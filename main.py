@@ -1136,9 +1136,6 @@ def calculate_career_jump(req: CareerRequest):
     </div>
   </div>
 </div>
-"""
-    
-    return {
         "score": 92,
         "report": report
     }
