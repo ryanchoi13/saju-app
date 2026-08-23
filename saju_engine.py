@@ -151,41 +151,59 @@ JIJANGGAN_DATA = {
 }
 
 def calculate_saju_pillars(year: int, month: int, day: int, sijin_index: int = None):
-    # 년주
-    y_gan = CHEONGAN[(year - 4) % 10]
-    y_ji = JIJI[(year - 4) % 12]
+    # 1. 년주 (입춘 기준 간략 보정: 2월 4일 이전이면 전년도 간지)
+    effective_year = year if not (month == 1 or (month == 2 and day < 4)) else year - 1
+    y_gan = CHEONGAN[(effective_year - 4) % 10]
+    y_ji = JIJI[(effective_year - 4) % 12]
     year_pillar = f"{y_gan}{y_ji}"
 
-    # 월주 (간략식 만세력 기준)
-    m_ji_idx = (month + 1) % 12
-    m_ji = JIJI[m_ji_idx]
-    m_gan_base = {"갑": 2, "기": 2, "을": 4, "경": 4, "병": 6, "신": 6, "정": 8, "임": 8, "무": 0, "계": 0}[y_gan]
-    m_gan = CHEONGAN[(m_gan_base + (month - 1)) % 10]
+    # 2. 월주 (24절기 절입 기준 월지 계산)
+    # 각 월별 절입일 대략치: 1월(소한 1/6), 2월(입춘 2/4), 3월(경칩 3/6), 4월(청명 4/5), 5월(입하 5/6), 6월(망종 6/6),
+    # 7월(소서 7/7), 8월(입추 8/8), 9월(백로 9/8), 10월(한로 10/8), 11월(입동 11/7), 12월(대설 12/7)
+    cutoff_days = [0, 6, 4, 6, 5, 6, 6, 7, 8, 8, 8, 7, 7]
+    if day < cutoff_days[month]:
+        solar_month_idx = (month + 9) % 12  # 이전 절기 월
+    else:
+        solar_month_idx = (month + 10) % 12 # 인월(寅:2)부터 시작하는 절기 월 인덱스
+
+    m_ji = JIJI[solar_month_idx]
+    
+    # 년간에 따른 월간 시작음
+    y_gan_idx = CHEONGAN.index(y_gan)
+    m_gan_base = {0: 2, 5: 2, 1: 4, 6: 4, 2: 6, 7: 6, 3: 8, 8: 8, 4: 0, 9: 0}[y_gan_idx]
+    # 인월(index 2) 기준 몇 번째 달인지 계산
+    month_offset = (solar_month_idx - 2) % 12
+    m_gan = CHEONGAN[(m_gan_base + month_offset) % 10]
     month_pillar = f"{m_gan}{m_ji}"
 
-    # 일주
+    # 3. 일주 (1900-01-01 = 갑술(甲戌)일 정확한 일진 공식)
     base_date = date(1900, 1, 1)
     target_date = date(year, month, day)
     diff = (target_date - base_date).days
-    d_gan = CHEONGAN[(diff + 10) % 10]
-    d_ji = JIJI[(diff + 12) % 12]
+    
+    # 1900년 1월 1일은 갑(0) 술(10)일
+    d_gan = CHEONGAN[(diff + 0) % 10]
+    d_ji = JIJI[(diff + 10) % 12]
     day_pillar = f"{d_gan}{d_ji}"
 
-    # 시주
+    # 4. 시주
     if sijin_index is not None and 0 <= sijin_index < 12:
         h_ji = JIJI[sijin_index]
-        d_gan_base = {"갑": 0, "기": 0, "을": 2, "경": 2, "병": 4, "신": 4, "정": 6, "임": 6, "무": 8, "계": 8}[d_gan]
+        d_gan_idx = CHEONGAN.index(d_gan)
+        d_gan_base = {0: 0, 5: 0, 1: 2, 6: 2, 2: 4, 7: 4, 3: 6, 8: 6, 4: 8, 9: 8}[d_gan_idx]
         h_gan = CHEONGAN[(d_gan_base + sijin_index) % 10]
         hour_pillar = f"{h_gan}{h_ji}"
     else:
         hour_pillar = None
 
-    # 오행 비율 계산
-    elements = [OHENG_MAP.get(y_gan, "목"), OHENG_MAP.get(y_ji, "목"),
-                OHENG_MAP.get(m_gan, "화"), OHENG_MAP.get(m_ji, "토"),
-                OHENG_MAP.get(d_gan, "목"), OHENG_MAP.get(d_ji, "화")]
+    # 오행 매핑
+    elements = [
+        OHENG_MAP.get(y_gan, "토"), OHENG_MAP.get(y_ji, "화"),
+        OHENG_MAP.get(m_gan, "목"), OHENG_MAP.get(m_ji, "목"),
+        OHENG_MAP.get(d_gan, "목"), OHENG_MAP.get(d_ji, "토")
+    ]
     if hour_pillar:
-        elements.extend([OHENG_MAP.get(hour_pillar[0], "금"), OHENG_MAP.get(hour_pillar[1], "수")])
+        elements.extend([OHENG_MAP.get(hour_pillar[0], "토"), OHENG_MAP.get(hour_pillar[1], "화")])
 
     total_count = len(elements)
     oheng_ratio = {
