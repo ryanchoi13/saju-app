@@ -185,7 +185,7 @@
                         <input type="text" id="name" value="최정오" class="w-full bg-transparent text-sm text-slate-900 font-semibold focus:outline-none">
                     </div>
 
-                    <!-- 양력 / 음력 선택 완벽 토글 -->
+                    <!-- 양력 / 음력 선택 토글 -->
                     <div class="bg-[#F8FAF7] rounded-xl p-3.5 border border-brand-100 focus-within:border-brand-600 focus-within:bg-white transition space-y-1.5">
                         <div class="flex justify-between items-center">
                             <label class="text-xs font-medium text-slate-400">생년월일</label>
@@ -645,26 +645,45 @@
                         <p class="text-xs text-slate-500 font-normal">카테고리별 맞춤 프리미엄 리포트</p>
                     </div>
 
-                    <!-- 프라이버시 수호 위젯 정기구독 -->
-                    <div class="bg-gradient-to-br from-amber-500 via-amber-600 to-amber-700 rounded-2xl p-5 text-white shadow-md space-y-3 border-2 border-amber-300">
+                    <!-- 프라이버시 수호 위젯 정기구독 영역 (구독 전/후 전환) -->
+                    <div id="talismanSubContainer" class="bg-gradient-to-br from-amber-500 via-amber-600 to-amber-700 rounded-2xl p-5 text-white shadow-md space-y-3 border-2 border-amber-300">
                         <div class="flex justify-between items-center">
                             <span class="text-xs bg-amber-900/80 text-amber-200 font-bold px-3 py-0.5 rounded-full border border-amber-400">프라이버시 수호 위젯</span>
-                            <span class="text-sm font-black text-amber-200">월 2,900원</span>
+                            <span id="talismanSubBadge" class="text-sm font-black text-amber-200">월 2,900원</span>
                         </div>
                         <div class="space-y-1">
                             <h4 class="text-base font-black text-white flex items-center gap-1.5">
                                 <span>🎴</span>
                                 <span>오늘의 맞춤 부적 1초 열람 위젯</span>
                             </h4>
-                            <p class="text-xs text-amber-100 font-normal leading-relaxed">
+                            <p id="talismanSubDesc" class="text-xs text-amber-100 font-normal leading-relaxed">
                                 잠금화면 노출 없이 <b>홈 화면 아이콘을 1초 터치</b>하여 매일 나만을 위한 맞춤 개운 부적을 비밀스럽게 단독 화면으로 열람하세요.
                             </p>
                         </div>
-                        <div class="pt-1">
+                        
+                        <!-- 미구독 상태 버튼 -->
+                        <div id="talismanUnsubBtnBox" class="pt-1">
                             <button onclick="subscribeTalismanWidget()" class="w-full bg-white text-amber-950 hover:bg-amber-100 font-black text-xs py-3.5 rounded-xl shadow-xs transition active:scale-95 flex items-center justify-center space-x-1">
                                 <span>🔔</span>
-                                <span>월 2,900원 정기구독 & 위젯 열기</span>
+                                <span>월 2,900원 정기구독 시작하기</span>
                             </button>
+                        </div>
+
+                        <!-- 구독 완료 상태 UI -->
+                        <div id="talismanSubscribedBox" class="hidden pt-1 space-y-2">
+                            <div class="bg-amber-950/60 border border-amber-300/40 rounded-xl p-3 text-center">
+                                <span class="text-xs font-bold text-amber-200">✨ 위젯 서비스 이용 중 (매일 00시 갱신)</span>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2">
+                                <button onclick="installTalismanWidget()" class="bg-white text-amber-950 hover:bg-amber-100 font-bold text-xs py-3 rounded-xl shadow-xs transition active:scale-95 flex items-center justify-center space-x-1">
+                                    <span>📱</span>
+                                    <span>홈화면 아이콘 추가</span>
+                                </button>
+                                <button onclick="openStandaloneTalismanView()" class="bg-amber-900/90 hover:bg-amber-950 text-amber-100 font-bold text-xs py-3 rounded-xl border border-amber-400/50 shadow-xs transition active:scale-95 flex items-center justify-center space-x-1">
+                                    <span>🎴</span>
+                                    <span>부적 바로 열기</span>
+                                </button>
+                            </div>
                         </div>
                     </div>
 
@@ -894,7 +913,7 @@
             </button>
         </nav>
 
-        <!-- 기본 개운부적 모달 (깔끔한 확인 & 닫기 단일 버튼) -->
+        <!-- 기본 개운부적 모달 -->
         <div id="talismanModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 backdrop-blur-sm p-4">
             <div class="bg-white border-2 border-amber-400 rounded-3xl w-full max-w-xs p-5 text-center shadow-2xl space-y-4">
                 <div class="flex justify-between items-center pb-2 border-b border-slate-100">
@@ -1060,7 +1079,6 @@
     <script>
         let isTalismanSubscribed = false;
         let currentCoin = 300;
-        let currentCoin = 300;
         let fortunesData = null;
         let paidReportsData = null;
         let isAnalyzed = false;
@@ -1127,6 +1145,28 @@
             };
         }
 
+        function renderTalismanSubUI() {
+            const unsubBox = document.getElementById('talismanUnsubBtnBox');
+            const subBox = document.getElementById('talismanSubscribedBox');
+            const badge = document.getElementById('talismanSubBadge');
+            
+            if (isTalismanSubscribed) {
+                if (unsubBox) unsubBox.classList.add('hidden');
+                if (subBox) subBox.classList.remove('hidden');
+                if (badge) {
+                    badge.innerText = "구독 중 ✅";
+                    badge.className = "text-xs font-bold text-lime-300 bg-black/30 px-2.5 py-0.5 rounded-full border border-lime-400/40";
+                }
+            } else {
+                if (unsubBox) unsubBox.classList.remove('hidden');
+                if (subBox) subBox.classList.add('hidden');
+                if (badge) {
+                    badge.innerText = "월 2,900원";
+                    badge.className = "text-sm font-black text-amber-200";
+                }
+            }
+        }
+
         function loadStoredData() {
             try {
                 const savedCoins = localStorage.getItem('user_coins');
@@ -1137,16 +1177,12 @@
 
                 const tal = localStorage.getItem('saved_talisman');
                 if (tal) savedTalisman = JSON.parse(tal);
-const tal = localStorage.getItem('saved_talisman');
-                if (tal) savedTalisman = JSON.parse(tal);
 
-                // 👇 여기 아래 4줄을 붙여넣으세요!
                 if (localStorage.getItem('is_talisman_subscribed') === 'true') {
                     isTalismanSubscribed = true;
                 }
                 renderTalismanSubUI();
 
-                const urlParams = new URLSearchParams(window.location.search);
                 const urlParams = new URLSearchParams(window.location.search);
                 if (urlParams.get('open') === 'talisman') {
                     openStandaloneTalismanView();
@@ -1159,6 +1195,7 @@ const tal = localStorage.getItem('saved_talisman');
                 localStorage.setItem('user_coins', currentCoin);
                 localStorage.setItem('unlocked_reports', JSON.stringify(unlockedReports));
                 if (savedTalisman) localStorage.setItem('saved_talisman', JSON.stringify(savedTalisman));
+                localStorage.setItem('is_talisman_subscribed', isTalismanSubscribed ? 'true' : 'false');
             } catch(e) {}
         }
 
@@ -1266,62 +1303,35 @@ const tal = localStorage.getItem('saved_talisman');
             closeTalismanModal();
         }
 
-let isTalismanSubscribed = false;
-
-// 구독 상태 UI 렌더링 함수
-function renderTalismanSubUI() {
-    const unsubBox = document.getElementById('talismanUnsubBtnBox');
-    const subBox = document.getElementById('talismanSubscribedBox');
-    const badge = document.getElementById('talismanSubBadge');
-    
-    if (isTalismanSubscribed) {
-        if (unsubBox) unsubBox.classList.add('hidden');
-        if (subBox) subBox.classList.remove('hidden');
-        if (badge) {
-            badge.innerText = "구독 중 ✅";
-            badge.className = "text-xs font-bold text-lime-300 bg-black/30 px-2.5 py-0.5 rounded-full border border-lime-400/40";
-        }
-    } else {
-        if (unsubBox) unsubBox.classList.remove('hidden');
-        if (subBox) subBox.classList.add('hidden');
-        if (badge) {
-            badge.innerText = "월 2,900원";
-            badge.className = "text-sm font-black text-amber-200";
-        }
-    }
-}
-
-function subscribeTalismanWidget() {
-    if (confirm('🎴 [오늘의 맞춤 부적 1초 열람 위젯]\n\n• 월 구독료: 2,900원\n• 혜택: 매일 아침 나만을 위한 맞춤 부적이 전용 단독 화면으로 1초 만에 열람됩니다.\n\n정기구독을 시작하시겠습니까?')) {
-        isTalismanSubscribed = true;
-        savedTalisman = getActiveTalisman();
-        localStorage.setItem('is_talisman_subscribed', 'true');
-        saveStoredData();
-        renderSavedTalismanUI();
-        renderTalismanSubUI();
-        alert('🎉 정기구독이 정상 등록되었습니다!\n[홈화면 아이콘 추가] 버튼을 눌러 바탕화면에 위젯을 설치해 보세요.');
-    }
-}
-
-function installTalismanWidget() {
-    if (deferredPrompt) {
-        deferredPrompt.prompt();
-        deferredPrompt.userChoice.then((choiceResult) => {
-            if (choiceResult.outcome === 'accepted') {
-                alert('📱 홈 화면에 부적 위젯 아이콘이 추가되었습니다!');
+        function subscribeTalismanWidget() {
+            if (confirm('🎴 [오늘의 맞춤 부적 1초 열람 위젯]\n\n• 월 구독료: 2,900원\n• 혜택: 매일 아침 나만을 위한 맞춤 부적이 전용 단독 화면으로 1초 만에 열람됩니다.\n\n정기구독을 시작하시겠습니까?')) {
+                isTalismanSubscribed = true;
+                savedTalisman = getActiveTalisman();
+                saveStoredData();
+                renderSavedTalismanUI();
+                renderTalismanSubUI();
+                alert('🎉 정기구독이 정상 등록되었습니다!\n[홈화면 아이콘 추가] 버튼을 눌러 바탕화면에 위젯을 설치해 보세요.');
             }
-            deferredPrompt = null;
-        });
-    } else {
-        // 브라우저 직접 추가 안내
-        const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
-        if (isIOS) {
-            alert('📱 [아이폰 홈 화면 위젯 추가 방법]\n\n1. 하단 [부적 바로 열기] 버튼을 누릅니다.\n2. 사파리 하단 [공유(↑)] 버튼을 누릅니다.\n3. [홈 화면에 추가]를 선택하면 부적 아이콘이 생성됩니다!');
-        } else {
-            alert('📱 [안드로이드 홈 화면 위젯 추가 방법]\n\n1. 하단 [부적 바로 열기] 버튼을 누릅니다.\n2. 크롬 우측 상단 메뉴(⋮)를 누릅니다.\n3. [홈 화면에 추가]를 선택하면 부적 아이콘이 생성됩니다!');
         }
-    }
-}
+
+        function installTalismanWidget() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        alert('📱 홈 화면에 부적 위젯 아이콘이 추가되었습니다!');
+                    }
+                    deferredPrompt = null;
+                });
+            } else {
+                const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+                if (isIOS) {
+                    alert('📱 [아이폰 홈 화면 위젯 추가 방법]\n\n1. 하단 [부적 바로 열기] 버튼을 누릅니다.\n2. 사파리 하단 [공유(↑)] 버튼을 누릅니다.\n3. [홈 화면에 추가]를 선택하면 부적 아이콘이 생성됩니다!');
+                } else {
+                    alert('📱 [안드로이드 홈 화면 위젯 추가 방법]\n\n1. 하단 [부적 바로 열기] 버튼을 누릅니다.\n2. 크롬 우측 상단 메뉴(⋮)를 누릅니다.\n3. [홈 화면에 추가]를 선택하면 부적 아이콘이 생성됩니다!');
+                }
+            }
+        }
 
         function renderSavedTalismanUI() {
             const box = document.getElementById('mySavedTalismanBox');
