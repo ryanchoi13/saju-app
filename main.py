@@ -20,10 +20,22 @@ class AnalyzeRequest(BaseModel):
     is_unknown_time: bool = False
 
 @app.get("/", response_class=HTMLResponse)
-async def read_index():
-    index_path = os.path.join(BASE_DIR, "index.html")
-    with open(index_path, "r", encoding="utf-8") as f:
-        return f.read()
+async def get_talisman_manifest():
+    return {
+        "name": "오늘의 맞춤 부적",
+        "short_name": "수호부적",
+        "start_url": "/?open=talisman",
+        "display": "standalone",
+        "background_color": "#18181B",
+        "theme_color": "#D97706",
+        "icons": [
+            {
+                "src": "https://cdn-icons-png.flaticon.com/512/3655/3655581.png",
+                "sizes": "512x512",
+                "type": "image/png"
+            }
+        ]
+    }
 
 @app.get("/manifest.json")
 async def get_manifest():
