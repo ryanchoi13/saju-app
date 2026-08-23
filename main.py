@@ -20,6 +20,20 @@ class AnalyzeRequest(BaseModel):
     is_unknown_time: bool = False
 
 @app.get("/", response_class=HTMLResponse)
+async def read_index():
+    index_path = os.path.join(BASE_DIR, "index.html")
+    with open(index_path, "r", encoding="utf-8") as f:
+        return f.read()
+
+@app.get("/manifest.json")
+async def get_manifest():
+    return FileResponse(os.path.join(BASE_DIR, "manifest.json"), media_type="application/json")
+
+@app.get("/sw.js")
+async def get_sw():
+    return FileResponse(os.path.join(BASE_DIR, "sw.js"), media_type="application/javascript")
+
+@app.get("/manifest-talisman.json")
 async def get_talisman_manifest():
     return {
         "name": "오늘의 맞춤 부적",
@@ -36,14 +50,6 @@ async def get_talisman_manifest():
             }
         ]
     }
-
-@app.get("/manifest.json")
-async def get_manifest():
-    return FileResponse(os.path.join(BASE_DIR, "manifest.json"), media_type="application/json")
-
-@app.get("/sw.js")
-async def get_sw():
-    return FileResponse(os.path.join(BASE_DIR, "sw.js"), media_type="application/javascript")
 
 @app.get("/api/daily-tarot")
 async def get_daily_tarot():
