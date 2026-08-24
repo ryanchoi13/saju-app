@@ -659,16 +659,25 @@
             fetchSajuAnalysis(name, year, month, day, currentCalendarType, sijin);
         }
 
-        function openTalismanModal() {
-            if (!currentTalismanData) return;
-            document.getElementById('modalTalismanTitle').innerText = currentTalismanData.title;
-            document.getElementById('modalTalismanDesc').innerText = currentTalismanData.desc;
-            document.getElementById('modalTalismanPower').innerText = currentTalismanData.power;
-            document.getElementById('modalTalismanCmd').innerText = currentTalismanData.chinese;
-            
-            document.getElementById('modalTalismanSvgBox').innerHTML = renderDistinctTalisman(currentTalismanData.title);
-            document.getElementById('talismanModal').classList.remove('hidden');
-        }
+function openTalismanModal() {
+    const t = getActiveTalisman();
+    
+    // 텍스트 바인딩
+    if (document.getElementById('talismanTitle')) document.getElementById('talismanTitle').innerText = t.title;
+    if (document.getElementById('talismanDesc')) document.getElementById('talismanDesc').innerText = t.desc;
+    if (document.getElementById('talismanPower')) document.getElementById('talismanPower').innerText = t.power;
+    if (document.getElementById('talismanOwner')) document.getElementById('talismanOwner').innerText = currentUserName || "최정오";
+
+    // 중앙 빨간 삼각 인형 문양 영역을 12종 고유 그래픽으로 강제 교체
+    const modalBox = document.getElementById('talismanModal') || document.querySelector('.bg-amber-100') || document.body;
+    const svgEl = modalBox.querySelector('svg');
+    if (svgEl) {
+        svgEl.outerHTML = renderDistinctTalisman(t.title);
+    }
+
+    const modal = document.getElementById('talismanModal');
+    if (modal) modal.classList.remove('hidden');
+}
 
         function closeTalismanModal() {
             document.getElementById('talismanModal').classList.add('hidden');
