@@ -1309,7 +1309,8 @@
             document.getElementById('standaloneTalismanDesc').innerText = t.desc;
             document.getElementById('standaloneTalismanPower').innerText = t.power;
             document.getElementById('standaloneTalismanOwner').innerText = currentUserName || "최정오";
-
+const iconContainer = document.querySelector('#standaloneTalismanView .w-28.h-28');
+            if (iconContainer) iconContainer.innerHTML = getTalismanGraphic(t.title);
             document.getElementById('mainAppContainer').classList.add('hidden');
             document.getElementById('standaloneTalismanView').classList.remove('hidden');
             closeTalismanModal();
