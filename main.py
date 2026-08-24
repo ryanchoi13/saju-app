@@ -224,16 +224,16 @@ async def get_daily_tarot(slot: Optional[int] = 1, rand_seed: Optional[str] = No
 async def analyze_saju(req: AnalyzeRequest):
     saju_result = calculate_saju_pillars(req.year, req.month, req.day, req.sijin_index)
     
-    # [핵심] 오늘 날짜 + 사용자 고유 사주 결합 해시 생성
+    # 2026년 기준 실시간 날짜 + 이름 + 생년월일 + 시진 고유값 생성
     today_str = datetime.now().strftime("%Y-%m-%d")
-    seed_str = f"{today_str}_{req.name}_{req.year}_{req.month}_{req.day}_{saju_result.get('day_stem', '갑')}"
-    hash_idx = int(hashlib.md5(seed_str.encode()).hexdigest(), 16)
+    sijin_val = req.sijin_index if req.sijin_index is not None else 0
+    unique_seed = f"{today_str}_{req.name}_{req.year}_{req.month}_{req.day}_{sijin_val}"
+    hash_idx = int(hashlib.md5(unique_seed.encode()).hexdigest(), 16)
     
-    # 1. 12대 부적 중 오늘 나만을 위한 맞춤 부적 자동 추출
-    talisman_idx = (hash_idx + req.year + req.day) % len(TALISMAN_DECK)
+    # 12종 부적 중 사주 및 생년월일에 따른 1:1 매칭
+    talisman_idx = hash_idx % len(TALISMAN_DECK)
     today_talisman = TALISMAN_DECK[talisman_idx]
 
-    # 2. 운세 큐레이션 및 점수 산정
     curation = DAILY_CURATIONS[hash_idx % len(DAILY_CURATIONS)]
     score_variance = (hash_idx % 7) - 3
     daily_score = max(82, min(99, curation["score_base"] + score_variance))
