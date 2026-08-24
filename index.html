@@ -1133,18 +1133,18 @@
         };
 
         function getActiveTalisman() {
+            // 사주 분석 결과로 받은 '오늘의 맞춤 부적'을 최우선으로 반영
             if (fortunesData && fortunesData.daily && fortunesData.daily.talisman) {
                 return fortunesData.daily.talisman;
             }
             if (savedTalisman) return savedTalisman;
             return {
-                title: "재물만복부 (財物萬福符)",
-                desc: "금고의 문을 열고 새는 돈을 막아주는 황금 기운",
-                chinese: "財運大吉\n聚財如山",
-                power: "재물통로 개운 · 자산 증식"
+                title: "소원성취부 (所願成就符)",
+                desc: "오랫동안 가슴에 품어온 간절한 뜻이 현실로 결실을 맺는 기운",
+                chinese: "心想事成\n萬事如意",
+                power: "소원 성취 · 만사 대길"
             };
         }
-
         function renderTalismanSubUI() {
             const unsubBox = document.getElementById('talismanUnsubBtnBox');
             const subBox = document.getElementById('talismanSubscribedBox');
@@ -1599,6 +1599,7 @@
 
                 const data = await response.json();
                 fortunesData = data.fortunes;
+                savedTalisman = data.fortunes.daily.talisman;
                 paidReportsData = data.paid_reports;
                 isAnalyzed = true;
 
