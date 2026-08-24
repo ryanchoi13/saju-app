@@ -5,10 +5,14 @@ from pydantic import BaseModel
 from typing import Optional
 import os
 
-app = FastAPI(title="운세의 신 PRO API", version="3.4.0")
+app = FastAPI(title="운세의 신 PRO API", version="3.5.0")
 
 CHEONGAN_HANJA = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
 JIJI_HANJA = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"]
+
+# 천간/지지 오행 매핑
+CHEONGAN_ELEMENTS = {"甲": "wood", "乙": "wood", "丙": "fire", "丁": "fire", "戊": "earth", "己": "earth", "庚": "metal", "辛": "metal", "壬": "water", "癸": "water"}
+JIJI_ELEMENTS = {"子": "water", "丑": "earth", "寅": "wood", "卯": "wood", "辰": "earth", "巳": "fire", "午": "fire", "未": "earth", "申": "metal", "酉": "metal", "戌": "earth", "亥": "water"}
 
 JIJANGGAN_MAP = {
     "子": "癸 (계)", "丑": "己 (기)", "寅": "甲 (갑)", "卯": "乙 (을)",
@@ -91,6 +95,24 @@ def analyze_saju(req: SajuRequest):
         h_jj = JIJI_HANJA[req.sijin_index]
         h_pillar = f"{h_cg}{h_jj}"
 
+    # 오행 8자 동적 분석 (년/월/일/시 천간+지지 8자 기반)
+    pillars_cg_jj = [y_cg, y_jj, m_cg, m_jj, d_cg, d_jj]
+    if h_cg != "-":
+        pillars_cg_jj.extend([h_cg, h_jj])
+        
+    elem_counts = {"wood": 0, "fire": 0, "earth": 0, "metal": 0, "water": 0}
+    total_count = len(pillars_cg_jj)
+    
+    for char in pillars_cg_jj:
+        if char in CHEONGAN_ELEMENTS:
+            elem_counts[CHEONGAN_ELEMENTS[char]] += 1
+        elif char in JIJI_ELEMENTS:
+            elem_counts[JIJI_ELEMENTS[char]] += 1
+            
+    elem_percentages = {
+        k: round((v / total_count) * 100, 1) for k, v in elem_counts.items()
+    }
+
     user_mbti = DAY_MBTI_MAP.get(d_cg, {"mbti": "용의주도한 전략가 (ENTJ형)", "desc": "목표를 향해 나아가는 전략적 사주"})
     user_animal_icon = ANIMAL_ICONS.get(d_animal, "🐯")
 
@@ -117,7 +139,7 @@ def analyze_saju(req: SajuRequest):
             "mbti": user_mbti,
             "animal_symbol": d_animal,
             "animal_icon": user_animal_icon,
-            "elements": {"wood": 25, "fire": 30, "earth": 20, "metal": 15, "water": 10}
+            "elements": elem_percentages
         },
         "daily_fortune": {
             "score": 97,
@@ -140,45 +162,71 @@ def get_daily_tarot(slot: int = 1, rand_seed: Optional[str] = None):
     return TAROT_CARDS[idx]
 
 @app.post("/api/daewoon-report")
-def get_daewoon_report():
+def get_daewoon_report(req: dict):
+    user_name = req.get("name", "최정오")
     return {
-        "title": "👑 자미두수 & 10년 대운 심층 리포트 (통합 프리미엄)",
-        "content": """
-        <div class='space-y-4 text-xs text-slate-800 leading-relaxed text-left'>
-            <!-- 1. 현재 대운 분석 -->
-            <div class='bg-amber-50/90 p-4 rounded-2xl border border-amber-200 space-y-2.5'>
-                <h4 class='text-sm font-black text-amber-950 flex items-center gap-1.5'>
-                    <span>📈 1. 현재 10년 대운 정밀 감명 (43세 ~ 52세 황금기)</span>
+        "title": f"👑 {user_name}님의 자미두수 & 10년 대운 심층 리포트",
+        "content": f"""
+        <div class='space-y-5 text-xs text-slate-800 leading-relaxed text-left'>
+            <!-- 1. 4단계 평생 생애 주기별 대운맥 흐름 -->
+            <div class='bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-3'>
+                <h4 class='text-sm font-black text-slate-900 flex items-center gap-1.5 border-b pb-2 border-slate-200'>
+                    <span>🌐 1. {user_name}님의 평생 생애 주기별 대운맥(大運脈) 흐름</span>
+                </h4>
+                <div class='space-y-2 text-[11px]'>
+                    <div class='p-2.5 bg-white rounded-xl border border-slate-200 space-y-1'>
+                        <p class='font-bold text-slate-900'>🌱 [유년기 (년주 기반 / 0세 ~ 19세) : 기틀 형성 및 학업기]</p>
+                        <p class='text-slate-600 leading-normal'>탐구심과 지적 호기심이 왕성했던 시기로, 다재다능한 감각을 기르며 내면의 뼈대를 공고히 하던 유년기입니다. 인성(印星)의 조력을 받아 학업 및 기초 소양 구축에 유익했던 기반 형성기입니다.</p>
+                    </div>
+                    <div class='p-2.5 bg-white rounded-xl border border-slate-200 space-y-1'>
+                        <p class='font-bold text-slate-900'>🌿 [청년기 (월주 기반 / 20세 ~ 39세) : 도약과 실전 탐색기]</p>
+                        <p class='text-slate-600 leading-normal'>사회로 진출하여 다양한 시행착오와 도전을 통해 자신만의 전문 역량을 갈고닦던 시기입니다. 시련 속에서도 결단력과 추진력을 길러 중년의 큰 성공을 위한 튼튼한 발판을 마련했습니다.</p>
+                    </div>
+                    <div class='p-2.5 bg-amber-50 rounded-xl border border-amber-300 space-y-1'>
+                        <p class='font-bold text-amber-950'>🔥 [중장년기 (*현재 40세 ~ 59세) : 황금 비상 및 자산 결실기]</p>
+                        <p class='text-amber-900 leading-normal'><strong>{user_name}님 사주 인생의 최고 하이라이트 구간입니다.</strong> 일주(日柱)의 천을귀인과 유금(酉金) 편재가 왕성하게 결합하여, 사회적 주도권을 완전히 잡고 커리어 상승과 자산 확장이 거침없이 일어나는 황금 비상기입니다.</p>
+                    </div>
+                    <div class='p-2.5 bg-white rounded-xl border border-slate-200 space-y-1'>
+                        <p class='font-bold text-slate-900'>🍎 [말년기 (시주 기반 / 60세 이후) : 태평성대 및 완숙기]</p>
+                        <p class='text-slate-600 leading-normal'>평생 축적한 지혜와 부를 바탕으로 명예로운 노후를 완성하는 시기입니다. 자손 복과 문서운이 풍족하여 안락하고 평온한 정토를 누리게 됩니다.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. 현재 10년 대운 정밀 감명 & 조언/개운법 -->
+            <div class='bg-amber-50/90 p-4 rounded-2xl border border-amber-200 space-y-3'>
+                <h4 class='text-sm font-black text-amber-950 flex items-center gap-1.5 border-b pb-2 border-amber-300'>
+                    <span>📈 2. {user_name}님의 현재 10년 대운 정밀 감명 (43세 ~ 52세)</span>
                 </h4>
                 <p><strong>[대운의 본질과 주도권]</strong> 丁火 일간에 천을귀인(天乙貴人)과 유금(酉金) 편재의 기운이 굳건히 결합하는 시기입니다. 과거에 수동적으로 끌려가던 입장에서 벗어나, 조직과 사업의 핵심 결정권을 쥐고 인생의 황금기를 설계하는 10년입니다.</p>
-                <p><strong>[세운별 핵심 분기점]</strong> 
-                <br>• <strong>44~45세:</strong> 자산 포트폴리오의 재편기. 불필요한 고정 지출을 정리하고 문서(부동산/지식재산) 형태의 안전 자산을 확보하는 최적기.
-                <br>• <strong>46~48세:</strong> 대운의 정점기. 강력한 조력자의 등장과 함께 사회적 직위와 명예가 수직 상승하는 황금 전환점.
-                <br>• <strong>49~52세:</strong> 수확 및 수성(守成)기. 무리한 확장보다 구축된 시스템을 안정화하여 평생의 은퇴 자금을 완비하는 시기.</p>
-            </div>
-
-            <!-- 2. 평생 대운 흐름 -->
-            <div class='bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-2.5'>
-                <h4 class='text-sm font-black text-slate-900 flex items-center gap-1.5'>
-                    <span>🌐 2. 평생 생애 주기별 대운맥(大運脈) 흐름</span>
-                </h4>
-                <p><strong>[초년운 (~30세) : 기반 형성기]</strong> 다재다능한 재능을 탐색하고 다양한 환경을 겪으며 내면의 맷집과 실전 감각을 기르던 시기였습니다.</p>
-                <p><strong>[중년운 (31세~55세) : 결실과 비상기]</strong> 타고난 치밀함과 리더십이 폭발하며 사회적으로 가장 큰 실적과 자산을 축적하는 대기만성형 상승 곡선입니다.</p>
-                <p><strong>[말년운 (56세 이후) : 태평성대와 수호기]</strong> 지혜로운 안목으로 후진을 양성하거나 자산을 지키며 평온하고 유복한 노후를 누리게 됩니다.</p>
-            </div>
-
-            <!-- 3. 평생 귀인 vs 상극 인연 -->
-            <div class='bg-emerald-50/90 p-4 rounded-2xl border border-emerald-200 space-y-2.5'>
-                <h4 class='text-sm font-black text-emerald-950 flex items-center gap-1.5'>
-                    <span>🤝 3. 평생의 천을귀인 vs 상극 인연 종합 처세법</span>
-                </h4>
-                <div class='space-y-1'>
-                    <p class='text-emerald-900 font-bold'>🌟 평생 나를 돕는 귀인: 쥐띠, 소띠, 뱀띠 (서북쪽 및 동남쪽 방향)</p>
-                    <p class='text-slate-600 text-[11px]'>감정적으로 흔들릴 때 차분하게 중심을 잡아주며, 법률, 세무, 대형 계약 등 결정적 순간에 실질적인 해결책을 안겨주는 평생의 동반자입니다.</p>
+                <p><strong>[세운별 핵심 분기점 및 행동 가이드]</strong> 
+                <br>• <strong>44~45세 (자산 포트폴리오 재편):</strong> 불필요한 고정 지출을 정돈하고 부동산 및 문서 형태의 안전 자산을 확보하는 최적기.
+                <br>• <strong>46~48세 (대운의 정점 및 비상):</strong> 강력한 조력자의 등장과 함께 사회적 직위와 명예가 수직 상승하는 황금 전환점.
+                <br>• <strong>49~52세 (수확 및 시스템 수성):</strong> 무리한 확장보다 구축된 시스템을 안정화하여 평생의 은퇴 자금을 완비하는 시기.</p>
+                <div class='p-3 bg-white rounded-xl border border-amber-200 space-y-1 text-[11px] text-amber-950'>
+                    <p class='font-bold'>💡 대운 성공 조언 & 개운 실천 가이드:</p>
+                    <p>• 남의 말에 현혹된 위험한 투자를 경계하고, 본인이 직접 검증한 문서/시스템 자산에 집중하십시오.</p>
+                    <p>• 주중 수요일이나 목요일 오전에 서남쪽 방향에서 만나는 귀인과의 협상이 자산 증식의 큰 열쇠가 됩니다.</p>
                 </div>
-                <div class='pt-2 border-t border-emerald-200 space-y-1'>
+            </div>
+
+            <!-- 3. 평생 귀인/상극 인연 & 종합 개운 비급 -->
+            <div class='bg-emerald-50/90 p-4 rounded-2xl border border-emerald-200 space-y-3'>
+                <h4 class='text-sm font-black text-emerald-950 flex items-center gap-1.5 border-b pb-2 border-emerald-300'>
+                    <span>🤝 3. {user_name}님의 평생 귀인/상극 인연 & 종합 개운 비급</span>
+                </h4>
+                <div class='space-y-1.5'>
+                    <p class='text-emerald-900 font-bold'>🌟 평생 나를 돕는 귀인: 쥐띠, 소띠, 뱀띠 (서북쪽 및 동남쪽 방향)</p>
+                    <p class='text-slate-600 text-[11px] leading-normal'>감정적으로 흔들릴 때 차분하게 중심을 잡아주며, 법률, 세무, 대형 계약 등 결정적 순간에 실질적인 해결책을 안겨주는 평생의 동반자입니다.</p>
+                </div>
+                <div class='pt-2 border-t border-emerald-200 space-y-1.5'>
                     <p class='text-rose-700 font-bold'>⚠️ 평생 주의해야 할 상극 인연: 호랑이띠, 토끼띠</p>
-                    <p class='text-slate-600 text-[11px]'>성향이 지나치게 강해 사소한 의견 차이로도 자존심 싸움이 번질 수 있습니다. 금전 거래나 동업 시 반드시 공증과 서면 계약을 철저히 하십시오.</p>
+                    <p class='text-slate-600 text-[11px] leading-normal'>성향이 지나치게 강해 사소한 의견 차이로도 자존심 싸움이 번질 수 있습니다. 금전 거래나 동업 시 반드시 공증과 서면 계약을 철저히 하십시오.</p>
+                </div>
+                <div class='pt-2 border-t border-emerald-200 space-y-1.5 text-[11px]'>
+                    <p class='font-bold text-emerald-950'>🎨 오행 체질 맞춤 개운 비급 (색상/방향/음식):</p>
+                    <p>• <strong>행운의 색상:</strong> 아이보리, 스카이 블루, 황금색 계열 의상 및 소품 추천.</p>
+                    <p>• <strong>개운 음식:</strong> 미온수, 검은콩, 견과류, 신선한 야채 중심 식단으로 수(水)기운 보강.</p>
                 </div>
             </div>
         </div>
@@ -189,64 +237,113 @@ def get_daewoon_report():
 def get_theme_report(req: dict):
     theme = req.get("theme", "wealth")
     sub_opt = req.get("sub_option", "기본")
+    user_name = req.get("name", "최정오")
     
     if theme == "wealth":
         return {
-            "title": "💰 평생 재물 그릇 & 금고운 심층 리포트",
-            "content": """
-            <div class='space-y-3.5 text-xs text-slate-700 leading-relaxed text-left p-1'>
-                <div class='p-3 bg-amber-50 rounded-xl border border-amber-200'>
+            "title": f"💰 {user_name}님의 평생 재물 그릇 & 금고운 심층 리포트",
+            "content": f"""
+            <div class='space-y-4 text-xs text-slate-700 leading-relaxed text-left p-1'>
+                <div class='p-3.5 bg-amber-50 rounded-2xl border border-amber-200 space-y-1'>
                     <p class='font-bold text-amber-950 text-sm'>[재물 그릇의 본질] '금고형' 자산 축적 원국</p>
-                    <p class='text-[11px] text-amber-900 mt-1'>일확천금의 투기보다 체계적인 시스템과 현금 흐름을 통해 복리로 부를 쌓아 올리는 대기만성형 금고를 타고났습니다.</p>
+                    <p class='text-[11px] text-amber-900'>일확천금의 위험한 투기보다 체계적인 시스템과 현금 흐름을 통해 복리로 부를 쌓아 올리는 대기만성형 황금 금고를 타고났습니다.</p>
                 </div>
-                <p><strong>1. 최적의 자산 포트폴리오 전략:</strong> 변동성이 극심한 단타 매매보다는 실물 부동산(상가, 토지, 안정적 주거지) 및 배당형 우량 자산에 70% 이상을 배분할 때 자산 손실 없이 우상향합니다.</p>
-                <p><strong>2. 재물운이 폭발하는 대박 시기:</strong> 40대 중후반과 50대 초반에 강력한 문서운이 들어와 보유한 자산 가치가 2배 이상 퀀텀점프하는 분기점을 맞이합니다.</p>
-                <p><strong>3. 손재수(損財數) 방어 개운법:</strong> 지인 간의 구두 금전 대여를 절대 금하고, 서남쪽 방향에 황금빛 소품이나 금속 재질의 인테리어를 배치하면 재물의 누수를 완벽히 방어할 수 있습니다.</p>
+                
+                <div class='space-y-2'>
+                    <p class='font-bold text-slate-900 text-xs'>1. {user_name}님 맞춤 최적 자산 포트폴리오 전략</p>
+                    <p class='text-[11px] text-slate-600 leading-normal'>변동성이 극심한 주식 단타나 코인 등 리스크가 높은 자산은 재물 유실을 유발하기 쉽습니다. 실물 부동산(상가, 토지, 안정적 주거 자산) 및 배당형 우량 자산에 전체 자산의 70% 이상을 배분할 때 손실 없이 안정적인 우상향 그래프를 그립니다.</p>
+                </div>
+
+                <div class='space-y-2'>
+                    <p class='font-bold text-slate-900 text-xs'>2. 재물운이 폭발하는 인생 최고의 대박 타이밍</p>
+                    <p class='text-[11px] text-slate-600 leading-normal'>40대 중후반과 50대 초반 구간에 강력한 문서운(印星/財星)이 연이어 들어옵니다. 이 시기에 계약한 계약서나 보유 부동산의 가치가 최소 2배 이상 수직 상승하는 퀀텀점프의 기회를 맞이하게 됩니다.</p>
+                </div>
+
+                <div class='space-y-2'>
+                    <p class='font-bold text-slate-900 text-xs'>3. 손재수(損財數) 및 헛돈 방어 개운 비방</p>
+                    <p class='text-[11px] text-slate-600 leading-normal'>지인이나 가까운 친족 간의 구두 금전 대여는 절대 금물입니다. 집 안이나 사무실의 서남쪽 방향에 황금빛 소품이나 금속 재질의 인테리어를 배치하고, 노란색 계열의 지갑을 사용할 때 새어나가는 재물의 기운을 완벽하게 차단할 수 있습니다.</p>
+                </div>
             </div>
             """
         }
     elif theme == "love":
         return {
-            "title": f"💖 평생 애정운 & 인연법 ({sub_opt} 맞춤)",
+            "title": f"💖 {user_name}님의 평생 애정운 & 인연법 ({sub_opt} 맞춤)",
             "content": f"""
-            <div class='space-y-3.5 text-xs text-slate-700 leading-relaxed text-left p-1'>
-                <div class='p-3 bg-rose-50 rounded-xl border border-rose-200'>
-                    <p class='font-bold text-rose-950 text-sm'>[현재 상태: {sub_opt}] 맞춤 애정 감명</p>
-                    <p class='text-[11px] text-rose-900 mt-1'>현재 본인의 기운은 내면의 신뢰와 깊은 유대감을 형성하기에 가장 안정적인 상태입니다.</p>
+            <div class='space-y-4 text-xs text-slate-700 leading-relaxed text-left p-1'>
+                <div class='p-3.5 bg-rose-50 rounded-2xl border border-rose-200 space-y-1'>
+                    <p class='font-bold text-rose-950 text-sm'>[현재 상태: {sub_opt}] 맞춤 애정 정밀 감명</p>
+                    <p class='text-[11px] text-rose-900'>현재 {user_name}님의 기운은 내면의 깊은 신뢰와 유대감을 형성하기에 가장 안정적이고 온화한 상태입니다.</p>
                 </div>
-                <p><strong>1. 나와 맞는 평생 배필의 특징:</strong> 겉치레보다 대화가 통하고 배려심이 깊으며, 본인의 열정적인 성향을 묵묵히 지지해 주는 온화한 인품의 소유자와 궁합이 가장 좋습니다.</p>
-                <p><strong>2. 시기별 애정운의 흐름:</strong> 상반기에는 소통의 깊이를 더하고, 하반기로 갈수록 두 사람 사이의 현실적 결속력(결혼 논의, 미래 설계)이 확고해지는 운의 흐름입니다.</p>
-                <p><strong>3. 인연을 지키는 핵심 처세법:</strong> 서운한 감정이 들 때는 즉각 반응하기보다 하루의 시간을 두고 차분히 감정을 정리한 후 대화하는 것이 애정의 온도를 평생 유지하는 비결입니다.</p>
+
+                <div class='space-y-2'>
+                    <p class='font-bold text-slate-900 text-xs'>1. 나에게 운명적으로 맞는 평생 배필의 특징</p>
+                    <p class='text-[11px] text-slate-600 leading-normal'>겉치레나 화려한 언변보다는 대화가 깊이 통하고 배려심이 깊으며, {user_name}님의 열정적이고 주도적인 성향을 묵묵히 품어주는 차분한 인품의 소유자와 가장 고품격 궁합을 이룹니다.</p>
+                </div>
+
+                <div class='space-y-2'>
+                    <p class='font-bold text-slate-900 text-xs'>2. 시기별 애정 흐름 및 관계 발전 가이드</p>
+                    <p class='text-[11px] text-slate-600 leading-normal'>상반기에는 서로의 가치관을 확인하며 소통의 깊이를 더하고, 하반기로 갈수록 두 사람 사이의 현실적 결속력(미래 설계, 공동 자산 관리, 안정적 결혼 생활)이 매우 단단해지는 대길의 흐름입니다.</p>
+                </div>
+
+                <div class='space-y-2'>
+                    <p class='font-bold text-slate-900 text-xs'>3. 인연의 온도를 평생 유지하는 핵심 처세법</p>
+                    <p class='text-[11px] text-slate-600 leading-normal'>서운한 감정이 생겼을 때는 즉각적으로 대립하기보다 하루의 여유를 두고 차분히 감정을 정리한 뒤 대화하는 것이 애정운의 불꽃을 평생 지키는 최고의 비결입니다.</p>
+                </div>
             </div>
             """
         }
     elif theme == "business":
         return {
-            "title": f"🏢 사업 & 직업 성공 대길운 ({sub_opt} 맞춤)",
+            "title": f"🏢 {user_name}님의 사업 & 직업 성공 대길운 ({sub_opt} 맞춤)",
             "content": f"""
-            <div class='space-y-3.5 text-xs text-slate-700 leading-relaxed text-left p-1'>
-                <div class='p-3 bg-blue-50 rounded-xl border border-blue-200'>
-                    <p class='font-bold text-blue-950 text-sm'>[직업군 상태: {sub_opt}] 성공 로드맵</p>
-                    <p class='text-[11px] text-blue-900 mt-1'>기획력과 디테일한 실행력이 완벽히 결합되어 어느 조직에서든 핵심 리더로 두각을 나타낼 사주 구조입니다.</p>
+            <div class='space-y-4 text-xs text-slate-700 leading-relaxed text-left p-1'>
+                <div class='p-3.5 bg-blue-50 rounded-2xl border border-blue-200 space-y-1'>
+                    <p class='font-bold text-blue-950 text-sm'>[직업군 상태: {sub_opt}] 대길 성공 로드맵</p>
+                    <p class='text-[11px] text-blue-900'>치밀한 기획력과 디테일한 실행력이 완벽히 결합되어 어떤 조직이나 분야에서든 핵심 수장으로 두각을 나타낼 사주 구조입니다.</p>
                 </div>
-                <p><strong>1. 대박을 부르는 핵심 직무/사업 아이템:</strong> 전문 컨설팅, IT/기술 기획, 유통 및 브랜드 매니지먼트, 교육/인재 개발 등 시스템을 구축하고 사람을 연결하는 분야에서 최고의 역량을 발휘합니다.</p>
-                <p><strong>2. 승진/이직/창업의 최적 타이밍:</strong> 가을과 겨울로 넘어가는 환절기 구간에 나를 강력히 추천해 주는 귀인(상사, 핵심 파트너)이 나타나며 경력의 큰 도약이 일어납니다.</p>
-                <p><strong>3. 성공을 위한 실전 지침:</strong> 모든 실무를 혼자 짊어지려 하지 말고 신뢰할 수 있는 파트너에게 역할을 위임할 때 성과의 규모가 3배 이상 확장됩니다.</p>
+
+                <div class='space-y-2'>
+                    <p class='font-bold text-slate-900 text-xs'>1. 성공을 보장하는 대박 직무/사업 분야</p>
+                    <p class='text-[11px] text-slate-600 leading-normal'>전문 컨설팅, IT/기술 기획, 유통 및 브랜드 매니지먼트, 자산 관리, 인재 개발 등 체계적인 시스템을 구축하고 사람과 자원을 연결하는 영역에서 귀하의 능력이 최고 가치로 환산됩니다.</p>
+                </div>
+
+                <div class='space-y-2'>
+                    <p class='font-bold text-slate-900 text-xs'>2. 승진/이직/창업 성공의 최적 타이밍</p>
+                    <p class='text-[11px] text-slate-600 leading-normal'>가을과 겨울로 넘어가는 환절기 구간에 나를 강력히 끌어주는 결정적 귀인(상사, 거대 파트너사)이 등장합니다. 이 시기 추진하는 신규 사업이나 이직은 성공 확률이 3배 이상 높아집니다.</p>
+                </div>
+
+                <div class='space-y-2'>
+                    <p class='font-bold text-slate-900 text-xs'>3. 사업적 성공을 완성하는 리더십 지침</p>
+                    <p class='text-[11px] text-slate-600 leading-normal'>모든 실무를 본인이 직접 도맡으려 하지 말고, 검증된 신뢰할 수 있는 파트너에게 과감하게 역할을 위임하고 전체 판을 조율할 때 성과의 규모가 비약적으로 확장됩니다.</p>
+                </div>
             </div>
             """
         }
     else: # health
         return {
-            "title": "🌿 평생 오행 체질 & 건강 개운법",
-            "content": """
-            <div class='space-y-3.5 text-xs text-slate-700 leading-relaxed text-left p-1'>
-                <div class='p-3 bg-emerald-50 rounded-xl border border-emerald-200'>
+            "title": f"🌿 {user_name}님의 평생 오행 체질 & 건강 개운법",
+            "content": f"""
+            <div class='space-y-4 text-xs text-slate-700 leading-relaxed text-left p-1'>
+                <div class='p-3.5 bg-emerald-50 rounded-2xl border border-emerald-200 space-y-1'>
                     <p class='font-bold text-emerald-950 text-sm'>[오행 체질 진단] 화(火)·토(土) 왕성 체질</p>
-                    <p class='text-[11px] text-emerald-900 mt-1'>대사 활동과 열정은 넘치나, 상대적으로 수(水)와 금(金) 기운이 소모되기 쉬운 체질입니다.</p>
+                    <p class='text-[11px] text-emerald-900'>대사 활동과 생명력은 매우 왕성하나, 상대적으로 수(水)와 금(金) 기운이 빠르게 소모될 수 있는 체질적 특성을 지녔습니다.</p>
                 </div>
-                <p><strong>1. 집중 관리 취약 장기:</strong> 심혈관계의 열기를 식히고 신장, 방광 및 관절 계통의 수분을 보충하는 관리가 평생 건강의 핵심 열쇠입니다.</p>
-                <p><strong>2. 맞춤 체질 섭생법:</strong> 자극적인 음식과 찬 음료를 피하고, 검은깨, 검은콩, 해조류 등 신장 기능을 보강하는 블랙푸드와 미온수를 습관화하십시오.</p>
-                <p><strong>3. 일상 건강 개운 루틴:</strong> 매일 취침 전 10분간의 반신욕이나 족욕으로 머리의 상기된 열을 발끝으로 내리는 수승화강(水昇火降) 습관을 적극 권장합니다.</p>
+
+                <div class='space-y-2'>
+                    <p class='font-bold text-slate-900 text-xs'>1. 평생 집중 관리해야 할 취약 장기</p>
+                    <p class='text-[11px] text-slate-600 leading-normal'>심혈관계의 과도한 열기를 조절하고, 신장, 방광, 관절 및 호흡기 계통의 수분을 충분히 보충하는 생활 습관이 평생 장수와 활력의 핵심 열쇠입니다.</p>
+                </div>
+
+                <div class='space-y-2'>
+                    <p class='font-bold text-slate-900 text-xs'>2. 체질을 다스리는 맞춤 섭생 가이드</p>
+                    <p class='text-[11px] text-slate-600 leading-normal'>자극적이고 과도하게 매운 음식이나 차가운 음료는 피하십시오. 검은깨, 검은콩, 해조류, 미온수 등 신장 기능을 보강하는 블랙푸드를 식단에 적극 곁들이는 것이 좋습니다.</p>
+                </div>
+
+                <div class='space-y-2'>
+                    <p class='font-bold text-slate-900 text-xs'>3. 100세 건강을 완성하는 일상 개운 루틴</p>
+                    <p class='text-[11px] text-slate-600 leading-normal'>매일 취침 전 10분간의 따뜻한 족욕이나 가벼운 명상을 통해 머리의 상기된 열을 발끝으로 내리는 수승화강(水昇火降) 루틴을 실천하면 수면의 질이 획기적으로 개선됩니다.</p>
+                </div>
             </div>
             """
         }
