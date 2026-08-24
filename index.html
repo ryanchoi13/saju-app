@@ -1132,7 +1132,45 @@
             "XXI. THE WORLD (세계)": "https://upload.wikimedia.org/wikipedia/commons/f/ff/RWS_Tarot_21_World.jpg"
         };
 
-        function getActiveTalisman() {
+        function getTalismanGraphic(title) {
+    if (title.includes("재물") || title.includes("금고") || title.includes("사업")) {
+        return `
+            <svg viewBox="0 0 100 100" class="w-full h-full text-red-700 fill-current">
+                <path d="M50 8 L75 24 L75 76 L50 92 L25 76 L25 24 Z" stroke="#B91C1C" stroke-width="4" fill="none"/>
+                <circle cx="50" cy="50" r="16" stroke="#B91C1C" stroke-width="4" fill="none"/>
+                <path d="M50 24 L50 76 M34 50 L66 50" stroke="#B91C1C" stroke-width="4" stroke-linecap="round"/>
+                <path d="M42 38 L58 62 M58 38 L42 62" stroke="#B91C1C" stroke-width="3" stroke-linecap="round"/>
+            </svg>
+        `;
+    } else if (title.includes("관운") || title.includes("장원") || title.includes("귀인")) {
+        return `
+            <svg viewBox="0 0 100 100" class="w-full h-full text-red-700 fill-current">
+                <path d="M50 6 L65 25 L35 25 Z" stroke="#B91C1C" stroke-width="4" fill="none"/>
+                <path d="M50 25 L50 88 M30 45 L70 45 M22 62 L78 62" stroke="#B91C1C" stroke-width="5" stroke-linecap="round"/>
+                <circle cx="50" cy="38" r="5" fill="#B91C1C"/>
+                <circle cx="30" cy="78" r="4" fill="#B91C1C"/>
+                <circle cx="70" cy="78" r="4" fill="#B91C1C"/>
+                <path d="M30 78 L50 88 L70 78" stroke="#B91C1C" stroke-width="3" fill="none"/>
+            </svg>
+        `;
+    } else if (title.includes("인연") || title.includes("도화") || title.includes("소원")) {
+        return `
+            <svg viewBox="0 0 100 100" class="w-full h-full text-red-700 fill-current">
+                <path d="M50 15 C35 0, 10 20, 50 65 C90 20, 65 0, 50 15 Z" stroke="#B91C1C" stroke-width="4" fill="none"/>
+                <circle cx="50" cy="35" r="8" stroke="#B91C1C" stroke-width="3" fill="none"/>
+                <path d="M50 65 L50 92 M35 78 L65 78 M40 88 L60 88" stroke="#B91C1C" stroke-width="4" stroke-linecap="round"/>
+            </svg>
+        `;
+    } else {
+        // 벽사, 건강, 심신안정
+        return `
+            <svg viewBox="0 0 100 100" class="w-full h-full text-red-700 fill-current">
+                <path d="M50 5 L50 92 M30 20 L50 5 L70 20 M20 40 L80 40 M28 58 L72 58 M50 92 L35 75 M50 92 L65 75" stroke="#B91C1C" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                <circle cx="50" cy="40" r="7" stroke="#B91C1C" stroke-width="3" fill="none"/>
+            </svg>
+        `;
+    }
+}
             // 사주 분석 결과로 받은 '오늘의 맞춤 부적'을 최우선으로 반영
             if (fortunesData && fortunesData.daily && fortunesData.daily.talisman) {
                 return fortunesData.daily.talisman;
@@ -1288,6 +1326,8 @@
             document.getElementById('talismanDesc').innerText = t.desc;
             document.getElementById('talismanPower').innerText = t.power;
             document.getElementById('talismanOwner').innerText = currentUserName || "최정오";
+            const iconContainer = document.querySelector('#talismanModal .w-24.h-24');
+            if (iconContainer) iconContainer.innerHTML = getTalismanGraphic(t.title);
 
             document.getElementById('talismanModal').classList.remove('hidden');
         }
