@@ -86,8 +86,8 @@
                         <span id="todayDateStr" class="text-xs text-brand-200 font-medium">오늘의 일진</span>
                         <span id="dailyScoreBadge" class="bg-amber-400 text-slate-900 text-xs font-black px-2 py-0.5 rounded-full">운세 95점</span>
                     </div>
-                    <h3 id="dailyTitle" class="text-lg font-black leading-snug tracking-tight mb-2">로딩 중...</h3>
-                    <p id="dailyAdvice" class="text-xs text-brand-100 leading-relaxed font-light">운세를 불러오는 중입니다.</p>
+                    <h3 id="dailyTitle" class="text-lg font-black leading-snug tracking-tight mb-2">금빛 기운이 서서히 솟아나는 도약의 하루</h3>
+                    <p id="dailyAdvice" class="text-xs text-brand-100 leading-relaxed font-light">묵혀두었던 계획이나 관계에서 긍정적인 신호가 찾아옵니다.</p>
 
                     <div class="mt-4 pt-3 border-t border-brand-700/60 flex items-center justify-between">
                         <div class="flex items-center space-x-2">
@@ -121,6 +121,22 @@
                         <span class="text-slate-400 font-medium block">👔 추천 코디</span>
                         <p id="fashionStyle" class="font-bold text-slate-800">-</p>
                     </div>
+                    <div class="bg-slate-50 border border-slate-100 rounded-xl p-3 space-y-1">
+                        <span class="text-slate-400 font-medium block">🍲 추천 메뉴</span>
+                        <p id="recommendedMenu" class="font-bold text-slate-800">-</p>
+                    </div>
+                    <div class="bg-slate-50 border border-slate-100 rounded-xl p-3 space-y-1">
+                        <span class="text-slate-400 font-medium block">🤝 오늘의 귀인</span>
+                        <p id="luckyPerson" class="font-bold text-slate-800">-</p>
+                    </div>
+                </div>
+
+                <!-- 개운 액션 -->
+                <div class="bg-amber-50/80 border border-amber-200 rounded-2xl p-3.5 space-y-1 text-xs">
+                    <span class="font-bold text-amber-950 flex items-center space-x-1">
+                        <span>✨ 오늘의 개운(開運) 실천 액션</span>
+                    </span>
+                    <p id="todayGaewoon" class="text-amber-900 leading-relaxed font-light">-</p>
                 </div>
 
                 <!-- 타로 영역 -->
@@ -190,6 +206,17 @@
                             <p id="s_year" class="font-black text-slate-800 text-sm">-</p>
                         </div>
                     </div>
+
+                    <div class="pt-2 space-y-1.5">
+                        <span class="text-[11px] font-bold text-slate-700 block">오행(五行) 에너지 분포</span>
+                        <div class="flex h-3 rounded-full overflow-hidden text-[9px] font-black text-white text-center leading-3">
+                            <div id="barWood" class="bg-emerald-600 transition-all duration-500" style="width: 20%">木</div>
+                            <div id="barFire" class="bg-rose-500 transition-all duration-500" style="width: 20%">火</div>
+                            <div id="barEarth" class="bg-amber-500 transition-all duration-500" style="width: 20%">土</div>
+                            <div id="barMetal" class="bg-slate-400 transition-all duration-500" style="width: 20%">金</div>
+                            <div id="barWater" class="bg-sky-600 transition-all duration-500" style="width: 20%">水</div>
+                        </div>
+                    </div>
                 </div>
 
                 <div id="daewoonBox" class="bg-white border-2 border-amber-300 rounded-2xl p-4 shadow-sm space-y-3">
@@ -216,6 +243,36 @@
                         🪙 220 복채로 열람하기
                     </button>
                 </div>
+                <div class="bg-white border border-slate-200 rounded-2xl p-4 space-y-2 shadow-2xs">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold text-slate-900">🌿 평생 체질 진단 & 건강 개운</span>
+                        <span class="text-[10px] bg-slate-100 text-slate-700 px-2 py-0.5 rounded-full font-bold">220 복채</span>
+                    </div>
+                    <div id="themeReport_health" class="hidden"></div>
+                    <button id="btn_health" onclick="unlockThemeFortune('health', 220, '/api/health-fortune', 'themeReport_health', 'btn_health')" class="w-full bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold py-2 rounded-xl transition">
+                        🪙 220 복채로 열람하기
+                    </button>
+                </div>
+                <div class="bg-white border border-slate-200 rounded-2xl p-4 space-y-2 shadow-2xs">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold text-slate-900">💖 평생 애정/결혼운 & 배우자복</span>
+                        <span class="text-[10px] bg-slate-100 text-slate-700 px-2 py-0.5 rounded-full font-bold">220 복채</span>
+                    </div>
+                    <div id="themeReport_love" class="hidden"></div>
+                    <button id="btn_love" onclick="unlockThemeFortune('love', 220, '/api/love-fortune', 'themeReport_love', 'btn_love')" class="w-full bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold py-2 rounded-xl transition">
+                        🪙 220 복채로 열람하기
+                    </button>
+                </div>
+                <div class="bg-white border border-slate-200 rounded-2xl p-4 space-y-2 shadow-2xs">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold text-slate-900">🏢 평생 사업운 & 대박 아이템</span>
+                        <span class="text-[10px] bg-slate-100 text-slate-700 px-2 py-0.5 rounded-full font-bold">220 복채</span>
+                    </div>
+                    <div id="themeReport_business" class="hidden"></div>
+                    <button id="btn_business" onclick="unlockThemeFortune('business', 220, '/api/business-fortune', 'themeReport_business', 'btn_business')" class="w-full bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold py-2 rounded-xl transition">
+                        🪙 220 복채로 열람하기
+                    </button>
+                </div>
             </div>
 
             <!-- 탭 4: 마이페이지 -->
@@ -232,7 +289,7 @@
             </div>
         </div>
 
-        <!-- 단독 부적 뷰 (위젯 모드) -->
+        <!-- 단독 부적 뷰 -->
         <div id="standaloneTalismanView" class="hidden p-6 text-center space-y-6 flex-1 flex flex-col justify-center items-center bg-slate-950 text-white min-h-screen">
             <span class="text-xs text-amber-400 font-bold tracking-widest block uppercase">Daily Sacred Talisman</span>
             <h2 id="standaloneTalismanTitle" class="text-2xl font-serif-title font-black text-amber-300">부적</h2>
@@ -252,7 +309,7 @@
 
     </div>
 
-    <!-- 부적 모달 팝업 (옛날 SVG 완전 삭제 후 동적 컨테이너만 배치) -->
+    <!-- 부적 모달 팝업 -->
     <div id="talismanModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-xs flex items-center justify-center p-4 z-50 hidden">
         <div class="bg-white rounded-3xl p-5 max-w-xs w-full text-center space-y-4 shadow-2xl border border-amber-300">
             <div class="space-y-1">
@@ -279,7 +336,7 @@
         </div>
     </div>
 
-    <!-- 사주 정보 입력 모달 (양력/음력/윤달 & 시진 선택) -->
+    <!-- 사주 정보 입력 모달 (양력/음력/윤달 & 시진 선택 완벽 지원) -->
     <div id="profileInputModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 hidden">
         <div class="bg-white rounded-3xl p-5 max-w-xs w-full space-y-3.5 shadow-2xl">
             <h3 class="font-serif-title font-bold text-slate-900 text-sm">사주 정보 입력</h3>
@@ -564,6 +621,9 @@
                 document.getElementById('luckyNumber').innerText = data.fortunes.daily.lucky_number;
                 document.getElementById('luckyDirection').innerText = data.fortunes.daily.lucky_direction;
                 document.getElementById('fashionStyle').innerText = data.fortunes.daily.fashion_style;
+                document.getElementById('recommendedMenu').innerText = data.fortunes.daily.recommended_menu;
+                document.getElementById('luckyPerson').innerText = data.fortunes.daily.lucky_person;
+                document.getElementById('todayGaewoon').innerText = data.fortunes.daily.today_gaewoon;
                 document.getElementById('dailyTalismanName').innerText = currentTalismanData.title;
 
                 document.getElementById('sajuOwnerName').innerText = `${name} 님`;
@@ -571,6 +631,14 @@
                 document.getElementById('s_month').innerText = data.saju_data.month_pillar;
                 document.getElementById('s_day').innerText = data.saju_data.day_pillar;
                 document.getElementById('s_hour').innerText = data.saju_data.hour_pillar || "時未詳";
+
+                const oheng = data.saju_data.elements_count || {wood: 2, fire: 2, earth: 2, metal: 1, water: 1};
+                const total = (oheng.wood + oheng.fire + oheng.earth + oheng.metal + oheng.water) || 8;
+                document.getElementById('barWood').style.width = `${(oheng.wood / total) * 100}%`;
+                document.getElementById('barFire').style.width = `${(oheng.fire / total) * 100}%`;
+                document.getElementById('barEarth').style.width = `${(oheng.earth / total) * 100}%`;
+                document.getElementById('barMetal').style.width = `${(oheng.metal / total) * 100}%`;
+                document.getElementById('barWater').style.width = `${(oheng.water / total) * 100}%`;
 
                 window.cachedDaewoonReport = data.paid_reports.daewoon;
 
@@ -598,9 +666,7 @@
             document.getElementById('modalTalismanPower').innerText = currentTalismanData.power;
             document.getElementById('modalTalismanCmd').innerText = currentTalismanData.chinese;
             
-            // 전용 그래픽 주입
             document.getElementById('modalTalismanSvgBox').innerHTML = renderDistinctTalisman(currentTalismanData.title);
-
             document.getElementById('talismanModal').classList.remove('hidden');
         }
 
@@ -615,9 +681,7 @@
             document.getElementById('standaloneTalismanPower').innerText = currentTalismanData.power;
             document.getElementById('standaloneTalismanCmd').innerText = currentTalismanData.chinese;
 
-            // 단독 위젯 전용 그래픽 주입
             document.getElementById('standaloneTalismanSvgBox').innerHTML = renderDistinctTalisman(currentTalismanData.title);
-
             document.getElementById('mainAppContainer').classList.add('hidden');
             document.getElementById('standaloneTalismanView').classList.remove('hidden');
             closeTalismanModal();
@@ -724,24 +788,22 @@
         }
 
         window.addEventListener('DOMContentLoaded', () => {
-            localStorage.removeItem('saved_talisman');
+            // 구버전 캐시 및 서비스워커 강제 삭제
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                    for (let r of registrations) r.unregister();
+                });
+            }
+            if ('caches' in window) {
+                caches.keys().then(function(names) {
+                    for (let name of names) caches.delete(name);
+                });
+            }
 
             const savedProfile = JSON.parse(localStorage.getItem('saju_profile') || '{"name":"최정오","year":1978,"month":5,"day":12,"calendarType":"solar","sijin":5}');
             setCalendarType(savedProfile.calendarType || 'solar');
             fetchSajuAnalysis(savedProfile.name, savedProfile.year, savedProfile.month, savedProfile.day, savedProfile.calendarType || 'solar', savedProfile.sijin || 5);
         });
-  // 브라우저에 남아있는 옛날 캐시 및 서비스워커 강제 삭제
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.getRegistrations().then(function(registrations) {
-                for (let registration of registrations) {
-                    registration.unregister();
-                }
-            });
-        }
-        if ('caches' in window) {
-            caches.keys().then(function(names) {
-                for (let name of names) caches.delete(name);
-            });
-        }  </script>
+    </script>
 </body>
 </html>
