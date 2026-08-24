@@ -1378,14 +1378,21 @@
             }, 3200);
         }
 
+        let drawnTarotCards = {};
+
         async function handleTarotDraw(cardNum) {
+            if (drawnTarotCards[cardNum]) {
+                displayTarotResult(drawnTarotCards[cardNum]);
+                return;
+            }
+
             if (dailyTarotDrawn) {
                 if (currentCoin < 30) {
-                    alert('🪙 오늘의 무료 1회 타로를 이미 열람하셨습니다.\n추가로 다시 뽑으려면 30 복채가 필요합니다.');
+                    alert('🪙 오늘의 무료 1회 타로를 이미 열람하셨습니다.\n다른 카드를 추가로 뽑으시려면 30 복채가 필요합니다.');
                     openChargeStore();
                     return;
                 }
-                if (!confirm('🪙 오늘의 무료 타로를 이미 보셨습니다.\n보유 복채 30개를 사용하여 다른 카드를 다시 뽑으시겠습니까?')) {
+                if (!confirm(`🪙 보유 복채 30개를 사용하여 ${cardNum}번 타로 카드를 열람하시겠습니까?`)) {
                     return;
                 }
                 currentCoin -= 30;
@@ -1393,12 +1400,15 @@
             }
 
             try {
-                const res = await fetch('/api/daily-tarot');
+                const randSeed = Date.now().toString();
+                const res = await fetch(`/api/daily-tarot?slot=${cardNum}&rand_seed=${randSeed}`);
                 const card = await res.json();
                 
                 dailyTarotDrawn = true;
-                document.getElementById('tarotStatusBadge').innerText = '오늘 열람완료';
-                document.getElementById('tarotStatusBadge').className = 'text-xs text-slate-500 bg-slate-100 px-2.5 py-0.5 rounded-full font-medium';
+                drawnTarotCards[cardNum] = card;
+
+                document.getElementById('tarotStatusBadge').innerText = '열람 진행중';
+                document.getElementById('tarotStatusBadge').className = 'text-xs text-brand-800 bg-brand-50 px-2.5 py-0.5 rounded-full font-bold border border-brand-200';
 
                 const targetFlipper = document.getElementById(`flipper${cardNum}`);
                 const targetFront = document.getElementById(`front${cardNum}`);
@@ -1411,44 +1421,69 @@
                 targetFlipper.classList.add('flipped');
 
                 setTimeout(() => {
-                    const resBox = document.getElementById('tarotResultBox');
-                    resBox.innerHTML = `
-                        <div class="bg-white border-2 border-amber-300/80 rounded-2xl p-4.5 shadow-sm space-y-3 mt-3">
-                            <div class="flex items-center space-x-3 pb-3 border-b border-slate-100">
-                                <img src="${imgUrl}" alt="${card.name}" class="w-14 h-24 object-cover rounded-lg border border-amber-400 shadow-xs shrink-0">
-                                <div class="space-y-1">
-                                    <span class="text-xs bg-amber-50 text-amber-900 border border-amber-200 px-2 py-0.5 rounded-full font-bold">TODAY'S TAROT</span>
-                                    <h4 class="text-sm font-black text-slate-900">${card.name}</h4>
-                                    <p class="text-xs text-amber-800 font-bold">${card.keyword}</p>
-                                </div>
-                            </div>
-
-                            <div class="space-y-2.5 text-xs text-slate-700 leading-relaxed font-normal bg-slate-50/70 p-3.5 rounded-xl border border-slate-200/60">
-                                <div class="space-y-0.5">
-                                    <span class="font-bold text-slate-900 block">📜 카드의 상징 & 오늘 운의 흐름</span>
-                                    <p class="text-slate-600">${card.overview}</p>
-                                </div>
-                                <div class="space-y-0.5 pt-1.5 border-t border-slate-200/60">
-                                    <span class="font-bold text-brand-800 block">💡 오늘의 실천 액션 지침</span>
-                                    <p class="text-slate-600">${card.action}</p>
-                                </div>
-                                <div class="space-y-0.5 pt-1.5 border-t border-slate-200/60">
-                                    <span class="font-bold text-rose-700 block">⚠️ 유의할 점 & 조언</span>
-                                    <p class="text-slate-600">${card.caution}</p>
-                                </div>
-                            </div>
-
-                            <button onclick="resetTarotDeck()" class="w-full bg-brand-50 hover:bg-brand-100/80 border border-brand-200 text-brand-900 text-xs font-bold py-2.5 rounded-xl transition flex items-center justify-center space-x-1 shadow-2xs active:scale-95">
-                                <span>다른 카드 다시 뽑기 (🪙 30 복채)</span>
-                            </button>
-                        </div>
-                    `;
-                    resBox.classList.remove('hidden');
-                }, 700);
+                    displayTarotResult(card);
+                }, 600);
 
             } catch(e) {
                 alert('타로 카드를 불러오는 중 오류가 발생했습니다.');
             }
+        }
+
+        function displayTarotResult(card) {
+            const imgUrl = TAROT_IMAGES[card.name] || TAROT_IMAGES["0. THE FOOL (바보)"];
+            const resBox = document.getElementById('tarotResultBox');
+            resBox.innerHTML = `
+                <div class="bg-white border-2 border-amber-300/80 rounded-2xl p-4.5 shadow-sm space-y-3 mt-3">
+                    <div class="flex items-center space-x-3 pb-3 border-b border-slate-100">
+                        <img src="${imgUrl}" alt="${card.name}" class="w-14 h-24 object-cover rounded-lg border border-amber-400 shadow-xs shrink-0">
+                        <div class="space-y-1">
+                            <span class="text-xs bg-amber-50 text-amber-900 border border-amber-200 px-2 py-0.5 rounded-full font-bold">선택한 카드 해석</span>
+                            <h4 class="text-sm font-black text-slate-900">${card.name}</h4>
+                            <p class="text-xs text-amber-800 font-bold">${card.keyword}</p>
+                        </div>
+                    </div>
+
+                    <div class="space-y-2.5 text-xs text-slate-700 leading-relaxed font-normal bg-slate-50/70 p-3.5 rounded-xl border border-slate-200/60">
+                        <div class="space-y-0.5">
+                            <span class="font-bold text-slate-900 block">📜 카드의 상징 & 운의 흐름</span>
+                            <p class="text-slate-600">${card.overview}</p>
+                        </div>
+                        <div class="space-y-0.5 pt-1.5 border-t border-slate-200/60">
+                            <span class="font-bold text-brand-800 block">💡 실천 액션 지침</span>
+                            <p class="text-slate-600">${card.action}</p>
+                        </div>
+                        <div class="space-y-0.5 pt-1.5 border-t border-slate-200/60">
+                            <span class="font-bold text-rose-700 block">⚠️ 유의할 점 & 조언</span>
+                            <p class="text-slate-600">${card.caution}</p>
+                        </div>
+                    </div>
+
+                    <button onclick="resetTarotDeck()" class="w-full bg-brand-50 hover:bg-brand-100/80 border border-brand-200 text-brand-900 text-xs font-bold py-2.5 rounded-xl transition flex items-center justify-center space-x-1 shadow-2xs active:scale-95">
+                        <span>전체 덱 셔플하고 다시 뽑기 (🪙 30 복채)</span>
+                    </button>
+                </div>
+            `;
+            resBox.classList.remove('hidden');
+        }
+
+        function resetTarotDeck() {
+            if (currentCoin < 30) {
+                alert('🪙 전체 덱을 다시 섞어 뽑으려면 30 복채가 필요합니다.');
+                openChargeStore();
+                return;
+            }
+            if (!confirm('🪙 보유 복채 30개를 사용하여 3장의 카드를 모두 뒤집고 새로 섞으시겠습니까?')) {
+                return;
+            }
+            currentCoin -= 30;
+            updateCoinDisplay();
+
+            drawnTarotCards = {};
+            for (let i = 1; i <= 3; i++) {
+                const flipper = document.getElementById(`flipper${i}`);
+                if (flipper) flipper.classList.remove('flipped');
+            }
+            document.getElementById('tarotResultBox').classList.add('hidden');
         }
 
         function resetTarotDeck() {
