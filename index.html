@@ -730,6 +730,18 @@
             setCalendarType(savedProfile.calendarType || 'solar');
             fetchSajuAnalysis(savedProfile.name, savedProfile.year, savedProfile.month, savedProfile.day, savedProfile.calendarType || 'solar', savedProfile.sijin || 5);
         });
-    </script>
+  // 브라우저에 남아있는 옛날 캐시 및 서비스워커 강제 삭제
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                for (let registration of registrations) {
+                    registration.unregister();
+                }
+            });
+        }
+        if ('caches' in window) {
+            caches.keys().then(function(names) {
+                for (let name of names) caches.delete(name);
+            });
+        }  </script>
 </body>
 </html>
