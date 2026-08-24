@@ -1,4 +1,3 @@
-```html:index.html
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -7,8 +6,8 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <title>운세의 신 PRO</title>
     
-    <script src="[https://cdn.tailwindcss.com](https://cdn.tailwindcss.com)"></script>
-    <link href="[https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800;900&display=swap](https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800;900&display=swap)" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Pretendard', sans-serif; background-color: #F4F7F4; color: #1E293B; }
         .perspective-1000 { perspective: 1000px; }
@@ -85,7 +84,7 @@
             <!-- 탭 1: 오늘운세 -->
             <div id="view-today" class="hidden space-y-4">
                 
-                <!-- 사주 MBTI (생년월일에 따른 동적 계산 연동) -->
+                <!-- 사주 MBTI -->
                 <div class="bg-white rounded-3xl border border-slate-100 p-4 shadow-sm flex items-center space-x-3.5">
                     <div id="mbtiAnimalIcon" class="w-12 h-12 rounded-2xl bg-amber-100 flex items-center justify-center text-2xl shadow-inner">🐔</div>
                     <div class="flex-1 space-y-0.5">
@@ -95,7 +94,7 @@
                     </div>
                 </div>
 
-                <!-- 오늘의 일진 (양 3배 확장) -->
+                <!-- 오늘의 일진 -->
                 <div class="bg-gradient-to-br from-[#1E4D38] to-[#2D6A4F] rounded-3xl p-5 text-white shadow-md space-y-2">
                     <div class="flex justify-between items-center">
                         <span class="text-[11px] text-emerald-200 font-medium">오늘의 일진</span>
@@ -195,7 +194,7 @@
             <!-- 탭 2: 정통사주 -->
             <div id="view-saju" class="hidden space-y-4">
                 
-                <!-- 사주 명식표 (깔끔한 한자 표기 및 지장간) -->
+                <!-- 사주 명식표 -->
                 <div class="bg-white rounded-3xl border border-slate-100 p-5 shadow-sm space-y-3">
                     <div class="flex justify-between items-center border-b pb-2">
                         <h3 class="text-xs font-black text-slate-900">사주 명식표 (四柱命式)</h3>
@@ -237,7 +236,7 @@
                         </div>
                     </div>
 
-                    <!-- 오행 에너지 분포 (5개 개별 그래프 원상 복구) -->
+                    <!-- 오행 에너지 분포 -->
                     <div class="pt-3 space-y-2">
                         <span class="text-[11px] font-bold text-slate-700 block">오행(五行) 에너지 분포</span>
                         <div class="space-y-1.5 text-[10px]">
@@ -280,14 +279,13 @@
                     </div>
                 </div>
 
-                <!-- 자미두수 & 10년 대운 (그래프 티저 + 2개 카테고리 해금) -->
+                <!-- 자미두수 & 10년 대운 -->
                 <div class="bg-white border-2 border-amber-300 rounded-3xl p-5 shadow-sm space-y-3">
                     <div class="flex items-center justify-between">
                         <span class="text-xs font-black text-slate-900">👑 자미두수 & 10년 대운 리포트</span>
                         <span class="text-[10px] bg-amber-100 text-amber-900 px-2 py-0.5 rounded-full font-black">450 복채</span>
                     </div>
 
-                    <!-- 10년 대운 그래프 티저 -->
                     <div id="daewoonGraphTeaser" class="relative p-3 bg-slate-50 rounded-2xl border border-slate-200 overflow-hidden">
                         <div class="text-[10px] font-bold text-slate-500 mb-1">📊 10년 생애 운세 바이오리듬</div>
                         <svg viewBox="0 0 300 80" class="w-full h-16 filter blur-[2px] transition-all duration-500">
@@ -308,7 +306,7 @@
 
             </div>
 
-            <!-- 탭 3: 궁합·테마 (하단 명확한 풀비율 결제 버튼 적용) -->
+            <!-- 탭 3: 궁합·테마 -->
             <div id="view-theme" class="hidden space-y-3">
                 
                 <div class="bg-white rounded-3xl border border-slate-100 p-4 shadow-sm space-y-3">
@@ -357,7 +355,7 @@
 
             </div>
 
-            <!-- 탭 4: 마이페이지 (X-box 버그 수정 & 3가지 충전 패키지 모달) -->
+            <!-- 탭 4: 마이페이지 -->
             <div id="view-mypage" class="hidden space-y-4">
                 
                 <div class="bg-white rounded-3xl border border-slate-100 p-5 shadow-sm space-y-3">
@@ -423,7 +421,6 @@
             </div>
             
             <div id="modalOptionBox" class="space-y-2">
-                <!-- 동적 옵션 노출 -->
             </div>
 
             <button id="btnConfirmUnlockTheme" onclick="confirmUnlockTheme()" class="w-full bg-[#2D6A4F] text-white font-black text-xs py-3 rounded-xl shadow-xs transition active:scale-95">
@@ -492,7 +489,6 @@
             });
             const data = await res.json();
 
-            // 동적 MBTI 및 12지신 아이콘 바인딩
             document.getElementById('mbtiTypeName').innerText = data.saju_data.mbti.mbti;
             document.getElementById('mbtiTypeDesc').innerText = data.saju_data.mbti.desc;
             document.getElementById('mbtiAnimalIcon').innerText = data.saju_data.animal_icon;
