@@ -54,7 +54,6 @@ async def get_talisman_manifest():
         ]
     }
 
-# 12대 전통 비급 부적 풀
 TALISMAN_DECK = [
     {
         "title": "재물만복부 (財物萬福符)",
@@ -224,14 +223,13 @@ async def get_daily_tarot(slot: Optional[int] = 1, rand_seed: Optional[str] = No
 async def analyze_saju(req: AnalyzeRequest):
     saju_result = calculate_saju_pillars(req.year, req.month, req.day, req.sijin_index)
     
-    # 2026년 기준 실시간 날짜 + 이름 + 생년월일 + 시진 고유값 생성
     today_str = datetime.now().strftime("%Y-%m-%d")
     sijin_val = req.sijin_index if req.sijin_index is not None else 0
     unique_seed = f"{today_str}_{req.name}_{req.year}_{req.month}_{req.day}_{sijin_val}"
     hash_idx = int(hashlib.md5(unique_seed.encode()).hexdigest(), 16)
     
     # 12종 부적 중 사주 및 생년월일에 따른 1:1 매칭
-    talisman_idx = hash_idx % len(TALISMAN_DECK)
+    talisman_idx = (req.year + req.month * 3 + req.day * 7 + hash_idx) % len(TALISMAN_DECK)
     today_talisman = TALISMAN_DECK[talisman_idx]
 
     curation = DAILY_CURATIONS[hash_idx % len(DAILY_CURATIONS)]
