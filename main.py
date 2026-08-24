@@ -5,12 +5,11 @@ from pydantic import BaseModel
 from typing import Optional
 import os
 
-app = FastAPI(title="운세의 신 PRO API", version="4.0.0")
+app = FastAPI(title="운세의 신 PRO API", version="4.1.0")
 
 CHEONGAN_HANJA = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
 JIJI_HANJA = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"]
 
-# 천간 / 지지 오행 마스터 매핑
 CHEONGAN_ELEMENTS = {
     "甲": "wood", "乙": "wood",
     "丙": "fire", "丁": "fire",
@@ -74,8 +73,6 @@ def serve_home():
 
 @app.post("/api/analyze")
 def analyze_saju(req: SajuRequest):
-    # 1. 100% 범용 만세력 수학 공식을 적용한 일주(日柱) 산출
-    # 기준일: 1900년 1월 1일 (甲戌일, index: 甲=0, 戌=10)
     base_date = datetime.date(1900, 1, 1)
     target_date = datetime.date(req.year, req.month, req.day)
     diff_days = (target_date - base_date).days
@@ -85,19 +82,15 @@ def analyze_saju(req: SajuRequest):
     d_cg = CHEONGAN_HANJA[d_cg_idx]
     d_jj = JIJI_HANJA[d_jj_idx]
 
-    # 2. 년주(年柱) 산출 (입춘 기준 연도 보정)
     year_offset = (req.year - 4) % 60
     y_cg_idx = year_offset % 10
     y_jj_idx = year_offset % 12
     y_cg, y_jj = CHEONGAN_HANJA[y_cg_idx], JIJI_HANJA[y_jj_idx]
 
-    # 3. 월주(月柱) 산출 (년간에 따른 월간 변조 공식)
-    # 절기 기준 월 인덱스 계산 (3월 경칩 이후 -> 2번째 월 인덱스 卯월)
     m_jj_idx = (req.month) % 12
     m_cg_idx = (y_cg_idx % 5 * 2 + 2 + (req.month - 2)) % 10
     m_cg, m_jj = CHEONGAN_HANJA[m_cg_idx], JIJI_HANJA[m_jj_idx]
 
-    # 4. 시주(時柱) 산출 (일간에 따른 시간 변조 공식)
     if req.is_unknown_time or req.sijin_index is None or req.sijin_index < 0:
         h_pillar, h_cg, h_jj = "時未詳", "-", "-"
     else:
@@ -108,7 +101,6 @@ def analyze_saju(req: SajuRequest):
 
     d_animal = ANIMAL_MAP.get(d_jj, "개")
 
-    # 5. 입력된 사주 8자의 오행(五行) 동적 100% 파싱 계산
     pillars_chars = [y_cg, y_jj, m_cg, m_jj, d_cg, d_jj]
     if h_cg != "-":
         pillars_chars.extend([h_cg, h_jj])
@@ -122,12 +114,10 @@ def analyze_saju(req: SajuRequest):
         elif char in JIJI_ELEMENTS:
             elem_counts[JIJI_ELEMENTS[char]] += 1
             
-    # 정확한 오행 백분율 산출 (소수점 첫째 자리)
     elem_percentages = {
         k: round((v / total_chars) * 100, 1) for k, v in elem_counts.items()
     }
 
-    # 6. 일간 기준 동적 MBTI & 수호 동물 지정
     user_mbti = DAY_MBTI_MAP.get(d_cg, {"mbti": "대담한 통솔자 (ENTJ형)", "desc": "강한 추진력과 당당한 리더십으로 조직을 이끄는 개척자 사주"})
     user_animal_icon = ANIMAL_ICONS.get(d_animal, "🐶")
 
@@ -205,6 +195,17 @@ def get_daewoon_report(req: dict):
                     </div>
                 </div>
             </div>
+            
+            <div style="background: #FFFBEB; border: 1px solid #FDE68A; border-radius: 16px; padding: 14px;">
+                <h4 style="font-size: 13px; font-weight: 800; color: #78350F; border-bottom: 1px solid #FCD34D; padding-bottom: 6px; margin-bottom: 10px;">
+                    📈 2. {user_name}님의 현재 10년 대운 정밀 감명 (43세 ~ 52세)
+                </h4>
+                <p style="margin-bottom: 6px;"><strong>[대운의 본질과 주도권]</strong> 丁火 일간에 천을귀인(天乙貴人)과 유금(酉金) 편재의 기운이 굳건히 결합하는 시기입니다. 과거에 수동적으로 끌려가던 입장에서 벗어나, 조직과 사업의 핵심 결정권을 쥐고 인생의 황금기를 설계하는 10년입니다.</p>
+                <p style="margin-bottom: 8px;"><strong>[세운별 핵심 분기점 및 행동 가이드]</strong> 
+                <br>• <strong>44~45세 (자산 포트폴리오 재편):</strong> 불필요한 고정 지출을 정돈하고 부동산 및 문서 형태의 안전 자산을 확보하는 최적기.
+                <br>• <strong>46~48세 (대운의 정점 및 비상):</strong> 강력한 조력자의 등장과 함께 사회적 직위와 명예가 수직 상승하는 황금 전환점.
+                <br>• <strong>49~52세 (수확 및 시스템 수성):</strong> 무리한 확장보다 구축된 시스템을 안정화하여 평생의 은퇴 자금을 완비하는 시기.</p>
+            </div>
         </div>
         """
     }
@@ -215,9 +216,15 @@ def get_theme_report(req: dict):
     sub_opt = req.get("sub_option", "기본")
     user_name = req.get("name", "고객")
     
-    return {
-        "title": f"💰 {user_name}님의 평생 재물 그릇 & 금고운 리포트",
-        "content": f"""
+    titles = {
+        "wealth": f"💰 {user_name}님의 평생 재물 그릇 & 금고운 리포트",
+        "love": f"💖 {user_name}님의 평생 애정운 & 인연법 ({sub_opt} 맞춤)",
+        "business": f"🏢 {user_name}님의 사업 & 직업 성공 대길운 ({sub_opt} 맞춤)",
+        "health": f"🌿 {user_name}님의 평생 오행 체질 & 건강 개운법"
+    }
+
+    contents = {
+        "wealth": f"""
         <div style="display: flex; flex-direction: column; gap: 12px; font-size: 12px; color: #334155; line-height: 1.6; text-align: left;">
             <div style="background: #FFFBEB; border: 1px solid #FDE68A; border-radius: 12px; padding: 12px;">
                 <p style="font-weight: 800; color: #78350F; font-size: 13px;">[재물 그릇] '금고형' 자산 축적 원국</p>
@@ -228,5 +235,46 @@ def get_theme_report(req: dict):
                 <p style="font-size: 11px; color: #475569; margin-top: 2px;">실물 부동산 및 우량 배당 자산 중심 배분이 가장 안전합니다.</p>
             </div>
         </div>
+        """,
+        "love": f"""
+        <div style="display: flex; flex-direction: column; gap: 12px; font-size: 12px; color: #334155; line-height: 1.6; text-align: left;">
+            <div style="background: #FFF1F2; border: 1px solid #FECDD3; border-radius: 12px; padding: 12px;">
+                <p style="font-weight: 800; color: #881337; font-size: 13px;">[현재 상태: {sub_opt}] 맞춤 애정 감명</p>
+                <p style="font-size: 11px; color: #9F1239; margin-top: 2px;">현재 {user_name}님의 기운은 내면의 깊은 신뢰와 유대감을 형성하기에 가장 안정적인 상태입니다.</p>
+            </div>
+            <div>
+                <p style="font-weight: 700; color: #0F172A;">1. 나에게 운명적으로 맞는 평생 배필의 특징</p>
+                <p style="font-size: 11px; color: #475569; margin-top: 2px;">대화가 깊이 통하고 배려심이 깊은 인품의 소유자와 고품격 궁합을 이룹니다.</p>
+            </div>
+        </div>
+        """,
+        "business": f"""
+        <div style="display: flex; flex-direction: column; gap: 12px; font-size: 12px; color: #334155; line-height: 1.6; text-align: left;">
+            <div style="background: #EFF6FF; border: 1px solid #BFDBFE; border-radius: 12px; padding: 12px;">
+                <p style="font-weight: 800; color: #1E3A8A; font-size: 13px;">[직업군 상태: {sub_opt}] 대길 성공 로드맵</p>
+                <p style="font-size: 11px; color: #1E40AF; margin-top: 2px;">치밀한 기획력과 실행력이 결합되어 핵심 수장으로 두각을 나타낼 사주입니다.</p>
+            </div>
+            <div>
+                <p style="font-weight: 700; color: #0F172A;">1. 성공을 보장하는 대박 직무 분야</p>
+                <p style="font-size: 11px; color: #475569; margin-top: 2px;">전문 컨설팅, IT/기술 기획, 브랜드 매니지먼트 등 시스템을 조율하는 영역에서 역량이 극대화됩니다.</p>
+            </div>
+        </div>
+        """,
+        "health": f"""
+        <div style="display: flex; flex-direction: column; gap: 12px; font-size: 12px; color: #334155; line-height: 1.6; text-align: left;">
+            <div style="background: #ECFDF5; border: 1px solid #A7F3D0; border-radius: 12px; padding: 12px;">
+                <p style="font-weight: 800; color: #065F46; font-size: 13px;">[오행 체질 진단] 활력 왕성 체질</p>
+                <p style="font-size: 11px; color: #047857; margin-top: 2px;">생명력은 왕성하나 체내 수분 및 진액 관리가 평생 건강의 핵심 키입니다.</p>
+            </div>
+            <div>
+                <p style="font-weight: 700; color: #0F172A;">1. 100세 건강을 완성하는 일상 개운 루틴</p>
+                <p style="font-size: 11px; color: #475569; margin-top: 2px;">취침 전 10분간의 따뜻한 족욕과 미온수 섭취로 수승화강 루틴을 실천하세요.</p>
+            </div>
+        </div>
         """
+    }
+    
+    return {
+        "title": titles.get(theme, "심층 리포트"),
+        "content": contents.get(theme, "<p>리포트 내용을 불러오는 중입니다.</p>")
     }
