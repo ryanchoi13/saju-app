@@ -248,7 +248,7 @@
             
             <div class="w-48 h-72 bg-gradient-to-b from-amber-50 to-amber-100 border-4 border-amber-400 rounded-2xl p-4 shadow-2xl flex flex-col justify-between items-center text-slate-900">
                 <span id="standaloneTalismanCmd" class="text-xs font-black text-red-700 tracking-widest border-b border-red-700 pb-1">勅令</span>
-                <div id="standaloneTalismanSvgBox" class="w-28 h-28 my-auto"></div>
+                <div id="standaloneTalismanSvgBox" class="w-28 h-28 my-auto flex items-center justify-center"></div>
                 <p id="standaloneTalismanPower" class="text-xs font-black text-amber-950 bg-amber-200/80 px-2 py-0.5 rounded-full"></p>
             </div>
 
@@ -271,7 +271,7 @@
 
             <div class="w-40 h-60 bg-gradient-to-b from-amber-50 to-amber-100 border-3 border-amber-400 rounded-2xl p-3 shadow-md mx-auto flex flex-col justify-between items-center">
                 <span id="modalTalismanCmd" class="text-[11px] font-black text-red-700 tracking-widest border-b border-red-700 pb-0.5">勅令</span>
-                <div id="modalTalismanSvgBox" class="w-24 h-24 my-auto"></div>
+                <div id="modalTalismanSvgBox" class="w-24 h-24 my-auto flex items-center justify-center"></div>
                 <span id="modalTalismanPower" class="text-[10px] font-bold text-amber-950 bg-amber-200/70 px-2 py-0.5 rounded-full"></span>
             </div>
 
@@ -362,6 +362,146 @@
             "XXI. THE WORLD (세계)": "https://upload.wikimedia.org/wikipedia/commons/f/ff/RWS_Tarot_21_World.jpg"
         };
 
+        // 12종 부적별 완벽히 구별되는 프론트엔드 실시간 SVG 렌더러
+        function generateDistinctTalismanSvg(title) {
+            if (title.includes("재물만복")) {
+                // 1. 재물만복: 대형 황금 엽전 3개 + 중앙 萬福 붉은 도장
+                return `
+                    <svg viewBox="0 0 100 100" class="w-full h-full">
+                        <circle cx="50" cy="50" r="44" stroke="#DC2626" stroke-width="4" fill="#FEF2F2" />
+                        <rect x="34" y="34" width="32" height="32" stroke="#DC2626" stroke-width="3" fill="#FEE2E2" />
+                        <circle cx="50" cy="18" r="8" stroke="#DC2626" stroke-width="2.5" fill="none" />
+                        <circle cx="50" cy="82" r="8" stroke="#DC2626" stroke-width="2.5" fill="none" />
+                        <circle cx="18" cy="50" r="8" stroke="#DC2626" stroke-width="2.5" fill="none" />
+                        <circle cx="82" cy="50" r="8" stroke="#DC2626" stroke-width="2.5" fill="none" />
+                        <text x="50" y="56" font-family="'Noto Serif KR', serif" font-weight="900" font-size="14" fill="#991B1B" text-anchor="middle">萬福</text>
+                    </svg>
+                `;
+            } else if (title.includes("금고수호")) {
+                // 2. 금고수호: 거대한 철통 방패 & 자물쇠
+                return `
+                    <svg viewBox="0 0 100 100" class="w-full h-full">
+                        <path d="M50 6 L88 22 L88 68 L50 94 L12 68 L12 22 Z" stroke="#DC2626" stroke-width="4" fill="#FEF2F2" />
+                        <rect x="32" y="40" width="36" height="30" rx="4" stroke="#DC2626" stroke-width="3.5" fill="#FEE2E2" />
+                        <path d="M40 40 V28 C40 22 60 22 60 28 V40" stroke="#DC2626" stroke-width="4" fill="none" />
+                        <text x="50" y="61" font-family="'Noto Serif KR', serif" font-weight="900" font-size="12" fill="#991B1B" text-anchor="middle">金庫</text>
+                    </svg>
+                `;
+            } else if (title.includes("사업대성")) {
+                // 3. 사업대성: 대형 솟구치는 3단 번창 화살표 & 깃발
+                return `
+                    <svg viewBox="0 0 100 100" class="w-full h-full">
+                        <path d="M50 6 L78 34 H58 V92 H42 V34 H22 Z" stroke="#DC2626" stroke-width="4" fill="#FEF2F2" />
+                        <path d="M18 70 L50 46 L82 70" stroke="#DC2626" stroke-width="3.5" fill="none" stroke-linecap="round" />
+                        <path d="M18 84 L50 60 L82 84" stroke="#DC2626" stroke-width="3.5" fill="none" stroke-linecap="round" />
+                        <text x="50" y="46" font-family="'Noto Serif KR', serif" font-weight="900" font-size="12" fill="#991B1B" text-anchor="middle">大成</text>
+                    </svg>
+                `;
+            } else if (title.includes("인연화합")) {
+                // 4. 인연화합: 붉은 실 쌍희 囍 결합
+                return `
+                    <svg viewBox="0 0 100 100" class="w-full h-full">
+                        <circle cx="36" cy="42" r="28" stroke="#DC2626" stroke-width="3.5" fill="#FEF2F2" />
+                        <circle cx="64" cy="42" r="28" stroke="#DC2626" stroke-width="3.5" fill="#FEF2F2" />
+                        <path d="M50 16 C38 0 10 24 50 68 C90 24 62 0 50 16 Z" stroke="#DC2626" stroke-width="3.5" fill="#FEE2E2" />
+                        <text x="50" y="90" font-family="'Noto Serif KR', serif" font-weight="900" font-size="16" fill="#991B1B" text-anchor="middle">囍 和合</text>
+                    </svg>
+                `;
+            } else if (title.includes("도화매혹")) {
+                // 5. 도화매혹: 커다란 5엽 복숭아꽃과 꽃술
+                return `
+                    <svg viewBox="0 0 100 100" class="w-full h-full">
+                        <g fill="#FEE2E2" stroke="#DC2626" stroke-width="3">
+                            <circle cx="50" cy="24" r="16" />
+                            <circle cx="74" cy="42" r="16" />
+                            <circle cx="65" cy="70" r="16" />
+                            <circle cx="35" cy="70" r="16" />
+                            <circle cx="26" cy="42" r="16" />
+                        </g>
+                        <circle cx="50" cy="48" r="12" fill="#DC2626" />
+                        <circle cx="50" cy="48" r="6" fill="#FFF" />
+                        <text x="50" y="90" font-family="'Noto Serif KR', serif" font-weight="900" font-size="14" fill="#991B1B" text-anchor="middle">桃花</text>
+                    </svg>
+                `;
+            } else if (title.includes("소원성취")) {
+                // 6. 소원성취: 불꽃 여의주(보주)
+                return `
+                    <svg viewBox="0 0 100 100" class="w-full h-full">
+                        <circle cx="50" cy="58" r="32" stroke="#DC2626" stroke-width="4" fill="#FEF2F2" />
+                        <path d="M50 8 C32 28 68 38 50 58 C32 38 68 28 50 8 Z" stroke="#DC2626" stroke-width="3.5" fill="#FEE2E2" />
+                        <text x="50" y="66" font-family="'Noto Serif KR', serif" font-weight="900" font-size="15" fill="#991B1B" text-anchor="middle">成就</text>
+                    </svg>
+                `;
+            } else if (title.includes("귀인상조")) {
+                // 7. 귀인상조: 날개를 펼친 백학 & 별
+                return `
+                    <svg viewBox="0 0 100 100" class="w-full h-full">
+                        <polygon points="50,6 62,36 94,36 68,56 78,88 50,70 22,88 32,56 6,36 38,36" stroke="#DC2626" stroke-width="3.5" fill="#FEF2F2" />
+                        <circle cx="50" cy="48" r="14" stroke="#DC2626" stroke-width="2.5" fill="#FEE2E2" />
+                        <text x="50" y="54" font-family="'Noto Serif KR', serif" font-weight="900" font-size="12" fill="#991B1B" text-anchor="middle">貴人</text>
+                    </svg>
+                `;
+            } else if (title.includes("관운승진")) {
+                // 8. 관운승진: 황실 관모(사모) & 3단 상승 계단
+                return `
+                    <svg viewBox="0 0 100 100" class="w-full h-full">
+                        <path d="M20 42 Q50 12 80 42 L90 52 H10 Z" stroke="#DC2626" stroke-width="4" fill="#FEF2F2" />
+                        <rect x="34" y="52" width="32" height="12" stroke="#DC2626" stroke-width="3" fill="#FEE2E2" />
+                        <path d="M18 72 H82 M26 82 H74 M34 92 H66" stroke="#DC2626" stroke-width="4" stroke-linecap="round" />
+                        <text x="50" y="42" font-family="'Noto Serif KR', serif" font-weight="900" font-size="11" fill="#991B1B" text-anchor="middle">昇進</text>
+                    </svg>
+                `;
+            } else if (title.includes("장원급제")) {
+                // 9. 장원급제: 장원급제 대형 붓 & 어사화
+                return `
+                    <svg viewBox="0 0 100 100" class="w-full h-full">
+                        <path d="M50 8 L58 32 L54 74 L46 74 L42 32 Z" stroke="#DC2626" stroke-width="3.5" fill="#FEF2F2" />
+                        <polygon points="46,74 54,74 50,92" fill="#DC2626" />
+                        <circle cx="50" cy="22" r="6" fill="#DC2626" />
+                        <path d="M16 52 Q50 34 84 52" stroke="#DC2626" stroke-width="3.5" fill="none" />
+                        <text x="50" y="60" font-family="'Noto Serif KR', serif" font-weight="900" font-size="12" fill="#991B1B" text-anchor="middle">及第</text>
+                    </svg>
+                `;
+            } else if (title.includes("벽사소재")) {
+                // 10. 벽사소재: 악귀를 베는 거대한 번개 칠성검
+                return `
+                    <svg viewBox="0 0 100 100" class="w-full h-full">
+                        <path d="M50 6 L56 20 V72 L50 94 L44 72 V20 Z" stroke="#DC2626" stroke-width="4" fill="#FEF2F2" />
+                        <path d="M24 30 H76 M34 38 H66" stroke="#DC2626" stroke-width="4" stroke-linecap="round" />
+                        <path d="M20 68 L44 74 M80 68 L56 74" stroke="#DC2626" stroke-width="3.5" />
+                        <text x="50" y="58" font-family="'Noto Serif KR', serif" font-weight="900" font-size="13" fill="#991B1B" text-anchor="middle">辟邪</text>
+                    </svg>
+                `;
+            } else if (title.includes("칠성무병")) {
+                // 11. 칠성무병: 북두칠성 7개의 굵은 별자리 성도
+                return `
+                    <svg viewBox="0 0 100 100" class="w-full h-full">
+                        <circle cx="50" cy="50" r="44" stroke="#DC2626" stroke-width="2.5" fill="#FEF2F2" />
+                        <path d="M22 22 L40 26 L46 44 L30 52 L22 22 M46 44 L64 62 L78 64 L86 82" stroke="#DC2626" stroke-width="3.5" fill="none" stroke-linecap="round" />
+                        <circle cx="22" cy="22" r="5" fill="#DC2626" />
+                        <circle cx="40" cy="26" r="5" fill="#DC2626" />
+                        <circle cx="46" cy="44" r="5" fill="#DC2626" />
+                        <circle cx="30" cy="52" r="5" fill="#DC2626" />
+                        <circle cx="64" cy="62" r="5" fill="#DC2626" />
+                        <circle cx="78" cy="64" r="5" fill="#DC2626" />
+                        <circle cx="86" cy="82" r="5" fill="#DC2626" />
+                        <text x="50" y="86" font-family="'Noto Serif KR', serif" font-weight="900" font-size="12" fill="#991B1B" text-anchor="middle">無病</text>
+                    </svg>
+                `;
+            } else {
+                // 12. 심신안정: 굵고 선명한 음양 태극 & 연꽃
+                return `
+                    <svg viewBox="0 0 100 100" class="w-full h-full">
+                        <circle cx="50" cy="50" r="42" stroke="#DC2626" stroke-width="3.5" fill="#FEF2F2" />
+                        <path d="M50 8 A21 21 0 0 0 50 50 A21 21 0 0 1 50 92 A42 42 0 0 0 50 8 Z" fill="#DC2626" />
+                        <circle cx="50" cy="29" r="6" fill="#FEF2F2" />
+                        <circle cx="50" cy="71" r="6" fill="#DC2626" />
+                        <text x="50" y="90" font-family="'Noto Serif KR', serif" font-weight="900" font-size="12" fill="#991B1B" text-anchor="middle">淸心</text>
+                    </svg>
+                `;
+            }
+        }
+
         function switchTab(tabId) {
             ['today', 'saju', 'theme', 'mypage'].forEach(t => {
                 document.getElementById(`view-${t}`).classList.add('hidden');
@@ -380,7 +520,6 @@
                 });
                 const data = await res.json();
                 
-                // 부적 데이터 실시간 갱신
                 currentTalismanData = data.fortunes.daily.talisman;
 
                 document.getElementById('dailyTitle').innerText = data.fortunes.daily.title;
@@ -416,14 +555,15 @@
             fetchSajuAnalysis(name, year, month, day);
         }
 
-        // 부적 모달 열기 (서버가 준 SVG 직접 렌더링)
         function openTalismanModal() {
             if (!currentTalismanData) return;
             document.getElementById('modalTalismanTitle').innerText = currentTalismanData.title;
             document.getElementById('modalTalismanDesc').innerText = currentTalismanData.desc;
             document.getElementById('modalTalismanPower').innerText = currentTalismanData.power;
             document.getElementById('modalTalismanCmd').innerText = currentTalismanData.chinese;
-            document.getElementById('modalTalismanSvgBox').innerHTML = currentTalismanData.svg;
+            
+            // 즉시 100% 다른 고유 SVG 그래픽 렌더링
+            document.getElementById('modalTalismanSvgBox').innerHTML = generateDistinctTalismanSvg(currentTalismanData.title);
 
             document.getElementById('talismanModal').classList.remove('hidden');
         }
@@ -432,14 +572,15 @@
             document.getElementById('talismanModal').classList.add('hidden');
         }
 
-        // 단독 부적 뷰 열기
         function openStandaloneTalismanView() {
             if (!currentTalismanData) return;
             document.getElementById('standaloneTalismanTitle').innerText = currentTalismanData.title;
             document.getElementById('standaloneTalismanDesc').innerText = currentTalismanData.desc;
             document.getElementById('standaloneTalismanPower').innerText = currentTalismanData.power;
             document.getElementById('standaloneTalismanCmd').innerText = currentTalismanData.chinese;
-            document.getElementById('standaloneTalismanSvgBox').innerHTML = currentTalismanData.svg;
+
+            // 단독 위젯 모드용 SVG 주입
+            document.getElementById('standaloneTalismanSvgBox').innerHTML = generateDistinctTalismanSvg(currentTalismanData.title);
 
             document.getElementById('mainAppContainer').classList.add('hidden');
             document.getElementById('standaloneTalismanView').classList.remove('hidden');
