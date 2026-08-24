@@ -92,7 +92,7 @@
 
                 <div class="form-group">
                     <label class="form-label">이름</label>
-                    <input type="text" id="inputName" class="form-input" value="홍길동">
+                    <input type="text" id="inputName" class="form-input" value="최정오">
                 </div>
 
                 <div class="form-group">
@@ -104,7 +104,7 @@
                             <button type="button" onclick="setCalType('leap')" id="btnCalLeap" class="cal-btn">음력(윤달)</button>
                         </div>
                     </div>
-                    <input type="date" id="inputBirth" class="form-input" value="1990-01-01">
+                    <input type="date" id="inputBirth" class="form-input" value="1978-03-13">
                 </div>
 
                 <div class="form-group">
@@ -260,7 +260,7 @@
                 <div class="card">
                     <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 8px; margin-bottom: 12px;">
                         <h3 style="font-size: 12px; font-weight: 900;">사주 명식표 (四柱命式)</h3>
-                        <span id="sajuOwnerName" style="font-size: 12px; color: #2D6A4F; font-weight: 700;">고객 님</span>
+                        <span id="sajuOwnerName" style="font-size: 12px; color: #2D6A4F; font-weight: 700;">최정오 님</span>
                     </div>
 
                     <div class="grid-4">
@@ -294,7 +294,7 @@
                         </div>
                     </div>
 
-                    <!-- 오행 에너지 분포 (동적 파싱 연동) -->
+                    <!-- 오행 에너지 분포 -->
                     <div style="margin-top: 14px; text-align: left;">
                         <span style="font-size: 11px; font-weight: 700; color: #334155; display: block; margin-bottom: 6px;">오행(五行) 에너지 분포</span>
                         <div style="display: flex; flex-direction: column; gap: 6px; font-size: 10px;">
@@ -427,7 +427,7 @@
                 <div class="card" style="display: flex; justify-content: space-between; align-items: center; text-align: left;">
                     <div>
                         <p style="font-size: 12px; font-weight: 700; color: #1E293B;">사주 정보 변경</p>
-                        <p id="mypageProfileDesc" style="font-size: 10px; color: #94A3B8; margin-top: 2px;">고객 (1990-01-01)</p>
+                        <p id="mypageProfileDesc" style="font-size: 10px; color: #94A3B8; margin-top: 2px;">최정오 (1978-03-13)</p>
                     </div>
                     <button onclick="resetProfileAndReinput()" style="background: #F1F5F9; border: none; font-size: 12px; font-weight: 700; color: #334155; padding: 6px 12px; border-radius: 12px; cursor: pointer;">정보 수정</button>
                 </div>
@@ -479,7 +479,7 @@
                 <div id="talismanGraphicBox" style="width: 80px; height: 80px;"></div>
                 <p id="talismanPower" style="font-size: 12px; font-weight: 700; color: #0F172A;"></p>
                 <div style="border-top: 1px solid rgba(220,38,38,0.3); width: 100%; padding-top: 4px; font-size: 10px; color: #1E293B;">
-                    소지자: <span id="talismanOwner" style="font-weight: 700; text-decoration: underline;">고객</span> 님 평생 수호
+                    소지자: <span id="talismanOwner" style="font-weight: 700; text-decoration: underline;">최정오</span> 님 평생 수호
                 </div>
             </div>
 
@@ -544,10 +544,17 @@
         let selectedCalendarType = 'solar';
         let currentThemeKey = '';
         let currentTalisman = null;
-        let currentUserName = "고객";
+        let currentUserName = "최정오";
         let dailyTarotDrawn = false;
         let drawnTarotCards = {};
-        let unlockedReports = JSON.parse(localStorage.getItem('unlocked_reports') || '[]');
+        
+        // localStorage로부터 저장된 구매 리포트 목록 복원
+        let unlockedReports = [];
+        try {
+            unlockedReports = JSON.parse(localStorage.getItem('unlocked_reports') || '[]');
+        } catch(e) {
+            unlockedReports = [];
+        }
 
         const TAROT_IMAGES = {
             "0. THE FOOL (바보)": "[https://upload.wikimedia.org/wikipedia/commons/9/90/RWS_Tarot_00_Fool.jpg](https://upload.wikimedia.org/wikipedia/commons/9/90/RWS_Tarot_00_Fool.jpg)",
@@ -579,11 +586,15 @@
             });
             document.getElementById(`view-${tabId}`).classList.remove('hidden');
             document.getElementById(`tab-${tabId}`).classList.add('active');
+
+            if (tabId === 'mypage') {
+                renderUnlockedArchive();
+            }
         }
 
         async function startSajuAnalysis() {
-            currentUserName = document.getElementById('inputName').value.trim() || "고객";
-            const birth = document.getElementById('inputBirth').value || "1990-01-01";
+            currentUserName = document.getElementById('inputName').value.trim() || "최정오";
+            const birth = document.getElementById('inputBirth').value || "1978-03-13";
             const sijin = parseInt(document.getElementById('inputSijin').value);
             const [year, month, day] = birth.split('-').map(Number);
 
@@ -634,6 +645,8 @@
 
             document.getElementById('onboardingInputView').classList.add('hidden');
             document.getElementById('view-today').classList.remove('hidden');
+
+            checkUnlockedStates();
         }
 
         function resetProfileAndReinput() {
@@ -729,7 +742,7 @@
                 document.getElementById('daewoonBox').innerHTML = data.content;
                 document.getElementById('daewoonBox').classList.remove('hidden');
                 document.getElementById('btnDaewoon').classList.add('hidden');
-                saveUnlockedReport(data.title, data.content);
+                saveUnlockedReport('daewoon', data.title, data.content);
             });
         }
 
@@ -783,30 +796,70 @@
             targetBox.classList.remove('hidden');
             document.getElementById(`btnTheme_${currentThemeKey}`).classList.add('hidden');
             
-            saveUnlockedReport(data.title, data.content);
+            saveUnlockedReport(currentThemeKey, data.title, data.content);
             closeThemeSelectModal();
         }
 
-        function saveUnlockedReport(title, content) {
-            unlockedReports.push({title, content, date: new Date().toLocaleDateString()});
+        function saveUnlockedReport(key, title, content) {
+            const todayStr = new Date().toLocaleDateString();
+            const existingIdx = unlockedReports.findIndex(r => r.key === key);
+            if (existingIdx >= 0) {
+                unlockedReports[existingIdx] = { key, title, content, date: todayStr };
+            } else {
+                unlockedReports.push({ key, title, content, date: todayStr });
+            }
             localStorage.setItem('unlocked_reports', JSON.stringify(unlockedReports));
             renderUnlockedArchive();
         }
 
+        function checkUnlockedStates() {
+            unlockedReports.forEach(item => {
+                if (item.key === 'daewoon') {
+                    const box = document.getElementById('daewoonBox');
+                    const btn = document.getElementById('btnDaewoon');
+                    if (box && btn) {
+                        box.innerHTML = item.content;
+                        box.classList.remove('hidden');
+                        btn.classList.add('hidden');
+                    }
+                } else if (['wealth', 'love', 'business', 'health'].includes(item.key)) {
+                    const box = document.getElementById(`themeReport_${item.key}`);
+                    const btn = document.getElementById(`btnTheme_${item.key}`);
+                    if (box && btn) {
+                        box.innerHTML = item.content;
+                        box.classList.remove('hidden');
+                        btn.classList.add('hidden');
+                    }
+                }
+            });
+        }
+
+        function toggleArchiveItem(idx) {
+            const el = document.getElementById(`archive_content_${idx}`);
+            if (el) {
+                el.classList.toggle('hidden');
+            }
+        }
+
         function renderUnlockedArchive() {
             const container = document.getElementById('unlockedArchiveList');
-            if (!unlockedReports.length) {
-                container.innerHTML = `<p style="font-size: 11px; color: #94A3B8; text-align: center; padding: 8px 0;">아직 구매한 심층 리포트가 없습니다.</p>`;
+            if (!container) return;
+            if (!unlockedReports || unlockedReports.length === 0) {
+                container.innerHTML = `<p style="font-size: 11px; color: #94A3B8; text-align: center; padding: 12px 0;">아직 구매한 심층 리포트가 없습니다.</p>`;
                 return;
             }
-            container.innerHTML = unlockedReports.map((r) => `
-                <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 12px; margin-bottom: 8px;">
+            container.innerHTML = unlockedReports.map((r, idx) => `
+                <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 12px; margin-bottom: 8px; text-align: left;">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <span style="font-weight: 700; color: #1E293B; font-size: 12px;">${r.title}</span>
+                        <span style="font-weight: 800; color: #1E293B; font-size: 12px;">${r.title}</span>
                         <span style="font-size: 10px; color: #94A3B8;">${r.date}</span>
                     </div>
-                    <button onclick="this.nextElementSibling.classList.toggle('hidden')" style="background: none; border: none; font-size: 10px; color: #2D6A4F; font-weight: 700; margin-top: 4px; cursor: pointer;">내용 다시보기 ▾</button>
-                    <div class="hidden" style="margin-top: 6px; padding-top: 6px; border-top: 1px solid #E2E8F0;">${r.content}</div>
+                    <button onclick="toggleArchiveItem(${idx})" style="background: #E2E8F0; border: none; font-size: 10px; color: #2D6A4F; font-weight: 800; margin-top: 8px; padding: 4px 8px; border-radius: 6px; cursor: pointer;">
+                        내용 다시보기 ▾
+                    </button>
+                    <div id="archive_content_${idx}" class="hidden" style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #E2E8F0;">
+                        ${r.content}
+                    </div>
                 </div>
             `).join('');
         }
@@ -826,6 +879,7 @@
 
         window.addEventListener('DOMContentLoaded', () => {
             renderUnlockedArchive();
+            checkUnlockedStates();
         });
     </script>
 </body>
