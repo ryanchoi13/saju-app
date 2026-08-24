@@ -184,7 +184,6 @@
                         </div>
                     </div>
 
-                    <!-- 타로 해석 결과 -->
                     <div id="tarotResultBox" class="hidden"></div>
                 </div>
 
@@ -219,10 +218,10 @@
                         </div>
                     </div>
 
-                    <!-- 오행 에너지 밸런스 프로그레스 바 -->
+                    <!-- 오행 에너지 밸런스 -->
                     <div class="pt-2 space-y-1.5">
                         <span class="text-[11px] font-bold text-slate-700 block">오행(五行) 에너지 분포</span>
-                        <div class="flex h-3 rounded-full overflow-hidden text-[9px] font-black text-white text-center leading-3" id="ohengBarContainer">
+                        <div class="flex h-3 rounded-full overflow-hidden text-[9px] font-black text-white text-center leading-3">
                             <div id="barWood" class="bg-emerald-600 transition-all duration-500" style="width: 20%">木</div>
                             <div id="barFire" class="bg-rose-500 transition-all duration-500" style="width: 20%">火</div>
                             <div id="barEarth" class="bg-amber-500 transition-all duration-500" style="width: 20%">土</div>
@@ -250,7 +249,7 @@
                 </div>
             </div>
 
-            <!-- 탭 3: 테마 운세 (유료 리포트 풀) -->
+            <!-- 탭 3: 테마 운세 -->
             <div id="view-theme" class="hidden p-4 space-y-3">
                 
                 <!-- 재물운 -->
@@ -372,7 +371,6 @@
                     </button>
                 </div>
 
-                <!-- 부적 지갑 보관함 -->
                 <div class="space-y-2">
                     <h4 class="text-xs font-bold text-slate-800">내 부적 주머니 (보관함)</h4>
                     <div id="savedTalismanPocket" class="p-3 bg-amber-50/60 border border-amber-200/80 rounded-xl flex items-center justify-between">
@@ -405,7 +403,7 @@
             <h2 id="standaloneTalismanTitle" class="text-2xl font-serif-title font-black text-amber-300">소원성취부</h2>
             
             <div class="w-48 h-72 bg-gradient-to-b from-amber-50 to-amber-100 border-4 border-amber-400 rounded-2xl p-4 shadow-2xl flex flex-col justify-between items-center text-slate-900">
-                <span class="text-xs font-black text-red-700 tracking-widest border-b border-red-700 pb-1">勅令 萬事如意</span>
+                <span id="standaloneTalismanCmd" class="text-xs font-black text-red-700 tracking-widest border-b border-red-700 pb-1">勅令 萬事如意</span>
                 <div class="w-28 h-28 my-auto"></div>
                 <p id="standaloneTalismanPower" class="text-xs font-black text-amber-950 bg-amber-200/80 px-2 py-0.5 rounded-full"></p>
             </div>
@@ -428,7 +426,7 @@
             </div>
 
             <div class="w-40 h-60 bg-gradient-to-b from-amber-50 to-amber-100 border-3 border-amber-400 rounded-2xl p-3 shadow-md mx-auto flex flex-col justify-between items-center">
-                <span class="text-[11px] font-black text-red-700 tracking-widest border-b border-red-700 pb-0.5">勅令 神明加護</span>
+                <span id="talismanCmd" class="text-[11px] font-black text-red-700 tracking-widest border-b border-red-700 pb-0.5">勅令 神明加護</span>
                 <div class="w-24 h-24 my-auto"></div>
                 <span id="talismanPower" class="text-[10px] font-bold text-amber-950 bg-amber-200/70 px-2 py-0.5 rounded-full"></span>
             </div>
@@ -506,7 +504,6 @@
         let dailyTarotDrawn = false;
         let drawnTarotCards = {};
         let unlockedReports = {};
-        let savedTalisman = null;
 
         const TAROT_IMAGES = {
             "0. THE FOOL (바보)": "https://upload.wikimedia.org/wikipedia/commons/9/90/RWS_Tarot_00_Fool.jpg",
@@ -533,7 +530,6 @@
             "XXI. THE WORLD (세계)": "https://upload.wikimedia.org/wikipedia/commons/f/ff/RWS_Tarot_21_World.jpg"
         };
 
-        // 12종 부적별 고유 SVG 그래픽 생성 함수
         function getTalismanGraphic(title) {
             if (title.includes("재물") || title.includes("금고") || title.includes("사업")) {
                 return `
@@ -573,15 +569,15 @@
             }
         }
 
+        // 항상 실시간 사주 분석 결과를 최우선으로 반환 (캐시 버그 차단)
         function getActiveTalisman() {
             if (fortunesData && fortunesData.daily && fortunesData.daily.talisman) {
                 return fortunesData.daily.talisman;
             }
-            if (savedTalisman) return savedTalisman;
             return {
                 title: "소원성취부 (所願成就符)",
                 desc: "오랫동안 가슴에 품어온 간절한 뜻이 현실로 결실을 맺는 기운",
-                chinese: "心想事成\n萬事如意",
+                chinese: "勅令 萬事如意",
                 power: "소원 성취 · 만사 대길"
             };
         }
@@ -645,7 +641,7 @@
                 document.getElementById('s_day').innerText = data.saju_data.day_pillar;
                 document.getElementById('s_hour').innerText = data.saju_data.hour_pillar || "時未詳";
 
-                // 오행 밸런스 바인딩 (데이터 기반 비율 계산)
+                // 오행 밸런스 바인딩
                 const oheng = data.saju_data.elements_count || {wood: 2, fire: 2, earth: 2, metal: 1, water: 1};
                 const total = (oheng.wood + oheng.fire + oheng.earth + oheng.metal + oheng.water) || 8;
                 document.getElementById('barWood').style.width = `${(oheng.wood / total) * 100}%`;
@@ -654,7 +650,6 @@
                 document.getElementById('barMetal').style.width = `${(oheng.metal / total) * 100}%`;
                 document.getElementById('barWater').style.width = `${(oheng.water / total) * 100}%`;
 
-                // 대운 리포트 캐시
                 window.cachedDaewoonReport = data.paid_reports.daewoon;
 
             } catch(e) {
@@ -673,7 +668,6 @@
             fetchSajuAnalysis(name, year, month, day);
         }
 
-        // 타로 드로우 핸들러
         async function handleTarotDraw(cardNum) {
             if (drawnTarotCards[cardNum]) {
                 displayTarotResult(drawnTarotCards[cardNum]);
@@ -748,12 +742,14 @@
             resBox.classList.remove('hidden');
         }
 
-        // 부적 모달 및 뷰 핸들러
         function openTalismanModal() {
             const t = getActiveTalisman();
             document.getElementById('talismanTitle').innerText = t.title;
             document.getElementById('talismanDesc').innerText = t.desc;
             document.getElementById('talismanPower').innerText = t.power;
+            
+            const cmdEl = document.getElementById('talismanCmd');
+            if (cmdEl && t.chinese) cmdEl.innerText = t.chinese.replace('\n', ' ');
 
             const iconContainer = document.querySelector('#talismanModal .w-24.h-24');
             if (iconContainer) iconContainer.innerHTML = getTalismanGraphic(t.title);
@@ -766,10 +762,10 @@
         }
 
         function saveTalismanToPocket() {
-            savedTalisman = getActiveTalisman();
-            localStorage.setItem('saved_talisman', JSON.stringify(savedTalisman));
-            document.getElementById('pocketTalismanTitle').innerText = savedTalisman.title;
-            document.getElementById('pocketTalismanDesc').innerText = savedTalisman.power;
+            const currentT = getActiveTalisman();
+            localStorage.setItem('saved_talisman', JSON.stringify(currentT));
+            document.getElementById('pocketTalismanTitle').innerText = currentT.title;
+            document.getElementById('pocketTalismanDesc').innerText = currentT.power;
             alert('🧧 오늘의 맞춤 부적이 내 부적 주머니에 안전하게 보관되었습니다!');
             closeTalismanModal();
         }
@@ -779,6 +775,9 @@
             document.getElementById('standaloneTalismanTitle').innerText = t.title;
             document.getElementById('standaloneTalismanDesc').innerText = t.desc;
             document.getElementById('standaloneTalismanPower').innerText = t.power;
+
+            const cmdEl = document.getElementById('standaloneTalismanCmd');
+            if (cmdEl && t.chinese) cmdEl.innerText = t.chinese.replace('\n', ' ');
 
             const iconContainer = document.querySelector('#standaloneTalismanView .w-28.h-28');
             if (iconContainer) iconContainer.innerHTML = getTalismanGraphic(t.title);
@@ -793,7 +792,6 @@
             document.getElementById('mainAppContainer').classList.remove('hidden');
         }
 
-        // 유료 결제 로직
         function unlockDaewoonReport() {
             if (currentCoin < 450) {
                 alert('🪙 복채가 부족합니다. (필요: 450 복채)');
@@ -855,16 +853,12 @@
 
         // 초기 실행
         window.addEventListener('DOMContentLoaded', () => {
+            // 이전 고정 캐시 정리
+            localStorage.removeItem('saved_talisman');
+
             const savedCoins = localStorage.getItem('saju_coins');
             if (savedCoins) currentCoin = parseInt(savedCoins);
             updateCoinDisplay();
-
-            const storedTalisman = localStorage.getItem('saved_talisman');
-            if (storedTalisman) {
-                savedTalisman = JSON.parse(storedTalisman);
-                document.getElementById('pocketTalismanTitle').innerText = savedTalisman.title;
-                document.getElementById('pocketTalismanDesc').innerText = savedTalisman.power;
-            }
 
             const savedProfile = JSON.parse(localStorage.getItem('saju_profile') || '{"name":"최정오","year":1978,"month":5,"day":12}');
             fetchSajuAnalysis(savedProfile.name, savedProfile.year, savedProfile.month, savedProfile.day);
