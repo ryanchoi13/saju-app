@@ -23,7 +23,7 @@
 
     <div class="w-full max-w-md bg-white min-h-screen shadow-2xl flex flex-col justify-between relative pb-20">
         
-        <!-- 헤더 -->
+        <!-- 상단 헤더 -->
         <header class="bg-white border-b border-slate-100 px-4 py-3 flex items-center justify-between sticky top-0 z-30">
             <div class="flex items-center space-x-1.5">
                 <h1 class="text-xl font-black text-[#2D6A4F] tracking-tight">운세의 신</h1>
@@ -71,7 +71,18 @@
                         <label class="text-[10px] text-slate-400 font-medium block mb-0.5">태어난 시간 (30분 보정 적용)</label>
                         <select id="inputSijin" class="w-full bg-transparent font-bold text-slate-800 text-xs focus:outline-none">
                             <option value="-1">태어난 시간 모름</option>
+                            <option value="0">자시 (23:30 ~ 01:29)</option>
+                            <option value="1">축시 (01:30 ~ 03:29)</option>
+                            <option value="2">인시 (03:30 ~ 05:29)</option>
+                            <option value="3">묘시 (05:30 ~ 07:29)</option>
+                            <option value="4">진시 (07:30 ~ 09:29)</option>
                             <option value="5" selected>사시 (09:30 ~ 11:29)</option>
+                            <option value="6">오시 (11:30 ~ 13:29)</option>
+                            <option value="7">미시 (13:30 ~ 15:29)</option>
+                            <option value="8">신시 (15:30 ~ 17:29)</option>
+                            <option value="9">유시 (17:30 ~ 19:29)</option>
+                            <option value="10">술시 (19:30 ~ 21:29)</option>
+                            <option value="11">해시 (21:30 ~ 23:29)</option>
                         </select>
                     </div>
                 </div>
@@ -101,7 +112,7 @@
                         <span id="resScoreBadge" class="bg-amber-400 text-slate-900 text-[10px] font-black px-2 py-0.5 rounded-full">운세 97점</span>
                     </div>
                     <h3 id="resTitle" class="text-base font-black leading-snug">금빛 기운이 서서히 솟아나는 도약의 하루</h3>
-                    <p id="resAdvice" class="text-xs text-emerald-100 leading-relaxed font-light whitespace-pre-line"></p>
+                    <p id="resAdvice" class="text-xs text-emerald-100 leading-relaxed font-light whitespace-pre-line text-left"></p>
                 </div>
 
                 <!-- 6대 큐레이션 -->
@@ -133,14 +144,14 @@
                 </div>
 
                 <!-- 개운 액션 -->
-                <div class="bg-amber-50/90 border border-amber-200/80 rounded-2xl p-3.5 space-y-1 text-xs">
+                <div class="bg-amber-50/90 border border-amber-200/80 rounded-2xl p-3.5 space-y-1 text-xs text-left">
                     <span class="font-bold text-amber-950 flex items-center space-x-1">
                         <span>✨ 오늘의 개운(開運) 실천 액션</span>
                     </span>
                     <p id="resGaewoon" class="text-amber-900 leading-relaxed font-light">오전 중 따뜻한 차 한 잔을 마시며 핵심 목표 3가지 메모하기</p>
                 </div>
 
-                <!-- 타로 카드 -->
+                <!-- 오늘의 타로 (실물 타로 덱 뒷면 그래픽 적용) -->
                 <div class="bg-white border border-slate-100 rounded-3xl p-4 shadow-sm space-y-3">
                     <div class="flex items-center justify-between">
                         <div>
@@ -151,41 +162,95 @@
                     </div>
 
                     <div class="grid grid-cols-3 gap-2 pt-1">
+                        <!-- 카드 1 -->
                         <div onclick="handleTarotDraw(1)" class="cursor-pointer perspective-1000 aspect-[2/3] w-full">
-                            <div id="flipper1" class="flipper relative w-full h-full transform-style-3d transition-transform duration-700 shadow-xs rounded-xl">
-                                <div class="absolute inset-0 backface-hidden bg-[#162032] rounded-xl border-2 border-[#C5A880] p-1 flex items-center justify-center overflow-hidden">
-                                    <svg viewBox="0 0 100 150" class="w-full h-full opacity-80"><polygon points="50,45 55,65 75,70 55,75 50,95 45,75 25,70 45,65" fill="#C5A880" /><circle cx="50" cy="70" r="24" fill="none" stroke="#C5A880" stroke-width="1" /></svg>
+                            <div id="flipper1" class="flipper relative w-full h-full transform-style-3d transition-transform duration-700 shadow-sm rounded-xl">
+                                <div class="absolute inset-0 backface-hidden bg-[#10192B] rounded-xl border-2 border-[#D4AF37] p-1 flex items-center justify-center overflow-hidden">
+                                    <svg viewBox="0 0 100 150" class="w-full h-full">
+                                        <rect x="4" y="4" width="92" height="142" fill="none" stroke="#D4AF37" stroke-width="1.5" />
+                                        <rect x="8" y="8" width="84" height="134" fill="none" stroke="#D4AF37" stroke-width="0.8" stroke-dasharray="2 2" />
+                                        <circle cx="50" cy="45" r="16" fill="none" stroke="#D4AF37" stroke-width="1" />
+                                        <polygon points="50,25 54,41 70,45 54,49 50,65 46,49 30,45 46,41" fill="#D4AF37" />
+                                        <circle cx="50" cy="105" r="16" fill="none" stroke="#D4AF37" stroke-width="1" />
+                                        <polygon points="50,85 54,101 70,105 54,109 50,125 46,109 30,105 46,101" fill="#D4AF37" />
+                                        <circle cx="20" cy="75" r="4" fill="#D4AF37" opacity="0.7" />
+                                        <circle cx="80" cy="75" r="4" fill="#D4AF37" opacity="0.7" />
+                                    </svg>
                                 </div>
-                                <div id="front1" class="absolute inset-0 backface-hidden rotate-y-180 bg-white rounded-xl flex items-center justify-center"></div>
+                                <div id="front1" class="absolute inset-0 backface-hidden rotate-y-180 bg-white rounded-xl flex items-center justify-center overflow-hidden"></div>
                             </div>
                         </div>
+
+                        <!-- 카드 2 -->
                         <div onclick="handleTarotDraw(2)" class="cursor-pointer perspective-1000 aspect-[2/3] w-full">
-                            <div id="flipper2" class="flipper relative w-full h-full transform-style-3d transition-transform duration-700 shadow-xs rounded-xl">
-                                <div class="absolute inset-0 backface-hidden bg-[#162032] rounded-xl border-2 border-[#C5A880] p-1 flex items-center justify-center overflow-hidden">
-                                    <svg viewBox="0 0 100 150" class="w-full h-full opacity-80"><polygon points="50,45 55,65 75,70 55,75 50,95 45,75 25,70 45,65" fill="#C5A880" /><circle cx="50" cy="70" r="24" fill="none" stroke="#C5A880" stroke-width="1" /></svg>
+                            <div id="flipper2" class="flipper relative w-full h-full transform-style-3d transition-transform duration-700 shadow-sm rounded-xl">
+                                <div class="absolute inset-0 backface-hidden bg-[#10192B] rounded-xl border-2 border-[#D4AF37] p-1 flex items-center justify-center overflow-hidden">
+                                    <svg viewBox="0 0 100 150" class="w-full h-full">
+                                        <rect x="4" y="4" width="92" height="142" fill="none" stroke="#D4AF37" stroke-width="1.5" />
+                                        <rect x="8" y="8" width="84" height="134" fill="none" stroke="#D4AF37" stroke-width="0.8" stroke-dasharray="2 2" />
+                                        <circle cx="50" cy="45" r="16" fill="none" stroke="#D4AF37" stroke-width="1" />
+                                        <polygon points="50,25 54,41 70,45 54,49 50,65 46,49 30,45 46,41" fill="#D4AF37" />
+                                        <circle cx="50" cy="105" r="16" fill="none" stroke="#D4AF37" stroke-width="1" />
+                                        <polygon points="50,85 54,101 70,105 54,109 50,125 46,109 30,105 46,101" fill="#D4AF37" />
+                                        <circle cx="20" cy="75" r="4" fill="#D4AF37" opacity="0.7" />
+                                        <circle cx="80" cy="75" r="4" fill="#D4AF37" opacity="0.7" />
+                                    </svg>
                                 </div>
-                                <div id="front2" class="absolute inset-0 backface-hidden rotate-y-180 bg-white rounded-xl flex items-center justify-center"></div>
+                                <div id="front2" class="absolute inset-0 backface-hidden rotate-y-180 bg-white rounded-xl flex items-center justify-center overflow-hidden"></div>
                             </div>
                         </div>
+
+                        <!-- 카드 3 -->
                         <div onclick="handleTarotDraw(3)" class="cursor-pointer perspective-1000 aspect-[2/3] w-full">
-                            <div id="flipper3" class="flipper relative w-full h-full transform-style-3d transition-transform duration-700 shadow-xs rounded-xl">
-                                <div class="absolute inset-0 backface-hidden bg-[#162032] rounded-xl border-2 border-[#C5A880] p-1 flex items-center justify-center overflow-hidden">
-                                    <svg viewBox="0 0 100 150" class="w-full h-full opacity-80"><polygon points="50,45 55,65 75,70 55,75 50,95 45,75 25,70 45,65" fill="#C5A880" /><circle cx="50" cy="70" r="24" fill="none" stroke="#C5A880" stroke-width="1" /></svg>
+                            <div id="flipper3" class="flipper relative w-full h-full transform-style-3d transition-transform duration-700 shadow-sm rounded-xl">
+                                <div class="absolute inset-0 backface-hidden bg-[#10192B] rounded-xl border-2 border-[#D4AF37] p-1 flex items-center justify-center overflow-hidden">
+                                    <svg viewBox="0 0 100 150" class="w-full h-full">
+                                        <rect x="4" y="4" width="92" height="142" fill="none" stroke="#D4AF37" stroke-width="1.5" />
+                                        <rect x="8" y="8" width="84" height="134" fill="none" stroke="#D4AF37" stroke-width="0.8" stroke-dasharray="2 2" />
+                                        <circle cx="50" cy="45" r="16" fill="none" stroke="#D4AF37" stroke-width="1" />
+                                        <polygon points="50,25 54,41 70,45 54,49 50,65 46,49 30,45 46,41" fill="#D4AF37" />
+                                        <circle cx="50" cy="105" r="16" fill="none" stroke="#D4AF37" stroke-width="1" />
+                                        <polygon points="50,85 54,101 70,105 54,109 50,125 46,109 30,105 46,101" fill="#D4AF37" />
+                                        <circle cx="20" cy="75" r="4" fill="#D4AF37" opacity="0.7" />
+                                        <circle cx="80" cy="75" r="4" fill="#D4AF37" opacity="0.7" />
+                                    </svg>
                                 </div>
-                                <div id="front3" class="absolute inset-0 backface-hidden rotate-y-180 bg-white rounded-xl flex items-center justify-center"></div>
+                                <div id="front3" class="absolute inset-0 backface-hidden rotate-y-180 bg-white rounded-xl flex items-center justify-center overflow-hidden"></div>
                             </div>
                         </div>
                     </div>
                     <div id="tarotResultBox" class="hidden"></div>
                 </div>
 
-                <!-- 최하단 부적 카드 -->
-                <div class="bg-[#FFFBEB] border-2 border-amber-300 rounded-3xl p-5 text-center space-y-3 shadow-sm">
-                    <span class="text-[10px] bg-amber-200/80 text-amber-950 font-black px-2.5 py-0.5 rounded-full uppercase">Daily Sacred Talisman</span>
-                    <h3 id="resTalismanNameCard" class="text-base font-black text-amber-950">재물만복부 (萬福符)</h3>
-                    <p id="resTalismanDescCard" class="text-xs text-amber-900/80 leading-snug">오늘 하루 닥쳐올 수 있는 액운을 걷어내 주는 1:1 맞춤 부적</p>
-                    <button onclick="openTalismanModal()" class="w-full bg-[#D97706] text-white font-black text-xs py-3 rounded-2xl shadow-sm transition active:scale-95">
-                        🎴 오늘의 맞춤 비급 부적 확인하기
+                <!-- 오늘의 맞춤 부적 전용 카드 (스포일러 제거 및 비급 부적 비주얼 적용) -->
+                <div class="bg-gradient-to-br from-amber-50 to-orange-50/80 border-2 border-amber-300 rounded-3xl p-5 text-center space-y-3.5 shadow-sm">
+                    <div class="flex items-center justify-center space-x-1.5">
+                        <span class="text-base">🔥</span>
+                        <h3 class="text-base font-black text-amber-950 tracking-tight">오늘의 맞춤 부적</h3>
+                        <span class="text-base">🌊</span>
+                    </div>
+
+                    <!-- 오행 정령 & 부적 오버랩 아트워크 -->
+                    <div class="relative w-full h-28 bg-amber-100/60 rounded-2xl border border-amber-200/80 flex items-center justify-center overflow-hidden">
+                        <div class="absolute top-2 flex space-x-3 text-lg opacity-80">
+                            <span>🔥</span><span>💧</span><span>🌱</span><span>🪙</span><span>⛰️</span>
+                        </div>
+                        <div class="w-16 h-20 bg-[#FFF2B2] border-2 border-[#D97706] rounded-lg shadow-md flex flex-col items-center justify-center p-1 transform rotate-2">
+                            <span class="text-[7px] text-red-700 font-bold">勅令</span>
+                            <div class="w-8 h-8 my-0.5">
+                                <svg viewBox="0 0 100 100" class="w-full h-full"><circle cx="50" cy="50" r="40" stroke="#DC2626" stroke-width="6" fill="#FEE2E2" /><path d="M50 15 V85 M15 50 H85" stroke="#DC2626" stroke-width="6" /><text x="50" y="58" font-size="20" font-weight="900" fill="#991B1B" text-anchor="middle">萬福</text></svg>
+                            </div>
+                            <span class="text-[7px] text-red-800 font-black">開運</span>
+                        </div>
+                    </div>
+
+                    <div class="space-y-0.5">
+                        <p class="text-xs font-bold text-amber-900">나의 오늘 기운에 딱 맞는 맞춤 부적</p>
+                        <p class="text-[10px] text-amber-700/80">매일 12시 정각에 새로운 기운으로 업데이트됩니다!</p>
+                    </div>
+
+                    <button onclick="openTalismanModal()" class="w-full bg-[#D97706] hover:bg-[#B45309] text-white font-black text-xs py-3.5 rounded-2xl shadow-sm transition active:scale-95 flex items-center justify-center space-x-1.5">
+                        <span>🎴 맞춤 부적 보기</span>
                     </button>
                 </div>
 
@@ -238,7 +303,7 @@
 
                     <!-- 오행 에너지 분포 -->
                     <div class="pt-3 space-y-2">
-                        <span class="text-[11px] font-bold text-slate-700 block">오행(五行) 에너지 분포</span>
+                        <span class="text-[11px] font-bold text-slate-700 block text-left">오행(五行) 에너지 분포</span>
                         <div class="space-y-1.5 text-[10px]">
                             <div class="flex items-center gap-2">
                                 <span class="w-6 font-bold text-emerald-700">木</span>
@@ -287,7 +352,7 @@
                     </div>
 
                     <div id="daewoonGraphTeaser" class="relative p-3 bg-slate-50 rounded-2xl border border-slate-200 overflow-hidden">
-                        <div class="text-[10px] font-bold text-slate-500 mb-1">📊 10년 생애 운세 바이오리듬</div>
+                        <div class="text-[10px] font-bold text-slate-500 mb-1 text-left">📊 10년 생애 운세 바이오리듬</div>
                         <svg viewBox="0 0 300 80" class="w-full h-16 filter blur-[2px] transition-all duration-500">
                             <path d="M 0,60 Q 50,10 100,50 T 200,20 T 300,40" fill="none" stroke="#D97706" stroke-width="4" />
                             <circle cx="150" cy="35" r="6" fill="#D97706" />
@@ -310,7 +375,7 @@
             <div id="view-theme" class="hidden space-y-3">
                 
                 <div class="bg-white rounded-3xl border border-slate-100 p-4 shadow-sm space-y-3">
-                    <div>
+                    <div class="text-left">
                         <p class="text-xs font-black text-slate-900">💰 평생 재물 그릇 & 금고운</p>
                         <p class="text-[10px] text-slate-400">자산 흐름 및 부동산/투자 성공 분석</p>
                     </div>
@@ -321,7 +386,7 @@
                 </div>
 
                 <div class="bg-white rounded-3xl border border-slate-100 p-4 shadow-sm space-y-3">
-                    <div>
+                    <div class="text-left">
                         <p class="text-xs font-black text-slate-900">💖 평생 애정운 & 인연법</p>
                         <p class="text-[10px] text-slate-400">나와 맞는 인연의 특징과 결혼 시기</p>
                     </div>
@@ -332,7 +397,7 @@
                 </div>
 
                 <div class="bg-white rounded-3xl border border-slate-100 p-4 shadow-sm space-y-3">
-                    <div>
+                    <div class="text-left">
                         <p class="text-xs font-black text-slate-900">🏢 사업 & 직업 성공 대길운</p>
                         <p class="text-[10px] text-slate-400">대박 직업 아이템 및 이직/창업 시기</p>
                     </div>
@@ -343,7 +408,7 @@
                 </div>
 
                 <div class="bg-white rounded-3xl border border-slate-100 p-4 shadow-sm space-y-3">
-                    <div>
+                    <div class="text-left">
                         <p class="text-xs font-black text-slate-900">🌿 평생 오행 체질 & 건강운</p>
                         <p class="text-[10px] text-slate-400">오행 과다/부족 취약 장기 및 섭생법</p>
                     </div>
@@ -362,7 +427,7 @@
                     <div class="flex justify-between items-center">
                         <span class="text-xs text-slate-500">현재 보유 복채</span>
                         <div class="flex items-center space-x-1 text-lg font-black text-amber-900">
-                            <span id="coinMypage">130</span>
+                            <span id="coinMypage">300</span>
                             <span class="text-base">🪙</span>
                         </div>
                     </div>
@@ -371,15 +436,16 @@
                     </button>
                 </div>
 
-                <div class="bg-white rounded-3xl border border-slate-100 p-4 shadow-sm flex justify-between items-center">
+                <!-- 사주 정보 변경 (정상 복구) -->
+                <div class="bg-white rounded-3xl border border-slate-100 p-4 shadow-sm flex justify-between items-center text-left">
                     <div>
                         <p class="text-xs font-bold text-slate-800">사주 정보 변경</p>
-                        <p class="text-[10px] text-slate-400">최정오 (1978-03-13)</p>
+                        <p id="mypageProfileDesc" class="text-[10px] text-slate-400">최정오 (1978-03-13)</p>
                     </div>
-                    <button onclick="resetProfileAndReinput()" class="text-xs bg-slate-100 text-slate-700 px-3 py-1.5 rounded-xl font-bold">정보 수정</button>
+                    <button onclick="resetProfileAndReinput()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-xl font-bold transition">정보 수정</button>
                 </div>
 
-                <div class="bg-white rounded-3xl border border-slate-100 p-5 shadow-sm space-y-3">
+                <div class="bg-white rounded-3xl border border-slate-100 p-5 shadow-sm space-y-3 text-left">
                     <h3 class="text-xs font-black text-slate-900">📂 구매한 운세 다시보기 보관함</h3>
                     <div id="unlockedArchiveList" class="space-y-2 text-xs">
                         <p class="text-slate-400 text-[11px] py-2 text-center">아직 구매한 심층 리포트가 없습니다.</p>
@@ -412,16 +478,44 @@
 
     </div>
 
+    <!-- 황금 부적 모달 -->
+    <div id="talismanModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-xs flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-white rounded-3xl p-5 max-w-xs w-full text-center space-y-3.5 shadow-2xl">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-2">
+                <h3 class="text-xs font-bold text-slate-800">🎴 영험한 전통 개운(開運) 부적</h3>
+                <button onclick="closeTalismanModal()" class="text-slate-400 font-bold text-sm">&times;</button>
+            </div>
+
+            <div class="w-full bg-[#FFF1B8] border-3 border-[#D97706] rounded-2xl p-4 shadow-md mx-auto flex flex-col justify-between items-center text-slate-900 space-y-2">
+                <div id="talismanCmd" class="text-xs font-bold text-red-700 tracking-widest border-b border-red-300/80 w-full pb-1 text-center font-serif">
+                    勅令 · 萬福大吉
+                </div>
+                <h4 id="talismanTitle" class="text-sm font-black text-red-950">재물만복부</h4>
+                <div id="talismanGraphicBox" class="w-24 h-24 my-auto flex items-center justify-center"></div>
+                <div class="w-full text-center space-y-0.5">
+                    <p id="talismanPower" class="text-xs font-bold text-slate-950">재물 증식 · 금전운 대통</p>
+                    <p id="talismanDesc" class="text-[10px] text-slate-700 leading-snug"></p>
+                    <div class="border-t border-red-300/80 pt-1 text-[10px] text-slate-800 font-medium">
+                        소지자: <span id="talismanOwner" class="font-bold underline">최정오</span> 님 평생 수호
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="closeTalismanModal()" class="w-full bg-[#D97706] hover:bg-[#B45309] text-white text-xs font-bold py-2.5 rounded-xl shadow-sm transition active:scale-95">
+                확인 🎴
+            </button>
+        </div>
+    </div>
+
     <!-- 상태 선택 결제 팝업 모달 -->
     <div id="themeSelectModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 hidden">
-        <div class="bg-white rounded-3xl p-5 max-w-xs w-full space-y-4 shadow-2xl">
+        <div class="bg-white rounded-3xl p-5 max-w-xs w-full space-y-4 shadow-2xl text-left">
             <div class="flex justify-between items-center border-b border-slate-100 pb-2">
                 <h3 id="modalThemeTitle" class="font-bold text-slate-900 text-xs">심층 리포트 옵션 선택</h3>
                 <button onclick="closeThemeSelectModal()" class="text-slate-400 font-bold text-sm">&times;</button>
             </div>
             
-            <div id="modalOptionBox" class="space-y-2">
-            </div>
+            <div id="modalOptionBox" class="space-y-2"></div>
 
             <button id="btnConfirmUnlockTheme" onclick="confirmUnlockTheme()" class="w-full bg-[#2D6A4F] text-white font-black text-xs py-3 rounded-xl shadow-xs transition active:scale-95">
                 🪙 220 복채로 열람하기
@@ -455,9 +549,28 @@
     </div>
 
     <script>
-        let currentCoin = 130;
+        let currentCoin = 300;
         let selectedCalendarType = 'solar';
         let currentThemeKey = '';
+        let currentTalisman = null;
+        let dailyTarotDrawn = false;
+        let drawnTarotCards = {};
+        let unlockedReports = JSON.parse(localStorage.getItem('unlocked_reports') || '[]');
+
+        const TAROT_IMAGES = {
+            "0. THE FOOL (바보)": "https://upload.wikimedia.org/wikipedia/commons/9/90/RWS_Tarot_00_Fool.jpg",
+            "I. THE MAGICIAN (마법사)": "https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg",
+            "II. THE HIGH PRIESTESS (여사제)": "https://upload.wikimedia.org/wikipedia/commons/8/88/RWS_Tarot_02_High_Priestess.jpg",
+            "III. THE EMPRESS (여황제)": "https://upload.wikimedia.org/wikipedia/commons/d/d2/RWS_Tarot_03_Empress.jpg",
+            "IV. THE EMPEROR (황제)": "https://upload.wikimedia.org/wikipedia/commons/c/c3/RWS_Tarot_04_Emperor.jpg",
+            "VI. THE LOVERS (연인)": "https://upload.wikimedia.org/wikipedia/commons/3/3a/TheLovers.jpg",
+            "X. WHEEL OF FORTUNE (운명의 수레바퀴)": "https://upload.wikimedia.org/wikipedia/commons/3/3c/RWS_Tarot_10_Wheel_of_Fortune.jpg",
+            "XIX. THE SUN (태양)": "https://upload.wikimedia.org/wikipedia/commons/1/17/RWS_Tarot_19_Sun.jpg"
+        };
+
+        function renderDistinctTalisman(title) {
+            return `<svg viewBox="0 0 100 100" class="w-full h-full"><circle cx="50" cy="50" r="44" stroke="#DC2626" stroke-width="4" fill="#FEF2F2" /><rect x="34" y="34" width="32" height="32" stroke="#DC2626" stroke-width="3" fill="#FEE2E2" /><circle cx="50" cy="18" r="8" stroke="#DC2626" stroke-width="2.5" fill="none" /><circle cx="50" cy="82" r="8" stroke="#DC2626" stroke-width="2.5" fill="none" /><circle cx="18" cy="50" r="8" stroke="#DC2626" stroke-width="2.5" fill="none" /><circle cx="82" cy="50" r="8" stroke="#DC2626" stroke-width="2.5" fill="none" /><text x="50" y="56" font-family="'Noto Serif KR', serif" font-weight="900" font-size="14" fill="#991B1B" text-anchor="middle">萬福</text></svg>`;
+        }
 
         function setCalType(type) {
             selectedCalendarType = type;
@@ -489,30 +602,116 @@
             });
             const data = await res.json();
 
+            currentTalisman = data.daily_fortune.talisman;
+
             document.getElementById('mbtiTypeName').innerText = data.saju_data.mbti.mbti;
             document.getElementById('mbtiTypeDesc').innerText = data.saju_data.mbti.desc;
             document.getElementById('mbtiAnimalIcon').innerText = data.saju_data.animal_icon;
 
+            document.getElementById('resTitle').innerText = data.daily_fortune.title;
             document.getElementById('resAdvice').innerText = data.daily_fortune.advice;
+            document.getElementById('resScoreBadge').innerText = `운세 ${data.daily_fortune.score}점`;
+
+            document.getElementById('mypageProfileDesc').innerText = `${name} (${birth})`;
+
             document.getElementById('onboardingInputView').classList.add('hidden');
             document.getElementById('view-today').classList.remove('hidden');
         }
 
+        function resetProfileAndReinput() {
+            document.getElementById('onboardingInputView').classList.remove('hidden');
+            ['today', 'saju', 'theme', 'mypage'].forEach(t => document.getElementById(`view-${t}`).classList.add('hidden'));
+            switchTab('today');
+        }
+
+        function openTalismanModal() {
+            const name = document.getElementById('inputName').value || "최정오";
+            if (!currentTalisman) {
+                currentTalisman = { title: "재물만복부 (萬福符)", chinese: "勅令 · 萬福大吉", power: "재물 증식 · 금전운 대통", desc: "사방에서 금전과 복록이 샘솟듯 모여드는 강력한 비급 부적입니다." };
+            }
+            document.getElementById('talismanTitle').innerText = currentTalisman.title;
+            document.getElementById('talismanDesc').innerText = currentTalisman.desc;
+            document.getElementById('talismanPower').innerText = currentTalisman.power;
+            document.getElementById('talismanCmd').innerText = currentTalisman.chinese;
+            document.getElementById('talismanOwner').innerText = name;
+            document.getElementById('talismanGraphicBox').innerHTML = renderDistinctTalisman(currentTalisman.title);
+            document.getElementById('talismanModal').classList.remove('hidden');
+        }
+
+        function closeTalismanModal() {
+            document.getElementById('talismanModal').classList.add('hidden');
+        }
+
+        async function handleTarotDraw(slot) {
+            if (drawnTarotCards[slot]) {
+                displayTarotResult(drawnTarotCards[slot]);
+                return;
+            }
+
+            if (dailyTarotDrawn) {
+                if (currentCoin < 30) {
+                    alert('🪙 1회 무료 타로를 이미 확인하셨습니다. 추가 열람에는 30 복채가 필요합니다.');
+                    openChargeStore();
+                    return;
+                }
+                if (!confirm(`🪙 30 복채로 ${slot}번 카드를 확인하시겠습니까?`)) return;
+                currentCoin -= 30;
+                updateCoinDisplay();
+            }
+
+            try {
+                const res = await fetch(`/api/daily-tarot?slot=${slot}&rand_seed=${Date.now()}`);
+                const card = await res.json();
+                dailyTarotDrawn = true;
+                drawnTarotCards[slot] = card;
+
+                const flipper = document.getElementById(`flipper${slot}`);
+                const front = document.getElementById(`front${slot}`);
+                const imgUrl = TAROT_IMAGES[card.name] || TAROT_IMAGES["0. THE FOOL (바보)"];
+
+                front.innerHTML = `<img src="${imgUrl}" alt="${card.name}" class="w-full h-full object-cover rounded-xl border border-amber-300">`;
+                flipper.classList.add('flipped');
+
+                setTimeout(() => { displayTarotResult(card); }, 600);
+            } catch(e) {
+                alert('타로 카드 데이터를 불러오지 못했습니다.');
+            }
+        }
+
+        function displayTarotResult(card) {
+            const imgUrl = TAROT_IMAGES[card.name] || TAROT_IMAGES["0. THE FOOL (바보)"];
+            const resBox = document.getElementById('tarotResultBox');
+            resBox.innerHTML = `
+                <div class="bg-slate-50 border border-slate-200 rounded-2xl p-3.5 space-y-1.5 mt-2 text-xs text-left">
+                    <div class="flex items-center space-x-2.5 pb-1.5 border-b border-slate-200">
+                        <img src="${imgUrl}" class="w-10 h-16 object-cover rounded-md border border-amber-300">
+                        <div>
+                            <h4 class="font-black text-slate-900 text-xs">${card.name}</h4>
+                            <p class="text-amber-800 font-bold text-[11px]">${card.keyword}</p>
+                        </div>
+                    </div>
+                    <p class="text-slate-600 text-[11px] leading-relaxed">${card.overview}</p>
+                    <p class="text-[#2D6A4F] font-bold text-[11px]">💡 ${card.action}</p>
+                </div>
+            `;
+            resBox.classList.remove('hidden');
+        }
+
         function unlockDaewoon() {
             if (currentCoin < 450) { openChargeStore(); return; }
-            if (!confirm('🪙 450 복채로 열람하시겠습니까?')) return;
+            if (!confirm('🪙 450 복채로 자미두수 & 10년 대운 심층 리포트를 열람하시겠습니까?')) return;
             
             fetch('/api/daewoon-report', {method: 'POST'})
                 .then(r => r.json())
                 .then(data => {
                     currentCoin -= 450;
-                    document.getElementById('coinHeader').innerText = currentCoin;
-                    document.getElementById('coinMypage').innerText = currentCoin;
+                    updateCoinDisplay();
                     document.getElementById('daewoonBox').innerHTML = data.content;
                     document.getElementById('daewoonBox').classList.remove('hidden');
                     document.getElementById('btnDaewoon').classList.add('hidden');
                     document.getElementById('daewoonBlurOverlay').classList.add('hidden');
                     document.querySelector('#daewoonGraphTeaser svg').classList.remove('blur-[2px]');
+                    saveUnlockedReport(data.title, data.content);
                 });
         }
 
@@ -524,19 +723,19 @@
                 modalBox.innerHTML = `
                     <p class="text-[11px] text-slate-500 mb-2">현재 상태를 선택해 주세요:</p>
                     <div class="grid grid-cols-2 gap-2 text-xs font-bold">
-                        <label class="p-2 border rounded-xl flex items-center gap-1.5 cursor-pointer bg-slate-50"><input type="radio" name="optM" value="솔로" checked> 솔로</label>
-                        <label class="p-2 border rounded-xl flex items-center gap-1.5 cursor-pointer bg-slate-50"><input type="radio" name="optM" value="썸/짝사랑"> 썸/짝사랑</label>
-                        <label class="p-2 border rounded-xl flex items-center gap-1.5 cursor-pointer bg-slate-50"><input type="radio" name="optM" value="연애중"> 연애중</label>
-                        <label class="p-2 border rounded-xl flex items-center gap-1.5 cursor-pointer bg-slate-50"><input type="radio" name="optM" value="기혼"> 기혼</label>
+                        <label class="p-2.5 border rounded-xl flex items-center gap-1.5 cursor-pointer bg-slate-50"><input type="radio" name="optM" value="솔로" checked> 솔로</label>
+                        <label class="p-2.5 border rounded-xl flex items-center gap-1.5 cursor-pointer bg-slate-50"><input type="radio" name="optM" value="썸/짝사랑"> 썸/짝사랑</label>
+                        <label class="p-2.5 border rounded-xl flex items-center gap-1.5 cursor-pointer bg-slate-50"><input type="radio" name="optM" value="연애중"> 연애중</label>
+                        <label class="p-2.5 border rounded-xl flex items-center gap-1.5 cursor-pointer bg-slate-50"><input type="radio" name="optM" value="기혼"> 기혼</label>
                     </div>`;
             } else if (key === 'business') {
                 modalBox.innerHTML = `
                     <p class="text-[11px] text-slate-500 mb-2">현재 직업 상태를 선택해 주세요:</p>
                     <div class="grid grid-cols-2 gap-2 text-xs font-bold">
-                        <label class="p-2 border rounded-xl flex items-center gap-1.5 cursor-pointer bg-slate-50"><input type="radio" name="optM" value="직장인" checked> 직장인</label>
-                        <label class="p-2 border rounded-xl flex items-center gap-1.5 cursor-pointer bg-slate-50"><input type="radio" name="optM" value="취업/이직 준비중"> 준비중</label>
-                        <label class="p-2 border rounded-xl flex items-center gap-1.5 cursor-pointer bg-slate-50"><input type="radio" name="optM" value="사업가/프리랜서"> 사업/프리</label>
-                        <label class="p-2 border rounded-xl flex items-center gap-1.5 cursor-pointer bg-slate-50"><input type="radio" name="optM" value="창업 준비중"> 창업준비</label>
+                        <label class="p-2.5 border rounded-xl flex items-center gap-1.5 cursor-pointer bg-slate-50"><input type="radio" name="optM" value="직장인" checked> 직장인</label>
+                        <label class="p-2.5 border rounded-xl flex items-center gap-1.5 cursor-pointer bg-slate-50"><input type="radio" name="optM" value="취업/이직 준비중"> 준비중</label>
+                        <label class="p-2.5 border rounded-xl flex items-center gap-1.5 cursor-pointer bg-slate-50"><input type="radio" name="optM" value="사업가/프리랜서"> 사업/프리</label>
+                        <label class="p-2.5 border rounded-xl flex items-center gap-1.5 cursor-pointer bg-slate-50"><input type="radio" name="optM" value="창업 준비중"> 창업준비</label>
                     </div>`;
             } else {
                 modalBox.innerHTML = `<p class="text-xs text-slate-600 py-2">원국 기반 정밀 분석 리포트가 열람됩니다.</p>`;
@@ -559,25 +758,57 @@
             const data = await res.json();
 
             currentCoin -= 220;
-            document.getElementById('coinHeader').innerText = currentCoin;
-            document.getElementById('coinMypage').innerText = currentCoin;
+            updateCoinDisplay();
             
             const targetBox = document.getElementById(`themeReport_${currentThemeKey}`);
             targetBox.innerHTML = data.content;
             targetBox.classList.remove('hidden');
             document.getElementById(`btnTheme_${currentThemeKey}`).classList.add('hidden');
             
+            saveUnlockedReport(data.title, data.content);
             closeThemeSelectModal();
+        }
+
+        function saveUnlockedReport(title, content) {
+            unlockedReports.push({title, content, date: new Date().toLocaleDateString()});
+            localStorage.setItem('unlocked_reports', JSON.stringify(unlockedReports));
+            renderUnlockedArchive();
+        }
+
+        function renderUnlockedArchive() {
+            const container = document.getElementById('unlockedArchiveList');
+            if (!unlockedReports.length) {
+                container.innerHTML = `<p class="text-slate-400 text-[11px] py-2 text-center">아직 구매한 심층 리포트가 없습니다.</p>`;
+                return;
+            }
+            container.innerHTML = unlockedReports.map((r, i) => `
+                <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-1.5 text-left">
+                    <div class="flex justify-between items-center">
+                        <span class="font-bold text-slate-800">${r.title}</span>
+                        <span class="text-[10px] text-slate-400">${r.date}</span>
+                    </div>
+                    <button onclick="this.nextElementSibling.classList.toggle('hidden')" class="text-[10px] text-[#2D6A4F] font-bold">내용 다시보기 ▾</button>
+                    <div class="hidden pt-2 border-t border-slate-200">${r.content}</div>
+                </div>
+            `).join('');
+        }
+
+        function updateCoinDisplay() {
+            document.getElementById('coinHeader').innerText = currentCoin;
+            document.getElementById('coinMypage').innerText = currentCoin;
         }
 
         function openChargeStore() { document.getElementById('chargeModal').classList.remove('hidden'); }
         function closeChargeStore() { document.getElementById('chargeModal').classList.add('hidden'); }
         function addCoin(amt) {
             currentCoin += amt;
-            document.getElementById('coinHeader').innerText = currentCoin;
-            document.getElementById('coinMypage').innerText = currentCoin;
+            updateCoinDisplay();
             closeChargeStore();
         }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            renderUnlockedArchive();
+        });
     </script>
 </body>
 </html>
