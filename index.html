@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>운세의 신 - 정통 사주명리 & 자미두수</title>
     
     <link rel="manifest" href="/manifest.json">
@@ -289,18 +291,29 @@
             </div>
         </div>
 
-        <!-- 단독 부적 뷰 -->
+        <!-- 단독 부적 뷰 (위젯 액자 모드) -->
         <div id="standaloneTalismanView" class="hidden p-6 text-center space-y-6 flex-1 flex flex-col justify-center items-center bg-slate-950 text-white min-h-screen">
             <span class="text-xs text-amber-400 font-bold tracking-widest block uppercase">Daily Sacred Talisman</span>
             <h2 id="standaloneTalismanTitle" class="text-2xl font-serif-title font-black text-amber-300">부적</h2>
             
-            <div class="w-52 h-80 bg-gradient-to-b from-amber-50 to-amber-100 border-4 border-amber-400 rounded-2xl p-4 shadow-2xl flex flex-col justify-between items-center text-slate-900">
-                <span id="standaloneTalismanCmd" class="text-xs font-black text-red-700 tracking-widest border-b border-red-700 pb-1">勅令</span>
-                <div id="standaloneTalismanSvgBox" class="w-32 h-32 my-auto flex items-center justify-center"></div>
-                <p id="standaloneTalismanPower" class="text-xs font-black text-amber-950 bg-amber-200/80 px-2 py-0.5 rounded-full"></p>
-            </div>
+            <div class="w-64 h-96 bg-amber-100 border-4 border-amber-600 rounded-3xl p-5 shadow-2xl flex flex-col justify-between items-center text-slate-900">
+                <div class="text-sm font-bold text-red-700 tracking-widest border-b border-red-300 w-full pb-1 text-center font-serif">
+                    敎 令 · 萬 福
+                </div>
+                
+                <h4 id="standaloneTalismanTitleSub" class="text-base font-bold text-red-900 mt-1"></h4>
 
-            <p id="standaloneTalismanDesc" class="text-xs text-slate-300 leading-relaxed max-w-xs"></p>
+                <!-- 고유 그래픽 영역 -->
+                <div id="standaloneTalismanGraphicBox" class="w-32 h-32 my-auto flex items-center justify-center"></div>
+
+                <div class="w-full text-center space-y-1">
+                    <p id="standaloneTalismanPower" class="text-xs font-bold text-slate-900"></p>
+                    <p id="standaloneTalismanDesc" class="text-[11px] text-slate-600"></p>
+                    <div class="border-t border-red-300 pt-1 text-[11px] text-slate-700">
+                        소지자: <span id="standaloneTalismanOwner" class="font-bold underline"></span> 님 평생 수호
+                    </div>
+                </div>
+            </div>
             
             <button onclick="goToMainApp()" class="bg-amber-400 text-slate-950 text-xs font-black px-6 py-2.5 rounded-full shadow-lg active:scale-95 transition">
                 운세 앱 홈으로 돌아가기
@@ -309,34 +322,48 @@
 
     </div>
 
-    <!-- 부적 모달 팝업 -->
+    <!-- 스크린샷 원본 형태를 완벽 재현한 팝업 모달 -->
     <div id="talismanModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-xs flex items-center justify-center p-4 z-50 hidden">
-        <div class="bg-white rounded-3xl p-5 max-w-xs w-full text-center space-y-4 shadow-2xl border border-amber-300">
-            <div class="space-y-1">
-                <span class="text-[10px] bg-amber-100 text-amber-900 px-2.5 py-0.5 rounded-full font-black">오늘의 맞춤 수호 부적</span>
-                <h3 id="modalTalismanTitle" class="text-base font-serif-title font-black text-slate-900">부적</h3>
+        <div class="bg-white rounded-3xl p-5 max-w-xs w-full text-center space-y-4 shadow-2xl">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-2">
+                <h3 class="text-xs font-bold text-slate-800 flex items-center space-x-1">
+                    <span>🎴 영험한 전통 개운(開運) 부적</span>
+                </h3>
+                <button onclick="closeTalismanModal()" class="text-slate-400 hover:text-slate-600 font-bold text-sm">&times;</button>
             </div>
 
-            <div class="w-44 h-64 bg-gradient-to-b from-amber-50 to-amber-100 border-3 border-amber-400 rounded-2xl p-3 shadow-md mx-auto flex flex-col justify-between items-center">
-                <span id="modalTalismanCmd" class="text-[11px] font-black text-red-700 tracking-widest border-b border-red-700 pb-0.5">勅令</span>
-                <div id="modalTalismanSvgBox" class="w-28 h-28 my-auto flex items-center justify-center"></div>
-                <span id="modalTalismanPower" class="text-[10px] font-bold text-amber-950 bg-amber-200/70 px-2 py-0.5 rounded-full"></span>
-            </div>
+            <!-- 스크린샷과 100% 동일한 황금빛 부적 카드 본체 -->
+            <div class="w-full bg-[#FFF1B8] border-3 border-[#D97706] rounded-2xl p-4 shadow-md mx-auto flex flex-col justify-between items-center text-slate-900 space-y-2">
+                <div class="text-xs font-bold text-red-700 tracking-widest border-b border-red-300/80 w-full pb-1 text-center font-serif">
+                    敎 令 · 萬 福
+                </div>
 
-            <p id="modalTalismanDesc" class="text-xs text-slate-600 leading-relaxed"></p>
+                <h4 id="modalTalismanTitle" class="text-sm font-black text-red-950">천우신조부 (天佑神助符)</h4>
+
+                <!-- 12종 고유 그래픽이 실시간으로 교체되는 정중앙 영역 -->
+                <div id="modalTalismanGraphicBox" class="w-24 h-24 my-auto flex items-center justify-center"></div>
+
+                <div class="w-full text-center space-y-0.5">
+                    <p id="modalTalismanPower" class="text-xs font-bold text-slate-950">귀인 조력 · 위기 탈출</p>
+                    <p id="modalTalismanDesc" class="text-[10px] text-slate-700 leading-snug">결정적인 순간 귀인의 손길을 이어주는 수호 기운</p>
+                    <div class="border-t border-red-300/80 pt-1 text-[10px] text-slate-800 font-medium">
+                        소지자: <span id="modalTalismanOwner" class="font-bold underline">최정오</span> 님 평생 수호
+                    </div>
+                </div>
+            </div>
 
             <div class="space-y-2">
-                <button onclick="openStandaloneTalismanView()" class="w-full bg-slate-950 text-amber-300 text-xs font-bold py-2 rounded-xl transition">
-                    부적 전용 화면으로 보기
+                <button onclick="closeTalismanModal()" class="w-full bg-[#D97706] hover:bg-[#B45309] text-white text-xs font-bold py-2.5 rounded-xl shadow-sm transition active:scale-95 flex items-center justify-center space-x-1">
+                    <span>확인🎴</span>
                 </button>
-                <button onclick="closeTalismanModal()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold py-2 rounded-xl transition">
-                    닫기
+                <button onclick="openStandaloneTalismanView()" class="w-full bg-[#111827] hover:bg-slate-900 text-amber-300 text-xs font-bold py-2.5 rounded-xl transition flex items-center justify-center space-x-1">
+                    <span>✨ 부적 전용 액자 화면으로 보기</span>
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- 사주 정보 입력 모달 (양력/음력/윤달 & 시진 선택 완벽 지원) -->
+    <!-- 사주 정보 입력 모달 (양력/음력/윤달 & 시진 완벽 선택) -->
     <div id="profileInputModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 hidden">
         <div class="bg-white rounded-3xl p-5 max-w-xs w-full space-y-3.5 shadow-2xl">
             <h3 class="font-serif-title font-bold text-slate-900 text-sm">사주 정보 입력</h3>
@@ -413,6 +440,7 @@
     <script>
         let currentCoin = 1000;
         let currentTalismanData = null;
+        let currentUserName = "최정오";
         let dailyTarotDrawn = false;
         let drawnTarotCards = {};
         let currentCalendarType = "solar";
@@ -446,7 +474,8 @@
         function renderDistinctTalisman(title) {
             if (!title) title = "재물만복부";
             
-            if (title.includes("재물만복")) {
+            if (title.includes("재물") || title.includes("만복")) {
+                // 1. 재물만복부 (대형 황금 엽전 & 萬福 도장)
                 return `
                     <svg viewBox="0 0 100 100" class="w-full h-full">
                         <circle cx="50" cy="50" r="44" stroke="#DC2626" stroke-width="4" fill="#FEF2F2" />
@@ -458,7 +487,8 @@
                         <text x="50" y="56" font-family="'Noto Serif KR', serif" font-weight="900" font-size="14" fill="#991B1B" text-anchor="middle">萬福</text>
                     </svg>
                 `;
-            } else if (title.includes("금고수호")) {
+            } else if (title.includes("금고") || title.includes("수호")) {
+                // 2. 금고수호부 (각진 6각 방패 & 자물쇠)
                 return `
                     <svg viewBox="0 0 100 100" class="w-full h-full">
                         <path d="M50 6 L88 22 L88 68 L50 94 L12 68 L12 22 Z" stroke="#DC2626" stroke-width="4" fill="#FEF2F2" />
@@ -467,7 +497,8 @@
                         <text x="50" y="61" font-family="'Noto Serif KR', serif" font-weight="900" font-size="12" fill="#991B1B" text-anchor="middle">金庫</text>
                     </svg>
                 `;
-            } else if (title.includes("사업대성")) {
+            } else if (title.includes("사업") || title.includes("대성")) {
+                // 3. 사업대성부 (3단 번창 상승 화살표)
                 return `
                     <svg viewBox="0 0 100 100" class="w-full h-full">
                         <path d="M50 6 L78 34 H58 V92 H42 V34 H22 Z" stroke="#DC2626" stroke-width="4" fill="#FEF2F2" />
@@ -476,7 +507,8 @@
                         <text x="50" y="46" font-family="'Noto Serif KR', serif" font-weight="900" font-size="12" fill="#991B1B" text-anchor="middle">大成</text>
                     </svg>
                 `;
-            } else if (title.includes("인연화합")) {
+            } else if (title.includes("인연") || title.includes("화합")) {
+                // 4. 인연화합부 (붉은 실 하트 & 쌍희 囍)
                 return `
                     <svg viewBox="0 0 100 100" class="w-full h-full">
                         <circle cx="36" cy="42" r="28" stroke="#DC2626" stroke-width="3.5" fill="#FEF2F2" />
@@ -485,7 +517,8 @@
                         <text x="50" y="90" font-family="'Noto Serif KR', serif" font-weight="900" font-size="16" fill="#991B1B" text-anchor="middle">囍 和合</text>
                     </svg>
                 `;
-            } else if (title.includes("도화매혹")) {
+            } else if (title.includes("도화") || title.includes("매혹")) {
+                // 5. 도화매혹부 (5엽 복숭아꽃)
                 return `
                     <svg viewBox="0 0 100 100" class="w-full h-full">
                         <g fill="#FEE2E2" stroke="#DC2626" stroke-width="3">
@@ -500,7 +533,8 @@
                         <text x="50" y="90" font-family="'Noto Serif KR', serif" font-weight="900" font-size="14" fill="#991B1B" text-anchor="middle">桃花</text>
                     </svg>
                 `;
-            } else if (title.includes("소원성취")) {
+            } else if (title.includes("소원") || title.includes("성취")) {
+                // 6. 소원성취부 (불꽃 보주 / 여의주)
                 return `
                     <svg viewBox="0 0 100 100" class="w-full h-full">
                         <circle cx="50" cy="58" r="32" stroke="#DC2626" stroke-width="4" fill="#FEF2F2" />
@@ -508,7 +542,8 @@
                         <text x="50" y="66" font-family="'Noto Serif KR', serif" font-weight="900" font-size="15" fill="#991B1B" text-anchor="middle">成就</text>
                     </svg>
                 `;
-            } else if (title.includes("귀인상조")) {
+            } else if (title.includes("귀인") || title.includes("천우신조")) {
+                // 7. 귀인상조 / 천우신조부 (날개별 & 貴人)
                 return `
                     <svg viewBox="0 0 100 100" class="w-full h-full">
                         <polygon points="50,6 62,36 94,36 68,56 78,88 50,70 22,88 32,56 6,36 38,36" stroke="#DC2626" stroke-width="3.5" fill="#FEF2F2" />
@@ -516,7 +551,8 @@
                         <text x="50" y="54" font-family="'Noto Serif KR', serif" font-weight="900" font-size="12" fill="#991B1B" text-anchor="middle">貴人</text>
                     </svg>
                 `;
-            } else if (title.includes("관운승진")) {
+            } else if (title.includes("관운") || title.includes("승진")) {
+                // 8. 관운승진부 (사모 & 3단 승진 계단)
                 return `
                     <svg viewBox="0 0 100 100" class="w-full h-full">
                         <path d="M20 42 Q50 12 80 42 L90 52 H10 Z" stroke="#DC2626" stroke-width="4" fill="#FEF2F2" />
@@ -525,7 +561,8 @@
                         <text x="50" y="42" font-family="'Noto Serif KR', serif" font-weight="900" font-size="11" fill="#991B1B" text-anchor="middle">昇進</text>
                     </svg>
                 `;
-            } else if (title.includes("장원급제")) {
+            } else if (title.includes("장원") || title.includes("급제")) {
+                // 9. 장원급제부 (문곡성 대형 붓)
                 return `
                     <svg viewBox="0 0 100 100" class="w-full h-full">
                         <path d="M50 8 L58 32 L54 74 L46 74 L42 32 Z" stroke="#DC2626" stroke-width="3.5" fill="#FEF2F2" />
@@ -535,7 +572,8 @@
                         <text x="50" y="60" font-family="'Noto Serif KR', serif" font-weight="900" font-size="12" fill="#991B1B" text-anchor="middle">及第</text>
                     </svg>
                 `;
-            } else if (title.includes("벽사소재")) {
+            } else if (title.includes("벽사") || title.includes("소재")) {
+                // 10. 벽사소재부 (악귀를 베는 칠성보검)
                 return `
                     <svg viewBox="0 0 100 100" class="w-full h-full">
                         <path d="M50 6 L56 20 V72 L50 94 L44 72 V20 Z" stroke="#DC2626" stroke-width="4" fill="#FEF2F2" />
@@ -544,7 +582,8 @@
                         <text x="50" y="58" font-family="'Noto Serif KR', serif" font-weight="900" font-size="13" fill="#991B1B" text-anchor="middle">辟邪</text>
                     </svg>
                 `;
-            } else if (title.includes("칠성무병")) {
+            } else if (title.includes("칠성") || title.includes("무병")) {
+                // 11. 칠성무병부 (북두칠성 별자리)
                 return `
                     <svg viewBox="0 0 100 100" class="w-full h-full">
                         <circle cx="50" cy="50" r="44" stroke="#DC2626" stroke-width="2.5" fill="#FEF2F2" />
@@ -560,6 +599,7 @@
                     </svg>
                 `;
             } else {
+                // 12. 심신안정부 (음양 태극 & 淸心)
                 return `
                     <svg viewBox="0 0 100 100" class="w-full h-full">
                         <circle cx="50" cy="50" r="42" stroke="#DC2626" stroke-width="3.5" fill="#FEF2F2" />
@@ -613,6 +653,7 @@
                 const data = await res.json();
                 
                 currentTalismanData = data.fortunes.daily.talisman;
+                currentUserName = name;
 
                 document.getElementById('dailyTitle').innerText = data.fortunes.daily.title;
                 document.getElementById('dailyAdvice').innerText = data.fortunes.daily.advice;
@@ -659,38 +700,35 @@
             fetchSajuAnalysis(name, year, month, day, currentCalendarType, sijin);
         }
 
-function openTalismanModal() {
-    const t = getActiveTalisman();
-    
-    // 텍스트 바인딩
-    if (document.getElementById('talismanTitle')) document.getElementById('talismanTitle').innerText = t.title;
-    if (document.getElementById('talismanDesc')) document.getElementById('talismanDesc').innerText = t.desc;
-    if (document.getElementById('talismanPower')) document.getElementById('talismanPower').innerText = t.power;
-    if (document.getElementById('talismanOwner')) document.getElementById('talismanOwner').innerText = currentUserName || "최정오";
+        // 모달 팝업 열기 (스크린샷 원본 UI에 고유 그래픽 실시간 바인딩)
+        function openTalismanModal() {
+            if (!currentTalismanData) return;
+            document.getElementById('modalTalismanTitle').innerText = currentTalismanData.title;
+            document.getElementById('modalTalismanDesc').innerText = currentTalismanData.desc;
+            document.getElementById('modalTalismanPower').innerText = currentTalismanData.power;
+            document.getElementById('modalTalismanOwner').innerText = currentUserName;
+            
+            // 12종 고유 그래픽 주입
+            document.getElementById('modalTalismanGraphicBox').innerHTML = renderDistinctTalisman(currentTalismanData.title);
 
-    // 중앙 빨간 삼각 인형 문양 영역을 12종 고유 그래픽으로 강제 교체
-    const modalBox = document.getElementById('talismanModal') || document.querySelector('.bg-amber-100') || document.body;
-    const svgEl = modalBox.querySelector('svg');
-    if (svgEl) {
-        svgEl.outerHTML = renderDistinctTalisman(t.title);
-    }
-
-    const modal = document.getElementById('talismanModal');
-    if (modal) modal.classList.remove('hidden');
-}
+            document.getElementById('talismanModal').classList.remove('hidden');
+        }
 
         function closeTalismanModal() {
             document.getElementById('talismanModal').classList.add('hidden');
         }
 
+        // 단독 부적 뷰 (액자 모드)
         function openStandaloneTalismanView() {
             if (!currentTalismanData) return;
             document.getElementById('standaloneTalismanTitle').innerText = currentTalismanData.title;
+            document.getElementById('standaloneTalismanTitleSub').innerText = currentTalismanData.title;
             document.getElementById('standaloneTalismanDesc').innerText = currentTalismanData.desc;
             document.getElementById('standaloneTalismanPower').innerText = currentTalismanData.power;
-            document.getElementById('standaloneTalismanCmd').innerText = currentTalismanData.chinese;
+            document.getElementById('standaloneTalismanOwner').innerText = currentUserName;
 
-            document.getElementById('standaloneTalismanSvgBox').innerHTML = renderDistinctTalisman(currentTalismanData.title);
+            document.getElementById('standaloneTalismanGraphicBox').innerHTML = renderDistinctTalisman(currentTalismanData.title);
+
             document.getElementById('mainAppContainer').classList.add('hidden');
             document.getElementById('standaloneTalismanView').classList.remove('hidden');
             closeTalismanModal();
@@ -797,7 +835,7 @@ function openTalismanModal() {
         }
 
         window.addEventListener('DOMContentLoaded', () => {
-            // 구버전 캐시 및 서비스워커 강제 삭제
+            // 브라우저 및 서비스워커 캐시 강제 무효화
             if ('serviceWorker' in navigator) {
                 navigator.serviceWorker.getRegistrations().then(function(registrations) {
                     for (let r of registrations) r.unregister();
