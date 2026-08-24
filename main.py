@@ -5,6 +5,7 @@ from pydantic import BaseModel
 from typing import Optional
 from datetime import datetime
 import os
+import random
 import hashlib
 
 from saju_engine import calculate_saju_pillars
@@ -53,7 +54,6 @@ async def get_talisman_manifest():
         ]
     }
 
-# 일자별/개인별 일진 큐레이션 풀
 DAILY_CURATIONS = [
     {
         "title": "금빛 기운이 서서히 솟아나는 도약의 하루",
@@ -109,7 +109,6 @@ DAILY_CURATIONS = [
     }
 ]
 
-@app.get("/api/daily-tarot")
 TAROT_DECK = [
     {"name": "0. THE FOOL (바보)", "keyword": "새로운 시작, 순수한 열정, 무한한 가능성", "overview": "얽매이지 않는 자유로운 발걸음으로 미지의 새로운 여정을 시작할 최적의 타이밍입니다.", "action": "실패를 두려워하지 말고 호기심과 가벼운 마음으로 첫 발을 내딛으세요.", "caution": "준비 없는 무모한 모험이나 디테일 부족을 경계해야 합니다."},
     {"name": "I. THE MAGICIAN (마법사)", "keyword": "창조, 시작, 다재다능, 주도권", "overview": "원하는 것을 현실로 만들어낼 수 있는 능력과 자원이 이미 손안에 있습니다.", "action": "자신감을 가지고 준비해온 기획이나 대화를 먼저 리드하세요.", "caution": "겉모습에만 치중하지 말고 실질적인 내실을 챙겨야 합니다."},
@@ -137,9 +136,7 @@ TAROT_DECK = [
 
 @app.get("/api/daily-tarot")
 async def get_daily_tarot(slot: Optional[int] = 1, rand_seed: Optional[str] = None):
-    import random
     if rand_seed:
-        # 다시 뽑기 등 고유 시드가 올 경우 랜덤성 부여
         hash_val = int(hashlib.md5(f"{rand_seed}_{slot}_{random.random()}".encode()).hexdigest(), 16)
     else:
         today_str = datetime.now().strftime("%Y-%m-%d")
@@ -151,13 +148,12 @@ async def get_daily_tarot(slot: Optional[int] = 1, rand_seed: Optional[str] = No
 async def analyze_saju(req: AnalyzeRequest):
     saju_result = calculate_saju_pillars(req.year, req.month, req.day, req.sijin_index)
     
-    # 오늘 날짜 + 사주 천간 결합 시드 생성
     today_str = datetime.now().strftime("%Y-%m-%d")
     seed_str = f"{today_str}_{req.year}_{req.month}_{req.day}_{saju_result.get('day_stem', '갑')}"
     hash_idx = int(hashlib.md5(seed_str.encode()).hexdigest(), 16)
     
     curation = DAILY_CURATIONS[hash_idx % len(DAILY_CURATIONS)]
-    score_variance = (hash_idx % 7) - 3  # -3 ~ +3 변동
+    score_variance = (hash_idx % 7) - 3
     daily_score = max(82, min(99, curation["score_base"] + score_variance))
 
     fortunes = {
