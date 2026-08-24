@@ -28,7 +28,7 @@ JIJANGGAN_MAP = {
     "亥": "壬 (임)"
 }
 
-# 60일주 기반 동적 MBTI 매핑 사전 (태어난 날짜의 일간 기준)
+# 60일주 기반 동적 MBTI 매핑 사전
 DAY_MBTI_MAP = {
     "甲": {"mbti": "대담한 통솔자 (ENTJ형)", "desc": "강한 추진력과 당당한 리더십으로 조직을 이끄는 개척자"},
     "乙": {"mbti": "재기발랄한 활동가 (ENFP형)", "desc": "유연한 적응력과 풍부한 친화력으로 사람의 마음을 얻는 인재"},
@@ -80,7 +80,6 @@ def serve_home():
 
 @app.post("/api/analyze")
 def analyze_saju(req: SajuRequest):
-    # 1. 태어난 날짜 기반 정밀 60갑자 일주(日柱) 산출
     base_date = datetime.date(1900, 1, 1)
     target_date = datetime.date(req.year, req.month, req.day)
     diff_days = (target_date - base_date).days
@@ -92,7 +91,6 @@ def analyze_saju(req: SajuRequest):
     d_jj = JIJI_HANJA[d_jj_idx]
     d_animal = ANIMAL_MAP[d_jj]
 
-    # 년주/월주/시주 산출
     year_offset = (req.year - 4) % 60
     y_cg, y_jj = CHEONGAN_HANJA[year_offset % 10], JIJI_HANJA[year_offset % 12]
     m_cg, m_jj = CHEONGAN_HANJA[(req.month + 2) % 10], JIJI_HANJA[(req.month + 1) % 12]
@@ -104,11 +102,9 @@ def analyze_saju(req: SajuRequest):
         h_jj = JIJI_HANJA[req.sijin_index]
         h_pillar = f"{h_cg}{h_jj}"
 
-    # 2. 생년월일에 따른 100% 동적 사주 MBTI & 동물 심볼 계산
     user_mbti = DAY_MBTI_MAP.get(d_cg, {"mbti": "용의주도한 전략가 (ENTJ형)", "desc": "목표를 향해 나아가는 전략적 사주"})
     user_animal_icon = ANIMAL_ICONS.get(d_animal, "🐯")
 
-    # 3. 풍성해진 오늘의 일진 본문 (양 3배 확장)
     daily_advice_rich = (
         "금빛 기운이 서서히 솟구치며 정체되었던 일들의 막힌 혈을 시원하게 뚫어주는 대길(大吉)의 하루입니다.\n\n"
         "오전에는 뜻밖의 반가운 소식이나 귀인의 연락이 닿아 오랫동안 계획했던 일에 강한 추진력이 실리게 됩니다. 서두르지 말고 주변과의 대화에 귀를 기울이세요.\n\n"
