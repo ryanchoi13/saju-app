@@ -19,6 +19,7 @@ class AnalyzeRequest(BaseModel):
     year: int
     month: int
     day: int
+    calendar_type: Optional[str] = "solar"
     sijin_index: Optional[int] = None
     is_unknown_time: bool = False
 
@@ -26,7 +27,9 @@ class AnalyzeRequest(BaseModel):
 async def read_index():
     index_path = os.path.join(BASE_DIR, "index.html")
     with open(index_path, "r", encoding="utf-8") as f:
-        return f.read()
+        content = f.read()
+    # 모바일 캐시 방지를 위해 버전 타임스탬프 헤더 추가
+    return HTMLResponse(content=content, headers={"Cache-Control": "no-cache, no-store, must-revalidate"})
 
 @app.get("/manifest.json")
 async def get_manifest():
@@ -54,91 +57,91 @@ async def get_talisman_manifest():
         ]
     }
 
-# 12대 전통 비급 부적 (SVG 그래픽 내장)
+# 12대 전통 비급 부적
 TALISMAN_DECK = [
     {
+        "id": "talisman_wealth",
         "title": "재물만복부 (財物萬福符)",
         "desc": "금고의 문을 열고 새는 돈을 막아주는 황금 기운",
         "chinese": "勅令 財運大吉 聚財如山",
-        "power": "재물통로 개운 · 자산 증식",
-        "svg": '<svg viewBox="0 0 100 100" class="w-full h-full"><circle cx="50" cy="50" r="42" stroke="#B91C1C" stroke-width="3.5" fill="#FEF2F2" /><rect x="36" y="36" width="28" height="28" stroke="#B91C1C" stroke-width="3" fill="none" /><circle cx="50" cy="22" r="7" stroke="#B91C1C" stroke-width="2.5" fill="none" /><circle cx="50" cy="78" r="7" stroke="#B91C1C" stroke-width="2.5" fill="none" /><circle cx="22" cy="50" r="7" stroke="#B91C1C" stroke-width="2.5" fill="none" /><circle cx="78" cy="50" r="7" stroke="#B91C1C" stroke-width="2.5" fill="none" /><text x="50" y="55" font-family="serif" font-weight="900" font-size="13" fill="#B91C1C" text-anchor="middle">萬福</text></svg>'
+        "power": "재물통로 개운 · 자산 증식"
     },
     {
-        "title": "귀인상조부 (貴人相助符)",
-        "desc": "막힌 곳을 뚫어줄 은인과 귀인이 사방에서 돕는 영험한 기운",
-        "chinese": "勅令 貴人助我 萬事亨通",
-        "power": "인맥 조력 · 위기 돌파",
-        "svg": '<svg viewBox="0 0 100 100" class="w-full h-full"><polygon points="50,10 60,38 90,38 66,56 76,84 50,68 24,84 34,56 10,38 40,38" stroke="#B91C1C" stroke-width="3" fill="#FEF2F2" /><circle cx="50" cy="48" r="12" stroke="#B91C1C" stroke-width="2" fill="#FFF" /><text x="50" y="53" font-family="serif" font-weight="900" font-size="11" fill="#B91C1C" text-anchor="middle">貴人</text></svg>'
-    },
-    {
-        "title": "벽사소재부 (辟邪消災符)",
-        "desc": "탁한 액운과 잡귀, 구설수를 칼날처럼 베어내는 수호의 기운",
-        "chinese": "勅令 邪氣退散 福德來臨",
-        "power": "액막이 소멸 · 악살 방어",
-        "svg": '<svg viewBox="0 0 100 100" class="w-full h-full"><path d="M50 8 L55 20 V72 L50 88 L45 72 V20 Z" stroke="#B91C1C" stroke-width="3.5" fill="#FEF2F2" /><path d="M30 30 H70 M38 36 H62" stroke="#B91C1C" stroke-width="3.5" stroke-linecap="round" /><path d="M25 65 L45 72 M75 65 L55 72" stroke="#B91C1C" stroke-width="3" /><circle cx="50" cy="22" r="3" fill="#B91C1C" /><text x="50" y="55" font-family="serif" font-weight="900" font-size="11" fill="#B91C1C" text-anchor="middle">辟邪</text></svg>'
-    },
-    {
+        "id": "talisman_safe",
         "title": "금고수호부 (金庫守護符)",
         "desc": "갑작스러운 지출과 손재수를 막고 재산을 단단히 지키는 기운",
         "chinese": "勅令 寶庫固封 漏財永息",
-        "power": "손재수 방어 · 자산 보전",
-        "svg": '<svg viewBox="0 0 100 100" class="w-full h-full"><path d="M50 8 L85 24 L85 70 L50 92 L15 70 L15 24 Z" stroke="#B91C1C" stroke-width="3.5" fill="#FEF2F2" /><rect x="34" y="38" width="32" height="26" rx="4" stroke="#B91C1C" stroke-width="3" fill="none" /><path d="M42 38 V28 C42 23 58 23 58 28 V38" stroke="#B91C1C" stroke-width="3" fill="none" /><text x="50" y="55" font-family="serif" font-weight="900" font-size="10" fill="#B91C1C" text-anchor="middle">金庫</text></svg>'
+        "power": "손재수 방어 · 자산 보전"
     },
     {
-        "title": "관운승진부 (官運昇進符)",
-        "desc": "명예를 드높이고 직장 및 사회에서 권한을 확대하는 기운",
-        "chinese": "勅令 官運昌盛 出世登科",
-        "power": "승진 합격 · 명예 상승",
-        "svg": '<svg viewBox="0 0 100 100" class="w-full h-full"><path d="M25 40 Q50 15 75 40 L85 48 H15 Z" stroke="#B91C1C" stroke-width="3.5" fill="#FEF2F2" /><rect x="35" y="48" width="30" height="12" stroke="#B91C1C" stroke-width="2.5" fill="none" /><path d="M25 68 H75 M32 78 H68 M40 88 H60" stroke="#B91C1C" stroke-width="3.5" stroke-linecap="round" /><text x="50" y="58" font-family="serif" font-weight="900" font-size="9" fill="#B91C1C" text-anchor="middle">昇進</text></svg>'
-    },
-    {
+        "id": "talisman_biz",
         "title": "사업대성부 (事業大成符)",
         "desc": "손님이 구름처럼 몰려들고 계약이 성사되는 번창의 기운",
         "chinese": "勅令 商運大吉 千客萬來",
-        "power": "매출 폭발 · 계약 성사",
-        "svg": '<svg viewBox="0 0 100 100" class="w-full h-full"><path d="M50 8 L72 32 H58 V88 H42 V32 H28 Z" stroke="#B91C1C" stroke-width="3.5" fill="#FEF2F2" /><path d="M22 68 L50 48 L78 68" stroke="#B91C1C" stroke-width="3" fill="none" /><path d="M22 82 L50 62 L78 82" stroke="#B91C1C" stroke-width="3" fill="none" /><text x="50" y="44" font-family="serif" font-weight="900" font-size="11" fill="#B91C1C" text-anchor="middle">大成</text></svg>'
+        "power": "매출 폭발 · 계약 성사"
     },
     {
+        "id": "talisman_love",
         "title": "인연화합부 (因緣和合符)",
         "desc": "어긋난 관계를 봉합하고 진실된 짝과의 애정을 두텁게 하는 기운",
         "chinese": "勅令 緣分結實 夫婦和合",
-        "power": "애정 돈독 · 관계 회복",
-        "svg": '<svg viewBox="0 0 100 100" class="w-full h-full"><circle cx="38" cy="44" r="26" stroke="#B91C1C" stroke-width="3" fill="none" /><circle cx="62" cy="44" r="26" stroke="#B91C1C" stroke-width="3" fill="none" /><path d="M50 20 C40 5 15 25 50 65 C85 25 60 5 50 20 Z" stroke="#B91C1C" stroke-width="3" fill="#FEF2F2" /><text x="50" y="88" font-family="serif" font-weight="900" font-size="14" fill="#B91C1C" text-anchor="middle">和合</text></svg>'
+        "power": "애정 돈독 · 관계 회복"
     },
     {
-        "title": "칠성무병부 (七星無病符)",
-        "desc": "북두칠성의 기운으로 오장육부의 피로를 씻고 활력을 채우는 기운",
-        "chinese": "勅令 身心康健 延年益壽",
-        "power": "심신 정화 · 면역 증진",
-        "svg": '<svg viewBox="0 0 100 100" class="w-full h-full"><circle cx="50" cy="50" r="42" stroke="#B91C1C" stroke-width="2" fill="#FEF2F2" /><path d="M24 25 L40 28 L46 45 L32 54 L24 25 M46 45 L62 60 L76 62 L82 80" stroke="#B91C1C" stroke-width="2.5" fill="none" /><circle cx="24" cy="25" r="4" fill="#B91C1C" /><circle cx="40" cy="28" r="4" fill="#B91C1C" /><circle cx="46" cy="45" r="4" fill="#B91C1C" /><circle cx="32" cy="54" r="4" fill="#B91C1C" /><circle cx="62" cy="60" r="4" fill="#B91C1C" /><circle cx="76" cy="62" r="4" fill="#B91C1C" /><circle cx="82" cy="80" r="4" fill="#B91C1C" /><text x="50" y="55" font-family="serif" font-weight="900" font-size="10" fill="#B91C1C" text-anchor="middle">無病</text></svg>'
-    },
-    {
-        "title": "장원급제부 (壯元及第符)",
-        "desc": "머리를 맑게 하여 시험과 면접, 오디션에서 최고 점수를 받는 기운",
-        "chinese": "勅令 文星照臨 必得高第",
-        "power": "집중력 강화 · 시험 합격",
-        "svg": '<svg viewBox="0 0 100 100" class="w-full h-full"><path d="M50 10 L56 30 L53 72 L47 72 L44 30 Z" stroke="#B91C1C" stroke-width="3" fill="#FEF2F2" /><polygon points="47,72 53,72 50,88" fill="#B91C1C" /><circle cx="50" cy="22" r="5" fill="#B91C1C" /><path d="M20 50 Q50 35 80 50" stroke="#B91C1C" stroke-width="3" fill="none" /><text x="50" y="58" font-family="serif" font-weight="900" font-size="11" fill="#B91C1C" text-anchor="middle">及第</text></svg>'
-    },
-    {
-        "title": "심신안정부 (心神安定符)",
-        "desc": "불안과 불면, 잡념을 가라앉히고 평온한 평정심을 선사하는 기운",
-        "chinese": "勅令 心神淸明 安祥和平",
-        "power": "멘탈 케어 · 불면 해소",
-        "svg": '<svg viewBox="0 0 100 100" class="w-full h-full"><circle cx="50" cy="50" r="40" stroke="#B91C1C" stroke-width="3" fill="#FEF2F2" /><path d="M50 10 A20 20 0 0 0 50 50 A20 20 0 0 1 50 90 A40 40 0 0 0 50 10 Z" fill="#B91C1C" /><circle cx="50" cy="30" r="5" fill="#FEF2F2" /><circle cx="50" cy="70" r="5" fill="#B91C1C" /><text x="50" y="88" font-family="serif" font-weight="900" font-size="9" fill="#B91C1C" text-anchor="middle">淸心</text></svg>'
-    },
-    {
+        "id": "talisman_dohwa",
         "title": "도화매혹부 (桃花魅惑符)",
         "desc": "나의 숨겨진 매력을 발산하여 대중과 이성의 호감을 끄는 기운",
         "chinese": "勅令 桃花盛開 萬人愛慕",
-        "power": "인기 상승 · 이성 호감",
-        "svg": '<svg viewBox="0 0 100 100" class="w-full h-full"><path d="M50 28 C45 10 55 10 50 28 Z M68 40 C85 30 80 45 68 40 Z M62 65 C75 80 62 85 62 65 Z M38 65 C38 85 25 80 38 65 Z M32 40 C20 45 15 30 32 40 Z" stroke="#B91C1C" stroke-width="3" fill="#FEF2F2" /><circle cx="50" cy="46" r="8" stroke="#B91C1C" stroke-width="2.5" fill="#B91C1C" /><text x="50" y="86" font-family="serif" font-weight="900" font-size="13" fill="#B91C1C" text-anchor="middle">桃花</text></svg>'
+        "power": "인기 상승 · 이성 호감"
     },
     {
+        "id": "talisman_wish",
         "title": "소원성취부 (所願成就符)",
         "desc": "오랫동안 가슴에 품어온 간절한 뜻이 현실로 결실을 맺는 기운",
         "chinese": "勅令 心想事成 萬事如意",
-        "power": "소원 성취 · 만사 대길",
-        "svg": '<svg viewBox="0 0 100 100" class="w-full h-full"><circle cx="50" cy="58" r="28" stroke="#B91C1C" stroke-width="3.5" fill="#FEF2F2" /><path d="M50 10 C38 28 62 38 50 58 C38 38 62 28 50 10 Z" stroke="#B91C1C" stroke-width="3" fill="#FEE2E2" /><text x="50" y="64" font-family="serif" font-weight="900" font-size="13" fill="#B91C1C" text-anchor="middle">成就</text></svg>'
+        "power": "소원 성취 · 만사 대길"
+    },
+    {
+        "id": "talisman_noble",
+        "title": "귀인상조부 (貴人相助符)",
+        "desc": "막힌 곳을 뚫어줄 은인과 귀인이 사방에서 돕는 영험한 기운",
+        "chinese": "勅令 貴人助我 萬事亨通",
+        "power": "인맥 조력 · 위기 돌파"
+    },
+    {
+        "id": "talisman_honor",
+        "title": "관운승진부 (官運昇進符)",
+        "desc": "명예를 드높이고 직장 및 사회에서 권한을 확대하는 기운",
+        "chinese": "勅令 官運昌盛 出世登科",
+        "power": "승진 합격 · 명예 상승"
+    },
+    {
+        "id": "talisman_pass",
+        "title": "장원급제부 (壯元及第符)",
+        "desc": "머리를 맑게 하여 시험과 면접, 오디션에서 최고 점수를 받는 기운",
+        "chinese": "勅令 文星照臨 必得高第",
+        "power": "집중력 강화 · 시험 합격"
+    },
+    {
+        "id": "talisman_protect",
+        "title": "벽사소재부 (辟邪消災符)",
+        "desc": "탁한 액운과 잡귀, 구설수를 칼날처럼 베어내는 수호의 기운",
+        "chinese": "勅令 邪氣退散 福德來臨",
+        "power": "액막이 소멸 · 악살 방어"
+    },
+    {
+        "id": "talisman_health",
+        "title": "칠성무병부 (七星無病符)",
+        "desc": "북두칠성의 기운으로 오장육부의 피로를 씻고 활력을 채우는 기운",
+        "chinese": "勅令 身心康健 延年益壽",
+        "power": "심신 정화 · 면역 증진"
+    },
+    {
+        "id": "talisman_peace",
+        "title": "심신안정부 (心神安定符)",
+        "desc": "불안과 불면, 잡념을 가라앉히고 평온한 평정심을 선사하는 기운",
+        "chinese": "勅令 心神淸明 安祥和平",
+        "power": "멘탈 케어 · 불면 해소"
     }
 ]
 
@@ -236,13 +239,15 @@ async def get_daily_tarot(slot: Optional[int] = 1, rand_seed: Optional[str] = No
 async def analyze_saju(req: AnalyzeRequest):
     saju_result = calculate_saju_pillars(req.year, req.month, req.day, req.sijin_index)
     
-    # 생년월일 + 날짜 기반 고유 인덱스 산출
+    # 생년월일 + 오늘 날짜 기반 1:1 고유 부적 추출 (양력/음력 구분 반영)
     today_str = datetime.now().strftime("%Y-%m-%d")
-    unique_seed = f"{today_str}_{req.name}_{req.year}_{req.month}_{req.day}"
+    cal_flag = req.calendar_type or "solar"
+    sijin_flag = req.sijin_index if req.sijin_index is not None else -1
+    unique_seed = f"{today_str}_{req.name}_{req.year}_{req.month}_{req.day}_{cal_flag}_{sijin_flag}"
     hash_idx = int(hashlib.md5(unique_seed.encode()).hexdigest(), 16)
     
     # 12종 부적 중 사주별 1:1 매칭
-    talisman_idx = (req.year * 7 + req.month * 13 + req.day * 17 + hash_idx) % len(TALISMAN_DECK)
+    talisman_idx = (req.year * 3 + req.month * 7 + req.day * 11 + hash_idx) % len(TALISMAN_DECK)
     today_talisman = TALISMAN_DECK[talisman_idx]
 
     curation = DAILY_CURATIONS[hash_idx % len(DAILY_CURATIONS)]
@@ -262,29 +267,7 @@ async def analyze_saju(req: AnalyzeRequest):
             "recommended_menu": curation["recommended_menu"],
             "lucky_person": curation["lucky_person"],
             "today_gaewoon": curation["today_gaewoon"],
-            "love_advice": "마음을 솔직하게 표현할수록 신뢰가 깊어집니다.",
-            "career_advice": "기초를 탄탄히 다지면 곧 큰 결실로 이어집니다.",
-            "health_advice": "스트레칭으로 목과 어깨의 긴장을 풀어주세요.",
-            "study_advice": "핵심 요점을 정리하고 집중 시간을 확보하세요.",
             "talisman": today_talisman
-        },
-        "monthly": {
-            "title": "안정적인 기반 위에 새로운 기회가 열리는 달",
-            "score": 89,
-            "theme": "씨앗을 뿌리고 터전을 넓히는 중요한 분기점입니다.",
-            "love_advice": "서로의 다름을 존중할 때 관계가 더욱 단단해집니다.",
-            "career_advice": "주변과의 원활한 소통이 프로젝트 성공의 열쇠입니다.",
-            "health_advice": "규칙적인 수면 패턴으로 면역력을 관리하세요.",
-            "study_advice": "장기적인 학습 로드맵을 재점검하기 좋은 시기입니다."
-        },
-        "yearly": {
-            "title": "2026년 대운의 도약과 자산 확장의 해",
-            "score": 95,
-            "main_trend": "그동안 쌓아온 노력과 인내가 마침내 시장에서 큰 가치로 환산되는 시기입니다.",
-            "love_advice": "평생을 함께할 든든한 동반자 인연이 두터워집니다.",
-            "career_advice": "전문성을 인정받아 직급 상승 및 영향력이 확대됩니다.",
-            "health_advice": "규칙적인 운동으로 체력을 길러 큰 기운을 받치세요.",
-            "study_advice": "전문 자격 및 지식 확장이 평생의 무기가 됩니다."
         }
     }
     
@@ -294,20 +277,23 @@ async def analyze_saju(req: AnalyzeRequest):
             <h5 class="font-bold text-amber-950 text-sm mb-1">👑 【{req.name} 님의 자미두수 & 10년 대운 심층 마스터 리포트】</h5>
             <p class="text-amber-900 text-xs">선천적 사주 원국과 10년 주기 대운의 거대한 계절 흐름을 입체 분석한 평생 지침서입니다.</p>
         </div>
+
         <div class="space-y-2">
             <h6 class="font-bold text-brand-900 text-xs border-b border-brand-200 pb-1">1. 대운의 계절적 흐름 & 인생의 터닝포인트</h6>
-            <p>• {req.name} 님의 사주는 뿌리가 깊은 거목의 형상으로, 현재 생애주기 중 가장 에너지가 응축되고 추진력이 폭발하는 황금기 대운의 중심부를 관통하고 있습니다.</p>
+            <p>• {req.name} 님의 사주는 뿌리가 깊은 거목(甲木)의 형상으로, 현재 생애주기 중 가장 에너지가 응축되고 추진력이 폭발하는 <b>40대 중장년 황금기 대운</b>의 중심부를 관통하고 있습니다.</p>
+            <p>• 스스로 판을 주도하고 실질적인 자산과 명예를 거머쥐는 결실의 계절로 진입했습니다.</p>
         </div>
+
         <div class="space-y-2">
             <h6 class="font-bold text-brand-900 text-xs border-b border-brand-200 pb-1">2. 황실 자미두수 4대 핵심 명궁 정밀 해부</h6>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
                 <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
                     <span class="font-bold text-brand-800 block">💰 재백궁(財帛宮) - 평생 재물 그릇</span>
-                    <p class="text-slate-600 text-xs">천부성과 무곡성의 길한 기운이 비쳐 금고가 단단하고 자산이 우상향합니다.</p>
+                    <p class="text-slate-600 text-xs">천부성과 무곡성의 길한 기운이 비쳐 금고가 단단하고 부동산, 문서형 자산을 통해 자산이 계단식으로 우상향합니다.</p>
                 </div>
                 <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
-                    <span class="font-bold text-brand-800 block">💼 관록궁(官祿宮) - 직업 & 성공</span>
-                    <p class="text-slate-600 text-xs">자신의 독자적 전문 영역에서 최대 역량이 발휘됩니다.</p>
+                    <span class="font-bold text-brand-800 block">💼 관록궁(官祿宮) - 직업 & 사회적 성공</span>
+                    <p class="text-slate-600 text-xs">독자적 전문 영역이나 책임자 위치에서 최대 역량이 발휘되며 조직 내 영향력이 커집니다.</p>
                 </div>
             </div>
         </div>
@@ -329,11 +315,11 @@ async def wealth_fortune():
 
 @app.post("/api/health-fortune")
 async def health_fortune():
-    return {"score": 93, "report": "<div class='p-3 bg-sky-50 rounded-xl text-xs text-sky-950 leading-relaxed font-bold'>🌿 평생 건강: 하체 근력 운동과 규칙적인 수분 섭취가 사주의 화기를 내려줍니다.</div>"}
+    return {"score": 93, "report": "<div class='p-3 bg-sky-50 rounded-xl text-xs text-sky-950 leading-relaxed font-bold'>🌿 평생 체질 진단: 하체 근력 운동과 규칙적인 수분 섭취가 사주의 화기를 내려줍니다.</div>"}
 
 @app.post("/api/love-fortune")
 async def love_fortune():
-    return {"score": 95, "report": "<div class='p-3 bg-rose-50 rounded-xl text-xs text-rose-950 leading-relaxed font-bold'>💖 애정운: 신뢰감 높은 동반자 인연이 자리하여 가운이 번창합니다.</div>"}
+    return {"score": 95, "report": "<div class='p-3 bg-rose-50 rounded-xl text-xs text-rose-950 leading-relaxed font-bold'>💖 평생 애정운: 신뢰감 높은 동반자 인연이 자리하여 가운이 번창합니다.</div>"}
 
 @app.post("/api/business-fortune")
 async def business_fortune():
