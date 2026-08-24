@@ -5,7 +5,7 @@ from pydantic import BaseModel
 from typing import Optional
 import os
 
-app = FastAPI(title="운세의 신 PRO API", version="4.1.0")
+app = FastAPI(title="운세의 신 PRO API", version="4.2.0")
 
 CHEONGAN_HANJA = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
 JIJI_HANJA = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"]
@@ -171,40 +171,39 @@ def get_daewoon_report(req: dict):
     return {
         "title": f"👑 {user_name}님의 자미두수 & 10년 대운 심층 리포트",
         "content": f"""
-        <div style="display: flex; flex-direction: column; gap: 14px; font-size: 12px; color: #334155; line-height: 1.6; text-align: left;">
-            <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 16px; padding: 14px;">
-                <h4 style="font-size: 13px; font-weight: 800; color: #0F172A; border-bottom: 1px solid #E2E8F0; padding-bottom: 6px; margin-bottom: 10px;">
+        <div style="display: flex; flex-direction: column; gap: 12px; font-size: 12px; color: #334155; line-height: 1.6; text-align: left;">
+            <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 14px; padding: 12px;">
+                <h4 style="font-size: 13px; font-weight: 800; color: #0F172A; border-bottom: 1px solid #E2E8F0; padding-bottom: 6px; margin-bottom: 8px;">
                     🌐 1. {user_name}님의 평생 생애 주기별 대운맥(大運脈) 흐름
                 </h4>
-                <div style="display: flex; flex-direction: column; gap: 8px; font-size: 11px;">
-                    <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px; padding: 10px;">
+                <div style="display: flex; flex-direction: column; gap: 6px; font-size: 11px;">
+                    <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 10px; padding: 8px;">
                         <p style="font-weight: 700; color: #0F172A;">🌱 [유년기 (년주 기반 / 0세 ~ 19세) : 기틀 형성기]</p>
                         <p style="color: #475569; margin-top: 2px;">탐구심과 지적 호기심이 왕성했던 시기로 내면의 뼈대를 공고히 하던 유년기입니다.</p>
                     </div>
-                    <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px; padding: 10px;">
+                    <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 10px; padding: 8px;">
                         <p style="font-weight: 700; color: #0F172A;">🌿 [청년기 (월주 기반 / 20세 ~ 39세) : 도약 탐색기]</p>
                         <p style="color: #475569; margin-top: 2px;">전문 역량을 갈고닦으며 중년의 성공을 위한 튼튼한 발판을 마련했습니다.</p>
                     </div>
-                    <div style="background: #FEF3C7; border: 1px solid #FCD34D; border-radius: 12px; padding: 10px;">
+                    <div style="background: #FEF3C7; border: 1px solid #FCD34D; border-radius: 10px; padding: 8px;">
                         <p style="font-weight: 800; color: #78350F;">🔥 [중장년기 (*현재 일주 기반 / 40세 ~ 59세) : 황금 자산 결실기]</p>
                         <p style="color: #92400E; margin-top: 2px;"><strong>{user_name}님 인생 최고 하이라이트 구간입니다.</strong> 사회적 주도권을 잡고 자산 확장이 거침없이 일어납니다.</p>
                     </div>
-                    <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px; padding: 10px;">
+                    <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 10px; padding: 8px;">
                         <p style="font-weight: 700; color: #0F172A;">🍎 [말년기 (시주 기반 / 60세 이후) : 태평성대기]</p>
                         <p style="color: #475569; margin-top: 2px;">평생 축적한 부와 지혜로 안락하고 평온한 노후를 누립니다.</p>
                     </div>
                 </div>
             </div>
-            
-            <div style="background: #FFFBEB; border: 1px solid #FDE68A; border-radius: 16px; padding: 14px;">
-                <h4 style="font-size: 13px; font-weight: 800; color: #78350F; border-bottom: 1px solid #FCD34D; padding-bottom: 6px; margin-bottom: 10px;">
+
+            <div style="background: #FFFBEB; border: 1px solid #FDE68A; border-radius: 14px; padding: 12px;">
+                <h4 style="font-size: 13px; font-weight: 800; color: #78350F; border-bottom: 1px solid #FCD34D; padding-bottom: 6px; margin-bottom: 8px;">
                     📈 2. {user_name}님의 현재 10년 대운 정밀 감명 (43세 ~ 52세)
                 </h4>
-                <p style="margin-bottom: 6px;"><strong>[대운의 본질과 주도권]</strong> 丁火 일간에 천을귀인(天乙貴人)과 유금(酉金) 편재의 기운이 굳건히 결합하는 시기입니다. 과거에 수동적으로 끌려가던 입장에서 벗어나, 조직과 사업의 핵심 결정권을 쥐고 인생의 황금기를 설계하는 10년입니다.</p>
-                <p style="margin-bottom: 8px;"><strong>[세운별 핵심 분기점 및 행동 가이드]</strong> 
-                <br>• <strong>44~45세 (자산 포트폴리오 재편):</strong> 불필요한 고정 지출을 정돈하고 부동산 및 문서 형태의 안전 자산을 확보하는 최적기.
-                <br>• <strong>46~48세 (대운의 정점 및 비상):</strong> 강력한 조력자의 등장과 함께 사회적 직위와 명예가 수직 상승하는 황금 전환점.
-                <br>• <strong>49~52세 (수확 및 시스템 수성):</strong> 무리한 확장보다 구축된 시스템을 안정화하여 평생의 은퇴 자금을 완비하는 시기.</p>
+                <p style="margin-bottom: 4px;"><strong>[대운의 본질과 주도권]</strong> 丁火 일간에 천을귀인(天乙貴人)과 유금(酉金) 편재의 기운이 굳건히 결합하는 시기입니다. 과거에 수동적으로 끌려가던 입장에서 벗어나, 조직과 사업의 핵심 결정권을 쥐고 인생의 황금기를 설계하는 10년입니다.</p>
+                <p><strong>[세운별 핵심 분기점 및 행동 가이드]</strong>
+                <br>• <strong>44~45세 (자산 포트폴리오 재편):</strong> 불필요한 고정 지출을 정돈하고 안전 자산을 확보하는 최적기.
+                <br>• <strong>46~48세 (대운의 정점 및 비상):</strong> 강력한 조력자의 등장과 함께 직위와 명예가 수직 상승하는 황금 전환점.</p>
             </div>
         </div>
         """
@@ -225,9 +224,9 @@ def get_theme_report(req: dict):
 
     contents = {
         "wealth": f"""
-        <div style="display: flex; flex-direction: column; gap: 12px; font-size: 12px; color: #334155; line-height: 1.6; text-align: left;">
-            <div style="background: #FFFBEB; border: 1px solid #FDE68A; border-radius: 12px; padding: 12px;">
-                <p style="font-weight: 800; color: #78350F; font-size: 13px;">[재물 그릇] '금고형' 자산 축적 원국</p>
+        <div style="display: flex; flex-direction: column; gap: 10px; font-size: 12px; color: #334155; line-height: 1.6; text-align: left;">
+            <div style="background: #FFFBEB; border: 1px solid #FDE68A; border-radius: 12px; padding: 10px;">
+                <p style="font-weight: 800; color: #78350F; font-size: 12px;">[재물 그릇] '금고형' 자산 축적 원국</p>
                 <p style="font-size: 11px; color: #92400E; margin-top: 2px;">체계적인 현금 흐름을 통해 부를 쌓아 올리는 황금 금고 사주입니다.</p>
             </div>
             <div>
@@ -237,9 +236,9 @@ def get_theme_report(req: dict):
         </div>
         """,
         "love": f"""
-        <div style="display: flex; flex-direction: column; gap: 12px; font-size: 12px; color: #334155; line-height: 1.6; text-align: left;">
-            <div style="background: #FFF1F2; border: 1px solid #FECDD3; border-radius: 12px; padding: 12px;">
-                <p style="font-weight: 800; color: #881337; font-size: 13px;">[현재 상태: {sub_opt}] 맞춤 애정 감명</p>
+        <div style="display: flex; flex-direction: column; gap: 10px; font-size: 12px; color: #334155; line-height: 1.6; text-align: left;">
+            <div style="background: #FFF1F2; border: 1px solid #FECDD3; border-radius: 12px; padding: 10px;">
+                <p style="font-weight: 800; color: #881337; font-size: 12px;">[현재 상태: {sub_opt}] 맞춤 애정 감명</p>
                 <p style="font-size: 11px; color: #9F1239; margin-top: 2px;">현재 {user_name}님의 기운은 내면의 깊은 신뢰와 유대감을 형성하기에 가장 안정적인 상태입니다.</p>
             </div>
             <div>
@@ -249,9 +248,9 @@ def get_theme_report(req: dict):
         </div>
         """,
         "business": f"""
-        <div style="display: flex; flex-direction: column; gap: 12px; font-size: 12px; color: #334155; line-height: 1.6; text-align: left;">
-            <div style="background: #EFF6FF; border: 1px solid #BFDBFE; border-radius: 12px; padding: 12px;">
-                <p style="font-weight: 800; color: #1E3A8A; font-size: 13px;">[직업군 상태: {sub_opt}] 대길 성공 로드맵</p>
+        <div style="display: flex; flex-direction: column; gap: 10px; font-size: 12px; color: #334155; line-height: 1.6; text-align: left;">
+            <div style="background: #EFF6FF; border: 1px solid #BFDBFE; border-radius: 12px; padding: 10px;">
+                <p style="font-weight: 800; color: #1E3A8A; font-size: 12px;">[직업군 상태: {sub_opt}] 대길 성공 로드맵</p>
                 <p style="font-size: 11px; color: #1E40AF; margin-top: 2px;">치밀한 기획력과 실행력이 결합되어 핵심 수장으로 두각을 나타낼 사주입니다.</p>
             </div>
             <div>
@@ -261,9 +260,9 @@ def get_theme_report(req: dict):
         </div>
         """,
         "health": f"""
-        <div style="display: flex; flex-direction: column; gap: 12px; font-size: 12px; color: #334155; line-height: 1.6; text-align: left;">
-            <div style="background: #ECFDF5; border: 1px solid #A7F3D0; border-radius: 12px; padding: 12px;">
-                <p style="font-weight: 800; color: #065F46; font-size: 13px;">[오행 체질 진단] 활력 왕성 체질</p>
+        <div style="display: flex; flex-direction: column; gap: 10px; font-size: 12px; color: #334155; line-height: 1.6; text-align: left;">
+            <div style="background: #ECFDF5; border: 1px solid #A7F3D0; border-radius: 12px; padding: 10px;">
+                <p style="font-weight: 800; color: #065F46; font-size: 12px;">[오행 체질 진단] 활력 왕성 체질</p>
                 <p style="font-size: 11px; color: #047857; margin-top: 2px;">생명력은 왕성하나 체내 수분 및 진액 관리가 평생 건강의 핵심 키입니다.</p>
             </div>
             <div>
