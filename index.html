@@ -88,7 +88,7 @@
                 <div class="bg-gradient-to-br from-brand-900 to-brand-800 rounded-2xl p-5 text-white shadow-md relative overflow-hidden">
                     <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-brand-700/30 rounded-full blur-xl pointer-events-none"></div>
                     <div class="flex justify-between items-start mb-2">
-                        <span id="todayDateStr" class="text-xs text-brand-200 font-medium">2026년 오늘의 일진</span>
+                        <span id="todayDateStr" class="text-xs text-brand-200 font-medium">오늘의 일진</span>
                         <span id="dailyScoreBadge" class="bg-amber-400 text-slate-900 text-xs font-black px-2 py-0.5 rounded-full">운세 95점</span>
                     </div>
                     <h3 id="dailyTitle" class="text-lg font-black leading-snug tracking-tight mb-2">금빛 기운이 서서히 솟아나는 도약의 하루</h3>
@@ -113,20 +113,36 @@
                 <div class="grid grid-cols-2 gap-2.5 text-xs">
                     <div class="bg-slate-50 border border-slate-100 rounded-xl p-3 space-y-1">
                         <span class="text-slate-400 font-medium block">🎨 행운의 색상</span>
-                        <p id="luckyColor" class="font-bold text-slate-800">포레스트 그린 / 골드</p>
+                        <p id="luckyColor" class="font-bold text-slate-800">-</p>
                     </div>
                     <div class="bg-slate-50 border border-slate-100 rounded-xl p-3 space-y-1">
                         <span class="text-slate-400 font-medium block">🔢 행운의 숫자</span>
-                        <p id="luckyNumber" class="font-bold text-slate-800">7, 8</p>
+                        <p id="luckyNumber" class="font-bold text-slate-800">-</p>
                     </div>
                     <div class="bg-slate-50 border border-slate-100 rounded-xl p-3 space-y-1">
                         <span class="text-slate-400 font-medium block">🧭 행운의 방위</span>
-                        <p id="luckyDirection" class="font-bold text-slate-800">동남쪽</p>
+                        <p id="luckyDirection" class="font-bold text-slate-800">-</p>
                     </div>
                     <div class="bg-slate-50 border border-slate-100 rounded-xl p-3 space-y-1">
                         <span class="text-slate-400 font-medium block">👔 추천 코디</span>
-                        <p id="fashionStyle" class="font-bold text-slate-800">단정하고 깔끔한 세미 캐주얼</p>
+                        <p id="fashionStyle" class="font-bold text-slate-800">-</p>
                     </div>
+                    <div class="bg-slate-50 border border-slate-100 rounded-xl p-3 space-y-1">
+                        <span class="text-slate-400 font-medium block">🍲 추천 메뉴</span>
+                        <p id="recommendedMenu" class="font-bold text-slate-800">-</p>
+                    </div>
+                    <div class="bg-slate-50 border border-slate-100 rounded-xl p-3 space-y-1">
+                        <span class="text-slate-400 font-medium block">🤝 오늘의 귀인</span>
+                        <p id="luckyPerson" class="font-bold text-slate-800">-</p>
+                    </div>
+                </div>
+
+                <!-- 오늘의 개운 액션 처방 -->
+                <div class="bg-amber-50/70 border border-amber-200/80 rounded-2xl p-3.5 space-y-1 text-xs">
+                    <span class="font-bold text-amber-950 flex items-center space-x-1">
+                        <span>✨ 오늘의 개운(開運) 실천 액션</span>
+                    </span>
+                    <p id="todayGaewoon" class="text-amber-900 leading-relaxed font-light">-</p>
                 </div>
 
                 <!-- 오늘의 타로 3장 영역 -->
@@ -142,7 +158,6 @@
                     </div>
 
                     <div class="grid grid-cols-3 gap-2.5 pt-1">
-                        <!-- 카드 1 -->
                         <div onclick="handleTarotDraw(1)" class="cursor-pointer perspective-1000 aspect-[2/3] w-full">
                             <div id="flipper1" class="flipper relative w-full h-full transform-style-3d transition-transform duration-700 shadow-xs rounded-xl">
                                 <div class="absolute inset-0 backface-hidden bg-gradient-to-br from-indigo-950 via-slate-900 to-brand-950 rounded-xl border border-indigo-500/30 flex items-center justify-center p-2 text-center">
@@ -151,7 +166,6 @@
                                 <div id="front1" class="absolute inset-0 backface-hidden rotate-y-180 bg-white rounded-xl flex items-center justify-center"></div>
                             </div>
                         </div>
-                        <!-- 카드 2 -->
                         <div onclick="handleTarotDraw(2)" class="cursor-pointer perspective-1000 aspect-[2/3] w-full">
                             <div id="flipper2" class="flipper relative w-full h-full transform-style-3d transition-transform duration-700 shadow-xs rounded-xl">
                                 <div class="absolute inset-0 backface-hidden bg-gradient-to-br from-indigo-950 via-slate-900 to-brand-950 rounded-xl border border-indigo-500/30 flex items-center justify-center p-2 text-center">
@@ -160,7 +174,6 @@
                                 <div id="front2" class="absolute inset-0 backface-hidden rotate-y-180 bg-white rounded-xl flex items-center justify-center"></div>
                             </div>
                         </div>
-                        <!-- 카드 3 -->
                         <div onclick="handleTarotDraw(3)" class="cursor-pointer perspective-1000 aspect-[2/3] w-full">
                             <div id="flipper3" class="flipper relative w-full h-full transform-style-3d transition-transform duration-700 shadow-xs rounded-xl">
                                 <div class="absolute inset-0 backface-hidden bg-gradient-to-br from-indigo-950 via-slate-900 to-brand-950 rounded-xl border border-indigo-500/30 flex items-center justify-center p-2 text-center">
@@ -171,7 +184,7 @@
                         </div>
                     </div>
 
-                    <!-- 타로 해석 결과 컨테이너 -->
+                    <!-- 타로 해석 결과 -->
                     <div id="tarotResultBox" class="hidden"></div>
                 </div>
 
@@ -179,13 +192,14 @@
 
             <!-- 탭 2: 정통 사주 -->
             <div id="view-saju" class="hidden p-4 space-y-4">
+                
+                <!-- 사주 명식표 -->
                 <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 space-y-3">
                     <div class="flex justify-between items-center border-b border-slate-200 pb-2">
                         <h3 class="font-serif-title text-sm font-bold text-slate-900">사주 명식표 (四柱命式)</h3>
                         <span id="sajuOwnerName" class="text-xs text-brand-900 font-bold"></span>
                     </div>
 
-                    <!-- 사주 4주 8자 그리드 -->
                     <div class="grid grid-cols-4 gap-1.5 text-center text-xs">
                         <div class="bg-white p-2 rounded-lg border border-slate-100">
                             <span class="text-[10px] text-slate-400 block mb-1">시주 (時)</span>
@@ -202,6 +216,18 @@
                         <div class="bg-white p-2 rounded-lg border border-slate-100">
                             <span class="text-[10px] text-slate-400 block mb-1">년주 (年)</span>
                             <p id="s_year" class="font-black text-slate-800 text-sm">-</p>
+                        </div>
+                    </div>
+
+                    <!-- 오행 에너지 밸런스 프로그레스 바 -->
+                    <div class="pt-2 space-y-1.5">
+                        <span class="text-[11px] font-bold text-slate-700 block">오행(五行) 에너지 분포</span>
+                        <div class="flex h-3 rounded-full overflow-hidden text-[9px] font-black text-white text-center leading-3" id="ohengBarContainer">
+                            <div id="barWood" class="bg-emerald-600 transition-all duration-500" style="width: 20%">木</div>
+                            <div id="barFire" class="bg-rose-500 transition-all duration-500" style="width: 20%">火</div>
+                            <div id="barEarth" class="bg-amber-500 transition-all duration-500" style="width: 20%">土</div>
+                            <div id="barMetal" class="bg-slate-400 transition-all duration-500" style="width: 20%">金</div>
+                            <div id="barWater" class="bg-sky-600 transition-all duration-500" style="width: 20%">水</div>
                         </div>
                     </div>
                 </div>
@@ -224,10 +250,10 @@
                 </div>
             </div>
 
-            <!-- 탭 3: 테마 운세 -->
+            <!-- 탭 3: 테마 운세 (유료 리포트 풀) -->
             <div id="view-theme" class="hidden p-4 space-y-3">
                 
-                <!-- 재물운 카드 -->
+                <!-- 재물운 -->
                 <div class="bg-white border border-slate-200 rounded-2xl p-4 space-y-2 shadow-2xs">
                     <div class="flex items-center justify-between">
                         <div class="flex items-center space-x-2">
@@ -242,7 +268,7 @@
                     </button>
                 </div>
 
-                <!-- 건강운 카드 -->
+                <!-- 건강운 -->
                 <div class="bg-white border border-slate-200 rounded-2xl p-4 space-y-2 shadow-2xs">
                     <div class="flex items-center justify-between">
                         <div class="flex items-center space-x-2">
@@ -257,7 +283,7 @@
                     </button>
                 </div>
 
-                <!-- 애정운 카드 -->
+                <!-- 애정운 -->
                 <div class="bg-white border border-slate-200 rounded-2xl p-4 space-y-2 shadow-2xs">
                     <div class="flex items-center justify-between">
                         <div class="flex items-center space-x-2">
@@ -272,7 +298,7 @@
                     </button>
                 </div>
 
-                <!-- 사업운 카드 -->
+                <!-- 사업운 -->
                 <div class="bg-white border border-slate-200 rounded-2xl p-4 space-y-2 shadow-2xs">
                     <div class="flex items-center justify-between">
                         <div class="flex items-center space-x-2">
@@ -283,6 +309,51 @@
                     </div>
                     <div id="themeReport_business" class="hidden"></div>
                     <button id="btn_business" onclick="unlockThemeFortune('business', 220, '/api/business-fortune', 'themeReport_business', 'btn_business')" class="w-full bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold py-2 rounded-xl transition">
+                        🪙 220 복채로 열람하기
+                    </button>
+                </div>
+
+                <!-- 이직/연봉 점프 -->
+                <div class="bg-white border border-slate-200 rounded-2xl p-4 space-y-2 shadow-2xs">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-2">
+                            <span class="text-base">💼</span>
+                            <h4 class="text-xs font-bold text-slate-900">2026 이직 합격 & 연봉 상승 전략</h4>
+                        </div>
+                        <span class="text-[10px] bg-slate-100 text-slate-700 px-2 py-0.5 rounded-full font-bold">220 복채</span>
+                    </div>
+                    <div id="themeReport_career" class="hidden"></div>
+                    <button id="btn_career" onclick="unlockThemeFortune('career', 220, '/api/career-jump', 'themeReport_career', 'btn_career')" class="w-full bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold py-2 rounded-xl transition">
+                        🪙 220 복채로 열람하기
+                    </button>
+                </div>
+
+                <!-- 궁합 -->
+                <div class="bg-white border border-slate-200 rounded-2xl p-4 space-y-2 shadow-2xs">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-2">
+                            <span class="text-base">❤️</span>
+                            <h4 class="text-xs font-bold text-slate-900">상대방과의 1:1 정밀 궁합</h4>
+                        </div>
+                        <span class="text-[10px] bg-slate-100 text-slate-700 px-2 py-0.5 rounded-full font-bold">220 복채</span>
+                    </div>
+                    <div id="themeReport_gunghap" class="hidden"></div>
+                    <button id="btn_gunghap" onclick="unlockThemeFortune('gunghap', 220, '/api/gunghap', 'themeReport_gunghap', 'btn_gunghap')" class="w-full bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold py-2 rounded-xl transition">
+                        🪙 220 복채로 열람하기
+                    </button>
+                </div>
+
+                <!-- 속마음 -->
+                <div class="bg-white border border-slate-200 rounded-2xl p-4 space-y-2 shadow-2xs">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-2">
+                            <span class="text-base">💔</span>
+                            <h4 class="text-xs font-bold text-slate-900">그 사람의 속마음 & 연락 타이밍</h4>
+                        </div>
+                        <span class="text-[10px] bg-slate-100 text-slate-700 px-2 py-0.5 rounded-full font-bold">220 복채</span>
+                    </div>
+                    <div id="themeReport_heart" class="hidden"></div>
+                    <button id="btn_heart" onclick="unlockThemeFortune('heart', 220, '/api/heart', 'themeReport_heart', 'btn_heart')" class="w-full bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold py-2 rounded-xl transition">
                         🪙 220 복채로 열람하기
                     </button>
                 </div>
@@ -299,6 +370,23 @@
                     <button onclick="openChargeStore()" class="w-full bg-brand-900 text-white text-xs font-bold py-2.5 rounded-xl">
                         복채 충전소 열기
                     </button>
+                </div>
+
+                <!-- 부적 지갑 보관함 -->
+                <div class="space-y-2">
+                    <h4 class="text-xs font-bold text-slate-800">내 부적 주머니 (보관함)</h4>
+                    <div id="savedTalismanPocket" class="p-3 bg-amber-50/60 border border-amber-200/80 rounded-xl flex items-center justify-between">
+                        <div class="flex items-center space-x-2">
+                            <span class="text-xl">🧧</span>
+                            <div>
+                                <h5 id="pocketTalismanTitle" class="text-xs font-bold text-amber-950">보관된 부적 없음</h5>
+                                <p id="pocketTalismanDesc" class="text-[10px] text-amber-800">부적 팝업에서 지갑에 보관할 수 있습니다.</p>
+                            </div>
+                        </div>
+                        <button onclick="openTalismanModal()" class="text-xs bg-amber-400 text-slate-950 font-bold px-2.5 py-1 rounded-lg">
+                            보기
+                        </button>
+                    </div>
                 </div>
 
                 <div class="space-y-2">
@@ -348,7 +436,10 @@
             <p id="talismanDesc" class="text-xs text-slate-600 leading-relaxed"></p>
 
             <div class="space-y-2">
-                <button onclick="openStandaloneTalismanView()" class="w-full bg-slate-950 text-amber-300 text-xs font-bold py-2.5 rounded-xl shadow-xs transition active:scale-95">
+                <button onclick="saveTalismanToPocket()" class="w-full bg-amber-400 text-slate-950 text-xs font-bold py-2.5 rounded-xl shadow-xs transition active:scale-95">
+                    내 부적 주머니에 보관하기
+                </button>
+                <button onclick="openStandaloneTalismanView()" class="w-full bg-slate-950 text-amber-300 text-xs font-bold py-2 rounded-xl transition">
                     부적 전용 화면(위젯 모드)으로 보기
                 </button>
                 <button onclick="closeTalismanModal()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold py-2 rounded-xl transition">
@@ -415,6 +506,7 @@
         let dailyTarotDrawn = false;
         let drawnTarotCards = {};
         let unlockedReports = {};
+        let savedTalisman = null;
 
         const TAROT_IMAGES = {
             "0. THE FOOL (바보)": "https://upload.wikimedia.org/wikipedia/commons/9/90/RWS_Tarot_00_Fool.jpg",
@@ -485,6 +577,7 @@
             if (fortunesData && fortunesData.daily && fortunesData.daily.talisman) {
                 return fortunesData.daily.talisman;
             }
+            if (savedTalisman) return savedTalisman;
             return {
                 title: "소원성취부 (所願成就符)",
                 desc: "오랫동안 가슴에 품어온 간절한 뜻이 현실로 결실을 맺는 기운",
@@ -540,6 +633,9 @@
                 document.getElementById('luckyNumber').innerText = fortunesData.daily.lucky_number;
                 document.getElementById('luckyDirection').innerText = fortunesData.daily.lucky_direction;
                 document.getElementById('fashionStyle').innerText = fortunesData.daily.fashion_style;
+                document.getElementById('recommendedMenu').innerText = fortunesData.daily.recommended_menu;
+                document.getElementById('luckyPerson').innerText = fortunesData.daily.lucky_person;
+                document.getElementById('todayGaewoon').innerText = fortunesData.daily.today_gaewoon;
                 document.getElementById('dailyTalismanName').innerText = fortunesData.daily.talisman.title;
 
                 // 사주 명식 바인딩
@@ -548,6 +644,15 @@
                 document.getElementById('s_month').innerText = data.saju_data.month_pillar;
                 document.getElementById('s_day').innerText = data.saju_data.day_pillar;
                 document.getElementById('s_hour').innerText = data.saju_data.hour_pillar || "時未詳";
+
+                // 오행 밸런스 바인딩 (데이터 기반 비율 계산)
+                const oheng = data.saju_data.elements_count || {wood: 2, fire: 2, earth: 2, metal: 1, water: 1};
+                const total = (oheng.wood + oheng.fire + oheng.earth + oheng.metal + oheng.water) || 8;
+                document.getElementById('barWood').style.width = `${(oheng.wood / total) * 100}%`;
+                document.getElementById('barFire').style.width = `${(oheng.fire / total) * 100}%`;
+                document.getElementById('barEarth').style.width = `${(oheng.earth / total) * 100}%`;
+                document.getElementById('barMetal').style.width = `${(oheng.metal / total) * 100}%`;
+                document.getElementById('barWater').style.width = `${(oheng.water / total) * 100}%`;
 
                 // 대운 리포트 캐시
                 window.cachedDaewoonReport = data.paid_reports.daewoon;
@@ -660,6 +765,15 @@
             document.getElementById('talismanModal').classList.add('hidden');
         }
 
+        function saveTalismanToPocket() {
+            savedTalisman = getActiveTalisman();
+            localStorage.setItem('saved_talisman', JSON.stringify(savedTalisman));
+            document.getElementById('pocketTalismanTitle').innerText = savedTalisman.title;
+            document.getElementById('pocketTalismanDesc').innerText = savedTalisman.power;
+            alert('🧧 오늘의 맞춤 부적이 내 부적 주머니에 안전하게 보관되었습니다!');
+            closeTalismanModal();
+        }
+
         function openStandaloneTalismanView() {
             const t = getActiveTalisman();
             document.getElementById('standaloneTalismanTitle').innerText = t.title;
@@ -745,10 +859,16 @@
             if (savedCoins) currentCoin = parseInt(savedCoins);
             updateCoinDisplay();
 
+            const storedTalisman = localStorage.getItem('saved_talisman');
+            if (storedTalisman) {
+                savedTalisman = JSON.parse(storedTalisman);
+                document.getElementById('pocketTalismanTitle').innerText = savedTalisman.title;
+                document.getElementById('pocketTalismanDesc').innerText = savedTalisman.power;
+            }
+
             const savedProfile = JSON.parse(localStorage.getItem('saju_profile') || '{"name":"최정오","year":1978,"month":5,"day":12}');
             fetchSajuAnalysis(savedProfile.name, savedProfile.year, savedProfile.month, savedProfile.day);
 
-            // URL 파라미터 체크 (부적 바로가기 앱)
             const urlParams = new URLSearchParams(window.location.search);
             if (urlParams.get('open') === 'talisman') {
                 openStandaloneTalismanView();
