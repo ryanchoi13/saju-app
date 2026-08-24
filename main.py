@@ -54,6 +54,82 @@ async def get_talisman_manifest():
         ]
     }
 
+# 12대 전통 비급 부적 풀
+TALISMAN_DECK = [
+    {
+        "title": "재물만복부 (財物萬福符)",
+        "desc": "금고의 문을 열고 새는 돈을 막아주는 황금 기운",
+        "chinese": "財運大吉\n聚財如山",
+        "power": "재물통로 개운 · 자산 증식"
+    },
+    {
+        "title": "귀인상조부 (貴人相助符)",
+        "desc": "막힌 곳을 뚫어줄 은인과 귀인이 사방에서 돕는 영험한 기운",
+        "chinese": "貴人助我\n萬事亨通",
+        "power": "인맥 조력 · 위기 돌파"
+    },
+    {
+        "title": "벽사소재부 (辟邪消災符)",
+        "desc": "탁한 액운과 잡귀, 구설수를 칼날처럼 베어내는 수호의 기운",
+        "chinese": "邪氣退散\n福德來臨",
+        "power": "액막이 소멸 · 악살 방어"
+    },
+    {
+        "title": "금고수호부 (金庫守護符)",
+        "desc": "갑작스러운 지출과 손재수를 막고 재산을 단단히 지키는 기운",
+        "chinese": "寶庫固封\n漏財永息",
+        "power": "손재수 방어 · 자산 보전"
+    },
+    {
+        "title": "관운승진부 (官運昇進符)",
+        "desc": "명예를 드높이고 직장 및 사회에서 권한을 확대하는 기운",
+        "chinese": "官運昌盛\n出世登科",
+        "power": "승진 합격 · 명예 상승"
+    },
+    {
+        "title": "사업대성부 (事業大成符)",
+        "desc": "손님이 구름처럼 몰려들고 계약이 성사되는 번창의 기운",
+        "chinese": "商運大吉\n千客萬來",
+        "power": "매출 폭발 · 계약 성사"
+    },
+    {
+        "title": "인연화합부 (因緣和合符)",
+        "desc": "어긋난 관계를 봉합하고 진실된 짝과의 애정을 두텁게 하는 기운",
+        "chinese": "緣分結實\n夫婦和合",
+        "power": "애정 돈독 · 관계 회복"
+    },
+    {
+        "title": "칠성무병부 (七星無病符)",
+        "desc": "북두칠성의 기운으로 오장육부의 피로를 씻고 활력을 채우는 기운",
+        "chinese": "身心康健\n延年益壽",
+        "power": "심신 정화 · 면역 증진"
+    },
+    {
+        "title": "장원급제부 (壯元及第符)",
+        "desc": "머리를 맑게 하여 시험과 면접, 오디션에서 최고 점수를 받는 기운",
+        "chinese": "文星照臨\n必得高第",
+        "power": "집중력 강화 · 시험 합격"
+    },
+    {
+        "title": "심신안정부 (心神安定符)",
+        "desc": "불안과 불면, 잡념을 가라앉히고 평온한 평정심을 선사하는 기운",
+        "chinese": "心神淸明\n安祥和平",
+        "power": "멘탈 케어 · 불면 해소"
+    },
+    {
+        "title": "도화매혹부 (桃花魅惑符)",
+        "desc": "나의 숨겨진 매력을 발산하여 대중과 이성의 호감을 끄는 기운",
+        "chinese": "桃花盛開\n萬人愛慕",
+        "power": "인기 상승 · 이성 호감"
+    },
+    {
+        "title": "소원성취부 (所願成就符)",
+        "desc": "오랫동안 가슴에 품어온 간절한 뜻이 현실로 결실을 맺는 기운",
+        "chinese": "心想事成\n萬事如意",
+        "power": "소원 성취 · 만사 대길"
+    }
+]
+
 DAILY_CURATIONS = [
     {
         "title": "금빛 기운이 서서히 솟아나는 도약의 하루",
@@ -148,10 +224,16 @@ async def get_daily_tarot(slot: Optional[int] = 1, rand_seed: Optional[str] = No
 async def analyze_saju(req: AnalyzeRequest):
     saju_result = calculate_saju_pillars(req.year, req.month, req.day, req.sijin_index)
     
+    # [핵심] 오늘 날짜 + 사용자 고유 사주 결합 해시 생성
     today_str = datetime.now().strftime("%Y-%m-%d")
-    seed_str = f"{today_str}_{req.year}_{req.month}_{req.day}_{saju_result.get('day_stem', '갑')}"
+    seed_str = f"{today_str}_{req.name}_{req.year}_{req.month}_{req.day}_{saju_result.get('day_stem', '갑')}"
     hash_idx = int(hashlib.md5(seed_str.encode()).hexdigest(), 16)
     
+    # 1. 12대 부적 중 오늘 나만을 위한 맞춤 부적 자동 추출
+    talisman_idx = (hash_idx + req.year + req.day) % len(TALISMAN_DECK)
+    today_talisman = TALISMAN_DECK[talisman_idx]
+
+    # 2. 운세 큐레이션 및 점수 산정
     curation = DAILY_CURATIONS[hash_idx % len(DAILY_CURATIONS)]
     score_variance = (hash_idx % 7) - 3
     daily_score = max(82, min(99, curation["score_base"] + score_variance))
@@ -173,12 +255,7 @@ async def analyze_saju(req: AnalyzeRequest):
             "career_advice": "기초를 탄탄히 다지면 곧 큰 결실로 이어집니다.",
             "health_advice": "스트레칭으로 목과 어깨의 긴장을 풀어주세요.",
             "study_advice": "핵심 요점을 정리하고 집중 시간을 확보하세요.",
-            "talisman": {
-                "title": "재물만복부 (財物萬福符)",
-                "desc": "금고의 문을 열고 새는 돈을 막아주는 황금 기운",
-                "chinese": "財運大吉\n聚財如山",
-                "power": "재물통로 개운 · 자산 증식"
-            }
+            "talisman": today_talisman
         },
         "monthly": {
             "title": "안정적인 기반 위에 새로운 기회가 열리는 달",
