@@ -531,44 +531,136 @@
         };
 
         function getTalismanGraphic(title) {
-            if (title.includes("재물") || title.includes("금고") || title.includes("사업")) {
+            if (title.includes("재물만복")) {
+                // 1. 재물만복부 (3단 엽전과 황금 창고)
                 return `
-                    <svg viewBox="0 0 100 100" class="w-full h-full text-red-700 fill-current">
-                        <path d="M50 8 L75 24 L75 76 L50 92 L25 76 L25 24 Z" stroke="#B91C1C" stroke-width="4" fill="none"/>
-                        <circle cx="50" cy="50" r="16" stroke="#B91C1C" stroke-width="4" fill="none"/>
-                        <path d="M50 24 L50 76 M34 50 L66 50" stroke="#B91C1C" stroke-width="4" stroke-linecap="round"/>
-                        <path d="M42 38 L58 62 M58 38 L42 62" stroke="#B91C1C" stroke-width="3" stroke-linecap="round"/>
+                    <svg viewBox="0 0 100 100" class="w-full h-full">
+                        <circle cx="50" cy="50" r="42" stroke="#B91C1C" stroke-width="3.5" fill="#FEF2F2" />
+                        <rect x="36" y="36" width="28" height="28" stroke="#B91C1C" stroke-width="3" fill="none" />
+                        <circle cx="50" cy="22" r="7" stroke="#B91C1C" stroke-width="2.5" fill="none" />
+                        <circle cx="50" cy="78" r="7" stroke="#B91C1C" stroke-width="2.5" fill="none" />
+                        <circle cx="22" cy="50" r="7" stroke="#B91C1C" stroke-width="2.5" fill="none" />
+                        <circle cx="78" cy="50" r="7" stroke="#B91C1C" stroke-width="2.5" fill="none" />
+                        <text x="50" y="55" font-family="'Noto Serif KR', serif" font-weight="900" font-size="13" fill="#B91C1C" text-anchor="middle">萬福</text>
                     </svg>
                 `;
-            } else if (title.includes("관운") || title.includes("장원") || title.includes("귀인")) {
+            } else if (title.includes("금고수호")) {
+                // 2. 금고수호부 (4중 잠금 결계와 방패)
                 return `
-                    <svg viewBox="0 0 100 100" class="w-full h-full text-red-700 fill-current">
-                        <path d="M50 6 L65 25 L35 25 Z" stroke="#B91C1C" stroke-width="4" fill="none"/>
-                        <path d="M50 25 L50 88 M30 45 L70 45 M22 62 L78 62" stroke="#B91C1C" stroke-width="5" stroke-linecap="round"/>
-                        <circle cx="50" cy="38" r="5" fill="#B91C1C"/>
-                        <circle cx="30" cy="78" r="4" fill="#B91C1C"/>
-                        <circle cx="70" cy="78" r="4" fill="#B91C1C"/>
-                        <path d="M30 78 L50 88 L70 78" stroke="#B91C1C" stroke-width="3" fill="none"/>
+                    <svg viewBox="0 0 100 100" class="w-full h-full">
+                        <path d="M50 8 L85 24 L85 70 L50 92 L15 70 L15 24 Z" stroke="#B91C1C" stroke-width="3.5" fill="#FEF2F2" />
+                        <rect x="34" y="38" width="32" height="26" rx="4" stroke="#B91C1C" stroke-width="3" fill="none" />
+                        <path d="M42 38 V28 C42 23 58 23 58 28 V38" stroke="#B91C1C" stroke-width="3" fill="none" />
+                        <circle cx="50" cy="49" r="3.5" fill="#B91C1C" />
+                        <path d="M50 52 L50 59" stroke="#B91C1C" stroke-width="2.5" />
                     </svg>
                 `;
-            } else if (title.includes("인연") || title.includes("도화") || title.includes("소원")) {
+            } else if (title.includes("사업대성")) {
+                // 3. 사업대성부 (3단 번창 상승 기둥)
                 return `
-                    <svg viewBox="0 0 100 100" class="w-full h-full text-red-700 fill-current">
-                        <path d="M50 15 C35 0, 10 20, 50 65 C90 20, 65 0, 50 15 Z" stroke="#B91C1C" stroke-width="4" fill="none"/>
-                        <circle cx="50" cy="35" r="8" stroke="#B91C1C" stroke-width="3" fill="none"/>
-                        <path d="M50 65 L50 92 M35 78 L65 78 M40 88 L60 88" stroke="#B91C1C" stroke-width="4" stroke-linecap="round"/>
+                    <svg viewBox="0 0 100 100" class="w-full h-full">
+                        <path d="M50 8 L72 32 H58 V88 H42 V32 H28 Z" stroke="#B91C1C" stroke-width="3.5" fill="#FEF2F2" />
+                        <path d="M22 68 L50 48 L78 68" stroke="#B91C1C" stroke-width="3" fill="none" />
+                        <path d="M22 82 L50 62 L78 82" stroke="#B91C1C" stroke-width="3" fill="none" />
+                        <text x="50" y="44" font-family="'Noto Serif KR', serif" font-weight="900" font-size="11" fill="#B91C1C" text-anchor="middle">大成</text>
+                    </svg>
+                `;
+            } else if (title.includes("인연화합")) {
+                // 4. 인연화합부 (쌍희 囍 & 붉은 실 매듭)
+                return `
+                    <svg viewBox="0 0 100 100" class="w-full h-full">
+                        <circle cx="38" cy="44" r="26" stroke="#B91C1C" stroke-width="3" fill="none" />
+                        <circle cx="62" cy="44" r="26" stroke="#B91C1C" stroke-width="3" fill="none" />
+                        <path d="M50 20 C40 5 15 25 50 65 C85 25 60 5 50 20 Z" stroke="#B91C1C" stroke-width="3" fill="#FEF2F2" />
+                        <text x="50" y="88" font-family="'Noto Serif KR', serif" font-weight="900" font-size="14" fill="#B91C1C" text-anchor="middle">和合</text>
+                    </svg>
+                `;
+            } else if (title.includes("도화매혹")) {
+                // 5. 도화매혹부 (5엽 복숭아꽃 & 나비)
+                return `
+                    <svg viewBox="0 0 100 100" class="w-full h-full">
+                        <path d="M50 28 C45 10 55 10 50 28 Z M68 40 C85 30 80 45 68 40 Z M62 65 C75 80 62 85 62 65 Z M38 65 C38 85 25 80 38 65 Z M32 40 C20 45 15 30 32 40 Z" stroke="#B91C1C" stroke-width="3" fill="#FEF2F2" />
+                        <circle cx="50" cy="46" r="8" stroke="#B91C1C" stroke-width="2.5" fill="#B91C1C" />
+                        <circle cx="50" cy="46" r="4" fill="#FFF" />
+                        <text x="50" y="86" font-family="'Noto Serif KR', serif" font-weight="900" font-size="13" fill="#B91C1C" text-anchor="middle">桃花</text>
+                    </svg>
+                `;
+            } else if (title.includes("소원성취")) {
+                // 6. 소원성취부 (불꽃 보주 / 여의주)
+                return `
+                    <svg viewBox="0 0 100 100" class="w-full h-full">
+                        <circle cx="50" cy="58" r="28" stroke="#B91C1C" stroke-width="3.5" fill="#FEF2F2" />
+                        <path d="M50 10 C38 28 62 38 50 58 C38 38 62 28 50 10 Z" stroke="#B91C1C" stroke-width="3" fill="#FEE2E2" />
+                        <text x="50" y="64" font-family="'Noto Serif KR', serif" font-weight="900" font-size="13" fill="#B91C1C" text-anchor="middle">成就</text>
+                    </svg>
+                `;
+            } else if (title.includes("귀인상조")) {
+                // 7. 귀인상조부 (빛나는 조력자의 날개별)
+                return `
+                    <svg viewBox="0 0 100 100" class="w-full h-full">
+                        <polygon points="50,10 60,38 90,38 66,56 76,84 50,68 24,84 34,56 10,38 40,38" stroke="#B91C1C" stroke-width="3" fill="#FEF2F2" />
+                        <circle cx="50" cy="48" r="12" stroke="#B91C1C" stroke-width="2" fill="#FFF" />
+                        <text x="50" y="53" font-family="'Noto Serif KR', serif" font-weight="900" font-size="10" fill="#B91C1C" text-anchor="middle">貴人</text>
+                    </svg>
+                `;
+            } else if (title.includes("관운승진")) {
+                // 8. 관운승진부 (관모와 3단 상승 계단)
+                return `
+                    <svg viewBox="0 0 100 100" class="w-full h-full">
+                        <path d="M25 40 Q50 15 75 40 L85 48 H15 Z" stroke="#B91C1C" stroke-width="3.5" fill="#FEF2F2" />
+                        <rect x="35" y="48" width="30" height="12" stroke="#B91C1C" stroke-width="2.5" fill="none" />
+                        <path d="M25 68 H75 M32 78 H68 M40 88 H60" stroke="#B91C1C" stroke-width="3.5" stroke-linecap="round" />
+                    </svg>
+                `;
+            } else if (title.includes("장원급제")) {
+                // 9. 장원급제부 (문곡성 붓과 벼루)
+                return `
+                    <svg viewBox="0 0 100 100" class="w-full h-full">
+                        <path d="M50 10 L56 30 L53 72 L47 72 L44 30 Z" stroke="#B91C1C" stroke-width="3" fill="#FEF2F2" />
+                        <polygon points="47,72 53,72 50,88" fill="#B91C1C" />
+                        <circle cx="50" cy="22" r="5" fill="#B91C1C" />
+                        <path d="M20 50 Q50 35 80 50" stroke="#B91C1C" stroke-width="3" fill="none" />
+                        <text x="50" y="58" font-family="'Noto Serif KR', serif" font-weight="900" font-size="11" fill="#B91C1C" text-anchor="middle">及第</text>
+                    </svg>
+                `;
+            } else if (title.includes("벽사소재")) {
+                // 10. 벽사소재부 (악살을 베는 칠성보검)
+                return `
+                    <svg viewBox="0 0 100 100" class="w-full h-full">
+                        <path d="M50 8 L55 20 V72 L50 88 L45 72 V20 Z" stroke="#B91C1C" stroke-width="3.5" fill="#FEF2F2" />
+                        <path d="M30 30 H70 M38 36 H62" stroke="#B91C1C" stroke-width="3.5" stroke-linecap="round" />
+                        <path d="M25 65 L45 72 M75 65 L55 72" stroke="#B91C1C" stroke-width="3" />
+                        <circle cx="50" cy="22" r="3" fill="#B91C1C" />
+                    </svg>
+                `;
+            } else if (title.includes("칠성무병")) {
+                // 11. 칠성무병부 (북두칠성 별자리 성도)
+                return `
+                    <svg viewBox="0 0 100 100" class="w-full h-full">
+                        <circle cx="50" cy="50" r="42" stroke="#B91C1C" stroke-width="2" fill="#FEF2F2" />
+                        <!-- 북두칠성 7개 별과 궤적 -->
+                        <path d="M24 25 L40 28 L46 45 L32 54 L24 25 M46 45 L62 60 L76 62 L82 80" stroke="#B91C1C" stroke-width="2.5" fill="none" />
+                        <circle cx="24" cy="25" r="4" fill="#B91C1C" />
+                        <circle cx="40" cy="28" r="4" fill="#B91C1C" />
+                        <circle cx="46" cy="45" r="4" fill="#B91C1C" />
+                        <circle cx="32" cy="54" r="4" fill="#B91C1C" />
+                        <circle cx="62" cy="60" r="4" fill="#B91C1C" />
+                        <circle cx="76" cy="62" r="4" fill="#B91C1C" />
+                        <circle cx="82" cy="80" r="4" fill="#B91C1C" />
                     </svg>
                 `;
             } else {
+                // 12. 심신안정부 (연꽃 & 음양 태극)
                 return `
-                    <svg viewBox="0 0 100 100" class="w-full h-full text-red-700 fill-current">
-                        <path d="M50 5 L50 92 M30 20 L50 5 L70 20 M20 40 L80 40 M28 58 L72 58 M50 92 L35 75 M50 92 L65 75" stroke="#B91C1C" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-                        <circle cx="50" cy="40" r="7" stroke="#B91C1C" stroke-width="3" fill="none"/>
+                    <svg viewBox="0 0 100 100" class="w-full h-full">
+                        <circle cx="50" cy="50" r="40" stroke="#B91C1C" stroke-width="3" fill="#FEF2F2" />
+                        <path d="M50 10 A20 20 0 0 0 50 50 A20 20 0 0 1 50 90 A40 40 0 0 0 50 10 Z" fill="#B91C1C" />
+                        <circle cx="50" cy="30" r="5" fill="#FEF2F2" />
+                        <circle cx="50" cy="70" r="5" fill="#B91C1C" />
                     </svg>
                 `;
             }
         }
-
         // 항상 실시간 사주 분석 결과를 최우선으로 반환 (캐시 버그 차단)
         function getActiveTalisman() {
             if (fortunesData && fortunesData.daily && fortunesData.daily.talisman) {
