@@ -23,7 +23,6 @@
         main { flex: 1; padding: 16px; display: flex; flex-direction: column; gap: 16px; }
         .card { background: #FFFFFF; border-radius: 24px; border: 1px solid #F1F5F9; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
         
-        /* 폼 요소 */
         .gift-badge { display: inline-flex; align-items: center; background: #FEF3C7; border: 1px solid #FDE68A; color: #78350F; font-size: 12px; font-weight: 700; padding: 4px 12px; border-radius: 9999px; margin-bottom: 12px; }
         .form-group { background: #F8FAFC; border-radius: 16px; border: 1px solid #F1F5F9; padding: 12px; margin-bottom: 10px; text-align: left; }
         .form-label { font-size: 10px; color: #94A3B8; font-weight: 500; display: block; margin-bottom: 4px; }
@@ -33,7 +32,6 @@
         .cal-btn.active { background: #FFFFFF; color: #2D6A4F; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
         .btn-primary { width: 100%; background: #2D6A4F; color: white; border: none; font-size: 13px; font-weight: 900; padding: 14px; border-radius: 16px; cursor: pointer; box-shadow: 0 4px 6px -1px rgba(45,106,79,0.2); margin-top: 8px; }
 
-        /* 결과 화면 요소 */
         .mbti-card { display: flex; align-items: center; gap: 14px; background: white; border-radius: 24px; border: 1px solid #F1F5F9; padding: 16px; }
         .mbti-icon { width: 48px; height: 48px; border-radius: 16px; background: #FEF3C7; display: flex; align-items: center; justify-content: center; font-size: 24px; }
         .daily-banner { background: linear-gradient(135deg, #1E4D38 0%, #2D6A4F 100%); border-radius: 24px; padding: 20px; color: white; display: flex; flex-direction: column; gap: 8px; }
@@ -42,7 +40,6 @@
         .grid-cell { background: white; border: 1px solid #F1F5F9; border-radius: 16px; padding: 12px; font-size: 12px; text-align: left; }
         .action-card { background: #FFFBEB; border: 1px solid #FDE68A; border-radius: 16px; padding: 14px; text-align: left; font-size: 12px; }
 
-        /* 타로 카드 3D 플립 */
         .tarot-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
         .tarot-wrapper { perspective: 1000px; aspect-ratio: 2/3; cursor: pointer; }
         .flipper { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; transition: transform 0.6s ease; border-radius: 12px; }
@@ -51,17 +48,14 @@
         .card-back { background: #10192B; border: 2px solid #D4AF37; padding: 4px; display: flex; align-items: center; justify-content: center; }
         .card-front { transform: rotateY(180deg); background: white; overflow: hidden; }
 
-        /* 부적 카드 */
         .talisman-banner { background: linear-gradient(135deg, #FFFDF5 0%, #FFFBEB 100%); border: 2px solid #FCD34D; border-radius: 24px; padding: 20px; text-align: center; display: flex; flex-direction: column; gap: 12px; }
         .talisman-art { height: 110px; background: rgba(254,243,199,0.6); border-radius: 16px; border: 1px solid rgba(253,230,138,0.8); display: flex; align-items: center; justify-content: center; position: relative; }
 
-        /* 하단 탭바 */
         nav { position: fixed; bottom: 0; width: 100%; max-width: 448px; background: rgba(255,255,255,0.95); backdrop-filter: blur(8px); border-top: 1px solid #F1F5F9; padding: 10px 24px; display: flex; justify-content: space-between; z-index: 40; }
         .tab-btn { background: none; border: none; display: flex; flex-direction: column; align-items: center; gap: 4px; color: #94A3B8; font-size: 10px; cursor: pointer; font-weight: 500; }
         .tab-btn.active { color: #2D6A4F; font-weight: 800; }
         .tab-btn svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 2; }
 
-        /* 모달 팝업 */
         .modal-bg { position: fixed; inset: 0; background: rgba(15,23,42,0.6); backdrop-filter: blur(2px); display: flex; align-items: center; justify-content: center; padding: 16px; z-index: 50; }
         .modal-content { background: white; border-radius: 24px; padding: 20px; width: 100%; max-width: 320px; text-align: center; display: flex; flex-direction: column; gap: 14px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); }
 
@@ -349,7 +343,7 @@
                     </div>
                 </div>
 
-                <!-- 자미두수 & 10년 대운 -->
+                <!-- 자미두수 & 10년 대운 (상단 여백 넉넉하게 보정 및 레드 닷 곡선 선상 완벽 밀착) -->
                 <div class="card" style="border: 2px solid #FCD34D;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                         <span style="font-size: 13px; font-weight: 900;">👑 자미두수 & 10년 대운 리포트</span>
@@ -358,10 +352,12 @@
 
                     <div style="background: #F8FAFC; border-radius: 16px; border: 1px solid #E2E8F0; padding: 12px; margin-bottom: 12px; text-align: left;">
                         <div style="font-size: 10px; font-weight: 700; color: #475569; margin-bottom: 4px;">📊 10년 생애 운세 그래프</div>
-                        <div style="position: relative; width: 100%; height: 70px;">
-                            <svg viewBox="0 0 300 80" style="width: 100%; height: 50px;">
-                                <path d="M 10,65 Q 60,15 110,55 T 210,20 T 290,40" fill="none" stroke="#D97706" stroke-width="3.5" stroke-linecap="round" />
-                                <circle cx="160" cy="32" r="6" fill="#EF4444" stroke="#FFFFFF" stroke-width="2" />
+                        <div style="position: relative; width: 100%; height: 85px;">
+                            <svg viewBox="0 0 300 90" style="width: 100%; height: 65px; overflow: visible;">
+                                <!-- 여백이 충분한 파도 곡선 (M 10,70 ~) -->
+                                <path d="M 10,70 Q 60,30 110,60 T 210,30 T 290,48" fill="none" stroke="#D97706" stroke-width="3.5" stroke-linecap="round" />
+                                <!-- 40대 x=160, y=30 선상 밀착 점 -->
+                                <circle cx="160" cy="30" r="5" fill="#EF4444" stroke="#FFFFFF" stroke-width="2" />
                                 <text x="160" y="18" font-size="9" font-weight="900" fill="#EF4444" text-anchor="middle">현재 40대★</text>
                             </svg>
                             <div style="display: flex; justify-content: space-between; font-size: 9px; color: #94A3B8; font-weight: 700; border-top: 1px solid #E2E8F0; padding-top: 4px;">
