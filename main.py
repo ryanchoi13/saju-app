@@ -3,7 +3,9 @@ from fastapi import FastAPI
 from fastapi.responses import HTMLResponse, FileResponse
 from pydantic import BaseModel
 from typing import Optional
+from datetime import datetime
 import os
+import hashlib
 
 from saju_engine import calculate_saju_pillars
 
@@ -51,33 +53,100 @@ async def get_talisman_manifest():
         ]
     }
 
+# 일자별/개인별 일진 큐레이션 풀
+DAILY_CURATIONS = [
+    {
+        "title": "금빛 기운이 서서히 솟아나는 도약의 하루",
+        "score_base": 92,
+        "advice": "묵혀두었던 계획이나 관계에서 긍정적인 신호가 찾아옵니다. 주도적으로 움직이세요.",
+        "lucky_color": "포레스트 그린 / 골드",
+        "lucky_number": "7, 8",
+        "lucky_direction": "동남쪽",
+        "fashion_style": "단정하고 깔끔한 세미 캐주얼",
+        "lucky_item": "원목 또는 메탈 소품",
+        "recommended_menu": "속이 편안한 영양 한식",
+        "lucky_person": "차분하고 책임감 있는 지인",
+        "today_gaewoon": "오전 중 따뜻한 차 한 잔을 마시며 핵심 목표 3가지를 메모하세요."
+    },
+    {
+        "title": "귀인의 조력으로 매듭이 풀리는 순풍의 하루",
+        "score_base": 95,
+        "advice": "뜻밖의 제안이나 기쁜 소식이 전해집니다. 주변 사람과의 대화에 귀를 기울이세요.",
+        "lucky_color": "아이보리 / 스카이 블루",
+        "lucky_number": "1, 6",
+        "lucky_direction": "정북쪽",
+        "fashion_style": "밝은 톤의 셔츠 또는 니트",
+        "lucky_item": "가죽 지갑 또는 다이어리",
+        "recommended_menu": "신선한 샐러드와 담백한 단백질 식단",
+        "lucky_person": "오랜만에 연락 온 선배 또는 동료",
+        "today_gaewoon": "출근길 또는 외출 시 햇볕을 5분간 쬐며 심호흡을 하세요."
+    },
+    {
+        "title": "내실을 다지고 재물 씨앗을 심는 알찬 하루",
+        "score_base": 88,
+        "advice": "급하게 서두르기보다 점검과 정리에 집중할 때 더 큰 실익이 발생하는 날입니다.",
+        "lucky_color": "네이비 / 딥 브라운",
+        "lucky_number": "3, 5",
+        "lucky_direction": "남서쪽",
+        "fashion_style": "신뢰감을 주는 모노톤 셋업",
+        "lucky_item": "손목시계 또는 펜",
+        "recommended_menu": "따끈한 국물 요리나 솥밥",
+        "lucky_person": "묵묵히 자기 일을 해내는 실무자",
+        "today_gaewoon": "책상이나 지갑 속 영수증을 깔끔하게 정리해 금전 통로를 정돈하세요."
+    },
+    {
+        "title": "빛나는 영감과 아이디어가 샘솟는 창조의 하루",
+        "score_base": 94,
+        "advice": "기존의 틀을 깨는 새로운 시도가 높은 평가를 받습니다. 아이디어를 주저 말고 표현하세요.",
+        "lucky_color": "버건디 / 크림 베이지",
+        "lucky_number": "2, 9",
+        "lucky_direction": "정동쪽",
+        "fashion_style": "포인트 컬러가 들어간 스카프나 악세서리",
+        "lucky_item": "노트북 파우치 또는 향수",
+        "recommended_menu": "풍미가 깊은 이탈리안 파스타 또는 커피",
+        "lucky_person": "감각이 뛰어나고 솔직한 후배",
+        "today_gaewoon": "새로운 음악을 들으며 평소와 다른 산책로를 걸어보세요."
+    }
+]
+
 @app.get("/api/daily-tarot")
 async def get_daily_tarot():
-    return {
-        "name": "X. WHEEL OF FORTUNE (운명의 수레바퀴)",
-        "keyword": "전환점, 뜻밖의 행운, 필연적 기회",
-        "overview": "정체되었던 흐름이 풀리고 새로운 기운이 상승 궤도에 진입합니다.",
-        "action": "변화를 주저하지 말고 찾아온 제안이나 흐름을 긍정적으로 수용하세요.",
-        "caution": "과거의 관성에 얽매이지 말고 새 판을 짤 타이밍입니다."
-    }
+    today_str = datetime.now().strftime("%Y-%m-%d")
+    tarot_deck = [
+        {"name": "X. WHEEL OF FORTUNE (운명의 수레바퀴)", "keyword": "전환점, 뜻밖의 행운, 필연적 기회", "overview": "정체되었던 흐름이 풀리고 새로운 기운이 상승 궤도에 진입합니다.", "action": "변화를 주저하지 말고 찾아온 제안이나 흐름을 긍정적으로 수용하세요.", "caution": "과거의 관성에 얽매이지 말고 새 판을 짤 타이밍입니다."},
+        {"name": "I. THE MAGICIAN (마법사)", "keyword": "창조, 시작, 다재다능, 주도권", "overview": "원하는 것을 현실로 만들어낼 수 있는 능력과 자원이 이미 손안에 있습니다.", "action": "자신감을 가지고 준비해온 기획이나 대화를 먼저 리드하세요.", "caution": "겉모습에만 치중하지 말고 실질적인 내실을 챙겨야 합니다."},
+        {"name": "XIX. THE SUN (태양)", "keyword": "성공, 활력, 명확성, 기쁨", "overview": "어둠이 걷히고 모든 상황이 투명하고 긍정적으로 밝아지는 최상의 카드입니다.", "action": "에너지를 아끼지 말고 밝은 미소로 주변에 긍정적 영향력을 넓히세요.", "caution": "지나친 낙관으로 사소한 디테일을 놓치지 않도록 주의하세요."},
+        {"name": "VI. THE LOVERS (연인)", "keyword": "조화, 올바른 선택, 유대감", "overview": "사람과의 관계에서 깊은 공감대가 형성되고 중요한 선택의 기로에서 좋은 답을 찾습니다.", "action": "마음이 이끄는 진솔한 결정을 내리고 파트너와 신뢰를 나누세요.", "caution": "우유부단하게 결정을 미루면 기회가 지나갈 수 있습니다."}
+    ]
+    hash_val = int(hashlib.md5(today_str.encode()).hexdigest(), 16)
+    return tarot_deck[hash_val % len(tarot_deck)]
 
 @app.post("/api/analyze")
 async def analyze_saju(req: AnalyzeRequest):
     saju_result = calculate_saju_pillars(req.year, req.month, req.day, req.sijin_index)
     
+    # 오늘 날짜 + 사주 천간 결합 시드 생성
+    today_str = datetime.now().strftime("%Y-%m-%d")
+    seed_str = f"{today_str}_{req.year}_{req.month}_{req.day}_{saju_result.get('day_stem', '갑')}"
+    hash_idx = int(hashlib.md5(seed_str.encode()).hexdigest(), 16)
+    
+    curation = DAILY_CURATIONS[hash_idx % len(DAILY_CURATIONS)]
+    score_variance = (hash_idx % 7) - 3  # -3 ~ +3 변동
+    daily_score = max(82, min(99, curation["score_base"] + score_variance))
+
     fortunes = {
         "daily": {
-            "title": "금빛 기운이 서서히 솟아나는 도약의 하루",
-            "score": 92,
-            "advice": "묵혀두었던 계획이나 관계에서 긍정적인 신호가 찾아옵니다.",
-            "lucky_color": "포레스트 그린 / 골드",
-            "lucky_number": "7, 8",
-            "lucky_direction": "동남쪽",
-            "fashion_style": "단정하고 깔끔한 세미 캐주얼",
-            "lucky_item": "원목 또는 메탈 소품",
-            "recommended_menu": "따뜻하고 편안한 한식류",
-            "lucky_person": "성실하고 차분한 동료 또는 지인",
-            "today_gaewoon": "오전 중 따뜻한 차 한 잔을 마시며 오늘의 목표 3가지를 메모하세요.",
+            "title": curation["title"],
+            "score": daily_score,
+            "advice": curation["advice"],
+            "lucky_color": curation["lucky_color"],
+            "lucky_number": curation["lucky_number"],
+            "lucky_direction": curation["lucky_direction"],
+            "fashion_style": curation["fashion_style"],
+            "lucky_item": curation["lucky_item"],
+            "recommended_menu": curation["recommended_menu"],
+            "lucky_person": curation["lucky_person"],
+            "today_gaewoon": curation["today_gaewoon"],
             "love_advice": "마음을 솔직하게 표현할수록 신뢰가 깊어집니다.",
             "career_advice": "기초를 탄탄히 다지면 곧 큰 결실로 이어집니다.",
             "health_advice": "스트레칭으로 목과 어깨의 긴장을 풀어주세요.",
