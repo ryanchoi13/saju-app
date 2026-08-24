@@ -6,7 +6,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <title>운세의 신 PRO</title>
     
-    <link href="[https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800;900&display=swap](https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800;900&display=swap)" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Pretendard', sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background-color: #F4F7F4; color: #1E293B; display: flex; justify-content: center; min-height: 100vh; }
@@ -21,6 +21,7 @@
         .charge-tag { font-size: 10px; background: #2D6A4F; color: white; padding: 2px 6px; border-radius: 9999px; margin-left: 2px; }
 
         main { flex: 1; padding: 16px; display: flex; flex-direction: column; gap: 16px; }
+        .tab-view { display: flex; flex-direction: column; gap: 16px; width: 100%; }
         .card { background: #FFFFFF; border-radius: 24px; border: 1px solid #F1F5F9; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
         
         .gift-badge { display: inline-flex; align-items: center; background: #FEF3C7; border: 1px solid #FDE68A; color: #78350F; font-size: 12px; font-weight: 700; padding: 4px 12px; border-radius: 9999px; margin-bottom: 12px; }
@@ -130,7 +131,7 @@
             </div>
 
             <!-- 탭 1: 오늘운세 -->
-            <div id="view-today" class="hidden" style="display: flex; flex-direction: column; gap: 16px;">
+            <div id="view-today" class="tab-view hidden">
                 
                 <!-- 사주 MBTI -->
                 <div class="mbti-card">
@@ -255,7 +256,7 @@
             </div>
 
             <!-- 탭 2: 정통사주 -->
-            <div id="view-saju" class="hidden" style="display: flex; flex-direction: column; gap: 16px;">
+            <div id="view-saju" class="tab-view hidden">
                 
                 <div class="card">
                     <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 8px; margin-bottom: 12px;">
@@ -368,7 +369,7 @@
             </div>
 
             <!-- 탭 3: 궁합·테마 -->
-            <div id="view-theme" class="hidden" style="display: flex; flex-direction: column; gap: 12px;">
+            <div id="view-theme" class="tab-view hidden">
                 
                 <div class="card" style="text-align: left;">
                     <p style="font-size: 13px; font-weight: 900;">💰 평생 재물 그릇 & 금고운</p>
@@ -409,7 +410,7 @@
             </div>
 
             <!-- 탭 4: 마이페이지 -->
-            <div id="view-mypage" class="hidden" style="display: flex; flex-direction: column; gap: 16px;">
+            <div id="view-mypage" class="tab-view hidden">
                 
                 <div class="card" style="text-align: left;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
@@ -432,7 +433,7 @@
                     <button onclick="resetProfileAndReinput()" style="background: #F1F5F9; border: none; font-size: 12px; font-weight: 700; color: #334155; padding: 6px 12px; border-radius: 12px; cursor: pointer;">정보 수정</button>
                 </div>
 
-                <!-- 구매한 운세 다시보기 보관함 (내용 즉시 노출 개편) -->
+                <!-- 구매한 운세 다시보기 보관함 -->
                 <div class="card" style="text-align: left;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                         <h3 style="font-size: 13px; font-weight: 900; color: #0F172A;">📂 구매한 운세 다시보기 보관함</h3>
@@ -564,14 +565,8 @@
         }
 
         const TAROT_IMAGES = {
-            "0. THE FOOL (바보)": "[https://upload.wikimedia.org/wikipedia/commons/9/90/RWS_Tarot_00_Fool.jpg](https://upload.wikimedia.org/wikipedia/commons/9/90/RWS_Tarot_00_Fool.jpg)",
-            "I. THE MAGICIAN (마법사)": "[https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg](https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg)",
-            "II. THE HIGH PRIESTESS (여사제)": "[https://upload.wikimedia.org/wikipedia/commons/8/88/RWS_Tarot_02_High_Priestess.jpg](https://upload.wikimedia.org/wikipedia/commons/8/88/RWS_Tarot_02_High_Priestess.jpg)",
-            "III. THE EMPRESS (여황제)": "[https://upload.wikimedia.org/wikipedia/commons/d/d2/RWS_Tarot_03_Empress.jpg](https://upload.wikimedia.org/wikipedia/commons/d/d2/RWS_Tarot_03_Empress.jpg)",
-            "IV. THE EMPEROR (황제)": "[https://upload.wikimedia.org/wikipedia/commons/c/c3/RWS_Tarot_04_Emperor.jpg](https://upload.wikimedia.org/wikipedia/commons/c/c3/RWS_Tarot_04_Emperor.jpg)",
-            "VI. THE LOVERS (연인)": "[https://upload.wikimedia.org/wikipedia/commons/3/3a/TheLovers.jpg](https://upload.wikimedia.org/wikipedia/commons/3/3a/TheLovers.jpg)",
-            "X. WHEEL OF FORTUNE (운명의 수레바퀴)": "[https://upload.wikimedia.org/wikipedia/commons/3/3c/RWS_Tarot_10_Wheel_of_Fortune.jpg](https://upload.wikimedia.org/wikipedia/commons/3/3c/RWS_Tarot_10_Wheel_of_Fortune.jpg)",
-            "XIX. THE SUN (태양)": "[https://upload.wikimedia.org/wikipedia/commons/1/17/RWS_Tarot_19_Sun.jpg](https://upload.wikimedia.org/wikipedia/commons/1/17/RWS_Tarot_19_Sun.jpg)"
+            "0. THE FOOL (바보)": "https://upload.wikimedia.org/wikipedia/commons/9/90/RWS_Tarot_00_Fool.jpg",
+            "I. THE MAGICIAN (마법사)": "https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg"
         };
 
         function renderDistinctTalisman(title) {
@@ -588,11 +583,15 @@
 
         function switchTab(tabId) {
             ['today', 'saju', 'theme', 'mypage'].forEach(t => {
-                document.getElementById(`view-${t}`).classList.add('hidden');
-                document.getElementById(`tab-${t}`).classList.remove('active');
+                const el = document.getElementById(`view-${t}`);
+                if (el) el.classList.add('hidden');
+                const tabEl = document.getElementById(`tab-${t}`);
+                if (tabEl) tabEl.classList.remove('active');
             });
-            document.getElementById(`view-${tabId}`).classList.remove('hidden');
-            document.getElementById(`tab-${tabId}`).classList.add('active');
+            const targetEl = document.getElementById(`view-${tabId}`);
+            if (targetEl) targetEl.classList.remove('hidden');
+            const targetTab = document.getElementById(`tab-${tabId}`);
+            if (targetTab) targetTab.classList.add('active');
 
             if (tabId === 'mypage') {
                 renderUnlockedArchive();
@@ -749,7 +748,7 @@
                 document.getElementById('daewoonBox').classList.remove('hidden');
                 document.getElementById('btnDaewoon').classList.add('hidden');
                 saveUnlockedReport('daewoon', data.title, data.content);
-                alert('🎉 자미두수 & 10년 대운 리포트가 열람되었습니다!\n[마이페이지 > 구매한 운세 다시보기 보관함]에도 보관되었습니다.');
+                alert('🎉 자미두수 & 10년 대운 리포트가 열람되었습니다!\n[마이페이지 > 구매한 운세 다시보기 보관함]에 보관되었습니다.');
             });
         }
 
@@ -805,7 +804,7 @@
             
             saveUnlockedReport(currentThemeKey, data.title, data.content);
             closeThemeSelectModal();
-            alert(`🎉 ${data.title} 열람이 완료되었습니다!\n[마이페이지 > 구매한 운세 다시보기 보관함]에도 보관되었습니다.`);
+            alert(`🎉 [${data.title}] 열람 완료!\n[마이페이지 > 구매한 운세 다시보기 보관함]에 보관되었습니다.`);
         }
 
         function saveUnlockedReport(key, title, content) {
@@ -814,13 +813,13 @@
             if (existingIdx >= 0) {
                 unlockedReports[existingIdx] = { key, title, content, date: todayStr };
             } else {
-                unlockedReports.push({ key, title, content, date: todayStr });
+                unlockedReports.unshift({ key, title, content, date: todayStr });
             }
             
             try {
                 localStorage.setItem('unlocked_reports', JSON.stringify(unlockedReports));
             } catch(e) {
-                console.error("localStorage 접근 제한:", e);
+                console.error(e);
             }
             
             renderUnlockedArchive();
@@ -858,6 +857,9 @@
                 if (unlockedReports.length > 0) {
                     countBadge.style.background = '#2D6A4F';
                     countBadge.style.color = '#FFFFFF';
+                } else {
+                    countBadge.style.background = '#E2E8F0';
+                    countBadge.style.color = '#475569';
                 }
             }
 
