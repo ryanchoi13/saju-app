@@ -67,7 +67,7 @@
                         <span>🪙</span>
                         <span id="headerCoinDisplay">1000</span>
                     </button>
-                    <button onclick="openProfileInputModal()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-2.5 py-1 rounded-full font-semibold transition">
+                    <button onclick="openProfileInputModal()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-2.5 py-1 rounded-full font-semibold transition active:scale-95">
                         정보 변경
                     </button>
                 </div>
@@ -296,20 +296,20 @@
             <span class="text-xs text-amber-400 font-bold tracking-widest block uppercase">Daily Sacred Talisman</span>
             <h2 id="standaloneTalismanTitle" class="text-2xl font-serif-title font-black text-amber-300">부적</h2>
             
-            <div class="w-64 h-96 bg-amber-100 border-4 border-amber-600 rounded-3xl p-5 shadow-2xl flex flex-col justify-between items-center text-slate-900">
-                <div class="text-sm font-bold text-red-700 tracking-widest border-b border-red-300 w-full pb-1 text-center font-serif">
-                    敎 令 · 萬 福
+            <div class="w-64 h-96 bg-[#FFF1B8] border-4 border-[#D97706] rounded-3xl p-5 shadow-2xl flex flex-col justify-between items-center text-slate-900">
+                <div id="standaloneTalismanCmd" class="text-xs font-bold text-red-700 tracking-widest border-b border-red-300/80 w-full pb-1 text-center font-serif">
+                    勅令
                 </div>
                 
-                <h4 id="standaloneTalismanTitleSub" class="text-base font-bold text-red-900 mt-1"></h4>
+                <h4 id="standaloneTalismanTitleSub" class="text-base font-black text-red-950 mt-1"></h4>
 
                 <!-- 고유 그래픽 영역 -->
                 <div id="standaloneTalismanGraphicBox" class="w-32 h-32 my-auto flex items-center justify-center"></div>
 
                 <div class="w-full text-center space-y-1">
-                    <p id="standaloneTalismanPower" class="text-xs font-bold text-slate-900"></p>
-                    <p id="standaloneTalismanDesc" class="text-[11px] text-slate-600"></p>
-                    <div class="border-t border-red-300 pt-1 text-[11px] text-slate-700">
+                    <p id="standaloneTalismanPower" class="text-xs font-bold text-slate-950"></p>
+                    <p id="standaloneTalismanDesc" class="text-[11px] text-slate-700 leading-snug"></p>
+                    <div class="border-t border-red-300/80 pt-1 text-[11px] text-slate-800 font-medium">
                         소지자: <span id="standaloneTalismanOwner" class="font-bold underline"></span> 님 평생 수호
                     </div>
                 </div>
@@ -322,7 +322,7 @@
 
     </div>
 
-    <!-- 스크린샷 원본 형태를 완벽 재현한 팝업 모달 -->
+    <!-- 황금빛 부적 팝업 모달 (12종 고유 그래픽 실시간 연동) -->
     <div id="talismanModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-xs flex items-center justify-center p-4 z-50 hidden">
         <div class="bg-white rounded-3xl p-5 max-w-xs w-full text-center space-y-4 shadow-2xl">
             <div class="flex justify-between items-center border-b border-slate-100 pb-2">
@@ -332,20 +332,19 @@
                 <button onclick="closeTalismanModal()" class="text-slate-400 hover:text-slate-600 font-bold text-sm">&times;</button>
             </div>
 
-            <!-- 스크린샷과 100% 동일한 황금빛 부적 카드 본체 -->
             <div class="w-full bg-[#FFF1B8] border-3 border-[#D97706] rounded-2xl p-4 shadow-md mx-auto flex flex-col justify-between items-center text-slate-900 space-y-2">
-                <div class="text-xs font-bold text-red-700 tracking-widest border-b border-red-300/80 w-full pb-1 text-center font-serif">
-                    敎 令 · 萬 福
+                <div id="modalTalismanCmd" class="text-xs font-bold text-red-700 tracking-widest border-b border-red-300/80 w-full pb-1 text-center font-serif">
+                    勅令
                 </div>
 
-                <h4 id="modalTalismanTitle" class="text-sm font-black text-red-950">천우신조부 (天佑神助符)</h4>
+                <h4 id="modalTalismanTitle" class="text-sm font-black text-red-950">부적</h4>
 
                 <!-- 12종 고유 그래픽이 실시간으로 교체되는 정중앙 영역 -->
                 <div id="modalTalismanGraphicBox" class="w-24 h-24 my-auto flex items-center justify-center"></div>
 
                 <div class="w-full text-center space-y-0.5">
-                    <p id="modalTalismanPower" class="text-xs font-bold text-slate-950">귀인 조력 · 위기 탈출</p>
-                    <p id="modalTalismanDesc" class="text-[10px] text-slate-700 leading-snug">결정적인 순간 귀인의 손길을 이어주는 수호 기운</p>
+                    <p id="modalTalismanPower" class="text-xs font-bold text-slate-950"></p>
+                    <p id="modalTalismanDesc" class="text-[10px] text-slate-700 leading-snug"></p>
                     <div class="border-t border-red-300/80 pt-1 text-[10px] text-slate-800 font-medium">
                         소지자: <span id="modalTalismanOwner" class="font-bold underline">최정오</span> 님 평생 수호
                     </div>
@@ -707,6 +706,7 @@
             document.getElementById('modalTalismanDesc').innerText = currentTalismanData.desc;
             document.getElementById('modalTalismanPower').innerText = currentTalismanData.power;
             document.getElementById('modalTalismanOwner').innerText = currentUserName;
+            document.getElementById('modalTalismanCmd').innerText = currentTalismanData.chinese || "勅令 萬事大吉";
             
             // 12종 고유 그래픽 주입
             document.getElementById('modalTalismanGraphicBox').innerHTML = renderDistinctTalisman(currentTalismanData.title);
@@ -726,6 +726,7 @@
             document.getElementById('standaloneTalismanDesc').innerText = currentTalismanData.desc;
             document.getElementById('standaloneTalismanPower').innerText = currentTalismanData.power;
             document.getElementById('standaloneTalismanOwner').innerText = currentUserName;
+            document.getElementById('standaloneTalismanCmd').innerText = currentTalismanData.chinese || "勅令 萬事大吉";
 
             document.getElementById('standaloneTalismanGraphicBox').innerHTML = renderDistinctTalisman(currentTalismanData.title);
 
