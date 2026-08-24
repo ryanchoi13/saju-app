@@ -6,7 +6,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <title>운세의 신 PRO</title>
     
-    <link href="[https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800;900&display=swap](https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800;900&display=swap)" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Pretendard', sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background-color: #F4F7F4; color: #1E293B; display: flex; justify-content: center; min-height: 100vh; }
@@ -439,7 +439,7 @@
                         <h3 style="font-size: 13px; font-weight: 900; color: #0F172A;">📂 구매한 운세 다시보기 보관함</h3>
                         <span id="archiveCountBadge" style="font-size: 10px; background: #2D6A4F; color: #FFFFFF; padding: 2px 8px; border-radius: 9999px; font-weight: 700;">0건</span>
                     </div>
-                    <div id="unlockedArchiveList" style="display: flex; flex-direction: column; gap: 12px;">
+                    <div id="unlockedArchiveList" style="display: flex; flex-direction: column; gap: 10px;">
                         <div style="text-align: center; padding: 20px 0; color: #94A3B8; font-size: 11px;">
                             <p style="font-size: 24px; margin-bottom: 4px;">📂</p>
                             <p>아직 구매한 심층 리포트가 없습니다.</p>
@@ -548,6 +548,24 @@
         </div>
     </div>
 
+    <!-- 보관함 다시보기 팝업 모달 -->
+    <div id="archiveDetailModal" class="modal-bg hidden">
+        <div class="modal-content" style="max-width: 380px; max-height: 85vh; display: flex; flex-direction: column; text-align: left; padding: 20px; border-radius: 24px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 10px; margin-bottom: 12px; flex-shrink: 0;">
+                <h3 id="archiveModalTitle" style="font-size: 13px; font-weight: 900; color: #0F172A; padding-right: 8px; line-height: 1.3;">운세 리포트</h3>
+                <button onclick="closeArchiveDetailModal()" style="background: none; border: none; font-size: 20px; color: #94A3B8; cursor: pointer; flex-shrink: 0;">&times;</button>
+            </div>
+            
+            <div id="archiveModalBody" style="flex: 1; overflow-y: auto; padding-right: 4px; margin-bottom: 12px;">
+                <!-- 리포트 본문 출력 -->
+            </div>
+
+            <button onclick="closeArchiveDetailModal()" style="width: 100%; background: #2D6A4F; color: white; border: none; font-size: 13px; font-weight: 900; padding: 12px; border-radius: 12px; cursor: pointer; flex-shrink: 0;">
+                확인 및 닫기
+            </button>
+        </div>
+    </div>
+
     <script>
         let currentCoin = 1000;
         let selectedCalendarType = 'solar';
@@ -557,7 +575,7 @@
         let dailyTarotDrawn = false;
         let drawnTarotCards = {};
 
-        // 무조건 배열을 반환하는 데이터 복원 함수
+        // 안전한 배열 파싱 함수
         function getUnlockedReports() {
             try {
                 let raw = localStorage.getItem('unlocked_reports');
@@ -573,8 +591,8 @@
         let unlockedReports = getUnlockedReports();
 
         const TAROT_IMAGES = {
-            "0. THE FOOL (바보)": "[https://upload.wikimedia.org/wikipedia/commons/9/90/RWS_Tarot_00_Fool.jpg](https://upload.wikimedia.org/wikipedia/commons/9/90/RWS_Tarot_00_Fool.jpg)",
-            "I. THE MAGICIAN (마법사)": "[https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg](https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg)"
+            "0. THE FOOL (바보)": "https://upload.wikimedia.org/wikipedia/commons/9/90/RWS_Tarot_00_Fool.jpg",
+            "I. THE MAGICIAN (마법사)": "https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg"
         };
 
         function renderDistinctTalisman(title) {
@@ -756,7 +774,7 @@
                 document.getElementById('daewoonBox').classList.remove('hidden');
                 document.getElementById('btnDaewoon').classList.add('hidden');
                 saveUnlockedReport('daewoon', data.title, data.content);
-                alert('🎉 [자미두수 & 10년 대운 리포트] 열람이 완료되었습니다!\n[마이페이지 > 구매한 운세 다시보기 보관함]에서 언제든 다시 보실 수 있습니다.');
+                alert('🎉 [자미두수 & 10년 대운 리포트] 열람 완료!\n[마이페이지 > 보관함]에 성공적으로 보관되었습니다.');
             });
         }
 
@@ -812,7 +830,7 @@
             
             saveUnlockedReport(currentThemeKey, data.title, data.content);
             closeThemeSelectModal();
-            alert(`🎉 [${data.title}] 열람 완료!\n[마이페이지 > 구매한 운세 다시보기 보관함]에서 언제든 다시 보실 수 있습니다.`);
+            alert(`🎉 [${data.title}] 열람 완료!\n[마이페이지 > 보관함]에 성공적으로 보관되었습니다.`);
         }
 
         function saveUnlockedReport(key, title, content) {
@@ -858,6 +876,20 @@
             });
         }
 
+        function openArchiveDetail(idx) {
+            unlockedReports = getUnlockedReports();
+            const item = unlockedReports[idx];
+            if (!item) return;
+
+            document.getElementById('archiveModalTitle').innerText = item.title;
+            document.getElementById('archiveModalBody').innerHTML = item.content;
+            document.getElementById('archiveDetailModal').classList.remove('hidden');
+        }
+
+        function closeArchiveDetailModal() {
+            document.getElementById('archiveDetailModal').classList.add('hidden');
+        }
+
         function renderUnlockedArchive() {
             unlockedReports = getUnlockedReports();
             const container = document.getElementById('unlockedArchiveList');
@@ -886,18 +918,18 @@
                 return;
             }
 
-            container.innerHTML = unlockedReports.map((r) => `
-                <div style="background: #F8FAFC; border: 1.5px solid #2D6A4F; border-radius: 16px; padding: 14px; text-align: left; box-shadow: 0 2px 4px rgba(0,0,0,0.03);">
-                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #E2E8F0; padding-bottom: 8px; margin-bottom: 10px;">
-                        <div style="display: flex; align-items: center; gap: 6px;">
-                            <span style="font-size: 10px; background: #2D6A4F; color: #FFFFFF; font-weight: 800; padding: 2px 6px; border-radius: 4px;">열람완료</span>
-                            <span style="font-weight: 800; color: #0F172A; font-size: 12px;">${r.title}</span>
+            container.innerHTML = unlockedReports.map((r, idx) => `
+                <div style="background: #F8FAFC; border: 1.5px solid #2D6A4F; border-radius: 16px; padding: 12px 14px; text-align: left; display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+                    <div style="flex: 1; overflow: hidden;">
+                        <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
+                            <span style="font-size: 9px; background: #2D6A4F; color: #FFFFFF; font-weight: 800; padding: 2px 6px; border-radius: 4px; flex-shrink: 0;">열람완료</span>
+                            <span style="font-size: 10px; color: #94A3B8; flex-shrink: 0;">${r.date}</span>
                         </div>
-                        <span style="font-size: 10px; color: #94A3B8;">${r.date}</span>
+                        <h4 style="font-weight: 800; color: #0F172A; font-size: 12px; line-height: 1.3; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${r.title}</h4>
                     </div>
-                    <div style="font-size: 11px; color: #334155; line-height: 1.6;">
-                        ${r.content}
-                    </div>
+                    <button onclick="openArchiveDetail(${idx})" style="background: #2D6A4F; color: #FFFFFF; border: none; font-size: 11px; font-weight: 800; padding: 8px 12px; border-radius: 10px; cursor: pointer; white-space: nowrap; flex-shrink: 0; box-shadow: 0 2px 4px rgba(45,106,79,0.2);">
+                        📄 다시보기
+                    </button>
                 </div>
             `).join('');
         }
