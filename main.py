@@ -110,16 +110,42 @@ DAILY_CURATIONS = [
 ]
 
 @app.get("/api/daily-tarot")
-async def get_daily_tarot():
-    today_str = datetime.now().strftime("%Y-%m-%d")
-    tarot_deck = [
-        {"name": "X. WHEEL OF FORTUNE (운명의 수레바퀴)", "keyword": "전환점, 뜻밖의 행운, 필연적 기회", "overview": "정체되었던 흐름이 풀리고 새로운 기운이 상승 궤도에 진입합니다.", "action": "변화를 주저하지 말고 찾아온 제안이나 흐름을 긍정적으로 수용하세요.", "caution": "과거의 관성에 얽매이지 말고 새 판을 짤 타이밍입니다."},
-        {"name": "I. THE MAGICIAN (마법사)", "keyword": "창조, 시작, 다재다능, 주도권", "overview": "원하는 것을 현실로 만들어낼 수 있는 능력과 자원이 이미 손안에 있습니다.", "action": "자신감을 가지고 준비해온 기획이나 대화를 먼저 리드하세요.", "caution": "겉모습에만 치중하지 말고 실질적인 내실을 챙겨야 합니다."},
-        {"name": "XIX. THE SUN (태양)", "keyword": "성공, 활력, 명확성, 기쁨", "overview": "어둠이 걷히고 모든 상황이 투명하고 긍정적으로 밝아지는 최상의 카드입니다.", "action": "에너지를 아끼지 말고 밝은 미소로 주변에 긍정적 영향력을 넓히세요.", "caution": "지나친 낙관으로 사소한 디테일을 놓치지 않도록 주의하세요."},
-        {"name": "VI. THE LOVERS (연인)", "keyword": "조화, 올바른 선택, 유대감", "overview": "사람과의 관계에서 깊은 공감대가 형성되고 중요한 선택의 기로에서 좋은 답을 찾습니다.", "action": "마음이 이끄는 진솔한 결정을 내리고 파트너와 신뢰를 나누세요.", "caution": "우유부단하게 결정을 미루면 기회가 지나갈 수 있습니다."}
-    ]
-    hash_val = int(hashlib.md5(today_str.encode()).hexdigest(), 16)
-    return tarot_deck[hash_val % len(tarot_deck)]
+TAROT_DECK = [
+    {"name": "0. THE FOOL (바보)", "keyword": "새로운 시작, 순수한 열정, 무한한 가능성", "overview": "얽매이지 않는 자유로운 발걸음으로 미지의 새로운 여정을 시작할 최적의 타이밍입니다.", "action": "실패를 두려워하지 말고 호기심과 가벼운 마음으로 첫 발을 내딛으세요.", "caution": "준비 없는 무모한 모험이나 디테일 부족을 경계해야 합니다."},
+    {"name": "I. THE MAGICIAN (마법사)", "keyword": "창조, 시작, 다재다능, 주도권", "overview": "원하는 것을 현실로 만들어낼 수 있는 능력과 자원이 이미 손안에 있습니다.", "action": "자신감을 가지고 준비해온 기획이나 대화를 먼저 리드하세요.", "caution": "겉모습에만 치중하지 말고 실질적인 내실을 챙겨야 합니다."},
+    {"name": "II. THE HIGH PRIESTESS (여사제)", "keyword": "직관, 통찰력, 비밀, 정중동", "overview": "내면의 목소리와 직관이 극대화되는 날입니다. 깊이 있는 사색이 정답을 줍니다.", "action": "서두르지 말고 상황을 관찰하며 내면의 지혜를 믿으세요.", "caution": "차갑거나 배타적인 태도로 주변 사람에게 오해를 사지 않도록 하세요."},
+    {"name": "III. THE EMPRESS (여황제)", "keyword": "풍요, 결실, 포용, 창의성", "overview": "물질적·정서적으로 풍요롭고 따뜻한 에너지가 가득 차오르는 결실의 카드입니다.", "action": "주변에 베풀고 스스로에게도 기분 좋은 휴식과 보상을 선물하세요.", "caution": "나태함이나 과도한 소비에 주의하세요."},
+    {"name": "IV. THE EMPEROR (황제)", "keyword": "통솔력, 안정, 확고한 원칙, 성취", "overview": "자신의 영역을 확고하게 장악하고 리더십을 발휘하여 목표를 달성합니다.", "action": "원칙과 기준을 명확히 세우고 흔들림 없이 밀고 나가세요.", "caution": "고집이나 독단적인 태도로 파트너와 부딪히지 않도록 조율하세요."},
+    {"name": "V. THE HIEROPHANT (교황)", "keyword": "신뢰, 조언, 멘토, 전통", "overview": "신뢰할 수 있는 멘토나 조력자의 가르침을 통해 올바른 방향을 찾습니다.", "action": "혼자 끙끙 앓기보다 경험자의 조언을 구하고 상식을 따르세요.", "caution": "지나친 보수성으로 새로운 기회를 놓치지 않도록 주의하세요."},
+    {"name": "VI. THE LOVERS (연인)", "keyword": "조화, 올바른 선택, 유대감", "overview": "사람과의 관계에서 깊은 공감대가 형성되고 중요한 선택의 기로에서 좋은 답을 찾습니다.", "action": "마음이 이끄는 진솔한 결정을 내리고 파트너와 신뢰를 나누세요.", "caution": "우유부단하게 결정을 미루면 기회가 지나갈 수 있습니다."},
+    {"name": "VII. THE CHARIOT (전차)", "keyword": "돌파, 승리, 강한 추진력", "overview": "장애물을 뚫고 목표를 향해 거침없이 질주하는 승리의 기운이 감돕니다.", "action": "목표에 집중하고 강한 집중력으로 오늘 안에 끝장을 보세요.", "caution": "과속이나 감정적 폭주로 주변을 다치게 하지 않도록 브레이크를 점검하세요."},
+    {"name": "VIII. STRENGTH (힘)", "keyword": "부드러운 통제, 인내, 내면의 용기", "overview": "물리적인 힘이 아닌 따뜻한 포용력과 인내로 거친 상황을 길들입니다.", "action": "화내지 말고 부드러운 미소와 설득으로 상대를 내 편으로 만드세요.", "caution": "지나친 자기 억압으로 스트레스가 쌓이지 않도록 마인드 컨트롤하세요."},
+    {"name": "IX. THE HERMIT (은둔자)", "keyword": "탐구, 진리, 고요한 성찰", "overview": "외부의 소음에서 벗어나 나만의 길을 밝히는 등불을 켜는 시간입니다.", "action": "조용히 생각을 정리하고 깊이 있는 연구나 공부에 몰입하세요.", "caution": "세상과의 소통을 완전히 단절하고 외골수로 빠지지 않도록 하세요."},
+    {"name": "X. WHEEL OF FORTUNE (운명의 수레바퀴)", "keyword": "전환점, 뜻밖의 행운, 필연적 기회", "overview": "정체되었던 흐름이 풀리고 새로운 기운이 상승 궤도에 진입합니다.", "action": "변화를 주저하지 말고 찾아온 제안이나 흐름을 긍정적으로 수용하세요.", "caution": "과거의 관성에 얽매이지 말고 새 판을 짤 타이밍입니다."},
+    {"name": "XI. JUSTICE (정의)", "keyword": "공정함, 균형, 명확한 판단", "overview": "감정을 배제하고 냉철한 이성과 객관적 사실에 근거해 결정을 내립니다.", "action": "계약, 서류, 금전 거래 등에서 꼼꼼하게 시시비비를 가리세요.", "caution": "지나치게 따지다 인간미를 잃지 않도록 배려를 섞어주세요."},
+    {"name": "XII. THE HANGED MAN (매달린 사람)", "keyword": "관점의 전환, 희생, 기다림의 지혜", "overview": "남들과 다른 시각으로 세상을 바라볼 때 뜻밖의 돌파구가 열립니다.", "action": "조급하게 움직이지 말고 한 발 물러서서 상황을 넓게 조망하세요.", "caution": "무기력하게 끌려다니지 말고 주체적인 인내를 유지하세요."},
+    {"name": "XIII. DEATH (죽음과 재생)", "keyword": "끝과 새로운 시작, 환골탈태", "overview": "쓸모없어진 과거의 패턴을 과감히 잘라내고 완전히 새로운 판을 짭니다.", "action": "미련을 버리고 불필요한 관계나 습관을 정리하세요.", "caution": "과거를 붙잡고 있으면 새로운 복이 들어올 자리가 없습니다."},
+    {"name": "XIV. TEMPERANCE (절제)", "keyword": "균형, 융합, 평정심", "overview": "서로 다른 두 기운을 조화롭게 섞어 최적의 황금비율을 찾아냅니다.", "action": "과유불급을 기억하고 중용의 태도로 마음의 평화를 지키세요.", "caution": "극단적인 선택이나 과식, 과음을 피하세요."},
+    {"name": "XV. THE DEVIL (악마)", "keyword": "강한 유혹, 집착, 본능적 매력", "overview": "헤어나오기 힘든 강력한 매력이나 유혹, 집착에 얽힐 수 있습니다.", "action": "달콤한 제안의 이면에 숨겨진 계약 조건을 철저히 확인하세요.", "caution": "중독적인 습관이나 집착의 고리를 과감히 끊어내야 합니다."},
+    {"name": "XVI. THE TOWER (탑)", "keyword": "예상치 못한 충격, 낡은 틀의 붕괴, 각성", "overview": "불안정한 기반 위에 쌓아올린 탑이 무너지며 진실이 드러납니다.", "action": "위기를 기회로 삼아 바닥부터 새롭고 튼튼하게 다시 시작하세요.", "caution": "당황하지 말고 충격을 차분히 수습하는 침착함이 필요합니다."},
+    {"name": "XVII. THE STAR (별)", "keyword": "희망, 영감, 치유, 맑은 비전", "overview": "어둠 속에서 반짝이는 길잡이 별처럼 미래에 대한 밝은 희망과 비전이 생깁니다.", "action": "꿈꾸던 이상을 향해 긍정적인 마음으로 씨앗을 뿌리세요.", "caution": "현실감 없는 막연한 낙관주의에만 머무르지 않도록 실행력을 더하세요."},
+    {"name": "XVIII. THE MOON (달)", "keyword": "불안, 안개, 감수성, 비밀", "overview": "상황이 아직 안갯속처럼 명확하지 않아 마음속에 불안이 스밀 수 있습니다.", "action": "중대한 결정은 며칠 뒤로 미루고 감정의 파도를 차분히 가라앉히세요.", "caution": "실체 없는 두려움이나 의심에 휘둘리지 마세요."},
+    {"name": "XIX. THE SUN (태양)", "keyword": "성공, 활력, 명확성, 최고의 행운", "overview": "모든 근심이 사라지고 밝은 빛 아래에서 큰 성공과 기쁨을 누립니다.", "action": "자신 있게 나서서 스포트라이트를 받고 열정을 마음껏 발산하세요.", "caution": "자만심으로 주변 사람을 무시하지 않도록 겸손을 챙기세요."},
+    {"name": "XX. JUDGEMENT (심판)", "keyword": "부활, 재기, 기쁜 소식, 결단", "overview": "오랫동안 기다려온 결과나 기쁜 보상의 나팔 소리가 울려 퍼집니다.", "action": "망설이지 말고 과거의 오해를 풀고 두 번째 기회를 잡으세요.", "caution": "결정적 신호가 왔을 때 주저하다 타이밍을 놓치지 마세요."},
+    {"name": "XXI. THE WORLD (세계)", "keyword": "완성, 완벽한 조화, 글로벌, 대단원", "overview": "한 단계의 완벽한 마무리를 짓고 더 넓은 세계로 도약하는 최고의 결실 카드입니다.", "action": "지금까지의 성취를 자축하고 더 큰 무대를 향해 나아가세요.", "caution": "완성에 안주하지 말고 다음 레벨을 준비하세요."}
+]
+
+@app.get("/api/daily-tarot")
+async def get_daily_tarot(slot: Optional[int] = 1, rand_seed: Optional[str] = None):
+    import random
+    if rand_seed:
+        # 다시 뽑기 등 고유 시드가 올 경우 랜덤성 부여
+        hash_val = int(hashlib.md5(f"{rand_seed}_{slot}_{random.random()}".encode()).hexdigest(), 16)
+    else:
+        today_str = datetime.now().strftime("%Y-%m-%d")
+        hash_val = int(hashlib.md5(f"{today_str}_slot_{slot}".encode()).hexdigest(), 16)
+    
+    return TAROT_DECK[hash_val % len(TAROT_DECK)]
 
 @app.post("/api/analyze")
 async def analyze_saju(req: AnalyzeRequest):
