@@ -76,7 +76,7 @@
             <div id="headerAuthArea">
                 <button onclick="openChargeStore()" class="coin-btn">
                     <span class="coin-circle">C</span>
-                    <span id="coinHeader">300</span>
+                    <span id="coinHeader">1000</span>
                     <span class="charge-tag">충전</span>
                 </button>
             </div>
@@ -86,7 +86,7 @@
             
             <!-- 로그인 전 사주 입력창 -->
             <div id="onboardingInputView" class="card" style="text-align: center;">
-                <div class="gift-badge">🎁 가입 축하 300 복채 지급</div>
+                <div class="gift-badge">🎁 가입 축하 1,000 복채 지급</div>
                 <h2 style="font-size: 20px; font-weight: 900; margin-bottom: 2px;">반가워요!</h2>
                 <p style="font-size: 12px; color: #64748B; margin-bottom: 16px;">사주를 분석할 기본 정보를 입력해 주세요</p>
 
@@ -415,7 +415,7 @@
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                         <span style="font-size: 12px; color: #64748B;">현재 보유 복채</span>
                         <div style="display: flex; align-items: center; gap: 4px; font-size: 18px; font-weight: 900; color: #78350F;">
-                            <span id="coinMypage">300</span>
+                            <span id="coinMypage">1000</span>
                             <span>🪙</span>
                         </div>
                     </div>
@@ -432,10 +432,18 @@
                     <button onclick="resetProfileAndReinput()" style="background: #F1F5F9; border: none; font-size: 12px; font-weight: 700; color: #334155; padding: 6px 12px; border-radius: 12px; cursor: pointer;">정보 수정</button>
                 </div>
 
+                <!-- 구매한 운세 다시보기 보관함 (내용 즉시 노출 개편) -->
                 <div class="card" style="text-align: left;">
-                    <h3 style="font-size: 12px; font-weight: 900; margin-bottom: 10px;">📂 구매한 운세 다시보기 보관함</h3>
-                    <div id="unlockedArchiveList">
-                        <p style="font-size: 11px; color: #94A3B8; text-align: center; padding: 8px 0;">아직 구매한 심층 리포트가 없습니다.</p>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                        <h3 style="font-size: 13px; font-weight: 900; color: #0F172A;">📂 구매한 운세 다시보기 보관함</h3>
+                        <span id="archiveCountBadge" style="font-size: 10px; background: #E2E8F0; color: #475569; padding: 2px 8px; border-radius: 9999px; font-weight: 700;">0건</span>
+                    </div>
+                    <div id="unlockedArchiveList" style="display: flex; flex-direction: column; gap: 12px;">
+                        <div style="text-align: center; padding: 20px 0; color: #94A3B8; font-size: 11px;">
+                            <p style="font-size: 24px; margin-bottom: 4px;">📂</p>
+                            <p>아직 구매한 심층 리포트가 없습니다.</p>
+                            <p style="font-size: 10px; color: #CBD5E1; margin-top: 2px;">정통사주 및 테마운세에서 열람한 리포트가 이곳에 평생 보관됩니다.</p>
+                        </div>
                     </div>
                 </div>
 
@@ -540,7 +548,7 @@
     </div>
 
     <script>
-        let currentCoin = 300;
+        let currentCoin = 1000;
         let selectedCalendarType = 'solar';
         let currentThemeKey = '';
         let currentTalisman = null;
@@ -548,7 +556,6 @@
         let dailyTarotDrawn = false;
         let drawnTarotCards = {};
         
-        // localStorage로부터 저장된 구매 리포트 목록 복원
         let unlockedReports = [];
         try {
             unlockedReports = JSON.parse(localStorage.getItem('unlocked_reports') || '[]');
@@ -607,7 +614,6 @@
 
             currentTalisman = data.daily_fortune.talisman;
 
-            // 사주 4기둥 표시
             document.getElementById('s_year').innerText = data.saju_data.year_pillar;
             document.getElementById('s_month').innerText = data.saju_data.month_pillar;
             document.getElementById('s_day').innerText = data.saju_data.day_pillar;
@@ -619,7 +625,6 @@
             document.getElementById('jjg_day').innerText = dtl.day.jjg || "-";
             document.getElementById('jjg_hour').innerText = dtl.hour.jjg || "-";
 
-            // MBTI 및 오행 정밀 파싱 결과 바인딩
             document.getElementById('mbtiTypeName').innerText = data.saju_data.mbti.mbti;
             document.getElementById('mbtiTypeDesc').innerText = data.saju_data.mbti.desc;
             document.getElementById('mbtiAnimalIcon').innerText = data.saju_data.animal_icon;
@@ -647,6 +652,7 @@
             document.getElementById('view-today').classList.remove('hidden');
 
             checkUnlockedStates();
+            renderUnlockedArchive();
         }
 
         function resetProfileAndReinput() {
@@ -743,6 +749,7 @@
                 document.getElementById('daewoonBox').classList.remove('hidden');
                 document.getElementById('btnDaewoon').classList.add('hidden');
                 saveUnlockedReport('daewoon', data.title, data.content);
+                alert('🎉 자미두수 & 10년 대운 리포트가 열람되었습니다!\n[마이페이지 > 구매한 운세 다시보기 보관함]에도 보관되었습니다.');
             });
         }
 
@@ -798,6 +805,7 @@
             
             saveUnlockedReport(currentThemeKey, data.title, data.content);
             closeThemeSelectModal();
+            alert(`🎉 ${data.title} 열람이 완료되었습니다!\n[마이페이지 > 구매한 운세 다시보기 보관함]에도 보관되었습니다.`);
         }
 
         function saveUnlockedReport(key, title, content) {
@@ -808,7 +816,13 @@
             } else {
                 unlockedReports.push({ key, title, content, date: todayStr });
             }
-            localStorage.setItem('unlocked_reports', JSON.stringify(unlockedReports));
+            
+            try {
+                localStorage.setItem('unlocked_reports', JSON.stringify(unlockedReports));
+            } catch(e) {
+                console.error("localStorage 접근 제한:", e);
+            }
+            
             renderUnlockedArchive();
         }
 
@@ -834,30 +848,39 @@
             });
         }
 
-        function toggleArchiveItem(idx) {
-            const el = document.getElementById(`archive_content_${idx}`);
-            if (el) {
-                el.classList.toggle('hidden');
-            }
-        }
-
         function renderUnlockedArchive() {
             const container = document.getElementById('unlockedArchiveList');
+            const countBadge = document.getElementById('archiveCountBadge');
             if (!container) return;
+
+            if (countBadge) {
+                countBadge.innerText = `${unlockedReports.length}건`;
+                if (unlockedReports.length > 0) {
+                    countBadge.style.background = '#2D6A4F';
+                    countBadge.style.color = '#FFFFFF';
+                }
+            }
+
             if (!unlockedReports || unlockedReports.length === 0) {
-                container.innerHTML = `<p style="font-size: 11px; color: #94A3B8; text-align: center; padding: 12px 0;">아직 구매한 심층 리포트가 없습니다.</p>`;
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 20px 0; color: #94A3B8; font-size: 11px;">
+                        <p style="font-size: 24px; margin-bottom: 4px;">📂</p>
+                        <p>아직 구매한 심층 리포트가 없습니다.</p>
+                        <p style="font-size: 10px; color: #CBD5E1; margin-top: 2px;">정통사주 및 테마운세에서 열람한 리포트가 이곳에 평생 보관됩니다.</p>
+                    </div>`;
                 return;
             }
-            container.innerHTML = unlockedReports.map((r, idx) => `
-                <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 12px; margin-bottom: 8px; text-align: left;">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <span style="font-weight: 800; color: #1E293B; font-size: 12px;">${r.title}</span>
+
+            container.innerHTML = unlockedReports.map((r) => `
+                <div style="background: #F8FAFC; border: 1.5px solid #2D6A4F; border-radius: 16px; padding: 14px; text-align: left; box-shadow: 0 2px 4px rgba(0,0,0,0.03);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #E2E8F0; padding-bottom: 8px; margin-bottom: 10px;">
+                        <div style="display: flex; align-items: center; gap: 6px;">
+                            <span style="font-size: 10px; background: #D1FAE5; color: #065F46; font-weight: 800; padding: 2px 6px; border-radius: 4px;">보관됨</span>
+                            <span style="font-weight: 800; color: #0F172A; font-size: 12px;">${r.title}</span>
+                        </div>
                         <span style="font-size: 10px; color: #94A3B8;">${r.date}</span>
                     </div>
-                    <button onclick="toggleArchiveItem(${idx})" style="background: #E2E8F0; border: none; font-size: 10px; color: #2D6A4F; font-weight: 800; margin-top: 8px; padding: 4px 8px; border-radius: 6px; cursor: pointer;">
-                        내용 다시보기 ▾
-                    </button>
-                    <div id="archive_content_${idx}" class="hidden" style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #E2E8F0;">
+                    <div style="font-size: 11px; color: #334155; line-height: 1.6;">
                         ${r.content}
                     </div>
                 </div>
