@@ -1,338 +1,766 @@
-# -*- coding: utf-8 -*-
-from fastapi import FastAPI
-from fastapi.responses import HTMLResponse, FileResponse
-from pydantic import BaseModel
-from typing import Optional
-from datetime import datetime
-import os
-import random
-import hashlib
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <title>운세의 신 - 정통 사주명리 & 자미두수</title>
+    
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#1F3D2B">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3655/3655581.png">
 
-from saju_engine import calculate_saju_pillars
-
-app = FastAPI(title="운세의 신 API")
-
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-
-class AnalyzeRequest(BaseModel):
-    name: str
-    year: int
-    month: int
-    day: int
-    calendar_type: Optional[str] = "solar"
-    sijin_index: Optional[int] = None
-    is_unknown_time: bool = False
-
-@app.get("/", response_class=HTMLResponse)
-async def read_index():
-    index_path = os.path.join(BASE_DIR, "index.html")
-    with open(index_path, "r", encoding="utf-8") as f:
-        content = f.read()
-    # 모바일 캐시 방지를 위해 버전 타임스탬프 헤더 추가
-    return HTMLResponse(content=content, headers={"Cache-Control": "no-cache, no-store, must-revalidate"})
-
-@app.get("/manifest.json")
-async def get_manifest():
-    return FileResponse(os.path.join(BASE_DIR, "manifest.json"), media_type="application/json")
-
-@app.get("/sw.js")
-async def get_sw():
-    return FileResponse(os.path.join(BASE_DIR, "sw.js"), media_type="application/javascript")
-
-@app.get("/manifest-talisman.json")
-async def get_talisman_manifest():
-    return {
-        "name": "오늘의 맞춤 부적",
-        "short_name": "수호부적",
-        "start_url": "/?open=talisman",
-        "display": "standalone",
-        "background_color": "#18181B",
-        "theme_color": "#D97706",
-        "icons": [
-            {
-                "src": "https://cdn-icons-png.flaticon.com/512/3655/3655581.png",
-                "sizes": "512x512",
-                "type": "image/png"
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@600;700;900&family=Pretendard:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#F4F7F4',
+                            100: '#E3EBE3',
+                            200: '#C7D7C7',
+                            700: '#2D5A3F',
+                            800: '#234732',
+                            900: '#1F3D2B',
+                            950: '#13271B'
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['"Noto Serif KR"', 'serif'],
+                        sans: ['Pretendard', 'sans-serif']
+                    }
+                }
             }
-        ]
-    }
-
-# 12대 전통 비급 부적
-TALISMAN_DECK = [
-    {
-        "id": "talisman_wealth",
-        "title": "재물만복부 (財物萬福符)",
-        "desc": "금고의 문을 열고 새는 돈을 막아주는 황금 기운",
-        "chinese": "勅令 財運大吉 聚財如山",
-        "power": "재물통로 개운 · 자산 증식"
-    },
-    {
-        "id": "talisman_safe",
-        "title": "금고수호부 (金庫守護符)",
-        "desc": "갑작스러운 지출과 손재수를 막고 재산을 단단히 지키는 기운",
-        "chinese": "勅令 寶庫固封 漏財永息",
-        "power": "손재수 방어 · 자산 보전"
-    },
-    {
-        "id": "talisman_biz",
-        "title": "사업대성부 (事業大成符)",
-        "desc": "손님이 구름처럼 몰려들고 계약이 성사되는 번창의 기운",
-        "chinese": "勅令 商運大吉 千客萬來",
-        "power": "매출 폭발 · 계약 성사"
-    },
-    {
-        "id": "talisman_love",
-        "title": "인연화합부 (因緣和合符)",
-        "desc": "어긋난 관계를 봉합하고 진실된 짝과의 애정을 두텁게 하는 기운",
-        "chinese": "勅令 緣分結實 夫婦和合",
-        "power": "애정 돈독 · 관계 회복"
-    },
-    {
-        "id": "talisman_dohwa",
-        "title": "도화매혹부 (桃花魅惑符)",
-        "desc": "나의 숨겨진 매력을 발산하여 대중과 이성의 호감을 끄는 기운",
-        "chinese": "勅令 桃花盛開 萬人愛慕",
-        "power": "인기 상승 · 이성 호감"
-    },
-    {
-        "id": "talisman_wish",
-        "title": "소원성취부 (所願成就符)",
-        "desc": "오랫동안 가슴에 품어온 간절한 뜻이 현실로 결실을 맺는 기운",
-        "chinese": "勅令 心想事成 萬事如意",
-        "power": "소원 성취 · 만사 대길"
-    },
-    {
-        "id": "talisman_noble",
-        "title": "귀인상조부 (貴人相助符)",
-        "desc": "막힌 곳을 뚫어줄 은인과 귀인이 사방에서 돕는 영험한 기운",
-        "chinese": "勅令 貴人助我 萬事亨通",
-        "power": "인맥 조력 · 위기 돌파"
-    },
-    {
-        "id": "talisman_honor",
-        "title": "관운승진부 (官運昇進符)",
-        "desc": "명예를 드높이고 직장 및 사회에서 권한을 확대하는 기운",
-        "chinese": "勅令 官運昌盛 出世登科",
-        "power": "승진 합격 · 명예 상승"
-    },
-    {
-        "id": "talisman_pass",
-        "title": "장원급제부 (壯元及第符)",
-        "desc": "머리를 맑게 하여 시험과 면접, 오디션에서 최고 점수를 받는 기운",
-        "chinese": "勅令 文星照臨 必得高第",
-        "power": "집중력 강화 · 시험 합격"
-    },
-    {
-        "id": "talisman_protect",
-        "title": "벽사소재부 (辟邪消災符)",
-        "desc": "탁한 액운과 잡귀, 구설수를 칼날처럼 베어내는 수호의 기운",
-        "chinese": "勅令 邪氣退散 福德來臨",
-        "power": "액막이 소멸 · 악살 방어"
-    },
-    {
-        "id": "talisman_health",
-        "title": "칠성무병부 (七星無病符)",
-        "desc": "북두칠성의 기운으로 오장육부의 피로를 씻고 활력을 채우는 기운",
-        "chinese": "勅令 身心康健 延年益壽",
-        "power": "심신 정화 · 면역 증진"
-    },
-    {
-        "id": "talisman_peace",
-        "title": "심신안정부 (心神安定符)",
-        "desc": "불안과 불면, 잡념을 가라앉히고 평온한 평정심을 선사하는 기운",
-        "chinese": "勅令 心神淸明 安祥和平",
-        "power": "멘탈 케어 · 불면 해소"
-    }
-]
-
-DAILY_CURATIONS = [
-    {
-        "title": "금빛 기운이 서서히 솟아나는 도약의 하루",
-        "score_base": 92,
-        "advice": "묵혀두었던 계획이나 관계에서 긍정적인 신호가 찾아옵니다. 주도적으로 움직이세요.",
-        "lucky_color": "포레스트 그린 / 골드",
-        "lucky_number": "7, 8",
-        "lucky_direction": "동남쪽",
-        "fashion_style": "단정하고 깔끔한 세미 캐주얼",
-        "lucky_item": "원목 또는 메탈 소품",
-        "recommended_menu": "속이 편안한 영양 한식",
-        "lucky_person": "차분하고 책임감 있는 지인",
-        "today_gaewoon": "오전 중 따뜻한 차 한 잔을 마시며 핵심 목표 3가지를 메모하세요."
-    },
-    {
-        "title": "귀인의 조력으로 매듭이 풀리는 순풍의 하루",
-        "score_base": 95,
-        "advice": "뜻밖의 제안이나 기쁜 소식이 전해집니다. 주변 사람과의 대화에 귀를 기울이세요.",
-        "lucky_color": "아이보리 / 스카이 블루",
-        "lucky_number": "1, 6",
-        "lucky_direction": "정북쪽",
-        "fashion_style": "밝은 톤의 셔츠 또는 니트",
-        "lucky_item": "가죽 지갑 또는 다이어리",
-        "recommended_menu": "신선한 샐러드와 담백한 단백질 식단",
-        "lucky_person": "오랜만에 연락 온 선배 또는 동료",
-        "today_gaewoon": "출근길 또는 외출 시 햇볕을 5분간 쬐며 심호흡을 하세요."
-    },
-    {
-        "title": "내실을 다지고 재물 씨앗을 심는 알찬 하루",
-        "score_base": 88,
-        "advice": "급하게 서두르기보다 점검과 정리에 집중할 때 더 큰 실익이 발생하는 날입니다.",
-        "lucky_color": "네이비 / 딥 브라운",
-        "lucky_number": "3, 5",
-        "lucky_direction": "남서쪽",
-        "fashion_style": "신뢰감을 주는 모노톤 셋업",
-        "lucky_item": "손목시계 또는 펜",
-        "recommended_menu": "따끈한 국물 요리나 솥밥",
-        "lucky_person": "묵묵히 자기 일을 해내는 실무자",
-        "today_gaewoon": "책상이나 지갑 속 영수증을 깔끔하게 정리해 금전 통로를 정돈하세요."
-    },
-    {
-        "title": "빛나는 영감과 아이디어가 샘솟는 창조의 하루",
-        "score_base": 94,
-        "advice": "기존의 틀을 깨는 새로운 시도가 높은 평가를 받습니다. 아이디어를 주저 말고 표현하세요.",
-        "lucky_color": "버건디 / 크림 베이지",
-        "lucky_number": "2, 9",
-        "lucky_direction": "정동쪽",
-        "fashion_style": "포인트 컬러가 들어간 스카프나 악세서리",
-        "lucky_item": "노트북 파우치 또는 향수",
-        "recommended_menu": "풍미가 깊은 이탈리안 파스타 또는 커피",
-        "lucky_person": "감각이 뛰어나고 솔직한 후배",
-        "today_gaewoon": "새로운 음악을 들으며 평소와 다른 산책로를 걸어보세요."
-    }
-]
-
-TAROT_DECK = [
-    {"name": "0. THE FOOL (바보)", "keyword": "새로운 시작, 순수한 열정, 무한한 가능성", "overview": "얽매이지 않는 자유로운 발걸음으로 미지의 새로운 여정을 시작할 최적의 타이밍입니다.", "action": "실패를 두려워하지 말고 호기심과 가벼운 마음으로 첫 발을 내딛으세요.", "caution": "준비 없는 무모한 모험이나 디테일 부족을 경계해야 합니다."},
-    {"name": "I. THE MAGICIAN (마법사)", "keyword": "창조, 시작, 다재다능, 주도권", "overview": "원하는 것을 현실로 만들어낼 수 있는 능력과 자원이 이미 손안에 있습니다.", "action": "자신감을 가지고 준비해온 기획이나 대화를 먼저 리드하세요.", "caution": "겉모습에만 치중하지 말고 실질적인 내실을 챙겨야 합니다."},
-    {"name": "II. THE HIGH PRIESTESS (여사제)", "keyword": "직관, 통찰력, 비밀, 정중동", "overview": "내면의 목소리와 직관이 극대화되는 날입니다. 깊이 있는 사색이 정답을 줍니다.", "action": "서두르지 말고 상황을 관찰하며 내면의 지혜를 믿으세요.", "caution": "차갑거나 배타적인 태도로 주변 사람에게 오해를 사지 않도록 하세요."},
-    {"name": "III. THE EMPRESS (여황제)", "keyword": "풍요, 결실, 포용, 창의성", "overview": "물질적·정서적으로 풍요롭고 따뜻한 에너지가 가득 차오르는 결실의 카드입니다.", "action": "주변에 베풀고 스스로에게도 기분 좋은 휴식과 보상을 선물하세요.", "caution": "나태함이나 과도한 소비에 주의하세요."},
-    {"name": "IV. THE EMPEROR (황제)", "keyword": "통솔력, 안정, 확고한 원칙, 성취", "overview": "자신의 영역을 확고하게 장악하고 리더십을 발휘하여 목표를 달성합니다.", "action": "원칙과 기준을 명확히 세우고 흔들림 없이 밀고 나가세요.", "caution": "고집이나 독단적인 태도로 파트너와 부딪히지 않도록 조율하세요."},
-    {"name": "V. THE HIEROPHANT (교황)", "keyword": "신뢰, 조언, 멘토, 전통", "overview": "신뢰할 수 있는 멘토나 조력자의 가르침을 통해 올바른 방향을 찾습니다.", "action": "혼자 끙끙 앓기보다 경험자의 조언을 구하고 상식을 따르세요.", "caution": "지나친 보수성으로 새로운 기회를 놓치지 않도록 주의하세요."},
-    {"name": "VI. THE LOVERS (연인)", "keyword": "조화, 올바른 선택, 유대감", "overview": "사람과의 관계에서 깊은 공감대가 형성되고 중요한 선택의 기로에서 좋은 답을 찾습니다.", "action": "마음이 이끄는 진솔한 결정을 내리고 파트너와 신뢰를 나누세요.", "caution": "우유부단하게 결정을 미루면 기회가 지나갈 수 있습니다."},
-    {"name": "VII. THE CHARIOT (전차)", "keyword": "돌파, 승리, 강한 추진력", "overview": "장애물을 뚫고 목표를 향해 거침없이 질주하는 승리의 기운이 감돕니다.", "action": "목표에 집중하고 강한 집중력으로 오늘 안에 끝장을 보세요.", "caution": "과속이나 감정적 폭주로 주변을 다치게 하지 않도록 브레이크를 점검하세요."},
-    {"name": "VIII. STRENGTH (힘)", "keyword": "부드러운 통제, 인내, 내면의 용기", "overview": "물리적인 힘이 아닌 따뜻한 포용력과 인내로 거친 상황을 길들입니다.", "action": "화내지 말고 부드러운 미소와 설득으로 상대를 내 편으로 만드세요.", "caution": "지나친 자기 억압으로 스트레스가 쌓이지 않도록 마인드 컨트롤하세요."},
-    {"name": "IX. THE HERMIT (은둔자)", "keyword": "탐구, 진리, 고요한 성찰", "overview": "외부의 소음에서 벗어나 나만의 길을 밝히는 등불을 켜는 시간입니다.", "action": "조용히 생각을 정리하고 깊이 있는 연구나 공부에 몰입하세요.", "caution": "세상과의 소통을 완전히 단절하고 외골수로 빠지지 않도록 하세요."},
-    {"name": "X. WHEEL OF FORTUNE (운명의 수레바퀴)", "keyword": "전환점, 뜻밖의 행운, 필연적 기회", "overview": "정체되었던 흐름이 풀리고 새로운 기운이 상승 궤도에 진입합니다.", "action": "변화를 주저하지 말고 찾아온 제안이나 흐름을 긍정적으로 수용하세요.", "caution": "과거의 관성에 얽매이지 말고 새 판을 짤 타이밍입니다."},
-    {"name": "XI. JUSTICE (정의)", "keyword": "공정함, 균형, 명확한 판단", "overview": "감정을 배제하고 냉철한 이성과 객관적 사실에 근거해 결정을 내립니다.", "action": "계약, 서류, 금전 거래 등에서 꼼꼼하게 시시비비를 가리세요.", "caution": "지나치게 따지다 인간미를 잃지 않도록 배려를 섞어주세요."},
-    {"name": "XII. THE HANGED MAN (매달린 사람)", "keyword": "관점의 전환, 희생, 기다림의 지혜", "overview": "남들과 다른 시각으로 세상을 바라볼 때 뜻밖의 돌파구가 열립니다.", "action": "조급하게 움직이지 말고 한 발 물러서서 상황을 넓게 조망하세요.", "caution": "무기력하게 끌려다니지 말고 주체적인 인내를 유지하세요."},
-    {"name": "XIII. DEATH (죽음과 재생)", "keyword": "끝과 새로운 시작, 환골탈태", "overview": "쓸모없어진 과거의 패턴을 과감히 잘라내고 완전히 새로운 판을 짭니다.", "action": "미련을 버리고 불필요한 관계나 습관을 정리하세요.", "caution": "과거를 붙잡고 있으면 새로운 복이 들어올 자리가 없습니다."},
-    {"name": "XIV. TEMPERANCE (절제)", "keyword": "균형, 융합, 평정심", "overview": "서로 다른 두 기운을 조화롭게 섞어 최적의 황금비율을 찾아냅니다.", "action": "과유불급을 기억하고 중용의 태도로 마음의 평화를 지키세요.", "caution": "극단적인 선택이나 과식, 과음을 피하세요."},
-    {"name": "XV. THE DEVIL (악마)", "keyword": "강한 유혹, 집착, 본능적 매력", "overview": "헤어나오기 힘든 강력한 매력이나 유혹, 집착에 얽힐 수 있습니다.", "action": "달콤한 제안의 이면에 숨겨진 계약 조건을 철저히 확인하세요.", "caution": "중독적인 습관이나 집착의 고리를 과감히 끊어내야 합니다."},
-    {"name": "XVI. THE TOWER (탑)", "keyword": "예상치 못한 충격, 낡은 틀의 붕괴, 각성", "overview": "불안정한 기반 위에 쌓아올린 탑이 무너지며 진실이 드러납니다.", "action": "위기를 기회로 삼아 바닥부터 새롭고 튼튼하게 다시 시작하세요.", "caution": "당황하지 말고 충격을 차분히 수습하는 침착함이 필요합니다."},
-    {"name": "XVII. THE STAR (별)", "keyword": "희망, 영감, 치유, 맑은 비전", "overview": "어둠 속에서 반짝이는 길잡이 별처럼 미래에 대한 밝은 희망과 비전이 생깁니다.", "action": "꿈꾸던 이상을 향해 긍정적인 마음으로 씨앗을 뿌리세요.", "caution": "현실감 없는 막연한 낙관주의에만 머무르지 않도록 실행력을 더하세요."},
-    {"name": "XVIII. THE MOON (달)", "keyword": "불안, 안개, 감수성, 비밀", "overview": "상황이 아직 안갯속처럼 명확하지 않아 마음속에 불안이 스밀 수 있습니다.", "action": "중대한 결정은 며칠 뒤로 미루고 감정의 파도를 차분히 가라앉히세요.", "caution": "실체 없는 두려움이나 의심에 휘둘리지 마세요."},
-    {"name": "XIX. THE SUN (태양)", "keyword": "성공, 활력, 명확성, 최고의 행운", "overview": "모든 근심이 사라지고 밝은 빛 아래에서 큰 성공과 기쁨을 누립니다.", "action": "자신 있게 나서서 스포트라이트를 받고 열정을 마음껏 발산하세요.", "caution": "자만심으로 주변 사람을 무시하지 않도록 겸손을 챙기세요."},
-    {"name": "XX. JUDGEMENT (심판)", "keyword": "부활, 재기, 기쁜 소식, 결단", "overview": "오랫동안 기다려온 결과나 기쁜 보상의 나팔 소리가 울려 퍼집니다.", "action": "망설이지 말고 과거의 오해를 풀고 두 번째 기회를 잡으세요.", "caution": "결정적 신호가 왔을 때 주저하다 타이밍을 놓치지 마세요."},
-    {"name": "XXI. THE WORLD (세계)", "keyword": "완성, 완벽한 조화, 글로벌, 대단원", "overview": "한 단계의 완벽한 마무리를 짓고 더 넓은 세계로 도약하는 최고의 결실 카드입니다.", "action": "지금까지의 성취를 자축하고 더 큰 무대를 향해 나아가세요.", "caution": "완성에 안주하지 말고 다음 레벨을 준비하세요."}
-]
-
-@app.get("/api/daily-tarot")
-async def get_daily_tarot(slot: Optional[int] = 1, rand_seed: Optional[str] = None):
-    if rand_seed:
-        hash_val = int(hashlib.md5(f"{rand_seed}_{slot}_{random.random()}".encode()).hexdigest(), 16)
-    else:
-        today_str = datetime.now().strftime("%Y-%m-%d")
-        hash_val = int(hashlib.md5(f"{today_str}_slot_{slot}".encode()).hexdigest(), 16)
-    
-    return TAROT_DECK[hash_val % len(TAROT_DECK)]
-
-@app.post("/api/analyze")
-async def analyze_saju(req: AnalyzeRequest):
-    saju_result = calculate_saju_pillars(req.year, req.month, req.day, req.sijin_index)
-    
-    # 생년월일 + 오늘 날짜 기반 1:1 고유 부적 추출 (양력/음력 구분 반영)
-    today_str = datetime.now().strftime("%Y-%m-%d")
-    cal_flag = req.calendar_type or "solar"
-    sijin_flag = req.sijin_index if req.sijin_index is not None else -1
-    unique_seed = f"{today_str}_{req.name}_{req.year}_{req.month}_{req.day}_{cal_flag}_{sijin_flag}"
-    hash_idx = int(hashlib.md5(unique_seed.encode()).hexdigest(), 16)
-    
-    # 12종 부적 중 사주별 1:1 매칭
-    talisman_idx = (req.year * 3 + req.month * 7 + req.day * 11 + hash_idx) % len(TALISMAN_DECK)
-    today_talisman = TALISMAN_DECK[talisman_idx]
-
-    curation = DAILY_CURATIONS[hash_idx % len(DAILY_CURATIONS)]
-    score_variance = (hash_idx % 7) - 3
-    daily_score = max(82, min(99, curation["score_base"] + score_variance))
-
-    fortunes = {
-        "daily": {
-            "title": curation["title"],
-            "score": daily_score,
-            "advice": curation["advice"],
-            "lucky_color": curation["lucky_color"],
-            "lucky_number": curation["lucky_number"],
-            "lucky_direction": curation["lucky_direction"],
-            "fashion_style": curation["fashion_style"],
-            "lucky_item": curation["lucky_item"],
-            "recommended_menu": curation["recommended_menu"],
-            "lucky_person": curation["lucky_person"],
-            "today_gaewoon": curation["today_gaewoon"],
-            "talisman": today_talisman
         }
-    }
-    
-    daewoon_full_report = f"""
-    <div class="space-y-4 text-xs text-slate-800 leading-relaxed font-normal">
-        <div class="p-3.5 bg-amber-50 rounded-xl border border-amber-300">
-            <h5 class="font-bold text-amber-950 text-sm mb-1">👑 【{req.name} 님의 자미두수 & 10년 대운 심층 마스터 리포트】</h5>
-            <p class="text-amber-900 text-xs">선천적 사주 원국과 10년 주기 대운의 거대한 계절 흐름을 입체 분석한 평생 지침서입니다.</p>
-        </div>
+    </script>
+    <style>
+        body { font-family: 'Pretendard', sans-serif; background-color: #F8FAF7; color: #1E293B; }
+        .font-serif-title { font-family: 'Noto Serif KR', serif; }
+        .perspective-1000 { perspective: 1000px; }
+        .transform-style-3d { transform-style: preserve-3d; }
+        .backface-hidden { backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+        .rotate-y-180 { transform: rotateY(180deg); }
+        .flipper.flipped { transform: rotateY(180deg); }
+        .tab-btn.active { color: #1F3D2B; font-weight: 800; border-bottom: 2px solid #1F3D2B; }
+    </style>
+</head>
+<body class="bg-slate-100 flex justify-center min-h-screen">
 
-        <div class="space-y-2">
-            <h6 class="font-bold text-brand-900 text-xs border-b border-brand-200 pb-1">1. 대운의 계절적 흐름 & 인생의 터닝포인트</h6>
-            <p>• {req.name} 님의 사주는 뿌리가 깊은 거목(甲木)의 형상으로, 현재 생애주기 중 가장 에너지가 응축되고 추진력이 폭발하는 <b>40대 중장년 황금기 대운</b>의 중심부를 관통하고 있습니다.</p>
-            <p>• 스스로 판을 주도하고 실질적인 자산과 명예를 거머쥐는 결실의 계절로 진입했습니다.</p>
-        </div>
-
-        <div class="space-y-2">
-            <h6 class="font-bold text-brand-900 text-xs border-b border-brand-200 pb-1">2. 황실 자미두수 4대 핵심 명궁 정밀 해부</h6>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
-                <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
-                    <span class="font-bold text-brand-800 block">💰 재백궁(財帛宮) - 평생 재물 그릇</span>
-                    <p class="text-slate-600 text-xs">천부성과 무곡성의 길한 기운이 비쳐 금고가 단단하고 부동산, 문서형 자산을 통해 자산이 계단식으로 우상향합니다.</p>
+    <div id="appShell" class="w-full max-w-md bg-white min-h-screen shadow-xl relative pb-20 flex flex-col justify-between">
+        
+        <div id="mainAppContainer" class="flex-1">
+            
+            <!-- 상단 헤더 -->
+            <header class="sticky top-0 bg-white/95 backdrop-blur-md border-b border-slate-100 px-4 py-3 flex items-center justify-between z-30">
+                <div class="flex items-center space-x-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-brand-700 animate-pulse"></span>
+                    <h1 class="font-serif-title text-base font-bold text-brand-900 tracking-tight">운세의 신</h1>
                 </div>
-                <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
-                    <span class="font-bold text-brand-800 block">💼 관록궁(官祿宮) - 직업 & 사회적 성공</span>
-                    <p class="text-slate-600 text-xs">독자적 전문 영역이나 책임자 위치에서 최대 역량이 발휘되며 조직 내 영향력이 커집니다.</p>
+                <div class="flex items-center space-x-2">
+                    <button onclick="openChargeStore()" class="flex items-center space-x-1 bg-amber-50 border border-amber-200 px-2.5 py-1 rounded-full text-xs font-bold text-amber-900 active:scale-95 transition">
+                        <span>🪙</span>
+                        <span id="headerCoinDisplay">1000</span>
+                    </button>
+                    <button onclick="openProfileInputModal()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-2.5 py-1 rounded-full font-semibold transition">
+                        정보 변경
+                    </button>
+                </div>
+            </header>
+
+            <!-- 탭 내비게이션 -->
+            <nav class="flex border-b border-slate-100 bg-white text-xs text-slate-500 font-medium px-2">
+                <button onclick="switchTab('today')" id="tab-today" class="tab-btn active flex-1 py-3 text-center transition">오늘의 운세</button>
+                <button onclick="switchTab('saju')" id="tab-saju" class="tab-btn flex-1 py-3 text-center transition">정통 사주</button>
+                <button onclick="switchTab('theme')" id="tab-theme" class="tab-btn flex-1 py-3 text-center transition">테마 운세</button>
+                <button onclick="switchTab('mypage')" id="tab-mypage" class="tab-btn flex-1 py-3 text-center transition">마이페이지</button>
+            </nav>
+
+            <!-- 탭 1: 오늘의 운세 -->
+            <div id="view-today" class="p-4 space-y-4">
+                <div class="bg-gradient-to-br from-brand-900 to-brand-800 rounded-2xl p-5 text-white shadow-md relative overflow-hidden">
+                    <div class="flex justify-between items-start mb-2">
+                        <span id="todayDateStr" class="text-xs text-brand-200 font-medium">오늘의 일진</span>
+                        <span id="dailyScoreBadge" class="bg-amber-400 text-slate-900 text-xs font-black px-2 py-0.5 rounded-full">운세 95점</span>
+                    </div>
+                    <h3 id="dailyTitle" class="text-lg font-black leading-snug tracking-tight mb-2">로딩 중...</h3>
+                    <p id="dailyAdvice" class="text-xs text-brand-100 leading-relaxed font-light">운세를 불러오는 중입니다.</p>
+
+                    <div class="mt-4 pt-3 border-t border-brand-700/60 flex items-center justify-between">
+                        <div class="flex items-center space-x-2">
+                            <span class="text-base">📜</span>
+                            <div>
+                                <p id="dailyTalismanName" class="text-xs font-bold text-amber-300">맞춤 부적 생성중</p>
+                                <p class="text-[10px] text-brand-200">오늘의 1:1 맞춤 비급 부적</p>
+                            </div>
+                        </div>
+                        <button onclick="openTalismanModal()" class="text-[11px] bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold px-3 py-1.5 rounded-xl shadow-xs transition active:scale-95">
+                            부적 받기
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 큐레이션 그리드 -->
+                <div class="grid grid-cols-2 gap-2.5 text-xs">
+                    <div class="bg-slate-50 border border-slate-100 rounded-xl p-3 space-y-1">
+                        <span class="text-slate-400 font-medium block">🎨 행운의 색상</span>
+                        <p id="luckyColor" class="font-bold text-slate-800">-</p>
+                    </div>
+                    <div class="bg-slate-50 border border-slate-100 rounded-xl p-3 space-y-1">
+                        <span class="text-slate-400 font-medium block">🔢 행운의 숫자</span>
+                        <p id="luckyNumber" class="font-bold text-slate-800">-</p>
+                    </div>
+                    <div class="bg-slate-50 border border-slate-100 rounded-xl p-3 space-y-1">
+                        <span class="text-slate-400 font-medium block">🧭 행운의 방위</span>
+                        <p id="luckyDirection" class="font-bold text-slate-800">-</p>
+                    </div>
+                    <div class="bg-slate-50 border border-slate-100 rounded-xl p-3 space-y-1">
+                        <span class="text-slate-400 font-medium block">👔 추천 코디</span>
+                        <p id="fashionStyle" class="font-bold text-slate-800">-</p>
+                    </div>
+                </div>
+
+                <!-- 오늘의 개운 액션 -->
+                <div class="bg-amber-50/80 border border-amber-200 rounded-2xl p-3.5 space-y-1 text-xs">
+                    <span class="font-bold text-amber-950 flex items-center space-x-1">
+                        <span>✨ 오늘의 개운(開運) 실천 액션</span>
+                    </span>
+                    <p id="todayGaewoon" class="text-amber-900 leading-relaxed font-light">-</p>
+                </div>
+
+                <!-- 타로 영역 -->
+                <div class="bg-white border border-slate-200/80 rounded-2xl p-4 shadow-2xs space-y-3">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h4 class="text-xs font-black text-slate-900">🔮 오늘의 타로 (1일 1회 무료)</h4>
+                            <p class="text-[11px] text-slate-500">카드를 선택해 오늘의 조언을 받으세요</p>
+                        </div>
+                        <span id="tarotStatusBadge" class="text-[10px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full font-bold">1회 무료</span>
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-2.5 pt-1">
+                        <div onclick="handleTarotDraw(1)" class="cursor-pointer perspective-1000 aspect-[2/3] w-full">
+                            <div id="flipper1" class="flipper relative w-full h-full transform-style-3d transition-transform duration-700 shadow-xs rounded-xl">
+                                <div class="absolute inset-0 backface-hidden bg-gradient-to-br from-indigo-950 via-slate-900 to-brand-950 rounded-xl border border-indigo-500/30 flex items-center justify-center">
+                                    <span class="text-xs text-amber-300 font-serif-title font-bold">I</span>
+                                </div>
+                                <div id="front1" class="absolute inset-0 backface-hidden rotate-y-180 bg-white rounded-xl flex items-center justify-center"></div>
+                            </div>
+                        </div>
+                        <div onclick="handleTarotDraw(2)" class="cursor-pointer perspective-1000 aspect-[2/3] w-full">
+                            <div id="flipper2" class="flipper relative w-full h-full transform-style-3d transition-transform duration-700 shadow-xs rounded-xl">
+                                <div class="absolute inset-0 backface-hidden bg-gradient-to-br from-indigo-950 via-slate-900 to-brand-950 rounded-xl border border-indigo-500/30 flex items-center justify-center">
+                                    <span class="text-xs text-amber-300 font-serif-title font-bold">II</span>
+                                </div>
+                                <div id="front2" class="absolute inset-0 backface-hidden rotate-y-180 bg-white rounded-xl flex items-center justify-center"></div>
+                            </div>
+                        </div>
+                        <div onclick="handleTarotDraw(3)" class="cursor-pointer perspective-1000 aspect-[2/3] w-full">
+                            <div id="flipper3" class="flipper relative w-full h-full transform-style-3d transition-transform duration-700 shadow-xs rounded-xl">
+                                <div class="absolute inset-0 backface-hidden bg-gradient-to-br from-indigo-950 via-slate-900 to-brand-950 rounded-xl border border-indigo-500/30 flex items-center justify-center">
+                                    <span class="text-xs text-amber-300 font-serif-title font-bold">III</span>
+                                </div>
+                                <div id="front3" class="absolute inset-0 backface-hidden rotate-y-180 bg-white rounded-xl flex items-center justify-center"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="tarotResultBox" class="hidden"></div>
+                </div>
+            </div>
+
+            <!-- 탭 2: 정통 사주 -->
+            <div id="view-saju" class="hidden p-4 space-y-4">
+                <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 space-y-3">
+                    <div class="flex justify-between items-center border-b border-slate-200 pb-2">
+                        <h3 class="font-serif-title text-sm font-bold text-slate-900">사주 명식표 (四柱命式)</h3>
+                        <span id="sajuOwnerName" class="text-xs text-brand-900 font-bold"></span>
+                    </div>
+
+                    <div class="grid grid-cols-4 gap-1.5 text-center text-xs">
+                        <div class="bg-white p-2 rounded-lg border border-slate-100">
+                            <span class="text-[10px] text-slate-400 block mb-1">시주 (時)</span>
+                            <p id="s_hour" class="font-black text-slate-800 text-sm">-</p>
+                        </div>
+                        <div class="bg-white p-2 rounded-lg border border-slate-100">
+                            <span class="text-[10px] text-slate-400 block mb-1">일주 (日)</span>
+                            <p id="s_day" class="font-black text-brand-900 text-sm font-bold">-</p>
+                        </div>
+                        <div class="bg-white p-2 rounded-lg border border-slate-100">
+                            <span class="text-[10px] text-slate-400 block mb-1">월주 (月)</span>
+                            <p id="s_month" class="font-black text-slate-800 text-sm">-</p>
+                        </div>
+                        <div class="bg-white p-2 rounded-lg border border-slate-100">
+                            <span class="text-[10px] text-slate-400 block mb-1">년주 (年)</span>
+                            <p id="s_year" class="font-black text-slate-800 text-sm">-</p>
+                        </div>
+                    </div>
+
+                    <!-- 오행 에너지 바 -->
+                    <div class="pt-2 space-y-1.5">
+                        <span class="text-[11px] font-bold text-slate-700 block">오행(五行) 에너지 분포</span>
+                        <div class="flex h-3 rounded-full overflow-hidden text-[9px] font-black text-white text-center leading-3">
+                            <div id="barWood" class="bg-emerald-600 transition-all duration-500" style="width: 20%">木</div>
+                            <div id="barFire" class="bg-rose-500 transition-all duration-500" style="width: 20%">火</div>
+                            <div id="barEarth" class="bg-amber-500 transition-all duration-500" style="width: 20%">土</div>
+                            <div id="barMetal" class="bg-slate-400 transition-all duration-500" style="width: 20%">金</div>
+                            <div id="barWater" class="bg-sky-600 transition-all duration-500" style="width: 20%">水</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="daewoonBox" class="bg-white border-2 border-amber-300 rounded-2xl p-4 shadow-sm space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-black text-slate-900">👑 자미두수 & 10년 대운 심층 리포트</span>
+                        <span class="text-[10px] bg-amber-100 text-amber-900 px-2 py-0.5 rounded-full font-black">450 복채</span>
+                    </div>
+                    <div id="daewoonReportContent" class="hidden"></div>
+                    <button id="btnUnlockDaewoon" onclick="unlockDaewoonReport()" class="w-full bg-amber-400 hover:bg-amber-300 text-slate-950 text-xs font-black py-2.5 rounded-xl shadow-xs transition active:scale-95">
+                        🪙 450 복채로 심층 리포트 열람하기
+                    </button>
+                </div>
+            </div>
+
+            <!-- 탭 3: 테마 운세 -->
+            <div id="view-theme" class="hidden p-4 space-y-3">
+                <div class="bg-white border border-slate-200 rounded-2xl p-4 space-y-2 shadow-2xs">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold text-slate-900">💰 평생 재물 그릇 & 부동산/투자운</span>
+                        <span class="text-[10px] bg-slate-100 text-slate-700 px-2 py-0.5 rounded-full font-bold">220 복채</span>
+                    </div>
+                    <div id="themeReport_wealth" class="hidden"></div>
+                    <button id="btn_wealth" onclick="unlockThemeFortune('wealth', 220, '/api/wealth-fortune', 'themeReport_wealth', 'btn_wealth')" class="w-full bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold py-2 rounded-xl transition">
+                        🪙 220 복채로 열람하기
+                    </button>
+                </div>
+                <div class="bg-white border border-slate-200 rounded-2xl p-4 space-y-2 shadow-2xs">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold text-slate-900">🌿 평생 체질 진단 & 건강 개운</span>
+                        <span class="text-[10px] bg-slate-100 text-slate-700 px-2 py-0.5 rounded-full font-bold">220 복채</span>
+                    </div>
+                    <div id="themeReport_health" class="hidden"></div>
+                    <button id="btn_health" onclick="unlockThemeFortune('health', 220, '/api/health-fortune', 'themeReport_health', 'btn_health')" class="w-full bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold py-2 rounded-xl transition">
+                        🪙 220 복채로 열람하기
+                    </button>
+                </div>
+            </div>
+
+            <!-- 탭 4: 마이페이지 -->
+            <div id="view-mypage" class="hidden p-4 space-y-4">
+                <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 space-y-3">
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs text-slate-500">현재 보유 복채</span>
+                        <span id="mypageCoinDisplay" class="text-lg font-black text-amber-800">1000 🪙</span>
+                    </div>
+                    <button onclick="openChargeStore()" class="w-full bg-brand-900 text-white text-xs font-bold py-2.5 rounded-xl">
+                        복채 충전소 열기
+                    </button>
                 </div>
             </div>
         </div>
+
+        <!-- 단독 부적 뷰 -->
+        <div id="standaloneTalismanView" class="hidden p-6 text-center space-y-6 flex-1 flex flex-col justify-center items-center bg-slate-950 text-white min-h-screen">
+            <span class="text-xs text-amber-400 font-bold tracking-widest block uppercase">Daily Sacred Talisman</span>
+            <h2 id="standaloneTalismanTitle" class="text-2xl font-serif-title font-black text-amber-300">부적</h2>
+            
+            <div class="w-48 h-72 bg-gradient-to-b from-amber-50 to-amber-100 border-4 border-amber-400 rounded-2xl p-4 shadow-2xl flex flex-col justify-between items-center text-slate-900">
+                <span id="standaloneTalismanCmd" class="text-xs font-black text-red-700 tracking-widest border-b border-red-700 pb-1">勅令</span>
+                <div id="standaloneTalismanSvgBox" class="w-28 h-28 my-auto flex items-center justify-center"></div>
+                <p id="standaloneTalismanPower" class="text-xs font-black text-amber-950 bg-amber-200/80 px-2 py-0.5 rounded-full"></p>
+            </div>
+
+            <p id="standaloneTalismanDesc" class="text-xs text-slate-300 leading-relaxed max-w-xs"></p>
+            
+            <button onclick="goToMainApp()" class="bg-amber-400 text-slate-950 text-xs font-black px-6 py-2.5 rounded-full shadow-lg active:scale-95 transition">
+                운세 앱 홈으로 돌아가기
+            </button>
+        </div>
+
     </div>
-    """
 
-    return {
-        "saju_data": saju_result,
-        "character_profile": saju_result["character"],
-        "jijanggan_data": saju_result["jijanggan"],
-        "life_chart": saju_result["life_chart"],
-        "fortunes": fortunes,
-        "paid_reports": {"daewoon": daewoon_full_report}
-    }
+    <!-- 부적 모달 팝업 -->
+    <div id="talismanModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-xs flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-white rounded-3xl p-5 max-w-xs w-full text-center space-y-4 shadow-2xl border border-amber-300">
+            <div class="space-y-1">
+                <span class="text-[10px] bg-amber-100 text-amber-900 px-2.5 py-0.5 rounded-full font-black">오늘의 맞춤 수호 부적</span>
+                <h3 id="modalTalismanTitle" class="text-base font-serif-title font-black text-slate-900">부적</h3>
+            </div>
 
-@app.post("/api/wealth-fortune")
-async def wealth_fortune():
-    return {"score": 96, "report": "<div class='p-3 bg-amber-50 rounded-xl text-xs text-amber-950 leading-relaxed font-bold'>💰 평생 재물 그릇: 정재(正財)의 기운으로 부동산 및 시스템 문서 자산이 크게 불어납니다.</div>"}
+            <div class="w-40 h-60 bg-gradient-to-b from-amber-50 to-amber-100 border-3 border-amber-400 rounded-2xl p-3 shadow-md mx-auto flex flex-col justify-between items-center">
+                <span id="modalTalismanCmd" class="text-[11px] font-black text-red-700 tracking-widest border-b border-red-700 pb-0.5">勅令</span>
+                <div id="modalTalismanSvgBox" class="w-24 h-24 my-auto flex items-center justify-center"></div>
+                <span id="modalTalismanPower" class="text-[10px] font-bold text-amber-950 bg-amber-200/70 px-2 py-0.5 rounded-full"></span>
+            </div>
 
-@app.post("/api/health-fortune")
-async def health_fortune():
-    return {"score": 93, "report": "<div class='p-3 bg-sky-50 rounded-xl text-xs text-sky-950 leading-relaxed font-bold'>🌿 평생 체질 진단: 하체 근력 운동과 규칙적인 수분 섭취가 사주의 화기를 내려줍니다.</div>"}
+            <p id="modalTalismanDesc" class="text-xs text-slate-600 leading-relaxed"></p>
 
-@app.post("/api/love-fortune")
-async def love_fortune():
-    return {"score": 95, "report": "<div class='p-3 bg-rose-50 rounded-xl text-xs text-rose-950 leading-relaxed font-bold'>💖 평생 애정운: 신뢰감 높은 동반자 인연이 자리하여 가운이 번창합니다.</div>"}
+            <div class="space-y-2">
+                <button onclick="openStandaloneTalismanView()" class="w-full bg-slate-950 text-amber-300 text-xs font-bold py-2 rounded-xl transition">
+                    부적 전용 화면으로 보기
+                </button>
+                <button onclick="closeTalismanModal()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold py-2 rounded-xl transition">
+                    닫기
+                </button>
+            </div>
+        </div>
+    </div>
 
-@app.post("/api/business-fortune")
-async def business_fortune():
-    return {"score": 94, "report": "<div class='p-3 bg-amber-50 rounded-xl text-xs text-amber-950 leading-relaxed font-bold'>🏢 사업운: 전문 노하우 및 B2B 시스템 비즈니스에 최적화된 CEO 사주입니다.</div>"}
+    <!-- 사주 정보 입력 모달 (양력/음력/윤달 & 시진 선택 완벽 복원) -->
+    <div id="profileInputModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-white rounded-3xl p-5 max-w-xs w-full space-y-3.5 shadow-2xl">
+            <h3 class="font-serif-title font-bold text-slate-900 text-sm">사주 정보 입력</h3>
+            
+            <div class="space-y-2 text-xs">
+                <div>
+                    <label class="text-slate-500 block mb-1">이름</label>
+                    <input type="text" id="inputName" class="w-full p-2 border border-slate-200 rounded-lg text-xs" value="최정오">
+                </div>
 
-@app.post("/api/career-jump")
-async def career_jump():
-    return {"score": 92, "report": "<div class='p-3 bg-sky-50 rounded-xl text-xs text-sky-950 leading-relaxed font-bold'>💼 이직 전략: 2026년 하반기 명예 관성 상승으로 연봉 협상 주도권을 쥡니다.</div>"}
+                <!-- 양력 / 음력 / 윤달 선택 -->
+                <div>
+                    <label class="text-slate-500 block mb-1">달력 구분</label>
+                    <div class="grid grid-cols-3 gap-1">
+                        <button type="button" onclick="setCalendarType('solar')" id="btnCalSolar" class="py-1.5 text-[11px] rounded-lg border font-bold border-brand-900 bg-brand-900 text-white">양력</button>
+                        <button type="button" onclick="setCalendarType('lunar')" id="btnCalLunar" class="py-1.5 text-[11px] rounded-lg border font-bold border-slate-200 bg-white text-slate-600">음력(평달)</button>
+                        <button type="button" onclick="setCalendarType('leap')" id="btnCalLeap" class="py-1.5 text-[11px] rounded-lg border font-bold border-slate-200 bg-white text-slate-600">음력(윤달)</button>
+                    </div>
+                </div>
 
-@app.post("/api/gunghap")
-async def gunghap():
-    return {"score": 88, "report": "<div class='p-3 bg-rose-50 rounded-xl text-xs text-rose-950 leading-relaxed font-bold'>❤️ 정밀 궁합: 상호보완형 상생 궁합으로 최상의 시너지를 냅니다.</div>"}
+                <div class="grid grid-cols-3 gap-1.5">
+                    <div>
+                        <label class="text-slate-500 block mb-1">년도</label>
+                        <input type="number" id="inputYear" class="w-full p-2 border border-slate-200 rounded-lg text-xs" value="1978">
+                    </div>
+                    <div>
+                        <label class="text-slate-500 block mb-1">월</label>
+                        <input type="number" id="inputMonth" class="w-full p-2 border border-slate-200 rounded-lg text-xs" value="5">
+                    </div>
+                    <div>
+                        <label class="text-slate-500 block mb-1">일</label>
+                        <input type="number" id="inputDay" class="w-full p-2 border border-slate-200 rounded-lg text-xs" value="12">
+                    </div>
+                </div>
 
-@app.post("/api/heart")
-async def heart():
-    return {"score": 84, "report": "<div class='p-3 bg-purple-50 rounded-xl text-xs text-purple-950 leading-relaxed font-bold'>💔 속마음: 상대방도 진지하게 생각하고 있으니 가벼운 안부로 다가가세요.</div>"}
+                <!-- 태어난 시간 (시진) -->
+                <div>
+                    <label class="text-slate-500 block mb-1">태어난 시간</label>
+                    <select id="inputSijin" class="w-full p-2 border border-slate-200 rounded-lg text-xs bg-white">
+                        <option value="-1">태어난 시간 모름</option>
+                        <option value="0">자시 (子時) 23:30 ~ 01:29</option>
+                        <option value="1">축시 (丑時) 01:30 ~ 03:29</option>
+                        <option value="2">인시 (寅時) 03:30 ~ 05:29</option>
+                        <option value="3">묘시 (卯時) 05:30 ~ 07:29</option>
+                        <option value="4">진시 (辰時) 07:30 ~ 09:29</option>
+                        <option value="5" selected>사시 (巳時) 09:30 ~ 11:29</option>
+                        <option value="6">오시 (午時) 11:30 ~ 13:29</option>
+                        <option value="7">미시 (未時) 13:30 ~ 15:29</option>
+                        <option value="8">신시 (申時) 15:30 ~ 17:29</option>
+                        <option value="9">유시 (酉時) 17:30 ~ 19:29</option>
+                        <option value="10">술시 (戌時) 19:30 ~ 21:29</option>
+                        <option value="11">해시 (亥時) 21:30 ~ 23:29</option>
+                    </select>
+                </div>
+            </div>
+
+            <button onclick="saveAndAnalyzeProfile()" class="w-full bg-brand-900 text-white text-xs font-bold py-2.5 rounded-xl shadow-xs transition active:scale-95">
+                사주 분석 & 맞춤 부적 발급
+            </button>
+        </div>
+    </div>
+
+    <!-- 복채 모달 -->
+    <div id="chargeModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-white rounded-3xl p-5 max-w-xs w-full space-y-4 shadow-2xl">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-2">
+                <h3 class="font-bold text-slate-900 text-sm">복채 충전소</h3>
+                <button onclick="closeChargeStore()" class="text-slate-400 font-bold text-sm">&times;</button>
+            </div>
+            <button onclick="addCoin(500)" class="w-full p-3 bg-amber-50 border border-amber-300 rounded-xl font-bold text-xs text-amber-900">
+                🪙 500 복채 무료 충전
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let currentCoin = 1000;
+        let currentTalismanData = null;
+        let dailyTarotDrawn = false;
+        let drawnTarotCards = {};
+        let currentCalendarType = "solar";
+
+        const TAROT_IMAGES = {
+            "0. THE FOOL (바보)": "https://upload.wikimedia.org/wikipedia/commons/9/90/RWS_Tarot_00_Fool.jpg",
+            "I. THE MAGICIAN (마법사)": "https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg",
+            "II. THE HIGH PRIESTESS (여사제)": "https://upload.wikimedia.org/wikipedia/commons/8/88/RWS_Tarot_02_High_Priestess.jpg",
+            "III. THE EMPRESS (여황제)": "https://upload.wikimedia.org/wikipedia/commons/d/d2/RWS_Tarot_03_Empress.jpg",
+            "IV. THE EMPEROR (황제)": "https://upload.wikimedia.org/wikipedia/commons/c/c3/RWS_Tarot_04_Emperor.jpg",
+            "V. THE HIEROPHANT (교황)": "https://upload.wikimedia.org/wikipedia/commons/8/8d/RWS_Tarot_05_Hierophant.jpg",
+            "VI. THE LOVERS (연인)": "https://upload.wikimedia.org/wikipedia/commons/3/3a/TheLovers.jpg",
+            "VII. THE CHARIOT (전차)": "https://upload.wikimedia.org/wikipedia/commons/9/9b/RWS_Tarot_07_Chariot.jpg",
+            "VIII. STRENGTH (힘)": "https://upload.wikimedia.org/wikipedia/commons/f/f5/RWS_Tarot_08_Strength.jpg",
+            "IX. THE HERMIT (은둔자)": "https://upload.wikimedia.org/wikipedia/commons/4/4d/Tarot_Nine_of_Wands.jpg",
+            "X. WHEEL OF FORTUNE (운명의 수레바퀴)": "https://upload.wikimedia.org/wikipedia/commons/3/3c/RWS_Tarot_10_Wheel_of_Fortune.jpg",
+            "XI. JUSTICE (정의)": "https://upload.wikimedia.org/wikipedia/commons/e/e0/RWS_Tarot_11_Justice.jpg",
+            "XII. THE HANGED MAN (매달린 사람)": "https://upload.wikimedia.org/wikipedia/commons/2/2b/RWS_Tarot_12_Hanged_Man.jpg",
+            "XIII. DEATH (죽음과 재생)": "https://upload.wikimedia.org/wikipedia/commons/d/d7/RWS_Tarot_13_Death.jpg",
+            "XIV. TEMPERANCE (절제)": "https://upload.wikimedia.org/wikipedia/commons/f/f8/RWS_Tarot_14_Temperance.jpg",
+            "XV. THE DEVIL (악마)": "https://upload.wikimedia.org/wikipedia/commons/5/55/RWS_Tarot_15_Devil.jpg",
+            "XVI. THE TOWER (탑)": "https://upload.wikimedia.org/wikipedia/commons/5/53/RWS_Tarot_16_Tower.jpg",
+            "XVII. THE STAR (별)": "https://upload.wikimedia.org/wikipedia/commons/d/db/RWS_Tarot_17_Star.jpg",
+            "XVIII. THE MOON (달)": "https://upload.wikimedia.org/wikipedia/commons/7/7f/RWS_Tarot_18_Moon.jpg",
+            "XIX. THE SUN (태양)": "https://upload.wikimedia.org/wikipedia/commons/1/17/RWS_Tarot_19_Sun.jpg",
+            "XX. JUDGEMENT (심판)": "https://upload.wikimedia.org/wikipedia/commons/d/dd/RWS_Tarot_20_Judgement.jpg",
+            "XXI. THE WORLD (세계)": "https://upload.wikimedia.org/wikipedia/commons/f/ff/RWS_Tarot_21_World.jpg"
+        };
+
+        // 12종 부적별 완벽히 다른 고유 SVG 그래픽
+        function renderDistinctTalisman(title) {
+            if (title.includes("재물만복")) {
+                return `
+                    <svg viewBox="0 0 100 100" class="w-full h-full">
+                        <circle cx="50" cy="50" r="44" stroke="#DC2626" stroke-width="4" fill="#FEF2F2" />
+                        <rect x="34" y="34" width="32" height="32" stroke="#DC2626" stroke-width="3" fill="#FEE2E2" />
+                        <circle cx="50" cy="18" r="8" stroke="#DC2626" stroke-width="2.5" fill="none" />
+                        <circle cx="50" cy="82" r="8" stroke="#DC2626" stroke-width="2.5" fill="none" />
+                        <circle cx="18" cy="50" r="8" stroke="#DC2626" stroke-width="2.5" fill="none" />
+                        <circle cx="82" cy="50" r="8" stroke="#DC2626" stroke-width="2.5" fill="none" />
+                        <text x="50" y="56" font-family="'Noto Serif KR', serif" font-weight="900" font-size="14" fill="#991B1B" text-anchor="middle">萬福</text>
+                    </svg>
+                `;
+            } else if (title.includes("금고수호")) {
+                return `
+                    <svg viewBox="0 0 100 100" class="w-full h-full">
+                        <path d="M50 6 L88 22 L88 68 L50 94 L12 68 L12 22 Z" stroke="#DC2626" stroke-width="4" fill="#FEF2F2" />
+                        <rect x="32" y="40" width="36" height="30" rx="4" stroke="#DC2626" stroke-width="3.5" fill="#FEE2E2" />
+                        <path d="M40 40 V28 C40 22 60 22 60 28 V40" stroke="#DC2626" stroke-width="4" fill="none" />
+                        <text x="50" y="61" font-family="'Noto Serif KR', serif" font-weight="900" font-size="12" fill="#991B1B" text-anchor="middle">金庫</text>
+                    </svg>
+                `;
+            } else if (title.includes("사업대성")) {
+                return `
+                    <svg viewBox="0 0 100 100" class="w-full h-full">
+                        <path d="M50 6 L78 34 H58 V92 H42 V34 H22 Z" stroke="#DC2626" stroke-width="4" fill="#FEF2F2" />
+                        <path d="M18 70 L50 46 L82 70" stroke="#DC2626" stroke-width="3.5" fill="none" stroke-linecap="round" />
+                        <path d="M18 84 L50 60 L82 84" stroke="#DC2626" stroke-width="3.5" fill="none" stroke-linecap="round" />
+                        <text x="50" y="46" font-family="'Noto Serif KR', serif" font-weight="900" font-size="12" fill="#991B1B" text-anchor="middle">大成</text>
+                    </svg>
+                `;
+            } else if (title.includes("인연화합")) {
+                return `
+                    <svg viewBox="0 0 100 100" class="w-full h-full">
+                        <circle cx="36" cy="42" r="28" stroke="#DC2626" stroke-width="3.5" fill="#FEF2F2" />
+                        <circle cx="64" cy="42" r="28" stroke="#DC2626" stroke-width="3.5" fill="#FEF2F2" />
+                        <path d="M50 16 C38 0 10 24 50 68 C90 24 62 0 50 16 Z" stroke="#DC2626" stroke-width="3.5" fill="#FEE2E2" />
+                        <text x="50" y="90" font-family="'Noto Serif KR', serif" font-weight="900" font-size="16" fill="#991B1B" text-anchor="middle">囍 和合</text>
+                    </svg>
+                `;
+            } else if (title.includes("도화매혹")) {
+                return `
+                    <svg viewBox="0 0 100 100" class="w-full h-full">
+                        <g fill="#FEE2E2" stroke="#DC2626" stroke-width="3">
+                            <circle cx="50" cy="24" r="16" />
+                            <circle cx="74" cy="42" r="16" />
+                            <circle cx="65" cy="70" r="16" />
+                            <circle cx="35" cy="70" r="16" />
+                            <circle cx="26" cy="42" r="16" />
+                        </g>
+                        <circle cx="50" cy="48" r="12" fill="#DC2626" />
+                        <circle cx="50" cy="48" r="6" fill="#FFF" />
+                        <text x="50" y="90" font-family="'Noto Serif KR', serif" font-weight="900" font-size="14" fill="#991B1B" text-anchor="middle">桃花</text>
+                    </svg>
+                `;
+            } else if (title.includes("소원성취")) {
+                return `
+                    <svg viewBox="0 0 100 100" class="w-full h-full">
+                        <circle cx="50" cy="58" r="32" stroke="#DC2626" stroke-width="4" fill="#FEF2F2" />
+                        <path d="M50 8 C32 28 68 38 50 58 C32 38 68 28 50 8 Z" stroke="#DC2626" stroke-width="3.5" fill="#FEE2E2" />
+                        <text x="50" y="66" font-family="'Noto Serif KR', serif" font-weight="900" font-size="15" fill="#991B1B" text-anchor="middle">成就</text>
+                    </svg>
+                `;
+            } else if (title.includes("귀인상조")) {
+                return `
+                    <svg viewBox="0 0 100 100" class="w-full h-full">
+                        <polygon points="50,6 62,36 94,36 68,56 78,88 50,70 22,88 32,56 6,36 38,36" stroke="#DC2626" stroke-width="3.5" fill="#FEF2F2" />
+                        <circle cx="50" cy="48" r="14" stroke="#DC2626" stroke-width="2.5" fill="#FEE2E2" />
+                        <text x="50" y="54" font-family="'Noto Serif KR', serif" font-weight="900" font-size="12" fill="#991B1B" text-anchor="middle">貴人</text>
+                    </svg>
+                `;
+            } else if (title.includes("관운승진")) {
+                return `
+                    <svg viewBox="0 0 100 100" class="w-full h-full">
+                        <path d="M20 42 Q50 12 80 42 L90 52 H10 Z" stroke="#DC2626" stroke-width="4" fill="#FEF2F2" />
+                        <rect x="34" y="52" width="32" height="12" stroke="#DC2626" stroke-width="3" fill="#FEE2E2" />
+                        <path d="M18 72 H82 M26 82 H74 M34 92 H66" stroke="#DC2626" stroke-width="4" stroke-linecap="round" />
+                        <text x="50" y="42" font-family="'Noto Serif KR', serif" font-weight="900" font-size="11" fill="#991B1B" text-anchor="middle">昇進</text>
+                    </svg>
+                `;
+            } else if (title.includes("장원급제")) {
+                return `
+                    <svg viewBox="0 0 100 100" class="w-full h-full">
+                        <path d="M50 8 L58 32 L54 74 L46 74 L42 32 Z" stroke="#DC2626" stroke-width="3.5" fill="#FEF2F2" />
+                        <polygon points="46,74 54,74 50,92" fill="#DC2626" />
+                        <circle cx="50" cy="22" r="6" fill="#DC2626" />
+                        <path d="M16 52 Q50 34 84 52" stroke="#DC2626" stroke-width="3.5" fill="none" />
+                        <text x="50" y="60" font-family="'Noto Serif KR', serif" font-weight="900" font-size="12" fill="#991B1B" text-anchor="middle">及第</text>
+                    </svg>
+                `;
+            } else if (title.includes("벽사소재")) {
+                return `
+                    <svg viewBox="0 0 100 100" class="w-full h-full">
+                        <path d="M50 6 L56 20 V72 L50 94 L44 72 V20 Z" stroke="#DC2626" stroke-width="4" fill="#FEF2F2" />
+                        <path d="M24 30 H76 M34 38 H66" stroke="#DC2626" stroke-width="4" stroke-linecap="round" />
+                        <path d="M20 68 L44 74 M80 68 L56 74" stroke="#DC2626" stroke-width="3.5" />
+                        <text x="50" y="58" font-family="'Noto Serif KR', serif" font-weight="900" font-size="13" fill="#991B1B" text-anchor="middle">辟邪</text>
+                    </svg>
+                `;
+            } else if (title.includes("칠성무병")) {
+                return `
+                    <svg viewBox="0 0 100 100" class="w-full h-full">
+                        <circle cx="50" cy="50" r="44" stroke="#DC2626" stroke-width="2.5" fill="#FEF2F2" />
+                        <path d="M22 22 L40 26 L46 44 L30 52 L22 22 M46 44 L64 62 L78 64 L86 82" stroke="#DC2626" stroke-width="3.5" fill="none" stroke-linecap="round" />
+                        <circle cx="22" cy="22" r="5" fill="#DC2626" />
+                        <circle cx="40" cy="26" r="5" fill="#DC2626" />
+                        <circle cx="46" cy="44" r="5" fill="#DC2626" />
+                        <circle cx="30" cy="52" r="5" fill="#DC2626" />
+                        <circle cx="64" cy="62" r="5" fill="#DC2626" />
+                        <circle cx="78" cy="64" r="5" fill="#DC2626" />
+                        <circle cx="86" cy="82" r="5" fill="#DC2626" />
+                        <text x="50" y="86" font-family="'Noto Serif KR', serif" font-weight="900" font-size="12" fill="#991B1B" text-anchor="middle">無病</text>
+                    </svg>
+                `;
+            } else {
+                return `
+                    <svg viewBox="0 0 100 100" class="w-full h-full">
+                        <circle cx="50" cy="50" r="42" stroke="#DC2626" stroke-width="3.5" fill="#FEF2F2" />
+                        <path d="M50 8 A21 21 0 0 0 50 50 A21 21 0 0 1 50 92 A42 42 0 0 0 50 8 Z" fill="#DC2626" />
+                        <circle cx="50" cy="29" r="6" fill="#FEF2F2" />
+                        <circle cx="50" cy="71" r="6" fill="#DC2626" />
+                        <text x="50" y="90" font-family="'Noto Serif KR', serif" font-weight="900" font-size="12" fill="#991B1B" text-anchor="middle">淸心</text>
+                    </svg>
+                `;
+            }
+        }
+
+        function setCalendarType(type) {
+            currentCalendarType = type;
+            ['solar', 'lunar', 'leap'].forEach(t => {
+                const btn = document.getElementById(`btnCal${t.charAt(0).toUpperCase() + t.slice(1)}`);
+                if (t === type) {
+                    btn.className = "py-1.5 text-[11px] rounded-lg border font-bold border-brand-900 bg-brand-900 text-white";
+                } else {
+                    btn.className = "py-1.5 text-[11px] rounded-lg border font-bold border-slate-200 bg-white text-slate-600";
+                }
+            });
+        }
+
+        function switchTab(tabId) {
+            ['today', 'saju', 'theme', 'mypage'].forEach(t => {
+                document.getElementById(`view-${t}`).classList.add('hidden');
+                document.getElementById(`tab-${t}`).classList.remove('active');
+            });
+            document.getElementById(`view-${tabId}`).classList.remove('hidden');
+            document.getElementById(`tab-${tabId}`).classList.add('active');
+        }
+
+        async function fetchSajuAnalysis(name, year, month, day, calType, sijinIdx) {
+            try {
+                const res = await fetch('/api/analyze', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        name: name,
+                        year: parseInt(year),
+                        month: parseInt(month),
+                        day: parseInt(day),
+                        calendar_type: calType,
+                        sijin_index: parseInt(sijinIdx) === -1 ? null : parseInt(sijinIdx),
+                        is_unknown_time: parseInt(sijinIdx) === -1
+                    })
+                });
+                const data = await res.json();
+                
+                // 부적 데이터 즉시 할당
+                currentTalismanData = data.fortunes.daily.talisman;
+
+                document.getElementById('dailyTitle').innerText = data.fortunes.daily.title;
+                document.getElementById('dailyAdvice').innerText = data.fortunes.daily.advice;
+                document.getElementById('dailyScoreBadge').innerText = `운세 ${data.fortunes.daily.score}점`;
+                document.getElementById('luckyColor').innerText = data.fortunes.daily.lucky_color;
+                document.getElementById('luckyNumber').innerText = data.fortunes.daily.lucky_number;
+                document.getElementById('luckyDirection').innerText = data.fortunes.daily.lucky_direction;
+                document.getElementById('fashionStyle').innerText = data.fortunes.daily.fashion_style;
+                document.getElementById('todayGaewoon').innerText = data.fortunes.daily.today_gaewoon;
+                document.getElementById('dailyTalismanName').innerText = currentTalismanData.title;
+
+                document.getElementById('sajuOwnerName').innerText = `${name} 님`;
+                document.getElementById('s_year').innerText = data.saju_data.year_pillar;
+                document.getElementById('s_month').innerText = data.saju_data.month_pillar;
+                document.getElementById('s_day').innerText = data.saju_data.day_pillar;
+                document.getElementById('s_hour').innerText = data.saju_data.hour_pillar || "時未詳";
+
+                window.cachedDaewoonReport = data.paid_reports.daewoon;
+
+            } catch(e) {
+                console.error("사주 로드 실패", e);
+            }
+        }
+
+        function saveAndAnalyzeProfile() {
+            const name = document.getElementById('inputName').value || "최정오";
+            const year = document.getElementById('inputYear').value || 1978;
+            const month = document.getElementById('inputMonth').value || 5;
+            const day = document.getElementById('inputDay').value || 12;
+            const sijin = document.getElementById('inputSijin').value || 5;
+
+            localStorage.setItem('saju_profile', JSON.stringify({name, year, month, day, calendarType: currentCalendarType, sijin}));
+            closeProfileInputModal();
+            fetchSajuAnalysis(name, year, month, day, currentCalendarType, sijin);
+        }
+
+        function openTalismanModal() {
+            if (!currentTalismanData) return;
+            document.getElementById('modalTalismanTitle').innerText = currentTalismanData.title;
+            document.getElementById('modalTalismanDesc').innerText = currentTalismanData.desc;
+            document.getElementById('modalTalismanPower').innerText = currentTalismanData.power;
+            document.getElementById('modalTalismanCmd').innerText = currentTalismanData.chinese;
+            
+            // 전용 그래픽 주입
+            document.getElementById('modalTalismanSvgBox').innerHTML = renderDistinctTalisman(currentTalismanData.title);
+
+            document.getElementById('talismanModal').classList.remove('hidden');
+        }
+
+        function closeTalismanModal() {
+            document.getElementById('talismanModal').classList.add('hidden');
+        }
+
+        function openStandaloneTalismanView() {
+            if (!currentTalismanData) return;
+            document.getElementById('standaloneTalismanTitle').innerText = currentTalismanData.title;
+            document.getElementById('standaloneTalismanDesc').innerText = currentTalismanData.desc;
+            document.getElementById('standaloneTalismanPower').innerText = currentTalismanData.power;
+            document.getElementById('standaloneTalismanCmd').innerText = currentTalismanData.chinese;
+
+            // 단독 위젯 전용 그래픽 주입
+            document.getElementById('standaloneTalismanSvgBox').innerHTML = renderDistinctTalisman(currentTalismanData.title);
+
+            document.getElementById('mainAppContainer').classList.add('hidden');
+            document.getElementById('standaloneTalismanView').classList.remove('hidden');
+            closeTalismanModal();
+        }
+
+        function goToMainApp() {
+            document.getElementById('standaloneTalismanView').classList.add('hidden');
+            document.getElementById('mainAppContainer').classList.remove('hidden');
+        }
+
+        async function handleTarotDraw(cardNum) {
+            if (drawnTarotCards[cardNum]) {
+                displayTarotResult(drawnTarotCards[cardNum]);
+                return;
+            }
+
+            if (dailyTarotDrawn) {
+                if (currentCoin < 30) {
+                    alert('🪙 오늘의 무료 1회 타로를 이미 보셨습니다.\n추가로 카드를 뽑으려면 30 복채가 필요합니다.');
+                    openChargeStore();
+                    return;
+                }
+                if (!confirm(`🪙 30 복채로 ${cardNum}번 카드를 열람하시겠습니까?`)) return;
+                currentCoin -= 30;
+                updateCoinDisplay();
+            }
+
+            try {
+                const randSeed = Date.now().toString();
+                const res = await fetch(`/api/daily-tarot?slot=${cardNum}&rand_seed=${randSeed}`);
+                const card = await res.json();
+                
+                dailyTarotDrawn = true;
+                drawnTarotCards[cardNum] = card;
+
+                const targetFlipper = document.getElementById(`flipper${cardNum}`);
+                const targetFront = document.getElementById(`front${cardNum}`);
+                const imgUrl = TAROT_IMAGES[card.name] || TAROT_IMAGES["0. THE FOOL (바보)"];
+
+                targetFront.innerHTML = `<img src="${imgUrl}" alt="${card.name}" class="w-full h-full object-cover rounded-xl border border-amber-300">`;
+                targetFlipper.classList.add('flipped');
+
+                setTimeout(() => { displayTarotResult(card); }, 600);
+            } catch(e) {
+                alert('타로 카드를 불러오지 못했습니다.');
+            }
+        }
+
+        function displayTarotResult(card) {
+            const imgUrl = TAROT_IMAGES[card.name] || TAROT_IMAGES["0. THE FOOL (바보)"];
+            const resBox = document.getElementById('tarotResultBox');
+            resBox.innerHTML = `
+                <div class="bg-white border-2 border-amber-300 rounded-2xl p-4 shadow-sm space-y-2 mt-3 text-xs">
+                    <div class="flex items-center space-x-3 pb-2 border-b border-slate-100">
+                        <img src="${imgUrl}" class="w-12 h-20 object-cover rounded-lg border border-amber-400">
+                        <div>
+                            <h4 class="font-black text-slate-900">${card.name}</h4>
+                            <p class="text-amber-800 font-bold">${card.keyword}</p>
+                        </div>
+                    </div>
+                    <p class="text-slate-600">${card.overview}</p>
+                    <p class="text-brand-900 font-bold">💡 ${card.action}</p>
+                </div>
+            `;
+            resBox.classList.remove('hidden');
+        }
+
+        function updateCoinDisplay() {
+            document.getElementById('headerCoinDisplay').innerText = currentCoin;
+            document.getElementById('mypageCoinDisplay').innerText = `${currentCoin} 🪙`;
+        }
+
+        function addCoin(amt) {
+            currentCoin += amt;
+            updateCoinDisplay();
+            closeChargeStore();
+        }
+
+        function openChargeStore() { document.getElementById('chargeModal').classList.remove('hidden'); }
+        function closeChargeStore() { document.getElementById('chargeModal').classList.add('hidden'); }
+        function openProfileInputModal() { document.getElementById('profileInputModal').classList.remove('hidden'); }
+        function closeProfileInputModal() { document.getElementById('profileInputModal').classList.add('hidden'); }
+
+        function unlockDaewoonReport() {
+            if (currentCoin < 450) { openChargeStore(); return; }
+            if (!confirm('🪙 450 복채로 열람하시겠습니까?')) return;
+            currentCoin -= 450;
+            updateCoinDisplay();
+            document.getElementById('daewoonReportContent').innerHTML = window.cachedDaewoonReport;
+            document.getElementById('daewoonReportContent').classList.remove('hidden');
+            document.getElementById('btnUnlockDaewoon').classList.add('hidden');
+        }
+
+        async function unlockThemeFortune(key, price, apiEndpoint, containerId, btnId) {
+            if (currentCoin < price) { openChargeStore(); return; }
+            if (!confirm(`🪙 ${price} 복채로 열람하시겠습니까?`)) return;
+            const res = await fetch(apiEndpoint, { method: 'POST' });
+            const data = await res.json();
+            currentCoin -= price;
+            updateCoinDisplay();
+            document.getElementById(containerId).innerHTML = data.report;
+            document.getElementById(containerId).classList.remove('hidden');
+            document.getElementById(btnId).classList.add('hidden');
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            // 모바일 구버전 캐시 강제 무효화
+            localStorage.removeItem('saved_talisman');
+
+            const savedProfile = JSON.parse(localStorage.getItem('saju_profile') || '{"name":"최정오","year":1978,"month":5,"day":12,"calendarType":"solar","sijin":5}');
+            setCalendarType(savedProfile.calendarType || 'solar');
+            fetchSajuAnalysis(savedProfile.name, savedProfile.year, savedProfile.month, savedProfile.day, savedProfile.calendarType || 'solar', savedProfile.sijin || 5);
+        });
+    </script>
+</body>
+</html>
