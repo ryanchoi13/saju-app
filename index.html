@@ -671,13 +671,12 @@
             </svg>`;
         }
 
-        // 5대 오행 결핍 맞춤 경면주사 부적 SVG 생성기
-        function renderAuthenticCinnabarTalisman(type = "metal", width = 160, height = 260) {
+        // 30종 특화 부적 SVG 생성 렌더러 (사주 패턴별 실시간 주술 필치 변환)
+        function renderAuthenticCinnabarTalisman(type = "wealth", pattern = "vault", width = 160, height = 260) {
             let innerSymbol = '';
             let bottomText = '萬福大吉';
 
-            if (type === "wood") {
-                // 사업대성부 (칠성 기운 / 사통팔달 관통 결계)
+            if (type === "business") {
                 bottomText = '事業亨通';
                 innerSymbol = `
                     <path d="M 40 100 L 100 100 L 70 130 Z" />
@@ -687,30 +686,7 @@
                     <path d="M 52 165 L 88 165" />
                     <line x1="70" y1="130" x2="70" y2="175" />
                 `;
-            } else if (type === "fire") {
-                // 소원성취부 (태양 화염 / 삼태성 승천 결계)
-                bottomText = '心想事成';
-                innerSymbol = `
-                    <circle cx="70" cy="105" r="14" />
-                    <circle cx="70" cy="105" r="6" fill="#C62828" />
-                    <path d="M 40 128 Q 70 118 100 128" />
-                    <path d="M 48 142 Q 70 130 92 142" />
-                    <path d="M 42 156 L 98 156" />
-                    <line x1="70" y1="120" x2="70" y2="175" />
-                `;
-            } else if (type === "earth") {
-                // 금고수호부 (4각 결계 / 자산 누수 방어)
-                bottomText = '金庫安穩';
-                innerSymbol = `
-                    <rect x="42" y="96" width="56" height="34" />
-                    <line x1="70" y1="96" x2="70" y2="130" />
-                    <line x1="42" y1="113" x2="98" y2="113" />
-                    <path d="M 46 142 L 94 142" />
-                    <path d="M 40 156 Q 70 146 100 156" />
-                    <line x1="70" y1="130" x2="70" y2="175" />
-                `;
-            } else if (type === "water") {
-                // 천생화합부 (일월쌍합 / 연리지 결속선)
+            } else if (type === "love") {
                 bottomText = '萬事和合';
                 innerSymbol = `
                     <circle cx="50" cy="108" r="10" />
@@ -720,8 +696,25 @@
                     <path d="M 48 148 L 92 148" />
                     <path d="M 70 132 L 70 172" />
                 `;
+            } else if (type === "health") {
+                bottomText = '無病長壽';
+                innerSymbol = `
+                    <circle cx="70" cy="105" r="14" />
+                    <circle cx="70" cy="105" r="6" fill="#C62828" />
+                    <path d="M 40 128 Q 70 118 100 128" />
+                    <path d="M 48 142 Q 70 130 92 142" />
+                    <path d="M 42 156 L 98 156" />
+                    <line x1="70" y1="120" x2="70" y2="175" />
+                `;
+            } else if (type === "wish") {
+                bottomText = '心想事成';
+                innerSymbol = `
+                    <polygon points="70,95 78,112 96,112 81,123 87,140 70,129 53,140 59,123 44,112 62,112" />
+                    <path d="M 38 148 Q 70 138 102 148" />
+                    <path d="M 46 160 L 94 160" />
+                    <line x1="70" y1="130" x2="70" y2="175" />
+                `;
             } else {
-                // 재물만복부 (암장 금고 / 옥새 겹문양)
                 bottomText = '萬福大吉';
                 innerSymbol = `
                     <rect x="44" y="98" width="22" height="18" />
@@ -767,7 +760,7 @@
                     <path d="M 70 200 L 70 226" />
                     <path d="M 46 228 Q 70 220 94 228" />
                 </g>
-                <rect x="42" y="206" width="56" height="18" fill="none" stroke="#B71C1C" stroke-width="1.6" opacity="0.85" rx="2"/>
+                <rect x="40" y="206" width="60" height="18" fill="none" stroke="#B71C1C" stroke-width="1.6" opacity="0.85" rx="2"/>
                 <text x="70" y="219" font-size="8.5" font-weight="900" fill="#B71C1C" text-anchor="middle" font-family="'Pretendard', serif">${bottomText}</text>
             </svg>
             `;
@@ -878,7 +871,7 @@
             // [핵심] 사주 맞춤 부적 프리뷰 및 명칭 동적 갱신
             const talismanPreview = document.getElementById('talismanBannerPreview');
             if (talismanPreview && currentTalisman) {
-                talismanPreview.innerHTML = renderAuthenticCinnabarTalisman(currentTalisman.type || 'metal', 72, 110);
+                talismanPreview.innerHTML = renderAuthenticCinnabarTalisman(currentTalisman.type || 'wealth', currentTalisman.pattern || 'vault', 72, 110);
             }
             const tHeader = document.getElementById('talismanBannerHeader');
             if (tHeader && currentTalisman) tHeader.innerText = `오늘의 맞춤 ${currentTalisman.title}`;
@@ -944,7 +937,7 @@
 
         function openTalismanModal() {
             if (!currentTalisman) {
-                currentTalisman = { type: "metal", title: "재물만복부 (萬福大吉符)", power: "재물 증식 · 금전운 대통", desc: "사방에서 금전과 복록이 샘솟듯 모여드는 강력한 전통 경면주사 수제 부적입니다." };
+                currentTalisman = { type: "wealth", pattern: "vault", title: "암장금고부 (暗藏金庫符)", power: "자산 방어 · 헛돈 누수 완벽 차단", desc: "사방에서 금전과 복록이 샘솟듯 모여드는 강력한 전통 경면주사 수제 부적입니다." };
             }
             document.getElementById('talismanTitle').innerText = currentTalisman.title;
             document.getElementById('talismanPower').innerText = currentTalisman.power;
@@ -952,7 +945,7 @@
             document.getElementById('talismanOwnerName').innerText = currentUserName;
             
             // 맞춤형 부적 타입에 따른 SVG 실시간 렌더링
-            document.getElementById('talismanRealBox').innerHTML = renderAuthenticCinnabarTalisman(currentTalisman.type || "metal", 160, 260);
+            document.getElementById('talismanRealBox').innerHTML = renderAuthenticCinnabarTalisman(currentTalisman.type || "wealth", currentTalisman.pattern || "vault", 160, 260);
             document.getElementById('talismanModal').classList.remove('hidden');
         }
 
@@ -1166,9 +1159,18 @@
                     const box = document.getElementById('daewoonBox');
                     const btn = document.getElementById('btnDaewoon');
                     if (box && btn) {
-                        box.innerHTML = item.content;
-                        box.classList.remove('hidden');
-                        btn.classList.add('hidden');
+                        fetch('/api/daewoon-report', {
+                            method: 'POST',
+                            headers: {'Content-Type': 'application/json'},
+                            body: JSON.stringify({ name: currentUserName, age: currentUserAge })
+                        })
+                        .then(r => r.json())
+                        .then(data => {
+                            box.innerHTML = data.content;
+                            box.classList.remove('hidden');
+                            btn.classList.add('hidden');
+                            saveUnlockedReport('daewoon', data.title, data.content);
+                        });
                     }
                 } else if (['wealth', 'love', 'business', 'health'].includes(item.key)) {
                     const box = document.getElementById(`themeReport_${item.key}`);
@@ -1266,7 +1268,7 @@
 
             const talismanPreview = document.getElementById('talismanBannerPreview');
             if (talismanPreview) {
-                talismanPreview.innerHTML = renderAuthenticCinnabarTalisman('metal', 72, 110);
+                talismanPreview.innerHTML = renderAuthenticCinnabarTalisman('wealth', 'vault', 72, 110);
             }
 
             renderUnlockedArchive();
