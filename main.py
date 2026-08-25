@@ -5,7 +5,7 @@ from pydantic import BaseModel
 from typing import Optional
 import os
 
-app = FastAPI(title="운세의 신 PRO API", version="4.7.0")
+app = FastAPI(title="운세의 신 PRO API", version="4.8.0")
 
 CHEONGAN_HANJA = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
 JIJI_HANJA = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"]
@@ -208,61 +208,87 @@ def get_daewoon_report(req: dict):
     return {
         "title": f"👑 {user_name}님의 자미두수 & 10년 대운 심층 리포트",
         "content": f"""
-        <div style="display: flex; flex-direction: column; gap: 14px; font-size: 12px; color: #334155; line-height: 1.6; text-align: left;">
+        <div style="display: flex; flex-direction: column; gap: 14px; font-size: 12px; color: #334155; line-height: 1.65; text-align: left;">
             
-            <!-- 1. 평생 생애 주기별 대운맥 흐름 (심층 3~4문장 확장) -->
+            <!-- 1. 평생 생애 주기별 대운맥 흐름 (풍부한 4~5문장 심층 확장) -->
             <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 16px; padding: 14px;">
-                <h4 style="font-size: 13px; font-weight: 800; color: #0F172A; border-bottom: 1px solid #E2E8F0; padding-bottom: 8px; margin-bottom: 10px;">
+                <h4 style="font-size: 13px; font-weight: 900; color: #0F172A; border-bottom: 1px solid #E2E8F0; padding-bottom: 8px; margin-bottom: 10px;">
                     🌐 1. {user_name}님의 평생 생애 주기별 대운맥(大運脈) 흐름
                 </h4>
-                <div style="display: flex; flex-direction: column; gap: 8px; font-size: 11px;">
+                <div style="display: flex; flex-direction: column; gap: 10px; font-size: 11px;">
                     <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px; padding: 10px;">
-                        <p style="font-weight: 800; color: #0F172A; margin-bottom: 3px;">🌱 [유년기 (년주 기반 / 0세 ~ 19세) : 기틀 형성 및 학업기]</p>
-                        <p style="color: #475569; line-height: 1.6;">타고난 영민함과 왕성한 지적 호기심으로 다양한 방면의 학문과 기예를 스펀지처럼 흡수하던 시기입니다. 내면의 가치관과 도덕적 기틀을 확립하며 훗날 대성할 큰 그릇의 뼈대를 공고히 다졌습니다. 주변 환경의 변화 속에서도 스스로 중심을 잡고 기본기를 충실히 연마한 귀중한 도약의 씨앗 구간이었습니다.</p>
+                        <p style="font-weight: 800; color: #0F172A; margin-bottom: 4px;">🌱 [유년기 (년주 기반 / 0세 ~ 19세) : 기틀 형성 및 학업기]</p>
+                        <p style="color: #475569; line-height: 1.65;">
+                            타고난 영민함과 왕성한 지적 호기심으로 다양한 방면의 학문과 기예를 스펀지처럼 빠르게 흡수하던 시기입니다. 
+                            부모와 가문의 든든한 울타리 안에서 내면의 가치관과 도덕적 기틀을 공고히 다졌습니다. 
+                            초년의 다양한 환경적 변화 속에서도 스스로 중심을 잃지 않고 본인만의 개성과 잠재력을 훌륭히 키워냈습니다. 
+                            훗날 사회에 진출하여 큰 인물로 대성할 수 있는 가장 튼튼하고 건강한 뿌리를 내린 귀중한 준비기였습니다.
+                        </p>
                     </div>
                     
                     <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px; padding: 10px;">
-                        <p style="font-weight: 800; color: #0F172A; margin-bottom: 3px;">🌿 [청년기 (월주 기반 / 20세 ~ 39세) : 도약 탐색 및 역량 구축기]</p>
-                        <p style="color: #475569; line-height: 1.6;">사회에 첫발을 내딛고 치열한 실전 경험과 전문성을 갈고닦으며 자신의 진가를 입증해 나가던 시기입니다. 다양한 인간관계와 조직 생활을 거치며 실패를 성공의 자산으로 바꾸는 혜안과 위기 극복의 내공을 체득했습니다. 중년의 대성공을 위한 탄탄한 인맥과 경제적 발판을 완벽히 구축한 탐색과 성장의 터널 구간이었습니다.</p>
+                        <p style="font-weight: 800; color: #0F172A; margin-bottom: 4px;">🌿 [청년기 (월주 기반 / 20세 ~ 39세) : 도약 탐색 및 실전 역량 구축기]</p>
+                        <p style="color: #475569; line-height: 1.65;">
+                            본격적으로 사회에 발을 내딛고 치열한 경쟁과 현장 경험을 통해 자신의 진짜 실력을 증명해 나가던 시기입니다. 
+                            때로는 예상치 못한 난관이나 인간관계의 시행착오를 겪기도 했으나, 이를 밑거름 삼아 위기 극복의 탁월한 내공을 체득했습니다. 
+                            다양한 직무와 사업적 시도를 거치며 평생의 무기가 될 전문 기술과 광범위한 인적 네트워크를 탄탄히 구축했습니다. 
+                            40대 황금 결실기로 웅비하기 위한 모든 지식과 체력을 완벽히 비축한 도약의 터널 구간이었습니다.
+                        </p>
                     </div>
 
                     <div style="background: #FEF3C7; border: 1.5px solid #FCD34D; border-radius: 12px; padding: 10px;">
-                        <p style="font-weight: 900; color: #78350F; margin-bottom: 3px;">🔥 [중장년기 (*현재 일주 기반 / 40세 ~ 59세) : 황금 자산 결실기]</p>
-                        <p style="color: #92400E; line-height: 1.6;"><strong>{user_name}님 인생 일대에서 가장 강력한 운세의 파도가 솟구치는 최고 하이라이트 구간입니다.</strong> 과거 수동적으로 끌려가던 입장에서 벗어나 모든 분야의 주도권과 결정권을 온전히 장악하게 됩니다. 투자, 사업, 명예의 삼박자가 절묘하게 맞아떨어지며 평생을 누릴 탄탄한 부와 사회적 명성을 확고히 굳히는 시기입니다.</p>
+                        <p style="font-weight: 900; color: #78350F; margin-bottom: 4px;">🔥 [중장년기 (*현재 일주 기반 / 40세 ~ 59세) : 황금 자산 결실기]</p>
+                        <p style="color: #92400E; line-height: 1.65;">
+                            <strong>{user_name}님 인생 일대에서 가장 강력한 천운(天運)의 파도가 솟구치는 최고 절정의 하이라이트 구간입니다.</strong> 
+                            남에게 의존하거나 수동적으로 끌려가던 입장에서 벗어나, 모든 조직과 프로젝트의 핵심 결정권을 쥐고 진두지휘하게 됩니다. 
+                            과거 20~30대에 쌓아 올린 전문성과 신뢰가 거대한 금전적 이익과 사회적 명성으로 환원되는 시기입니다. 
+                            부동산, 금융, 사업 등 다방면에서 자산의 볼륨이 폭발적으로 팽창하며 평생을 누릴 경제적 자유의 기틀을 확고히 세우게 됩니다.
+                        </p>
                     </div>
 
                     <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px; padding: 10px;">
-                        <p style="font-weight: 800; color: #0F172A; margin-bottom: 3px;">🍎 [말년기 (시주 기반 / 60세 이후) : 태평성대 및 명예 완성기]</p>
-                        <p style="color: #475569; line-height: 1.6;">치열했던 현역에서 한 걸음 물러나 평생 축적한 막대한 부와 지혜를 토대로 안락하고 평온한 태평성대를 누립니다. 후학 양성과 자손 번영에 기여하며 존경받는 원로로서 사회적 영향력을 유지합니다. 심신의 건강과 물질적 풍요가 완벽한 조화를 이루어 가문 전체를 반석 위에 올려놓는 영광의 시기입니다.</p>
+                        <p style="font-weight: 800; color: #0F172A; margin-bottom: 4px;">🍎 [말년기 (시주 기반 / 60세 이후) : 태평성대 및 명예 완성기]</p>
+                        <p style="color: #475569; line-height: 1.65;">
+                            치열했던 현역의 경쟁 무대에서 한 걸음 물러나, 평생 일구어낸 막대한 자산과 풍부한 지혜를 바탕으로 안락한 태평성대를 누립니다. 
+                            가문과 자손들에게 든든한 버팀목이자 존경받는 원로로서 사회적 영향력과 품격을 고스란히 유지합니다. 
+                            물질적 풍요뿐만 아니라 심신의 건강과 평온함이 극대화되어 진정한 삶의 가치와 여유를 만끽하게 됩니다. 
+                            가문의 번영을 확립하고 명예롭게 인생을 완성해 나가는 가장 영광스러운 황혼기입니다.
+                        </p>
                     </div>
                 </div>
             </div>
 
-            <!-- 2. 10년 대운 정밀 감명 (43세 ~ 52세 전 구간 세운별 분기점 완성) -->
+            <!-- 2. 10년 대운 정밀 감명 (43세 ~ 52세 전 연령 세운별 분기점 100% 망라) -->
             <div style="background: #FFFBEB; border: 1.5px solid #FDE68A; border-radius: 16px; padding: 14px;">
                 <h4 style="font-size: 13px; font-weight: 900; color: #78350F; border-bottom: 1px solid #FCD34D; padding-bottom: 8px; margin-bottom: 10px;">
                     📈 2. {user_name}님의 현재 10년 대운 정밀 감명 (43세 ~ 52세)
                 </h4>
                 
-                <div style="margin-bottom: 10px; line-height: 1.6;">
-                    <p style="font-weight: 800; color: #92400E; margin-bottom: 2px;">[대운의 본질과 주도권]</p>
-                    <p style="color: #78350F;">본원(日干)에 천을귀인(天乙貴人)과 편재(偏財)의 황금 기운이 강력하게 결합하는 대길 운맥입니다. 지난날의 정체와 불확실성을 완전히 걷어내고, 본인이 직접 판을 설계하고 이끌어가는 독보적인 리더십이 발현되는 10년의 절정기입니다.</p>
+                <div style="margin-bottom: 12px; line-height: 1.65;">
+                    <p style="font-weight: 800; color: #92400E; margin-bottom: 3px;">[대운의 본질과 주도권]</p>
+                    <p style="color: #78350F;">
+                        본원(日干)에 천을귀인(天乙貴人)과 편재(偏財)의 강력한 황금 기운이 결합하는 대길(大吉)의 10년입니다. 
+                        오랫동안 지체되었던 막힌 활로가 시원하게 뚫리며, 본인의 생각과 기획이 그대로 현실의 성과로 이어지는 주도적 대운입니다.
+                    </p>
                 </div>
 
-                <div style="display: flex; flex-direction: column; gap: 6px; font-size: 11px; background: rgba(254,243,199,0.6); border-radius: 10px; padding: 10px;">
-                    <p style="font-weight: 900; color: #78350F; font-size: 11px; margin-bottom: 2px;">[세운별 핵심 분기점 및 행동 가이드]</p>
+                <div style="display: flex; flex-direction: column; gap: 8px; font-size: 11px; background: rgba(254,243,199,0.7); border-radius: 12px; padding: 12px;">
+                    <p style="font-weight: 900; color: #78350F; font-size: 11.5px; margin-bottom: 2px;">[세운별 핵심 분기점 및 연령대별 로드맵 (43세 ~ 52세)]</p>
                     
-                    <p style="color: #92400E; line-height: 1.5;">
-                        • <strong>43세 ~ 45세 (도입기 / 자산 포트폴리오 재편):</strong> 불필요한 고정 비용을 정리하고 부동산·우량 자산 중심으로 종잣돈을 재배치하여 안전망을 탄탄히 다진 시기입니다.
-                    </p>
-                    
-                    <p style="color: #B45309; font-weight: 800; line-height: 1.5; background: #FEF3C7; padding: 4px 6px; border-radius: 6px;">
-                        • <strong>46세 ~ 49세 (정점기 / ★현재 위치 - 대운의 절정 및 비상):</strong> 영향력 있는 귀인의 결정적 조력과 함께 직위·자산이 가파르게 수직 상승하는 황금 전환점입니다. 주저하지 말고 핵심 프로젝트를 공격적으로 전개하십시오.
-                    </p>
-                    
-                    <p style="color: #92400E; line-height: 1.5;">
-                        • <strong>50세 ~ 52세 (결실기 / 성과 수확 및 안정화 안착):</strong> 40대 중후반에 이룩한 결실을 장기 수익 구조로 확정 짓고, 50대 중반 이후의 대운으로 순조롭게 연착륙하는 수확의 시기입니다.
-                    </p>
+                    <div style="background: #FFFFFF; border: 1px solid #FCD34D; border-radius: 8px; padding: 8px;">
+                        <p style="font-weight: 800; color: #92400E; margin-bottom: 2px;">• 43세 ~ 45세 (도입기 / 자산 포트폴리오 재편 및 내실 정비):</p>
+                        <p style="color: #475569; line-height: 1.55;">불필요하게 새어나가던 고정 지출과 인간관계를 과감히 정돈하고, 부동산 및 우량 안전 자산 중심으로 종잣돈을 재배치하여 대운의 폭발력을 견뎌낼 튼튼한 기반을 다진 구간입니다.</p>
+                    </div>
+
+                    <div style="background: #FEF3C7; border: 1.5px solid #F59E0B; border-radius: 8px; padding: 8px;">
+                        <p style="font-weight: 900; color: #B45309; margin-bottom: 2px;">• 46세 ~ 49세 (정점기 / ★현재 49세 위치 - 대운의 최고 절정 및 비상):</p>
+                        <p style="color: #78350F; line-height: 1.55;"><strong>현재 {user_name}님이 위치한 가장 뜨거운 황금 구간입니다.</strong> 천운의 조력자와 귀인이 잇따라 등장하여 직위와 명예, 사업 수익이 수직 상승합니다. 주저하지 말고 준비해 온 핵심 프로젝트를 공격적으로 추진해야 할 결정적 승부처입니다.</p>
+                    </div>
+
+                    <div style="background: #FFFFFF; border: 1px solid #FCD34D; border-radius: 8px; padding: 8px;">
+                        <p style="font-weight: 800; color: #92400E; margin-bottom: 2px;">• 50세 ~ 52세 (결실기 / 성과 수확 및 50대 대운 연착륙):</p>
+                        <p style="color: #475569; line-height: 1.55;">40대 중후반에 이룩한 거대한 성취를 장기적인 시스템 수익 구조로 확정 짓는 시기입니다. 무리한 외형 확장보다는 보유 자산의 안전한 수성과 관리에 집중하며 50대 중반의 후속 대운으로 순조롭게 안착하게 됩니다.</p>
+                    </div>
                 </div>
             </div>
 
