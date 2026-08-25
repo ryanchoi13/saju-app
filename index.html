@@ -32,7 +32,6 @@
         .cal-btn.active { background: #FFFFFF; color: #2D6A4F; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
         .btn-primary { width: 100%; background: #2D6A4F; color: white; border: none; font-size: 13px; font-weight: 900; padding: 14px; border-radius: 16px; cursor: pointer; box-shadow: 0 4px 6px -1px rgba(45,106,79,0.2); margin-top: 8px; }
 
-        /* 오행 고유 컬러 뱃지 규격 */
         .badge-elem { width: 38px; height: 38px; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; font-size: 17px; font-weight: 900; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
         .badge-jjg { width: 30px; height: 22px; border-radius: 6px; display: inline-flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; }
         
@@ -165,7 +164,7 @@
                     <div class="grid-cell"><span style="font-size: 10px; color: #94A3B8; display: block;">🔢 행운의 숫자</span><p id="resNumber" style="font-weight: 700; margin-top: 2px;">4, 9</p></div>
                     <div class="grid-cell"><span style="font-size: 10px; color: #94A3B8; display: block;">🧭 행운의 방위</span><p id="resDirection" style="font-weight: 700; margin-top: 2px;">정서쪽 (백호 방위)</p></div>
                     <div class="grid-cell"><span style="font-size: 10px; color: #94A3B8; display: block;">👔 추천 코디</span><p id="resStyle" style="font-weight: 700; margin-top: 2px;">화이트 셔츠와 메탈 시계</p></div>
-                    <div class="grid-cell"><span style="font-size: 10px; color: #94A3B8; display: block;">🍲 추천 메뉴</span><p id="resMenu" style="font-weight: 700; margin-top: 2px;">신선한 견과류와 생선 요리</p></div>
+                    <div class="grid-cell"><span style="font-size: 10px; color: #94A3B8; display: block;">🍲 추천 메뉴</span><p id="resMenu" style="font-weight: 700; margin-top: 2px;">신선한 견과류와 고단백 요리</p></div>
                     <div class="grid-cell"><span style="font-size: 10px; color: #94A3B8; display: block;">💡 마인드 처세</span><p id="resMindset" style="font-weight: 700; font-size: 11px; margin-top: 2px;">맺고 끊음을 명확히 대화하기</p></div>
                 </div>
 
@@ -174,7 +173,7 @@
                     <p id="resGaewoon" style="color: #92400E; font-weight: 300;">오늘 완료해야 할 우선순위 3가지 메모하기</p>
                 </div>
 
-                <!-- 22장 랜덤 타로 카드 섹션 -->
+                <!-- 22장 완전 난수 타로 카네 섹션 -->
                 <div class="card" style="padding: 16px;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                         <div style="text-align: left;">
@@ -237,7 +236,10 @@
                 
                 <div class="card" style="padding: 18px;">
                     <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 10px; margin-bottom: 14px;">
-                        <h3 style="font-size: 14px; font-weight: 900; color: #0F172A;">사주 명식표 (四柱命式)</h3>
+                        <div>
+                            <h3 style="font-size: 14px; font-weight: 900; color: #0F172A; display: inline-block;">사주 명식표 (四柱命式)</h3>
+                            <span id="sajuSingangBadge" style="font-size: 10px; background: #FEF3C7; color: #78350F; font-weight: 900; padding: 2px 6px; border-radius: 6px; margin-left: 6px;">신약(身弱) 사주</span>
+                        </div>
                         <span id="sajuOwnerName" style="font-size: 12px; color: #2D6A4F; font-weight: 800; background: #EBF5EE; padding: 3px 8px; border-radius: 8px;">최정오 님</span>
                     </div>
 
@@ -879,12 +881,25 @@
             // 1. 사주 결핍 오행 맞춤 부적 렌더링
             const talismanPreview = document.getElementById('talismanBannerPreview');
             if (talismanPreview && currentTalisman) {
-                talismanPreview.innerHTML = renderAuthenticCinnabarTalisman(currentTalisman.type || 'metal', 72, 110);
+                talismanPreview.innerHTML = renderAuthenticCinnabarTalisman(currentTalisman.type || 'wealth', 72, 110);
             }
             const tHeader = document.getElementById('talismanBannerHeader');
             if (tHeader && currentTalisman) tHeader.innerText = `오늘의 맞춤 ${currentTalisman.title}`;
 
-            // 2. 천간/지간 뱃지
+            // 2. 신강/신약 사주 뱃지 갱신
+            const singangBadge = document.getElementById('sajuSingangBadge');
+            if (singangBadge && data.singang_status) {
+                singangBadge.innerText = data.singang_status;
+                if (data.singang_status.includes("신강")) {
+                    singangBadge.style.background = "#DC2626";
+                    singangBadge.style.color = "#FFFFFF";
+                } else {
+                    singangBadge.style.background = "#FEF3C7";
+                    singangBadge.style.color = "#78350F";
+                }
+            }
+
+            // 3. 천간/지간 뱃지
             const dtl = data.saju_data.pillars_detail;
             setElemBadge('cg_h_badge', dtl.hour.cg, dtl.hour.cg_elem);
             setElemBadge('cg_d_badge', dtl.day.cg, dtl.day.cg_elem);
@@ -896,13 +911,13 @@
             setElemBadge('jj_m_badge', dtl.month.jj, dtl.month.jj_elem);
             setElemBadge('jj_y_badge', dtl.year.jj, dtl.year.jj_elem);
 
-            // 3. 지장간
+            // 4. 지장간
             document.getElementById('jjg_h_box').innerHTML = formatJijangganGroup(dtl.hour.jijanggan);
             document.getElementById('jjg_d_box').innerHTML = formatJijangganGroup(dtl.day.jijanggan);
             document.getElementById('jjg_m_box').innerHTML = formatJijangganGroup(dtl.month.jijanggan);
             document.getElementById('jjg_y_box').innerHTML = formatJijangganGroup(dtl.year.jijanggan);
 
-            // 4. 오행 세로 막대그래프
+            // 5. 오행 세로 막대그래프
             const elems = data.saju_data.elements;
             const applyBar = (key, val) => {
                 const barEl = document.getElementById(`bar${key}`);
@@ -919,7 +934,7 @@
 
             updateDaewoonGraphByAge(currentUserAge);
 
-            // 5. 6대 큐레이션 및 총평 실시간 바인딩
+            // 6. 6대 큐레이션 및 총평 실시간 바인딩
             document.getElementById('mbtiTypeName').innerText = data.saju_data.mbti.mbti;
             document.getElementById('mbtiTypeDesc').innerText = data.saju_data.mbti.desc;
             document.getElementById('mbtiAnimalIcon').innerText = data.saju_data.animal_icon;
@@ -1019,7 +1034,6 @@
             }
 
             try {
-                // 고유 난수 시드를 전달하여 매번 다른 타로 카드 반환
                 const randomSeed = Math.floor(Math.random() * 1000000);
                 const res = await fetch(`/api/daily-tarot?slot=${slot}&rand_seed=${randomSeed}`);
                 const card = await res.json();
