@@ -5,12 +5,11 @@ from pydantic import BaseModel
 from typing import Optional
 import os
 
-app = FastAPI(title="운세의 신 PRO API", version="4.5.0")
+app = FastAPI(title="운세의 신 PRO API", version="4.6.0")
 
 CHEONGAN_HANJA = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
 JIJI_HANJA = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"]
 
-# 천간 / 지지 오행 마스터 매핑
 CHEONGAN_ELEMENTS = {
     "甲": "wood", "乙": "wood",
     "丙": "fire", "丁": "fire",
@@ -24,7 +23,6 @@ JIJI_ELEMENTS = {
     "申": "metal", "酉": "metal", "戌": "earth", "亥": "water"
 }
 
-# 12지지별 정밀 지장간 (여기, 중기, 정기)
 JIJANGGAN_FULL_MAP = {
     "子": [{"char": "壬", "elem": "water", "weight": 10}, {"char": "癸", "elem": "water", "weight": 20}],
     "丑": [{"char": "癸", "elem": "water", "weight": 9}, {"char": "辛", "elem": "metal", "weight": 3}, {"char": "己", "elem": "earth", "weight": 18}],
@@ -126,10 +124,6 @@ def analyze_saju(req: SajuRequest):
 
     d_animal = ANIMAL_MAP.get(d_jj, "개")
 
-    # 1. 지장간 리스트 상세 추출
-    jj_list = [h_jj, d_jj, m_jj, y_jj]
-    cg_list = [h_cg, d_cg, m_cg, y_cg]
-
     pillars_detail = {
         "hour": {
             "cg": h_cg, "cg_elem": CHEONGAN_ELEMENTS.get(h_cg, "none"),
@@ -153,20 +147,15 @@ def analyze_saju(req: SajuRequest):
         }
     }
 
-    # 2. 지장간 가중치 합산 정밀 오행 계산
-    # 천간 4글자: 각 25점 (총 100점)
-    # 지장간: 각 지지당 30점 만점 할당 (월지는 계절성 반영 1.5배 가중)
     scores = {"wood": 0.0, "fire": 0.0, "earth": 0.0, "metal": 0.0, "water": 0.0}
     
-    # 천간 배점
     for cg in [y_cg, m_cg, d_cg]:
         scores[CHEONGAN_ELEMENTS[cg]] += 25.0
     if h_cg != "-":
         scores[CHEONGAN_ELEMENTS[h_cg]] += 25.0
 
-    # 지장간 배점
     for idx, jj in enumerate([y_jj, m_jj, d_jj]):
-        mult = 1.5 if idx == 1 else 1.0 # 월지 가중치
+        mult = 1.5 if idx == 1 else 1.0
         for item in JIJANGGAN_FULL_MAP.get(jj, []):
             scores[item["elem"]] += item["weight"] * mult
 
@@ -294,7 +283,7 @@ def get_theme_report(req: dict):
         """,
         "love": f"""
         <div style="display: flex; flex-direction: column; gap: 10px; font-size: 12px; color: #334155; line-height: 1.6; text-align: left;">
-            <div style="background: #FFF1F2; border: 1px solid #FECDD3; border-radius: 12px; padding: 10px;">
+            <div style="background: #FFF1F2; border: 1px solid #FECDD3; border-radius: 10px; padding: 10px;">
                 <p style="font-weight: 800; color: #881337; font-size: 12px;">[현재 상태: {sub_opt}] 맞춤 애정 감명</p>
                 <p style="font-size: 11px; color: #9F1239; margin-top: 2px;">현재 {user_name}님의 기운은 내면의 깊은 신뢰와 유대감을 형성하기에 가장 안정적인 상태입니다.</p>
             </div>
@@ -306,7 +295,7 @@ def get_theme_report(req: dict):
         """,
         "business": f"""
         <div style="display: flex; flex-direction: column; gap: 10px; font-size: 12px; color: #334155; line-height: 1.6; text-align: left;">
-            <div style="background: #EFF6FF; border: 1px solid #BFDBFE; border-radius: 12px; padding: 10px;">
+            <div style="background: #EFF6FF; border: 1px solid #BFDBFE; border-radius: 10px; padding: 10px;">
                 <p style="font-weight: 800; color: #1E3A8A; font-size: 12px;">[직업군 상태: {sub_opt}] 대길 성공 로드맵</p>
                 <p style="font-size: 11px; color: #1E40AF; margin-top: 2px;">치밀한 기획력과 실행력이 결합되어 핵심 수장으로 두각을 나타낼 사주입니다.</p>
             </div>
@@ -318,7 +307,7 @@ def get_theme_report(req: dict):
         """,
         "health": f"""
         <div style="display: flex; flex-direction: column; gap: 10px; font-size: 12px; color: #334155; line-height: 1.6; text-align: left;">
-            <div style="background: #ECFDF5; border: 1px solid #A7F3D0; border-radius: 12px; padding: 10px;">
+            <div style="background: #ECFDF5; border: 1px solid #A7F3D0; border-radius: 10px; padding: 10px;">
                 <p style="font-weight: 800; color: #065F46; font-size: 12px;">[오행 체질 진단] 활력 왕성 체질</p>
                 <p style="font-size: 11px; color: #047857; margin-top: 2px;">생명력은 왕성하나 체내 수분 및 진액 관리가 평생 건강의 핵심 키입니다.</p>
             </div>
