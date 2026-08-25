@@ -6,7 +6,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <title>운세의 신 PRO</title>
     
-    <link href="[https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800;900&display=swap](https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800;900&display=swap)" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Pretendard', sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background-color: #F4F7F4; color: #1E293B; display: flex; justify-content: center; min-height: 100vh; }
@@ -59,7 +59,6 @@
         .card-back { background: #162447; border: 3px solid #FFFFFF; box-shadow: 0 4px 8px rgba(0,0,0,0.18); overflow: hidden; }
         .card-front { transform: rotateY(180deg); background: white; overflow: hidden; border: 2px solid #D4AF37; }
 
-        /* 전통 경면주사 부적 카드 배너 */
         .talisman-banner { background: linear-gradient(135deg, #FFFDF5 0%, #FFFBEB 100%); border: 2px solid #FCD34D; border-radius: 24px; padding: 20px; text-align: center; display: flex; flex-direction: column; gap: 14px; }
         .talisman-art { height: 130px; background: rgba(254,243,199,0.5); border-radius: 16px; border: 1px solid rgba(253,230,138,0.8); display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
 
@@ -144,7 +143,6 @@
             <!-- 탭 1: 오늘운세 -->
             <div id="view-today" class="tab-view hidden">
                 
-                <!-- 사주 MBTI -->
                 <div class="mbti-card">
                     <div id="mbtiAnimalIcon" class="mbti-icon">🐶</div>
                     <div style="text-align: left;">
@@ -154,17 +152,15 @@
                     </div>
                 </div>
 
-                <!-- 오늘의 일진 -->
                 <div class="daily-banner">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                         <span style="font-size: 11px; color: #A7F3D0;">오늘의 일진</span>
                         <span id="resScoreBadge" style="background: #FBBF24; color: #1E293B; font-size: 10px; font-weight: 900; padding: 2px 8px; border-radius: 9999px;">운세 97점</span>
                     </div>
-                    <h3 id="resTitle" style="font-size: 16px; font-weight: 900; text-align: left;">금빛 기운이 서서히 솟아나는 도약의 하루</h3>
+                    <h3 id="resTitle" style="font-size: 16px; font-weight: 900; text-align: left;">도약의 하루</h3>
                     <p id="resAdvice" style="font-size: 12px; color: #D1FAE5; font-weight: 300; line-height: 1.6; text-align: left; white-space: pre-line;"></p>
                 </div>
 
-                <!-- 6대 큐레이션 -->
                 <div class="grid-2">
                     <div class="grid-cell"><span style="font-size: 10px; color: #94A3B8; display: block;">🎨 행운의 색상</span><p id="resColor" style="font-weight: 700; margin-top: 2px;">스카이 블루 / 아이보리</p></div>
                     <div class="grid-cell"><span style="font-size: 10px; color: #94A3B8; display: block;">🔢 행운의 숫자</span><p id="resNumber" style="font-weight: 700; margin-top: 2px;">1, 6</p></div>
@@ -174,13 +170,11 @@
                     <div class="grid-cell"><span style="font-size: 10px; color: #94A3B8; display: block;">💡 마인드 처세</span><p id="resMindset" style="font-weight: 700; font-size: 11px; margin-top: 2px;">상대의 말에 공감하고 명확하게 전달하기</p></div>
                 </div>
 
-                <!-- 개운 액션 -->
                 <div class="action-card">
                     <span style="font-weight: 800; color: #78350F; display: block; margin-bottom: 2px;">✨ 오늘의 개운(開運) 실천 액션</span>
                     <p id="resGaewoon" style="color: #92400E; font-weight: 300;">오전 중 따뜻한 차 한 잔을 마시며 목표 3가지 메모하기</p>
                 </div>
 
-                <!-- 오늘의 타로 -->
                 <div class="card" style="padding: 16px;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                         <div style="text-align: left;">
@@ -214,7 +208,6 @@
                     <div id="tarotResultBox" class="hidden"></div>
                 </div>
 
-                <!-- 오늘의 맞춤 부적 전용 카드 -->
                 <div class="talisman-banner">
                     <div style="display: flex; justify-content: center; align-items: center; gap: 6px;">
                         <span>🔥</span>
@@ -247,62 +240,53 @@
                         <span id="sajuOwnerName" style="font-size: 12px; color: #2D6A4F; font-weight: 800; background: #EBF5EE; padding: 3px 8px; border-radius: 8px;">최정오 님</span>
                     </div>
 
-                    <!-- 명식 그리드 -->
                     <div style="display: grid; grid-template-columns: 56px 1fr 1fr 1fr 1fr; gap: 6px; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 18px; padding: 12px 8px;">
-                        
-                        <!-- 좌측 구분 라벨 열 -->
                         <div style="display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; padding: 8px 0;">
-                            <span style="font-size: 11px; font-weight: 800; color: #64748B; height: 18px; line-height: 18px; display: flex; align-items: center; justify-content: center;">구분</span>
+                            <span style="font-size: 11px; font-weight: 800; color: #64748B; height: 18px; line-height: 18px;">구분</span>
                             <div style="height: 38px; display: flex; align-items: center; justify-content: center; color: #475569; font-size: 10px; font-weight: 800; line-height: 1.2;">천간<br>(天干)</div>
                             <div style="height: 38px; display: flex; align-items: center; justify-content: center; color: #475569; font-size: 10px; font-weight: 800; line-height: 1.2;">지간<br>(地干)</div>
-                            <div style="border-top: 1px dashed #CBD5E1; width: 100%; padding-top: 8px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 4px;">
+                            <div style="border-top: 1px dashed #CBD5E1; width: 100%; padding-top: 8px; display: flex; flex-direction: column; align-items: center; gap: 4px;">
                                 <div style="color: #475569; font-size: 10px; font-weight: 800; line-height: 1.2;">지장간<br>(地藏干)</div>
                             </div>
                         </div>
 
-                        <!-- 시주 (時) -->
                         <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 14px; padding: 8px 4px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center;">
-                            <span style="font-size: 11px; font-weight: 800; color: #64748B; height: 18px; line-height: 18px; display: flex; align-items: center; justify-content: center;">시주 (時)</span>
+                            <span style="font-size: 11px; font-weight: 800; color: #64748B; height: 18px; line-height: 18px;">시주 (時)</span>
                             <div id="cg_h_badge" class="badge-elem elem-none">-</div>
                             <div id="jj_h_badge" class="badge-elem elem-none">-</div>
-                            <div style="border-top: 1px dashed #CBD5E1; width: 100%; padding-top: 8px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 4px;">
+                            <div style="border-top: 1px dashed #CBD5E1; width: 100%; padding-top: 8px; display: flex; flex-direction: column; align-items: center; gap: 4px;">
                                 <div id="jjg_h_box" style="display: flex; flex-direction: column; align-items: center; gap: 4px;">-</div>
                             </div>
                         </div>
 
-                        <!-- 일주 (日) -->
                         <div style="background: #F0FDF4; border: 1.5px solid #86EFAC; border-radius: 14px; padding: 8px 4px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center;">
-                            <span style="font-size: 11px; font-weight: 800; color: #166534; height: 18px; line-height: 18px; display: flex; align-items: center; justify-content: center;">일주 (日)</span>
+                            <span style="font-size: 11px; font-weight: 800; color: #166534; height: 18px; line-height: 18px;">일주 (日)</span>
                             <div id="cg_d_badge" class="badge-elem elem-none">-</div>
                             <div id="jj_d_badge" class="badge-elem elem-none">-</div>
-                            <div style="border-top: 1px dashed #A7F3D0; width: 100%; padding-top: 8px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 4px;">
+                            <div style="border-top: 1px dashed #A7F3D0; width: 100%; padding-top: 8px; display: flex; flex-direction: column; align-items: center; gap: 4px;">
                                 <div id="jjg_d_box" style="display: flex; flex-direction: column; align-items: center; gap: 4px;">-</div>
                             </div>
                         </div>
 
-                        <!-- 월주 (月) -->
                         <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 14px; padding: 8px 4px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center;">
-                            <span style="font-size: 11px; font-weight: 800; color: #64748B; height: 18px; line-height: 18px; display: flex; align-items: center; justify-content: center;">월주 (月)</span>
+                            <span style="font-size: 11px; font-weight: 800; color: #64748B; height: 18px; line-height: 18px;">월주 (月)</span>
                             <div id="cg_m_badge" class="badge-elem elem-none">-</div>
                             <div id="jj_m_badge" class="badge-elem elem-none">-</div>
-                            <div style="border-top: 1px dashed #CBD5E1; width: 100%; padding-top: 8px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 4px;">
+                            <div style="border-top: 1px dashed #CBD5E1; width: 100%; padding-top: 8px; display: flex; flex-direction: column; align-items: center; gap: 4px;">
                                 <div id="jjg_m_box" style="display: flex; flex-direction: column; align-items: center; gap: 4px;">-</div>
                             </div>
                         </div>
 
-                        <!-- 년주 (年) -->
                         <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 14px; padding: 8px 4px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center;">
-                            <span style="font-size: 11px; font-weight: 800; color: #64748B; height: 18px; line-height: 18px; display: flex; align-items: center; justify-content: center;">년주 (年)</span>
+                            <span style="font-size: 11px; font-weight: 800; color: #64748B; height: 18px; line-height: 18px;">년주 (年)</span>
                             <div id="cg_y_badge" class="badge-elem elem-none">-</div>
                             <div id="jj_y_badge" class="badge-elem elem-none">-</div>
-                            <div style="border-top: 1px dashed #CBD5E1; width: 100%; padding-top: 8px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 4px;">
+                            <div style="border-top: 1px dashed #CBD5E1; width: 100%; padding-top: 8px; display: flex; flex-direction: column; align-items: center; gap: 4px;">
                                 <div id="jjg_y_box" style="display: flex; flex-direction: column; align-items: center; gap: 4px;">-</div>
                             </div>
                         </div>
-
                     </div>
 
-                    <!-- 오행(五行) 세로 막대 그래프 -->
                     <div style="margin-top: 18px; text-align: left;">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                             <span style="font-size: 12px; font-weight: 800; color: #0F172A;">오행(五行) 실질 에너지 세력 분포</span>
@@ -358,14 +342,13 @@
                     </div>
                 </div>
 
-                <!-- 자미두수 & 10년 대운 (전 구간 20대~70대 완벽 풀스트레치 그래프) -->
+                <!-- 자미두수 & 10년 대운 (실시간 나이 연동 그래프) -->
                 <div class="card" style="border: 2px solid #FCD34D;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                         <span style="font-size: 13px; font-weight: 900;">👑 자미두수 & 10년 대운 리포트</span>
                         <span style="font-size: 10px; background: #FEF3C7; color: #78350F; padding: 2px 8px; border-radius: 9999px; font-weight: 900;">450 복채</span>
                     </div>
 
-                    <!-- 10년 생애 그래프 -->
                     <div style="background: #F8FAFC; border-radius: 18px; border: 1px solid #E2E8F0; padding: 14px 12px 10px; margin-bottom: 14px; text-align: left;">
                         <div style="font-size: 11px; font-weight: 800; color: #475569; margin-bottom: 8px;">📊 10년 생애 그래프</div>
                         
@@ -383,24 +366,24 @@
                                 <path d="M 0,78 C 30,75 45,62 60,60 C 85,57 105,28 130,28 C 155,28 170,54 190,52 C 215,50 230,22 245,24 C 265,26 280,36 300,38" 
                                       fill="none" stroke="url(#fullCurveGradient)" stroke-width="3.6" stroke-linecap="round" />
 
-                                <line x1="130" y1="6" x2="130" y2="88" stroke="#94A3B8" stroke-width="1.2" stroke-dasharray="2.5 2.5" />
+                                <line id="daewoonGuideLine" x1="130" y1="6" x2="130" y2="88" stroke="#94A3B8" stroke-width="1.2" stroke-dasharray="2.5 2.5" />
 
-                                <rect x="60" y="-2" width="140" height="15" rx="4" fill="#FEF2F2" stroke="#FECDD3" stroke-width="0.8"/>
-                                <text x="130" y="9" font-size="8.5" font-weight="900" fill="#DC2626" text-anchor="middle">📍 최정오 님의 현재 위치 (황금 결실기)</text>
+                                <rect id="daewoonTagBox" x="60" y="-2" width="140" height="15" rx="4" fill="#FEF2F2" stroke="#FECDD3" stroke-width="0.8"/>
+                                <text id="daewoonTagText" x="130" y="9" font-size="8.5" font-weight="900" fill="#DC2626" text-anchor="middle">📍 최정오 님의 현재 위치 (황금기)</text>
 
-                                <circle cx="130" cy="28" r="5" fill="#EF4444" stroke="#FFFFFF" stroke-width="2" />
+                                <circle id="daewoonCurrentDot" cx="130" cy="28" r="5" fill="#EF4444" stroke="#FFFFFF" stroke-width="2" />
                             </svg>
 
-                            <div style="display: grid; grid-template-columns: repeat(6, 1fr); text-align: center; font-size: 9px; color: #94A3B8; font-weight: 700; border-top: 1px solid #E2E8F0; padding-top: 6px; margin-top: -2px;">
-                                <span>20대</span>
-                                <span>30대</span>
-                                <div style="display: flex; flex-direction: column; align-items: center; margin-top: -2px;">
+                            <div id="daewoonAgeLabels" style="display: grid; grid-template-columns: repeat(6, 1fr); text-align: center; font-size: 9px; color: #94A3B8; font-weight: 700; border-top: 1px solid #E2E8F0; padding-top: 6px; margin-top: -2px;">
+                                <span id="lblAge20">20대</span>
+                                <span id="lblAge30">30대</span>
+                                <div id="lblAge40Box" style="display: flex; flex-direction: column; align-items: center; margin-top: -2px;">
                                     <span style="color: #DC2626; font-weight: 900; font-size: 10px;">40대★</span>
-                                    <span style="color: #DC2626; font-size: 8px; font-weight: 900;">(현재 49세)</span>
+                                    <span id="lblCurrentAgeText" style="color: #DC2626; font-size: 8px; font-weight: 900;">(현재 49세)</span>
                                 </div>
-                                <span>50대</span>
-                                <span>60대</span>
-                                <span>70대~</span>
+                                <span id="lblAge50">50대</span>
+                                <span id="lblAge60">60대</span>
+                                <span id="lblAge70">70대~</span>
                             </div>
                         </div>
                     </div>
@@ -621,6 +604,7 @@
         let currentThemeKey = '';
         let currentTalisman = null;
         let currentUserName = "최정오";
+        let currentUserAge = 49;
         let dailyTarotDrawn = false;
         let drawnTarotCards = {};
 
@@ -639,9 +623,9 @@
         let unlockedReports = getUnlockedReports();
 
         const TAROT_IMAGES = {
-            "0. THE FOOL (바보)": "[https://upload.wikimedia.org/wikipedia/commons/9/90/RWS_Tarot_00_Fool.jpg](https://upload.wikimedia.org/wikipedia/commons/9/90/RWS_Tarot_00_Fool.jpg)",
-            "I. THE MAGICIAN (마법사)": "[https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg](https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg)",
-            "II. THE HIGH PRIESTESS (여사제)": "[https://upload.wikimedia.org/wikipedia/commons/8/88/RWS_Tarot_02_High_Priestess.jpg](https://upload.wikimedia.org/wikipedia/commons/8/88/RWS_Tarot_02_High_Priestess.jpg)"
+            "0. THE FOOL (바보)": "https://upload.wikimedia.org/wikipedia/commons/9/90/RWS_Tarot_00_Fool.jpg",
+            "I. THE MAGICIAN (마법사)": "https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg",
+            "II. THE HIGH PRIESTESS (여사제)": "https://upload.wikimedia.org/wikipedia/commons/8/88/RWS_Tarot_02_High_Priestess.jpg"
         };
 
         function getTarotCardBackSvg() {
@@ -682,30 +666,24 @@
                     <circle cx="48" cy="38" r="3" fill="#C62828" />
                     <circle cx="70" cy="38" r="3" fill="#C62828" />
                     <circle cx="92" cy="38" r="3" fill="#C62828" />
-
                     <path d="M 32 50 L 108 50" />
                     <path d="M 36 50 L 36 68 L 104 68 L 104 50" />
                     <path d="M 50 58 L 90 58" />
                     <path d="M 70 50 L 70 68" />
                     <path d="M 42 76 Q 70 66 98 76" />
-                    
                     <path d="M 30 88 L 110 88" />
                     <path d="M 34 88 L 34 165 Q 34 180 50 180 L 90 180 Q 106 180 106 165 L 106 88" />
-                    
                     <rect x="44" y="98" width="22" height="18" />
                     <rect x="74" y="98" width="22" height="18" />
                     <line x1="55" y1="98" x2="55" y2="116" />
                     <line x1="85" y1="98" x2="85" y2="116" />
-
                     <path d="M 42 126 L 98 126" />
                     <path d="M 50 134 Q 70 128 90 134" />
-                    
                     <path d="M 48 144 Q 58 138 70 148 Q 82 138 92 144" />
                     <path d="M 54 152 L 86 152" />
                     <path d="M 70 148 L 70 172" />
                     <circle cx="58" cy="164" r="2.5" fill="#C62828" />
                     <circle cx="82" cy="164" r="2.5" fill="#C62828" />
-
                     <path d="M 36 192 Q 70 184 104 192" />
                     <path d="M 48 200 L 92 200" />
                     <path d="M 38 210 Q 70 198 102 210" />
@@ -714,7 +692,7 @@
                     <path d="M 46 228 Q 70 220 94 228" />
                 </g>
                 <rect x="52" y="206" width="36" height="18" fill="none" stroke="#B71C1C" stroke-width="1.8" opacity="0.8" rx="2"/>
-                <text x="70" y="219" font-size="9" font-weight="900" fill="#B71C1C" text-anchor="middle" font-family="'Pretendard', serif">開運大吉</text>
+                <text x="70" y="219" font-size="9" font-weight="900" fill="#B71C1C" text-anchor="middle">開運大吉</text>
             </svg>
             `;
         }
@@ -765,6 +743,30 @@
             `).join('');
         }
 
+        // 입력된 생년에 맞게 그래프 나이축 및 현재 위치 핀 동적 렌더링
+        function updateDaewoonGraphByAge(age) {
+            currentUserAge = age;
+            const clampedAge = Math.min(85, Math.max(15, age));
+            
+            // X축 위치 (20대=25, 70대=275 사이 보간)
+            const posX = Math.min(285, Math.max(15, (clampedAge - 20) * 5.0 + 25));
+            const posY = clampedAge >= 40 && clampedAge <= 55 ? 28 : (clampedAge < 40 ? 60 : 34);
+
+            const dot = document.getElementById('daewoonCurrentDot');
+            const line = document.getElementById('daewoonGuideLine');
+            const tagText = document.getElementById('daewoonTagText');
+            const tagBox = document.getElementById('daewoonTagBox');
+
+            if (dot) { dot.setAttribute('cx', posX); dot.setAttribute('cy', posY); }
+            if (line) { line.setAttribute('x1', posX); line.setAttribute('x2', posX); }
+            if (tagText) { tagText.setAttribute('x', posX); tagText.textContent = `📍 ${currentUserName}님의 현재 위치 (${age}세)`; }
+            if (tagBox) { tagBox.setAttribute('x', Math.max(10, Math.min(150, posX - 70))); }
+
+            const ageDecade = Math.floor(age / 10) * 10;
+            const curText = document.getElementById('lblCurrentAgeText');
+            if (curText) curText.innerText = `(현재 ${age}세)`;
+        }
+
         async function startSajuAnalysis() {
             currentUserName = document.getElementById('inputName').value.trim() || "최정오";
             const birth = document.getElementById('inputBirth').value || "1978-03-13";
@@ -779,7 +781,9 @@
             const data = await res.json();
 
             currentTalisman = data.daily_fortune.talisman;
+            currentUserAge = data.current_age;
 
+            // 천간 & 지간 뱃지 바인딩
             const dtl = data.saju_data.pillars_detail;
             setElemBadge('cg_h_badge', dtl.hour.cg, dtl.hour.cg_elem);
             setElemBadge('cg_d_badge', dtl.day.cg, dtl.day.cg_elem);
@@ -791,11 +795,13 @@
             setElemBadge('jj_m_badge', dtl.month.jj, dtl.month.jj_elem);
             setElemBadge('jj_y_badge', dtl.year.jj, dtl.year.jj_elem);
 
+            // 지장간 바인딩
             document.getElementById('jjg_h_box').innerHTML = formatJijangganGroup(dtl.hour.jijanggan);
             document.getElementById('jjg_d_box').innerHTML = formatJijangganGroup(dtl.day.jijanggan);
             document.getElementById('jjg_m_box').innerHTML = formatJijangganGroup(dtl.month.jijanggan);
             document.getElementById('jjg_y_box').innerHTML = formatJijangganGroup(dtl.year.jijanggan);
 
+            // 오행 세로 막대그래프 갱신
             const elems = data.saju_data.elements;
             const applyBar = (key, val) => {
                 const barEl = document.getElementById(`bar${key}`);
@@ -809,6 +815,8 @@
             applyBar('Earth', elems.earth);
             applyBar('Metal', elems.metal);
             applyBar('Water', elems.water);
+
+            updateDaewoonGraphByAge(currentUserAge);
 
             document.getElementById('mbtiTypeName').innerText = data.saju_data.mbti.mbti;
             document.getElementById('mbtiTypeDesc').innerText = data.saju_data.mbti.desc;
@@ -956,7 +964,7 @@
             fetch('/api/daewoon-report', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ name: currentUserName })
+                body: JSON.stringify({ name: currentUserName, age: currentUserAge })
             })
             .then(r => r.json())
             .then(data => {
@@ -966,7 +974,7 @@
                 document.getElementById('daewoonBox').classList.remove('hidden');
                 document.getElementById('btnDaewoon').classList.add('hidden');
                 saveUnlockedReport('daewoon', data.title, data.content);
-                alert('🎉 [자미두수 & 10년 대운 리포트] 열람 완료!\n[마이페이지 > 보관함]에 보관되었습니다.');
+                alert('🎉 [자미두수 & 10년 대운 리포트] 열람 완료!\n[마이페이지 > 보관함]에 최신 버전으로 보관되었습니다.');
             });
         }
 
@@ -1022,7 +1030,7 @@
             
             saveUnlockedReport(currentThemeKey, data.title, data.content);
             closeThemeSelectModal();
-            alert(`🎉 [${data.title}] 열람 완료!\n[마이페이지 > 보관함]에 성공적으로 보관되었습니다.`);
+            alert(`🎉 [${data.title}] 열람 완료!\n[마이페이지 > 보관함]에 보관되었습니다.`);
         }
 
         function saveUnlockedReport(key, title, content) {
@@ -1055,7 +1063,7 @@
                         fetch('/api/daewoon-report', {
                             method: 'POST',
                             headers: {'Content-Type': 'application/json'},
-                            body: JSON.stringify({ name: currentUserName })
+                            body: JSON.stringify({ name: currentUserName, age: currentUserAge })
                         })
                         .then(r => r.json())
                         .then(data => {
