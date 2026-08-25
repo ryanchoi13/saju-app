@@ -6,7 +6,7 @@ from typing import Optional
 import os
 import random
 
-app = FastAPI(title="운세의 신 PRO API", version="10.0.1")
+app = FastAPI(title="운세의 신 PRO API", version="11.0.0")
 
 CHEONGAN_HANJA = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
 JIJI_HANJA = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"]
@@ -154,7 +154,7 @@ def analyze_saju(req: SajuRequest):
 
     d_animal = ANIMAL_MAP.get(d_jj, "개")
 
-    # 5. 만 나이 연산 (2026년 기준)
+    # 5. 만 나이 연산
     current_year = 2026
     current_age = current_year - req.year + 1
 
@@ -181,7 +181,7 @@ def analyze_saju(req: SajuRequest):
         }
     }
 
-    # 6. 오행 가중치 점수 연산
+    # 6. 오행 가중치 정밀 연산
     scores = {"wood": 0.0, "fire": 0.0, "earth": 0.0, "metal": 0.0, "water": 0.0}
     for cg in [y_cg, m_cg, d_cg]:
         scores[CHEONGAN_ELEMENTS[cg]] += 25.0
@@ -202,7 +202,7 @@ def analyze_saju(req: SajuRequest):
         k: round((v / total_score) * 100, 1) for k, v in scores.items()
     }
 
-    # 7. 신강/신약 판정
+    # 7. 신강 vs 신약 판정
     day_elem = CHEONGAN_ELEMENTS[d_cg]
     support_score = scores.get(day_elem, 0)
     insoeng_map = {"wood": "water", "fire": "wood", "earth": "fire", "metal": "earth", "water": "metal"}
@@ -231,7 +231,6 @@ def analyze_saju(req: SajuRequest):
     daily_title = fortune_titles.get(d_cg, "새로운 기운이 서서히 솟아나는 도약의 하루")
     daily_score = 86 + (d_cg_idx * 3 + datetime.date.today().day) % 13
 
-    # 변수명 수정: 문법 오류 원인이었던 3_stage_advice -> three_stage_advice로 완전 변경!
     three_stage_advice = (
         f"☀️ 오전 (06:00~12:00): 부족한 {min_elem.upper()} 기운을 불어넣어 줄 반가운 소식이나 귀인의 연락이 닿아 오랫동안 추진하던 일에 탄력이 붙습니다.\n\n"
         f"🌤️ 오후 (12:00~18:00): 본원({d_cg})의 결단력과 추진력이 극대화되는 황금 타임입니다. 중요한 협상이나 문서 계약을 적극 추진하세요.\n\n"
@@ -287,57 +286,56 @@ def get_daewoon_report(req: dict):
     return {
         "title": f"👑 {user_name}님의 자미두수 & 10년 대운 심층 리포트",
         "content": f"""
-        <div style="display: flex; flex-direction: column; gap: 14px; font-size: 12px; color: #334155; line-height: 1.65; text-align: left;">
-            <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 16px; padding: 14px;">
-                <h4 style="font-size: 13px; font-weight: 700; color: #0F172A; border-bottom: 1px solid #E2E8F0; padding-bottom: 8px; margin-bottom: 10px;">
-                    🌐 1. {user_name}님의 평생 생애 주기별 대운맥(大運脈) 흐름
+        <div style="display: flex; flex-direction: column; gap: 14px; font-size: 13px; color: #334155; line-height: 1.75; text-align: left;">
+            <div style="border-left: 4px solid #2D6A4F; padding-left: 10px; margin-bottom: 4px;">
+                <h4 style="font-size: 15px; font-weight: 700; color: #0F172A;">
+                    🌐 1. {user_name}님의 평생 생애 주기별 대운맥 흐름
                 </h4>
-                <div style="display: flex; flex-direction: column; gap: 10px; font-size: 11px;">
-                    <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px; padding: 10px;">
-                        <p style="font-weight: 700; color: #0F172A; margin-bottom: 4px;">🌱 [유년기 (0세 ~ 19세) : 기틀 형성 및 학업기]</p>
-                        <p style="color: #475569; line-height: 1.65;">타고난 영민함과 지적 호기심으로 내면의 가치관과 도덕적 기틀을 확립하던 시기입니다.</p>
-                    </div>
-                    <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px; padding: 10px;">
-                        <p style="font-weight: 700; color: #0F172A; margin-bottom: 4px;">🌿 [청년기 (20세 ~ 39세) : 도약 탐색 및 역량 구축기]</p>
-                        <p style="color: #475569; line-height: 1.65;">사회에 진출하여 실전 경험과 전문성을 갈고닦으며 자신의 진가를 입증해 나간 시기입니다.</p>
-                    </div>
-                    <div style="background: #FEF3C7; border: 1.5px solid #FCD34D; border-radius: 12px; padding: 10px;">
-                        <p style="font-weight: 700; color: #78350F; margin-bottom: 4px;">🔥 [중장년기 (*현재 일주 기반 / 40세 ~ 59세) : 황금 자산 결실기]</p>
-                        <p style="color: #92400E; line-height: 1.65;"><strong>{user_name}님 인생 일대에서 가장 강력한 천운의 파도가 솟구치는 최고 하이라이트 구간입니다.</strong> 사회적 주도권을 잡고 자산과 명예의 결실이 폭발적으로 확장됩니다.</p>
-                    </div>
-                    <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px; padding: 10px;">
-                        <p style="font-weight: 700; color: #0F172A; margin-bottom: 4px;">🍎 [말년기 (60세 이후) : 태평성대 및 명예 완성기]</p>
-                        <p style="color: #475569; line-height: 1.65;">평생 축적한 부와 지혜를 토대로 안락하고 평온한 노후를 누리며 가문 번영을 완성합니다.</p>
-                    </div>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <div style="border-bottom: 1px solid #F1F5F9; padding-bottom: 8px;">
+                    <p style="font-weight: 700; color: #0F172A; margin-bottom: 2px;">🌱 [유년기 (0세 ~ 19세) : 기틀 형성기]</p>
+                    <p style="color: #475569;">타고난 영민함과 지적 호기심으로 내면의 가치관과 도덕적 기틀을 확립하던 시기입니다. 초년의 환경 변화 속에서도 중심을 잡고 잠재력을 키웠습니다.</p>
+                </div>
+                <div style="border-bottom: 1px solid #F1F5F9; padding-bottom: 8px;">
+                    <p style="font-weight: 700; color: #0F172A; margin-bottom: 2px;">🌿 [청년기 (20세 ~ 39세) : 역량 구축기]</p>
+                    <p style="color: #475569;">사회에 진출하여 실전 경험과 전문성을 갈고닦으며 진가를 입증해 나간 시기입니다. 실패를 자산으로 바꾸는 혜안과 인적 네트워크를 다졌습니다.</p>
+                </div>
+                <div style="border-bottom: 1px solid #F1F5F9; padding-bottom: 8px;">
+                    <p style="font-weight: 700; color: #D97706; margin-bottom: 2px;">🔥 [중장년기 (*현재 위치 / 40세 ~ 59세) : 황금 결실기]</p>
+                    <p style="color: #92400E;"><strong>{user_name}님 인생 일대에서 가장 강력한 천운의 파도가 솟구치는 최고 하이라이트 구간입니다.</strong> 사회적 주도권을 잡고 자산과 명예의 결실이 폭발적으로 확장됩니다.</p>
+                </div>
+                <div>
+                    <p style="font-weight: 700; color: #0F172A; margin-bottom: 2px;">🍎 [말년기 (60세 이후) : 태평성대기]</p>
+                    <p style="color: #475569;">평생 축적한 부와 지혜를 토대로 안락하고 평온한 노후를 누리며 존경받는 원로로서 가문 번영을 완성합니다.</p>
                 </div>
             </div>
 
-            <div style="background: #FFFBEB; border: 1.5px solid #FDE68A; border-radius: 16px; padding: 14px;">
-                <h4 style="font-size: 13px; font-weight: 700; color: #78350F; border-bottom: 1px solid #FCD34D; padding-bottom: 8px; margin-bottom: 10px;">
-                    📈 2. {user_name}님의 현재 10년 대운 정밀 감명 ({start_age}세 ~ {end_age}세)
+            <div style="border-left: 4px solid #D97706; padding-left: 10px; margin-top: 10px; margin-bottom: 4px;">
+                <h4 style="font-size: 15px; font-weight: 700; color: #78350F;">
+                    📈 2. {user_name}님의 현재 10년 대운 감명 ({start_age}세 ~ {end_age}세)
                 </h4>
-                <div style="margin-bottom: 12px; line-height: 1.65;">
-                    <p style="font-weight: 700; color: #92400E; margin-bottom: 3px;">[대운의 본질과 주도권]</p>
-                    <p style="color: #78350F;">본원에 귀인과 재성의 기운이 결합하는 시기로, 본인이 직접 판을 설계하고 이끌어가는 독보적인 리더십이 발현되는 10년의 절정기입니다.</p>
-                </div>
-                <div style="display: flex; flex-direction: column; gap: 8px; font-size: 11px; background: rgba(254,243,199,0.7); border-radius: 12px; padding: 12px;">
-                    <p style="font-weight: 700; color: #78350F; font-size: 11.5px; margin-bottom: 2px;">[세운별 핵심 분기점 ({start_age}세 ~ {end_age}세)]</p>
-                    <p style="color: #475569; line-height: 1.55;">• <strong>{start_age}세 ~ {start_age+2}세 (도입기):</strong> 고정 비용 정돈 및 안전 자산 중심 종잣돈 재배치.</p>
-                    <p style="color: #B45309; font-weight: 700; line-height: 1.55; background: #FEF3C7; padding: 4px 6px; border-radius: 6px;">• <strong>{start_age+3}세 ~ {start_age+6}세 (정점기 / ★현재 {age}세 위치):</strong> 귀인의 결정적 조력과 함께 직위·자산이 수직 상승하는 황금 전환점.</p>
-                    <p style="color: #475569; line-height: 1.55;">• <strong>{start_age+7}세 ~ {end_age}세 (결실기):</strong> 성과를 안정적 시스템 수익으로 확정 짓고 차기 대운으로의 연착륙.</p>
-                </div>
+            </div>
+            <p style="color: #78350F; line-height: 1.75;">
+                본원에 귀인과 재성의 기운이 결합하는 시기로, 본인이 직접 판을 설계하고 이끌어가는 독보적인 리더십이 발현되는 10년의 절정기입니다.
+            </p>
+            <div style="display: flex; flex-direction: column; gap: 6px; font-size: 12.5px; color: #475569;">
+                <p>• <strong>{start_age}세 ~ {start_age+2}세 (도입기):</strong> 고정 비용 정돈 및 안전 자산 중심 종잣돈 재배치.</p>
+                <p style="color: #B45309; font-weight: 700;">• <strong>{start_age+3}세 ~ {start_age+6}세 (정점기 / ★현재 {age}세 위치):</strong> 귀인의 결정적 조력과 함께 직위·자산 수직 상승 전환점.</p>
+                <p>• <strong>{start_age+7}세 ~ {end_age}세 (결실기):</strong> 성과를 안정적 시스템 수익으로 확정 짓고 차기 대운으로의 연착륙.</p>
+            </div>
 
-                <div style="margin-top: 10px; background: #FFFFFF; border: 1px solid #FCD34D; border-radius: 10px; padding: 10px;">
-                    <p style="font-weight: 700; color: #78350F; font-size: 11px; margin-bottom: 3px;">🔥 [10년 대운 맞춤 개운(開運) 실천 팁]</p>
-                    <p style="color: #92400E; font-size: 10.5px; line-height: 1.5;">
-                        현재 대운은 귀인의 도우심이 강한 시기이므로, 혼자 모든 짐을 짊어지려 하지 말고 주변 전문가나 협력 파트너에게 적극적으로 조언을 구하고 문서를 명확히 작성할 때 재물과 명예가 더욱 공고해집니다.
-                    </p>
-                </div>
+            <div style="margin-top: 6px; border-top: 1px dashed rgba(217,119,6,0.4); padding-top: 8px;">
+                <p style="font-weight: 700; color: #78350F; font-size: 13px; margin-bottom: 2px;">🔥 [10년 대운 맞춤 개운(開運) 실천 팁]</p>
+                <p style="color: #92400E; font-size: 12px; line-height: 1.65;">
+                    현재 대운은 귀인의 도우심이 강한 시기이므로, 혼자 모든 짐을 짊어지려 하지 말고 주변 전문가나 협력 파트너에게 적극적으로 조언을 구하고 문서를 명확히 작성할 때 재물과 명예가 더욱 공고해집니다.
+                </p>
             </div>
         </div>
         """
     }
 
+# 피드백 반영: 테마운 4종 분량 대폭 확대 (3개 단락 롱폼 재구축)
 @app.post("/api/theme-report")
 def get_theme_report(req: dict):
     theme = req.get("theme", "wealth")
@@ -353,50 +351,90 @@ def get_theme_report(req: dict):
 
     contents = {
         "wealth": f"""
-        <div style="display: flex; flex-direction: column; gap: 14px; font-size: 12px; color: #334155; line-height: 1.65; text-align: left;">
-            <div style="background: #FFFBEB; border: 1.5px solid #FCD34D; border-radius: 16px; padding: 14px;">
-                <span style="font-size: 10px; background: #D97706; color: white; padding: 2px 6px; border-radius: 6px; font-weight: 700;">원국 정밀 감명</span>
-                <h4 style="font-size: 13px; font-weight: 700; color: #78350F; margin: 4px 0 6px;">[평생 재물운] '암장(暗藏) 금고형' 자산 축적 원국</h4>
-                <p style="color: #92400E; font-size: 11px; line-height: 1.6;">
-                    {user_name}님의 사주는 겉으로 드러난 화려함보다 실속 있게 현금과 실물 자산을 차곡차곡 축적하는 전형적인 '황금 금고형' 구조입니다. 지장간 속에 알짜배기 재성이 은밀하게 뿌리를 내리고 있어 틈새 기회를 포착하여 자산을 불리는 능력이 탁월합니다.
+        <div style="display: flex; flex-direction: column; gap: 14px; font-size: 13px; color: #334155; line-height: 1.75; text-align: left;">
+            <div style="border-left: 4px solid #D97706; padding-left: 10px;">
+                <span style="font-size: 11px; color: #D97706; font-weight: 700;">원국 정밀 감명</span>
+                <h4 style="font-size: 15px; font-weight: 700; color: #78350F; margin: 2px 0 4px;">[평생 재물운] '암장(暗藏) 금고형' 자산 축적 원국</h4>
+                <p style="color: #92400E; font-size: 12.5px;">
+                    {user_name}님의 사주는 겉으로 드러난 화려함보다 실속 있게 현금과 실물 자산을 차곡차곡 축적하는 전형적인 '황금 금고형' 구조입니다. 지장간 속에 알짜배기 재성이 은밀하게 뿌리를 내리고 있어 틈새 기회를 포착하여 자산을 불리는 능력이 탁월합니다. 단기 시세 차익보다는 실물 부동산과 우량 배당 자산 중심 포트폴리오가 운명을 견인합니다.
                 </p>
             </div>
-            <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 14px; padding: 12px;">
-                <p style="font-weight: 700; color: #0F172A; font-size: 12px; margin-bottom: 4px;">📊 1. 생애 자산 증식 3단계 로드맵</p>
-                <p style="font-size: 11px; color: #475569; line-height: 1.6;">• 초년~30대: 종잣돈 축적 ➔ 40대~50대: 자산 퀀텀점프 황금기 ➔ 60대 이후: 임대/배당 태평성대</p>
+            <div style="border-top: 1px solid #F1F5F9; padding-top: 10px;">
+                <p style="font-weight: 700; color: #0F172A; font-size: 13.5px; margin-bottom: 4px;">📊 1. {user_name}님의 생애 자산 증식 3단계 로드맵</p>
+                <p style="font-size: 12px; color: #475569;">• <strong>초년~30대 (씨앗 축적기):</strong> 종잣돈을 모으고 금융/실물 경제의 안목을 기르는 시기였습니다.</p>
+                <p style="font-size: 12px; color: #B45309; font-weight: 700;">• <strong>40대 중후반~50대 (*현재 황금기):</strong> 귀인의 도움과 부동산/사업 결단으로 자산 규모가 3배 이상 폭발적으로 퀀텀점프하는 최상의 전환점입니다.</p>
+                <p style="font-size: 12px; color: #475569;">• <strong>60대 이후 (임대/배당 태평기):</strong> 고정적 현금 흐름을 바탕으로 부를 안전하게 대물림하는 완벽한 자산 수성기입니다.</p>
+            </div>
+            <div style="border-top: 1px solid #F1F5F9; padding-top: 10px;">
+                <p style="font-weight: 700; color: #065F46; font-size: 13.5px; margin-bottom: 4px;">💡 2. 재물운을 극대화하는 실전 개운(開運) 솔루션</p>
+                <p style="font-size: 12px; color: #047857;">• <strong>행운의 방위:</strong> 주거지나 사무실 기준 '정북쪽'과 '동북쪽'이 재물이 샘솟는 황금 방위입니다.</p>
+                <p style="font-size: 12px; color: #047857;">• <strong>금전 누수 방어법:</strong> 지갑 안에 현금을 항상 짝수 매수로 정돈하여 넣고, 노란색 소품을 휴대하면 헛돈 지출이 차단됩니다.</p>
+                <p style="font-size: 12px; color: #047857;">• <strong>문서 계약 대길 타이밍:</strong> 음력 4월, 8월, 12월에 체결하는 부동산/투자 계약이 평생의 복록을 부릅니다.</p>
             </div>
         </div>
         """,
         "love": f"""
-        <div style="display: flex; flex-direction: column; gap: 14px; font-size: 12px; color: #334155; line-height: 1.65; text-align: left;">
-            <div style="background: #FFF1F2; border: 1.5px solid #FECDD3; border-radius: 16px; padding: 14px;">
-                <span style="font-size: 10px; background: #E11D48; color: white; padding: 2px 6px; border-radius: 6px; font-weight: 700;">상태 맞춤: {sub_opt}</span>
-                <h4 style="font-size: 13px; font-weight: 700; color: #881337; margin: 4px 0 6px;">[평생 애정운] 깊은 신뢰와 상호 존중의 천생연분</h4>
-                <p style="color: #9F1239; font-size: 11px; line-height: 1.6;">
-                    {user_name}님의 애정 원국은 한 번 맺은 신뢰를 평생 지켜나가는 따뜻한 포용력의 소유자입니다. 상대방에게 일방적으로 맞추기보다 생각을 솔직히 공유할 때 유대감이 더욱 깊어집니다.
+        <div style="display: flex; flex-direction: column; gap: 14px; font-size: 13px; color: #334155; line-height: 1.75; text-align: left;">
+            <div style="border-left: 4px solid #E11D48; padding-left: 10px;">
+                <span style="font-size: 11px; color: #E11D48; font-weight: 700;">상태 맞춤: {sub_opt}</span>
+                <h4 style="font-size: 15px; font-weight: 700; color: #881337; margin: 2px 0 4px;">[평생 애정운] 깊은 신뢰와 상호 존중의 천생연분</h4>
+                <p style="color: #9F1239; font-size: 12.5px;">
+                    {user_name}님의 애정 원국은 가벼운 감정의 불꽃보다는 한 번 맺은 신뢰를 평생 지켜나가는 따뜻한 포용력의 소유자입니다. 현재 상태({sub_opt})를 고려할 때, 상대방에게 일방적으로 맞추기보다 본인의 비전을 솔직하게 공유할 때 둘 사이의 유대감이 더욱 깊어집니다.
                 </p>
+            </div>
+            <div style="border-top: 1px solid #F1F5F9; padding-top: 10px;">
+                <p style="font-weight: 700; color: #0F172A; font-size: 13.5px; margin-bottom: 4px;">💞 1. {user_name}님과 운명적으로 통하는 상대방의 특징</p>
+                <p style="font-size: 12px; color: #475569;">• <strong>성향과 인품:</strong> 감정 기복이 적고 원칙이 뚜렷하며, 대화 시 상대방의 이야기를 깊이 경청해 주는 차분한 스타일.</p>
+                <p style="font-size: 12px; color: #475569;">• <strong>외모 및 이미지:</strong> 부드럽고 온화한 인상에 단정하고 세련된 옷차림을 선호하며 지적인 분위기를 풍기는 사람.</p>
+                <p style="font-size: 12px; color: #475569;">• <strong>오행 궁합 조화:</strong> {user_name}님 사주에 꼭 필요한 차분한 기운을 채워줄 수 있는 띠(쥐띠, 닭띠, 원숭이띠)와 대길연을 이룹니다.</p>
+            </div>
+            <div style="border-top: 1px solid #F1F5F9; padding-top: 10px;">
+                <p style="font-weight: 700; color: #78350F; font-size: 13.5px; margin-bottom: 4px;">🌹 2. 평생 화목을 완성하는 실전 관계 처세법</p>
+                <p style="font-size: 12px; color: #92400E;">• <strong>소통의 법칙:</strong> 서운한 감정이 들 때는 즉각 반응하기보다 반나절 정도 생각을 정리한 후 부드러운 화법으로 전달하세요.</p>
+                <p style="font-size: 12px; color: #92400E;">• <strong>행운의 장소:</strong> 물이 잔잔하게 흐르는 호수 주변, 조용한 미술관이나 테라스가 있는 카페가 기운을 조화롭게 묶어줍니다.</p>
             </div>
         </div>
         """,
         "business": f"""
-        <div style="display: flex; flex-direction: column; gap: 14px; font-size: 12px; color: #334155; line-height: 1.65; text-align: left;">
-            <div style="background: #EFF6FF; border: 1.5px solid #BFDBFE; border-radius: 16px; padding: 14px;">
-                <span style="font-size: 10px; background: #2563EB; color: white; padding: 2px 6px; border-radius: 6px; font-weight: 700;">직업군 맞춤: {sub_opt}</span>
-                <h4 style="font-size: 13px; font-weight: 700; color: #1E3A8A; margin: 4px 0 6px;">[사업·직업운] 치밀한 기획력과 결단력의 수장</h4>
-                <p style="color: #1E40AF; font-size: 11px; line-height: 1.6;">
-                    {user_name}님의 사주는 복잡한 문제의 핵심을 단번에 꿰뚫고 시스템을 정돈하는 전략가 기질을 타고났습니다. 현재 직업군({sub_opt})에서 대체 불가능한 리더로 두각을 나타냅니다.
+        <div style="display: flex; flex-direction: column; gap: 14px; font-size: 13px; color: #334155; line-height: 1.75; text-align: left;">
+            <div style="border-left: 4px solid #2563EB; padding-left: 10px;">
+                <span style="font-size: 11px; color: #2563EB; font-weight: 700;">직업군 맞춤: {sub_opt}</span>
+                <h4 style="font-size: 15px; font-weight: 700; color: #1E3A8A; margin: 2px 0 4px;">[사업·직업운] 치밀한 기획력과 결단력의 수장</h4>
+                <p style="color: #1E40AF; font-size: 12.5px;">
+                    {user_name}님의 사주는 복잡한 문제의 핵심을 단번에 꿰뚫고 시스템을 정돈하는 전략가 기질을 타고났습니다. 현재 직업군({sub_opt})에서 남들이 기피하는 난제를 해결하며 대체 불가능한 리더로서 두각을 나타내게 됩니다.
                 </p>
+            </div>
+            <div style="border-top: 1px solid #F1F5F9; padding-top: 10px;">
+                <p style="font-weight: 700; color: #0F172A; font-size: 13.5px; margin-bottom: 4px;">🚀 1. {user_name}님의 대박 직무 분야 및 사업 아이템</p>
+                <p style="font-size: 12px; color: #475569;">• <strong>추천 핵심 직무:</strong> 전략 기획, 경영 컨설팅, IT/기술 매니지먼트, 금융 분석 등 시스템을 설계하는 분야.</p>
+                <p style="font-size: 12px; color: #475569;">• <strong>창업 및 사업 방향:</strong> 지식 기반 플랫폼, 전문 라이선스 비즈니스 등 무형의 노하우를 자산화하는 모델에 최적입니다.</p>
+            </div>
+            <div style="border-top: 1px solid #F1F5F9; padding-top: 10px;">
+                <p style="font-weight: 700; color: #78350F; font-size: 13.5px; margin-bottom: 4px;">💼 2. 승진·이직·사업 대성을 위한 실전 처세 가이드</p>
+                <p style="font-size: 12px; color: #92400E;">• <strong>이직/창업 대길 시기:</strong> 가을(양력 9~11월)과 초봄(양력 2~3월)에 들어오는 스카우트 제의나 신규 사업 론칭이 큰 명예를 안겨줍니다.</p>
+                <p style="font-size: 12px; color: #92400E;">• <strong>사무 공간 개운법:</strong> 책상을 출입문이 대각선으로 보이는 자리에 앉고, 메탈 소품을 두면 집중력이 극대화됩니다.</p>
             </div>
         </div>
         """,
         "health": f"""
-        <div style="display: flex; flex-direction: column; gap: 14px; font-size: 12px; color: #334155; line-height: 1.65; text-align: left;">
-            <div style="background: #ECFDF5; border: 1.5px solid #A7F3D0; border-radius: 16px; padding: 14px;">
-                <span style="font-size: 10px; background: #059669; color: white; padding: 2px 6px; border-radius: 6px; font-weight: 700;">오행 체질 정밀 분석</span>
-                <h4 style="font-size: 13px; font-weight: 700; color: #065F46; margin: 4px 0 6px;">[평생 건강운] 수승화강(水昇火降) 활력 관리</h4>
-                <p style="color: #047857; font-size: 11px; line-height: 1.6;">
-                    {user_name}님의 오행 체질은 강인한 생명력을 갖추고 있으나 두한족열(머리는 시원하게 발은 따뜻하게)의 수칙을 유지해야 건강이 완성됩니다.
+        <div style="display: flex; flex-direction: column; gap: 14px; font-size: 13px; color: #334155; line-height: 1.75; text-align: left;">
+            <div style="border-left: 4px solid #059669; padding-left: 10px;">
+                <span style="font-size: 11px; color: #059669; font-weight: 700;">오행 체질 정밀 분석</span>
+                <h4 style="font-size: 15px; font-weight: 700; color: #065F46; margin: 2px 0 4px;">[평생 건강운] 수승화강(水昇火降) 활력 관리</h4>
+                <p style="color: #047857; font-size: 12.5px;">
+                    {user_name}님의 오행 체질은 강인한 생명력과 추진력을 갖추고 있으나 두한족열(머리는 시원하게 발은 따뜻하게)의 수칙을 유지해야 합니다. 스트레스 누적 시 간 피로와 소화기계로 신호가 올 수 있으므로 규칙적인 유산소 운동이 건강의 비결입니다.
                 </p>
+            </div>
+            <div style="border-top: 1px solid #F1F5F9; padding-top: 10px;">
+                <p style="font-weight: 700; color: #0F172A; font-size: 13.5px; margin-bottom: 4px;">🏥 1. {user_name}님이 각별히 챙겨야 할 3대 취약 장기</p>
+                <p style="font-size: 12px; color: #475569;">• <strong>간장 & 담낭:</strong> 만성 피로와 눈의 침침함을 방지하기 위해 과도한 음주를 피하고 간 보호 성분을 섭취하세요.</p>
+                <p style="font-size: 12px; color: #475569;">• <strong>신장 & 방광:</strong> 체내 노폐물 배출을 위해 하루 1.5L 이상의 미온수를 나누어 마시는 습관이 필수적입니다.</p>
+                <p style="font-size: 12px; color: #475569;">• <strong>위장 & 비장:</strong> 야식을 지양하고 담백한 식단을 유지해야 소화 흡수력이 강화됩니다.</p>
+            </div>
+            <div style="border-top: 1px solid #F1F5F9; padding-top: 10px;">
+                <p style="font-weight: 700; color: #1E3A8A; font-size: 13.5px; margin-bottom: 4px;">🌿 2. 평생 활력을 완성하는 일상 개운 섭생 루틴</p>
+                <p style="font-size: 12px; color: #1E40AF;">• <strong>취침 전 힐링 루틴:</strong> 매일 밤 15분간 따뜻한 족욕을 통해 하체 순환을 돕고 숙면을 취하세요.</p>
+                <p style="font-size: 12px; color: #1E40AF;">• <strong>추천 운동 요법:</strong> 주 3회 30분 이상의 빠른 걷기나 수영 등 유산소 운동이 오행 밸런스를 맞춰줍니다.</p>
             </div>
         </div>
         """
