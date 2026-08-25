@@ -33,15 +33,22 @@
         .cal-btn.active { background: #FFFFFF; color: #2D6A4F; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
         .btn-primary { width: 100%; background: #2D6A4F; color: white; border: none; font-size: 13px; font-weight: 900; padding: 14px; border-radius: 16px; cursor: pointer; box-shadow: 0 4px 6px -1px rgba(45,106,79,0.2); margin-top: 8px; }
 
+        /* 오행 고유 컬러 뱃지 시스템 */
+        .badge-elem { width: 36px; height: 36px; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 900; box-shadow: 0 2px 4px rgba(0,0,0,0.04); }
+        .elem-wood { background: #ECFDF5; color: #047857; border: 1.5px solid #A7F3D0; }
+        .elem-fire { background: #FEF2F2; color: #DC2626; border: 1.5px solid #FECDD3; }
+        .elem-earth { background: #FFFBEB; color: #D97706; border: 1.5px solid #FDE68A; }
+        .elem-metal { background: #F1F5F9; color: #475569; border: 1.5px solid #CBD5E1; }
+        .elem-water { background: #EFF6FF; color: #2563EB; border: 1.5px solid #BFDBFE; }
+        .elem-none { background: #F8FAFC; color: #94A3B8; border: 1px solid #E2E8F0; }
+
         .mbti-card { display: flex; align-items: center; gap: 14px; background: white; border-radius: 24px; border: 1px solid #F1F5F9; padding: 16px; }
         .mbti-icon { width: 48px; height: 48px; border-radius: 16px; background: #FEF3C7; display: flex; align-items: center; justify-content: center; font-size: 24px; }
         .daily-banner { background: linear-gradient(135deg, #1E4D38 0%, #2D6A4F 100%); border-radius: 24px; padding: 20px; color: white; display: flex; flex-direction: column; gap: 8px; }
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-        .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
         .grid-cell { background: white; border: 1px solid #F1F5F9; border-radius: 16px; padding: 12px; font-size: 12px; text-align: left; }
         .action-card { background: #FFFBEB; border: 1px solid #FDE68A; border-radius: 16px; padding: 14px; text-align: left; font-size: 12px; }
 
-        /* 타로 카드 3D 플립 & 정밀 앤틱 성좌 덱 */
         .tarot-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
         .tarot-wrapper { perspective: 1000px; aspect-ratio: 2/3; cursor: pointer; }
         .flipper { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; transition: transform 0.6s ease; border-radius: 10px; }
@@ -170,7 +177,7 @@
                     <p id="resGaewoon" style="color: #92400E; font-weight: 300;">오전 중 따뜻한 차 한 잔을 마시며 목표 3가지 메모하기</p>
                 </div>
 
-                <!-- 오늘의 타로 (레퍼런스 이미지 정밀 일치 앤틱 성좌 덱) -->
+                <!-- 오늘의 타로 -->
                 <div class="card" style="padding: 16px;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                         <div style="text-align: left;">
@@ -181,23 +188,18 @@
                     </div>
 
                     <div class="tarot-grid">
-                        <!-- 카드 1 -->
                         <div onclick="handleTarotDraw(1)" class="tarot-wrapper">
                             <div id="flipper1" class="flipper">
                                 <div class="card-face card-back" id="tarotSvgSlot1"></div>
                                 <div id="front1" class="card-face card-front"></div>
                             </div>
                         </div>
-
-                        <!-- 카드 2 -->
                         <div onclick="handleTarotDraw(2)" class="tarot-wrapper">
                             <div id="flipper2" class="flipper">
                                 <div class="card-face card-back" id="tarotSvgSlot2"></div>
                                 <div id="front2" class="card-face card-front"></div>
                             </div>
                         </div>
-
-                        <!-- 카드 3 -->
                         <div onclick="handleTarotDraw(3)" class="tarot-wrapper">
                             <div id="flipper3" class="flipper">
                                 <div class="card-face card-back" id="tarotSvgSlot3"></div>
@@ -206,7 +208,6 @@
                         </div>
                     </div>
                     
-                    <!-- 타로 심층 해석 출력 영역 -->
                     <div id="tarotResultBox" class="hidden"></div>
                 </div>
 
@@ -243,84 +244,135 @@
 
             </div>
 
-            <!-- 탭 2: 정통사주 -->
+            <!-- 탭 2: 정통사주 (피드백 반영 리뉴얼: 천간/지지/지장간 분리 & 오행 컬러링) -->
             <div id="view-saju" class="tab-view hidden">
                 
-                <div class="card">
-                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 8px; margin-bottom: 12px;">
-                        <h3 style="font-size: 12px; font-weight: 900;">사주 명식표 (四柱命式)</h3>
-                        <span id="sajuOwnerName" style="font-size: 12px; color: #2D6A4F; font-weight: 700;">최정오 님</span>
+                <div class="card" style="padding: 18px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 10px; margin-bottom: 14px;">
+                        <div>
+                            <h3 style="font-size: 14px; font-weight: 900; color: #0F172A;">사주 명식표 (四柱命式)</h3>
+                            <p style="font-size: 10px; color: #94A3B8; margin-top: 1px;">오행 고유 기운 배색 및 지장간 포함 정밀 분석</p>
+                        </div>
+                        <span id="sajuOwnerName" style="font-size: 12px; color: #2D6A4F; font-weight: 800; background: #EBF5EE; padding: 3px 8px; border-radius: 8px;">최정오 님</span>
                     </div>
 
-                    <div class="grid-4">
-                        <div class="form-group" style="margin: 0; text-align: center; padding: 8px;">
-                            <span style="font-size: 9px; color: #94A3B8; font-weight: 700;">시주 (時)</span>
-                            <p id="s_hour" style="font-size: 14px; font-weight: 900; color: #1E293B; margin: 4px 0;">-</p>
-                            <div style="border-top: 1px solid #E2E8F0; padding-top: 4px; font-size: 9px; color: #64748B;">
-                                <span>지장간:</span><p id="jjg_hour">-</p>
-                            </div>
+                    <!-- 3단 명식표 (천간 / 지지 / 지장간) -->
+                    <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 18px; padding: 12px; display: flex; flex-direction: column; gap: 8px;">
+                        
+                        <!-- 기둥 헤더 -->
+                        <div style="display: grid; grid-template-columns: 46px 1fr 1fr 1fr 1fr; gap: 6px; text-align: center; font-size: 11px; font-weight: 800; color: #64748B; border-bottom: 1px solid #E2E8F0; padding-bottom: 6px;">
+                            <span>구분</span>
+                            <span>시주 (時)</span>
+                            <span style="color: #2D6A4F;">일주 (日)</span>
+                            <span>월주 (月)</span>
+                            <span>년주 (年)</span>
                         </div>
-                        <div class="form-group" style="margin: 0; text-align: center; padding: 8px;">
-                            <span style="font-size: 9px; color: #94A3B8; font-weight: 700;">일주 (日)</span>
-                            <p id="s_day" style="font-size: 14px; font-weight: 900; color: #2D6A4F; margin: 4px 0;">-</p>
-                            <div style="border-top: 1px solid #E2E8F0; padding-top: 4px; font-size: 9px; color: #64748B;">
-                                <span>지장간:</span><p id="jjg_day">-</p>
-                            </div>
+
+                        <!-- 1단: 천간(天干) -->
+                        <div style="display: grid; grid-template-columns: 46px 1fr 1fr 1fr 1fr; gap: 6px; align-items: center; text-align: center;">
+                            <span style="font-size: 10px; font-weight: 800; color: #475569; background: #EDE9FE; color: #6D28D9; padding: 4px 0; border-radius: 6px;">천간</span>
+                            <div class="badge-elem elem-none" id="cg_h_badge">-</div>
+                            <div class="badge-elem elem-none" id="cg_d_badge">-</div>
+                            <div class="badge-elem elem-none" id="cg_m_badge">-</div>
+                            <div class="badge-elem elem-none" id="cg_y_badge">-</div>
                         </div>
-                        <div class="form-group" style="margin: 0; text-align: center; padding: 8px;">
-                            <span style="font-size: 9px; color: #94A3B8; font-weight: 700;">월주 (月)</span>
-                            <p id="s_month" style="font-size: 14px; font-weight: 900; color: #1E293B; margin: 4px 0;">-</p>
-                            <div style="border-top: 1px solid #E2E8F0; padding-top: 4px; font-size: 9px; color: #64748B;">
-                                <span>지장간:</span><p id="jjg_month">-</p>
-                            </div>
+
+                        <!-- 2단: 지지(地支) -->
+                        <div style="display: grid; grid-template-columns: 46px 1fr 1fr 1fr 1fr; gap: 6px; align-items: center; text-align: center;">
+                            <span style="font-size: 10px; font-weight: 800; background: #FEF3C7; color: #B45309; padding: 4px 0; border-radius: 6px;">지지</span>
+                            <div class="badge-elem elem-none" id="jj_h_badge">-</div>
+                            <div class="badge-elem elem-none" id="jj_d_badge">-</div>
+                            <div class="badge-elem elem-none" id="jj_m_badge">-</div>
+                            <div class="badge-elem elem-none" id="jj_y_badge">-</div>
                         </div>
-                        <div class="form-group" style="margin: 0; text-align: center; padding: 8px;">
-                            <span style="font-size: 9px; color: #94A3B8; font-weight: 700;">년주 (年)</span>
-                            <p id="s_year" style="font-size: 14px; font-weight: 900; color: #1E293B; margin: 4px 0;">-</p>
-                            <div style="border-top: 1px solid #E2E8F0; padding-top: 4px; font-size: 9px; color: #64748B;">
-                                <span>지장간:</span><p id="jjg_year">-</p>
-                            </div>
+
+                        <!-- 3단: 지장간(地藏干) -->
+                        <div style="display: grid; grid-template-columns: 46px 1fr 1fr 1fr 1fr; gap: 6px; align-items: center; text-align: center; border-top: 1px dashed #CBD5E1; padding-top: 8px;">
+                            <span style="font-size: 9px; font-weight: 800; background: #F1F5F9; color: #475569; padding: 4px 0; border-radius: 6px; line-height: 1.2;">지장간<br>(숨은기운)</span>
+                            <div id="jjg_h_box" style="display: flex; justify-content: center; gap: 2px; flex-wrap: wrap;">-</div>
+                            <div id="jjg_d_box" style="display: flex; justify-content: center; gap: 2px; flex-wrap: wrap;">-</div>
+                            <div id="jjg_m_box" style="display: flex; justify-content: center; gap: 2px; flex-wrap: wrap;">-</div>
+                            <div id="jjg_y_box" style="display: flex; justify-content: center; gap: 2px; flex-wrap: wrap;">-</div>
                         </div>
+
                     </div>
 
-                    <!-- 오행 에너지 분포 -->
-                    <div style="margin-top: 14px; text-align: left;">
-                        <span style="font-size: 11px; font-weight: 700; color: #334155; display: block; margin-bottom: 6px;">오행(五行) 에너지 분포</span>
-                        <div style="display: flex; flex-direction: column; gap: 6px; font-size: 10px;">
-                            <div style="display: flex; align-items: center; gap: 8px;">
-                                <span style="width: 20px; font-weight: 700; color: #059669;">木</span>
-                                <div style="flex: 1; background: #F1F5F9; height: 10px; border-radius: 9999px; overflow: hidden;">
-                                    <div id="barWood" style="background: #059669; height: 100%; border-radius: 9999px; width: 0%;"></div>
+                    <!-- 오행(五行) 에너지 막대그래프 (지장간 가중치 정밀 반영) -->
+                    <div style="margin-top: 18px; text-align: left;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <span style="font-size: 12px; font-weight: 800; color: #0F172A;">오행(五行) 실질 에너지 세력 분포</span>
+                            <span style="font-size: 10px; color: #64748B;">지장간 포함 100%</span>
+                        </div>
+
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            <!-- 木 -->
+                            <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 8px 12px;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; margin-bottom: 4px;">
+                                    <span style="font-weight: 800; color: #047857; display: flex; align-items: center; gap: 4px;">
+                                        <span style="width: 8px; height: 8px; border-radius: 50%; background: #10B981; display: inline-block;"></span>
+                                        木 (나무/성장)
+                                    </span>
+                                    <span id="valWood" style="font-weight: 900; color: #047857;">0%</span>
                                 </div>
-                                <span id="valWood" style="width: 36px; text-align: right; color: #64748B; font-weight: 700;">0%</span>
+                                <div style="background: #E2E8F0; height: 8px; border-radius: 9999px; overflow: hidden;">
+                                    <div id="barWood" style="background: #10B981; height: 100%; border-radius: 9999px; width: 0%; transition: width 0.6s ease;"></div>
+                                </div>
                             </div>
-                            <div style="display: flex; align-items: center; gap: 8px;">
-                                <span style="width: 20px; font-weight: 700; color: #E11D48;">火</span>
-                                <div style="flex: 1; background: #F1F5F9; height: 10px; border-radius: 9999px; overflow: hidden;">
-                                    <div id="barFire" style="background: #F43F5E; height: 100%; border-radius: 9999px; width: 0%;"></div>
+
+                            <!-- 火 -->
+                            <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 8px 12px;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; margin-bottom: 4px;">
+                                    <span style="font-weight: 800; color: #DC2626; display: flex; align-items: center; gap: 4px;">
+                                        <span style="width: 8px; height: 8px; border-radius: 50%; background: #EF4444; display: inline-block;"></span>
+                                        火 (불/열정)
+                                    </span>
+                                    <span id="valFire" style="font-weight: 900; color: #DC2626;">0%</span>
                                 </div>
-                                <span id="valFire" style="width: 36px; text-align: right; color: #64748B; font-weight: 700;">0%</span>
+                                <div style="background: #E2E8F0; height: 8px; border-radius: 9999px; overflow: hidden;">
+                                    <div id="barFire" style="background: #EF4444; height: 100%; border-radius: 9999px; width: 0%; transition: width 0.6s ease;"></div>
+                                </div>
                             </div>
-                            <div style="display: flex; align-items: center; gap: 8px;">
-                                <span style="width: 20px; font-weight: 700; color: #D97706;">土</span>
-                                <div style="flex: 1; background: #F1F5F9; height: 10px; border-radius: 9999px; overflow: hidden;">
-                                    <div id="barEarth" style="background: #F59E0B; height: 100%; border-radius: 9999px; width: 0%;"></div>
+
+                            <!-- 土 -->
+                            <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 8px 12px;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; margin-bottom: 4px;">
+                                    <span style="font-weight: 800; color: #D97706; display: flex; align-items: center; gap: 4px;">
+                                        <span style="width: 8px; height: 8px; border-radius: 50%; background: #F59E0B; display: inline-block;"></span>
+                                        土 (흙/포용)
+                                    </span>
+                                    <span id="valEarth" style="font-weight: 900; color: #D97706;">0%</span>
                                 </div>
-                                <span id="valEarth" style="width: 36px; text-align: right; color: #64748B; font-weight: 700;">0%</span>
+                                <div style="background: #E2E8F0; height: 8px; border-radius: 9999px; overflow: hidden;">
+                                    <div id="barEarth" style="background: #F59E0B; height: 100%; border-radius: 9999px; width: 0%; transition: width 0.6s ease;"></div>
+                                </div>
                             </div>
-                            <div style="display: flex; align-items: center; gap: 8px;">
-                                <span style="width: 20px; font-weight: 700; color: #475569;">金</span>
-                                <div style="flex: 1; background: #F1F5F9; height: 10px; border-radius: 9999px; overflow: hidden;">
-                                    <div id="barMetal" style="background: #94A3B8; height: 100%; border-radius: 9999px; width: 0%;"></div>
+
+                            <!-- 金 -->
+                            <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 8px 12px;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; margin-bottom: 4px;">
+                                    <span style="font-weight: 800; color: #475569; display: flex; align-items: center; gap: 4px;">
+                                        <span style="width: 8px; height: 8px; border-radius: 50%; background: #94A3B8; display: inline-block;"></span>
+                                        金 (쇠/결단)
+                                    </span>
+                                    <span id="valMetal" style="font-weight: 900; color: #475569;">0%</span>
                                 </div>
-                                <span id="valMetal" style="width: 36px; text-align: right; color: #64748B; font-weight: 700;">0%</span>
+                                <div style="background: #E2E8F0; height: 8px; border-radius: 9999px; overflow: hidden;">
+                                    <div id="barMetal" style="background: #94A3B8; height: 100%; border-radius: 9999px; width: 0%; transition: width 0.6s ease;"></div>
+                                </div>
                             </div>
-                            <div style="display: flex; align-items: center; gap: 8px;">
-                                <span style="width: 20px; font-weight: 700; color: #0284C7;">水</span>
-                                <div style="flex: 1; background: #F1F5F9; height: 10px; border-radius: 9999px; overflow: hidden;">
-                                    <div id="barWater" style="background: #0284C7; height: 100%; border-radius: 9999px; width: 0%;"></div>
+
+                            <!-- 水 -->
+                            <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 8px 12px;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; margin-bottom: 4px;">
+                                    <span style="font-weight: 800; color: #2563EB; display: flex; align-items: center; gap: 4px;">
+                                        <span style="width: 8px; height: 8px; border-radius: 50%; background: #3B82F6; display: inline-block;"></span>
+                                        水 (물/지혜)
+                                    </span>
+                                    <span id="valWater" style="font-weight: 900; color: #2563EB;">0%</span>
                                 </div>
-                                <span id="valWater" style="width: 36px; text-align: right; color: #64748B; font-weight: 700;">0%</span>
+                                <div style="background: #E2E8F0; height: 8px; border-radius: 9999px; overflow: hidden;">
+                                    <div id="barWater" style="background: #3B82F6; height: 100%; border-radius: 9999px; width: 0%; transition: width 0.6s ease;"></div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -577,16 +629,9 @@
 
         const TAROT_IMAGES = {
             "0. THE FOOL (바보)": "https://upload.wikimedia.org/wikipedia/commons/9/90/RWS_Tarot_00_Fool.jpg",
-            "I. THE MAGICIAN (마법사)": "https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg",
-            "II. THE HIGH PRIESTESS (여사제)": "https://upload.wikimedia.org/wikipedia/commons/8/88/RWS_Tarot_02_High_Priestess.jpg",
-            "III. THE EMPRESS (여황제)": "https://upload.wikimedia.org/wikipedia/commons/d/d2/RWS_Tarot_03_Empress.jpg",
-            "IV. THE EMPEROR (황제)": "https://upload.wikimedia.org/wikipedia/commons/c/c3/RWS_Tarot_04_Emperor.jpg",
-            "VI. THE LOVERS (연인)": "https://upload.wikimedia.org/wikipedia/commons/3/3a/TheLovers.jpg",
-            "X. WHEEL OF FORTUNE (운명의 수레바퀴)": "https://upload.wikimedia.org/wikipedia/commons/3/3c/RWS_Tarot_10_Wheel_of_Fortune.jpg",
-            "XIX. THE SUN (태양)": "https://upload.wikimedia.org/wikipedia/commons/1/17/RWS_Tarot_19_Sun.jpg"
+            "I. THE MAGICIAN (마법사)": "https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg"
         };
 
-        // 레퍼런스 이미지 기반 정밀 타로 뒷면 SVG 생성 함수
         function getTarotCardBackSvg() {
             return `
             <svg viewBox="0 0 100 150" style="width: 100%; height: 100%; background: #162447; border-radius: 8px;">
@@ -597,79 +642,21 @@
                         <stop offset="100%" stop-color="#997A15"/>
                     </radialGradient>
                 </defs>
-
-                <!-- 코너 아치 장식 (4개 모서리) -->
                 <path d="M 0,0 L 16,0 Q 0,0 0,16 Z" fill="#D4AF37" opacity="0.8"/>
                 <path d="M 100,0 L 84,0 Q 100,0 100,16 Z" fill="#D4AF37" opacity="0.8"/>
                 <path d="M 0,150 L 16,150 Q 0,150 0,134 Z" fill="#D4AF37" opacity="0.8"/>
                 <path d="M 100,150 L 84,150 Q 100,150 100,134 Z" fill="#D4AF37" opacity="0.8"/>
-
-                <!-- 좌우 하프 성좌 장식 -->
-                <!-- 좌측 하프 -->
                 <circle cx="0" cy="75" r="14" fill="none" stroke="#D4AF37" stroke-width="0.8"/>
                 <polygon points="0,64 3,73 12,75 3,77 0,86" fill="#D4AF37"/>
-                <polygon points="0,67 2,74 8,75 2,76 0,83" fill="#FFF2B2"/>
-                <!-- 우측 하프 -->
                 <circle cx="100" cy="75" r="14" fill="none" stroke="#D4AF37" stroke-width="0.8"/>
                 <polygon points="100,64 97,73 88,75 97,77 100,86" fill="#D4AF37"/>
-                <polygon points="100,67 98,74 92,75 98,76 100,83" fill="#FFF2B2"/>
-
-                <!-- 흩뿌려진 별무리 및 점성 도트 배경 -->
-                <!-- 상단 배경 성운 -->
-                <circle cx="18" cy="18" r="1" fill="#FFF2B2"/>
-                <circle cx="82" cy="18" r="1" fill="#FFF2B2"/>
-                <polygon points="26,14 27,17 30,17.5 27,18 26,21 25,18 22,17.5 25,17" fill="#D4AF37"/>
-                <polygon points="74,14 75,17 78,17.5 75,18 74,21 73,18 70,17.5 73,17" fill="#D4AF37"/>
-                <circle cx="38" cy="22" r="0.8" fill="#FFF2B2"/>
-                <circle cx="62" cy="22" r="0.8" fill="#FFF2B2"/>
-                <circle cx="12" cy="38" r="0.7" fill="#D4AF37"/>
-                <circle cx="88" cy="38" r="0.7" fill="#D4AF37"/>
-
-                <!-- 상단 메인 성좌 (8각 스타버스트 & 링) -->
                 <circle cx="50" cy="42" r="16" fill="none" stroke="#D4AF37" stroke-width="1.2"/>
-                <circle cx="50" cy="42" r="13" fill="none" stroke="#D4AF37" stroke-width="0.5" stroke-dasharray="1 1"/>
-                <!-- 8각 메인 별 -->
                 <polygon points="50,23 53.5,38.5 69,42 53.5,45.5 50,61 46.5,45.5 31,42 46.5,38.5" fill="url(#starGlow)"/>
-                <polygon points="50,30 52.5,39.5 62,42 52.5,44.5 50,54 47.5,44.5 38,42 47.5,39.5" fill="#FFFFFF" opacity="0.9"/>
-                <polygon points="38,30 47.5,39.5 50,30 52.5,39.5 62,30 52.5,44.5 62,54 47.5,44.5 38,54 47.5,39.5" fill="#D4AF37" opacity="0.6"/>
-
-                <!-- 중앙 상/하 초승달 & 그믐달 -->
-                <path d="M 40,25 A 6,6 0 0,0 52,25 A 4.5,4.5 0 0,1 40,25" fill="#D4AF37"/>
-                <path d="M 48,59 A 6,6 0 0,0 60,59 A 4.5,4.5 0 0,1 48,59" fill="#D4AF37"/>
-
-                <!-- 중앙 썬 & 문 (일월성신 중심) -->
                 <circle cx="50" cy="75" r="4.5" fill="none" stroke="#D4AF37" stroke-width="0.8"/>
-                <!-- 태양광선 링 -->
-                <path d="M 50,67 L 50,69 M 50,81 L 50,83 M 42,75 L 44,75 M 56,75 L 58,75 M 44,69 L 45.5,70.5 M 54.5,79.5 L 56,81 M 44,81 L 45.5,79.5 M 54.5,70.5 L 56,69" stroke="#D4AF37" stroke-width="0.8" stroke-linecap="round"/>
                 <circle cx="50" cy="75" r="3" fill="#FFF2B2"/>
-                <path d="M 48,72 A 3,3 0 0,0 48,78 A 2,2 0 0,1 48,72" fill="#D4AF37"/>
-
-                <!-- 중앙 미니 별 장식들 -->
-                <polygon points="30,75 31.5,77 34,77.5 31.5,78 30,80 28.5,78 26,77.5 28.5,77" fill="#D4AF37"/>
-                <polygon points="70,75 71.5,77 74,77.5 71.5,78 70,80 68.5,78 66,77.5 68.5,77" fill="#D4AF37"/>
-                <circle cx="38" cy="70" r="0.8" fill="#FFF2B2"/>
-                <circle cx="62" cy="70" r="0.8" fill="#FFF2B2"/>
-                <circle cx="38" cy="80" r="0.8" fill="#FFF2B2"/>
-                <circle cx="62" cy="80" r="0.8" fill="#FFF2B2"/>
-
-                <!-- 하단 메인 성좌 (8각 스타버스트 & 링) -->
                 <circle cx="50" cy="108" r="16" fill="none" stroke="#D4AF37" stroke-width="1.2"/>
-                <circle cx="50" cy="108" r="13" fill="none" stroke="#D4AF37" stroke-width="0.5" stroke-dasharray="1 1"/>
                 <polygon points="50,89 53.5,104.5 69,108 53.5,111.5 50,127 46.5,111.5 31,108 46.5,104.5" fill="url(#starGlow)"/>
-                <polygon points="50,96 52.5,105.5 62,108 52.5,110.5 50,120 47.5,110.5 38,108 47.5,105.5" fill="#FFFFFF" opacity="0.9"/>
-                <polygon points="38,96 47.5,105.5 50,96 52.5,105.5 62,96 52.5,110.5 62,120 47.5,110.5 38,120 47.5,105.5" fill="#D4AF37" opacity="0.6"/>
-
-                <!-- 하단 배경 성운 -->
-                <circle cx="18" cy="132" r="1" fill="#FFF2B2"/>
-                <circle cx="82" cy="132" r="1" fill="#FFF2B2"/>
-                <polygon points="26,129 27,132 30,132.5 27,133 26,136 25,133 22,132.5 25,132" fill="#D4AF37"/>
-                <polygon points="74,129 75,132 78,132.5 75,133 74,136 73,133 70,132.5 73,132" fill="#D4AF37"/>
-                <circle cx="38" cy="128" r="0.8" fill="#FFF2B2"/>
-                <circle cx="62" cy="128" r="0.8" fill="#FFF2B2"/>
-                <circle cx="12" cy="112" r="0.7" fill="#D4AF37"/>
-                <circle cx="88" cy="112" r="0.7" fill="#D4AF37"/>
-            </svg>
-            `;
+            </svg>`;
         }
 
         function renderDistinctTalisman(title) {
@@ -701,6 +688,20 @@
             }
         }
 
+        function formatElemBadge(char, elem) {
+            if (!char || char === "-") return `<div class="badge-elem elem-none">-</div>`;
+            return `<div class="badge-elem elem-${elem}">${char}</div>`;
+        }
+
+        function formatJijangganGroup(jjList) {
+            if (!jjList || jjList.length === 0) return `<span style="font-size:10px; color:#94A3B8;">-</span>`;
+            return jjList.map(j => `
+                <span style="font-size: 10px; font-weight: 800; padding: 2px 4px; border-radius: 4px;" class="elem-${j.elem}">
+                    ${j.char}
+                </span>
+            `).join('');
+        }
+
         async function startSajuAnalysis() {
             currentUserName = document.getElementById('inputName').value.trim() || "최정오";
             const birth = document.getElementById('inputBirth').value || "1978-03-13";
@@ -716,21 +717,25 @@
 
             currentTalisman = data.daily_fortune.talisman;
 
-            document.getElementById('s_year').innerText = data.saju_data.year_pillar;
-            document.getElementById('s_month').innerText = data.saju_data.month_pillar;
-            document.getElementById('s_day').innerText = data.saju_data.day_pillar;
-            document.getElementById('s_hour').innerText = data.saju_data.hour_pillar;
-
+            // 1. 천간 & 지지 오행 컬러 뱃지 렌더링
             const dtl = data.saju_data.pillars_detail;
-            document.getElementById('jjg_year').innerText = dtl.year.jjg || "-";
-            document.getElementById('jjg_month').innerText = dtl.month.jjg || "-";
-            document.getElementById('jjg_day').innerText = dtl.day.jjg || "-";
-            document.getElementById('jjg_hour').innerText = dtl.hour.jjg || "-";
+            document.getElementById('cg_h_badge').outerHTML = formatElemBadge(dtl.hour.cg, dtl.hour.cg_elem);
+            document.getElementById('cg_d_badge').outerHTML = formatElemBadge(dtl.day.cg, dtl.day.cg_elem);
+            document.getElementById('cg_m_badge').outerHTML = formatElemBadge(dtl.month.cg, dtl.month.cg_elem);
+            document.getElementById('cg_y_badge').outerHTML = formatElemBadge(dtl.year.cg, dtl.year.cg_elem);
 
-            document.getElementById('mbtiTypeName').innerText = data.saju_data.mbti.mbti;
-            document.getElementById('mbtiTypeDesc').innerText = data.saju_data.mbti.desc;
-            document.getElementById('mbtiAnimalIcon').innerText = data.saju_data.animal_icon;
+            document.getElementById('jj_h_badge').outerHTML = formatElemBadge(dtl.hour.jj, dtl.hour.jj_elem);
+            document.getElementById('jj_d_badge').outerHTML = formatElemBadge(dtl.day.jj, dtl.day.jj_elem);
+            document.getElementById('jj_m_badge').outerHTML = formatElemBadge(dtl.month.jj, dtl.month.jj_elem);
+            document.getElementById('jj_y_badge').outerHTML = formatElemBadge(dtl.year.jj, dtl.year.jj_elem);
 
+            // 2. 지장간 렌더링
+            document.getElementById('jjg_h_box').innerHTML = formatJijangganGroup(dtl.hour.jijanggan);
+            document.getElementById('jjg_d_box').innerHTML = formatJijangganGroup(dtl.day.jijanggan);
+            document.getElementById('jjg_m_box').innerHTML = formatJijangganGroup(dtl.month.jijanggan);
+            document.getElementById('jjg_y_box').innerHTML = formatJijangganGroup(dtl.year.jijanggan);
+
+            // 3. 지장간 가중치 포함 오행 실질 세력 그래프 바인딩
             const elems = data.saju_data.elements;
             document.getElementById('barWood').style.width = `${elems.wood}%`;
             document.getElementById('valWood').innerText = `${elems.wood}%`;
@@ -742,6 +747,10 @@
             document.getElementById('valMetal').innerText = `${elems.metal}%`;
             document.getElementById('barWater').style.width = `${elems.water}%`;
             document.getElementById('valWater').innerText = `${elems.water}%`;
+
+            document.getElementById('mbtiTypeName').innerText = data.saju_data.mbti.mbti;
+            document.getElementById('mbtiTypeDesc').innerText = data.saju_data.mbti.desc;
+            document.getElementById('mbtiAnimalIcon').innerText = data.saju_data.animal_icon;
 
             document.getElementById('sajuOwnerName').innerText = `${currentUserName} 님`;
             document.getElementById('resTitle').innerText = data.daily_fortune.title;
@@ -1037,7 +1046,6 @@
             closeChargeStore();
         }
 
-        // 초기 로드 시 타로 카드 뒷면 SVG 바인딩
         window.addEventListener('DOMContentLoaded', () => {
             const svgMarkup = getTarotCardBackSvg();
             ['tarotSvgSlot1', 'tarotSvgSlot2', 'tarotSvgSlot3'].forEach(id => {
