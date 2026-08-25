@@ -159,21 +159,22 @@
                     <p id="resAdvice" style="font-size: 12px; color: #D1FAE5; font-weight: 300; line-height: 1.6; text-align: left; white-space: pre-line;"></p>
                 </div>
 
-                <!-- 실시간 사주 맞춤 6대 큐레이션 -->
+                <!-- 사주 맞춤 실시간 6대 큐레이션 -->
                 <div class="grid-2">
-                    <div class="grid-cell"><span style="font-size: 10px; color: #94A3B8; display: block;">🎨 행운의 색상</span><p id="resColor" style="font-weight: 700; margin-top: 2px;">스카이 블루 / 아이보리</p></div>
-                    <div class="grid-cell"><span style="font-size: 10px; color: #94A3B8; display: block;">🔢 행운의 숫자</span><p id="resNumber" style="font-weight: 700; margin-top: 2px;">1, 6</p></div>
-                    <div class="grid-cell"><span style="font-size: 10px; color: #94A3B8; display: block;">🧭 행운의 방위</span><p id="resDirection" style="font-weight: 700; margin-top: 2px;">정북쪽</p></div>
-                    <div class="grid-cell"><span style="font-size: 10px; color: #94A3B8; display: block;">👔 추천 코디</span><p id="resStyle" style="font-weight: 700; margin-top: 2px;">부드러운 니트 또는 셔츠</p></div>
-                    <div class="grid-cell"><span style="font-size: 10px; color: #94A3B8; display: block;">🍲 추천 메뉴</span><p id="resMenu" style="font-weight: 700; margin-top: 2px;">신선한 샐러드와 단백질 식단</p></div>
-                    <div class="grid-cell"><span style="font-size: 10px; color: #94A3B8; display: block;">💡 마인드 처세</span><p id="resMindset" style="font-weight: 700; font-size: 11px; margin-top: 2px;">상대의 말에 공감하고 명확하게 전달하기</p></div>
+                    <div class="grid-cell"><span style="font-size: 10px; color: #94A3B8; display: block;">🎨 행운의 색상</span><p id="resColor" style="font-weight: 700; margin-top: 2px;">스노우 화이트 / 실버</p></div>
+                    <div class="grid-cell"><span style="font-size: 10px; color: #94A3B8; display: block;">🔢 행운의 숫자</span><p id="resNumber" style="font-weight: 700; margin-top: 2px;">4, 9</p></div>
+                    <div class="grid-cell"><span style="font-size: 10px; color: #94A3B8; display: block;">🧭 행운의 방위</span><p id="resDirection" style="font-weight: 700; margin-top: 2px;">정서쪽 (백호 방위)</p></div>
+                    <div class="grid-cell"><span style="font-size: 10px; color: #94A3B8; display: block;">👔 추천 코디</span><p id="resStyle" style="font-weight: 700; margin-top: 2px;">화이트 셔츠와 메탈 시계</p></div>
+                    <div class="grid-cell"><span style="font-size: 10px; color: #94A3B8; display: block;">🍲 추천 메뉴</span><p id="resMenu" style="font-weight: 700; margin-top: 2px;">신선한 견과류와 생선 요리</p></div>
+                    <div class="grid-cell"><span style="font-size: 10px; color: #94A3B8; display: block;">💡 마인드 처세</span><p id="resMindset" style="font-weight: 700; font-size: 11px; margin-top: 2px;">맺고 끊음을 명확히 대화하기</p></div>
                 </div>
 
                 <div class="action-card">
                     <span style="font-weight: 800; color: #78350F; display: block; margin-bottom: 2px;">✨ 오늘의 개운(開運) 실천 액션</span>
-                    <p id="resGaewoon" style="color: #92400E; font-weight: 300;">오전 중 따뜻한 차 한 잔을 마시며 목표 3가지 메모하기</p>
+                    <p id="resGaewoon" style="color: #92400E; font-weight: 300;">오늘 완료해야 할 우선순위 3가지 메모하기</p>
                 </div>
 
+                <!-- 22장 랜덤 타로 카드 섹션 -->
                 <div class="card" style="padding: 16px;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                         <div style="text-align: left;">
@@ -641,7 +642,12 @@
         const TAROT_IMAGES = {
             "0. THE FOOL (바보)": "https://upload.wikimedia.org/wikipedia/commons/9/90/RWS_Tarot_00_Fool.jpg",
             "I. THE MAGICIAN (마법사)": "https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg",
-            "II. THE HIGH PRIESTESS (여사제)": "https://upload.wikimedia.org/wikipedia/commons/8/88/RWS_Tarot_02_High_Priestess.jpg"
+            "II. THE HIGH PRIESTESS (여사제)": "https://upload.wikimedia.org/wikipedia/commons/8/88/RWS_Tarot_02_High_Priestess.jpg",
+            "III. THE EMPRESS (여황제)": "https://upload.wikimedia.org/wikipedia/commons/d/d2/RWS_Tarot_03_Empress.jpg",
+            "IV. THE EMPEROR (황제)": "https://upload.wikimedia.org/wikipedia/commons/c/c3/RWS_Tarot_04_Emperor.jpg",
+            "VI. THE LOVERS (연인)": "https://upload.wikimedia.org/wikipedia/commons/3/3a/TheLovers.jpg",
+            "X. WHEEL OF FORTUNE (운명의 수레바퀴)": "https://upload.wikimedia.org/wikipedia/commons/3/3c/RWS_Tarot_10_Wheel_of_Fortune.jpg",
+            "XIX. THE SUN (태양)": "https://upload.wikimedia.org/wikipedia/commons/1/17/RWS_Tarot_19_Sun.jpg"
         };
 
         function getTarotCardBackSvg() {
@@ -671,12 +677,12 @@
             </svg>`;
         }
 
-        // 30종 특화 부적 SVG 렌더러
-        function renderAuthenticCinnabarTalisman(type = "wealth", pattern = "vault", width = 160, height = 260) {
+        // 5대 고유 문양 실시간 렌더러
+        function renderAuthenticCinnabarTalisman(type = "metal", width = 160, height = 260) {
             let innerSymbol = '';
             let bottomText = '萬福大吉';
 
-            if (type === "business") {
+            if (type === "wood") {
                 bottomText = '事業亨通';
                 innerSymbol = `
                     <path d="M 40 100 L 100 100 L 70 130 Z" />
@@ -686,18 +692,8 @@
                     <path d="M 52 165 L 88 165" />
                     <line x1="70" y1="130" x2="70" y2="175" />
                 `;
-            } else if (type === "love") {
-                bottomText = '萬事和合';
-                innerSymbol = `
-                    <circle cx="50" cy="108" r="10" />
-                    <circle cx="90" cy="108" r="10" />
-                    <path d="M 50 108 Q 70 124 90 108 Q 70 96 50 108" />
-                    <path d="M 42 132 Q 70 145 98 132" />
-                    <path d="M 48 148 L 92 148" />
-                    <path d="M 70 132 L 70 172" />
-                `;
-            } else if (type === "health") {
-                bottomText = '無病長壽';
+            } else if (type === "fire") {
+                bottomText = '心想事成';
                 innerSymbol = `
                     <circle cx="70" cy="105" r="14" />
                     <circle cx="70" cy="105" r="6" fill="#C62828" />
@@ -706,13 +702,25 @@
                     <path d="M 42 156 L 98 156" />
                     <line x1="70" y1="120" x2="70" y2="175" />
                 `;
-            } else if (type === "wish") {
-                bottomText = '心想事成';
+            } else if (type === "earth") {
+                bottomText = '金庫安穩';
                 innerSymbol = `
-                    <polygon points="70,95 78,112 96,112 81,123 87,140 70,129 53,140 59,123 44,112 62,112" />
-                    <path d="M 38 148 Q 70 138 102 148" />
-                    <path d="M 46 160 L 94 160" />
+                    <rect x="42" y="96" width="56" height="34" />
+                    <line x1="70" y1="96" x2="70" y2="130" />
+                    <line x1="42" y1="113" x2="98" y2="113" />
+                    <path d="M 46 142 L 94 142" />
+                    <path d="M 40 156 Q 70 146 100 156" />
                     <line x1="70" y1="130" x2="70" y2="175" />
+                `;
+            } else if (type === "water") {
+                bottomText = '萬事和合';
+                innerSymbol = `
+                    <circle cx="50" cy="108" r="10" />
+                    <circle cx="90" cy="108" r="10" />
+                    <path d="M 50 108 Q 70 124 90 108 Q 70 96 50 108" />
+                    <path d="M 42 132 Q 70 145 98 132" />
+                    <path d="M 48 148 L 92 148" />
+                    <path d="M 70 132 L 70 172" />
                 `;
             } else {
                 bottomText = '萬福大吉';
@@ -871,12 +879,12 @@
             // 1. 사주 결핍 오행 맞춤 부적 렌더링
             const talismanPreview = document.getElementById('talismanBannerPreview');
             if (talismanPreview && currentTalisman) {
-                talismanPreview.innerHTML = renderAuthenticCinnabarTalisman(currentTalisman.type || 'wealth', currentTalisman.pattern || 'vault', 72, 110);
+                talismanPreview.innerHTML = renderAuthenticCinnabarTalisman(currentTalisman.type || 'metal', 72, 110);
             }
             const tHeader = document.getElementById('talismanBannerHeader');
             if (tHeader && currentTalisman) tHeader.innerText = `오늘의 맞춤 ${currentTalisman.title}`;
 
-            // 2. 천간/지간 오행 뱃지
+            // 2. 천간/지간 뱃지
             const dtl = data.saju_data.pillars_detail;
             setElemBadge('cg_h_badge', dtl.hour.cg, dtl.hour.cg_elem);
             setElemBadge('cg_d_badge', dtl.day.cg, dtl.day.cg_elem);
@@ -888,13 +896,13 @@
             setElemBadge('jj_m_badge', dtl.month.jj, dtl.month.jj_elem);
             setElemBadge('jj_y_badge', dtl.year.jj, dtl.year.jj_elem);
 
-            // 3. 지장간 렌더링
+            // 3. 지장간
             document.getElementById('jjg_h_box').innerHTML = formatJijangganGroup(dtl.hour.jijanggan);
             document.getElementById('jjg_d_box').innerHTML = formatJijangganGroup(dtl.day.jijanggan);
             document.getElementById('jjg_m_box').innerHTML = formatJijangganGroup(dtl.month.jijanggan);
             document.getElementById('jjg_y_box').innerHTML = formatJijangganGroup(dtl.year.jijanggan);
 
-            // 4. 오행 세로 차트 갱신
+            // 4. 오행 세로 막대그래프
             const elems = data.saju_data.elements;
             const applyBar = (key, val) => {
                 const barEl = document.getElementById(`bar${key}`);
@@ -909,10 +917,9 @@
             applyBar('Metal', elems.metal);
             applyBar('Water', elems.water);
 
-            // 5. 실시간 만 나이 생애 그래프 반영
             updateDaewoonGraphByAge(currentUserAge);
 
-            // 6. 사주 일간 기반 6대 큐레이션 및 일진 총평 실시간 바인딩
+            // 5. 6대 큐레이션 및 총평 실시간 바인딩
             document.getElementById('mbtiTypeName').innerText = data.saju_data.mbti.mbti;
             document.getElementById('mbtiTypeDesc').innerText = data.saju_data.mbti.desc;
             document.getElementById('mbtiAnimalIcon').innerText = data.saju_data.animal_icon;
@@ -947,14 +954,14 @@
 
         function openTalismanModal() {
             if (!currentTalisman) {
-                currentTalisman = { type: "wealth", pattern: "vault", title: "암장금고부 (暗藏金庫符)", power: "자산 방어 · 헛돈 누수 완벽 차단", desc: "사방에서 금전과 복록이 샘솟듯 모여드는 강력한 전통 경면주사 수제 부적입니다." };
+                currentTalisman = { type: "metal", title: "재물만복부 (萬福大吉符)", power: "재물 증식 · 금전운 대통", desc: "사방에서 금전과 복록이 샘솟듯 모여드는 강력한 전통 경면주사 수제 부적입니다." };
             }
             document.getElementById('talismanTitle').innerText = currentTalisman.title;
             document.getElementById('talismanPower').innerText = currentTalisman.power;
             document.getElementById('talismanDesc').innerText = currentTalisman.desc;
             document.getElementById('talismanOwnerName').innerText = currentUserName;
             
-            document.getElementById('talismanRealBox').innerHTML = renderAuthenticCinnabarTalisman(currentTalisman.type || "wealth", currentTalisman.pattern || "vault", 160, 260);
+            document.getElementById('talismanRealBox').innerHTML = renderAuthenticCinnabarTalisman(currentTalisman.type || "metal", 160, 260);
             document.getElementById('talismanModal').classList.remove('hidden');
         }
 
@@ -1012,7 +1019,9 @@
             }
 
             try {
-                const res = await fetch(`/api/daily-tarot?slot=${slot}&rand_seed=${Date.now()}`);
+                // 고유 난수 시드를 전달하여 매번 다른 타로 카드 반환
+                const randomSeed = Math.floor(Math.random() * 1000000);
+                const res = await fetch(`/api/daily-tarot?slot=${slot}&rand_seed=${randomSeed}`);
                 const card = await res.json();
                 dailyTarotDrawn = true;
                 drawnTarotCards[slot] = card;
@@ -1277,7 +1286,7 @@
 
             const talismanPreview = document.getElementById('talismanBannerPreview');
             if (talismanPreview) {
-                talismanPreview.innerHTML = renderAuthenticCinnabarTalisman('wealth', 'vault', 72, 110);
+                talismanPreview.innerHTML = renderAuthenticCinnabarTalisman('metal', 72, 110);
             }
 
             renderUnlockedArchive();
