@@ -22,7 +22,6 @@
         main { flex: 1; padding: 16px; display: flex; flex-direction: column; gap: 16px; }
         .tab-view { display: flex; flex-direction: column; gap: 16px; width: 100%; }
         
-        /* 피드백 반영: 깔끔한 여백과 단일 카드 구조 */
         .card { background: #FFFFFF; border-radius: 20px; border: 1px solid #E2E8F0; padding: 18px; box-shadow: 0 2px 4px rgba(0,0,0,0.03); }
         
         .gift-badge { display: inline-flex; align-items: center; background: #FEF3C7; border: 1px solid #FDE68A; color: #78350F; font-size: 12px; font-weight: 700; padding: 4px 12px; border-radius: 9999px; margin-bottom: 12px; }
@@ -34,7 +33,6 @@
         .cal-btn.active { background: #FFFFFF; color: #2D6A4F; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
         .btn-primary { width: 100%; background: #2D6A4F; color: white; border: none; font-size: 14px; font-weight: 700; padding: 14px; border-radius: 16px; cursor: pointer; box-shadow: 0 4px 6px -1px rgba(45,106,79,0.2); margin-top: 8px; }
 
-        /* 피드백 반영: 시독성이 개선된 명식표 뱃지 */
         .badge-elem { width: 40px; height: 40px; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
         .badge-jjg { width: 32px; height: 24px; border-radius: 6px; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; }
         
@@ -345,7 +343,7 @@
                     </div>
                 </div>
 
-                <!-- 자미두수 & 10년 대운 -->
+                <!-- 자미두수 & 10년 대운 (피드백 반영: 가변 연령축 및 정밀 나이 연동) -->
                 <div class="card" style="border: 2px solid #FCD34D;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                         <span style="font-size: 14px; font-weight: 700;">👑 자미두수 & 10년 대운 리포트</span>
@@ -679,7 +677,6 @@
             </svg>`;
         }
 
-        // 피드백 반영: 5종 부적 중앙 문양 및 하단 낙관 시각적 대형 확대 렌더러
         function renderAuthenticCinnabarTalisman(type = "metal", width = 160, height = 260) {
             let innerSymbol = '';
             let bottomText = '萬福大吉';
@@ -1080,6 +1077,7 @@
             resBox.classList.remove('hidden');
         }
 
+        // 피드백 반영: 결제 완료 알림 메시지에서 보관함 관련 문구 삭제
         function unlockDaewoon() {
             if (currentCoin < 450) { openChargeStore(); return; }
             if (!confirm('450 복채로 자미두수 & 10년 대운 심층 리포트를 열람하시겠습니까?')) return;
@@ -1097,7 +1095,7 @@
                 document.getElementById('daewoonBox').classList.remove('hidden');
                 document.getElementById('btnDaewoon').classList.add('hidden');
                 saveUnlockedReport('daewoon', data.title, data.content);
-                alert('🎉 [자미두수 & 10년 대운 리포트] 열람 완료!\n[마이페이지 > 보관함]에 보관되었습니다.');
+                alert(`🎉 [${data.title}] 열람 완료!`);
             });
         }
 
@@ -1131,6 +1129,7 @@
 
         function closeThemeSelectModal() { document.getElementById('themeSelectModal').classList.add('hidden'); }
 
+        // 피드백 반영: 결제 완료 알림 메시지에서 보관함 관련 문구 삭제
         async function confirmUnlockTheme() {
             if (currentCoin < 220) { openChargeStore(); return; }
             const selEl = document.querySelector('input[name="optM"]:checked');
@@ -1153,7 +1152,7 @@
             
             saveUnlockedReport(currentThemeKey, data.title, data.content);
             closeThemeSelectModal();
-            alert(`🎉 [${data.title}] 열람 완료!\n[마이페이지 > 보관함]에 성공적으로 보관되었습니다.`);
+            alert(`🎉 [${data.title}] 열람 완료!`);
         }
 
         function saveUnlockedReport(key, title, content) {
