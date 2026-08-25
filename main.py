@@ -5,7 +5,7 @@ from pydantic import BaseModel
 from typing import Optional
 import os
 
-app = FastAPI(title="운세의 신 PRO API", version="5.1.0")
+app = FastAPI(title="운세의 신 PRO API", version="5.2.0")
 
 CHEONGAN_HANJA = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
 JIJI_HANJA = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"]
@@ -51,11 +51,13 @@ DAY_MBTI_MAP = {
 ANIMAL_MAP = {"子": "쥐", "丑": "소", "寅": "호랑이", "卯": "토끼", "辰": "용", "巳": "뱀", "午": "말", "未": "양", "申": "원숭이", "酉": "닭", "戌": "개", "亥": "돼지"}
 ANIMAL_ICONS = {"쥐": "🐭", "소": "🐮", "호랑이": "🐯", "토끼": "🐰", "용": "🐲", "뱀": "🐍", "말": "🐴", "양": "🐑", "원숭이": "🐵", "닭": "🐔", "개": "🐶", "돼지": "🐷"}
 
-TALISMAN_LIST = [
-    {"title": "재물만복부 (萬福符)", "power": "재물 증식 · 금전운 대통", "desc": "사방에서 금전과 복록이 샘솟듯 모여드는 강력한 전통 경면주사 수제 부적입니다."},
-    {"title": "금고수호부 (金庫守護符)", "power": "자산 방어 · 누수 차단", "desc": "새어나가는 헛돈을 철통같이 막아주고 보유 자산을 굳건히 지켜줍니다."},
-    {"title": "사업대성부 (事業大成符)", "power": "사업 번창 · 계약 성사", "desc": "막혔던 활로를 시원하게 뚫어주고 거래와 사업 번창을 돕는 부적입니다."}
-]
+# 4대 사주 맞춤 부적 마스터 (사주 오행 및 일간에 따라 실시간 매칭)
+TALISMAN_TYPE_MAP = {
+    "wealth": {"type": "wealth", "title": "재물만복부 (萬福符)", "power": "재물 증식 · 금전운 대통", "desc": "사방에서 금전과 복록이 샘솟듯 모여들고 헛돈 누수를 철통같이 차단하는 강력한 전통 경면주사 수제 부적입니다."},
+    "love": {"type": "love", "title": "천생화합부 (和合符)", "power": "애정 결속 · 인연운 대길", "desc": "서로의 기운을 조화롭게 묶어주고 엇갈린 인연의 오해를 풀어 평생의 신뢰와 화목을 완성하는 비급 부적입니다."},
+    "business": {"type": "business", "title": "사업대성부 (亨通符)", "power": "사업 번창 · 계약 성사", "desc": "막혔던 활로를 시원하게 뚫어주고 귀인의 조력과 승진·사업적 대성취를 견인하는 전통 수제 부적입니다."},
+    "health": {"type": "health", "title": "무병장수부 (延壽符)", "power": "심신 정화 · 기력 회복", "desc": "오행의 탁한 기운을 정화하고 수승화강의 원리를 통해 평생의 원기와 활력을 지켜주는 수호 부적입니다."}
+}
 
 TAROT_CARDS = [
     {
@@ -78,9 +80,9 @@ TAROT_CARDS = [
         "name": "II. THE HIGH PRIESTESS (여사제)",
         "keyword": "깊은 통찰 · 직관과 혜안 · 침묵의 지혜",
         "symbolism": "흑과 백의 기둥 사이에 앉아 스크롤을 쥔 여사제는 이성과 감성의 조화, 표면 아래 숨겨진 본질적 진실을 상징합니다.",
-        "fortune_reading": "겉으로 드러난 말보다 상대방의 숨은 의도나 상황의 이면을 꿰뚫어 보는 혜안이 극대화되는 날입니다.",
-        "advice": "성급하게 반응하기보다는 차분히 경청하고 심사숙고하세요.",
-        "action_tip": "조용한 장소에서 생각을 차분히 정리하는 시간을 10분간 가지세요."
+        "fortune_reading": "겉으로 드러난 말보다 상대방의 숨은 의도나 상황의 이면을 꿰뚫어 보는 혜안이 극대화되는 날입니다. 성급하게 반응하기보다는 차분히 경청하고 심사숙고하세요.",
+        "advice": "중요한 결정은 하루 이틀 여유를 두고 결정하세요.",
+        "action_tip": "조용한 장소에서 생각을 차분히 정리하는 시간을 가지세요."
     }
 ]
 
@@ -105,24 +107,20 @@ def analyze_saju(req: SajuRequest):
     target_date = datetime.date(req.year, req.month, req.day)
     diff_days = (target_date - base_date).days
     
-    # 일주 계산
     d_cg_idx = (diff_days + 0) % 10
     d_jj_idx = (diff_days + 10) % 12
     d_cg = CHEONGAN_HANJA[d_cg_idx]
     d_jj = JIJI_HANJA[d_jj_idx]
 
-    # 년주 계산
     year_offset = (req.year - 4) % 60
     y_cg_idx = year_offset % 10
     y_jj_idx = year_offset % 12
     y_cg, y_jj = CHEONGAN_HANJA[y_cg_idx], JIJI_HANJA[y_jj_idx]
 
-    # 월주 계산
     m_jj_idx = (req.month) % 12
     m_cg_idx = (y_cg_idx % 5 * 2 + 2 + (req.month - 2)) % 10
     m_cg, m_jj = CHEONGAN_HANJA[m_cg_idx], JIJI_HANJA[m_jj_idx]
 
-    # 시주 계산
     if req.is_unknown_time or req.sijin_index is None or req.sijin_index < 0:
         h_pillar, h_cg, h_jj = "時未詳", "-", "-"
     else:
@@ -133,7 +131,6 @@ def analyze_saju(req: SajuRequest):
 
     d_animal = ANIMAL_MAP.get(d_jj, "개")
 
-    # 만 나이 기반 실시간 연령 계산
     current_year = datetime.date.today().year
     current_age = current_year - req.year + 1
 
@@ -160,7 +157,6 @@ def analyze_saju(req: SajuRequest):
         }
     }
 
-    # 지장간 가중치 오행 계산
     scores = {"wood": 0.0, "fire": 0.0, "earth": 0.0, "metal": 0.0, "water": 0.0}
     for cg in [y_cg, m_cg, d_cg]:
         scores[CHEONGAN_ELEMENTS[cg]] += 25.0
@@ -180,6 +176,18 @@ def analyze_saju(req: SajuRequest):
     elem_percentages = {
         k: round((v / total_score) * 100, 1) for k, v in scores.items()
     }
+
+    # 사용자 사주 일간(日干) 기반 맞춤 부적 자동 선택
+    # 甲/乙(목): 사업대성부, 丙/丁(화): 재물만복부, 戊/己(토): 금고수호부, 庚/辛(금): 천생화합부, 壬/癸(수): 무병장수부
+    talisman_key_map = {
+        "甲": "business", "乙": "business",
+        "丙": "wealth", "丁": "wealth",
+        "戊": "wealth", "己": "wealth",
+        "庚": "love", "辛": "love",
+        "壬": "health", "癸": "health"
+    }
+    user_talisman_type = talisman_key_map.get(d_cg, "wealth")
+    user_talisman = TALISMAN_TYPE_MAP.get(user_talisman_type, TALISMAN_TYPE_MAP["wealth"])
 
     user_mbti = DAY_MBTI_MAP.get(d_cg, {"mbti": "대담한 통솔자 (ENTJ형)", "desc": "강한 추진력과 당당한 리더십으로 조직을 이끄는 개척자 사주"})
     user_animal_icon = ANIMAL_ICONS.get(d_animal, "🐶")
@@ -209,7 +217,7 @@ def analyze_saju(req: SajuRequest):
             "recommended_menu": "신선한 채소와 담백한 단백질 식단",
             "mindset": "상대의 말에 공감하고 핵심을 명확히 전달하기",
             "action": "오전 중 따뜻한 차 한 잔을 마시며 목표 3가지 메모하기",
-            "talisman": TALISMAN_LIST[0]
+            "talisman": user_talisman
         }
     }
 
@@ -221,7 +229,7 @@ def get_daily_tarot(slot: int = 1, rand_seed: Optional[str] = None):
 
 @app.post("/api/daewoon-report")
 def get_daewoon_report(req: dict):
-    user_name = req.get("name", "고객")
+    user_name = req.get("name", "최정오")
     age = req.get("age", 49)
     age_decade = (age // 10) * 10
     start_age = age_decade + 3
@@ -274,11 +282,12 @@ def get_daewoon_report(req: dict):
         """
     }
 
+# 4대 테마운 롱폼 심층 리포트 (재물운 수준의 3단 완벽 대등 구성)
 @app.post("/api/theme-report")
 def get_theme_report(req: dict):
     theme = req.get("theme", "wealth")
     sub_opt = req.get("sub_option", "기본")
-    user_name = req.get("name", "고객")
+    user_name = req.get("name", "최정오")
     
     titles = {
         "wealth": f"💰 {user_name}님의 평생 재물 그릇 & 금고운 심층 리포트",
@@ -311,7 +320,8 @@ def get_theme_report(req: dict):
                 <p style="font-weight: 800; color: #065F46; font-size: 12px; margin-bottom: 4px;">💡 2. 재물운을 극대화하는 실전 개운(開運) 솔루션</p>
                 <p style="font-size: 11px; color: #047857; line-height: 1.6;">
                     • <strong>행운의 방위:</strong> 주거지나 사무실 기준 '정북쪽'과 '동북쪽'이 재물이 샘솟는 황금 방위입니다.<br>
-                    • <strong>금전 누수 방어법:</strong> 지갑 안에 현금을 항상 짝수 매수로 정돈하여 넣고, 노란색이나 짙은 갈색 소품을 휴대하면 헛돈 지출이 철통같이 차단됩니다.
+                    • <strong>금전 누수 방어법:</strong> 지갑 안에 현금을 항상 짝수 매수로 정돈하여 넣고, 노란색이나 짙은 갈색 소품을 휴대하면 헛돈 지출이 철통같이 차단됩니다.<br>
+                    • <strong>문서 계약 대길 타이밍:</strong> 음력 4월, 8월, 12월에 체결하는 부동산이나 투자 계약이 평생의 거대한 복록을 부릅니다.
                 </p>
             </div>
         </div>
@@ -323,15 +333,25 @@ def get_theme_report(req: dict):
                 <h4 style="font-size: 13px; font-weight: 900; color: #881337; margin: 4px 0 6px;">[평생 인연법] 깊은 신뢰와 상호 존중을 완성하는 천생연분</h4>
                 <p style="color: #9F1239; font-size: 11px; line-height: 1.6;">
                     {user_name}님의 애정 원국은 가벼운 감정의 불꽃보다는 한 번 맺은 신뢰를 평생 지켜나가는 우직하고 따뜻한 포용력의 소유자입니다. 
-                    현재 상태({sub_opt})를 고려할 때, 상대방에게 일방적으로 맞추기보다는 본인의 생각과 비전을 솔직하게 공유할 때 둘 사이의 유대감이 더욱 깊어집니다.
+                    현재 상태({sub_opt})를 고려할 때, 상대방에게 일방적으로 맞추기보다는 본인의 생각과 비전을 솔직하게 공유할 때 둘 사이의 유대감이 더욱 깊어집니다. 
+                    겉으로 표현하지 않는 내면의 외로움이나 고민을 따뜻하게 안아주고 존중해 줄 수 있는 지혜로운 배필과 최고의 시너지를 발휘합니다.
                 </p>
             </div>
             <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 14px; padding: 12px;">
                 <p style="font-weight: 800; color: #0F172A; font-size: 12px; margin-bottom: 4px;">💞 1. {user_name}님과 운명적으로 통하는 상대방의 특징</p>
                 <div style="display: flex; flex-direction: column; gap: 6px; font-size: 11px; color: #475569;">
                     <p>• <strong>성향과 인품:</strong> 감정 기복이 적고 원칙이 뚜렷하며, 대화 시 상대방의 이야기를 깊이 경청해 주는 차분한 스타일.</p>
-                    <p>• <strong>오행 궁합 조화:</strong> {user_name}님 사주에 꼭 필요한 水(물)과 金(쇠)의 차분한 기운을 채워줄 수 있는 사람과 대길연을 이룹니다.</p>
+                    <p>• <strong>외모 및 이미지:</strong> 부드럽고 온화한 인상에 단정하고 세련된 옷차림을 선호하며 지적인 분위기를 풍기는 사람.</p>
+                    <p>• <strong>오행 궁합 조화:</strong> {user_name}님 사주에 꼭 필요한 水(물)과 金(쇠)의 차분한 기운을 채워줄 수 있는 띠(쥐띠, 닭띠, 원숭이띠)와 대길연(大吉緣)을 이룹니다.</p>
                 </div>
+            </div>
+            <div style="background: #FFFBEB; border: 1px solid #FDE68A; border-radius: 14px; padding: 12px;">
+                <p style="font-weight: 800; color: #78350F; font-size: 12px; margin-bottom: 4px;">🌹 2. 관계를 화목하게 유지하는 관계 처세 비결</p>
+                <p style="font-size: 11px; color: #92400E; line-height: 1.6;">
+                    • <strong>소통의 법칙:</strong> 서운한 감정이 들 때는 즉각 반응하기보다 반나절 정도 생각을 정리한 후 부드러운 화법으로 전달하세요.<br>
+                    • <strong>행운의 데이트/힐링 장소:</strong> 물이 잔잔하게 흐르는 호수 주변, 조용한 미술관이나 테라스가 있는 카페가 두 사람의 기운을 조화롭게 묶어줍니다.<br>
+                    • <strong>인연운 상승 액션:</strong> 상대방에게 사소하지만 진심 어린 칭찬 한마디를 매일 건네면 가정과 연애 전선에 따뜻한 봄바람이 지속됩니다.
+                </p>
             </div>
         </div>
         """,
@@ -342,7 +362,24 @@ def get_theme_report(req: dict):
                 <h4 style="font-size: 13px; font-weight: 900; color: #1E3A8A; margin: 4px 0 6px;">[사업 & 직업 성공] 치밀한 기획력과 결단력으로 조직을 이끄는 수장</h4>
                 <p style="color: #1E40AF; font-size: 11px; line-height: 1.6;">
                     {user_name}님의 사주는 복잡하게 얽힌 문제의 핵심을 단번에 꿰뚫고 시스템을 정돈하는 탁월한 전략가이자 해결사의 기질을 타고났습니다. 
-                    현재 직업군({sub_opt})에서 남들이 기피하거나 어려워하는 난제를 기지로 해결하며 대체 불가능한 핵심 리더로서 두각을 나타내게 됩니다.
+                    현재 직업군({sub_opt})에서 남들이 기피하거나 어려워하는 난제를 기지로 해결하며 대체 불가능한 핵심 리더로서 두각을 나타내게 됩니다. 
+                    자신의 전문 역량을 데이터화하고 신뢰를 쌓아갈 때, 상급자나 대형 파트너사로부터 파격적인 협업 제안과 승진·사업 확장의 활로가 열립니다.
+                </p>
+            </div>
+            <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 14px; padding: 12px;">
+                <p style="font-weight: 800; color: #0F172A; font-size: 12px; margin-bottom: 4px;">🚀 1. {user_name}님의 대박 직무 분야 및 사업 아이템</p>
+                <div style="display: flex; flex-direction: column; gap: 6px; font-size: 11px; color: #475569;">
+                    <p>• <strong>추천 핵심 직무:</strong> 전략 기획, 경영 컨설팅, IT/기술 매니지먼트, 금융·투자 분석 등 구조와 프로세스를 설계하는 분야.</p>
+                    <p>• <strong>창업 및 사업 방향:</strong> 지식 기반 플랫폼, 전문 라이선스 비즈니스, 유통/물류 시스템 혁신 등 무형의 노하우를 자산화하는 사업 모델에 최적입니다.</p>
+                    <p>• <strong>조직 내 최적 포지션:</strong> 현장 실무자를 거쳐 최종 승인권과 기획권을 쥔 총괄 디렉터(C-Level) 자리에서 잠재력이 200% 발현됩니다.</p>
+                </div>
+            </div>
+            <div style="background: #FFFBEB; border: 1px solid #FDE68A; border-radius: 14px; padding: 12px;">
+                <p style="font-weight: 800; color: #78350F; font-size: 12px; margin-bottom: 4px;">💼 2. 승진·이직·사업 대성을 위한 실전 처세 가이드</p>
+                <p style="font-size: 11px; color: #92400E; line-height: 1.6;">
+                    • <strong>인맥 관리 비결:</strong> '기브 앤 테이크'의 원칙을 지키되, 능력 있는 아랫사람을 너그럽게 품어줄 때 그들이 평생의 충성스러운 조력자가 됩니다.<br>
+                    • <strong>이직/창업 대길 시기:</strong> 가을(양력 9~11월)과 초봄(양력 2~3월)에 들어오는 스카우트 제의나 신규 사업 론칭이 큰 명예를 안겨줍니다.<br>
+                    • <strong>사무 공간 개운법:</strong> 책상을 출입문이 대각선으로 보이는 안정된 자리에 배치하고, 컴퓨터 옆에 작은 금속제 소품을 두면 집중력과 계약 성사율이 극대화됩니다.
                 </p>
             </div>
         </div>
@@ -353,7 +390,25 @@ def get_theme_report(req: dict):
                 <span style="font-size: 10px; background: #059669; color: white; padding: 2px 6px; border-radius: 6px; font-weight: 900;">오행 체질 정밀 분석</span>
                 <h4 style="font-size: 13px; font-weight: 900; color: #065F46; margin: 4px 0 6px;">[평생 건강 & 체질] 왕성한 에너지와 수승화강(水昇火降) 관리 사주</h4>
                 <p style="color: #047857; font-size: 11px; line-height: 1.6;">
-                    {user_name}님의 오행 체질은 강인한 생명력과 추진력을 갖추고 있으나, 두한족열(머리는 시원하게 발은 따뜻하게)의 기본 건강 수칙을 철저히 유지해야 합니다.
+                    {user_name}님의 오행 체질은 목(木)과 토(土)의 기운이 왕성하여 강인한 생명력과 추진력을 갖추고 있으나, 상대적으로 수(水)와 금(金) 기운의 보충이 필수적입니다. 
+                    체내의 열기가 상체로 몰리기 쉬우므로 두한족열(頭寒足熱, 머리는 시원하게 발은 따뜻하게)의 기본 건강 수칙을 철저히 유지해야 합니다. 
+                    스트레스가 누적될 경우 간 피로와 소화기계의 더부룩함으로 신호가 올 수 있으므로, 규칙적인 유산소 운동과 수분 섭취로 체내 순환을 원활히 돕는 것이 100세 건강의 비결입니다.
+                </p>
+            </div>
+            <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 14px; padding: 12px;">
+                <p style="font-weight: 800; color: #0F172A; font-size: 12px; margin-bottom: 4px;">🏥 1. {user_name}님이 각별히 챙겨야 할 3대 취약 장기</p>
+                <div style="display: flex; flex-direction: column; gap: 6px; font-size: 11px; color: #475569;">
+                    <p>• <strong>간장 & 담낭 (木 기운 조절):</strong> 만성 피로와 눈의 침침함을 방지하기 위해 과도한 음주를 피하고 밀크씨슬 등 간 보호 성분을 꾸준히 섭취하세요.</p>
+                    <p>• <strong>신장 & 방광 (水 기운 보충):</strong> 체내 노폐물 배출과 진액 관리를 위해 하루 1.5L 이상의 미온수를 나누어 마시는 습관이 필수적입니다.</p>
+                    <p>• <strong>위장 & 비장 (土 기운 순환):</strong> 불규칙한 식사나 야식을 지양하고, 자극적인 음식보다는 따뜻하고 담백한 식단을 유지해야 소화 흡수력이 강화됩니다.</p>
+                </div>
+            </div>
+            <div style="background: #EFF6FF; border: 1px solid #BFDBFE; border-radius: 14px; padding: 12px;">
+                <p style="font-weight: 800; color: #1E3A8A; font-size: 12px; margin-bottom: 4px;">🌿 2. 평생 활력을 완성하는 일상 개운 섭생 루틴</p>
+                <p style="font-size: 11px; color: #1E40AF; line-height: 1.6;">
+                    • <strong>추천 보양 식재료:</strong> 검은콩, 흑임자, 미역 등 해조류와 신선한 녹색 잎채소가 부족한 수기(水氣)를 가득 채워줍니다.<br>
+                    • <strong>취침 전 힐링 루틴:</strong> 매일 밤 15분간 따뜻한 족욕을 통해 하체의 순환을 돕고 숙면을 취하면 하루 동안 쌓인 탁한 기운이 깨끗이 정화됩니다.<br>
+                    • <strong>추천 운동 요법:</strong> 격렬한 웨이트 트레이닝보다는 주 3회 30분 이상의 빠른 걷기나 수영 등 유산소 운동이 오행 밸런스를 가장 이상적으로 맞추어 줍니다.
                 </p>
             </div>
         </div>
