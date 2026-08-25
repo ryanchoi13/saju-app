@@ -59,6 +59,7 @@
         .card-back { background: #162447; border: 3px solid #FFFFFF; box-shadow: 0 4px 8px rgba(0,0,0,0.18); overflow: hidden; }
         .card-front { transform: rotateY(180deg); background: white; overflow: hidden; border: 2px solid #D4AF37; }
 
+        /* 전통 경면주사 부적 카드 배너 */
         .talisman-banner { background: linear-gradient(135deg, #FFFDF5 0%, #FFFBEB 100%); border: 2px solid #FCD34D; border-radius: 24px; padding: 20px; text-align: center; display: flex; flex-direction: column; gap: 14px; }
         .talisman-art { height: 130px; background: rgba(254,243,199,0.5); border-radius: 16px; border: 1px solid rgba(253,230,138,0.8); display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
 
@@ -471,8 +472,8 @@
                     <div id="unlockedArchiveList" style="display: flex; flex-direction: column; gap: 10px;">
                         <div style="text-align: center; padding: 20px 0; color: #94A3B8; font-size: 11px;">
                             <p style="font-size: 24px; margin-bottom: 4px;">📂</p>
-                            <p style="font-weight: 700; color: #64748B;">아직 구매한 심층 리포트가 없습니다.</p>
-                            <p style="font-size: 10px; color: #CBD5E1; margin-top: 2px;">정통사주 및 테마운세에서 열람한 리포트가 이곳에 평생 보관됩니다.</p>
+                            <p style="font-weight: 700; color: #64748B;">현재 사주 정보로 구매한 리포트가 없습니다.</p>
+                            <p style="font-size: 10px; color: #CBD5E1; margin-top: 2px;">정통사주 및 테마운세에서 열람한 리포트가 이곳에 프로필별로 보관됩니다.</p>
                         </div>
                     </div>
                 </div>
@@ -608,7 +609,7 @@
         let dailyTarotDrawn = false;
         let drawnTarotCards = {};
 
-        // 프로필 고유 키 생성 함수 (이름_생년월일_양음력_시진)
+        // 프로필 고유 키 생성 (이름_생년월일_양음력_시진)
         function getProfileKey() {
             const name = (document.getElementById('inputName')?.value || "최정오").trim();
             const birth = document.getElementById('inputBirth')?.value || "1978-03-13";
@@ -673,30 +674,24 @@
                     <circle cx="48" cy="38" r="3" fill="#C62828" />
                     <circle cx="70" cy="38" r="3" fill="#C62828" />
                     <circle cx="92" cy="38" r="3" fill="#C62828" />
-
                     <path d="M 32 50 L 108 50" />
                     <path d="M 36 50 L 36 68 L 104 68 L 104 50" />
                     <path d="M 50 58 L 90 58" />
                     <path d="M 70 50 L 70 68" />
                     <path d="M 42 76 Q 70 66 98 76" />
-                    
                     <path d="M 30 88 L 110 88" />
                     <path d="M 34 88 L 34 165 Q 34 180 50 180 L 90 180 Q 106 180 106 165 L 106 88" />
-                    
                     <rect x="44" y="98" width="22" height="18" />
                     <rect x="74" y="98" width="22" height="18" />
                     <line x1="55" y1="98" x2="55" y2="116" />
                     <line x1="85" y1="98" x2="85" y2="116" />
-
                     <path d="M 42 126 L 98 126" />
                     <path d="M 50 134 Q 70 128 90 134" />
-                    
                     <path d="M 48 144 Q 58 138 70 148 Q 82 138 92 144" />
                     <path d="M 54 152 L 86 152" />
                     <path d="M 70 148 L 70 172" />
                     <circle cx="58" cy="164" r="2.5" fill="#C62828" />
                     <circle cx="82" cy="164" r="2.5" fill="#C62828" />
-
                     <path d="M 36 192 Q 70 184 104 192" />
                     <path d="M 48 200 L 92 200" />
                     <path d="M 38 210 Q 70 198 102 210" />
@@ -780,15 +775,12 @@
             if (decadeText) decadeText.innerText = `${ageDecade}대★`;
         }
 
-        // 모든 유료 뷰 UI를 결제 전(초기 잠금 상태)으로 리셋
         function resetUnlockedUI() {
-            // 대운 리포트 초기화
             const daewoonBox = document.getElementById('daewoonBox');
             const btnDaewoon = document.getElementById('btnDaewoon');
             if (daewoonBox) { daewoonBox.innerHTML = ''; daewoonBox.classList.add('hidden'); }
             if (btnDaewoon) { btnDaewoon.classList.remove('hidden'); }
 
-            // 테마운 4종 초기화
             ['wealth', 'love', 'business', 'health'].forEach(key => {
                 const box = document.getElementById(`themeReport_${key}`);
                 const btn = document.getElementById(`btnTheme_${key}`);
@@ -803,7 +795,6 @@
             const sijin = parseInt(document.getElementById('inputSijin').value);
             const [year, month, day] = birth.split('-').map(Number);
 
-            // 프로필 변경 시 기존 열람 UI 잠금 초기화
             resetUnlockedUI();
 
             const res = await fetch('/api/analyze', {
@@ -816,7 +807,6 @@
             currentTalisman = data.daily_fortune.talisman;
             currentUserAge = data.current_age;
 
-            // 천간 & 지간 뱃지 바인딩
             const dtl = data.saju_data.pillars_detail;
             setElemBadge('cg_h_badge', dtl.hour.cg, dtl.hour.cg_elem);
             setElemBadge('cg_d_badge', dtl.day.cg, dtl.day.cg_elem);
@@ -828,13 +818,11 @@
             setElemBadge('jj_m_badge', dtl.month.jj, dtl.month.jj_elem);
             setElemBadge('jj_y_badge', dtl.year.jj, dtl.year.jj_elem);
 
-            // 지장간 바인딩
             document.getElementById('jjg_h_box').innerHTML = formatJijangganGroup(dtl.hour.jijanggan);
             document.getElementById('jjg_d_box').innerHTML = formatJijangganGroup(dtl.day.jijanggan);
             document.getElementById('jjg_m_box').innerHTML = formatJijangganGroup(dtl.month.jijanggan);
             document.getElementById('jjg_y_box').innerHTML = formatJijangganGroup(dtl.year.jijanggan);
 
-            // 오행 세로 막대그래프 갱신
             const elems = data.saju_data.elements;
             const applyBar = (key, val) => {
                 const barEl = document.getElementById(`bar${key}`);
@@ -865,7 +853,6 @@
             document.getElementById('onboardingInputView').classList.add('hidden');
             document.getElementById('view-today').classList.remove('hidden');
 
-            // 현재 프로필 키 기준 결제 내역 복원
             checkUnlockedStates();
             renderUnlockedArchive();
         }
@@ -1067,7 +1054,6 @@
             alert(`🎉 [${data.title}] 열람 완료!\n[마이페이지 > 보관함]에 성공적으로 보관되었습니다.`);
         }
 
-        // 프로필별 격리 저장 함수
         function saveUnlockedReport(key, title, content) {
             const pKey = getProfileKey();
             const currentList = getUnlockedReports();
@@ -1089,11 +1075,8 @@
             renderUnlockedArchive();
         }
 
-        // 현재 프로필 키 기준 결제 상태 화면 반영
         function checkUnlockedStates() {
             const currentList = getUnlockedReports();
-            
-            // 기존 뷰 초기화 후 복원
             resetUnlockedUI();
 
             currentList.forEach(item => {
