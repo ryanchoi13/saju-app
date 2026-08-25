@@ -6,7 +6,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <title>운세의 신 PRO</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="[https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800;900&display=swap](https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800;900&display=swap)" rel="stylesheet">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Pretendard', sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background-color: #F4F7F4; color: #1E293B; display: flex; justify-content: center; min-height: 100vh; }
@@ -33,8 +33,10 @@
         .cal-btn.active { background: #FFFFFF; color: #2D6A4F; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
         .btn-primary { width: 100%; background: #2D6A4F; color: white; border: none; font-size: 13px; font-weight: 900; padding: 14px; border-radius: 16px; cursor: pointer; box-shadow: 0 4px 6px -1px rgba(45,106,79,0.2); margin-top: 8px; }
 
-        /* 오행 고유 컬러 뱃지 시스템 */
-        .badge-elem { width: 36px; height: 36px; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 900; box-shadow: 0 2px 4px rgba(0,0,0,0.04); }
+        /* 오행 고유 컬러 뱃지 규격 */
+        .badge-elem { width: 40px; height: 40px; border-radius: 12px; display: inline-flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 900; box-shadow: 0 2px 4px rgba(0,0,0,0.04); }
+        .badge-jjg { width: 32px; height: 24px; border-radius: 6px; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; }
+        
         .elem-wood { background: #ECFDF5; color: #047857; border: 1.5px solid #A7F3D0; }
         .elem-fire { background: #FEF2F2; color: #DC2626; border: 1.5px solid #FECDD3; }
         .elem-earth { background: #FFFBEB; color: #D97706; border: 1.5px solid #FDE68A; }
@@ -244,61 +246,69 @@
 
             </div>
 
-            <!-- 탭 2: 정통사주 (피드백 반영 리뉴얼: 천간/지지/지장간 분리 & 오행 컬러링) -->
+            <!-- 탭 2: 정통사주 (피드백 반영: 시/일/월/년 수직 수평 정렬 명식표) -->
             <div id="view-saju" class="tab-view hidden">
                 
                 <div class="card" style="padding: 18px;">
                     <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 10px; margin-bottom: 14px;">
                         <div>
                             <h3 style="font-size: 14px; font-weight: 900; color: #0F172A;">사주 명식표 (四柱命式)</h3>
-                            <p style="font-size: 10px; color: #94A3B8; margin-top: 1px;">오행 고유 기운 배색 및 지장간 포함 정밀 분석</p>
+                            <p style="font-size: 10px; color: #94A3B8; margin-top: 1px;">오행 고유 기운 배색 및 수직 중앙정렬 명식</p>
                         </div>
                         <span id="sajuOwnerName" style="font-size: 12px; color: #2D6A4F; font-weight: 800; background: #EBF5EE; padding: 3px 8px; border-radius: 8px;">최정오 님</span>
                     </div>
 
-                    <!-- 3단 명식표 (천간 / 지지 / 지장간) -->
-                    <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 18px; padding: 12px; display: flex; flex-direction: column; gap: 8px;">
+                    <!-- 4기둥 수직 중앙정렬 카드리드 (시주 | 일주 | 월주 | 년주) -->
+                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;">
                         
-                        <!-- 기둥 헤더 -->
-                        <div style="display: grid; grid-template-columns: 46px 1fr 1fr 1fr 1fr; gap: 6px; text-align: center; font-size: 11px; font-weight: 800; color: #64748B; border-bottom: 1px solid #E2E8F0; padding-bottom: 6px;">
-                            <span>구분</span>
-                            <span>시주 (時)</span>
-                            <span style="color: #2D6A4F;">일주 (日)</span>
-                            <span>월주 (月)</span>
-                            <span>년주 (年)</span>
+                        <!-- 시주 (時) -->
+                        <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 16px; padding: 12px 4px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center;">
+                            <span style="font-size: 11px; font-weight: 800; color: #64748B;">시주 (時)</span>
+                            <div id="cg_h_badge" class="badge-elem elem-none">-</div>
+                            <div id="jj_h_badge" class="badge-elem elem-none">-</div>
+                            <div style="border-top: 1px dashed #CBD5E1; width: 100%; margin-top: 2px; padding-top: 6px;">
+                                <span style="font-size: 9px; font-weight: 700; color: #94A3B8; display: block; margin-bottom: 4px;">지장간</span>
+                                <div id="jjg_h_box" style="display: flex; flex-direction: column; align-items: center; gap: 3px;">-</div>
+                            </div>
                         </div>
 
-                        <!-- 1단: 천간(天干) -->
-                        <div style="display: grid; grid-template-columns: 46px 1fr 1fr 1fr 1fr; gap: 6px; align-items: center; text-align: center;">
-                            <span style="font-size: 10px; font-weight: 800; color: #475569; background: #EDE9FE; color: #6D28D9; padding: 4px 0; border-radius: 6px;">천간</span>
-                            <div class="badge-elem elem-none" id="cg_h_badge">-</div>
-                            <div class="badge-elem elem-none" id="cg_d_badge">-</div>
-                            <div class="badge-elem elem-none" id="cg_m_badge">-</div>
-                            <div class="badge-elem elem-none" id="cg_y_badge">-</div>
+                        <!-- 일주 (日) - 사주 중심선 강조 -->
+                        <div style="background: #F0FDF4; border: 1.5px solid #86EFAC; border-radius: 16px; padding: 12px 4px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center;">
+                            <span style="font-size: 11px; font-weight: 800; color: #166534;">일주 (日)</span>
+                            <div id="cg_d_badge" class="badge-elem elem-none">-</div>
+                            <div id="jj_d_badge" class="badge-elem elem-none">-</div>
+                            <div style="border-top: 1px dashed #A7F3D0; width: 100%; margin-top: 2px; padding-top: 6px;">
+                                <span style="font-size: 9px; font-weight: 700; color: #15803D; display: block; margin-bottom: 4px;">지장간</span>
+                                <div id="jjg_d_box" style="display: flex; flex-direction: column; align-items: center; gap: 3px;">-</div>
+                            </div>
                         </div>
 
-                        <!-- 2단: 지지(地支) -->
-                        <div style="display: grid; grid-template-columns: 46px 1fr 1fr 1fr 1fr; gap: 6px; align-items: center; text-align: center;">
-                            <span style="font-size: 10px; font-weight: 800; background: #FEF3C7; color: #B45309; padding: 4px 0; border-radius: 6px;">지지</span>
-                            <div class="badge-elem elem-none" id="jj_h_badge">-</div>
-                            <div class="badge-elem elem-none" id="jj_d_badge">-</div>
-                            <div class="badge-elem elem-none" id="jj_m_badge">-</div>
-                            <div class="badge-elem elem-none" id="jj_y_badge">-</div>
+                        <!-- 월주 (月) -->
+                        <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 16px; padding: 12px 4px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center;">
+                            <span style="font-size: 11px; font-weight: 800; color: #64748B;">월주 (月)</span>
+                            <div id="cg_m_badge" class="badge-elem elem-none">-</div>
+                            <div id="jj_m_badge" class="badge-elem elem-none">-</div>
+                            <div style="border-top: 1px dashed #CBD5E1; width: 100%; margin-top: 2px; padding-top: 6px;">
+                                <span style="font-size: 9px; font-weight: 700; color: #94A3B8; display: block; margin-bottom: 4px;">지장간</span>
+                                <div id="jjg_m_box" style="display: flex; flex-direction: column; align-items: center; gap: 3px;">-</div>
+                            </div>
                         </div>
 
-                        <!-- 3단: 지장간(地藏干) -->
-                        <div style="display: grid; grid-template-columns: 46px 1fr 1fr 1fr 1fr; gap: 6px; align-items: center; text-align: center; border-top: 1px dashed #CBD5E1; padding-top: 8px;">
-                            <span style="font-size: 9px; font-weight: 800; background: #F1F5F9; color: #475569; padding: 4px 0; border-radius: 6px; line-height: 1.2;">지장간<br>(숨은기운)</span>
-                            <div id="jjg_h_box" style="display: flex; justify-content: center; gap: 2px; flex-wrap: wrap;">-</div>
-                            <div id="jjg_d_box" style="display: flex; justify-content: center; gap: 2px; flex-wrap: wrap;">-</div>
-                            <div id="jjg_m_box" style="display: flex; justify-content: center; gap: 2px; flex-wrap: wrap;">-</div>
-                            <div id="jjg_y_box" style="display: flex; justify-content: center; gap: 2px; flex-wrap: wrap;">-</div>
+                        <!-- 년주 (年) -->
+                        <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 16px; padding: 12px 4px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center;">
+                            <span style="font-size: 11px; font-weight: 800; color: #64748B;">년주 (年)</span>
+                            <div id="cg_y_badge" class="badge-elem elem-none">-</div>
+                            <div id="jj_y_badge" class="badge-elem elem-none">-</div>
+                            <div style="border-top: 1px dashed #CBD5E1; width: 100%; margin-top: 2px; padding-top: 6px;">
+                                <span style="font-size: 9px; font-weight: 700; color: #94A3B8; display: block; margin-bottom: 4px;">지장간</span>
+                                <div id="jjg_y_box" style="display: flex; flex-direction: column; align-items: center; gap: 3px;">-</div>
+                            </div>
                         </div>
 
                     </div>
 
-                    <!-- 오행(五行) 에너지 막대그래프 (지장간 가중치 정밀 반영) -->
-                    <div style="margin-top: 18px; text-align: left;">
+                    <!-- 오행(五行) 에너지 막대그래프 -->
+                    <div style="margin-top: 20px; text-align: left;">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                             <span style="font-size: 12px; font-weight: 800; color: #0F172A;">오행(五行) 실질 에너지 세력 분포</span>
                             <span style="font-size: 10px; color: #64748B;">지장간 포함 100%</span>
@@ -628,8 +638,8 @@
         let unlockedReports = getUnlockedReports();
 
         const TAROT_IMAGES = {
-            "0. THE FOOL (바보)": "https://upload.wikimedia.org/wikipedia/commons/9/90/RWS_Tarot_00_Fool.jpg",
-            "I. THE MAGICIAN (마법사)": "https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg"
+            "0. THE FOOL (바보)": "[https://upload.wikimedia.org/wikipedia/commons/9/90/RWS_Tarot_00_Fool.jpg](https://upload.wikimedia.org/wikipedia/commons/9/90/RWS_Tarot_00_Fool.jpg)",
+            "I. THE MAGICIAN (마법사)": "[https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg](https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg)"
         };
 
         function getTarotCardBackSvg() {
@@ -688,15 +698,22 @@
             }
         }
 
-        function formatElemBadge(char, elem) {
-            if (!char || char === "-") return `<div class="badge-elem elem-none">-</div>`;
-            return `<div class="badge-elem elem-${elem}">${char}</div>`;
+        function setElemBadge(id, char, elem) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            if (!char || char === "-") {
+                el.innerText = "-";
+                el.className = "badge-elem elem-none";
+            } else {
+                el.innerText = char;
+                el.className = `badge-elem elem-${elem}`;
+            }
         }
 
         function formatJijangganGroup(jjList) {
             if (!jjList || jjList.length === 0) return `<span style="font-size:10px; color:#94A3B8;">-</span>`;
             return jjList.map(j => `
-                <span style="font-size: 10px; font-weight: 800; padding: 2px 4px; border-radius: 4px;" class="elem-${j.elem}">
+                <span class="badge-jjg elem-${j.elem}">
                     ${j.char}
                 </span>
             `).join('');
@@ -717,25 +734,25 @@
 
             currentTalisman = data.daily_fortune.talisman;
 
-            // 1. 천간 & 지지 오행 컬러 뱃지 렌더링
+            // 천간 & 지지 오행 컬러 뱃지 바인딩
             const dtl = data.saju_data.pillars_detail;
-            document.getElementById('cg_h_badge').outerHTML = formatElemBadge(dtl.hour.cg, dtl.hour.cg_elem);
-            document.getElementById('cg_d_badge').outerHTML = formatElemBadge(dtl.day.cg, dtl.day.cg_elem);
-            document.getElementById('cg_m_badge').outerHTML = formatElemBadge(dtl.month.cg, dtl.month.cg_elem);
-            document.getElementById('cg_y_badge').outerHTML = formatElemBadge(dtl.year.cg, dtl.year.cg_elem);
+            setElemBadge('cg_h_badge', dtl.hour.cg, dtl.hour.cg_elem);
+            setElemBadge('cg_d_badge', dtl.day.cg, dtl.day.cg_elem);
+            setElemBadge('cg_m_badge', dtl.month.cg, dtl.month.cg_elem);
+            setElemBadge('cg_y_badge', dtl.year.cg, dtl.year.cg_elem);
 
-            document.getElementById('jj_h_badge').outerHTML = formatElemBadge(dtl.hour.jj, dtl.hour.jj_elem);
-            document.getElementById('jj_d_badge').outerHTML = formatElemBadge(dtl.day.jj, dtl.day.jj_elem);
-            document.getElementById('jj_m_badge').outerHTML = formatElemBadge(dtl.month.jj, dtl.month.jj_elem);
-            document.getElementById('jj_y_badge').outerHTML = formatElemBadge(dtl.year.jj, dtl.year.jj_elem);
+            setElemBadge('jj_h_badge', dtl.hour.jj, dtl.hour.jj_elem);
+            setElemBadge('jj_d_badge', dtl.day.jj, dtl.day.jj_elem);
+            setElemBadge('jj_m_badge', dtl.month.jj, dtl.month.jj_elem);
+            setElemBadge('jj_y_badge', dtl.year.jj, dtl.year.jj_elem);
 
-            // 2. 지장간 렌더링
+            // 지장간 수직 정렬 바인딩
             document.getElementById('jjg_h_box').innerHTML = formatJijangganGroup(dtl.hour.jijanggan);
             document.getElementById('jjg_d_box').innerHTML = formatJijangganGroup(dtl.day.jijanggan);
             document.getElementById('jjg_m_box').innerHTML = formatJijangganGroup(dtl.month.jijanggan);
             document.getElementById('jjg_y_box').innerHTML = formatJijangganGroup(dtl.year.jijanggan);
 
-            // 3. 지장간 가중치 포함 오행 실질 세력 그래프 바인딩
+            // 오행 실질 세력 그래프 바인딩
             const elems = data.saju_data.elements;
             document.getElementById('barWood').style.width = `${elems.wood}%`;
             document.getElementById('valWood').innerText = `${elems.wood}%`;
