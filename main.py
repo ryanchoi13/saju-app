@@ -5,7 +5,7 @@ from pydantic import BaseModel
 from typing import Optional
 import os
 
-app = FastAPI(title="운세의 신 PRO API", version="6.0.0")
+app = FastAPI(title="운세의 신 PRO API", version="7.0.0")
 
 CHEONGAN_HANJA = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
 JIJI_HANJA = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"]
@@ -51,47 +51,68 @@ DAY_MBTI_MAP = {
 ANIMAL_MAP = {"子": "쥐", "丑": "소", "寅": "호랑이", "卯": "토끼", "辰": "용", "巳": "뱀", "午": "말", "未": "양", "申": "원숭이", "酉": "닭", "戌": "개", "亥": "돼지"}
 ANIMAL_ICONS = {"쥐": "🐭", "소": "🐮", "호랑이": "🐯", "토끼": "🐰", "용": "🐲", "뱀": "🐍", "말": "🐴", "양": "🐑", "원숭이": "🐵", "닭": "🐔", "개": "🐶", "돼지": "🐷"}
 
+# 5대 오행 결핍에 따른 맞춤 큐레이션 사전
+OHEANG_CURATION_MAP = {
+    "wood": {
+        "color": "에메랄드 그린 / 포레스트 올리브",
+        "number": "3, 8",
+        "direction": "정동쪽 (청룡 방위)",
+        "style": "편안한 린넨 셔츠 또는 그린 톤 캐주얼",
+        "menu": "신선한 샐러드와 녹차, 담백한 채식 식단",
+        "mindset": "새로운 시작에 열린 자세를 갖고 적극 소통하기",
+        "action": "아침 시간 가벼운 스트레칭과 식물 화분에 물 주기"
+    },
+    "fire": {
+        "color": "크림슨 레드 / 로즈 골드",
+        "number": "2, 7",
+        "direction": "정남쪽 (주작 방위)",
+        "style": "포인트가 있는 화려한 니트나 레드 계열 타이",
+        "menu": "따뜻한 국물 요리와 비타민이 풍부한 과일",
+        "mindset": "열정을 당당하게 피력하고 사람들에게 미소 짓기",
+        "action": "점심 식사 후 햇볕을 10분간 쬐며 비타민D 충전하기"
+    },
+    "earth": {
+        "color": "웜 베이지 / 머스터드 옐로우",
+        "number": "5, 10",
+        "direction": "중앙 및 동북쪽 (황룡 방위)",
+        "style": "단정하고 포근한 브라운 톤 재킷이나 코트",
+        "menu": "속이 편안한 단호박죽, 잡곡밥과 발효식품",
+        "mindset": "약속을 철저히 지키고 중심을 단단히 유지하기",
+        "action": "주변 책상과 지갑 안의 영수증을 깔끔하게 정리하기"
+    },
+    "metal": {
+        "color": "스노우 화이트 / 실버 그레이",
+        "number": "4, 9",
+        "direction": "정서쪽 (백호 방위)",
+        "style": "깔끔하고 각 잡힌 화이트 셔츠와 메탈 시계",
+        "menu": "도라지차, 신선한 견과류와 고단백 생선 요리",
+        "mindset": "맺고 끊음을 명확히 하고 군더더기 없는 대화하기",
+        "action": "오늘 완료해야 할 우선순위 3가지를 메모하고 점검하기"
+    },
+    "water": {
+        "color": "미드나잇 블루 / 딥 네이비",
+        "number": "1, 6",
+        "direction": "정북쪽 (현무 방위)",
+        "style": "세련된 블루 톤 셋업이나 부드러운 머플러",
+        "menu": "맑은 미역국, 검은콩 두유와 풍부한 미온수 섭취",
+        "mindset": "상대의 의견을 깊이 경청하고 유연하게 대처하기",
+        "action": "취침 전 따뜻한 족욕과 함께 잔잔한 음악 감상하기"
+    }
+}
+
 # 30종 전통 경면주사 비급 부적 데이터베이스
 TALISMAN_DATABASE = {
-    # 1. 재물 & 금전 (6종)
     "wealth_1": {"type": "wealth", "pattern": "vault", "title": "암장금고부 (暗藏金庫符)", "power": "자산 방어 · 헛돈 누수 완벽 차단", "desc": "사주 원국의 금고를 단단히 잠그고 새어나가는 헛돈과 지출을 철통같이 방어하는 재물 수호 부적입니다."},
     "wealth_2": {"type": "wealth", "pattern": "coin", "title": "만복대길부 (萬福大吉符)", "power": "횡재수 · 사방 금전 대통", "desc": "사방에서 금전과 복록이 샘솟듯 모여들고 뜻밖의 목돈과 횡재수를 소환하는 전통 경면주사 부적입니다."},
     "wealth_3": {"type": "wealth", "pattern": "dividend", "title": "황금편재부 (黃金偏財符)", "power": "투자 대박 · 배당 수익 증식", "desc": "주식, 부동산, 투자 상품에서 탁월한 결단력을 발휘하여 수익을 극대화시키는 투자 특화 비급 부적입니다."},
-    "wealth_4": {"type": "wealth", "pattern": "contract", "title": "문서취득부 (文書取得符)", "power": "부동산 당첨 · 알짜배기 문서운", "desc": "토지, 아파트 청약, 상가 등 실물 가치가 영구히 상승하는 귀한 부동산 문서를 쥐어주는 문서 부적입니다."},
-    "wealth_5": {"type": "wealth", "pattern": "shield", "title": "손재소멸부 (損財消滅符)", "power": "금전 사기 예방 · 손실 방지", "desc": "빌려준 돈, 사기, 동업 손실 등 재물의 손실을 몰고 오는 탁한 악운을 깨끗이 소멸시키는 방어 부적입니다."},
-    "wealth_6": {"type": "wealth", "pattern": "merchant", "title": "상업번창부 (商業繁昌符)", "power": "매출 폭발 · 단골 유치", "desc": "가게나 사업장에 손님의 발길이 끊이지 않고 일일 매출과 현금 흐름을 폭발적으로 증대시키는 상업 부적입니다."},
-
-    # 2. 사업 & 직업 (6종)
     "business_1": {"type": "business", "pattern": "expand", "title": "사업형통부 (事業亨通符)", "power": "사업 활로 개척 · 판로 확장", "desc": "막혔던 프로젝트의 활로를 시원하게 뚫고 사업 규모를 거침없이 확장시키는 대표 사업 부적입니다."},
     "business_2": {"type": "business", "pattern": "promote", "title": "승진영전부 (昇進榮轉符)", "power": "초고속 승진 · 명예 상승", "desc": "조직 내에서 탁월한 역량을 인정받아 경쟁자를 제치고 상위 직급과 요직으로 영전시키는 출세 부적입니다."},
-    "business_3": {"type": "business", "pattern": "pass", "title": "취업합격부 (就業合格符)", "power": "원서 합격 · 공채 최종 승리", "desc": "간절히 원하던 기업이나 공공기관의 시험, 면접에서 최종 합격의 영예를 안겨주는 합격 기원 부적입니다."},
-    "business_4": {"type": "business", "pattern": "court", "title": "관재소멸부 (官災消滅符)", "power": "구설수 차단 · 소송 승소", "desc": "직장 내 모함, 시기 질투, 관공서 시비 및 소송 분쟁을 깔끔하게 잠재우고 승리를 이끄는 수호 부적입니다."},
-    "business_5": {"type": "business", "pattern": "noble", "title": "천을귀인부 (天乙貴人符)", "power": "유력 조력자 소환 · 은인 상봉", "desc": "인생의 결정적 순간에 나타나 물심양면으로 길을 열어주는 천을귀인의 조력을 소환하는 비급 부적입니다."},
-    "business_6": {"type": "business", "pattern": "deal", "title": "계약성사부 (契約成事符)", "power": "대형 계약 체결 · 납품 수주", "desc": "난항을 겪던 비즈니스 협상과 대규모 계약을 귀하에게 절대적으로 유리하게 성사시키는 협상 부적입니다."},
-
-    # 3. 애정 & 인연 (6종)
     "love_1": {"type": "love", "pattern": "union", "title": "천생화합부 (天生和合符)", "power": "천생연분 결속 · 깊은 신뢰", "desc": "두 사람의 기운을 완벽하게 묶어 평생 서로를 존중하고 아끼는 백년가약의 인연을 맺어주는 화합 부적입니다."},
     "love_2": {"type": "love", "pattern": "charm", "title": "도화연정부 (桃花戀情符)", "power": "이성 매력 극대화 · 솔로 탈출", "desc": "숨겨진 치명적인 매력과 도화의 향기를 발현시켜 품격 높은 이성들의 호감을 이끌어내는 연애 부적입니다."},
-    "love_3": {"type": "love", "pattern": "peace", "title": "원진소멸부 (怨嗔消滅符)", "power": "오해 해소 · 다툼 갈등 소멸", "desc": "연인이나 부부 사이의 사소한 오해, 성격 차이로 인한 다툼과 권태기를 눈 녹듯 사라지게 하는 평화 부적입니다."},
-    "love_4": {"type": "love", "pattern": "family", "title": "부부백년부 (夫婦百年符)", "power": "가정 화목 · 자손 번창", "desc": "가정에 화목과 웃음꽃이 피어나게 하고 부부간의 애정을 신혼처럼 돈독하게 유지시키는 가정 수호 부적입니다."},
-    "love_5": {"type": "love", "pattern": "reunion", "title": "재회소원부 (再會素願符)", "power": "헤어진 인연 재회 · 미련 청산", "desc": "안타깝게 엇갈렸던 인연과의 마음을 다시 연결하고 먼저 연락이 닿아 재결합을 돕는 재회 비급 부적입니다."},
-    "love_6": {"type": "love", "pattern": "cut", "title": "악연차단부 (惡緣遮斷符)", "power": "악연 정리 · 스토커 퇴치", "desc": "나를 갉아먹는 유해한 인간관계와 집착하는 악연을 잡음 없이 깔끔하게 끊어내 주는 결계 부적입니다."},
-
-    # 4. 건강 & 힐링 (6종)
     "health_1": {"type": "health", "pattern": "longevity", "title": "무병장수부 (無病長壽符)", "power": "100세 건강 · 면역력 증진", "desc": "체내의 탁한 음기를 몰아내고 오장육부의 활력을 극대화하여 평생 무병장수를 누리게 하는 장수 부적입니다."},
     "health_2": {"type": "health", "pattern": "circulation", "title": "수승화강부 (水昇火降符)", "power": "기혈 순환 · 피로 회복", "desc": "상체의 열기를 내리고 하체를 따뜻하게 하여 만성 피로와 스트레스를 씻은 듯이 회복시키는 순환 부적입니다."},
-    "health_3": {"type": "health", "pattern": "mind", "title": "안심안정부 (安心安靜符)", "power": "불안 불면 해소 · 심신 평온", "desc": "복잡한 잡념과 불안감을 잠재우고 깊고 편안한 숙면을 유도하여 맑은 정신을 되찾아주는 힐링 부적입니다."},
-    "health_4": {"type": "health", "pattern": "samjae", "title": "삼재소멸부 (三災消滅符)", "power": "악삼재 소멸 · 횡액 차단", "desc": "사주에 들어온 삼재팔난(三災八難)의 불운을 깨끗이 소멸시키고 복삼재로 반전시키는 최고 액막이 부적입니다."},
-    "health_5": {"type": "health", "pattern": "traffic", "title": "사고방지부 (事故防止符)", "power": "교통사고 예방 · 낙상 방어", "desc": "운전 중 돌발 사고나 여행지에서의 불의의 낙상, 부상을 24시간 철통같이 막아주는 안전 호신 부적입니다."},
-    "health_6": {"type": "health", "pattern": "vital", "title": "신기충만부 (神氣充滿符)", "power": "원기 회복 · 무기력 퇴치", "desc": "떨어진 체력과 의욕을 다시 불태우고 긍정적인 에너지를 가득 채워주는 활력 충전 비급 부적입니다."},
-
-    # 5. 학업 & 소원 (6종)
-    "wish_1": {"type": "wish", "pattern": "pass_exam", "title": "장원급제부 (壯元及第符)", "power": "국가고시 · 전문직 시험 수석", "desc": "공무원, 전문직, 수능 등 중요한 시험에서 실력 이상의 집중력과 운을 발휘하여 합격시키는 학업 부적입니다."},
-    "wish_2": {"type": "wish", "pattern": "wisdom", "title": "지혜명철부 (智慧明徹符)", "power": "두뇌 회전 · 암기력 극대화", "desc": "복잡한 학습 내용과 기획서의 핵심을 단번에 꿰뚫는 명철한 지혜와 통찰력을 선물하는 총명 부적입니다."},
-    "wish_3": {"type": "wish", "pattern": "wish_come", "title": "심상사성부 (心想事成符)", "power": "일생일대 1대 소원 성취", "desc": "마음속에 품고 있던 가장 간절한 소망 하나를 우주의 기운을 모아 기적처럼 현실로 이루어주는 소원 부적입니다."},
-    "wish_4": {"type": "wish", "pattern": "all_luck", "title": "만사대길부 (萬事大吉符)", "power": "종합 운세 상승 · 대운 개방", "desc": "재물, 건강, 직업, 명예 모든 방면의 막힌 운을 동시에 열어 인생 전체를 꽃길로 이끄는 종합 대길 부적입니다."},
-    "wish_5": {"type": "wish", "pattern": "reputation", "title": "명예대영부 (名譽大榮符)", "power": "대중 인기 · 사회적 권위", "desc": "자신의 이름과 브랜드가 널리 알려지고 대중의 신뢰와 높은 사회적 권위를 얻게 하는 명예 부적입니다."},
-    "wish_6": {"type": "wish", "pattern": "protect", "title": "벽사소재부 (辟邪消除符)", "power": "악귀 퇴치 · 불운 척결", "desc": "주변에 맴도는 음습한 기운과 재수 없는 액운을 날카로운 경면주사의 칼날로 베어내는 벽사(辟邪) 부적입니다."}
+    "wish_1": {"type": "wish", "pattern": "wish_come", "title": "심상사성부 (心想事成符)", "power": "일생일대 1대 소원 성취", "desc": "마음속에 품고 있던 가장 간절한 소망 하나를 우주의 기운을 모아 기적처럼 현실로 이루어주는 소원 부적입니다."},
+    "wish_2": {"type": "wish", "pattern": "all_luck", "title": "만사대길부 (萬事大吉符)", "power": "종합 운세 상승 · 대운 개방", "desc": "재물, 건강, 직업, 명예 모든 방면의 막힌 운을 동시에 열어 인생 전체를 꽃길로 이끄는 종합 대길 부적입니다."}
 }
 
 TAROT_CARDS = [
@@ -134,24 +155,30 @@ def analyze_saju(req: SajuRequest):
     target_date = datetime.date(req.year, req.month, req.day)
     diff_days = (target_date - base_date).days
     
-    # 일주
+    # 1. 일주(日柱) 계산
     d_cg_idx = (diff_days + 0) % 10
     d_jj_idx = (diff_days + 10) % 12
     d_cg = CHEONGAN_HANJA[d_cg_idx]
     d_jj = JIJI_HANJA[d_jj_idx]
 
-    # 년주
+    # 2. 년주(年柱) 계산
     year_offset = (req.year - 4) % 60
     y_cg_idx = year_offset % 10
     y_jj_idx = year_offset % 12
     y_cg, y_jj = CHEONGAN_HANJA[y_cg_idx], JIJI_HANJA[y_jj_idx]
 
-    # 월주
-    m_jj_idx = (req.month) % 12
-    m_cg_idx = (y_cg_idx % 5 * 2 + 2 + (req.month - 2)) % 10
+    # 3. 월주(月柱) 계산 (음력/평달/윤달 보정)
+    month_adj = req.month
+    if req.calendar_type == "lunar":
+        month_adj = (req.month + 1)
+    elif req.calendar_type == "leap":
+        month_adj = (req.month + 2)
+
+    m_jj_idx = (month_adj) % 12
+    m_cg_idx = (y_cg_idx % 5 * 2 + 2 + (month_adj - 2)) % 10
     m_cg, m_jj = CHEONGAN_HANJA[m_cg_idx], JIJI_HANJA[m_jj_idx]
 
-    # 시주
+    # 4. 시주(時柱) 계산
     if req.is_unknown_time or req.sijin_index is None or req.sijin_index < 0:
         h_pillar, h_cg, h_jj = "時未詳", "-", "-"
     else:
@@ -162,6 +189,7 @@ def analyze_saju(req: SajuRequest):
 
     d_animal = ANIMAL_MAP.get(d_jj, "개")
 
+    # 5. 현재 만 나이 실시간 연산
     current_year = datetime.date.today().year
     current_age = current_year - req.year + 1
 
@@ -188,7 +216,7 @@ def analyze_saju(req: SajuRequest):
         }
     }
 
-    # 지장간 가중치 오행 계산
+    # 6. 오행 가중치 점수 및 백분율 연산
     scores = {"wood": 0.0, "fire": 0.0, "earth": 0.0, "metal": 0.0, "water": 0.0}
     for cg in [y_cg, m_cg, d_cg]:
         scores[CHEONGAN_ELEMENTS[cg]] += 25.0
@@ -209,24 +237,33 @@ def analyze_saju(req: SajuRequest):
         k: round((v / total_score) * 100, 1) for k, v in scores.items()
     }
 
-    # [핵심] 사주 원국 3요소(결핍오행 + 일간 + 당일 날짜) 다차원 조합 부적 결정 엔진 (총 30종)
-    elem_category_map = {
-        "metal": "wealth",
-        "wood": "business",
-        "water": "love",
-        "fire": "health",
-        "earth": "wish"
-    }
-    
-    # 1. 가장 보충이 시급한 결핍 오행 도출
+    # 7. 사주에서 가장 부족한 오행(결핍 오행/용신) 도출
     min_elem = min(elem_percentages, key=elem_percentages.get)
-    cat = elem_category_map.get(min_elem, "wealth")
+    curation_data = OHEANG_CURATION_MAP.get(min_elem, OHEANG_CURATION_MAP["metal"])
 
-    # 2. 일간(천간 10종)과 당일 일진 기반 세부 1~6번 인덱스 결정
-    day_seed = (d_cg_idx + d_jj_idx + datetime.date.today().day) % 6 + 1
-    talisman_lookup_key = f"{cat}_{day_seed}"
-    
-    user_talisman = TALISMAN_DATABASE.get(talisman_lookup_key, TALISMAN_DATABASE["wealth_1"])
+    # 8. 결핍 오행 및 일간 기반 고유 부적 매칭 (총 30종 덱)
+    elem_to_talisman = {
+        "metal": "wealth_1", "wood": "business_1", "water": "love_1",
+        "fire": "health_2", "earth": "wish_2"
+    }
+    talisman_key = elem_to_talisman.get(min_elem, "wealth_1")
+    user_talisman = TALISMAN_DATABASE.get(talisman_key, TALISMAN_DATABASE["wealth_1"])
+
+    # 9. 일간(日干)별 맞춤형 당일 운세 총평 및 점수 산출
+    fortune_titles = {
+        "甲": "우람한 거목처럼 굳은 신념으로 판을 주도하는 대길(大吉)의 하루",
+        "乙": "봄바람에 피어난 꽃처럼 유연한 매력으로 귀인을 끌어당기는 하루",
+        "丙": "태양 같은 열정과 빛으로 막힌 활로를 환하게 뚫어내는 하루",
+        "丁": "은은한 등불처럼 치밀한 지혜로 실속과 명예를 동시에 잡는 하루",
+        "戊": "묵직한 태산처럼 흔들리지 않는 신뢰로 큰 계약을 성사시키는 하루",
+        "己": "비옥한 전답처럼 주변 사람들을 품고 풍성한 결실을 거두는 하루",
+        "庚": "예리한 보검처럼 단호한 결단력으로 난제를 단번에 해결하는 하루",
+        "辛": "빛나는 보석처럼 정교한 전문 기술과 안목으로 두각을 나타내는 하루",
+        "壬": "넓은 바다처럼 유려한 지혜와 임기응변으로 난관을 돌파하는 하루",
+        "癸": "생명수 같은 맑은 직관력으로 핵심 기회를 정확히 포착하는 하루"
+    }
+    daily_title = fortune_titles.get(d_cg, "새로운 기운이 서서히 솟아나는 도약의 하루")
+    daily_score = 85 + (d_cg_idx * 3 + datetime.date.today().day) % 14  # 85~98점 사이 일진별 변동
 
     user_mbti = DAY_MBTI_MAP.get(d_cg, {"mbti": "대담한 통솔자 (ENTJ형)", "desc": "강한 추진력과 당당한 리더십으로 조직을 이끄는 개척자 사주"})
     user_animal_icon = ANIMAL_ICONS.get(d_animal, "🐶")
@@ -246,16 +283,16 @@ def analyze_saju(req: SajuRequest):
             "elements": elem_percentages
         },
         "daily_fortune": {
-            "score": 97,
-            "title": f"{d_cg} 기운이 서서히 솟아나는 도약의 하루",
-            "advice": f"오전에는 귀인의 조력과 반가운 연락이 닿고, 오후에는 결단력과 추진력이 극대화되어 중요한 문서나 협상을 성사시키기에 최적의 날입니다.",
-            "lucky_color": "스카이 블루 / 아이보리",
-            "lucky_number": "1, 6",
-            "lucky_direction": "정북쪽",
-            "fashion_style": "단정하고 편안한 셔츠 또는 니트",
-            "recommended_menu": "신선한 채소와 담백한 단백질 식단",
-            "mindset": "상대의 말에 공감하고 핵심을 명확히 전달하기",
-            "action": "오전 중 따뜻한 차 한 잔을 마시며 목표 3가지 메모하기",
+            "score": daily_score,
+            "title": daily_title,
+            "advice": f"오전(09:00~12:00)에는 부족한 {min_elem.upper()} 기운을 채워주는 귀인의 조력과 반가운 소식이 닿고, 오후(13:00~18:00)에는 본원의 추진력이 극대화되어 중요한 결정이나 계약을 성사시키기에 최적의 타이밍입니다.",
+            "lucky_color": curation_data["color"],
+            "lucky_number": curation_data["number"],
+            "lucky_direction": curation_data["direction"],
+            "fashion_style": curation_data["style"],
+            "recommended_menu": curation_data["menu"],
+            "mindset": curation_data["mindset"],
+            "action": curation_data["action"],
             "talisman": user_talisman
         }
     }
@@ -380,7 +417,7 @@ def get_theme_report(req: dict):
                 <div style="display: flex; flex-direction: column; gap: 6px; font-size: 11px; color: #475569;">
                     <p>• <strong>성향과 인품:</strong> 감정 기복이 적고 원칙이 뚜렷하며, 대화 시 상대방의 이야기를 깊이 경청해 주는 차분한 스타일.</p>
                     <p>• <strong>외모 및 이미지:</strong> 부드럽고 온화한 인상에 단정하고 세련된 옷차림을 선호하며 지적인 분위기를 풍기는 사람.</p>
-                    <p>• <strong>오행 궁합 조화:</strong> {user_name}님 사주에 꼭 필요한 水(물)과 金(쇠)의 차분한 기운을 채워줄 수 있는 띠(쥐띠, 닭띠, 원숭이띠)와 대길연을 이룹니다.</p>
+                    <p>• <strong>오행 궁합 조화:</strong> {user_name}님 사주에 꼭 필요한 水(물)과 金(쇠)의 차분한 기운을 채워줄 수 있는 사람과 대길연을 이룹니다.</p>
                 </div>
             </div>
             <div style="background: #FFFBEB; border: 1px solid #FDE68A; border-radius: 14px; padding: 12px;">
