@@ -6,7 +6,7 @@ from typing import Optional
 import os
 import random
 
-app = FastAPI(title="운세의 신 PRO API", version="11.0.0")
+app = FastAPI(title="운세의 신 PRO API", version="10.1.0")
 
 CHEONGAN_HANJA = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
 JIJI_HANJA = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"]
@@ -154,7 +154,7 @@ def analyze_saju(req: SajuRequest):
 
     d_animal = ANIMAL_MAP.get(d_jj, "개")
 
-    # 5. 만 나이 연산
+    # 5. 만 나이 연산 (2026년 기준)
     current_year = 2026
     current_age = current_year - req.year + 1
 
@@ -284,7 +284,7 @@ def get_daewoon_report(req: dict):
     end_age = start_age + 9
 
     return {
-        "title": f"👑 {user_name}님의 자미두수 & 10년 대운 심층 리포트",
+        "title": "👑 자미두수 & 10년 대운",
         "content": f"""
         <div style="display: flex; flex-direction: column; gap: 14px; font-size: 13px; color: #334155; line-height: 1.75; text-align: left;">
             <div style="border-left: 4px solid #2D6A4F; padding-left: 10px; margin-bottom: 4px;">
@@ -335,7 +335,7 @@ def get_daewoon_report(req: dict):
         """
     }
 
-# 피드백 반영: 테마운 4종 분량 대폭 확대 (3개 단락 롱폼 재구축)
+# 피드백 반영: 마이페이지 보관함에 보일 제목을 테마운세 본 제목과 동일하게 단축
 @app.post("/api/theme-report")
 def get_theme_report(req: dict):
     theme = req.get("theme", "wealth")
@@ -343,10 +343,10 @@ def get_theme_report(req: dict):
     user_name = req.get("name", "최정오")
     
     titles = {
-        "wealth": f"💰 {user_name}님의 평생 재물운 심층 리포트",
-        "love": f"💖 {user_name}님의 평생 애정운 ({sub_opt} 맞춤)",
-        "business": f"🏢 {user_name}님의 사업·직업운 ({sub_opt} 맞춤)",
-        "health": f"🌿 {user_name}님의 평생 건강운 리포트"
+        "wealth": "💰 평생 재물운",
+        "love": f"💖 평생 애정운 ({sub_opt})",
+        "business": f"🏢 사업·직업운 ({sub_opt})",
+        "health": "🌿 평생 건강운"
     }
 
     contents = {
@@ -422,13 +422,13 @@ def get_theme_report(req: dict):
                 <span style="font-size: 11px; color: #059669; font-weight: 700;">오행 체질 정밀 분석</span>
                 <h4 style="font-size: 15px; font-weight: 700; color: #065F46; margin: 2px 0 4px;">[평생 건강운] 수승화강(水昇火降) 활력 관리</h4>
                 <p style="color: #047857; font-size: 12.5px;">
-                    {user_name}님의 오행 체질은 강인한 생명력과 추진력을 갖추고 있으나 두한족열(머리는 시원하게 발은 따뜻하게)의 수칙을 유지해야 합니다. 스트레스 누적 시 간 피로와 소화기계로 신호가 올 수 있으므로 규칙적인 유산소 운동이 건강의 비결입니다.
+                    {user_name}님의 오행 체질은 강인한 생명력을 갖추고 있으나 두한족열(머리는 시원하게 발은 따뜻하게)의 수칙을 유지해야 합니다. 스트레스 누적 시 간 피로와 소화기계로 신호가 올 수 있으므로 규칙적인 유산소 운동이 건강의 비결입니다.
                 </p>
             </div>
             <div style="border-top: 1px solid #F1F5F9; padding-top: 10px;">
                 <p style="font-weight: 700; color: #0F172A; font-size: 13.5px; margin-bottom: 4px;">🏥 1. {user_name}님이 각별히 챙겨야 할 3대 취약 장기</p>
                 <p style="font-size: 12px; color: #475569;">• <strong>간장 & 담낭:</strong> 만성 피로와 눈의 침침함을 방지하기 위해 과도한 음주를 피하고 간 보호 성분을 섭취하세요.</p>
-                <p style="font-size: 12px; color: #475569;">• <strong>신장 & 방광:</strong> 체내 노폐물 배출을 위해 하루 1.5L 이상의 미온수를 나누어 마시는 습관이 필수적입니다.</p>
+                <p style="font-size: 12px; color: #475569;">• <strong>신장 & 방광:</strong> 노폐물 배출을 위해 하루 1.5L 이상의 미온수를 나누어 마시는 습관이 필수적입니다.</p>
                 <p style="font-size: 12px; color: #475569;">• <strong>위장 & 비장:</strong> 야식을 지양하고 담백한 식단을 유지해야 소화 흡수력이 강화됩니다.</p>
             </div>
             <div style="border-top: 1px solid #F1F5F9; padding-top: 10px;">
