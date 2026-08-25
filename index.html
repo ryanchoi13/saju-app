@@ -14,9 +14,9 @@
         
         header { background: #FFFFFF; border-bottom: 1px solid #F1F5F9; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 30; }
         .logo-box { display: flex; align-items: center; gap: 6px; }
-        .logo-text { font-size: 20px; font-weight: 900; color: #2D6A4F; letter-spacing: -0.5px; }
-        .pro-badge { background: #EBF5EE; color: #2D6A4F; font-size: 10px; font-weight: 900; padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(45,106,79,0.2); }
-        .coin-btn { display: flex; align-items: center; gap: 5px; background: #FEF3C7; border: 1px solid #FCD34D; padding: 4px 10px; border-radius: 9999px; font-size: 12px; font-weight: 900; color: #78350F; cursor: pointer; }
+        .logo-text { font-size: 20px; font-weight: 800; color: #2D6A4F; letter-spacing: -0.5px; }
+        .pro-badge { background: #EBF5EE; color: #2D6A4F; font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(45,106,79,0.2); }
+        .coin-btn { display: flex; align-items: center; gap: 5px; background: #FEF3C7; border: 1px solid #FCD34D; padding: 4px 10px; border-radius: 9999px; font-size: 12px; font-weight: 700; color: #78350F; cursor: pointer; }
         .charge-tag { font-size: 10px; background: #2D6A4F; color: white; padding: 2px 6px; border-radius: 9999px; margin-left: 2px; }
 
         main { flex: 1; padding: 16px; display: flex; flex-direction: column; gap: 16px; }
@@ -30,10 +30,11 @@
         .cal-toggle { display: flex; background: #E2E8F0; padding: 2px; border-radius: 8px; font-size: 10px; font-weight: 700; gap: 2px; }
         .cal-btn { padding: 3px 8px; border-radius: 6px; border: none; background: transparent; color: #64748B; cursor: pointer; }
         .cal-btn.active { background: #FFFFFF; color: #2D6A4F; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
-        .btn-primary { width: 100%; background: #2D6A4F; color: white; border: none; font-size: 13px; font-weight: 900; padding: 14px; border-radius: 16px; cursor: pointer; box-shadow: 0 4px 6px -1px rgba(45,106,79,0.2); margin-top: 8px; }
+        .btn-primary { width: 100%; background: #2D6A4F; color: white; border: none; font-size: 13px; font-weight: 700; padding: 14px; border-radius: 16px; cursor: pointer; box-shadow: 0 4px 6px -1px rgba(45,106,79,0.2); margin-top: 8px; }
 
-        .badge-elem { width: 38px; height: 38px; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; font-size: 17px; font-weight: 900; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
-        .badge-jjg { width: 30px; height: 22px; border-radius: 6px; display: inline-flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; }
+        /* 피드백 반영: 오행 고유 컬러 뱃지 규격 및 깔끔한 폰트 두께 */
+        .badge-elem { width: 38px; height: 38px; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; font-size: 17px; font-weight: 700; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+        .badge-jjg { width: 30px; height: 22px; border-radius: 6px; display: inline-flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; }
         
         .elem-wood { background: #ECFDF5; color: #047857; border: 1.5px solid #A7F3D0; }
         .elem-fire { background: #FEF2F2; color: #DC2626; border: 1.5px solid #FECDD3; }
@@ -62,7 +63,7 @@
 
         nav { position: fixed; bottom: 0; width: 100%; max-width: 448px; background: rgba(255,255,255,0.95); backdrop-filter: blur(8px); border-top: 1px solid #F1F5F9; padding: 10px 24px; display: flex; justify-content: space-between; z-index: 40; }
         .tab-btn { background: none; border: none; display: flex; flex-direction: column; align-items: center; gap: 4px; color: #94A3B8; font-size: 10px; cursor: pointer; font-weight: 500; }
-        .tab-btn.active { color: #2D6A4F; font-weight: 800; }
+        .tab-btn.active { color: #2D6A4F; font-weight: 700; }
         .tab-btn svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 2; }
 
         .modal-bg { position: fixed; inset: 0; background: rgba(15,23,42,0.65); backdrop-filter: blur(3px); display: flex; align-items: center; justify-content: center; padding: 16px; z-index: 50; }
@@ -95,7 +96,7 @@
             <!-- 사주 입력 화면 -->
             <div id="onboardingInputView" class="card" style="text-align: center;">
                 <div class="gift-badge">🎁 가입 축하 1,000 복채 지급</div>
-                <h2 style="font-size: 20px; font-weight: 900; margin-bottom: 2px;">반가워요!</h2>
+                <h2 style="font-size: 20px; font-weight: 800; margin-bottom: 2px;">반가워요!</h2>
                 <p style="font-size: 12px; color: #64748B; margin-bottom: 16px;">사주를 분석할 기본 정보를 입력해 주세요</p>
 
                 <div class="form-group">
@@ -143,8 +144,8 @@
                 <div class="mbti-card">
                     <div id="mbtiAnimalIcon" class="mbti-icon">🐶</div>
                     <div style="text-align: left;">
-                        <span style="font-size: 10px; background: #D1FAE5; color: #065F46; padding: 2px 6px; border-radius: 9999px; font-weight: 800;">사주 MBTI</span>
-                        <h4 id="mbtiTypeName" style="font-size: 13px; font-weight: 900; margin-top: 2px;">대담한 통솔자 (ENTJ형)</h4>
+                        <span style="font-size: 10px; background: #D1FAE5; color: #065F46; padding: 2px 6px; border-radius: 9999px; font-weight: 700;">사주 MBTI</span>
+                        <h4 id="mbtiTypeName" style="font-size: 13px; font-weight: 700; margin-top: 2px;">대담한 통솔자 (ENTJ형)</h4>
                         <p id="mbtiTypeDesc" style="font-size: 11px; color: #64748B;">목표를 향해 나아가는 전략적 사주</p>
                     </div>
                 </div>
@@ -152,32 +153,30 @@
                 <div class="daily-banner">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                         <span style="font-size: 11px; color: #A7F3D0;">오늘의 일진</span>
-                        <span id="resScoreBadge" style="background: #FBBF24; color: #1E293B; font-size: 10px; font-weight: 900; padding: 2px 8px; border-radius: 9999px;">운세 97점</span>
+                        <span id="resScoreBadge" style="background: #FBBF24; color: #1E293B; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 9999px;">운세 97점</span>
                     </div>
-                    <h3 id="resTitle" style="font-size: 16px; font-weight: 900; text-align: left;">도약의 하루</h3>
-                    <p id="resAdvice" style="font-size: 12px; color: #D1FAE5; font-weight: 300; line-height: 1.6; text-align: left; white-space: pre-line;"></p>
+                    <h3 id="resTitle" style="font-size: 15px; font-weight: 700; text-align: left;">도약의 하루</h3>
+                    <p id="resAdvice" style="font-size: 12px; color: #D1FAE5; font-weight: 400; line-height: 1.6; text-align: left; white-space: pre-line;"></p>
                 </div>
 
-                <!-- 사주 맞춤 실시간 6대 큐레이션 -->
                 <div class="grid-2">
-                    <div class="grid-cell"><span style="font-size: 10px; color: #94A3B8; display: block;">🎨 행운의 색상</span><p id="resColor" style="font-weight: 700; margin-top: 2px;">스노우 화이트 / 실버</p></div>
-                    <div class="grid-cell"><span style="font-size: 10px; color: #94A3B8; display: block;">🔢 행운의 숫자</span><p id="resNumber" style="font-weight: 700; margin-top: 2px;">4, 9</p></div>
-                    <div class="grid-cell"><span style="font-size: 10px; color: #94A3B8; display: block;">🧭 행운의 방위</span><p id="resDirection" style="font-weight: 700; margin-top: 2px;">정서쪽 (백호 방위)</p></div>
-                    <div class="grid-cell"><span style="font-size: 10px; color: #94A3B8; display: block;">👔 추천 코디</span><p id="resStyle" style="font-weight: 700; margin-top: 2px;">화이트 셔츠와 메탈 시계</p></div>
-                    <div class="grid-cell"><span style="font-size: 10px; color: #94A3B8; display: block;">🍲 추천 메뉴</span><p id="resMenu" style="font-weight: 700; margin-top: 2px;">신선한 견과류와 고단백 요리</p></div>
-                    <div class="grid-cell"><span style="font-size: 10px; color: #94A3B8; display: block;">💡 마인드 처세</span><p id="resMindset" style="font-weight: 700; font-size: 11px; margin-top: 2px;">맺고 끊음을 명확히 대화하기</p></div>
+                    <div class="grid-cell"><span style="font-size: 10px; color: #94A3B8; display: block;">🎨 행운의 색상</span><p id="resColor" style="font-weight: 600; margin-top: 2px;">스노우 화이트 / 실버</p></div>
+                    <div class="grid-cell"><span style="font-size: 10px; color: #94A3B8; display: block;">🔢 행운의 숫자</span><p id="resNumber" style="font-weight: 600; margin-top: 2px;">4, 9</p></div>
+                    <div class="grid-cell"><span style="font-size: 10px; color: #94A3B8; display: block;">🧭 행운의 방위</span><p id="resDirection" style="font-weight: 600; margin-top: 2px;">정서쪽 (백호 방위)</p></div>
+                    <div class="grid-cell"><span style="font-size: 10px; color: #94A3B8; display: block;">👔 추천 코디</span><p id="resStyle" style="font-weight: 600; margin-top: 2px;">화이트 셔츠와 메탈 시계</p></div>
+                    <div class="grid-cell"><span style="font-size: 10px; color: #94A3B8; display: block;">🍲 추천 메뉴</span><p id="resMenu" style="font-weight: 600; margin-top: 2px;">신선한 견과류와 고단백 요리</p></div>
+                    <div class="grid-cell"><span style="font-size: 10px; color: #94A3B8; display: block;">💡 마인드 처세</span><p id="resMindset" style="font-weight: 600; font-size: 11px; margin-top: 2px;">맺고 끊음을 명확히 대화하기</p></div>
                 </div>
 
                 <div class="action-card">
-                    <span style="font-weight: 800; color: #78350F; display: block; margin-bottom: 2px;">✨ 오늘의 개운(開運) 실천 액션</span>
-                    <p id="resGaewoon" style="color: #92400E; font-weight: 300;">오늘 완료해야 할 우선순위 3가지 메모하기</p>
+                    <span style="font-weight: 700; color: #78350F; display: block; margin-bottom: 2px;">✨ 오늘의 개운(開運) 실천 액션</span>
+                    <p id="resGaewoon" style="color: #92400E; font-weight: 400;">오늘 완료해야 할 우선순위 3가지 메모하기</p>
                 </div>
 
-                <!-- 22장 완전 난수 타로 카네 섹션 -->
                 <div class="card" style="padding: 16px;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                         <div style="text-align: left;">
-                            <h4 style="font-size: 12px; font-weight: 900;">🔮 오늘의 타로 (1일 1회 무료)</h4>
+                            <h4 style="font-size: 12px; font-weight: 700;">🔮 오늘의 타로 (1일 1회 무료)</h4>
                             <p style="font-size: 10px; color: #64748B;">카드를 골라 오늘의 조언을 확인하세요</p>
                         </div>
                         <span style="font-size: 10px; background: #F1F5F9; color: #475569; padding: 2px 6px; border-radius: 9999px; font-weight: 700;">1회 무료</span>
@@ -207,11 +206,10 @@
                     <div id="tarotResultBox" class="hidden"></div>
                 </div>
 
-                <!-- 사주 맞춤 부적 전용 카드 -->
                 <div class="talisman-banner">
                     <div style="display: flex; justify-content: center; align-items: center; gap: 6px;">
                         <span>🔥</span>
-                        <h3 id="talismanBannerHeader" style="font-size: 16px; font-weight: 900; color: #78350F;">오늘의 맞춤 경면주사 부적</h3>
+                        <h3 id="talismanBannerHeader" style="font-size: 15px; font-weight: 700; color: #78350F;">오늘의 맞춤 경면주사 부적</h3>
                         <span>🌊</span>
                     </div>
 
@@ -220,11 +218,11 @@
                     </div>
 
                     <div>
-                        <p id="talismanBannerSub" style="font-size: 12px; font-weight: 800; color: #78350F;">나의 오늘 사주 원국에 맞춘 수제 비급 부적</p>
+                        <p id="talismanBannerSub" style="font-size: 12px; font-weight: 700; color: #78350F;">나의 오늘 사주 원국에 맞춘 수제 비급 부적</p>
                         <p style="font-size: 10px; color: #92400E; margin-top: 2px;">매일 12시 정각에 새로운 기운으로 업데이트됩니다!</p>
                     </div>
 
-                    <button onclick="openTalismanModal()" style="width: 100%; background: #D97706; color: white; border: none; font-size: 13px; font-weight: 900; padding: 14px; border-radius: 16px; cursor: pointer; box-shadow: 0 4px 6px rgba(217,119,6,0.2);">
+                    <button onclick="openTalismanModal()" style="width: 100%; background: #D97706; color: white; border: none; font-size: 13px; font-weight: 700; padding: 14px; border-radius: 16px; cursor: pointer; box-shadow: 0 4px 6px rgba(217,119,6,0.2);">
                         🎴 맞춤 부적 열람 및 다운로드
                     </button>
                 </div>
@@ -237,24 +235,24 @@
                 <div class="card" style="padding: 18px;">
                     <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 10px; margin-bottom: 14px;">
                         <div>
-                            <h3 style="font-size: 14px; font-weight: 900; color: #0F172A; display: inline-block;">사주 명식표 (四柱命式)</h3>
-                            <span id="sajuSingangBadge" style="font-size: 10px; background: #FEF3C7; color: #78350F; font-weight: 900; padding: 2px 6px; border-radius: 6px; margin-left: 6px;">신약(身弱) 사주</span>
+                            <h3 style="font-size: 14px; font-weight: 700; color: #0F172A; display: inline-block;">사주 명식표 (四柱命式)</h3>
+                            <span id="sajuSingangBadge" style="font-size: 10px; background: #FEF3C7; color: #78350F; font-weight: 700; padding: 2px 6px; border-radius: 6px; margin-left: 6px;">신약(身弱) 사주</span>
                         </div>
-                        <span id="sajuOwnerName" style="font-size: 12px; color: #2D6A4F; font-weight: 800; background: #EBF5EE; padding: 3px 8px; border-radius: 8px;">최정오 님</span>
+                        <span id="sajuOwnerName" style="font-size: 12px; color: #2D6A4F; font-weight: 700; background: #EBF5EE; padding: 3px 8px; border-radius: 8px;">최정오 님</span>
                     </div>
 
                     <div style="display: grid; grid-template-columns: 56px 1fr 1fr 1fr 1fr; gap: 6px; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 18px; padding: 12px 8px;">
                         <div style="display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; padding: 8px 0;">
-                            <span style="font-size: 11px; font-weight: 800; color: #64748B; height: 18px; line-height: 18px;">구분</span>
-                            <div style="height: 38px; display: flex; align-items: center; justify-content: center; color: #475569; font-size: 10px; font-weight: 800; line-height: 1.2;">천간<br>(天干)</div>
-                            <div style="height: 38px; display: flex; align-items: center; justify-content: center; color: #475569; font-size: 10px; font-weight: 800; line-height: 1.2;">지간<br>(地干)</div>
+                            <span style="font-size: 11px; font-weight: 700; color: #64748B; height: 18px; line-height: 18px;">구분</span>
+                            <div style="height: 38px; display: flex; align-items: center; justify-content: center; color: #475569; font-size: 10px; font-weight: 700; line-height: 1.2;">천간<br>(天干)</div>
+                            <div style="height: 38px; display: flex; align-items: center; justify-content: center; color: #475569; font-size: 10px; font-weight: 700; line-height: 1.2;">지간<br>(地干)</div>
                             <div style="border-top: 1px dashed #CBD5E1; width: 100%; padding-top: 8px; display: flex; flex-direction: column; align-items: center; gap: 4px;">
-                                <div style="color: #475569; font-size: 10px; font-weight: 800; line-height: 1.2;">지장간<br>(地藏干)</div>
+                                <div style="color: #475569; font-size: 10px; font-weight: 700; line-height: 1.2;">지장간<br>(地藏干)</div>
                             </div>
                         </div>
 
                         <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 14px; padding: 8px 4px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center;">
-                            <span style="font-size: 11px; font-weight: 800; color: #64748B; height: 18px; line-height: 18px;">시주 (時)</span>
+                            <span style="font-size: 11px; font-weight: 700; color: #64748B; height: 18px; line-height: 18px;">시주 (時)</span>
                             <div id="cg_h_badge" class="badge-elem elem-none">-</div>
                             <div id="jj_h_badge" class="badge-elem elem-none">-</div>
                             <div style="border-top: 1px dashed #CBD5E1; width: 100%; padding-top: 8px; display: flex; flex-direction: column; align-items: center; gap: 4px;">
@@ -263,7 +261,7 @@
                         </div>
 
                         <div style="background: #F0FDF4; border: 1.5px solid #86EFAC; border-radius: 14px; padding: 8px 4px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center;">
-                            <span style="font-size: 11px; font-weight: 800; color: #166534; height: 18px; line-height: 18px;">일주 (日)</span>
+                            <span style="font-size: 11px; font-weight: 700; color: #166534; height: 18px; line-height: 18px;">일주 (日)</span>
                             <div id="cg_d_badge" class="badge-elem elem-none">-</div>
                             <div id="jj_d_badge" class="badge-elem elem-none">-</div>
                             <div style="border-top: 1px dashed #A7F3D0; width: 100%; padding-top: 8px; display: flex; flex-direction: column; align-items: center; gap: 4px;">
@@ -272,7 +270,7 @@
                         </div>
 
                         <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 14px; padding: 8px 4px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center;">
-                            <span style="font-size: 11px; font-weight: 800; color: #64748B; height: 18px; line-height: 18px;">월주 (月)</span>
+                            <span style="font-size: 11px; font-weight: 700; color: #64748B; height: 18px; line-height: 18px;">월주 (月)</span>
                             <div id="cg_m_badge" class="badge-elem elem-none">-</div>
                             <div id="jj_m_badge" class="badge-elem elem-none">-</div>
                             <div style="border-top: 1px dashed #CBD5E1; width: 100%; padding-top: 8px; display: flex; flex-direction: column; align-items: center; gap: 4px;">
@@ -281,7 +279,7 @@
                         </div>
 
                         <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 14px; padding: 8px 4px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center;">
-                            <span style="font-size: 11px; font-weight: 800; color: #64748B; height: 18px; line-height: 18px;">년주 (年)</span>
+                            <span style="font-size: 11px; font-weight: 700; color: #64748B; height: 18px; line-height: 18px;">년주 (年)</span>
                             <div id="cg_y_badge" class="badge-elem elem-none">-</div>
                             <div id="jj_y_badge" class="badge-elem elem-none">-</div>
                             <div style="border-top: 1px dashed #CBD5E1; width: 100%; padding-top: 8px; display: flex; flex-direction: column; align-items: center; gap: 4px;">
@@ -292,70 +290,70 @@
 
                     <div style="margin-top: 18px; text-align: left;">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                            <span style="font-size: 12px; font-weight: 800; color: #0F172A;">오행(五行) 실질 에너지 세력 분포</span>
+                            <span style="font-size: 12px; font-weight: 700; color: #0F172A;">오행(五行) 실질 에너지 세력 분포</span>
                             <span style="font-size: 10px; color: #64748B;">지장간 포함 100%</span>
                         </div>
 
                         <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 18px; padding: 14px 10px 10px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; text-align: center;">
                             <div style="display: flex; flex-direction: column; align-items: center; gap: 6px;">
-                                <span id="valWood" style="font-size: 11px; font-weight: 900; color: #047857; min-height: 16px;">0%</span>
+                                <span id="valWood" style="font-size: 11px; font-weight: 700; color: #047857; min-height: 16px;">0%</span>
                                 <div style="width: 28px; height: 100px; background: #E2E8F0; border-radius: 14px; position: relative; overflow: hidden; display: flex; align-items: flex-end;">
                                     <div id="barWood" style="width: 100%; height: 0%; background: linear-gradient(180deg, #34D399 0%, #10B981 100%); border-radius: 14px; transition: height 0.6s ease;"></div>
                                 </div>
-                                <span style="font-size: 11px; font-weight: 800; color: #047857;">木</span>
+                                <span style="font-size: 11px; font-weight: 700; color: #047857;">木</span>
                                 <span style="font-size: 9px; color: #94A3B8; margin-top: -4px;">나무</span>
                             </div>
 
                             <div style="display: flex; flex-direction: column; align-items: center; gap: 6px;">
-                                <span id="valFire" style="font-size: 11px; font-weight: 900; color: #DC2626; min-height: 16px;">0%</span>
+                                <span id="valFire" style="font-size: 11px; font-weight: 700; color: #DC2626; min-height: 16px;">0%</span>
                                 <div style="width: 28px; height: 100px; background: #E2E8F0; border-radius: 14px; position: relative; overflow: hidden; display: flex; align-items: flex-end;">
                                     <div id="barFire" style="width: 100%; height: 0%; background: linear-gradient(180deg, #F87171 0%, #EF4444 100%); border-radius: 14px; transition: height 0.6s ease;"></div>
                                 </div>
-                                <span style="font-size: 11px; font-weight: 800; color: #DC2626;">火</span>
+                                <span style="font-size: 11px; font-weight: 700; color: #DC2626;">火</span>
                                 <span style="font-size: 9px; color: #94A3B8; margin-top: -4px;">불</span>
                             </div>
 
                             <div style="display: flex; flex-direction: column; align-items: center; gap: 6px;">
-                                <span id="valEarth" style="font-size: 11px; font-weight: 900; color: #D97706; min-height: 16px;">0%</span>
+                                <span id="valEarth" style="font-size: 11px; font-weight: 700; color: #D97706; min-height: 16px;">0%</span>
                                 <div style="width: 28px; height: 100px; background: #E2E8F0; border-radius: 14px; position: relative; overflow: hidden; display: flex; align-items: flex-end;">
                                     <div id="barEarth" style="width: 100%; height: 0%; background: linear-gradient(180deg, #FBBF24 0%, #F59E0B 100%); border-radius: 14px; transition: height 0.6s ease;"></div>
                                 </div>
-                                <span style="font-size: 11px; font-weight: 800; color: #D97706;">土</span>
+                                <span style="font-size: 11px; font-weight: 700; color: #D97706;">土</span>
                                 <span style="font-size: 9px; color: #94A3B8; margin-top: -4px;">흙</span>
                             </div>
 
                             <div style="display: flex; flex-direction: column; align-items: center; gap: 6px;">
-                                <span id="valMetal" style="font-size: 11px; font-weight: 900; color: #475569; min-height: 16px;">0%</span>
+                                <span id="valMetal" style="font-size: 11px; font-weight: 700; color: #475569; min-height: 16px;">0%</span>
                                 <div style="width: 28px; height: 100px; background: #E2E8F0; border-radius: 14px; position: relative; overflow: hidden; display: flex; align-items: flex-end;">
                                     <div id="barMetal" style="width: 100%; height: 0%; background: linear-gradient(180deg, #CBD5E1 0%, #94A3B8 100%); border-radius: 14px; transition: height 0.6s ease;"></div>
                                 </div>
-                                <span style="font-size: 11px; font-weight: 800; color: #475569;">金</span>
+                                <span style="font-size: 11px; font-weight: 700; color: #475569;">金</span>
                                 <span style="font-size: 9px; color: #94A3B8; margin-top: -4px;">쇠</span>
                             </div>
 
                             <div style="display: flex; flex-direction: column; align-items: center; gap: 6px;">
-                                <span id="valWater" style="font-size: 11px; font-weight: 900; color: #2563EB; min-height: 16px;">0%</span>
+                                <span id="valWater" style="font-size: 11px; font-weight: 700; color: #2563EB; min-height: 16px;">0%</span>
                                 <div style="width: 28px; height: 100px; background: #E2E8F0; border-radius: 14px; position: relative; overflow: hidden; display: flex; align-items: flex-end;">
                                     <div id="barWater" style="width: 100%; height: 0%; background: linear-gradient(180deg, #60A5FA 0%, #3B82F6 100%); border-radius: 14px; transition: height 0.6s ease;"></div>
                                 </div>
-                                <span style="font-size: 11px; font-weight: 800; color: #2563EB;">水</span>
+                                <span style="font-size: 11px; font-weight: 700; color: #2563EB;">水</span>
                                 <span style="font-size: 9px; color: #94A3B8; margin-top: -4px;">물</span>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- 자미두수 & 10년 대운 -->
+                <!-- 자미두수 & 10년 대운 (피드백 반영: 가변 연령축 및 정밀 나이 연동) -->
                 <div class="card" style="border: 2px solid #FCD34D;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                        <span style="font-size: 13px; font-weight: 900;">👑 자미두수 & 10년 대운 리포트</span>
-                        <span style="font-size: 10px; background: #FEF3C7; color: #78350F; padding: 2px 8px; border-radius: 9999px; font-weight: 900; display: inline-flex; align-items: center; gap: 4px;">
+                        <span style="font-size: 13px; font-weight: 700;">👑 자미두수 & 10년 대운 리포트</span>
+                        <span style="font-size: 10px; background: #FEF3C7; color: #78350F; padding: 2px 8px; border-radius: 9999px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;">
                             <span class="coin-icon-svg-inline"></span> 450 복채
                         </span>
                     </div>
 
                     <div style="background: #F8FAFC; border-radius: 18px; border: 1px solid #E2E8F0; padding: 14px 12px 10px; margin-bottom: 14px; text-align: left;">
-                        <div style="font-size: 11px; font-weight: 800; color: #475569; margin-bottom: 8px;">📊 10년 생애 그래프</div>
+                        <div style="font-size: 11px; font-weight: 700; color: #475569; margin-bottom: 8px;">📊 10년 생애 그래프</div>
                         
                         <div style="position: relative; width: 100%; height: 118px;">
                             <svg viewBox="0 0 300 100" style="width: 100%; height: 85px; overflow: visible;">
@@ -369,74 +367,74 @@
                                 </defs>
 
                                 <path d="M 0,78 C 30,75 45,62 60,60 C 85,57 105,28 130,28 C 155,28 170,54 190,52 C 215,50 230,22 245,24 C 265,26 280,36 300,38" 
-                                      fill="none" stroke="url(#fullCurveGradient)" stroke-width="3.6" stroke-linecap="round" />
+                                      fill="none" stroke="url(#fullCurveGradient)" stroke-width="3.2" stroke-linecap="round" />
 
                                 <line id="daewoonGuideLine" x1="130" y1="6" x2="130" y2="88" stroke="#94A3B8" stroke-width="1.2" stroke-dasharray="2.5 2.5" />
 
                                 <rect id="daewoonTagBox" x="60" y="-2" width="140" height="15" rx="4" fill="#FEF2F2" stroke="#FECDD3" stroke-width="0.8"/>
-                                <text id="daewoonTagText" x="130" y="9" font-size="8.5" font-weight="900" fill="#DC2626" text-anchor="middle">📍 최정오 님의 현재 위치 (황금기)</text>
+                                <text id="daewoonTagText" x="130" y="9" font-size="8.5" font-weight="700" fill="#DC2626" text-anchor="middle">📍 최정오 님의 현재 위치 (황금기)</text>
 
                                 <circle id="daewoonCurrentDot" cx="130" cy="28" r="5" fill="#EF4444" stroke="#FFFFFF" stroke-width="2" />
                             </svg>
 
-                            <div id="daewoonAgeLabels" style="display: grid; grid-template-columns: repeat(6, 1fr); text-align: center; font-size: 9px; color: #94A3B8; font-weight: 700; border-top: 1px solid #E2E8F0; padding-top: 6px; margin-top: -2px;">
-                                <span id="lblAge20">20대</span>
-                                <span id="lblAge30">30대</span>
-                                <div id="lblAge40Box" style="display: flex; flex-direction: column; align-items: center; margin-top: -2px;">
-                                    <span id="lblAgeDecadeText" style="color: #DC2626; font-weight: 900; font-size: 10px;">40대★</span>
-                                    <span id="lblCurrentAgeText" style="color: #DC2626; font-size: 8px; font-weight: 900;">(현재 49세)</span>
+                            <div id="daewoonAgeLabels" style="display: grid; grid-template-columns: repeat(6, 1fr); text-align: center; font-size: 9px; color: #94A3B8; font-weight: 600; border-top: 1px solid #E2E8F0; padding-top: 6px; margin-top: -2px;">
+                                <span id="lblAge1">20대</span>
+                                <span id="lblAge2">30대</span>
+                                <div id="lblAge3Box" style="display: flex; flex-direction: column; align-items: center; margin-top: -2px;">
+                                    <span id="lblAgeDecadeText" style="color: #DC2626; font-weight: 700; font-size: 10px;">40대★</span>
+                                    <span id="lblCurrentAgeText" style="color: #DC2626; font-size: 8px; font-weight: 700;">(현재 49세)</span>
                                 </div>
-                                <span id="lblAge50">50대</span>
-                                <span id="lblAge60">60대</span>
-                                <span id="lblAge70">70대~</span>
+                                <span id="lblAge4">50대</span>
+                                <span id="lblAge5">60대</span>
+                                <span id="lblAge6">70대~</span>
                             </div>
                         </div>
                     </div>
 
                     <div id="daewoonBox" class="hidden"></div>
 
-                    <button id="btnDaewoon" onclick="unlockDaewoon()" style="width: 100%; background: #FBBF24; color: #0F172A; border: none; font-size: 13px; font-weight: 900; padding: 14px; border-radius: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                    <button id="btnDaewoon" onclick="unlockDaewoon()" style="width: 100%; background: #FBBF24; color: #0F172A; border: none; font-size: 13px; font-weight: 700; padding: 14px; border-radius: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
                         <span class="btn-coin-icon"></span> 450 복채로 심층 리포트 열람하기
                     </button>
                 </div>
 
             </div>
 
-            <!-- 탭 3: 궁합·테마 -->
+            <!-- 탭 3: 궁합·테마 (피드백 반영: 제목 단축) -->
             <div id="view-theme" class="tab-view hidden">
                 
                 <div class="card" style="text-align: left;">
-                    <p style="font-size: 13px; font-weight: 900;">💰 평생 재물 그릇 & 금고운</p>
+                    <p style="font-size: 13px; font-weight: 700;">💰 평생 재물운</p>
                     <p style="font-size: 10px; color: #94A3B8; margin-top: 2px;">자산 흐름 및 부동산/투자 성공 분석</p>
                     <div id="themeReport_wealth" class="hidden" style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #F1F5F9;"></div>
-                    <button id="btnTheme_wealth" onclick="openThemeSelectModal('wealth')" style="width: 100%; background: #0F172A; color: white; border: none; font-size: 12px; font-weight: 900; padding: 12px; border-radius: 12px; cursor: pointer; margin-top: 12px; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                    <button id="btnTheme_wealth" onclick="openThemeSelectModal('wealth')" style="width: 100%; background: #0F172A; color: white; border: none; font-size: 12px; font-weight: 700; padding: 12px; border-radius: 12px; cursor: pointer; margin-top: 12px; display: flex; align-items: center; justify-content: center; gap: 6px;">
                         <span class="btn-coin-icon-white"></span> 220 복채로 상세 리포트 열람하기
                     </button>
                 </div>
 
                 <div class="card" style="text-align: left;">
-                    <p style="font-size: 13px; font-weight: 900;">💖 평생 애정운 & 인연법</p>
+                    <p style="font-size: 13px; font-weight: 700;">💖 평생 애정운</p>
                     <p style="font-size: 10px; color: #94A3B8; margin-top: 2px;">나와 맞는 인연의 특징과 결혼 시기</p>
                     <div id="themeReport_love" class="hidden" style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #F1F5F9;"></div>
-                    <button id="btnTheme_love" onclick="openThemeSelectModal('love')" style="width: 100%; background: #0F172A; color: white; border: none; font-size: 12px; font-weight: 900; padding: 12px; border-radius: 12px; cursor: pointer; margin-top: 12px; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                    <button id="btnTheme_love" onclick="openThemeSelectModal('love')" style="width: 100%; background: #0F172A; color: white; border: none; font-size: 12px; font-weight: 700; padding: 12px; border-radius: 12px; cursor: pointer; margin-top: 12px; display: flex; align-items: center; justify-content: center; gap: 6px;">
                         <span class="btn-coin-icon-white"></span> 220 복채로 상세 리포트 열람하기
                     </button>
                 </div>
 
                 <div class="card" style="text-align: left;">
-                    <p style="font-size: 13px; font-weight: 900;">🏢 사업 & 직업 성공 대길운</p>
+                    <p style="font-size: 13px; font-weight: 700;">🏢 사업·직업운</p>
                     <p style="font-size: 10px; color: #94A3B8; margin-top: 2px;">대박 직업 아이템 및 이직/창업 시기</p>
                     <div id="themeReport_business" class="hidden" style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #F1F5F9;"></div>
-                    <button id="btnTheme_business" onclick="openThemeSelectModal('business')" style="width: 100%; background: #0F172A; color: white; border: none; font-size: 12px; font-weight: 900; padding: 12px; border-radius: 12px; cursor: pointer; margin-top: 12px; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                    <button id="btnTheme_business" onclick="openThemeSelectModal('business')" style="width: 100%; background: #0F172A; color: white; border: none; font-size: 12px; font-weight: 700; padding: 12px; border-radius: 12px; cursor: pointer; margin-top: 12px; display: flex; align-items: center; justify-content: center; gap: 6px;">
                         <span class="btn-coin-icon-white"></span> 220 복채로 상세 리포트 열람하기
                     </button>
                 </div>
 
                 <div class="card" style="text-align: left;">
-                    <p style="font-size: 13px; font-weight: 900;">🌿 평생 오행 체질 & 건강운</p>
+                    <p style="font-size: 13px; font-weight: 700;">🌿 평생 건강운</p>
                     <p style="font-size: 10px; color: #94A3B8; margin-top: 2px;">오행 과다/부족 취약 장기 및 섭생법</p>
                     <div id="themeReport_health" class="hidden" style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #F1F5F9;"></div>
-                    <button id="btnTheme_health" onclick="openThemeSelectModal('health')" style="width: 100%; background: #0F172A; color: white; border: none; font-size: 12px; font-weight: 900; padding: 12px; border-radius: 12px; cursor: pointer; margin-top: 12px; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                    <button id="btnTheme_health" onclick="openThemeSelectModal('health')" style="width: 100%; background: #0F172A; color: white; border: none; font-size: 12px; font-weight: 700; padding: 12px; border-radius: 12px; cursor: pointer; margin-top: 12px; display: flex; align-items: center; justify-content: center; gap: 6px;">
                         <span class="btn-coin-icon-white"></span> 220 복채로 상세 리포트 열람하기
                     </button>
                 </div>
@@ -449,12 +447,12 @@
                 <div class="card" style="text-align: left;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                         <span style="font-size: 12px; color: #64748B;">현재 보유 복채</span>
-                        <div style="display: flex; align-items: center; gap: 6px; font-size: 18px; font-weight: 900; color: #78350F;">
+                        <div style="display: flex; align-items: center; gap: 6px; font-size: 18px; font-weight: 700; color: #78350F;">
                             <span id="coinMypage">1000</span>
                             <span id="mypageCoinSvg"></span>
                         </div>
                     </div>
-                    <button onclick="openChargeStore()" style="width: 100%; background: #2D6A4F; color: white; border: none; font-size: 13px; font-weight: 900; padding: 12px; border-radius: 16px; cursor: pointer;">
+                    <button onclick="openChargeStore()" style="width: 100%; background: #2D6A4F; color: white; border: none; font-size: 13px; font-weight: 700; padding: 12px; border-radius: 16px; cursor: pointer;">
                         복채 충전하기
                     </button>
                 </div>
@@ -469,7 +467,7 @@
 
                 <div class="card" style="text-align: left;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                        <h3 style="font-size: 13px; font-weight: 900; color: #0F172A;">📂 구매한 운세 다시보기 보관함</h3>
+                        <h3 style="font-size: 13px; font-weight: 700; color: #0F172A;">📂 구매한 운세 다시보기 보관함</h3>
                         <span id="archiveCountBadge" style="font-size: 10px; background: #2D6A4F; color: #FFFFFF; padding: 2px 8px; border-radius: 9999px; font-weight: 700;">0건</span>
                     </div>
                     <div id="unlockedArchiveList" style="display: flex; flex-direction: column; gap: 10px;">
@@ -510,26 +508,26 @@
     <div id="talismanModal" class="modal-bg hidden">
         <div class="modal-content" style="max-width: 330px; padding: 18px; border-radius: 24px;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 8px;">
-                <h3 style="font-size: 13px; font-weight: 800; color: #1E293B;">🎴 전통 경면주사(鏡面朱砂) 비급 부적</h3>
+                <h3 style="font-size: 13px; font-weight: 700; color: #1E293B;">🎴 전통 경면주사(鏡面朱砂) 비급 부적</h3>
                 <button onclick="closeTalismanModal()" style="background: none; border: none; font-size: 18px; color: #94A3B8; cursor: pointer;">&times;</button>
             </div>
 
             <div id="talismanRealBox" style="display: flex; justify-content: center; align-items: center; padding: 4px 0;"></div>
 
             <div style="text-align: left; background: #FFFBEB; border: 1px solid #FDE68A; border-radius: 12px; padding: 10px;">
-                <h4 id="talismanTitle" style="font-size: 12px; font-weight: 900; color: #78350F;">재물만복부 (萬福符)</h4>
+                <h4 id="talismanTitle" style="font-size: 12px; font-weight: 700; color: #78350F;">재물만복부 (萬福符)</h4>
                 <p id="talismanPower" style="font-size: 11px; font-weight: 700; color: #B45309; margin: 2px 0;"></p>
                 <p id="talismanDesc" style="font-size: 10px; color: #92400E; line-height: 1.4;"></p>
                 <div style="border-top: 1px dashed rgba(217,119,6,0.4); margin-top: 6px; padding-top: 4px; font-size: 10px; color: #78350F;">
-                    소지자: <span id="talismanOwnerName" style="font-weight: 900; text-decoration: underline;">최정오</span> 님 평생 수호 각인
+                    소지자: <span id="talismanOwnerName" style="font-weight: 700; text-decoration: underline;">최정오</span> 님 평생 수호 각인
                 </div>
             </div>
 
             <div style="display: flex; gap: 8px;">
-                <button onclick="downloadTalismanImage()" style="flex: 1; background: #D97706; color: white; border: none; font-size: 12px; font-weight: 800; padding: 12px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px;">
+                <button onclick="downloadTalismanImage()" style="flex: 1; background: #D97706; color: white; border: none; font-size: 12px; font-weight: 700; padding: 12px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px;">
                     📥 부적 다운로드
                 </button>
-                <button onclick="closeTalismanModal()" style="background: #E2E8F0; color: #334155; border: none; font-size: 12px; font-weight: 800; padding: 12px 16px; border-radius: 12px; cursor: pointer;">
+                <button onclick="closeTalismanModal()" style="background: #E2E8F0; color: #334155; border: none; font-size: 12px; font-weight: 700; padding: 12px 16px; border-radius: 12px; cursor: pointer;">
                     닫기
                 </button>
             </div>
@@ -546,7 +544,7 @@
             
             <div id="modalOptionBox" style="display: flex; flex-direction: column; gap: 8px;"></div>
 
-            <button id="btnConfirmUnlockTheme" onclick="confirmUnlockTheme()" style="width: 100%; background: #2D6A4F; color: white; border: none; font-size: 12px; font-weight: 900; padding: 12px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
+            <button id="btnConfirmUnlockTheme" onclick="confirmUnlockTheme()" style="width: 100%; background: #2D6A4F; color: white; border: none; font-size: 12px; font-weight: 700; padding: 12px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
                 <span class="btn-coin-icon-white"></span> 220 복채로 열람하기
             </button>
         </div>
@@ -563,26 +561,26 @@
             <div style="display: flex; flex-direction: column; gap: 10px;">
                 <button onclick="addCoin(500)" style="background: #FFFBEB; border: 1px solid #FDE68A; border-radius: 16px; padding: 12px; display: flex; justify-content: space-between; align-items: center; text-align: left; cursor: pointer;">
                     <div>
-                        <p style="font-size: 12px; font-weight: 900; color: #78350F;">🪙 500 복채 패키지</p>
+                        <p style="font-size: 12px; font-weight: 700; color: #78350F;">🪙 500 복채 패키지</p>
                         <p style="font-size: 10px; color: #92400E; margin-top: 2px;">기본 복채 충전</p>
                     </div>
-                    <span style="background: #F59E0B; color: white; font-size: 11px; font-weight: 900; padding: 4px 8px; border-radius: 8px;">₩4,900</span>
+                    <span style="background: #F59E0B; color: white; font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 8px;">₩4,900</span>
                 </button>
 
                 <button onclick="addCoin(1200)" style="background: #ECFDF5; border: 1px solid #A7F3D0; border-radius: 16px; padding: 12px; display: flex; justify-content: space-between; align-items: center; text-align: left; cursor: pointer;">
                     <div>
-                        <p style="font-size: 12px; font-weight: 900; color: #065F46;">🪙 1,200 복채 패키지</p>
+                        <p style="font-size: 12px; font-weight: 700; color: #065F46;">🪙 1,200 복채 패키지</p>
                         <p style="font-size: 10px; color: #047857; font-weight: 700; margin-top: 2px;">🎁 보너스 +15% 포함</p>
                     </div>
-                    <span style="background: #2D6A4F; color: white; font-size: 11px; font-weight: 900; padding: 4px 8px; border-radius: 8px;">₩9,900</span>
+                    <span style="background: #2D6A4F; color: white; font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 8px;">₩9,900</span>
                 </button>
 
                 <button onclick="addCoin(3000)" style="background: #FAF5FF; border: 1px solid #E9D5FF; border-radius: 16px; padding: 12px; display: flex; justify-content: space-between; align-items: center; text-align: left; cursor: pointer;">
                     <div>
-                        <p style="font-size: 12px; font-weight: 900; color: #581C87;">🪙 3,000 복채 패키지</p>
+                        <p style="font-size: 12px; font-weight: 700; color: #581C87;">🪙 3,000 복채 패키지</p>
                         <p style="font-size: 10px; color: #7E22CE; font-weight: 700; margin-top: 2px;">🔥 BEST 30% 할인 적용</p>
                     </div>
-                    <span style="background: #9333EA; color: white; font-size: 11px; font-weight: 900; padding: 4px 8px; border-radius: 8px;">₩19,900</span>
+                    <span style="background: #9333EA; color: white; font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 8px;">₩19,900</span>
                 </button>
             </div>
         </div>
@@ -592,13 +590,13 @@
     <div id="archiveDetailModal" class="modal-bg hidden">
         <div class="modal-content" style="max-width: 380px; max-height: 85vh; display: flex; flex-direction: column; text-align: left; padding: 20px; border-radius: 24px;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 10px; margin-bottom: 12px; flex-shrink: 0;">
-                <h3 id="archiveModalTitle" style="font-size: 13px; font-weight: 900; color: #0F172A; padding-right: 8px; line-height: 1.3;">운세 리포트</h3>
+                <h3 id="archiveModalTitle" style="font-size: 13px; font-weight: 700; color: #0F172A; padding-right: 8px; line-height: 1.3;">운세 리포트</h3>
                 <button onclick="closeArchiveDetailModal()" style="background: none; border: none; font-size: 20px; color: #94A3B8; cursor: pointer; flex-shrink: 0;">&times;</button>
             </div>
             
             <div id="archiveModalBody" style="flex: 1; overflow-y: auto; padding-right: 4px; margin-bottom: 12px;"></div>
 
-            <button onclick="closeArchiveDetailModal()" style="width: 100%; background: #2D6A4F; color: white; border: none; font-size: 13px; font-weight: 900; padding: 12px; border-radius: 12px; cursor: pointer; flex-shrink: 0;">
+            <button onclick="closeArchiveDetailModal()" style="width: 100%; background: #2D6A4F; color: white; border: none; font-size: 13px; font-weight: 700; padding: 12px; border-radius: 12px; cursor: pointer; flex-shrink: 0;">
                 확인 및 닫기
             </button>
         </div>
@@ -618,7 +616,7 @@
             return `<svg viewBox="0 0 20 20" width="${size}" height="${size}" style="display:inline-block; vertical-align:middle; flex-shrink:0;">
                 <circle cx="10" cy="10" r="9" fill="${color}" stroke="#D97706" stroke-width="1.2"/>
                 <circle cx="10" cy="10" r="7" fill="none" stroke="#FDE68A" stroke-width="0.8" stroke-dasharray="2 1"/>
-                <text x="10" y="14" font-size="11" font-weight="900" fill="#FFFFFF" text-anchor="middle" font-family="'Pretendard', sans-serif">C</text>
+                <text x="10" y="14" font-size="11" font-weight="700" fill="#FFFFFF" text-anchor="middle" font-family="'Pretendard', sans-serif">C</text>
             </svg>`;
         }
 
@@ -679,65 +677,68 @@
             </svg>`;
         }
 
-        // 5대 고유 문양 실시간 렌더러
+        // 피드백 반영: 5종 부적 중앙 문양 및 하단 낙관 시각적 대형 확대 렌더러
         function renderAuthenticCinnabarTalisman(type = "metal", width = 160, height = 260) {
             let innerSymbol = '';
             let bottomText = '萬福大吉';
 
             if (type === "wood") {
+                // 사업대성부 (칠성 관통 대형 문양)
                 bottomText = '事業亨通';
                 innerSymbol = `
-                    <path d="M 40 100 L 100 100 L 70 130 Z" />
-                    <circle cx="70" cy="112" r="3.5" fill="#C62828"/>
-                    <path d="M 32 140 L 108 140" />
-                    <path d="M 45 152 Q 70 140 95 152" />
-                    <path d="M 52 165 L 88 165" />
-                    <line x1="70" y1="130" x2="70" y2="175" />
+                    <path d="M 35 95 L 105 95 L 70 135 Z" fill="rgba(198,40,40,0.15)"/>
+                    <circle cx="70" cy="110" r="6" fill="#C62828"/>
+                    <path d="M 28 142 L 112 142" stroke-width="4.2"/>
+                    <path d="M 40 156 Q 70 140 100 156" stroke-width="3.8"/>
+                    <path d="M 48 170 L 92 170" stroke-width="3.5"/>
+                    <line x1="70" y1="125" x2="70" y2="182" stroke-width="4.5"/>
                 `;
             } else if (type === "fire") {
+                // 소원성취부 (태양 화염 대형 문양)
                 bottomText = '心想事成';
                 innerSymbol = `
-                    <circle cx="70" cy="105" r="14" />
-                    <circle cx="70" cy="105" r="6" fill="#C62828" />
-                    <path d="M 40 128 Q 70 118 100 128" />
-                    <path d="M 48 142 Q 70 130 92 142" />
-                    <path d="M 42 156 L 98 156" />
-                    <line x1="70" y1="120" x2="70" y2="175" />
+                    <circle cx="70" cy="110" r="18" fill="rgba(198,40,40,0.1)"/>
+                    <circle cx="70" cy="110" r="9" fill="#C62828"/>
+                    <path d="M 35 136 Q 70 120 105 136" stroke-width="4"/>
+                    <path d="M 42 152 Q 70 138 98 152" stroke-width="3.6"/>
+                    <path d="M 38 168 L 102 168" stroke-width="3.8"/>
+                    <line x1="70" y1="125" x2="70" y2="182" stroke-width="4.2"/>
                 `;
             } else if (type === "earth") {
+                // 금고수호부 (4각 이중 결계 대형 문양)
                 bottomText = '金庫安穩';
                 innerSymbol = `
-                    <rect x="42" y="96" width="56" height="34" />
-                    <line x1="70" y1="96" x2="70" y2="130" />
-                    <line x1="42" y1="113" x2="98" y2="113" />
-                    <path d="M 46 142 L 94 142" />
-                    <path d="M 40 156 Q 70 146 100 156" />
-                    <line x1="70" y1="130" x2="70" y2="175" />
+                    <rect x="38" y="94" width="64" height="40" fill="rgba(198,40,40,0.1)"/>
+                    <line x1="70" y1="94" x2="70" y2="134" stroke-width="3.8"/>
+                    <line x1="38" y1="114" x2="102" y2="114" stroke-width="3.8"/>
+                    <path d="M 42 148 L 98 148" stroke-width="4"/>
+                    <path d="M 36 164 Q 70 150 104 164" stroke-width="3.8"/>
+                    <line x1="70" y1="134" x2="70" y2="180" stroke-width="4.2"/>
                 `;
             } else if (type === "water") {
+                // 천생화합부 (일월쌍합 대형 문양)
                 bottomText = '萬事和合';
                 innerSymbol = `
-                    <circle cx="50" cy="108" r="10" />
-                    <circle cx="90" cy="108" r="10" />
-                    <path d="M 50 108 Q 70 124 90 108 Q 70 96 50 108" />
-                    <path d="M 42 132 Q 70 145 98 132" />
-                    <path d="M 48 148 L 92 148" />
-                    <path d="M 70 132 L 70 172" />
+                    <circle cx="48" cy="112" r="13" />
+                    <circle cx="92" cy="112" r="13" />
+                    <path d="M 48 112 Q 70 130 92 112 Q 70 96 48 112" fill="rgba(198,40,40,0.2)"/>
+                    <path d="M 38 138 Q 70 152 102 138" stroke-width="4"/>
+                    <path d="M 44 156 L 96 156" stroke-width="3.8"/>
+                    <path d="M 70 138 L 70 180" stroke-width="4.2"/>
                 `;
             } else {
+                // 재물만복부 (암장 금고 / 엽전 오행 대형 문양)
                 bottomText = '萬福大吉';
                 innerSymbol = `
-                    <rect x="44" y="98" width="22" height="18" />
-                    <rect x="74" y="98" width="22" height="18" />
-                    <line x1="55" y1="98" x2="55" y2="116" />
-                    <line x1="85" y1="98" x2="85" y2="116" />
-                    <path d="M 42 126 L 98 126" />
-                    <path d="M 50 134 Q 70 128 90 134" />
-                    <path d="M 48 144 Q 58 138 70 148 Q 82 138 92 144" />
-                    <path d="M 54 152 L 86 152" />
-                    <path d="M 70 148 L 70 172" />
-                    <circle cx="58" cy="164" r="2.5" fill="#C62828" />
-                    <circle cx="82" cy="164" r="2.5" fill="#C62828" />
+                    <rect x="40" y="96" width="26" height="22" stroke-width="3.8"/>
+                    <rect x="74" y="96" width="26" height="22" stroke-width="3.8"/>
+                    <line x1="53" y1="96" x2="53" y2="118" stroke-width="3"/>
+                    <line x1="87" y1="96" x2="87" y2="118" stroke-width="3"/>
+                    <path d="M 38 128 L 102 128" stroke-width="4.2"/>
+                    <path d="M 46 140 Q 70 130 94 140" stroke-width="3.8"/>
+                    <path d="M 42 152 Q 56 144 70 156 Q 84 144 98 152" stroke-width="3.5"/>
+                    <circle cx="56" cy="170" r="3.5" fill="#C62828" />
+                    <circle cx="84" cy="170" r="3.5" fill="#C62828" />
                 `;
             }
 
@@ -763,15 +764,12 @@
                     
                     ${innerSymbol}
 
-                    <path d="M 36 192 Q 70 184 104 192" />
-                    <path d="M 48 200 L 92 200" />
-                    <path d="M 38 210 Q 70 198 102 210" />
-                    <path d="M 52 218 L 88 218" />
-                    <path d="M 70 200 L 70 226" />
-                    <path d="M 46 228 Q 70 220 94 228" />
+                    <path d="M 36 190 Q 70 182 104 190" />
+                    <path d="M 48 198 L 92 198" />
                 </g>
-                <rect x="40" y="206" width="60" height="18" fill="none" stroke="#B71C1C" stroke-width="1.6" opacity="0.85" rx="2"/>
-                <text x="70" y="219" font-size="8.5" font-weight="900" fill="#B71C1C" text-anchor="middle" font-family="'Pretendard', serif">${bottomText}</text>
+                <!-- 하단 선명한 낙관 뱃지 -->
+                <rect x="36" y="204" width="68" height="22" fill="#C62828" rx="3"/>
+                <text x="70" y="219" font-size="10" font-weight="900" fill="#FFFFFF" text-anchor="middle" font-family="'Pretendard', serif" letter-spacing="1px">${bottomText}</text>
             </svg>
             `;
         }
@@ -822,11 +820,28 @@
             `).join('');
         }
 
+        // 피드백 반영: 나이에 따른 가변 연령축 및 위치 동적 연산
         function updateDaewoonGraphByAge(age) {
             currentUserAge = age;
-            const clampedAge = Math.min(85, Math.max(15, age));
+            const clampedAge = Math.max(10, age);
+            const startDecade = Math.max(10, Math.floor((clampedAge - 20) / 10) * 10);
+
+            // X축 6개 연령대 라벨 가변 갱신
+            for (let i = 1; i <= 6; i++) {
+                const lbl = document.getElementById(`lblAge${i}`);
+                const currentDecade = startDecade + (i - 1) * 10;
+                if (lbl) {
+                    if (i === 6) lbl.innerText = `${currentDecade}대~`;
+                    else lbl.innerText = `${currentDecade}대`;
+                }
+            }
+
+            // 현재 나이 지표 핀 위치 계산
+            const rangeStart = startDecade;
+            const rangeEnd = startDecade + 50;
+            const progress = Math.min(1.0, Math.max(0.0, (clampedAge - rangeStart) / (rangeEnd - rangeStart)));
             
-            const posX = Math.min(285, Math.max(15, (clampedAge - 20) * 4.6 + 15));
+            const posX = 15 + progress * 270;
             const posY = clampedAge >= 40 && clampedAge <= 55 ? 28 : (clampedAge < 40 ? 60 : 34);
 
             const dot = document.getElementById('daewoonCurrentDot');
@@ -881,22 +896,15 @@
             // 1. 사주 결핍 오행 맞춤 부적 렌더링
             const talismanPreview = document.getElementById('talismanBannerPreview');
             if (talismanPreview && currentTalisman) {
-                talismanPreview.innerHTML = renderAuthenticCinnabarTalisman(currentTalisman.type || 'wealth', 72, 110);
+                talismanPreview.innerHTML = renderAuthenticCinnabarTalisman(currentTalisman.type || 'metal', 72, 110);
             }
             const tHeader = document.getElementById('talismanBannerHeader');
             if (tHeader && currentTalisman) tHeader.innerText = `오늘의 맞춤 ${currentTalisman.title}`;
 
-            // 2. 신강/신약 사주 뱃지 갱신
+            // 2. 신강/신약 뱃지
             const singangBadge = document.getElementById('sajuSingangBadge');
             if (singangBadge && data.singang_status) {
                 singangBadge.innerText = data.singang_status;
-                if (data.singang_status.includes("신강")) {
-                    singangBadge.style.background = "#DC2626";
-                    singangBadge.style.color = "#FFFFFF";
-                } else {
-                    singangBadge.style.background = "#FEF3C7";
-                    singangBadge.style.color = "#78350F";
-                }
             }
 
             // 3. 천간/지간 뱃지
@@ -917,7 +925,7 @@
             document.getElementById('jjg_m_box').innerHTML = formatJijangganGroup(dtl.month.jijanggan);
             document.getElementById('jjg_y_box').innerHTML = formatJijangganGroup(dtl.year.jijanggan);
 
-            // 5. 오행 세로 막대그래프
+            // 5. 오행 세로 차트
             const elems = data.saju_data.elements;
             const applyBar = (key, val) => {
                 const barEl = document.getElementById(`bar${key}`);
@@ -1061,16 +1069,16 @@
                     <div style="display: flex; align-items: center; gap: 12px; border-bottom: 1px solid #E2E8F0; padding-bottom: 10px;">
                         <img src="${imgUrl}" style="width: 44px; height: 68px; object-fit: cover; border-radius: 6px; border: 1px solid #FCD34D; flex-shrink: 0;">
                         <div>
-                            <h4 style="font-weight: 900; font-size: 13px; color: #0F172A;">${card.name}</h4>
+                            <h4 style="font-weight: 700; font-size: 13px; color: #0F172A;">${card.name}</h4>
                             <p style="color: #B45309; font-weight: 700; font-size: 11px; margin-top: 2px;">${card.keyword}</p>
                         </div>
                     </div>
                     <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px; padding: 10px;">
-                        <p style="font-weight: 800; color: #1E293B; font-size: 11px; margin-bottom: 2px;">🔍 카드 기본 상징</p>
+                        <p style="font-weight: 700; color: #1E293B; font-size: 11px; margin-bottom: 2px;">🔍 카드 기본 상징</p>
                         <p style="color: #64748B; font-size: 11px; line-height: 1.5;">${card.symbolism}</p>
                     </div>
                     <div style="background: #FEF3C7; border: 1px solid #FCD34D; border-radius: 12px; padding: 10px;">
-                        <p style="font-weight: 800; color: #78350F; font-size: 11px; margin-bottom: 2px;">🌟 오늘의 운세 심층 리딩</p>
+                        <p style="font-weight: 700; color: #78350F; font-size: 11px; margin-bottom: 2px;">🌟 오늘의 운세 심층 리딩</p>
                         <p style="color: #92400E; font-size: 11px; line-height: 1.6;">${card.fortune_reading}</p>
                     </div>
                     <div style="font-size: 11px; line-height: 1.5; color: #334155; padding: 0 2px;">
@@ -1257,12 +1265,12 @@
                 <div style="background: #F8FAFC; border: 1.5px solid #2D6A4F; border-radius: 16px; padding: 12px 14px; text-align: left; display: flex; justify-content: space-between; align-items: center; gap: 10px;">
                     <div style="flex: 1; overflow: hidden;">
                         <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
-                            <span style="font-size: 9px; background: #2D6A4F; color: #FFFFFF; font-weight: 800; padding: 2px 6px; border-radius: 4px; flex-shrink: 0;">열람완료</span>
+                            <span style="font-size: 9px; background: #2D6A4F; color: #FFFFFF; font-weight: 700; padding: 2px 6px; border-radius: 4px; flex-shrink: 0;">열람완료</span>
                             <span style="font-size: 10px; color: #94A3B8; flex-shrink: 0;">${r.date}</span>
                         </div>
-                        <h4 style="font-weight: 800; color: #0F172A; font-size: 12px; line-height: 1.3; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${r.title}</h4>
+                        <h4 style="font-weight: 700; color: #0F172A; font-size: 12px; line-height: 1.3; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${r.title}</h4>
                     </div>
-                    <button onclick="openArchiveDetail(${idx})" style="background: #2D6A4F; color: #FFFFFF; border: none; font-size: 11px; font-weight: 800; padding: 8px 12px; border-radius: 10px; cursor: pointer; white-space: nowrap; flex-shrink: 0; box-shadow: 0 2px 4px rgba(45,106,79,0.2);">
+                    <button onclick="openArchiveDetail(${idx})" style="background: #2D6A4F; color: #FFFFFF; border: none; font-size: 11px; font-weight: 700; padding: 8px 12px; border-radius: 10px; cursor: pointer; white-space: nowrap; flex-shrink: 0; box-shadow: 0 2px 4px rgba(45,106,79,0.2);">
                         📄 다시보기
                     </button>
                 </div>
