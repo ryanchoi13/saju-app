@@ -5,25 +5,39 @@ from pydantic import BaseModel
 from typing import Optional
 import os
 
-app = FastAPI(title="운세의 신 PRO API", version="4.4.0")
+app = FastAPI(title="운세의 신 PRO API", version="4.5.0")
 
 CHEONGAN_HANJA = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
 JIJI_HANJA = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"]
 
+# 천간 / 지지 오행 마스터 매핑
 CHEONGAN_ELEMENTS = {
-    "甲": "wood", "乙": "wood", "丙": "fire", "丁": "fire", "戊": "earth",
-    "己": "earth", "庚": "metal", "辛": "metal", "壬": "water", "癸": "water"
+    "甲": "wood", "乙": "wood",
+    "丙": "fire", "丁": "fire",
+    "戊": "earth", "己": "earth",
+    "庚": "metal", "辛": "metal",
+    "壬": "water", "癸": "water"
 }
 JIJI_ELEMENTS = {
-    "子": "water", "丑": "earth", "寅": "wood", "卯": "wood", "辰": "earth",
-    "巳": "fire", "午": "fire", "未": "earth", "申": "metal", "酉": "metal",
-    "戌": "earth", "亥": "water"
+    "子": "water", "丑": "earth", "寅": "wood", "卯": "wood",
+    "辰": "earth", "巳": "fire", "午": "fire", "未": "earth",
+    "申": "metal", "酉": "metal", "戌": "earth", "亥": "water"
 }
 
-JIJANGGAN_MAP = {
-    "子": "癸 (계)", "丑": "己 (기)", "寅": "甲 (갑)", "卯": "乙 (을)",
-    "辰": "戊 (무)", "巳": "丙 (병)", "午": "丁 (정)", "未": "己 (기)",
-    "申": "庚 (경)", "酉": "辛 (신)", "戌": "戊 (무)", "亥": "壬 (임)"
+# 12지지별 정밀 지장간 (여기, 중기, 정기)
+JIJANGGAN_FULL_MAP = {
+    "子": [{"char": "壬", "elem": "water", "weight": 10}, {"char": "癸", "elem": "water", "weight": 20}],
+    "丑": [{"char": "癸", "elem": "water", "weight": 9}, {"char": "辛", "elem": "metal", "weight": 3}, {"char": "己", "elem": "earth", "weight": 18}],
+    "寅": [{"char": "戊", "elem": "earth", "weight": 7}, {"char": "丙", "elem": "fire", "weight": 7}, {"char": "甲", "elem": "wood", "weight": 16}],
+    "卯": [{"char": "甲", "elem": "wood", "weight": 10}, {"char": "乙", "elem": "wood", "weight": 20}],
+    "辰": [{"char": "乙", "elem": "wood", "weight": 9}, {"char": "癸", "elem": "water", "weight": 3}, {"char": "戊", "elem": "earth", "weight": 18}],
+    "巳": [{"char": "戊", "elem": "earth", "weight": 7}, {"char": "庚", "elem": "metal", "weight": 7}, {"char": "丙", "elem": "fire", "weight": 16}],
+    "午": [{"char": "丙", "elem": "fire", "weight": 10}, {"char": "己", "elem": "earth", "weight": 9}, {"char": "丁", "elem": "fire", "weight": 11}],
+    "未": [{"char": "丁", "elem": "fire", "weight": 9}, {"char": "乙", "elem": "wood", "weight": 3}, {"char": "己", "elem": "earth", "weight": 18}],
+    "申": [{"char": "戊", "elem": "earth", "weight": 7}, {"char": "壬", "elem": "water", "weight": 7}, {"char": "庚", "elem": "metal", "weight": 16}],
+    "酉": [{"char": "庚", "elem": "metal", "weight": 10}, {"char": "辛", "elem": "metal", "weight": 20}],
+    "戌": [{"char": "辛", "elem": "metal", "weight": 9}, {"char": "丁", "elem": "fire", "weight": 3}, {"char": "戊", "elem": "earth", "weight": 18}],
+    "亥": [{"char": "戊", "elem": "earth", "weight": 7}, {"char": "甲", "elem": "wood", "weight": 7}, {"char": "壬", "elem": "water", "weight": 16}]
 }
 
 DAY_MBTI_MAP = {
@@ -48,71 +62,22 @@ TALISMAN_LIST = [
     {"title": "사업대성부 (事業大成符)", "chinese": "勅令 · 萬事亨通", "power": "사업 번창 · 계약 성사", "desc": "막혔던 활로를 시원하게 뚫어주고 거래와 사업 번창을 돕는 부적입니다."}
 ]
 
-# 타로 메이저 카드 심층 해설 데이터베이스
 TAROT_CARDS = [
     {
         "name": "0. THE FOOL (바보)",
         "keyword": "새로운 시작 · 순수한 열정 · 무한한 잠재력",
-        "symbolism": "화려한 옷을 입고 절벽 끝에 서 있는 청년은 세상의 관습에 얽매이지 않는 순수한 영혼과 새로운 여정의 출발을 상징합니다. 손에 쥔 하얀 장미는 순수성을, 곁의 하얀 개는 본능적인 위험 경고와 충성을 뜻합니다.",
-        "fortune_reading": "오늘은 오랫동안 머뭇거리던 일의 시작 단추를 꿰기에 더없이 좋은 날입니다. 과거의 실패나 주변의 지나친 참견에 신경 쓰지 않고, 본인의 순수한 호기심과 직관을 따를 때 예상 밖의 통로가 시원하게 열립니다. 계산기를 두드리기보다는 일단 가벼운 마음으로 발을 내딛는 것이 핵심입니다.",
-        "advice": "새로운 프로젝트 구상이나 이직/취미/약속 등 새로운 제안에 열린 마음을 가지세요. 다만 준비 없는 무모함은 피하고, 발걸음은 경쾌하되 시선은 주변을 살피는 지혜가 필요합니다.",
-        "action_tip": "오늘 떠오르는 새로운 아이디어를 즉시 메모하고, 망설이던 연락을 먼저 건네보세요."
+        "symbolism": "화려한 옷을 입고 절벽 끝에 서 있는 청년은 세상의 관습에 얽매이지 않는 순수한 영혼과 새로운 여정의 출발을 상징합니다.",
+        "fortune_reading": "오늘은 오랫동안 머뭇거리던 일의 시작 단추를 꿰기에 더없이 좋은 날입니다. 직관을 따를 때 예상 밖의 통로가 열립니다.",
+        "advice": "새로운 제안에 열린 마음을 가지되, 발걸음은 가볍되 시선은 주변을 살피는 지혜가 필요합니다.",
+        "action_tip": "오늘 떠오르는 새로운 아이디어를 메모하고 먼저 안부 연락을 건네보세요."
     },
     {
         "name": "I. THE MAGICIAN (마법사)",
         "keyword": "창조적 역량 · 완벽한 주도권 · 실력 발휘",
-        "symbolism": "머리 위의 무한대(∞) 기호와 제단 위의 4대 원소(지팡이, 컵, 검, 동전)는 세상의 모든 도구와 자원을 능숙하게 통제할 수 있는 탁월한 지혜와 창조력을 상징합니다.",
-        "fortune_reading": "귀하가 가진 지식, 언변, 전문 기술이 빛을 발하는 날입니다. 상대방을 설득하거나 협상을 주도하기에 최고의 컨디션이며, 막혀 있던 프로젝트도 귀하의 기지로 실마리를 풀 수 있습니다. 자신의 역량을 겸손 뒤에 숨기지 말고 자신 있게 세상에 드러내야 복이 들어옵니다.",
-        "advice": "미팅이나 보고, 프레젠테이션에서 당당한 태도로 분위기를 리드하세요. 철저한 사전 준비가 뒷받침될 때 원하는 성과와 명예를 온전히 거머쥘 수 있습니다.",
-        "action_tip": "중요한 대화나 업무에서 본인의 핵심 주장을 당당하고 명확하게 피력하세요."
-    },
-    {
-        "name": "II. THE HIGH PRIESTESS (여사제)",
-        "keyword": "깊은 통찰 · 직관과 혜안 · 침묵의 지혜",
-        "symbolism": "흑과 백의 기둥(B와 J) 사이에 앉아 토라(TORA) 스크롤을 쥔 여사제는 이성과 감성의 조화, 표면 아래 숨겨진 본질적 진실과 영적인 직관을 상징합니다.",
-        "fortune_reading": "겉으로 드러난 말보다 상대방의 숨은 의도나 상황의 이면을 꿰뚫어 보는 혜안이 극대화되는 날입니다. 성급하게 감정적으로 반응하거나 행동하기보다는, 한 걸음 물러서서 차분히 상황을 관찰할 때 가장 정확한 해답을 찾을 수 있습니다.",
-        "advice": "중요한 계약이나 감정적인 결정은 하루 이틀 여유를 두고 심사숙고하세요. 비밀 유지가 필수적이며, 경솔한 발언을 삼가고 경청에 집중하는 것이 유리합니다.",
-        "action_tip": "조용한 장소에서 차를 마시며 생각을 차분히 정리하는 시간을 10분간 가지세요."
-    },
-    {
-        "name": "III. THE EMPRESS (여황제)",
-        "keyword": "풍요로운 결실 · 따뜻한 포용 · 물질적 번영",
-        "symbolism": "황금빛 곡식 밭에 기대앉아 12개의 별이 박힌 왕관을 쓴 여황제는 대자연의 풍요, 결실의 수확, 그리고 주변을 너그럽게 품어주는 모성애적 온정을 상징합니다.",
-        "fortune_reading": "그동안 쏟아부은 노력과 인내가 풍성한 결실과 금전적 안정으로 환원되는 날입니다. 주변 사람들과의 관계가 화기애애해지고, 베푼 호의가 두 배의 행운이 되어 되돌아옵니다. 편안하고 너그러운 태도가 사람을 끌어모읍니다.",
-        "advice": "혼자만의 성과에 도취되지 말고 함께 고생한 동료나 가족에게 고마움을 전하세요. 식사 대접이나 따뜻한 격려 한마디가 평생의 귀인 인연을 만듭니다.",
-        "action_tip": "가장 소중한 사람에게 감사의 메시지를 보내거나 맛있는 식사를 대접하세요."
-    },
-    {
-        "name": "IV. THE EMPEROR (황제)",
-        "keyword": "확고한 리더십 · 안정된 질서 · 목표 달성",
-        "symbolism": "돌로 된 굳건한 옥좌에 앉아 보주와 홀을 쥐고 있는 황제는 흔들리지 않는 원칙, 조직을 수호하는 카리스마, 그리고 세속적인 권력과 기반의 확립을 상징합니다.",
-        "fortune_reading": "흐트러진 기강을 바로잡고 목표를 향해 조직을 진두지휘해야 하는 날입니다. 명확한 가이드라인과 원칙을 제시할 때 사람들의 신뢰를 얻으며, 추진 중인 일이 굳건한 반석 위에 오르게 됩니다. 결단력을 발휘하십시오.",
-        "advice": "감정에 치우치지 말고 이성적이고 객관적인 데이터에 기반해 판단하세요. 지나친 고집은 경계하되, 핵심 원칙만큼은 타협 없이 밀고 나가는 뚝심이 필요합니다.",
-        "action_tip": "오늘 꼭 완수해야 할 핵심 업무 3가지를 정리하고 단호하게 실행하세요."
-    },
-    {
-        "name": "VI. THE LOVERS (연인)",
-        "keyword": "진정한 교감 · 조화로운 선택 · 파트너십",
-        "symbolism": "천사 라파엘의 축복 아래 서 있는 남녀는 순수한 사랑과 소통, 그리고 인생의 중대한 갈림길에서 올바른 가치관에 입각한 선택을 상징합니다.",
-        "fortune_reading": "마음이 통하는 동료, 연인, 비즈니스 파트너와의 호흡이 최상으로 맞아떨어지는 날입니다. 혼자 끙끙 앓던 문제도 상대방과의 대화를 통해 명쾌한 해법을 찾게 됩니다. 화합과 협업을 통해 시너지를 창출하기에 완벽합니다.",
-        "advice": "솔직한 감정과 진심을 표현하세요. 계산적인 태도를 버리고 서로의 장점을 존중하며 협력할 때 장기적으로 큰 이익과 안정을 얻게 됩니다.",
-        "action_tip": "마찰이 있던 상대에게 먼저 부드러운 안부 인사를 건네며 대화의 물꼬를 트세요."
-    },
-    {
-        "name": "X. WHEEL OF FORTUNE (운명의 수레바퀴)",
-        "keyword": "행운의 전환점 · 필연적 기회 · 운명의 상승기류",
-        "symbolism": "끊임없이 회전하는 수레바퀴와 사방의 4대 복음서 동물들은 우주 삼라만상의 순환, 거스를 수 없는 필연적인 운명의 전환과 새로운 도약의 사이클을 상징합니다.",
-        "fortune_reading": "정체되었던 정국이 풀리고 귀하에게 유리한 상승기류의 파도가 들어오는 날입니다. 생각지도 못했던 경로에서 뜻밖의 기회나 제안이 찾아오며, 풀리지 않던 난제가 자연스럽게 해결되는 행운의 전환점입니다.",
-        "advice": "익숙하고 편안한 과거의 틀에 안주하지 말고, 새롭게 다가오는 변화의 흐름에 유연하게 편승하세요. 타이밍을 놓치지 않고 빠르게 반응하는 것이 핵심입니다.",
-        "action_tip": "예상치 못한 제안이나 연락이 오면 긍정적으로 검토하고 기회를 낚아채세요."
-    },
-    {
-        "name": "XIX. THE SUN (태양)",
-        "keyword": "눈부신 성공 · 생명력과 활력 · 명예와 축하",
-        "symbolism": "해바라기 꽃밭 위로 환하게 떠오른 태양과 백마를 탄 어린아이는 모든 어둠과 불안의 종식, 순수한 기쁨, 그리고 만천하에 드러나는 빛나는 성취를 상징합니다.",
-        "fortune_reading": "그 어떤 근심이나 장애물도 귀하의 밝은 기운을 막을 수 없는 최고의 대길(大吉)의 날입니다. 귀하의 성과가 많은 사람에게 인정받아 칭찬과 명예를 얻게 되며, 몸과 마음에 넘치는 에너지와 자신감이 가득 찹니다.",
-        "advice": "마음껏 활기를 발산하고 성취를 즐기세요. 긍정적인 기운은 주변 사람들에게도 큰 힘이 되며, 더 큰 복록과 협력자를 불러들이는 자석 역할을 합니다.",
-        "action_tip": "낮 시간대 10분간 햇볕을 쬐며 긍정 에너지를 충전하고 성과를 축하하세요."
+        "symbolism": "머리 위의 무한대(∞) 기호와 제단 위의 4대 원소는 세상의 모든 도구를 능숙하게 통제하는 지혜와 창조력을 상징합니다.",
+        "fortune_reading": "귀하가 가진 지식과 언변, 전문 기술이 빛을 발하는 날입니다. 당당한 태도로 판을 리드하기에 최적입니다.",
+        "advice": "미팅이나 보고에서 주도적으로 의견을 제시하고 실력을 마음껏 드러내세요.",
+        "action_tip": "중요한 대화나 업무에서 본인의 핵심 주장을 명확하게 피력하세요."
     }
 ]
 
@@ -161,21 +126,57 @@ def analyze_saju(req: SajuRequest):
 
     d_animal = ANIMAL_MAP.get(d_jj, "개")
 
-    pillars_chars = [y_cg, y_jj, m_cg, m_jj, d_cg, d_jj]
-    if h_cg != "-":
-        pillars_chars.extend([h_cg, h_jj])
-        
-    elem_counts = {"wood": 0, "fire": 0, "earth": 0, "metal": 0, "water": 0}
-    total_chars = len(pillars_chars)
+    # 1. 지장간 리스트 상세 추출
+    jj_list = [h_jj, d_jj, m_jj, y_jj]
+    cg_list = [h_cg, d_cg, m_cg, y_cg]
+
+    pillars_detail = {
+        "hour": {
+            "cg": h_cg, "cg_elem": CHEONGAN_ELEMENTS.get(h_cg, "none"),
+            "jj": h_jj, "jj_elem": JIJI_ELEMENTS.get(h_jj, "none"),
+            "jijanggan": JIJANGGAN_FULL_MAP.get(h_jj, [])
+        },
+        "day": {
+            "cg": d_cg, "cg_elem": CHEONGAN_ELEMENTS.get(d_cg, "none"),
+            "jj": d_jj, "jj_elem": JIJI_ELEMENTS.get(d_jj, "none"),
+            "jijanggan": JIJANGGAN_FULL_MAP.get(d_jj, [])
+        },
+        "month": {
+            "cg": m_cg, "cg_elem": CHEONGAN_ELEMENTS.get(m_cg, "none"),
+            "jj": m_jj, "jj_elem": JIJI_ELEMENTS.get(m_jj, "none"),
+            "jijanggan": JIJANGGAN_FULL_MAP.get(m_jj, [])
+        },
+        "year": {
+            "cg": y_cg, "cg_elem": CHEONGAN_ELEMENTS.get(y_cg, "none"),
+            "jj": y_jj, "jj_elem": JIJI_ELEMENTS.get(y_jj, "none"),
+            "jijanggan": JIJANGGAN_FULL_MAP.get(y_jj, [])
+        }
+    }
+
+    # 2. 지장간 가중치 합산 정밀 오행 계산
+    # 천간 4글자: 각 25점 (총 100점)
+    # 지장간: 각 지지당 30점 만점 할당 (월지는 계절성 반영 1.5배 가중)
+    scores = {"wood": 0.0, "fire": 0.0, "earth": 0.0, "metal": 0.0, "water": 0.0}
     
-    for char in pillars_chars:
-        if char in CHEONGAN_ELEMENTS:
-            elem_counts[CHEONGAN_ELEMENTS[char]] += 1
-        elif char in JIJI_ELEMENTS:
-            elem_counts[JIJI_ELEMENTS[char]] += 1
-            
+    # 천간 배점
+    for cg in [y_cg, m_cg, d_cg]:
+        scores[CHEONGAN_ELEMENTS[cg]] += 25.0
+    if h_cg != "-":
+        scores[CHEONGAN_ELEMENTS[h_cg]] += 25.0
+
+    # 지장간 배점
+    for idx, jj in enumerate([y_jj, m_jj, d_jj]):
+        mult = 1.5 if idx == 1 else 1.0 # 월지 가중치
+        for item in JIJANGGAN_FULL_MAP.get(jj, []):
+            scores[item["elem"]] += item["weight"] * mult
+
+    if h_jj != "-":
+        for item in JIJANGGAN_FULL_MAP.get(h_jj, []):
+            scores[item["elem"]] += item["weight"] * 1.0
+
+    total_score = sum(scores.values())
     elem_percentages = {
-        k: round((v / total_chars) * 100, 1) for k, v in elem_counts.items()
+        k: round((v / total_score) * 100, 1) for k, v in scores.items()
     }
 
     user_mbti = DAY_MBTI_MAP.get(d_cg, {"mbti": "대담한 통솔자 (ENTJ형)", "desc": "강한 추진력과 당당한 리더십으로 조직을 이끄는 개척자 사주"})
@@ -194,12 +195,7 @@ def analyze_saju(req: SajuRequest):
             "month_pillar": f"{m_cg}{m_jj}",
             "day_pillar": f"{d_cg}{d_jj}",
             "hour_pillar": h_pillar,
-            "pillars_detail": {
-                "year": {"cg": y_cg, "jj": y_jj, "jjg": JIJANGGAN_MAP.get(y_jj, "-")},
-                "month": {"cg": m_cg, "jj": m_jj, "jjg": JIJANGGAN_MAP.get(m_jj, "-")},
-                "day": {"cg": d_cg, "jj": d_jj, "jjg": JIJANGGAN_MAP.get(d_jj, "-")},
-                "hour": {"cg": h_cg, "jj": h_jj, "jjg": JIJANGGAN_MAP.get(h_jj, "-")}
-            },
+            "pillars_detail": pillars_detail,
             "mbti": user_mbti,
             "animal_symbol": d_animal,
             "animal_icon": user_animal_icon,
