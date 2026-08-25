@@ -6,7 +6,7 @@ from typing import Optional
 import os
 import random
 
-app = FastAPI(title="운세의 신 PRO API", version="10.0.0")
+app = FastAPI(title="운세의 신 PRO API", version="10.0.1")
 
 CHEONGAN_HANJA = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
 JIJI_HANJA = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"]
@@ -71,7 +71,7 @@ OHEANG_CURATION_MAP = {
     "metal": {
         "color": "스노우 화이트 / 실버 그레이", "number": "4, 9", "direction": "정서쪽 (백호 방위)",
         "style": "각 잡힌 화이트 셔츠와 세련된 메탈 시계", "menu": "도라지차, 신선한 견과류와 고단백 생선 요리",
-        "mindset": "맺고 끊음을 명확히 하고 군더더기 없는 대화하기", "action": "오늘 완료해야 할 우선순위 3가지를 메모하기"
+        "mindset": "맺고 끊음을 명확히 하고 군더더기 없는 대화하기", "action": "오늘 완료해야 할 우선순위 3가지 메모하기"
     },
     "water": {
         "color": "미드나잇 블루 / 딥 네이비", "number": "1, 6", "direction": "정북쪽 (현무 방위)",
@@ -132,7 +132,7 @@ def analyze_saju(req: SajuRequest):
     y_jj_idx = year_offset % 12
     y_cg, y_jj = CHEONGAN_HANJA[y_cg_idx], JIJI_HANJA[y_jj_idx]
 
-    # 3. 월주 (음력/윤달 보정)
+    # 3. 월주
     month_adj = req.month
     if req.calendar_type == "lunar":
         month_adj = (req.month + 1)
@@ -154,7 +154,7 @@ def analyze_saju(req: SajuRequest):
 
     d_animal = ANIMAL_MAP.get(d_jj, "개")
 
-    # 5. 실시간 만 나이 및 한국 나이 연산
+    # 5. 만 나이 연산 (2026년 기준)
     current_year = 2026
     current_age = current_year - req.year + 1
 
@@ -181,7 +181,7 @@ def analyze_saju(req: SajuRequest):
         }
     }
 
-    # 6. 오행 가중치 정밀 연산
+    # 6. 오행 가중치 점수 연산
     scores = {"wood": 0.0, "fire": 0.0, "earth": 0.0, "metal": 0.0, "water": 0.0}
     for cg in [y_cg, m_cg, d_cg]:
         scores[CHEONGAN_ELEMENTS[cg]] += 25.0
@@ -202,7 +202,7 @@ def analyze_saju(req: SajuRequest):
         k: round((v / total_score) * 100, 1) for k, v in scores.items()
     }
 
-    # 7. 신강 vs 신약 판정
+    # 7. 신강/신약 판정
     day_elem = CHEONGAN_ELEMENTS[d_cg]
     support_score = scores.get(day_elem, 0)
     insoeng_map = {"wood": "water", "fire": "wood", "earth": "fire", "metal": "earth", "water": "metal"}
@@ -231,8 +231,8 @@ def analyze_saju(req: SajuRequest):
     daily_title = fortune_titles.get(d_cg, "새로운 기운이 서서히 솟아나는 도약의 하루")
     daily_score = 86 + (d_cg_idx * 3 + datetime.date.today().day) % 13
 
-    # 피드백 반영: 오늘의 일진 해석 3단계 (오전 / 오후 / 저녁·밤) 확장
-    3_stage_advice = (
+    # 변수명 수정: 문법 오류 원인이었던 3_stage_advice -> three_stage_advice로 완전 변경!
+    three_stage_advice = (
         f"☀️ 오전 (06:00~12:00): 부족한 {min_elem.upper()} 기운을 불어넣어 줄 반가운 소식이나 귀인의 연락이 닿아 오랫동안 추진하던 일에 탄력이 붙습니다.\n\n"
         f"🌤️ 오후 (12:00~18:00): 본원({d_cg})의 결단력과 추진력이 극대화되는 황금 타임입니다. 중요한 협상이나 문서 계약을 적극 추진하세요.\n\n"
         f"🌙 저녁·밤 (18:00~24:00): 오늘 하루의 성과를 차분히 정리하고, 미온수를 마시며 내일의 도약을 준비하는 안정된 결실의 시간입니다."
@@ -259,7 +259,7 @@ def analyze_saju(req: SajuRequest):
         "daily_fortune": {
             "score": daily_score,
             "title": daily_title,
-            "advice": 3_stage_advice,
+            "advice": three_stage_advice,
             "lucky_color": curation_data["color"],
             "lucky_number": curation_data["number"],
             "lucky_direction": curation_data["direction"],
@@ -327,7 +327,6 @@ def get_daewoon_report(req: dict):
                     <p style="color: #475569; line-height: 1.55;">• <strong>{start_age+7}세 ~ {end_age}세 (결실기):</strong> 성과를 안정적 시스템 수익으로 확정 짓고 차기 대운으로의 연착륙.</p>
                 </div>
 
-                <!-- 피드백 반영: 대운 맞춤 개운 실천 팁 추가 -->
                 <div style="margin-top: 10px; background: #FFFFFF; border: 1px solid #FCD34D; border-radius: 10px; padding: 10px;">
                     <p style="font-weight: 700; color: #78350F; font-size: 11px; margin-bottom: 3px;">🔥 [10년 대운 맞춤 개운(開運) 실천 팁]</p>
                     <p style="color: #92400E; font-size: 10.5px; line-height: 1.5;">
@@ -345,7 +344,6 @@ def get_theme_report(req: dict):
     sub_opt = req.get("sub_option", "기본")
     user_name = req.get("name", "최정오")
     
-    # 피드백 반영: 테마운 제목 단축 (평생 재물운, 평생 애정운, 사업·직업운, 평생 건강운)
     titles = {
         "wealth": f"💰 {user_name}님의 평생 재물운 심층 리포트",
         "love": f"💖 {user_name}님의 평생 애정운 ({sub_opt} 맞춤)",
