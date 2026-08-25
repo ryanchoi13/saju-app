@@ -41,12 +41,13 @@
         .grid-cell { background: white; border: 1px solid #F1F5F9; border-radius: 16px; padding: 12px; font-size: 12px; text-align: left; }
         .action-card { background: #FFFBEB; border: 1px solid #FDE68A; border-radius: 16px; padding: 14px; text-align: left; font-size: 12px; }
 
+        /* 타로 카드 3D 플립 & 정밀 듀얼 성좌 덱 */
         .tarot-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
         .tarot-wrapper { perspective: 1000px; aspect-ratio: 2/3; cursor: pointer; }
         .flipper { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; transition: transform 0.6s ease; border-radius: 12px; }
         .flipper.flipped { transform: rotateY(180deg); }
         .card-face { position: absolute; inset: 0; backface-visibility: hidden; border-radius: 12px; }
-        .card-back { background: #10192B; border: 2px solid #D4AF37; padding: 4px; display: flex; align-items: center; justify-content: center; }
+        .card-back { background: #0E1626; border: 2px solid #D4AF37; padding: 2px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.15); overflow: hidden; }
         .card-front { transform: rotateY(180deg); background: white; overflow: hidden; }
 
         .talisman-banner { background: linear-gradient(135deg, #FFFDF5 0%, #FFFBEB 100%); border: 2px solid #FCD34D; border-radius: 24px; padding: 20px; text-align: center; display: flex; flex-direction: column; gap: 12px; }
@@ -169,7 +170,7 @@
                     <p id="resGaewoon" style="color: #92400E; font-weight: 300;">오전 중 따뜻한 차 한 잔을 마시며 목표 3가지 메모하기</p>
                 </div>
 
-                <!-- 오늘의 타로 -->
+                <!-- 오늘의 타로 (듀얼 골드 성좌 뒷면 덱 적용) -->
                 <div class="card" style="padding: 16px;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                         <div style="text-align: left;">
@@ -180,45 +181,98 @@
                     </div>
 
                     <div class="tarot-grid">
+                        <!-- 카드 1 -->
                         <div onclick="handleTarotDraw(1)" class="tarot-wrapper">
                             <div id="flipper1" class="flipper">
                                 <div class="card-face card-back">
                                     <svg viewBox="0 0 100 150" style="width: 100%; height: 100%;">
-                                        <rect x="4" y="4" width="92" height="142" fill="none" stroke="#D4AF37" stroke-width="1.5" />
-                                        <circle cx="50" cy="45" r="16" fill="none" stroke="#D4AF37" stroke-width="1" />
-                                        <polygon points="50,25 54,41 70,45 54,49 50,65 46,49 30,45 46,41" fill="#D4AF37" />
+                                        <rect x="3" y="3" width="94" height="144" rx="4" fill="none" stroke="#D4AF37" stroke-width="1.5" />
+                                        <rect x="6" y="6" width="88" height="138" rx="2" fill="none" stroke="#D4AF37" stroke-width="0.8" stroke-dasharray="2 2" />
+                                        
+                                        <!-- 상단 성좌 (별마크 1) -->
+                                        <circle cx="50" cy="42" r="17" fill="none" stroke="#D4AF37" stroke-width="1" />
+                                        <polygon points="50,23 53.5,38.5 69,42 53.5,45.5 50,61 46.5,45.5 31,42 46.5,38.5" fill="#D4AF37" />
+                                        <polygon points="50,30 52,39.5 62,42 52,44.5 50,54 48,44.5 38,42 48,39.5" fill="#FFF2B2" />
+                                        
+                                        <!-- 중앙 오너먼트 (초승달 & 미니 별) -->
+                                        <path d="M 44,75 A 6,6 0 0,0 56,75 A 5,5 0 0,1 44,75" fill="#D4AF37" />
+                                        <circle cx="22" cy="75" r="2.5" fill="#D4AF37" />
+                                        <circle cx="78" cy="75" r="2.5" fill="#D4AF37" />
+                                        <line x1="28" y1="75" x2="38" y2="75" stroke="#D4AF37" stroke-width="0.8" />
+                                        <line x1="62" y1="75" x2="72" y2="75" stroke="#D4AF37" stroke-width="0.8" />
+
+                                        <!-- 하단 성좌 (별마크 2) -->
+                                        <circle cx="50" cy="108" r="17" fill="none" stroke="#D4AF37" stroke-width="1" />
+                                        <polygon points="50,89 53.5,104.5 69,108 53.5,111.5 50,127 46.5,111.5 31,108 46.5,104.5" fill="#D4AF37" />
+                                        <polygon points="50,96 52,105.5 62,108 52,110.5 50,120 48,110.5 38,108 48,105.5" fill="#FFF2B2" />
                                     </svg>
                                 </div>
                                 <div id="front1" class="card-face card-front"></div>
                             </div>
                         </div>
 
+                        <!-- 카드 2 -->
                         <div onclick="handleTarotDraw(2)" class="tarot-wrapper">
                             <div id="flipper2" class="flipper">
                                 <div class="card-face card-back">
                                     <svg viewBox="0 0 100 150" style="width: 100%; height: 100%;">
-                                        <rect x="4" y="4" width="92" height="142" fill="none" stroke="#D4AF37" stroke-width="1.5" />
-                                        <circle cx="50" cy="45" r="16" fill="none" stroke="#D4AF37" stroke-width="1" />
-                                        <polygon points="50,25 54,41 70,45 54,49 50,65 46,49 30,45 46,41" fill="#D4AF37" />
+                                        <rect x="3" y="3" width="94" height="144" rx="4" fill="none" stroke="#D4AF37" stroke-width="1.5" />
+                                        <rect x="6" y="6" width="88" height="138" rx="2" fill="none" stroke="#D4AF37" stroke-width="0.8" stroke-dasharray="2 2" />
+                                        
+                                        <!-- 상단 성좌 (별마크 1) -->
+                                        <circle cx="50" cy="42" r="17" fill="none" stroke="#D4AF37" stroke-width="1" />
+                                        <polygon points="50,23 53.5,38.5 69,42 53.5,45.5 50,61 46.5,45.5 31,42 46.5,38.5" fill="#D4AF37" />
+                                        <polygon points="50,30 52,39.5 62,42 52,44.5 50,54 48,44.5 38,42 48,39.5" fill="#FFF2B2" />
+                                        
+                                        <!-- 중앙 오너먼트 (초승달 & 미니 별) -->
+                                        <path d="M 44,75 A 6,6 0 0,0 56,75 A 5,5 0 0,1 44,75" fill="#D4AF37" />
+                                        <circle cx="22" cy="75" r="2.5" fill="#D4AF37" />
+                                        <circle cx="78" cy="75" r="2.5" fill="#D4AF37" />
+                                        <line x1="28" y1="75" x2="38" y2="75" stroke="#D4AF37" stroke-width="0.8" />
+                                        <line x1="62" y1="75" x2="72" y2="75" stroke="#D4AF37" stroke-width="0.8" />
+
+                                        <!-- 하단 성좌 (별마크 2) -->
+                                        <circle cx="50" cy="108" r="17" fill="none" stroke="#D4AF37" stroke-width="1" />
+                                        <polygon points="50,89 53.5,104.5 69,108 53.5,111.5 50,127 46.5,111.5 31,108 46.5,104.5" fill="#D4AF37" />
+                                        <polygon points="50,96 52,105.5 62,108 52,110.5 50,120 48,110.5 38,108 48,105.5" fill="#FFF2B2" />
                                     </svg>
                                 </div>
                                 <div id="front2" class="card-face card-front"></div>
                             </div>
                         </div>
 
+                        <!-- 카드 3 -->
                         <div onclick="handleTarotDraw(3)" class="tarot-wrapper">
                             <div id="flipper3" class="flipper">
                                 <div class="card-face card-back">
                                     <svg viewBox="0 0 100 150" style="width: 100%; height: 100%;">
-                                        <rect x="4" y="4" width="92" height="142" fill="none" stroke="#D4AF37" stroke-width="1.5" />
-                                        <circle cx="50" cy="45" r="16" fill="none" stroke="#D4AF37" stroke-width="1" />
-                                        <polygon points="50,25 54,41 70,45 54,49 50,65 46,49 30,45 46,41" fill="#D4AF37" />
+                                        <rect x="3" y="3" width="94" height="144" rx="4" fill="none" stroke="#D4AF37" stroke-width="1.5" />
+                                        <rect x="6" y="6" width="88" height="138" rx="2" fill="none" stroke="#D4AF37" stroke-width="0.8" stroke-dasharray="2 2" />
+                                        
+                                        <!-- 상단 성좌 (별마크 1) -->
+                                        <circle cx="50" cy="42" r="17" fill="none" stroke="#D4AF37" stroke-width="1" />
+                                        <polygon points="50,23 53.5,38.5 69,42 53.5,45.5 50,61 46.5,45.5 31,42 46.5,38.5" fill="#D4AF37" />
+                                        <polygon points="50,30 52,39.5 62,42 52,44.5 50,54 48,44.5 38,42 48,39.5" fill="#FFF2B2" />
+                                        
+                                        <!-- 중앙 오너먼트 (초승달 & 미니 별) -->
+                                        <path d="M 44,75 A 6,6 0 0,0 56,75 A 5,5 0 0,1 44,75" fill="#D4AF37" />
+                                        <circle cx="22" cy="75" r="2.5" fill="#D4AF37" />
+                                        <circle cx="78" cy="75" r="2.5" fill="#D4AF37" />
+                                        <line x1="28" y1="75" x2="38" y2="75" stroke="#D4AF37" stroke-width="0.8" />
+                                        <line x1="62" y1="75" x2="72" y2="75" stroke="#D4AF37" stroke-width="0.8" />
+
+                                        <!-- 하단 성좌 (별마크 2) -->
+                                        <circle cx="50" cy="108" r="17" fill="none" stroke="#D4AF37" stroke-width="1" />
+                                        <polygon points="50,89 53.5,104.5 69,108 53.5,111.5 50,127 46.5,111.5 31,108 46.5,104.5" fill="#D4AF37" />
+                                        <polygon points="50,96 52,105.5 62,108 52,110.5 50,120 48,110.5 38,108 48,105.5" fill="#FFF2B2" />
                                     </svg>
                                 </div>
                                 <div id="front3" class="card-face card-front"></div>
                             </div>
                         </div>
                     </div>
+                    
+                    <!-- 타로 심층 해석 출력 영역 -->
                     <div id="tarotResultBox" class="hidden"></div>
                 </div>
 
@@ -556,9 +610,7 @@
                 <button onclick="closeArchiveDetailModal()" style="background: none; border: none; font-size: 20px; color: #94A3B8; cursor: pointer; flex-shrink: 0;">&times;</button>
             </div>
             
-            <div id="archiveModalBody" style="flex: 1; overflow-y: auto; padding-right: 4px; margin-bottom: 12px;">
-                <!-- 리포트 본문 출력 -->
-            </div>
+            <div id="archiveModalBody" style="flex: 1; overflow-y: auto; padding-right: 4px; margin-bottom: 12px;"></div>
 
             <button onclick="closeArchiveDetailModal()" style="width: 100%; background: #2D6A4F; color: white; border: none; font-size: 13px; font-weight: 900; padding: 12px; border-radius: 12px; cursor: pointer; flex-shrink: 0;">
                 확인 및 닫기
@@ -575,7 +627,6 @@
         let dailyTarotDrawn = false;
         let drawnTarotCards = {};
 
-        // 안전한 배열 파싱 함수
         function getUnlockedReports() {
             try {
                 let raw = localStorage.getItem('unlocked_reports');
@@ -592,11 +643,17 @@
 
         const TAROT_IMAGES = {
             "0. THE FOOL (바보)": "https://upload.wikimedia.org/wikipedia/commons/9/90/RWS_Tarot_00_Fool.jpg",
-            "I. THE MAGICIAN (마법사)": "https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg"
+            "I. THE MAGICIAN (마법사)": "https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg",
+            "II. THE HIGH PRIESTESS (여사제)": "https://upload.wikimedia.org/wikipedia/commons/8/88/RWS_Tarot_02_High_Priestess.jpg",
+            "III. THE EMPRESS (여황제)": "https://upload.wikimedia.org/wikipedia/commons/d/d2/RWS_Tarot_03_Empress.jpg",
+            "IV. THE EMPEROR (황제)": "https://upload.wikimedia.org/wikipedia/commons/c/c3/RWS_Tarot_04_Emperor.jpg",
+            "VI. THE LOVERS (연인)": "https://upload.wikimedia.org/wikipedia/commons/3/3a/TheLovers.jpg",
+            "X. WHEEL OF FORTUNE (운명의 수레바퀴)": "https://upload.wikimedia.org/wikipedia/commons/3/3c/RWS_Tarot_10_Wheel_of_Fortune.jpg",
+            "XIX. THE SUN (태양)": "https://upload.wikimedia.org/wikipedia/commons/1/17/RWS_Tarot_19_Sun.jpg"
         };
 
         function renderDistinctTalisman(title) {
-            return `<svg viewBox="0 0 100 100" style="width: 100%; height: 100%;"><circle cx="50" cy="50" r="44" stroke="#DC2626" stroke-width="4" fill="#FEF2F2" /><rect x="34" y="34" width="32" height="32" stroke="#DC2626" stroke-width="3" fill="#FEE2E2" /><circle cx="50" cy="18" r="8" stroke="#DC2626" stroke-width="2.5" fill="none" /><circle cx="50" cy="82" r="8" stroke="#DC2626" stroke-width="2.5" fill="none" /><text x="50" y="56" font-weight="900" font-size="14" fill="#991B1B" text-anchor="middle">萬福</text></svg>`;
+            return `<svg viewBox="0 0 100 100" style="width: 100%; height: 100%;"><circle cx="50" cy="50" r="44" stroke="#DC2626" stroke-width="4" fill="#FEF2F2" /><rect x="34" y="34" width="32" height="32" stroke="#DC2626" stroke-width="3" fill="#FEE2E2" /><circle cx="50" cy="18" r="8" stroke="#DC2626" stroke-width="2.5" fill="none" /><circle cx="50" cy="82" r="8" stroke="#DC2626" stroke-width="2.5" fill="none" /><circle cx="18" cy="50" r="8" stroke="#DC2626" stroke-width="2.5" fill="none" /><circle cx="82" cy="50" r="8" stroke="#DC2626" stroke-width="2.5" fill="none" /><text x="50" y="56" font-weight="900" font-size="14" fill="#991B1B" text-anchor="middle">萬福</text></svg>`;
         }
 
         function setCalType(type) {
@@ -742,16 +799,29 @@
             const imgUrl = TAROT_IMAGES[card.name] || TAROT_IMAGES["0. THE FOOL (바보)"];
             const resBox = document.getElementById('tarotResultBox');
             resBox.innerHTML = `
-                <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 16px; padding: 14px; margin-top: 10px; font-size: 12px; text-align: left;">
-                    <div style="display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #E2E8F0; padding-bottom: 6px; margin-bottom: 6px;">
-                        <img src="${imgUrl}" style="width: 40px; height: 60px; object-fit: cover; border-radius: 6px;">
+                <div style="background: #F8FAFC; border: 1.5px solid #E2E8F0; border-radius: 18px; padding: 16px; margin-top: 12px; font-size: 12px; text-align: left; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+                    <div style="display: flex; align-items: center; gap: 12px; border-bottom: 1px solid #E2E8F0; padding-bottom: 10px;">
+                        <img src="${imgUrl}" style="width: 44px; height: 68px; object-fit: cover; border-radius: 6px; border: 1px solid #FCD34D; flex-shrink: 0;">
                         <div>
-                            <h4 style="font-weight: 900; font-size: 12px;">${card.name}</h4>
-                            <p style="color: #92400E; font-weight: 700; font-size: 11px;">${card.keyword}</p>
+                            <h4 style="font-weight: 900; font-size: 13px; color: #0F172A;">${card.name}</h4>
+                            <p style="color: #B45309; font-weight: 700; font-size: 11px; margin-top: 2px;">${card.keyword}</p>
                         </div>
                     </div>
-                    <p style="color: #475569; font-size: 11px; line-height: 1.5;">${card.overview}</p>
-                    <p style="color: #2D6A4F; font-weight: 700; font-size: 11px; margin-top: 4px;">💡 ${card.action}</p>
+                    <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px; padding: 10px;">
+                        <p style="font-weight: 800; color: #1E293B; font-size: 11px; margin-bottom: 2px;">🔍 카드 기본 상징</p>
+                        <p style="color: #64748B; font-size: 11px; line-height: 1.5;">${card.symbolism}</p>
+                    </div>
+                    <div style="background: #FEF3C7; border: 1px solid #FCD34D; border-radius: 12px; padding: 10px;">
+                        <p style="font-weight: 800; color: #78350F; font-size: 11px; margin-bottom: 2px;">🌟 오늘의 운세 심층 리딩</p>
+                        <p style="color: #92400E; font-size: 11px; line-height: 1.6;">${card.fortune_reading}</p>
+                    </div>
+                    <div style="font-size: 11px; line-height: 1.5; color: #334155; padding: 0 2px;">
+                        <p style="font-weight: 700; color: #0F172A; margin-bottom: 2px;">💡 실전 처세 조언:</p>
+                        <p>${card.advice}</p>
+                    </div>
+                    <div style="background: #ECFDF5; border: 1px solid #A7F3D0; border-radius: 12px; padding: 8px 10px; font-size: 11px; color: #065F46; font-weight: 700;">
+                        ✨ 개운 액션: ${card.action_tip}
+                    </div>
                 </div>
             `;
             resBox.classList.remove('hidden');
@@ -774,7 +844,7 @@
                 document.getElementById('daewoonBox').classList.remove('hidden');
                 document.getElementById('btnDaewoon').classList.add('hidden');
                 saveUnlockedReport('daewoon', data.title, data.content);
-                alert('🎉 [자미두수 & 10년 대운 리포트] 열람 완료!\n[마이페이지 > 보관함]에 성공적으로 보관되었습니다.');
+                alert('🎉 [자미두수 & 10년 대운 리포트] 열람 완료!\n[마이페이지 > 보관함]에 보관되었습니다.');
             });
         }
 
@@ -830,7 +900,7 @@
             
             saveUnlockedReport(currentThemeKey, data.title, data.content);
             closeThemeSelectModal();
-            alert(`🎉 [${data.title}] 열람 완료!\n[마이페이지 > 보관함]에 성공적으로 보관되었습니다.`);
+            alert(`🎉 [${data.title}] 열람 완료!\n[마이페이지 > 보관함]에 보관되었습니다.`);
         }
 
         function saveUnlockedReport(key, title, content) {
