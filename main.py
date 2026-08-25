@@ -6,7 +6,7 @@ from typing import Optional
 import os
 import random
 
-app = FastAPI(title="운세의 신 PRO API", version="8.0.0")
+app = FastAPI(title="운세의 신 PRO API - 정밀 명리 엔진", version="9.0.0")
 
 CHEONGAN_HANJA = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
 JIJI_HANJA = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"]
@@ -88,10 +88,10 @@ TALISMAN_OHEANG_MAP = {
     "water": {"type": "water", "title": "천생화합부 (萬事和合符)", "power": "인연 결속 · 애정 화합 · 인간관계 개선", "desc": "사주에 부족한 水(지혜와 융합)의 부드러운 유대감을 채워 엇갈린 인연을 묶어주고 귀인의 조력을 이끌어내는 화합 비급 부적입니다."}
 }
 
-# 22장 메이저 타로 덱 완성본
+# 22장 메이저 타로 덱 전체
 TAROT_CARDS = [
     {"name": "0. THE FOOL (바보)", "keyword": "새로운 시작 · 순수한 열정 · 무한한 잠재력", "symbolism": "절벽 끝에 선 순수한 영혼으로 관습에 얽매이지 않는 새로운 여정의 출발을 상징합니다.", "fortune_reading": "오랫동안 머뭇거리던 일의 시작 단추를 꿰기에 최적의 날입니다. 직관을 따를 때 예상 밖의 통로가 열립니다.", "advice": "새로운 제안에 열린 마음을 가지되 발걸음은 가볍고 시선은 신중히 유지하세요.", "action_tip": "떠오르는 아이디어를 즉시 메모하고 먼저 연락을 건네보세요."},
-    {"name": "I. THE MAGICIAN (마법사)", "keyword": "창조적 역량 · 완벽한 주도권 · 실력 발휘", "symbolism": "머리 위의 무한대(∞) 기호와 제단 위의 4대 원소는 세상의 모든 도구를 통제하는 지혜를 뜻합니다.", "fortune_reading": "지식과 언변, 전문 기술이 빛을 발하는 날입니다. 당당한 태도로 판을 리드하기에 최적입니다.", "advice": "미팅이나 보고에서 주도적으로 의견을 제시하고 실력을 드러내세요.", "action_tip": "중요한 대화에서 본인의 핵심 주장을 명확하게 피력하세요."},
+    {"name": "I. THE MAGICIAN (마법사)", "keyword": "창조적 역량 · 완벽한 주도권 · 실력 발휘", "symbolism": "머리 위의 무한대(∞) 기호와 제단 위의 4대 원소는 모든 도구를 통제하는 지혜를 뜻합니다.", "fortune_reading": "지식과 언변, 전문 기술이 빛을 발하는 날입니다. 당당한 태도로 판을 리드하기에 최적입니다.", "advice": "미팅이나 보고에서 주도적으로 의견을 제시하고 실력을 드러내세요.", "action_tip": "중요한 대화에서 본인의 핵심 주장을 명확하게 피력하세요."},
     {"name": "II. THE HIGH PRIESTESS (여사제)", "keyword": "깊은 통찰 · 직관과 혜안 · 침묵의 지혜", "symbolism": "흑과 백의 기둥 사이에 앉아 본질적 진실과 영적인 직관을 상징합니다.", "fortune_reading": "겉으로 드러난 말보다 상대방의 숨은 의도나 상황의 이면을 꿰뚫어 보는 혜안이 극대화됩니다.", "advice": "성급하게 반응하기보다는 차분히 경청하고 심사숙고하세요.", "action_tip": "조용한 장소에서 생각을 차분히 정리하는 시간을 가지세요."},
     {"name": "III. THE EMPRESS (여황제)", "keyword": "풍요와 번영 · 따뜻한 포용 · 결실의 기쁨", "symbolism": "풍성한 곡식과 석류 장식은 모성적 사랑과 물질적·정신적 풍요로움을 상징합니다.", "fortune_reading": "그동안 공들여 준비한 일에서 만족스러운 성과와 금전적 보상이 주어지는 날입니다.", "advice": "주변 사람들에게 넉넉한 마음으로 베풀면 더 큰 행운이 돌아옵니다.", "action_tip": "맛있는 식사를 대접하거나 가까운 이에게 감사 인사를 전하세요."},
     {"name": "IV. THE EMPEROR (황제)", "keyword": "확고한 권위 · 강력한 통솔 · 안정된 기반", "symbolism": "단단한 석조 왕좌는 흔들리지 않는 통치력과 엄격한 질서, 조직의 굳건함을 뜻합니다.", "fortune_reading": "자신의 영역에서 주도권을 확립하고 책임감 있게 프로젝트를 완수하기에 좋은 날입니다.", "advice": "원칙과 약속을 철저히 지키며 리더십을 발휘하세요.", "action_tip": "흐트러진 계획을 점검하고 체계적인 규율을 세우세요."},
@@ -133,7 +133,7 @@ def analyze_saju(req: SajuRequest):
     y_jj_idx = year_offset % 12
     y_cg, y_jj = CHEONGAN_HANJA[y_cg_idx], JIJI_HANJA[y_jj_idx]
 
-    # 3. 월주(月柱) (음력/윤달 보정 적용)
+    # 3. 월주(月柱)
     month_adj = req.month
     if req.calendar_type == "lunar":
         month_adj = (req.month + 1)
@@ -155,7 +155,7 @@ def analyze_saju(req: SajuRequest):
 
     d_animal = ANIMAL_MAP.get(d_jj, "개")
 
-    # 5. 만 나이 실시간 계산
+    # 5. 만 나이 실시간 연산
     current_year = datetime.date.today().year
     current_age = current_year - req.year + 1
 
@@ -182,7 +182,7 @@ def analyze_saju(req: SajuRequest):
         }
     }
 
-    # 6. 오행 가중치 점수 및 백분율 연산
+    # 6. 오행 가중치 점수 연산
     scores = {"wood": 0.0, "fire": 0.0, "earth": 0.0, "metal": 0.0, "water": 0.0}
     for cg in [y_cg, m_cg, d_cg]:
         scores[CHEONGAN_ELEMENTS[cg]] += 25.0
@@ -203,12 +203,21 @@ def analyze_saju(req: SajuRequest):
         k: round((v / total_score) * 100, 1) for k, v in scores.items()
     }
 
-    # 7. 사주 결핍 오행 도출 및 큐레이션 매핑
+    # 7. 사주 정밀 [신강 vs 신약] 판정 엔진
+    day_elem = CHEONGAN_ELEMENTS[d_cg]
+    support_score = scores.get(day_elem, 0)
+    # 인성(나를 생해주는 오행) 추가 점수
+    insoeng_map = {"wood": "water", "fire": "wood", "earth": "fire", "metal": "earth", "water": "metal"}
+    support_score += scores.get(insoeng_map.get(day_elem, ""), 0)
+    
+    singang_status = "신약(身弱)" if support_score < 45 else ("신강(身强)" if support_score > 65 else "중화(中和)")
+
+    # 8. 사주 결핍 오행 도출 및 큐레이션 매핑
     min_elem = min(elem_percentages, key=elem_percentages.get)
     curation_data = OHEANG_CURATION_MAP.get(min_elem, OHEANG_CURATION_MAP["metal"])
     user_talisman = TALISMAN_OHEANG_MAP.get(min_elem, TALISMAN_OHEANG_MAP["metal"])
 
-    # 8. 일간별 맞춤형 당일 운세 감명
+    # 9. 일간별 맞춤형 당일 운세 감명
     fortune_titles = {
         "甲": "우람한 거목처럼 굳은 신념으로 판을 주도하는 대길(大吉)의 하루",
         "乙": "봄바람에 피어난 꽃처럼 유연한 매력으로 귀인을 끌어당기는 하루",
@@ -230,6 +239,7 @@ def analyze_saju(req: SajuRequest):
     return {
         "user_name": req.name,
         "current_age": current_age,
+        "singang_status": singang_status,
         "saju_data": {
             "year_pillar": f"{y_cg}{y_jj}",
             "month_pillar": f"{m_cg}{m_jj}",
@@ -256,13 +266,12 @@ def analyze_saju(req: SajuRequest):
         }
     }
 
-# 타로 랜덤 추첨 엔드포인트
+# 타로 완전 난수 추첨 엔드포인트
 @app.get("/api/daily-tarot")
 def get_daily_tarot(slot: int = 1, rand_seed: Optional[str] = None):
-    # 슬롯 번호와 시간 시드를 조합하여 매번 고유한 타로 카드 반환
-    seed_val = int(rand_seed or str(datetime.datetime.now().microsecond))
-    idx = (seed_val + slot * 7) % len(TAROT_CARDS)
-    return TAROT_CARDS[idx]
+    # 매 호출 시 무작위 난수 기반 타로 카드 반환
+    random_idx = random.randint(0, len(TAROT_CARDS) - 1)
+    return TAROT_CARDS[random_idx]
 
 @app.post("/api/daewoon-report")
 def get_daewoon_report(req: dict):
