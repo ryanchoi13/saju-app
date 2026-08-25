@@ -59,7 +59,6 @@
         .card-back { background: #162447; border: 3px solid #FFFFFF; box-shadow: 0 4px 8px rgba(0,0,0,0.18); overflow: hidden; }
         .card-front { transform: rotateY(180deg); background: white; overflow: hidden; border: 2px solid #D4AF37; }
 
-        /* 전통 경면주사 부적 카드 배너 */
         .talisman-banner { background: linear-gradient(135deg, #FFFDF5 0%, #FFFBEB 100%); border: 2px solid #FCD34D; border-radius: 24px; padding: 20px; text-align: center; display: flex; flex-direction: column; gap: 14px; }
         .talisman-art { height: 130px; background: rgba(254,243,199,0.5); border-radius: 16px; border: 1px solid rgba(253,230,138,0.8); display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
 
@@ -358,44 +357,45 @@
                     </div>
                 </div>
 
-                <!-- 자미두수 & 10년 대운 (피드백 반영: 전 구간 완전 연결 생애 그래프 & 정밀 지표) -->
+                <!-- 자미두수 & 10년 대운 (전 구간 20대~70대 완벽 풀스트레치 그래프) -->
                 <div class="card" style="border: 2px solid #FCD34D;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                         <span style="font-size: 13px; font-weight: 900;">👑 자미두수 & 10년 대운 리포트</span>
                         <span style="font-size: 10px; background: #FEF3C7; color: #78350F; padding: 2px 8px; border-radius: 9999px; font-weight: 900;">450 복채</span>
                     </div>
 
-                    <!-- 10년 생애 그래프 (수정: 전 구간 20대~70대 연결 및 상하 점선/나이 지표) -->
-                    <div style="background: #F8FAFC; border-radius: 18px; border: 1px solid #E2E8F0; padding: 14px 12px; margin-bottom: 14px; text-align: left;">
+                    <!-- 10년 생애 그래프 (풀스트레치 일치 및 현재 49세 접촉) -->
+                    <div style="background: #F8FAFC; border-radius: 18px; border: 1px solid #E2E8F0; padding: 14px 12px 10px; margin-bottom: 14px; text-align: left;">
                         <div style="font-size: 11px; font-weight: 800; color: #475569; margin-bottom: 8px;">📊 10년 생애 그래프</div>
                         
-                        <div style="position: relative; width: 100%; height: 115px;">
-                            <!-- SVG 곡선 (20대 x=20 부터 70대 x=280 까지 자연스럽게 연결) -->
+                        <div style="position: relative; width: 100%; height: 118px;">
+                            <!-- 20대(X=0) 부터 70대(X=300) 까지 완벽하게 가득 찬 풀 곡선 -->
                             <svg viewBox="0 0 300 100" style="width: 100%; height: 85px; overflow: visible;">
                                 <defs>
-                                    <linearGradient id="curveGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                    <linearGradient id="fullCurveGradient" x1="0%" y1="0%" x2="100%" y2="0%">
                                         <stop offset="0%" stop-color="#F59E0B" />
-                                        <stop offset="50%" stop-color="#D97706" />
+                                        <stop offset="45%" stop-color="#DC2626" />
+                                        <stop offset="70%" stop-color="#D97706" />
                                         <stop offset="100%" stop-color="#059669" />
                                     </linearGradient>
                                 </defs>
 
-                                <!-- 20대(x=20,y=75) -> 30대(x=72,y=58) -> 40대(x=124,y=30) -> 50대(x=176,y=48) -> 60대(x=228,y=22) -> 70대(x=280,y=38) -->
-                                <path d="M 20,75 C 45,72 55,60 72,58 C 95,55 108,30 124,30 C 145,30 158,50 176,48 C 198,46 210,20 228,22 C 248,24 265,36 280,38" 
-                                      fill="none" stroke="url(#curveGradient)" stroke-width="3.5" stroke-linecap="round" />
+                                <!-- 20대(0,78) -> 30대(60,60) -> 40대(130,28) -> 50대(190,52) -> 60대(245,24) -> 70대(300,38) -->
+                                <path d="M 0,78 C 30,75 45,62 60,60 C 85,57 105,28 130,28 C 155,28 170,54 190,52 C 215,50 230,22 245,24 C 265,26 280,36 300,38" 
+                                      fill="none" stroke="url(#fullCurveGradient)" stroke-width="3.6" stroke-linecap="round" />
 
-                                <!-- 상하 수직 가이드 점선 (현재 49세 위치 x=124 밀착) -->
-                                <line x1="124" y1="6" x2="124" y2="88" stroke="#94A3B8" stroke-width="1.2" stroke-dasharray="2.5 2.5" />
+                                <!-- 상하 수직 가이드 점선 (현재 49세 X=130 밀착) -->
+                                <line x1="130" y1="6" x2="130" y2="88" stroke="#94A3B8" stroke-width="1.2" stroke-dasharray="2.5 2.5" />
 
-                                <!-- 상단 위치 안내 라벨 -->
-                                <rect x="54" y="-2" width="140" height="15" rx="4" fill="#FEF2F2" stroke="#FECDD3" stroke-width="0.8"/>
-                                <text x="124" y="9" font-size="8.5" font-weight="900" fill="#DC2626" text-anchor="middle">📍 최정오 님의 현재 위치 (황금 결실기)</text>
+                                <!-- 상단 위치 안내 뱃지 -->
+                                <rect x="60" y="-2" width="140" height="15" rx="4" fill="#FEF2F2" stroke="#FECDD3" stroke-width="0.8"/>
+                                <text x="130" y="9" font-size="8.5" font-weight="900" fill="#DC2626" text-anchor="middle">📍 최정오 님의 현재 위치 (황금 결실기)</text>
 
-                                <!-- 곡선과 완벽히 접촉하는 현재 나이 빨간점 -->
-                                <circle cx="124" cy="30" r="5" fill="#EF4444" stroke="#FFFFFF" stroke-width="2" />
+                                <!-- 곡선과 완벽히 접촉하는 현재 49세 빨간점 (cx=130, cy=28) -->
+                                <circle cx="130" cy="28" r="5" fill="#EF4444" stroke="#FFFFFF" stroke-width="2" />
                             </svg>
 
-                            <!-- 하단 연령대 및 나이 표기 라벨 (수직 가이드선과 1:1 일치) -->
+                            <!-- 하단 6개 연령대 라벨 -->
                             <div style="display: grid; grid-template-columns: repeat(6, 1fr); text-align: center; font-size: 9px; color: #94A3B8; font-weight: 700; border-top: 1px solid #E2E8F0; padding-top: 6px; margin-top: -2px;">
                                 <span>20대</span>
                                 <span>30대</span>
@@ -493,7 +493,7 @@
                     <div id="unlockedArchiveList" style="display: flex; flex-direction: column; gap: 10px;">
                         <div style="text-align: center; padding: 20px 0; color: #94A3B8; font-size: 11px;">
                             <p style="font-size: 24px; margin-bottom: 4px;">📂</p>
-                            <p>아직 구매한 심층 리포트가 없습니다.</p>
+                            <p style="font-weight: 700; color: #64748B;">아직 구매한 심층 리포트가 없습니다.</p>
                             <p style="font-size: 10px; color: #CBD5E1; margin-top: 2px;">정통사주 및 테마운세에서 열람한 리포트가 이곳에 평생 보관됩니다.</p>
                         </div>
                     </div>
@@ -974,7 +974,7 @@
                 document.getElementById('daewoonBox').classList.remove('hidden');
                 document.getElementById('btnDaewoon').classList.add('hidden');
                 saveUnlockedReport('daewoon', data.title, data.content);
-                alert('🎉 [자미두수 & 10년 대운 리포트] 열람 완료!\n[마이페이지 > 보관함]에 보관되었습니다.');
+                alert('🎉 [자미두수 & 10년 대운 리포트] 열람 완료!\n[마이페이지 > 보관함]에 최신 심층 버전으로 보관되었습니다.');
             });
         }
 
@@ -1060,9 +1060,19 @@
                     const box = document.getElementById('daewoonBox');
                     const btn = document.getElementById('btnDaewoon');
                     if (box && btn) {
-                        box.innerHTML = item.content;
-                        box.classList.remove('hidden');
-                        btn.classList.add('hidden');
+                        // 최신 버전 업데이트를 위해 API 재호출 후 갱신
+                        fetch('/api/daewoon-report', {
+                            method: 'POST',
+                            headers: {'Content-Type': 'application/json'},
+                            body: JSON.stringify({ name: currentUserName })
+                        })
+                        .then(r => r.json())
+                        .then(data => {
+                            box.innerHTML = data.content;
+                            box.classList.remove('hidden');
+                            btn.classList.add('hidden');
+                            saveUnlockedReport('daewoon', data.title, data.content);
+                        });
                     }
                 } else if (['wealth', 'love', 'business', 'health'].includes(item.key)) {
                     const box = document.getElementById(`themeReport_${item.key}`);
