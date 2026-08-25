@@ -6,7 +6,7 @@ from typing import Optional
 import os
 import random
 
-app = FastAPI(title="운세의 신 PRO API", version="12.0.0")
+app = FastAPI(title="운세의 신 PRO API", version="12.1.0")
 
 CHEONGAN_HANJA = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
 JIJI_HANJA = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"]
@@ -88,7 +88,14 @@ TALISMAN_OHEANG_MAP = {
     "water": {"type": "water", "title": "천생화합부 (萬事和合符)", "power": "인연 결속 · 애정 화합 · 인간관계 개선", "desc": "사주에 부족한 水(지혜와 융합)의 부드러운 유대감을 채워 엇갈린 인연을 묶어주고 귀인의 조력을 이끌어내는 화합 비급 부적입니다."}
 }
 
-# 22장 메이저 타로 덱 완전 풀세트
+TALISMAN_DATABASE = {
+    "wealth_1": {"type": "wealth", "pattern": "vault", "title": "암장금고부 (暗藏金庫符)", "power": "자산 방어 · 헛돈 누수 완벽 차단", "desc": "사주 원국의 금고를 단단히 잠그고 새어나가는 헛돈과 지출을 철통같이 방어하는 재물 수호 부적입니다."},
+    "wealth_2": {"type": "wealth", "pattern": "coin", "title": "만복대길부 (萬福大吉符)", "power": "횡재수 · 사방 금전 대통", "desc": "사방에서 금전과 복록이 샘솟듯 모여들고 뜻밖의 목돈과 횡재수를 소환하는 전통 경면주사 부적입니다."},
+    "business_1": {"type": "business", "pattern": "expand", "title": "사업형통부 (事業亨通符)", "power": "사업 활로 개척 · 판로 확장", "desc": "막혔던 프로젝트의 활로를 시원하게 뚫고 사업 규모를 거침없이 확장시키는 대표 사업 부적입니다."},
+    "love_1": {"type": "love", "pattern": "union", "title": "천생화합부 (天生和合符)", "power": "천생연분 결속 · 깊은 신뢰", "desc": "두 사람의 기운을 완벽하게 묶어 평생 서로를 존중하고 아끼는 백년가약의 인연을 맺어주는 화합 부적입니다."},
+    "health_1": {"type": "health", "pattern": "longevity", "title": "무병장수부 (無病長壽符)", "power": "100세 건강 · 면역력 증진", "desc": "체내의 탁한 음기를 몰아내고 오장육부의 활력을 극대화하여 평생 무병장수를 누리게 하는 장수 부적입니다."}
+}
+
 TAROT_CARDS = [
     {"name": "0. THE FOOL (바보)", "keyword": "새로운 시작 · 순수한 열정 · 무한한 잠재력", "symbolism": "절벽 끝에 선 순수한 영혼으로 관습에 얽매이지 않는 새로운 여정의 출발을 상징합니다.", "fortune_reading": "오랫동안 머뭇거리던 일의 시작 단추를 꿰기에 최적의 날입니다. 직관을 따를 때 예상 밖의 통로가 열립니다.", "advice": "새로운 제안에 열린 마음을 가지되 발걸음은 가볍고 시선은 신중히 유지하세요.", "action_tip": "떠오르는 아이디어를 즉시 메모하고 먼저 연락을 건네보세요."},
     {"name": "I. THE MAGICIAN (마법사)", "keyword": "창조적 역량 · 완벽한 주도권 · 실력 발휘", "symbolism": "머리 위의 무한대(∞) 기호와 제단 위의 4대 원소는 모든 도구를 통제하는 지혜를 뜻합니다.", "fortune_reading": "지식과 언변, 전문 기술이 빛을 발하는 날입니다. 당당한 태도로 판을 리드하기에 최적입니다.", "advice": "미팅이나 보고에서 주도적으로 의견을 제시하고 실력을 드러내세요.", "action_tip": "중요한 대화에서 본인의 핵심 주장을 명확하게 피력하세요."},
@@ -343,7 +350,6 @@ def analyze_saju(req: SajuRequest):
         }
     }
 
-# 22장 메이저 아르카나 전체 무작위 추첨
 @app.get("/api/daily-tarot")
 def get_daily_tarot(slot: int = 1, rand_seed: Optional[str] = None):
     random_idx = random.randint(0, len(TAROT_CARDS) - 1)
@@ -357,6 +363,7 @@ def get_daewoon_report(req: dict):
     start_age = age_decade + 3
     end_age = start_age + 9
 
+    # 문구 개선: '현재 대운' 대신 '이번 10년 대운 기간(XX세~XX세) 동안은...'으로 명확화!
     return {
         "title": "👑 자미두수 & 10년 대운",
         "content": f"""
@@ -402,7 +409,7 @@ def get_daewoon_report(req: dict):
             <div style="margin-top: 6px; border-top: 1px dashed rgba(217,119,6,0.4); padding-top: 8px;">
                 <p style="font-weight: 700; color: #78350F; font-size: 13px; margin-bottom: 2px;">🔥 [10년 대운 맞춤 개운(開運) 실천 팁]</p>
                 <p style="color: #92400E; font-size: 12px; line-height: 1.65;">
-                    현재 대운은 귀인의 도우심이 강한 시기이므로, 혼자 모든 짐을 짊어지려 하지 말고 주변 전문가나 협력 파트너에게 적극적으로 조언을 구하고 문서를 명확히 작성할 때 재물과 명예가 더욱 공고해집니다.
+                    이번 10년 대운 기간({start_age}세~{end_age}세) 동안은 귀인의 도우심이 강하게 작용하는 시기이므로, 혼자 모든 짐을 짊어지려 하지 말고 주변 전문가나 협력 파트너에게 적극적으로 조언을 구하고 문서를 명확히 작성할 때 재물과 명예가 더욱 공고해집니다.
                 </p>
             </div>
         </div>
