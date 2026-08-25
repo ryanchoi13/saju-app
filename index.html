@@ -6,7 +6,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <title>운세의 신 PRO</title>
     
-    <link href="[https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800;900&display=swap](https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800;900&display=swap)" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Pretendard', sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background-color: #F4F7F4; color: #1E293B; display: flex; justify-content: center; min-height: 100vh; }
@@ -34,8 +34,8 @@
         .btn-primary { width: 100%; background: #2D6A4F; color: white; border: none; font-size: 13px; font-weight: 900; padding: 14px; border-radius: 16px; cursor: pointer; box-shadow: 0 4px 6px -1px rgba(45,106,79,0.2); margin-top: 8px; }
 
         /* 오행 고유 컬러 뱃지 규격 */
-        .badge-elem { width: 40px; height: 40px; border-radius: 12px; display: inline-flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 900; box-shadow: 0 2px 4px rgba(0,0,0,0.04); }
-        .badge-jjg { width: 32px; height: 24px; border-radius: 6px; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; }
+        .badge-elem { width: 38px; height: 38px; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; font-size: 17px; font-weight: 900; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+        .badge-jjg { width: 30px; height: 22px; border-radius: 6px; display: inline-flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; }
         
         .elem-wood { background: #ECFDF5; color: #047857; border: 1.5px solid #A7F3D0; }
         .elem-fire { background: #FEF2F2; color: #DC2626; border: 1.5px solid #FECDD3; }
@@ -246,144 +246,128 @@
 
             </div>
 
-            <!-- 탭 2: 정통사주 (피드백 반영: 시/일/월/년 수직 수평 정렬 명식표) -->
+            <!-- 탭 2: 정통사주 (피드백 반영: 좌측 행 라벨 + 세로 바 차트) -->
             <div id="view-saju" class="tab-view hidden">
                 
                 <div class="card" style="padding: 18px;">
                     <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 10px; margin-bottom: 14px;">
-                        <div>
-                            <h3 style="font-size: 14px; font-weight: 900; color: #0F172A;">사주 명식표 (四柱命式)</h3>
-                            <p style="font-size: 10px; color: #94A3B8; margin-top: 1px;">오행 고유 기운 배색 및 수직 중앙정렬 명식</p>
-                        </div>
+                        <h3 style="font-size: 14px; font-weight: 900; color: #0F172A;">사주 명식표 (四柱命式)</h3>
                         <span id="sajuOwnerName" style="font-size: 12px; color: #2D6A4F; font-weight: 800; background: #EBF5EE; padding: 3px 8px; border-radius: 8px;">최정오 님</span>
                     </div>
 
-                    <!-- 4기둥 수직 중앙정렬 카드리드 (시주 | 일주 | 월주 | 년주) -->
-                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;">
+                    <!-- 명식 그리드 (좌측 구분 라벨 1열 + 4개 기둥 열) -->
+                    <div style="display: grid; grid-template-columns: 56px 1fr 1fr 1fr 1fr; gap: 6px; align-items: stretch; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 18px; padding: 12px 8px;">
                         
-                        <!-- 시주 (時) -->
-                        <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 16px; padding: 12px 4px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center;">
-                            <span style="font-size: 11px; font-weight: 800; color: #64748B;">시주 (時)</span>
+                        <!-- 1. 좌측 구분 라벨 열 -->
+                        <div style="display: flex; flex-direction: column; justify-content: space-between; gap: 8px; text-align: center;">
+                            <div style="font-size: 11px; font-weight: 800; color: #64748B; height: 18px; line-height: 18px;">구분</div>
+                            <div style="height: 38px; display: flex; align-items: center; justify-content: center; background: #EDE9FE; color: #6D28D9; font-size: 10px; font-weight: 900; border-radius: 8px;">천간<br>(天干)</div>
+                            <div style="height: 38px; display: flex; align-items: center; justify-content: center; background: #FEF3C7; color: #B45309; font-size: 10px; font-weight: 900; border-radius: 8px;">지간<br>(地干)</div>
+                            <div style="min-height: 74px; display: flex; align-items: center; justify-content: center; background: #F1F5F9; color: #475569; font-size: 10px; font-weight: 900; border-radius: 8px; border-top: 1px dashed #CBD5E1; padding-top: 4px;">지장간<br>(地藏干)</div>
+                        </div>
+
+                        <!-- 2. 시주 (時) -->
+                        <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 14px; padding: 8px 4px; display: flex; flex-direction: column; justify-content: space-between; align-items: center; gap: 8px; text-align: center;">
+                            <span style="font-size: 11px; font-weight: 800; color: #64748B; height: 18px; line-height: 18px;">시주 (時)</span>
                             <div id="cg_h_badge" class="badge-elem elem-none">-</div>
                             <div id="jj_h_badge" class="badge-elem elem-none">-</div>
-                            <div style="border-top: 1px dashed #CBD5E1; width: 100%; margin-top: 2px; padding-top: 6px;">
-                                <span style="font-size: 9px; font-weight: 700; color: #94A3B8; display: block; margin-bottom: 4px;">지장간</span>
+                            <div style="border-top: 1px dashed #CBD5E1; width: 100%; padding-top: 6px; min-height: 74px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 3px;">
                                 <div id="jjg_h_box" style="display: flex; flex-direction: column; align-items: center; gap: 3px;">-</div>
                             </div>
                         </div>
 
-                        <!-- 일주 (日) - 사주 중심선 강조 -->
-                        <div style="background: #F0FDF4; border: 1.5px solid #86EFAC; border-radius: 16px; padding: 12px 4px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center;">
-                            <span style="font-size: 11px; font-weight: 800; color: #166534;">일주 (日)</span>
+                        <!-- 3. 일주 (日) - 본원 강조 테두리 -->
+                        <div style="background: #F0FDF4; border: 1.5px solid #86EFAC; border-radius: 14px; padding: 8px 4px; display: flex; flex-direction: column; justify-content: space-between; align-items: center; gap: 8px; text-align: center;">
+                            <span style="font-size: 11px; font-weight: 800; color: #166534; height: 18px; line-height: 18px;">일주 (日)</span>
                             <div id="cg_d_badge" class="badge-elem elem-none">-</div>
                             <div id="jj_d_badge" class="badge-elem elem-none">-</div>
-                            <div style="border-top: 1px dashed #A7F3D0; width: 100%; margin-top: 2px; padding-top: 6px;">
-                                <span style="font-size: 9px; font-weight: 700; color: #15803D; display: block; margin-bottom: 4px;">지장간</span>
+                            <div style="border-top: 1px dashed #A7F3D0; width: 100%; padding-top: 6px; min-height: 74px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 3px;">
                                 <div id="jjg_d_box" style="display: flex; flex-direction: column; align-items: center; gap: 3px;">-</div>
                             </div>
                         </div>
 
-                        <!-- 월주 (月) -->
-                        <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 16px; padding: 12px 4px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center;">
-                            <span style="font-size: 11px; font-weight: 800; color: #64748B;">월주 (月)</span>
+                        <!-- 4. 월주 (月) -->
+                        <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 14px; padding: 8px 4px; display: flex; flex-direction: column; justify-content: space-between; align-items: center; gap: 8px; text-align: center;">
+                            <span style="font-size: 11px; font-weight: 800; color: #64748B; height: 18px; line-height: 18px;">월주 (月)</span>
                             <div id="cg_m_badge" class="badge-elem elem-none">-</div>
                             <div id="jj_m_badge" class="badge-elem elem-none">-</div>
-                            <div style="border-top: 1px dashed #CBD5E1; width: 100%; margin-top: 2px; padding-top: 6px;">
-                                <span style="font-size: 9px; font-weight: 700; color: #94A3B8; display: block; margin-bottom: 4px;">지장간</span>
+                            <div style="border-top: 1px dashed #CBD5E1; width: 100%; padding-top: 6px; min-height: 74px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 3px;">
                                 <div id="jjg_m_box" style="display: flex; flex-direction: column; align-items: center; gap: 3px;">-</div>
                             </div>
                         </div>
 
-                        <!-- 년주 (年) -->
-                        <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 16px; padding: 12px 4px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center;">
-                            <span style="font-size: 11px; font-weight: 800; color: #64748B;">년주 (年)</span>
+                        <!-- 5. 년주 (年) -->
+                        <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 14px; padding: 8px 4px; display: flex; flex-direction: column; justify-content: space-between; align-items: center; gap: 8px; text-align: center;">
+                            <span style="font-size: 11px; font-weight: 800; color: #64748B; height: 18px; line-height: 18px;">년주 (年)</span>
                             <div id="cg_y_badge" class="badge-elem elem-none">-</div>
                             <div id="jj_y_badge" class="badge-elem elem-none">-</div>
-                            <div style="border-top: 1px dashed #CBD5E1; width: 100%; margin-top: 2px; padding-top: 6px;">
-                                <span style="font-size: 9px; font-weight: 700; color: #94A3B8; display: block; margin-bottom: 4px;">지장간</span>
+                            <div style="border-top: 1px dashed #CBD5E1; width: 100%; padding-top: 6px; min-height: 74px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 3px;">
                                 <div id="jjg_y_box" style="display: flex; flex-direction: column; align-items: center; gap: 3px;">-</div>
                             </div>
                         </div>
 
                     </div>
 
-                    <!-- 오행(五行) 에너지 막대그래프 -->
-                    <div style="margin-top: 20px; text-align: left;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <!-- 오행(五行) 세로 막대 그래프 (Vertical Bar Chart) -->
+                    <div style="margin-top: 18px; text-align: left;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                             <span style="font-size: 12px; font-weight: 800; color: #0F172A;">오행(五行) 실질 에너지 세력 분포</span>
                             <span style="font-size: 10px; color: #64748B;">지장간 포함 100%</span>
                         </div>
 
-                        <div style="display: flex; flex-direction: column; gap: 8px;">
-                            <!-- 木 -->
-                            <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 8px 12px;">
-                                <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; margin-bottom: 4px;">
-                                    <span style="font-weight: 800; color: #047857; display: flex; align-items: center; gap: 4px;">
-                                        <span style="width: 8px; height: 8px; border-radius: 50%; background: #10B981; display: inline-block;"></span>
-                                        木 (나무/성장)
-                                    </span>
-                                    <span id="valWood" style="font-weight: 900; color: #047857;">0%</span>
+                        <!-- 세로 5개 컬럼 차트 컨테이너 -->
+                        <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 18px; padding: 14px 10px 10px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; text-align: center;">
+                            
+                            <!-- 1. 木 (나무) -->
+                            <div style="display: flex; flex-direction: column; align-items: center; gap: 6px;">
+                                <span id="valWood" style="font-size: 11px; font-weight: 900; color: #047857; min-height: 16px;">0%</span>
+                                <div style="width: 28px; height: 100px; background: #E2E8F0; border-radius: 14px; position: relative; overflow: hidden; display: flex; align-items: flex-end;">
+                                    <div id="barWood" style="width: 100%; height: 0%; background: linear-gradient(180deg, #34D399 0%, #10B981 100%); border-radius: 14px; transition: height 0.6s ease;"></div>
                                 </div>
-                                <div style="background: #E2E8F0; height: 8px; border-radius: 9999px; overflow: hidden;">
-                                    <div id="barWood" style="background: #10B981; height: 100%; border-radius: 9999px; width: 0%; transition: width 0.6s ease;"></div>
-                                </div>
+                                <span style="font-size: 11px; font-weight: 800; color: #047857;">木</span>
+                                <span style="font-size: 9px; color: #94A3B8; margin-top: -4px;">나무</span>
                             </div>
 
-                            <!-- 火 -->
-                            <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 8px 12px;">
-                                <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; margin-bottom: 4px;">
-                                    <span style="font-weight: 800; color: #DC2626; display: flex; align-items: center; gap: 4px;">
-                                        <span style="width: 8px; height: 8px; border-radius: 50%; background: #EF4444; display: inline-block;"></span>
-                                        火 (불/열정)
-                                    </span>
-                                    <span id="valFire" style="font-weight: 900; color: #DC2626;">0%</span>
+                            <!-- 2. 火 (불) -->
+                            <div style="display: flex; flex-direction: column; align-items: center; gap: 6px;">
+                                <span id="valFire" style="font-size: 11px; font-weight: 900; color: #DC2626; min-height: 16px;">0%</span>
+                                <div style="width: 28px; height: 100px; background: #E2E8F0; border-radius: 14px; position: relative; overflow: hidden; display: flex; align-items: flex-end;">
+                                    <div id="barFire" style="width: 100%; height: 0%; background: linear-gradient(180deg, #F87171 0%, #EF4444 100%); border-radius: 14px; transition: height 0.6s ease;"></div>
                                 </div>
-                                <div style="background: #E2E8F0; height: 8px; border-radius: 9999px; overflow: hidden;">
-                                    <div id="barFire" style="background: #EF4444; height: 100%; border-radius: 9999px; width: 0%; transition: width 0.6s ease;"></div>
-                                </div>
+                                <span style="font-size: 11px; font-weight: 800; color: #DC2626;">火</span>
+                                <span style="font-size: 9px; color: #94A3B8; margin-top: -4px;">불</span>
                             </div>
 
-                            <!-- 土 -->
-                            <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 8px 12px;">
-                                <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; margin-bottom: 4px;">
-                                    <span style="font-weight: 800; color: #D97706; display: flex; align-items: center; gap: 4px;">
-                                        <span style="width: 8px; height: 8px; border-radius: 50%; background: #F59E0B; display: inline-block;"></span>
-                                        土 (흙/포용)
-                                    </span>
-                                    <span id="valEarth" style="font-weight: 900; color: #D97706;">0%</span>
+                            <!-- 3. 土 (흙) -->
+                            <div style="display: flex; flex-direction: column; align-items: center; gap: 6px;">
+                                <span id="valEarth" style="font-size: 11px; font-weight: 900; color: #D97706; min-height: 16px;">0%</span>
+                                <div style="width: 28px; height: 100px; background: #E2E8F0; border-radius: 14px; position: relative; overflow: hidden; display: flex; align-items: flex-end;">
+                                    <div id="barEarth" style="width: 100%; height: 0%; background: linear-gradient(180deg, #FBBF24 0%, #F59E0B 100%); border-radius: 14px; transition: height 0.6s ease;"></div>
                                 </div>
-                                <div style="background: #E2E8F0; height: 8px; border-radius: 9999px; overflow: hidden;">
-                                    <div id="barEarth" style="background: #F59E0B; height: 100%; border-radius: 9999px; width: 0%; transition: width 0.6s ease;"></div>
-                                </div>
+                                <span style="font-size: 11px; font-weight: 800; color: #D97706;">土</span>
+                                <span style="font-size: 9px; color: #94A3B8; margin-top: -4px;">흙</span>
                             </div>
 
-                            <!-- 金 -->
-                            <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 8px 12px;">
-                                <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; margin-bottom: 4px;">
-                                    <span style="font-weight: 800; color: #475569; display: flex; align-items: center; gap: 4px;">
-                                        <span style="width: 8px; height: 8px; border-radius: 50%; background: #94A3B8; display: inline-block;"></span>
-                                        金 (쇠/결단)
-                                    </span>
-                                    <span id="valMetal" style="font-weight: 900; color: #475569;">0%</span>
+                            <!-- 4. 金 (쇠) -->
+                            <div style="display: flex; flex-direction: column; align-items: center; gap: 6px;">
+                                <span id="valMetal" style="font-size: 11px; font-weight: 900; color: #475569; min-height: 16px;">0%</span>
+                                <div style="width: 28px; height: 100px; background: #E2E8F0; border-radius: 14px; position: relative; overflow: hidden; display: flex; align-items: flex-end;">
+                                    <div id="barMetal" style="width: 100%; height: 0%; background: linear-gradient(180deg, #CBD5E1 0%, #94A3B8 100%); border-radius: 14px; transition: height 0.6s ease;"></div>
                                 </div>
-                                <div style="background: #E2E8F0; height: 8px; border-radius: 9999px; overflow: hidden;">
-                                    <div id="barMetal" style="background: #94A3B8; height: 100%; border-radius: 9999px; width: 0%; transition: width 0.6s ease;"></div>
-                                </div>
+                                <span style="font-size: 11px; font-weight: 800; color: #475569;">金</span>
+                                <span style="font-size: 9px; color: #94A3B8; margin-top: -4px;">쇠</span>
                             </div>
 
-                            <!-- 水 -->
-                            <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 8px 12px;">
-                                <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; margin-bottom: 4px;">
-                                    <span style="font-weight: 800; color: #2563EB; display: flex; align-items: center; gap: 4px;">
-                                        <span style="width: 8px; height: 8px; border-radius: 50%; background: #3B82F6; display: inline-block;"></span>
-                                        水 (물/지혜)
-                                    </span>
-                                    <span id="valWater" style="font-weight: 900; color: #2563EB;">0%</span>
+                            <!-- 5. 水 (물) -->
+                            <div style="display: flex; flex-direction: column; align-items: center; gap: 6px;">
+                                <span id="valWater" style="font-size: 11px; font-weight: 900; color: #2563EB; min-height: 16px;">0%</span>
+                                <div style="width: 28px; height: 100px; background: #E2E8F0; border-radius: 14px; position: relative; overflow: hidden; display: flex; align-items: flex-end;">
+                                    <div id="barWater" style="width: 100%; height: 0%; background: linear-gradient(180deg, #60A5FA 0%, #3B82F6 100%); border-radius: 14px; transition: height 0.6s ease;"></div>
                                 </div>
-                                <div style="background: #E2E8F0; height: 8px; border-radius: 9999px; overflow: hidden;">
-                                    <div id="barWater" style="background: #3B82F6; height: 100%; border-radius: 9999px; width: 0%; transition: width 0.6s ease;"></div>
-                                </div>
+                                <span style="font-size: 11px; font-weight: 800; color: #2563EB;">水</span>
+                                <span style="font-size: 9px; color: #94A3B8; margin-top: -4px;">물</span>
                             </div>
+
                         </div>
                     </div>
                 </div>
@@ -638,8 +622,8 @@
         let unlockedReports = getUnlockedReports();
 
         const TAROT_IMAGES = {
-            "0. THE FOOL (바보)": "[https://upload.wikimedia.org/wikipedia/commons/9/90/RWS_Tarot_00_Fool.jpg](https://upload.wikimedia.org/wikipedia/commons/9/90/RWS_Tarot_00_Fool.jpg)",
-            "I. THE MAGICIAN (마법사)": "[https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg](https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg)"
+            "0. THE FOOL (바보)": "https://upload.wikimedia.org/wikipedia/commons/9/90/RWS_Tarot_00_Fool.jpg",
+            "I. THE MAGICIAN (마법사)": "https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg"
         };
 
         function getTarotCardBackSvg() {
@@ -734,7 +718,7 @@
 
             currentTalisman = data.daily_fortune.talisman;
 
-            // 천간 & 지지 오행 컬러 뱃지 바인딩
+            // 천간 & 지간 뱃지 바인딩
             const dtl = data.saju_data.pillars_detail;
             setElemBadge('cg_h_badge', dtl.hour.cg, dtl.hour.cg_elem);
             setElemBadge('cg_d_badge', dtl.day.cg, dtl.day.cg_elem);
@@ -746,24 +730,29 @@
             setElemBadge('jj_m_badge', dtl.month.jj, dtl.month.jj_elem);
             setElemBadge('jj_y_badge', dtl.year.jj, dtl.year.jj_elem);
 
-            // 지장간 수직 정렬 바인딩
+            // 지장간 세로 스택 바인딩
             document.getElementById('jjg_h_box').innerHTML = formatJijangganGroup(dtl.hour.jijanggan);
             document.getElementById('jjg_d_box').innerHTML = formatJijangganGroup(dtl.day.jijanggan);
             document.getElementById('jjg_m_box').innerHTML = formatJijangganGroup(dtl.month.jijanggan);
             document.getElementById('jjg_y_box').innerHTML = formatJijangganGroup(dtl.year.jijanggan);
 
-            // 오행 실질 세력 그래프 바인딩
+            // 세로 막대그래프 높이 바인딩 (Max 높이 100px 기준 환산)
             const elems = data.saju_data.elements;
-            document.getElementById('barWood').style.width = `${elems.wood}%`;
-            document.getElementById('valWood').innerText = `${elems.wood}%`;
-            document.getElementById('barFire').style.width = `${elems.fire}%`;
-            document.getElementById('valFire').innerText = `${elems.fire}%`;
-            document.getElementById('barEarth').style.width = `${elems.earth}%`;
-            document.getElementById('valEarth').innerText = `${elems.earth}%`;
-            document.getElementById('barMetal').style.width = `${elems.metal}%`;
-            document.getElementById('valMetal').innerText = `${elems.metal}%`;
-            document.getElementById('barWater').style.width = `${elems.water}%`;
-            document.getElementById('valWater').innerText = `${elems.water}%`;
+            
+            // 비율 계산 및 높이 적용
+            const maxGraphHeight = 100;
+            const applyBar = (key, val) => {
+                const barEl = document.getElementById(`bar${key}`);
+                const valEl = document.getElementById(`val${key}`);
+                if (barEl) barEl.style.height = `${Math.min(100, Math.max(val > 0 ? 8 : 0, val * 2.2))}%`;
+                if (valEl) valEl.innerText = `${val}%`;
+            };
+
+            applyBar('Wood', elems.wood);
+            applyBar('Fire', elems.fire);
+            applyBar('Earth', elems.earth);
+            applyBar('Metal', elems.metal);
+            applyBar('Water', elems.water);
 
             document.getElementById('mbtiTypeName').innerText = data.saju_data.mbti.mbti;
             document.getElementById('mbtiTypeDesc').innerText = data.saju_data.mbti.desc;
