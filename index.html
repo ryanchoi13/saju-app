@@ -180,7 +180,7 @@
                     <p id="resGaewoon" style="color: #92400E; font-weight: 300;">오전 중 따뜻한 차 한 잔을 마시며 목표 3가지 메모하기</p>
                 </div>
 
-                <!-- 오늘의 타로 -->
+                <!-- 오늘의 타로 (정밀 앤틱 성좌 덱 고정) -->
                 <div class="card" style="padding: 16px;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                         <div style="text-align: left;">
@@ -214,7 +214,7 @@
                     <div id="tarotResultBox" class="hidden"></div>
                 </div>
 
-                <!-- 오늘의 맞춤 부적 전용 카드 (경면주사 실물 부적 프리뷰) -->
+                <!-- 오늘의 맞춤 부적 전용 카드 -->
                 <div class="talisman-banner">
                     <div style="display: flex; justify-content: center; align-items: center; gap: 6px;">
                         <span>🔥</span>
@@ -238,7 +238,7 @@
 
             </div>
 
-            <!-- 탭 2: 정통사주 (피드백 반영: 좌측 행 라벨 + 세로 바 차트) -->
+            <!-- 탭 2: 정통사주 -->
             <div id="view-saju" class="tab-view hidden">
                 
                 <div class="card" style="padding: 18px;">
@@ -502,7 +502,7 @@
 
     </div>
 
-    <!-- 전통 경면주사 수제 부적 모달 (실물 부적 렌더링 & 다운로드) -->
+    <!-- 전통 경면주사 수제 부적 모달 -->
     <div id="talismanModal" class="modal-bg hidden">
         <div class="modal-content" style="max-width: 330px; padding: 18px; border-radius: 24px;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 8px;">
@@ -510,7 +510,6 @@
                 <button onclick="closeTalismanModal()" style="background: none; border: none; font-size: 18px; color: #94A3B8; cursor: pointer;">&times;</button>
             </div>
 
-            <!-- 실물 경면주사 부적 SVG 캔버스 영역 -->
             <div id="talismanRealBox" style="display: flex; justify-content: center; align-items: center; padding: 4px 0;"></div>
 
             <div style="text-align: left; background: #FFFBEB; border: 1px solid #FDE68A; border-radius: 12px; padding: 10px;">
@@ -623,9 +622,16 @@
 
         const TAROT_IMAGES = {
             "0. THE FOOL (바보)": "https://upload.wikimedia.org/wikipedia/commons/9/90/RWS_Tarot_00_Fool.jpg",
-            "I. THE MAGICIAN (마법사)": "https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg"
+            "I. THE MAGICIAN (마법사)": "https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg",
+            "II. THE HIGH PRIESTESS (여사제)": "https://upload.wikimedia.org/wikipedia/commons/8/88/RWS_Tarot_02_High_Priestess.jpg",
+            "III. THE EMPRESS (여황제)": "https://upload.wikimedia.org/wikipedia/commons/d/d2/RWS_Tarot_03_Empress.jpg",
+            "IV. THE EMPEROR (황제)": "https://upload.wikimedia.org/wikipedia/commons/c/c3/RWS_Tarot_04_Emperor.jpg",
+            "VI. THE LOVERS (연인)": "https://upload.wikimedia.org/wikipedia/commons/3/3a/TheLovers.jpg",
+            "X. WHEEL OF FORTUNE (운명의 수레바퀴)": "https://upload.wikimedia.org/wikipedia/commons/3/3c/RWS_Tarot_10_Wheel_of_Fortune.jpg",
+            "XIX. THE SUN (태양)": "https://upload.wikimedia.org/wikipedia/commons/1/17/RWS_Tarot_19_Sun.jpg"
         };
 
+        // 레퍼런스 이미지 정밀 일치 앤틱 성좌 덱 SVG
         function getTarotCardBackSvg() {
             return `
             <svg viewBox="0 0 100 150" style="width: 100%; height: 100%; background: #162447; border-radius: 8px;">
@@ -636,34 +642,83 @@
                         <stop offset="100%" stop-color="#997A15"/>
                     </radialGradient>
                 </defs>
+
+                <!-- 4개 코너 아치 장식 -->
                 <path d="M 0,0 L 16,0 Q 0,0 0,16 Z" fill="#D4AF37" opacity="0.8"/>
                 <path d="M 100,0 L 84,0 Q 100,0 100,16 Z" fill="#D4AF37" opacity="0.8"/>
                 <path d="M 0,150 L 16,150 Q 0,150 0,134 Z" fill="#D4AF37" opacity="0.8"/>
                 <path d="M 100,150 L 84,150 Q 100,150 100,134 Z" fill="#D4AF37" opacity="0.8"/>
+
+                <!-- 좌우 하프 성좌 장식 -->
                 <circle cx="0" cy="75" r="14" fill="none" stroke="#D4AF37" stroke-width="0.8"/>
                 <polygon points="0,64 3,73 12,75 3,77 0,86" fill="#D4AF37"/>
+                <polygon points="0,67 2,74 8,75 2,76 0,83" fill="#FFF2B2"/>
+
                 <circle cx="100" cy="75" r="14" fill="none" stroke="#D4AF37" stroke-width="0.8"/>
                 <polygon points="100,64 97,73 88,75 97,77 100,86" fill="#D4AF37"/>
+                <polygon points="100,67 98,74 92,75 98,76 100,83" fill="#FFF2B2"/>
+
+                <!-- 흩뿌려진 별무리 및 점성 도트 배경 -->
+                <circle cx="18" cy="18" r="1" fill="#FFF2B2"/>
+                <circle cx="82" cy="18" r="1" fill="#FFF2B2"/>
+                <polygon points="26,14 27,17 30,17.5 27,18 26,21 25,18 22,17.5 25,17" fill="#D4AF37"/>
+                <polygon points="74,14 75,17 78,17.5 75,18 74,21 73,18 70,17.5 73,17" fill="#D4AF37"/>
+                <circle cx="38" cy="22" r="0.8" fill="#FFF2B2"/>
+                <circle cx="62" cy="22" r="0.8" fill="#FFF2B2"/>
+                <circle cx="12" cy="38" r="0.7" fill="#D4AF37"/>
+                <circle cx="88" cy="38" r="0.7" fill="#D4AF37"/>
+
+                <!-- 상단 메인 성좌 (8각 스타버스트 & 링) -->
                 <circle cx="50" cy="42" r="16" fill="none" stroke="#D4AF37" stroke-width="1.2"/>
+                <circle cx="50" cy="42" r="13" fill="none" stroke="#D4AF37" stroke-width="0.5" stroke-dasharray="1 1"/>
                 <polygon points="50,23 53.5,38.5 69,42 53.5,45.5 50,61 46.5,45.5 31,42 46.5,38.5" fill="url(#starGlow)"/>
+                <polygon points="50,30 52.5,39.5 62,42 52.5,44.5 50,54 47.5,44.5 38,42 47.5,39.5" fill="#FFFFFF" opacity="0.9"/>
+                <polygon points="38,30 47.5,39.5 50,30 52.5,39.5 62,30 52.5,44.5 62,54 47.5,44.5 38,54 47.5,39.5" fill="#D4AF37" opacity="0.6"/>
+
+                <!-- 중앙 상/하 초승달 & 그믐달 -->
+                <path d="M 40,25 A 6,6 0 0,0 52,25 A 4.5,4.5 0 0,1 40,25" fill="#D4AF37"/>
+                <path d="M 48,59 A 6,6 0 0,0 60,59 A 4.5,4.5 0 0,1 48,59" fill="#D4AF37"/>
+
+                <!-- 중앙 썬 & 문 (일월성신 중심) -->
                 <circle cx="50" cy="75" r="4.5" fill="none" stroke="#D4AF37" stroke-width="0.8"/>
+                <path d="M 50,67 L 50,69 M 50,81 L 50,83 M 42,75 L 44,75 M 56,75 L 58,75 M 44,69 L 45.5,70.5 M 54.5,79.5 L 56,81 M 44,81 L 45.5,79.5 M 54.5,70.5 L 56,69" stroke="#D4AF37" stroke-width="0.8" stroke-linecap="round"/>
                 <circle cx="50" cy="75" r="3" fill="#FFF2B2"/>
+                <path d="M 48,72 A 3,3 0 0,0 48,78 A 2,2 0 0,1 48,72" fill="#D4AF37"/>
+
+                <!-- 중앙 미니 별 장식들 -->
+                <polygon points="30,75 31.5,77 34,77.5 31.5,78 30,80 28.5,78 26,77.5 28.5,77" fill="#D4AF37"/>
+                <polygon points="70,75 71.5,77 74,77.5 71.5,78 70,80 68.5,78 66,77.5 68.5,77" fill="#D4AF37"/>
+                <circle cx="38" cy="70" r="0.8" fill="#FFF2B2"/>
+                <circle cx="62" cy="70" r="0.8" fill="#FFF2B2"/>
+                <circle cx="38" cy="80" r="0.8" fill="#FFF2B2"/>
+                <circle cx="62" cy="80" r="0.8" fill="#FFF2B2"/>
+
+                <!-- 하단 메인 성좌 (8각 스타버스트 & 링) -->
                 <circle cx="50" cy="108" r="16" fill="none" stroke="#D4AF37" stroke-width="1.2"/>
+                <circle cx="50" cy="108" r="13" fill="none" stroke="#D4AF37" stroke-width="0.5" stroke-dasharray="1 1"/>
                 <polygon points="50,89 53.5,104.5 69,108 53.5,111.5 50,127 46.5,111.5 31,108 46.5,104.5" fill="url(#starGlow)"/>
-            </svg>`;
+                <polygon points="50,96 52.5,105.5 62,108 52.5,110.5 50,120 47.5,110.5 38,108 47.5,105.5" fill="#FFFFFF" opacity="0.9"/>
+                <polygon points="38,96 47.5,105.5 50,96 52.5,105.5 62,96 52.5,110.5 62,120 47.5,110.5 38,120 47.5,105.5" fill="#D4AF37" opacity="0.6"/>
+
+                <!-- 하단 배경 성운 -->
+                <circle cx="18" cy="132" r="1" fill="#FFF2B2"/>
+                <circle cx="82" cy="132" r="1" fill="#FFF2B2"/>
+                <polygon points="26,129 27,132 30,132.5 27,133 26,136 25,133 22,132.5 25,132" fill="#D4AF37"/>
+                <polygon points="74,129 75,132 78,132.5 75,133 74,136 73,133 70,132.5 73,132" fill="#D4AF37"/>
+                <circle cx="38" cy="128" r="0.8" fill="#FFF2B2"/>
+                <circle cx="62" cy="128" r="0.8" fill="#FFF2B2"/>
+                <circle cx="12" cy="112" r="0.7" fill="#D4AF37"/>
+                <circle cx="88" cy="112" r="0.7" fill="#D4AF37"/>
+            </svg>
+            `;
         }
 
-        // 전통 경면주사 수제 부적 정밀 SVG 생성 함수 (레퍼런스 이미지 기반)
+        // 전통 경면주사 수제 부적 SVG 생성 함수
         function renderAuthenticCinnabarTalisman(width = 160, height = 260) {
             return `
             <svg id="svgTalismanMain" width="${width}" height="${height}" viewBox="0 0 140 240" style="background: linear-gradient(135deg, #FFE814 0%, #FFD000 100%); border: 3px solid #C49700; border-radius: 8px; box-shadow: 0 6px 16px rgba(0,0,0,0.25);">
-                <!-- 한지 미세 테두리 라인 -->
                 <rect x="4" y="4" width="132" height="232" fill="none" stroke="#E65100" stroke-width="0.8" opacity="0.4" />
-                
-                <!-- 경면주사 붉은색 필치 (전통 초서체 비급 문양) -->
                 <g fill="none" stroke="#C62828" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round">
-                    
-                    <!-- 1. 부두 (符頭: 勅令 / 삼태성 기운) -->
                     <path d="M 28 22 Q 42 16 68 18 Q 92 20 112 16" />
                     <path d="M 70 18 L 70 32" />
                     <path d="M 40 28 L 100 28" />
@@ -671,18 +726,15 @@
                     <circle cx="70" cy="38" r="3" fill="#C62828" />
                     <circle cx="92" cy="38" r="3" fill="#C62828" />
 
-                    <!-- 2. 부신 상단 (비급 주문: 魁·星·萬福) -->
                     <path d="M 32 50 L 108 50" />
                     <path d="M 36 50 L 36 68 L 104 68 L 104 50" />
                     <path d="M 50 58 L 90 58" />
                     <path d="M 70 50 L 70 68" />
                     <path d="M 42 76 Q 70 66 98 76" />
                     
-                    <!-- 3. 부신 중단 (재물/금고 수호 옥새형 겹문양) -->
                     <path d="M 30 88 L 110 88" />
                     <path d="M 34 88 L 34 165 Q 34 180 50 180 L 90 180 Q 106 180 106 165 L 106 88" />
                     
-                    <!-- 내부 3단 만복격자 (금전 축적 결계) -->
                     <rect x="44" y="98" width="22" height="18" />
                     <rect x="74" y="98" width="22" height="18" />
                     <line x1="55" y1="98" x2="55" y2="116" />
@@ -691,14 +743,12 @@
                     <path d="M 42 126 L 98 126" />
                     <path d="M 50 134 Q 70 128 90 134" />
                     
-                    <!-- 내부 귀신/액운 제압 符心 (경면주사 핵심 주술선) -->
                     <path d="M 48 144 Q 58 138 70 148 Q 82 138 92 144" />
                     <path d="M 54 152 L 86 152" />
                     <path d="M 70 148 L 70 172" />
                     <circle cx="58" cy="164" r="2.5" fill="#C62828" />
                     <circle cx="82" cy="164" r="2.5" fill="#C62828" />
 
-                    <!-- 4. 부각 (符脚: 急急如律令 봉인선) -->
                     <path d="M 36 192 Q 70 184 104 192" />
                     <path d="M 48 200 L 92 200" />
                     <path d="M 38 210 Q 70 198 102 210" />
@@ -706,8 +756,6 @@
                     <path d="M 70 200 L 70 226" />
                     <path d="M 46 228 Q 70 220 94 228" />
                 </g>
-
-                <!-- 하단 붉은 수결 낙관 (勅令印) -->
                 <rect x="52" y="206" width="36" height="18" fill="none" stroke="#B71C1C" stroke-width="1.8" opacity="0.8" rx="2"/>
                 <text x="70" y="219" font-size="9" font-weight="900" fill="#B71C1C" text-anchor="middle" font-family="'Pretendard', serif">開運大吉</text>
             </svg>
@@ -1139,14 +1187,12 @@
         }
 
         window.addEventListener('DOMContentLoaded', () => {
-            // 타로 뒷면 SVG 초기화
             const svgMarkup = getTarotCardBackSvg();
             ['tarotSvgSlot1', 'tarotSvgSlot2', 'tarotSvgSlot3'].forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.innerHTML = svgMarkup;
             });
 
-            // 부적 배너 프리뷰 초기화
             const talismanPreview = document.getElementById('talismanBannerPreview');
             if (talismanPreview) {
                 talismanPreview.innerHTML = renderAuthenticCinnabarTalisman(72, 110);
