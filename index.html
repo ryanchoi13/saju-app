@@ -76,7 +76,6 @@
 
     <div class="app-container">
         
-        <!-- 헤더 -->
         <header>
             <div class="logo-box">
                 <h1 class="logo-text">운세의 신</h1>
@@ -160,6 +159,7 @@
                     <p id="resAdvice" style="font-size: 12px; color: #D1FAE5; font-weight: 300; line-height: 1.6; text-align: left; white-space: pre-line;"></p>
                 </div>
 
+                <!-- 실시간 사주 맞춤 6대 큐레이션 -->
                 <div class="grid-2">
                     <div class="grid-cell"><span style="font-size: 10px; color: #94A3B8; display: block;">🎨 행운의 색상</span><p id="resColor" style="font-weight: 700; margin-top: 2px;">스카이 블루 / 아이보리</p></div>
                     <div class="grid-cell"><span style="font-size: 10px; color: #94A3B8; display: block;">🔢 행운의 숫자</span><p id="resNumber" style="font-weight: 700; margin-top: 2px;">1, 6</p></div>
@@ -671,7 +671,7 @@
             </svg>`;
         }
 
-        // 30종 특화 부적 SVG 생성 렌더러 (사주 패턴별 실시간 주술 필치 변환)
+        // 30종 특화 부적 SVG 렌더러
         function renderAuthenticCinnabarTalisman(type = "wealth", pattern = "vault", width = 160, height = 260) {
             let innerSymbol = '';
             let bottomText = '萬福大吉';
@@ -868,7 +868,7 @@
             currentTalisman = data.daily_fortune.talisman;
             currentUserAge = data.current_age;
 
-            // [핵심] 사주 맞춤 부적 프리뷰 및 명칭 동적 갱신
+            // 1. 사주 결핍 오행 맞춤 부적 렌더링
             const talismanPreview = document.getElementById('talismanBannerPreview');
             if (talismanPreview && currentTalisman) {
                 talismanPreview.innerHTML = renderAuthenticCinnabarTalisman(currentTalisman.type || 'wealth', currentTalisman.pattern || 'vault', 72, 110);
@@ -876,7 +876,7 @@
             const tHeader = document.getElementById('talismanBannerHeader');
             if (tHeader && currentTalisman) tHeader.innerText = `오늘의 맞춤 ${currentTalisman.title}`;
 
-            // 천간 & 지간 뱃지 바인딩
+            // 2. 천간/지간 오행 뱃지
             const dtl = data.saju_data.pillars_detail;
             setElemBadge('cg_h_badge', dtl.hour.cg, dtl.hour.cg_elem);
             setElemBadge('cg_d_badge', dtl.day.cg, dtl.day.cg_elem);
@@ -888,13 +888,13 @@
             setElemBadge('jj_m_badge', dtl.month.jj, dtl.month.jj_elem);
             setElemBadge('jj_y_badge', dtl.year.jj, dtl.year.jj_elem);
 
-            // 지장간 바인딩
+            // 3. 지장간 렌더링
             document.getElementById('jjg_h_box').innerHTML = formatJijangganGroup(dtl.hour.jijanggan);
             document.getElementById('jjg_d_box').innerHTML = formatJijangganGroup(dtl.day.jijanggan);
             document.getElementById('jjg_m_box').innerHTML = formatJijangganGroup(dtl.month.jijanggan);
             document.getElementById('jjg_y_box').innerHTML = formatJijangganGroup(dtl.year.jijanggan);
 
-            // 오행 세로 막대그래프 갱신
+            // 4. 오행 세로 차트 갱신
             const elems = data.saju_data.elements;
             const applyBar = (key, val) => {
                 const barEl = document.getElementById(`bar${key}`);
@@ -909,8 +909,10 @@
             applyBar('Metal', elems.metal);
             applyBar('Water', elems.water);
 
+            // 5. 실시간 만 나이 생애 그래프 반영
             updateDaewoonGraphByAge(currentUserAge);
 
+            // 6. 사주 일간 기반 6대 큐레이션 및 일진 총평 실시간 바인딩
             document.getElementById('mbtiTypeName').innerText = data.saju_data.mbti.mbti;
             document.getElementById('mbtiTypeDesc').innerText = data.saju_data.mbti.desc;
             document.getElementById('mbtiAnimalIcon').innerText = data.saju_data.animal_icon;
@@ -919,6 +921,14 @@
             document.getElementById('resTitle').innerText = data.daily_fortune.title;
             document.getElementById('resAdvice').innerText = data.daily_fortune.advice;
             document.getElementById('resScoreBadge').innerText = `운세 ${data.daily_fortune.score}점`;
+
+            document.getElementById('resColor').innerText = data.daily_fortune.lucky_color;
+            document.getElementById('resNumber').innerText = data.daily_fortune.lucky_number;
+            document.getElementById('resDirection').innerText = data.daily_fortune.lucky_direction;
+            document.getElementById('resStyle').innerText = data.daily_fortune.fashion_style;
+            document.getElementById('resMenu').innerText = data.daily_fortune.recommended_menu;
+            document.getElementById('resMindset').innerText = data.daily_fortune.mindset;
+            document.getElementById('resGaewoon').innerText = data.daily_fortune.action;
 
             document.getElementById('mypageProfileDesc').innerText = `${currentUserName} (${birth})`;
 
@@ -944,7 +954,6 @@
             document.getElementById('talismanDesc').innerText = currentTalisman.desc;
             document.getElementById('talismanOwnerName').innerText = currentUserName;
             
-            // 맞춤형 부적 타입에 따른 SVG 실시간 렌더링
             document.getElementById('talismanRealBox').innerHTML = renderAuthenticCinnabarTalisman(currentTalisman.type || "wealth", currentTalisman.pattern || "vault", 160, 260);
             document.getElementById('talismanModal').classList.remove('hidden');
         }
