@@ -209,7 +209,7 @@
                 <div class="talisman-banner">
                     <div style="display: flex; justify-content: center; align-items: center; gap: 6px;">
                         <span>🔥</span>
-                        <h3 id="talismanBannerHeader" style="font-size: 16px; font-weight: 700; color: #78350F;">오늘의 맞춤 경면주사 부적</h3>
+                        <h3 id="talismanBannerHeader" style="font-size: 15px; font-weight: 700; color: #78350F;">오늘의 맞춤 경면주사 부적</h3>
                         <span>🌊</span>
                     </div>
 
@@ -343,7 +343,7 @@
                     </div>
                 </div>
 
-                <!-- 자미두수 & 10년 대운 (피드백 반영: 가변 연령축 및 정밀 나이 연동) -->
+                <!-- 자미두수 & 10년 대운 -->
                 <div class="card" style="border: 2px solid #FCD34D;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                         <span style="font-size: 14px; font-weight: 700;">👑 자미두수 & 10년 대운 리포트</span>
@@ -400,7 +400,7 @@
 
             </div>
 
-            <!-- 탭 3: 궁합·테마 (피드백 반영: 깔끔한 단일 카드 및 폰트 확대) -->
+            <!-- 탭 3: 궁합·테마 (피드백 반영: 제목 단축) -->
             <div id="view-theme" class="tab-view hidden">
                 
                 <div class="card" style="text-align: left;">
@@ -645,9 +645,23 @@
             "II. THE HIGH PRIESTESS (여사제)": "https://upload.wikimedia.org/wikipedia/commons/8/88/RWS_Tarot_02_High_Priestess.jpg",
             "III. THE EMPRESS (여황제)": "https://upload.wikimedia.org/wikipedia/commons/d/d2/RWS_Tarot_03_Empress.jpg",
             "IV. THE EMPEROR (황제)": "https://upload.wikimedia.org/wikipedia/commons/c/c3/RWS_Tarot_04_Emperor.jpg",
+            "V. THE HIEROPHANT (교황)": "https://upload.wikimedia.org/wikipedia/commons/8/8d/RWS_Tarot_05_Hierophant.jpg",
             "VI. THE LOVERS (연인)": "https://upload.wikimedia.org/wikipedia/commons/3/3a/TheLovers.jpg",
+            "VII. THE CHARIOT (전차)": "https://upload.wikimedia.org/wikipedia/commons/9/9b/RWS_Tarot_07_Chariot.jpg",
+            "VIII. STRENGTH (힘)": "https://upload.wikimedia.org/wikipedia/commons/f/f5/RWS_Tarot_08_Strength.jpg",
+            "IX. THE HERMIT (은둔자)": "https://upload.wikimedia.org/wikipedia/commons/4/4d/RWS_Tarot_09_Hermit.jpg",
             "X. WHEEL OF FORTUNE (운명의 수레바퀴)": "https://upload.wikimedia.org/wikipedia/commons/3/3c/RWS_Tarot_10_Wheel_of_Fortune.jpg",
-            "XIX. THE SUN (태양)": "https://upload.wikimedia.org/wikipedia/commons/1/17/RWS_Tarot_19_Sun.jpg"
+            "XI. JUSTICE (정의)": "https://upload.wikimedia.org/wikipedia/commons/e/e0/RWS_Tarot_11_Justice.jpg",
+            "XII. THE HANGED MAN (매달린 사람)": "https://upload.wikimedia.org/wikipedia/commons/2/2b/RWS_Tarot_12_Hanged_Man.jpg",
+            "XIII. DEATH (죽음)": "https://upload.wikimedia.org/wikipedia/commons/d/d7/RWS_Tarot_13_Death.jpg",
+            "XIV. TEMPERANCE (절제)": "https://upload.wikimedia.org/wikipedia/commons/f/f8/RWS_Tarot_14_Temperance.jpg",
+            "XV. THE DEVIL (악마)": "https://upload.wikimedia.org/wikipedia/commons/5/55/RWS_Tarot_15_Devil.jpg",
+            "XVI. THE TOWER (탑)": "https://upload.wikimedia.org/wikipedia/commons/5/53/RWS_Tarot_16_Tower.jpg",
+            "XVII. THE STAR (별)": "https://upload.wikimedia.org/wikipedia/commons/d/db/RWS_Tarot_17_Star.jpg",
+            "XVIII. THE MOON (달)": "https://upload.wikimedia.org/wikipedia/commons/7/7f/RWS_Tarot_18_Moon.jpg",
+            "XIX. THE SUN (태양)": "https://upload.wikimedia.org/wikipedia/commons/1/17/RWS_Tarot_19_Sun.jpg",
+            "XX. JUDGEMENT (심판)": "https://upload.wikimedia.org/wikipedia/commons/d/dd/RWS_Tarot_20_Judgement.jpg",
+            "XXI. THE WORLD (세계)": "https://upload.wikimedia.org/wikipedia/commons/f/ff/RWS_Tarot_21_World.jpg"
         };
 
         function getTarotCardBackSvg() {
@@ -1077,7 +1091,6 @@
             resBox.classList.remove('hidden');
         }
 
-        // 피드백 반영: 결제 완료 알림 메시지에서 보관함 관련 문구 삭제
         function unlockDaewoon() {
             if (currentCoin < 450) { openChargeStore(); return; }
             if (!confirm('450 복채로 자미두수 & 10년 대운 심층 리포트를 열람하시겠습니까?')) return;
@@ -1129,7 +1142,6 @@
 
         function closeThemeSelectModal() { document.getElementById('themeSelectModal').classList.add('hidden'); }
 
-        // 피드백 반영: 결제 완료 알림 메시지에서 보관함 관련 문구 삭제
         async function confirmUnlockTheme() {
             if (currentCoin < 220) { openChargeStore(); return; }
             const selEl = document.querySelector('input[name="optM"]:checked');
