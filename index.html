@@ -6,7 +6,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <title>운세의 신 PRO</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="[https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800;900&display=swap](https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800;900&display=swap)" rel="stylesheet">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Pretendard', sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background-color: #F4F7F4; color: #1E293B; display: flex; justify-content: center; min-height: 100vh; }
@@ -59,6 +59,7 @@
         .card-back { background: #162447; border: 3px solid #FFFFFF; box-shadow: 0 4px 8px rgba(0,0,0,0.18); overflow: hidden; }
         .card-front { transform: rotateY(180deg); background: white; overflow: hidden; border: 2px solid #D4AF37; }
 
+        /* 전통 경면주사 부적 카드 배너 */
         .talisman-banner { background: linear-gradient(135deg, #FFFDF5 0%, #FFFBEB 100%); border: 2px solid #FCD34D; border-radius: 24px; padding: 20px; text-align: center; display: flex; flex-direction: column; gap: 14px; }
         .talisman-art { height: 130px; background: rgba(254,243,199,0.5); border-radius: 16px; border: 1px solid rgba(253,230,138,0.8); display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
 
@@ -364,12 +365,11 @@
                         <span style="font-size: 10px; background: #FEF3C7; color: #78350F; padding: 2px 8px; border-radius: 9999px; font-weight: 900;">450 복채</span>
                     </div>
 
-                    <!-- 10년 생애 그래프 (풀스트레치 일치 및 현재 49세 접촉) -->
+                    <!-- 10년 생애 그래프 -->
                     <div style="background: #F8FAFC; border-radius: 18px; border: 1px solid #E2E8F0; padding: 14px 12px 10px; margin-bottom: 14px; text-align: left;">
                         <div style="font-size: 11px; font-weight: 800; color: #475569; margin-bottom: 8px;">📊 10년 생애 그래프</div>
                         
                         <div style="position: relative; width: 100%; height: 118px;">
-                            <!-- 20대(X=0) 부터 70대(X=300) 까지 완벽하게 가득 찬 풀 곡선 -->
                             <svg viewBox="0 0 300 100" style="width: 100%; height: 85px; overflow: visible;">
                                 <defs>
                                     <linearGradient id="fullCurveGradient" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -380,22 +380,17 @@
                                     </linearGradient>
                                 </defs>
 
-                                <!-- 20대(0,78) -> 30대(60,60) -> 40대(130,28) -> 50대(190,52) -> 60대(245,24) -> 70대(300,38) -->
                                 <path d="M 0,78 C 30,75 45,62 60,60 C 85,57 105,28 130,28 C 155,28 170,54 190,52 C 215,50 230,22 245,24 C 265,26 280,36 300,38" 
                                       fill="none" stroke="url(#fullCurveGradient)" stroke-width="3.6" stroke-linecap="round" />
 
-                                <!-- 상하 수직 가이드 점선 (현재 49세 X=130 밀착) -->
                                 <line x1="130" y1="6" x2="130" y2="88" stroke="#94A3B8" stroke-width="1.2" stroke-dasharray="2.5 2.5" />
 
-                                <!-- 상단 위치 안내 뱃지 -->
                                 <rect x="60" y="-2" width="140" height="15" rx="4" fill="#FEF2F2" stroke="#FECDD3" stroke-width="0.8"/>
                                 <text x="130" y="9" font-size="8.5" font-weight="900" fill="#DC2626" text-anchor="middle">📍 최정오 님의 현재 위치 (황금 결실기)</text>
 
-                                <!-- 곡선과 완벽히 접촉하는 현재 49세 빨간점 (cx=130, cy=28) -->
                                 <circle cx="130" cy="28" r="5" fill="#EF4444" stroke="#FFFFFF" stroke-width="2" />
                             </svg>
 
-                            <!-- 하단 6개 연령대 라벨 -->
                             <div style="display: grid; grid-template-columns: repeat(6, 1fr); text-align: center; font-size: 9px; color: #94A3B8; font-weight: 700; border-top: 1px solid #E2E8F0; padding-top: 6px; margin-top: -2px;">
                                 <span>20대</span>
                                 <span>30대</span>
@@ -644,8 +639,9 @@
         let unlockedReports = getUnlockedReports();
 
         const TAROT_IMAGES = {
-            "0. THE FOOL (바보)": "https://upload.wikimedia.org/wikipedia/commons/9/90/RWS_Tarot_00_Fool.jpg",
-            "I. THE MAGICIAN (마법사)": "https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg"
+            "0. THE FOOL (바보)": "[https://upload.wikimedia.org/wikipedia/commons/9/90/RWS_Tarot_00_Fool.jpg](https://upload.wikimedia.org/wikipedia/commons/9/90/RWS_Tarot_00_Fool.jpg)",
+            "I. THE MAGICIAN (마법사)": "[https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg](https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg)",
+            "II. THE HIGH PRIESTESS (여사제)": "[https://upload.wikimedia.org/wikipedia/commons/8/88/RWS_Tarot_02_High_Priestess.jpg](https://upload.wikimedia.org/wikipedia/commons/8/88/RWS_Tarot_02_High_Priestess.jpg)"
         };
 
         function getTarotCardBackSvg() {
@@ -784,7 +780,6 @@
 
             currentTalisman = data.daily_fortune.talisman;
 
-            // 천간 & 지간 뱃지 바인딩
             const dtl = data.saju_data.pillars_detail;
             setElemBadge('cg_h_badge', dtl.hour.cg, dtl.hour.cg_elem);
             setElemBadge('cg_d_badge', dtl.day.cg, dtl.day.cg_elem);
@@ -796,15 +791,12 @@
             setElemBadge('jj_m_badge', dtl.month.jj, dtl.month.jj_elem);
             setElemBadge('jj_y_badge', dtl.year.jj, dtl.year.jj_elem);
 
-            // 지장간 세로 스택 바인딩
             document.getElementById('jjg_h_box').innerHTML = formatJijangganGroup(dtl.hour.jijanggan);
             document.getElementById('jjg_d_box').innerHTML = formatJijangganGroup(dtl.day.jijanggan);
             document.getElementById('jjg_m_box').innerHTML = formatJijangganGroup(dtl.month.jijanggan);
             document.getElementById('jjg_y_box').innerHTML = formatJijangganGroup(dtl.year.jijanggan);
 
-            // 세로 막대그래프 높이 바인딩
             const elems = data.saju_data.elements;
-            
             const applyBar = (key, val) => {
                 const barEl = document.getElementById(`bar${key}`);
                 const valEl = document.getElementById(`val${key}`);
@@ -974,7 +966,7 @@
                 document.getElementById('daewoonBox').classList.remove('hidden');
                 document.getElementById('btnDaewoon').classList.add('hidden');
                 saveUnlockedReport('daewoon', data.title, data.content);
-                alert('🎉 [자미두수 & 10년 대운 리포트] 열람 완료!\n[마이페이지 > 보관함]에 최신 심층 버전으로 보관되었습니다.');
+                alert('🎉 [자미두수 & 10년 대운 리포트] 열람 완료!\n[마이페이지 > 보관함]에 보관되었습니다.');
             });
         }
 
@@ -1060,7 +1052,6 @@
                     const box = document.getElementById('daewoonBox');
                     const btn = document.getElementById('btnDaewoon');
                     if (box && btn) {
-                        // 최신 버전 업데이트를 위해 API 재호출 후 갱신
                         fetch('/api/daewoon-report', {
                             method: 'POST',
                             headers: {'Content-Type': 'application/json'},
