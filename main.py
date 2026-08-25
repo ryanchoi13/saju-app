@@ -5,7 +5,7 @@ from pydantic import BaseModel
 from typing import Optional
 import os
 
-app = FastAPI(title="운세의 신 PRO API", version="5.3.0")
+app = FastAPI(title="운세의 신 PRO API", version="6.0.0")
 
 CHEONGAN_HANJA = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
 JIJI_HANJA = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"]
@@ -51,38 +51,47 @@ DAY_MBTI_MAP = {
 ANIMAL_MAP = {"子": "쥐", "丑": "소", "寅": "호랑이", "卯": "토끼", "辰": "용", "巳": "뱀", "午": "말", "未": "양", "申": "원숭이", "酉": "닭", "戌": "개", "亥": "돼지"}
 ANIMAL_ICONS = {"쥐": "🐭", "소": "🐮", "호랑이": "🐯", "토끼": "🐰", "용": "🐲", "뱀": "🐍", "말": "🐴", "양": "🐑", "원숭이": "🐵", "닭": "🐔", "개": "🐶", "돼지": "🐷"}
 
-# 사주 오행 결핍 맞춤형 5대 비급 부적
-TALISMAN_OHEANG_MAP = {
-    "wood": {
-        "type": "wood",
-        "title": "사업대성부 (事業亨通符)",
-        "power": "추진력 강화 · 사업 번창 · 승진운",
-        "desc": "사주에 부족한 木(성장과 개척)의 활력을 불어넣어 막힌 활로를 뚫고 사업과 직무에서 강력한 주도권을 쥐게 하는 비급 부적입니다."
-    },
-    "fire": {
-        "type": "fire",
-        "title": "소원성취부 (心想事成符)",
-        "power": "열정 회복 · 명예 상승 · 소원 성취",
-        "desc": "사주에 부족한 火(열정과 확산)의 빛을 밝혀 어둠을 몰아내고 오랫동안 염원하던 소망을 일사천리로 성취시키는 전통 부적입니다."
-    },
-    "earth": {
-        "type": "earth",
-        "title": "금고수호부 (金庫安穩符)",
-        "power": "자산 방어 · 누수 차단 · 재물 안착",
-        "desc": "사주에 부족한 土(포용과 저장)의 단단한 대지를 마련하여 헛돈 지출을 막고 평생의 자산을 굳건하게 지켜주는 금고 수호 부적입니다."
-    },
-    "metal": {
-        "type": "metal",
-        "title": "재물만복부 (萬福大吉符)",
-        "power": "재물 증식 · 금전운 대통 · 투자 대박",
-        "desc": "사주에 부족한 金(결단과 결실)의 황금 기운을 채워 사방에서 금전과 복록이 샘솟듯 쏟아지게 하는 전통 경면주사 수제 부적입니다."
-    },
-    "water": {
-        "type": "water",
-        "title": "천생화합부 (萬事和合符)",
-        "power": "인연 결속 · 애정 화합 · 인간관계 개선",
-        "desc": "사주에 부족한 水(지혜와 융합)의 부드러운 유대감을 채워 엇갈린 인연을 묶어주고 귀인의 조력을 이끌어내는 화합 비급 부적입니다."
-    }
+# 30종 전통 경면주사 비급 부적 데이터베이스
+TALISMAN_DATABASE = {
+    # 1. 재물 & 금전 (6종)
+    "wealth_1": {"type": "wealth", "pattern": "vault", "title": "암장금고부 (暗藏金庫符)", "power": "자산 방어 · 헛돈 누수 완벽 차단", "desc": "사주 원국의 금고를 단단히 잠그고 새어나가는 헛돈과 지출을 철통같이 방어하는 재물 수호 부적입니다."},
+    "wealth_2": {"type": "wealth", "pattern": "coin", "title": "만복대길부 (萬福大吉符)", "power": "횡재수 · 사방 금전 대통", "desc": "사방에서 금전과 복록이 샘솟듯 모여들고 뜻밖의 목돈과 횡재수를 소환하는 전통 경면주사 부적입니다."},
+    "wealth_3": {"type": "wealth", "pattern": "dividend", "title": "황금편재부 (黃金偏財符)", "power": "투자 대박 · 배당 수익 증식", "desc": "주식, 부동산, 투자 상품에서 탁월한 결단력을 발휘하여 수익을 극대화시키는 투자 특화 비급 부적입니다."},
+    "wealth_4": {"type": "wealth", "pattern": "contract", "title": "문서취득부 (文書取得符)", "power": "부동산 당첨 · 알짜배기 문서운", "desc": "토지, 아파트 청약, 상가 등 실물 가치가 영구히 상승하는 귀한 부동산 문서를 쥐어주는 문서 부적입니다."},
+    "wealth_5": {"type": "wealth", "pattern": "shield", "title": "손재소멸부 (損財消滅符)", "power": "금전 사기 예방 · 손실 방지", "desc": "빌려준 돈, 사기, 동업 손실 등 재물의 손실을 몰고 오는 탁한 악운을 깨끗이 소멸시키는 방어 부적입니다."},
+    "wealth_6": {"type": "wealth", "pattern": "merchant", "title": "상업번창부 (商業繁昌符)", "power": "매출 폭발 · 단골 유치", "desc": "가게나 사업장에 손님의 발길이 끊이지 않고 일일 매출과 현금 흐름을 폭발적으로 증대시키는 상업 부적입니다."},
+
+    # 2. 사업 & 직업 (6종)
+    "business_1": {"type": "business", "pattern": "expand", "title": "사업형통부 (事業亨通符)", "power": "사업 활로 개척 · 판로 확장", "desc": "막혔던 프로젝트의 활로를 시원하게 뚫고 사업 규모를 거침없이 확장시키는 대표 사업 부적입니다."},
+    "business_2": {"type": "business", "pattern": "promote", "title": "승진영전부 (昇進榮轉符)", "power": "초고속 승진 · 명예 상승", "desc": "조직 내에서 탁월한 역량을 인정받아 경쟁자를 제치고 상위 직급과 요직으로 영전시키는 출세 부적입니다."},
+    "business_3": {"type": "business", "pattern": "pass", "title": "취업합격부 (就業合格符)", "power": "원서 합격 · 공채 최종 승리", "desc": "간절히 원하던 기업이나 공공기관의 시험, 면접에서 최종 합격의 영예를 안겨주는 합격 기원 부적입니다."},
+    "business_4": {"type": "business", "pattern": "court", "title": "관재소멸부 (官災消滅符)", "power": "구설수 차단 · 소송 승소", "desc": "직장 내 모함, 시기 질투, 관공서 시비 및 소송 분쟁을 깔끔하게 잠재우고 승리를 이끄는 수호 부적입니다."},
+    "business_5": {"type": "business", "pattern": "noble", "title": "천을귀인부 (天乙貴人符)", "power": "유력 조력자 소환 · 은인 상봉", "desc": "인생의 결정적 순간에 나타나 물심양면으로 길을 열어주는 천을귀인의 조력을 소환하는 비급 부적입니다."},
+    "business_6": {"type": "business", "pattern": "deal", "title": "계약성사부 (契約成事符)", "power": "대형 계약 체결 · 납품 수주", "desc": "난항을 겪던 비즈니스 협상과 대규모 계약을 귀하에게 절대적으로 유리하게 성사시키는 협상 부적입니다."},
+
+    # 3. 애정 & 인연 (6종)
+    "love_1": {"type": "love", "pattern": "union", "title": "천생화합부 (天生和合符)", "power": "천생연분 결속 · 깊은 신뢰", "desc": "두 사람의 기운을 완벽하게 묶어 평생 서로를 존중하고 아끼는 백년가약의 인연을 맺어주는 화합 부적입니다."},
+    "love_2": {"type": "love", "pattern": "charm", "title": "도화연정부 (桃花戀情符)", "power": "이성 매력 극대화 · 솔로 탈출", "desc": "숨겨진 치명적인 매력과 도화의 향기를 발현시켜 품격 높은 이성들의 호감을 이끌어내는 연애 부적입니다."},
+    "love_3": {"type": "love", "pattern": "peace", "title": "원진소멸부 (怨嗔消滅符)", "power": "오해 해소 · 다툼 갈등 소멸", "desc": "연인이나 부부 사이의 사소한 오해, 성격 차이로 인한 다툼과 권태기를 눈 녹듯 사라지게 하는 평화 부적입니다."},
+    "love_4": {"type": "love", "pattern": "family", "title": "부부백년부 (夫婦百年符)", "power": "가정 화목 · 자손 번창", "desc": "가정에 화목과 웃음꽃이 피어나게 하고 부부간의 애정을 신혼처럼 돈독하게 유지시키는 가정 수호 부적입니다."},
+    "love_5": {"type": "love", "pattern": "reunion", "title": "재회소원부 (再會素願符)", "power": "헤어진 인연 재회 · 미련 청산", "desc": "안타깝게 엇갈렸던 인연과의 마음을 다시 연결하고 먼저 연락이 닿아 재결합을 돕는 재회 비급 부적입니다."},
+    "love_6": {"type": "love", "pattern": "cut", "title": "악연차단부 (惡緣遮斷符)", "power": "악연 정리 · 스토커 퇴치", "desc": "나를 갉아먹는 유해한 인간관계와 집착하는 악연을 잡음 없이 깔끔하게 끊어내 주는 결계 부적입니다."},
+
+    # 4. 건강 & 힐링 (6종)
+    "health_1": {"type": "health", "pattern": "longevity", "title": "무병장수부 (無病長壽符)", "power": "100세 건강 · 면역력 증진", "desc": "체내의 탁한 음기를 몰아내고 오장육부의 활력을 극대화하여 평생 무병장수를 누리게 하는 장수 부적입니다."},
+    "health_2": {"type": "health", "pattern": "circulation", "title": "수승화강부 (水昇火降符)", "power": "기혈 순환 · 피로 회복", "desc": "상체의 열기를 내리고 하체를 따뜻하게 하여 만성 피로와 스트레스를 씻은 듯이 회복시키는 순환 부적입니다."},
+    "health_3": {"type": "health", "pattern": "mind", "title": "안심안정부 (安心安靜符)", "power": "불안 불면 해소 · 심신 평온", "desc": "복잡한 잡념과 불안감을 잠재우고 깊고 편안한 숙면을 유도하여 맑은 정신을 되찾아주는 힐링 부적입니다."},
+    "health_4": {"type": "health", "pattern": "samjae", "title": "삼재소멸부 (三災消滅符)", "power": "악삼재 소멸 · 횡액 차단", "desc": "사주에 들어온 삼재팔난(三災八難)의 불운을 깨끗이 소멸시키고 복삼재로 반전시키는 최고 액막이 부적입니다."},
+    "health_5": {"type": "health", "pattern": "traffic", "title": "사고방지부 (事故防止符)", "power": "교통사고 예방 · 낙상 방어", "desc": "운전 중 돌발 사고나 여행지에서의 불의의 낙상, 부상을 24시간 철통같이 막아주는 안전 호신 부적입니다."},
+    "health_6": {"type": "health", "pattern": "vital", "title": "신기충만부 (神氣充滿符)", "power": "원기 회복 · 무기력 퇴치", "desc": "떨어진 체력과 의욕을 다시 불태우고 긍정적인 에너지를 가득 채워주는 활력 충전 비급 부적입니다."},
+
+    # 5. 학업 & 소원 (6종)
+    "wish_1": {"type": "wish", "pattern": "pass_exam", "title": "장원급제부 (壯元及第符)", "power": "국가고시 · 전문직 시험 수석", "desc": "공무원, 전문직, 수능 등 중요한 시험에서 실력 이상의 집중력과 운을 발휘하여 합격시키는 학업 부적입니다."},
+    "wish_2": {"type": "wish", "pattern": "wisdom", "title": "지혜명철부 (智慧明徹符)", "power": "두뇌 회전 · 암기력 극대화", "desc": "복잡한 학습 내용과 기획서의 핵심을 단번에 꿰뚫는 명철한 지혜와 통찰력을 선물하는 총명 부적입니다."},
+    "wish_3": {"type": "wish", "pattern": "wish_come", "title": "심상사성부 (心想事成符)", "power": "일생일대 1대 소원 성취", "desc": "마음속에 품고 있던 가장 간절한 소망 하나를 우주의 기운을 모아 기적처럼 현실로 이루어주는 소원 부적입니다."},
+    "wish_4": {"type": "wish", "pattern": "all_luck", "title": "만사대길부 (萬事大吉符)", "power": "종합 운세 상승 · 대운 개방", "desc": "재물, 건강, 직업, 명예 모든 방면의 막힌 운을 동시에 열어 인생 전체를 꽃길로 이끄는 종합 대길 부적입니다."},
+    "wish_5": {"type": "wish", "pattern": "reputation", "title": "명예대영부 (名譽大榮符)", "power": "대중 인기 · 사회적 권위", "desc": "자신의 이름과 브랜드가 널리 알려지고 대중의 신뢰와 높은 사회적 권위를 얻게 하는 명예 부적입니다."},
+    "wish_6": {"type": "wish", "pattern": "protect", "title": "벽사소재부 (辟邪消除符)", "power": "악귀 퇴치 · 불운 척결", "desc": "주변에 맴도는 음습한 기운과 재수 없는 액운을 날카로운 경면주사의 칼날로 베어내는 벽사(辟邪) 부적입니다."}
 }
 
 TAROT_CARDS = [
@@ -125,20 +134,24 @@ def analyze_saju(req: SajuRequest):
     target_date = datetime.date(req.year, req.month, req.day)
     diff_days = (target_date - base_date).days
     
+    # 일주
     d_cg_idx = (diff_days + 0) % 10
     d_jj_idx = (diff_days + 10) % 12
     d_cg = CHEONGAN_HANJA[d_cg_idx]
     d_jj = JIJI_HANJA[d_jj_idx]
 
+    # 년주
     year_offset = (req.year - 4) % 60
     y_cg_idx = year_offset % 10
     y_jj_idx = year_offset % 12
     y_cg, y_jj = CHEONGAN_HANJA[y_cg_idx], JIJI_HANJA[y_jj_idx]
 
+    # 월주
     m_jj_idx = (req.month) % 12
     m_cg_idx = (y_cg_idx % 5 * 2 + 2 + (req.month - 2)) % 10
     m_cg, m_jj = CHEONGAN_HANJA[m_cg_idx], JIJI_HANJA[m_jj_idx]
 
+    # 시주
     if req.is_unknown_time or req.sijin_index is None or req.sijin_index < 0:
         h_pillar, h_cg, h_jj = "時未詳", "-", "-"
     else:
@@ -196,9 +209,24 @@ def analyze_saju(req: SajuRequest):
         k: round((v / total_score) * 100, 1) for k, v in scores.items()
     }
 
-    # [핵심] 사주에서 가장 결핍된(부족한) 오행 기운을 찾아 맞춤 부적 자동 배정
+    # [핵심] 사주 원국 3요소(결핍오행 + 일간 + 당일 날짜) 다차원 조합 부적 결정 엔진 (총 30종)
+    elem_category_map = {
+        "metal": "wealth",
+        "wood": "business",
+        "water": "love",
+        "fire": "health",
+        "earth": "wish"
+    }
+    
+    # 1. 가장 보충이 시급한 결핍 오행 도출
     min_elem = min(elem_percentages, key=elem_percentages.get)
-    user_talisman = TALISMAN_OHEANG_MAP.get(min_elem, TALISMAN_OHEANG_MAP["metal"])
+    cat = elem_category_map.get(min_elem, "wealth")
+
+    # 2. 일간(천간 10종)과 당일 일진 기반 세부 1~6번 인덱스 결정
+    day_seed = (d_cg_idx + d_jj_idx + datetime.date.today().day) % 6 + 1
+    talisman_lookup_key = f"{cat}_{day_seed}"
+    
+    user_talisman = TALISMAN_DATABASE.get(talisman_lookup_key, TALISMAN_DATABASE["wealth_1"])
 
     user_mbti = DAY_MBTI_MAP.get(d_cg, {"mbti": "대담한 통솔자 (ENTJ형)", "desc": "강한 추진력과 당당한 리더십으로 조직을 이끄는 개척자 사주"})
     user_animal_icon = ANIMAL_ICONS.get(d_animal, "🐶")
@@ -293,7 +321,6 @@ def get_daewoon_report(req: dict):
         """
     }
 
-# 4대 테마운 롱폼 심층 리포트 (동일 분량 3단 대등 구조)
 @app.post("/api/theme-report")
 def get_theme_report(req: dict):
     theme = req.get("theme", "wealth")
