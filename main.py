@@ -5,7 +5,7 @@ from pydantic import BaseModel
 from typing import Optional
 import os
 
-app = FastAPI(title="운세의 신 PRO API", version="5.2.0")
+app = FastAPI(title="운세의 신 PRO API", version="5.3.0")
 
 CHEONGAN_HANJA = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
 JIJI_HANJA = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"]
@@ -51,38 +51,56 @@ DAY_MBTI_MAP = {
 ANIMAL_MAP = {"子": "쥐", "丑": "소", "寅": "호랑이", "卯": "토끼", "辰": "용", "巳": "뱀", "午": "말", "未": "양", "申": "원숭이", "酉": "닭", "戌": "개", "亥": "돼지"}
 ANIMAL_ICONS = {"쥐": "🐭", "소": "🐮", "호랑이": "🐯", "토끼": "🐰", "용": "🐲", "뱀": "🐍", "말": "🐴", "양": "🐑", "원숭이": "🐵", "닭": "🐔", "개": "🐶", "돼지": "🐷"}
 
-# 4대 사주 맞춤 부적 마스터 (사주 오행 및 일간에 따라 실시간 매칭)
-TALISMAN_TYPE_MAP = {
-    "wealth": {"type": "wealth", "title": "재물만복부 (萬福符)", "power": "재물 증식 · 금전운 대통", "desc": "사방에서 금전과 복록이 샘솟듯 모여들고 헛돈 누수를 철통같이 차단하는 강력한 전통 경면주사 수제 부적입니다."},
-    "love": {"type": "love", "title": "천생화합부 (和合符)", "power": "애정 결속 · 인연운 대길", "desc": "서로의 기운을 조화롭게 묶어주고 엇갈린 인연의 오해를 풀어 평생의 신뢰와 화목을 완성하는 비급 부적입니다."},
-    "business": {"type": "business", "title": "사업대성부 (亨通符)", "power": "사업 번창 · 계약 성사", "desc": "막혔던 활로를 시원하게 뚫어주고 귀인의 조력과 승진·사업적 대성취를 견인하는 전통 수제 부적입니다."},
-    "health": {"type": "health", "title": "무병장수부 (延壽符)", "power": "심신 정화 · 기력 회복", "desc": "오행의 탁한 기운을 정화하고 수승화강의 원리를 통해 평생의 원기와 활력을 지켜주는 수호 부적입니다."}
+# 사주 오행 결핍 맞춤형 5대 비급 부적
+TALISMAN_OHEANG_MAP = {
+    "wood": {
+        "type": "wood",
+        "title": "사업대성부 (事業亨通符)",
+        "power": "추진력 강화 · 사업 번창 · 승진운",
+        "desc": "사주에 부족한 木(성장과 개척)의 활력을 불어넣어 막힌 활로를 뚫고 사업과 직무에서 강력한 주도권을 쥐게 하는 비급 부적입니다."
+    },
+    "fire": {
+        "type": "fire",
+        "title": "소원성취부 (心想事成符)",
+        "power": "열정 회복 · 명예 상승 · 소원 성취",
+        "desc": "사주에 부족한 火(열정과 확산)의 빛을 밝혀 어둠을 몰아내고 오랫동안 염원하던 소망을 일사천리로 성취시키는 전통 부적입니다."
+    },
+    "earth": {
+        "type": "earth",
+        "title": "금고수호부 (金庫安穩符)",
+        "power": "자산 방어 · 누수 차단 · 재물 안착",
+        "desc": "사주에 부족한 土(포용과 저장)의 단단한 대지를 마련하여 헛돈 지출을 막고 평생의 자산을 굳건하게 지켜주는 금고 수호 부적입니다."
+    },
+    "metal": {
+        "type": "metal",
+        "title": "재물만복부 (萬福大吉符)",
+        "power": "재물 증식 · 금전운 대통 · 투자 대박",
+        "desc": "사주에 부족한 金(결단과 결실)의 황금 기운을 채워 사방에서 금전과 복록이 샘솟듯 쏟아지게 하는 전통 경면주사 수제 부적입니다."
+    },
+    "water": {
+        "type": "water",
+        "title": "천생화합부 (萬事和合符)",
+        "power": "인연 결속 · 애정 화합 · 인간관계 개선",
+        "desc": "사주에 부족한 水(지혜와 융합)의 부드러운 유대감을 채워 엇갈린 인연을 묶어주고 귀인의 조력을 이끌어내는 화합 비급 부적입니다."
+    }
 }
 
 TAROT_CARDS = [
     {
         "name": "0. THE FOOL (바보)",
         "keyword": "새로운 시작 · 순수한 열정 · 무한한 잠재력",
-        "symbolism": "화려한 옷을 입고 절벽 끝에 서 있는 청년은 세상의 관습에 얽매이지 않는 순수한 영혼과 새로운 여정의 출발을 상징합니다. 손에 쥔 하얀 장미는 순수성을, 곁의 하얀 개는 본능적인 위험 경고와 충성을 뜻합니다.",
-        "fortune_reading": "오늘은 오랫동안 머뭇거리던 일의 시작 단추를 꿰기에 더없이 좋은 날입니다. 과거의 실패나 주변의 지나친 참견에 신경 쓰지 않고, 본인의 순수한 호기심과 직관을 따를 때 예상 밖의 통로가 시원하게 열립니다. 계산기를 두드리기보다는 일단 가벼운 마음으로 발을 내딛는 것이 핵심입니다.",
-        "advice": "새로운 프로젝트 구상이나 이직/취미/약속 등 새로운 제안에 열린 마음을 가지세요. 다만 준비 없는 무모함은 피하고, 발걸음은 경쾌하되 시선은 주변을 살피는 지혜가 필요합니다.",
-        "action_tip": "오늘 떠오르는 새로운 아이디어를 즉시 메모하고, 망설이던 연락을 먼저 건네보세요."
+        "symbolism": "화려한 옷을 입고 절벽 끝에 서 있는 청년은 세상의 관습에 얽매이지 않는 순수한 영혼과 새로운 여정의 출발을 상징합니다.",
+        "fortune_reading": "오늘은 오랫동안 머뭇거리던 일의 시작 단추를 꿰기에 더없이 좋은 날입니다. 직관을 따를 때 예상 밖의 통로가 열립니다.",
+        "advice": "새로운 제안에 열린 마음을 가지되 발걸음은 가볍되 시선은 주변을 살피세요.",
+        "action_tip": "오늘 떠오르는 아이디어를 즉시 메모하고 먼저 안부 연락을 건네보세요."
     },
     {
         "name": "I. THE MAGICIAN (마법사)",
         "keyword": "창조적 역량 · 완벽한 주도권 · 실력 발휘",
-        "symbolism": "머리 위의 무한대(∞) 기호와 제단 위의 4대 원소(지팡이, 컵, 검, 동전)는 세상의 모든 도구와 자원을 능숙하게 통제할 수 있는 탁월한 지혜와 창조력을 상징합니다.",
-        "fortune_reading": "귀하가 가진 지식, 언변, 전문 기술이 빛을 발하는 날입니다. 상대방을 설득하거나 협상을 주도하기에 최고의 컨디션이며, 막혀 있던 프로젝트도 귀하의 기지로 실마리를 풀 수 있습니다. 자신의 역량을 겸손 뒤에 숨기지 말고 자신 있게 세상에 드러내야 복이 들어옵니다.",
-        "advice": "미팅이나 보고, 프레젠테이션에서 당당한 태도로 분위기를 리드하세요. 철저한 사전 준비가 뒷받침될 때 원하는 성과와 명예를 온전히 거머쥘 수 있습니다.",
-        "action_tip": "중요한 대화나 업무에서 본인의 핵심 주장을 당당하고 명확하게 피력하세요."
-    },
-    {
-        "name": "II. THE HIGH PRIESTESS (여사제)",
-        "keyword": "깊은 통찰 · 직관과 혜안 · 침묵의 지혜",
-        "symbolism": "흑과 백의 기둥 사이에 앉아 스크롤을 쥔 여사제는 이성과 감성의 조화, 표면 아래 숨겨진 본질적 진실을 상징합니다.",
-        "fortune_reading": "겉으로 드러난 말보다 상대방의 숨은 의도나 상황의 이면을 꿰뚫어 보는 혜안이 극대화되는 날입니다. 성급하게 반응하기보다는 차분히 경청하고 심사숙고하세요.",
-        "advice": "중요한 결정은 하루 이틀 여유를 두고 결정하세요.",
-        "action_tip": "조용한 장소에서 생각을 차분히 정리하는 시간을 가지세요."
+        "symbolism": "머리 위의 무한대(∞) 기호와 제단 위의 4대 원소는 모든 도구를 통제하는 지혜와 창조력을 상징합니다.",
+        "fortune_reading": "귀하의 지식과 언변, 전문 기술이 빛을 발하는 날입니다. 당당한 태도로 판을 리드하기에 최적입니다.",
+        "advice": "미팅이나 보고에서 주도적으로 의견을 제시하고 실력을 마음껏 드러내세요.",
+        "action_tip": "중요한 대화나 업무에서 본인의 핵심 주장을 명확하게 피력하세요."
     }
 ]
 
@@ -157,6 +175,7 @@ def analyze_saju(req: SajuRequest):
         }
     }
 
+    # 지장간 가중치 오행 계산
     scores = {"wood": 0.0, "fire": 0.0, "earth": 0.0, "metal": 0.0, "water": 0.0}
     for cg in [y_cg, m_cg, d_cg]:
         scores[CHEONGAN_ELEMENTS[cg]] += 25.0
@@ -177,17 +196,9 @@ def analyze_saju(req: SajuRequest):
         k: round((v / total_score) * 100, 1) for k, v in scores.items()
     }
 
-    # 사용자 사주 일간(日干) 기반 맞춤 부적 자동 선택
-    # 甲/乙(목): 사업대성부, 丙/丁(화): 재물만복부, 戊/己(토): 금고수호부, 庚/辛(금): 천생화합부, 壬/癸(수): 무병장수부
-    talisman_key_map = {
-        "甲": "business", "乙": "business",
-        "丙": "wealth", "丁": "wealth",
-        "戊": "wealth", "己": "wealth",
-        "庚": "love", "辛": "love",
-        "壬": "health", "癸": "health"
-    }
-    user_talisman_type = talisman_key_map.get(d_cg, "wealth")
-    user_talisman = TALISMAN_TYPE_MAP.get(user_talisman_type, TALISMAN_TYPE_MAP["wealth"])
+    # [핵심] 사주에서 가장 결핍된(부족한) 오행 기운을 찾아 맞춤 부적 자동 배정
+    min_elem = min(elem_percentages, key=elem_percentages.get)
+    user_talisman = TALISMAN_OHEANG_MAP.get(min_elem, TALISMAN_OHEANG_MAP["metal"])
 
     user_mbti = DAY_MBTI_MAP.get(d_cg, {"mbti": "대담한 통솔자 (ENTJ형)", "desc": "강한 추진력과 당당한 리더십으로 조직을 이끄는 개척자 사주"})
     user_animal_icon = ANIMAL_ICONS.get(d_animal, "🐶")
@@ -282,7 +293,7 @@ def get_daewoon_report(req: dict):
         """
     }
 
-# 4대 테마운 롱폼 심층 리포트 (재물운 수준의 3단 완벽 대등 구성)
+# 4대 테마운 롱폼 심층 리포트 (동일 분량 3단 대등 구조)
 @app.post("/api/theme-report")
 def get_theme_report(req: dict):
     theme = req.get("theme", "wealth")
@@ -342,11 +353,11 @@ def get_theme_report(req: dict):
                 <div style="display: flex; flex-direction: column; gap: 6px; font-size: 11px; color: #475569;">
                     <p>• <strong>성향과 인품:</strong> 감정 기복이 적고 원칙이 뚜렷하며, 대화 시 상대방의 이야기를 깊이 경청해 주는 차분한 스타일.</p>
                     <p>• <strong>외모 및 이미지:</strong> 부드럽고 온화한 인상에 단정하고 세련된 옷차림을 선호하며 지적인 분위기를 풍기는 사람.</p>
-                    <p>• <strong>오행 궁합 조화:</strong> {user_name}님 사주에 꼭 필요한 水(물)과 金(쇠)의 차분한 기운을 채워줄 수 있는 띠(쥐띠, 닭띠, 원숭이띠)와 대길연(大吉緣)을 이룹니다.</p>
+                    <p>• <strong>오행 궁합 조화:</strong> {user_name}님 사주에 꼭 필요한 水(물)과 金(쇠)의 차분한 기운을 채워줄 수 있는 띠(쥐띠, 닭띠, 원숭이띠)와 대길연을 이룹니다.</p>
                 </div>
             </div>
             <div style="background: #FFFBEB; border: 1px solid #FDE68A; border-radius: 14px; padding: 12px;">
-                <p style="font-weight: 800; color: #78350F; font-size: 12px; margin-bottom: 4px;">🌹 2. 관계를 화목하게 유지하는 관계 처세 비결</p>
+                <p style="font-weight: 800; color: #78350F; font-size: 12px; margin-bottom: 4px;">🌹 2. 평생 화목을 완성하는 실전 관계 처세법</p>
                 <p style="font-size: 11px; color: #92400E; line-height: 1.6;">
                     • <strong>소통의 법칙:</strong> 서운한 감정이 들 때는 즉각 반응하기보다 반나절 정도 생각을 정리한 후 부드러운 화법으로 전달하세요.<br>
                     • <strong>행운의 데이트/힐링 장소:</strong> 물이 잔잔하게 흐르는 호수 주변, 조용한 미술관이나 테라스가 있는 카페가 두 사람의 기운을 조화롭게 묶어줍니다.<br>
