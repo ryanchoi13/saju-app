@@ -50,6 +50,20 @@
         .grid-cell { background: white; border: 1px solid #E2E8F0; border-radius: 14px; padding: 12px; font-size: 13px; text-align: left; }
         .action-card { background: #FFFBEB; border: 1px solid #FDE68A; border-radius: 14px; padding: 14px; text-align: left; font-size: 13px; }
 
+        /* 피드백 반영: 2x6 노스크롤 띠/별자리 그리드 */
+        .zodiac-grid-2x6 { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
+        .zodiac-btn { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 8px 2px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; }
+        .zodiac-btn:hover, .zodiac-btn:active { background: #EBF5EE; border-color: #86EFAC; transform: translateY(-1px); }
+        .zodiac-icon { font-size: 18px; line-height: 1.2; }
+        .zodiac-label { font-size: 10.5px; font-weight: 700; color: #334155; margin-top: 2px; }
+
+        .sub-tab-box { display: flex; background: #F1F5F9; border-radius: 12px; padding: 3px; gap: 4px; margin-bottom: 12px; }
+        .sub-tab-btn { flex: 1; padding: 7px; font-size: 12px; font-weight: 700; color: #64748B; border: none; background: transparent; border-radius: 8px; cursor: pointer; }
+        .sub-tab-btn.active { background: #FFFFFF; color: #2D6A4F; box-shadow: 0 1px 2px rgba(0,0,0,0.06); }
+
+        /* Phase 1 광고 슬롯 스타일 (플레이스홀더) */
+        .ad-slot-box { background: #FAFAFA; border: 1px dashed #CBD5E1; border-radius: 14px; padding: 12px; text-align: center; color: #94A3B8; font-size: 11px; font-weight: 600; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 60px; }
+
         .tarot-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
         .tarot-wrapper { perspective: 1000px; aspect-ratio: 2/3; cursor: pointer; }
         .flipper { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; transition: transform 0.6s ease; border-radius: 10px; }
@@ -67,7 +81,7 @@
         .tab-btn svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2; }
 
         .modal-bg { position: fixed; inset: 0; background: rgba(15,23,42,0.65); backdrop-filter: blur(3px); display: flex; align-items: center; justify-content: center; padding: 16px; z-index: 50; }
-        .modal-content { background: white; border-radius: 24px; padding: 20px; width: 100%; max-width: 320px; text-align: center; display: flex; flex-direction: column; gap: 14px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); }
+        .modal-content { background: white; border-radius: 24px; padding: 20px; width: 100%; max-width: 340px; text-align: center; display: flex; flex-direction: column; gap: 14px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); }
 
         .hidden { display: none !important; }
     </style>
@@ -159,6 +173,51 @@
                     <p id="resAdvice" style="font-size: 13px; color: #D1FAE5; font-weight: 400; line-height: 1.75; text-align: left; white-space: pre-line;"></p>
                 </div>
 
+                <!-- [신규 탑재] 12간지 띠별 / 12성좌 별자리 운세 (2x6 그리드) -->
+                <div class="card" style="padding: 16px;">
+                    <div class="sub-tab-box">
+                        <button type="button" onclick="switchZodiacSubTab('zodiac')" id="btnSubZodiac" class="sub-tab-btn active">🐭 12간지 띠별 운세</button>
+                        <button type="button" onclick="switchZodiacSubTab('star')" id="btnSubStar" class="sub-tab-btn">♈ 12별자리 운세</button>
+                    </div>
+
+                    <!-- 12간지 2x6 그리드 -->
+                    <div id="gridZodiacBox" class="zodiac-grid-2x6">
+                        <div onclick="openZodiacModal('zodiac', '쥐')" class="zodiac-btn"><span class="zodiac-icon">🐭</span><span class="zodiac-label">쥐</span></div>
+                        <div onclick="openZodiacModal('zodiac', '소')" class="zodiac-btn"><span class="zodiac-icon">🐮</span><span class="zodiac-label">소</span></div>
+                        <div onclick="openZodiacModal('zodiac', '호랑이')" class="zodiac-btn"><span class="zodiac-icon">🐯</span><span class="zodiac-label">호랑이</span></div>
+                        <div onclick="openZodiacModal('zodiac', '토끼')" class="zodiac-btn"><span class="zodiac-icon">🐰</span><span class="zodiac-label">토끼</span></div>
+                        <div onclick="openZodiacModal('zodiac', '용')" class="zodiac-btn"><span class="zodiac-icon">🐲</span><span class="zodiac-label">용</span></div>
+                        <div onclick="openZodiacModal('zodiac', '뱀')" class="zodiac-btn"><span class="zodiac-icon">🐍</span><span class="zodiac-label">뱀</span></div>
+                        <div onclick="openZodiacModal('zodiac', '말')" class="zodiac-btn"><span class="zodiac-icon">🐴</span><span class="zodiac-label">말</span></div>
+                        <div onclick="openZodiacModal('zodiac', '양')" class="zodiac-btn"><span class="zodiac-icon">🐑</span><span class="zodiac-label">양</span></div>
+                        <div onclick="openZodiacModal('zodiac', '원숭이')" class="zodiac-btn"><span class="zodiac-icon">🐵</span><span class="zodiac-label">원숭이</span></div>
+                        <div onclick="openZodiacModal('zodiac', '닭')" class="zodiac-btn"><span class="zodiac-icon">🐔</span><span class="zodiac-label">닭</span></div>
+                        <div onclick="openZodiacModal('zodiac', '개')" class="zodiac-btn"><span class="zodiac-icon">🐶</span><span class="zodiac-label">개</span></div>
+                        <div onclick="openZodiacModal('zodiac', '돼지')" class="zodiac-btn"><span class="zodiac-icon">🐷</span><span class="zodiac-label">돼지</span></div>
+                    </div>
+
+                    <!-- 12별자리 2x6 그리드 -->
+                    <div id="gridStarBox" class="zodiac-grid-2x6 hidden">
+                        <div onclick="openZodiacModal('star', '물병자리')" class="zodiac-btn"><span class="zodiac-icon">♒</span><span class="zodiac-label">물병</span></div>
+                        <div onclick="openZodiacModal('star', '물고기자리')" class="zodiac-btn"><span class="zodiac-icon">♓</span><span class="zodiac-label">물고기</span></div>
+                        <div onclick="openZodiacModal('star', '양자리')" class="zodiac-btn"><span class="zodiac-icon">♈</span><span class="zodiac-label">양</span></div>
+                        <div onclick="openZodiacModal('star', '황소자리')" class="zodiac-btn"><span class="zodiac-icon">♉</span><span class="zodiac-label">황소</span></div>
+                        <div onclick="openZodiacModal('star', '쌍둥이자리')" class="zodiac-btn"><span class="zodiac-icon">♊</span><span class="zodiac-label">쌍둥이</span></div>
+                        <div onclick="openZodiacModal('star', '게자리')" class="zodiac-btn"><span class="zodiac-icon">♋</span><span class="zodiac-label">게</span></div>
+                        <div onclick="openZodiacModal('star', '사자자리')" class="zodiac-btn"><span class="zodiac-icon">♌</span><span class="zodiac-label">사자</span></div>
+                        <div onclick="openZodiacModal('star', '처녀자리')" class="zodiac-btn"><span class="zodiac-icon">♍</span><span class="zodiac-label">처녀</span></div>
+                        <div onclick="openZodiacModal('star', '천칭자리')" class="zodiac-btn"><span class="zodiac-icon">♎</span><span class="zodiac-label">천칭</span></div>
+                        <div onclick="openZodiacModal('star', '전갈자리')" class="zodiac-btn"><span class="zodiac-icon">♏</span><span class="zodiac-label">전갈</span></div>
+                        <div onclick="openZodiacModal('star', '사수자리')" class="zodiac-btn"><span class="zodiac-icon">♐</span><span class="zodiac-label">사수</span></div>
+                        <div onclick="openZodiacModal('star', '염소자리')" class="zodiac-btn"><span class="zodiac-icon">♑</span><span class="zodiac-label">염소</span></div>
+                    </div>
+                </div>
+
+                <!-- Phase 1 광고 슬롯 1 (피드 배너 영역) -->
+                <div class="ad-slot-box">
+                    <span>📢 광고 영역 (Google AdSense / Kakao AdFit 슬롯 1)</span>
+                </div>
+
                 <div class="grid-2">
                     <div class="grid-cell"><span style="font-size: 11px; color: #94A3B8; display: block;">🎨 행운의 색상</span><p id="resColor" style="font-weight: 600; margin-top: 2px; font-size: 13px;">스노우 화이트 / 실버</p></div>
                     <div class="grid-cell"><span style="font-size: 11px; color: #94A3B8; display: block;">🔢 행운의 숫자</span><p id="resNumber" style="font-weight: 600; margin-top: 2px; font-size: 13px;">4, 9</p></div>
@@ -209,7 +268,7 @@
                 <div class="talisman-banner">
                     <div style="display: flex; justify-content: center; align-items: center; gap: 6px;">
                         <span>🔥</span>
-                        <h3 id="talismanBannerHeader" style="font-size: 15px; font-weight: 700; color: #78350F;">오늘의 맞춤 경면주사 부적</h3>
+                        <h3 id="talismanBannerHeader" style="font-size: 16px; font-weight: 700; color: #78350F;">오늘의 맞춤 경면주사 부적</h3>
                         <span>🌊</span>
                     </div>
 
@@ -343,6 +402,11 @@
                     </div>
                 </div>
 
+                <!-- Phase 1 광고 슬롯 2 (사주 명식과 대운 사이) -->
+                <div class="ad-slot-box">
+                    <span>📢 광고 영역 (Google AdSense / Kakao AdFit 슬롯 2)</span>
+                </div>
+
                 <!-- 자미두수 & 10년 대운 -->
                 <div class="card" style="border: 2px solid #FCD34D;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
@@ -400,7 +464,7 @@
 
             </div>
 
-            <!-- 탭 3: 궁합·테마 (피드백 반영: 제목 단축) -->
+            <!-- 탭 3: 궁합·테마 -->
             <div id="view-theme" class="tab-view hidden">
                 
                 <div class="card" style="text-align: left;">
@@ -502,6 +566,48 @@
             </button>
         </nav>
 
+    </div>
+
+    <!-- [신규] 띠별 / 별자리 운세 상세 팝업 모달 + 소셜 바이럴 공유 -->
+    <div id="zodiacModal" class="modal-bg hidden">
+        <div class="modal-content" style="max-width: 350px; text-align: left; padding: 20px; border-radius: 24px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 10px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span id="zodiacModalIcon" style="font-size: 24px;">🐭</span>
+                    <div>
+                        <h3 id="zodiacModalName" style="font-size: 15px; font-weight: 800; color: #0F172A;">쥐띠 오늘의 운세</h3>
+                        <p id="zodiacModalSub" style="font-size: 11px; color: #64748B;">오늘의 실시간 일진 분석</p>
+                    </div>
+                </div>
+                <button onclick="closeZodiacModal()" style="background: none; border: none; font-size: 20px; color: #94A3B8; cursor: pointer;">&times;</button>
+            </div>
+
+            <div style="display: flex; align-items: center; justify-content: space-between; background: #F0FDF4; border: 1px solid #86EFAC; border-radius: 12px; padding: 10px 14px;">
+                <span style="font-size: 12px; font-weight: 700; color: #166534;">오늘의 종합 운세 지수</span>
+                <span id="zodiacModalScore" style="font-size: 16px; font-weight: 900; color: #15803D;">95점</span>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 10px; max-height: 48vh; overflow-y: auto; padding-right: 2px;">
+                <div>
+                    <h4 id="zodiacModalTitle" style="font-size: 13.5px; font-weight: 700; color: #0F172A; margin-bottom: 4px;">총평</h4>
+                    <p id="zodiacModalOverview" style="font-size: 12.5px; color: #475569; line-height: 1.6;"></p>
+                </div>
+
+                <div id="zodiacYearTipsBox" style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 10px; font-size: 11.5px; line-height: 1.6; color: #334155;"></div>
+
+                <div id="zodiacExtraInfo" style="font-size: 12px; color: #2D6A4F; font-weight: 600; background: #EBF5EE; border-radius: 10px; padding: 8px 10px;"></div>
+
+                <!-- Phase 1 광고 슬롯 3 (운세 팝업 내 하단 광고 영역) -->
+                <div class="ad-slot-box" style="margin-top: 4px;">
+                    <span>📢 광고 영역 (Google AdSense / Kakao AdFit 슬롯 3)</span>
+                </div>
+            </div>
+
+            <!-- 소셜 바이럴 공유 버튼 -->
+            <button onclick="shareZodiacFortune()" style="width: 100%; background: #FEE500; color: #191919; border: none; font-size: 13px; font-weight: 800; padding: 12px; border-radius: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.06);">
+                <span>💬</span> 친구에게 이 운세 공유하기
+            </button>
+        </div>
     </div>
 
     <!-- 전통 경면주사 수제 부적 모달 -->
@@ -611,6 +717,7 @@
         let currentUserAge = 49;
         let dailyTarotDrawn = false;
         let drawnTarotCards = {};
+        let currentZodiacData = null;
 
         function getGoldCoinSvg(size = 15, color = "#F59E0B") {
             return `<svg viewBox="0 0 20 20" width="${size}" height="${size}" style="display:inline-block; vertical-align:middle; flex-shrink:0;">
@@ -803,6 +910,78 @@
 
             if (tabId === 'mypage') {
                 renderUnlockedArchive();
+            }
+        }
+
+        // 띠 / 별자리 서브 탭 전환
+        function switchZodiacSubTab(type) {
+            const btnZodiac = document.getElementById('btnSubZodiac');
+            const btnStar = document.getElementById('btnSubStar');
+            const gridZodiac = document.getElementById('gridZodiacBox');
+            const gridStar = document.getElementById('gridStarBox');
+
+            if (type === 'zodiac') {
+                btnZodiac.className = 'sub-tab-btn active';
+                btnStar.className = 'sub-tab-btn';
+                gridZodiac.classList.remove('hidden');
+                gridStar.classList.add('hidden');
+            } else {
+                btnStar.className = 'sub-tab-btn active';
+                btnZodiac.className = 'sub-tab-btn';
+                gridStar.classList.remove('hidden');
+                gridZodiac.classList.add('hidden');
+            }
+        }
+
+        // 띠별 / 별자리 운세 팝업 열기
+        async function openZodiacModal(type, key) {
+            try {
+                const res = await fetch(`/api/zodiac-fortune?type=${type}&key=${encodeURIComponent(key)}`);
+                const data = await res.json();
+                currentZodiacData = { type, key, ...data };
+
+                document.getElementById('zodiacModalIcon').innerText = data.icon;
+                document.getElementById('zodiacModalName').innerText = `${data.name} 오늘의 운세`;
+                document.getElementById('zodiacModalScore').innerText = `${data.score}점`;
+                document.getElementById('zodiacModalTitle').innerText = data.title;
+                document.getElementById('zodiacModalOverview').innerText = data.overview;
+
+                const tipsBox = document.getElementById('zodiacYearTipsBox');
+                if (type === 'zodiac' && data.year_tips) {
+                    tipsBox.innerHTML = `<p style="font-weight:700; color:#0F172A; margin-bottom:4px;">📅 출생연도별 1줄 가이드</p>` + data.year_tips.join('<br>');
+                    tipsBox.classList.remove('hidden');
+                    document.getElementById('zodiacExtraInfo').innerHTML = `⏱️ ${data.lucky_time} | 🤝 ${data.lucky_match}`;
+                } else {
+                    tipsBox.innerHTML = `<p style="font-weight:700; color:#E11D48; margin-bottom:2px;">💖 애정운 가이드</p>${data.love_advice}`;
+                    tipsBox.classList.remove('hidden');
+                    document.getElementById('zodiacExtraInfo').innerHTML = `✨ 행운의 아이템: ${data.lucky_item} | ⏱️ ${data.lucky_time}`;
+                }
+
+                document.getElementById('zodiacModal').classList.remove('hidden');
+            } catch(e) {
+                alert('운세를 불러오지 못했습니다.');
+            }
+        }
+
+        function closeZodiacModal() {
+            document.getElementById('zodiacModal').classList.add('hidden');
+        }
+
+        // 소셜 바이럴 공유 (카톡 / SNS)
+        function shareZodiacFortune() {
+            if (!currentZodiacData) return;
+            const shareText = `[운세의 신] 오늘 ${currentZodiacData.name} 운세 점수는 ${currentZodiacData.score}점!\n"${currentZodiacData.title}"\n\n너의 오늘 운세도 지금 확인해봐 👉 ${window.location.href}`;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: `[운세의 신] ${currentZodiacData.name} 오늘의 운세`,
+                    text: shareText,
+                    url: window.location.href
+                }).catch(() => {});
+            } else {
+                navigator.clipboard.writeText(shareText).then(() => {
+                    alert('📋 오늘의 운세 공유 링크가 복사되었습니다!\n카카오톡이나 인스타그램에 붙여넣어 공유하세요.');
+                });
             }
         }
 
@@ -1176,7 +1355,7 @@
             if (existingIdx >= 0) {
                 currentList[existingIdx] = { key: key, title: title, content: content, date: todayStr };
             } else {
-                currentList.unshift({ key: key, title: title, content: content, date: todayStr });
+                currentList[existingIdx] = { key: key, title: title, content: content, date: todayStr };
             }
             
             try {
