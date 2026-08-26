@@ -6,7 +6,7 @@ from typing import Optional
 import os
 import random
 
-app = FastAPI(title="운세의 신 API", version="20.0.0")
+app = FastAPI(title="운세의 신 API", version="21.0.0")
 
 CHEONGAN_HANJA = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
 JIJI_HANJA = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"]
@@ -382,7 +382,6 @@ def get_daily_tarot(slot: int = 1, rand_seed: Optional[str] = None):
     random_idx = random.randint(0, len(TAROT_CARDS) - 1)
     return TAROT_CARDS[random_idx]
 
-# [1단계 업그레이드] 자미두수 평생운세: 분량 3배 확장 & 챕터형 족집게 Q&A 구조
 @app.post("/api/daewoon-report")
 def get_daewoon_report(req: dict):
     user_name = req.get("name", "최정오")
@@ -396,7 +395,6 @@ def get_daewoon_report(req: dict):
         "content": f"""
         <div style="display: flex; flex-direction: column; gap: 16px; font-size: 14.5px; color: #334155; line-height: 1.85; text-align: left;">
             
-            <!-- Chapter 1 -->
             <div>
                 <div style="border-left: 4px solid #2D6A4F; padding-left: 10px; margin-bottom: 8px;">
                     <span style="font-size: 12px; color: #2D6A4F; font-weight: 800;">Chapter 1. 평생 대운맥</span>
@@ -431,7 +429,6 @@ def get_daewoon_report(req: dict):
 
             <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
 
-            <!-- Chapter 2 -->
             <div>
                 <div style="border-left: 4px solid #D97706; padding-left: 10px; margin-bottom: 8px;">
                     <span style="font-size: 12px; color: #D97706; font-weight: 800;">Chapter 2. 현재 10년 대운</span>
@@ -451,7 +448,6 @@ def get_daewoon_report(req: dict):
 
             <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
 
-            <!-- Chapter 3 -->
             <div>
                 <div style="border-left: 4px solid #DC2626; padding-left: 10px; margin-bottom: 8px;">
                     <span style="font-size: 12px; color: #DC2626; font-weight: 800;">Chapter 3. 불운 방어</span>
@@ -467,7 +463,6 @@ def get_daewoon_report(req: dict):
 
             <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
 
-            <!-- Chapter 4 -->
             <div>
                 <div style="border-left: 4px solid #F59E0B; padding-left: 10px; margin-bottom: 8px;">
                     <span style="font-size: 12px; color: #D97706; font-weight: 800;">Chapter 4. 실전 개운 솔루션</span>
@@ -486,7 +481,6 @@ def get_daewoon_report(req: dict):
         """
     }
 
-# [1단계 업그레이드] 2026 신년운세 & 토정비결: 12개월 기회/주의점 2원화 상세 리포트
 @app.post("/api/sinnian-report")
 def get_sinnian_report(req: dict):
     user_name = req.get("name", "최정오")
@@ -526,7 +520,6 @@ def get_sinnian_report(req: dict):
         "content": f"""
         <div style="display: flex; flex-direction: column; gap: 16px; font-size: 14.5px; color: #334155; line-height: 1.85; text-align: left;">
             
-            <!-- Chapter 1 -->
             <div>
                 <div style="border-left: 4px solid #DC2626; padding-left: 10px; margin-bottom: 8px;">
                     <span style="font-size: 12px; color: #DC2626; font-weight: 800;">Chapter 1. 2026년 세운(歲運) 총론</span>
@@ -546,7 +539,6 @@ def get_sinnian_report(req: dict):
 
             <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
 
-            <!-- Chapter 2 -->
             <div>
                 <div style="border-left: 4px solid #2D6A4F; padding-left: 10px; margin-bottom: 10px;">
                     <span style="font-size: 12px; color: #2D6A4F; font-weight: 800;">Chapter 2. 12개월 정밀 토정비결</span>
@@ -561,7 +553,6 @@ def get_sinnian_report(req: dict):
 
             <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
 
-            <!-- Chapter 3 -->
             <div>
                 <div style="border-left: 4px solid #D97706; padding-left: 10px; margin-bottom: 8px;">
                     <span style="font-size: 12px; color: #D97706; font-weight: 800;">Chapter 3. 2026 개운 비책</span>
@@ -579,7 +570,6 @@ def get_sinnian_report(req: dict):
         """
     }
 
-# [1단계 업그레이드] 4대 테마운: 챕터형 족집게 분석 체계로 대폭 확장
 def generate_love_report_content(user_name: str, sub_opt: str) -> str:
     if sub_opt == "기혼":
         return f"""
@@ -736,6 +726,165 @@ def generate_love_report_content(user_name: str, sub_opt: str) -> str:
         </div>
         """
 
+# [신규 추가] 사업·직업운 4대 상황별 맞춤 분기 엔진
+def generate_business_report_content(user_name: str, sub_opt: str) -> str:
+    if sub_opt == "취업/이직 준비중":
+        return f"""
+        <div style="display: flex; flex-direction: column; gap: 16px; font-size: 14.5px; color: #334155; line-height: 1.85; text-align: left;">
+            <div style="border-left: 4px solid #2563EB; padding-left: 10px;">
+                <span style="font-size: 12px; color: #2563EB; font-weight: 800;">상황 맞춤: 취업/이직 준비중</span>
+                <h4 style="font-size: 16.5px; font-weight: 800; color: #1E3A8A; margin: 3px 0 6px;">[취업·이직 대길운] 숨겨진 잠재력 폭발과 합격의 낭보</h4>
+                <p style="color: #1E40AF; font-size: 14.5px; line-height: 1.85;">
+                    {user_name}님의 사주 원국은 치밀한 분석력과 묵직한 신뢰감을 겸비하고 있어, 면접관이나 인사 결정권자에게 깊은 인상을 심어주는 관록의 명식입니다. 남들의 눈치를 보며 기준을 낮추기보다 본인의 전문 강점을 당당하게 어필할 때 더 큰 기업과 좋은 조건으로 이직·취업 문이 활짝 열립니다.
+                </p>
+            </div>
+
+            <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
+
+            <div>
+                <div style="border-left: 4px solid #1E40AF; padding-left: 10px; margin-bottom: 8px;">
+                    <span style="font-size: 12px; color: #1E40AF; font-weight: 800;">Chapter 2. 합격 최적 타이밍</span>
+                    <h4 style="font-size: 16.5px; font-weight: 800; color: #0F172A; margin-top: 2px;">🎯 Q. 서류/면접 합격률이 가장 높은 황금 달(月)은?</h4>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 8px; font-size: 14.5px; color: #475569; line-height: 1.85;">
+                    <p>• <strong>합격 대길 시기:</strong> 가을(양력 9~11월)과 초봄(양력 2~3월)에 문서운(印星)과 취업운(官星)이 강력 결합하여 뜻밖의 합격 통보를 받습니다.</p>
+                    <p>• <strong>추천 직무 분야:</strong> 전략 기획, 경영 관리, IT/기술 매니지먼트, 금융 분석 등 원칙과 시스템을 다루는 직무에서 합격률이 2배로 높아집니다.</p>
+                    <p>• <strong>귀인 결정권자:</strong> 쥐띠, 닭띠, 원숭이띠의 연장자 면접관이나 헤드헌터가 결정적인 조력자 역할을 해줍니다.</p>
+                </div>
+            </div>
+
+            <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
+
+            <div>
+                <div style="border-left: 4px solid #D97706; padding-left: 10px; margin-bottom: 8px;">
+                    <span style="font-size: 12px; color: #D97706; font-weight: 800;">Chapter 3. 면접 합격 개운법</span>
+                    <h4 style="font-size: 16.5px; font-weight: 800; color: #78350F; margin-top: 2px;">💼 합격을 부르는 면접 스타일 & 마인드셋</h4>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 8px; font-size: 14.5px; color: #92400E; line-height: 1.85;">
+                    <p>• <strong>면접 복장 코디:</strong> 신뢰감을 주는 딥 네이비 정장에 단정한 화이트 셔츠와 메탈 시계를 착용하면 전문성과 결단력이 돋보입니다.</p>
+                    <p>• <strong>실전 답변 전략:</strong> 화려한 미사여구보다 실제 경험을 두괄식으로 간결하게 전달할 때 압도적인 신뢰를 얻습니다.</p>
+                </div>
+            </div>
+        </div>
+        """
+    elif sub_opt == "사업가/프리랜서":
+        return f"""
+        <div style="display: flex; flex-direction: column; gap: 16px; font-size: 14.5px; color: #334155; line-height: 1.85; text-align: left;">
+            <div style="border-left: 4px solid #2563EB; padding-left: 10px;">
+                <span style="font-size: 12px; color: #2563EB; font-weight: 800;">상황 맞춤: 사업가/프리랜서</span>
+                <h4 style="font-size: 16.5px; font-weight: 800; color: #1E3A8A; margin: 3px 0 6px;">[사업 번창 & 수주 대길운] 매출 퀀텀점프와 독점적 시장 장악</h4>
+                <p style="color: #1E40AF; font-size: 14.5px; line-height: 1.85;">
+                    {user_name}님의 사주는 판의 흐름을 꿰뚫어 보고 과감한 결단력으로 시장의 주도권을 쥐는 전형적인 '비즈니스 사령관'의 명식입니다. 남들이 주저할 때 틈새시장을 선점하는 감각이 탁월하여, 단순 용역을 넘어 자신만의 시스템과 브랜드를 구축할 때 폭발적인 부의 확장이 일어납니다.
+                </p>
+            </div>
+
+            <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
+
+            <div>
+                <div style="border-left: 4px solid #1E40AF; padding-left: 10px; margin-bottom: 8px;">
+                    <span style="font-size: 12px; color: #1E40AF; font-weight: 800;">Chapter 2. 매출 폭발 타이밍</span>
+                    <h4 style="font-size: 16.5px; font-weight: 800; color: #0F172A; margin-top: 2px;">🚀 Q. 대형 수주 및 투자 유치 대박의 타이밍은?</h4>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 8px; font-size: 14.5px; color: #475569; line-height: 1.85;">
+                    <p>• <strong>대박 수주·계약 시기:</strong> 양력 5월과 10월에 재물선과 계약선이 합을 이루어 연간 매출의 60% 이상을 견인하는 대형 계약이 성사됩니다.</p>
+                    <p>• <strong>추천 사업 확장 모델:</strong> 무형의 지식재산권(IP), 라이선스, 플랫폼 비즈니스 등 초기 고정비를 낮추고 마진율을 극대화하는 모델이 대성합니다.</p>
+                    <p>• <strong>파트너십 궁합:</strong> 실행력이 뛰어난 소띠, 용띠 파트너와 손을 잡으면 사업의 안정성과 확장 속도가 3배로 빨라집니다.</p>
+                </div>
+            </div>
+
+            <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
+
+            <div>
+                <div style="border-left: 4px solid #D97706; padding-left: 10px; margin-bottom: 8px;">
+                    <span style="font-size: 12px; color: #D97706; font-weight: 800;">Chapter 3. 사업 자산 방어</span>
+                    <h4 style="font-size: 16.5px; font-weight: 800; color: #78350F; margin-top: 2px;">💼 금전 누수 차단 및 집무실 개운 비책</h4>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 8px; font-size: 14.5px; color: #92400E; line-height: 1.85;">
+                    <p>• <strong>집무실 명당 배치:</strong> 출입문을 대각선으로 바라보는 자리에 책상을 배치하고 등 뒤에 단단한 벽을 두면 배신수와 구설을 완벽히 막아냅니다.</p>
+                    <p>• <strong>미수금 방어법:</strong> 구두 계약을 절대 금하고 모든 계약은 단계별 선금과 서면 날인을 철저히 준수하세요.</p>
+                </div>
+            </div>
+        </div>
+        """
+    elif sub_opt == "창업 준비중":
+        return f"""
+        <div style="display: flex; flex-direction: column; gap: 16px; font-size: 14.5px; color: #334155; line-height: 1.85; text-align: left;">
+            <div style="border-left: 4px solid #2563EB; padding-left: 10px;">
+                <span style="font-size: 12px; color: #2563EB; font-weight: 800;">상황 맞춤: 창업 준비중</span>
+                <h4 style="font-size: 16.5px; font-weight: 800; color: #1E3A8A; margin: 3px 0 6px;">[창업 대길 & 개척운] 성공적인 론칭과 탄탄한 사업 기반 구축</h4>
+                <p style="color: #1E40AF; font-size: 14.5px; line-height: 1.85;">
+                    {user_name}님의 사주는 남의 밑에서 정해진 일만 하기에는 그릇이 너무 크며, 스스로 깃발을 꽂고 영토를 확장할 때 진정한 천운이 발현되는 창업가의 사주입니다. 철저한 시장 조사와 린(Lean)한 초기 자본 운용이 뒷받침된다면 3년 내에 탄탄한 중견 기업의 기틀을 닦게 됩니다.
+                </p>
+            </div>
+
+            <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
+
+            <div>
+                <div style="border-left: 4px solid #1E40AF; padding-left: 10px; margin-bottom: 8px;">
+                    <span style="font-size: 12px; color: #1E40AF; font-weight: 800;">Chapter 2. 창업 론칭 타이밍</span>
+                    <h4 style="font-size: 16.5px; font-weight: 800; color: #0F172A; margin-top: 2px;">🏁 Q. 사업자 등록 및 공식 론칭 대길의 달은?</h4>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 8px; font-size: 14.5px; color: #475569; line-height: 1.85;">
+                    <p>• <strong>사업자 등록 대길 시기:</strong> 봄(양력 3~4월)과 가을(양력 9~10월)에 오픈 및 법인 설립을 진행하면 초기 고객 유입과 언론/입소문 효과가 극대화됩니다.</p>
+                    <p>• <strong>대박 창업 아이템:</strong> 전문 지식 서비스, 라이선스 비즈니스, B2B 매칭 플랫폼 등 시스템 수익형 아이템이 가장 안전하고 높은 수익률을 보장합니다.</p>
+                    <p>• <strong>사업장 명당 방위:</strong> 주거지 기준 '정동쪽'과 '서북쪽'에 터를 잡으면 귀인의 발걸음이 끊이지 않습니다.</p>
+                </div>
+            </div>
+
+            <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
+
+            <div>
+                <div style="border-left: 4px solid #D97706; padding-left: 10px; margin-bottom: 8px;">
+                    <span style="font-size: 12px; color: #D97706; font-weight: 800;">Chapter 3. 창업 생존 수칙</span>
+                    <h4 style="font-size: 16.5px; font-weight: 800; color: #78350F; margin-top: 2px;">💡 망하지 않는 창업 3대 실천 원칙</h4>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 8px; font-size: 14.5px; color: #92400E; line-height: 1.85;">
+                    <p>• <strong>초기 고정비 최소화:</strong> 화려한 인테리어보다 실제 마케팅과 제품 경쟁력에 80% 이상의 자금을 투입하세요.</p>
+                    <p>• <strong>핵심 멤버 구성:</strong> 재무와 꼼꼼한 실무를 도맡아줄 파트너(소띠, 닭띠)를 초기에 확보하면 리스크가 0%로 줄어듭니다.</p>
+                </div>
+            </div>
+        </div>
+        """
+    else: # 직장인 기본
+        return f"""
+        <div style="display: flex; flex-direction: column; gap: 16px; font-size: 14.5px; color: #334155; line-height: 1.85; text-align: left;">
+            <div style="border-left: 4px solid #2563EB; padding-left: 10px;">
+                <span style="font-size: 12px; color: #2563EB; font-weight: 800;">상황 맞춤: 직장인</span>
+                <h4 style="font-size: 16.5px; font-weight: 800; color: #1E3A8A; margin: 3px 0 6px;">[직장·승진운] 핵심 인재로서의 두각과 고속 승진의 천운</h4>
+                <p style="color: #1E40AF; font-size: 14.5px; line-height: 1.85;">
+                    {user_name}님의 사주는 복잡한 난제를 단번에 해결하는 전략적 기획력과 결단력을 지니고 있어 조직 내에서 대체 불가능한 핵심 리더로서 인정받는 명식입니다. 사내 정치에 휩쓸리지 않고 본인만의 독보적인 실적을 증명할 때 파격적인 승진과 연봉 인상의 기회가 찾아옵니다.
+                </p>
+            </div>
+
+            <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
+
+            <div>
+                <div style="border-left: 4px solid #1E40AF; padding-left: 10px; margin-bottom: 8px;">
+                    <span style="font-size: 12px; color: #1E40AF; font-weight: 800;">Chapter 2. 승진·영전 타이밍</span>
+                    <h4 style="font-size: 16.5px; font-weight: 800; color: #0F172A; margin-top: 2px;">🚀 Q. 사내 인사 고과 및 영전·승진의 최적기는?</h4>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 8px; font-size: 14.5px; color: #475569; line-height: 1.85;">
+                    <p>• <strong>승진·영전 대길 시기:</strong> 하반기(양력 10~12월)와 초봄(2~3월)에 상급자 및 인사위원회의 강력한 추천으로 직급 상승이 성사됩니다.</p>
+                    <p>• <strong>사내 귀인 상사:</strong> 은근히 무게감 있고 원칙이 뚜렷한 상사(원숭이띠, 쥐띠)가 {user_name}님의 든든한 방패막이가 되어줍니다.</p>
+                    <p>• <strong>성과 어필 전략:</strong> 혼자 묵묵히 일하기보다 성과 보고서와 프레젠테이션을 통해 가시적인 숫자로 상급자를 설득하세요.</p>
+                </div>
+            </div>
+
+            <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
+
+            <div>
+                <div style="border-left: 4px solid #D97706; padding-left: 10px; margin-bottom: 8px;">
+                    <span style="font-size: 12px; color: #D97706; font-weight: 800;">Chapter 3. 사내 처세 비책</span>
+                    <h4 style="font-size: 16.5px; font-weight: 800; color: #78350F; margin-top: 2px;">💼 직장 스트레스 차단 & 사무 공간 개운법</h4>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 8px; font-size: 14.5px; color: #92400E; line-height: 1.85;">
+                    <p>• <strong>사무실 책상 풍수:</strong> 모니터 옆에 메탈 소재의 소품이나 화분(작은 관엽식물)을 두면 잡음을 없애고 집중력을 극대화합니다.</p>
+                    <p>• <strong>동료 관계 처세:</strong> 동료들의 불평불만에 휩쓸리지 말고 중립을 유지할 때 인사철에 가장 안전하고 높은 평가를 받습니다.</p>
+                </div>
+            </div>
+        </div>
+        """
+
 @app.post("/api/theme-report")
 def get_theme_report(req: dict):
     theme = req.get("theme", "wealth")
@@ -751,6 +900,8 @@ def get_theme_report(req: dict):
 
     if theme == "love":
         content_html = generate_love_report_content(user_name, sub_opt)
+    elif theme == "business":
+        content_html = generate_business_report_content(user_name, sub_opt)
     elif theme == "wealth":
         content_html = f"""
         <div style="display: flex; flex-direction: column; gap: 16px; font-size: 14.5px; color: #334155; line-height: 1.85; text-align: left;">
@@ -787,44 +938,6 @@ def get_theme_report(req: dict):
                     <p>• <strong>행운의 방위:</strong> 주거지나 사무실 기준 '정북쪽'과 '동북쪽'이 재물이 샘솟는 황금 방위입니다.</p>
                     <p>• <strong>금전 누수 방어법:</strong> 지갑 안에 현금을 항상 짝수 매수로 정돈하여 넣고, 노란색 소품을 휴대하면 헛돈 지출이 차단됩니다.</p>
                     <p>• <strong>문서 계약 대길 타이밍:</strong> 음력 4월, 8월, 12월에 체결하는 부동산/투자 계약이 평생의 복록을 부릅니다.</p>
-                </div>
-            </div>
-        </div>
-        """
-    elif theme == "business":
-        content_html = f"""
-        <div style="display: flex; flex-direction: column; gap: 16px; font-size: 14.5px; color: #334155; line-height: 1.85; text-align: left;">
-            <div style="border-left: 4px solid #2563EB; padding-left: 10px;">
-                <span style="font-size: 12px; color: #2563EB; font-weight: 800;">Chapter 1. 직업적 천명 감명</span>
-                <h4 style="font-size: 16.5px; font-weight: 800; color: #1E3A8A; margin: 3px 0 6px;">[사업·직업운] 치밀한 기획력과 결단력의 수장</h4>
-                <p style="color: #1E40AF; font-size: 14.5px; line-height: 1.85;">
-                    {user_name}님의 사주는 복잡한 문제의 핵심을 단번에 꿰뚫고 시스템을 정돈하는 전략가 기질을 타고났습니다. 현재 직업군({sub_opt})에서 남들이 기피하는 난제를 해결하며 대체 불가능한 리더로서 두각을 나타내게 됩니다.
-                </p>
-            </div>
-
-            <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
-
-            <div>
-                <div style="border-left: 4px solid #1E40AF; padding-left: 10px; margin-bottom: 8px;">
-                    <span style="font-size: 12px; color: #1E40AF; font-weight: 800;">Chapter 2. 성공 비즈니스 분야</span>
-                    <h4 style="font-size: 16.5px; font-weight: 800; color: #0F172A; margin-top: 2px;">🚀 Q. {user_name}님에게 가장 큰 부와 명예를 안겨줄 아이템은?</h4>
-                </div>
-                <div style="display: flex; flex-direction: column; gap: 8px; font-size: 14.5px; color: #475569; line-height: 1.85;">
-                    <p>• <strong>추천 핵심 직무:</strong> 전략 기획, 경영 컨설팅, IT/기술 매니지먼트, 금융 분석 등 시스템을 설계하는 분야.</p>
-                    <p>• <strong>창업 및 사업 방향:</strong> 지식 기반 플랫폼, 전문 라이선스 비즈니스 등 무형의 노하우를 자산화하는 모델에 최적입니다.</p>
-                </div>
-            </div>
-
-            <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
-
-            <div>
-                <div style="border-left: 4px solid #D97706; padding-left: 10px; margin-bottom: 8px;">
-                    <span style="font-size: 12px; color: #D97706; font-weight: 800;">Chapter 3. 승진·이직 가이드</span>
-                    <h4 style="font-size: 16.5px; font-weight: 800; color: #78350F; margin-top: 2px;">💼 승진·이직·사업 대성을 위한 실전 처세 가이드</h4>
-                </div>
-                <div style="display: flex; flex-direction: column; gap: 8px; font-size: 14.5px; color: #92400E; line-height: 1.85;">
-                    <p>• <strong>이직/창업 대길 시기:</strong> 가을(양력 9~11월)과 초봄(양력 2~3월)에 들어오는 스카우트 제의나 신규 사업 론칭이 큰 명예를 안겨줍니다.</p>
-                    <p>• <strong>사무 공간 개운법:</strong> 책상을 출입문이 대각선으로 보이는 자리에 앉고, 메탈 소품을 두면 집중력이 극대화됩니다.</p>
                 </div>
             </div>
         </div>
