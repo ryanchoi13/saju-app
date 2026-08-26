@@ -12,7 +12,6 @@
         body { background-color: #F4F7F4; color: #1E293B; display: flex; justify-content: center; min-height: 100vh; }
         .app-container { width: 100%; max-width: 448px; background: #FFFFFF; min-height: 100vh; display: flex; flex-direction: column; position: relative; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); padding-bottom: 80px; }
         
-        /* 2. 로고 클릭 가능 스타일 */
         header { background: #FFFFFF; border-bottom: 1px solid #F1F5F9; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 30; }
         .logo-box { display: flex; align-items: center; gap: 6px; cursor: pointer; user-select: none; }
         .logo-text { font-size: 21px; font-weight: 800; color: #2D6A4F; letter-spacing: -0.5px; }
@@ -92,7 +91,6 @@
     <div class="app-container">
         
         <header>
-            <!-- 2, 3. 로고 클릭 이벤트 연동 및 PRO 제거 -->
             <div class="logo-box" onclick="goToHomeAndScrollTop()">
                 <h1 class="logo-text">운세의 신</h1>
             </div>
@@ -156,7 +154,6 @@
             <!-- 탭 1: 오늘운세 -->
             <div id="view-today" class="tab-view hidden">
                 
-                <!-- 4. 사주 MBTI 및 설명 문구 -->
                 <div class="mbti-card">
                     <div class="mbti-top">
                         <div id="mbtiAnimalIcon" class="mbti-icon">🐶</div>
@@ -173,7 +170,6 @@
                     </div>
                 </div>
 
-                <!-- 5, 6. 오늘의 일진 배너: 볼드 완화(font-weight: 600) 및 간격 최적화 -->
                 <div class="daily-banner">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
                         <span style="font-size: 13px; color: #A7F3D0;">오늘의 일진</span>
@@ -415,7 +411,6 @@
                     <span>📢 광고 영역 (Google AdSense / Kakao AdFit 슬롯 2)</span>
                 </div>
 
-                <!-- 9. 10년 생애 그래프 X축 레이블을 '세'로 정밀 수정 -->
                 <div class="card" style="border: 2px solid #FCD34D;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                         <span style="font-size: 15px; font-weight: 800;">👑 자미두수 & 10년 대운 리포트</span>
@@ -555,7 +550,7 @@
 
         </main>
 
-        <!-- 1. 초기 상태에서는 하단 내비게이션 바 숨김 (hidden 클래스 기본 적용) -->
+        <!-- 초기 상태에서는 하단 내비게이션 바 숨김 (hidden) -->
         <nav id="bottomNavBar" class="hidden">
             <button onclick="switchTab('today')" id="tab-today" class="tab-btn active">
                 <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
@@ -577,7 +572,7 @@
 
     </div>
 
-    <!-- 7, 8. 띠별 / 별자리 운세 상세 팝업: 볼드 완화 & 출생연도 불릿 점 제거 및 카드화 -->
+    <!-- 띠별 / 별자리 운세 상세 팝업 -->
     <div id="zodiacModal" class="modal-bg hidden">
         <div class="modal-content" style="max-width: 360px; text-align: left; padding: 22px; border-radius: 24px;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #F1F5F9; padding-bottom: 10px;">
@@ -598,7 +593,6 @@
 
             <div style="display: flex; flex-direction: column; gap: 12px; max-height: 52vh; overflow-y: auto; padding-right: 2px;">
                 <div>
-                    <!-- 볼드 완화 font-weight: 600 -->
                     <h4 id="zodiacModalTitle" style="font-size: 15px; font-weight: 600; color: #0F172A; margin-bottom: 4px; line-height: 1.45;">총평</h4>
                     <p id="zodiacModalOverview" style="font-size: 14px; color: #475569; line-height: 1.7;"></p>
                 </div>
@@ -684,7 +678,7 @@
         </div>
     </div>
 
-    <!-- 4. 복채 충전소 팝업: 엑박 제거 및 무료 충전소 카드 정리 -->
+    <!-- 복채 충전소 모달 -->
     <div id="chargeModal" class="modal-bg hidden">
         <div class="modal-content" style="max-width: 340px;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 10px;">
@@ -696,7 +690,6 @@
             </div>
             
             <div style="display: flex; flex-direction: column; gap: 10px;">
-                <!-- 무료 충전소 카드 -->
                 <div style="background: #F0FDF4; border: 1.5px solid #86EFAC; border-radius: 16px; padding: 14px; display: flex; justify-content: space-between; align-items: center; text-align: left;">
                     <div>
                         <p style="font-size: 14px; font-weight: 800; color: #166534;">무료 충전소</p>
@@ -707,7 +700,6 @@
                     </button>
                 </div>
 
-                <!-- 일반 패키지들 -->
                 <button onclick="addCoin(500)" style="background: #FFFBEB; border: 1px solid #FDE68A; border-radius: 16px; padding: 13px; display: flex; justify-content: space-between; align-items: center; text-align: left; cursor: pointer;">
                     <div style="display: flex; align-items: center; gap: 6px;">
                         <span class="btn-coin-icon"></span>
@@ -744,7 +736,7 @@
         </div>
     </div>
 
-    <!-- 보관함 다시보기 팝업 모달 (버튼 문구 '확인'으로 통일) -->
+    <!-- 보관함 다시보기 팝업 모달 -->
     <div id="archiveDetailModal" class="modal-bg hidden">
         <div class="modal-content" style="max-width: 380px; max-height: 85vh; display: flex; flex-direction: column; text-align: left; padding: 20px; border-radius: 24px;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 10px; margin-bottom: 12px; flex-shrink: 0;">
@@ -949,7 +941,6 @@
             });
         }
 
-        // 2. 로고 클릭 시 최상단 홈으로 이동
         function goToHomeAndScrollTop() {
             const onboarding = document.getElementById('onboardingInputView');
             if (onboarding && !onboarding.classList.contains('hidden')) return;
@@ -989,11 +980,10 @@
                 btnStar.className = 'sub-tab-btn active';
                 btnZodiac.className = 'sub-tab-btn';
                 gridStar.classList.remove('hidden');
-                gridZodiac.classList.add('hidden');
+                gridStar.classList.add('hidden');
             }
         }
 
-        // 7, 8. 띠별 / 별자리 운세 팝업: 불릿 점 제거 및 카드화
         async function openZodiacModal(type, key) {
             try {
                 const res = await fetch(`/api/zodiac-fortune?type=${type}&key=${encodeURIComponent(key)}`);
@@ -1078,7 +1068,6 @@
             `).join('');
         }
 
-        // 9. 나이 X축 레이블을 '세'로 정밀 동기화
         function updateDaewoonGraphByAge(age) {
             currentUserAge = age;
             const clampedAge = Math.max(10, age);
@@ -1131,7 +1120,6 @@
             });
         }
 
-        // 1. 생년월일 입력 후 하단 내비게이션 바 노출
         async function startSajuAnalysis() {
             currentUserName = document.getElementById('inputName').value.trim() || "최정오";
             const birth = document.getElementById('inputBirth').value || "1978-03-13";
@@ -1216,7 +1204,6 @@
             document.getElementById('onboardingInputView').classList.add('hidden');
             document.getElementById('view-today').classList.remove('hidden');
 
-            // 1. 분석 완료 시 하단 내비게이션 바 노출
             document.getElementById('bottomNavBar').classList.remove('hidden');
 
             checkUnlockedStates();
@@ -1226,7 +1213,6 @@
         function resetProfileAndReinput() {
             document.getElementById('onboardingInputView').classList.remove('hidden');
             ['today', 'saju', 'theme', 'mypage'].forEach(t => document.getElementById(`view-${t}`).classList.add('hidden'));
-            // 1. 정보 재입력 화면에서는 하단바 다시 숨김
             document.getElementById('bottomNavBar').classList.add('hidden');
         }
 
