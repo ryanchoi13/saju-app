@@ -6,7 +6,7 @@ from typing import Optional
 import os
 import random
 
-app = FastAPI(title="운세의 신 API", version="17.0.0")
+app = FastAPI(title="운세의 신 API", version="18.0.0")
 
 CHEONGAN_HANJA = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
 JIJI_HANJA = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"]
@@ -66,34 +66,6 @@ STAR_SIGNS = [
     {"name": "사수자리", "icon": "♐", "period": "11.23 ~ 12.21"},
     {"name": "염소자리", "icon": "♑", "period": "12.22 ~ 01.19"}
 ]
-
-OHEANG_CURATION_MAP = {
-    "wood": {
-        "color": "에메랄드 그린 / 포레스트 올리브", "number": "3, 8", "direction": "정동쪽 (청룡 방위)",
-        "style": "편안한 린넨 셔츠 또는 그린 톤 캐주얼", "menu": "신선한 샐러드와 녹차, 담백한 채식 식단",
-        "mindset": "새로운 시작에 열린 자세를 갖고 적극 소통하기", "action": "아침 시간 가벼운 스트레칭과 산책하기"
-    },
-    "fire": {
-        "color": "크림슨 레드 / 로즈 골드", "number": "2, 7", "direction": "정남쪽 (주작 방위)",
-        "style": "포인트가 있는 화려한 니트나 레드 계열 타이", "menu": "따뜻한 국물 요리와 비타민 과일",
-        "mindset": "열정을 당당하게 피력하고 사람들에게 미소 짓기", "action": "점심 식사 후 햇볕을 10분간 쬐며 활력 충전하기"
-    },
-    "earth": {
-        "color": "웜 베이지 / 머스터드 옐로우", "number": "5, 10", "direction": "동북쪽 및 중앙 (황룡 방위)",
-        "style": "단정하고 포근한 브라운 톤 재킷이나 코트", "menu": "속이 편안한 단호박죽과 잡곡밥",
-        "mindset": "약속을 철저히 지키고 중심을 단단히 유지하기", "action": "주변 책상과 지갑 안의 영수증을 깔끔히 정리하기"
-    },
-    "metal": {
-        "color": "스노우 화이트 / 실버 그레이", "number": "4, 9", "direction": "정서쪽 (백호 방위)",
-        "style": "각 잡힌 화이트 셔츠와 세련된 메탈 시계", "menu": "도라지차, 신선한 견과류와 고단백 생선 요리",
-        "mindset": "맺고 끊음을 명확히 하고 군더더기 없는 대화하기", "action": "오늘 완료해야 할 우선순위 3가지 메모하기"
-    },
-    "water": {
-        "color": "미드나잇 블루 / 딥 네이비", "number": "1, 6", "direction": "정북쪽 (현무 방위)",
-        "style": "세련된 네이비 셋업이나 부드러운 머플러", "menu": "맑은 미역국, 검은콩 두유와 미온수 섭취",
-        "mindset": "상대의 의견을 깊이 경청하고 유연하게 대처하기", "action": "취침 전 따뜻한 족욕과 잔잔한 명상하기"
-    }
-}
 
 TALISMAN_OHEANG_MAP = {
     "wood": {"type": "wood", "title": "사업대성부 (事業亨通符)", "power": "추진력 강화 · 사업 번창 · 승진운", "desc": "사주에 부족한 木(성장과 개척)의 활력을 불어넣어 막힌 활로를 뚫고 사업과 직무에서 강력한 주도권을 쥐게 하는 비급 부적입니다."},
@@ -410,7 +382,6 @@ def get_daily_tarot(slot: int = 1, rand_seed: Optional[str] = None):
     random_idx = random.randint(0, len(TAROT_CARDS) - 1)
     return TAROT_CARDS[random_idx]
 
-# [피드백 반영] 1, 2, 3번 제목 규격 통일(16.5px, border-left), 1-2번 사이 및 2-3번 사이 노란 가로줄 적용, 본문 폰트/간격 3번 수준으로 통일
 @app.post("/api/daewoon-report")
 def get_daewoon_report(req: dict):
     user_name = req.get("name", "최정오")
@@ -424,7 +395,6 @@ def get_daewoon_report(req: dict):
         "content": f"""
         <div style="display: flex; flex-direction: column; gap: 16px; font-size: 14.5px; color: #334155; line-height: 1.85; text-align: left;">
             
-            <!-- 1번 섹션: 생애 주기별 대운맥 -->
             <div>
                 <div style="border-left: 4px solid #2D6A4F; padding-left: 10px; margin-bottom: 8px;">
                     <h4 style="font-size: 16.5px; font-weight: 800; color: #0F172A;">
@@ -451,10 +421,8 @@ def get_daewoon_report(req: dict):
                 </div>
             </div>
 
-            <!-- 1번과 2번 사이 노란색 가로줄 -->
             <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
 
-            <!-- 2번 섹션: 현재 10년 대운 감명 -->
             <div>
                 <div style="border-left: 4px solid #D97706; padding-left: 10px; margin-bottom: 8px;">
                     <h4 style="font-size: 16.5px; font-weight: 800; color: #78350F;">
@@ -471,10 +439,8 @@ def get_daewoon_report(req: dict):
                 </div>
             </div>
 
-            <!-- 2번과 3번 사이 노란색 가로줄 -->
             <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
 
-            <!-- 3번 섹션: 3대 개운 실천 비책 (세로선 장식 및 제목 크기 통일) -->
             <div>
                 <div style="border-left: 4px solid #F59E0B; padding-left: 10px; margin-bottom: 8px;">
                     <h4 style="font-size: 16.5px; font-weight: 800; color: #78350F;">
@@ -493,7 +459,155 @@ def get_daewoon_report(req: dict):
         """
     }
 
-# [피드백 반영] 궁합·테마운 리포트 글자 크기(14.5px) 및 간격 정통사주 3번 수준으로 통일
+# [상태별 애정운 분기 생성 함수]
+def generate_love_report_content(user_name: str, sub_opt: str) -> str:
+    if sub_opt == "기혼":
+        return f"""
+        <div style="display: flex; flex-direction: column; gap: 16px; font-size: 14.5px; color: #334155; line-height: 1.85; text-align: left;">
+            <div style="border-left: 4px solid #E11D48; padding-left: 10px;">
+                <span style="font-size: 12px; color: #E11D48; font-weight: 800;">상태 맞춤: 기혼 (부부 해로)</span>
+                <h4 style="font-size: 16.5px; font-weight: 800; color: #881337; margin: 3px 0 6px;">[부부 해로 및 가정 화목운] 신뢰와 상호 존중의 평생 동반자</h4>
+                <p style="color: #9F1239; font-size: 14.5px; line-height: 1.85;">
+                    {user_name}님의 사주 원국은 부부 간의 신뢰와 가정의 안정을 최우선으로 삼는 묵직한 포용력을 지니고 있습니다. 기혼 생활에서 일방적인 헌신이나 잔소리보다는 서로의 독립적인 영역을 인정하고 격려해 줄 때 부부 금실과 가정의 재물운이 함께 상승합니다.
+                </p>
+            </div>
+
+            <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
+
+            <div>
+                <div style="border-left: 4px solid #BE123C; padding-left: 10px; margin-bottom: 8px;">
+                    <h4 style="font-size: 16.5px; font-weight: 800; color: #881337;">🏡 1. {user_name}님 가정의 화목 및 배우자 합(合) 분석</h4>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 8px; font-size: 14.5px; color: #475569; line-height: 1.85;">
+                    <p>• <strong>배우자와의 성향 조화:</strong> 겉으로는 무던해 보여도 속정이 깊은 배우자궁을 타고났으며, 서로의 장단점을 보완해 주는 상생의 구조입니다.</p>
+                    <p>• <strong>가정 내 갈등 관리:</strong> 자녀 교육이나 재정 계획에 이견이 생길 때는 감정적 직설보다 차 한 잔을 나누며 대화할 때 막힘없이 풀립니다.</p>
+                    <p>• <strong>가정 번영 오행 기운:</strong> {user_name}님과 배우자 사이에 온화한 기운을 북돋워 주는 방위는 '남서쪽'이며, 거실에 따뜻한 조명을 두면 부부 화합이 배가됩니다.</p>
+                </div>
+            </div>
+
+            <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
+
+            <div>
+                <div style="border-left: 4px solid #D97706; padding-left: 10px; margin-bottom: 8px;">
+                    <h4 style="font-size: 16.5px; font-weight: 800; color: #78350F;">🌹 2. 평생 백년해로를 완성하는 실전 부부 처세법</h4>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 8px; font-size: 14.5px; color: #92400E; line-height: 1.85;">
+                    <p>• <strong>감사 표현의 생활화:</strong> 당연하게 여기기 쉬운 일상적인 배려에 대해 "고마워요"라는 말을 하루 한 번 전하는 것이 최고의 부부 개운법입니다.</p>
+                    <p>• <strong>행운의 데이트 추천:</strong> 주말 가벼운 근교 숲길 산책이나 조용한 힐링 여행이 부부의 권태감을 씻어내고 새로운 활력을 줍니다.</p>
+                </div>
+            </div>
+        </div>
+        """
+    elif sub_opt == "연애중":
+        return f"""
+        <div style="display: flex; flex-direction: column; gap: 16px; font-size: 14.5px; color: #334155; line-height: 1.85; text-align: left;">
+            <div style="border-left: 4px solid #E11D48; padding-left: 10px;">
+                <span style="font-size: 12px; color: #E11D48; font-weight: 800;">상태 맞춤: 연애중 (결속과 발전)</span>
+                <h4 style="font-size: 16.5px; font-weight: 800; color: #881337; margin: 3px 0 6px;">[연애 발전 및 결실운] 깊은 교감과 미래를 약속하는 인연</h4>
+                <p style="color: #9F1239; font-size: 14.5px; line-height: 1.85;">
+                    {user_name}님은 연인과의 관계에서 진실된 소통과 배려를 중시하는 따뜻한 사랑의 소유자입니다. 현재 연애는 단순한 설렘을 넘어 미래의 진지한 동반자로 발전하기에 매우 좋은 기운이 흐르고 있습니다.
+                </p>
+            </div>
+
+            <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
+
+            <div>
+                <div style="border-left: 4px solid #BE123C; padding-left: 10px; margin-bottom: 8px;">
+                    <h4 style="font-size: 16.5px; font-weight: 800; color: #881337;">💍 1. {user_name}님의 결혼 및 장기적 인연 발전 가이드</h4>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 8px; font-size: 14.5px; color: #475569; line-height: 1.85;">
+                    <p>• <strong>관계의 성숙 포인트:</strong> 상대방에게 바라는 점을 솔직하면서도 부드럽게 표현할 때 신뢰의 뿌리가 깊어집니다.</p>
+                    <p>• <strong>결혼 및 결실의 타이밍:</strong> 가을(9~11월)과 봄(3~5월)에 두 사람 사이의 중요한 약속이나 결혼 논의가 급물살을 타게 됩니다.</p>
+                </div>
+            </div>
+
+            <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
+
+            <div>
+                <div style="border-left: 4px solid #D97706; padding-left: 10px; margin-bottom: 8px;">
+                    <h4 style="font-size: 16.5px; font-weight: 800; color: #78350F;">🌹 2. 둘만의 사랑을 공고히 하는 실전 연애 처세법</h4>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 8px; font-size: 14.5px; color: #92400E; line-height: 1.85;">
+                    <p>• <strong>밀당 없는 진정성:</strong> 계산적인 밀고 당기기보다 솔직하고 일관된 태도를 보여줄 때 상대방의 마음을 완전히 사로잡습니다.</p>
+                    <p>• <strong>추천 데이트 장소:</strong> 야경이 내려다보이는 레스토랑이나 클래식한 전시회가 로맨틱한 기운을 증폭시킵니다.</p>
+                </div>
+            </div>
+        </div>
+        """
+    elif sub_opt == "썸/짝사랑":
+        return f"""
+        <div style="display: flex; flex-direction: column; gap: 16px; font-size: 14.5px; color: #334155; line-height: 1.85; text-align: left;">
+            <div style="border-left: 4px solid #E11D48; padding-left: 10px;">
+                <span style="font-size: 12px; color: #E11D48; font-weight: 800;">상태 맞춤: 썸/짝사랑 (관계 진전)</span>
+                <h4 style="font-size: 16.5px; font-weight: 800; color: #881337; margin: 3px 0 6px;">[호감 발전 및 연인 전환운] 매력 어필과 결정적 고백의 타이밍</h4>
+                <p style="color: #9F1239; font-size: 14.5px; line-height: 1.85;">
+                    {user_name}님은 은근한 매력과 진중함으로 상대방에게 호감을 심어주는 기운을 지니고 있습니다. 망설이기보다는 적절한 순간에 확실한 시그널을 보낼 때 연인 관계로의 전환이 빠르게 이루어집니다.
+                </p>
+            </div>
+
+            <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
+
+            <div>
+                <div style="border-left: 4px solid #BE123C; padding-left: 10px; margin-bottom: 8px;">
+                    <h4 style="font-size: 16.5px; font-weight: 800; color: #881337;">💘 1. 상대방의 마음을 여는 핵심 전략</h4>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 8px; font-size: 14.5px; color: #475569; line-height: 1.85;">
+                    <p>• <strong>공감대 형성:</strong> 상대방의 취향이나 관심사를 미리 파악하여 자연스러운 대화 주제로 이끌어내세요.</p>
+                    <p>• <strong>결정적 타이밍:</strong> 비가 오는 날이나 저녁 티타임에 은근한 칭찬과 함께 호감을 표현할 때 성공 확률이 2배로 높아집니다.</p>
+                </div>
+            </div>
+
+            <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
+
+            <div>
+                <div style="border-left: 4px solid #D97706; padding-left: 10px; margin-bottom: 8px;">
+                    <h4 style="font-size: 16.5px; font-weight: 800; color: #78350F;">🌹 2. 썸을 연애로 만드는 실전 액션 팁</h4>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 8px; font-size: 14.5px; color: #92400E; line-height: 1.85;">
+                    <p>• <strong>과도한 조급함 금물:</strong> 상대방의 반응 속도에 일희일비하지 말고 여유 있고 당당한 태도를 유지하세요.</p>
+                    <p>• <strong>행운의 아이템:</strong> 은은한 우디/플로럴 계열 향수와 단정한 셔츠 차림이 매력도를 극대화합니다.</p>
+                </div>
+            </div>
+        </div>
+        """
+    else: # 솔로 기본
+        return f"""
+        <div style="display: flex; flex-direction: column; gap: 16px; font-size: 14.5px; color: #334155; line-height: 1.85; text-align: left;">
+            <div style="border-left: 4px solid #E11D48; padding-left: 10px;">
+                <span style="font-size: 12px; color: #E11D48; font-weight: 800;">상태 맞춤: 솔로 (새로운 인연)</span>
+                <h4 style="font-size: 16.5px; font-weight: 800; color: #881337; margin: 3px 0 6px;">[평생 애정운] 깊은 신뢰와 상호 존중의 천생연분</h4>
+                <p style="color: #9F1239; font-size: 14.5px; line-height: 1.85;">
+                    {user_name}님의 애정 원국은 가벼운 감정의 불꽃보다는 한 번 맺은 신뢰를 평생 지켜나가는 따뜻한 포용력의 소유자입니다. 주변 사람들에게 굳이 맞추려 하지 않고 본인 본연의 당당함을 드러낼 때 뜻밖의 귀한 인연이 찾아옵니다.
+                </p>
+            </div>
+
+            <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
+
+            <div>
+                <div style="border-left: 4px solid #BE123C; padding-left: 10px; margin-bottom: 8px;">
+                    <h4 style="font-size: 16.5px; font-weight: 800; color: #881337;">💞 1. {user_name}님과 운명적으로 통하는 상대방의 특징</h4>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 8px; font-size: 14.5px; color: #475569; line-height: 1.85;">
+                    <p>• <strong>성향과 인품:</strong> 감정 기복이 적고 원칙이 뚜렷하며, 대화 시 상대방의 이야기를 깊이 경청해 주는 차분한 스타일.</p>
+                    <p>• <strong>외모 및 이미지:</strong> 부드럽고 온화한 인상에 단정하고 세련된 옷차림을 선호하며 지적인 분위기를 풍기는 사람.</p>
+                    <p>• <strong>오행 궁합 조화:</strong> {user_name}님 사주에 꼭 필요한 차분한 기운을 채워줄 수 있는 띠(쥐띠, 닭띠, 원숭이띠)와 대길연을 이룹니다.</p>
+                </div>
+            </div>
+
+            <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
+
+            <div>
+                <div style="border-left: 4px solid #D97706; padding-left: 10px; margin-bottom: 8px;">
+                    <h4 style="font-size: 16.5px; font-weight: 800; color: #78350F;">🌹 2. 평생 인연을 완성하는 실전 관계 처세법</h4>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 8px; font-size: 14.5px; color: #92400E; line-height: 1.85;">
+                    <p>• <strong>만남의 장소:</strong> 물이 잔잔하게 흐르는 호수 주변, 조용한 미술관이나 테라스가 있는 카페가 인연의 기운을 조화롭게 묶어줍니다.</p>
+                    <p>• <strong>인연 대길 시기:</strong> 가을(양력 9~11월)과 초봄(양력 2~3월)에 귀인의 소개로 다가오는 만남을 주목하세요.</p>
+                </div>
+            </div>
+        </div>
+        """
+
 @app.post("/api/theme-report")
 def get_theme_report(req: dict):
     theme = req.get("theme", "wealth")
@@ -507,8 +621,10 @@ def get_theme_report(req: dict):
         "health": "🌿 평생 건강운"
     }
 
-    contents = {
-        "wealth": f"""
+    if theme == "love":
+        content_html = generate_love_report_content(user_name, sub_opt)
+    elif theme == "wealth":
+        content_html = f"""
         <div style="display: flex; flex-direction: column; gap: 16px; font-size: 14.5px; color: #334155; line-height: 1.85; text-align: left;">
             <div style="border-left: 4px solid #D97706; padding-left: 10px;">
                 <span style="font-size: 12px; color: #D97706; font-weight: 800;">원국 정밀 감명</span>
@@ -544,44 +660,9 @@ def get_theme_report(req: dict):
                 </div>
             </div>
         </div>
-        """,
-        "love": f"""
-        <div style="display: flex; flex-direction: column; gap: 16px; font-size: 14.5px; color: #334155; line-height: 1.85; text-align: left;">
-            <div style="border-left: 4px solid #E11D48; padding-left: 10px;">
-                <span style="font-size: 12px; color: #E11D48; font-weight: 800;">상태 맞춤: {sub_opt}</span>
-                <h4 style="font-size: 16.5px; font-weight: 800; color: #881337; margin: 3px 0 6px;">[평생 애정운] 깊은 신뢰와 상호 존중의 천생연분</h4>
-                <p style="color: #9F1239; font-size: 14.5px; line-height: 1.85;">
-                    {user_name}님의 애정 원국은 가벼운 감정의 불꽃보다는 한 번 맺은 신뢰를 평생 지켜나가는 따뜻한 포용력의 소유자입니다. 현재 상태({sub_opt})를 고려할 때, 상대방에게 일방적으로 맞추기보다 본인의 비전을 솔직하게 공유할 때 둘 사이의 유대감이 더욱 깊어집니다.
-                </p>
-            </div>
-
-            <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
-
-            <div>
-                <div style="border-left: 4px solid #BE123C; padding-left: 10px; margin-bottom: 8px;">
-                    <h4 style="font-size: 16.5px; font-weight: 800; color: #881337;">💞 1. {user_name}님과 운명적으로 통하는 상대방의 특징</h4>
-                </div>
-                <div style="display: flex; flex-direction: column; gap: 8px; font-size: 14.5px; color: #475569; line-height: 1.85;">
-                    <p>• <strong>성향과 인품:</strong> 감정 기복이 적고 원칙이 뚜렷하며, 대화 시 상대방의 이야기를 깊이 경청해 주는 차분한 스타일.</p>
-                    <p>• <strong>외모 및 이미지:</strong> 부드럽고 온화한 인상에 단정하고 세련된 옷차림을 선호하며 지적인 분위기를 풍기는 사람.</p>
-                    <p>• <strong>오행 궁합 조화:</strong> {user_name}님 사주에 꼭 필요한 차분한 기운을 채워줄 수 있는 띠(쥐띠, 닭띠, 원숭이띠)와 대길연을 이룹니다.</p>
-                </div>
-            </div>
-
-            <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
-
-            <div>
-                <div style="border-left: 4px solid #D97706; padding-left: 10px; margin-bottom: 8px;">
-                    <h4 style="font-size: 16.5px; font-weight: 800; color: #78350F;">🌹 2. 평생 화목을 완성하는 실전 관계 처세법</h4>
-                </div>
-                <div style="display: flex; flex-direction: column; gap: 8px; font-size: 14.5px; color: #92400E; line-height: 1.85;">
-                    <p>• <strong>소통의 법칙:</strong> 서운한 감정이 들 때는 즉각 반응하기보다 반나절 정도 생각을 정리한 후 부드러운 화법으로 전달하세요.</p>
-                    <p>• <strong>행운의 장소:</strong> 물이 잔잔하게 흐르는 호수 주변, 조용한 미술관이나 테라스가 있는 카페가 기운을 조화롭게 묶어줍니다.</p>
-                </div>
-            </div>
-        </div>
-        """,
-        "business": f"""
+        """
+    elif theme == "business":
+        content_html = f"""
         <div style="display: flex; flex-direction: column; gap: 16px; font-size: 14.5px; color: #334155; line-height: 1.85; text-align: left;">
             <div style="border-left: 4px solid #2563EB; padding-left: 10px;">
                 <span style="font-size: 12px; color: #2563EB; font-weight: 800;">직업군 맞춤: {sub_opt}</span>
@@ -615,8 +696,9 @@ def get_theme_report(req: dict):
                 </div>
             </div>
         </div>
-        """,
-        "health": f"""
+        """
+    else: # health
+        content_html = f"""
         <div style="display: flex; flex-direction: column; gap: 16px; font-size: 14.5px; color: #334155; line-height: 1.85; text-align: left;">
             <div style="border-left: 4px solid #059669; padding-left: 10px;">
                 <span style="font-size: 12px; color: #059669; font-weight: 800;">오행 체질 정밀 분석</span>
@@ -652,9 +734,8 @@ def get_theme_report(req: dict):
             </div>
         </div>
         """
-    }
     
     return {
         "title": titles.get(theme, "심층 리포트"),
-        "content": contents.get(theme, "<p>리포트 내용을 불러오는 중입니다.</p>")
+        "content": content_html
     }
