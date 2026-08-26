@@ -50,7 +50,6 @@
         .grid-cell { background: white; border: 1px solid #E2E8F0; border-radius: 14px; padding: 12px; font-size: 13px; text-align: left; }
         .action-card { background: #FFFBEB; border: 1px solid #FDE68A; border-radius: 14px; padding: 14px; text-align: left; font-size: 13px; }
 
-        /* 2x6 노스크롤 띠/별자리 그리드 */
         .zodiac-grid-2x6 { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
         .zodiac-btn { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 8px 2px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; }
         .zodiac-btn:hover, .zodiac-btn:active { background: #EBF5EE; border-color: #86EFAC; transform: translateY(-1px); }
@@ -61,8 +60,8 @@
         .sub-tab-btn { flex: 1; padding: 7px; font-size: 12px; font-weight: 700; color: #64748B; border: none; background: transparent; border-radius: 8px; cursor: pointer; }
         .sub-tab-btn.active { background: #FFFFFF; color: #2D6A4F; box-shadow: 0 1px 2px rgba(0,0,0,0.06); }
 
-        /* Phase 1 광고 슬롯 스타일 */
-        .ad-slot-box { background: #FAFAFA; border: 1px dashed #CBD5E1; border-radius: 14px; padding: 12px; text-align: center; color: #94A3B8; font-size: 11px; font-weight: 600; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 60px; }
+        /* 디스플레이 광고 배너 플레이스홀더 */
+        .ad-slot-box { background: #F8FAFC; border: 1px dashed #CBD5E1; border-radius: 14px; padding: 12px; text-align: center; color: #94A3B8; font-size: 11px; font-weight: 600; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 64px; }
 
         .tarot-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
         .tarot-wrapper { perspective: 1000px; aspect-ratio: 2/3; cursor: pointer; }
@@ -225,7 +224,7 @@
                     <div id="tarotResultBox" class="hidden"></div>
                 </div>
 
-                <!-- 6. 오늘의 맞춤 경면주사 부적 (개인 맞춤의 정점) -->
+                <!-- 6. 오늘의 맞춤 경면주사 부적 -->
                 <div class="talisman-banner">
                     <div style="display: flex; justify-content: center; align-items: center; gap: 6px;">
                         <span>🔥</span>
@@ -247,7 +246,7 @@
                     </button>
                 </div>
 
-                <!-- 7. [위치 이동] 12간지 띠별 / 12성좌 별자리 운세 (부적 바로 아래 배치!) -->
+                <!-- 7. 12간지 띠별 / 12성좌 별자리 운세 (부적 바로 아래 배치!) -->
                 <div class="card" style="padding: 16px;">
                     <div class="sub-tab-box">
                         <button type="button" onclick="switchZodiacSubTab('zodiac')" id="btnSubZodiac" class="sub-tab-btn active">🐭 12간지 띠별 운세</button>
@@ -603,6 +602,7 @@
 
                 <div id="zodiacExtraInfo" style="font-size: 12px; color: #2D6A4F; font-weight: 600; background: #EBF5EE; border-radius: 10px; padding: 8px 10px;"></div>
 
+                <!-- Phase 1 광고 슬롯 3 (팝업 내 배너 플레이스홀더) -->
                 <div class="ad-slot-box" style="margin-top: 4px;">
                     <span>📢 광고 영역 (Google AdSense / Kakao AdFit 슬롯 3)</span>
                 </div>
@@ -610,6 +610,30 @@
 
             <button onclick="shareZodiacFortune()" style="width: 100%; background: #FEE500; color: #191919; border: none; font-size: 13px; font-weight: 800; padding: 12px; border-radius: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.06);">
                 <span>💬</span> 친구에게 이 운세 공유하기
+            </button>
+        </div>
+    </div>
+
+    <!-- [신규 보상형 광고 UI] 타로 추가 뽑기 선택 모달 -->
+    <div id="tarotChoiceModal" class="modal-bg hidden">
+        <div class="modal-content" style="max-width: 320px; padding: 20px; border-radius: 24px; text-align: center;">
+            <div style="font-size: 28px; margin-bottom: 2px;">🔮</div>
+            <h3 style="font-size: 15px; font-weight: 800; color: #0F172A;">타로 카드 추가 열람</h3>
+            <p style="font-size: 12px; color: #64748B;">오늘의 1회 무료 타로를 이미 확인하셨습니다.<br>어떤 방식으로 추가 카드를 열람하시겠습니까?</p>
+
+            <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 8px;">
+                <!-- 보상형 광고 시청 트리거 버튼 -->
+                <button onclick="simulateRewardedAd('tarot')" style="background: linear-gradient(135deg, #2D6A4F 0%, #1E4D38 100%); color: white; border: none; font-size: 13px; font-weight: 800; padding: 13px; border-radius: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 4px 6px rgba(45,106,79,0.2);">
+                    <span>🎬</span> 짧은 광고 보고 무료 확인
+                </button>
+                <!-- 복채 결제 버튼 -->
+                <button onclick="confirmTarotByCoin()" style="background: #FEF3C7; border: 1.5px solid #FCD34D; color: #78350F; font-size: 13px; font-weight: 800; padding: 12px; border-radius: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                    <span class="btn-coin-icon"></span> 30 복채로 즉시 확인
+                </button>
+            </div>
+
+            <button onclick="closeTarotChoiceModal()" style="background: transparent; border: none; font-size: 12px; color: #94A3B8; cursor: pointer; margin-top: 4px; font-weight: 600;">
+                닫기
             </button>
         </div>
     </div>
@@ -660,15 +684,25 @@
         </div>
     </div>
 
-    <!-- 복채 충전소 모달 -->
+    <!-- [신규 보상형 광고 카드 탑재] 복채 충전소 모달 -->
     <div id="chargeModal" class="modal-bg hidden">
-        <div class="modal-content">
+        <div class="modal-content" style="max-width: 330px;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 8px;">
-                <h3 style="font-size: 12px; font-weight: 700; color: #1E293B;">🪙 복채 충전소</h3>
-                <button onclick="closeChargeStore()" style="background: none; border: none; font-size: 16px; color: #94A3B8; cursor: pointer;">&times;</button>
+                <h3 style="font-size: 13px; font-weight: 800; color: #1E293B;">🪙 복채 충전소</h3>
+                <button onclick="closeChargeStore()" style="background: none; border: none; font-size: 18px; color: #94A3B8; cursor: pointer;">&times;</button>
             </div>
             
             <div style="display: flex; flex-direction: column; gap: 10px;">
+                <!-- 보상형 무료 충전 카드 UI -->
+                <button onclick="simulateRewardedAd('coin')" style="background: #F0FDF4; border: 1.5px solid #86EFAC; border-radius: 16px; padding: 12px; display: flex; justify-content: space-between; align-items: center; text-align: left; cursor: pointer;">
+                    <div>
+                        <p style="font-size: 12.5px; font-weight: 800; color: #166534;">🎬 무료 충전소 (광고 시청)</p>
+                        <p style="font-size: 10.5px; color: #15803D; margin-top: 2px;">짧은 광고 보고 +30 복채 받기 (1일 5회)</p>
+                    </div>
+                    <span style="background: #166534; color: white; font-size: 11px; font-weight: 800; padding: 4px 8px; border-radius: 8px;">무료</span>
+                </button>
+
+                <!-- 일반 유료 결제 패키지들 -->
                 <button onclick="addCoin(500)" style="background: #FFFBEB; border: 1px solid #FDE68A; border-radius: 16px; padding: 12px; display: flex; justify-content: space-between; align-items: center; text-align: left; cursor: pointer;">
                     <div>
                         <p style="font-size: 12px; font-weight: 700; color: #78350F;">🪙 500 복채 패키지</p>
@@ -722,6 +756,7 @@
         let dailyTarotDrawn = false;
         let drawnTarotCards = {};
         let currentZodiacData = null;
+        let pendingTarotSlot = null;
 
         function getGoldCoinSvg(size = 15, color = "#F59E0B") {
             return `<svg viewBox="0 0 20 20" width="${size}" height="${size}" style="display:inline-block; vertical-align:middle; flex-shrink:0;">
@@ -1208,17 +1243,50 @@
                 return;
             }
 
+            // 1회 무료 소진 후 보상형 모달 UI 팝업
             if (dailyTarotDrawn) {
-                if (currentCoin < 30) {
-                    alert('1회 무료 타로를 이미 확인하셨습니다. 추가 열람에는 30 복채가 필요합니다.');
-                    openChargeStore();
-                    return;
-                }
-                if (!confirm(`30 복채로 ${slot}번 카드를 확인하시겠습니까?`)) return;
-                currentCoin -= 30;
-                updateCoinDisplay();
+                pendingTarotSlot = slot;
+                document.getElementById('tarotChoiceModal').classList.remove('hidden');
+                return;
             }
 
+            drawTarotCardFinal(slot);
+        }
+
+        function closeTarotChoiceModal() {
+            document.getElementById('tarotChoiceModal').classList.add('hidden');
+            pendingTarotSlot = null;
+        }
+
+        function confirmTarotByCoin() {
+            if (currentCoin < 30) {
+                alert('보유 복채가 부족합니다. 복채를 충전하거나 광고를 시청해 보세요.');
+                closeTarotChoiceModal();
+                openChargeStore();
+                return;
+            }
+            currentCoin -= 30;
+            updateCoinDisplay();
+            const slot = pendingTarotSlot;
+            closeTarotChoiceModal();
+            drawTarotCardFinal(slot);
+        }
+
+        // 보상형 광고 시청 시뮬레이션
+        function simulateRewardedAd(type) {
+            if (type === 'tarot') {
+                const slot = pendingTarotSlot;
+                closeTarotChoiceModal();
+                alert('🎬 [광고 시청 완료]\n보상이 지급되어 무료로 타로 카드를 확인합니다!');
+                drawTarotCardFinal(slot);
+            } else if (type === 'coin') {
+                closeChargeStore();
+                alert('🎬 [광고 시청 완료]\n+30 복채가 무료로 지급되었습니다!');
+                addCoin(30);
+            }
+        }
+
+        async function drawTarotCardFinal(slot) {
             try {
                 const randomSeed = Math.floor(Math.random() * 1000000);
                 const res = await fetch(`/api/daily-tarot?slot=${slot}&rand_seed=${randomSeed}`);
