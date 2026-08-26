@@ -6,7 +6,7 @@ from typing import Optional
 import os
 import random
 
-app = FastAPI(title="운세의 신 PRO API", version="12.1.0")
+app = FastAPI(title="운세의 신 PRO API", version="13.0.0")
 
 CHEONGAN_HANJA = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
 JIJI_HANJA = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"]
@@ -52,6 +52,36 @@ DAY_MBTI_MAP = {
 ANIMAL_MAP = {"子": "쥐", "丑": "소", "寅": "호랑이", "卯": "토끼", "辰": "용", "巳": "뱀", "午": "말", "未": "양", "申": "원숭이", "酉": "닭", "戌": "개", "亥": "돼지"}
 ANIMAL_ICONS = {"쥐": "🐭", "소": "🐮", "호랑이": "🐯", "토끼": "🐰", "용": "🐲", "뱀": "🐍", "말": "🐴", "양": "🐑", "원숭이": "🐵", "닭": "🐔", "개": "🐶", "돼지": "🐷"}
 
+ZODIAC_BASE_YEARS = {
+    "쥐": [2008, 1996, 1984, 1972, 1960],
+    "소": [2009, 1997, 1985, 1973, 1961],
+    "호랑이": [2010, 1998, 1986, 1974, 1962],
+    "토끼": [2011, 1999, 1987, 1975, 1963],
+    "용": [2012, 2000, 1988, 1976, 1964],
+    "뱀": [2013, 2001, 1989, 1977, 1965],
+    "말": [2014, 2002, 1990, 1978, 1966],
+    "양": [2015, 2003, 1991, 1979, 1967],
+    "원숭이": [2016, 2004, 1992, 1980, 1968],
+    "닭": [2017, 2005, 1993, 1981, 1969],
+    "개": [2018, 2006, 1994, 1982, 1970],
+    "돼지": [2019, 2007, 1995, 1983, 1971]
+}
+
+STAR_SIGNS = [
+    {"name": "물병자리", "icon": "♒", "period": "01.20 ~ 02.18"},
+    {"name": "물고기자리", "icon": "♓", "period": "02.19 ~ 03.20"},
+    {"name": "양자리", "icon": "♈", "period": "03.21 ~ 04.19"},
+    {"name": "황소자리", "icon": "♉", "period": "04.20 ~ 05.20"},
+    {"name": "쌍둥이자리", "icon": "♊", "period": "05.21 ~ 06.21"},
+    {"name": "게자리", "icon": "♋", "period": "06.22 ~ 07.22"},
+    {"name": "사자자리", "icon": "♌", "period": "07.23 ~ 08.22"},
+    {"name": "처녀자리", "icon": "♍", "period": "08.23 ~ 09.22"},
+    {"name": "천칭자리", "icon": "♎", "period": "09.23 ~ 10.22"},
+    {"name": "전갈자리", "icon": "♏", "period": "10.23 ~ 11.22"},
+    {"name": "사수자리", "icon": "♐", "period": "11.23 ~ 12.21"},
+    {"name": "염소자리", "icon": "♑", "period": "12.22 ~ 01.19"}
+]
+
 OHEANG_CURATION_MAP = {
     "wood": {
         "color": "에메랄드 그린 / 포레스트 올리브", "number": "3, 8", "direction": "정동쪽 (청룡 방위)",
@@ -86,14 +116,6 @@ TALISMAN_OHEANG_MAP = {
     "earth": {"type": "earth", "title": "금고수호부 (金庫安穩符)", "power": "자산 방어 · 누수 차단 · 재물 안착", "desc": "사주에 부족한 土(포용과 저장)의 단단한 대지를 마련하여 헛돈 지출을 막고 평생의 자산을 굳건하게 지켜주는 금고 수호 부적입니다."},
     "metal": {"type": "metal", "title": "재물만복부 (萬福大吉符)", "power": "재물 증식 · 금전운 대통 · 투자 대박", "desc": "사주에 부족한 金(결단과 결실)의 황금 기운을 채워 사방에서 금전과 복록이 샘솟듯 쏟아지게 하는 전통 경면주사 수제 부적입니다."},
     "water": {"type": "water", "title": "천생화합부 (萬事和合符)", "power": "인연 결속 · 애정 화합 · 인간관계 개선", "desc": "사주에 부족한 水(지혜와 융합)의 부드러운 유대감을 채워 엇갈린 인연을 묶어주고 귀인의 조력을 이끌어내는 화합 비급 부적입니다."}
-}
-
-TALISMAN_DATABASE = {
-    "wealth_1": {"type": "wealth", "pattern": "vault", "title": "암장금고부 (暗藏金庫符)", "power": "자산 방어 · 헛돈 누수 완벽 차단", "desc": "사주 원국의 금고를 단단히 잠그고 새어나가는 헛돈과 지출을 철통같이 방어하는 재물 수호 부적입니다."},
-    "wealth_2": {"type": "wealth", "pattern": "coin", "title": "만복대길부 (萬福大吉符)", "power": "횡재수 · 사방 금전 대통", "desc": "사방에서 금전과 복록이 샘솟듯 모여들고 뜻밖의 목돈과 횡재수를 소환하는 전통 경면주사 부적입니다."},
-    "business_1": {"type": "business", "pattern": "expand", "title": "사업형통부 (事業亨通符)", "power": "사업 활로 개척 · 판로 확장", "desc": "막혔던 프로젝트의 활로를 시원하게 뚫고 사업 규모를 거침없이 확장시키는 대표 사업 부적입니다."},
-    "love_1": {"type": "love", "pattern": "union", "title": "천생화합부 (天生和合符)", "power": "천생연분 결속 · 깊은 신뢰", "desc": "두 사람의 기운을 완벽하게 묶어 평생 서로를 존중하고 아끼는 백년가약의 인연을 맺어주는 화합 부적입니다."},
-    "health_1": {"type": "health", "pattern": "longevity", "title": "무병장수부 (無病長壽符)", "power": "100세 건강 · 면역력 증진", "desc": "체내의 탁한 음기를 몰아내고 오장육부의 활력을 극대화하여 평생 무병장수를 누리게 하는 장수 부적입니다."}
 }
 
 TAROT_CARDS = [
@@ -141,7 +163,6 @@ def analyze_saju(req: SajuRequest):
     base_date = datetime.date(1900, 1, 1)
     today = datetime.date.today()
     
-    # 1. 사용자 사주 일주(日柱)
     target_date = datetime.date(req.year, req.month, req.day)
     diff_days = (target_date - base_date).days
     d_cg_idx = diff_days % 10
@@ -149,13 +170,11 @@ def analyze_saju(req: SajuRequest):
     d_cg = CHEONGAN_HANJA[d_cg_idx]
     d_jj = JIJI_HANJA[d_jj_idx]
 
-    # 2. 년주
     year_offset = (req.year - 4) % 60
     y_cg_idx = year_offset % 10
     y_jj_idx = year_offset % 12
     y_cg, y_jj = CHEONGAN_HANJA[y_cg_idx], JIJI_HANJA[y_jj_idx]
 
-    # 3. 월주
     month_adj = req.month
     if req.calendar_type == "lunar":
         month_adj = (req.month + 1)
@@ -166,7 +185,6 @@ def analyze_saju(req: SajuRequest):
     m_cg_idx = (y_cg_idx % 5 * 2 + 2 + (month_adj - 2)) % 10
     m_cg, m_jj = CHEONGAN_HANJA[m_cg_idx], JIJI_HANJA[m_jj_idx]
 
-    # 4. 시주
     if req.is_unknown_time or req.sijin_index is None or req.sijin_index < 0:
         h_pillar, h_cg, h_jj = "時未詳", "-", "-"
     else:
@@ -177,7 +195,6 @@ def analyze_saju(req: SajuRequest):
 
     d_animal = ANIMAL_MAP.get(d_jj, "개")
 
-    # 5. 오늘 날짜의 일진(日辰) 실시간 연산
     today_diff = (today - base_date).days
     today_cg_idx = today_diff % 10
     today_jj_idx = (today_diff + 10) % 12
@@ -185,12 +202,10 @@ def analyze_saju(req: SajuRequest):
     today_jj = JIJI_HANJA[today_jj_idx]
     today_iljin_str = f"{today_cg}{today_jj}일"
 
-    # 6. 오늘 일진과 사용자 일간의 십신(十神) 연산
     stem_diff = (today_cg_idx - d_cg_idx) % 10
     shipshin_names = ["비견(比肩)", "겁재(劫財)", "식신(食神)", "상관(傷官)", "편재(偏財)", "정재(正財)", "편관(偏官)", "정관(正官)", "편인(偏印)", "정인(正印)"]
     today_shipshin = shipshin_names[stem_diff]
 
-    # 7. 만 나이 실시간 연산
     current_year = today.year
     current_age = current_year - req.year + 1
 
@@ -217,7 +232,6 @@ def analyze_saju(req: SajuRequest):
         }
     }
 
-    # 8. 오행 가중치 점수 연산
     scores = {"wood": 0.0, "fire": 0.0, "earth": 0.0, "metal": 0.0, "water": 0.0}
     for cg in [y_cg, m_cg, d_cg]:
         scores[CHEONGAN_ELEMENTS[cg]] += 25.0
@@ -238,14 +252,12 @@ def analyze_saju(req: SajuRequest):
         k: round((v / total_score) * 100, 1) for k, v in scores.items()
     }
 
-    # 9. 신강 vs 신약 판정
     day_elem = CHEONGAN_ELEMENTS[d_cg]
     support_score = scores.get(day_elem, 0)
     insoeng_map = {"wood": "water", "fire": "wood", "earth": "fire", "metal": "earth", "water": "metal"}
     support_score += scores.get(insoeng_map.get(day_elem, ""), 0)
     singang_status = "신약(身弱) 사주" if support_score < 45 else ("신강(身强) 사주" if support_score > 65 else "중화(中和) 사주")
 
-    # 10. 날짜 시드 기반 6대 행운 큐레이션 매일 자정 자동 순환
     daily_seed = today.toordinal() + diff_days
     
     colors_pool = ["스노우 화이트 / 실버 그레이", "에메랄드 그린 / 포레스트 올리브", "크림슨 레드 / 로즈 골드", "웜 베이지 / 머스터드", "미드나잇 블루 / 네이비", "아이보리 / 스카이 블루"]
@@ -264,7 +276,6 @@ def analyze_saju(req: SajuRequest):
     mindset = mindsets_pool[(daily_seed + 5) % len(mindsets_pool)]
     action = actions_pool[(daily_seed + 6) % len(actions_pool)]
 
-    # 11. 오늘 십신(today_shipshin)에 따른 매일 다른 3단계 일진 총평
     advice_templates = {
         "비견(比肩)": (f"오늘({today_iljin_str})은 동료와의 협력이 빛을 발하고 추진력이 곧바로 성과로 연결되는 대길의 하루입니다.",
                      f"☀️ 오전 (06:00~12:00): 아이디어를 주변에 공유하고 활발하게 소통하며 기틀을 잡으세요.\n\n"
@@ -313,7 +324,6 @@ def analyze_saju(req: SajuRequest):
     three_stage_advice = advice_info[1]
     daily_score = 82 + (daily_seed * 7) % 17
 
-    # 12. 매일 자정 순환하는 오늘의 맞춤 부적
     min_elem = min(elem_percentages, key=elem_percentages.get)
     user_talisman = TALISMAN_OHEANG_MAP.get(min_elem, TALISMAN_OHEANG_MAP["metal"])
 
@@ -350,6 +360,55 @@ def analyze_saju(req: SajuRequest):
         }
     }
 
+# [신규] 12간지 띠별 / 12성좌 별자리 운세 실시간 연산 API
+@app.get("/api/zodiac-fortune")
+def get_zodiac_fortune(type: str = "zodiac", key: str = "쥐"):
+    today = datetime.date.today()
+    seed = today.toordinal() + hash(key)
+    score = 65 + (seed % 36)  # 65점 ~ 100점 분포
+    
+    if type == "zodiac":
+        years = ZODIAC_BASE_YEARS.get(key, [2008, 1996, 1984, 1972, 1960])
+        year_advices = [
+            f"• <strong>{str(years[0])[-2:]}년생 ({today.year - years[0] + 1}세):</strong> 학업과 취미에서 기대 이상의 두각을 나타내는 활기찬 하루입니다.",
+            f"• <strong>{str(years[1])[-2:]}년생 ({today.year - years[1] + 1}세):</strong> 새로운 제안이나 기회가 찾아오니 적극적으로 의견을 피력하세요.",
+            f"• <strong>{str(years[2])[-2:]}년생 ({today.year - years[2] + 1}세):</strong> 실속을 챙기고 금전적 성과를 안정적으로 확정 짓는 날입니다.",
+            f"• <strong>{str(years[3])[-2:]}년생 ({today.year - years[3] + 1}세):</strong> 귀인의 도움으로 복잡했던 문서나 계약 문제가 순조롭게 풀립니다.",
+            f"• <strong>{str(years[4])[-2:]}년생 ({today.year - years[4] + 1}세):</strong> 마음의 여유를 갖고 건강을 챙기며 가족과 화목을 누리세요."
+        ]
+        
+        titles = [
+            f"주변의 신뢰를 한 몸에 받으며 귀인이 길을 열어주는 날",
+            f"오랫동안 정체되었던 문제의 활로가 시원하게 열리는 날",
+            f"재물운과 협상운이 크게 결합하여 실속을 챙기는 대길의 하루",
+            f"서두르지 않고 원칙을 지킬 때 더 큰 이익이 찾아오는 하루"
+        ]
+        
+        return {
+            "name": f"{key}띠",
+            "icon": ANIMAL_ICONS.get(key, "🐾"),
+            "score": score,
+            "title": titles[seed % len(titles)],
+            "overview": f"오늘 {key}띠는 자신의 본래 역량이 빛을 발하는 날입니다. 사소한 시비에 휘말리지 말고 큰 그림을 보고 추진하면 오후에 큰 결실이 따릅니다.",
+            "year_tips": year_advices,
+            "lucky_time": f"오후 {(seed % 6) + 1}시 ~ {(seed % 6) + 3}시",
+            "lucky_match": f"호흡이 잘 맞는 띠: {['소띠', '용띠', '원숭이띠', '돼지띠'][seed % 4]}"
+        }
+    else:
+        # 별자리 운세
+        star_item = next((s for s in STAR_SIGNS if s["name"] == key), STAR_SIGNS[0])
+        return {
+            "name": star_item["name"],
+            "icon": star_item["icon"],
+            "period": star_item["period"],
+            "score": score,
+            "title": f"창의적인 영감과 반가운 인연이 샘솟는 럭키 데이",
+            "overview": f"{star_item['name']}에게 오늘은 내면의 직관이 강력하게 작용하는 날입니다. 망설이던 대화나 프로젝트의 첫 단추를 꿰기에 완벽합니다.",
+            "love_advice": "솔로는 호감 가는 이성에게 가벼운 안부를, 커플은 솔직한 감정 표현으로 유대감이 2배로 깊어집니다.",
+            "lucky_item": f"{['은색 액세서리', '따뜻한 라떼', '스마트 워치', '향수', '블루 셔츠'][seed % 5]}",
+            "lucky_time": f"오전 {(seed % 4) + 9}시 ~ 12시"
+        }
+
 @app.get("/api/daily-tarot")
 def get_daily_tarot(slot: int = 1, rand_seed: Optional[str] = None):
     random_idx = random.randint(0, len(TAROT_CARDS) - 1)
@@ -363,7 +422,6 @@ def get_daewoon_report(req: dict):
     start_age = age_decade + 3
     end_age = start_age + 9
 
-    # 문구 개선: '현재 대운' 대신 '이번 10년 대운 기간(XX세~XX세) 동안은...'으로 명확화!
     return {
         "title": "👑 자미두수 & 10년 대운",
         "content": f"""
