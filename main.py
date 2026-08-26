@@ -6,7 +6,7 @@ from typing import Optional
 import os
 import random
 
-app = FastAPI(title="운세의 신 PRO API", version="13.0.0")
+app = FastAPI(title="운세의 신 PRO API", version="14.0.0")
 
 CHEONGAN_HANJA = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
 JIJI_HANJA = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"]
@@ -52,11 +52,12 @@ DAY_MBTI_MAP = {
 ANIMAL_MAP = {"子": "쥐", "丑": "소", "寅": "호랑이", "卯": "토끼", "辰": "용", "巳": "뱀", "午": "말", "未": "양", "申": "원숭이", "酉": "닭", "戌": "개", "亥": "돼지"}
 ANIMAL_ICONS = {"쥐": "🐭", "소": "🐮", "호랑이": "🐯", "토끼": "🐰", "용": "🐲", "뱀": "🐍", "말": "🐴", "양": "🐑", "원숭이": "🐵", "닭": "🐔", "개": "🐶", "돼지": "🐷"}
 
+# 최소 연령 중2(15세, 2012년생 기준 5개 연령대)
 ZODIAC_BASE_YEARS = {
-    "쥐": [2008, 1996, 1984, 1972, 1960],
-    "소": [2009, 1997, 1985, 1973, 1961],
-    "호랑이": [2010, 1998, 1986, 1974, 1962],
-    "토끼": [2011, 1999, 1987, 1975, 1963],
+    "쥐": [2020, 2008, 1996, 1984, 1972],
+    "소": [2021, 2009, 1997, 1985, 1973],
+    "호랑이": [2022, 2010, 1998, 1986, 1974],
+    "토끼": [2023, 2011, 1999, 1987, 1975],
     "용": [2012, 2000, 1988, 1976, 1964],
     "뱀": [2013, 2001, 1989, 1977, 1965],
     "말": [2014, 2002, 1990, 1978, 1966],
@@ -360,28 +361,34 @@ def analyze_saju(req: SajuRequest):
         }
     }
 
-# [신규] 12간지 띠별 / 12성좌 별자리 운세 실시간 연산 API
+# 12간지 띠별 (중2=15세부터 5개 연령대) 및 12성좌 동적 핵심 포커스 운세 API
 @app.get("/api/zodiac-fortune")
 def get_zodiac_fortune(type: str = "zodiac", key: str = "쥐"):
     today = datetime.date.today()
     seed = today.toordinal() + hash(key)
-    score = 65 + (seed % 36)  # 65점 ~ 100점 분포
+    score = 65 + (seed % 36)  # 65점 ~ 100점
     
     if type == "zodiac":
-        years = ZODIAC_BASE_YEARS.get(key, [2008, 1996, 1984, 1972, 1960])
+        # 15세(2012년생)부터 63세(1964년생)까지 5개 핵심 활동 연령대
+        years = [2012, 2000, 1988, 1976, 1964]
+        # 해당 띠의 실제 년도 오프셋 보정
+        zodiac_names = list(ANIMAL_MAP.values())
+        z_idx = zodiac_names.index(key) if key in zodiac_names else 0
+        adj_years = [y - ((4 - z_idx) % 12) for y in years]
+        
         year_advices = [
-            f"• <strong>{str(years[0])[-2:]}년생 ({today.year - years[0] + 1}세):</strong> 학업과 취미에서 기대 이상의 두각을 나타내는 활기찬 하루입니다.",
-            f"• <strong>{str(years[1])[-2:]}년생 ({today.year - years[1] + 1}세):</strong> 새로운 제안이나 기회가 찾아오니 적극적으로 의견을 피력하세요.",
-            f"• <strong>{str(years[2])[-2:]}년생 ({today.year - years[2] + 1}세):</strong> 실속을 챙기고 금전적 성과를 안정적으로 확정 짓는 날입니다.",
-            f"• <strong>{str(years[3])[-2:]}년생 ({today.year - years[3] + 1}세):</strong> 귀인의 도움으로 복잡했던 문서나 계약 문제가 순조롭게 풀립니다.",
-            f"• <strong>{str(years[4])[-2:]}년생 ({today.year - years[4] + 1}세):</strong> 마음의 여유를 갖고 건강을 챙기며 가족과 화목을 누리세요."
+            f"• <strong>{str(adj_years[0])[-2:]}년생 ({today.year - adj_years[0] + 1}세):</strong> 학업과 진로에서 번뜩이는 영감을 발휘해 주변의 칭찬을 받는 날입니다.",
+            f"• <strong>{str(adj_years[1])[-2:]}년생 ({today.year - adj_years[1] + 1}세):</strong> 취업·이직 및 새로운 프로젝트에서 중요한 주도권을 쥐게 됩니다.",
+            f"• <strong>{str(adj_years[2])[-2:]}년생 ({today.year - adj_years[2] + 1}세):</strong> 실속을 차리고 금전적 결실과 성과를 확정 짓는 대길의 타이밍입니다.",
+            f"• <strong>{str(adj_years[3])[-2:]}년생 ({today.year - adj_years[3] + 1}세):</strong> 귀인의 도움으로 복잡했던 계약이나 사업 협상이 순조롭게 성사됩니다.",
+            f"• <strong>{str(adj_years[4])[-2:]}년생 ({today.year - adj_years[4] + 1}세):</strong> 무리한 확장보다 내실을 다지며 가족과 평온한 화목을 누리는 날입니다."
         ]
         
         titles = [
-            f"주변의 신뢰를 한 몸에 받으며 귀인이 길을 열어주는 날",
-            f"오랫동안 정체되었던 문제의 활로가 시원하게 열리는 날",
+            f"주변의 신뢰를 한 몸에 받으며 귀인이 활로를 열어주는 날",
+            f"오랫동안 정체되었던 문제의 실마리가 시원하게 풀리는 날",
             f"재물운과 협상운이 크게 결합하여 실속을 챙기는 대길의 하루",
-            f"서두르지 않고 원칙을 지킬 때 더 큰 이익이 찾아오는 하루"
+            f"서두르지 않고 원칙을 지킬 때 더 큰 결실이 찾아오는 하루"
         ]
         
         return {
@@ -389,22 +396,30 @@ def get_zodiac_fortune(type: str = "zodiac", key: str = "쥐"):
             "icon": ANIMAL_ICONS.get(key, "🐾"),
             "score": score,
             "title": titles[seed % len(titles)],
-            "overview": f"오늘 {key}띠는 자신의 본래 역량이 빛을 발하는 날입니다. 사소한 시비에 휘말리지 말고 큰 그림을 보고 추진하면 오후에 큰 결실이 따릅니다.",
+            "overview": f"오늘 {key}띠는 자신의 본래 실력과 결단력이 빛을 발하는 날입니다. 사소한 시비에 휘말리지 말고 큰 흐름을 보고 추진하면 오후에 큰 성취가 따릅니다.",
             "year_tips": year_advices,
             "lucky_time": f"오후 {(seed % 6) + 1}시 ~ {(seed % 6) + 3}시",
             "lucky_match": f"호흡이 잘 맞는 띠: {['소띠', '용띠', '원숭이띠', '돼지띠'][seed % 4]}"
         }
     else:
-        # 별자리 운세
         star_item = next((s for s in STAR_SIGNS if s["name"] == key), STAR_SIGNS[0])
+        focus_types = [
+            {"badge": "💰 오늘 가장 중요한 재물운", "desc": "뜻밖의 금전적 횡재수가 따르거나 유리한 조건의 거래 계약이 성사될 가능성이 매우 높습니다."},
+            {"badge": "💼 오늘 가장 중요한 사업·커리어운", "desc": "직무와 프로젝트에서 탁월한 기획력이 돋보여 상급자나 협력사의 절대적인 신뢰를 얻습니다."},
+            {"badge": "💖 오늘 가장 중요한 애정운", "desc": "솔로는 매력적인 귀인과의 깜짝 인연이, 커플은 깊은 대화로 상호 신뢰가 2배로 돈독해집니다."},
+            {"badge": "🌿 오늘 가장 중요한 건강·멘탈운", "desc": "두한족열의 수칙을 지키며 가벼운 유산소 운동을 곁들이면 최고의 활력과 집중력을 회복합니다."}
+        ]
+        chosen_focus = focus_types[seed % len(focus_types)]
+        
         return {
             "name": star_item["name"],
             "icon": star_item["icon"],
             "period": star_item["period"],
             "score": score,
-            "title": f"창의적인 영감과 반가운 인연이 샘솟는 럭키 데이",
-            "overview": f"{star_item['name']}에게 오늘은 내면의 직관이 강력하게 작용하는 날입니다. 망설이던 대화나 프로젝트의 첫 단추를 꿰기에 완벽합니다.",
-            "love_advice": "솔로는 호감 가는 이성에게 가벼운 안부를, 커플은 솔직한 감정 표현으로 유대감이 2배로 깊어집니다.",
+            "title": f"창의적인 영감과 반가운 기회가 샘솟는 럭키 데이",
+            "overview": f"{star_item['name']}에게 오늘은 내면의 직관이 강력하게 작용하는 날입니다. 망설이던 결정이나 프로젝트의 첫 단추를 꿰기에 완벽합니다.",
+            "focus_badge": chosen_focus["badge"],
+            "focus_content": chosen_focus["desc"],
             "lucky_item": f"{['은색 액세서리', '따뜻한 라떼', '스마트 워치', '향수', '블루 셔츠'][seed % 5]}",
             "lucky_time": f"오전 {(seed % 4) + 9}시 ~ 12시"
         }
