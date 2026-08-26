@@ -6,7 +6,7 @@ from typing import Optional
 import os
 import random
 
-app = FastAPI(title="운세의 신 API", version="21.0.0")
+app = FastAPI(title="운세의 신 API", version="22.0.0")
 
 CHEONGAN_HANJA = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
 JIJI_HANJA = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"]
@@ -477,34 +477,51 @@ def get_daewoon_report(req: dict):
                 </div>
             </div>
 
+            <!-- PDF 소장 버튼 -->
+            <div style="margin-top: 10px; text-align: center;">
+                <button onclick="printReportDocument('👑 자미두수 평생운세 정밀 감명서', this)" style="width: 100%; background: #F8FAFC; border: 1.5px solid #CBD5E1; color: #334155; font-size: 14px; font-weight: 800; padding: 12px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                    📄 평생운세 감명서 PDF / 인쇄 소장하기
+                </button>
+            </div>
+
         </div>
         """
     }
 
+# [2단계] 12개월 히트맵 캘린더 탑재 & [3단계] PDF 소장 버튼 탑재
 @app.post("/api/sinnian-report")
 def get_sinnian_report(req: dict):
     user_name = req.get("name", "최정오")
     
     monthly_guides = [
-        {"m": "1월", "gua": "지천태(地天泰) 괘", "opp": "새해 첫 출발이 대길하여 신규 사업 및 프로젝트 착수에 최적입니다.", "warn": "초반의 빠른 성취에 자만하지 말고 세부 규정을 차분히 정비하세요."},
-        {"m": "2월", "gua": "수천수(水天需) 괘", "opp": "실력과 내실을 다지며 시장 상황의 흐름을 관망할 때 이익이 보존됩니다.", "warn": "서두른 결정이나 충동구매는 후회를 부르니 하루 이틀 시일을 두세요."},
-        {"m": "3월", "gua": "천화동인(天火同人) 괘", "opp": "귀인의 조력이 닿아 인간관계와 직무에서 강력한 협력자가 나타납니다.", "warn": "주변과의 이견 조율 시 감정적 대응을 피하고 데이터로 설득하세요."},
-        {"m": "4월", "gua": "풍천소축(風天小畜) 괘", "opp": "작은 성과가 차곡차곡 쌓여 종잣돈의 기틀이 한 단계 단단해집니다.", "warn": "무리한 대출이나 투자는 지양하고 현금 유동성을 확보하세요."},
-        {"m": "5월", "gua": "화천대유(火天大有) 괘", "opp": "★올해 상반기 최고의 재물운! 부동산/투자/계약에서 큰 결실을 맺습니다.", "warn": "성과를 독식하려 하지 말고 함께한 동료들에게 따뜻하게 베푸세요."},
-        {"m": "6월", "gua": "천풍구(天風姤) 괘", "opp": "새로운 제안과 이직/신규 프로젝트의 반가운 활로가 열립니다.", "warn": "계약서의 독소 조항과 구두 약속을 면밀히 검증하는 신중함이 필수입니다."},
-        {"m": "7월", "gua": "천수송(天水訟) 괘", "opp": "기존의 복잡했던 업무 체계를 깔끔히 정리하고 체질을 개선하는 달.", "warn": "사소한 언쟁이나 시비수를 피하기 위해 공감 화법을 철저히 유지하세요."},
-        {"m": "8월", "gua": "풍지관(風地觀) 괘", "opp": "상반기의 성과를 점검하고 하반기 대도약을 위한 전략을 세우기에 최적입니다.", "warn": "체력 저하와 간 피로를 방지하기 위해 충분한 수면과 족욕을 챙기세요."},
-        {"m": "9월", "gua": "산지박(山地剝) 괘", "opp": "불필요한 고정비와 낭비 요소를 말끔히 청산하여 실속을 챙깁니다.", "warn": "무리한 확장보다 기존 고객 및 핵심 업무 관리에 집중하세요."},
-        {"m": "10월", "gua": "지뢰복(地雷復) 괘", "opp": "★올해 하반기 최고의 승부처! 승진, 수주, 투자 회수에서 낭보가 울립니다.", "warn": "기회가 올 때 주저하지 말고 과감한 결단력으로 주도권을 쥐세요."},
-        {"m": "11월", "gua": "수뢰준(水雷屯) 괘", "opp": "내년을 위한 새로운 아이템이나 자격/학업의 씨앗을 뿌리기에 좋습니다.", "warn": "경험자의 조언을 경청하여 불필요한 시행착오를 사전에 방지하세요."},
-        {"m": "12월", "gua": "지화명이(地火明夷) 괘", "opp": "한 해 일군 풍성한 결실을 확정 짓고 가문과 가족의 화목을 누립니다.", "warn": "연말 과음과 과로를 피하고 따뜻한 온기로 몸과 마음을 달래세요."}
+        {"m": "1월", "gua": "지천태(地天泰) 괘", "score": "95점", "level": "대길", "bg": "#DCFCE7", "color": "#166534", "opp": "새해 첫 출발이 대길하여 신규 사업 및 프로젝트 착수에 최적입니다.", "warn": "초반의 빠른 성취에 자만하지 말고 세부 규정을 차분히 정비하세요."},
+        {"m": "2월", "gua": "수천수(水天需) 괘", "score": "78점", "level": "평온", "bg": "#F1F5F9", "color": "#475569", "opp": "실력과 내실을 다지며 시장 상황의 흐름을 관망할 때 이익이 보존됩니다.", "warn": "서두른 결정이나 충동구매는 후회를 부르니 하루 이틀 시일을 두세요."},
+        {"m": "3월", "gua": "천화동인(天火同人) 괘", "score": "88점", "level": "길운", "bg": "#EFF6FF", "color": "#1E40AF", "opp": "귀인의 조력이 닿아 인간관계와 직무에서 강력한 협력자가 나타납니다.", "warn": "주변과의 이견 조율 시 감정적 대응을 피하고 데이터로 설득하세요."},
+        {"m": "4월", "gua": "풍천소축(風天小畜) 괘", "score": "82점", "level": "길운", "bg": "#EFF6FF", "color": "#1E40AF", "opp": "작은 성과가 차곡차곡 쌓여 종잣돈의 기틀이 한 단계 단단해집니다.", "warn": "무리한 대출이나 투자는 지양하고 현금 유동성을 확보하세요."},
+        {"m": "5월", "gua": "화천대유(火天大有) 괘", "score": "98점", "level": "★대길", "bg": "#FEF3C7", "color": "#B45309", "opp": "★올해 상반기 최고의 재물운! 부동산/투자/계약에서 큰 결실을 맺습니다.", "warn": "성과를 독식하려 하지 말고 함께한 동료들에게 따뜻하게 베푸세요."},
+        {"m": "6월", "gua": "천풍구(天風姤) 괘", "score": "85점", "level": "길운", "bg": "#EFF6FF", "color": "#1E40AF", "opp": "새로운 제안과 이직/신규 프로젝트의 반가운 활로가 열립니다.", "warn": "계약서의 독소 조항과 구두 약속을 면밀하게 검증하는 신중함이 필수입니다."},
+        {"m": "7월", "gua": "천수송(天水訟) 괘", "score": "68점", "level": "주의", "bg": "#FEE2E2", "color": "#991B1B", "opp": "기존의 복잡했던 업무 체계를 깔끔히 정리하고 체질을 개선하는 달.", "warn": "사소한 언쟁이나 시비수를 피하기 위해 공감 화법을 철저히 유지하세요."},
+        {"m": "8월", "gua": "풍지관(風地觀) 괘", "score": "75점", "level": "평온", "bg": "#F1F5F9", "color": "#475569", "opp": "상반기의 성과를 점검하고 하반기 대도약을 위한 전략을 세우기에 최적입니다.", "warn": "체력 저하와 간 피로를 방지하기 위해 충분한 수면과 족욕을 챙기세요."},
+        {"m": "9월", "gua": "산지박(山地剝) 괘", "score": "80점", "level": "길운", "bg": "#EFF6FF", "color": "#1E40AF", "opp": "불필요한 고정비와 낭비 요소를 말끔히 청산하여 실속을 챙깁니다.", "warn": "무리한 확장보다 기존 고객 및 핵심 업무 관리에 집중하세요."},
+        {"m": "10월", "gua": "지뢰복(地雷復) 괘", "score": "99점", "level": "★대길", "bg": "#FEF3C7", "color": "#B45309", "opp": "★올해 하반기 최고의 승부처! 승진, 수주, 투자 회수에서 낭보가 울립니다.", "warn": "기회가 올 때 주저하지 말고 과감한 결단력으로 주도권을 쥐세요."},
+        {"m": "11월", "gua": "수뢰준(水雷屯) 괘", "score": "84점", "level": "길운", "bg": "#EFF6FF", "color": "#1E40AF", "opp": "내년을 위한 새로운 아이템이나 자격/학업의 씨앗을 뿌리기에 좋습니다.", "warn": "경험자의 조언을 경청하여 불필요한 시행착오를 사전에 방지하세요."},
+        {"m": "12월", "gua": "지화명이(地火明夷) 괘", "score": "92점", "level": "대길", "bg": "#DCFCE7", "color": "#166534", "opp": "한 해 일군 풍성한 결실을 확정 짓고 가문과 가족의 화목을 누립니다.", "warn": "연말 과음과 과로를 피하고 따뜻한 온기로 몸과 마음을 달래세요."}
     ]
+
+    # [2단계] 12개월 히트맵 캘린더 그리드 생성
+    heatmap_html = "".join([f"""
+        <div style="background: {item['bg']}; color: {item['color']}; border-radius: 8px; padding: 8px 4px; text-align: center; font-size: 12px; font-weight: 800; border: 1px solid rgba(0,0,0,0.06);">
+            <div style="font-size: 11px; opacity: 0.85;">{item['m']}</div>
+            <div style="font-size: 13.5px; margin: 2px 0;">{item['score']}</div>
+            <div style="font-size: 10.5px;">{item['level']}</div>
+        </div>
+    """ for item in monthly_guides])
 
     months_html = "".join([f"""
         <div style="background: #F8FAFC; border-left: 3.5px solid #2D6A4F; border-radius: 8px; padding: 12px 14px; margin-bottom: 8px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
                 <span style="font-weight: 800; color: #0F172A; font-size: 15px;">📅 {item['m']} 세운 가이드</span>
-                <span style="font-size: 12px; background: #EBF5EE; color: #2D6A4F; font-weight: 800; padding: 2px 8px; border-radius: 6px;">{item['gua']}</span>
+                <span style="font-size: 12px; background: {item['bg']}; color: {item['color']}; font-weight: 800; padding: 2px 8px; border-radius: 6px;">{item['gua']} ({item['score']})</span>
             </div>
             <p style="color: #065F46; font-size: 13.5px; line-height: 1.6; margin-bottom: 2px;">
                 <strong>✨ 기회의 순간:</strong> {item['opp']}
@@ -520,6 +537,7 @@ def get_sinnian_report(req: dict):
         "content": f"""
         <div style="display: flex; flex-direction: column; gap: 16px; font-size: 14.5px; color: #334155; line-height: 1.85; text-align: left;">
             
+            <!-- Chapter 1 -->
             <div>
                 <div style="border-left: 4px solid #DC2626; padding-left: 10px; margin-bottom: 8px;">
                     <span style="font-size: 12px; color: #DC2626; font-weight: 800;">Chapter 1. 2026년 세운(歲運) 총론</span>
@@ -539,6 +557,22 @@ def get_sinnian_report(req: dict):
 
             <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
 
+            <!-- 2단계: 12개월 히트맵 캘린더 카드 -->
+            <div>
+                <div style="border-left: 4px solid #2D6A4F; padding-left: 10px; margin-bottom: 8px;">
+                    <span style="font-size: 12px; color: #2D6A4F; font-weight: 800;">Visual Infographic</span>
+                    <h4 style="font-size: 16.5px; font-weight: 800; color: #0F172A; margin-top: 2px;">
+                        📊 2026년 12개월 운세 흐름 히트맵
+                    </h4>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 12px;">
+                    {heatmap_html}
+                </div>
+            </div>
+
+            <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
+
+            <!-- Chapter 2 -->
             <div>
                 <div style="border-left: 4px solid #2D6A4F; padding-left: 10px; margin-bottom: 10px;">
                     <span style="font-size: 12px; color: #2D6A4F; font-weight: 800;">Chapter 2. 12개월 정밀 토정비결</span>
@@ -553,6 +587,7 @@ def get_sinnian_report(req: dict):
 
             <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
 
+            <!-- Chapter 3 -->
             <div>
                 <div style="border-left: 4px solid #D97706; padding-left: 10px; margin-bottom: 8px;">
                     <span style="font-size: 12px; color: #D97706; font-weight: 800;">Chapter 3. 2026 개운 비책</span>
@@ -566,6 +601,14 @@ def get_sinnian_report(req: dict):
                     <p>• <strong>마인드셋 처세:</strong> 빠른 속도감 속에서도 중요한 계약서는 반드시 문구 하나까지 꼼꼼히 점검할 때 완벽한 승리를 거둡니다.</p>
                 </div>
             </div>
+
+            <!-- PDF 소장 버튼 -->
+            <div style="margin-top: 10px; text-align: center;">
+                <button onclick="printReportDocument('📅 2026 신년운세 & 토정비결 정밀 감명서', this)" style="width: 100%; background: #F8FAFC; border: 1.5px solid #CBD5E1; color: #334155; font-size: 14px; font-weight: 800; padding: 12px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                    📄 2026 신년운세 감명서 PDF / 인쇄 소장하기
+                </button>
+            </div>
+
         </div>
         """
     }
@@ -608,6 +651,12 @@ def generate_love_report_content(user_name: str, sub_opt: str) -> str:
                     <p>• <strong>행운의 힐링 추천:</strong> 주말 가벼운 근교 숲길 산책이나 조용한 힐링 여행이 부부의 권태감을 씻어내고 새로운 활력을 줍니다.</p>
                 </div>
             </div>
+
+            <div style="margin-top: 10px; text-align: center;">
+                <button onclick="printReportDocument('💖 평생 애정운 정밀 감명서', this)" style="width: 100%; background: #F8FAFC; border: 1.5px solid #CBD5E1; color: #334155; font-size: 14px; font-weight: 800; padding: 12px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                    📄 애정운 감명서 PDF / 인쇄 소장하기
+                </button>
+            </div>
         </div>
         """
     elif sub_opt == "연애중":
@@ -646,6 +695,12 @@ def generate_love_report_content(user_name: str, sub_opt: str) -> str:
                     <p>• <strong>추천 데이트 장소:</strong> 야경이 내려다보이는 레스토랑이나 클래식한 전시회가 로맨틱한 기운을 증폭시킵니다.</p>
                 </div>
             </div>
+
+            <div style="margin-top: 10px; text-align: center;">
+                <button onclick="printReportDocument('💖 평생 애정운 정밀 감명서', this)" style="width: 100%; background: #F8FAFC; border: 1.5px solid #CBD5E1; color: #334155; font-size: 14px; font-weight: 800; padding: 12px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                    📄 애정운 감명서 PDF / 인쇄 소장하기
+                </button>
+            </div>
         </div>
         """
     elif sub_opt == "썸/짝사랑":
@@ -683,6 +738,12 @@ def generate_love_report_content(user_name: str, sub_opt: str) -> str:
                     <p>• <strong>과도한 조급함 금물:</strong> 상대방의 반응 속도에 일희일비하지 말고 여유 있고 당당한 태도를 유지하세요.</p>
                     <p>• <strong>행운의 아이템:</strong> 은은한 우디/플로럴 계열 향수와 단정한 셔츠 차림이 매력도를 극대화합니다.</p>
                 </div>
+            </div>
+
+            <div style="margin-top: 10px; text-align: center;">
+                <button onclick="printReportDocument('💖 평생 애정운 정밀 감명서', this)" style="width: 100%; background: #F8FAFC; border: 1.5px solid #CBD5E1; color: #334155; font-size: 14px; font-weight: 800; padding: 12px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                    📄 애정운 감명서 PDF / 인쇄 소장하기
+                </button>
             </div>
         </div>
         """
@@ -723,10 +784,15 @@ def generate_love_report_content(user_name: str, sub_opt: str) -> str:
                     <p>• <strong>인연 대길 시기:</strong> 가을(양력 9~11월)과 초봄(양력 2~3월)에 귀인의 소개로 다가오는 만남을 주목하세요.</p>
                 </div>
             </div>
+
+            <div style="margin-top: 10px; text-align: center;">
+                <button onclick="printReportDocument('💖 평생 애정운 정밀 감명서', this)" style="width: 100%; background: #F8FAFC; border: 1.5px solid #CBD5E1; color: #334155; font-size: 14px; font-weight: 800; padding: 12px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                    📄 애정운 감명서 PDF / 인쇄 소장하기
+                </button>
+            </div>
         </div>
         """
 
-# [신규 추가] 사업·직업운 4대 상황별 맞춤 분기 엔진
 def generate_business_report_content(user_name: str, sub_opt: str) -> str:
     if sub_opt == "취업/이직 준비중":
         return f"""
@@ -764,6 +830,12 @@ def generate_business_report_content(user_name: str, sub_opt: str) -> str:
                     <p>• <strong>면접 복장 코디:</strong> 신뢰감을 주는 딥 네이비 정장에 단정한 화이트 셔츠와 메탈 시계를 착용하면 전문성과 결단력이 돋보입니다.</p>
                     <p>• <strong>실전 답변 전략:</strong> 화려한 미사여구보다 실제 경험을 두괄식으로 간결하게 전달할 때 압도적인 신뢰를 얻습니다.</p>
                 </div>
+            </div>
+
+            <div style="margin-top: 10px; text-align: center;">
+                <button onclick="printReportDocument('🏢 사업·직업운 정밀 감명서', this)" style="width: 100%; background: #F8FAFC; border: 1.5px solid #CBD5E1; color: #334155; font-size: 14px; font-weight: 800; padding: 12px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                    📄 직업운 감명서 PDF / 인쇄 소장하기
+                </button>
             </div>
         </div>
         """
@@ -804,6 +876,12 @@ def generate_business_report_content(user_name: str, sub_opt: str) -> str:
                     <p>• <strong>미수금 방어법:</strong> 구두 계약을 절대 금하고 모든 계약은 단계별 선금과 서면 날인을 철저히 준수하세요.</p>
                 </div>
             </div>
+
+            <div style="margin-top: 10px; text-align: center;">
+                <button onclick="printReportDocument('🏢 사업·직업운 정밀 감명서', this)" style="width: 100%; background: #F8FAFC; border: 1.5px solid #CBD5E1; color: #334155; font-size: 14px; font-weight: 800; padding: 12px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                    📄 직업운 감명서 PDF / 인쇄 소장하기
+                </button>
+            </div>
         </div>
         """
     elif sub_opt == "창업 준비중":
@@ -843,9 +921,15 @@ def generate_business_report_content(user_name: str, sub_opt: str) -> str:
                     <p>• <strong>핵심 멤버 구성:</strong> 재무와 꼼꼼한 실무를 도맡아줄 파트너(소띠, 닭띠)를 초기에 확보하면 리스크가 0%로 줄어듭니다.</p>
                 </div>
             </div>
+
+            <div style="margin-top: 10px; text-align: center;">
+                <button onclick="printReportDocument('🏢 사업·직업운 정밀 감명서', this)" style="width: 100%; background: #F8FAFC; border: 1.5px solid #CBD5E1; color: #334155; font-size: 14px; font-weight: 800; padding: 12px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                    📄 직업운 감명서 PDF / 인쇄 소장하기
+                </button>
+            </div>
         </div>
         """
-    else: # 직장인 기본
+    else:
         return f"""
         <div style="display: flex; flex-direction: column; gap: 16px; font-size: 14.5px; color: #334155; line-height: 1.85; text-align: left;">
             <div style="border-left: 4px solid #2563EB; padding-left: 10px;">
@@ -881,6 +965,12 @@ def generate_business_report_content(user_name: str, sub_opt: str) -> str:
                     <p>• <strong>사무실 책상 풍수:</strong> 모니터 옆에 메탈 소재의 소품이나 화분(작은 관엽식물)을 두면 잡음을 없애고 집중력을 극대화합니다.</p>
                     <p>• <strong>동료 관계 처세:</strong> 동료들의 불평불만에 휩쓸리지 말고 중립을 유지할 때 인사철에 가장 안전하고 높은 평가를 받습니다.</p>
                 </div>
+            </div>
+
+            <div style="margin-top: 10px; text-align: center;">
+                <button onclick="printReportDocument('🏢 사업·직업운 정밀 감명서', this)" style="width: 100%; background: #F8FAFC; border: 1.5px solid #CBD5E1; color: #334155; font-size: 14px; font-weight: 800; padding: 12px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                    📄 직업운 감명서 PDF / 인쇄 소장하기
+                </button>
             </div>
         </div>
         """
@@ -940,6 +1030,12 @@ def get_theme_report(req: dict):
                     <p>• <strong>문서 계약 대길 타이밍:</strong> 음력 4월, 8월, 12월에 체결하는 부동산/투자 계약이 평생의 복록을 부릅니다.</p>
                 </div>
             </div>
+
+            <div style="margin-top: 10px; text-align: center;">
+                <button onclick="printReportDocument('💰 평생 재물운 정밀 감명서', this)" style="width: 100%; background: #F8FAFC; border: 1.5px solid #CBD5E1; color: #334155; font-size: 14px; font-weight: 800; padding: 12px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                    📄 재물운 감명서 PDF / 인쇄 소장하기
+                </button>
+            </div>
         </div>
         """
     else:
@@ -978,6 +1074,12 @@ def get_theme_report(req: dict):
                     <p>• <strong>취침 전 힐링 루틴:</strong> 매일 밤 15분간 따뜻한 족욕을 통해 하체 순환을 돕고 숙면을 취하세요.</p>
                     <p>• <strong>추천 운동 요법:</strong> 주 3회 30분 이상의 빠른 걷기나 수영 등 유산소 운동이 오행 밸런스를 맞춰줍니다.</p>
                 </div>
+            </div>
+
+            <div style="margin-top: 10px; text-align: center;">
+                <button onclick="printReportDocument('🌿 평생 건강운 정밀 감명서', this)" style="width: 100%; background: #F8FAFC; border: 1.5px solid #CBD5E1; color: #334155; font-size: 14px; font-weight: 800; padding: 12px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                    📄 건강운 감명서 PDF / 인쇄 소장하기
+                </button>
             </div>
         </div>
         """
