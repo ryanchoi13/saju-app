@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <title>운세의 신 PRO</title>
+    <title>운세의 신</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
@@ -12,10 +12,10 @@
         body { background-color: #F4F7F4; color: #1E293B; display: flex; justify-content: center; min-height: 100vh; }
         .app-container { width: 100%; max-width: 448px; background: #FFFFFF; min-height: 100vh; display: flex; flex-direction: column; position: relative; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); padding-bottom: 80px; }
         
+        /* 2. 로고 클릭 가능 스타일 */
         header { background: #FFFFFF; border-bottom: 1px solid #F1F5F9; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 30; }
-        .logo-box { display: flex; align-items: center; gap: 6px; }
+        .logo-box { display: flex; align-items: center; gap: 6px; cursor: pointer; user-select: none; }
         .logo-text { font-size: 21px; font-weight: 800; color: #2D6A4F; letter-spacing: -0.5px; }
-        .pro-badge { background: #EBF5EE; color: #2D6A4F; font-size: 11px; font-weight: 700; padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(45,106,79,0.2); }
         .coin-btn { display: flex; align-items: center; gap: 5px; background: #FEF3C7; border: 1px solid #FCD34D; padding: 5px 12px; border-radius: 9999px; font-size: 13px; font-weight: 700; color: #78350F; cursor: pointer; }
         .charge-tag { font-size: 11px; background: #2D6A4F; color: white; padding: 2px 7px; border-radius: 9999px; margin-left: 2px; }
 
@@ -43,9 +43,11 @@
         .elem-water { background: #EFF6FF; color: #2563EB; border: 1.5px solid #BFDBFE; }
         .elem-none { background: #F8FAFC; color: #94A3B8; border: 1px solid #E2E8F0; }
 
-        .mbti-card { display: flex; align-items: center; gap: 14px; background: white; border-radius: 20px; border: 1px solid #E2E8F0; padding: 16px; }
-        .mbti-icon { width: 52px; height: 52px; border-radius: 16px; background: #FEF3C7; display: flex; align-items: center; justify-content: center; font-size: 28px; }
-        .daily-banner { background: linear-gradient(135deg, #1E4D38 0%, #2D6A4F 100%); border-radius: 20px; padding: 20px; color: white; display: flex; flex-direction: column; gap: 8px; }
+        .mbti-card { display: flex; flex-direction: column; gap: 8px; background: white; border-radius: 20px; border: 1px solid #E2E8F0; padding: 16px; }
+        .mbti-top { display: flex; align-items: center; gap: 14px; }
+        .mbti-icon { width: 52px; height: 52px; border-radius: 16px; background: #FEF3C7; display: flex; align-items: center; justify-content: center; font-size: 28px; flex-shrink: 0; }
+        
+        .daily-banner { background: linear-gradient(135deg, #1E4D38 0%, #2D6A4F 100%); border-radius: 20px; padding: 20px; color: white; display: flex; flex-direction: column; }
         
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
         .grid-cell { background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 14px; padding: 12px; font-size: 14px; text-align: left; }
@@ -90,9 +92,9 @@
     <div class="app-container">
         
         <header>
-            <div class="logo-box">
+            <!-- 2, 3. 로고 클릭 이벤트 연동 및 PRO 제거 -->
+            <div class="logo-box" onclick="goToHomeAndScrollTop()">
                 <h1 class="logo-text">운세의 신</h1>
-                <span class="pro-badge">PRO</span>
             </div>
             
             <div id="headerAuthArea">
@@ -154,22 +156,31 @@
             <!-- 탭 1: 오늘운세 -->
             <div id="view-today" class="tab-view hidden">
                 
+                <!-- 4. 사주 MBTI 및 설명 문구 -->
                 <div class="mbti-card">
-                    <div id="mbtiAnimalIcon" class="mbti-icon">🐶</div>
-                    <div style="text-align: left;">
-                        <span style="font-size: 11px; background: #D1FAE5; color: #065F46; padding: 2px 8px; border-radius: 9999px; font-weight: 700;">사주 MBTI</span>
-                        <h4 id="mbtiTypeName" style="font-size: 15px; font-weight: 700; margin-top: 2px;">대담한 통솔자 (ENTJ형)</h4>
-                        <p id="mbtiTypeDesc" style="font-size: 13px; color: #64748B;">목표를 향해 나아가는 전략적 사주</p>
+                    <div class="mbti-top">
+                        <div id="mbtiAnimalIcon" class="mbti-icon">🐶</div>
+                        <div style="text-align: left;">
+                            <span style="font-size: 11px; background: #D1FAE5; color: #065F46; padding: 2px 8px; border-radius: 9999px; font-weight: 700;">사주 MBTI</span>
+                            <h4 id="mbtiTypeName" style="font-size: 15px; font-weight: 700; margin-top: 2px;">대담한 통솔자 (ENTJ형)</h4>
+                            <p id="mbtiTypeDesc" style="font-size: 13px; color: #64748B;">목표를 향해 나아가는 전략적 사주</p>
+                        </div>
+                    </div>
+                    <div style="border-top: 1px dashed #E2E8F0; padding-top: 6px; text-align: left;">
+                        <p style="font-size: 11px; color: #64748B; line-height: 1.4;">
+                            ※ 사주 MBTI는 사주 명식(일간)을 기반으로 분석한 결과로, 표준 성격유형검사(MBTI)와는 차이가 있을 수 있습니다.
+                        </p>
                     </div>
                 </div>
 
+                <!-- 5, 6. 오늘의 일진 배너: 볼드 완화(font-weight: 600) 및 간격 최적화 -->
                 <div class="daily-banner">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
                         <span style="font-size: 13px; color: #A7F3D0;">오늘의 일진</span>
                         <span id="resScoreBadge" style="background: #FBBF24; color: #1E293B; font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 9999px;">운세 97점</span>
                     </div>
-                    <h3 id="resTitle" style="font-size: 17px; font-weight: 800; text-align: left;">도약의 하루</h3>
-                    <p id="resAdvice" style="font-size: 14px; color: #D1FAE5; font-weight: 400; line-height: 1.8; text-align: left; white-space: pre-line;"></p>
+                    <h3 id="resTitle" style="font-size: 16px; font-weight: 600; text-align: left; line-height: 1.5; margin-bottom: 14px;">도약의 하루</h3>
+                    <div id="resAdvice" style="font-size: 13.5px; color: #D1FAE5; font-weight: 400; line-height: 1.65; text-align: left;"></div>
                 </div>
 
                 <div class="grid-2">
@@ -251,7 +262,7 @@
 
                     <div id="gridZodiacBox" class="zodiac-grid-2x6">
                         <div onclick="openZodiacModal('zodiac', '쥐')" class="zodiac-btn"><span class="zodiac-icon">🐭</span><span class="zodiac-label">쥐</span></div>
-                        <div onclick="openZodiacModal('소')" class="zodiac-btn"><span class="zodiac-icon">🐮</span><span class="zodiac-label">소</span></div>
+                        <div onclick="openZodiacModal('zodiac', '소')" class="zodiac-btn"><span class="zodiac-icon">🐮</span><span class="zodiac-label">소</span></div>
                         <div onclick="openZodiacModal('zodiac', '호랑이')" class="zodiac-btn"><span class="zodiac-icon">🐯</span><span class="zodiac-label">호랑이</span></div>
                         <div onclick="openZodiacModal('zodiac', '토끼')" class="zodiac-btn"><span class="zodiac-icon">🐰</span><span class="zodiac-label">토끼</span></div>
                         <div onclick="openZodiacModal('zodiac', '용')" class="zodiac-btn"><span class="zodiac-icon">🐲</span><span class="zodiac-label">용</span></div>
@@ -404,6 +415,7 @@
                     <span>📢 광고 영역 (Google AdSense / Kakao AdFit 슬롯 2)</span>
                 </div>
 
+                <!-- 9. 10년 생애 그래프 X축 레이블을 '세'로 정밀 수정 -->
                 <div class="card" style="border: 2px solid #FCD34D;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                         <span style="font-size: 15px; font-weight: 800;">👑 자미두수 & 10년 대운 리포트</span>
@@ -432,21 +444,21 @@
                                 <line id="daewoonGuideLine" x1="130" y1="6" x2="130" y2="88" stroke="#94A3B8" stroke-width="1.2" stroke-dasharray="2.5 2.5" />
 
                                 <rect id="daewoonTagBox" x="60" y="-2" width="140" height="15" rx="4" fill="#FEF2F2" stroke="#FECDD3" stroke-width="0.8"/>
-                                <text id="daewoonTagText" x="130" y="9" font-size="8.5" font-weight="700" fill="#DC2626" text-anchor="middle">📍 최정오 님의 현재 위치 (황금기)</text>
+                                <text id="daewoonTagText" x="130" y="9" font-size="8.5" font-weight="700" fill="#DC2626" text-anchor="middle">📍 최정오 님의 현재 위치 (49세)</text>
 
                                 <circle id="daewoonCurrentDot" cx="130" cy="28" r="5" fill="#EF4444" stroke="#FFFFFF" stroke-width="2" />
                             </svg>
 
                             <div id="daewoonAgeLabels" style="display: grid; grid-template-columns: repeat(6, 1fr); text-align: center; font-size: 11px; color: #94A3B8; font-weight: 600; border-top: 1px solid #E2E8F0; padding-top: 6px; margin-top: -2px;">
-                                <span id="lblAge1">20대</span>
-                                <span id="lblAge2">30대</span>
+                                <span id="lblAge1">20세</span>
+                                <span id="lblAge2">30세</span>
                                 <div id="lblAge3Box" style="display: flex; flex-direction: column; align-items: center; margin-top: -2px;">
-                                    <span id="lblAgeDecadeText" style="color: #DC2626; font-weight: 700; font-size: 12px;">40대★</span>
-                                    <span id="lblCurrentAgeText" style="color: #DC2626; font-size: 10px; font-weight: 700;">(현재 49세)</span>
+                                    <span id="lblAgeDecadeText" style="color: #DC2626; font-weight: 800; font-size: 12px;">40세★</span>
+                                    <span id="lblCurrentAgeText" style="color: #DC2626; font-size: 10px; font-weight: 800;">(현재 49세)</span>
                                 </div>
-                                <span id="lblAge4">50대</span>
-                                <span id="lblAge5">60대</span>
-                                <span id="lblAge6">70대~</span>
+                                <span id="lblAge4">50세</span>
+                                <span id="lblAge5">60세</span>
+                                <span id="lblAge6">70세~</span>
                             </div>
                         </div>
                     </div>
@@ -460,7 +472,7 @@
 
             </div>
 
-            <!-- 탭 3: 궁합·테마 (폰트 16px로 시원하게 확대) -->
+            <!-- 탭 3: 궁합·테마 -->
             <div id="view-theme" class="tab-view hidden">
                 
                 <div class="card" style="text-align: left;">
@@ -543,7 +555,8 @@
 
         </main>
 
-        <nav id="bottomNavBar">
+        <!-- 1. 초기 상태에서는 하단 내비게이션 바 숨김 (hidden 클래스 기본 적용) -->
+        <nav id="bottomNavBar" class="hidden">
             <button onclick="switchTab('today')" id="tab-today" class="tab-btn active">
                 <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
                 <span>오늘운세</span>
@@ -564,7 +577,7 @@
 
     </div>
 
-    <!-- 띠별 / 별자리 운세 상세 팝업 -->
+    <!-- 7, 8. 띠별 / 별자리 운세 상세 팝업: 볼드 완화 & 출생연도 불릿 점 제거 및 카드화 -->
     <div id="zodiacModal" class="modal-bg hidden">
         <div class="modal-content" style="max-width: 360px; text-align: left; padding: 22px; border-radius: 24px;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #F1F5F9; padding-bottom: 10px;">
@@ -585,12 +598,13 @@
 
             <div style="display: flex; flex-direction: column; gap: 12px; max-height: 52vh; overflow-y: auto; padding-right: 2px;">
                 <div>
-                    <h4 id="zodiacModalTitle" style="font-size: 15px; font-weight: 800; color: #0F172A; margin-bottom: 4px;">총평</h4>
+                    <!-- 볼드 완화 font-weight: 600 -->
+                    <h4 id="zodiacModalTitle" style="font-size: 15px; font-weight: 600; color: #0F172A; margin-bottom: 4px; line-height: 1.45;">총평</h4>
                     <p id="zodiacModalOverview" style="font-size: 14px; color: #475569; line-height: 1.7;"></p>
                 </div>
 
-                <div style="border-top: 1px solid #F1F5F9; padding-top: 8px;">
-                    <div id="zodiacYearTipsBox" style="font-size: 13.5px; line-height: 1.75; color: #334155;"></div>
+                <div style="border-top: 1px solid #F1F5F9; padding-top: 10px;">
+                    <div id="zodiacYearTipsBox"></div>
                 </div>
 
                 <div id="zodiacExtraInfo" style="font-size: 13px; color: #2D6A4F; font-weight: 600; border-top: 1px dashed #E2E8F0; padding-top: 8px;"></div>
@@ -606,7 +620,7 @@
         </div>
     </div>
 
-    <!-- 타로 추가 뽑기 단일 결제 확인 모달 (피드백 반영: 광고 옵션 제거 & 10 복채 결제) -->
+    <!-- 타로 추가 뽑기 단일 결제 확인 모달 -->
     <div id="tarotChoiceModal" class="modal-bg hidden">
         <div class="modal-content" style="max-width: 330px; padding: 22px; border-radius: 24px; text-align: center;">
             <div style="font-size: 32px; margin-bottom: 2px;">🔮</div>
@@ -670,7 +684,7 @@
         </div>
     </div>
 
-    <!-- [피드백 반영: 엑박 오류 수정 & 무료 충전소 UI 정돈] 복채 충전소 모달 -->
+    <!-- 4. 복채 충전소 팝업: 엑박 제거 및 무료 충전소 카드 정리 -->
     <div id="chargeModal" class="modal-bg hidden">
         <div class="modal-content" style="max-width: 340px;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 10px;">
@@ -788,7 +802,6 @@
         const TAROT_IMAGES = {
             "0. THE FOOL (바보)": "https://upload.wikimedia.org/wikipedia/commons/9/90/RWS_Tarot_00_Fool.jpg",
             "I. THE MAGICIAN (마법사)": "https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg",
-            "II. THE HIGH BASE_PRIESTESS (여사제)": "https://upload.wikimedia.org/wikipedia/commons/8/88/RWS_Tarot_02_High_Priestess.jpg",
             "II. THE HIGH PRIESTESS (여사제)": "https://upload.wikimedia.org/wikipedia/commons/8/88/RWS_Tarot_02_High_Priestess.jpg",
             "III. THE EMPRESS (여황제)": "https://upload.wikimedia.org/wikipedia/commons/d/d2/RWS_Tarot_03_Empress.jpg",
             "IV. THE EMPEROR (황제)": "https://upload.wikimedia.org/wikipedia/commons/c/c3/RWS_Tarot_04_Emperor.jpg",
@@ -936,6 +949,14 @@
             });
         }
 
+        // 2. 로고 클릭 시 최상단 홈으로 이동
+        function goToHomeAndScrollTop() {
+            const onboarding = document.getElementById('onboardingInputView');
+            if (onboarding && !onboarding.classList.contains('hidden')) return;
+            switchTab('today');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
         function switchTab(tabId) {
             ['today', 'saju', 'theme', 'mypage'].forEach(t => {
                 const el = document.getElementById(`view-${t}`);
@@ -972,6 +993,7 @@
             }
         }
 
+        // 7, 8. 띠별 / 별자리 운세 팝업: 불릿 점 제거 및 카드화
         async function openZodiacModal(type, key) {
             try {
                 const res = await fetch(`/api/zodiac-fortune?type=${type}&key=${encodeURIComponent(key)}`);
@@ -987,9 +1009,14 @@
                 const tipsBox = document.getElementById('zodiacYearTipsBox');
                 if (type === 'zodiac' && data.year_tips) {
                     tipsBox.innerHTML = `
-                        <p style="font-weight: 800; color: #0F172A; margin-bottom: 6px; font-size: 14px;">📅 출생연도별 핵심 1줄 가이드</p>
-                        <div style="display: flex; flex-direction: column; gap: 5px;">
-                            ${data.year_tips.join('')}
+                        <p style="font-weight: 800; color: #0F172A; margin-bottom: 8px; font-size: 14px;">📅 출생연도별 핵심 1줄 가이드</p>
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            ${data.year_tips.map(item => `
+                                <div style="background: #F8FAFC; border-left: 3px solid #2D6A4F; border-radius: 4px; padding: 6px 10px;">
+                                    <span style="font-weight: 800; color: #1E293B; font-size: 13.5px; display: block; margin-bottom: 2px;">${item.year_label}</span>
+                                    <span style="color: #475569; font-size: 13px; line-height: 1.55;">${item.tip}</span>
+                                </div>
+                            `).join('')}
                         </div>
                     `;
                     document.getElementById('zodiacExtraInfo').innerHTML = `⏱️ <strong>행운 시간대:</strong> ${data.lucky_time} &nbsp;|&nbsp; 🤝 <strong>찰떡 궁합:</strong> ${data.lucky_match}`;
@@ -1051,6 +1078,7 @@
             `).join('');
         }
 
+        // 9. 나이 X축 레이블을 '세'로 정밀 동기화
         function updateDaewoonGraphByAge(age) {
             currentUserAge = age;
             const clampedAge = Math.max(10, age);
@@ -1060,8 +1088,8 @@
                 const lbl = document.getElementById(`lblAge${i}`);
                 const currentDecade = startDecade + (i - 1) * 10;
                 if (lbl) {
-                    if (i === 6) lbl.innerText = `${currentDecade}대~`;
-                    else lbl.innerText = `${currentDecade}대`;
+                    if (i === 6) lbl.innerText = `${currentDecade}세~`;
+                    else lbl.innerText = `${currentDecade}세`;
                 }
             }
 
@@ -1086,7 +1114,7 @@
             const curText = document.getElementById('lblCurrentAgeText');
             const decadeText = document.getElementById('lblAgeDecadeText');
             if (curText) curText.innerText = `(현재 ${age}세)`;
-            if (decadeText) decadeText.innerText = `${ageDecade}대★`;
+            if (decadeText) decadeText.innerText = `${ageDecade}세★`;
         }
 
         function resetUnlockedUI() {
@@ -1103,6 +1131,7 @@
             });
         }
 
+        // 1. 생년월일 입력 후 하단 내비게이션 바 노출
         async function startSajuAnalysis() {
             currentUserName = document.getElementById('inputName').value.trim() || "최정오";
             const birth = document.getElementById('inputBirth').value || "1978-03-13";
@@ -1171,7 +1200,7 @@
 
             document.getElementById('sajuOwnerName').innerText = `${currentUserName} 님`;
             document.getElementById('resTitle').innerText = data.daily_fortune.title;
-            document.getElementById('resAdvice').innerText = data.daily_fortune.advice;
+            document.getElementById('resAdvice').innerHTML = data.daily_fortune.advice;
             document.getElementById('resScoreBadge').innerText = `운세 ${data.daily_fortune.score}점`;
 
             document.getElementById('resColor').innerText = data.daily_fortune.lucky_color;
@@ -1187,6 +1216,9 @@
             document.getElementById('onboardingInputView').classList.add('hidden');
             document.getElementById('view-today').classList.remove('hidden');
 
+            // 1. 분석 완료 시 하단 내비게이션 바 노출
+            document.getElementById('bottomNavBar').classList.remove('hidden');
+
             checkUnlockedStates();
             renderUnlockedArchive();
         }
@@ -1194,7 +1226,8 @@
         function resetProfileAndReinput() {
             document.getElementById('onboardingInputView').classList.remove('hidden');
             ['today', 'saju', 'theme', 'mypage'].forEach(t => document.getElementById(`view-${t}`).classList.add('hidden'));
-            switchTab('today');
+            // 1. 정보 재입력 화면에서는 하단바 다시 숨김
+            document.getElementById('bottomNavBar').classList.add('hidden');
         }
 
         function openTalismanModal() {
