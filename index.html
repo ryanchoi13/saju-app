@@ -264,7 +264,7 @@
                     <div id="gridZodiacBox" class="zodiac-grid-2x6">
                         <div onclick="openZodiacModal('zodiac', '쥐')" class="zodiac-btn"><span class="zodiac-icon">🐭</span><span class="zodiac-label">쥐</span></div>
                         <div onclick="openZodiacModal('zodiac', '소')" class="zodiac-btn"><span class="zodiac-icon">🐮</span><span class="zodiac-label">소</span></div>
-                        <div onclick="openZodiacModal('호랑이')" class="zodiac-btn"><span class="zodiac-icon">🐯</span><span class="zodiac-label">호랑이</span></div>
+                        <div onclick="openZodiacModal('zodiac', '호랑이')" class="zodiac-btn"><span class="zodiac-icon">🐯</span><span class="zodiac-label">호랑이</span></div>
                         <div onclick="openZodiacModal('zodiac', '토끼')" class="zodiac-btn"><span class="zodiac-icon">🐰</span><span class="zodiac-label">토끼</span></div>
                         <div onclick="openZodiacModal('zodiac', '용')" class="zodiac-btn"><span class="zodiac-icon">🐲</span><span class="zodiac-label">용</span></div>
                         <div onclick="openZodiacModal('zodiac', '뱀')" class="zodiac-btn"><span class="zodiac-icon">🐍</span><span class="zodiac-label">뱀</span></div>
@@ -989,7 +989,7 @@
         // [2단계] SVG 방사형 레이더 차트 그리기 함수
         function renderOheangRadarChart(elems) {
             const cx = 100, cy = 90, rMax = 65;
-            const angles = [ -90, -18, 54, 126, 198 ]; // 木(상), 火(우상), 土(우하), 金(좌하), 水(좌상)
+            const angles = [ -90, -18, 54, 126, 198 ];
             const labels = ["木", "火", "土", "金", "水"];
             const colors = ["#047857", "#DC2626", "#D97706", "#475569", "#2563EB"];
             const values = [ elems.wood || 0, elems.fire || 0, elems.earth || 0, elems.metal || 0, elems.water || 0 ];
@@ -1043,7 +1043,6 @@
             const reportContainer = btnElement.closest('.card') || btnElement.parentElement;
             const contentClone = reportContainer.cloneNode(true);
             
-            // 버튼 및 티저 요소 제거 후 순수 리포트 내용만 추출
             contentClone.querySelectorAll('button, .teaser-blur-box, svg[id="fullCurveGradient"]').forEach(el => el.remove());
             
             const printWindow = window.open('', '_blank');
@@ -1344,7 +1343,7 @@
             applyBar('Metal', elems.metal);
             applyBar('Water', elems.water);
 
-            // [2단계] 오행 방사형 레이더 차트 렌더링
+            // 2단계: 오행 방사형 레이더 차트 렌더링
             const radarSvg = document.getElementById('oheangRadarSvg');
             if (radarSvg) {
                 radarSvg.innerHTML = renderOheangRadarChart(elems);
@@ -1393,4 +1392,424 @@
             document.getElementById('talismanTitle').innerText = currentTalisman.title;
             document.getElementById('talismanPower').innerText = currentTalisman.power;
             document.getElementById('talismanDesc').innerText = currentTalisman.desc;
-            document.getElementById('talismanOwnerName저는 언어 모델일 뿐이라 그것에 필요한 정보나 능력이 없어서 도와드릴 수가 없습니다.
+            document.getElementById('talismanOwnerName').innerText = currentUserName;
+            
+            document.getElementById('talismanRealBox').innerHTML = renderAuthenticCinnabarTalisman(currentTalisman.type || "metal", 160, 260);
+            document.getElementById('talismanModal').classList.remove('hidden');
+        }
+
+        function closeTalismanModal() {
+            document.getElementById('talismanModal').classList.add('hidden');
+        }
+
+        function downloadTalismanImage() {
+            const svgElement = document.getElementById('svgTalismanMain');
+            if (!svgElement) return;
+
+            const svgString = new XMLSerializer().serializeToString(svgElement);
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            const img = new Image();
+
+            canvas.width = 420;
+            canvas.height = 720;
+
+            const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+            const URL = window.URL || window.webkitURL || window;
+            const blobURL = URL.createObjectURL(svgBlob);
+
+            img.onload = function () {
+                ctx.drawImage(img, 0, 0, 420, 720);
+                const pngURL = canvas.toDataURL('image/png');
+                
+                const dlLink = document.createElement('a');
+                dlLink.download = `${currentUserName}_맞춤_${currentTalisman?.title || '경면주사부적'}.png`;
+                dlLink.href = pngURL;
+                document.body.appendChild(dlLink);
+                dlLink.click();
+                document.body.removeChild(dlLink);
+                URL.revokeObjectURL(blobURL);
+                alert('📥 맞춤 경면주사 부적이 폰에 저장되었습니다! 배경화면이나 지갑에 보관하세요.');
+            };
+            img.src = blobURL;
+        }
+
+        async function handleTarotDraw(slot) {
+            if (drawnTarotCards[slot]) {
+                displayTarotResult(drawnTarotCards[slot]);
+                return;
+            }
+
+            if (dailyTarotDrawn) {
+                pendingTarotSlot = slot;
+                document.getElementById('tarotChoiceModal').classList.remove('hidden');
+                return;
+            }
+
+            drawTarotCardFinal(slot);
+        }
+
+        function closeTarotChoiceModal() {
+            document.getElementById('tarotChoiceModal').classList.add('hidden');
+            pendingTarotSlot = null;
+        }
+
+        function confirmTarotByCoin() {
+            if (currentCoin < 10) {
+                alert('보유 복채가 부족합니다. 복채를 충전해 주세요.');
+                closeTarotChoiceModal();
+                openChargeStore();
+                return;
+            }
+            currentCoin -= 10;
+            updateCoinDisplay();
+            const slot = pendingTarotSlot;
+            closeTarotChoiceModal();
+            drawTarotCardFinal(slot);
+        }
+
+        function simulateRewardedAd(type) {
+            if (type === 'coin') {
+                closeChargeStore();
+                alert('🎬 [광고 시청 완료]\n+3 복채가 무료로 지급되었습니다!');
+                addCoin(3);
+            }
+        }
+
+        async function drawTarotCardFinal(slot) {
+            try {
+                const randomSeed = Math.floor(Math.random() * 1000000);
+                const res = await fetch(`/api/daily-tarot?slot=${slot}&rand_seed=${randomSeed}`);
+                const card = await res.json();
+                dailyTarotDrawn = true;
+                drawnTarotCards[slot] = card;
+
+                const flipper = document.getElementById(`flipper${slot}`);
+                const front = document.getElementById(`front${slot}`);
+                const imgUrl = TAROT_IMAGES[card.name] || TAROT_IMAGES["0. THE FOOL (바보)"];
+
+                front.innerHTML = `<img src="${imgUrl}" alt="${card.name}" style="width: 100%; height: 100%; object-fit: cover;">`;
+                flipper.classList.add('flipped');
+
+                setTimeout(() => { displayTarotResult(card); }, 600);
+            } catch(e) {
+                alert('타로 카드 데이터를 불러오지 못했습니다.');
+            }
+        }
+
+        function displayTarotResult(card) {
+            const imgUrl = TAROT_IMAGES[card.name] || TAROT_IMAGES["0. THE FOOL (바보)"];
+            const resBox = document.getElementById('tarotResultBox');
+            resBox.innerHTML = `
+                <div style="background: #FFFFFF; border-top: 2px solid #E2E8F0; padding-top: 14px; margin-top: 12px; font-size: 14px; text-align: left; display: flex; flex-direction: column; gap: 10px;">
+                    <div style="display: flex; align-items: center; gap: 12px; border-bottom: 1px solid #F1F5F9; padding-bottom: 10px;">
+                        <img src="${imgUrl}" style="width: 46px; height: 70px; object-fit: cover; border-radius: 6px; border: 1px solid #FCD34D; flex-shrink: 0;">
+                        <div>
+                            <h4 style="font-weight: 800; font-size: 15px; color: #0F172A;">${card.name}</h4>
+                            <p style="color: #B45309; font-weight: 700; font-size: 13px; margin-top: 2px;">${card.keyword}</p>
+                        </div>
+                    </div>
+                    <div style="border-left: 3px solid #64748B; padding-left: 8px;">
+                        <p style="font-weight: 800; color: #1E293B; font-size: 13px; margin-bottom: 2px;">🔍 카드 기본 상징</p>
+                        <p style="color: #64748B; font-size: 13px; line-height: 1.65;">${card.symbolism}</p>
+                    </div>
+                    <div style="border-left: 3px solid #F59E0B; padding-left: 8px;">
+                        <p style="font-weight: 800; color: #78350F; font-size: 13px; margin-bottom: 2px;">🌟 오늘의 운세 심층 리딩</p>
+                        <p style="color: #92400E; font-size: 13px; line-height: 1.65;">${card.fortune_reading}</p>
+                    </div>
+                    <div style="font-size: 13px; line-height: 1.65; color: #334155; padding-left: 8px;">
+                        <p style="font-weight: 800; color: #0F172A; margin-bottom: 2px;">💡 실전 처세 조언:</p>
+                        <p>${card.advice}</p>
+                    </div>
+                    <div style="border-top: 1px dashed #A7F3D0; padding-top: 6px; font-size: 13px; color: #065F46; font-weight: 800; padding-left: 8px;">
+                        ✨ 개운 액션: ${card.action_tip}
+                    </div>
+                </div>
+            `;
+            resBox.classList.remove('hidden');
+        }
+
+        // [3단계: 인쇄 버튼이 포함된 자미두수 평생운세 열람]
+        function unlockDaewoon() {
+            if (currentCoin < 450) { openChargeStore(); return; }
+            
+            fetch('/api/daewoon-report', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ name: currentUserName, age: currentUserAge })
+            })
+            .then(r => r.json())
+            .then(data => {
+                currentCoin -= 450;
+                updateCoinDisplay();
+                
+                const extraActionHtml = `
+                    <div style="display:flex; justify-content:flex-end; margin-top:10px;">
+                        <button onclick="printReportDocument('${data.title}', this)" style="background:#F1F5F9; border:1px solid #CBD5E1; color:#334155; font-size:12px; font-weight:700; padding:6px 12px; border-radius:8px; cursor:pointer;">
+                            📄 감명서 인쇄/PDF 소장
+                        </button>
+                    </div>
+                `;
+
+                document.getElementById('daewoonBox').innerHTML = data.content + extraActionHtml;
+                document.getElementById('daewoonBox').classList.remove('hidden');
+                document.getElementById('daewoonTeaserBox').classList.add('hidden');
+                document.getElementById('btnDaewoon').classList.add('hidden');
+                saveUnlockedReport('daewoon', data.title, data.content);
+            });
+        }
+
+        // [3단계: 인쇄 버튼이 포함된 2026 신년운세 열람]
+        function unlockSinnian() {
+            if (currentCoin < 300) { openChargeStore(); return; }
+            
+            fetch('/api/sinnian-report', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ name: currentUserName })
+            })
+            .then(r => r.json())
+            .then(data => {
+                currentCoin -= 300;
+                updateCoinDisplay();
+
+                const extraActionHtml = `
+                    <div style="display:flex; justify-content:flex-end; margin-top:10px;">
+                        <button onclick="printReportDocument('${data.title}', this)" style="background:#F1F5F9; border:1px solid #CBD5E1; color:#334155; font-size:12px; font-weight:700; padding:6px 12px; border-radius:8px; cursor:pointer;">
+                            📄 감명서 인쇄/PDF 소장
+                        </button>
+                    </div>
+                `;
+
+                document.getElementById('sinnianBox').innerHTML = data.content + extraActionHtml;
+                document.getElementById('sinnianBox').classList.remove('hidden');
+                document.getElementById('sinnianTeaserBox').classList.add('hidden');
+                document.getElementById('btnSinnian').classList.add('hidden');
+                saveUnlockedReport('sinnian', data.title, data.content);
+            });
+        }
+
+        function openThemeSelectModal(key) {
+            currentThemeKey = key;
+            const modalBox = document.getElementById('modalOptionBox');
+            
+            if (key === 'love') {
+                modalBox.innerHTML = `
+                    <p style="font-size: 12px; color: #64748B; margin-bottom: 6px;">현재 상태를 선택해 주세요:</p>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 13px; font-weight: 700;">
+                        <label style="padding: 11px; border: 1px solid #E2E8F0; border-radius: 10px; background: #F8FAFC; cursor: pointer;"><input type="radio" name="optM" value="솔로" checked> 솔로</label>
+                        <label style="padding: 11px; border: 1px solid #E2E8F0; border-radius: 10px; background: #F8FAFC; cursor: pointer;"><input type="radio" name="optM" value="썸/짝사랑"> 썸/짝사랑</label>
+                        <label style="padding: 11px; border: 1px solid #E2E8F0; border-radius: 10px; background: #F8FAFC; cursor: pointer;"><input type="radio" name="optM" value="연애중"> 연애중</label>
+                        <label style="padding: 11px; border: 1px solid #E2E8F0; border-radius: 10px; background: #F8FAFC; cursor: pointer;"><input type="radio" name="optM" value="기혼"> 기혼</label>
+                    </div>`;
+            } else if (key === 'business') {
+                modalBox.innerHTML = `
+                    <p style="font-size: 12px; color: #64748B; margin-bottom: 6px;">현재 직업 상태를 선택해 주세요:</p>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 13px; font-weight: 700;">
+                        <label style="padding: 11px; border: 1px solid #E2E8F0; border-radius: 10px; background: #F8FAFC; cursor: pointer;"><input type="radio" name="optM" value="직장인" checked> 직장인</label>
+                        <label style="padding: 11px; border: 1px solid #E2E8F0; border-radius: 10px; background: #F8FAFC; cursor: pointer;"><input type="radio" name="optM" value="취업/이직 준비중"> 준비중</label>
+                        <label style="padding: 11px; border: 1px solid #E2E8F0; border-radius: 10px; background: #F8FAFC; cursor: pointer;"><input type="radio" name="optM" value="사업가/프리랜서"> 사업/프리</label>
+                        <label style="padding: 11px; border: 1px solid #E2E8F0; border-radius: 10px; background: #F8FAFC; cursor: pointer;"><input type="radio" name="optM" value="창업 준비중"> 창업준비</label>
+                    </div>`;
+            } else {
+                modalBox.innerHTML = `<p style="font-size: 13px; color: #475569; padding: 6px 0;">원국 기반 정밀 분석 리포트가 즉시 열람됩니다.</p>`;
+            }
+            document.getElementById('themeSelectModal').classList.remove('hidden');
+        }
+
+        function closeThemeSelectModal() { document.getElementById('themeSelectModal').classList.add('hidden'); }
+
+        async function confirmUnlockTheme() {
+            if (currentCoin < 220) { openChargeStore(); return; }
+            const selEl = document.querySelector('input[name="optM"]:checked');
+            const subOpt = selEl ? selEl.value : '기본';
+
+            const res = await fetch('/api/theme-report', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({theme: currentThemeKey, sub_option: subOpt, name: currentUserName})
+            });
+            const data = await res.json();
+
+            currentCoin -= 220;
+            updateCoinDisplay();
+            
+            const extraActionHtml = `
+                <div style="display:flex; justify-content:flex-end; margin-top:10px;">
+                    <button onclick="printReportDocument('${data.title}', this)" style="background:#F1F5F9; border:1px solid #CBD5E1; color:#334155; font-size:12px; font-weight:700; padding:6px 12px; border-radius:8px; cursor:pointer;">
+                        📄 감명서 인쇄/PDF 소장
+                    </button>
+                </div>
+            `;
+
+            const targetBox = document.getElementById(`themeReport_${currentThemeKey}`);
+            targetBox.innerHTML = data.content + extraActionHtml;
+            targetBox.classList.remove('hidden');
+            document.getElementById(`btnTheme_${currentThemeKey}`).classList.add('hidden');
+            
+            saveUnlockedReport(currentThemeKey, data.title, data.content);
+            closeThemeSelectModal();
+        }
+
+        function saveUnlockedReport(key, title, content) {
+            const pKey = getProfileKey();
+            const currentList = getUnlockedReports();
+            const todayStr = new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' });
+            
+            const existingIdx = currentList.findIndex(r => r.key === key);
+            if (existingIdx >= 0) {
+                currentList[existingIdx] = { key: key, title: title, content: content, date: todayStr };
+            } else {
+                currentList.unshift({ key: key, title: title, content: content, date: todayStr });
+            }
+            
+            try {
+                localStorage.setItem(`unlocked_reports_${pKey}`, JSON.stringify(currentList));
+            } catch(e) {
+                console.error("Storage Error:", e);
+            }
+            
+            renderUnlockedArchive();
+        }
+
+        function checkUnlockedStates() {
+            const currentList = getUnlockedReports();
+            resetUnlockedUI();
+
+            currentList.forEach(item => {
+                const extraActionHtml = `
+                    <div style="display:flex; justify-content:flex-end; margin-top:10px;">
+                        <button onclick="printReportDocument('${item.title}', this)" style="background:#F1F5F9; border:1px solid #CBD5E1; color:#334155; font-size:12px; font-weight:700; padding:6px 12px; border-radius:8px; cursor:pointer;">
+                            📄 감명서 인쇄/PDF 소장
+                        </button>
+                    </div>
+                `;
+
+                if (item.key === 'daewoon') {
+                    const box = document.getElementById('daewoonBox');
+                    const teaser = document.getElementById('daewoonTeaserBox');
+                    const btn = document.getElementById('btnDaewoon');
+                    if (box && btn) {
+                        box.innerHTML = item.content + extraActionHtml;
+                        box.classList.remove('hidden');
+                        if (teaser) teaser.classList.add('hidden');
+                        btn.classList.add('hidden');
+                    }
+                } else if (item.key === 'sinnian') {
+                    const box = document.getElementById('sinnianBox');
+                    const teaser = document.getElementById('sinnianTeaserBox');
+                    const btn = document.getElementById('btnSinnian');
+                    if (box && btn) {
+                        box.innerHTML = item.content + extraActionHtml;
+                        box.classList.remove('hidden');
+                        if (teaser) teaser.classList.add('hidden');
+                        btn.classList.add('hidden');
+                    }
+                } else if (['wealth', 'love', 'business', 'health'].includes(item.key)) {
+                    const box = document.getElementById(`themeReport_${item.key}`);
+                    const btn = document.getElementById(`btnTheme_${item.key}`);
+                    if (box && btn) {
+                        box.innerHTML = item.content + extraActionHtml;
+                        box.classList.remove('hidden');
+                        btn.classList.add('hidden');
+                    }
+                }
+            });
+        }
+
+        function openArchiveDetail(idx) {
+            const currentList = getUnlockedReports();
+            const item = currentList[idx];
+            if (!item) return;
+
+            document.getElementById('archiveModalTitle').innerText = item.title;
+            document.getElementById('archiveModalBody').innerHTML = item.content;
+            document.getElementById('archiveDetailModal').classList.remove('hidden');
+        }
+
+        function closeArchiveDetailModal() {
+            document.getElementById('archiveDetailModal').classList.add('hidden');
+        }
+
+        function renderUnlockedArchive() {
+            const currentList = getUnlockedReports();
+            const container = document.getElementById('unlockedArchiveList');
+            const countBadge = document.getElementById('archiveCountBadge');
+            
+            if (countBadge) {
+                countBadge.innerText = `${currentList.length}건`;
+                countBadge.style.background = currentList.length > 0 ? '#2D6A4F' : '#E2E8F0';
+                countBadge.style.color = currentList.length > 0 ? '#FFFFFF' : '#475569';
+            }
+
+            if (!container) return;
+
+            if (currentList.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 20px 0; color: #94A3B8; font-size: 13px;">
+                        <p style="font-size: 28px; margin-bottom: 4px;">📂</p>
+                        <p style="font-weight: 700; color: #64748B;">현재 사주 정보로 구매한 리포트가 없습니다.</p>
+                        <p style="font-size: 12px; color: #CBD5E1; margin-top: 2px;">정통사주 및 테마운세에서 열람한 리포트가 이곳에 프로필별로 보관됩니다.</p>
+                    </div>`;
+                return;
+            }
+
+            container.innerHTML = currentList.map((r, idx) => `
+                <div style="background: #F8FAFC; border: 1.5px solid #2D6A4F; border-radius: 16px; padding: 12px 14px; text-align: left; display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+                    <div style="flex: 1; overflow: hidden;">
+                        <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
+                            <span style="font-size: 11px; background: #2D6A4F; color: #FFFFFF; font-weight: 700; padding: 2px 6px; border-radius: 4px; flex-shrink: 0;">열람완료</span>
+                            <span style="font-size: 12px; color: #94A3B8; flex-shrink: 0;">${r.date}</span>
+                        </div>
+                        <h4 style="font-weight: 800; color: #0F172A; font-size: 14px; line-height: 1.3; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${r.title}</h4>
+                    </div>
+                    <button onclick="openArchiveDetail(${idx})" style="background: #2D6A4F; color: #FFFFFF; border: none; font-size: 13px; font-weight: 700; padding: 8px 12px; border-radius: 10px; cursor: pointer; white-space: nowrap; flex-shrink: 0; box-shadow: 0 2px 4px rgba(45,106,79,0.2);">
+                        📄 다시보기
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function updateCoinDisplay() {
+            document.getElementById('coinHeader').innerText = currentCoin;
+            document.getElementById('coinMypage').innerText = currentCoin;
+        }
+
+        function openChargeStore() { document.getElementById('chargeModal').classList.remove('hidden'); }
+        function closeChargeStore() { document.getElementById('chargeModal').classList.add('hidden'); }
+        function addCoin(amt) {
+            currentCoin += amt;
+            updateCoinDisplay();
+            closeChargeStore();
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const headerCoin = document.getElementById('headerCoinSvg');
+            if (headerCoin) headerCoin.innerHTML = getGoldCoinSvg(16, "#F59E0B");
+            const mypageCoin = document.getElementById('mypageCoinSvg');
+            if (mypageCoin) mypageCoin.innerHTML = getGoldCoinSvg(19, "#F59E0B");
+
+            const chargeModalCoin = document.getElementById('chargeModalHeaderCoinSvg');
+            if (chargeModalCoin) chargeModalCoin.innerHTML = getGoldCoinSvg(18, "#F59E0B");
+
+            document.querySelectorAll('.btn-coin-icon').forEach(el => { el.innerHTML = getGoldCoinSvg(16, "#D97706"); });
+            document.querySelectorAll('.btn-coin-icon-white').forEach(el => { el.innerHTML = getGoldCoinSvg(16, "#F59E0B"); });
+            document.querySelectorAll('.coin-icon-svg-inline').forEach(el => { el.innerHTML = getGoldCoinSvg(14, "#F59E0B"); });
+
+            const svgMarkup = getTarotCardBackSvg();
+            ['tarotSvgSlot1', 'tarotSvgSlot2', 'tarotSvgSlot3'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.innerHTML = svgMarkup;
+            });
+
+            const talismanPreview = document.getElementById('talismanBannerPreview');
+            if (talismanPreview) {
+                talismanPreview.innerHTML = renderAuthenticCinnabarTalisman('metal', 72, 110);
+            }
+
+            renderUnlockedArchive();
+            checkUnlockedStates();
+        });
+    </script>
+</body>
+</html>
