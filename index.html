@@ -293,9 +293,10 @@
 
             </div>
 
-            <!-- 탭 2: 정통사주 -->
+            <!-- 탭 2: 정통사주 (2대 핵심 유료 라인업: 자미두수 평생운세 + 2026 신년운세) -->
             <div id="view-saju" class="tab-view hidden">
                 
+                <!-- 사주 명식표 -->
                 <div class="card" style="padding: 18px;">
                     <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 10px; margin-bottom: 14px;">
                         <div>
@@ -411,9 +412,10 @@
                     <span>📢 광고 영역 (Google AdSense / Kakao AdFit 슬롯 2)</span>
                 </div>
 
+                <!-- 1. 자미두수 평생운세 (거시적 대운) -->
                 <div class="card" style="border: 2px solid #FCD34D;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                        <span style="font-size: 15px; font-weight: 800;">👑 자미두수 & 10년 대운 리포트</span>
+                        <span style="font-size: 15px; font-weight: 800;">👑 자미두수 평생운세</span>
                         <span style="font-size: 12px; background: #FEF3C7; color: #78350F; padding: 4px 10px; border-radius: 9999px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;">
                             <span class="coin-icon-svg-inline"></span> 450 복채
                         </span>
@@ -461,7 +463,26 @@
                     <div id="daewoonBox" class="hidden"></div>
 
                     <button id="btnDaewoon" onclick="unlockDaewoon()" style="width: 100%; background: #FBBF24; color: #0F172A; border: none; font-size: 15px; font-weight: 800; padding: 14px; border-radius: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
-                        <span class="btn-coin-icon"></span> 450 복채로 심층 리포트 열람하기
+                        <span class="btn-coin-icon"></span> 450 복채로 평생운세 열람하기
+                    </button>
+                </div>
+
+                <!-- 2. 2026 신년운세 & 토정비결 (미시적 1년운) 신규 카드 -->
+                <div class="card" style="border: 2px solid #86EFAC;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <span style="font-size: 15px; font-weight: 800; color: #166534;">📅 2026 신년운세 & 토정비결</span>
+                        <span style="font-size: 12px; background: #DCFCE7; color: #166534; padding: 4px 10px; border-radius: 9999px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;">
+                            <span class="coin-icon-svg-inline"></span> 300 복채
+                        </span>
+                    </div>
+                    <p style="font-size: 13px; color: #64748B; text-align: left; margin-bottom: 12px;">
+                        2026 丙午년 1년 총운 풀이와 1월부터 12월까지 월별 정밀 토정비결 괘상 및 실전 처세 가이드를 제공합니다.
+                    </p>
+
+                    <div id="sinnianBox" class="hidden" style="margin-bottom: 12px;"></div>
+
+                    <button id="btnSinnian" onclick="unlockSinnian()" style="width: 100%; background: #2D6A4F; color: white; border: none; font-size: 15px; font-weight: 800; padding: 14px; border-radius: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 4px 6px rgba(45,106,79,0.2);">
+                        <span class="btn-coin-icon-white"></span> 300 복채로 2026 신년운세 열람하기
                     </button>
                 </div>
 
@@ -550,7 +571,6 @@
 
         </main>
 
-        <!-- 초기 상태에서는 하단 내비게이션 바 숨김 (hidden) -->
         <nav id="bottomNavBar" class="hidden">
             <button onclick="switchTab('today')" id="tab-today" class="tab-btn active">
                 <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
@@ -1112,6 +1132,11 @@
             if (daewoonBox) { daewoonBox.innerHTML = ''; daewoonBox.classList.add('hidden'); }
             if (btnDaewoon) { btnDaewoon.classList.remove('hidden'); }
 
+            const sinnianBox = document.getElementById('sinnianBox');
+            const btnSinnian = document.getElementById('btnSinnian');
+            if (sinnianBox) { sinnianBox.innerHTML = ''; sinnianBox.classList.add('hidden'); }
+            if (btnSinnian) { btnSinnian.classList.remove('hidden'); }
+
             ['wealth', 'love', 'business', 'health'].forEach(key => {
                 const box = document.getElementById(`themeReport_${key}`);
                 const btn = document.getElementById(`btnTheme_${key}`);
@@ -1362,7 +1387,7 @@
 
         function unlockDaewoon() {
             if (currentCoin < 450) { openChargeStore(); return; }
-            if (!confirm('450 복채로 자미두수 & 10년 대운 심층 리포트를 열람하시겠습니까?')) return;
+            if (!confirm('450 복채로 자미두수 평생운세 리포트를 열람하시겠습니까?')) return;
             
             fetch('/api/daewoon-report', {
                 method: 'POST',
@@ -1377,6 +1402,28 @@
                 document.getElementById('daewoonBox').classList.remove('hidden');
                 document.getElementById('btnDaewoon').classList.add('hidden');
                 saveUnlockedReport('daewoon', data.title, data.content);
+                alert(`🎉 [${data.title}] 열람 완료!`);
+            });
+        }
+
+        // [신규 추가] 2026 신년운세 잠금 해제 함수
+        function unlockSinnian() {
+            if (currentCoin < 300) { openChargeStore(); return; }
+            if (!confirm('300 복채로 2026 신년운세 & 토정비결 리포트를 열람하시겠습니까?')) return;
+            
+            fetch('/api/sinnian-report', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ name: currentUserName })
+            })
+            .then(r => r.json())
+            .then(data => {
+                currentCoin -= 300;
+                updateCoinDisplay();
+                document.getElementById('sinnianBox').innerHTML = data.content;
+                document.getElementById('sinnianBox').classList.remove('hidden');
+                document.getElementById('btnSinnian').classList.add('hidden');
+                saveUnlockedReport('sinnian', data.title, data.content);
                 alert(`🎉 [${data.title}] 열람 완료!`);
             });
         }
@@ -1466,18 +1513,17 @@
                     const box = document.getElementById('daewoonBox');
                     const btn = document.getElementById('btnDaewoon');
                     if (box && btn) {
-                        fetch('/api/daewoon-report', {
-                            method: 'POST',
-                            headers: {'Content-Type': 'application/json'},
-                            body: JSON.stringify({ name: currentUserName, age: currentUserAge })
-                        })
-                        .then(r => r.json())
-                        .then(data => {
-                            box.innerHTML = data.content;
-                            box.classList.remove('hidden');
-                            btn.classList.add('hidden');
-                            saveUnlockedReport('daewoon', data.title, data.content);
-                        });
+                        box.innerHTML = item.content;
+                        box.classList.remove('hidden');
+                        btn.classList.add('hidden');
+                    }
+                } else if (item.key === 'sinnian') {
+                    const box = document.getElementById('sinnianBox');
+                    const btn = document.getElementById('btnSinnian');
+                    if (box && btn) {
+                        box.innerHTML = item.content;
+                        box.classList.remove('hidden');
+                        btn.classList.add('hidden');
                     }
                 } else if (['wealth', 'love', 'business', 'health'].includes(item.key)) {
                     const box = document.getElementById(`themeReport_${item.key}`);
