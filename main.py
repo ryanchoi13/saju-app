@@ -6,7 +6,7 @@ from typing import Optional
 import os
 import random
 
-app = FastAPI(title="운세의 신 PRO API", version="15.0.0")
+app = FastAPI(title="운세의 신 API", version="16.0.0")
 
 CHEONGAN_HANJA = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
 JIJI_HANJA = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"]
@@ -141,7 +141,7 @@ class SajuRequest(BaseModel):
 def serve_home():
     if os.path.exists("index.html"):
         return FileResponse("index.html")
-    return HTMLResponse("<h2>운세의 신 PRO 준비 중</h2>")
+    return HTMLResponse("<h2>운세의 신 준비 중</h2>")
 
 @app.post("/api/analyze")
 def analyze_saju(req: SajuRequest):
@@ -261,47 +261,48 @@ def analyze_saju(req: SajuRequest):
     mindset = mindsets_pool[(daily_seed + 5) % len(mindsets_pool)]
     action = actions_pool[(daily_seed + 6) % len(actions_pool)]
 
+    # 간격 조절을 위해 3단계 시간대 문구를 깔끔하게 분리
     advice_templates = {
         "비견(比肩)": (f"오늘({today_iljin_str})은 동료와의 협력이 빛을 발하고 추진력이 곧바로 성과로 연결되는 대길의 하루입니다.",
-                     f"☀️ 오전 (06:00~12:00): 아이디어를 주변에 공유하고 활발하게 소통하며 기틀을 잡으세요.\n\n"
-                     f"🌤️ 오후 (12:00~18:00): 본원({d_cg})의 리더십으로 추진 중인 주요 과제를 당당하게 완성하세요.\n\n"
-                     f"🌙 저녁·밤 (18:00~24:00): 원만한 대화로 하루를 마무리하고 편안한 수면을 취하세요."),
+                     f"☀️ <strong>오전 (06:00~12:00):</strong> 아이디어를 주변에 공유하고 활발하게 소통하며 기틀을 잡으세요.<br>"
+                     f"🌤️ <strong>오후 (12:00~18:00):</strong> 본원({d_cg})의 리더십으로 추진 중인 주요 과제를 당당하게 완성하세요.<br>"
+                     f"🌙 <strong>저녁·밤 (18:00~24:00):</strong> 원만한 대화로 하루를 마무리하고 편안한 수면을 취하세요."),
         "겁재(劫財)": (f"오늘({today_iljin_str})은 경쟁력이 크게 상승하나 불필요한 충동 지출을 철저히 방어해야 하는 날입니다.",
-                     f"☀️ 오전 (06:00~12:00): 불필요한 지출을 차단하고 업무 우선순위를 단단히 정리하세요.\n\n"
-                     f"🌤️ 오후 (12:00~18:00): 경쟁 구도에서 기지를 발휘하여 우위를 점하는 승부처입니다.\n\n"
-                     f"🌙 저녁·밤 (18:00~24:00): 마음을 차분히 가라앉히고 미온수로 몸의 열기를 내리세요."),
+                     f"☀️ <strong>오전 (06:00~12:00):</strong> 불필요한 지출을 차단하고 업무 우선순위를 단단히 정리하세요.<br>"
+                     f"🌤️ <strong>오후 (12:00~18:00):</strong> 경쟁 구도에서 기지를 발휘하여 우위를 점하는 승부처입니다.<br>"
+                     f"🌙 <strong>저녁·밤 (18:00~24:00):</strong> 마음을 차분히 가라앉히고 미온수로 몸의 열기를 내리세요."),
         "식신(食神)": (f"오늘({today_iljin_str})은 창의적인 아이디어가 샘솟고 새로운 결실의 씨앗을 뿌리는 풍요로운 날입니다.",
-                     f"☀️ 오전 (06:00~12:00): 구상 중이던 프로젝트나 취미의 첫 단추를 채우기에 최적입니다.\n\n"
-                     f"🌤️ 오후 (12:00~18:00): 표현력이 극대화되어 미팅이나 프레젠테이션에서 큰 호응을 얻습니다.\n\n"
-                     f"🌙 저녁·밤 (18:00~24:00): 맛있는 식사와 휴식으로 내면의 에너지를 충전하세요."),
+                     f"☀️ <strong>오전 (06:00~12:00):</strong> 구상 중이던 프로젝트나 취미의 첫 단추를 채우기에 최적입니다.<br>"
+                     f"🌤️ <strong>오후 (12:00~18:00):</strong> 표현력이 극대화되어 미팅이나 프레젠테이션에서 큰 호응을 얻습니다.<br>"
+                     f"🌙 <strong>저녁·밤 (18:00~24:00):</strong> 맛있는 식사와 휴식으로 내면의 에너지를 충전하세요."),
         "상관(傷官)": (f"오늘({today_iljin_str})은 예리한 감각이 돋보이나 언행의 부드러움이 요청되는 날입니다.",
-                     f"☀️ 오전 (06:00~12:00): 문제의 핵심을 단번에 포착하여 막힌 혈을 시원하게 뚫어냅니다.\n\n"
-                     f"🌤️ 오후 (12:00~18:00): 대화 시 직설적 표현보다는 따뜻한 공감 화법을 활용하세요.\n\n"
-                     f"🌙 저녁·밤 (18:00~24:00): 가벼운 스트레칭과 음악 감상으로 과열된 신경을 다스리세요."),
+                     f"☀️ <strong>오전 (06:00~12:00):</strong> 문제의 핵심을 단번에 포착하여 막힌 혈을 시원하게 뚫어냅니다.<br>"
+                     f"🌤️ <strong>오후 (12:00~18:00):</strong> 대화 시 직설적 표현보다는 따뜻한 공감 화법을 활용하세요.<br>"
+                     f"🌙 <strong>저녁·밤 (18:00~24:00):</strong> 가벼운 스트레칭과 음악 감상으로 과열된 신경을 다스리세요."),
         "편재(偏財)": (f"오늘({today_iljin_str})은 틈새 기회가 포착되고 금전적 결실의 파도가 커지는 대길의 날입니다.",
-                     f"☀️ 오전 (06:00~12:00): 부동산, 투자, 신규 거래 관련 반가운 소식이 닿습니다.\n\n"
-                     f"🌤️ 오후 (12:00~18:00): 과감한 결단력으로 이익을 확정 짓기에 최상의 타이밍입니다.\n\n"
-                     f"🌙 저녁·밤 (18:00~24:00): 자산 포트폴리오를 점검하며 성과를 안정적으로 확정하세요."),
+                     f"☀️ <strong>오전 (06:00~12:00):</strong> 부동산, 투자, 신규 거래 관련 반가운 소식이 닿습니다.<br>"
+                     f"🌤️ <strong>오후 (12:00~18:00):</strong> 과감한 결단력으로 이익을 확정 짓기에 최상의 타이밍입니다.<br>"
+                     f"🌙 <strong>저녁·밤 (18:00~24:00):</strong> 자산 포트폴리오를 점검하며 성과를 안정적으로 확정하세요."),
         "정재(正財)": (f"오늘({today_iljin_str})은 쌓아 올린 신뢰가 실속 있는 금전적 보상으로 환원되는 날입니다.",
-                     f"☀️ 오전 (06:00~12:00): 기존에 추진하던 일에서 실속 있는 인정과 보상이 뒤따릅니다.\n\n"
-                     f"🌤️ 오후 (12:00~18:00): 꼼꼼한 문서 검토와 지출 관리로 자산 기틀을 다지세요.\n\n"
-                     f"🌙 저녁·밤 (18:00~24:00): 소중한 사람들과 따뜻한 시간을 보내며 여유를 누리세요."),
+                     f"☀️ <strong>오전 (06:00~12:00):</strong> 기존에 추진하던 일에서 실속 있는 인정과 보상이 뒤따릅니다.<br>"
+                     f"🌤️ <strong>오후 (12:00~18:00):</strong> 꼼꼼한 문서 검토와 지출 관리로 자산 기틀을 다지세요.<br>"
+                     f"🌙 <strong>저녁·밤 (18:00~24:00):</strong> 소중한 사람들과 따뜻한 시간을 보내며 여유를 누리세요."),
         "편관(偏官)": (f"오늘({today_iljin_str})은 책임감이 막중하나 난관을 돌파해 당당히 권위를 세우는 날입니다.",
-                     f"☀️ 오전 (06:00~12:00): 어려운 과제가 오더라도 담대하게 원칙을 지키며 임하세요.\n\n"
-                     f"🌤️ 오후 (12:00~18:00): 강력한 통솔력으로 주변을 이끌고 난제를 완벽히 해결합니다.\n\n"
-                     f"🌙 저녁·밤 (18:00~24:00): 따뜻한 족욕으로 몸의 피로를 풀어주고 숙면을 취하세요."),
+                     f"☀️ <strong>오전 (06:00~12:00):</strong> 어려운 과제가 오더라도 담대하게 원칙을 지키며 임하세요.<br>"
+                     f"🌤️ <strong>오후 (12:00~18:00):</strong> 강력한 통솔력으로 주변을 이끌고 난제를 완벽히 해결합니다.<br>"
+                     f"🌙 <strong>저녁·밤 (18:00~24:00):</strong> 따뜻한 족욕으로 몸의 피로를 풀어주고 숙면을 취하세요."),
         "정관(正官)": (f"오늘({today_iljin_str})은 승진, 인정, 계약 등 명예로운 운의 흐름이 강하게 작용하는 날입니다.",
-                     f"☀️ 오전 (06:00~12:00): 공공 기관, 상급자, 고객과의 약속이 일사천리로 진행됩니다.\n\n"
-                     f"🌤️ 오후 (12:00~18:00): 단정하고 신뢰감 있는 태도로 협상을 리드하여 보람을 얻으세요.\n\n"
-                     f"🌙 저녁·밤 (18:00~24:00): 오늘 일군 성과를 되돌아보며 안정감을 만끽하세요."),
+                     f"☀️ <strong>오전 (06:00~12:00):</strong> 공공 기관, 상급자, 고객과의 약속이 일사천리로 진행됩니다.<br>"
+                     f"🌤️ <strong>오후 (12:00~18:00):</strong> 단정하고 신뢰감 있는 태도로 협상을 리드하여 보람을 얻으세요.<br>"
+                     f"🌙 <strong>저녁·밤 (18:00~24:00):</strong> 오늘 일군 성과를 되돌아보며 안정감을 만끽하세요."),
         "편인(偏印)": (f"오늘({today_iljin_str})은 깊은 통찰력과 전문적 지혜로 남다른 기회를 발견하는 날입니다.",
-                     f"☀️ 오전 (06:00~12:00): 복잡한 기획이나 아이디어 구상에서 족집게 혜안이 떠오릅니다.\n\n"
-                     f"🌤️ 오후 (12:00~18:00): 혼자만의 몰입 시간을 통해 독보적인 노하우를 완성하세요.\n\n"
-                     f"🌙 저녁·밤 (18:00~24:00): 독서나 차 한 잔의 여유로 내면의 평온을 얻으세요."),
+                     f"☀️ <strong>오전 (06:00~12:00):</strong> 복잡한 기획이나 아이디어 구상에서 족집게 혜안이 떠오릅니다.<br>"
+                     f"🌤️ <strong>오후 (12:00~18:00):</strong> 혼자만의 몰입 시간을 통해 독보적인 노하우를 완성하세요.<br>"
+                     f"🌙 <strong>저녁·밤 (18:00~24:00):</strong> 독서나 차 한 잔의 여유로 내면의 평온을 얻으세요."),
         "정인(正印)": (f"오늘({today_iljin_str})은 귀인의 따뜻한 조력과 문서운이 크게 결합하는 대길의 하루입니다.",
-                     f"☀️ 오전 (06:00~12:00): 은인의 도움으로 막혀 있던 업무의 혈이 시원하게 풀립니다.\n\n"
-                     f"🌤️ 오후 (12:00~18:00): 계약 서명, 자격증, 승인 등 문서와 관련된 대길운을 잡으세요.\n\n"
-                     f"🌙 저녁·밤 (18:00~24:00): 나를 아껴주는 이들에게 따뜻한 고마움을 표현하세요.")
+                     f"☀️ <strong>오전 (06:00~12:00):</strong> 은인의 도움으로 막혀 있던 업무의 혈이 시원하게 풀립니다.<br>"
+                     f"🌤️ <strong>오후 (12:00~18:00):</strong> 계약 서명, 자격증, 승인 등 문서와 관련된 대길운을 잡으세요.<br>"
+                     f"🌙 <strong>저녁·밤 (18:00~24:00):</strong> 나를 아껴주는 이들에게 따뜻한 고마움을 표현하세요.")
     }
 
     advice_info = advice_templates.get(today_shipshin, advice_templates["정재(正財)"])
@@ -345,6 +346,7 @@ def analyze_saju(req: SajuRequest):
         }
     }
 
+# 띠별/별자리 API: 불릿 점 제거 및 깔끔한 키-값 구조로 변환
 @app.get("/api/zodiac-fortune")
 def get_zodiac_fortune(type: str = "zodiac", key: str = "쥐"):
     today = datetime.date.today()
@@ -357,19 +359,20 @@ def get_zodiac_fortune(type: str = "zodiac", key: str = "쥐"):
         z_idx = zodiac_names.index(key) if key in zodiac_names else 0
         adj_years = [y - ((4 - z_idx) % 12) for y in years]
         
+        # 불릿 점(•) 제거 및 가독성 높은 리스트 구조
         year_advices = [
-            f"• <strong>{str(adj_years[0])[-2:]}년생 ({today.year - adj_years[0] + 1}세):</strong> 학업과 진로에서 번뜩이는 영감을 발휘해 주변의 칭찬을 받는 날입니다.",
-            f"• <strong>{str(adj_years[1])[-2:]}년생 ({today.year - adj_years[1] + 1}세):</strong> 취업·이직 및 새로운 프로젝트에서 중요한 주도권을 쥐게 됩니다.",
-            f"• <strong>{str(adj_years[2])[-2:]}년생 ({today.year - adj_years[2] + 1}세):</strong> 실속을 차리고 금전적 결실과 성과를 확정 짓는 대길의 타이밍입니다.",
-            f"• <strong>{str(adj_years[3])[-2:]}년생 ({today.year - adj_years[3] + 1}세):</strong> 귀인의 도움으로 복잡했던 계약이나 사업 협상이 순조롭게 성사됩니다.",
-            f"• <strong>{str(adj_years[4])[-2:]}년생 ({today.year - adj_years[4] + 1}세):</strong> 무리한 확장보다 내실을 다지며 가족과 평온한 화목을 누리는 날입니다."
+            {"year_label": f"{str(adj_years[0])[-2:]}년생 ({today.year - adj_years[0] + 1}세)", "tip": "학업과 진로에서 번뜩이는 영감을 발휘해 주변의 칭찬을 받는 날입니다."},
+            {"year_label": f"{str(adj_years[1])[-2:]}년생 ({today.year - adj_years[1] + 1}세)", "tip": "취업·이직 및 새로운 프로젝트에서 중요한 주도권을 쥐게 됩니다."},
+            {"year_label": f"{str(adj_years[2])[-2:]}년생 ({today.year - adj_years[2] + 1}세)", "tip": "실속을 차리고 금전적 결실과 성과를 확정 짓는 대길의 타이밍입니다."},
+            {"year_label": f"{str(adj_years[3])[-2:]}년생 ({today.year - adj_years[3] + 1}세)", "tip": "귀인의 도움으로 복잡했던 계약이나 사업 협상이 순조롭게 성사됩니다."},
+            {"year_label": f"{str(adj_years[4])[-2:]}년생 ({today.year - adj_years[4] + 1}세)", "tip": "무리한 확장보다 내실을 다지며 가족과 평온한 화목을 누리는 날입니다."}
         ]
         
         titles = [
-            f"주변의 신뢰를 한 몸에 받으며 귀인이 활로를 열어주는 날",
-            f"오랫동안 정체되었던 문제의 실마리가 시원하게 풀리는 날",
-            f"재물운과 협상운이 크게 결합하여 실속을 챙기는 대길의 하루",
-            f"서두르지 않고 원칙을 지킬 때 더 큰 결실이 찾아오는 하루"
+            "주변의 신뢰를 한 몸에 받으며 귀인이 활로를 열어주는 날",
+            "오랫동안 정체되었던 문제의 실마리가 시원하게 풀리는 날",
+            "재물운과 협상운이 크게 결합하여 실속을 챙기는 대길의 하루",
+            "서두르지 않고 원칙을 지킬 때 더 큰 결실이 찾아오는 하루"
         ]
         
         return {
@@ -397,7 +400,7 @@ def get_zodiac_fortune(type: str = "zodiac", key: str = "쥐"):
             "icon": star_item["icon"],
             "period": star_item["period"],
             "score": score,
-            "title": f"창의적인 영감과 반가운 기회가 샘솟는 럭키 데이",
+            "title": "창의적인 영감과 반가운 기회가 샘솟는 럭키 데이",
             "overview": f"{star_item['name']}에게 오늘은 내면의 직관이 강력하게 작용하는 날입니다. 망설이던 결정이나 프로젝트의 첫 단추를 꿰기에 완벽합니다.",
             "focus_badge": chosen_focus["badge"],
             "focus_content": chosen_focus["desc"],
@@ -410,6 +413,7 @@ def get_daily_tarot(slot: int = 1, rand_seed: Optional[str] = None):
     random_idx = random.randint(0, len(TAROT_CARDS) - 1)
     return TAROT_CARDS[random_idx]
 
+# 10년 대운 맞춤 개운 실천 팁 분량 & 체계적 확장
 @app.post("/api/daewoon-report")
 def get_daewoon_report(req: dict):
     user_name = req.get("name", "최정오")
@@ -418,7 +422,6 @@ def get_daewoon_report(req: dict):
     start_age = age_decade + 3
     end_age = start_age + 9
 
-    # 글자 크기 14.5px 및 줄간격 1.85로 쾌적하게 확대
     return {
         "title": "👑 자미두수 & 10년 대운",
         "content": f"""
@@ -461,11 +464,14 @@ def get_daewoon_report(req: dict):
                 <p>• <strong>{start_age+7}세 ~ {end_age}세 (결실기):</strong> 성과를 안정적 시스템 수익으로 확정 짓고 차기 대운으로의 연착륙.</p>
             </div>
 
-            <div style="margin-top: 8px; border-top: 1px dashed rgba(217,119,6,0.4); padding-top: 10px;">
-                <p style="font-weight: 800; color: #78350F; font-size: 14.5px; margin-bottom: 4px;">🔥 [10년 대운 맞춤 개운(開運) 실천 팁]</p>
-                <p style="color: #92400E; font-size: 13.5px; line-height: 1.8;">
-                    이번 10년 대운 기간({start_age}세~{end_age}세) 동안은 귀인의 도우심이 강하게 작용하는 시기이므로, 혼자 모든 짐을 짊어지려 하지 말고 주변 전문가나 협력 파트너에게 적극적으로 조언을 구하고 문서를 명확히 작성할 때 재물과 명예가 더욱 공고해집니다.
-                </p>
+            <div style="margin-top: 10px; border-top: 2px solid #FCD34D; padding-top: 12px;">
+                <h4 style="font-weight: 800; color: #78350F; font-size: 15px; margin-bottom: 8px;">🔥 3. 이번 10년 대운({start_age}세~{end_age}세) 맞춤 3대 개운(開運) 실천 비책</h4>
+                
+                <div style="display: flex; flex-direction: column; gap: 8px; font-size: 13.5px; line-height: 1.75; color: #451A03;">
+                    <p>• <strong>[재물 및 자산 운용]:</strong> 현재 10년 대운은 단기 시세차익보다 실물 부동산, 우량 배당 자산 등 고정 현금 흐름을 창출하는 안전 자산에 집중할 때 부의 크기가 3배 이상 공고해집니다.</p>
+                    <p>• <strong>[비즈니스 및 직업 처세]:</strong> 혼자 모든 짐을 짊어지려 하지 말고 주변 전문가와 협력 파트너를 적극적으로 활용하세요. 구두 약속보다는 명확한 계약 문서로 권리를 확보하는 것이 성패를 가릅니다.</p>
+                    <p>• <strong>[건강 및 마인드셋]:</strong> 머리는 차갑게 식히고 하체 순환을 돕는 '두한족열' 루틴을 유지하세요. 감정에 휘둘리지 않는 평정심을 유지할 때 인생 최대의 복록을 온전히 담아낼 수 있습니다.</p>
+                </div>
             </div>
         </div>
         """
@@ -484,7 +490,6 @@ def get_theme_report(req: dict):
         "health": "🌿 평생 건강운"
     }
 
-    # 궁합·테마운 리포트 본문 글자 크기 14.5px 및 가독성 대폭 향상
     contents = {
         "wealth": f"""
         <div style="display: flex; flex-direction: column; gap: 16px; font-size: 14.5px; color: #334155; line-height: 1.85; text-align: left;">
