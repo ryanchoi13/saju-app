@@ -6,7 +6,7 @@ from typing import Optional
 import os
 import random
 
-app = FastAPI(title="운세의 신 API", version="18.0.0")
+app = FastAPI(title="운세의 신 API", version="19.0.0")
 
 CHEONGAN_HANJA = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
 JIJI_HANJA = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"]
@@ -391,10 +391,9 @@ def get_daewoon_report(req: dict):
     end_age = start_age + 9
 
     return {
-        "title": "👑 자미두수 & 10년 대운",
+        "title": "👑 자미두수 평생운세",
         "content": f"""
         <div style="display: flex; flex-direction: column; gap: 16px; font-size: 14.5px; color: #334155; line-height: 1.85; text-align: left;">
-            
             <div>
                 <div style="border-left: 4px solid #2D6A4F; padding-left: 10px; margin-bottom: 8px;">
                     <h4 style="font-size: 16.5px; font-weight: 800; color: #0F172A;">
@@ -454,12 +453,92 @@ def get_daewoon_report(req: dict):
                     <p>• <strong>[건강 및 마인드셋]:</strong> 머리는 차갑게 식히고 하체 순환을 돕는 '두한족열' 루틴을 유지하세요. 감정에 휘둘리지 않는 평정심을 유지할 때 인생 최대의 복록을 온전히 담아낼 수 있습니다.</p>
                 </div>
             </div>
-
         </div>
         """
     }
 
-# [상태별 애정운 분기 생성 함수]
+# [신규 추가] 2026 신년운세 & 12개월 토정비결 리포트 생성 API
+@app.post("/api/sinnian-report")
+def get_sinnian_report(req: dict):
+    user_name = req.get("name", "최정오")
+    
+    monthly_guides = [
+        {"m": "1월", "gua": "지천태(地天泰) 괘", "tip": "새해 첫 출발이 매우 상서롭습니다. 오랫동안 구상해온 계획의 첫 단추를 채우기에 최적입니다."},
+        {"m": "2월", "gua": "수천수(水天需) 괘", "tip": "조급하게 서두르기보다는 내실을 다지며 주변 상황의 흐름을 관망할 때 이익이 보존됩니다."},
+        {"m": "3월", "gua": "천화동인(天火同人) 괘", "tip": "귀인의 조력이 닿아 직무와 인간관계에서 반가운 협력자가 나타나 활로가 열립니다."},
+        {"m": "4월", "gua": "풍천소축(風天小畜) 괘", "tip": "작은 성과가 모여 큰 결실을 이루는 달입니다. 지출을 통제하고 종잣돈을 아끼세요."},
+        {"m": "5월", "gua": "화천대유(火天大有) 괘", "tip": "재물운이 크게 상승하는 대길의 달입니다. 투자나 계약 문서에서 큰 결실을 맺습니다."},
+        {"m": "6월", "gua": "천풍구(天風姤) 괘", "tip": "새로운 인연이나 뜻밖의 제안이 다가오나 계약 조항을 면밀하게 검토하는 신중함이 필요합니다."},
+        {"m": "7월", "gua": "천수송(天水訟) 괘", "tip": "사소한 시비나 언쟁을 피하고 원칙을 지키며 부드러운 화법으로 대화할 때 평온이 유지됩니다."},
+        {"m": "8월", "gua": "풍지관(風地觀) 괘", "tip": "상반기의 성과를 정리하고 하반기의 새로운 전략을 수립하기에 최적의 전환점입니다."},
+        {"m": "9월", "gua": "산지박(山地剝) 괘", "tip": "불필요한 인간관계나 낡은 습관을 정리하고 내면의 체력을 보충해야 하는 힐링의 달입니다."},
+        {"m": "10월", "gua": "지뢰복(地雷復) 괘", "tip": "정체되었던 기운이 다시 솟구쳐 오르는 반전의 달로, 승진이나 계약에서 낭보가 전해집니다."},
+        {"m": "11월", "gua": "수뢰준(水雷屯) 괘", "tip": "새로운 도전을 위한 기반이 단단해집니다. 경험자의 조언을 경청하면 시행착오를 줄입니다."},
+        {"m": "12월", "gua": "지화명이(地火明夷) 괘", "tip": "한 해의 결실을 풍성하게 갈무리하고 가족과 함께 따뜻한 성취를 누리는 대단원의 달입니다."}
+    ]
+
+    months_html = "".join([f"""
+        <div style="background: #F8FAFC; border-left: 3.5px solid #2D6A4F; border-radius: 6px; padding: 10px 12px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px;">
+                <span style="font-weight: 800; color: #0F172A; font-size: 14.5px;">📅 {item['m']} 운세</span>
+                <span style="font-size: 11.5px; background: #EBF5EE; color: #2D6A4F; font-weight: 700; padding: 2px 6px; border-radius: 4px;">{item['gua']}</span>
+            </div>
+            <p style="color: #475569; font-size: 13.5px; line-height: 1.6;">{item['tip']}</p>
+        </div>
+    """ for item in monthly_guides])
+
+    return {
+        "title": "📅 2026 신년운세 & 토정비결",
+        "content": f"""
+        <div style="display: flex; flex-direction: column; gap: 16px; font-size: 14.5px; color: #334155; line-height: 1.85; text-align: left;">
+            <div>
+                <div style="border-left: 4px solid #DC2626; padding-left: 10px; margin-bottom: 8px;">
+                    <span style="font-size: 12px; color: #DC2626; font-weight: 800;">2026 丙午년(붉은 말의 해)</span>
+                    <h4 style="font-size: 16.5px; font-weight: 800; color: #991B1B; margin-top: 2px;">
+                        🔥 1. {user_name}님의 2026년 세운(歲運) 총론
+                    </h4>
+                </div>
+                <p style="color: #7F1D1D; line-height: 1.85; margin-bottom: 10px;">
+                    2026년은 강렬한 불(火)의 활력이 대지를 비추는 丙午년입니다. {user_name}님의 사주와 만나 정체되었던 문제들이 시원하게 돌파되고, 숨어있던 재능과 결실이 수면 위로 찬란하게 드러나는 역동적인 도약의 한 해가 됩니다.
+                </p>
+                <div style="display: flex; flex-direction: column; gap: 6px; font-size: 14px; color: #475569;">
+                    <p>• <strong>💰 재물 대박 타이밍:</strong> 양력 5월과 10월에 큰 금전적 횡재수와 유리한 계약이 성사됩니다.</p>
+                    <p>• <strong>💼 커리어·직무 발전:</strong> 상반기에 뿌린 씨앗이 하반기(9~11월)에 승진과 명예로운 성과로 환원됩니다.</p>
+                    <p>• <strong>🤝 결정적 귀인수:</strong> 서북쪽 방위에서 다가오는 동료 및 전문 파트너가 결정적 난관을 해결해 줍니다.</p>
+                </div>
+            </div>
+
+            <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
+
+            <div>
+                <div style="border-left: 4px solid #2D6A4F; padding-left: 10px; margin-bottom: 10px;">
+                    <h4 style="font-size: 16.5px; font-weight: 800; color: #0F172A;">
+                        📜 2. 1월~12월 월별 토정비결 & 실전 처세 가이드
+                    </h4>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                    {months_html}
+                </div>
+            </div>
+
+            <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
+
+            <div>
+                <div style="border-left: 4px solid #D97706; padding-left: 10px; margin-bottom: 8px;">
+                    <h4 style="font-size: 16.5px; font-weight: 800; color: #78350F;">
+                        ✨ 3. 2026년 운세를 극대화하는 3대 개운(開運) 솔루션
+                    </h4>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 8px; font-size: 14px; color: #92400E; line-height: 1.75;">
+                    <p>• <strong>행운의 방위:</strong> 주거지 및 집무실 기준 '정동쪽'과 '서북쪽'이 복록을 부르는 최고의 방위입니다.</p>
+                    <p>• <strong>금전 지출 방어:</strong> 양력 7월에는 충동적인 지출이나 무리한 확장을 자제하고 현금 유동성을 확보하세요.</p>
+                    <p>• <strong>마인드셋 처세:</strong> 빠른 속도감 속에서도 중요한 계약서는 반드시 문구 하나까지 꼼꼼히 점검할 때 승리합니다.</p>
+                </div>
+            </div>
+        </div>
+        """
+    }
+
 def generate_love_report_content(user_name: str, sub_opt: str) -> str:
     if sub_opt == "기혼":
         return f"""
@@ -570,7 +649,7 @@ def generate_love_report_content(user_name: str, sub_opt: str) -> str:
             </div>
         </div>
         """
-    else: # 솔로 기본
+    else:
         return f"""
         <div style="display: flex; flex-direction: column; gap: 16px; font-size: 14.5px; color: #334155; line-height: 1.85; text-align: left;">
             <div style="border-left: 4px solid #E11D48; padding-left: 10px;">
@@ -697,7 +776,7 @@ def get_theme_report(req: dict):
             </div>
         </div>
         """
-    else: # health
+    else:
         content_html = f"""
         <div style="display: flex; flex-direction: column; gap: 16px; font-size: 14.5px; color: #334155; line-height: 1.85; text-align: left;">
             <div style="border-left: 4px solid #059669; padding-left: 10px;">
