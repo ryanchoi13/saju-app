@@ -293,10 +293,9 @@
 
             </div>
 
-            <!-- 탭 2: 정통사주 (2대 핵심 유료 라인업: 자미두수 평생운세 + 2026 신년운세) -->
+            <!-- 탭 2: 정통사주 -->
             <div id="view-saju" class="tab-view hidden">
                 
-                <!-- 사주 명식표 -->
                 <div class="card" style="padding: 18px;">
                     <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 10px; margin-bottom: 14px;">
                         <div>
@@ -412,7 +411,7 @@
                     <span>📢 광고 영역 (Google AdSense / Kakao AdFit 슬롯 2)</span>
                 </div>
 
-                <!-- 1. 자미두수 평생운세 (거시적 대운) -->
+                <!-- 1. 자미두수 평생운세 -->
                 <div class="card" style="border: 2px solid #FCD34D;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                         <span style="font-size: 15px; font-weight: 800;">👑 자미두수 평생운세</span>
@@ -467,7 +466,7 @@
                     </button>
                 </div>
 
-                <!-- 2. 2026 신년운세 & 토정비결 (미시적 1년운) 신규 카드 -->
+                <!-- 2. 2026 신년운세 & 토정비결 -->
                 <div class="card" style="border: 2px solid #86EFAC;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                         <span style="font-size: 15px; font-weight: 800; color: #166534;">📅 2026 신년운세 & 토정비결</span>
@@ -692,8 +691,9 @@
             
             <div id="modalOptionBox" style="display: flex; flex-direction: column; gap: 8px;"></div>
 
+            <!-- 원클릭 다이렉트 결제 열람 -->
             <button id="btnConfirmUnlockTheme" onclick="confirmUnlockTheme()" style="width: 100%; background: #2D6A4F; color: white; border: none; font-size: 14px; font-weight: 800; padding: 13px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
-                <span class="btn-coin-icon-white"></span> 220 복채로 열람하기
+                <span class="btn-coin-icon-white"></span> 220 복채로 즉시 열람하기
             </button>
         </div>
     </div>
@@ -1385,9 +1385,9 @@
             resBox.classList.remove('hidden');
         }
 
+        // [원클릭 다이렉트 결제] 자미두수 평생운세 (alert 팝업 제거)
         function unlockDaewoon() {
             if (currentCoin < 450) { openChargeStore(); return; }
-            if (!confirm('450 복채로 자미두수 평생운세 리포트를 열람하시겠습니까?')) return;
             
             fetch('/api/daewoon-report', {
                 method: 'POST',
@@ -1402,14 +1402,12 @@
                 document.getElementById('daewoonBox').classList.remove('hidden');
                 document.getElementById('btnDaewoon').classList.add('hidden');
                 saveUnlockedReport('daewoon', data.title, data.content);
-                alert(`🎉 [${data.title}] 열람 완료!`);
             });
         }
 
-        // [신규 추가] 2026 신년운세 잠금 해제 함수
+        // [원클릭 다이렉트 결제] 2026 신년운세 (alert 팝업 제거)
         function unlockSinnian() {
             if (currentCoin < 300) { openChargeStore(); return; }
-            if (!confirm('300 복채로 2026 신년운세 & 토정비결 리포트를 열람하시겠습니까?')) return;
             
             fetch('/api/sinnian-report', {
                 method: 'POST',
@@ -1424,7 +1422,6 @@
                 document.getElementById('sinnianBox').classList.remove('hidden');
                 document.getElementById('btnSinnian').classList.add('hidden');
                 saveUnlockedReport('sinnian', data.title, data.content);
-                alert(`🎉 [${data.title}] 열람 완료!`);
             });
         }
 
@@ -1451,13 +1448,14 @@
                         <label style="padding: 11px; border: 1px solid #E2E8F0; border-radius: 10px; background: #F8FAFC; cursor: pointer;"><input type="radio" name="optM" value="창업 준비중"> 창업준비</label>
                     </div>`;
             } else {
-                modalBox.innerHTML = `<p style="font-size: 13px; color: #475569; padding: 6px 0;">원국 기반 정밀 분석 리포트가 열람됩니다.</p>`;
+                modalBox.innerHTML = `<p style="font-size: 13px; color: #475569; padding: 6px 0;">원국 기반 정밀 분석 리포트가 즉시 열람됩니다.</p>`;
             }
             document.getElementById('themeSelectModal').classList.remove('hidden');
         }
 
         function closeThemeSelectModal() { document.getElementById('themeSelectModal').classList.add('hidden'); }
 
+        // [원클릭 다이렉트 결제] 테마운세 (alert 팝업 제거)
         async function confirmUnlockTheme() {
             if (currentCoin < 220) { openChargeStore(); return; }
             const selEl = document.querySelector('input[name="optM"]:checked');
@@ -1480,7 +1478,6 @@
             
             saveUnlockedReport(currentThemeKey, data.title, data.content);
             closeThemeSelectModal();
-            alert(`🎉 [${data.title}] 열람 완료!`);
         }
 
         function saveUnlockedReport(key, title, content) {
