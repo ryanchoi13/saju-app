@@ -22,7 +22,6 @@
         main { flex: 1; padding: 16px; display: flex; flex-direction: column; gap: 16px; }
         .tab-view { display: flex; flex-direction: column; gap: 16px; width: 100%; }
         
-        /* 피드백 반영: 깔끔한 단일 카드 및 위계 정리 */
         .card { background: #FFFFFF; border-radius: 20px; border: 1px solid #E2E8F0; padding: 18px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
         
         .gift-badge { display: inline-flex; align-items: center; background: #FEF3C7; border: 1px solid #FDE68A; color: #78350F; font-size: 12px; font-weight: 700; padding: 4px 12px; border-radius: 9999px; margin-bottom: 12px; }
@@ -565,7 +564,7 @@
 
     </div>
 
-    <!-- [디자인 개선] 띠별 / 별자리 운세 상세 팝업 (Box-in-Box 제거, 선과 타이포 위계 적용) -->
+    <!-- 띠별 / 별자리 운세 상세 팝업 -->
     <div id="zodiacModal" class="modal-bg hidden">
         <div class="modal-content" style="max-width: 350px; text-align: left; padding: 20px; border-radius: 24px;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #F1F5F9; padding-bottom: 10px;">
@@ -579,7 +578,6 @@
                 <button onclick="closeZodiacModal()" style="background: none; border: none; font-size: 22px; color: #94A3B8; cursor: pointer;">&times;</button>
             </div>
 
-            <!-- 종합 지수 바 -->
             <div style="display: flex; align-items: center; justify-content: space-between; border-left: 4px solid #10B981; padding-left: 10px; margin: 2px 0;">
                 <span style="font-size: 13px; font-weight: 700; color: #166534;">오늘의 종합 운세 지수</span>
                 <span id="zodiacModalScore" style="font-size: 18px; font-weight: 900; color: #047857;">95점</span>
@@ -608,7 +606,7 @@
         </div>
     </div>
 
-    <!-- 타로 추가 뽑기 선택 모달 -->
+    <!-- 타로 추가 뽑기 선택 모달 (10 복채로 조정) -->
     <div id="tarotChoiceModal" class="modal-bg hidden">
         <div class="modal-content" style="max-width: 320px; padding: 20px; border-radius: 24px; text-align: center;">
             <div style="font-size: 28px; margin-bottom: 2px;">🔮</div>
@@ -620,7 +618,7 @@
                     <span>🎬</span> 짧은 광고 보고 무료 확인
                 </button>
                 <button onclick="confirmTarotByCoin()" style="background: #FEF3C7; border: 1.5px solid #FCD34D; color: #78350F; font-size: 13px; font-weight: 800; padding: 12px; border-radius: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
-                    <span class="btn-coin-icon"></span> 30 복채로 즉시 확인
+                    <span class="btn-coin-icon"></span> 10 복채로 즉시 확인
                 </button>
             </div>
 
@@ -676,7 +674,7 @@
         </div>
     </div>
 
-    <!-- 복채 충전소 모달 -->
+    <!-- 복채 충전소 모달 (+3 복채 지급으로 조정) -->
     <div id="chargeModal" class="modal-bg hidden">
         <div class="modal-content" style="max-width: 330px;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 8px;">
@@ -688,7 +686,7 @@
                 <button onclick="simulateRewardedAd('coin')" style="background: #F0FDF4; border: 1.5px solid #86EFAC; border-radius: 16px; padding: 12px; display: flex; justify-content: space-between; align-items: center; text-align: left; cursor: pointer;">
                     <div>
                         <p style="font-size: 12.5px; font-weight: 800; color: #166534;">🎬 무료 충전소 (광고 시청)</p>
-                        <p style="font-size: 10.5px; color: #15803D; margin-top: 2px;">짧은 광고 보고 +30 복채 받기 (1일 5회)</p>
+                        <p style="font-size: 10.5px; color: #15803D; margin-top: 2px;">짧은 광고 보고 +3 복채 받기 (1일 5회)</p>
                     </div>
                     <span style="background: #166534; color: white; font-size: 11px; font-weight: 800; padding: 4px 8px; border-radius: 8px;">무료</span>
                 </button>
@@ -961,7 +959,6 @@
             }
         }
 
-        // 띠별 / 별자리 운세 팝업 열기 (디자인 위계 개선)
         async function openZodiacModal(type, key) {
             try {
                 const res = await fetch(`/api/zodiac-fortune?type=${type}&key=${encodeURIComponent(key)}`);
@@ -1256,20 +1253,22 @@
             pendingTarotSlot = null;
         }
 
+        // [조정] 타로 추가 뽑기: 10 복채 결제
         function confirmTarotByCoin() {
-            if (currentCoin < 30) {
+            if (currentCoin < 10) {
                 alert('보유 복채가 부족합니다. 복채를 충전하거나 광고를 시청해 보세요.');
                 closeTarotChoiceModal();
                 openChargeStore();
                 return;
             }
-            currentCoin -= 30;
+            currentCoin -= 10;
             updateCoinDisplay();
             const slot = pendingTarotSlot;
             closeTarotChoiceModal();
             drawTarotCardFinal(slot);
         }
 
+        // [조정] 보상형 광고 시청: +3 복채 지급
         function simulateRewardedAd(type) {
             if (type === 'tarot') {
                 const slot = pendingTarotSlot;
@@ -1278,8 +1277,8 @@
                 drawTarotCardFinal(slot);
             } else if (type === 'coin') {
                 closeChargeStore();
-                alert('🎬 [광고 시청 완료]\n+30 복채가 무료로 지급되었습니다!');
-                addCoin(30);
+                alert('🎬 [광고 시청 완료]\n+3 복채가 무료로 지급되었습니다!');
+                addCoin(3);
             }
         }
 
