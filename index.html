@@ -6,22 +6,24 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <title>운세의 신</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800;900&family=Noto+Serif+KR:wght@600;800;900&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Pretendard', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background-color: #F4F7F4; color: #1E293B; display: flex; justify-content: center; min-height: 100vh; }
-        .app-container { width: 100%; max-width: 448px; background: #FFFFFF; min-height: 100vh; display: flex; flex-direction: column; position: relative; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); padding-bottom: 80px; }
+        body { background-color: #0B1315; color: #1E293B; display: flex; justify-content: center; min-height: 100vh; }
+        .app-container { width: 100%; max-width: 448px; background: #FAF9F6; min-height: 100vh; display: flex; flex-direction: column; position: relative; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); padding-bottom: 80px; }
         
-        header { background: #FFFFFF; border-bottom: 1px solid #F1F5F9; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 30; }
-        .logo-box { display: flex; align-items: center; gap: 6px; cursor: pointer; user-select: none; }
-        .logo-text { font-size: 21px; font-weight: 800; color: #2D6A4F; letter-spacing: -0.5px; }
-        .coin-btn { display: flex; align-items: center; gap: 5px; background: #FEF3C7; border: 1px solid #FCD34D; padding: 5px 12px; border-radius: 9999px; font-size: 13px; font-weight: 700; color: #78350F; cursor: pointer; }
+        /* 헤더: 청월당풍 동양 미학 헤더 */
+        header { background: #111D1E; border-bottom: 1px solid rgba(212,175,55,0.2); padding: 14px 18px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 30; }
+        .logo-box { display: flex; align-items: center; gap: 8px; cursor: pointer; user-select: none; }
+        .logo-symbol { width: 28px; height: 28px; background: linear-gradient(135deg, #F59E0B 0%, #B45309 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 14px; font-weight: 900; font-family: 'Noto Serif KR', serif; box-shadow: 0 0 10px rgba(245,158,11,0.4); }
+        .logo-text { font-size: 19px; font-weight: 800; color: #F8FAFC; letter-spacing: -0.5px; font-family: 'Noto Serif KR', serif; }
+        .coin-btn { display: flex; align-items: center; gap: 6px; background: rgba(254,243,199,0.1); border: 1px solid rgba(252,211,77,0.4); padding: 5px 12px; border-radius: 9999px; font-size: 13px; font-weight: 700; color: #FDE68A; cursor: pointer; }
         .charge-tag { font-size: 11px; background: #2D6A4F; color: white; padding: 2px 7px; border-radius: 9999px; margin-left: 2px; }
 
         main { flex: 1; padding: 16px; display: flex; flex-direction: column; gap: 16px; }
         .tab-view { display: flex; flex-direction: column; gap: 16px; width: 100%; }
         
-        .card { background: #FFFFFF; border-radius: 20px; border: 1px solid #E2E8F0; padding: 18px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+        .card { background: #FFFFFF; border-radius: 20px; border: 1px solid #E2E8F0; padding: 18px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.03); position: relative; }
         
         .gift-badge { display: inline-flex; align-items: center; background: #FEF3C7; border: 1px solid #FDE68A; color: #78350F; font-size: 13px; font-weight: 700; padding: 4px 12px; border-radius: 9999px; margin-bottom: 12px; }
         .form-group { background: #F8FAFC; border-radius: 14px; border: 1px solid #E2E8F0; padding: 12px; margin-bottom: 10px; text-align: left; }
@@ -29,8 +31,8 @@
         .form-input { width: 100%; background: transparent; border: none; font-size: 15px; font-weight: 700; color: #1E293B; outline: none; }
         .cal-toggle { display: flex; background: #E2E8F0; padding: 2px; border-radius: 8px; font-size: 12px; font-weight: 700; gap: 2px; }
         .cal-btn { padding: 4px 10px; border-radius: 6px; border: none; background: transparent; color: #64748B; cursor: pointer; }
-        .cal-btn.active { background: #FFFFFF; color: #2D6A4F; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
-        .btn-primary { width: 100%; background: #2D6A4F; color: white; border: none; font-size: 15px; font-weight: 700; padding: 15px; border-radius: 16px; cursor: pointer; box-shadow: 0 4px 6px -1px rgba(45,106,79,0.2); margin-top: 8px; }
+        .cal-btn.active { background: #FFFFFF; color: #111D1E; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+        .btn-primary { width: 100%; background: linear-gradient(135deg, #1B4D3E 0%, #111D1E 100%); color: #FDE68A; border: 1px solid #D4AF37; font-size: 15px; font-weight: 800; padding: 15px; border-radius: 16px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.2); margin-top: 8px; }
 
         .badge-elem { width: 42px; height: 42px; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; font-size: 19px; font-weight: 700; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
         .badge-jjg { width: 34px; height: 26px; border-radius: 6px; display: inline-flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; }
@@ -46,7 +48,7 @@
         .mbti-top { display: flex; align-items: center; gap: 14px; }
         .mbti-icon { width: 52px; height: 52px; border-radius: 16px; background: #FEF3C7; display: flex; align-items: center; justify-content: center; font-size: 28px; flex-shrink: 0; }
         
-        .daily-banner { background: linear-gradient(135deg, #1E4D38 0%, #2D6A4F 100%); border-radius: 20px; padding: 20px; color: white; display: flex; flex-direction: column; }
+        .daily-banner { background: linear-gradient(135deg, #111D1E 0%, #1E3A34 100%); border: 1px solid #D4AF37; border-radius: 20px; padding: 20px; color: white; display: flex; flex-direction: column; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
         
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
         .grid-cell { background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 14px; padding: 12px; font-size: 14px; text-align: left; }
@@ -60,7 +62,7 @@
 
         .sub-tab-box { display: flex; background: #F1F5F9; border-radius: 12px; padding: 3px; gap: 4px; margin-bottom: 12px; }
         .sub-tab-btn { flex: 1; padding: 8px; font-size: 13px; font-weight: 700; color: #64748B; border: none; background: transparent; border-radius: 8px; cursor: pointer; }
-        .sub-tab-btn.active { background: #FFFFFF; color: #2D6A4F; box-shadow: 0 1px 2px rgba(0,0,0,0.06); }
+        .sub-tab-btn.active { background: #FFFFFF; color: #111D1E; box-shadow: 0 1px 2px rgba(0,0,0,0.06); }
 
         .ad-slot-box { background: #F8FAFC; border: 1px dashed #CBD5E1; border-radius: 14px; padding: 12px; text-align: center; color: #94A3B8; font-size: 12px; font-weight: 600; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 64px; }
 
@@ -69,24 +71,24 @@
         .flipper { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; transition: transform 0.6s ease; border-radius: 10px; }
         .flipper.flipped { transform: rotateY(180deg); }
         .card-face { position: absolute; inset: 0; backface-visibility: hidden; border-radius: 10px; }
-        .card-back { background: #162447; border: 3px solid #FFFFFF; box-shadow: 0 4px 8px rgba(0,0,0,0.18); overflow: hidden; }
+        .card-back { background: #111D1E; border: 2px solid #D4AF37; box-shadow: 0 4px 8px rgba(0,0,0,0.2); overflow: hidden; }
         .card-front { transform: rotateY(180deg); background: white; overflow: hidden; border: 2px solid #D4AF37; }
 
         .talisman-banner { background: linear-gradient(135deg, #FFFDF5 0%, #FFFBEB 100%); border: 2px solid #FCD34D; border-radius: 20px; padding: 20px; text-align: center; display: flex; flex-direction: column; gap: 14px; }
         .talisman-art { height: 130px; background: rgba(254,243,199,0.5); border-radius: 16px; border: 1px solid rgba(253,230,138,0.8); display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
 
-        /* 3단계: 블러 티저 페이월 박스 */
-        .teaser-blur-box { background: #F8FAFC; border: 1px dashed #CBD5E1; border-radius: 16px; padding: 14px; text-align: left; position: relative; overflow: hidden; margin-bottom: 12px; }
-        .teaser-blur-text { filter: blur(3.5px); user-select: none; color: #64748B; font-size: 13.5px; line-height: 1.6; }
-        .teaser-lock-badge { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(255,255,255,0.7); backdrop-filter: blur(1px); }
+        /* 청월당풍 프리미엄 페이월 티저 블러 박스 */
+        .teaser-blur-box { background: #FFFFFF; border: 1.5px solid #FCD34D; border-radius: 18px; padding: 16px; text-align: left; position: relative; overflow: hidden; margin-bottom: 12px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02); }
+        .teaser-blur-text { filter: blur(4px); user-select: none; color: #64748B; font-size: 13.5px; line-height: 1.7; }
+        .teaser-lock-badge { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(255,255,255,0.75); backdrop-filter: blur(2px); }
 
-        nav { position: fixed; bottom: 0; width: 100%; max-width: 448px; background: rgba(255,255,255,0.95); backdrop-filter: blur(8px); border-top: 1px solid #F1F5F9; padding: 10px 24px; display: flex; justify-content: space-between; z-index: 40; }
-        .tab-btn { background: none; border: none; display: flex; flex-direction: column; align-items: center; gap: 4px; color: #94A3B8; font-size: 12px; cursor: pointer; font-weight: 500; }
-        .tab-btn.active { color: #2D6A4F; font-weight: 700; }
+        nav { position: fixed; bottom: 0; width: 100%; max-width: 448px; background: rgba(17,29,30,0.95); backdrop-filter: blur(8px); border-top: 1px solid rgba(212,175,55,0.2); padding: 10px 24px; display: flex; justify-content: space-between; z-index: 40; }
+        .tab-btn { background: none; border: none; display: flex; flex-direction: column; align-items: center; gap: 4px; color: #64748B; font-size: 12px; cursor: pointer; font-weight: 500; }
+        .tab-btn.active { color: #FDE68A; font-weight: 800; }
         .tab-btn svg { width: 23px; height: 23px; stroke: currentColor; fill: none; stroke-width: 2; }
 
-        .modal-bg { position: fixed; inset: 0; background: rgba(15,23,42,0.65); backdrop-filter: blur(3px); display: flex; align-items: center; justify-content: center; padding: 16px; z-index: 50; }
-        .modal-content { background: white; border-radius: 24px; padding: 20px; width: 100%; max-width: 350px; text-align: center; display: flex; flex-direction: column; gap: 14px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); }
+        .modal-bg { position: fixed; inset: 0; background: rgba(11,19,21,0.75); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; padding: 16px; z-index: 50; }
+        .modal-content { background: #FAF9F6; border-radius: 24px; padding: 20px; width: 100%; max-width: 350px; text-align: center; display: flex; flex-direction: column; gap: 14px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.4); border: 1px solid #E2E8F0; }
 
         .hidden { display: none !important; }
     </style>
@@ -97,6 +99,7 @@
         
         <header>
             <div class="logo-box" onclick="goToHomeAndScrollTop()">
+                <div class="logo-symbol">神</div>
                 <h1 class="logo-text">운세의 신</h1>
             </div>
             
@@ -114,7 +117,7 @@
             <!-- 사주 입력 화면 -->
             <div id="onboardingInputView" class="card" style="text-align: center;">
                 <div class="gift-badge">🎁 가입 축하 1,000 복채 지급</div>
-                <h2 style="font-size: 21px; font-weight: 800; margin-bottom: 2px;">반가워요!</h2>
+                <h2 style="font-size: 21px; font-weight: 800; margin-bottom: 2px; font-family: 'Noto Serif KR', serif;">정밀 명식 감명</h2>
                 <p style="font-size: 14px; color: #64748B; margin-bottom: 16px;">사주를 분석할 기본 정보를 입력해 주세요</p>
 
                 <div class="form-group">
@@ -153,7 +156,7 @@
                     </select>
                 </div>
 
-                <button onclick="startSajuAnalysis()" class="btn-primary">사주 분석 시작하기 ✨</button>
+                <button onclick="startSajuAnalysis()" class="btn-primary">정밀 감명서 발행하기 ✨</button>
             </div>
 
             <!-- 탭 1: 오늘운세 -->
@@ -177,11 +180,11 @@
 
                 <div class="daily-banner">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                        <span style="font-size: 13px; color: #A7F3D0;">오늘의 일진</span>
-                        <span id="resScoreBadge" style="background: #FBBF24; color: #1E293B; font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 9999px;">운세 97점</span>
+                        <span style="font-size: 13px; color: #FDE68A;">오늘의 일진</span>
+                        <span id="resScoreBadge" style="background: #FBBF24; color: #1E293B; font-size: 12px; font-weight: 800; padding: 3px 10px; border-radius: 9999px;">운세 97점</span>
                     </div>
-                    <h3 id="resTitle" style="font-size: 16px; font-weight: 600; text-align: left; line-height: 1.5; margin-bottom: 14px;">도약의 하루</h3>
-                    <div id="resAdvice" style="font-size: 13.5px; color: #D1FAE5; font-weight: 400; line-height: 1.65; text-align: left;"></div>
+                    <h3 id="resTitle" style="font-size: 16px; font-weight: 700; text-align: left; line-height: 1.5; margin-bottom: 14px;">도약의 하루</h3>
+                    <div id="resAdvice" style="font-size: 13.5px; color: #E2E8F0; font-weight: 400; line-height: 1.65; text-align: left;"></div>
                 </div>
 
                 <div class="grid-2">
@@ -236,7 +239,7 @@
                 <div class="talisman-banner">
                     <div style="display: flex; justify-content: center; align-items: center; gap: 6px;">
                         <span>🔥</span>
-                        <h3 id="talismanBannerHeader" style="font-size: 16.5px; font-weight: 800; color: #78350F;">오늘의 맞춤 경면주사 부적</h3>
+                        <h3 id="talismanBannerHeader" style="font-size: 16.5px; font-weight: 800; color: #78350F; font-family: 'Noto Serif KR', serif;">오늘의 맞춤 경면주사 부적</h3>
                         <span>🌊</span>
                     </div>
 
@@ -305,7 +308,7 @@
                 <div class="card" style="padding: 18px;">
                     <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 10px; margin-bottom: 14px;">
                         <div>
-                            <h3 style="font-size: 16px; font-weight: 800; color: #0F172A; display: inline-block;">사주 명식표 (四柱命式)</h3>
+                            <h3 style="font-size: 16px; font-weight: 800; color: #0F172A; display: inline-block; font-family: 'Noto Serif KR', serif;">사주 명식표 (四柱命式)</h3>
                             <span id="sajuSingangBadge" style="font-size: 12px; background: #FEF3C7; color: #78350F; font-weight: 700; padding: 2px 8px; border-radius: 6px; margin-left: 6px;">신약(身弱) 사주</span>
                         </div>
                         <span id="sajuOwnerName" style="font-size: 14px; color: #2D6A4F; font-weight: 700; background: #EBF5EE; padding: 4px 10px; border-radius: 8px;">최정오 님</span>
@@ -358,24 +361,17 @@
                         </div>
                     </div>
 
-                    <!-- 2단계: 오행 실질 에너지 막대그래프 + 오각형 방사형 레이더 차트 결합 -->
+                    <!-- 오행 실질 에너지 정갈한 5단 막대 기둥 차트 (레이더 차트 제거 완료) -->
                     <div style="margin-top: 18px; text-align: left;">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                             <span style="font-size: 14px; font-weight: 800; color: #0F172A;">오행(五行) 실질 에너지 세력 분포</span>
                             <span style="font-size: 12px; color: #64748B;">지장간 포함 100%</span>
                         </div>
 
-                        <!-- 2단계: 오행 방사형 레이더 차트 -->
-                        <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 18px; padding: 12px; margin-bottom: 10px; display: flex; justify-content: center;">
-                            <svg id="oheangRadarSvg" viewBox="0 0 200 180" style="width: 100%; max-width: 220px; height: 150px; overflow: visible;">
-                                <!-- 동적 렌더링 영역 -->
-                            </svg>
-                        </div>
-
-                        <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 18px; padding: 14px 10px 10px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; text-align: center;">
+                        <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 18px; padding: 16px 10px 12px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; text-align: center;">
                             <div style="display: flex; flex-direction: column; align-items: center; gap: 6px;">
                                 <span id="valWood" style="font-size: 13px; font-weight: 700; color: #047857; min-height: 16px;">0%</span>
-                                <div style="width: 28px; height: 90px; background: #E2E8F0; border-radius: 14px; position: relative; overflow: hidden; display: flex; align-items: flex-end;">
+                                <div style="width: 28px; height: 95px; background: #E2E8F0; border-radius: 14px; position: relative; overflow: hidden; display: flex; align-items: flex-end;">
                                     <div id="barWood" style="width: 100%; height: 0%; background: linear-gradient(180deg, #34D399 0%, #10B981 100%); border-radius: 14px; transition: height 0.6s ease;"></div>
                                 </div>
                                 <span style="font-size: 13px; font-weight: 800; color: #047857;">木</span>
@@ -383,7 +379,7 @@
 
                             <div style="display: flex; flex-direction: column; align-items: center; gap: 6px;">
                                 <span id="valFire" style="font-size: 13px; font-weight: 700; color: #DC2626; min-height: 16px;">0%</span>
-                                <div style="width: 28px; height: 90px; background: #E2E8F0; border-radius: 14px; position: relative; overflow: hidden; display: flex; align-items: flex-end;">
+                                <div style="width: 28px; height: 95px; background: #E2E8F0; border-radius: 14px; position: relative; overflow: hidden; display: flex; align-items: flex-end;">
                                     <div id="barFire" style="width: 100%; height: 0%; background: linear-gradient(180deg, #F87171 0%, #EF4444 100%); border-radius: 14px; transition: height 0.6s ease;"></div>
                                 </div>
                                 <span style="font-size: 13px; font-weight: 800; color: #DC2626;">火</span>
@@ -391,7 +387,7 @@
 
                             <div style="display: flex; flex-direction: column; align-items: center; gap: 6px;">
                                 <span id="valEarth" style="font-size: 13px; font-weight: 700; color: #D97706; min-height: 16px;">0%</span>
-                                <div style="width: 28px; height: 90px; background: #E2E8F0; border-radius: 14px; position: relative; overflow: hidden; display: flex; align-items: flex-end;">
+                                <div style="width: 28px; height: 95px; background: #E2E8F0; border-radius: 14px; position: relative; overflow: hidden; display: flex; align-items: flex-end;">
                                     <div id="barEarth" style="width: 100%; height: 0%; background: linear-gradient(180deg, #FBBF24 0%, #F59E0B 100%); border-radius: 14px; transition: height 0.6s ease;"></div>
                                 </div>
                                 <span style="font-size: 13px; font-weight: 800; color: #D97706;">土</span>
@@ -399,7 +395,7 @@
 
                             <div style="display: flex; flex-direction: column; align-items: center; gap: 6px;">
                                 <span id="valMetal" style="font-size: 13px; font-weight: 700; color: #475569; min-height: 16px;">0%</span>
-                                <div style="width: 28px; height: 90px; background: #E2E8F0; border-radius: 14px; position: relative; overflow: hidden; display: flex; align-items: flex-end;">
+                                <div style="width: 28px; height: 95px; background: #E2E8F0; border-radius: 14px; position: relative; overflow: hidden; display: flex; align-items: flex-end;">
                                     <div id="barMetal" style="width: 100%; height: 0%; background: linear-gradient(180deg, #CBD5E1 0%, #94A3B8 100%); border-radius: 14px; transition: height 0.6s ease;"></div>
                                 </div>
                                 <span style="font-size: 13px; font-weight: 800; color: #475569;">金</span>
@@ -407,7 +403,7 @@
 
                             <div style="display: flex; flex-direction: column; align-items: center; gap: 6px;">
                                 <span id="valWater" style="font-size: 13px; font-weight: 700; color: #2563EB; min-height: 16px;">0%</span>
-                                <div style="width: 28px; height: 90px; background: #E2E8F0; border-radius: 14px; position: relative; overflow: hidden; display: flex; align-items: flex-end;">
+                                <div style="width: 28px; height: 95px; background: #E2E8F0; border-radius: 14px; position: relative; overflow: hidden; display: flex; align-items: flex-end;">
                                     <div id="barWater" style="width: 100%; height: 0%; background: linear-gradient(180deg, #60A5FA 0%, #3B82F6 100%); border-radius: 14px; transition: height 0.6s ease;"></div>
                                 </div>
                                 <span style="font-size: 13px; font-weight: 800; color: #2563EB;">水</span>
@@ -423,7 +419,7 @@
                 <!-- 1. 자미두수 평생운세 (블러 티저 포함) -->
                 <div class="card" style="border: 2px solid #FCD34D;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                        <span style="font-size: 15px; font-weight: 800;">👑 자미두수 평생운세</span>
+                        <span style="font-size: 15px; font-weight: 800; font-family: 'Noto Serif KR', serif;">👑 자미두수 평생운세</span>
                         <span style="font-size: 12px; background: #FEF3C7; color: #78350F; padding: 4px 10px; border-radius: 9999px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;">
                             <span class="coin-icon-svg-inline"></span> 450 복채
                         </span>
@@ -468,7 +464,7 @@
                         </div>
                     </div>
 
-                    <!-- 3단계: 블러 티저 프리뷰 -->
+                    <!-- 블러 티저 프리뷰 -->
                     <div id="daewoonTeaserBox" class="teaser-blur-box">
                         <div class="teaser-blur-text">
                             <p><strong>Chapter 2. 현재 10년 대운 집중 감명:</strong> {name}님의 사주에 재성과 귀인이 합을 이루어 자산 규모가 수직 상승하는 전환점입니다. 인생 최대 대박 귀인은 [🔒 00띠]이며, 가장 큰 승부처는...</p>
@@ -490,7 +486,7 @@
                 <!-- 2. 2026 신년운세 & 토정비결 (블러 티저 포함) -->
                 <div class="card" style="border: 2px solid #86EFAC;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                        <span style="font-size: 15px; font-weight: 800; color: #166534;">📅 2026 신년운세 & 토정비결</span>
+                        <span style="font-size: 15px; font-weight: 800; color: #166534; font-family: 'Noto Serif KR', serif;">📅 2026 신년운세 & 토정비결</span>
                         <span style="font-size: 12px; background: #DCFCE7; color: #166534; padding: 4px 10px; border-radius: 9999px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;">
                             <span class="coin-icon-svg-inline"></span> 300 복채
                         </span>
@@ -499,7 +495,7 @@
                         2026 丙午년 1년 총운 풀이와 1월부터 12월까지 월별 정밀 토정비결 괘상 및 실전 처세 가이드를 제공합니다.
                     </p>
 
-                    <!-- 3단계: 블러 티저 프리뷰 -->
+                    <!-- 블러 티저 프리뷰 -->
                     <div id="sinnianTeaserBox" class="teaser-blur-box">
                         <div class="teaser-blur-text">
                             <p><strong>Chapter 1. 2026년 세운 총론:</strong> 올해 가장 큰돈이 들어오는 황금의 달은 [🔒 0월]과 [00월]이며, 이직/계약수에서 결정적 기회가 찾아옵니다.</p>
@@ -524,37 +520,37 @@
             <div id="view-theme" class="tab-view hidden">
                 
                 <div class="card" style="text-align: left;">
-                    <p style="font-size: 16.5px; font-weight: 800; color: #0F172A;">💰 평생 재물운</p>
+                    <p style="font-size: 16.5px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif;">💰 평생 재물운</p>
                     <p style="font-size: 13.5px; color: #64748B; margin-top: 3px;">자산 흐름 및 부동산/투자 성공 분석</p>
                     <div id="themeReport_wealth" class="hidden" style="margin-top: 14px; padding-top: 12px; border-top: 1px solid #F1F5F9;"></div>
-                    <button id="btnTheme_wealth" onclick="openThemeSelectModal('wealth')" style="width: 100%; background: #0F172A; color: white; border: none; font-size: 14.5px; font-weight: 700; padding: 14px; border-radius: 14px; cursor: pointer; margin-top: 14px; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                    <button id="btnTheme_wealth" onclick="openThemeSelectModal('wealth')" style="width: 100%; background: #111D1E; color: white; border: none; font-size: 14.5px; font-weight: 700; padding: 14px; border-radius: 14px; cursor: pointer; margin-top: 14px; display: flex; align-items: center; justify-content: center; gap: 6px;">
                         <span class="btn-coin-icon-white"></span> 220 복채로 상세 리포트 열람하기
                     </button>
                 </div>
 
                 <div class="card" style="text-align: left;">
-                    <p style="font-size: 16.5px; font-weight: 800; color: #0F172A;">💖 평생 애정운</p>
+                    <p style="font-size: 16.5px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif;">💖 평생 애정운</p>
                     <p style="font-size: 13.5px; color: #64748B; margin-top: 3px;">나와 맞는 인연의 특징과 결혼 시기</p>
                     <div id="themeReport_love" class="hidden" style="margin-top: 14px; padding-top: 12px; border-top: 1px solid #F1F5F9;"></div>
-                    <button id="btnTheme_love" onclick="openThemeSelectModal('love')" style="width: 100%; background: #0F172A; color: white; border: none; font-size: 14.5px; font-weight: 700; padding: 14px; border-radius: 14px; cursor: pointer; margin-top: 14px; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                    <button id="btnTheme_love" onclick="openThemeSelectModal('love')" style="width: 100%; background: #111D1E; color: white; border: none; font-size: 14.5px; font-weight: 700; padding: 14px; border-radius: 14px; cursor: pointer; margin-top: 14px; display: flex; align-items: center; justify-content: center; gap: 6px;">
                         <span class="btn-coin-icon-white"></span> 220 복채로 상세 리포트 열람하기
                     </button>
                 </div>
 
                 <div class="card" style="text-align: left;">
-                    <p style="font-size: 16.5px; font-weight: 800; color: #0F172A;">🏢 사업·직업운</p>
+                    <p style="font-size: 16.5px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif;">🏢 사업·직업운</p>
                     <p style="font-size: 13.5px; color: #64748B; margin-top: 3px;">대박 직업 아이템 및 이직/창업 시기</p>
                     <div id="themeReport_business" class="hidden" style="margin-top: 14px; padding-top: 12px; border-top: 1px solid #F1F5F9;"></div>
-                    <button id="btnTheme_business" onclick="openThemeSelectModal('business')" style="width: 100%; background: #0F172A; color: white; border: none; font-size: 14.5px; font-weight: 700; padding: 14px; border-radius: 14px; cursor: pointer; margin-top: 14px; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                    <button id="btnTheme_business" onclick="openThemeSelectModal('business')" style="width: 100%; background: #111D1E; color: white; border: none; font-size: 14.5px; font-weight: 700; padding: 14px; border-radius: 14px; cursor: pointer; margin-top: 14px; display: flex; align-items: center; justify-content: center; gap: 6px;">
                         <span class="btn-coin-icon-white"></span> 220 복채로 상세 리포트 열람하기
                     </button>
                 </div>
 
                 <div class="card" style="text-align: left;">
-                    <p style="font-size: 16.5px; font-weight: 800; color: #0F172A;">🌿 평생 건강운</p>
+                    <p style="font-size: 16.5px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif;">🌿 평생 건강운</p>
                     <p style="font-size: 13.5px; color: #64748B; margin-top: 3px;">오행 과다/부족 취약 장기 및 섭생법</p>
                     <div id="themeReport_health" class="hidden" style="margin-top: 14px; padding-top: 12px; border-top: 1px solid #F1F5F9;"></div>
-                    <button id="btnTheme_health" onclick="openThemeSelectModal('health')" style="width: 100%; background: #0F172A; color: white; border: none; font-size: 14.5px; font-weight: 700; padding: 14px; border-radius: 14px; cursor: pointer; margin-top: 14px; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                    <button id="btnTheme_health" onclick="openThemeSelectModal('health')" style="width: 100%; background: #111D1E; color: white; border: none; font-size: 14.5px; font-weight: 700; padding: 14px; border-radius: 14px; cursor: pointer; margin-top: 14px; display: flex; align-items: center; justify-content: center; gap: 6px;">
                         <span class="btn-coin-icon-white"></span> 220 복채로 상세 리포트 열람하기
                     </button>
                 </div>
@@ -587,7 +583,7 @@
 
                 <div class="card" style="text-align: left;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                        <h3 style="font-size: 15px; font-weight: 800; color: #0F172A;">📂 구매한 운세 다시보기 보관함</h3>
+                        <h3 style="font-size: 15px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif;">📂 구매한 감명서 보관함</h3>
                         <span id="archiveCountBadge" style="font-size: 12px; background: #2D6A4F; color: #FFFFFF; padding: 3px 10px; border-radius: 9999px; font-weight: 700;">0건</span>
                     </div>
                     <div id="unlockedArchiveList" style="display: flex; flex-direction: column; gap: 10px;">
@@ -631,7 +627,7 @@
                 <div style="display: flex; align-items: center; gap: 8px;">
                     <span id="zodiacModalIcon" style="font-size: 28px;">🐭</span>
                     <div>
-                        <h3 id="zodiacModalName" style="font-size: 17px; font-weight: 800; color: #0F172A;">쥐띠 오늘의 운세</h3>
+                        <h3 id="zodiacModalName" style="font-size: 17px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif;">쥐띠 오늘의 운세</h3>
                         <p id="zodiacModalSub" style="font-size: 12px; color: #64748B;">오늘의 실시간 일진 분석</p>
                     </div>
                 </div>
@@ -688,7 +684,7 @@
     <div id="talismanModal" class="modal-bg hidden">
         <div class="modal-content" style="max-width: 340px; padding: 18px; border-radius: 24px;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 8px;">
-                <h3 style="font-size: 14px; font-weight: 800; color: #1E293B;">🎴 전통 경면주사(鏡面朱砂) 비급 부적</h3>
+                <h3 style="font-size: 14px; font-weight: 800; color: #1E293B; font-family: 'Noto Serif KR', serif;">🎴 전통 경면주사(鏡面朱砂) 비급 부적</h3>
                 <button onclick="closeTalismanModal()" style="background: none; border: none; font-size: 20px; color: #94A3B8; cursor: pointer;">&times;</button>
             </div>
 
@@ -736,7 +732,7 @@
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 10px;">
                 <div style="display: flex; align-items: center; gap: 6px;">
                     <span id="chargeModalHeaderCoinSvg"></span>
-                    <h3 style="font-size: 15px; font-weight: 800; color: #1E293B;">복채 충전소</h3>
+                    <h3 style="font-size: 15px; font-weight: 800; color: #1E293B; font-family: 'Noto Serif KR', serif;">복채 충전소</h3>
                 </div>
                 <button onclick="closeChargeStore()" style="background: none; border: none; font-size: 20px; color: #94A3B8; cursor: pointer;">&times;</button>
             </div>
@@ -792,7 +788,7 @@
     <div id="archiveDetailModal" class="modal-bg hidden">
         <div class="modal-content" style="max-width: 380px; max-height: 85vh; display: flex; flex-direction: column; text-align: left; padding: 20px; border-radius: 24px;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 10px; margin-bottom: 12px; flex-shrink: 0;">
-                <h3 id="archiveModalTitle" style="font-size: 14px; font-weight: 800; color: #0F172A; padding-right: 8px; line-height: 1.3;">운세 리포트</h3>
+                <h3 id="archiveModalTitle" style="font-size: 14px; font-weight: 800; color: #0F172A; padding-right: 8px; line-height: 1.3; font-family: 'Noto Serif KR', serif;">운세 리포트</h3>
                 <button onclick="closeArchiveDetailModal()" style="background: none; border: none; font-size: 20px; color: #94A3B8; cursor: pointer; flex-shrink: 0;">&times;</button>
             </div>
             
@@ -815,7 +811,6 @@
         let drawnTarotCards = {};
         let currentZodiacData = null;
         let pendingTarotSlot = null;
-        let currentElements = { wood: 20, fire: 20, earth: 20, metal: 20, water: 20 };
 
         function getGoldCoinSvg(size = 16, color = "#F59E0B") {
             return `<svg viewBox="0 0 20 20" width="${size}" height="${size}" style="display:inline-block; vertical-align:middle; flex-shrink:0;">
@@ -871,7 +866,7 @@
 
         function getTarotCardBackSvg() {
             return `
-            <svg viewBox="0 0 100 150" style="width: 100%; height: 100%; background: #162447; border-radius: 8px;">
+            <svg viewBox="0 0 100 150" style="width: 100%; height: 100%; background: #111D1E; border-radius: 8px;">
                 <defs>
                     <radialGradient id="starGlow" cx="50%" cy="50%" r="50%">
                         <stop offset="0%" stop-color="#FFF9D2"/>
@@ -981,64 +976,11 @@
                     <path d="M 48 198 L 92 198" />
                 </g>
                 <rect x="36" y="204" width="68" height="22" fill="#C62828" rx="3"/>
-                <text x="70" y="219" font-size="10" font-weight="900" fill="#FFFFFF" text-anchor="middle" font-family="'Pretendard', serif" letter-spacing="1px">${bottomText}</text>
+                <text x="70" y="219" font-size="10" font-weight="900" fill="#FFFFFF" text-anchor="middle" font-family="'Noto Serif KR', serif" letter-spacing="1px">${bottomText}</text>
             </svg>
             `;
         }
 
-        // [2단계] SVG 방사형 레이더 차트 그리기 함수
-        function renderOheangRadarChart(elems) {
-            const cx = 100, cy = 90, rMax = 65;
-            const angles = [ -90, -18, 54, 126, 198 ];
-            const labels = ["木", "火", "土", "金", "水"];
-            const colors = ["#047857", "#DC2626", "#D97706", "#475569", "#2563EB"];
-            const values = [ elems.wood || 0, elems.fire || 0, elems.earth || 0, elems.metal || 0, elems.water || 0 ];
-
-            const getPoint = (angleDeg, radius) => {
-                const rad = angleDeg * (Math.PI / 180);
-                return { x: cx + radius * Math.cos(rad), y: cy + radius * Math.sin(rad) };
-            };
-
-            let gridCircles = [0.25, 0.5, 0.75, 1.0].map(pct => {
-                let pts = angles.map(a => {
-                    let pt = getPoint(a, rMax * pct);
-                    return `${pt.x},${pt.y}`;
-                }).join(' ');
-                return `<polygon points="${pts}" fill="none" stroke="#E2E8F0" stroke-width="1" />`;
-            }).join('');
-
-            let axisLines = angles.map(a => {
-                let pt = getPoint(a, rMax);
-                return `<line x1="${cx}" y1="${cy}" x2="${pt.x}" y2="${pt.y}" stroke="#CBD5E1" stroke-width="1" stroke-dasharray="2 2"/>`;
-            }).join('');
-
-            let dataPoints = values.map((val, i) => {
-                let scaledRadius = Math.max(10, Math.min(rMax, (val / 50) * rMax));
-                let pt = getPoint(angles[i], scaledRadius);
-                return `${pt.x},${pt.y}`;
-            }).join(' ');
-
-            let vertexNodes = values.map((val, i) => {
-                let scaledRadius = Math.max(10, Math.min(rMax, (val / 50) * rMax));
-                let pt = getPoint(angles[i], scaledRadius);
-                let labelPt = getPoint(angles[i], rMax + 14);
-                return `
-                    <circle cx="${pt.x}" cy="${pt.y}" r="3.5" fill="${colors[i]}" stroke="#FFFFFF" stroke-width="1.5"/>
-                    <text x="${labelPt.x}" y="${labelPt.y + 4}" font-size="11" font-weight="900" fill="${colors[i]}" text-anchor="middle">${labels[i]}</text>
-                `;
-            }).join('');
-
-            return `
-                <g>
-                    ${gridCircles}
-                    ${axisLines}
-                    <polygon points="${dataPoints}" fill="rgba(45, 106, 79, 0.25)" stroke="#2D6A4F" stroke-width="2.2" stroke-linejoin="round"/>
-                    ${vertexNodes}
-                </g>
-            `;
-        }
-
-        // [3단계] PDF / 인쇄 소장 윈도우 생성 함수
         function printReportDocument(title, btnElement) {
             const reportContainer = btnElement.closest('.card') || btnElement.parentElement;
             const contentClone = reportContainer.cloneNode(true);
@@ -1052,11 +994,11 @@
                 <head>
                     <meta charset="UTF-8">
                     <title>${title} - ${currentUserName} 님</title>
-                    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;800;900&display=swap" rel="stylesheet">
+                    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;800;900&family=Noto+Serif+KR:wght@700&display=swap" rel="stylesheet">
                     <style>
                         body { font-family: 'Pretendard', sans-serif; padding: 40px; color: #1E293B; max-width: 680px; margin: 0 auto; line-height: 1.85; }
                         .header { border-bottom: 3px solid #2D6A4F; padding-bottom: 16px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: flex-end; }
-                        .header h1 { font-size: 22px; color: #2D6A4F; margin: 0; }
+                        .header h1 { font-size: 22px; color: #2D6A4F; margin: 0; font-family: 'Noto Serif KR', serif; }
                         .header p { font-size: 13px; color: #64748B; margin: 0; }
                         .footer { margin-top: 40px; border-top: 1px solid #E2E8F0; padding-top: 16px; text-align: center; font-size: 12px; color: #94A3B8; }
                         @media print {
@@ -1299,7 +1241,6 @@
 
             currentTalisman = data.daily_fortune.talisman;
             currentUserAge = data.current_age;
-            currentElements = data.saju_data.elements;
 
             const talismanPreview = document.getElementById('talismanBannerPreview');
             if (talismanPreview && currentTalisman) {
@@ -1342,12 +1283,6 @@
             applyBar('Earth', elems.earth);
             applyBar('Metal', elems.metal);
             applyBar('Water', elems.water);
-
-            // 2단계: 오행 방사형 레이더 차트 렌더링
-            const radarSvg = document.getElementById('oheangRadarSvg');
-            if (radarSvg) {
-                radarSvg.innerHTML = renderOheangRadarChart(elems);
-            }
 
             updateDaewoonGraphByAge(currentUserAge);
 
@@ -1529,7 +1464,7 @@
             resBox.classList.remove('hidden');
         }
 
-        // [3단계: 인쇄 버튼이 포함된 자미두수 평생운세 열람]
+        // [원클릭 다이렉트 결제 & PDF 인쇄 연동] 자미두수 평생운세
         function unlockDaewoon() {
             if (currentCoin < 450) { openChargeStore(); return; }
             
@@ -1559,7 +1494,7 @@
             });
         }
 
-        // [3단계: 인쇄 버튼이 포함된 2026 신년운세 열람]
+        // [원클릭 다이렉트 결제 & PDF 인쇄 연동] 2026 신년운세
         function unlockSinnian() {
             if (currentCoin < 300) { openChargeStore(); return; }
             
@@ -1748,7 +1683,7 @@
                 container.innerHTML = `
                     <div style="text-align: center; padding: 20px 0; color: #94A3B8; font-size: 13px;">
                         <p style="font-size: 28px; margin-bottom: 4px;">📂</p>
-                        <p style="font-weight: 700; color: #64748B;">현재 사주 정보로 구매한 리포트가 없습니다.</p>
+                        <p style="font-weight: 700; color: #64748B;">현재 사주 정보로 구매한 감명서가 없습니다.</p>
                         <p style="font-size: 12px; color: #CBD5E1; margin-top: 2px;">정통사주 및 테마운세에서 열람한 리포트가 이곳에 프로필별로 보관됩니다.</p>
                     </div>`;
                 return;
@@ -1761,7 +1696,7 @@
                             <span style="font-size: 11px; background: #2D6A4F; color: #FFFFFF; font-weight: 700; padding: 2px 6px; border-radius: 4px; flex-shrink: 0;">열람완료</span>
                             <span style="font-size: 12px; color: #94A3B8; flex-shrink: 0;">${r.date}</span>
                         </div>
-                        <h4 style="font-weight: 800; color: #0F172A; font-size: 14px; line-height: 1.3; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${r.title}</h4>
+                        <h4 style="font-weight: 800; color: #0F172A; font-size: 14px; line-height: 1.3; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-family: 'Noto Serif KR', serif;">${r.title}</h4>
                     </div>
                     <button onclick="openArchiveDetail(${idx})" style="background: #2D6A4F; color: #FFFFFF; border: none; font-size: 13px; font-weight: 700; padding: 8px 12px; border-radius: 10px; cursor: pointer; white-space: nowrap; flex-shrink: 0; box-shadow: 0 2px 4px rgba(45,106,79,0.2);">
                         📄 다시보기
