@@ -6,7 +6,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <title>운세의 신</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800;900&family=Noto+Serif+KR:wght@600;800;900&display=swap" rel="stylesheet">
+    <link href="[https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800;900&family=Noto+Serif+KR:wght@600;800;900&display=swap](https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800;900&family=Noto+Serif+KR:wght@600;800;900&display=swap)" rel="stylesheet">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Pretendard', sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background-color: #0B1315; color: #1E293B; display: flex; justify-content: center; min-height: 100vh; }
@@ -96,7 +96,6 @@
         .teaser-blur-text { filter: blur(4px); user-select: none; color: #64748B; font-size: 13.5px; line-height: 1.7; }
         .teaser-lock-badge { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(255,255,255,0.75); backdrop-filter: blur(2px); }
 
-        /* 하단 고정 네비게이션 (z-index: 1000) */
         nav#bottomNavBar { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 448px; background: rgba(17,29,30,0.98); backdrop-filter: blur(8px); border-top: 1px solid rgba(212,175,55,0.3); padding: 10px 24px; display: flex; justify-content: space-between; align-items: center; z-index: 1000; }
         .tab-btn { background: none; border: none; display: flex; flex-direction: column; align-items: center; gap: 4px; color: #64748B; font-size: 12px; cursor: pointer; font-weight: 500; }
         .tab-btn.active { color: #FDE68A; font-weight: 800; }
@@ -205,7 +204,7 @@
                     <div id="resAdvice" style="font-size: 13.5px; color: #E2E8F0; font-weight: 400; line-height: 1.65; text-align: left;"></div>
                 </div>
 
-                <!-- 6칸 그리드 복구: 맞춤 코디(상단 1칸) + 5개 요소(행운아이템, 숫자, 방위, 메뉴, 처세) -->
+                <!-- 6칸 그리드 복구 -->
                 <div class="grid-2">
                     <div class="grid-cell" style="grid-column: span 2; background: #F0FDF4; border: 1.5px solid #86EFAC;">
                         <span style="font-size: 12px; color: #166534; font-weight: 800; display: block;">👔 맞춤 추천 코디 (성별·나이·8월 여름)</span>
@@ -367,7 +366,7 @@
                                 <div onclick="openZodiacModal('zodiac', '원숭이')" class="zodiac-btn"><span class="zodiac-icon">🐵</span><span class="zodiac-label">원숭이</span></div>
                                 <div onclick="openZodiacModal('zodiac', '닭')" class="zodiac-btn"><span class="zodiac-icon">🐔</span><span class="zodiac-label">닭</span></div>
                                 <div onclick="openZodiacModal('zodiac', '개')" class="zodiac-btn"><span class="zodiac-icon">🐶</span><span class="zodiac-label">개</span></div>
-                                <div onclick="openZodiacModal('돼지', '돼지')" class="zodiac-btn"><span class="zodiac-icon">🐷</span><span class="zodiac-label">돼지</span></div>
+                                <div onclick="openZodiacModal('zodiac', '돼지')" class="zodiac-btn"><span class="zodiac-icon">🐷</span><span class="zodiac-label">돼지</span></div>
                             </div>
 
                             <div id="gridStarBox" class="zodiac-grid-2x6 hidden">
@@ -667,7 +666,7 @@
                     <button onclick="resetProfileAndReinput()" style="background: #F1F5F9; border: none; font-size: 13px; font-weight: 700; color: #334155; padding: 8px 14px; border-radius: 12px; cursor: pointer;">정보 수정</button>
                 </div>
 
-                <!-- [수정 복구] 구매한 감명서 보관함 -->
+                <!-- 구매한 감명서 보관함 -->
                 <div class="card" style="text-align: left;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                         <h3 style="font-size: 15px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif;">📂 구매한 감명서 보관함</h3>
@@ -789,7 +788,7 @@
             <h3 style="font-size: 16.5px; font-weight: 800; color: #0F172A;">타로 카드 추가 열람</h3>
             <p style="font-size: 13.5px; color: #64748B; line-height: 1.6;">오늘의 1회 무료 타로를 확인하셨습니다.<br><strong>10 복채</strong>로 추가 카드를 확인하시겠습니까?</p>
             <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px;">
-                <button onclick="confirmTarotByCoin()" style="background: #2D6A4F; color: white; border: none; font-size: 14.5px; font-weight: 800; padding: 13px; border-radius: 14px; cursor: pointer;">
+                <button onclick="confirmTarotByCoin()" style="background: #2D6A4F; color: white; border: none; font-size: 14.5px; font-weight: 800; padding: 13px; border-radius: 12px; cursor: pointer;">
                     <span class="btn-coin-icon-white"></span> 10 복채로 열람하기
                 </button>
                 <button onclick="closeTarotChoiceModal()" style="background: #F1F5F9; border: none; font-size: 13.5px; font-weight: 700; color: #475569; padding: 11px; border-radius: 14px; cursor: pointer;">
@@ -826,7 +825,7 @@
         </div>
     </div>
 
-    <!-- [4종 풀패키지 복구] 복채 충전소 모달 -->
+    <!-- 4종 풀패키지 복채 충전소 모달 -->
     <div id="chargeModal" class="modal-bg hidden">
         <div class="modal-content" style="max-width: 340px;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 10px;">
@@ -894,7 +893,7 @@
         </div>
     </div>
 
-    <!-- [신규] PG 모의 결제 팝업창 모달 -->
+    <!-- PG 모의 결제 팝업창 모달 -->
     <div id="pgModal" class="modal-bg hidden">
         <div class="modal-content" style="max-width: 340px; text-align: left;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 8px;">
@@ -1000,9 +999,9 @@
         }
 
         const TAROT_IMAGES = {
-            "0. THE FOOL (바보)": "https://upload.wikimedia.org/wikipedia/commons/9/90/RWS_Tarot_00_Fool.jpg",
-            "I. THE MAGICIAN (마법사)": "https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg",
-            "XIX. THE SUN (태양)": "https://upload.wikimedia.org/wikipedia/commons/1/17/RWS_Tarot_19_Sun.jpg"
+            "0. THE FOOL (바보)": "[https://upload.wikimedia.org/wikipedia/commons/9/90/RWS_Tarot_00_Fool.jpg](https://upload.wikimedia.org/wikipedia/commons/9/90/RWS_Tarot_00_Fool.jpg)",
+            "I. THE MAGICIAN (마법사)": "[https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg](https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg)",
+            "XIX. THE SUN (태양)": "[https://upload.wikimedia.org/wikipedia/commons/1/17/RWS_Tarot_19_Sun.jpg](https://upload.wikimedia.org/wikipedia/commons/1/17/RWS_Tarot_19_Sun.jpg)"
         };
 
         // [화려한 골드 타로 뒷면 복구]
@@ -1125,7 +1124,6 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // [수정] 탭 전환 함수
         function switchTab(tabId) {
             ['today', 'saju', 'theme', 'mypage'].forEach(t => {
                 const el = document.getElementById(`view-${t}`);
@@ -1294,7 +1292,7 @@
 
             document.getElementById('onboardingInputView').classList.add('hidden');
             
-            // [수정] 사주 정보 입력/수정 완료 시 항상 '오늘운세' 탭이 활성화되도록 완벽 연동
+            // 정보 수정 완료 시 항상 오늘운세 탭 활성화
             switchTab('today');
             document.getElementById('bottomNavBar').classList.remove('hidden');
             checkUnlockedStates();
@@ -1317,7 +1315,6 @@
 
         function closeTalismanModal() { document.getElementById('talismanModal').classList.add('hidden'); }
         
-        // [수정] 부적 다운로드 기능
         function downloadTalismanImage() {
             const svgElement = document.getElementById('svgTalismanMain');
             if (!svgElement) return;
@@ -1384,7 +1381,6 @@
             addCoin(3); 
         }
 
-        // [수정 보관함 저장 로직 결합] 리포트 열람 함수들
         function saveUnlockedReport(key, title, content) {
             const pKey = getProfileKey();
             const currentList = getUnlockedReports();
@@ -1512,7 +1508,6 @@
             saveUnlockedReport(themeKey, data.title, data.content);
         }
 
-        // [복구] 구매한 감명서 보관함 렌더링
         function renderUnlockedArchive() {
             const currentList = getUnlockedReports();
             const container = document.getElementById('unlockedArchiveList');
@@ -1600,7 +1595,6 @@
         function closeChargeStore() { document.getElementById('chargeModal').classList.add('hidden'); }
         function addCoin(amt) { currentCoin += amt; updateCoinDisplay(); closeChargeStore(); }
 
-        // [신규 PG 모의 결제]
         function openPgModal(coinAmt, price, itemName) {
             pendingCoinAmount = coinAmt;
             document.getElementById('pgItemName').innerText = itemName;
