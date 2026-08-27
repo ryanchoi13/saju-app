@@ -530,7 +530,6 @@
                                 <path d="M 0,90 C 30,85 45,72 60,70 C 85,67 105,32 130,32 C 155,32 170,62 190,60 C 215,58 230,26 245,28 C 265,30 280,42 300,44" fill="none" stroke="url(#fullCurveGradient)" stroke-width="3.8" stroke-linecap="round" />
                                 <line id="daewoonGuideLine" x1="130" y1="2" x2="130" y2="102" stroke="#94A3B8" stroke-width="1.5" stroke-dasharray="3 3" />
                                 
-                                <!-- [개선] 상단 현재 위치 태그: 2줄로 크고 명확하게 표시 -->
                                 <g transform="translate(60, -6)">
                                     <rect x="0" y="0" width="140" height="26" rx="6" fill="#FEF2F2" stroke="#FECDD3" stroke-width="1"/>
                                     <text id="daewoonTagText1" x="70" y="11" font-size="9" font-weight="700" fill="#DC2626" text-anchor="middle">📍 최정오 님의 현재 위치</text>
@@ -540,7 +539,6 @@
                                 <circle id="daewoonCurrentDot" cx="130" cy="32" r="6" fill="#EF4444" stroke="#FFFFFF" stroke-width="2.5" />
                             </svg>
 
-                            <!-- [개선] 하단 X축 나이 레이블: 40세 강조 제거 및 연회색 통일 -->
                             <div id="daewoonAgeLabels" style="display: grid; grid-template-columns: repeat(6, 1fr); text-align: center; font-size: 11.5px; color: #94A3B8; font-weight: 700; border-top: 1px solid #E2E8F0; padding-top: 8px;">
                                 <span>20세</span>
                                 <span>30세</span>
@@ -720,7 +718,7 @@
 
     </div>
 
-    <!-- 궁합 모달 -->
+    <!-- 궁합 상대방 정보 입력 모달 -->
     <div id="gunghapModal" class="modal-bg hidden">
         <div class="modal-content" style="max-width: 350px; text-align: left;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 8px;">
@@ -803,7 +801,7 @@
             <h3 style="font-size: 16.5px; font-weight: 800; color: #0F172A;">타로 카드 추가 열람</h3>
             <p style="font-size: 13.5px; color: #64748B; line-height: 1.6;">오늘의 1회 무료 타로를 확인하셨습니다.<br><strong>10 복채</strong>로 추가 카드를 확인하시겠습니까?</p>
             <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px;">
-                <button onclick="confirmTarotByCoin()" style="background: #2D6A4F; color: white; border: none; font-size: 14.5px; font-weight: 800; padding: 13px; border-radius: 14px; cursor: pointer;">
+                <button onclick="confirmTarotByCoin()" style="background: #2D6A4F; color: white; border: none; font-size: 14.5px; font-weight: 800; padding: 13px; border-radius: 12px; cursor: pointer;">
                     <span class="btn-coin-icon-white"></span> 10 복채로 열람하기
                 </button>
                 <button onclick="closeTarotChoiceModal()" style="background: #F1F5F9; border: none; font-size: 13.5px; font-weight: 700; color: #475569; padding: 11px; border-radius: 14px; cursor: pointer;">
@@ -1008,7 +1006,6 @@
             } catch(e) { return []; }
         }
 
-        // [정통 라이더 웨이트 고화질 타로 카드 일러스트 URL 매핑 & 에러 복구 핸들러]
         const TAROT_IMAGES = {
             "0. THE FOOL (바보)": "[https://upload.wikimedia.org/wikipedia/commons/9/90/RWS_Tarot_00_Fool.jpg](https://upload.wikimedia.org/wikipedia/commons/9/90/RWS_Tarot_00_Fool.jpg)",
             "I. THE MAGICIAN (마법사)": "[https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg](https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg)",
@@ -1160,7 +1157,7 @@
                 btnStar.className = 'sub-tab-btn active';
                 btnZodiac.className = 'sub-tab-btn';
                 gridStar.classList.remove('hidden');
-                gridZodiac.classList.add('hidden');
+                gridStar.classList.add('hidden');
             }
         }
 
@@ -1211,7 +1208,6 @@
             return jjList.map(j => `<span class="badge-jjg elem-${j.elem}">${j.char}</span>`).join('');
         }
 
-        // [개선] 10년 생애 대운 그래프 나이 포인터 연동 & 2줄 위치 태그
         function updateDaewoonGraphByAge(age) {
             currentUserAge = age;
             const tag1 = document.getElementById('daewoonTagText1');
@@ -1325,7 +1321,6 @@
 
         function closeTalismanModal() { document.getElementById('talismanModal').classList.add('hidden'); }
         
-        // [완벽한 상하좌우 비율 보정 부적 다운로드]
         function downloadTalismanImage() {
             const svgElement = document.getElementById('svgTalismanMain');
             if (!svgElement) return;
@@ -1335,7 +1330,6 @@
             const ctx = canvas.getContext('2d');
             const img = new Image();
 
-            // 완벽한 140:240 (7:12) 종횡비 보정
             canvas.width = 420;
             canvas.height = 720;
 
@@ -1360,7 +1354,6 @@
             img.src = blobURL;
         }
 
-        // [정통 라이더 웨이트 일러스트 타로 카드 뒤집기]
         async function handleTarotDraw(slot) {
             const res = await fetch(`/api/daily-tarot?slot=${slot}`);
             const card = await res.json();
@@ -1368,7 +1361,6 @@
             const front = document.getElementById(`front${slot}`);
             const imgUrl = TAROT_IMAGES[card.name] || TAROT_IMAGES["0. THE FOOL (바보)"];
 
-            // 정통 라이더 웨이트 카드 이미지 삽입
             front.innerHTML = `
                 <img src="${imgUrl}" 
                      alt="${card.name}" 
@@ -1481,19 +1473,19 @@
                 titleEl.innerText = "💖 현재 애정 상태를 선택해 주세요";
                 modalBox.innerHTML = `
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                        <label><input type="radio" name="optM" value="솔로" checked> 솔로</label>
-                        <label><input type="radio" name="optM" value="썸/짝사랑"> 썸/짝사랑</label>
-                        <label><input type="radio" name="optM" value="연애중"> 연애중</label>
-                        <label><input type="radio" name="optM" value="기혼"> 기혼</label>
+                        <label style="padding:10px; border:1px solid #E2E8F0; border-radius:8px; background:white; cursor:pointer;"><input type="radio" name="optM" value="솔로" checked> 솔로 (미혼)</label>
+                        <label style="padding:10px; border:1px solid #E2E8F0; border-radius:8px; background:white; cursor:pointer;"><input type="radio" name="optM" value="썸/짝사랑"> 썸 / 짝사랑</label>
+                        <label style="padding:10px; border:1px solid #E2E8F0; border-radius:8px; background:white; cursor:pointer;"><input type="radio" name="optM" value="연애중"> 연애중</label>
+                        <label style="padding:10px; border:1px solid #E2E8F0; border-radius:8px; background:white; cursor:pointer;"><input type="radio" name="optM" value="기혼"> 기혼 (부부)</label>
                     </div>`;
             } else if (key === 'business') {
                 titleEl.innerText = "🏢 현재 직업/사업 상태를 선택해 주세요";
                 modalBox.innerHTML = `
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                        <label><input type="radio" name="optM" value="직장인" checked> 직장인</label>
-                        <label><input type="radio" name="optM" value="취업/이직"> 취업/이직</label>
-                        <label><input type="radio" name="optM" value="사업가"> 사업가</label>
-                        <label><input type="radio" name="optM" value="창업"> 창업</label>
+                        <label style="padding:10px; border:1px solid #E2E8F0; border-radius:8px; background:white; cursor:pointer;"><input type="radio" name="optM" value="직장인" checked> 직장인 (승진/처세)</label>
+                        <label style="padding:10px; border:1px solid #E2E8F0; border-radius:8px; background:white; cursor:pointer;"><input type="radio" name="optM" value="취업/이직"> 취업 / 이직 준비</label>
+                        <label style="padding:10px; border:1px solid #E2E8F0; border-radius:8px; background:white; cursor:pointer;"><input type="radio" name="optM" value="사업가"> 사업가 (매출/확장)</label>
+                        <label style="padding:10px; border:1px solid #E2E8F0; border-radius:8px; background:white; cursor:pointer;"><input type="radio" name="optM" value="창업"> 창업 (신규 스타트업)</label>
                     </div>`;
             }
             document.getElementById('themeSelectModal').classList.remove('hidden');
