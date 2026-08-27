@@ -58,19 +58,29 @@
         .bio-pill-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
         .bio-pill-cell { background: #F8FAFC; border-radius: 10px; padding: 8px 6px; text-align: center; border: 1px solid #E2E8F0; }
 
-        .zodiac-grid-2x6 { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
+        /* [신규] 아코디언 서랍 카드 스타일 */
+        .drawer-card { background: #FFFFFF; border-radius: 18px; border: 1px solid #E2E8F0; overflow: hidden; transition: all 0.25s ease; }
+        .drawer-header { padding: 16px 18px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; background: #FFFFFF; user-select: none; }
+        .drawer-header:hover { background: #F8FAFC; }
+        .drawer-title-box { display: flex; align-items: center; gap: 10px; }
+        .drawer-icon-circle { width: 36px; height: 36px; border-radius: 10px; background: #F1F5F9; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+        .drawer-title { font-size: 15px; font-weight: 800; color: #0F172A; }
+        .drawer-sub { font-size: 12px; color: #64748B; margin-top: 2px; }
+        .drawer-arrow { font-size: 13px; color: #94A3B8; font-weight: 800; transition: transform 0.3s ease; }
+        .drawer-card.open .drawer-arrow { transform: rotate(180deg); color: #2D6A4F; }
+        .drawer-body { padding: 0 16px 16px 16px; border-top: 1px solid #F1F5F9; }
+
+        .zodiac-grid-2x6 { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; margin-top: 8px; }
         .zodiac-btn { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 8px 2px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; }
         .zodiac-btn:hover, .zodiac-btn:active { background: #EBF5EE; border-color: #86EFAC; transform: translateY(-1px); }
         .zodiac-icon { font-size: 19px; line-height: 1.2; }
         .zodiac-label { font-size: 11px; font-weight: 700; color: #334155; margin-top: 2px; }
 
-        .sub-tab-box { display: flex; background: #F1F5F9; border-radius: 12px; padding: 3px; gap: 4px; margin-bottom: 12px; }
+        .sub-tab-box { display: flex; background: #F1F5F9; border-radius: 12px; padding: 3px; gap: 4px; margin-top: 12px; margin-bottom: 8px; }
         .sub-tab-btn { flex: 1; padding: 8px; font-size: 13px; font-weight: 700; color: #64748B; border: none; background: transparent; border-radius: 8px; cursor: pointer; }
         .sub-tab-btn.active { background: #FFFFFF; color: #111D1E; box-shadow: 0 1px 2px rgba(0,0,0,0.06); }
 
-        .ad-slot-box { background: #F8FAFC; border: 1px dashed #CBD5E1; border-radius: 14px; padding: 12px; text-align: center; color: #94A3B8; font-size: 12px; font-weight: 600; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 64px; }
-
-        .tarot-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+        .tarot-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 12px; }
         .tarot-wrapper { perspective: 1000px; aspect-ratio: 2/3; cursor: pointer; }
         .flipper { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; transition: transform 0.6s ease; border-radius: 10px; }
         .flipper.flipped { transform: rotateY(180deg); }
@@ -78,8 +88,8 @@
         .card-back { background: #111D1E; border: 2px solid #D4AF37; box-shadow: 0 4px 8px rgba(0,0,0,0.2); overflow: hidden; }
         .card-front { transform: rotateY(180deg); background: white; overflow: hidden; border: 2px solid #D4AF37; }
 
-        .talisman-banner { background: linear-gradient(135deg, #FFFDF5 0%, #FFFBEB 100%); border: 2px solid #FCD34D; border-radius: 20px; padding: 20px; text-align: center; display: flex; flex-direction: column; gap: 14px; }
-        .talisman-art { height: 130px; background: rgba(254,243,199,0.5); border-radius: 16px; border: 1px solid rgba(253,230,138,0.8); display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+        .talisman-banner { background: linear-gradient(135deg, #FFFDF5 0%, #FFFBEB 100%); border: 2px solid #FCD34D; border-radius: 16px; padding: 16px; text-align: center; display: flex; flex-direction: column; gap: 12px; margin-top: 12px; }
+        .talisman-art { height: 120px; background: rgba(254,243,199,0.5); border-radius: 14px; border: 1px solid rgba(253,230,138,0.8); display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
 
         .teaser-blur-box { background: #FFFFFF; border: 1.5px solid #FCD34D; border-radius: 18px; padding: 16px; text-align: left; position: relative; overflow: hidden; margin-bottom: 12px; }
         .teaser-blur-text { filter: blur(4px); user-select: none; color: #64748B; font-size: 13.5px; line-height: 1.7; }
@@ -162,9 +172,10 @@
                 <button onclick="startSajuAnalysis()" class="btn-primary">정밀 감명서 발행하기 ✨</button>
             </div>
 
-            <!-- 탭 1: 오늘운세 -->
+            <!-- 탭 1: 오늘운세 (위계 정리 완료) -->
             <div id="view-today" class="tab-view hidden">
                 
+                <!-- 1. 사주 MBTI -->
                 <div class="mbti-card">
                     <div class="mbti-top">
                         <div id="mbtiAnimalIcon" class="mbti-icon">🐶</div>
@@ -176,6 +187,7 @@
                     </div>
                 </div>
 
+                <!-- 2. 오늘의 일진 배너 -->
                 <div class="daily-banner">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
                         <span style="font-size: 13px; color: #FDE68A;">오늘의 일진</span>
@@ -185,6 +197,7 @@
                     <div id="resAdvice" style="font-size: 13.5px; color: #E2E8F0; font-weight: 400; line-height: 1.65; text-align: left;"></div>
                 </div>
 
+                <!-- 3. 행운 요소 6칸 -->
                 <div class="grid-2">
                     <div class="grid-cell"><span style="font-size: 12px; color: #94A3B8; display: block;">🎨 행운의 색상</span><p id="resColor" style="font-weight: 700; margin-top: 2px; font-size: 14px;">스노우 화이트 / 실버</p></div>
                     <div class="grid-cell"><span style="font-size: 12px; color: #94A3B8; display: block;">🔢 행운의 숫자</span><p id="resNumber" style="font-weight: 700; margin-top: 2px; font-size: 14px;">4, 9</p></div>
@@ -194,13 +207,13 @@
                     <div class="grid-cell"><span style="font-size: 12px; color: #94A3B8; display: block;">💡 마인드 처세</span><p id="resMindset" style="font-weight: 700; font-size: 13px; margin-top: 2px;">맺고 끊음을 명확히 대화하기</p></div>
                 </div>
 
-                <!-- 오늘의 개운 실천 액션 -->
+                <!-- 4. 오늘의 개운 실천 액션 -->
                 <div class="action-card">
                     <span style="font-weight: 800; color: #78350F; display: block; margin-bottom: 3px; font-size: 14.5px;">✨ 오늘의 개운(開運) 실천 액션</span>
                     <p id="resGaewoon" style="color: #92400E; font-weight: 500; font-size: 14px; line-height: 1.6;">오늘 완료해야 할 우선순위 3가지 메모하기</p>
                 </div>
 
-                <!-- 곡선 파동형 바이오리듬 카드 -->
+                <!-- 5. 생체 에너지 바이오리듬 (곡선형 그래프) -->
                 <div class="biorhythm-card">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                         <div>
@@ -246,102 +259,122 @@
                     </div>
                 </div>
 
-                <!-- 오늘의 타로 -->
-                <div class="card" style="padding: 16px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                        <div style="text-align: left;">
-                            <h4 style="font-size: 14px; font-weight: 800;">🔮 오늘의 타로 (1일 1회 무료)</h4>
-                            <p style="font-size: 12px; color: #64748B;">카드를 골라 오늘의 조언을 확인하세요</p>
-                        </div>
-                        <span style="font-size: 11px; background: #F1F5F9; color: #475569; padding: 3px 8px; border-radius: 9999px; font-weight: 700;">1회 무료</span>
-                    </div>
-
-                    <div class="tarot-grid">
-                        <div onclick="handleTarotDraw(1)" class="tarot-wrapper">
-                            <div id="flipper1" class="flipper">
-                                <div class="card-face card-back" id="tarotSvgSlot1"></div>
-                                <div id="front1" class="card-face card-front"></div>
-                            </div>
-                        </div>
-                        <div onclick="handleTarotDraw(2)" class="tarot-wrapper">
-                            <div id="flipper2" class="flipper">
-                                <div class="card-face card-back" id="tarotSvgSlot2"></div>
-                                <div id="front2" class="card-face card-front"></div>
-                            </div>
-                        </div>
-                        <div onclick="handleTarotDraw(3)" class="tarot-wrapper">
-                            <div id="flipper3" class="flipper">
-                                <div class="card-face card-back" id="tarotSvgSlot3"></div>
-                                <div id="front3" class="card-face card-front"></div>
-                            </div>
-                        </div>
-                    </div>
+                <!-- 🗂️ 6. 스페셜 운세 & 개운 도구 서랍 (원터치 확장형 UI) -->
+                <div style="display: flex; flex-direction: column; gap: 10px;">
                     
-                    <div id="tarotResultBox" class="hidden"></div>
-                </div>
-
-                <!-- 맞춤 경면주사 부적 -->
-                <div class="talisman-banner">
-                    <div style="display: flex; justify-content: center; align-items: center; gap: 6px;">
-                        <span>🔥</span>
-                        <h3 id="talismanBannerHeader" style="font-size: 16.5px; font-weight: 800; color: #78350F; font-family: 'Noto Serif KR', serif;">오늘의 맞춤 경면주사 부적</h3>
-                        <span>🌊</span>
+                    <!-- 서랍 1: 오늘의 타로 뽑기 -->
+                    <div id="drawerTarot" class="drawer-card">
+                        <div class="drawer-header" onclick="toggleDrawer('drawerTarot')">
+                            <div class="drawer-title-box">
+                                <div class="drawer-icon-circle">🔮</div>
+                                <div style="text-align: left;">
+                                    <h4 class="drawer-title">오늘의 타로 카드</h4>
+                                    <p class="drawer-sub">1일 1회 무료 카드 뽑기</p>
+                                </div>
+                            </div>
+                            <span class="drawer-arrow">▼</span>
+                        </div>
+                        <div class="drawer-body hidden" id="drawerBodyTarot">
+                            <div class="tarot-grid">
+                                <div onclick="handleTarotDraw(1)" class="tarot-wrapper">
+                                    <div id="flipper1" class="flipper">
+                                        <div class="card-face card-back" id="tarotSvgSlot1"></div>
+                                        <div id="front1" class="card-face card-front"></div>
+                                    </div>
+                                </div>
+                                <div onclick="handleTarotDraw(2)" class="tarot-wrapper">
+                                    <div id="flipper2" class="flipper">
+                                        <div class="card-face card-back" id="tarotSvgSlot2"></div>
+                                        <div id="front2" class="card-face card-front"></div>
+                                    </div>
+                                </div>
+                                <div onclick="handleTarotDraw(3)" class="tarot-wrapper">
+                                    <div id="flipper3" class="flipper">
+                                        <div class="card-face card-back" id="tarotSvgSlot3"></div>
+                                        <div id="front3" class="card-face card-front"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="tarotResultBox" class="hidden"></div>
+                        </div>
                     </div>
 
-                    <div class="talisman-art">
-                        <div id="talismanBannerPreview" style="width: 72px; height: 110px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.15)); transform: rotate(1.5deg);"></div>
+                    <!-- 서랍 2: 맞춤 경면주사 부적 -->
+                    <div id="drawerTalisman" class="drawer-card">
+                        <div class="drawer-header" onclick="toggleDrawer('drawerTalisman')">
+                            <div class="drawer-title-box">
+                                <div class="drawer-icon-circle">🎴</div>
+                                <div style="text-align: left;">
+                                    <h4 class="drawer-title">오늘의 맞춤 부적</h4>
+                                    <p class="drawer-sub">나의 오행 맞춤 수제 비급 부적</p>
+                                </div>
+                            </div>
+                            <span class="drawer-arrow">▼</span>
+                        </div>
+                        <div class="drawer-body hidden" id="drawerBodyTalisman">
+                            <div class="talisman-banner">
+                                <h3 id="talismanBannerHeader" style="font-size: 15px; font-weight: 800; color: #78350F; font-family: 'Noto Serif KR', serif;">오늘의 맞춤 경면주사 부적</h3>
+                                <div class="talisman-art">
+                                    <div id="talismanBannerPreview" style="width: 72px; height: 110px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.15)); transform: rotate(1.5deg);"></div>
+                                </div>
+                                <p style="font-size: 12px; color: #92400E;">매일 밤 12시 정각에 새로운 기운으로 업데이트됩니다.</p>
+                                <button onclick="openTalismanModal()" style="width: 100%; background: #D97706; color: white; border: none; font-size: 14px; font-weight: 800; padding: 12px; border-radius: 14px; cursor: pointer;">
+                                    🎴 부적 크게보기 및 다운로드
+                                </button>
+                            </div>
+                        </div>
                     </div>
 
-                    <div>
-                        <p id="talismanBannerSub" style="font-size: 14px; font-weight: 700; color: #78350F;">나의 오늘 사주 원국에 맞춘 수제 비급 부적</p>
-                        <p style="font-size: 12px; color: #92400E; margin-top: 2px;">매일 12시 정각에 새로운 기운으로 업데이트됩니다!</p>
+                    <!-- 서랍 3: 12간지 띠별 & 12별자리 운세 -->
+                    <div id="drawerZodiac" class="drawer-card">
+                        <div class="drawer-header" onclick="toggleDrawer('drawerZodiac')">
+                            <div class="drawer-title-box">
+                                <div class="drawer-icon-circle">🐭</div>
+                                <div style="text-align: left;">
+                                    <h4 class="drawer-title">12간지 띠별 & 별자리 운세</h4>
+                                    <p class="drawer-sub">지인·가족의 운세 실시간 탐색</p>
+                                </div>
+                            </div>
+                            <span class="drawer-arrow">▼</span>
+                        </div>
+                        <div class="drawer-body hidden" id="drawerBodyZodiac">
+                            <div class="sub-tab-box">
+                                <button type="button" onclick="switchZodiacSubTab('zodiac')" id="btnSubZodiac" class="sub-tab-btn active">🐭 12간지 띠별</button>
+                                <button type="button" onclick="switchZodiacSubTab('star')" id="btnSubStar" class="sub-tab-btn">♈ 12별자리</button>
+                            </div>
+
+                            <div id="gridZodiacBox" class="zodiac-grid-2x6">
+                                <div onclick="openZodiacModal('zodiac', '쥐')" class="zodiac-btn"><span class="zodiac-icon">🐭</span><span class="zodiac-label">쥐</span></div>
+                                <div onclick="openZodiacModal('zodiac', '소')" class="zodiac-btn"><span class="zodiac-icon">🐮</span><span class="zodiac-label">소</span></div>
+                                <div onclick="openZodiacModal('zodiac', '호랑이')" class="zodiac-btn"><span class="zodiac-icon">🐯</span><span class="zodiac-label">호랑이</span></div>
+                                <div onclick="openZodiacModal('zodiac', '토끼')" class="zodiac-btn"><span class="zodiac-icon">🐰</span><span class="zodiac-label">토끼</span></div>
+                                <div onclick="openZodiacModal('zodiac', '용')" class="zodiac-btn"><span class="zodiac-icon">🐲</span><span class="zodiac-label">용</span></div>
+                                <div onclick="openZodiacModal('zodiac', '뱀')" class="zodiac-btn"><span class="zodiac-icon">🐍</span><span class="zodiac-label">뱀</span></div>
+                                <div onclick="openZodiacModal('zodiac', '말')" class="zodiac-btn"><span class="zodiac-icon">🐴</span><span class="zodiac-label">말</span></div>
+                                <div onclick="openZodiacModal('zodiac', '양')" class="zodiac-btn"><span class="zodiac-icon">🐑</span><span class="zodiac-label">양</span></div>
+                                <div onclick="openZodiacModal('zodiac', '원숭이')" class="zodiac-btn"><span class="zodiac-icon">🐵</span><span class="zodiac-label">원숭이</span></div>
+                                <div onclick="openZodiacModal('zodiac', '닭')" class="zodiac-btn"><span class="zodiac-icon">🐔</span><span class="zodiac-label">닭</span></div>
+                                <div onclick="openZodiacModal('zodiac', '개')" class="zodiac-btn"><span class="zodiac-icon">🐶</span><span class="zodiac-label">개</span></div>
+                                <div onclick="openZodiacModal('zodiac', '돼지')" class="zodiac-btn"><span class="zodiac-icon">🐷</span><span class="zodiac-label">돼지</span></div>
+                            </div>
+
+                            <div id="gridStarBox" class="zodiac-grid-2x6 hidden">
+                                <div onclick="openZodiacModal('star', '물병자리')" class="zodiac-btn"><span class="zodiac-icon">♒</span><span class="zodiac-label">물병</span></div>
+                                <div onclick="openZodiacModal('star', '물고기자리')" class="zodiac-btn"><span class="zodiac-icon">♓</span><span class="zodiac-label">물고기</span></div>
+                                <div onclick="openZodiacModal('star', '양자리')" class="zodiac-btn"><span class="zodiac-icon">♈</span><span class="zodiac-label">양</span></div>
+                                <div onclick="openZodiacModal('star', '황소자리')" class="zodiac-btn"><span class="zodiac-icon">♉</span><span class="zodiac-label">황소</span></div>
+                                <div onclick="openZodiacModal('star', '쌍둥이자리')" class="zodiac-btn"><span class="zodiac-icon">♊</span><span class="zodiac-label">쌍둥이</span></div>
+                                <div onclick="openZodiacModal('star', '게자리')" class="zodiac-btn"><span class="zodiac-icon">♋</span><span class="zodiac-label">게</span></div>
+                                <div onclick="openZodiacModal('star', '사자자리')" class="zodiac-btn"><span class="zodiac-icon">♌</span><span class="zodiac-label">사자</span></div>
+                                <div onclick="openZodiacModal('star', '처녀자리')" class="zodiac-btn"><span class="zodiac-icon">♍</span><span class="zodiac-label">처녀</span></div>
+                                <div onclick="openZodiacModal('star', '천칭자리')" class="zodiac-btn"><span class="zodiac-icon">♎</span><span class="zodiac-label">천칭</span></div>
+                                <div onclick="openZodiacModal('star', '전갈자리')" class="zodiac-btn"><span class="zodiac-icon">♏</span><span class="zodiac-label">전갈</span></div>
+                                <div onclick="openZodiacModal('star', '사수자리')" class="zodiac-btn"><span class="zodiac-icon">♐</span><span class="zodiac-label">사수</span></div>
+                                <div onclick="openZodiacModal('star', '염소자리')" class="zodiac-btn"><span class="zodiac-icon">♑</span><span class="zodiac-label">염소</span></div>
+                            </div>
+                        </div>
                     </div>
 
-                    <button onclick="openTalismanModal()" style="width: 100%; background: #D97706; color: white; border: none; font-size: 14.5px; font-weight: 800; padding: 14px; border-radius: 16px; cursor: pointer; box-shadow: 0 4px 6px rgba(217,119,6,0.2);">
-                        🎴 맞춤 부적 열람 및 다운로드
-                    </button>
-                </div>
-
-                <!-- 12간지 띠별 / 12성좌 별자리 운세 -->
-                <div class="card" style="padding: 16px;">
-                    <div class="sub-tab-box">
-                        <button type="button" onclick="switchZodiacSubTab('zodiac')" id="btnSubZodiac" class="sub-tab-btn active">🐭 12간지 띠별 운세</button>
-                        <button type="button" onclick="switchZodiacSubTab('star')" id="btnSubStar" class="sub-tab-btn">♈ 12별자리 운세</button>
-                    </div>
-
-                    <div id="gridZodiacBox" class="zodiac-grid-2x6">
-                        <div onclick="openZodiacModal('zodiac', '쥐')" class="zodiac-btn"><span class="zodiac-icon">🐭</span><span class="zodiac-label">쥐</span></div>
-                        <div onclick="openZodiacModal('zodiac', '소')" class="zodiac-btn"><span class="zodiac-icon">🐮</span><span class="zodiac-label">소</span></div>
-                        <div onclick="openZodiacModal('zodiac', '호랑이')" class="zodiac-btn"><span class="zodiac-icon">🐯</span><span class="zodiac-label">호랑이</span></div>
-                        <div onclick="openZodiacModal('zodiac', '토끼')" class="zodiac-btn"><span class="zodiac-icon">🐰</span><span class="zodiac-label">토끼</span></div>
-                        <div onclick="openZodiacModal('zodiac', '용')" class="zodiac-btn"><span class="zodiac-icon">🐲</span><span class="zodiac-label">용</span></div>
-                        <div onclick="openZodiacModal('zodiac', '뱀')" class="zodiac-btn"><span class="zodiac-icon">🐍</span><span class="zodiac-label">뱀</span></div>
-                        <div onclick="openZodiacModal('zodiac', '말')" class="zodiac-btn"><span class="zodiac-icon">🐴</span><span class="zodiac-label">말</span></div>
-                        <div onclick="openZodiacModal('zodiac', '양')" class="zodiac-btn"><span class="zodiac-icon">🐑</span><span class="zodiac-label">양</span></div>
-                        <div onclick="openZodiacModal('zodiac', '원숭이')" class="zodiac-btn"><span class="zodiac-icon">🐵</span><span class="zodiac-label">원숭이</span></div>
-                        <div onclick="openZodiacModal('zodiac', '닭')" class="zodiac-btn"><span class="zodiac-icon">🐔</span><span class="zodiac-label">닭</span></div>
-                        <div onclick="openZodiacModal('zodiac', '개')" class="zodiac-btn"><span class="zodiac-icon">🐶</span><span class="zodiac-label">개</span></div>
-                        <div onclick="openZodiacModal('zodiac', '돼지')" class="zodiac-btn"><span class="zodiac-icon">🐷</span><span class="zodiac-label">돼지</span></div>
-                    </div>
-
-                    <div id="gridStarBox" class="zodiac-grid-2x6 hidden">
-                        <div onclick="openZodiacModal('star', '물병자리')" class="zodiac-btn"><span class="zodiac-icon">♒</span><span class="zodiac-label">물병</span></div>
-                        <div onclick="openZodiacModal('star', '물고기자리')" class="zodiac-btn"><span class="zodiac-icon">♓</span><span class="zodiac-label">물고기</span></div>
-                        <div onclick="openZodiacModal('star', '양자리')" class="zodiac-btn"><span class="zodiac-icon">♈</span><span class="zodiac-label">양</span></div>
-                        <div onclick="openZodiacModal('star', '황소자리')" class="zodiac-btn"><span class="zodiac-icon">♉</span><span class="zodiac-label">황소</span></div>
-                        <div onclick="openZodiacModal('star', '쌍둥이자리')" class="zodiac-btn"><span class="zodiac-icon">♊</span><span class="zodiac-label">쌍둥이</span></div>
-                        <div onclick="openZodiacModal('star', '게자리')" class="zodiac-btn"><span class="zodiac-icon">♋</span><span class="zodiac-label">게</span></div>
-                        <div onclick="openZodiacModal('star', '사자자리')" class="zodiac-btn"><span class="zodiac-icon">♌</span><span class="zodiac-label">사자</span></div>
-                        <div onclick="openZodiacModal('star', '처녀자리')" class="zodiac-btn"><span class="zodiac-icon">♍</span><span class="zodiac-label">처녀</span></div>
-                        <div onclick="openZodiacModal('star', '천칭자리')" class="zodiac-btn"><span class="zodiac-icon">♎</span><span class="zodiac-label">천칭</span></div>
-                        <div onclick="openZodiacModal('star', '전갈자리')" class="zodiac-btn"><span class="zodiac-icon">♏</span><span class="zodiac-label">전갈</span></div>
-                        <div onclick="openZodiacModal('star', '사수자리')" class="zodiac-btn"><span class="zodiac-icon">♐</span><span class="zodiac-label">사수</span></div>
-                        <div onclick="openZodiacModal('star', '염소자리')" class="zodiac-btn"><span class="zodiac-icon">♑</span><span class="zodiac-label">염소</span></div>
-                    </div>
-                </div>
-
-                <div class="ad-slot-box">
-                    <span>📢 광고 영역 (Google AdSense / Kakao AdFit 슬롯 1)</span>
                 </div>
 
             </div>
@@ -349,7 +382,6 @@
             <!-- 탭 2: 정통사주 -->
             <div id="view-saju" class="tab-view hidden">
                 
-                <!-- 사주 명식표 -->
                 <div class="card" style="padding: 18px;">
                     <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 10px; margin-bottom: 14px;">
                         <div>
@@ -406,7 +438,6 @@
                         </div>
                     </div>
 
-                    <!-- 오행 실질 에너지 5단 막대 기둥 차트 -->
                     <div style="margin-top: 18px; text-align: left;">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                             <span style="font-size: 14px; font-weight: 800; color: #0F172A;">오행(五行) 실질 에너지 세력 분포</span>
@@ -457,22 +488,15 @@
                     </div>
                 </div>
 
-                <div class="ad-slot-box">
-                    <span>📢 광고 영역 (Google AdSense / Kakao AdFit 슬롯 2)</span>
-                </div>
-
                 <!-- 1. 자미두수 평생운세 -->
                 <div class="card" style="border: 2px solid #FCD34D;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                         <span style="font-size: 15px; font-weight: 800; font-family: 'Noto Serif KR', serif;">👑 자미두수 평생운세</span>
-                        <span style="font-size: 12px; background: #FEF3C7; color: #78350F; padding: 4px 10px; border-radius: 9999px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;">
-                            <span class="coin-icon-svg-inline"></span> 450 복채
-                        </span>
+                        <span style="font-size: 12px; background: #FEF3C7; color: #78350F; padding: 4px 10px; border-radius: 9999px; font-weight: 700;">450 복채</span>
                     </div>
 
                     <div style="background: #F8FAFC; border-radius: 18px; border: 1px solid #E2E8F0; padding: 14px 12px 10px; margin-bottom: 14px; text-align: left;">
                         <div style="font-size: 13px; font-weight: 700; color: #475569; margin-bottom: 8px;">📊 10년 생애 그래프</div>
-                        
                         <div style="position: relative; width: 100%; height: 118px;">
                             <svg viewBox="0 0 300 100" style="width: 100%; height: 85px; overflow: visible;">
                                 <defs>
@@ -483,19 +507,13 @@
                                         <stop offset="100%" stop-color="#059669" />
                                     </linearGradient>
                                 </defs>
-
-                                <path d="M 0,78 C 30,75 45,62 60,60 C 85,57 105,28 130,28 C 155,28 170,54 190,52 C 215,50 230,22 245,24 C 265,26 280,36 300,38" 
-                                      fill="none" stroke="url(#fullCurveGradient)" stroke-width="3.2" stroke-linecap="round" />
-
+                                <path d="M 0,78 C 30,75 45,62 60,60 C 85,57 105,28 130,28 C 155,28 170,54 190,52 C 215,50 230,22 245,24 C 265,26 280,36 300,38" fill="none" stroke="url(#fullCurveGradient)" stroke-width="3.2" stroke-linecap="round" />
                                 <line id="daewoonGuideLine" x1="130" y1="6" x2="130" y2="88" stroke="#94A3B8" stroke-width="1.2" stroke-dasharray="2.5 2.5" />
-
                                 <rect id="daewoonTagBox" x="60" y="-2" width="140" height="15" rx="4" fill="#FEF2F2" stroke="#FECDD3" stroke-width="0.8"/>
                                 <text id="daewoonTagText" x="130" y="9" font-size="8.5" font-weight="700" fill="#DC2626" text-anchor="middle">📍 최정오 님의 현재 위치 (49세)</text>
-
                                 <circle id="daewoonCurrentDot" cx="130" cy="28" r="5" fill="#EF4444" stroke="#FFFFFF" stroke-width="2" />
                             </svg>
-
-                            <div id="daewoonAgeLabels" style="display: grid; grid-template-columns: repeat(6, 1fr); text-align: center; font-size: 11px; color: #94A3B8; font-weight: 600; border-top: 1px solid #E2E8F0; padding-top: 6px; margin-top: -2px;">
+                            <div id="daewoonAgeLabels" style="display: grid; grid-template-columns: repeat(6, 1fr); text-align: center; font-size: 11px; color: #94A3B8; font-weight: 600; border-top: 1px solid #E2E8F0; padding-top: 6px;">
                                 <span id="lblAge1">20세</span>
                                 <span id="lblAge2">30세</span>
                                 <div id="lblAge3Box" style="display: flex; flex-direction: column; align-items: center; margin-top: -2px;">
@@ -509,7 +527,6 @@
                         </div>
                     </div>
 
-                    <!-- 블러 티저 프리뷰 -->
                     <div id="daewoonTeaserBox" class="teaser-blur-box">
                         <div class="teaser-blur-text">
                             <p><strong>Chapter 2. 현재 10년 대운 집중 감명:</strong> {name}님의 사주에 재성과 귀인이 합을 이루어 자산 규모가 수직 상승하는 전환점입니다. 인생 최대 대박 귀인은 [🔒 00띠]이며, 가장 큰 승부처는...</p>
@@ -527,19 +544,16 @@
                     </button>
                 </div>
 
-                <!-- 2. 2026 신년운세 & 토정비결 -->
+                <!-- 2. 2026 신년운세 -->
                 <div class="card" style="border: 2px solid #86EFAC;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                         <span style="font-size: 15px; font-weight: 800; color: #166534; font-family: 'Noto Serif KR', serif;">📅 2026 丙午년 총운 & 하반기 월별 가이드</span>
-                        <span style="font-size: 12px; background: #DCFCE7; color: #166534; padding: 4px 10px; border-radius: 9999px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;">
-                            <span class="coin-icon-svg-inline"></span> 300 복채
-                        </span>
+                        <span style="font-size: 12px; background: #DCFCE7; color: #166534; padding: 4px 10px; border-radius: 9999px; font-weight: 700;">300 복채</span>
                     </div>
                     <p style="font-size: 13px; color: #64748B; text-align: left; margin-bottom: 12px;">
                         2026 丙午년 1년 총운 풀이와 1월부터 12월까지 월별 정밀 토정비결 괘상 및 실전 처세 가이드(양력 기준)를 제공합니다.
                     </p>
 
-                    <!-- 블러 티저 프리뷰 -->
                     <div id="sinnianTeaserBox" class="teaser-blur-box">
                         <div class="teaser-blur-text">
                             <p><strong>Chapter 1. 2026년 세운 총론:</strong> 올해 가장 큰돈이 들어오는 황금의 달은 [🔒 0월]과 [00월]이며, 이직/계약수에서 결정적 기회가 찾아옵니다.</p>
@@ -559,16 +573,14 @@
 
             </div>
 
-            <!-- 탭 3: 궁합·테마 (정통 사주 궁합 킬러 카드 배치) -->
+            <!-- 탭 3: 궁합·테마 -->
             <div id="view-theme" class="tab-view hidden">
                 
-                <!-- [신규 탑재] 정통 사주 궁합 카드 -->
+                <!-- 정통 사주 궁합 카드 -->
                 <div class="card" style="border: 2px solid #FECDD3; background: #FFFDFD; text-align: left;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
                         <span style="font-size: 16px; font-weight: 800; color: #9F1239; font-family: 'Noto Serif KR', serif;">💞 정통 사주 궁합 감명</span>
-                        <span style="font-size: 12px; background: #FFE4E6; color: #BE123C; padding: 4px 10px; border-radius: 9999px; font-weight: 800;">
-                            350 복채
-                        </span>
+                        <span style="font-size: 12px; background: #FFE4E6; color: #BE123C; padding: 4px 10px; border-radius: 9999px; font-weight: 800;">350 복채</span>
                     </div>
                     <p style="font-size: 13.5px; color: #64748B; margin-bottom: 12px;">
                         연인·결혼, 동업·사업 파트너, 친구와의 천간합·지지합 및 오행 상생 밸런스를 1:1로 정밀 감명합니다.
@@ -581,7 +593,7 @@
                     </button>
                 </div>
 
-                <!-- 기존 4대 테마운세 -->
+                <!-- 4대 테마운세 -->
                 <div class="card" style="text-align: left;">
                     <p style="font-size: 16.5px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif;">💰 평생 재물운</p>
                     <p style="font-size: 13.5px; color: #64748B; margin-top: 3px;">자산 흐름 및 부동산/투자 성공 분석</p>
@@ -682,7 +694,7 @@
 
     </div>
 
-    <!-- [신규] 정통 사주 궁합 상대방 정보 입력 모달 -->
+    <!-- 궁합 상대방 정보 입력 모달 -->
     <div id="gunghapModal" class="modal-bg hidden">
         <div class="modal-content" style="max-width: 350px; text-align: left;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 8px;">
@@ -739,11 +751,9 @@
                     <h4 id="zodiacModalTitle" style="font-size: 15px; font-weight: 600; color: #0F172A; margin-bottom: 4px; line-height: 1.45;">총평</h4>
                     <p id="zodiacModalOverview" style="font-size: 14px; color: #475569; line-height: 1.7;"></p>
                 </div>
-
                 <div style="border-top: 1px solid #F1F5F9; padding-top: 10px;">
                     <div id="zodiacYearTipsBox"></div>
                 </div>
-
                 <div id="zodiacExtraInfo" style="font-size: 13px; color: #2D6A4F; font-weight: 600; border-top: 1px dashed #E2E8F0; padding-top: 8px;"></div>
             </div>
 
@@ -791,7 +801,7 @@
             </div>
 
             <div style="display: flex; gap: 8px;">
-                <button onclick="downloadTalismanImage()" style="flex: 1; background: #D97706; color: white; border: none; font-size: 13.5px; font-weight: 800; padding: 12px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px;">
+                <button onclick="downloadTalismanImage()" style="flex: 1; background: #D97706; color: white; border: none; font-size: 13.5px; font-weight: 800; padding: 12px; border-radius: 12px; cursor: pointer;">
                     📥 부적 다운로드
                 </button>
                 <button onclick="closeTalismanModal()" style="background: #E2E8F0; color: #334155; border: none; font-size: 13.5px; font-weight: 700; padding: 12px 18px; border-radius: 12px; cursor: pointer;">
@@ -891,6 +901,22 @@
         let drawnTarotCards = {};
         let currentZodiacData = null;
         let pendingTarotSlot = null;
+
+        // [신규] 아코디언 서랍 토글 함수
+        function toggleDrawer(drawerId) {
+            const card = document.getElementById(drawerId);
+            const body = card.querySelector('.drawer-body');
+            if (!body) return;
+
+            const isOpen = card.classList.contains('open');
+            if (isOpen) {
+                card.classList.remove('open');
+                body.classList.add('hidden');
+            } else {
+                card.classList.add('open');
+                body.classList.remove('hidden');
+            }
+        }
 
         function getGoldCoinSvg(size = 16, color = "#F59E0B") {
             return `<svg viewBox="0 0 20 20" width="${size}" height="${size}" style="display:inline-block; vertical-align:middle; flex-shrink:0;">
@@ -1514,7 +1540,6 @@
             });
         }
 
-        // [신규] 정통 사주 궁합 모달 열기 & 결제 열람
         function openGunghapInputModal() {
             document.getElementById('gunghapModal').classList.remove('hidden');
         }
