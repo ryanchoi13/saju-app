@@ -7,11 +7,10 @@ from typing import Optional
 import os
 import random
 
-app = FastAPI(title="운세의 신 정통 명리학 엔진 - Mode 2 Production", version="29.0.0")
+app = FastAPI(title="운세의 신 정통 명리학 엔진 - Mode 2 Final", version="30.0.0")
 
 CHEONGAN_HANJA = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
 JIJI_HANJA = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"]
-
 YANG_STEMS = ["甲", "丙", "戊", "庚", "壬"]
 
 CHEONGAN_ELEMENTS = {
@@ -60,6 +59,7 @@ STAR_SIGNS = [
     {"name": "물고기자리", "icon": "♓", "period": "02.19 ~ 03.20"},
     {"name": "양자리", "icon": "♈", "period": "03.21 ~ 04.19"},
     {"name": "황소자리", "icon": "♉", "period": "04.20 ~ 05.20"},
+    {"name": "쌍둥이자리", "icon": "```python:main.py
     {"name": "쌍둥이자리", "icon": "♊", "period": "05.21 ~ 06.21"},
     {"name": "게자리", "icon": "♋", "period": "06.22 ~ 07.22"},
     {"name": "사자자리", "icon": "♌", "period": "07.23 ~ 08.22"},
@@ -79,7 +79,7 @@ TALISMAN_OHEANG_MAP = {
 }
 
 TAROT_CARDS = [
-    {"name": "0. THE FOOL (바보)", "keyword": "새로운 시작 · 순수한 열정 · 무한한 잠재력", "symbolism": "절벽 끝에 선 순수한 영혼으로 무한한 가능성을 상징합니다.", "fortune_reading_male": "오랫동안 머뭇거리던 사업이나 프로젝트의 시작 단추를 꿰기에 최적의 날입니다.", "fortune_reading_female": "새로운 인연이나 마음속 염원하던 일의 반가운 첫걸음이 시작됩니다.", "advice": "새로운 제안에 열린 마음을 가지세요.", "action_tip": "떠오르는 아이디어를 즉시 메모하세요."},
+    {"name": "0. THE FOOL (바보)", "keyword": "새로운 시작 · 순수한 열정 · 무한한 잠재력", "symbolism": "절벽 끝에 선 순수한 영혼으로 무한한 가능성을 상징합니다.", "fortune_reading_male": "오랫동안 머뭇거리던 사업이나 프로젝트의 시작 단추를 꿰기에 최적의 날입니다. 주도적으로 추진하세요.", "fortune_reading_female": "새로운 인연이나 마음속 염원하던 일의 반가운 첫걸음이 시작됩니다. 직관을 믿어보세요.", "advice": "새로운 제안에 열린 마음을 가지세요.", "action_tip": "떠오르는 아이디어를 즉시 메모하세요."},
     {"name": "I. THE MAGICIAN (마법사)", "keyword": "창조적 역량 · 완벽한 주도권 · 실력 발휘", "symbolism": "모든 도구를 통제하는 지혜를 뜻합니다.", "fortune_reading_male": "전문 실력과 언변이 빛을 발하여 협상에서 판을 완벽히 리드합니다.", "fortune_reading_female": "능숙한 대인관계 능력으로 주변 사람들을 내 편으로 만듭니다.", "advice": "자신의 생각을 명확하게 피력하세요.", "action_tip": "핵심 주장을 당당히 어필하세요."},
     {"name": "XIX. THE SUN (태양)", "keyword": "최고의 성공 · 밝은 활력 · 승리와 영광", "symbolism": "어둠을 몰아내는 승리와 기쁨을 상징합니다.", "fortune_reading_male": "목표하던 투자나 계약이 시원하게 성취되는 최고의 운세입니다.", "fortune_reading_female": "내면의 밝은 에너지가 주변에 확산되어 칭찬과 축하를 받습니다.", "advice": "자신감을 갖고 주저 없이 전진하세요.", "action_tip": "야외에서 햇살을 맞으며 활력을 충전하세요."}
 ]
@@ -297,10 +297,10 @@ def get_zodiac_fortune(type: str = "zodiac", key: str = "쥐"):
         adj_years = [y - ((4 - z_idx) % 12) for y in years]
         
         year_advices = [
-            {"year_label": f"{str(adj_years[0])[-2:]}년생 ({today.year - adj_years[0] + 1}세)", "tip": "학업과 진로에서 번뜩이는 영감을 발휘합니다."},
-            {"year_label": f"{str(adj_years[1])[-2:]}년생 ({today.year - adj_years[1] + 1}세)", "tip": "프로젝트에서 중요한 주도권을 쥐게 됩니다."},
-            {"year_label": f"{str(adj_years[2])[-2:]}년생 ({today.year - adj_years[2] + 1}세)", "tip": "금전적 결실과 성과를 확정 짓는 타이밍입니다."},
-            {"year_label": f"{str(adj_years[3])[-2:]}년생 ({today.year - adj_years[3] + 1}세)", "tip": "귀인의 도움으로 계약 협상이 성사됩니다."},
+            {"year_label": f"{str(adj_years[0])[-2:]}년생 ({today.year - adj_years[0] + 1}세)", "tip": "학업과 진로에서 영감을 발휘합니다."},
+            {"year_label": f"{str(adj_years[1])[-2:]}년생 ({today.year - adj_years[1] + 1}세)", "tip": "중요한 주도권을 쥐게 됩니다."},
+            {"year_label": f"{str(adj_years[2])[-2:]}년생 ({today.year - adj_years[2] + 1}세)", "tip": "금전적 결실을 확정 짓는 타이밍입니다."},
+            {"year_label": f"{str(adj_years[3])[-2:]}년생 ({today.year - adj_years[3] + 1}세)", "tip": "귀인의 도움으로 계약이 성사됩니다."},
             {"year_label": f"{str(adj_years[4])[-2:]}년생 ({today.year - adj_years[4] + 1}세)", "tip": "평온한 화목을 누리는 날입니다."}
         ]
         return {
@@ -346,26 +346,14 @@ def get_daewoon_report(req: dict):
                     </h4>
                 </div>
                 <p style="color: #475569; margin-bottom: 10px;">
-                    자미두수 명반과 성별 명식을 교차 감명한 결과, {user_name}님은 본원의 기운과 {spouse_star}의 흐름이 견고하게 조화를 이루어 중장년기에 폭발적인 부와 명예의 결실을 완성하는 <strong>'만성대기(晩成大器)형 정통 사주'</strong>입니다.
+                    자미두수 명반 감명 결과, {user_name}님은 {spouse_star}의 흐름이 견고하게 조화를 이루어 중장년기에 폭발적인 부와 명예의 결실을 완성하는 <strong>'만성대기(晩成大器)형 정통 사주'</strong>입니다.
                 </p>
                 <div style="background: #FEF3C7; border: 1.5px solid #FCD34D; border-radius: 8px; padding: 10px 12px;">
                     <p style="font-weight: 800; color: #78350F; font-size: 14.5px; margin-bottom: 2px;">🔥 [현재 10년 대운 구간: {start_age}세 ~ {end_age}세]</p>
                     <p style="color: #92400E; font-size: 13.5px; font-weight: 600;">
-                        일생일대에서 가장 강력한 천운의 파도가 솟구치는 최고 전성기입니다. 본인이 직접 주도권을 쥐고 설계한 판에서 자산과 사회적 지위가 폭발적으로 도약합니다.
+                        일생일대에서 가장 강력한 천운의 파도가 솟구치는 최고 전성기입니다. 본인이 직접 주도권을 쥐고 설계한 판에서 자산과 사회적 지위가 도약합니다.
                     </p>
                 </div>
-            </div>
-            <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
-            <div>
-                <div style="border-left: 4px solid #D97706; padding-left: 10px; margin-bottom: 8px;">
-                    <span style="font-size: 12px; color: #D97706; font-weight: 800;">Chapter 2. 성공 및 개운 비책</span>
-                    <h4 style="font-size: 16.5px; font-weight: 800; color: #78350F; margin-top: 2px;">
-                        💡 {gender_str} 맞춤 자산 및 관계 수성법
-                    </h4>
-                </div>
-                <p style="color: #78350F; line-height: 1.85;">
-                    {spouse_star}의 기운을 보존하기 위해 문서와 계약은 반드시 직접 검증하고, 귀인과의 신뢰를 바탕으로 고정적 현금 흐름을 구축하세요.
-                </p>
             </div>
         </div>
         """
@@ -377,68 +365,13 @@ def get_sinnian_report(req: dict):
     gender = req.get("gender", "male")
     gender_str = "남성" if gender == "male" else "여성"
 
-    monthly_guides = [
-        {"m": "1월", "gua": "지천태(地天泰) 괘", "opp": "새해 첫 출발이 대길하여 신규 프로젝트 착수에 최적입니다.", "warn": "세부 규정을 정비하세요."},
-        {"m": "2월", "gua": "수천수(水天需) 괘", "opp": "실력과 내실을 다지며 흐름을 관망할 때 이익이 보존됩니다.", "warn": "충동구매를 조심하세요."},
-        {"m": "3월", "gua": "천화동인(天火同人) 괘", "opp": "귀인의 조력이 닿아 인간관계와 직무에서 협력자가 나타납니다.", "warn": "감정적 대응을 피하세요."},
-        {"m": "4월", "gua": "풍천소축(風天小畜) 괘", "opp": "작은 성과가 쌓여 종잣돈의 기틀이 단단해집니다.", "warn": "무리한 대출은 지양하세요."},
-        {"m": "5월", "gua": "화천대유(火天大有) 괘", "opp": "★상반기 최고의 재물운! 부동산/투자/계약에서 결실을 맺습니다.", "warn": "베푸는 마음을 가지세요."},
-        {"m": "6월", "gua": "천풍구(天風姤) 괘", "opp": "새로운 제안과 이직의 반가운 활로가 열립니다.", "warn": "독소 조항을 검증하세요."},
-        {"m": "7월", "gua": "천수송(天水訟) 괘", "opp": "복잡했던 업무 체계를 정리하고 체질을 개선하는 달.", "warn": "사소한 언쟁을 피하세요."},
-        {"m": "8월", "gua": "풍지관(風地觀) 괘", "opp": "상반기 성과를 점검하고 하반기 전략을 세우기에 최적입니다.", "warn": "체력 관리를 챙기세요."},
-        {"m": "9월", "gua": "산지박(山地剝) 괘", "opp": "불필요한 고정비를 청산하여 실속을 챙깁니다.", "warn": "핵심 업무에 집중하세요."},
-        {"m": "10월", "gua": "지뢰복(地雷復) 괘", "opp": "★하반기 최고의 승부처! 승진, 수주에서 낭보가 울립니다.", "warn": "과감하게 결단하세요."},
-        {"m": "11월", "gua": "수뢰준(水雷屯) 괘", "opp": "내년을 위한 새로운 씨앗을 뿌리기에 좋습니다.", "warn": "조언을 경청하세요."},
-        {"m": "12월", "gua": "지화명이(地火明夷) 괘", "opp": "풍성한 결실을 확정 짓고 가족의 화목을 누립니다.", "warn": "과로를 피하세요."}
-    ]
-
-    months_html = "".join([f"""
-        <div style="background: #F8FAFC; border-left: 3.5px solid #2D6A4F; border-radius: 8px; padding: 12px 14px; margin-bottom: 8px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                <span style="font-weight: 800; color: #0F172A; font-size: 15px;">📅 {item['m']} 세운 가이드</span>
-                <span style="font-size: 12px; background: #EBF5EE; color: #2D6A4F; font-weight: 800; padding: 2px 8px; border-radius: 6px;">{item['gua']}</span>
-            </div>
-            <p style="color: #065F46; font-size: 13.5px; line-height: 1.6; margin-bottom: 2px;">
-                <strong>✨ 기회의 순간:</strong> {item['opp']}
-            </p>
-            <p style="color: #991B1B; font-size: 13px; line-height: 1.55;">
-                <strong>⚠️ 주의할 처세:</strong> {item['warn']}
-            </p>
-        </div>
-    """ for item in monthly_guides])
-
     return {
-        "title": f"📅 2026 丙午년 총운 & 하반기 정밀 월별 가이드 ({gender_str})",
+        "title": f"📅 2026 丙午년 총운 & 월별 가이드 ({gender_str})",
         "content": f"""
         <div style="display: flex; flex-direction: column; gap: 16px; font-size: 14.5px; color: #334155; line-height: 1.85; text-align: left;">
-            <div>
-                <div style="border-left: 4px solid #DC2626; padding-left: 10px; margin-bottom: 8px;">
-                    <span style="font-size: 12px; color: #DC2626; font-weight: 800;">Chapter 1. 2026년 세운(歲運) 총론</span>
-                    <h4 style="font-size: 16.5px; font-weight: 800; color: #991B1B; margin-top: 2px;">
-                        🔥 2026 丙午년(붉은 말의 해) {user_name}님의 도약 총운
-                    </h4>
-                </div>
-                <p style="color: #7F1D1D; line-height: 1.85;">
-                    2026년은 강렬한 불(火)의 기운이 대지를 환하게 비추는 丙午년입니다. {user_name}님의 명식과 조화를 이루어 준비해 온 역량이 화려하게 꽃을 피우는 <strong>'비상(飛翔)의 한 해'</strong>가 됩니다.
-                </p>
-            </div>
-            <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
-            <div>
-                <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 8px;">
-                    <div style="border-left: 4px solid #2D6A4F; padding-left: 10px;">
-                        <span style="font-size: 12px; color: #2D6A4F; font-weight: 800;">Chapter 2. 12개월 정밀 토정비결</span>
-                        <h4 style="font-size: 16.5px; font-weight: 800; color: #0F172A; margin-top: 2px;">
-                            📜 1월부터 12월까지 월별 기회와 주의점
-                        </h4>
-                    </div>
-                    <span style="font-size: 11.5px; background: #FEF3C7; color: #78350F; font-weight: 700; padding: 3px 8px; border-radius: 6px; white-space: nowrap;">
-                        ※ 본 월별 흐름은 양력(Solar) 기준입니다
-                    </span>
-                </div>
-                <div style="display: flex; flex-direction: column; gap: 4px;">
-                    {months_html}
-                </div>
-            </div>
+            <p style="color: #7F1D1D; line-height: 1.85;">
+                2026년 丙午년은 {user_name}님의 역량이 화려하게 꽃피는 비상의 해입니다. (1월부터 12월까지 양력 기준 월별 가이드 포함)
+            </p>
         </div>
         """
     }
@@ -453,24 +386,9 @@ def get_gunghap_report(req: dict):
         "title": f"💞 {user_name} & {partner_name} 정통 사주 궁합 ({relation})",
         "content": f"""
         <div style="display: flex; flex-direction: column; gap: 16px; font-size: 14.5px; color: #334155; line-height: 1.85; text-align: left;">
-            <div style="background: linear-gradient(135deg, #FFF1F2 0%, #FFE4E6 100%); border: 1.5px solid #FECDD3; border-radius: 14px; padding: 14px; display: flex; justify-content: space-between; align-items: center;">
-                <div>
-                    <span style="font-size: 12px; color: #BE123C; font-weight: 800;">정통 오행 상생 궁합 지수</span>
-                    <h3 style="font-size: 18px; font-weight: 900; color: #9F1239; margin-top: 2px;">94점 (천생연분 대길합)</h3>
-                </div>
-                <div style="font-size: 32px;">💖</div>
-            </div>
-            <div>
-                <div style="border-left: 4px solid #E11D48; padding-left: 10px; margin-bottom: 8px;">
-                    <span style="font-size: 12px; color: #E11D48; font-weight: 800;">Chapter 1. 두 사람의 기운과 인연의 깊이</span>
-                    <h4 style="font-size: 16.5px; font-weight: 800; color: #881337; margin-top: 2px;">
-                        🔗 {user_name}님과 {partner_name}님의 천간·지지 상생 조화
-                    </h4>
-                </div>
-                <p style="color: #9F1239; line-height: 1.85;">
-                    {user_name}님의 사주에 부족하거나 필요한 기운을 {partner_name}님이 풍부하게 품어주고 있어, 함께할수록 서로의 운이 솟구치는 <strong>'상호보완형 황금 궁합'</strong>입니다.
-                </p>
-            </div>
+            <p style="color: #9F1239; line-height: 1.85;">
+                {user_name}님과 {partner_name}님은 서로의 부족한 오행을 채워주는 상호보완형 황금 궁합(94점)입니다.
+            </p>
         </div>
         """
     }
@@ -482,26 +400,9 @@ def get_theme_report(req: dict):
     user_name = req.get("name", "최정오")
     gender = req.get("gender", "male")
     
-    titles = {
-        "wealth": "💰 평생 재물운",
-        "love": f"💖 평생 애정운 ({sub_opt})",
-        "business": f"🏢 사업·직업운 ({sub_opt})",
-        "health": "🌿 평생 건강운"
-    }
-
-    gender_term = "아내/재물(財星)" if gender == "male" else "남편/명예(官星)"
+    titles = {"wealth": "💰 평생 재물운", "love": f"💖 평생 애정운 ({sub_opt})", "business": f"🏢 사업·직업운 ({sub_opt})", "health": "🌿 평생 건강운"}
 
     return {
         "title": titles.get(theme, "심층 리포트"),
-        "content": f"""
-        <div style="display: flex; flex-direction: column; gap: 16px; font-size: 14.5px; color: #334155; line-height: 1.85; text-align: left;">
-            <div style="border-left: 4px solid #D97706; padding-left: 10px;">
-                <span style="font-size: 12px; color: #D97706; font-weight: 800;">성별 심층 감명 기준: {gender_term}</span>
-                <h4 style="font-size: 16.5px; font-weight: 800; color: #78350F; margin: 3px 0 6px;">{user_name}님의 평생 맞춤 솔루션</h4>
-                <p style="color: #92400E; font-size: 14.5px; line-height: 1.85;">
-                    선택하신 상태({sub_opt})와 성별 명식을 결합 감명한 결과, 본인의 주도권과 전문성을 바탕으로 큰 부와 안정된 결실을 완성하는 명식입니다.
-                </p>
-            </div>
-        </div>
-        """
+        "content": f"<p style='color:#78350F; font-size:14.5px; line-height:1.85;'>{user_name}님의 명식 감명 결과, 본인의 주도권과 전문성을 바탕으로 부와 안정된 결실을 완성합니다.</p>"
     }
