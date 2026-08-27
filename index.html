@@ -53,7 +53,6 @@
         .grid-cell { background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 14px; padding: 12px; font-size: 14px; text-align: left; }
         .action-card { background: #FFFBEB; border-left: 4px solid #F59E0B; border-radius: 14px; padding: 14px; text-align: left; font-size: 14px; }
 
-        /* [곡선 그래프형] 바이오리듬 전용 스타일 */
         .biorhythm-card { background: #FFFFFF; border-radius: 20px; border: 1px solid #E2E8F0; padding: 18px; text-align: left; display: flex; flex-direction: column; gap: 14px; }
         .bio-legend-box { display: flex; justify-content: center; gap: 12px; font-size: 12px; font-weight: 700; }
         .bio-pill-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
@@ -201,7 +200,7 @@
                     <p id="resGaewoon" style="color: #92400E; font-weight: 500; font-size: 14px; line-height: 1.6;">오늘 완료해야 할 우선순위 3가지 메모하기</p>
                 </div>
 
-                <!-- [곡선 그래프형] 오늘의 바이오리듬 카드 (개운 액션과 타로 사이) -->
+                <!-- 곡선 파동형 바이오리듬 카드 -->
                 <div class="biorhythm-card">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                         <div>
@@ -211,17 +210,14 @@
                         <span id="bioDaysLived" style="font-size: 11px; background: #F1F5F9; color: #475569; padding: 3px 8px; border-radius: 9999px; font-weight: 700;">생애 계산중</span>
                     </div>
 
-                    <!-- 범례 -->
                     <div class="bio-legend-box">
                         <span style="color: #DC2626;">● 신체(23일)</span>
                         <span style="color: #9333EA;">● 감성(28일)</span>
                         <span style="color: #2563EB;">● 지성(33일)</span>
                     </div>
 
-                    <!-- SVG 사인 곡선 파동 그래프 -->
                     <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 14px; padding: 6px; position: relative;">
                         <svg id="biorhythmWaveSvg" viewBox="0 0 300 110" style="width: 100%; height: 110px; overflow: visible;">
-                            <!-- JS 동적 렌더링 -->
                         </svg>
                         <div style="display: flex; justify-content: space-between; font-size: 10.5px; color: #94A3B8; font-weight: 600; padding: 0 4px; margin-top: 2px;">
                             <span>-15일전</span>
@@ -230,7 +226,6 @@
                         </div>
                     </div>
 
-                    <!-- 3대 리듬 상태 카드 -->
                     <div class="bio-pill-grid">
                         <div class="bio-pill-cell">
                             <span style="font-size: 11px; color: #64748B; display: block;">💪 신체</span>
@@ -518,7 +513,6 @@
                     <div id="daewoonTeaserBox" class="teaser-blur-box">
                         <div class="teaser-blur-text">
                             <p><strong>Chapter 2. 현재 10년 대운 집중 감명:</strong> {name}님의 사주에 재성과 귀인이 합을 이루어 자산 규모가 수직 상승하는 전환점입니다. 인생 최대 대박 귀인은 [🔒 00띠]이며, 가장 큰 승부처는...</p>
-                            <p><strong>Chapter 3. 불운 방어:</strong> 이번 10년 대운 중 절대 피해야 할 투자처와 헛돈 지출을 막는 3대 비책...</p>
                         </div>
                         <div class="teaser-lock-badge">
                             <span style="font-size: 20px; margin-bottom: 2px;">🔒</span>
@@ -536,20 +530,19 @@
                 <!-- 2. 2026 신년운세 & 토정비결 -->
                 <div class="card" style="border: 2px solid #86EFAC;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                        <span style="font-size: 15px; font-weight: 800; color: #166534; font-family: 'Noto Serif KR', serif;">📅 2026 신년운세 & 토정비결</span>
+                        <span style="font-size: 15px; font-weight: 800; color: #166534; font-family: 'Noto Serif KR', serif;">📅 2026 丙午년 총운 & 하반기 월별 가이드</span>
                         <span style="font-size: 12px; background: #DCFCE7; color: #166534; padding: 4px 10px; border-radius: 9999px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;">
                             <span class="coin-icon-svg-inline"></span> 300 복채
                         </span>
                     </div>
                     <p style="font-size: 13px; color: #64748B; text-align: left; margin-bottom: 12px;">
-                        2026 丙午년 1년 총운 풀이와 1월부터 12월까지 월별 정밀 토정비결 괘상 및 실전 처세 가이드를 제공합니다.
+                        2026 丙午년 1년 총운 풀이와 1월부터 12월까지 월별 정밀 토정비결 괘상 및 실전 처세 가이드(양력 기준)를 제공합니다.
                     </p>
 
                     <!-- 블러 티저 프리뷰 -->
                     <div id="sinnianTeaserBox" class="teaser-blur-box">
                         <div class="teaser-blur-text">
                             <p><strong>Chapter 1. 2026년 세운 총론:</strong> 올해 가장 큰돈이 들어오는 황금의 달은 [🔒 0월]과 [00월]이며, 이직/계약수에서 결정적 기회가 찾아옵니다.</p>
-                            <p><strong>Chapter 2. 12개월 월별 토정비결:</strong> 1월부터 12월까지 월별 기회 vs 주의점 2원화 상세 리포트...</p>
                         </div>
                         <div class="teaser-lock-badge">
                             <span style="font-size: 20px; margin-bottom: 2px;">🔒</span>
@@ -566,9 +559,29 @@
 
             </div>
 
-            <!-- 탭 3: 궁합·테마 -->
+            <!-- 탭 3: 궁합·테마 (정통 사주 궁합 킬러 카드 배치) -->
             <div id="view-theme" class="tab-view hidden">
                 
+                <!-- [신규 탑재] 정통 사주 궁합 카드 -->
+                <div class="card" style="border: 2px solid #FECDD3; background: #FFFDFD; text-align: left;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                        <span style="font-size: 16px; font-weight: 800; color: #9F1239; font-family: 'Noto Serif KR', serif;">💞 정통 사주 궁합 감명</span>
+                        <span style="font-size: 12px; background: #FFE4E6; color: #BE123C; padding: 4px 10px; border-radius: 9999px; font-weight: 800;">
+                            350 복채
+                        </span>
+                    </div>
+                    <p style="font-size: 13.5px; color: #64748B; margin-bottom: 12px;">
+                        연인·결혼, 동업·사업 파트너, 친구와의 천간합·지지합 및 오행 상생 밸런스를 1:1로 정밀 감명합니다.
+                    </p>
+
+                    <div id="gunghapReportBox" class="hidden" style="margin-bottom: 12px;"></div>
+
+                    <button id="btnOpenGunghapModal" onclick="openGunghapInputModal()" style="width: 100%; background: linear-gradient(135deg, #BE123C 0%, #881337 100%); color: white; border: none; font-size: 15px; font-weight: 800; padding: 14px; border-radius: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 4px 6px rgba(190,18,60,0.2);">
+                        <span>💘</span> 상대방 정보 입력하고 궁합 보기
+                    </button>
+                </div>
+
+                <!-- 기존 4대 테마운세 -->
                 <div class="card" style="text-align: left;">
                     <p style="font-size: 16.5px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif;">💰 평생 재물운</p>
                     <p style="font-size: 13.5px; color: #64748B; margin-top: 3px;">자산 흐름 및 부동산/투자 성공 분석</p>
@@ -667,6 +680,39 @@
             </button>
         </nav>
 
+    </div>
+
+    <!-- [신규] 정통 사주 궁합 상대방 정보 입력 모달 -->
+    <div id="gunghapModal" class="modal-bg hidden">
+        <div class="modal-content" style="max-width: 350px; text-align: left;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 8px;">
+                <h3 style="font-size: 15px; font-weight: 800; color: #9F1239; font-family: 'Noto Serif KR', serif;">💞 상대방 사주 정보 입력</h3>
+                <button onclick="closeGunghapModal()" style="background: none; border: none; font-size: 20px; color: #94A3B8; cursor: pointer;">&times;</button>
+            </div>
+
+            <div class="form-group" style="margin-top: 4px;">
+                <label class="form-label">상대방 이름</label>
+                <input type="text" id="partnerNameInput" class="form-input" value="김지수">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">상대방 생년월일</label>
+                <input type="date" id="partnerBirthInput" class="form-input" value="1982-08-24">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">관계 유형</label>
+                <select id="partnerRelationSelect" class="form-input" style="cursor: pointer;">
+                    <option value="연인/결혼" selected>연인 / 결혼 궁합</option>
+                    <option value="동업/사업">동업 / 비즈니스 파트너</option>
+                    <option value="친구/지인">친구 / 지인 케미</option>
+                </select>
+            </div>
+
+            <button onclick="confirmUnlockGunghap()" style="width: 100%; background: #BE123C; color: white; border: none; font-size: 14.5px; font-weight: 800; padding: 13px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 4px 6px rgba(190,18,60,0.2);">
+                <span class="btn-coin-icon-white"></span> 350 복채로 궁합 감명서 열람
+            </button>
+        </div>
     </div>
 
     <!-- 띠별 / 별자리 운세 상세 팝업 -->
@@ -922,10 +968,9 @@
             `;
         }
 
-        // [신규] 30일 사인 곡선(Sine Wave) SVG 렌더링 함수
         function renderBiorhythmWaveSvg(daysLived) {
             const width = 300, height = 110, midY = 55, amp = 42;
-            const range = 15; // 전후 15일 (총 30일 구간)
+            const range = 15;
 
             const getPath = (period) => {
                 let d = "";
@@ -939,26 +984,20 @@
                 return d;
             };
 
-            const pathP = getPath(23); // 신체
-            const pathE = getPath(28); // 감성
-            const pathI = getPath(33); // 지성
+            const pathP = getPath(23);
+            const pathE = getPath(28);
+            const pathI = getPath(33);
 
-            // 오늘 위치(중앙 x=150)의 Y좌표
             const todayP = midY - (Math.sin(2 * Math.PI * daysLived / 23) * amp);
             const todayE = midY - (Math.sin(2 * Math.PI * daysLived / 28) * amp);
             const todayI = midY - (Math.sin(2 * Math.PI * daysLived / 33) * amp);
 
             return `
-                <!-- 배경 기준선 -->
                 <line x1="0" y1="${midY}" x2="${width}" y2="${midY}" stroke="#E2E8F0" stroke-width="1.2" />
                 <line x1="${width/2}" y1="5" x2="${width/2}" y2="${height-5}" stroke="#CBD5E1" stroke-width="1.5" stroke-dasharray="3 3" />
-
-                <!-- 3대 파동 곡선 -->
                 <path d="${pathP}" fill="none" stroke="#EF4444" stroke-width="2.2" opacity="0.85" />
                 <path d="${pathE}" fill="none" stroke="#A855F7" stroke-width="2.2" opacity="0.85" />
                 <path d="${pathI}" fill="none" stroke="#3B82F6" stroke-width="2.2" opacity="0.85" />
-
-                <!-- 오늘 기준점 포인트 (x=150) -->
                 <circle cx="${width/2}" cy="${todayP.toFixed(1)}" r="4.5" fill="#EF4444" stroke="#FFFFFF" stroke-width="1.8" />
                 <circle cx="${width/2}" cy="${todayE.toFixed(1)}" r="4.5" fill="#A855F7" stroke="#FFFFFF" stroke-width="1.8" />
                 <circle cx="${width/2}" cy="${todayI.toFixed(1)}" r="4.5" fill="#3B82F6" stroke="#FFFFFF" stroke-width="1.8" />
@@ -1166,6 +1205,11 @@
             if (sinnianTeaser) sinnianTeaser.classList.remove('hidden');
             if (btnSinnian) btnSinnian.classList.remove('hidden');
 
+            const gunghapBox = document.getElementById('gunghapReportBox');
+            const btnGunghap = document.getElementById('btnOpenGunghapModal');
+            if (gunghapBox) { gunghapBox.innerHTML = ''; gunghapBox.classList.add('hidden'); }
+            if (btnGunghap) btnGunghap.classList.remove('hidden');
+
             ['wealth', 'love', 'business', 'health'].forEach(key => {
                 const box = document.getElementById(`themeReport_${key}`);
                 const btn = document.getElementById(`btnTheme_${key}`);
@@ -1192,7 +1236,6 @@
             currentTalisman = data.daily_fortune.talisman;
             currentUserAge = data.current_age;
 
-            // [곡선 그래프형] 바이오리듬 UI 및 SVG 곡선 렌더링
             if (data.biorhythm) {
                 const bio = data.biorhythm;
                 document.getElementById('bioDaysLived').innerText = `생애 ${bio.days_lived.toLocaleString()}일째`;
@@ -1208,7 +1251,6 @@
 
                 document.getElementById('bioOverallText').innerText = bio.overall_summary;
 
-                // SVG 곡선 생성 함수 실행
                 const waveSvg = document.getElementById('biorhythmWaveSvg');
                 if (waveSvg) {
                     waveSvg.innerHTML = renderBiorhythmWaveSvg(bio.days_lived);
@@ -1472,6 +1514,54 @@
             });
         }
 
+        // [신규] 정통 사주 궁합 모달 열기 & 결제 열람
+        function openGunghapInputModal() {
+            document.getElementById('gunghapModal').classList.remove('hidden');
+        }
+
+        function closeGunghapModal() {
+            document.getElementById('gunghapModal').classList.add('hidden');
+        }
+
+        async function confirmUnlockGunghap() {
+            if (currentCoin < 350) { openChargeStore(); return; }
+
+            const partnerName = document.getElementById('partnerNameInput').value.trim() || "상대방";
+            const partnerBirth = document.getElementById('partnerBirthInput').value || "1982-08-24";
+            const relation = document.getElementById('partnerRelationSelect').value;
+
+            const res = await fetch('/api/gunghap-report', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    name: currentUserName,
+                    partner_name: partnerName,
+                    partner_birth: partnerBirth,
+                    relation: relation
+                })
+            });
+            const data = await res.json();
+
+            currentCoin -= 350;
+            updateCoinDisplay();
+
+            const extraActionHtml = `
+                <div style="display:flex; justify-content:flex-end; margin-top:10px;">
+                    <button onclick="printReportDocument('${data.title}', this)" style="background:#F1F5F9; border:1px solid #CBD5E1; color:#334155; font-size:12px; font-weight:700; padding:6px 12px; border-radius:8px; cursor:pointer;">
+                        📄 감명서 인쇄/PDF 소장
+                    </button>
+                </div>
+            `;
+
+            const targetBox = document.getElementById('gunghapReportBox');
+            targetBox.innerHTML = data.content + extraActionHtml;
+            targetBox.classList.remove('hidden');
+            document.getElementById('btnOpenGunghapModal').classList.add('hidden');
+
+            saveUnlockedReport('gunghap', data.title, data.content);
+            closeGunghapModal();
+        }
+
         function openThemeSelectModal(key) {
             currentThemeKey = key;
             const modalBox = document.getElementById('modalOptionBox');
@@ -1568,6 +1658,14 @@
                         box.innerHTML = item.content + extraActionHtml;
                         box.classList.remove('hidden');
                         if (teaser) teaser.classList.add('hidden');
+                        btn.classList.add('hidden');
+                    }
+                } else if (item.key === 'gunghap') {
+                    const box = document.getElementById('gunghapReportBox');
+                    const btn = document.getElementById('btnOpenGunghapModal');
+                    if (box && btn) {
+                        box.innerHTML = item.content + extraActionHtml;
+                        box.classList.remove('hidden');
                         btn.classList.add('hidden');
                     }
                 } else if (['wealth', 'love', 'business', 'health'].includes(item.key)) {
