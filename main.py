@@ -7,7 +7,7 @@ from typing import Optional
 import os
 import random
 
-app = FastAPI(title="운세의 신 정통 명리학 엔진 - Mode 2 Full Expanded", version="34.0.0")
+app = FastAPI(title="운세의 신 정통 명리학 엔진 - Mode 2 Mega Edition", version="35.0.0")
 
 CHEONGAN_HANJA = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
 JIJI_HANJA = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"]
@@ -93,9 +93,24 @@ TALISMAN_OHEANG_MAP = {
 }
 
 TAROT_CARDS = [
-    {"name": "0. THE FOOL (바보)", "keyword": "새로운 시작 · 순수한 열정 · 무한한 잠재력", "symbolism": "절벽 끝에 선 순수한 영혼으로 무한한 가능성을 상징합니다.", "fortune_reading_male": "오랫동안 머뭇거리던 사업이나 프로젝트의 시작 단추를 꿰기에 최적의 날입니다. 주도적으로 추진하세요.", "fortune_reading_female": "새로운 인연이나 마음속 염원하던 일의 반가운 첫걸음이 시작됩니다. 직관을 믿고 나아가세요."},
-    {"name": "I. THE MAGICIAN (마법사)", "keyword": "창조적 역량 · 완벽한 주도권 · 실력 발휘", "symbolism": "모든 도구를 통제하는 지혜를 뜻합니다.", "fortune_reading_male": "전문 실력과 언변이 빛을 발하여 중요한 협상에서 판을 완벽히 리드합니다.", "fortune_reading_female": "능숙한 소통 능력으로 주변 사람들을 내 편으로 만듭니다. 당당하게 의견을 피력하세요."},
-    {"name": "XIX. THE SUN (태양)", "keyword": "최고의 성공 · 밝은 활력 · 승리와 영광", "symbolism": "어둠을 몰아내는 승리와 기쁨을 상징합니다.", "fortune_reading_male": "목표하던 투자나 계약이 시원하게 성취되는 최고의 운세입니다.", "fortune_reading_female": "내면의 밝은 에너지가 주변에 확산되어 칭찬과 축하받을 낭보가 울려 퍼집니다."}
+    {
+        "name": "0. THE FOOL (바보)",
+        "keyword": "새로운 시작 · 순수한 열정 · 무한한 잠재력",
+        "fortune_reading_male": "오랫동안 머뭇거리던 사업이나 프로젝트의 시작 단추를 꿰기에 최적의 날입니다. 주도적으로 추진하세요.",
+        "fortune_reading_female": "새로운 인연이나 마음속 염원하던 일의 반가운 첫걸음이 시작됩니다. 직관을 믿고 나아가세요."
+    },
+    {
+        "name": "I. THE MAGICIAN (마법사)",
+        "keyword": "창조적 역량 · 완벽한 주도권 · 실력 발휘",
+        "fortune_reading_male": "전문 실력과 언변이 빛을 발하여 중요한 협상에서 판을 완벽히 리드합니다.",
+        "fortune_reading_female": "능숙한 소통 능력으로 주변 사람들을 내 편으로 만듭니다. 당당하게 의견을 피력하세요."
+    },
+    {
+        "name": "XIX. THE SUN (태양)",
+        "keyword": "최고의 성공 · 밝은 활력 · 승리와 영광",
+        "fortune_reading_male": "목표하던 투자나 계약이 시원하게 성취되는 최고의 운세입니다.",
+        "fortune_reading_female": "내면의 밝은 에너지가 주변에 확산되어 칭찬과 축하받을 낭보가 울려 퍼집니다."
+    }
 ]
 
 DAILY_OUTFITS_POOL = {
@@ -374,7 +389,6 @@ def get_daily_tarot(slot: int = 1, rand_seed: Optional[str] = None):
     random_idx = random.randint(0, len(TAROT_CARDS) - 1)
     return TAROT_CARDS[random_idx]
 
-# [풀버전 대용량 복구] 자미두수 평생 대운 감명서
 @app.post("/api/daewoon-report")
 def get_daewoon_report(req: dict):
     user_name = req.get("name", "최정오")
@@ -455,7 +469,6 @@ def get_daewoon_report(req: dict):
         """
     }
 
-# [풀버전 대용량 복구] 2026 신년운세 & 12개월 토정비결
 @app.post("/api/sinnian-report")
 def get_sinnian_report(req: dict):
     user_name = req.get("name", "최정오")
