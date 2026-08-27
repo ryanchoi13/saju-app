@@ -7,7 +7,7 @@ from typing import Optional
 import os
 import random
 
-app = FastAPI(title="운세의 신 정통 명리학 엔진", version="25.0.0")
+app = FastAPI(title="운세의 신 정통 명리학 엔진", version="26.0.0")
 
 CHEONGAN_HANJA = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
 JIJI_HANJA = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"]
@@ -69,11 +69,11 @@ STAR_SIGNS = [
 ]
 
 TALISMAN_OHEANG_MAP = {
-    "wood": {"type": "wood", "title": "사업대성부 (事業亨通符)", "power": "추진력 강화 · 사업 번창 · 승진운", "desc": "사주에 부족한 木(성장과 개척)의 활력을 불어넣어 막힌 활로를 뚫고 주도권을 쥐게 하는 비급 부적입니다."},
-    "fire": {"type": "fire", "title": "소원성취부 (心想事成符)", "power": "열정 회복 · 명예 상승 · 소원 성취", "desc": "사주에 부족한 火(열정과 확산)의 빛을 밝혀 어둠을 몰아내고 염원하던 소망을 성취시키는 전통 부적입니다."},
-    "earth": {"type": "earth", "title": "금고수호부 (金庫安穩符)", "power": "자산 방어 · 누수 차단 · 재물 안착", "desc": "사주에 부족한 土(포용과 저장)의 단단한 대지를 마련하여 헛돈 지출을 막고 평생의 자산을 지켜주는 수호 부적입니다."},
-    "metal": {"type": "metal", "title": "재물만복부 (萬福大吉符)", "power": "재물 증식 · 금전운 대통 · 투자 대박", "desc": "사주에 부족한 金(결단과 결실)의 황금 기운을 채워 사방에서 금전과 복록이 쏟아지게 하는 전통 경면주사 부적입니다."},
-    "water": {"type": "water", "title": "천생화합부 (萬事和合符)", "power": "인연 결속 · 애정 화합 · 인간관계 개선", "desc": "사주에 부족한 水(지혜와 융합)의 부드러운 유대감을 채워 엇갈린 인연을 묶어주고 귀인을 이끄는 화합 부적입니다."}
+    "wood": {"type": "wood", "title": "사업대성부 (事業亨通符)", "power": "추진력 강화 · 사업 번창 · 승진운", "desc": "사주에 부족한 木의 활력을 불어넣어 막힌 활로를 뚫고 주도권을 쥐게 하는 비급 부적입니다."},
+    "fire": {"type": "fire", "title": "소원성취부 (心想事成符)", "power": "열정 회복 · 명예 상승 · 소원 성취", "desc": "사주에 부족한 火의 빛을 밝혀 오랫동안 염원하던 소망을 일사천리로 성취시키는 전통 부적입니다."},
+    "earth": {"type": "earth", "title": "금고수호부 (金庫安穩符)", "power": "자산 방어 · 누수 차단 · 재물 안착", "desc": "사주에 부족한 土의 단단한 대지를 마련하여 헛돈 지출을 막고 평생의 자산을 지켜주는 수호 부적입니다."},
+    "metal": {"type": "metal", "title": "재물만복부 (萬福大吉符)", "power": "재물 증식 · 금전운 대통 · 투자 대박", "desc": "사주에 부족한 金의 황금 기운을 채워 사방에서 금전과 복록이 쏟아지게 하는 전통 경면주사 부적입니다."},
+    "water": {"type": "water", "title": "천생화합부 (萬事和合符)", "power": "인연 결속 · 애정 화합 · 인간관계 개선", "desc": "사주에 부족한 水의 지혜와 유대감을 채워 엇갈린 인연을 묶어주고 귀인을 이끄는 화합 부적입니다."}
 }
 
 TAROT_CARDS = [
@@ -81,24 +81,7 @@ TAROT_CARDS = [
     {"name": "I. THE MAGICIAN (마법사)", "keyword": "창조적 역량 · 완벽한 주도권 · 실력 발휘", "symbolism": "머리 위의 무한대 기호와 제단 위의 4대 원소는 모든 도구를 통제하는 지혜를 뜻합니다.", "fortune_reading": "지식과 언변, 전문 기술이 빛을 발하는 날입니다. 당당한 태도로 판을 리드하기에 최적입니다.", "advice": "미팅이나 보고에서 주도적으로 의견을 제시하고 실력을 드러내세요.", "action_tip": "중요한 대화에서 본인의 핵심 주장을 명확하게 피력하세요."},
     {"name": "II. THE HIGH PRIESTESS (여사제)", "keyword": "깊은 통찰 · 직관과 혜안 · 침묵의 지혜", "symbolism": "흑과 백의 기둥 사이에 앉아 본질적 진실과 영적인 직관을 상징합니다.", "fortune_reading": "겉으로 드러난 말보다 상대방의 숨은 의도나 상황의 이면을 꿰뚫어 보는 혜안이 극대화됩니다.", "advice": "성급하게 반응하기보다는 차분히 경청하고 심사숙고하세요.", "action_tip": "조용한 장소에서 생각을 차분히 정리하는 시간을 가지세요."},
     {"name": "III. THE EMPRESS (여황제)", "keyword": "풍요와 번영 · 따뜻한 포용 · 결실의 기쁨", "symbolism": "풍성한 곡식과 석류 장식은 모성적 사랑과 물질적·정신적 풍요로움을 상징합니다.", "fortune_reading": "그동안 공들여 준비한 일에서 만족스러운 성과와 금전적 보상이 주어지는 날입니다.", "advice": "주변 사람들에게 넉넉한 마음으로 베풀면 더 큰 행운이 돌아옵니다.", "action_tip": "맛있는 식사를 대접하거나 가까운 이에게 감사 인사를 전하세요."},
-    {"name": "IV. THE EMPEROR (황제)", "keyword": "확고한 권위 · 강력한 통솔 · 안정된 기반", "symbolism": "단단한 석조 왕좌는 흔들리지 않는 통치력과 엄격한 질서, 조직의 굳건함을 뜻합니다.", "fortune_reading": "자신의 영역에서 주도권을 확립하고 책임감 있게 프로젝트를 완수하기에 좋은 날입니다.", "advice": "원칙과 약속을 철저히 지키며 리더십을 발휘하세요.", "action_tip": "흐트러진 계획을 점검하고 체계적인 규율을 세우세요."},
-    {"name": "V. THE HIEROPHANT (교황)", "keyword": "신뢰와 조언 · 전통적 가치 · 귀인의 도우심", "symbolism": "교황의 삼중관과 두 명의 사제는 귀인의 정통성 있는 가르침과 신뢰를 상징합니다.", "fortune_reading": "스승이나 연장자, 유력 인사로부터 결정적인 귀인의 조언을 받아 난관을 해결하는 날입니다.", "advice": "독단적인 행동을 피하고 경험자의 조언을 겸손하게 받아들이세요.", "action_tip": "존경하는 멘토나 상급자에게 안부 연락을 건네보세요."},
-    {"name": "VI. THE LOVERS (연인)", "keyword": "조화로운 결합 · 진정한 공감 · 올바른 선택", "symbolism": "천사의 축복 아래 선 남녀는 영혼의 교감과 중요한 인생의 선택을 상징합니다.", "fortune_reading": "인간관계와 애정 전선에 따뜻한 훈풍이 불고 협력 파트너와의 호흡이 완벽히 맞습니다.", "advice": "계산적인 이득보다는 마음의 진정성을 바탕으로 대화하세요.", "action_tip": "소중한 사람과 티타임을 가지며 솔직한 마음을 나누세요."},
-    {"name": "VII. THE CHARIOT (전차)", "keyword": "거침없는 돌파 · 승리의 질주 · 강한 의지", "symbolism": "흑과 백의 스핑크스를 이끄는 젊은 기사는 이성과 감성을 통제하여 승리하는 의지를 뜻합니다.", "fortune_reading": "주저하지 않고 강력하게 밀어붙일 때 목표를 수월하게 쟁취할 수 있는 대길의 하루입니다.", "advice": "목표에 집중하고 사소한 장애물에 연연하지 마세요.", "action_tip": "오랫동안 미뤄왔던 단호한 결정을 오늘 실행에 옮기세요."},
-    {"name": "VIII. STRENGTH (힘)", "keyword": "내면의 인내 · 부드러운 통제 · 온화한 카리스마", "symbolism": "사자를 부드럽게 다스리는 여인은 강압적인 힘이 아닌 내면의 온화한 카리스마를 상징합니다.", "fortune_reading": "감정을 자제하고 부드럽지만 단단한 태도로 임할 때 유능한 상대도 내 편으로 만듭니다.", "advice": "화가 나거나 감정적일 때일수록 미소와 유연함으로 상대하세요.", "action_tip": "깊은 숨을 세 번 쉬며 너그러운 마음을 유지하세요."},
-    {"name": "IX. THE HERMIT (은둔자)", "keyword": "깊은 성찰 · 탐구와 지혜 · 내면의 빛", "symbolism": "등불을 들고 눈 덮인 산을 오르는 노인은 깊은 지혜와 진리 탐구를 상징합니다.", "fortune_reading": "외부의 번잡함에서 벗어나 혼자만의 시간에 몰입할 때 중요한 혜안을 얻게 됩니다.", "advice": "남들의 시선에 신경 쓰지 말고 자신의 내면 소리에 집중하세요.", "action_tip": "스마트폰을 잠시 내려놓고 30분간 조용히 사색을 즐기세요."},
-    {"name": "X. WHEEL OF FORTUNE (운명의 수레바퀴)", "keyword": "행운의 반전 · 결정적 기회 · 운명의 전환점", "symbolism": "영원히 회전하는 수레바퀴는 상승과 하강, 기회의 순간을 뜻합니다.", "fortune_reading": "정체되었던 상황이 뜻밖의 계기를 통해 긍정적인 방향으로 급물살을 타게 됩니다.", "advice": "흐름에 맞서지 말고 자연스럽게 변화를 수용하여 기회를 잡으세요.", "action_tip": "오랜 지인에게 온 연락이나 새로운 제안을 긍정적으로 검토하세요."},
-    {"name": "XI. JUSTICE (정의)", "keyword": "명확한 판단 · 공정한 균형 · 합리적 계약", "symbolism": "저울과 칼을 든 여신은 감정에 휘둘리지 않는 공정한 판단과 사필귀정을 상징합니다.", "fortune_reading": "공정하고 합리적인 판단이 빛을 발하며 문서 및 계약 건에서 이익이 확보됩니다.", "advice": "사사로운 감정을 배제하고 사실과 데이터에 근거해 결정하세요.", "action_tip": "계약서나 중요한 서류의 조항을 면밀히 재검토하세요."},
-    {"name": "XII. THE HANGED MAN (매달린 사람)", "keyword": "발상의 전환 · 인고의 결실 · 새로운 시각", "symbolism": "나무에 거꾸로 매달린 남자의 후광은 희생을 통해 깨달음을 얻는 신성한 시각을 뜻합니다.", "fortune_reading": "잠시 상황이 정체된 것처럼 보이지만 발상을 뒤집을 때 놀라운 해결책이 찾아옵니다.", "advice": "서두르지 말고 현재 상태를 조용히 관조하며 때를 기다리세요.", "action_tip": "기존 방식과 반대되는 새로운 아이디어를 검토해 보세요."},
-    {"name": "XIII. DEATH (죽음)", "keyword": "새로운 변혁 · 과거와의 작별 · 불운의 끝", "symbolism": "깃발을 든 기사는 오래된 유통기한이 끝난 상황을 청산하고 새 단계를 시작함을 뜻합니다.", "fortune_reading": "나를 갉아먹던 나쁜 습관이나 원치 않는 상황이 마침내 청산되고 새 출발이 시작됩니다.", "advice": "과거의 미련을 미련 없이 훌훌 털어버리고 새판을 짜세요.", "action_tip": "사용하지 않는 안 쓰는 물건이나 단톡방을 깔끔히 정리하세요."},
-    {"name": "XIV. TEMPERANCE (절제)", "keyword": "감정의 조화 · 유연한 중용 · 차분한 융합", "symbolism": "두 컵에 물을 서로 개어 섞는 천사는 이성과 감성, 서로 다른 기운의 완벽한 조화를 뜻합니다.", "fortune_reading": "치우침 없이 조화로운 태도를 유지할 때 원만한 대인관계와 마음의 평화가 유지됩니다.", "advice": "극단적인 선택을 피하고 적절한 타협점을 모색하세요.", "action_tip": "자극적인 음식을 피하고 미온수를 충분히 마시며 속을 달래세요."},
-    {"name": "XV. THE DEVIL (악마)", "keyword": "강력한 유혹 · 과감한 집착 · 치명적 매력", "symbolism": "사슬에 묶인 남녀는 유혹과 단기적인 쾌락, 강력한 욕망의 집착을 뜻합니다.", "fortune_reading": "단기적인 이익이나 달콤한 유혹이 다가오나 내실을 따지는 냉철함이 필요합니다.", "advice": "눈앞의 화려함에 혹하지 말고 계약의 조건과 유통기한을 따지세요.", "action_tip": "충동구매나 솔깃한 투자 제안에 쉽게 응하지 마세요."},
-    {"name": "XVI. THE TOWER (탑)", "keyword": "낡은 틀의 붕괴 · 전격적 쇄신 · 통쾌한 구체화", "symbolism": "번개를 맞아 부서지는 탑은 거짓된 기반이 깨지고 진실이 드러나는 쇄신을 상징합니다.", "fortune_reading": "갑작스러운 변화나 계획의 수정이 발생하지만 오히려 더 튼튼한 판을 짜게 됩니다.", "advice": "기존의 임시방편을 버리고 근본적인 체질 개선에 나서세요.", "action_tip": "잘못된 오해나 누적된 문제를 투명하게 드러내어 해결하세요."},
-    {"name": "XVII. THE STAR (별)", "keyword": "희망의 빛 · 무한한 영감 · 마음의 치유", "symbolism": "밤하늘에 빛나는 거대한 별과 물을 붓는 여인은 절망 뒤 찾아오는 치유와 희망을 뜻합니다.", "fortune_reading": "오랫동안 어둡던 터널을 지나 희망찬 반전과 밝은 아이디어가 샘솟는 기쁜 날입니다.", "advice": "스스로의 가능성을 믿고 오랫동안 꿈꿔온 목표를 향해 나아가세요.", "action_tip": "버킷리스트나 올해의 목표를 다시 읽어보며 다짐하세요."},
-    {"name": "XVIII. THE MOON (달)", "keyword": "은밀한 직관 · 안개 속의 진실 · 신중함", "symbolism": "수면 위로 떠오르는 가재와 달은 표면 아래 숨겨진 불안과 감춰진 진실을 뜻합니다.", "fortune_reading": "불확실한 소문이나 서급한 판단을 피하고 서두르지 않는 조심성이 요청되는 날입니다.", "advice": "확인되지 않은 루머에 동조하지 말고 사실을 다각도로 검증하세요.", "action_tip": "중요한 계약이나 금전 결정은 하루 이틀 시일을 두고 검토하세요."},
-    {"name": "XIX. THE SUN (태양)", "keyword": "최고의 성공 · 밝은 활력 · 승리와 영광", "symbolism": "찬란하게 빛나는 태양과 백마 탄 아이는 어둠을 몰아내는 승리와 기쁨을 상징합니다.", "fortune_reading": "모든 근심이 사라지고 목표하던 일이 시원하게 성취되는 최고의 운세입니다.", "advice": "자신감을 갖고 주저 없이 전진하여 승리의 기쁨을 누리세요.", "action_tip": "야외로 나가 밝은 햇살을 맞으며 활력을 충전하세요."},
-    {"name": "XX. JUDGEMENT (심판)", "keyword": "보상과 부활 · 명확한 소식 · 결정적 승인", "symbolism": "나팔을 부는 천사와 부활하는 사람들은 진심 어린 노력에 대한 온전한 보상을 상징합니다.", "fortune_reading": "과거에 최선을 다했던 일에 대한 반가운 보상이나 기다리던 승인 소식이 전해집니다.", "advice": "과거의 성과를 자신 있게 어필하고 정당한 대가를 요구하세요.", "action_tip": "결과를 기다리던 곳에 전화나 메일로 소식을 확인해 보세요."},
-    {"name": "XXI. THE WORLD (세계)", "keyword": "완벽한 완성 · 해피엔딩 · 글로벌 성취", "symbolism": "월계관 속에서 춤추는 여인은 프로젝트의 완벽한 완성 및 인생의 큰 단락 성취를 뜻합니다.", "fortune_reading": "오랫동안 공들여온 일의 완벽한 피날레와 함께 마침내 커다란 축하를 받는 날입니다.", "advice": "한 단계를 완벽히 마무리하고 더 큰 목표를 향한 비전을 그리세요.", "action_tip": "함께 달려온 동료나 가족과 축하 파티를 즐기세요."}
+    {"name": "XIX. THE SUN (태양)", "keyword": "최고의 성공 · 밝은 활력 · 승리와 영광", "symbolism": "찬란하게 빛나는 태양과 백마 탄 아이는 어둠을 몰아내는 승리와 기쁨을 상징합니다.", "fortune_reading": "모든 근심이 사라지고 목표하던 일이 시원하게 성취되는 최고의 운세입니다.", "advice": "자신감을 갖고 주저 없이 전진하여 승리의 기쁨을 누리세요.", "action_tip": "야외로 나가 밝은 햇살을 맞으며 활력을 충전하세요."}
 ]
 
 class SajuRequest(BaseModel):
@@ -325,7 +308,6 @@ def get_daily_tarot(slot: int = 1, rand_seed: Optional[str] = None):
     random_idx = random.randint(0, len(TAROT_CARDS) - 1)
     return TAROT_CARDS[random_idx]
 
-# [풀버전 복구] 자미두수 평생운세: 사주 일간(10간) 기반 완전 분기 챕터형 감명서
 @app.post("/api/daewoon-report")
 def get_daewoon_report(req: dict):
     user_name = req.get("name", "최정오")
@@ -424,7 +406,6 @@ def get_daewoon_report(req: dict):
         """
     }
 
-# [풀버전 복구] 2026 신년운세 & 12개월 토정비결 (양력 기준 1회 명시)
 @app.post("/api/sinnian-report")
 def get_sinnian_report(req: dict):
     user_name = req.get("name", "최정오")
@@ -482,7 +463,6 @@ def get_sinnian_report(req: dict):
 
             <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
 
-            <!-- Chapter 2: 12개월 월별 가이드 (양력 기준 1회 명시) -->
             <div>
                 <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 8px;">
                     <div style="border-left: 4px solid #2D6A4F; padding-left: 10px;">
@@ -519,7 +499,6 @@ def get_sinnian_report(req: dict):
         """
     }
 
-# [풀버전 복구] 정통 사주 궁합 3대 챕터 감명서
 @app.post("/api/gunghap-report")
 def get_gunghap_report(req: dict):
     user_name = req.get("name", "최정오")
@@ -585,7 +564,287 @@ def get_gunghap_report(req: dict):
         """
     }
 
-# 4대 테마운세 풀버전
+# [4대 맞춤 복구] 애정운 분기 함수
+def generate_love_report_content(user_name: str, sub_opt: str) -> str:
+    if sub_opt == "기혼":
+        return f"""
+        <div style="display: flex; flex-direction: column; gap: 16px; font-size: 14.5px; color: #334155; line-height: 1.85; text-align: left;">
+            <div style="border-left: 4px solid #E11D48; padding-left: 10px;">
+                <span style="font-size: 12px; color: #E11D48; font-weight: 800;">Chapter 1. 부부 명식 감명</span>
+                <h4 style="font-size: 16.5px; font-weight: 800; color: #881337; margin: 3px 0 6px;">[부부 해로 및 가정 화목운] 신뢰와 상호 존중의 평생 동반자</h4>
+                <p style="color: #9F1239; font-size: 14.5px; line-height: 1.85;">
+                    {user_name}님의 사주 원국은 부부 간의 신뢰와 가정의 안정을 최우선으로 삼는 묵직한 포용력을 지니고 있습니다. 일방적인 헌신이나 잔소리보다는 서로의 독립적인 영역을 인정하고 격려해 줄 때 부부 금실과 가정의 재물운이 함께 상승합니다.
+                </p>
+            </div>
+            <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
+            <div>
+                <div style="border-left: 4px solid #BE123C; padding-left: 10px; margin-bottom: 8px;">
+                    <span style="font-size: 12px; color: #BE123C; font-weight: 800;">Chapter 2. 가정 에너지 분석</span>
+                    <h4 style="font-size: 16.5px; font-weight: 800; color: #881337; margin-top: 2px;">🏡 Q. 배우자와의 성향 조화 및 가정 번영의 핵심은?</h4>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 8px; font-size: 14.5px; color: #475569;">
+                    <p>• <strong>배우자와의 성향 조화:</strong> 겉으로는 무던해 보여도 속정이 깊은 배우자궁을 타고났으며, 서로의 장단점을 보완해 주는 상생 구조입니다.</p>
+                    <p>• <strong>가정 내 갈등 관리:</strong> 자녀 교육이나 재정 계획에 이견이 생길 때는 감정적 직설보다 차 한 잔을 나누며 대화할 때 막힘없이 풀립니다.</p>
+                    <p>• <strong>가정 번영 오행 기운:</strong> 온화한 기운을 북돋워 주는 방위는 '남서쪽'이며, 거실에 따뜻한 조명을 두면 부부 화합이 배가됩니다.</p>
+                </div>
+            </div>
+            <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
+            <div>
+                <div style="border-left: 4px solid #D97706; padding-left: 10px; margin-bottom: 8px;">
+                    <span style="font-size: 12px; color: #D97706; font-weight: 800;">Chapter 3. 백년해로 처세</span>
+                    <h4 style="font-size: 16.5px; font-weight: 800; color: #78350F; margin-top: 2px;">🌹 평생 백년해로를 완성하는 실전 부부 개운법</h4>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 8px; font-size: 14.5px; color: #92400E;">
+                    <p>• <strong>감사 표현의 생활화:</strong> 일상적인 배려에 대해 "고마워요"라는 말을 하루 한 번 전하는 것이 최고의 부부 개운법입니다.</p>
+                    <p>• <strong>행운의 힐링 추천:</strong> 주말 가벼운 근교 숲길 산책이나 조용한 힐링 여행이 부부의 권태감을 씻어내고 새로운 활력을 줍니다.</p>
+                </div>
+            </div>
+        </div>
+        """
+    elif sub_opt == "연애중":
+        return f"""
+        <div style="display: flex; flex-direction: column; gap: 16px; font-size: 14.5px; color: #334155; line-height: 1.85; text-align: left;">
+            <div style="border-left: 4px solid #E11D48; padding-left: 10px;">
+                <span style="font-size: 12px; color: #E11D48; font-weight: 800;">Chapter 1. 연애 명식 감명</span>
+                <h4 style="font-size: 16.5px; font-weight: 800; color: #881337; margin: 3px 0 6px;">[연애 발전 및 결실운] 깊은 교감과 미래를 약속하는 인연</h4>
+                <p style="color: #9F1239; font-size: 14.5px; line-height: 1.85;">
+                    {user_name}님은 연인과의 관계에서 진실된 소통과 배려를 중시하는 따뜻한 사랑의 소유자입니다. 현재 연애는 단순한 설렘을 넘어 미래의 진지한 동반자로 발전하기에 매우 좋은 기운이 흐르고 있습니다.
+                </p>
+            </div>
+            <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
+            <div>
+                <div style="border-left: 4px solid #BE123C; padding-left: 10px; margin-bottom: 8px;">
+                    <span style="font-size: 12px; color: #BE123C; font-weight: 800;">Chapter 2. 결혼 결실 가이드</span>
+                    <h4 style="font-size: 16.5px; font-weight: 800; color: #881337; margin-top: 2px;">💍 Q. 장기적 인연 발전 및 결혼의 최적 타이밍은?</h4>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 8px; font-size: 14.5px; color: #475569;">
+                    <p>• <strong>관계의 성숙 포인트:</strong> 바라는 점을 솔직하면서도 부드럽게 표현할 때 신뢰의 뿌리가 깊어집니다.</p>
+                    <p>• <strong>결혼 및 결실의 타이밍:</strong> 가을(양력 9~11월)과 봄(양력 3~5월)에 중요한 약속이나 결혼 논의가 급물살을 타게 됩니다.</p>
+                </div>
+            </div>
+            <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
+            <div>
+                <div style="border-left: 4px solid #D97706; padding-left: 10px; margin-bottom: 8px;">
+                    <span style="font-size: 12px; color: #D97706; font-weight: 800;">Chapter 3. 사랑 결속 처세</span>
+                    <h4 style="font-size: 16.5px; font-weight: 800; color: #78350F; margin-top: 2px;">🌹 둘만의 사랑을 공고히 하는 실전 연애 처세법</h4>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 8px; font-size: 14.5px; color: #92400E;">
+                    <p>• <strong>밀당 없는 진정성:</strong> 계산적인 태도보다 솔직하고 일관된 태도를 보여줄 때 상대방의 마음을 완전히 사로잡습니다.</p>
+                    <p>• <strong>추천 데이트 장소:</strong> 야경이 내려다보이는 레스토랑이나 클래식한 전시회가 로맨틱한 기운을 증폭시킵니다.</p>
+                </div>
+            </div>
+        </div>
+        """
+    elif sub_opt == "썸/짝사랑":
+        return f"""
+        <div style="display: flex; flex-direction: column; gap: 16px; font-size: 14.5px; color: #334155; line-height: 1.85; text-align: left;">
+            <div style="border-left: 4px solid #E11D48; padding-left: 10px;">
+                <span style="font-size: 12px; color: #E11D48; font-weight: 800;">Chapter 1. 호감운 감명</span>
+                <h4 style="font-size: 16.5px; font-weight: 800; color: #881337; margin: 3px 0 6px;">[호감 발전 및 연인 전환운] 매력 어필과 결정적 고백 타이밍</h4>
+                <p style="color: #9F1239; font-size: 14.5px; line-height: 1.85;">
+                    {user_name}님은 은근한 매력과 진중함으로 상대방에게 호감을 심어주는 기운을 지니고 있습니다. 망설이기보다는 적절한 순간에 확실한 시그널을 보낼 때 연인 관계로의 전환이 빠르게 이루어집니다.
+                </p>
+            </div>
+            <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
+            <div>
+                <div style="border-left: 4px solid #BE123C; padding-left: 10px; margin-bottom: 8px;">
+                    <span style="font-size: 12px; color: #BE123C; font-weight: 800;">Chapter 2. 마음 공략법</span>
+                    <h4 style="font-size: 16.5px; font-weight: 800; color: #881337; margin-top: 2px;">💘 Q. 상대방의 마음을 여는 핵심 전략과 결정적 순간은?</h4>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 8px; font-size: 14.5px; color: #475569;">
+                    <p>• <strong>공감대 형성:</strong> 상대방의 취향과 관심사를 미리 파악하여 자연스러운 대화 주제로 이끌어내세요.</p>
+                    <p>• <strong>결정적 타이밍:</strong> 저녁 티타임이나 비 오는 날 은근한 칭찬과 함께 호감을 표현할 때 성공 확률이 2배로 높아집니다.</p>
+                </div>
+            </div>
+            <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
+            <div>
+                <div style="border-left: 4px solid #D97706; padding-left: 10px; margin-bottom: 8px;">
+                    <span style="font-size: 12px; color: #D97706; font-weight: 800;">Chapter 3. 실전 고백 팁</span>
+                    <h4 style="font-size: 16.5px; font-weight: 800; color: #78350F; margin-top: 2px;">🌹 썸을 연애로 만드는 실전 액션 팁</h4>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 8px; font-size: 14.5px; color: #92400E;">
+                    <p>• <strong>과도한 조급함 금물:</strong> 상대방의 반응 속도에 일희일비하지 말고 여유 있고 당당한 태도를 유지하세요.</p>
+                    <p>• <strong>행운의 아이템:</strong> 은은한 우디/플로럴 계열 향수와 단정한 셔츠 차림이 매력도를 극대화합니다.</p>
+                </div>
+            </div>
+        </div>
+        """
+    else: # 솔로 기본
+        return f"""
+        <div style="display: flex; flex-direction: column; gap: 16px; font-size: 14.5px; color: #334155; line-height: 1.85; text-align: left;">
+            <div style="border-left: 4px solid #E11D48; padding-left: 10px;">
+                <span style="font-size: 12px; color: #E11D48; font-weight: 800;">Chapter 1. 인연 명식 감명</span>
+                <h4 style="font-size: 16.5px; font-weight: 800; color: #881337; margin: 3px 0 6px;">[평생 애정운] 깊은 신뢰와 상호 존중의 천생연분</h4>
+                <p style="color: #9F1239; font-size: 14.5px; line-height: 1.85;">
+                    {user_name}님의 애정 원국은 가벼운 감정의 불꽃보다는 한 번 맺은 신뢰를 평생 지켜나가는 따뜻한 포용력의 소유자입니다. 주변 사람들에게 굳이 맞추려 하지 않고 본인 본연의 당당함을 드러낼 때 뜻밖의 귀한 인연이 찾아옵니다.
+                </p>
+            </div>
+            <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
+            <div>
+                <div style="border-left: 4px solid #BE123C; padding-left: 10px; margin-bottom: 8px;">
+                    <span style="font-size: 12px; color: #BE123C; font-weight: 800;">Chapter 2. 인연의 특징</span>
+                    <h4 style="font-size: 16.5px; font-weight: 800; color: #881337; margin-top: 2px;">💞 Q. {user_name}님과 운명적으로 통하는 상대방의 특징은?</h4>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 8px; font-size: 14.5px; color: #475569;">
+                    <p>• <strong>성향과 인품:</strong> 감정 기복이 적고 원칙이 뚜렷하며, 대화 시 상대방의 이야기를 깊이 경청해 주는 차분한 스타일.</p>
+                    <p>• <strong>외모 및 이미지:</strong> 부드럽고 온화한 인상에 단정하고 지적인 분위기를 풍기는 사람.</p>
+                    <p>• <strong>오행 궁합 조화:</strong> 쥐띠, 닭띠, 원숭이띠와 사주 궁합에서 대길연을 이룹니다.</p>
+                </div>
+            </div>
+            <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
+            <div>
+                <div style="border-left: 4px solid #D97706; padding-left: 10px; margin-bottom: 8px;">
+                    <span style="font-size: 12px; color: #D97706; font-weight: 800;">Chapter 3. 인연 성사 처세</span>
+                    <h4 style="font-size: 16.5px; font-weight: 800; color: #78350F; margin-top: 2px;">🌹 평생 인연을 완성하는 실전 관계 처세법</h4>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 8px; font-size: 14.5px; color: #92400E;">
+                    <p>• <strong>만남의 장소:</strong> 물이 잔잔하게 흐르는 호수 주변, 조용한 미술관이나 테라스 카페가 인연의 기운을 조화롭게 묶어줍니다.</p>
+                    <p>• <strong>인연 대길 시기:</strong> 가을(양력 9~11월)과 초봄(양력 2~3월)에 귀인의 소개로 다가오는 만남을 주목하세요.</p>
+                </div>
+            </div>
+        </div>
+        """
+
+# [4대 맞춤 복구] 사업·직업운 분기 함수
+def generate_business_report_content(user_name: str, sub_opt: str) -> str:
+    if sub_opt == "취업/이직 준비중":
+        return f"""
+        <div style="display: flex; flex-direction: column; gap: 16px; font-size: 14.5px; color: #334155; line-height: 1.85; text-align: left;">
+            <div style="border-left: 4px solid #2563EB; padding-left: 10px;">
+                <span style="font-size: 12px; color: #2563EB; font-weight: 800;">상황 맞춤: 취업/이직 준비중</span>
+                <h4 style="font-size: 16.5px; font-weight: 800; color: #1E3A8A; margin: 3px 0 6px;">[취업·이직 대길운] 숨겨진 잠재력 폭발과 합격의 낭보</h4>
+                <p style="color: #1E40AF; font-size: 14.5px; line-height: 1.85;">
+                    {user_name}님의 사주 원국은 치밀한 분석력과 묵직한 신뢰감을 겸비하고 있어 인사 결정권자에게 깊은 인상을 심어주는 관록의 명식입니다. 기준을 낮추기보다 전문 강점을 당당하게 어필할 때 더 좋은 조건으로 합격문이 열립니다.
+                </p>
+            </div>
+            <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
+            <div>
+                <div style="border-left: 4px solid #1E40AF; padding-left: 10px; margin-bottom: 8px;">
+                    <span style="font-size: 12px; color: #1E40AF; font-weight: 800;">Chapter 2. 합격 최적 타이밍</span>
+                    <h4 style="font-size: 16.5px; font-weight: 800; color: #0F172A; margin-top: 2px;">🎯 Q. 서류/면접 합격률이 가장 높은 황금 달(月)은?</h4>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 8px; font-size: 14.5px; color: #475569;">
+                    <p>• <strong>합격 대길 시기:</strong> 가을(양력 9~11월)과 초봄(양력 2~3월)에 문서운과 취업운이 결합하여 합격 통보를 받습니다.</p>
+                    <p>• <strong>추천 직무 분야:</strong> 전략 기획, 경영 관리, IT/기술 매니지먼트, 금융 분석 등 원칙과 시스템을 다루는 분야에 최적입니다.</p>
+                </div>
+            </div>
+            <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
+            <div>
+                <div style="border-left: 4px solid #D97706; padding-left: 10px; margin-bottom: 8px;">
+                    <span style="font-size: 12px; color: #D97706; font-weight: 800;">Chapter 3. 면접 합격 개운법</span>
+                    <h4 style="font-size: 16.5px; font-weight: 800; color: #78350F; margin-top: 2px;">💼 합격을 부르는 면접 스타일 & 마인드셋</h4>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 8px; font-size: 14.5px; color: #92400E;">
+                    <p>• <strong>면접 복장 코디:</strong> 딥 네이비 정장에 단정한 화이트 셔츠와 메탈 시계를 착용하면 전문성과 신뢰감이 돋보입니다.</p>
+                    <p>• <strong>실전 답변 전략:</strong> 화려한 미사여구보다 실제 경험을 두괄식으로 간결하게 전달할 때 압도적인 신뢰를 얻습니다.</p>
+                </div>
+            </div>
+        </div>
+        """
+    elif sub_opt == "사업가/프리랜서":
+        return f"""
+        <div style="display: flex; flex-direction: column; gap: 16px; font-size: 14.5px; color: #334155; line-height: 1.85; text-align: left;">
+            <div style="border-left: 4px solid #2563EB; padding-left: 10px;">
+                <span style="font-size: 12px; color: #2563EB; font-weight: 800;">상황 맞춤: 사업가/프리랜서</span>
+                <h4 style="font-size: 16.5px; font-weight: 800; color: #1E3A8A; margin: 3px 0 6px;">[사업 번창 & 수주 대길운] 매출 퀀텀점프와 독점적 시장 장악</h4>
+                <p style="color: #1E40AF; font-size: 14.5px; line-height: 1.85;">
+                    {user_name}님의 사주는 시장의 주도권을 쥐는 전형적인 '비즈니스 사령관'의 명식입니다. 단순 용역을 넘어 자신만의 시스템과 브랜드를 구축할 때 폭발적인 부의 확장이 일어납니다.
+                </p>
+            </div>
+            <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
+            <div>
+                <div style="border-left: 4px solid #1E40AF; padding-left: 10px; margin-bottom: 8px;">
+                    <span style="font-size: 12px; color: #1E40AF; font-weight: 800;">Chapter 2. 매출 폭발 타이밍</span>
+                    <h4 style="font-size: 16.5px; font-weight: 800; color: #0F172A; margin-top: 2px;">🚀 Q. 대형 수주 및 투자 유치 대박의 타이밍은?</h4>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 8px; font-size: 14.5px; color: #475569;">
+                    <p>• <strong>대박 수주·계약 시기:</strong> 양력 5월과 10월에 재물선과 계약선이 합을 이루어 연간 매출을 견인하는 대형 계약이 성사됩니다.</p>
+                    <p>• <strong>파트너십 궁합:</strong> 실행력이 뛰어난 소띠, 용띠 파트너와 손을 잡으면 사업의 안정성과 속도가 3배로 빨라집니다.</p>
+                </div>
+            </div>
+            <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
+            <div>
+                <div style="border-left: 4px solid #D97706; padding-left: 10px; margin-bottom: 8px;">
+                    <span style="font-size: 12px; color: #D97706; font-weight: 800;">Chapter 3. 사업 자산 방어</span>
+                    <h4 style="font-size: 16.5px; font-weight: 800; color: #78350F; margin-top: 2px;">💼 금전 누수 차단 및 집무실 개운 비책</h4>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 8px; font-size: 14.5px; color: #92400E;">
+                    <p>• <strong>집무실 명당 배치:</strong> 출입문을 대각선으로 바라보는 자리에 앉고 등 뒤에 단단한 벽을 두면 구설과 배신수를 막아냅니다.</p>
+                    <p>• <strong>미수금 방어법:</strong> 구두 계약을 절대 금하고 모든 계약은 단계별 선금과 서면 날인을 철저히 준수하세요.</p>
+                </div>
+            </div>
+        </div>
+        """
+    elif sub_opt == "창업 준비중":
+        return f"""
+        <div style="display: flex; flex-direction: column; gap: 16px; font-size: 14.5px; color: #334155; line-height: 1.85; text-align: left;">
+            <div style="border-left: 4px solid #2563EB; padding-left: 10px;">
+                <span style="font-size: 12px; color: #2563EB; font-weight: 800;">상황 맞춤: 창업 준비중</span>
+                <h4 style="font-size: 16.5px; font-weight: 800; color: #1E3A8A; margin: 3px 0 6px;">[창업 대길 & 개척운] 성공적인 론칭과 탄탄한 사업 기반 구축</h4>
+                <p style="color: #1E40AF; font-size: 14.5px; line-height: 1.85;">
+                    {user_name}님의 사주는 스스로 깃발을 꽂고 영토를 확장할 때 진정한 천운이 발현되는 창업가의 사주입니다. 철저한 시장 조사와 초기 자본 운용이 뒷받침된다면 3년 내에 탄탄한 기틀을 닦게 됩니다.
+                </p>
+            </div>
+            <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
+            <div>
+                <div style="border-left: 4px solid #1E40AF; padding-left: 10px; margin-bottom: 8px;">
+                    <span style="font-size: 12px; color: #1E40AF; font-weight: 800;">Chapter 2. 창업 론칭 타이밍</span>
+                    <h4 style="font-size: 16.5px; font-weight: 800; color: #0F172A; margin-top: 2px;">🏁 Q. 사업자 등록 및 공식 론칭 대길의 달은?</h4>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 8px; font-size: 14.5px; color: #475569;">
+                    <p>• <strong>사업자 등록 대길 시기:</strong> 봄(양력 3~4월)과 가을(양력 9~10월)에 오픈을 진행하면 초기 고객 유입 효과가 극대화됩니다.</p>
+                    <p>• <strong>사업장 명당 방위:</strong> 주거지 기준 '정동쪽'과 '서북쪽'에 터를 잡으면 귀인의 발걸음이 끊이지 않습니다.</p>
+                </div>
+            </div>
+            <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
+            <div>
+                <div style="border-left: 4px solid #D97706; padding-left: 10px; margin-bottom: 8px;">
+                    <span style="font-size: 12px; color: #D97706; font-weight: 800;">Chapter 3. 창업 생존 수칙</span>
+                    <h4 style="font-size: 16.5px; font-weight: 800; color: #78350F; margin-top: 2px;">💡 망하지 않는 창업 3대 실천 원칙</h4>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 8px; font-size: 14.5px; color: #92400E;">
+                    <p>• <strong>초기 고정비 최소화:</strong> 화려한 인테리어보다 실제 마케팅과 제품 경쟁력에 80% 이상의 자금을 투입하세요.</p>
+                    <p>• <strong>핵심 멤버 구성:</strong> 재무와 꼼꼼한 실무를 도맡아줄 파트너(소띠, 닭띠)를 초기에 확보하면 리스크가 줄어듭니다.</p>
+                </div>
+            </div>
+        </div>
+        """
+    else: # 직장인 기본
+        return f"""
+        <div style="display: flex; flex-direction: column; gap: 16px; font-size: 14.5px; color: #334155; line-height: 1.85; text-align: left;">
+            <div style="border-left: 4px solid #2563EB; padding-left: 10px;">
+                <span style="font-size: 12px; color: #2563EB; font-weight: 800;">상황 맞춤: 직장인</span>
+                <h4 style="font-size: 16.5px; font-weight: 800; color: #1E3A8A; margin: 3px 0 6px;">[직장·승진운] 핵심 인재로서의 두각과 고속 승진의 천운</h4>
+                <p style="color: #1E40AF; font-size: 14.5px; line-height: 1.85;">
+                    {user_name}님의 사주는 복잡한 난제를 단번에 해결하는 전략적 기획력과 결단력을 지니고 있어 조직 내에서 대체 불가능한 핵심 리더로서 인정받는 명식입니다. 본인만의 실적을 증명할 때 파격적인 승진과 연봉 인상의 기회가 찾아옵니다.
+                </p>
+            </div>
+            <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
+            <div>
+                <div style="border-left: 4px solid #1E40AF; padding-left: 10px; margin-bottom: 8px;">
+                    <span style="font-size: 12px; color: #1E40AF; font-weight: 800;">Chapter 2. 승진·영전 타이밍</span>
+                    <h4 style="font-size: 16.5px; font-weight: 800; color: #0F172A; margin-top: 2px;">🚀 Q. 사내 인사 고과 및 영전·승진의 최적기는?</h4>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 8px; font-size: 14.5px; color: #475569;">
+                    <p>• <strong>승진·영전 대길 시기:</strong> 하반기(양력 10~12월)와 초봄(양력 2~3월)에 상급자 및 인사위원회의 강력한 추천으로 직급 상승이 성사됩니다.</p>
+                    <p>• <strong>사내 귀인 상사:</strong> 무게감 있고 원칙이 뚜렷한 상사(원숭이띠, 쥐띠)가 든든한 방패막이가 되어줍니다.</p>
+                </div>
+            </div>
+            <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
+            <div>
+                <div style="border-left: 4px solid #D97706; padding-left: 10px; margin-bottom: 8px;">
+                    <span style="font-size: 12px; color: #D97706; font-weight: 800;">Chapter 3. 사내 처세 비책</span>
+                    <h4 style="font-size: 16.5px; font-weight: 800; color: #78350F; margin-top: 2px;">💼 직장 스트레스 차단 & 사무 공간 개운법</h4>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 8px; font-size: 14.5px; color: #92400E;">
+                    <p>• <strong>사무실 책상 풍수:</strong> 모니터 옆에 메탈 소재의 소품이나 화분을 두면 잡음을 없애고 집중력을 극대화합니다.</p>
+                    <p>• <strong>동료 관계 처세:</strong> 동료들의 불평불만에 휩쓸리지 말고 중립을 유지할 때 인사철에 가장 높은 평가를 받습니다.</p>
+                </div>
+            </div>
+        </div>
+        """
+
+# 4대 테마운세 풀버전 라우터
 @app.post("/api/theme-report")
 def get_theme_report(req: dict):
     theme = req.get("theme", "wealth")
@@ -599,14 +858,18 @@ def get_theme_report(req: dict):
         "health": "🌿 평생 건강운"
     }
 
-    if theme == "wealth":
+    if theme == "love":
+        content = generate_love_report_content(user_name, sub_opt)
+    elif theme == "business":
+        content = generate_business_report_content(user_name, sub_opt)
+    elif theme == "wealth":
         content = f"""
         <div style="display: flex; flex-direction: column; gap: 16px; font-size: 14.5px; color: #334155; line-height: 1.85; text-align: left;">
             <div style="border-left: 4px solid #D97706; padding-left: 10px;">
                 <span style="font-size: 12px; color: #D97706; font-weight: 800;">Chapter 1. 재물 원국 감명</span>
                 <h4 style="font-size: 16.5px; font-weight: 800; color: #78350F; margin: 3px 0 6px;">[평생 재물운] '암장(暗藏) 금고형' 자산 축적 원국</h4>
                 <p style="color: #92400E; font-size: 14.5px; line-height: 1.85;">
-                    {user_name}님의 사주는 겉으로 드러난 화려함보다 실속 있게 현금과 실물 자산을 차곡차곡 축적하는 전형적인 '황금 금고형' 구조입니다. 지장간 속에 알짜배기 재성이 뿌리를 내리고 있어 틈새 기회를 포착하여 자산을 불리는 능력이 탁월합니다.
+                    {user_name}님의 사주는 겉으로 드러난 화려함보다 실속 있게 현금과 실물 자산을 차곡차곡 축적하는 전형적인 '황금 금고형' 구조입니다. 지장간 속에 알짜배기 재성이 뿌리를 내리고 있어 틈새 기회를 포착하여 자산을 불리는 능력이 탁월합니다. 단기 시세 차익보다 실물 부동산과 우량 배당 자산 중심 포트폴리오가 운명을 견인합니다.
                 </p>
             </div>
             <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
@@ -615,47 +878,57 @@ def get_theme_report(req: dict):
                     <span style="font-size: 12px; color: #2D6A4F; font-weight: 800;">Chapter 2. 생애 자산 로드맵</span>
                     <h4 style="font-size: 16.5px; font-weight: 800; color: #0F172A; margin-top: 2px;">📊 Q. {user_name}님의 생애 주기별 자산 퀀텀점프 시기는?</h4>
                 </div>
-                <div style="display: flex; flex-direction: column; gap: 8px; font-size: 14px; color: #475569;">
-                    <p>• <strong>초년~30대:</strong> 종잣돈을 모으고 경제 안목을 기르는 시기였습니다.</p>
-                    <p style="color: #B45309; font-weight: 800;">• <strong>40대 중후반~50대 (*현재 황금기):</strong> 귀인의 도움과 투자 결단으로 자산 규모가 3배 이상 폭발적으로 도약하는 최상의 전환점입니다.</p>
-                    <p>• <strong>60대 이후:</strong> 고정적 현금 흐름을 바탕으로 부를 안전하게 대물림하는 완벽한 자산 수성기입니다.</p>
+                <div style="display: flex; flex-direction: column; gap: 8px; font-size: 14.5px; color: #475569;">
+                    <p>• <strong>초년~30대 (씨앗 축적기):</strong> 종잣돈을 모으고 금융/실물 경제의 안목을 기르는 시기였습니다.</p>
+                    <p style="color: #B45309; font-weight: 800;">• <strong>40대 중후반~50대 (*현재 황금기):</strong> 귀인의 도움과 부동산/사업 결단으로 자산 규모가 3배 이상 폭발적으로 퀀텀점프하는 최상의 전환점입니다.</p>
+                    <p>• <strong>60대 이후 (자산 수성기):</strong> 고정적 현금 흐름을 바탕으로 부를 안전하게 대물림하는 완벽한 자산 수성기입니다.</p>
+                </div>
+            </div>
+            <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
+            <div>
+                <div style="border-left: 4px solid #059669; padding-left: 10px; margin-bottom: 8px;">
+                    <span style="font-size: 12px; color: #059669; font-weight: 800;">Chapter 3. 실전 부의 증식 비책</span>
+                    <h4 style="font-size: 16.5px; font-weight: 800; color: #065F46; margin-top: 2px;">💡 재물운을 극대화하는 실전 개운(開運) 솔루션</h4>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 8px; font-size: 14.5px; color: #047857;">
+                    <p>• <strong>행운의 방위:</strong> 주거지나 사무실 기준 '정북쪽'과 '동북쪽'이 재물이 샘솟는 황금 방위입니다.</p>
+                    <p>• <strong>금전 누수 방어법:</strong> 지갑 안에 현금을 항상 짝수 매수로 정돈하여 넣고, 노란색 소품을 휴대하면 헛돈 지출이 차단됩니다.</p>
                 </div>
             </div>
         </div>
         """
-    elif theme == "love":
-        content = f"""
-        <div style="display: flex; flex-direction: column; gap: 16px; font-size: 14.5px; color: #334155; line-height: 1.85; text-align: left;">
-            <div style="border-left: 4px solid #E11D48; padding-left: 10px;">
-                <span style="font-size: 12px; color: #E11D48; font-weight: 800;">상태 맞춤: {sub_opt}</span>
-                <h4 style="font-size: 16.5px; font-weight: 800; color: #881337; margin: 3px 0 6px;">[평생 애정운] 깊은 신뢰와 상호 존중의 인연</h4>
-                <p style="color: #9F1239; font-size: 14.5px; line-height: 1.85;">
-                    {user_name}님의 애정 원국은 한 번 맺은 신뢰를 평생 지켜나가는 따뜻한 포용력의 소유자입니다. 본연의 당당함을 드러낼 때 뜻밖의 귀한 인연이 찾아옵니다.
-                </p>
-            </div>
-        </div>
-        """
-    elif theme == "business":
-        content = f"""
-        <div style="display: flex; flex-direction: column; gap: 16px; font-size: 14.5px; color: #334155; line-height: 1.85; text-align: left;">
-            <div style="border-left: 4px solid #2563EB; padding-left: 10px;">
-                <span style="font-size: 12px; color: #2563EB; font-weight: 800;">상황 맞춤: {sub_opt}</span>
-                <h4 style="font-size: 16.5px; font-weight: 800; color: #1E3A8A; margin: 3px 0 6px;">[사업·직업운] 전략적 기획력과 결단력의 리더</h4>
-                <p style="color: #1E40AF; font-size: 14.5px; line-height: 1.85;">
-                    복잡한 난제를 단번에 해결하는 전략가 기질을 타고났습니다. 사내 정치나 시장의 잡음에 휩쓸리지 않고 독보적인 실적을 증명할 때 파격적인 도약이 일어납니다.
-                </p>
-            </div>
-        </div>
-        """
-    else:
+    else: # 건강운 (선택옵션 없이 3대 챕터 풀버전 즉시 제공)
         content = f"""
         <div style="display: flex; flex-direction: column; gap: 16px; font-size: 14.5px; color: #334155; line-height: 1.85; text-align: left;">
             <div style="border-left: 4px solid #059669; padding-left: 10px;">
-                <span style="font-size: 12px; color: #059669; font-weight: 800;">오행 체질 정밀 분석</span>
+                <span style="font-size: 12px; color: #059669; font-weight: 800;">Chapter 1. 오행 체질 분석</span>
                 <h4 style="font-size: 16.5px; font-weight: 800; color: #065F46; margin: 3px 0 6px;">[평생 건강운] 수승화강(水昇火降) 활력 관리</h4>
                 <p style="color: #047857; font-size: 14.5px; line-height: 1.85;">
-                    강인한 생명력을 갖추고 있으나 두한족열(머리는 시원하게 발은 따뜻하게)의 수칙을 유지해야 합니다. 취침 전 족욕과 유산소 운동이 건강의 비결입니다.
+                    {user_name}님의 오행 체질은 강인한 생명력을 갖추고 있으나 두한족열(머리는 시원하게 발은 따뜻하게)의 수칙을 유지해야 합니다. 스트레스 누적 시 간 피로와 소화기계로 신호가 올 수 있으므로 규칙적인 유산소 운동이 건강의 비결입니다.
                 </p>
+            </div>
+            <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
+            <div>
+                <div style="border-left: 4px solid #047857; padding-left: 10px; margin-bottom: 8px;">
+                    <span style="font-size: 12px; color: #047857; font-weight: 800;">Chapter 2. 취약 장기 관리</span>
+                    <h4 style="font-size: 16.5px; font-weight: 800; color: #0F172A; margin-top: 2px;">🏥 Q. {user_name}님이 각별히 챙겨야 할 3대 취약 장기와 예방법은?</h4>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 8px; font-size: 14.5px; color: #475569;">
+                    <p>• <strong>간장 & 담낭:</strong> 만성 피로를 방지하기 위해 과도한 음주를 피하고 간 보호 성분을 섭취하세요.</p>
+                    <p>• <strong>신장 & 방광:</strong> 노폐물 배출을 위해 하루 1.5L 이상의 미온수를 나누어 마시는 습관이 필수적입니다.</p>
+                    <p>• <strong>위장 & 비장:</strong> 야식을 지양하고 담백한 식단을 유지해야 소화 흡수력이 강화됩니다.</p>
+                </div>
+            </div>
+            <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
+            <div>
+                <div style="border-left: 4px solid #1E40AF; padding-left: 10px; margin-bottom: 8px;">
+                    <span style="font-size: 12px; color: #1E40AF; font-weight: 800;">Chapter 3. 일상 섭생 루틴</span>
+                    <h4 style="font-size: 16.5px; font-weight: 800; color: #1E3A8A; margin-top: 2px;">🌿 평생 활력을 완성하는 일상 개운 섭생 루틴</h4>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 8px; font-size: 14.5px; color: #1E40AF;">
+                    <p>• <strong>취침 전 힐링 루틴:</strong> 매일 밤 15분간 따뜻한 족욕을 통해 하체 순환을 돕고 숙면을 취하세요.</p>
+                    <p>• <strong>추천 운동 요법:</strong> 주 3회 30분 이상의 빠른 걷기나 수영 등 유산소 운동이 오행 밸런스를 맞춰줍니다.</p>
+                </div>
             </div>
         </div>
         """
