@@ -58,7 +58,6 @@
         .bio-pill-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
         .bio-pill-cell { background: #F8FAFC; border-radius: 10px; padding: 8px 6px; text-align: center; border: 1px solid #E2E8F0; }
 
-        /* [신규] 아코디언 서랍 카드 스타일 */
         .drawer-card { background: #FFFFFF; border-radius: 18px; border: 1px solid #E2E8F0; overflow: hidden; transition: all 0.25s ease; }
         .drawer-header { padding: 16px 18px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; background: #FFFFFF; user-select: none; }
         .drawer-header:hover { background: #F8FAFC; }
@@ -172,10 +171,9 @@
                 <button onclick="startSajuAnalysis()" class="btn-primary">정밀 감명서 발행하기 ✨</button>
             </div>
 
-            <!-- 탭 1: 오늘운세 (위계 정리 완료) -->
+            <!-- 탭 1: 오늘운세 (핵심 브리핑 + 원터치 서랍) -->
             <div id="view-today" class="tab-view hidden">
                 
-                <!-- 1. 사주 MBTI -->
                 <div class="mbti-card">
                     <div class="mbti-top">
                         <div id="mbtiAnimalIcon" class="mbti-icon">🐶</div>
@@ -187,7 +185,6 @@
                     </div>
                 </div>
 
-                <!-- 2. 오늘의 일진 배너 -->
                 <div class="daily-banner">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
                         <span style="font-size: 13px; color: #FDE68A;">오늘의 일진</span>
@@ -197,7 +194,6 @@
                     <div id="resAdvice" style="font-size: 13.5px; color: #E2E8F0; font-weight: 400; line-height: 1.65; text-align: left;"></div>
                 </div>
 
-                <!-- 3. 행운 요소 6칸 -->
                 <div class="grid-2">
                     <div class="grid-cell"><span style="font-size: 12px; color: #94A3B8; display: block;">🎨 행운의 색상</span><p id="resColor" style="font-weight: 700; margin-top: 2px; font-size: 14px;">스노우 화이트 / 실버</p></div>
                     <div class="grid-cell"><span style="font-size: 12px; color: #94A3B8; display: block;">🔢 행운의 숫자</span><p id="resNumber" style="font-weight: 700; margin-top: 2px; font-size: 14px;">4, 9</p></div>
@@ -207,13 +203,12 @@
                     <div class="grid-cell"><span style="font-size: 12px; color: #94A3B8; display: block;">💡 마인드 처세</span><p id="resMindset" style="font-weight: 700; font-size: 13px; margin-top: 2px;">맺고 끊음을 명확히 대화하기</p></div>
                 </div>
 
-                <!-- 4. 오늘의 개운 실천 액션 -->
                 <div class="action-card">
                     <span style="font-weight: 800; color: #78350F; display: block; margin-bottom: 3px; font-size: 14.5px;">✨ 오늘의 개운(開運) 실천 액션</span>
                     <p id="resGaewoon" style="color: #92400E; font-weight: 500; font-size: 14px; line-height: 1.6;">오늘 완료해야 할 우선순위 3가지 메모하기</p>
                 </div>
 
-                <!-- 5. 생체 에너지 바이오리듬 (곡선형 그래프) -->
+                <!-- 곡선 파동형 바이오리듬 카드 -->
                 <div class="biorhythm-card">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                         <div>
@@ -259,10 +254,10 @@
                     </div>
                 </div>
 
-                <!-- 🗂️ 6. 스페셜 운세 & 개운 도구 서랍 (원터치 확장형 UI) -->
+                <!-- 🗂️ 스페셜 운세 & 개운 도구 서랍 (원터치 확장형 UI) -->
                 <div style="display: flex; flex-direction: column; gap: 10px;">
                     
-                    <!-- 서랍 1: 오늘의 타로 뽑기 -->
+                    <!-- 서랍 1: 오늘의 타로 -->
                     <div id="drawerTarot" class="drawer-card">
                         <div class="drawer-header" onclick="toggleDrawer('drawerTarot')">
                             <div class="drawer-title-box">
@@ -299,7 +294,7 @@
                         </div>
                     </div>
 
-                    <!-- 서랍 2: 맞춤 경면주사 부적 -->
+                    <!-- 서랍 2: 맞춤 부적 -->
                     <div id="drawerTalisman" class="drawer-card">
                         <div class="drawer-header" onclick="toggleDrawer('drawerTalisman')">
                             <div class="drawer-title-box">
@@ -325,7 +320,7 @@
                         </div>
                     </div>
 
-                    <!-- 서랍 3: 12간지 띠별 & 12별자리 운세 -->
+                    <!-- 서랍 3: 띠별/별자리 운세 -->
                     <div id="drawerZodiac" class="drawer-card">
                         <div class="drawer-header" onclick="toggleDrawer('drawerZodiac')">
                             <div class="drawer-title-box">
@@ -382,6 +377,7 @@
             <!-- 탭 2: 정통사주 -->
             <div id="view-saju" class="tab-view hidden">
                 
+                <!-- 사주 명식표 -->
                 <div class="card" style="padding: 18px;">
                     <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 10px; margin-bottom: 14px;">
                         <div>
@@ -438,6 +434,7 @@
                         </div>
                     </div>
 
+                    <!-- 오행 실질 에너지 5단 막대 기둥 차트 -->
                     <div style="margin-top: 18px; text-align: left;">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                             <span style="font-size: 14px; font-weight: 800; color: #0F172A;">오행(五行) 실질 에너지 세력 분포</span>
@@ -576,7 +573,6 @@
             <!-- 탭 3: 궁합·테마 -->
             <div id="view-theme" class="tab-view hidden">
                 
-                <!-- 정통 사주 궁합 카드 -->
                 <div class="card" style="border: 2px solid #FECDD3; background: #FFFDFD; text-align: left;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
                         <span style="font-size: 16px; font-weight: 800; color: #9F1239; font-family: 'Noto Serif KR', serif;">💞 정통 사주 궁합 감명</span>
@@ -593,7 +589,6 @@
                     </button>
                 </div>
 
-                <!-- 4대 테마운세 -->
                 <div class="card" style="text-align: left;">
                     <p style="font-size: 16.5px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif;">💰 평생 재물운</p>
                     <p style="font-size: 13.5px; color: #64748B; margin-top: 3px;">자산 흐름 및 부동산/투자 성공 분석</p>
@@ -781,7 +776,7 @@
         </div>
     </div>
 
-    <!-- 전통 경면주사 수제 부적 모달 -->
+    <!-- 전통 경면주사 수제 부적 모달 (5대 오행 고유 캘리그래피 복구) -->
     <div id="talismanModal" class="modal-bg hidden">
         <div class="modal-content" style="max-width: 340px; padding: 18px; border-radius: 24px;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 8px;">
@@ -902,7 +897,6 @@
         let currentZodiacData = null;
         let pendingTarotSlot = null;
 
-        // [신규] 아코디언 서랍 토글 함수
         function toggleDrawer(drawerId) {
             const card = document.getElementById(drawerId);
             const body = card.querySelector('.drawer-body');
@@ -950,7 +944,24 @@
             "I. THE MAGICIAN (마법사)": "https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg",
             "II. THE HIGH PRIESTESS (여사제)": "https://upload.wikimedia.org/wikipedia/commons/8/88/RWS_Tarot_02_High_Priestess.jpg",
             "III. THE EMPRESS (여황제)": "https://upload.wikimedia.org/wikipedia/commons/d/d2/RWS_Tarot_03_Empress.jpg",
-            "XIX. THE SUN (태양)": "https://upload.wikimedia.org/wikipedia/commons/1/17/RWS_Tarot_19_Sun.jpg"
+            "IV. THE EMPEROR (황제)": "https://upload.wikimedia.org/wikipedia/commons/c/c3/RWS_Tarot_04_Emperor.jpg",
+            "V. THE HIEROPHANT (교황)": "https://upload.wikimedia.org/wikipedia/commons/8/8d/RWS_Tarot_05_Hierophant.jpg",
+            "VI. THE LOVERS (연인)": "https://upload.wikimedia.org/wikipedia/commons/3/3a/TheLovers.jpg",
+            "VII. THE CHARIOT (전차)": "https://upload.wikimedia.org/wikipedia/commons/9/9b/RWS_Tarot_07_Chariot.jpg",
+            "VIII. STRENGTH (힘)": "https://upload.wikimedia.org/wikipedia/commons/f/f5/RWS_Tarot_08_Strength.jpg",
+            "IX. THE HERMIT (은둔자)": "https://upload.wikimedia.org/wikipedia/commons/4/4d/RWS_Tarot_09_Hermit.jpg",
+            "X. WHEEL OF FORTUNE (운명의 수레바퀴)": "https://upload.wikimedia.org/wikipedia/commons/3/3c/RWS_Tarot_10_Wheel_of_Fortune.jpg",
+            "XI. JUSTICE (정의)": "https://upload.wikimedia.org/wikipedia/commons/e/e0/RWS_Tarot_11_Justice.jpg",
+            "XII. THE HANGED MAN (매달린 사람)": "https://upload.wikimedia.org/wikipedia/commons/2/2b/RWS_Tarot_12_Hanged_Man.jpg",
+            "XIII. DEATH (죽음)": "https://upload.wikimedia.org/wikipedia/commons/d/d7/RWS_Tarot_13_Death.jpg",
+            "XIV. TEMPERANCE (절제)": "https://upload.wikimedia.org/wikipedia/commons/f/f8/RWS_Tarot_14_Temperance.jpg",
+            "XV. THE DEVIL (악마)": "https://upload.wikimedia.org/wikipedia/commons/5/55/RWS_Tarot_15_Devil.jpg",
+            "XVI. THE TOWER (탑)": "https://upload.wikimedia.org/wikipedia/commons/5/53/RWS_Tarot_16_Tower.jpg",
+            "XVII. THE STAR (별)": "https://upload.wikimedia.org/wikipedia/commons/d/db/RWS_Tarot_17_Star.jpg",
+            "XVIII. THE MOON (달)": "https://upload.wikimedia.org/wikipedia/commons/7/7f/RWS_Tarot_18_Moon.jpg",
+            "XIX. THE SUN (태양)": "https://upload.wikimedia.org/wikipedia/commons/1/17/RWS_Tarot_19_Sun.jpg",
+            "XX. JUDGEMENT (심판)": "https://upload.wikimedia.org/wikipedia/commons/d/dd/RWS_Tarot_20_Judgement.jpg",
+            "XXI. THE WORLD (세계)": "https://upload.wikimedia.org/wikipedia/commons/f/ff/RWS_Tarot_21_World.jpg"
         };
 
         function getTarotCardBackSvg() {
@@ -972,7 +983,66 @@
             </svg>`;
         }
 
+        // [화려한 5대 오행 캘리그래피 복구] 경면주사 수제 부적 SVG 렌더러
         function renderAuthenticCinnabarTalisman(type = "metal", width = 160, height = 260) {
+            let innerSymbol = '';
+            let bottomText = '萬福大吉';
+
+            if (type === "wood") {
+                bottomText = '事業亨通';
+                innerSymbol = `
+                    <path d="M 35 95 L 105 95 L 70 135 Z" fill="rgba(198,40,40,0.15)"/>
+                    <circle cx="70" cy="110" r="6" fill="#C62828"/>
+                    <path d="M 28 142 L 112 142" stroke-width="4.2"/>
+                    <path d="M 40 156 Q 70 140 100 156" stroke-width="3.8"/>
+                    <path d="M 48 170 L 92 170" stroke-width="3.5"/>
+                    <line x1="70" y1="125" x2="70" y2="182" stroke-width="4.5"/>
+                `;
+            } else if (type === "fire") {
+                bottomText = '心想事成';
+                innerSymbol = `
+                    <circle cx="70" cy="110" r="18" fill="rgba(198,40,40,0.1)"/>
+                    <circle cx="70" cy="110" r="9" fill="#C62828"/>
+                    <path d="M 35 136 Q 70 120 105 136" stroke-width="4"/>
+                    <path d="M 42 152 Q 70 138 98 152" stroke-width="3.6"/>
+                    <path d="M 38 168 L 102 168" stroke-width="3.8"/>
+                    <line x1="70" y1="125" x2="70" y2="182" stroke-width="4.2"/>
+                `;
+            } else if (type === "earth") {
+                bottomText = '金庫安穩';
+                innerSymbol = `
+                    <rect x="38" y="94" width="64" height="40" fill="rgba(198,40,40,0.1)"/>
+                    <line x1="70" y1="94" x2="70" y2="134" stroke-width="3.8"/>
+                    <line x1="38" y1="114" x2="102" y2="114" stroke-width="3.8"/>
+                    <path d="M 42 148 L 98 148" stroke-width="4"/>
+                    <path d="M 36 164 Q 70 150 104 164" stroke-width="3.8"/>
+                    <line x1="70" y1="134" x2="70" y2="180" stroke-width="4.2"/>
+                `;
+            } else if (type === "water") {
+                bottomText = '萬事和合';
+                innerSymbol = `
+                    <circle cx="48" cy="112" r="13" />
+                    <circle cx="92" cy="112" r="13" />
+                    <path d="M 48 112 Q 70 130 92 112 Q 70 96 48 112" fill="rgba(198,40,40,0.2)"/>
+                    <path d="M 38 138 Q 70 152 102 138" stroke-width="4"/>
+                    <path d="M 44 156 L 96 156" stroke-width="3.8"/>
+                    <path d="M 70 138 L 70 180" stroke-width="4.2"/>
+                `;
+            } else {
+                bottomText = '萬福大吉';
+                innerSymbol = `
+                    <rect x="40" y="96" width="26" height="22" stroke-width="3.8"/>
+                    <rect x="74" y="96" width="26" height="22" stroke-width="3.8"/>
+                    <line x1="53" y1="96" x2="53" y2="118" stroke-width="3"/>
+                    <line x1="87" y1="96" x2="87" y2="118" stroke-width="3"/>
+                    <path d="M 38 128 L 102 128" stroke-width="4.2"/>
+                    <path d="M 46 140 Q 70 130 94 140" stroke-width="3.8"/>
+                    <path d="M 42 152 Q 56 144 70 156 Q 84 144 98 152" stroke-width="3.5"/>
+                    <circle cx="56" cy="170" r="3.5" fill="#C62828" />
+                    <circle cx="84" cy="170" r="3.5" fill="#C62828" />
+                `;
+            }
+
             return `
             <svg id="svgTalismanMain" width="${width}" height="${height}" viewBox="0 0 140 240" style="background: linear-gradient(135deg, #FFE814 0%, #FFD000 100%); border: 3px solid #C49700; border-radius: 8px; box-shadow: 0 6px 16px rgba(0,0,0,0.25);">
                 <rect x="4" y="4" width="132" height="232" fill="none" stroke="#E65100" stroke-width="0.8" opacity="0.4" />
@@ -980,16 +1050,26 @@
                     <path d="M 28 22 Q 42 16 68 18 Q 92 20 112 16" />
                     <path d="M 70 18 L 70 32" />
                     <path d="M 40 28 L 100 28" />
+                    <circle cx="48" cy="38" r="3" fill="#C62828" />
                     <circle cx="70" cy="38" r="3" fill="#C62828" />
+                    <circle cx="92" cy="38" r="3" fill="#C62828" />
+
                     <path d="M 32 50 L 108 50" />
                     <path d="M 36 50 L 36 68 L 104 68 L 104 50" />
+                    <path d="M 50 58 L 90 58" />
+                    <path d="M 70 50 L 70 68" />
+                    <path d="M 42 76 Q 70 66 98 76" />
+                    
                     <path d="M 30 88 L 110 88" />
                     <path d="M 34 88 L 34 165 Q 34 180 50 180 L 90 180 Q 106 180 106 165 L 106 88" />
-                    <circle cx="70" cy="135" r="16" fill="rgba(198,40,40,0.15)"/>
-                    <line x1="70" y1="110" x2="70" y2="160" stroke-width="4.2"/>
+                    
+                    ${innerSymbol}
+
+                    <path d="M 36 190 Q 70 182 104 190" />
+                    <path d="M 48 198 L 92 198" />
                 </g>
                 <rect x="36" y="204" width="68" height="22" fill="#C62828" rx="3"/>
-                <text x="70" y="219" font-size="10" font-weight="900" fill="#FFFFFF" text-anchor="middle" font-family="'Pretendard', serif" letter-spacing="1px">萬福大吉</text>
+                <text x="70" y="219" font-size="10" font-weight="900" fill="#FFFFFF" text-anchor="middle" font-family="'Pretendard', serif" letter-spacing="1px">${bottomText}</text>
             </svg>
             `;
         }
@@ -1110,7 +1190,7 @@
                 btnStar.className = 'sub-tab-btn active';
                 btnZodiac.className = 'sub-tab-btn';
                 gridStar.classList.remove('hidden');
-                gridStar.classList.add('hidden');
+                gridZodiac.classList.add('hidden');
             }
         }
 
