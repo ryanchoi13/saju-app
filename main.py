@@ -7,7 +7,7 @@ from typing import Optional
 import os
 import random
 
-app = FastAPI(title="운세의 신 정통 명리학 엔진 - Mode 2 Mega Edition", version="35.0.0")
+app = FastAPI(title="운세의 신 정통 명리학 엔진 - Mode 2 Master Edition", version="36.0.0")
 
 CHEONGAN_HANJA = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
 JIJI_HANJA = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"]
@@ -550,19 +550,40 @@ def get_gunghap_report(req: dict):
 
     if relation == "동업/사업":
         chapter2_title = "💼 비즈니스 의사결정 케미 & 수익 배분 수칙"
-        chapter2_desc = f"• <strong>기획 vs 실행의 황금 분담:</strong> {user_name}님의 거시적 사업 비전과 {partner_name}님의 꼼꼼한 실무·자금 관리 능력이 결합하여 동업 리스크를 90% 이상 줄여줍니다.<br>• <strong>갈등 방지 원칙:</strong> 지분과 정산 구조는 초기에 문서화 및 공증을 완료할 때 동업 관계가 10년 이상 번창합니다."
-        chapter3_title = "📈 두 사람이 함께할 때 터지는 재물 시너지"
-        chapter3_desc = f"두 분이 결합하면 금전 유입 운이 단독 사업 대비 2.8배 이상 증폭됩니다. 특히 신규 거래처 수주 및 투자 유치에서 막강한 시너지를 발휘합니다."
+        chapter2_desc = f"""
+        <p>• <strong>기획 vs 실행의 황금 분담:</strong> {user_name}님의 거시적 사업 비전과 {partner_name}님의 꼼꼼한 실무·자금 관리 능력이 결합하여 동업 리스크를 90% 이상 줄여줍니다.</p>
+        <p>• <strong>갈등 방지 원칙:</strong> 지분과 정산 구조는 초기에 문서화 및 공증을 완료할 때 동업 관계가 10년 이상 번창합니다.</p>
+        <p>• <strong>위기 대응 전략:</strong> 자금 회수나 법적 분쟁 이슈 발생 시, {user_name}님이 대외 협상을 주도하고 {partner_name}님이 내부 문서를 검증하면 손실을 완벽히 방어합니다.</p>
+        """
+        chapter3_title = "📈 두 사람이 함께할 때 터지는 재물 시너지 & 대박 업종"
+        chapter3_desc = f"""
+        <p>두 분이 결합하면 금전 유입 운이 단독 사업 대비 2.8배 이상 증폭됩니다. 특히 <strong>신규 거래처 수주, 프랜차이즈/지점 확장, 투자 유치</strong>에서 막강한 시너지를 발휘합니다.</p>
+        <p><strong>추천 협력 분야:</strong> 유통/이커머스, IT 솔루션, 지식 서비스, 프리미엄 식음료 및 부동산 자산 개발 분야에서 큰 부를 거머쥡니다.</p>
+        """
     elif relation == "친구/지인":
         chapter2_title = "🍻 영혼의 소통 케미 & 평생 우정 유지법"
-        chapter2_desc = f"• <strong>말하지 않아도 통하는 티키타카:</strong> 사주 오행의 균형 덕분에 첫 만남부터 오랜 지인 같은 편안함을 느낍니다.<br>• <strong>주의할 점:</strong> 서로에 대한 친밀감이 지나쳐 예의를 놓치지 않도록 사소한 배려를 지킬 때 평생의 귀인 친구로 남습니다."
-        chapter3_title = "✨ 서로에게 주는 복록과 행운"
-        chapter3_desc = f"{partner_name}님은 {user_name}님이 힘든 시기에 결정적인 멘탈 케어와 현실적 활로를 열어주는 귀인 역할을 담당합니다."
+        chapter2_desc = f"""
+        <p>• <strong>말하지 않아도 통하는 티키타카:</strong> 사주 오행의 균형 덕분에 첫 만남부터 10년 지기 같은 편안함과 신뢰를 느낍니다.</p>
+        <p>• <strong>주의할 점:</strong> 서로에 대한 친밀감이 지나쳐 금전 차용이나 무리한 부탁을 하지 않는 선을 지킬 때 평생의 귀인 친구로 남습니다.</p>
+        <p>• <strong>힐링 포인트:</strong> 가벼운 근교 드라이브나 취미 활동(골프, 테니스, 맛집 탐방)을 함께할 때 스트레스가 단숨에 해소됩니다.</p>
+        """
+        chapter3_title = "✨ 서로에게 주는 복록과 행운의 시너지"
+        chapter3_desc = f"""
+        <p>{partner_name}님은 {user_name}님이 인생의 고비나 번아웃에 직면했을 때 결정적인 멘탈 케어와 현실적 활로를 열어주는 귀인 역할을 담당합니다.</p>
+        """
     else: # 연인/결혼
         chapter2_title = "💖 실전 생활/연애 케미 & 갈등 즉효성 해결 매뉴얼"
-        chapter2_desc = f"• <strong>소통의 찰떡 포인트:</strong> {user_name}님의 통솔력과 {partner_name}님의 섬세한 배려가 결합하여 어떤 위기도 사랑으로 극복합니다.<br>• <strong>다툼 발생 시 즉효 솔루션:</strong> 텍스트 메시지보다는 '분위기 좋은 카페나 맛있는 식사'를 함께하며 차분히 대화할 때 막힌 응어리가 10분 만에 풀립니다.<br>• <strong>결혼 적기:</strong> 두 사람의 기운이 합을 이루는 봄(양력 3~5월)과 가을(양력 9~11월)에 결실을 맺을 때 백년해로합니다."
-        chapter3_title = "💰 두 사람이 결합할 때 폭발하는 재물 & 가문 번영운"
-        chapter3_desc = f"결혼 후 가계 자산이 3배 이상 수직 상승하는 전형적인 '재물 상생 궁합'입니다. 맞벌이든 외벌이든 서로의 운을 북돋워 부동산 청약 및 자산 증식에서 놀라운 성과를 거둡니다."
+        chapter2_desc = f"""
+        <p>• <strong>소통의 찰떡 포인트:</strong> {user_name}님의 당당한 통솔력과 {partner_name}님의 섬세한 배려가 결합하여 어떤 현실적 위기도 사랑으로 극복합니다.</p>
+        <p>• <strong>다툼 발생 시 5분 즉효 솔루션:</strong> 메신저 텍스트 다툼을 멈추고 직접 만나 손을 잡고 대화하세요. '맛있는 식사나 따뜻한 티타임'을 곁들이며 대화할 때 막힌 응어리가 10분 만에 눈 녹듯 풀립니다.</p>
+        <p>• <strong>결혼 적기 & 길일:</strong> 두 사람의 기운이 온화하게 합을 이루는 봄(양력 3~5월)과 가을(양력 9~11월)에 결실을 맺을 때 백년해로합니다.</p>
+        <p>• <strong>가치관 조율:</strong> 경제권은 현실 감각이 뛰어난 쪽에게 위임하고, 주말 여가와 라이프스타일은 함께 결정할 때 갈등이 제로(0)가 됩니다.</p>
+        """
+        chapter3_title = "💰 두 사람이 결합할 때 폭발하는 가문 재물 & 부동산 대박운"
+        chapter3_desc = f"""
+        <p>결혼 후 가계 자산이 3배 이상 수직 상승하는 전형적인 <strong>'부귀쌍전(富貴雙全) 상생 궁합'</strong>입니다. 맞벌이든 외벌이든 서로의 운을 북돋워 부동산 청약 당첨 및 실물 자산 증식에서 놀라운 성과를 거둡니다.</p>
+        <p>두 분이 함께 모은 종잣돈은 40대 중후반에 10억 이상의 탄탄한 자산 기틀을 완성하는 원동력이 됩니다.</p>
+        """
 
     return {
         "title": f"💞 {user_name} & {partner_name} 정통 사주 궁합 ({relation})",
@@ -572,7 +593,7 @@ def get_gunghap_report(req: dict):
                 <div>
                     <span style="font-size: 12px; color: #BE123C; font-weight: 800;">정통 오행 상생 궁합 지수</span>
                     <h3 style="font-size: 20px; font-weight: 900; color: #9F1239; margin-top: 2px;">94점 (천생연분 대길합)</h3>
-                    <p style="font-size: 11.5px; color: #E11D48; margin-top: 2px;">애정합 96% · 신뢰합 92% · 재물시너지 95%</p>
+                    <p style="font-size: 11.5px; color: #E11D48; margin-top: 2px;">애정합 96% · 신뢰합 92% · 재물시너지 95% · 성격조화 93%</p>
                 </div>
                 <div style="font-size: 36px;">💖</div>
             </div>
@@ -585,7 +606,7 @@ def get_gunghap_report(req: dict):
                     </h4>
                 </div>
                 <p style="color: #9F1239; line-height: 1.85;">
-                    {user_name}님의 사주에 부족한 기운을 {partner_name}님이 넉넉하게 품어주고 있어, 만날수록 서로의 부족함이 채워지고 자존감이 회복되는 <strong>'상호보완형 황금 인연'</strong>입니다. 전생의 깊은 인연이 현생의 귀인으로 결실을 맺은 형국입니다.
+                    {user_name}님의 사주에 부족하거나 필요한 기운을 {partner_name}님이 풍부하게 품어주고 있어, 만날수록 서로의 부족함이 채워지고 자존감이 회복되는 <strong>'상호보완형 황금 인연'</strong>입니다. 전생의 깊은 인연이 현생의 귀인으로 결실을 맺은 형국이며, 서로를 만난 후 사회적 성취와 심리적 안정이 비약적으로 상승합니다.
                 </p>
             </div>
 
@@ -612,9 +633,9 @@ def get_gunghap_report(req: dict):
                         {chapter3_title}
                     </h4>
                 </div>
-                <p style="color: #047857; font-size: 14px; line-height: 1.8;">
+                <div style="color: #047857; font-size: 14px; line-height: 1.8;">
                     {chapter3_desc}
-                </p>
+                </div>
             </div>
 
             <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
@@ -627,8 +648,8 @@ def get_gunghap_report(req: dict):
                     </h4>
                 </div>
                 <div style="display: flex; flex-direction: column; gap: 6px; font-size: 14px; color: #475569;">
-                    <p>• <strong>행운의 장소:</strong> 물이 잔잔히 흐르는 강변이나 클래식한 조명의 카페가 두 분의 유대감을 2배로 증폭시킵니다.</p>
-                    <p>• <strong>추천 선물:</strong> 실버 톤의 메탈 시계나 은은한 천연 아로마 디퓨저가 두 분 사이의 애정 훈풍을 지속시킵니다.</p>
+                    <p>• <strong>행운의 데이트 장소:</strong> 물이 잔잔히 흐르는 강변이나 클래식한 조명의 카페가 두 분의 유대감을 2배로 증폭시킵니다.</p>
+                    <p>• <strong>추천 선물 아이템:</strong> 실버 톤의 메탈 시계나 은은한 천연 아로마 디퓨저가 두 분 사이의 애정 훈풍을 평생 지속시킵니다.</p>
                 </div>
             </div>
         </div>
@@ -655,6 +676,9 @@ def get_theme_report(req: dict):
                 <p style="color: #92400E; font-size: 14.5px; line-height: 1.85;">
                     {user_name}님의 사주는 겉으로 드러난 화려함보다 실속 있게 현금과 실물 자산을 차곡차곡 축적하는 전형적인 '황금 금고형' 명식입니다. 지장간 깊은 곳에 알짜배기 재성(財星)이 튼튼히 뿌리를 내리고 있어, 남들이 보지 못하는 틈새 기회를 포착하여 자산을 눈덩이처럼 불리는 능력이 탁월합니다.
                 </p>
+                <p style="color: #78350F; font-size: 13.5px; margin-top: 6px;">
+                    초년에는 자금 흐름의 기복이 있을 수 있으나, 나이가 들수록 금고의 문이 굳건해져 헛돈 지출이 차단되고 평생 동안 안정적인 부를 누리게 되는 <strong>'부익부(富益富)의 대기만성형 사주'</strong>입니다.
+                </p>
             </div>
 
             <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
@@ -665,9 +689,9 @@ def get_theme_report(req: dict):
                     <h4 style="font-size: 16.5px; font-weight: 800; color: #0F172A; margin-top: 2px;">📊 Q. {user_name}님의 생애 주기별 자산 대도약 시기는?</h4>
                 </div>
                 <div style="display: flex; flex-direction: column; gap: 8px; font-size: 14px; color: #475569;">
-                    <p>• <strong>초년~30대 (종잣돈 형성기):</strong> 실물 경제 감각을 기르고 기초 종잣돈을 모으는 담금질의 시기였습니다.</p>
-                    <p style="color: #B45309; font-weight: 800;">• <strong>40대 중후반~50대 (*현재 황금기):</strong> 귀인의 결정적 조력과 과감한 투자 결단으로 자산 규모가 3배 이상 폭발적으로 도약하는 일생일대의 승부처입니다.</p>
-                    <p>• <strong>60대 이후 (자산 수성 및 완성기):</strong> 부동산 임대 수익, 우량 배당 등 고정 현금 흐름을 토대로 안락한 부를 누리며 후대에 대물림합니다.</p>
+                    <p>• <strong>초년~30대 (종잣돈 형성기):</strong> 실물 경제 감각을 기르고 기초 종잣돈을 모으는 담금질의 시기였습니다. 다양한 경험을 통해 돈의 흐름을 읽는 안목이 완성되었습니다.</p>
+                    <p style="color: #B45309; font-weight: 800;">• <strong>40대 중후반~50대 (*현재 황금기):</strong> 귀인의 결정적 조력과 과감한 투자 결단으로 자산 규모가 3배 이상 폭발적으로 도약하는 일생일대의 승부처입니다. 본인이 주도권을 쥔 사업이나 실물 투자에서 대성합니다.</p>
+                    <p>• <strong>60대 이후 (자산 수성 및 완성기):</strong> 부동산 임대 수익, 우량 배당 등 고정 현금 흐름을 토대로 안락한 부를 누리며 자손에게 부를 안전하게 대물림합니다.</p>
                 </div>
             </div>
 
@@ -679,8 +703,9 @@ def get_theme_report(req: dict):
                     <h4 style="font-size: 16.5px; font-weight: 800; color: #1E3A8A; margin-top: 2px;">📈 가장 유리한 재테크 vs 피해야 할 위험 자산</h4>
                 </div>
                 <div style="display: flex; flex-direction: column; gap: 6px; font-size: 14px; color: #1E40AF; line-height: 1.8;">
-                    <p>• <strong>★대길 투자 종목:</strong> 입지가 탄탄한 수익형 부동산, 가치 우량 배당주, 안정적 국채 및 실물 금(Gold) 자산.</p>
+                    <p>• <strong>★대길 투자 종목:</strong> 입지가 탄탄한 수익형 부동산(상가·오피스), 독점적 기술을 가진 가치 우량 배당주, 안정적 국채 및 실물 금(Gold) 자산.</p>
                     <p>• <strong>⚠️ 기피 투자 종목:</strong> 변동성이 극단적인 초단타 선물/코인, 남의 말만 믿고 들어가는 비상장 지분 투자.</p>
+                    <p>• <strong>자산 배분 황금 비율:</strong> 안전 실물 자산 55% : 우량 배당 자산 30% : 현금성 유동성 15%</p>
                 </div>
             </div>
 
@@ -692,7 +717,7 @@ def get_theme_report(req: dict):
                     <h4 style="font-size: 16.5px; font-weight: 800; color: #991B1B; margin-top: 2px;">🛡️ 돈이 새어나가는 구멍 차단 솔루션</h4>
                 </div>
                 <p style="color: #451A03; font-size: 14px; line-height: 1.8;">
-                    운이 상승할 때는 친인척이나 지인으로부터 솔깃한 동업/보증 제안이 들어옵니다. 사사로운 정에 얽매이지 않고 모든 금융 거래를 공증 및 문서화할 때 손재수를 0%로 완벽히 방어합니다.
+                    운이 상승할 때는 친인척이나 지인으로부터 솔깃한 동업/보증 제안이 들어옵니다. 사사로운 정에 얽매이지 않고 모든 금융 거래를 공증 및 문서화할 때 손재수를 0%로 완벽히 방어합니다. 지갑은 짙은 브라운이나 블랙 톤의 고급 가죽 지갑을 사용하고, 영수증을 즉시 비우는 습관이 금전운을 배가시킵니다.
                 </p>
             </div>
         </div>
@@ -700,41 +725,79 @@ def get_theme_report(req: dict):
     elif theme == "love":
         if sub_opt == "솔로":
             ch1_title = "💖 [솔로 탈출] 운명의 짝을 만나는 최고의 루트 & 장소"
-            ch1_desc = f"• <strong>최고의 만남 방식:</strong> 자연스러운 길거리 헌팅보다는 <strong>'신뢰할 수 있는 멘토나 직장 동료의 주선 소개팅'</strong> 및 <strong>'전문 직무/취미 스터디 모임'</strong>에서 인연을 만날 때 성공률이 90%에 달합니다.<br>• <strong>행운의 동선:</strong> 서북쪽과 정동쪽에 위치한 세련된 북카페, 미술관, 클래식한 와인바가 당신의 애정 기운을 강하게 깨워줍니다."
+            ch1_desc = f"""
+            <p>• <strong>최고의 만남 방식:</strong> 자연스러운 길거리 헌팅보다는 <strong>'신뢰할 수 있는 멘토나 직장 동료의 주선 소개팅'</strong> 및 <strong>'전문 직무/취미 스터디 모임'</strong>에서 인연을 만날 때 성공률이 90%에 달합니다.</p>
+            <p>• <strong>행운의 동선:</strong> 서북쪽과 정동쪽에 위치한 세련된 북카페, 미술관, 클래식한 와인바가 당신의 애정 기운을 강하게 깨워줍니다.</p>
+            <p>• <strong>매력 어필 포인트:</strong> 과도한 꾸밈보다 단정하고 세련된 셔츠 룩과 지적인 경청 태도를 보여줄 때 상대방이 깊은 매력을 느낍니다.</p>
+            """
             ch2_title = "👤 미래 배우자의 구체적 외모 & 성격 & 직업 프로필"
-            ch2_desc = f"• <strong>외모 특징:</strong> 이목구비가 반듯하고 차분한 눈빛을 지녔으며, 키가 훤칠하고 단정한 클래식 정장/셔츠 스타일이 잘 어울리는 세련된 외모입니다.<br>• <strong>성격 및 기질:</strong> 겉은 쿨하고 냉철해 보이지만 내면은 당신을 묵묵히 챙겨주는 '외강내유형 든든한 조력자'입니다.<br>• <strong>추천 직업군:</strong> 공기업/공직자, 금융·회계 전문직, IT 기획자, 전문 자격사 등 안정성과 지적 역량을 겸비한 분야의 인물입니다."
+            ch2_desc = f"""
+            <p>• <strong>외모 특징:</strong> 이목구비가 반듯하고 차분하고 맑은 눈빛을 지녔으며, 키가 훤칠하고 단정한 클래식 정장/셔츠 스타일이 잘 어울리는 세련된 외모입니다.</p>
+            <p>• <strong>성격 및 기질:</strong> 겉은 쿨하고 냉철해 보이지만 내면은 당신을 묵묵히 챙겨주는 '외강내유형 든든한 조력자'입니다. 감정 기복이 적고 신뢰를 최우선으로 여깁니다.</p>
+            <p>• <strong>추천 직업군:</strong> 공기업/공직자, 금융·회계 전문직, IT 기획자, 전문 자격사 등 안정성과 지적 역량을 겸비한 분야의 인물입니다.</p>
+            <p>• <strong>나이 차이:</strong> 2~4살 연하 또는 동갑내기와 가장 이상적인 오행 화합을 이룹니다.</p>
+            """
             ch3_title = "⏰ 인연이 닿는 골든타임 & 고백 성사 타이밍"
-            ch3_desc = f"올해 상반기(양력 4~6월)와 가을(양력 9~11월)에 강력한 도화(桃花)의 훈풍이 불어옵니다. 첫 만남에서 너무 재기보다는 상대방의 가치관을 경청하며 솔직한 감정을 표현할 때 3번의 만남 안에 연인으로 발전합니다."
+            ch3_desc = f"""
+            <p>올해 상반기(양력 4~6월)와 가을(양력 9~11월)에 강력한 도화(桃花)의 훈풍이 불어옵니다. 첫 만남에서 너무 재기보다는 상대방의 가치관을 경청하며 솔직한 감정을 표현할 때 3번의 만남 안에 연인으로 발전합니다.</p>
+            """
         elif sub_opt == "썸/짝사랑":
             ch1_title = "💘 상대방의 숨겨진 본심 & 현재 심리 상태 분석"
-            ch1_desc = f"상대방 역시 {user_name}님에게 남다른 호감과 지적 매력을 느끼고 있으나, 먼저 다가가기 조심스러워 상황을 지켜보고 있습니다."
-            ch2_title = "🔥 썸에서 연인으로 직행하는 3단계 실전 화법"
-            ch2_desc = f"• 1단계: 일상의 가벼운 공통 관심사(맛집, 영화) 공유.<br>• 2단계: 상대방의 성취와 취향을 구체적으로 칭찬하여 라포 형성.<br>• 3단계: '이번 주말에 분위기 좋은 곳에서 맛있는 거 먹으러 가요'와 같이 자연스러운 1:1 약속 제안."
+            ch1_desc = f"""
+            <p>상대방 역시 {user_name}님에게 남다른 호감과 지적 매력을 느끼고 있으나, 먼저 다가가기 조심스러워 상황을 신중히 지켜보고 있습니다.</p>
+            <p>당신의 호의가 단순한 친절인지 이성적 호감인지 확신을 원하고 있는 상태입니다.</p>
+            """
+            ch2_title = "🔥 썸에서 연인으로 직행하는 4단계 실전 화법 & 플러팅"
+            ch2_desc = f"""
+            <p>• <strong>1단계:</strong> 일상의 가벼운 공통 관심사(맛집, 영화, 취미) 공유로 친밀도 강화.</p>
+            <p>• <strong>2단계:</strong> 상대방의 성취와 취향을 구체적으로 칭찬하여 '나를 알아주는 특별한 사람'이라는 인식 심기.</p>
+            <p>• <strong>3단계:</strong> '이번 주말에 분위기 좋은 곳에서 맛있는 거 먹으러 가요'와 같이 자연스러운 1:1 약속 제안.</p>
+            <p>• <strong>4단계:</strong> 저녁 식사 후 조용한 산책길에서 진심 어린 눈빛으로 확신을 주는 고백 건네기.</p>
+            """
             ch3_title = "⚠️ 반드시 피해야 할 치명적인 밀당의 함정"
-            ch3_desc = f"답장을 너무 늦게 하거나 떠보는 식의 질투 유발은 역효과를 부릅니다. 진정성 있는 다정함이 상대방의 마음을 완전히 여는 열쇠입니다."
+            ch3_desc = f"""
+            <p>답장을 너무 늦게 하거나 떠보는 식의 질투 유발은 상대방의 자존심을 건드려 관계를 급랭시킵니다. 진정성 있는 다정함과 일관된 태도가 상대방의 마음을 완전히 여는 열쇠입니다.</p>
+            """
         elif sub_opt == "연애중":
             ch1_title = "💍 결혼 결실을 맺는 골든타임 & 신뢰 증폭 비법"
-            ch1_desc = f"두 사람의 기운이 합을 이루는 시기입니다. 현실적인 재정 계획과 미래 가치관을 진솔하게 공유할 때 결혼 논의가 급물살을 탑니다."
+            ch1_desc = f"""
+            <p>두 사람의 기운이 온화하게 합을 이루는 시기입니다. 현실적인 재정 계획과 미래 가치관을 진솔하게 공유할 때 결혼 논의가 급물살을 탑니다.</p>
+            <p>양가 부모님 인사와 프로포즈는 가을(양력 9~11월)에 진행할 때 만사형통으로 성사됩니다.</p>
+            """
             ch2_title = "💡 연인 간 잦은 다툼 해결 & 권태기 극복 매뉴얼"
-            ch2_desc = f"사소한 의견 차이가 생길 때는 메신저 다툼을 멈추고 직접 만나 손을 잡고 대화하세요. 1박 2일 근교 힐링 여행이 권태기를 단숨에 날려줍니다."
+            ch2_desc = f"""
+            <p>• 사소한 의견 차이가 생길 때는 메신저 다툼을 멈추고 직접 만나 손을 잡고 대화하세요.</p>
+            <p>• 1박 2일 근교 힐링 여행이나 새로운 취미를 함께 시작할 때 권태기를 단숨에 날려줍니다.</p>
+            <p>• 서로의 개인 시간과 영역을 존중해 줄 때 관계의 결속력이 2배로 단단해집니다.</p>
+            """
             ch3_title = "🌹 두 사람의 사랑을 지켜주는 행운의 데이트"
-            ch3_desc = f"야경이 아름다운 전망대나 조용한 강변 드라이브가 서로에 대한 애틋한 애정을 200% 증폭시킵니다."
+            ch3_desc = f"""
+            <p>야경이 아름다운 전망대나 조용한 강변 드라이브가 서로에 대한 애틋한 애정을 200% 증폭시킵니다.</p>
+            """
         else: # 기혼
             ch1_title = "🏡 부부 금슬 증폭 & 가문 재물운 합일 비책"
-            ch1_desc = f"부부간의 신뢰가 곧 가문의 자산으로 연결되는 명식입니다. 서로의 노고를 인정하는 따뜻한 말 한마디가 집안에 황금 복록을 부릅니다."
+            ch1_desc = f"""
+            <p>부부간의 신뢰가 곧 가문의 자산으로 직결되는 명식입니다. 서로의 노고를 인정하는 따뜻한 말 한마디가 집안에 황금 복록을 부릅니다.</p>
+            <p>가정 내 재정 상태를 투명하게 공유하고 공동의 목표(부동산 청약, 노후 자산)를 설정할 때 부부 합일의 시너지가 극대화됩니다.</p>
+            """
             ch2_title = "👶 자녀 번영 & 화목한 가정 환경 구축법"
-            ch2_desc = f"자녀의 자율성을 존중하고 부모의 든든한 지지대를 보여줄 때 자녀의 학업운과 출세운이 대길하게 풀립니다."
+            ch2_desc = f"""
+            <p>자녀의 자율성을 존중하고 부모의 든든한 지지대를 보여줄 때 자녀의 학업운과 출세운이 대길하게 풀립니다.</p>
+            <p>거실에 따뜻한 조명과 밝은 그림을 배치하여 집안의 양기를 북돋워 주세요.</p>
+            """
             ch3_title = "✨ 부부 권태 방어 & 제2의 신혼 루틴"
-            ch3_desc = f"매월 1회 부부만의 오붓한 외식 데이트를 정례화하고 거실에 은은한 캔들을 배치하여 온화한 기운을 유지하세요."
+            ch3_desc = f"""
+            <p>매월 1회 부부만의 오붓한 외식 데이트를 정례화하고 일상 속 스킨십과 칭찬을 아끼지 마세요.</p>
+            """
 
         content = f"""
         <div style="display: flex; flex-direction: column; gap: 16px; font-size: 14.5px; color: #334155; line-height: 1.85; text-align: left;">
             <div style="border-left: 4px solid #E11D48; padding-left: 10px;">
                 <span style="font-size: 12px; color: #E11D48; font-weight: 800;">Chapter 1. 상태 맞춤 애정 원국 ({sub_opt})</span>
                 <h4 style="font-size: 16.5px; font-weight: 800; color: #881337; margin: 3px 0 6px;">{ch1_title}</h4>
-                <p style="color: #9F1239; font-size: 14.5px; line-height: 1.85;">
+                <div style="color: #9F1239; font-size: 14.5px; line-height: 1.85;">
                     {ch1_desc}
-                </p>
+                </div>
             </div>
 
             <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
@@ -756,42 +819,67 @@ def get_theme_report(req: dict):
                     <span style="font-size: 12px; color: #059669; font-weight: 800;">Chapter 3. 실전 성공 로드맵</span>
                     <h4 style="font-size: 16.5px; font-weight: 800; color: #065F46; margin-top: 2px;">{ch3_title}</h4>
                 </div>
-                <p style="color: #047857; font-size: 14px; line-height: 1.8;">
+                <div style="color: #047857; font-size: 14px; line-height: 1.8;">
                     {ch3_desc}
-                </p>
+                </div>
             </div>
         </div>
         """
     elif theme == "business":
         if sub_opt == "취업/이직":
             b_ch1 = "🎯 [취업·이직 성공] 합격률 200% 승부처 & 면접 합격 비책"
-            b_desc1 = f"• <strong>이직 골든타임:</strong> 상반기 3~5월과 하반기 9~11월에 당신의 이력서가 강력한 평가를 받습니다.<br>• <strong>면접 필승 처세:</strong> 겸손한 태도 속에 본인의 실전 프로젝트 문제 해결 역량을 숫자로 당당하게 어필하세요."
+            b_desc1 = f"""
+            <p>• <strong>이직 골든타임:</strong> 상반기 3~5월과 하반기 9~11월에 당신의 이력서가 강력한 평가를 받습니다.</p>
+            <p>• <strong>면접 필승 처세:</strong> 겸손한 태도 속에 본인의 실전 프로젝트 문제 해결 역량을 숫자로 당당하게 어필하세요.</p>
+            <p>• <strong>연봉 협상:</strong> 본인의 성과 포트폴리오를 근거로 희망 연봉 상단을 제시할 때 15% 이상의 인상이 가능합니다.</p>
+            """
             b_ch2 = "🏢 가장 운이 잘 풀리는 유망 직무 & 기업 형태"
-            b_desc2 = f"대기업 기획실, 외국계 전문 직무, 공공기관 및 기술 기반 혁신 기업에서 당신의 직무 자율성이 극대화됩니다."
+            b_desc2 = f"""
+            <p>대기업 기획실, 외국계 전문 직무, 공공기관 및 기술 기반 혁신 기업에서 당신의 직무 자율성이 극대화됩니다.</p>
+            <p>단순 반복 업무보다는 전략 수립과 의사결정 권한이 주어지는 포지션에서 초고속 승진합니다.</p>
+            """
         elif sub_opt == "사업가":
             b_ch1 = "🚀 [사업 확장 & 매출 폭발] 매출 3배 성장의 전환점"
-            b_desc1 = f"• <strong>스케일업 타이밍:</strong> 기존 아이템의 내실을 다진 후 하반기에 신규 채널과 파트너십을 확장할 때 폭발적 매출이 일어납니다.<br>• <strong>인사 관리:</strong> 실행력이 강한 실무 리더를 영입하고 권한을 위임할 때 사업 규모가 퀀텀점프합니다."
+            b_desc1 = f"""
+            <p>• <strong>스케일업 타이밍:</strong> 기존 아이템의 내실을 다진 후 하반기에 신규 채널과 파트너십을 확장할 때 폭발적 매출이 일어납니다.</p>
+            <p>• <strong>인사 관리:</strong> 실행력이 강한 실무 리더를 영입하고 권한을 위임할 때 사업 규모가 퀀텀점프합니다.</p>
+            <p>• <strong>마케팅 전략:</strong> 충성 고객 중심의 바이럴과 프리미엄 포지셔닝이 객단가를 40% 끌어올립니다.</p>
+            """
             b_ch2 = "💼 법률·세무 리스크 방어 & 관재구설수 차단"
-            b_desc2 = f"세무 검증과 계약서 조항을 철저히 정비하여 관재수를 원천 차단하세요."
+            b_desc2 = f"""
+            <p>세무 검증과 계약서 조항을 철저히 정비하여 관재수를 원천 차단하세요. 동업자나 주요 거래처와의 계약은 전문가 감수를 필수적으로 거치세요.</p>
+            """
         elif sub_opt == "창업":
             b_ch1 = "💡 [성공 창업 가이드] 실패 없는 창업 아이템 & 상권 분석"
-            b_desc1 = f"• <strong>대박 아이템:</strong> 전문 지식재산권 기반 서비스, 프리미엄 식음료/라이프스타일, B2B 솔루션 사업.<br>• <strong>초기 전략:</strong> 고정비를 최소화하는 린(Lean) 스타트업 방식으로 시작하여 6개월 내 손익분기점을 달성하세요."
+            b_desc1 = f"""
+            <p>• <strong>대박 아이템:</strong> 전문 지식재산권 기반 서비스, 프리미엄 식음료/라이프스타일, B2B 솔루션 사업.</p>
+            <p>• <strong>초기 전략:</strong> 고정비를 최소화하는 린(Lean) 스타트업 방식으로 시작하여 6개월 내 손익분기점을 달성하세요.</p>
+            <p>• <strong>상권 입지:</strong> 유동인구가 꾸준하고 배후 세대가 탄탄한 역세권 인근이 최적의 명당입니다.</p>
+            """
             b_ch2 = "🤝 투자 유치 & 동업 파트너십 수칙"
-            b_desc2 = f"지분 구조를 7:3 이상으로 확고히 쥐고 대표의 경영권을 지킬 때 투자 유치가 순조롭습니다."
+            b_desc2 = f"""
+            <p>지분 구조를 7:3 이상으로 확고히 쥐고 대표의 경영권을 지킬 때 투자 유치와 정부 지원 사업이 순조롭습니다.</p>
+            """
         else: # 직장인
             b_ch1 = "🎖️ [직장인 초고속 승진] 사내 핵심 인재로 인정받는 처세술"
-            b_desc1 = f"• <strong>승진 타이밍:</strong> 올해 인사 평가에서 당신의 기획안이 상급자의 두터운 신임을 얻습니다.<br>• <strong>사내 정치 돌파:</strong> 잡음에 휩쓸리지 않고 독보적인 실적과 데이터로 증명할 때 파격 승진의 길이 열립니다."
+            b_desc1 = f"""
+            <p>• <strong>승진 타이밍:</strong> 올해 인사 평가에서 당신의 기획안이 상급자의 두터운 신임을 얻습니다.</p>
+            <p>• <strong>사내 정치 돌파:</strong> 잡음에 휩쓸리지 않고 독보적인 실적과 데이터로 증명할 때 파격 승진의 길이 열립니다.</p>
+            <p>• <strong>핵심 성과 창출:</strong> 조직의 병목 현상을 해결하는 개선안을 선제적으로 보고하세요.</p>
+            """
             b_ch2 = "👔 상사 및 팀원과의 황금 파트너십 구축"
-            b_desc2 = f"상급자의 가려운 곳을 긁어주는 보고서 작성과 팀원들을 배려하는 리더십으로 인망을 얻으세요."
+            b_desc2 = f"""
+            <p>상급자의 가려운 곳을 긁어주는 보고서 작성과 팀원들을 배려하는 리더십으로 사내에서 대체 불가능한 인망을 얻으세요.</p>
+            """
 
         content = f"""
         <div style="display: flex; flex-direction: column; gap: 16px; font-size: 14.5px; color: #334155; line-height: 1.85; text-align: left;">
             <div style="border-left: 4px solid #2563EB; padding-left: 10px;">
                 <span style="font-size: 12px; color: #2563EB; font-weight: 800;">Chapter 1. 직무/사업 맞춤 운세 ({sub_opt})</span>
                 <h4 style="font-size: 16.5px; font-weight: 800; color: #1E3A8A; margin: 3px 0 6px;">{b_ch1}</h4>
-                <p style="color: #1E40AF; font-size: 14.5px; line-height: 1.85;">
+                <div style="color: #1E40AF; font-size: 14.5px; line-height: 1.85;">
                     {b_desc1}
-                </p>
+                </div>
             </div>
 
             <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
@@ -801,9 +889,9 @@ def get_theme_report(req: dict):
                     <span style="font-size: 12px; color: #059669; font-weight: 800;">Chapter 2. 유망 분야 & 실전 처세</span>
                     <h4 style="font-size: 16.5px; font-weight: 800; color: #065F46; margin-top: 2px;">{b_ch2}</h4>
                 </div>
-                <p style="color: #047857; font-size: 14px; line-height: 1.8;">
+                <div style="color: #047857; font-size: 14px; line-height: 1.8;">
                     {b_desc2}
-                </p>
+                </div>
             </div>
         </div>
         """
@@ -815,6 +903,9 @@ def get_theme_report(req: dict):
                 <h4 style="font-size: 16.5px; font-weight: 800; color: #065F46; margin: 3px 0 6px;">[평생 체질] 수승화강(水昇火降) 활력과 선천적 취약점</h4>
                 <p style="color: #047857; font-size: 14.5px; line-height: 1.85;">
                     {user_name}님은 타고난 생명력과 지구력이 우수하나, 심장·혈관(火)의 열기가 머리로 치솟거나 간 피로(木)가 누적되기 쉬운 체질입니다. 두한족열(머리는 시원하게, 발은 따뜻하게)의 기본 수칙을 유지해야 평생 에너지가 고갈되지 않습니다.
+                </p>
+                <p style="color: #065F46; font-size: 13.5px; margin-top: 6px;">
+                    스트레스가 극에 달할 때는 위장 장애나 수면 장애로 이어질 수 있으므로 감정 정화 루틴이 무엇보다 중요합니다.
                 </p>
             </div>
 
@@ -828,6 +919,7 @@ def get_theme_report(req: dict):
                 <div style="display: flex; flex-direction: column; gap: 6px; font-size: 14px; color: #78350F; line-height: 1.8;">
                     <p>• <strong>심혈관 & 혈압:</strong> 나트륨 섭취를 줄이고 유산소 운동으로 혈행을 원활히 유지하세요.</p>
                     <p>• <strong>척추 및 관절:</strong> 오랜 좌식 업무 시 허리 스트레칭과 바른 자세 유지가 필수입니다.</p>
+                    <p>• <strong>간 피로 회복:</strong> 음주 후 충분한 수분 섭취와 밀크씨슬 섭취를 권장합니다.</p>
                 </div>
             </div>
 
