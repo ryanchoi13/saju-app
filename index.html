@@ -96,7 +96,6 @@
         .teaser-blur-text { filter: blur(4px); user-select: none; color: #64748B; font-size: 13.5px; line-height: 1.7; }
         .teaser-lock-badge { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(255,255,255,0.75); backdrop-filter: blur(2px); }
 
-        /* 하단 고정 네비게이션 (z-index: 1000) */
         nav#bottomNavBar { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 448px; background: rgba(17,29,30,0.98); backdrop-filter: blur(8px); border-top: 1px solid rgba(212,175,55,0.3); padding: 10px 24px; display: flex; justify-content: space-between; align-items: center; z-index: 1000; }
         .tab-btn { background: none; border: none; display: flex; flex-direction: column; align-items: center; gap: 4px; color: #64748B; font-size: 12px; cursor: pointer; font-weight: 500; }
         .tab-btn.active { color: #FDE68A; font-weight: 800; }
@@ -205,7 +204,7 @@
                     <div id="resAdvice" style="font-size: 13.5px; color: #E2E8F0; font-weight: 400; line-height: 1.65; text-align: left;"></div>
                 </div>
 
-                <!-- 6칸 그리드 복구 -->
+                <!-- 6칸 그리드 -->
                 <div class="grid-2">
                     <div class="grid-cell" style="grid-column: span 2; background: #F0FDF4; border: 1.5px solid #86EFAC;">
                         <span style="font-size: 12px; color: #166534; font-weight: 800; display: block;">👔 맞춤 추천 코디 (성별·나이·8월 여름)</span>
@@ -269,7 +268,7 @@
                     </div>
                 </div>
 
-                <!-- [복구] 중간 광고 슬롯 1 -->
+                <!-- 중간 광고 슬롯 1 -->
                 <div class="ad-slot-box">
                     <span>📢 광고 영역 (Google AdSense / Kakao AdFit 슬롯 1)</span>
                 </div>
@@ -504,22 +503,22 @@
                     </div>
                 </div>
 
-                <!-- [복구] 중간 광고 슬롯 2 -->
+                <!-- 중간 광고 슬롯 2 -->
                 <div class="ad-slot-box">
                     <span>📢 광고 영역 (Google AdSense / Kakao AdFit 슬롯 2)</span>
                 </div>
 
-                <!-- 1. 자미두수 평생운세 -->
+                <!-- 1. 자미두수 평생운세 (대운 그래프 사이즈 확대 & 나이 표시 2줄 강조) -->
                 <div class="card" style="border: 2px solid #FCD34D;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                         <span style="font-size: 15px; font-weight: 800; font-family: 'Noto Serif KR', serif;">👑 자미두수 평생운세</span>
                         <span style="font-size: 12px; background: #FEF3C7; color: #78350F; padding: 4px 10px; border-radius: 9999px; font-weight: 700;">450 복채</span>
                     </div>
 
-                    <div style="background: #F8FAFC; border-radius: 18px; border: 1px solid #E2E8F0; padding: 14px 12px 10px; margin-bottom: 14px; text-align: left;">
-                        <div style="font-size: 13px; font-weight: 700; color: #475569; margin-bottom: 8px;">📊 10년 생애 그래프</div>
-                        <div style="position: relative; width: 100%; height: 118px;">
-                            <svg viewBox="0 0 300 100" style="width: 100%; height: 85px; overflow: visible;">
+                    <div style="background: #F8FAFC; border-radius: 18px; border: 1px solid #E2E8F0; padding: 16px 12px 14px; margin-bottom: 14px; text-align: left;">
+                        <div style="font-size: 13.5px; font-weight: 800; color: #334155; margin-bottom: 10px;">📊 10년 생애 대운 파동 그래프</div>
+                        <div style="position: relative; width: 100%; height: 140px;">
+                            <svg viewBox="0 0 300 120" style="width: 100%; height: 110px; overflow: visible;">
                                 <defs>
                                     <linearGradient id="fullCurveGradient" x1="0%" y1="0%" x2="100%" y2="0%">
                                         <stop offset="0%" stop-color="#F59E0B" />
@@ -528,22 +527,27 @@
                                         <stop offset="100%" stop-color="#059669" />
                                     </linearGradient>
                                 </defs>
-                                <path d="M 0,78 C 30,75 45,62 60,60 C 85,57 105,28 130,28 C 155,28 170,54 190,52 C 215,50 230,22 245,24 C 265,26 280,36 300,38" fill="none" stroke="url(#fullCurveGradient)" stroke-width="3.2" stroke-linecap="round" />
-                                <line id="daewoonGuideLine" x1="130" y1="6" x2="130" y2="88" stroke="#94A3B8" stroke-width="1.2" stroke-dasharray="2.5 2.5" />
-                                <rect id="daewoonTagBox" x="60" y="-2" width="140" height="15" rx="4" fill="#FEF2F2" stroke="#FECDD3" stroke-width="0.8"/>
-                                <text id="daewoonTagText" x="130" y="9" font-size="8.5" font-weight="700" fill="#DC2626" text-anchor="middle">📍 최정오 님의 현재 위치 (49세)</text>
-                                <circle id="daewoonCurrentDot" cx="130" cy="28" r="5" fill="#EF4444" stroke="#FFFFFF" stroke-width="2" />
+                                <path d="M 0,90 C 30,85 45,72 60,70 C 85,67 105,32 130,32 C 155,32 170,62 190,60 C 215,58 230,26 245,28 C 265,30 280,42 300,44" fill="none" stroke="url(#fullCurveGradient)" stroke-width="3.8" stroke-linecap="round" />
+                                <line id="daewoonGuideLine" x1="130" y1="2" x2="130" y2="102" stroke="#94A3B8" stroke-width="1.5" stroke-dasharray="3 3" />
+                                
+                                <!-- [개선] 상단 현재 위치 태그: 2줄로 크고 명확하게 표시 -->
+                                <g transform="translate(60, -6)">
+                                    <rect x="0" y="0" width="140" height="26" rx="6" fill="#FEF2F2" stroke="#FECDD3" stroke-width="1"/>
+                                    <text id="daewoonTagText1" x="70" y="11" font-size="9" font-weight="700" fill="#DC2626" text-anchor="middle">📍 최정오 님의 현재 위치</text>
+                                    <text id="daewoonTagText2" x="70" y="21.5" font-size="10.5" font-weight="900" fill="#DC2626" text-anchor="middle">(49세)</text>
+                                </g>
+
+                                <circle id="daewoonCurrentDot" cx="130" cy="32" r="6" fill="#EF4444" stroke="#FFFFFF" stroke-width="2.5" />
                             </svg>
-                            <div id="daewoonAgeLabels" style="display: grid; grid-template-columns: repeat(6, 1fr); text-align: center; font-size: 11px; color: #94A3B8; font-weight: 600; border-top: 1px solid #E2E8F0; padding-top: 6px;">
-                                <span id="lblAge1">20세</span>
-                                <span id="lblAge2">30세</span>
-                                <div id="lblAge3Box" style="display: flex; flex-direction: column; align-items: center; margin-top: -2px;">
-                                    <span id="lblAgeDecadeText" style="color: #DC2626; font-weight: 800; font-size: 12px;">40세★</span>
-                                    <span id="lblCurrentAgeText" style="color: #DC2626; font-size: 10px; font-weight: 800;">(현재 49세)</span>
-                                </div>
-                                <span id="lblAge4">50세</span>
-                                <span id="lblAge5">60세</span>
-                                <span id="lblAge6">70세~</span>
+
+                            <!-- [개선] 하단 X축 나이 레이블: 40세 강조 제거 및 연회색 통일 -->
+                            <div id="daewoonAgeLabels" style="display: grid; grid-template-columns: repeat(6, 1fr); text-align: center; font-size: 11.5px; color: #94A3B8; font-weight: 700; border-top: 1px solid #E2E8F0; padding-top: 8px;">
+                                <span>20세</span>
+                                <span>30세</span>
+                                <span>40세</span>
+                                <span>50세</span>
+                                <span>60세</span>
+                                <span>70세~</span>
                             </div>
                         </div>
                     </div>
@@ -716,7 +720,7 @@
 
     </div>
 
-    <!-- 궁합 상대방 정보 입력 모달 -->
+    <!-- 궁합 모달 -->
     <div id="gunghapModal" class="modal-bg hidden">
         <div class="modal-content" style="max-width: 350px; text-align: left;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 8px;">
@@ -1004,66 +1008,12 @@
             } catch(e) { return []; }
         }
 
+        // [정통 라이더 웨이트 고화질 타로 카드 일러스트 URL 매핑 & 에러 복구 핸들러]
         const TAROT_IMAGES = {
             "0. THE FOOL (바보)": "[https://upload.wikimedia.org/wikipedia/commons/9/90/RWS_Tarot_00_Fool.jpg](https://upload.wikimedia.org/wikipedia/commons/9/90/RWS_Tarot_00_Fool.jpg)",
             "I. THE MAGICIAN (마법사)": "[https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg](https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg)",
             "XIX. THE SUN (태양)": "[https://upload.wikimedia.org/wikipedia/commons/1/17/RWS_Tarot_19_Sun.jpg](https://upload.wikimedia.org/wikipedia/commons/1/17/RWS_Tarot_19_Sun.jpg)"
         };
-
-        function renderTarotFrontSvg(cardName) {
-            let symbolSvg = '';
-            let titleText = 'THE FOOL';
-            let numText = '0';
-
-            if (cardName.includes('MAGICIAN')) {
-                numText = 'I';
-                titleText = 'THE MAGICIAN';
-                symbolSvg = `
-                    <circle cx="50" cy="45" r="16" fill="#FEF3C7" stroke="#D4AF37" stroke-width="1.2"/>
-                    <path d="M 40 45 Q 45 40 50 45 Q 55 50 60 45 Q 55 40 50 45 Q 45 50 40 45 Z" fill="#B45309"/>
-                    <line x1="50" y1="20" x2="50" y2="35" stroke="#D97706" stroke-width="2.5" stroke-linecap="round"/>
-                    <rect x="32" y="70" width="36" height="18" fill="#F1F5F9" stroke="#94A3B8" rx="3"/>
-                    <circle cx="40" cy="79" r="3" fill="#DC2626"/>
-                    <circle cx="50" cy="79" r="3" fill="#2563EB"/>
-                    <circle cx="60" cy="79" r="3" fill="#059669"/>
-                `;
-            } else if (cardName.includes('SUN')) {
-                numText = 'XIX';
-                titleText = 'THE SUN';
-                symbolSvg = `
-                    <circle cx="50" cy="55" r="22" fill="#FDE047" stroke="#F59E0B" stroke-width="2"/>
-                    <g stroke="#F59E0B" stroke-width="2" stroke-linecap="round">
-                        <line x1="50" y1="24" x2="50" y2="18"/>
-                        <line x1="50" y1="86" x2="50" y2="92"/>
-                        <line x1="19" y1="55" x2="13" y2="55"/>
-                        <line x1="81" y1="55" x2="87" y2="55"/>
-                    </g>
-                    <circle cx="43" cy="52" r="2.5" fill="#78350F"/>
-                    <circle cx="57" cy="52" r="2.5" fill="#78350F"/>
-                    <path d="M 44 63 Q 50 68 56 63" fill="none" stroke="#78350F" stroke-width="1.8" stroke-linecap="round"/>
-                `;
-            } else {
-                numText = '0';
-                titleText = 'THE FOOL';
-                symbolSvg = `
-                    <circle cx="50" cy="45" r="15" fill="#E0F2FE" stroke="#38BDF8" stroke-width="1.2"/>
-                    <circle cx="50" cy="40" r="6" fill="#FBBF24"/>
-                    <path d="M 40 85 L 60 85 L 75 110 L 25 110 Z" fill="#E2E8F0" stroke="#94A3B8"/>
-                    <line x1="50" y1="46" x2="50" y2="75" stroke="#334155" stroke-width="2.5"/>
-                    <line x1="36" y1="58" x2="64" y2="58" stroke="#334155" stroke-width="2"/>
-                    <circle cx="35" cy="58" r="4" fill="#EF4444"/>
-                `;
-            }
-
-            return `
-            <svg viewBox="0 0 100 150" style="width:100%; height:100%; background:linear-gradient(180deg, #FFFFFF 0%, #FFFDF5 100%); border-radius:8px;">
-                <rect x="3" y="3" width="94" height="144" fill="none" stroke="#D4AF37" stroke-width="1.5" rx="5"/>
-                <text x="50" y="16" font-size="9" font-weight="900" fill="#78350F" text-anchor="middle" font-family="'Noto Serif KR', serif">${numText}</text>
-                ${symbolSvg}
-                <rect x="8" y="126" width="84" height="16" fill="#111D1E" rx="3"/>
-                <text x="50" y="137.5" font-size="7.5" font-weight="800" fill="#FDE68A" text-anchor="middle" font-family="'Pretendard', sans-serif" letter-spacing="0.5px">${titleText}</text>
-            </svg>`;
-        }
 
         function getTarotCardBackSvg() {
             return `
@@ -1261,10 +1211,13 @@
             return jjList.map(j => `<span class="badge-jjg elem-${j.elem}">${j.char}</span>`).join('');
         }
 
+        // [개선] 10년 생애 대운 그래프 나이 포인터 연동 & 2줄 위치 태그
         function updateDaewoonGraphByAge(age) {
             currentUserAge = age;
-            const tagText = document.getElementById('daewoonTagText');
-            if (tagText) tagText.textContent = `📍 ${currentUserName}님의 현재 위치 (${age}세)`;
+            const tag1 = document.getElementById('daewoonTagText1');
+            const tag2 = document.getElementById('daewoonTagText2');
+            if (tag1) tag1.textContent = `📍 ${currentUserName} 님의 현재 위치`;
+            if (tag2) tag2.textContent = `(${age}세)`;
         }
 
         function resetUnlockedUI() {
@@ -1334,6 +1287,11 @@
             setElemBadge('jj_m_badge', dtl.month.jj, dtl.month.jj_elem);
             setElemBadge('jj_y_badge', dtl.year.jj, dtl.year.jj_elem);
 
+            document.getElementById('jjg_h_box').innerHTML = formatJijangganGroup(dtl.hour.jijanggan);
+            document.getElementById('jjg_d_box').innerHTML = formatJijangganGroup(dtl.day.jijanggan);
+            document.getElementById('jjg_m_box').innerHTML = formatJijangganGroup(dtl.month.jijanggan);
+            document.getElementById('jjg_y_box').innerHTML = formatJijangganGroup(dtl.year.jijanggan);
+
             const elems = data.saju_data.elements;
             ['Wood', 'Fire', 'Earth', 'Metal', 'Water'].forEach(key => {
                 const kLower = key.toLowerCase();
@@ -1341,6 +1299,7 @@
                 document.getElementById(`val${key}`).innerText = `${elems[kLower]}%`;
             });
 
+            updateDaewoonGraphByAge(currentUserAge);
             document.getElementById('mypageProfileDesc').innerText = `${currentUserName} (${selectedGender === 'male' ? '남성' : '여성'} / ${birth})`;
 
             document.getElementById('onboardingInputView').classList.add('hidden');
@@ -1366,6 +1325,7 @@
 
         function closeTalismanModal() { document.getElementById('talismanModal').classList.add('hidden'); }
         
+        // [완벽한 상하좌우 비율 보정 부적 다운로드]
         function downloadTalismanImage() {
             const svgElement = document.getElementById('svgTalismanMain');
             if (!svgElement) return;
@@ -1375,6 +1335,7 @@
             const ctx = canvas.getContext('2d');
             const img = new Image();
 
+            // 완벽한 140:240 (7:12) 종횡비 보정
             canvas.width = 420;
             canvas.height = 720;
 
@@ -1383,6 +1344,8 @@
             const blobURL = URL.createObjectURL(svgBlob);
 
             img.onload = function () {
+                ctx.fillStyle = "#FAF9F6";
+                ctx.fillRect(0, 0, 420, 720);
                 ctx.drawImage(img, 0, 0, 420, 720);
                 const pngURL = canvas.toDataURL('image/png');
                 const dlLink = document.createElement('a');
@@ -1392,18 +1355,27 @@
                 dlLink.click();
                 document.body.removeChild(dlLink);
                 URL.revokeObjectURL(blobURL);
-                alert('📥 부적이 갤러리에 저장되었습니다!');
+                alert('📥 부적이 갤러리에 완벽한 균형으로 저장되었습니다!');
             };
             img.src = blobURL;
         }
 
+        // [정통 라이더 웨이트 일러스트 타로 카드 뒤집기]
         async function handleTarotDraw(slot) {
             const res = await fetch(`/api/daily-tarot?slot=${slot}`);
             const card = await res.json();
             const flipper = document.getElementById(`flipper${slot}`);
             const front = document.getElementById(`front${slot}`);
+            const imgUrl = TAROT_IMAGES[card.name] || TAROT_IMAGES["0. THE FOOL (바보)"];
 
-            front.innerHTML = renderTarotFrontSvg(card.name);
+            // 정통 라이더 웨이트 카드 이미지 삽입
+            front.innerHTML = `
+                <img src="${imgUrl}" 
+                     alt="${card.name}" 
+                     style="width:100%; height:100%; object-fit:cover; display:block; border-radius:8px;" 
+                     onerror="this.src='[https://upload.wikimedia.org/wikipedia/commons/9/90/RWS_Tarot_00_Fool.jpg](https://upload.wikimedia.org/wikipedia/commons/9/90/RWS_Tarot_00_Fool.jpg)';">
+            `;
+            
             flipper.classList.add('flipped');
             setTimeout(() => {
                 const resBox = document.getElementById('tarotResultBox');
