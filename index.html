@@ -53,12 +53,11 @@
         .grid-cell { background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 14px; padding: 12px; font-size: 14px; text-align: left; }
         .action-card { background: #FFFBEB; border-left: 4px solid #F59E0B; border-radius: 14px; padding: 14px; text-align: left; font-size: 14px; }
 
-        /* 바이오리듬 카드 스타일 */
-        .biorhythm-card { background: #FFFFFF; border-radius: 20px; border: 1px solid #E2E8F0; padding: 18px; text-align: left; display: flex; flex-direction: column; gap: 12px; }
-        .biorhythm-row { display: flex; flex-direction: column; gap: 4px; }
-        .biorhythm-header { display: flex; justify-content: space-between; align-items: center; font-size: 13.5px; font-weight: 700; }
-        .biorhythm-bar-bg { width: 100%; height: 10px; background: #F1F5F9; border-radius: 9999px; overflow: hidden; position: relative; }
-        .biorhythm-bar-fill { height: 100%; border-radius: 9999px; transition: width 0.6s ease; }
+        /* [곡선 그래프형] 바이오리듬 전용 스타일 */
+        .biorhythm-card { background: #FFFFFF; border-radius: 20px; border: 1px solid #E2E8F0; padding: 18px; text-align: left; display: flex; flex-direction: column; gap: 14px; }
+        .bio-legend-box { display: flex; justify-content: center; gap: 12px; font-size: 12px; font-weight: 700; }
+        .bio-pill-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+        .bio-pill-cell { background: #F8FAFC; border-radius: 10px; padding: 8px 6px; text-align: center; border: 1px solid #E2E8F0; }
 
         .zodiac-grid-2x6 { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
         .zodiac-btn { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 8px 2px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; }
@@ -202,54 +201,53 @@
                     <p id="resGaewoon" style="color: #92400E; font-weight: 500; font-size: 14px; line-height: 1.6;">오늘 완료해야 할 우선순위 3가지 메모하기</p>
                 </div>
 
-                <!-- [신규] 오늘의 바이오리듬 카드 -->
+                <!-- [곡선 그래프형] 오늘의 바이오리듬 카드 (개운 액션과 타로 사이) -->
                 <div class="biorhythm-card">
-                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 8px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
                         <div>
                             <h4 style="font-size: 15px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif;">🧬 생체 에너지 바이오리듬</h4>
-                            <p style="font-size: 12px; color: #64748B;">생년월일 기반 3대 주기 분석</p>
+                            <p style="font-size: 12px; color: #64748B;">생년월일 기반 전후 30일 파동 곡선</p>
                         </div>
                         <span id="bioDaysLived" style="font-size: 11px; background: #F1F5F9; color: #475569; padding: 3px 8px; border-radius: 9999px; font-weight: 700;">생애 계산중</span>
                     </div>
 
-                    <!-- 1. 신체 리듬 -->
-                    <div class="biorhythm-row">
-                        <div class="biorhythm-header">
-                            <span style="color: #DC2626;">💪 신체 리듬 (23일 주기)</span>
-                            <span id="bioPhysicalStatus" style="color: #DC2626; font-size: 12.5px; font-weight: 800;">-</span>
-                        </div>
-                        <div class="biorhythm-bar-bg">
-                            <div id="bioPhysicalBar" class="biorhythm-bar-fill" style="width: 50%; background: linear-gradient(90deg, #FCA5A5, #EF4444);"></div>
-                        </div>
-                        <p id="bioPhysicalTip" style="font-size: 12px; color: #64748B; margin-top: 1px;">-</p>
+                    <!-- 범례 -->
+                    <div class="bio-legend-box">
+                        <span style="color: #DC2626;">● 신체(23일)</span>
+                        <span style="color: #9333EA;">● 감성(28일)</span>
+                        <span style="color: #2563EB;">● 지성(33일)</span>
                     </div>
 
-                    <!-- 2. 감성 리듬 -->
-                    <div class="biorhythm-row">
-                        <div class="biorhythm-header">
-                            <span style="color: #9333EA;">💖 감성 리듬 (28일 주기)</span>
-                            <span id="bioEmotionalStatus" style="color: #9333EA; font-size: 12.5px; font-weight: 800;">-</span>
+                    <!-- SVG 사인 곡선 파동 그래프 -->
+                    <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 14px; padding: 6px; position: relative;">
+                        <svg id="biorhythmWaveSvg" viewBox="0 0 300 110" style="width: 100%; height: 110px; overflow: visible;">
+                            <!-- JS 동적 렌더링 -->
+                        </svg>
+                        <div style="display: flex; justify-content: space-between; font-size: 10.5px; color: #94A3B8; font-weight: 600; padding: 0 4px; margin-top: 2px;">
+                            <span>-15일전</span>
+                            <span style="color: #DC2626; font-weight: 800;">📍 TODAY (오늘)</span>
+                            <span>+15일후</span>
                         </div>
-                        <div class="biorhythm-bar-bg">
-                            <div id="bioEmotionalBar" class="biorhythm-bar-fill" style="width: 50%; background: linear-gradient(90deg, #D8B4FE, #A855F7);"></div>
-                        </div>
-                        <p id="bioEmotionalTip" style="font-size: 12px; color: #64748B; margin-top: 1px;">-</p>
                     </div>
 
-                    <!-- 3. 지성 리듬 -->
-                    <div class="biorhythm-row">
-                        <div class="biorhythm-header">
-                            <span style="color: #2563EB;">🧠 지성 리듬 (33일 주기)</span>
-                            <span id="bioIntellectualStatus" style="color: #2563EB; font-size: 12.5px; font-weight: 800;">-</span>
+                    <!-- 3대 리듬 상태 카드 -->
+                    <div class="bio-pill-grid">
+                        <div class="bio-pill-cell">
+                            <span style="font-size: 11px; color: #64748B; display: block;">💪 신체</span>
+                            <span id="bioPhysicalStatus" style="font-size: 12.5px; font-weight: 800; color: #DC2626;">-</span>
                         </div>
-                        <div class="biorhythm-bar-bg">
-                            <div id="bioIntellectualBar" class="biorhythm-bar-fill" style="width: 50%; background: linear-gradient(90deg, #93C5FD, #3B82F6);"></div>
+                        <div class="bio-pill-cell">
+                            <span style="font-size: 11px; color: #64748B; display: block;">💖 감성</span>
+                            <span id="bioEmotionalStatus" style="font-size: 12.5px; font-weight: 800; color: #9333EA;">-</span>
                         </div>
-                        <p id="bioIntellectualTip" style="font-size: 12px; color: #64748B; margin-top: 1px;">-</p>
+                        <div class="bio-pill-cell">
+                            <span style="font-size: 11px; color: #64748B; display: block;">🧠 지성</span>
+                            <span id="bioIntellectualStatus" style="font-size: 12.5px; font-weight: 800; color: #2563EB;">-</span>
+                        </div>
                     </div>
 
                     <div style="background: #F8FAFC; border-radius: 10px; padding: 8px 10px; font-size: 12.5px; color: #334155; line-height: 1.5; border-left: 3px solid #2D6A4F;">
-                        <span style="font-weight: 800; color: #2D6A4F;">💡 바이오 종합:</span> <span id="bioOverallText">생체 에너지를 분석 중입니다.</span>
+                        <span style="font-weight: 800; color: #2D6A4F;">💡 바이오 조언:</span> <span id="bioOverallText">생체 에너지를 분석 중입니다.</span>
                     </div>
                 </div>
 
@@ -642,7 +640,6 @@
                         <div style="text-align: center; padding: 20px 0; color: #94A3B8; font-size: 13px;">
                             <p style="font-size: 28px; margin-bottom: 4px;">📂</p>
                             <p style="font-weight: 700; color: #64748B;">현재 사주 정보로 구매한 감명서가 없습니다.</p>
-                            <p style="font-size: 12px; color: #CBD5E1; margin-top: 2px;">정통사주 및 테마운세에서 열람한 리포트가 이곳에 프로필별로 보관됩니다.</p>
                         </div>
                     </div>
                 </div>
@@ -748,7 +745,7 @@
             </div>
 
             <div style="display: flex; gap: 8px;">
-                <button onclick="downloadTalismanImage()" style="flex: 1; background: #D97706; color: white; border: none; font-size: 13.5px; font-weight: 800; padding: 12px; border-radius: 12px; cursor: pointer;">
+                <button onclick="downloadTalismanImage()" style="flex: 1; background: #D97706; color: white; border: none; font-size: 13.5px; font-weight: 800; padding: 12px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px;">
                     📥 부적 다운로드
                 </button>
                 <button onclick="closeTalismanModal()" style="background: #E2E8F0; color: #334155; border: none; font-size: 13.5px; font-weight: 700; padding: 12px 18px; border-radius: 12px; cursor: pointer;">
@@ -925,6 +922,49 @@
             `;
         }
 
+        // [신규] 30일 사인 곡선(Sine Wave) SVG 렌더링 함수
+        function renderBiorhythmWaveSvg(daysLived) {
+            const width = 300, height = 110, midY = 55, amp = 42;
+            const range = 15; // 전후 15일 (총 30일 구간)
+
+            const getPath = (period) => {
+                let d = "";
+                for (let x = 0; x <= width; x += 3) {
+                    const offsetDays = ((x / width) * (range * 2)) - range;
+                    const day = daysLived + offsetDays;
+                    const sinVal = Math.sin(2 * Math.PI * day / period);
+                    const y = midY - (sinVal * amp);
+                    d += (x === 0) ? `M ${x} ${y.toFixed(1)}` : ` L ${x} ${y.toFixed(1)}`;
+                }
+                return d;
+            };
+
+            const pathP = getPath(23); // 신체
+            const pathE = getPath(28); // 감성
+            const pathI = getPath(33); // 지성
+
+            // 오늘 위치(중앙 x=150)의 Y좌표
+            const todayP = midY - (Math.sin(2 * Math.PI * daysLived / 23) * amp);
+            const todayE = midY - (Math.sin(2 * Math.PI * daysLived / 28) * amp);
+            const todayI = midY - (Math.sin(2 * Math.PI * daysLived / 33) * amp);
+
+            return `
+                <!-- 배경 기준선 -->
+                <line x1="0" y1="${midY}" x2="${width}" y2="${midY}" stroke="#E2E8F0" stroke-width="1.2" />
+                <line x1="${width/2}" y1="5" x2="${width/2}" y2="${height-5}" stroke="#CBD5E1" stroke-width="1.5" stroke-dasharray="3 3" />
+
+                <!-- 3대 파동 곡선 -->
+                <path d="${pathP}" fill="none" stroke="#EF4444" stroke-width="2.2" opacity="0.85" />
+                <path d="${pathE}" fill="none" stroke="#A855F7" stroke-width="2.2" opacity="0.85" />
+                <path d="${pathI}" fill="none" stroke="#3B82F6" stroke-width="2.2" opacity="0.85" />
+
+                <!-- 오늘 기준점 포인트 (x=150) -->
+                <circle cx="${width/2}" cy="${todayP.toFixed(1)}" r="4.5" fill="#EF4444" stroke="#FFFFFF" stroke-width="1.8" />
+                <circle cx="${width/2}" cy="${todayE.toFixed(1)}" r="4.5" fill="#A855F7" stroke="#FFFFFF" stroke-width="1.8" />
+                <circle cx="${width/2}" cy="${todayI.toFixed(1)}" r="4.5" fill="#3B82F6" stroke="#FFFFFF" stroke-width="1.8" />
+            `;
+        }
+
         function printReportDocument(title, btnElement) {
             const reportContainer = btnElement.closest('.card') || btnElement.parentElement;
             const contentClone = reportContainer.cloneNode(true);
@@ -1005,7 +1045,7 @@
                 btnStar.className = 'sub-tab-btn active';
                 btnZodiac.className = 'sub-tab-btn';
                 gridStar.classList.remove('hidden');
-                gridZodiac.classList.add('hidden');
+                gridStar.classList.add('hidden');
             }
         }
 
@@ -1152,27 +1192,27 @@
             currentTalisman = data.daily_fortune.talisman;
             currentUserAge = data.current_age;
 
-            // 바이오리듬 UI 렌더링
+            // [곡선 그래프형] 바이오리듬 UI 및 SVG 곡선 렌더링
             if (data.biorhythm) {
                 const bio = data.biorhythm;
                 document.getElementById('bioDaysLived').innerText = `생애 ${bio.days_lived.toLocaleString()}일째`;
                 
                 document.getElementById('bioPhysicalStatus').innerText = `${bio.physical.status} (${bio.physical.val > 0 ? '+' : ''}${bio.physical.val}%)`;
                 document.getElementById('bioPhysicalStatus').style.color = bio.physical.color;
-                document.getElementById('bioPhysicalBar').style.width = `${bio.physical.pct}%`;
-                document.getElementById('bioPhysicalTip').innerText = bio.physical.tip;
 
                 document.getElementById('bioEmotionalStatus').innerText = `${bio.emotional.status} (${bio.emotional.val > 0 ? '+' : ''}${bio.emotional.val}%)`;
                 document.getElementById('bioEmotionalStatus').style.color = bio.emotional.color;
-                document.getElementById('bioEmotionalBar').style.width = `${bio.emotional.pct}%`;
-                document.getElementById('bioEmotionalTip').innerText = bio.emotional.tip;
 
                 document.getElementById('bioIntellectualStatus').innerText = `${bio.intellectual.status} (${bio.intellectual.val > 0 ? '+' : ''}${bio.intellectual.val}%)`;
                 document.getElementById('bioIntellectualStatus').style.color = bio.intellectual.color;
-                document.getElementById('bioIntellectualBar').style.width = `${bio.intellectual.pct}%`;
-                document.getElementById('bioIntellectualTip').innerText = bio.intellectual.tip;
 
                 document.getElementById('bioOverallText').innerText = bio.overall_summary;
+
+                // SVG 곡선 생성 함수 실행
+                const waveSvg = document.getElementById('biorhythmWaveSvg');
+                if (waveSvg) {
+                    waveSvg.innerHTML = renderBiorhythmWaveSvg(bio.days_lived);
+                }
             }
 
             const talismanPreview = document.getElementById('talismanBannerPreview');
