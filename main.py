@@ -7,7 +7,7 @@ from typing import Optional
 import os
 import random
 
-app = FastAPI(title="운세의 신 정통 명리학 엔진 - Mode 2 Full Content", version="32.0.0")
+app = FastAPI(title="운세의 신 정통 명리학 엔진 - Mode 2 Dynamic", version="33.0.0")
 
 CHEONGAN_HANJA = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
 JIJI_HANJA = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"]
@@ -74,7 +74,7 @@ TALISMAN_OHEANG_MAP = {
         "type": "wood",
         "title": "사업대성부 (事業亨通符)",
         "power": "추진력 강화 · 사업 번창 · 승진운",
-        "desc": "사주에 부족한 木(목)의 생명력과 추진력을 불어넣어 막힌 판로를 뚫고 사업과 직장에서 독보적인 주도권을 쥐게 하는 정통 비급 부적입니다."
+        "desc": "사주에 부족한 木(목)의 생명력과 추진력을 불어넣어 막힌 활로를 뚫고 사업과 직장에서 독보적인 주도권을 쥐게 하는 정통 비급 부적입니다."
     },
     "fire": {
         "type": "fire",
@@ -103,45 +103,85 @@ TALISMAN_OHEANG_MAP = {
 }
 
 TAROT_CARDS = [
-    {"name": "0. THE FOOL (바보)", "keyword": "새로운 시작 · 순수한 열정", "fortune_reading_male": "오랫동안 머뭇거리던 사업이나 프로젝트의 시작 단추를 꿰기에 최적의 날입니다. 주도적으로 추진하세요.", "fortune_reading_female": "새로운 인연이나 마음속 염원하던 일의 반가운 첫걸음이 시작됩니다. 직관을 믿고 나아가세요."},
-    {"name": "I. THE MAGICIAN (마법사)", "keyword": "창조적 역량 · 완벽한 주도권", "fortune_reading_male": "전문 실력과 언변이 빛을 발하여 중요한 협상에서 판을 완벽히 리드합니다.", "fortune_reading_female": "능숙한 소통 능력으로 주변 사람들을 내 편으로 만듭니다. 당당하게 의견을 피력하세요."},
-    {"name": "XIX. THE SUN (태양)", "keyword": "최고의 성공 · 밝은 활력", "fortune_reading_male": "목표하던 투자나 계약이 시원하게 성취되는 최고의 운세입니다.", "fortune_reading_female": "내면의 밝은 에너지가 주변에 확산되어 칭찬과 축하받을 낭보가 울려 퍼집니다."}
+    {"name": "0. THE FOOL (바보)", "keyword": "새로운 시작 · 순수한 열정 · 무한한 잠재력", "symbolism": "절벽 끝에 선 순수한 영혼으로 무한한 가능성을 상징합니다.", "fortune_reading_male": "오랫동안 머뭇거리던 사업이나 프로젝트의 시작 단추를 꿰기에 최적의 날입니다. 주도적으로 추진하세요.", "fortune_reading_female": "새로운 인연이나 마음속 염원하던 일의 반가운 첫걸음이 시작됩니다. 직관을 믿고 나아가세요."},
+    {"name": "I. THE MAGICIAN (마법사)", "keyword": "창조적 역량 · 완벽한 주도권 · 실력 발휘", "symbolism": "모든 도구를 통제하는 지혜를 뜻합니다.", "fortune_reading_male": "전문 실력과 언변이 빛을 발하여 중요한 협상에서 판을 완벽히 리드합니다.", "fortune_reading_female": "능숙한 소통 능력으로 주변 사람들을 내 편으로 만듭니다. 당당하게 의견을 피력하세요."},
+    {"name": "XIX. THE SUN (태양)", "keyword": "최고의 성공 · 밝은 활력 · 승리와 영광", "symbolism": "어둠을 몰아내는 승리와 기쁨을 상징합니다.", "fortune_reading_male": "목표하던 투자나 계약이 시원하게 성취되는 최고의 운세입니다.", "fortune_reading_female": "내면의 밝은 에너지가 주변에 확산되어 칭찬과 축하받을 낭보가 울려 퍼집니다."}
 ]
 
-OUTFIT_MATRIX = {
+# 확장된 다변화 데이터 풀
+DAILY_OUTFITS_POOL = {
     "male": {
-        "young": {
-            "wood": "올리브 그린 쿨맥스 반팔 피케티 & 라이트 베이지 반바지",
-            "fire": "코랄 핑크 린넨 셔츠 & 화이트 쿨 슬랙스",
-            "earth": "웜 크림 톤 반팔 니트 & 차콜 밴딩 스판 팬츠",
-            "metal": "화이트 린넨 셔츠 & 실버 메탈 워치 쿨비즈 룩",
-            "water": "딥 네이비 스트라이프 반팔 셔츠 & 메탈 팔찌"
-        },
-        "senior": {
-            "wood": "다크 올리브 린넨 헨리넥 셔츠 & 통풍 차콜 슬랙스",
-            "fire": "딥 와인 톤 하프 카라티 & 로즈골드 메탈 워치",
-            "earth": "샌드 베이지 린넨 재킷 & 오픈카라 쿨 셔츠",
-            "metal": "스노우 화이트 쿨비즈 셔츠 & 실버 가죽 세미 워치",
-            "water": "미드나잇 블루 린넨 블레이저 & 크림 드레스 팬츠"
-        }
+        "young": [
+            "화이트 린넨 셔츠 & 실버 메탈 워치 쿨비즈 룩",
+            "올리브 그린 쿨맥스 피케티 & 라이트 베이지 반바지",
+            "코랄 핑크 린넨 셔츠 & 화이트 쿨 슬랙스",
+            "웜 크림 톤 반팔 니트 & 차콜 밴딩 스판 팬츠",
+            "딥 네이비 스트라이프 하프 셔츠 & 메탈 팔찌",
+            "스카이블루 오픈카라 반팔 & 라이트 그레이 슬랙스",
+            "미니멀 블랙 오버핏 티셔츠 & 실버 체인 목걸이"
+        ],
+        "senior": [
+            "스노우 화이트 쿨비즈 셔츠 & 실버 가죽 세미 워치",
+            "다크 올리브 린넨 헨리넥 셔츠 & 통풍 차콜 슬랙스",
+            "딥 와인 톤 하프 카라티 & 로즈골드 메탈 워치",
+            "샌드 베이지 린넨 재킷 & 오픈카라 쿨 셔츠",
+            "미드나잇 블루 린넨 블레이저 & 크림 드레스 팬츠",
+            "클래식 네이비 피케 셔츠 & 라이트 브라운 팬츠",
+            "그레이 린넨 혼방 셔츠 & 통기성 블랙 슬랙스"
+        ]
     },
     "female": {
-        "young": {
-            "wood": "세이지 그린 린넨 원피스 & 실버 뱅글 팔찌",
-            "fire": "로즈 핑크 뷔스티에 블라우스 & 라이트 데님",
-            "earth": "크림 오프숄더 니트 & 샌드 베이지 와이드 팬츠",
-            "metal": "순백색 린넨 스퀘어넥 원피스 & 은은한 실버 펜던트",
-            "water": "스카이 블루 린넨 셔츠 & 화이트 하이웨스트 팬츠"
-        },
-        "senior": {
-            "wood": "올리브 카키 린넨 블라우스 & 통풍 보타닉 슬랙스",
-            "fire": "코랄 로즈 엘레강스 린넨 자켓 & 모던 이어링",
-            "earth": "웜 베이지 실크 블렌드 셔츠 & 아이보리 쿨 와이드 팬츠",
-            "metal": "스노우 화이트 린넨 셋업 & 고급스러운 실버 워치",
-            "water": "딥 네이비 린넨 쉬폰 원피스 & 클래식 은 팔찌"
-        }
+        "young": [
+            "순백색 린넨 스퀘어넥 원피스 & 은은한 실버 펜던트",
+            "세이지 그린 린넨 원피스 & 실버 뱅글 팔찌",
+            "로즈 핑크 뷔스티에 블라우스 & 라이트 데님",
+            "크림 오프숄더 니트 & 샌드 베이지 와이드 팬츠",
+            "스카이 블루 린넨 셔츠 & 화이트 하이웨스트 팬츠",
+            "라벤더 톤 플리츠 원피스 & 미니멀 숄더백",
+            "레몬 옐로우 하프 가디건 & 아이보리 린넨 스커트"
+        ],
+        "senior": [
+            "스노우 화이트 린넨 셋업 & 고급스러운 실버 워치",
+            "올리브 카키 린넨 블라우스 & 통풍 보타닉 슬랙스",
+            "코랄 로즈 엘레강스 린넨 자켓 & 모던 이어링",
+            "웜 베이지 실크 블렌드 셔츠 & 아이보리 쿨 와이드 팬츠",
+            "딥 네이비 린넨 쉬폰 원피스 & 클래식 은 팔찌",
+            "소프트 핑크 린넨 자켓 & 펄 네크리스",
+            "에메랄드 톤 린넨 튜닉 & 크림 실크 팬츠"
+        ]
     }
 }
+
+LUCKY_ITEMS_POOL = [
+    "실버 메탈 워치", "가벼운 원목 명함집", "은은한 시트러스 아로마", "클래식 만년필",
+    "가죽 미니 지갑", "블루라이트 차단 안경", "핸드메이드 가죽 키링", "산뜻한 린넨 손수건",
+    "천연 옥 원석 소품", "미니멀 메탈 볼펜", "각인 텀블러", "심플한 은반지"
+]
+
+LUCKY_DIRECTIONS_POOL = [
+    "정서쪽 (백호 방위)", "정동쪽 (청룡 방위)", "정남쪽 (주작 방위)",
+    "정북쪽 (현무 방위)", "동남쪽 (풍수 생기방)", "서북쪽 (천문 금전방)",
+    "남서쪽 (안정 귀인방)", "동북쪽 (학업 발전방)"
+]
+
+LUCKY_MENUS_POOL = [
+    "도라지차와 가벼운 고단백 식사", "신선한 아보카도 샐러드와 미온수", "따뜻한 전복죽과 비타민 과일",
+    "속이 편안한 영양 솥밥", "검은콩 두유와 견과류", "시원한 메밀소바와 야채튀김",
+    "단백질 닭가슴살 샐러드볼", "구수한 황태 해장국", "단호박 스프와 호밀빵",
+    "생과일 그릭 요거트볼", "신선한 연어 포케볼", "따뜻한 연잎차와 제철 과일"
+]
+
+MINDSETS_POOL = [
+    "맺고 끊음을 명확히 대화하기", "새로운 제안에 열린 마음 갖기", "상대의 말을 경청하고 공감하기",
+    "중요한 약속을 철저히 지키기", "원칙을 지키며 유연하게 대처하기", "서두르지 않고 한 번 더 검토하기",
+    "작은 성취에도 스스로를 칭찬하기", "감정을 앞세우지 않고 숫자로 대화하기", "긍정적인 미소로 대인관계 풀어나가기"
+]
+
+ACTIONS_POOL = [
+    "오늘 반드시 끝낼 우선순위 3가지 메모하기", "아침 시간 가벼운 스트레칭과 심호흡 5회", "점심 식사 후 햇볕 쬐며 10분간 산책하기",
+    "지갑 속 영수증 정리하고 카드함 정돈하기", "오랫동안 고마웠던 지인에게 안부 문자 보내기", "책상 위 불필요한 서류 3개 정리하기",
+    "물 500ml 천천히 마시며 속 달래기", "취침 30분 전 스마트폰 멀리 두고 명상하기", "하루를 마무리하며 감사한 일 1가지 기록하기"
+]
 
 class SajuRequest(BaseModel):
     name: str
@@ -258,20 +298,36 @@ def analyze_saju(req: SajuRequest):
 
     daewoon_dir_name, is_daewoon_forward = get_daewoon_info(y_cg, gender)
 
+    # [핵심] 날짜(오늘 일자) 기반 다변화 데일리 시드 알고리즘
+    today_ordinal = today.toordinal()
+    daily_hash = (today_ordinal * 31 + diff_days * 17 + (11 if gender == "male" else 23)) % 1000003
+
     age_group = "young" if current_age < 40 else "senior"
-    fashion_style = OUTFIT_MATRIX[gender][age_group].get(day_elem, "화이트 린넨 셔츠 & 메탈 워치")
+    outfit_list = DAILY_OUTFITS_POOL[gender][age_group]
+    fashion_style = outfit_list[daily_hash % len(outfit_list)]
 
-    daily_seed = today.toordinal() + diff_days
-    lucky_number = ["4, 9", "3, 8", "2, 7", "5, 10", "1, 6"][daily_seed % 5]
-    lucky_direction = ["정서쪽 (백호 방위)", "정동쪽 (청룡 방위)", "정남쪽 (주작 방위)", "중앙 및 동북쪽", "정북쪽 (현무 방위)"][daily_seed % 5]
-    lucky_item = ["실버 메탈 액세서리", "가벼운 원목 명함집", "은은한 아로마 오일", "클래식 만년필", "가죽 미니 지갑"][daily_seed % 5]
-    recommended_menu = ["도라지차와 가벼운 식사", "신선한 샐러드와 미온수", "따뜻한 국물 요리와 과일", "속이 편안한 잡곡밥", "검은콩 두유"][daily_seed % 5]
-    mindset = ["맺고 끊음을 명확히 대화하기", "새로운 제안에 열린 마음 갖기", "상대의 말을 경청하고 공감하기", "중요한 약속을 철저히 지키기", "원칙을 지키며 유연하게 대처하기"][daily_seed % 5]
+    num1 = ((daily_hash % 9) + 1)
+    num2 = (((daily_hash // 10) % 9) + 1)
+    if num1 == num2:
+        num2 = (num1 % 9) + 1
+    lucky_number = f"{min(num1, num2)}, {max(num1, num2)}"
 
-    daily_title = f"[{d_cg}{d_jj}일] 도약과 성취의 하루"
+    lucky_direction = LUCKY_DIRECTIONS_POOL[(daily_hash + 1) % len(LUCKY_DIRECTIONS_POOL)]
+    lucky_item = LUCKY_ITEMS_POOL[(daily_hash + 2) % len(LUCKY_ITEMS_POOL)]
+    recommended_menu = LUCKY_MENUS_POOL[(daily_hash + 3) % len(LUCKY_MENUS_POOL)]
+    mindset = MINDSETS_POOL[(daily_hash + 4) % len(MINDSETS_POOL)]
+    action = ACTIONS_POOL[(daily_hash + 5) % len(ACTIONS_POOL)]
+
+    daily_score = 80 + (daily_hash % 19)
+
+    today_diff = (today - base_date).days
+    today_cg = CHEONGAN_HANJA[today_diff % 10]
+    today_jj = JIJI_HANJA[(today_diff + 10) % 12]
+    daily_title = f"[{today_cg}{today_jj}일] 활력과 기회의 하루"
+
     three_stage_advice = (f"☀️ <strong>오전:</strong> 아이디어를 공유하며 활발히 소통하세요.<br>"
-                          f"🌤️ <strong>오후:</strong> 본원({d_cg})의 리더십으로 과제를 완수하세요.<br>"
-                          f"🌙 <strong>저녁:</strong> 가볍게 하루를 정리하세요.")
+                          f"🌤️ <strong>오후:</strong> 본원({d_cg})의 리더십으로 주요 과제를 완수하세요.<br>"
+                          f"🌙 <strong>저녁:</strong> 가볍게 하루를 정리하고 충전하세요.")
 
     min_elem = min(elem_percentages, key=elem_percentages.get)
     user_talisman = TALISMAN_OHEANG_MAP.get(min_elem, TALISMAN_OHEANG_MAP["metal"])
@@ -293,9 +349,9 @@ def analyze_saju(req: SajuRequest):
             "elements": elem_percentages
         },
         "daily_fortune": {
-            "score": 82 + (daily_seed * 7) % 17, "title": daily_title, "advice": three_stage_advice,
+            "score": daily_score, "title": daily_title, "advice": three_stage_advice,
             "lucky_number": lucky_number, "lucky_direction": lucky_direction, "lucky_item": lucky_item,
-            "fashion_style": fashion_style, "recommended_menu": recommended_menu, "mindset": mindset, "action": "오늘 우선순위 3가지 메모하기",
+            "fashion_style": fashion_style, "recommended_menu": recommended_menu, "mindset": mindset, "action": action,
             "talisman": user_talisman
         },
         "biorhythm": biorhythm_data
@@ -306,7 +362,7 @@ def analyze_saju(req: SajuRequest):
 def get_zodiac_fortune(type: str = "zodiac", key: str = "쥐"):
     today = datetime.date.today()
     seed = today.toordinal() + hash(key)
-    score = 65 + (seed % 36)
+    score = 68 + (seed % 31)
     
     if type == "zodiac":
         years = [2012, 2000, 1988, 1976, 1964]
@@ -399,7 +455,7 @@ def get_daewoon_report(req: dict):
                     </h4>
                 </div>
                 <p style="color: #78350F; line-height: 1.85;">
-                    현재 대운맥은 사주 본원에 귀인과 결합하는 절정기입니다. 끌려다니지 않고 본인의 통솔력으로 사업, 투자, 조직을 리드할 때 승률이 95% 이상으로 치솟습니다.
+                    현재 대운맥은 사주 본원에 귀인이 결합하는 절정기입니다. 끌려다니지 않고 본인의 통솔력으로 사업, 투자, 조직을 리드할 때 승률이 95% 이상으로 치솟습니다.
                 </p>
             </div>
 
