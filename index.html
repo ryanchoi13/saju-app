@@ -389,7 +389,7 @@
 
                 </div>
 
-                <!-- [신규] 오늘운세 탭 최하단 광고 슬롯 -->
+                <!-- 오늘운세 탭 최하단 광고 슬롯 -->
                 <div class="ad-slot-box" style="margin-top: 6px;">
                     <span>📢 광고 영역 (Google AdSense / Kakao AdFit 슬롯 3)</span>
                 </div>
@@ -592,7 +592,7 @@
                     </button>
                 </div>
 
-                <!-- [신규] 정통사주 탭 최하단 광고 슬롯 -->
+                <!-- 정통사주 탭 최하단 광고 슬롯 -->
                 <div class="ad-slot-box" style="margin-top: 6px;">
                     <span>📢 광고 영역 (Google AdSense / Kakao AdFit 슬롯 4)</span>
                 </div>
@@ -716,7 +716,7 @@
 
     </div>
 
-    <!-- 궁합 모달 -->
+    <!-- 궁합 상대방 정보 입력 모달 -->
     <div id="gunghapModal" class="modal-bg hidden">
         <div class="modal-content" style="max-width: 350px; text-align: left;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 8px;">
@@ -848,7 +848,6 @@
             </div>
             
             <div style="display: flex; flex-direction: column; gap: 10px;">
-                <!-- 무료 충전 -->
                 <div style="background: #F0FDF4; border: 1.5px solid #86EFAC; border-radius: 16px; padding: 12px 14px; display: flex; justify-content: space-between; align-items: center; text-align: left;">
                     <div>
                         <p style="font-size: 13.5px; font-weight: 800; color: #166534;">무료 충전소</p>
@@ -859,7 +858,6 @@
                     </button>
                 </div>
 
-                <!-- 1. 250 복채 -->
                 <button onclick="openPgModal(250, 2900, '250 복채')" style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 16px; padding: 11px 14px; display: flex; justify-content: space-between; align-items: center; text-align: left; cursor: pointer;">
                     <div style="display: flex; align-items: center; gap: 6px;">
                         <span class="btn-coin-icon"></span>
@@ -868,7 +866,6 @@
                     <span style="background: #E2E8F0; color: #334155; font-size: 12px; font-weight: 800; padding: 3px 8px; border-radius: 6px;">₩2,900</span>
                 </button>
 
-                <!-- 2. 500 복채 -->
                 <button onclick="openPgModal(500, 4900, '500 복채')" style="background: #FFFBEB; border: 1px solid #FDE68A; border-radius: 16px; padding: 11px 14px; display: flex; justify-content: space-between; align-items: center; text-align: left; cursor: pointer;">
                     <div style="display: flex; align-items: center; gap: 6px;">
                         <span class="btn-coin-icon"></span>
@@ -877,7 +874,6 @@
                     <span style="background: #F59E0B; color: white; font-size: 12px; font-weight: 800; padding: 3px 8px; border-radius: 6px;">₩4,900</span>
                 </button>
 
-                <!-- 3. 1,200 복채 -->
                 <button onclick="openPgModal(1200, 9900, '1,200 복채 (인기)')" style="background: #ECFDF5; border: 1.5px solid #86EFAC; border-radius: 16px; padding: 11px 14px; display: flex; justify-content: space-between; align-items: center; text-align: left; cursor: pointer;">
                     <div style="display: flex; align-items: center; gap: 6px;">
                         <span class="btn-coin-icon-white"></span>
@@ -889,7 +885,6 @@
                     <span style="background: #2D6A4F; color: white; font-size: 12px; font-weight: 800; padding: 3px 8px; border-radius: 6px;">₩9,900</span>
                 </button>
 
-                <!-- 4. 2,600 복채 -->
                 <button onclick="openPgModal(2600, 19900, '2,600 복채 (VIP 대박)')" style="background: #FEF2F2; border: 1.5px solid #FECDD3; border-radius: 16px; padding: 11px 14px; display: flex; justify-content: space-between; align-items: center; text-align: left; cursor: pointer;">
                     <div style="display: flex; align-items: center; gap: 6px;">
                         <span class="btn-coin-icon-white"></span>
@@ -1009,7 +1004,12 @@
             } catch(e) { return []; }
         }
 
-        // [자체 벡터 SVG] 절대 깨지지 않는 고화질 타로 카드 앞면 일러스트
+        const TAROT_IMAGES = {
+            "0. THE FOOL (바보)": "[https://upload.wikimedia.org/wikipedia/commons/9/90/RWS_Tarot_00_Fool.jpg](https://upload.wikimedia.org/wikipedia/commons/9/90/RWS_Tarot_00_Fool.jpg)",
+            "I. THE MAGICIAN (마법사)": "[https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg](https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg)",
+            "XIX. THE SUN (태양)": "[https://upload.wikimedia.org/wikipedia/commons/1/17/RWS_Tarot_19_Sun.jpg](https://upload.wikimedia.org/wikipedia/commons/1/17/RWS_Tarot_19_Sun.jpg)"
+        };
+
         function renderTarotFrontSvg(cardName) {
             let symbolSvg = '';
             let titleText = 'THE FOOL';
@@ -1037,10 +1037,6 @@
                         <line x1="50" y1="86" x2="50" y2="92"/>
                         <line x1="19" y1="55" x2="13" y2="55"/>
                         <line x1="81" y1="55" x2="87" y2="55"/>
-                        <line x1="28" y1="33" x2="23" y2="28"/>
-                        <line x1="72" y1="77" x2="77" y2="82"/>
-                        <line x1="28" y1="77" x2="23" y2="82"/>
-                        <line x1="72" y1="33" x2="77" y2="28"/>
                     </g>
                     <circle cx="43" cy="52" r="2.5" fill="#78350F"/>
                     <circle cx="57" cy="52" r="2.5" fill="#78350F"/>
@@ -1069,7 +1065,6 @@
             </svg>`;
         }
 
-        // [화려한 골드 타로 뒷면]
         function getTarotCardBackSvg() {
             return `
             <svg viewBox="0 0 100 150" style="width:100%; height:100%; background:#111D1E; border-radius:8px;">
@@ -1081,7 +1076,6 @@
             </svg>`;
         }
 
-        // [5대 오행 수제 부적 정밀 SVG]
         function renderAuthenticCinnabarTalisman(type = "metal", width = 160, height = 260) {
             let innerSymbol = '';
             let bottomText = '萬福大吉';
@@ -1122,7 +1116,6 @@
             </svg>`;
         }
 
-        // [곡선 위 밀착 Dot 바이오리듬 SVG]
         function renderBiorhythmWaveSvg(daysLived) {
             const width = 300, height = 110, midY = 55, amp = 40, range = 15;
             const getPath = (period) => {
@@ -1217,7 +1210,7 @@
                 btnStar.className = 'sub-tab-btn active';
                 btnZodiac.className = 'sub-tab-btn';
                 gridStar.classList.remove('hidden');
-                gridStar.classList.add('hidden');
+                gridZodiac.classList.add('hidden');
             }
         }
 
@@ -1351,8 +1344,6 @@
             document.getElementById('mypageProfileDesc').innerText = `${currentUserName} (${selectedGender === 'male' ? '남성' : '여성'} / ${birth})`;
 
             document.getElementById('onboardingInputView').classList.add('hidden');
-            
-            // 정보 수정 완료 시 항상 오늘운세 탭 활성화
             switchTab('today');
             document.getElementById('bottomNavBar').classList.remove('hidden');
             checkUnlockedStates();
@@ -1412,7 +1403,6 @@
             const flipper = document.getElementById(`flipper${slot}`);
             const front = document.getElementById(`front${slot}`);
 
-            // [수정] 100% 로딩 보장 벡터 SVG 렌더링
             front.innerHTML = renderTarotFrontSvg(card.name);
             flipper.classList.add('flipped');
             setTimeout(() => {
