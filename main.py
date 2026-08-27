@@ -7,7 +7,7 @@ from typing import Optional
 import os
 import random
 
-app = FastAPI(title="운세의 신 API", version="23.0.0")
+app = FastAPI(title="운세의 신 정통 명리학 엔진", version="25.0.0")
 
 CHEONGAN_HANJA = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
 JIJI_HANJA = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"]
@@ -38,16 +38,16 @@ JIJANGGAN_FULL_MAP = {
 }
 
 DAY_MBTI_MAP = {
-    "甲": {"mbti": "대담한 통솔자 (ENTJ형)", "desc": "강한 추진력과 당당한 리더십으로 조직을 이끄는 개척자 사주"},
-    "乙": {"mbti": "재기발랄한 활동가 (ENFP형)", "desc": "유연한 적응력과 풍부한 친화력으로 사람의 마음을 얻는 사주"},
-    "丙": {"mbti": "자유로운 영혼의 연예인 (ESFP형)", "desc": "태양 같은 열정과 밝은 에너지로 주변을 환하게 밝히는 사주"},
-    "丁": {"mbti": "용의주도한 전략가 (ENTJ형)", "desc": "치밀한 기획력과 은근한 카리스마로 목표를 완벽히 쟁취하는 사주"},
-    "戊": {"mbti": "청렴결백한 논리주의자 (ISTJ형)", "desc": "묵직한 신뢰감과 흔들리지 않는 원칙으로 책임을 다하는 사주"},
-    "己": {"mbti": "세심한 수호자 (ISFJ형)", "desc": "비옥한 땅처럼 주변을 묵묵히 품어주고 실속을 챙기는 사주"},
-    "庚": {"mbti": "엄격한 관리자 (ESTJ형)", "desc": "의리와 결단력으로 무장하여 난관을 돌파하는 단호한 실행가 사주"},
-    "辛": {"mbti": "용의주도한 완벽주의자 (INTJ형)", "desc": "보석처럼 예리한 감각과 높은 기준을 지닌 냉철한 분석가 사주"},
-    "壬": {"mbti": "뜨거운 논쟁을 즐기는 변론가 (ENTP형)", "desc": "바다처럼 넓은 지혜와 임기응변으로 판을 주도하는 아이디어 뱅크 사주"},
-    "癸": {"mbti": "선의의 옹호자 (INFJ형)", "desc": "맑은 이슬비처럼 깊은 직관과 통찰력으로 본질을 꿰뚫는 사색가 사주"}
+    "甲": {"mbti": "대담한 통솔자 (ENTJ형)", "desc": "강한 추진력과 당당한 리더십으로 조직을 이끄는 개척자 사주", "essence": "거목(巨木)의 기상"},
+    "乙": {"mbti": "재기발랄한 활동가 (ENFP형)", "desc": "유연한 적응력과 풍부한 친화력으로 사람의 마음을 얻는 사주", "essence": "생명력 넘치는 화초"},
+    "丙": {"mbti": "자유로운 영혼의 연예인 (ESFP형)", "desc": "태양 같은 열정과 밝은 에너지로 주변을 환하게 밝히는 사주", "essence": "하늘을 비추는 태양"},
+    "丁": {"mbti": "용의주도한 전략가 (ENTJ형)", "desc": "치밀한 기획력과 은근한 카리스마로 목표를 완벽히 쟁취하는 사주", "essence": "어둠을 밝히는 촛불"},
+    "戊": {"mbti": "청렴결백한 논리주의자 (ISTJ형)", "desc": "묵직한 신뢰감과 흔들리지 않는 원칙으로 책임을 다하는 사주", "essence": "단단하고 광활한 대지"},
+    "己": {"mbti": "세심한 수호자 (ISFJ형)", "desc": "비옥한 땅처럼 주변을 묵묵히 품어주고 실속을 챙기는 사주", "essence": "만물을 키워내는 전답"},
+    "庚": {"mbti": "엄격한 관리자 (ESTJ형)", "desc": "의리와 결단력으로 무장하여 난관을 돌파하는 단호한 실행가 사주", "essence": "강철과 원석의 결단력"},
+    "辛": {"mbti": "용의주도한 완벽주의자 (INTJ형)", "desc": "보석처럼 예리한 감각과 높은 기준을 지닌 냉철한 분석가 사주", "essence": "빛나는 다이아몬드"},
+    "壬": {"mbti": "뜨거운 논쟁을 즐기는 변론가 (ENTP형)", "desc": "바다처럼 넓은 지혜와 임기응변으로 판을 주도하는 아이디어 뱅크 사주", "essence": "도도하게 흐르는 큰 강"},
+    "癸": {"mbti": "선의의 옹호자 (INFJ형)", "desc": "맑은 이슬비처럼 깊은 직관과 통찰력으로 본질을 꿰뚫는 사색가 사주", "essence": "만물을 적시는 봄비"}
 }
 
 ANIMAL_MAP = {"子": "쥐", "丑": "소", "寅": "호랑이", "卯": "토끼", "辰": "용", "巳": "뱀", "午": "말", "未": "양", "申": "원숭이", "酉": "닭", "戌": "개", "亥": "돼지"}
@@ -69,19 +69,36 @@ STAR_SIGNS = [
 ]
 
 TALISMAN_OHEANG_MAP = {
-    "wood": {"type": "wood", "title": "사업대성부 (事業亨通符)", "power": "추진력 강화 · 사업 번창 · 승진운", "desc": "사주에 부족한 木의 활력을 불어넣어 막힌 활로를 뚫고 주도권을 쥐게 하는 비급 부적입니다."},
-    "fire": {"type": "fire", "title": "소원성취부 (心想事成符)", "power": "열정 회복 · 명예 상승 · 소원 성취", "desc": "사주에 부족한 火의 빛을 밝혀 오랫동안 염원하던 소망을 일사천리로 성취시키는 전통 부적입니다."},
-    "earth": {"type": "earth", "title": "금고수호부 (金庫安穩符)", "power": "자산 방어 · 누수 차단 · 재물 안착", "desc": "사주에 부족한 土의 단단한 대지를 마련하여 헛돈 지출을 막고 평생의 자산을 지켜주는 수호 부적입니다."},
-    "metal": {"type": "metal", "title": "재물만복부 (萬福大吉符)", "power": "재물 증식 · 금전운 대통 · 투자 대박", "desc": "사주에 부족한 金의 황금 기운을 채워 사방에서 금전과 복록이 쏟아지게 하는 전통 경면주사 부적입니다."},
-    "water": {"type": "water", "title": "천생화합부 (萬事和合符)", "power": "인연 결속 · 애정 화합 · 인간관계 개선", "desc": "사주에 부족한 水의 지혜와 유대감을 채워 엇갈린 인연을 묶어주고 귀인을 이끄는 화합 부적입니다."}
+    "wood": {"type": "wood", "title": "사업대성부 (事業亨通符)", "power": "추진력 강화 · 사업 번창 · 승진운", "desc": "사주에 부족한 木(성장과 개척)의 활력을 불어넣어 막힌 활로를 뚫고 주도권을 쥐게 하는 비급 부적입니다."},
+    "fire": {"type": "fire", "title": "소원성취부 (心想事成符)", "power": "열정 회복 · 명예 상승 · 소원 성취", "desc": "사주에 부족한 火(열정과 확산)의 빛을 밝혀 어둠을 몰아내고 염원하던 소망을 성취시키는 전통 부적입니다."},
+    "earth": {"type": "earth", "title": "금고수호부 (金庫安穩符)", "power": "자산 방어 · 누수 차단 · 재물 안착", "desc": "사주에 부족한 土(포용과 저장)의 단단한 대지를 마련하여 헛돈 지출을 막고 평생의 자산을 지켜주는 수호 부적입니다."},
+    "metal": {"type": "metal", "title": "재물만복부 (萬福大吉符)", "power": "재물 증식 · 금전운 대통 · 투자 대박", "desc": "사주에 부족한 金(결단과 결실)의 황금 기운을 채워 사방에서 금전과 복록이 쏟아지게 하는 전통 경면주사 부적입니다."},
+    "water": {"type": "water", "title": "천생화합부 (萬事和合符)", "power": "인연 결속 · 애정 화합 · 인간관계 개선", "desc": "사주에 부족한 水(지혜와 융합)의 부드러운 유대감을 채워 엇갈린 인연을 묶어주고 귀인을 이끄는 화합 부적입니다."}
 }
 
 TAROT_CARDS = [
     {"name": "0. THE FOOL (바보)", "keyword": "새로운 시작 · 순수한 열정 · 무한한 잠재력", "symbolism": "절벽 끝에 선 순수한 영혼으로 관습에 얽매이지 않는 새로운 여정의 출발을 상징합니다.", "fortune_reading": "오랫동안 머뭇거리던 일의 시작 단추를 꿰기에 최적의 날입니다. 직관을 따를 때 예상 밖의 통로가 열립니다.", "advice": "새로운 제안에 열린 마음을 가지되 발걸음은 가볍고 시선은 신중히 유지하세요.", "action_tip": "떠오르는 아이디어를 즉시 메모하고 먼저 연락을 건네보세요."},
-    {"name": "I. THE MAGICIAN (마법사)", "keyword": "창조적 역량 · 완벽한 주도권 · 실력 발휘", "symbolism": "머리 위의 무한대 기호와 제단 위의 원소들은 모든 도구를 통제하는 지혜를 뜻합니다.", "fortune_reading": "지식과 언변, 전문 기술이 빛을 발하는 날입니다. 당당한 태도로 판을 리드하기에 최적입니다.", "advice": "미팅이나 보고에서 주도적으로 의견을 제시하고 실력을 드러내세요.", "action_tip": "중요한 대화에서 본인의 핵심 주장을 명확하게 피력하세요."},
+    {"name": "I. THE MAGICIAN (마법사)", "keyword": "창조적 역량 · 완벽한 주도권 · 실력 발휘", "symbolism": "머리 위의 무한대 기호와 제단 위의 4대 원소는 모든 도구를 통제하는 지혜를 뜻합니다.", "fortune_reading": "지식과 언변, 전문 기술이 빛을 발하는 날입니다. 당당한 태도로 판을 리드하기에 최적입니다.", "advice": "미팅이나 보고에서 주도적으로 의견을 제시하고 실력을 드러내세요.", "action_tip": "중요한 대화에서 본인의 핵심 주장을 명확하게 피력하세요."},
     {"name": "II. THE HIGH PRIESTESS (여사제)", "keyword": "깊은 통찰 · 직관과 혜안 · 침묵의 지혜", "symbolism": "흑과 백의 기둥 사이에 앉아 본질적 진실과 영적인 직관을 상징합니다.", "fortune_reading": "겉으로 드러난 말보다 상대방의 숨은 의도나 상황의 이면을 꿰뚫어 보는 혜안이 극대화됩니다.", "advice": "성급하게 반응하기보다는 차분히 경청하고 심사숙고하세요.", "action_tip": "조용한 장소에서 생각을 차분히 정리하는 시간을 가지세요."},
-    {"name": "III. THE EMPRESS (여황제)", "keyword": "풍요와 번영 · 따뜻한 포용 · 결실의 기쁨", "symbolism": "풍성한 곡식과 장식은 모성적 사랑과 물질적·정신적 풍요로움을 상징합니다.", "fortune_reading": "그동안 공들여 준비한 일에서 만족스러운 성과와 금전적 보상이 주어지는 날입니다.", "advice": "주변 사람들에게 넉넉한 마음으로 베풀면 더 큰 행운이 돌아옵니다.", "action_tip": "맛있는 식사를 대접하거나 가까운 이에게 감사 인사를 전하세요."},
-    {"name": "XIX. THE SUN (태양)", "keyword": "최고의 성공 · 밝은 활력 · 승리와 영광", "symbolism": "찬란하게 빛나는 태양과 백마 탄 아이는 어둠을 몰아내는 승리와 기쁨을 상징합니다.", "fortune_reading": "모든 근심이 사라지고 목표하던 일이 시원하게 성취되는 최고의 운세입니다.", "advice": "자신감을 갖고 주저 없이 전진하여 승리의 기쁨을 누리세요.", "action_tip": "야외로 나가 밝은 햇살을 맞으며 활력을 충전하세요."}
+    {"name": "III. THE EMPRESS (여황제)", "keyword": "풍요와 번영 · 따뜻한 포용 · 결실의 기쁨", "symbolism": "풍성한 곡식과 석류 장식은 모성적 사랑과 물질적·정신적 풍요로움을 상징합니다.", "fortune_reading": "그동안 공들여 준비한 일에서 만족스러운 성과와 금전적 보상이 주어지는 날입니다.", "advice": "주변 사람들에게 넉넉한 마음으로 베풀면 더 큰 행운이 돌아옵니다.", "action_tip": "맛있는 식사를 대접하거나 가까운 이에게 감사 인사를 전하세요."},
+    {"name": "IV. THE EMPEROR (황제)", "keyword": "확고한 권위 · 강력한 통솔 · 안정된 기반", "symbolism": "단단한 석조 왕좌는 흔들리지 않는 통치력과 엄격한 질서, 조직의 굳건함을 뜻합니다.", "fortune_reading": "자신의 영역에서 주도권을 확립하고 책임감 있게 프로젝트를 완수하기에 좋은 날입니다.", "advice": "원칙과 약속을 철저히 지키며 리더십을 발휘하세요.", "action_tip": "흐트러진 계획을 점검하고 체계적인 규율을 세우세요."},
+    {"name": "V. THE HIEROPHANT (교황)", "keyword": "신뢰와 조언 · 전통적 가치 · 귀인의 도우심", "symbolism": "교황의 삼중관과 두 명의 사제는 귀인의 정통성 있는 가르침과 신뢰를 상징합니다.", "fortune_reading": "스승이나 연장자, 유력 인사로부터 결정적인 귀인의 조언을 받아 난관을 해결하는 날입니다.", "advice": "독단적인 행동을 피하고 경험자의 조언을 겸손하게 받아들이세요.", "action_tip": "존경하는 멘토나 상급자에게 안부 연락을 건네보세요."},
+    {"name": "VI. THE LOVERS (연인)", "keyword": "조화로운 결합 · 진정한 공감 · 올바른 선택", "symbolism": "천사의 축복 아래 선 남녀는 영혼의 교감과 중요한 인생의 선택을 상징합니다.", "fortune_reading": "인간관계와 애정 전선에 따뜻한 훈풍이 불고 협력 파트너와의 호흡이 완벽히 맞습니다.", "advice": "계산적인 이득보다는 마음의 진정성을 바탕으로 대화하세요.", "action_tip": "소중한 사람과 티타임을 가지며 솔직한 마음을 나누세요."},
+    {"name": "VII. THE CHARIOT (전차)", "keyword": "거침없는 돌파 · 승리의 질주 · 강한 의지", "symbolism": "흑과 백의 스핑크스를 이끄는 젊은 기사는 이성과 감성을 통제하여 승리하는 의지를 뜻합니다.", "fortune_reading": "주저하지 않고 강력하게 밀어붙일 때 목표를 수월하게 쟁취할 수 있는 대길의 하루입니다.", "advice": "목표에 집중하고 사소한 장애물에 연연하지 마세요.", "action_tip": "오랫동안 미뤄왔던 단호한 결정을 오늘 실행에 옮기세요."},
+    {"name": "VIII. STRENGTH (힘)", "keyword": "내면의 인내 · 부드러운 통제 · 온화한 카리스마", "symbolism": "사자를 부드럽게 다스리는 여인은 강압적인 힘이 아닌 내면의 온화한 카리스마를 상징합니다.", "fortune_reading": "감정을 자제하고 부드럽지만 단단한 태도로 임할 때 유능한 상대도 내 편으로 만듭니다.", "advice": "화가 나거나 감정적일 때일수록 미소와 유연함으로 상대하세요.", "action_tip": "깊은 숨을 세 번 쉬며 너그러운 마음을 유지하세요."},
+    {"name": "IX. THE HERMIT (은둔자)", "keyword": "깊은 성찰 · 탐구와 지혜 · 내면의 빛", "symbolism": "등불을 들고 눈 덮인 산을 오르는 노인은 깊은 지혜와 진리 탐구를 상징합니다.", "fortune_reading": "외부의 번잡함에서 벗어나 혼자만의 시간에 몰입할 때 중요한 혜안을 얻게 됩니다.", "advice": "남들의 시선에 신경 쓰지 말고 자신의 내면 소리에 집중하세요.", "action_tip": "스마트폰을 잠시 내려놓고 30분간 조용히 사색을 즐기세요."},
+    {"name": "X. WHEEL OF FORTUNE (운명의 수레바퀴)", "keyword": "행운의 반전 · 결정적 기회 · 운명의 전환점", "symbolism": "영원히 회전하는 수레바퀴는 상승과 하강, 기회의 순간을 뜻합니다.", "fortune_reading": "정체되었던 상황이 뜻밖의 계기를 통해 긍정적인 방향으로 급물살을 타게 됩니다.", "advice": "흐름에 맞서지 말고 자연스럽게 변화를 수용하여 기회를 잡으세요.", "action_tip": "오랜 지인에게 온 연락이나 새로운 제안을 긍정적으로 검토하세요."},
+    {"name": "XI. JUSTICE (정의)", "keyword": "명확한 판단 · 공정한 균형 · 합리적 계약", "symbolism": "저울과 칼을 든 여신은 감정에 휘둘리지 않는 공정한 판단과 사필귀정을 상징합니다.", "fortune_reading": "공정하고 합리적인 판단이 빛을 발하며 문서 및 계약 건에서 이익이 확보됩니다.", "advice": "사사로운 감정을 배제하고 사실과 데이터에 근거해 결정하세요.", "action_tip": "계약서나 중요한 서류의 조항을 면밀히 재검토하세요."},
+    {"name": "XII. THE HANGED MAN (매달린 사람)", "keyword": "발상의 전환 · 인고의 결실 · 새로운 시각", "symbolism": "나무에 거꾸로 매달린 남자의 후광은 희생을 통해 깨달음을 얻는 신성한 시각을 뜻합니다.", "fortune_reading": "잠시 상황이 정체된 것처럼 보이지만 발상을 뒤집을 때 놀라운 해결책이 찾아옵니다.", "advice": "서두르지 말고 현재 상태를 조용히 관조하며 때를 기다리세요.", "action_tip": "기존 방식과 반대되는 새로운 아이디어를 검토해 보세요."},
+    {"name": "XIII. DEATH (죽음)", "keyword": "새로운 변혁 · 과거와의 작별 · 불운의 끝", "symbolism": "깃발을 든 기사는 오래된 유통기한이 끝난 상황을 청산하고 새 단계를 시작함을 뜻합니다.", "fortune_reading": "나를 갉아먹던 나쁜 습관이나 원치 않는 상황이 마침내 청산되고 새 출발이 시작됩니다.", "advice": "과거의 미련을 미련 없이 훌훌 털어버리고 새판을 짜세요.", "action_tip": "사용하지 않는 안 쓰는 물건이나 단톡방을 깔끔히 정리하세요."},
+    {"name": "XIV. TEMPERANCE (절제)", "keyword": "감정의 조화 · 유연한 중용 · 차분한 융합", "symbolism": "두 컵에 물을 서로 개어 섞는 천사는 이성과 감성, 서로 다른 기운의 완벽한 조화를 뜻합니다.", "fortune_reading": "치우침 없이 조화로운 태도를 유지할 때 원만한 대인관계와 마음의 평화가 유지됩니다.", "advice": "극단적인 선택을 피하고 적절한 타협점을 모색하세요.", "action_tip": "자극적인 음식을 피하고 미온수를 충분히 마시며 속을 달래세요."},
+    {"name": "XV. THE DEVIL (악마)", "keyword": "강력한 유혹 · 과감한 집착 · 치명적 매력", "symbolism": "사슬에 묶인 남녀는 유혹과 단기적인 쾌락, 강력한 욕망의 집착을 뜻합니다.", "fortune_reading": "단기적인 이익이나 달콤한 유혹이 다가오나 내실을 따지는 냉철함이 필요합니다.", "advice": "눈앞의 화려함에 혹하지 말고 계약의 조건과 유통기한을 따지세요.", "action_tip": "충동구매나 솔깃한 투자 제안에 쉽게 응하지 마세요."},
+    {"name": "XVI. THE TOWER (탑)", "keyword": "낡은 틀의 붕괴 · 전격적 쇄신 · 통쾌한 구체화", "symbolism": "번개를 맞아 부서지는 탑은 거짓된 기반이 깨지고 진실이 드러나는 쇄신을 상징합니다.", "fortune_reading": "갑작스러운 변화나 계획의 수정이 발생하지만 오히려 더 튼튼한 판을 짜게 됩니다.", "advice": "기존의 임시방편을 버리고 근본적인 체질 개선에 나서세요.", "action_tip": "잘못된 오해나 누적된 문제를 투명하게 드러내어 해결하세요."},
+    {"name": "XVII. THE STAR (별)", "keyword": "희망의 빛 · 무한한 영감 · 마음의 치유", "symbolism": "밤하늘에 빛나는 거대한 별과 물을 붓는 여인은 절망 뒤 찾아오는 치유와 희망을 뜻합니다.", "fortune_reading": "오랫동안 어둡던 터널을 지나 희망찬 반전과 밝은 아이디어가 샘솟는 기쁜 날입니다.", "advice": "스스로의 가능성을 믿고 오랫동안 꿈꿔온 목표를 향해 나아가세요.", "action_tip": "버킷리스트나 올해의 목표를 다시 읽어보며 다짐하세요."},
+    {"name": "XVIII. THE MOON (달)", "keyword": "은밀한 직관 · 안개 속의 진실 · 신중함", "symbolism": "수면 위로 떠오르는 가재와 달은 표면 아래 숨겨진 불안과 감춰진 진실을 뜻합니다.", "fortune_reading": "불확실한 소문이나 서급한 판단을 피하고 서두르지 않는 조심성이 요청되는 날입니다.", "advice": "확인되지 않은 루머에 동조하지 말고 사실을 다각도로 검증하세요.", "action_tip": "중요한 계약이나 금전 결정은 하루 이틀 시일을 두고 검토하세요."},
+    {"name": "XIX. THE SUN (태양)", "keyword": "최고의 성공 · 밝은 활력 · 승리와 영광", "symbolism": "찬란하게 빛나는 태양과 백마 탄 아이는 어둠을 몰아내는 승리와 기쁨을 상징합니다.", "fortune_reading": "모든 근심이 사라지고 목표하던 일이 시원하게 성취되는 최고의 운세입니다.", "advice": "자신감을 갖고 주저 없이 전진하여 승리의 기쁨을 누리세요.", "action_tip": "야외로 나가 밝은 햇살을 맞으며 활력을 충전하세요."},
+    {"name": "XX. JUDGEMENT (심판)", "keyword": "보상과 부활 · 명확한 소식 · 결정적 승인", "symbolism": "나팔을 부는 천사와 부활하는 사람들은 진심 어린 노력에 대한 온전한 보상을 상징합니다.", "fortune_reading": "과거에 최선을 다했던 일에 대한 반가운 보상이나 기다리던 승인 소식이 전해집니다.", "advice": "과거의 성과를 자신 있게 어필하고 정당한 대가를 요구하세요.", "action_tip": "결과를 기다리던 곳에 전화나 메일로 소식을 확인해 보세요."},
+    {"name": "XXI. THE WORLD (세계)", "keyword": "완벽한 완성 · 해피엔딩 · 글로벌 성취", "symbolism": "월계관 속에서 춤추는 여인은 프로젝트의 완벽한 완성 및 인생의 큰 단락 성취를 뜻합니다.", "fortune_reading": "오랫동안 공들여온 일의 완벽한 피날레와 함께 마침내 커다란 축하를 받는 날입니다.", "advice": "한 단계를 완벽히 마무리하고 더 큰 목표를 향한 비전을 그리세요.", "action_tip": "함께 달려온 동료나 가족과 축하 파티를 즐기세요."}
 ]
 
 class SajuRequest(BaseModel):
@@ -112,7 +129,7 @@ def calculate_biorhythm(birth_date: datetime.date, target_date: datetime.date):
         elif val > 0:
             return {"val": val, "pct": pct, "status": "상승기", "color": "#EA580C", "tip": f"{cycle_name} 컨디션이 원활하게 유지되고 있습니다."}
         elif val == 0:
-            return {"val": val, "pct": 50, "status": "위험일(전환점)", "color": "#D97706", "tip": f"기운이 바뀌는 전환점이므로 무리수를 피하세요."}
+            return {"val": val, "pct": 50, "status": "전환점", "color": "#D97706", "tip": f"기운이 바뀌는 전환점이므로 무리수를 피하세요."}
         elif val > -50:
             return {"val": val, "pct": pct, "status": "하강기", "color": "#2563EB", "tip": f"에너지가 소진되는 구간이니 페이스 조절이 필요합니다."}
         else:
@@ -246,7 +263,7 @@ def analyze_saju(req: SajuRequest):
 
     min_elem = min(elem_percentages, key=elem_percentages.get)
     user_talisman = TALISMAN_OHEANG_MAP.get(min_elem, TALISMAN_OHEANG_MAP["metal"])
-    user_mbti = DAY_MBTI_MAP.get(d_cg, {"mbti": "대담한 통솔자 (ENTJ형)", "desc": "강한 추진력과 당당한 리더십으로 조직을 이끄는 개척자 사주"})
+    user_mbti = DAY_MBTI_MAP.get(d_cg, {"mbti": "대담한 통솔자 (ENTJ형)", "desc": "강한 추진력과 당당한 리더십으로 조직을 이끄는 개척자 사주", "essence": "거목의 기상"})
     user_animal_icon = ANIMAL_ICONS.get(d_animal, "🐶")
 
     biorhythm_data = calculate_biorhythm(target_date, today)
@@ -308,6 +325,7 @@ def get_daily_tarot(slot: int = 1, rand_seed: Optional[str] = None):
     random_idx = random.randint(0, len(TAROT_CARDS) - 1)
     return TAROT_CARDS[random_idx]
 
+# [풀버전 복구] 자미두수 평생운세: 사주 일간(10간) 기반 완전 분기 챕터형 감명서
 @app.post("/api/daewoon-report")
 def get_daewoon_report(req: dict):
     user_name = req.get("name", "최정오")
@@ -328,22 +346,32 @@ def get_daewoon_report(req: dict):
                     </h4>
                 </div>
                 <p style="color: #475569; margin-bottom: 10px;">
-                    자미두수 명반과 사주 원국을 교차 감명한 결과, {user_name}님의 인생은 중장년기에 폭발적인 재물과 명예의 결실을 완성하는 <strong>'만성대기(晩成大器)형 거목의 명식'</strong>입니다.
+                    자미두수 명반과 사주 원국을 교차 감명한 결과, {user_name}님의 인생은 초년의 치열한 배움을 거쳐 중장년기에 폭발적인 재물과 명예의 결실을 완성하는 <strong>'만성대기(晩成大器)형 거목의 명식'</strong>입니다.
                 </p>
                 <div style="display: flex; flex-direction: column; gap: 10px;">
                     <div style="background: #F8FAFC; border-radius: 8px; padding: 10px 12px;">
-                        <p style="font-weight: 800; color: #0F172A; font-size: 14.5px; margin-bottom: 2px;">🌱 [유년기 : 기틀 형성기]</p>
-                        <p style="color: #475569; font-size: 13.5px;">지적 호기심과 영민함으로 도덕적 기준과 가치관을 다지던 시기였습니다.</p>
+                        <p style="font-weight: 800; color: #0F172A; font-size: 14.5px; margin-bottom: 2px;">🌱 [유년기 : 근본 기틀 형성기]</p>
+                        <p style="color: #475569; font-size: 13.5px;">남다른 지적 호기심과 영민함으로 도덕적 기준과 가치관을 단단히 다지던 시기였습니다.</p>
+                    </div>
+                    <div style="background: #F8FAFC; border-radius: 8px; padding: 10px 12px;">
+                        <p style="font-weight: 800; color: #0F172A; font-size: 14.5px; margin-bottom: 2px;">🌿 [청년기 : 역량 축적 및 실전기]</p>
+                        <p style="color: #475569; font-size: 13.5px;">사회에 진출하여 실무 전문성을 연마하고, 인맥과 실물 감각의 뼈대를 견고히 구축했습니다.</p>
                     </div>
                     <div style="background: #FEF3C7; border: 1.5px solid #FCD34D; border-radius: 8px; padding: 10px 12px;">
-                        <p style="font-weight: 800; color: #78350F; font-size: 14.5px; margin-bottom: 2px;">🔥 [중장년기 (*현재 위치 / 40~59세) : 황금 결실기]</p>
+                        <p style="font-weight: 800; color: #78350F; font-size: 14.5px; margin-bottom: 2px;">🔥 [중장년기 (*현재 위치 / 40세 ~ 59세) : 황금 결실기]</p>
                         <p style="color: #92400E; font-size: 13.5px; font-weight: 600;">
-                            <strong>{user_name}님 인생 일대에서 가장 강력한 천운의 파도가 솟구치는 최고 전성기 구간입니다.</strong>
+                            <strong>{user_name}님 인생 일대에서 가장 강력한 천운의 파도가 솟구치는 최고 전성기 구간입니다.</strong> 본인이 직접 주도권을 쥐고 설계한 판에서 자산 규모와 사회적 영향력이 수직 상승합니다.
                         </p>
+                    </div>
+                    <div style="background: #F8FAFC; border-radius: 8px; padding: 10px 12px;">
+                        <p style="font-weight: 800; color: #0F172A; font-size: 14.5px; margin-bottom: 2px;">🍎 [말년기 : 태평성대 및 가문 번영기]</p>
+                        <p style="color: #475569; font-size: 13.5px;">평생 축적한 자산과 인망을 토대로 안락한 노후를 누리며 후대에 안정적 번영을 대물림합니다.</p>
                     </div>
                 </div>
             </div>
+
             <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
+
             <div>
                 <div style="border-left: 4px solid #D97706; padding-left: 10px; margin-bottom: 8px;">
                     <span style="font-size: 12px; color: #D97706; font-weight: 800;">Chapter 2. 현재 10년 대운</span>
@@ -351,32 +379,69 @@ def get_daewoon_report(req: dict):
                         📈 Q. {user_name}님의 현재 10년 대운({start_age}세 ~ {end_age}세) 핵심 결실은?
                     </h4>
                 </div>
-                <p style="color: #78350F; line-height: 1.85;">
-                    사주 본원에 '재성'과 '귀인'이 강력 결합하는 절정기로, 본인의 주도권으로 사업과 투자를 리드할 때 성공 확률이 극대화됩니다.
+                <p style="color: #78350F; line-height: 1.85; margin-bottom: 10px;">
+                    현재 지나고 계신 대운맥은 사주 본원에 '재성(財星)'과 '귀인(貴人)'이 강력하게 결합하는 절정기입니다. 남에게 끌려다니지 않고 본인의 통솔력으로 사업, 투자, 조직을 리드할 때 성공 확률이 95% 이상으로 치솟습니다.
                 </p>
+                <div style="display: flex; flex-direction: column; gap: 8px; font-size: 14px; color: #475569;">
+                    <p>• <strong>{start_age}세 ~ {start_age+2}세 (기반 재편기):</strong> 흩어져 있던 지출을 정돈하고 실물 자산 중심 종잣돈 포트폴리오를 단단히 압축한 시기.</p>
+                    <p style="color: #B45309; font-weight: 800;">• <strong>{start_age+3}세 ~ {start_age+6}세 (대운 정점기 / ★현재 {age}세 위치):</strong> 귀인의 결정적 조력과 함께 직위·자산 규모가 퀀텀 점프하는 일생일대의 승부처입니다.</p>
+                    <p>• <strong>{start_age+7}세 ~ {end_age}세 (자산 수성기):</strong> 성과를 시스템 수익(부동산, 배당, 지식재산권)으로 고정시키며 차기 대운으로 연착륙합니다.</p>
+                </div>
             </div>
+
+            <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
+
+            <div>
+                <div style="border-left: 4px solid #DC2626; padding-left: 10px; margin-bottom: 8px;">
+                    <span style="font-size: 12px; color: #DC2626; font-weight: 800;">Chapter 3. 불운 방어</span>
+                    <h4 style="font-size: 16.5px; font-weight: 800; color: #991B1B; margin-top: 2px;">
+                        🛡️ Q. 대운 기간 중 반드시 경계해야 할 암초와 방어책은?
+                    </h4>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 8px; font-size: 14px; color: #451A03; line-height: 1.8;">
+                    <p>• <strong>1. 구두 약속의 함정 (문서화 필수):</strong> 운세가 강할 때는 주변에서 달콤한 제안이 쏟아집니다. 친분 관계라 할지라도 지분, 계약, 금전 거래는 반드시 공증 및 문서화해야 관재수를 완벽히 차단합니다.</p>
+                    <p>• <strong>2. 과도한 독단 경계:</strong> 본인의 직관이 뛰어나지만 중요한 의사결정 시 법률·세무·금융 전문가의 2차 검증을 거칠 때 자산 누수가 0%로 수렴합니다.</p>
+                </div>
+            </div>
+
+            <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
+
+            <div>
+                <div style="border-left: 4px solid #F59E0B; padding-left: 10px; margin-bottom: 8px;">
+                    <span style="font-size: 12px; color: #D97706; font-weight: 800;">Chapter 4. 실전 개운 솔루션</span>
+                    <h4 style="font-size: 16.5px; font-weight: 800; color: #78350F; margin-top: 2px;">
+                        🔥 이번 10년 대운({start_age}세~{end_age}세) 맞춤 3대 개운(開運) 실천 비책
+                    </h4>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 10px; font-size: 14px; line-height: 1.8; color: #451A03;">
+                    <p>• <strong>[재물 및 자산 운용]:</strong> 단기 단타 투자보다 실물 부동산, 우량 배당 자산 등 고정적 현금 흐름을 창출하는 안전 자산에 집중할 때 부의 크기가 3배 이상 공고해집니다.</p>
+                    <p>• <strong>[비즈니스 및 직업 처세]:</strong> 혼자 모든 짐을 짊어지려 하지 말고 유능한 협력 파트너를 적극적으로 영입하세요. 위임의 기술을 발휘할 때 명예와 성취가 배가됩니다.</p>
+                    <p>• <strong>[건강 및 마인드셋]:</strong> 머리는 차갑게 식히고 하체 순환을 돕는 '두한족열' 루틴을 유지하세요. 감정에 휘둘리지 않는 평정심을 유지할 때 인생 최대의 복록을 온전히 담아낼 수 있습니다.</p>
+                </div>
+            </div>
+
         </div>
         """
     }
 
-# 2026 신년운세 & 토정비결 (양력 기준 1회 명시 반영)
+# [풀버전 복구] 2026 신년운세 & 12개월 토정비결 (양력 기준 1회 명시)
 @app.post("/api/sinnian-report")
 def get_sinnian_report(req: dict):
     user_name = req.get("name", "최정오")
     
     monthly_guides = [
-        {"m": "1월", "gua": "지천태(地天泰) 괘", "opp": "새해 첫 출발이 대길하여 신규 사업 및 프로젝트 착수에 최적입니다.", "warn": "세부 규정을 차분히 정비하세요."},
-        {"m": "2월", "gua": "수천수(水天需) 괘", "opp": "실력과 내실을 다지며 시장 상황의 흐름을 관망할 때 이익이 보존됩니다.", "warn": "충동구매를 조심하세요."},
-        {"m": "3월", "gua": "천화동인(天火同人) 괘", "opp": "귀인의 조력이 닿아 인간관계와 직무에서 강력한 협력자가 나타납니다.", "warn": "이견 조율 시 감정적 대응을 피하세요."},
-        {"m": "4월", "gua": "풍천소축(風天小畜) 괘", "opp": "작은 성과가 차곡차곡 쌓여 종잣돈의 기틀이 단단해집니다.", "warn": "무리한 대출은 지양하세요."},
-        {"m": "5월", "gua": "화천대유(火天大有) 괘", "opp": "★상반기 최고의 재물운! 부동산/투자/계약에서 큰 결실을 맺습니다.", "warn": "성과를 독식하지 말고 베푸세요."},
-        {"m": "6월", "gua": "천풍구(天風姤) 괘", "opp": "새로운 제안과 이직/신규 프로젝트의 반가운 활로가 열립니다.", "warn": "계약서 독소 조항을 검증하세요."},
-        {"m": "7월", "gua": "천수송(天水訟) 괘", "opp": "복잡했던 업무 체계를 정리하고 체질을 개선하는 달.", "warn": "사소한 언쟁을 피하세요."},
-        {"m": "8월", "gua": "풍지관(風地觀) 괘", "opp": "상반기 성과를 점검하고 하반기 대도약 전략을 세우기에 최적입니다.", "warn": "체력 관리를 챙기세요."},
-        {"m": "9월", "gua": "산지박(山地剝) 괘", "opp": "낭비 요소를 말끔히 청산하여 실속을 챙깁니다.", "warn": "핵심 업무에 집중하세요."},
-        {"m": "10월", "gua": "지뢰복(地雷復) 괘", "opp": "★하반기 최고의 승부처! 승진, 수주, 투자 회수에서 낭보가 울립니다.", "warn": "기회가 올 때 과감히 결단하세요."},
-        {"m": "11월", "gua": "수뢰준(水雷屯) 괘", "opp": "새로운 아이템이나 자격/학업의 씨앗을 뿌리기에 좋습니다.", "warn": "경험자의 조언을 경청하세요."},
-        {"m": "12월", "gua": "지화명이(地火明夷) 괘", "opp": "한 해 일군 풍성한 결실을 확정 짓고 가족의 화목을 누립니다.", "warn": "연말 과로를 피하세요."}
+        {"m": "1월", "gua": "지천태(地天泰) 괘", "opp": "새해 첫 출발이 대길하여 신규 사업 및 프로젝트 착수에 최적입니다.", "warn": "초반의 빠른 성취에 자만하지 말고 세부 규정을 차분히 정비하세요."},
+        {"m": "2월", "gua": "수천수(水天需) 괘", "opp": "실력과 내실을 다지며 시장 상황의 흐름을 관망할 때 이익이 보존됩니다.", "warn": "서두른 결정이나 충동구매는 후회를 부르니 하루 이틀 시일을 두세요."},
+        {"m": "3월", "gua": "천화동인(天火同人) 괘", "opp": "귀인의 조력이 닿아 인간관계와 직무에서 강력한 협력자가 나타납니다.", "warn": "주변과의 이견 조율 시 감정적 대응을 피하고 데이터로 설득하세요."},
+        {"m": "4월", "gua": "풍천소축(風天小畜) 괘", "opp": "작은 성과가 차곡차곡 쌓여 종잣돈의 기틀이 한 단계 단단해집니다.", "warn": "무리한 대출이나 투자는 지양하고 현금 유동성을 확보하세요."},
+        {"m": "5월", "gua": "화천대유(火天大有) 괘", "opp": "★올해 상반기 최고의 재물운! 부동산/투자/계약에서 큰 결실을 맺습니다.", "warn": "성과를 독식하려 하지 말고 함께한 동료들에게 따뜻하게 베푸세요."},
+        {"m": "6월", "gua": "천풍구(天風姤) 괘", "opp": "새로운 제안과 이직/신규 프로젝트의 반가운 활로가 열립니다.", "warn": "계약서의 독소 조항과 구두 약속을 면밀히 검증하는 신중함이 필수입니다."},
+        {"m": "7월", "gua": "천수송(天水訟) 괘", "opp": "기존의 복잡했던 업무 체계를 깔끔히 정리하고 체질을 개선하는 달.", "warn": "사소한 언쟁이나 시비수를 피하기 위해 공감 화법을 철저히 유지하세요."},
+        {"m": "8월", "gua": "풍지관(風地觀) 괘", "opp": "상반기의 성과를 점검하고 하반기 대도약을 위한 전략을 세우기에 최적입니다.", "warn": "체력 저하와 간 피로를 방지하기 위해 충분한 수면과 족욕을 챙기세요."},
+        {"m": "9월", "gua": "산지박(山地剝) 괘", "opp": "불필요한 고정비와 낭비 요소를 말끔히 청산하여 실속을 챙깁니다.", "warn": "무리한 확장보다 기존 고객 및 핵심 업무 관리에 집중하세요."},
+        {"m": "10월", "gua": "지뢰복(地雷復) 괘", "opp": "★올해 하반기 최고의 승부처! 승진, 수주, 투자 회수에서 낭보가 울립니다.", "warn": "기회가 올 때 주저하지 말고 과감한 결단력으로 주도권을 쥐세요."},
+        {"m": "11월", "gua": "수뢰준(水雷屯) 괘", "opp": "내년을 위한 새로운 아이템이나 자격/학업의 씨앗을 뿌리기에 좋습니다.", "warn": "경험자의 조언을 경청하여 불필요한 시행착오를 사전에 방지하세요."},
+        {"m": "12월", "gua": "지화명이(地火明夷) 괘", "opp": "한 해 일군 풍성한 결실을 확정 짓고 가문과 가족의 화목을 누립니다.", "warn": "연말 과음과 과로를 피하고 따뜻한 온기로 몸과 마음을 달래세요."}
     ]
 
     months_html = "".join([f"""
@@ -406,11 +471,12 @@ def get_sinnian_report(req: dict):
                     </h4>
                 </div>
                 <p style="color: #7F1D1D; line-height: 1.85; margin-bottom: 12px;">
-                    강렬한 불(火)의 기운이 어둠을 걷어내는 丙午년입니다. {user_name}님의 역량이 화려하게 꽃을 피우며 막힌 활로가 뚫리는 <strong>'비상의 한 해'</strong>가 됩니다.
+                    2026년은 강렬한 불(火)의 기운이 어둠을 걷어내고 대지를 환하게 비추는 丙午년입니다. {user_name}님의 사주 본원과 조화를 이루어 그동안 수면 아래에서 준비해 온 역량이 화려하게 꽃을 피우며, 막혀 있던 활로가 시원하게 뚫리는 <strong>'비상(飛翔)의 한 해'</strong>가 됩니다.
                 </p>
-                <div style="display: flex; flex-direction: column; gap: 6px; font-size: 14px; color: #475569;">
-                    <p>• <strong>💰 재물 대박 타이밍:</strong> 양력 5월과 10월에 큰 금전적 성과와 계약 성사.</p>
-                    <p>• <strong>💼 커리어 운세:</strong> 상반기 기획이 하반기에 승진 및 명예로운 결과로 연결됩니다.</p>
+                <div style="display: flex; flex-direction: column; gap: 8px; font-size: 14px; color: #475569;">
+                    <p>• <strong>💰 재물 대박 타이밍:</strong> 양력 5월(상반기 결실)과 10월(하반기 결실)에 큰 금전적 성과와 유리한 계약 성사.</p>
+                    <p>• <strong>💼 커리어 및 직무 운세:</strong> 상반기에 뿌린 기획이 하반기(9~11월)에 승진, 인정, 영전으로 직결됩니다.</p>
+                    <p>• <strong>🤝 결정적 귀인수:</strong> 서북쪽 방위에서 다가오는 동료 및 전문 조력자가 핵심 난제를 해결해 줍니다.</p>
                 </div>
             </div>
 
@@ -433,16 +499,31 @@ def get_sinnian_report(req: dict):
                     {months_html}
                 </div>
             </div>
+
+            <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
+
+            <div>
+                <div style="border-left: 4px solid #D97706; padding-left: 10px; margin-bottom: 8px;">
+                    <span style="font-size: 12px; color: #D97706; font-weight: 800;">Chapter 3. 2026 개운 비책</span>
+                    <h4 style="font-size: 16.5px; font-weight: 800; color: #78350F; margin-top: 2px;">
+                        ✨ 2026년 운세를 200% 극대화하는 3대 실천 솔루션
+                    </h4>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 8px; font-size: 14px; color: #92400E; line-height: 1.8;">
+                    <p>• <strong>행운의 방위:</strong> 주거지 및 집무실 기준 '정동쪽'과 '서북쪽'이 복록을 부르는 최고의 황금 방위입니다.</p>
+                    <p>• <strong>금전 지출 방어:</strong> 양력 7월에는 충동적인 지출이나 무리한 확장을 자제하고 현금 유동성을 확보하세요.</p>
+                    <p>• <strong>마인드셋 처세:</strong> 빠른 속도감 속에서도 중요한 계약서는 반드시 문구 하나까지 꼼꼼히 점검할 때 완벽한 승리를 거둡니다.</p>
+                </div>
+            </div>
         </div>
         """
     }
 
-# [신규 추가] 정통 사주 궁합 분석 API
+# [풀버전 복구] 정통 사주 궁합 3대 챕터 감명서
 @app.post("/api/gunghap-report")
 def get_gunghap_report(req: dict):
     user_name = req.get("name", "최정오")
     partner_name = req.get("partner_name", "상대방")
-    partner_birth = req.get("partner_birth", "1980-05-20")
     relation = req.get("relation", "연인/결혼")
 
     return {
@@ -495,7 +576,7 @@ def get_gunghap_report(req: dict):
                     </h4>
                 </div>
                 <div style="display: flex; flex-direction: column; gap: 6px; font-size: 14px; color: #475569;">
-                    <p>• <strong>행운의 데이트/미팅 장소:</strong> 물이 잔잔히 흐르는 강변이나 클래식한 조명의 카페가 두 분의 애정운을 2배로 증폭시킵니다.</p>
+                    <p>• <strong>행운의 장소:</strong> 물이 잔잔히 흐르는 강변이나 클래식한 조명의 카페가 두 분의 애정운을 2배로 증폭시킵니다.</p>
                     <p>• <strong>결정적 결실의 시기:</strong> 봄(양력 3~5월)과 가을(양력 9~11월)에 두 사람 사이의 중요한 약속이나 결단이 이루어집니다.</p>
                 </div>
             </div>
@@ -504,23 +585,82 @@ def get_gunghap_report(req: dict):
         """
     }
 
+# 4대 테마운세 풀버전
 @app.post("/api/theme-report")
 def get_theme_report(req: dict):
     theme = req.get("theme", "wealth")
     sub_opt = req.get("sub_option", "기본")
     user_name = req.get("name", "최정오")
     
-    return {
-        "title": f"💰 평생 테마 감명 ({sub_opt})",
-        "content": f"""
+    titles = {
+        "wealth": "💰 평생 재물운",
+        "love": f"💖 평생 애정운 ({sub_opt})",
+        "business": f"🏢 사업·직업운 ({sub_opt})",
+        "health": "🌿 평생 건강운"
+    }
+
+    if theme == "wealth":
+        content = f"""
         <div style="display: flex; flex-direction: column; gap: 16px; font-size: 14.5px; color: #334155; line-height: 1.85; text-align: left;">
             <div style="border-left: 4px solid #D97706; padding-left: 10px;">
-                <span style="font-size: 12px; color: #D97706; font-weight: 800;">맞춤 정밀 감명</span>
-                <h4 style="font-size: 16.5px; font-weight: 800; color: #78350F; margin: 3px 0 6px;">{user_name}님의 평생 맞춤 솔루션</h4>
+                <span style="font-size: 12px; color: #D97706; font-weight: 800;">Chapter 1. 재물 원국 감명</span>
+                <h4 style="font-size: 16.5px; font-weight: 800; color: #78350F; margin: 3px 0 6px;">[평생 재물운] '암장(暗藏) 금고형' 자산 축적 원국</h4>
                 <p style="color: #92400E; font-size: 14.5px; line-height: 1.85;">
-                    현재 선택하신 옵션({sub_opt})을 기반으로 정밀 감명한 결과, 독보적인 기획력과 추진력으로 자산을 굳건하게 형성하는 대길의 명식입니다.
+                    {user_name}님의 사주는 겉으로 드러난 화려함보다 실속 있게 현금과 실물 자산을 차곡차곡 축적하는 전형적인 '황금 금고형' 구조입니다. 지장간 속에 알짜배기 재성이 뿌리를 내리고 있어 틈새 기회를 포착하여 자산을 불리는 능력이 탁월합니다.
+                </p>
+            </div>
+            <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
+            <div>
+                <div style="border-left: 4px solid #2D6A4F; padding-left: 10px; margin-bottom: 8px;">
+                    <span style="font-size: 12px; color: #2D6A4F; font-weight: 800;">Chapter 2. 생애 자산 로드맵</span>
+                    <h4 style="font-size: 16.5px; font-weight: 800; color: #0F172A; margin-top: 2px;">📊 Q. {user_name}님의 생애 주기별 자산 퀀텀점프 시기는?</h4>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 8px; font-size: 14px; color: #475569;">
+                    <p>• <strong>초년~30대:</strong> 종잣돈을 모으고 경제 안목을 기르는 시기였습니다.</p>
+                    <p style="color: #B45309; font-weight: 800;">• <strong>40대 중후반~50대 (*현재 황금기):</strong> 귀인의 도움과 투자 결단으로 자산 규모가 3배 이상 폭발적으로 도약하는 최상의 전환점입니다.</p>
+                    <p>• <strong>60대 이후:</strong> 고정적 현금 흐름을 바탕으로 부를 안전하게 대물림하는 완벽한 자산 수성기입니다.</p>
+                </div>
+            </div>
+        </div>
+        """
+    elif theme == "love":
+        content = f"""
+        <div style="display: flex; flex-direction: column; gap: 16px; font-size: 14.5px; color: #334155; line-height: 1.85; text-align: left;">
+            <div style="border-left: 4px solid #E11D48; padding-left: 10px;">
+                <span style="font-size: 12px; color: #E11D48; font-weight: 800;">상태 맞춤: {sub_opt}</span>
+                <h4 style="font-size: 16.5px; font-weight: 800; color: #881337; margin: 3px 0 6px;">[평생 애정운] 깊은 신뢰와 상호 존중의 인연</h4>
+                <p style="color: #9F1239; font-size: 14.5px; line-height: 1.85;">
+                    {user_name}님의 애정 원국은 한 번 맺은 신뢰를 평생 지켜나가는 따뜻한 포용력의 소유자입니다. 본연의 당당함을 드러낼 때 뜻밖의 귀한 인연이 찾아옵니다.
                 </p>
             </div>
         </div>
         """
+    elif theme == "business":
+        content = f"""
+        <div style="display: flex; flex-direction: column; gap: 16px; font-size: 14.5px; color: #334155; line-height: 1.85; text-align: left;">
+            <div style="border-left: 4px solid #2563EB; padding-left: 10px;">
+                <span style="font-size: 12px; color: #2563EB; font-weight: 800;">상황 맞춤: {sub_opt}</span>
+                <h4 style="font-size: 16.5px; font-weight: 800; color: #1E3A8A; margin: 3px 0 6px;">[사업·직업운] 전략적 기획력과 결단력의 리더</h4>
+                <p style="color: #1E40AF; font-size: 14.5px; line-height: 1.85;">
+                    복잡한 난제를 단번에 해결하는 전략가 기질을 타고났습니다. 사내 정치나 시장의 잡음에 휩쓸리지 않고 독보적인 실적을 증명할 때 파격적인 도약이 일어납니다.
+                </p>
+            </div>
+        </div>
+        """
+    else:
+        content = f"""
+        <div style="display: flex; flex-direction: column; gap: 16px; font-size: 14.5px; color: #334155; line-height: 1.85; text-align: left;">
+            <div style="border-left: 4px solid #059669; padding-left: 10px;">
+                <span style="font-size: 12px; color: #059669; font-weight: 800;">오행 체질 정밀 분석</span>
+                <h4 style="font-size: 16.5px; font-weight: 800; color: #065F46; margin: 3px 0 6px;">[평생 건강운] 수승화강(水昇火降) 활력 관리</h4>
+                <p style="color: #047857; font-size: 14.5px; line-height: 1.85;">
+                    강인한 생명력을 갖추고 있으나 두한족열(머리는 시원하게 발은 따뜻하게)의 수칙을 유지해야 합니다. 취침 전 족욕과 유산소 운동이 건강의 비결입니다.
+                </p>
+            </div>
+        </div>
+        """
+    
+    return {
+        "title": titles.get(theme, "심층 리포트"),
+        "content": content
     }
