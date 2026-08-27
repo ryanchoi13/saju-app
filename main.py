@@ -7,7 +7,7 @@ from typing import Optional
 import os
 import random
 
-app = FastAPI(title="운세의 신 API", version="22.0.0")
+app = FastAPI(title="운세의 신 API", version="23.0.0")
 
 CHEONGAN_HANJA = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
 JIJI_HANJA = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"]
@@ -99,23 +99,20 @@ def serve_home():
         return FileResponse("index.html")
     return HTMLResponse("<h2>운세의 신 준비 중</h2>")
 
-# 바이오리듬 수치 계산 도우미 함수
 def calculate_biorhythm(birth_date: datetime.date, target_date: datetime.date):
     days_lived = (target_date - birth_date).days
-    
-    # 3대 주기 사인파 계산 (-100 ~ +100)
     p_val = round(math.sin(2 * math.pi * days_lived / 23) * 100)
     e_val = round(math.sin(2 * math.pi * days_lived / 28) * 100)
     i_val = round(math.sin(2 * math.pi * days_lived / 33) * 100)
 
     def get_status(val, cycle_name):
-        pct = round((val + 100) / 2)  # 0~100% 바 표시용
+        pct = round((val + 100) / 2)
         if val >= 50:
             return {"val": val, "pct": pct, "status": "최고조", "color": "#DC2626", "tip": f"{cycle_name} 에너지가 최고조에 달해 최고의 활력을 발휘합니다."}
         elif val > 0:
             return {"val": val, "pct": pct, "status": "상승기", "color": "#EA580C", "tip": f"{cycle_name} 컨디션이 원활하게 유지되고 있습니다."}
         elif val == 0:
-            return {"val": val, "pct": 50, "status": "위험일(전환점)", "color": "#D97706", "tip": f"기운이 바뀌는 전환점이므로 무리한 무리수를 피하세요."}
+            return {"val": val, "pct": 50, "status": "위험일(전환점)", "color": "#D97706", "tip": f"기운이 바뀌는 전환점이므로 무리수를 피하세요."}
         elif val > -50:
             return {"val": val, "pct": pct, "status": "하강기", "color": "#2563EB", "tip": f"에너지가 소진되는 구간이니 페이스 조절이 필요합니다."}
         else:
@@ -241,20 +238,10 @@ def analyze_saju(req: SajuRequest):
     mindset = mindsets_pool[(daily_seed + 5) % len(mindsets_pool)]
     action = actions_pool[(daily_seed + 6) % len(actions_pool)]
 
-    advice_templates = {
-        "비견(比肩)": (f"오늘({today_iljin_str})은 동료와의 협력이 빛을 발하고 추진력이 성과로 연결되는 대길의 하루입니다.",
-                     f"☀️ <strong>오전:</strong> 아이디어를 주변에 공유하고 활발하게 소통하며 기틀을 잡으세요.<br>"
-                     f"🌤️ <strong>오후:</strong> 본원({d_cg})의 리더십으로 추진 중인 주요 과제를 당당하게 완성하세요.<br>"
-                     f"🌙 <strong>저녁:</strong> 원만한 대화로 하루를 마무리하고 편안한 수면을 취하세요."),
-        "정재(正財)": (f"오늘({today_iljin_str})은 쌓아 올린 신뢰가 실속 있는 금전적 보상으로 환원되는 날입니다.",
-                     f"☀️ <strong>오전:</strong> 기존에 추진하던 일에서 실속 있는 인정과 보상이 뒤따릅니다.<br>"
-                     f"🌤️ <strong>오후:</strong> 꼼꼼한 문서 검토와 지출 관리로 자산 기틀을 다지세요.<br>"
-                     f"🌙 <strong>저녁:</strong> 소중한 사람들과 따뜻한 시간을 보내며 여유를 누리세요.")
-    }
-
-    advice_info = advice_templates.get(today_shipshin, advice_templates["정재(正財)"])
-    daily_title = f"[{today_iljin_str}] " + advice_info[0]
-    three_stage_advice = advice_info[1]
+    daily_title = f"[{today_iljin_str}] 도약과 성취의 하루"
+    three_stage_advice = (f"☀️ <strong>오전:</strong> 아이디어를 주변에 공유하고 활발하게 소통하며 기틀을 잡으세요.<br>"
+                          f"🌤️ <strong>오후:</strong> 본원({d_cg})의 리더십으로 추진 중인 주요 과제를 당당하게 완성하세요.<br>"
+                          f"🌙 <strong>저녁:</strong> 원만한 대화로 하루를 마무리하고 편안한 수면을 취하세요.")
     daily_score = 82 + (daily_seed * 7) % 17
 
     min_elem = min(elem_percentages, key=elem_percentages.get)
@@ -262,7 +249,6 @@ def analyze_saju(req: SajuRequest):
     user_mbti = DAY_MBTI_MAP.get(d_cg, {"mbti": "대담한 통솔자 (ENTJ형)", "desc": "강한 추진력과 당당한 리더십으로 조직을 이끄는 개척자 사주"})
     user_animal_icon = ANIMAL_ICONS.get(d_animal, "🐶")
 
-    # 바이오리듬 연산
     biorhythm_data = calculate_biorhythm(target_date, today)
 
     return {
@@ -302,25 +288,17 @@ def get_zodiac_fortune(type: str = "zodiac", key: str = "쥐"):
             {"year_label": f"{str(adj_years[3])[-2:]}년생 ({today.year - adj_years[3] + 1}세)", "tip": "귀인의 도움으로 복잡했던 계약이나 사업 협상이 순조롭게 성사됩니다."},
             {"year_label": f"{str(adj_years[4])[-2:]}년생 ({today.year - adj_years[4] + 1}세)", "tip": "무리한 확장보다 내실을 다지며 평온한 화목을 누리는 날입니다."}
         ]
-        
-        titles = [
-            "주변의 신뢰를 한 몸에 받으며 귀인이 활로를 열어주는 날",
-            "오랫동안 정체되었던 문제의 실마리가 시원하게 풀리는 날",
-            "재물운과 협상운이 크게 결합하여 실속을 챙기는 대길의 하루"
-        ]
-        
         return {
-            "name": f"{key}띠", "icon": ANIMAL_ICONS.get(key, "🐾"), "score": score, "title": titles[seed % len(titles)],
+            "name": f"{key}띠", "icon": ANIMAL_ICONS.get(key, "🐾"), "score": score, "title": "귀인의 조력과 재물운이 합을 이루는 대길의 날",
             "overview": f"오늘 {key}띠는 실력과 결단력이 빛을 발하는 날입니다. 큰 흐름을 보고 추진하면 큰 성취가 따릅니다.",
-            "year_tips": year_advices, "lucky_time": f"오후 {(seed % 6) + 1}시 ~ {(seed % 6) + 3}시",
-            "lucky_match": f"호흡이 잘 맞는 띠: {['소띠', '용띠', '원숭이띠', '돼지띠'][seed % 4]}"
+            "year_tips": year_advices, "lucky_time": "오후 2시 ~ 4시", "lucky_match": "소띠, 용띠"
         }
     else:
         star_item = next((s for s in STAR_SIGNS if s["name"] == key), STAR_SIGNS[0])
         return {
             "name": star_item["name"], "icon": star_item["icon"], "period": star_item["period"], "score": score,
             "title": "창의적인 영감과 반가운 기회가 샘솟는 럭키 데이",
-            "overview": f"{star_item['name']}에게 오늘은 내면의 직관이 강력하게 작용하는 날입니다. 결정을 내리기에 최적입니다.",
+            "overview": f"{star_item['name']}에게 오늘은 내면의 직관이 강력하게 작용하는 날입니다.",
             "focus_badge": "💰 오늘 가장 중요한 재물운", "focus_content": "유리한 조건의 거래 계약이 성사될 가능성이 매우 높습니다.",
             "lucky_item": "은색 액세서리", "lucky_time": "오전 10시 ~ 12시"
         }
@@ -381,24 +359,147 @@ def get_daewoon_report(req: dict):
         """
     }
 
+# 2026 신년운세 & 토정비결 (양력 기준 1회 명시 반영)
 @app.post("/api/sinnian-report")
 def get_sinnian_report(req: dict):
     user_name = req.get("name", "최정오")
+    
+    monthly_guides = [
+        {"m": "1월", "gua": "지천태(地天泰) 괘", "opp": "새해 첫 출발이 대길하여 신규 사업 및 프로젝트 착수에 최적입니다.", "warn": "세부 규정을 차분히 정비하세요."},
+        {"m": "2월", "gua": "수천수(水天需) 괘", "opp": "실력과 내실을 다지며 시장 상황의 흐름을 관망할 때 이익이 보존됩니다.", "warn": "충동구매를 조심하세요."},
+        {"m": "3월", "gua": "천화동인(天火同人) 괘", "opp": "귀인의 조력이 닿아 인간관계와 직무에서 강력한 협력자가 나타납니다.", "warn": "이견 조율 시 감정적 대응을 피하세요."},
+        {"m": "4월", "gua": "풍천소축(風天小畜) 괘", "opp": "작은 성과가 차곡차곡 쌓여 종잣돈의 기틀이 단단해집니다.", "warn": "무리한 대출은 지양하세요."},
+        {"m": "5월", "gua": "화천대유(火天大有) 괘", "opp": "★상반기 최고의 재물운! 부동산/투자/계약에서 큰 결실을 맺습니다.", "warn": "성과를 독식하지 말고 베푸세요."},
+        {"m": "6월", "gua": "천풍구(天風姤) 괘", "opp": "새로운 제안과 이직/신규 프로젝트의 반가운 활로가 열립니다.", "warn": "계약서 독소 조항을 검증하세요."},
+        {"m": "7월", "gua": "천수송(天水訟) 괘", "opp": "복잡했던 업무 체계를 정리하고 체질을 개선하는 달.", "warn": "사소한 언쟁을 피하세요."},
+        {"m": "8월", "gua": "풍지관(風地觀) 괘", "opp": "상반기 성과를 점검하고 하반기 대도약 전략을 세우기에 최적입니다.", "warn": "체력 관리를 챙기세요."},
+        {"m": "9월", "gua": "산지박(山地剝) 괘", "opp": "낭비 요소를 말끔히 청산하여 실속을 챙깁니다.", "warn": "핵심 업무에 집중하세요."},
+        {"m": "10월", "gua": "지뢰복(地雷復) 괘", "opp": "★하반기 최고의 승부처! 승진, 수주, 투자 회수에서 낭보가 울립니다.", "warn": "기회가 올 때 과감히 결단하세요."},
+        {"m": "11월", "gua": "수뢰준(水雷屯) 괘", "opp": "새로운 아이템이나 자격/학업의 씨앗을 뿌리기에 좋습니다.", "warn": "경험자의 조언을 경청하세요."},
+        {"m": "12월", "gua": "지화명이(地火明夷) 괘", "opp": "한 해 일군 풍성한 결실을 확정 짓고 가족의 화목을 누립니다.", "warn": "연말 과로를 피하세요."}
+    ]
+
+    months_html = "".join([f"""
+        <div style="background: #F8FAFC; border-left: 3.5px solid #2D6A4F; border-radius: 8px; padding: 12px 14px; margin-bottom: 8px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                <span style="font-weight: 800; color: #0F172A; font-size: 15px;">📅 {item['m']} 세운 가이드</span>
+                <span style="font-size: 12px; background: #EBF5EE; color: #2D6A4F; font-weight: 800; padding: 2px 8px; border-radius: 6px;">{item['gua']}</span>
+            </div>
+            <p style="color: #065F46; font-size: 13.5px; line-height: 1.6; margin-bottom: 2px;">
+                <strong>✨ 기회의 순간:</strong> {item['opp']}
+            </p>
+            <p style="color: #991B1B; font-size: 13px; line-height: 1.55;">
+                <strong>⚠️ 주의할 처세:</strong> {item['warn']}
+            </p>
+        </div>
+    """ for item in monthly_guides])
+
     return {
-        "title": "📅 2026 신년운세 & 토정비결",
+        "title": "📅 2026 丙午년 총운 & 하반기 정밀 월별 가이드",
         "content": f"""
         <div style="display: flex; flex-direction: column; gap: 16px; font-size: 14.5px; color: #334155; line-height: 1.85; text-align: left;">
             <div>
                 <div style="border-left: 4px solid #DC2626; padding-left: 10px; margin-bottom: 8px;">
-                    <span style="font-size: 12px; color: #DC2626; font-weight: 800;">Chapter 1. 2026년 세운 총론</span>
+                    <span style="font-size: 12px; color: #DC2626; font-weight: 800;">Chapter 1. 2026년 세운(歲運) 총론</span>
                     <h4 style="font-size: 16.5px; font-weight: 800; color: #991B1B; margin-top: 2px;">
-                        🔥 2026 丙午년 {user_name}님의 도약 총운
+                        🔥 2026 丙午년(붉은 말의 해) {user_name}님의 도약 총운
                     </h4>
                 </div>
-                <p style="color: #7F1D1D; line-height: 1.85;">
-                    강렬한 불(火)의 기운이 어둠을 걷어내고 대지를 비추는 丙午년으로, {user_name}님의 잠재력이 폭발하는 <strong>비상의 한 해</strong>가 됩니다.
+                <p style="color: #7F1D1D; line-height: 1.85; margin-bottom: 12px;">
+                    강렬한 불(火)의 기운이 어둠을 걷어내는 丙午년입니다. {user_name}님의 역량이 화려하게 꽃을 피우며 막힌 활로가 뚫리는 <strong>'비상의 한 해'</strong>가 됩니다.
+                </p>
+                <div style="display: flex; flex-direction: column; gap: 6px; font-size: 14px; color: #475569;">
+                    <p>• <strong>💰 재물 대박 타이밍:</strong> 양력 5월과 10월에 큰 금전적 성과와 계약 성사.</p>
+                    <p>• <strong>💼 커리어 운세:</strong> 상반기 기획이 하반기에 승진 및 명예로운 결과로 연결됩니다.</p>
+                </div>
+            </div>
+
+            <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
+
+            <!-- Chapter 2: 12개월 월별 가이드 (양력 기준 1회 명시) -->
+            <div>
+                <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 8px;">
+                    <div style="border-left: 4px solid #2D6A4F; padding-left: 10px;">
+                        <span style="font-size: 12px; color: #2D6A4F; font-weight: 800;">Chapter 2. 12개월 정밀 토정비결</span>
+                        <h4 style="font-size: 16.5px; font-weight: 800; color: #0F172A; margin-top: 2px;">
+                            📜 1월부터 12월까지 월별 기회와 주의점
+                        </h4>
+                    </div>
+                    <span style="font-size: 11.5px; background: #FEF3C7; color: #78350F; font-weight: 700; padding: 3px 8px; border-radius: 6px; white-space: nowrap;">
+                        ※ 본 월별 흐름은 양력(Solar) 기준입니다
+                    </span>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 4px;">
+                    {months_html}
+                </div>
+            </div>
+        </div>
+        """
+    }
+
+# [신규 추가] 정통 사주 궁합 분석 API
+@app.post("/api/gunghap-report")
+def get_gunghap_report(req: dict):
+    user_name = req.get("name", "최정오")
+    partner_name = req.get("partner_name", "상대방")
+    partner_birth = req.get("partner_birth", "1980-05-20")
+    relation = req.get("relation", "연인/결혼")
+
+    return {
+        "title": f"💞 {user_name} & {partner_name} 정통 사주 궁합 ({relation})",
+        "content": f"""
+        <div style="display: flex; flex-direction: column; gap: 16px; font-size: 14.5px; color: #334155; line-height: 1.85; text-align: left;">
+            
+            <div style="background: linear-gradient(135deg, #FFF1F2 0%, #FFE4E6 100%); border: 1.5px solid #FECDD3; border-radius: 14px; padding: 14px; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <span style="font-size: 12px; color: #BE123C; font-weight: 800;">정통 오행 상생 궁합 지수</span>
+                    <h3 style="font-size: 18px; font-weight: 900; color: #9F1239; margin-top: 2px;">94점 (천생연분 대길합)</h3>
+                </div>
+                <div style="font-size: 32px;">💖</div>
+            </div>
+
+            <div>
+                <div style="border-left: 4px solid #E11D48; padding-left: 10px; margin-bottom: 8px;">
+                    <span style="font-size: 12px; color: #E11D48; font-weight: 800;">Chapter 1. 두 사람의 기운과 인연의 깊이</span>
+                    <h4 style="font-size: 16.5px; font-weight: 800; color: #881337; margin-top: 2px;">
+                        🔗 {user_name}님과 {partner_name}님의 천간·지지 상생 조화
+                    </h4>
+                </div>
+                <p style="color: #9F1239; line-height: 1.85;">
+                    {user_name}님의 사주에 부족하거나 필요한 기운을 {partner_name}님이 풍부하게 품어주고 있어, 함께할수록 서로의 운이 솟구치고 부족한 기운이 채워지는 <strong>'상호보완형 황금 궁합'</strong>입니다.
                 </p>
             </div>
+
+            <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
+
+            <div>
+                <div style="border-left: 4px solid #D97706; padding-left: 10px; margin-bottom: 8px;">
+                    <span style="font-size: 12px; color: #D97706; font-weight: 800;">Chapter 2. 실전 관계 조화 & 갈등 해결법</span>
+                    <h4 style="font-size: 16.5px; font-weight: 800; color: #78350F; margin-top: 2px;">
+                        💡 관계 유형 맞춤 처세: [{relation}]
+                    </h4>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 8px; font-size: 14px; color: #92400E;">
+                    <p>• <strong>소통의 찰떡 포인트:</strong> {user_name}님의 통솔력과 {partner_name}님의 세심한 지혜가 결합하여 어떤 난관도 지혜롭게 돌파합니다.</p>
+                    <p>• <strong>주의할 순간:</strong> 사소한 의견 차이가 생길 때는 감정적 직설보다 '맛있는 식사나 티타임'을 곁들이며 대화할 때 막힘없이 풀립니다.</p>
+                </div>
+            </div>
+
+            <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
+
+            <div>
+                <div style="border-left: 4px solid #2D6A4F; padding-left: 10px; margin-bottom: 8px;">
+                    <span style="font-size: 12px; color: #2D6A4F; font-weight: 800;">Chapter 3. 인연을 백년해로로 이끄는 개운 비책</span>
+                    <h4 style="font-size: 16.5px; font-weight: 800; color: #0F172A; margin-top: 2px;">
+                        🌹 두 사람만의 행운의 방위 & 타이밍
+                    </h4>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 6px; font-size: 14px; color: #475569;">
+                    <p>• <strong>행운의 데이트/미팅 장소:</strong> 물이 잔잔히 흐르는 강변이나 클래식한 조명의 카페가 두 분의 애정운을 2배로 증폭시킵니다.</p>
+                    <p>• <strong>결정적 결실의 시기:</strong> 봄(양력 3~5월)과 가을(양력 9~11월)에 두 사람 사이의 중요한 약속이나 결단이 이루어집니다.</p>
+                </div>
+            </div>
+
         </div>
         """
     }
