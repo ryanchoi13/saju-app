@@ -96,6 +96,7 @@
         .teaser-blur-text { filter: blur(4px); user-select: none; color: #64748B; font-size: 13.5px; line-height: 1.7; }
         .teaser-lock-badge { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(255,255,255,0.75); backdrop-filter: blur(2px); }
 
+        /* 하단 고정 네비게이션 (z-index: 1000) */
         nav#bottomNavBar { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 448px; background: rgba(17,29,30,0.98); backdrop-filter: blur(8px); border-top: 1px solid rgba(212,175,55,0.3); padding: 10px 24px; display: flex; justify-content: space-between; align-items: center; z-index: 1000; }
         .tab-btn { background: none; border: none; display: flex; flex-direction: column; align-items: center; gap: 4px; color: #64748B; font-size: 12px; cursor: pointer; font-weight: 500; }
         .tab-btn.active { color: #FDE68A; font-weight: 800; }
@@ -388,6 +389,11 @@
 
                 </div>
 
+                <!-- [신규] 오늘운세 탭 최하단 광고 슬롯 -->
+                <div class="ad-slot-box" style="margin-top: 6px;">
+                    <span>📢 광고 영역 (Google AdSense / Kakao AdFit 슬롯 3)</span>
+                </div>
+
             </div>
 
             <!-- 탭 2: 정통사주 -->
@@ -586,6 +592,11 @@
                     </button>
                 </div>
 
+                <!-- [신규] 정통사주 탭 최하단 광고 슬롯 -->
+                <div class="ad-slot-box" style="margin-top: 6px;">
+                    <span>📢 광고 영역 (Google AdSense / Kakao AdFit 슬롯 4)</span>
+                </div>
+
             </div>
 
             <!-- 탭 3: 궁합·테마 -->
@@ -705,7 +716,7 @@
 
     </div>
 
-    <!-- 궁합 상대방 정보 입력 모달 -->
+    <!-- 궁합 모달 -->
     <div id="gunghapModal" class="modal-bg hidden">
         <div class="modal-content" style="max-width: 350px; text-align: left;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 8px;">
@@ -788,7 +799,7 @@
             <h3 style="font-size: 16.5px; font-weight: 800; color: #0F172A;">타로 카드 추가 열람</h3>
             <p style="font-size: 13.5px; color: #64748B; line-height: 1.6;">오늘의 1회 무료 타로를 확인하셨습니다.<br><strong>10 복채</strong>로 추가 카드를 확인하시겠습니까?</p>
             <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px;">
-                <button onclick="confirmTarotByCoin()" style="background: #2D6A4F; color: white; border: none; font-size: 14.5px; font-weight: 800; padding: 13px; border-radius: 12px; cursor: pointer;">
+                <button onclick="confirmTarotByCoin()" style="background: #2D6A4F; color: white; border: none; font-size: 14.5px; font-weight: 800; padding: 13px; border-radius: 14px; cursor: pointer;">
                     <span class="btn-coin-icon-white"></span> 10 복채로 열람하기
                 </button>
                 <button onclick="closeTarotChoiceModal()" style="background: #F1F5F9; border: none; font-size: 13.5px; font-weight: 700; color: #475569; padding: 11px; border-radius: 14px; cursor: pointer;">
@@ -998,13 +1009,67 @@
             } catch(e) { return []; }
         }
 
-        const TAROT_IMAGES = {
-            "0. THE FOOL (바보)": "[https://upload.wikimedia.org/wikipedia/commons/9/90/RWS_Tarot_00_Fool.jpg](https://upload.wikimedia.org/wikipedia/commons/9/90/RWS_Tarot_00_Fool.jpg)",
-            "I. THE MAGICIAN (마법사)": "[https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg](https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg)",
-            "XIX. THE SUN (태양)": "[https://upload.wikimedia.org/wikipedia/commons/1/17/RWS_Tarot_19_Sun.jpg](https://upload.wikimedia.org/wikipedia/commons/1/17/RWS_Tarot_19_Sun.jpg)"
-        };
+        // [자체 벡터 SVG] 절대 깨지지 않는 고화질 타로 카드 앞면 일러스트
+        function renderTarotFrontSvg(cardName) {
+            let symbolSvg = '';
+            let titleText = 'THE FOOL';
+            let numText = '0';
 
-        // [화려한 골드 타로 뒷면 복구]
+            if (cardName.includes('MAGICIAN')) {
+                numText = 'I';
+                titleText = 'THE MAGICIAN';
+                symbolSvg = `
+                    <circle cx="50" cy="45" r="16" fill="#FEF3C7" stroke="#D4AF37" stroke-width="1.2"/>
+                    <path d="M 40 45 Q 45 40 50 45 Q 55 50 60 45 Q 55 40 50 45 Q 45 50 40 45 Z" fill="#B45309"/>
+                    <line x1="50" y1="20" x2="50" y2="35" stroke="#D97706" stroke-width="2.5" stroke-linecap="round"/>
+                    <rect x="32" y="70" width="36" height="18" fill="#F1F5F9" stroke="#94A3B8" rx="3"/>
+                    <circle cx="40" cy="79" r="3" fill="#DC2626"/>
+                    <circle cx="50" cy="79" r="3" fill="#2563EB"/>
+                    <circle cx="60" cy="79" r="3" fill="#059669"/>
+                `;
+            } else if (cardName.includes('SUN')) {
+                numText = 'XIX';
+                titleText = 'THE SUN';
+                symbolSvg = `
+                    <circle cx="50" cy="55" r="22" fill="#FDE047" stroke="#F59E0B" stroke-width="2"/>
+                    <g stroke="#F59E0B" stroke-width="2" stroke-linecap="round">
+                        <line x1="50" y1="24" x2="50" y2="18"/>
+                        <line x1="50" y1="86" x2="50" y2="92"/>
+                        <line x1="19" y1="55" x2="13" y2="55"/>
+                        <line x1="81" y1="55" x2="87" y2="55"/>
+                        <line x1="28" y1="33" x2="23" y2="28"/>
+                        <line x1="72" y1="77" x2="77" y2="82"/>
+                        <line x1="28" y1="77" x2="23" y2="82"/>
+                        <line x1="72" y1="33" x2="77" y2="28"/>
+                    </g>
+                    <circle cx="43" cy="52" r="2.5" fill="#78350F"/>
+                    <circle cx="57" cy="52" r="2.5" fill="#78350F"/>
+                    <path d="M 44 63 Q 50 68 56 63" fill="none" stroke="#78350F" stroke-width="1.8" stroke-linecap="round"/>
+                `;
+            } else {
+                numText = '0';
+                titleText = 'THE FOOL';
+                symbolSvg = `
+                    <circle cx="50" cy="45" r="15" fill="#E0F2FE" stroke="#38BDF8" stroke-width="1.2"/>
+                    <circle cx="50" cy="40" r="6" fill="#FBBF24"/>
+                    <path d="M 40 85 L 60 85 L 75 110 L 25 110 Z" fill="#E2E8F0" stroke="#94A3B8"/>
+                    <line x1="50" y1="46" x2="50" y2="75" stroke="#334155" stroke-width="2.5"/>
+                    <line x1="36" y1="58" x2="64" y2="58" stroke="#334155" stroke-width="2"/>
+                    <circle cx="35" cy="58" r="4" fill="#EF4444"/>
+                `;
+            }
+
+            return `
+            <svg viewBox="0 0 100 150" style="width:100%; height:100%; background:linear-gradient(180deg, #FFFFFF 0%, #FFFDF5 100%); border-radius:8px;">
+                <rect x="3" y="3" width="94" height="144" fill="none" stroke="#D4AF37" stroke-width="1.5" rx="5"/>
+                <text x="50" y="16" font-size="9" font-weight="900" fill="#78350F" text-anchor="middle" font-family="'Noto Serif KR', serif">${numText}</text>
+                ${symbolSvg}
+                <rect x="8" y="126" width="84" height="16" fill="#111D1E" rx="3"/>
+                <text x="50" y="137.5" font-size="7.5" font-weight="800" fill="#FDE68A" text-anchor="middle" font-family="'Pretendard', sans-serif" letter-spacing="0.5px">${titleText}</text>
+            </svg>`;
+        }
+
+        // [화려한 골드 타로 뒷면]
         function getTarotCardBackSvg() {
             return `
             <svg viewBox="0 0 100 150" style="width:100%; height:100%; background:#111D1E; border-radius:8px;">
@@ -1016,7 +1081,7 @@
             </svg>`;
         }
 
-        // [5대 오행 수제 부적 정밀 SVG 복구]
+        // [5대 오행 수제 부적 정밀 SVG]
         function renderAuthenticCinnabarTalisman(type = "metal", width = 160, height = 260) {
             let innerSymbol = '';
             let bottomText = '萬福大吉';
@@ -1039,7 +1104,7 @@
             }
 
             return `
-            <svg id="svgTalismanMain" width="${width}" height="${height}" viewBox="0 0 140 240" style="background: linear-gradient(135deg, #FFE814 0%, #FFD000 100%); border: 3px solid #C49700; border-radius: 8px;">
+            <svg id="svgTalismanMain" width="${width}" height="${height}" viewBox="0 0 140 240" style="background: linear-gradient(135deg, #FFE814 0%, #FFD000 100%); border: 3px solid #C49700; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.15);">
                 <rect x="4" y="4" width="132" height="232" fill="none" stroke="#E65100" stroke-width="0.8" opacity="0.4" />
                 <g fill="none" stroke="#C62828" stroke-width="3.6" stroke-linecap="round">
                     <path d="M 28 22 Q 42 16 68 18 Q 92 20 112 16" />
@@ -1152,7 +1217,7 @@
                 btnStar.className = 'sub-tab-btn active';
                 btnZodiac.className = 'sub-tab-btn';
                 gridStar.classList.remove('hidden');
-                gridZodiac.classList.add('hidden');
+                gridStar.classList.add('hidden');
             }
         }
 
@@ -1276,11 +1341,6 @@
             setElemBadge('jj_m_badge', dtl.month.jj, dtl.month.jj_elem);
             setElemBadge('jj_y_badge', dtl.year.jj, dtl.year.jj_elem);
 
-            document.getElementById('jjg_h_box').innerHTML = formatJijangganGroup(dtl.hour.jijanggan);
-            document.getElementById('jjg_d_box').innerHTML = formatJijangganGroup(dtl.day.jijanggan);
-            document.getElementById('jjg_m_box').innerHTML = formatJijangganGroup(dtl.month.jijanggan);
-            document.getElementById('jjg_y_box').innerHTML = formatJijangganGroup(dtl.year.jijanggan);
-
             const elems = data.saju_data.elements;
             ['Wood', 'Fire', 'Earth', 'Metal', 'Water'].forEach(key => {
                 const kLower = key.toLowerCase();
@@ -1351,9 +1411,9 @@
             const card = await res.json();
             const flipper = document.getElementById(`flipper${slot}`);
             const front = document.getElementById(`front${slot}`);
-            const imgUrl = TAROT_IMAGES[card.name] || TAROT_IMAGES["0. THE FOOL (바보)"];
 
-            front.innerHTML = `<img src="${imgUrl}" style="width:100%; height:100%; object-fit:cover;">`;
+            // [수정] 100% 로딩 보장 벡터 SVG 렌더링
+            front.innerHTML = renderTarotFrontSvg(card.name);
             flipper.classList.add('flipped');
             setTimeout(() => {
                 const resBox = document.getElementById('tarotResultBox');
