@@ -171,7 +171,7 @@
                 <button onclick="startSajuAnalysis()" class="btn-primary">정밀 감명서 발행하기 ✨</button>
             </div>
 
-            <!-- 탭 1: 오늘운세 (핵심 브리핑 + 원터치 서랍) -->
+            <!-- 탭 1: 오늘운세 -->
             <div id="view-today" class="tab-view hidden">
                 
                 <div class="mbti-card">
@@ -254,7 +254,7 @@
                     </div>
                 </div>
 
-                <!-- 🗂️ 스페셜 운세 & 개운 도구 서랍 (원터치 확장형 UI) -->
+                <!-- 🗂️ 스페셜 운세 & 개운 도구 서랍 -->
                 <div style="display: flex; flex-direction: column; gap: 10px;">
                     
                     <!-- 서랍 1: 오늘의 타로 -->
@@ -570,9 +570,10 @@
 
             </div>
 
-            <!-- 탭 3: 궁합·테마 -->
+            <!-- 탭 3: 궁합·테마 (4대 옵션 복구 및 건강/재물 원클릭) -->
             <div id="view-theme" class="tab-view hidden">
                 
+                <!-- 정통 사주 궁합 카드 -->
                 <div class="card" style="border: 2px solid #FECDD3; background: #FFFDFD; text-align: left;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
                         <span style="font-size: 16px; font-weight: 800; color: #9F1239; font-family: 'Noto Serif KR', serif;">💞 정통 사주 궁합 감명</span>
@@ -589,38 +590,42 @@
                     </button>
                 </div>
 
+                <!-- 1. 평생 재물운 (옵션 없이 원클릭) -->
                 <div class="card" style="text-align: left;">
                     <p style="font-size: 16.5px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif;">💰 평생 재물운</p>
                     <p style="font-size: 13.5px; color: #64748B; margin-top: 3px;">자산 흐름 및 부동산/투자 성공 분석</p>
                     <div id="themeReport_wealth" class="hidden" style="margin-top: 14px; padding-top: 12px; border-top: 1px solid #F1F5F9;"></div>
-                    <button id="btnTheme_wealth" onclick="openThemeSelectModal('wealth')" style="width: 100%; background: #111D1E; color: white; border: none; font-size: 14.5px; font-weight: 700; padding: 14px; border-radius: 14px; cursor: pointer; margin-top: 14px; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                    <button id="btnTheme_wealth" onclick="unlockThemeDirect('wealth')" style="width: 100%; background: #111D1E; color: white; border: none; font-size: 14.5px; font-weight: 700; padding: 14px; border-radius: 14px; cursor: pointer; margin-top: 14px; display: flex; align-items: center; justify-content: center; gap: 6px;">
                         <span class="btn-coin-icon-white"></span> 220 복채로 상세 리포트 열람하기
                     </button>
                 </div>
 
+                <!-- 2. 평생 애정운 (4대 상황 옵션 모달 연동) -->
                 <div class="card" style="text-align: left;">
                     <p style="font-size: 16.5px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif;">💖 평생 애정운</p>
                     <p style="font-size: 13.5px; color: #64748B; margin-top: 3px;">나와 맞는 인연의 특징과 결혼 시기</p>
                     <div id="themeReport_love" class="hidden" style="margin-top: 14px; padding-top: 12px; border-top: 1px solid #F1F5F9;"></div>
                     <button id="btnTheme_love" onclick="openThemeSelectModal('love')" style="width: 100%; background: #111D1E; color: white; border: none; font-size: 14.5px; font-weight: 700; padding: 14px; border-radius: 14px; cursor: pointer; margin-top: 14px; display: flex; align-items: center; justify-content: center; gap: 6px;">
-                        <span class="btn-coin-icon-white"></span> 220 복채로 상세 리포트 열람하기
+                        <span class="btn-coin-icon-white"></span> 220 복채로 상황별 리포트 열람하기
                     </button>
                 </div>
 
+                <!-- 3. 사업·직업운 (4대 직업 옵션 모달 연동) -->
                 <div class="card" style="text-align: left;">
                     <p style="font-size: 16.5px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif;">🏢 사업·직업운</p>
                     <p style="font-size: 13.5px; color: #64748B; margin-top: 3px;">대박 직업 아이템 및 이직/창업 시기</p>
                     <div id="themeReport_business" class="hidden" style="margin-top: 14px; padding-top: 12px; border-top: 1px solid #F1F5F9;"></div>
                     <button id="btnTheme_business" onclick="openThemeSelectModal('business')" style="width: 100%; background: #111D1E; color: white; border: none; font-size: 14.5px; font-weight: 700; padding: 14px; border-radius: 14px; cursor: pointer; margin-top: 14px; display: flex; align-items: center; justify-content: center; gap: 6px;">
-                        <span class="btn-coin-icon-white"></span> 220 복채로 상세 리포트 열람하기
+                        <span class="btn-coin-icon-white"></span> 220 복채로 상황별 리포트 열람하기
                     </button>
                 </div>
 
+                <!-- 4. 평생 건강운 (옵션 없이 원클릭) -->
                 <div class="card" style="text-align: left;">
                     <p style="font-size: 16.5px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif;">🌿 평생 건강운</p>
                     <p style="font-size: 13.5px; color: #64748B; margin-top: 3px;">오행 과다/부족 취약 장기 및 섭생법</p>
                     <div id="themeReport_health" class="hidden" style="margin-top: 14px; padding-top: 12px; border-top: 1px solid #F1F5F9;"></div>
-                    <button id="btnTheme_health" onclick="openThemeSelectModal('health')" style="width: 100%; background: #111D1E; color: white; border: none; font-size: 14.5px; font-weight: 700; padding: 14px; border-radius: 14px; cursor: pointer; margin-top: 14px; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                    <button id="btnTheme_health" onclick="unlockThemeDirect('health')" style="width: 100%; background: #111D1E; color: white; border: none; font-size: 14.5px; font-weight: 700; padding: 14px; border-radius: 14px; cursor: pointer; margin-top: 14px; display: flex; align-items: center; justify-content: center; gap: 6px;">
                         <span class="btn-coin-icon-white"></span> 220 복채로 상세 리포트 열람하기
                     </button>
                 </div>
@@ -722,6 +727,22 @@
         </div>
     </div>
 
+    <!-- 4대 상황별 맞춤 선택 모달 (애정운 / 사업운 전용) -->
+    <div id="themeSelectModal" class="modal-bg hidden">
+        <div class="modal-content" style="text-align: left;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 8px;">
+                <h3 id="modalThemeTitle" style="font-size: 15px; font-weight: 800; color: #1E293B; font-family: 'Noto Serif KR', serif;">상황별 맞춤 리포트 선택</h3>
+                <button onclick="closeThemeSelectModal()" style="background: none; border: none; font-size: 18px; color: #94A3B8; cursor: pointer;">&times;</button>
+            </div>
+            
+            <div id="modalOptionBox" style="display: flex; flex-direction: column; gap: 8px;"></div>
+
+            <button id="btnConfirmUnlockTheme" onclick="confirmUnlockTheme()" style="width: 100%; background: #2D6A4F; color: white; border: none; font-size: 14.5px; font-weight: 800; padding: 13px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                <span class="btn-coin-icon-white"></span> 220 복채로 즉시 열람하기
+            </button>
+        </div>
+    </div>
+
     <!-- 띠별 / 별자리 운세 상세 팝업 -->
     <div id="zodiacModal" class="modal-bg hidden">
         <div class="modal-content" style="max-width: 360px; text-align: left; padding: 22px; border-radius: 24px;">
@@ -776,7 +797,7 @@
         </div>
     </div>
 
-    <!-- 전통 경면주사 수제 부적 모달 (5대 오행 고유 캘리그래피 복구) -->
+    <!-- 전통 경면주사 수제 부적 모달 -->
     <div id="talismanModal" class="modal-bg hidden">
         <div class="modal-content" style="max-width: 340px; padding: 18px; border-radius: 24px;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 8px;">
@@ -803,22 +824,6 @@
                     확인
                 </button>
             </div>
-        </div>
-    </div>
-
-    <!-- 상태 선택 결제 팝업 모달 -->
-    <div id="themeSelectModal" class="modal-bg hidden">
-        <div class="modal-content" style="text-align: left;">
-            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 8px;">
-                <h3 id="modalThemeTitle" style="font-size: 14px; font-weight: 800; color: #1E293B;">심층 리포트 옵션 선택</h3>
-                <button onclick="closeThemeSelectModal()" style="background: none; border: none; font-size: 18px; color: #94A3B8; cursor: pointer;">&times;</button>
-            </div>
-            
-            <div id="modalOptionBox" style="display: flex; flex-direction: column; gap: 8px;"></div>
-
-            <button id="btnConfirmUnlockTheme" onclick="confirmUnlockTheme()" style="width: 100%; background: #2D6A4F; color: white; border: none; font-size: 14px; font-weight: 800; padding: 13px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
-                <span class="btn-coin-icon-white"></span> 220 복채로 즉시 열람하기
-            </button>
         </div>
     </div>
 
@@ -944,24 +949,7 @@
             "I. THE MAGICIAN (마법사)": "https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg",
             "II. THE HIGH PRIESTESS (여사제)": "https://upload.wikimedia.org/wikipedia/commons/8/88/RWS_Tarot_02_High_Priestess.jpg",
             "III. THE EMPRESS (여황제)": "https://upload.wikimedia.org/wikipedia/commons/d/d2/RWS_Tarot_03_Empress.jpg",
-            "IV. THE EMPEROR (황제)": "https://upload.wikimedia.org/wikipedia/commons/c/c3/RWS_Tarot_04_Emperor.jpg",
-            "V. THE HIEROPHANT (교황)": "https://upload.wikimedia.org/wikipedia/commons/8/8d/RWS_Tarot_05_Hierophant.jpg",
-            "VI. THE LOVERS (연인)": "https://upload.wikimedia.org/wikipedia/commons/3/3a/TheLovers.jpg",
-            "VII. THE CHARIOT (전차)": "https://upload.wikimedia.org/wikipedia/commons/9/9b/RWS_Tarot_07_Chariot.jpg",
-            "VIII. STRENGTH (힘)": "https://upload.wikimedia.org/wikipedia/commons/f/f5/RWS_Tarot_08_Strength.jpg",
-            "IX. THE HERMIT (은둔자)": "https://upload.wikimedia.org/wikipedia/commons/4/4d/RWS_Tarot_09_Hermit.jpg",
-            "X. WHEEL OF FORTUNE (운명의 수레바퀴)": "https://upload.wikimedia.org/wikipedia/commons/3/3c/RWS_Tarot_10_Wheel_of_Fortune.jpg",
-            "XI. JUSTICE (정의)": "https://upload.wikimedia.org/wikipedia/commons/e/e0/RWS_Tarot_11_Justice.jpg",
-            "XII. THE HANGED MAN (매달린 사람)": "https://upload.wikimedia.org/wikipedia/commons/2/2b/RWS_Tarot_12_Hanged_Man.jpg",
-            "XIII. DEATH (죽음)": "https://upload.wikimedia.org/wikipedia/commons/d/d7/RWS_Tarot_13_Death.jpg",
-            "XIV. TEMPERANCE (절제)": "https://upload.wikimedia.org/wikipedia/commons/f/f8/RWS_Tarot_14_Temperance.jpg",
-            "XV. THE DEVIL (악마)": "https://upload.wikimedia.org/wikipedia/commons/5/55/RWS_Tarot_15_Devil.jpg",
-            "XVI. THE TOWER (탑)": "https://upload.wikimedia.org/wikipedia/commons/5/53/RWS_Tarot_16_Tower.jpg",
-            "XVII. THE STAR (별)": "https://upload.wikimedia.org/wikipedia/commons/d/db/RWS_Tarot_17_Star.jpg",
-            "XVIII. THE MOON (달)": "https://upload.wikimedia.org/wikipedia/commons/7/7f/RWS_Tarot_18_Moon.jpg",
-            "XIX. THE SUN (태양)": "https://upload.wikimedia.org/wikipedia/commons/1/17/RWS_Tarot_19_Sun.jpg",
-            "XX. JUDGEMENT (심판)": "https://upload.wikimedia.org/wikipedia/commons/d/dd/RWS_Tarot_20_Judgement.jpg",
-            "XXI. THE WORLD (세계)": "https://upload.wikimedia.org/wikipedia/commons/f/ff/RWS_Tarot_21_World.jpg"
+            "XIX. THE SUN (태양)": "https://upload.wikimedia.org/wikipedia/commons/1/17/RWS_Tarot_19_Sun.jpg"
         };
 
         function getTarotCardBackSvg() {
@@ -983,7 +971,6 @@
             </svg>`;
         }
 
-        // [화려한 5대 오행 캘리그래피 복구] 경면주사 수제 부적 SVG 렌더러
         function renderAuthenticCinnabarTalisman(type = "metal", width = 160, height = 260) {
             let innerSymbol = '';
             let bottomText = '萬福大吉';
@@ -1053,18 +1040,14 @@
                     <circle cx="48" cy="38" r="3" fill="#C62828" />
                     <circle cx="70" cy="38" r="3" fill="#C62828" />
                     <circle cx="92" cy="38" r="3" fill="#C62828" />
-
                     <path d="M 32 50 L 108 50" />
                     <path d="M 36 50 L 36 68 L 104 68 L 104 50" />
                     <path d="M 50 58 L 90 58" />
                     <path d="M 70 50 L 70 68" />
                     <path d="M 42 76 Q 70 66 98 76" />
-                    
                     <path d="M 30 88 L 110 88" />
                     <path d="M 34 88 L 34 165 Q 34 180 50 180 L 90 180 Q 106 180 106 165 L 106 88" />
-                    
                     ${innerSymbol}
-
                     <path d="M 36 190 Q 70 182 104 190" />
                     <path d="M 48 198 L 92 198" />
                 </g>
@@ -1667,20 +1650,53 @@
             closeGunghapModal();
         }
 
+        // [4대 맞춤 옵션 복구] 애정운 / 사업운 전용 모달 열기
         function openThemeSelectModal(key) {
             currentThemeKey = key;
             const modalBox = document.getElementById('modalOptionBox');
-            modalBox.innerHTML = `
-                <p style="font-size: 12px; color: #64748B; margin-bottom: 6px;">현재 상태를 선택해 주세요:</p>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 13px; font-weight: 700;">
-                    <label style="padding: 11px; border: 1px solid #E2E8F0; border-radius: 10px; background: #F8FAFC; cursor: pointer;"><input type="radio" name="optM" value="기본" checked> 기본</label>
-                    <label style="padding: 11px; border: 1px solid #E2E8F0; border-radius: 10px; background: #F8FAFC; cursor: pointer;"><input type="radio" name="optM" value="심화"> 심화</label>
-                </div>`;
+            const titleEl = document.getElementById('modalThemeTitle');
+
+            if (key === 'love') {
+                titleEl.innerText = "💖 현재 애정 상태를 선택해 주세요";
+                modalBox.innerHTML = `
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 13.5px; font-weight: 700;">
+                        <label style="padding: 12px; border: 1.5px solid #E2E8F0; border-radius: 12px; background: #FFFFFF; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+                            <input type="radio" name="optM" value="솔로" checked> 솔로
+                        </label>
+                        <label style="padding: 12px; border: 1.5px solid #E2E8F0; border-radius: 12px; background: #FFFFFF; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+                            <input type="radio" name="optM" value="썸/짝사랑"> 썸 / 짝사랑
+                        </label>
+                        <label style="padding: 12px; border: 1.5px solid #E2E8F0; border-radius: 12px; background: #FFFFFF; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+                            <input type="radio" name="optM" value="연애중"> 연애중
+                        </label>
+                        <label style="padding: 12px; border: 1.5px solid #E2E8F0; border-radius: 12px; background: #FFFFFF; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+                            <input type="radio" name="optM" value="기혼"> 기혼
+                        </label>
+                    </div>`;
+            } else if (key === 'business') {
+                titleEl.innerText = "🏢 현재 직업/사업 상태를 선택해 주세요";
+                modalBox.innerHTML = `
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 13.5px; font-weight: 700;">
+                        <label style="padding: 12px; border: 1.5px solid #E2E8F0; border-radius: 12px; background: #FFFFFF; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+                            <input type="radio" name="optM" value="직장인" checked> 직장인
+                        </label>
+                        <label style="padding: 12px; border: 1.5px solid #E2E8F0; border-radius: 12px; background: #FFFFFF; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+                            <input type="radio" name="optM" value="취업/이직 준비중"> 취업/이직 준비
+                        </label>
+                        <label style="padding: 12px; border: 1.5px solid #E2E8F0; border-radius: 12px; background: #FFFFFF; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+                            <input type="radio" name="optM" value="사업가/프리랜서"> 사업 / 프리랜서
+                        </label>
+                        <label style="padding: 12px; border: 1.5px solid #E2E8F0; border-radius: 12px; background: #FFFFFF; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+                            <input type="radio" name="optM" value="창업 준비중"> 창업 준비중
+                        </label>
+                    </div>`;
+            }
             document.getElementById('themeSelectModal').classList.remove('hidden');
         }
 
         function closeThemeSelectModal() { document.getElementById('themeSelectModal').classList.add('hidden'); }
 
+        // [옵션 있는 테마 결제] 애정운 / 사업운
         async function confirmUnlockTheme() {
             if (currentCoin < 220) { openChargeStore(); return; }
             const selEl = document.querySelector('input[name="optM"]:checked');
@@ -1711,6 +1727,36 @@
             
             saveUnlockedReport(currentThemeKey, data.title, data.content);
             closeThemeSelectModal();
+        }
+
+        // [옵션 없는 테마 원클릭 결제] 재물운 / 건강운
+        async function unlockThemeDirect(themeKey) {
+            if (currentCoin < 220) { openChargeStore(); return; }
+
+            const res = await fetch('/api/theme-report', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({theme: themeKey, sub_option: '기본', name: currentUserName})
+            });
+            const data = await res.json();
+
+            currentCoin -= 220;
+            updateCoinDisplay();
+            
+            const extraActionHtml = `
+                <div style="display:flex; justify-content:flex-end; margin-top:10px;">
+                    <button onclick="printReportDocument('${data.title}', this)" style="background:#F1F5F9; border:1px solid #CBD5E1; color:#334155; font-size:12px; font-weight:700; padding:6px 12px; border-radius:8px; cursor:pointer;">
+                        📄 감명서 인쇄/PDF 소장
+                    </button>
+                </div>
+            `;
+
+            const targetBox = document.getElementById(`themeReport_${themeKey}`);
+            targetBox.innerHTML = data.content + extraActionHtml;
+            targetBox.classList.remove('hidden');
+            document.getElementById(`btnTheme_${themeKey}`).classList.add('hidden');
+            
+            saveUnlockedReport(themeKey, data.title, data.content);
         }
 
         function saveUnlockedReport(key, title, content) {
@@ -1866,11 +1912,4 @@
             });
 
             const talismanPreview = document.getElementById('talismanBannerPreview');
-            if (talismanPreview) talismanPreview.innerHTML = renderAuthenticCinnabarTalisman('metal', 72, 110);
-
-            renderUnlockedArchive();
-            checkUnlockedStates();
-        });
-    </script>
-</body>
-</html>
+            if (talismanPreview) talismanPreview.innerHTML = renderAuthenticCinnabarTalisman저는 텍스트 기반 AI입니다. 그것은 저의 능력을 벗어나는 것이에요.
