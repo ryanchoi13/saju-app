@@ -53,7 +53,7 @@
         .grid-cell { background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 14px; padding: 12px; font-size: 14px; text-align: left; }
         .action-card { background: #FFFBEB; border-left: 4px solid #F59E0B; border-radius: 14px; padding: 14px; text-align: left; font-size: 14px; }
 
-        /* [신규] 바이오리듬 전용 스타일 */
+        /* 바이오리듬 카드 스타일 */
         .biorhythm-card { background: #FFFFFF; border-radius: 20px; border: 1px solid #E2E8F0; padding: 18px; text-align: left; display: flex; flex-direction: column; gap: 12px; }
         .biorhythm-row { display: flex; flex-direction: column; gap: 4px; }
         .biorhythm-header { display: flex; justify-content: space-between; align-items: center; font-size: 13.5px; font-weight: 700; }
@@ -83,7 +83,7 @@
         .talisman-banner { background: linear-gradient(135deg, #FFFDF5 0%, #FFFBEB 100%); border: 2px solid #FCD34D; border-radius: 20px; padding: 20px; text-align: center; display: flex; flex-direction: column; gap: 14px; }
         .talisman-art { height: 130px; background: rgba(254,243,199,0.5); border-radius: 16px; border: 1px solid rgba(253,230,138,0.8); display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
 
-        .teaser-blur-box { background: #FFFFFF; border: 1.5px solid #FCD34D; border-radius: 18px; padding: 16px; text-align: left; position: relative; overflow: hidden; margin-bottom: 12px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02); }
+        .teaser-blur-box { background: #FFFFFF; border: 1.5px solid #FCD34D; border-radius: 18px; padding: 16px; text-align: left; position: relative; overflow: hidden; margin-bottom: 12px; }
         .teaser-blur-text { filter: blur(4px); user-select: none; color: #64748B; font-size: 13.5px; line-height: 1.7; }
         .teaser-lock-badge { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(255,255,255,0.75); backdrop-filter: blur(2px); }
 
@@ -176,11 +176,6 @@
                             <p id="mbtiTypeDesc" style="font-size: 13px; color: #64748B;">목표를 향해 나아가는 전략적 사주</p>
                         </div>
                     </div>
-                    <div style="border-top: 1px dashed #E2E8F0; padding-top: 6px; text-align: left;">
-                        <p style="font-size: 11px; color: #64748B; line-height: 1.4;">
-                            ※ 사주 MBTI는 사주 명식(일간)을 기반으로 분석한 결과로, 표준 성격유형검사(MBTI)와는 차이가 있을 수 있습니다.
-                        </p>
-                    </div>
                 </div>
 
                 <div class="daily-banner">
@@ -207,54 +202,54 @@
                     <p id="resGaewoon" style="color: #92400E; font-weight: 500; font-size: 14px; line-height: 1.6;">오늘 완료해야 할 우선순위 3가지 메모하기</p>
                 </div>
 
-                <!-- [신규 배치] 오늘의 바이오리듬 카드 (개운 액션과 타로 사이) -->
+                <!-- [신규] 오늘의 바이오리듬 카드 -->
                 <div class="biorhythm-card">
                     <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 8px;">
                         <div>
                             <h4 style="font-size: 15px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif;">🧬 생체 에너지 바이오리듬</h4>
                             <p style="font-size: 12px; color: #64748B;">생년월일 기반 3대 주기 분석</p>
                         </div>
-                        <span id="bioDaysLived" style="font-size: 11px; background: #F1F5F9; color: #475569; padding: 3px 8px; border-radius: 9999px; font-weight: 700;">생애 0일째</span>
+                        <span id="bioDaysLived" style="font-size: 11px; background: #F1F5F9; color: #475569; padding: 3px 8px; border-radius: 9999px; font-weight: 700;">생애 계산중</span>
                     </div>
 
-                    <!-- 1. 신체 리듬 (Physical) -->
+                    <!-- 1. 신체 리듬 -->
                     <div class="biorhythm-row">
                         <div class="biorhythm-header">
                             <span style="color: #DC2626;">💪 신체 리듬 (23일 주기)</span>
-                            <span id="bioPhysicalStatus" style="color: #DC2626; font-size: 12.5px; font-weight: 800;">고조기 (+85%)</span>
+                            <span id="bioPhysicalStatus" style="color: #DC2626; font-size: 12.5px; font-weight: 800;">-</span>
                         </div>
                         <div class="biorhythm-bar-bg">
-                            <div id="bioPhysicalBar" class="biorhythm-bar-fill" style="width: 85%; background: linear-gradient(90deg, #FCA5A5, #EF4444);"></div>
+                            <div id="bioPhysicalBar" class="biorhythm-bar-fill" style="width: 50%; background: linear-gradient(90deg, #FCA5A5, #EF4444);"></div>
                         </div>
-                        <p id="bioPhysicalTip" style="font-size: 12px; color: #64748B; margin-top: 1px;">신체 활력과 지구력이 최고조입니다.</p>
+                        <p id="bioPhysicalTip" style="font-size: 12px; color: #64748B; margin-top: 1px;">-</p>
                     </div>
 
-                    <!-- 2. 감성 리듬 (Emotional) -->
+                    <!-- 2. 감성 리듬 -->
                     <div class="biorhythm-row">
                         <div class="biorhythm-header">
                             <span style="color: #9333EA;">💖 감성 리듬 (28일 주기)</span>
-                            <span id="bioEmotionalStatus" style="color: #9333EA; font-size: 12.5px; font-weight: 800;">상승기 (+40%)</span>
+                            <span id="bioEmotionalStatus" style="color: #9333EA; font-size: 12.5px; font-weight: 800;">-</span>
                         </div>
                         <div class="biorhythm-bar-bg">
-                            <div id="bioEmotionalBar" class="biorhythm-bar-fill" style="width: 70%; background: linear-gradient(90deg, #D8B4FE, #A855F7);"></div>
+                            <div id="bioEmotionalBar" class="biorhythm-bar-fill" style="width: 50%; background: linear-gradient(90deg, #D8B4FE, #A855F7);"></div>
                         </div>
-                        <p id="bioEmotionalTip" style="font-size: 12px; color: #64748B; margin-top: 1px;">대인관계 조율과 공감력이 풍부합니다.</p>
+                        <p id="bioEmotionalTip" style="font-size: 12px; color: #64748B; margin-top: 1px;">-</p>
                     </div>
 
-                    <!-- 3. 지성 리듬 (Intellectual) -->
+                    <!-- 3. 지성 리듬 -->
                     <div class="biorhythm-row">
                         <div class="biorhythm-header">
                             <span style="color: #2563EB;">🧠 지성 리듬 (33일 주기)</span>
-                            <span id="bioIntellectualStatus" style="color: #2563EB; font-size: 12.5px; font-weight: 800;">하강기 (-20%)</span>
+                            <span id="bioIntellectualStatus" style="color: #2563EB; font-size: 12.5px; font-weight: 800;">-</span>
                         </div>
                         <div class="biorhythm-bar-bg">
-                            <div id="bioIntellectualBar" class="biorhythm-bar-fill" style="width: 40%; background: linear-gradient(90deg, #93C5FD, #3B82F6);"></div>
+                            <div id="bioIntellectualBar" class="biorhythm-bar-fill" style="width: 50%; background: linear-gradient(90deg, #93C5FD, #3B82F6);"></div>
                         </div>
-                        <p id="bioIntellectualTip" style="font-size: 12px; color: #64748B; margin-top: 1px;">복잡한 판단은 서두르지 말고 차분히 검토하세요.</p>
+                        <p id="bioIntellectualTip" style="font-size: 12px; color: #64748B; margin-top: 1px;">-</p>
                     </div>
 
                     <div style="background: #F8FAFC; border-radius: 10px; padding: 8px 10px; font-size: 12.5px; color: #334155; line-height: 1.5; border-left: 3px solid #2D6A4F;">
-                        <span style="font-weight: 800; color: #2D6A4F;">💡 바이오 종합:</span> <span id="bioOverallText">심신의 에너지가 조화로운 하루입니다.</span>
+                        <span style="font-weight: 800; color: #2D6A4F;">💡 바이오 종합:</span> <span id="bioOverallText">생체 에너지를 분석 중입니다.</span>
                     </div>
                 </div>
 
@@ -361,6 +356,7 @@
             <!-- 탭 2: 정통사주 -->
             <div id="view-saju" class="tab-view hidden">
                 
+                <!-- 사주 명식표 -->
                 <div class="card" style="padding: 18px;">
                     <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 10px; margin-bottom: 14px;">
                         <div>
@@ -417,7 +413,7 @@
                         </div>
                     </div>
 
-                    <!-- 오행 실질 에너지 정갈한 5단 막대 기둥 차트 -->
+                    <!-- 오행 실질 에너지 5단 막대 기둥 차트 -->
                     <div style="margin-top: 18px; text-align: left;">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                             <span style="font-size: 14px; font-weight: 800; color: #0F172A;">오행(五行) 실질 에너지 세력 분포</span>
@@ -472,7 +468,7 @@
                     <span>📢 광고 영역 (Google AdSense / Kakao AdFit 슬롯 2)</span>
                 </div>
 
-                <!-- 1. 자미두수 평생운세 (블러 티저 포함) -->
+                <!-- 1. 자미두수 평생운세 -->
                 <div class="card" style="border: 2px solid #FCD34D;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                         <span style="font-size: 15px; font-weight: 800; font-family: 'Noto Serif KR', serif;">👑 자미두수 평생운세</span>
@@ -539,7 +535,7 @@
                     </button>
                 </div>
 
-                <!-- 2. 2026 신년운세 & 토정비결 (블러 티저 포함) -->
+                <!-- 2. 2026 신년운세 & 토정비결 -->
                 <div class="card" style="border: 2px solid #86EFAC;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                         <span style="font-size: 15px; font-weight: 800; color: #166534; font-family: 'Noto Serif KR', serif;">📅 2026 신년운세 & 토정비결</span>
@@ -645,7 +641,7 @@
                     <div id="unlockedArchiveList" style="display: flex; flex-direction: column; gap: 10px;">
                         <div style="text-align: center; padding: 20px 0; color: #94A3B8; font-size: 13px;">
                             <p style="font-size: 28px; margin-bottom: 4px;">📂</p>
-                            <p style="font-weight: 700; color: #64748B;">현재 사주 정보로 구매한 리포트가 없습니다.</p>
+                            <p style="font-weight: 700; color: #64748B;">현재 사주 정보로 구매한 감명서가 없습니다.</p>
                             <p style="font-size: 12px; color: #CBD5E1; margin-top: 2px;">정통사주 및 테마운세에서 열람한 리포트가 이곳에 프로필별로 보관됩니다.</p>
                         </div>
                     </div>
@@ -706,13 +702,9 @@
                 </div>
 
                 <div id="zodiacExtraInfo" style="font-size: 13px; color: #2D6A4F; font-weight: 600; border-top: 1px dashed #E2E8F0; padding-top: 8px;"></div>
-
-                <div class="ad-slot-box" style="margin-top: 2px;">
-                    <span>📢 광고 영역 (Google AdSense / Kakao AdFit 슬롯 3)</span>
-                </div>
             </div>
 
-            <button onclick="shareZodiacFortune()" style="width: 100%; background: #FEE500; color: #191919; border: none; font-size: 14.5px; font-weight: 800; padding: 13px; border-radius: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.06);">
+            <button onclick="shareZodiacFortune()" style="width: 100%; background: #FEE500; color: #191919; border: none; font-size: 14.5px; font-weight: 800; padding: 13px; border-radius: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
                 <span>💬</span> 친구에게 이 운세 공유하기
             </button>
         </div>
@@ -726,7 +718,7 @@
             <p style="font-size: 13.5px; color: #64748B; line-height: 1.6;">오늘의 1회 무료 타로를 이미 확인하셨습니다.<br><strong>10 복채</strong>로 추가 카드를 확인하시겠습니까?</p>
 
             <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px;">
-                <button onclick="confirmTarotByCoin()" style="background: #2D6A4F; color: white; border: none; font-size: 14.5px; font-weight: 800; padding: 13px; border-radius: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 4px 6px rgba(45,106,79,0.2);">
+                <button onclick="confirmTarotByCoin()" style="background: #2D6A4F; color: white; border: none; font-size: 14.5px; font-weight: 800; padding: 13px; border-radius: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
                     <span class="btn-coin-icon-white"></span> 10 복채로 열람하기
                 </button>
                 <button onclick="closeTarotChoiceModal()" style="background: #F1F5F9; border: none; font-size: 13.5px; font-weight: 700; color: #475569; padding: 11px; border-radius: 14px; cursor: pointer;">
@@ -740,14 +732,14 @@
     <div id="talismanModal" class="modal-bg hidden">
         <div class="modal-content" style="max-width: 340px; padding: 18px; border-radius: 24px;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 8px;">
-                <h3 style="font-size: 14px; font-weight: 800; color: #1E293B; font-family: 'Noto Serif KR', serif;">🎴 전통 경면주사(鏡面朱砂) 비급 부적</h3>
+                <h3 style="font-size: 14px; font-weight: 800; color: #1E293B; font-family: 'Noto Serif KR', serif;">🎴 전통 경면주사 비급 부적</h3>
                 <button onclick="closeTalismanModal()" style="background: none; border: none; font-size: 20px; color: #94A3B8; cursor: pointer;">&times;</button>
             </div>
 
             <div id="talismanRealBox" style="display: flex; justify-content: center; align-items: center; padding: 4px 0;"></div>
 
             <div style="text-align: left; background: #FFFBEB; border: 1px solid #FDE68A; border-radius: 12px; padding: 12px;">
-                <h4 id="talismanTitle" style="font-size: 13.5px; font-weight: 800; color: #78350F;">재물만복부 (萬福符)</h4>
+                <h4 id="talismanTitle" style="font-size: 13.5px; font-weight: 800; color: #78350F;">재물만복부</h4>
                 <p id="talismanPower" style="font-size: 12px; font-weight: 700; color: #B45309; margin: 2px 0;"></p>
                 <p id="talismanDesc" style="font-size: 11.5px; color: #92400E; line-height: 1.5;"></p>
                 <div style="border-top: 1px dashed rgba(217,119,6,0.4); margin-top: 6px; padding-top: 4px; font-size: 11px; color: #78350F;">
@@ -756,7 +748,7 @@
             </div>
 
             <div style="display: flex; gap: 8px;">
-                <button onclick="downloadTalismanImage()" style="flex: 1; background: #D97706; color: white; border: none; font-size: 13.5px; font-weight: 800; padding: 12px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px;">
+                <button onclick="downloadTalismanImage()" style="flex: 1; background: #D97706; color: white; border: none; font-size: 13.5px; font-weight: 800; padding: 12px; border-radius: 12px; cursor: pointer;">
                     📥 부적 다운로드
                 </button>
                 <button onclick="closeTalismanModal()" style="background: #E2E8F0; color: #334155; border: none; font-size: 13.5px; font-weight: 700; padding: 12px 18px; border-radius: 12px; cursor: pointer;">
@@ -799,7 +791,7 @@
                         <p style="font-size: 14px; font-weight: 800; color: #166534;">무료 충전소</p>
                         <p style="font-size: 11.5px; color: #15803D; margin-top: 2px;">짧은 광고보고 복채 3개 무료로 받기 (1일 5회)</p>
                     </div>
-                    <button onclick="simulateRewardedAd('coin')" style="background: #166534; color: white; border: none; font-size: 12px; font-weight: 800; padding: 6px 10px; border-radius: 8px; cursor: pointer; white-space: nowrap; flex-shrink: 0; box-shadow: 0 2px 4px rgba(22,101,52,0.2);">
+                    <button onclick="simulateRewardedAd('coin')" style="background: #166534; color: white; border: none; font-size: 12px; font-weight: 800; padding: 6px 10px; border-radius: 8px; cursor: pointer; white-space: nowrap;">
                         광고 보기
                     </button>
                 </div>
@@ -825,17 +817,6 @@
                     </div>
                     <span style="background: #2D6A4F; color: white; font-size: 12px; font-weight: 800; padding: 4px 8px; border-radius: 8px;">₩9,900</span>
                 </button>
-
-                <button onclick="addCoin(3000)" style="background: #FAF5FF; border: 1px solid #E9D5FF; border-radius: 16px; padding: 13px; display: flex; justify-content: space-between; align-items: center; text-align: left; cursor: pointer;">
-                    <div style="display: flex; align-items: center; gap: 6px;">
-                        <span class="btn-coin-icon"></span>
-                        <div>
-                            <p style="font-size: 13.5px; font-weight: 800; color: #581C87;">3,000 복채 패키지</p>
-                            <p style="font-size: 11px; color: #7E22CE; font-weight: 700; margin-top: 1px;">🔥 BEST 30% 할인 적용</p>
-                        </div>
-                    </div>
-                    <span style="background: #9333EA; color: white; font-size: 12px; font-weight: 800; padding: 4px 8px; border-radius: 8px;">₩19,900</span>
-                </button>
             </div>
         </div>
     </div>
@@ -843,14 +824,14 @@
     <!-- 보관함 다시보기 팝업 모달 -->
     <div id="archiveDetailModal" class="modal-bg hidden">
         <div class="modal-content" style="max-width: 380px; max-height: 85vh; display: flex; flex-direction: column; text-align: left; padding: 20px; border-radius: 24px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 10px; margin-bottom: 12px; flex-shrink: 0;">
-                <h3 id="archiveModalTitle" style="font-size: 14px; font-weight: 800; color: #0F172A; padding-right: 8px; line-height: 1.3; font-family: 'Noto Serif KR', serif;">운세 리포트</h3>
-                <button onclick="closeArchiveDetailModal()" style="background: none; border: none; font-size: 20px; color: #94A3B8; cursor: pointer; flex-shrink: 0;">&times;</button>
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 10px; margin-bottom: 12px;">
+                <h3 id="archiveModalTitle" style="font-size: 14px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif;">운세 리포트</h3>
+                <button onclick="closeArchiveDetailModal()" style="background: none; border: none; font-size: 20px; color: #94A3B8; cursor: pointer;">&times;</button>
             </div>
             
             <div id="archiveModalBody" style="flex: 1; overflow-y: auto; padding-right: 4px; margin-bottom: 12px;"></div>
 
-            <button onclick="closeArchiveDetailModal()" style="width: 100%; background: #2D6A4F; color: white; border: none; font-size: 14px; font-weight: 800; padding: 13px; border-radius: 12px; cursor: pointer; flex-shrink: 0;">
+            <button onclick="closeArchiveDetailModal()" style="width: 100%; background: #2D6A4F; color: white; border: none; font-size: 14px; font-weight: 800; padding: 13px; border-radius: 12px; cursor: pointer;">
                 확인
             </button>
         </div>
@@ -900,24 +881,7 @@
             "I. THE MAGICIAN (마법사)": "https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg",
             "II. THE HIGH PRIESTESS (여사제)": "https://upload.wikimedia.org/wikipedia/commons/8/88/RWS_Tarot_02_High_Priestess.jpg",
             "III. THE EMPRESS (여황제)": "https://upload.wikimedia.org/wikipedia/commons/d/d2/RWS_Tarot_03_Empress.jpg",
-            "IV. THE EMPEROR (황제)": "https://upload.wikimedia.org/wikipedia/commons/c/c3/RWS_Tarot_04_Emperor.jpg",
-            "V. THE HIEROPHANT (교황)": "https://upload.wikimedia.org/wikipedia/commons/8/8d/RWS_Tarot_05_Hierophant.jpg",
-            "VI. THE LOVERS (연인)": "https://upload.wikimedia.org/wikipedia/commons/3/3a/TheLovers.jpg",
-            "VII. THE CHARIOT (전차)": "https://upload.wikimedia.org/wikipedia/commons/9/9b/RWS_Tarot_07_Chariot.jpg",
-            "VIII. STRENGTH (힘)": "https://upload.wikimedia.org/wikipedia/commons/f/f5/RWS_Tarot_08_Strength.jpg",
-            "IX. THE HERMIT (은둔자)": "https://upload.wikimedia.org/wikipedia/commons/4/4d/RWS_Tarot_09_Hermit.jpg",
-            "X. WHEEL OF FORTUNE (운명의 수레바퀴)": "https://upload.wikimedia.org/wikipedia/commons/3/3c/RWS_Tarot_10_Wheel_of_Fortune.jpg",
-            "XI. JUSTICE (정의)": "https://upload.wikimedia.org/wikipedia/commons/e/e0/RWS_Tarot_11_Justice.jpg",
-            "XII. THE HANGED MAN (매달린 사람)": "https://upload.wikimedia.org/wikipedia/commons/2/2b/RWS_Tarot_12_Hanged_Man.jpg",
-            "XIII. DEATH (죽음)": "https://upload.wikimedia.org/wikipedia/commons/d/d7/RWS_Tarot_13_Death.jpg",
-            "XIV. TEMPERANCE (절제)": "https://upload.wikimedia.org/wikipedia/commons/f/f8/RWS_Tarot_14_Temperance.jpg",
-            "XV. THE DEVIL (악마)": "https://upload.wikimedia.org/wikipedia/commons/5/55/RWS_Tarot_15_Devil.jpg",
-            "XVI. THE TOWER (탑)": "https://upload.wikimedia.org/wikipedia/commons/5/53/RWS_Tarot_16_Tower.jpg",
-            "XVII. THE STAR (별)": "https://upload.wikimedia.org/wikipedia/commons/d/db/RWS_Tarot_17_Star.jpg",
-            "XVIII. THE MOON (달)": "https://upload.wikimedia.org/wikipedia/commons/7/7f/RWS_Tarot_18_Moon.jpg",
-            "XIX. THE SUN (태양)": "https://upload.wikimedia.org/wikipedia/commons/1/17/RWS_Tarot_19_Sun.jpg",
-            "XX. JUDGEMENT (심판)": "https://upload.wikimedia.org/wikipedia/commons/d/dd/RWS_Tarot_20_Judgement.jpg",
-            "XXI. THE WORLD (세계)": "https://upload.wikimedia.org/wikipedia/commons/f/ff/RWS_Tarot_21_World.jpg"
+            "XIX. THE SUN (태양)": "https://upload.wikimedia.org/wikipedia/commons/1/17/RWS_Tarot_19_Sun.jpg"
         };
 
         function getTarotCardBackSvg() {
@@ -934,78 +898,12 @@
                 <path d="M 100,0 L 84,0 Q 100,0 100,16 Z" fill="#D4AF37" opacity="0.8"/>
                 <path d="M 0,150 L 16,150 Q 0,150 0,134 Z" fill="#D4AF37" opacity="0.8"/>
                 <path d="M 100,150 L 84,150 Q 100,150 100,134 Z" fill="#D4AF37" opacity="0.8"/>
-                <circle cx="0" cy="75" r="14" fill="none" stroke="#D4AF37" stroke-width="0.8"/>
-                <polygon points="0,64 3,73 12,75 3,77 0,86" fill="#D4AF37"/>
-                <circle cx="100" cy="75" r="14" fill="none" stroke="#D4AF37" stroke-width="0.8"/>
-                <polygon points="100,64 97,73 88,75 97,77 100,86" fill="#D4AF37"/>
-                <circle cx="50" cy="42" r="16" fill="none" stroke="#D4AF37" stroke-width="1.2"/>
-                <polygon points="50,23 53.5,38.5 69,42 53.5,45.5 50,61 46.5,45.5 31,42 46.5,38.5" fill="url(#starGlow)"/>
-                <circle cx="50" cy="75" r="4.5" fill="none" stroke="#D4AF37" stroke-width="0.8"/>
-                <circle cx="50" cy="75" r="3" fill="#FFF2B2"/>
-                <circle cx="50" cy="108" r="16" fill="none" stroke="#D4AF37" stroke-width="1.2"/>
-                <polygon points="50,89 53.5,104.5 69,108 53.5,111.5 50,127 46.5,111.5 31,108 46.5,104.5" fill="url(#starGlow)"/>
+                <circle cx="50" cy="75" r="14" fill="none" stroke="#D4AF37" stroke-width="1.2"/>
+                <polygon points="50,56 53.5,71.5 69,75 53.5,78.5 50,94 46.5,78.5 31,75 46.5,71.5" fill="url(#starGlow)"/>
             </svg>`;
         }
 
         function renderAuthenticCinnabarTalisman(type = "metal", width = 160, height = 260) {
-            let innerSymbol = '';
-            let bottomText = '萬福大吉';
-
-            if (type === "wood") {
-                bottomText = '事業亨通';
-                innerSymbol = `
-                    <path d="M 35 95 L 105 95 L 70 135 Z" fill="rgba(198,40,40,0.15)"/>
-                    <circle cx="70" cy="110" r="6" fill="#C62828"/>
-                    <path d="M 28 142 L 112 142" stroke-width="4.2"/>
-                    <path d="M 40 156 Q 70 140 100 156" stroke-width="3.8"/>
-                    <path d="M 48 170 L 92 170" stroke-width="3.5"/>
-                    <line x1="70" y1="125" x2="70" y2="182" stroke-width="4.5"/>
-                `;
-            } else if (type === "fire") {
-                bottomText = '心想事成';
-                innerSymbol = `
-                    <circle cx="70" cy="110" r="18" fill="rgba(198,40,40,0.1)"/>
-                    <circle cx="70" cy="110" r="9" fill="#C62828"/>
-                    <path d="M 35 136 Q 70 120 105 136" stroke-width="4"/>
-                    <path d="M 42 152 Q 70 138 98 152" stroke-width="3.6"/>
-                    <path d="M 38 168 L 102 168" stroke-width="3.8"/>
-                    <line x1="70" y1="125" x2="70" y2="182" stroke-width="4.2"/>
-                `;
-            } else if (type === "earth") {
-                bottomText = '金庫安穩';
-                innerSymbol = `
-                    <rect x="38" y="94" width="64" height="40" fill="rgba(198,40,40,0.1)"/>
-                    <line x1="70" y1="94" x2="70" y2="134" stroke-width="3.8"/>
-                    <line x1="38" y1="114" x2="102" y2="114" stroke-width="3.8"/>
-                    <path d="M 42 148 L 98 148" stroke-width="4"/>
-                    <path d="M 36 164 Q 70 150 104 164" stroke-width="3.8"/>
-                    <line x1="70" y1="134" x2="70" y2="180" stroke-width="4.2"/>
-                `;
-            } else if (type === "water") {
-                bottomText = '萬事和合';
-                innerSymbol = `
-                    <circle cx="48" cy="112" r="13" />
-                    <circle cx="92" cy="112" r="13" />
-                    <path d="M 48 112 Q 70 130 92 112 Q 70 96 48 112" fill="rgba(198,40,40,0.2)"/>
-                    <path d="M 38 138 Q 70 152 102 138" stroke-width="4"/>
-                    <path d="M 44 156 L 96 156" stroke-width="3.8"/>
-                    <path d="M 70 138 L 70 180" stroke-width="4.2"/>
-                `;
-            } else {
-                bottomText = '萬福大吉';
-                innerSymbol = `
-                    <rect x="40" y="96" width="26" height="22" stroke-width="3.8"/>
-                    <rect x="74" y="96" width="26" height="22" stroke-width="3.8"/>
-                    <line x1="53" y1="96" x2="53" y2="118" stroke-width="3"/>
-                    <line x1="87" y1="96" x2="87" y2="118" stroke-width="3"/>
-                    <path d="M 38 128 L 102 128" stroke-width="4.2"/>
-                    <path d="M 46 140 Q 70 130 94 140" stroke-width="3.8"/>
-                    <path d="M 42 152 Q 56 144 70 156 Q 84 144 98 152" stroke-width="3.5"/>
-                    <circle cx="56" cy="170" r="3.5" fill="#C62828" />
-                    <circle cx="84" cy="170" r="3.5" fill="#C62828" />
-                `;
-            }
-
             return `
             <svg id="svgTalismanMain" width="${width}" height="${height}" viewBox="0 0 140 240" style="background: linear-gradient(135deg, #FFE814 0%, #FFD000 100%); border: 3px solid #C49700; border-radius: 8px; box-shadow: 0 6px 16px rgba(0,0,0,0.25);">
                 <rect x="4" y="4" width="132" height="232" fill="none" stroke="#E65100" stroke-width="0.8" opacity="0.4" />
@@ -1013,26 +911,16 @@
                     <path d="M 28 22 Q 42 16 68 18 Q 92 20 112 16" />
                     <path d="M 70 18 L 70 32" />
                     <path d="M 40 28 L 100 28" />
-                    <circle cx="48" cy="38" r="3" fill="#C62828" />
                     <circle cx="70" cy="38" r="3" fill="#C62828" />
-                    <circle cx="92" cy="38" r="3" fill="#C62828" />
-
                     <path d="M 32 50 L 108 50" />
                     <path d="M 36 50 L 36 68 L 104 68 L 104 50" />
-                    <path d="M 50 58 L 90 58" />
-                    <path d="M 70 50 L 70 68" />
-                    <path d="M 42 76 Q 70 66 98 76" />
-                    
                     <path d="M 30 88 L 110 88" />
                     <path d="M 34 88 L 34 165 Q 34 180 50 180 L 90 180 Q 106 180 106 165 L 106 88" />
-                    
-                    ${innerSymbol}
-
-                    <path d="M 36 190 Q 70 182 104 190" />
-                    <path d="M 48 198 L 92 198" />
+                    <circle cx="70" cy="135" r="16" fill="rgba(198,40,40,0.15)"/>
+                    <line x1="70" y1="110" x2="70" y2="160" stroke-width="4.2"/>
                 </g>
                 <rect x="36" y="204" width="68" height="22" fill="#C62828" rx="3"/>
-                <text x="70" y="219" font-size="10" font-weight="900" fill="#FFFFFF" text-anchor="middle" font-family="'Noto Serif KR', serif" letter-spacing="1px">${bottomText}</text>
+                <text x="70" y="219" font-size="10" font-weight="900" fill="#FFFFFF" text-anchor="middle" font-family="'Pretendard', serif" letter-spacing="1px">萬福大吉</text>
             </svg>
             `;
         }
@@ -1040,8 +928,7 @@
         function printReportDocument(title, btnElement) {
             const reportContainer = btnElement.closest('.card') || btnElement.parentElement;
             const contentClone = reportContainer.cloneNode(true);
-            
-            contentClone.querySelectorAll('button, .teaser-blur-box, svg[id="fullCurveGradient"]').forEach(el => el.remove());
+            contentClone.querySelectorAll('button, .teaser-blur-box').forEach(el => el.remove());
             
             const printWindow = window.open('', '_blank');
             printWindow.document.write(`
@@ -1055,12 +942,6 @@
                         body { font-family: 'Pretendard', sans-serif; padding: 40px; color: #1E293B; max-width: 680px; margin: 0 auto; line-height: 1.85; }
                         .header { border-bottom: 3px solid #2D6A4F; padding-bottom: 16px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: flex-end; }
                         .header h1 { font-size: 22px; color: #2D6A4F; margin: 0; font-family: 'Noto Serif KR', serif; }
-                        .header p { font-size: 13px; color: #64748B; margin: 0; }
-                        .footer { margin-top: 40px; border-top: 1px solid #E2E8F0; padding-top: 16px; text-align: center; font-size: 12px; color: #94A3B8; }
-                        @media print {
-                            body { padding: 0; }
-                            button { display: none; }
-                        }
                     </style>
                 </head>
                 <body>
@@ -1072,12 +953,7 @@
                         <p>수신인: <strong>${currentUserName}</strong> 님<br>발행일: ${new Date().toLocaleDateString('ko-KR')}</p>
                     </div>
                     ${contentClone.innerHTML}
-                    <div class="footer">
-                        본 감명서는 [운세의 신] 정통 명리학 및 자미두수 분석 엔진에 의해 발행되었습니다.
-                    </div>
-                    <script>
-                        window.onload = function() { window.print(); }
-                    <\/script>
+                    <script>window.onload = function() { window.print(); }<\/script>
                 </body>
                 </html>
             `);
@@ -1111,9 +987,7 @@
             const targetTab = document.getElementById(`tab-${tabId}`);
             if (targetTab) targetTab.classList.add('active');
 
-            if (tabId === 'mypage') {
-                renderUnlockedArchive();
-            }
+            if (tabId === 'mypage') renderUnlockedArchive();
         }
 
         function switchZodiacSubTab(type) {
@@ -1131,7 +1005,7 @@
                 btnStar.className = 'sub-tab-btn active';
                 btnZodiac.className = 'sub-tab-btn';
                 gridStar.classList.remove('hidden');
-                gridStar.classList.add('hidden');
+                gridZodiac.classList.add('hidden');
             }
         }
 
@@ -1150,25 +1024,20 @@
                 const tipsBox = document.getElementById('zodiacYearTipsBox');
                 if (type === 'zodiac' && data.year_tips) {
                     tipsBox.innerHTML = `
-                        <p style="font-weight: 800; color: #0F172A; margin-bottom: 8px; font-size: 14px;">📅 출생연도별 핵심 1줄 가이드</p>
+                        <p style="font-weight: 800; color: #0F172A; margin-bottom: 8px; font-size: 14px;">📅 출생연도별 핵심 가이드</p>
                         <div style="display: flex; flex-direction: column; gap: 8px;">
                             ${data.year_tips.map(item => `
                                 <div style="background: #F8FAFC; border-left: 3px solid #2D6A4F; border-radius: 4px; padding: 6px 10px;">
                                     <span style="font-weight: 800; color: #1E293B; font-size: 13.5px; display: block; margin-bottom: 2px;">${item.year_label}</span>
-                                    <span style="color: #475569; font-size: 13px; line-height: 1.55;">${item.tip}</span>
+                                    <span style="color: #475569; font-size: 13px;">${item.tip}</span>
                                 </div>
                             `).join('')}
                         </div>
                     `;
-                    document.getElementById('zodiacExtraInfo').innerHTML = `⏱️ <strong>행운 시간대:</strong> ${data.lucky_time} &nbsp;|&nbsp; 🤝 <strong>찰떡 궁합:</strong> ${data.lucky_match}`;
+                    document.getElementById('zodiacExtraInfo').innerHTML = `⏱️ 행운 시간대: ${data.lucky_time} | 🤝 ${data.lucky_match}`;
                 } else {
-                    tipsBox.innerHTML = `
-                        <div style="border-left: 3px solid #E11D48; padding-left: 8px; margin-bottom: 6px;">
-                            <span style="font-size: 12px; background: #FFE4E6; color: #BE123C; padding: 2px 6px; border-radius: 4px; font-weight: 800;">${data.focus_badge}</span>
-                        </div>
-                        <p style="color: #334155; line-height: 1.7; font-size: 13.5px;">${data.focus_content}</p>
-                    `;
-                    document.getElementById('zodiacExtraInfo').innerHTML = `✨ <strong>행운 아이템:</strong> ${data.lucky_item} &nbsp;|&nbsp; ⏱️ <strong>행운 시간대:</strong> ${data.lucky_time}`;
+                    tipsBox.innerHTML = `<p style="color: #334155; font-size: 13.5px;">${data.focus_content}</p>`;
+                    document.getElementById('zodiacExtraInfo').innerHTML = `✨ 행운 아이템: ${data.lucky_item} | ⏱️ ${data.lucky_time}`;
                 }
 
                 document.getElementById('zodiacModal').classList.remove('hidden');
@@ -1183,18 +1052,11 @@
 
         function shareZodiacFortune() {
             if (!currentZodiacData) return;
-            const shareText = `[운세의 신] 오늘 ${currentZodiacData.name} 운세 점수는 ${currentZodiacData.score}점!\n"${currentZodiacData.title}"\n\n너의 오늘 운세도 지금 확인해봐 👉 ${window.location.href}`;
-            
+            const shareText = `[운세의 신] 오늘 ${currentZodiacData.name} 운세 점수는 ${currentZodiacData.score}점!\n${window.location.href}`;
             if (navigator.share) {
-                navigator.share({
-                    title: `[운세의 신] ${currentZodiacData.name} 오늘의 운세`,
-                    text: shareText,
-                    url: window.location.href
-                }).catch(() => {});
+                navigator.share({ title: `[운세의 신] 오늘의 운세`, text: shareText, url: window.location.href }).catch(() => {});
             } else {
-                navigator.clipboard.writeText(shareText).then(() => {
-                    alert('📋 오늘의 운세 공유 링크가 복사되었습니다!\n카카오톡이나 인스타그램에 붙여넣어 공유하세요.');
-                });
+                navigator.clipboard.writeText(shareText).then(() => { alert('📋 오늘의 운세 링크가 복사되었습니다!'); });
             }
         }
 
@@ -1212,11 +1074,7 @@
 
         function formatJijangganGroup(jjList) {
             if (!jjList || jjList.length === 0) return `<span style="font-size:11px; color:#94A3B8;">-</span>`;
-            return jjList.map(j => `
-                <span class="badge-jjg elem-${j.elem}">
-                    ${j.char}
-                </span>
-            `).join('');
+            return jjList.map(j => `<span class="badge-jjg elem-${j.elem}">${j.char}</span>`).join('');
         }
 
         function updateDaewoonGraphByAge(age) {
@@ -1227,16 +1085,12 @@
             for (let i = 1; i <= 6; i++) {
                 const lbl = document.getElementById(`lblAge${i}`);
                 const currentDecade = startDecade + (i - 1) * 10;
-                if (lbl) {
-                    if (i === 6) lbl.innerText = `${currentDecade}세~`;
-                    else lbl.innerText = `${currentDecade}세`;
-                }
+                if (lbl) lbl.innerText = i === 6 ? `${currentDecade}세~` : `${currentDecade}세`;
             }
 
             const rangeStart = startDecade;
             const rangeEnd = startDecade + 50;
             const progress = Math.min(1.0, Math.max(0.0, (clampedAge - rangeStart) / (rangeEnd - rangeStart)));
-            
             const posX = 15 + progress * 270;
             const posY = clampedAge >= 40 && clampedAge <= 55 ? 28 : (clampedAge < 40 ? 60 : 34);
 
@@ -1262,21 +1116,21 @@
             const daewoonTeaser = document.getElementById('daewoonTeaserBox');
             const btnDaewoon = document.getElementById('btnDaewoon');
             if (daewoonBox) { daewoonBox.innerHTML = ''; daewoonBox.classList.add('hidden'); }
-            if (daewoonTeaser) { daewoonTeaser.classList.remove('hidden'); }
-            if (btnDaewoon) { btnDaewoon.classList.remove('hidden'); }
+            if (daewoonTeaser) daewoonTeaser.classList.remove('hidden');
+            if (btnDaewoon) btnDaewoon.classList.remove('hidden');
 
             const sinnianBox = document.getElementById('sinnianBox');
             const sinnianTeaser = document.getElementById('sinnianTeaserBox');
             const btnSinnian = document.getElementById('btnSinnian');
             if (sinnianBox) { sinnianBox.innerHTML = ''; sinnianBox.classList.add('hidden'); }
-            if (sinnianTeaser) { sinnianTeaser.classList.remove('hidden'); }
-            if (btnSinnian) { btnSinnian.classList.remove('hidden'); }
+            if (sinnianTeaser) sinnianTeaser.classList.remove('hidden');
+            if (btnSinnian) btnSinnian.classList.remove('hidden');
 
             ['wealth', 'love', 'business', 'health'].forEach(key => {
                 const box = document.getElementById(`themeReport_${key}`);
                 const btn = document.getElementById(`btnTheme_${key}`);
                 if (box) { box.innerHTML = ''; box.classList.add('hidden'); }
-                if (btn) { btn.classList.remove('hidden'); }
+                if (btn) btn.classList.remove('hidden');
             });
         }
 
@@ -1298,30 +1152,26 @@
             currentTalisman = data.daily_fortune.talisman;
             currentUserAge = data.current_age;
 
-            // [신규] 바이오리듬 UI 렌더링
+            // 바이오리듬 UI 렌더링
             if (data.biorhythm) {
                 const bio = data.biorhythm;
                 document.getElementById('bioDaysLived').innerText = `생애 ${bio.days_lived.toLocaleString()}일째`;
                 
-                // 신체
                 document.getElementById('bioPhysicalStatus').innerText = `${bio.physical.status} (${bio.physical.val > 0 ? '+' : ''}${bio.physical.val}%)`;
                 document.getElementById('bioPhysicalStatus').style.color = bio.physical.color;
                 document.getElementById('bioPhysicalBar').style.width = `${bio.physical.pct}%`;
                 document.getElementById('bioPhysicalTip').innerText = bio.physical.tip;
 
-                // 감성
                 document.getElementById('bioEmotionalStatus').innerText = `${bio.emotional.status} (${bio.emotional.val > 0 ? '+' : ''}${bio.emotional.val}%)`;
                 document.getElementById('bioEmotionalStatus').style.color = bio.emotional.color;
                 document.getElementById('bioEmotionalBar').style.width = `${bio.emotional.pct}%`;
                 document.getElementById('bioEmotionalTip').innerText = bio.emotional.tip;
 
-                // 지성
                 document.getElementById('bioIntellectualStatus').innerText = `${bio.intellectual.status} (${bio.intellectual.val > 0 ? '+' : ''}${bio.intellectual.val}%)`;
                 document.getElementById('bioIntellectualStatus').style.color = bio.intellectual.color;
                 document.getElementById('bioIntellectualBar').style.width = `${bio.intellectual.pct}%`;
                 document.getElementById('bioIntellectualTip').innerText = bio.intellectual.tip;
 
-                // 종합 요약
                 document.getElementById('bioOverallText').innerText = bio.overall_summary;
             }
 
@@ -1333,9 +1183,7 @@
             if (tHeader && currentTalisman) tHeader.innerText = `오늘의 맞춤 ${currentTalisman.title}`;
 
             const singangBadge = document.getElementById('sajuSingangBadge');
-            if (singangBadge && data.singang_status) {
-                singangBadge.innerText = data.singang_status;
-            }
+            if (singangBadge && data.singang_status) singangBadge.innerText = data.singang_status;
 
             const dtl = data.saju_data.pillars_detail;
             setElemBadge('cg_h_badge', dtl.hour.cg, dtl.hour.cg_elem);
@@ -1390,7 +1238,6 @@
 
             document.getElementById('onboardingInputView').classList.add('hidden');
             document.getElementById('view-today').classList.remove('hidden');
-
             document.getElementById('bottomNavBar').classList.remove('hidden');
 
             checkUnlockedStates();
@@ -1405,13 +1252,12 @@
 
         function openTalismanModal() {
             if (!currentTalisman) {
-                currentTalisman = { type: "metal", title: "재물만복부 (萬福大吉符)", power: "재물 증식 · 금전운 대통", desc: "사방에서 금전과 복록이 샘솟듯 모여드는 강력한 전통 경면주사 수제 부적입니다." };
+                currentTalisman = { type: "metal", title: "재물만복부", power: "재물 증식 · 금전운 대통", desc: "사방에서 금전과 복록이 쏟아지게 하는 전통 부적입니다." };
             }
             document.getElementById('talismanTitle').innerText = currentTalisman.title;
             document.getElementById('talismanPower').innerText = currentTalisman.power;
             document.getElementById('talismanDesc').innerText = currentTalisman.desc;
             document.getElementById('talismanOwnerName').innerText = currentUserName;
-            
             document.getElementById('talismanRealBox').innerHTML = renderAuthenticCinnabarTalisman(currentTalisman.type || "metal", 160, 260);
             document.getElementById('talismanModal').classList.remove('hidden');
         }
@@ -1439,7 +1285,349 @@
             img.onload = function () {
                 ctx.drawImage(img, 0, 0, 420, 720);
                 const pngURL = canvas.toDataURL('image/png');
-                
                 const dlLink = document.createElement('a');
-                dlLink.download = `${currentUserName}_맞춤_${currentTalisman?.title || '경면주사부적'}.png`;
-                dlLink.href = png그것을 도와드릴 수는 없습니다. 저는 언어 모델일 뿐이에요.
+                dlLink.download = `${currentUserName}_부적.png`;
+                dlLink.href = pngURL;
+                document.body.appendChild(dlLink);
+                dlLink.click();
+                document.body.removeChild(dlLink);
+                URL.revokeObjectURL(blobURL);
+                alert('📥 부적이 저장되었습니다!');
+            };
+            img.src = blobURL;
+        }
+
+        async function handleTarotDraw(slot) {
+            if (drawnTarotCards[slot]) {
+                displayTarotResult(drawnTarotCards[slot]);
+                return;
+            }
+            if (dailyTarotDrawn) {
+                pendingTarotSlot = slot;
+                document.getElementById('tarotChoiceModal').classList.remove('hidden');
+                return;
+            }
+            drawTarotCardFinal(slot);
+        }
+
+        function closeTarotChoiceModal() {
+            document.getElementById('tarotChoiceModal').classList.add('hidden');
+            pendingTarotSlot = null;
+        }
+
+        function confirmTarotByCoin() {
+            if (currentCoin < 10) {
+                alert('보유 복채가 부족합니다.');
+                closeTarotChoiceModal();
+                openChargeStore();
+                return;
+            }
+            currentCoin -= 10;
+            updateCoinDisplay();
+            const slot = pendingTarotSlot;
+            closeTarotChoiceModal();
+            drawTarotCardFinal(slot);
+        }
+
+        function simulateRewardedAd(type) {
+            closeChargeStore();
+            alert('🎬 [광고 시청 완료] +3 복채 지급!');
+            addCoin(3);
+        }
+
+        async function drawTarotCardFinal(slot) {
+            try {
+                const randomSeed = Math.floor(Math.random() * 1000000);
+                const res = await fetch(`/api/daily-tarot?slot=${slot}&rand_seed=${randomSeed}`);
+                const card = await res.json();
+                dailyTarotDrawn = true;
+                drawnTarotCards[slot] = card;
+
+                const flipper = document.getElementById(`flipper${slot}`);
+                const front = document.getElementById(`front${slot}`);
+                const imgUrl = TAROT_IMAGES[card.name] || TAROT_IMAGES["0. THE FOOL (바보)"];
+
+                front.innerHTML = `<img src="${imgUrl}" alt="${card.name}" style="width: 100%; height: 100%; object-fit: cover;">`;
+                flipper.classList.add('flipped');
+
+                setTimeout(() => { displayTarotResult(card); }, 600);
+            } catch(e) {
+                alert('타로 카드를 불러오지 못했습니다.');
+            }
+        }
+
+        function displayTarotResult(card) {
+            const imgUrl = TAROT_IMAGES[card.name] || TAROT_IMAGES["0. THE FOOL (바보)"];
+            const resBox = document.getElementById('tarotResultBox');
+            resBox.innerHTML = `
+                <div style="background: #FFFFFF; border-top: 2px solid #E2E8F0; padding-top: 14px; margin-top: 12px; font-size: 14px; text-align: left; display: flex; flex-direction: column; gap: 10px;">
+                    <div style="display: flex; align-items: center; gap: 12px; border-bottom: 1px solid #F1F5F9; padding-bottom: 10px;">
+                        <img src="${imgUrl}" style="width: 46px; height: 70px; object-fit: cover; border-radius: 6px; border: 1px solid #FCD34D; flex-shrink: 0;">
+                        <div>
+                            <h4 style="font-weight: 800; font-size: 15px; color: #0F172A;">${card.name}</h4>
+                            <p style="color: #B45309; font-weight: 700; font-size: 13px; margin-top: 2px;">${card.keyword}</p>
+                        </div>
+                    </div>
+                    <p style="color: #475569; font-size: 13px; line-height: 1.65;">${card.fortune_reading}</p>
+                </div>
+            `;
+            resBox.classList.remove('hidden');
+        }
+
+        function unlockDaewoon() {
+            if (currentCoin < 450) { openChargeStore(); return; }
+            
+            fetch('/api/daewoon-report', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ name: currentUserName, age: currentUserAge })
+            })
+            .then(r => r.json())
+            .then(data => {
+                currentCoin -= 450;
+                updateCoinDisplay();
+                
+                const extraActionHtml = `
+                    <div style="display:flex; justify-content:flex-end; margin-top:10px;">
+                        <button onclick="printReportDocument('${data.title}', this)" style="background:#F1F5F9; border:1px solid #CBD5E1; color:#334155; font-size:12px; font-weight:700; padding:6px 12px; border-radius:8px; cursor:pointer;">
+                            📄 감명서 인쇄/PDF 소장
+                        </button>
+                    </div>
+                `;
+
+                document.getElementById('daewoonBox').innerHTML = data.content + extraActionHtml;
+                document.getElementById('daewoonBox').classList.remove('hidden');
+                document.getElementById('daewoonTeaserBox').classList.add('hidden');
+                document.getElementById('btnDaewoon').classList.add('hidden');
+                saveUnlockedReport('daewoon', data.title, data.content);
+            });
+        }
+
+        function unlockSinnian() {
+            if (currentCoin < 300) { openChargeStore(); return; }
+            
+            fetch('/api/sinnian-report', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ name: currentUserName })
+            })
+            .then(r => r.json())
+            .then(data => {
+                currentCoin -= 300;
+                updateCoinDisplay();
+
+                const extraActionHtml = `
+                    <div style="display:flex; justify-content:flex-end; margin-top:10px;">
+                        <button onclick="printReportDocument('${data.title}', this)" style="background:#F1F5F9; border:1px solid #CBD5E1; color:#334155; font-size:12px; font-weight:700; padding:6px 12px; border-radius:8px; cursor:pointer;">
+                            📄 감명서 인쇄/PDF 소장
+                        </button>
+                    </div>
+                `;
+
+                document.getElementById('sinnianBox').innerHTML = data.content + extraActionHtml;
+                document.getElementById('sinnianBox').classList.remove('hidden');
+                document.getElementById('sinnianTeaserBox').classList.add('hidden');
+                document.getElementById('btnSinnian').classList.add('hidden');
+                saveUnlockedReport('sinnian', data.title, data.content);
+            });
+        }
+
+        function openThemeSelectModal(key) {
+            currentThemeKey = key;
+            const modalBox = document.getElementById('modalOptionBox');
+            modalBox.innerHTML = `
+                <p style="font-size: 12px; color: #64748B; margin-bottom: 6px;">현재 상태를 선택해 주세요:</p>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 13px; font-weight: 700;">
+                    <label style="padding: 11px; border: 1px solid #E2E8F0; border-radius: 10px; background: #F8FAFC; cursor: pointer;"><input type="radio" name="optM" value="기본" checked> 기본</label>
+                    <label style="padding: 11px; border: 1px solid #E2E8F0; border-radius: 10px; background: #F8FAFC; cursor: pointer;"><input type="radio" name="optM" value="심화"> 심화</label>
+                </div>`;
+            document.getElementById('themeSelectModal').classList.remove('hidden');
+        }
+
+        function closeThemeSelectModal() { document.getElementById('themeSelectModal').classList.add('hidden'); }
+
+        async function confirmUnlockTheme() {
+            if (currentCoin < 220) { openChargeStore(); return; }
+            const selEl = document.querySelector('input[name="optM"]:checked');
+            const subOpt = selEl ? selEl.value : '기본';
+
+            const res = await fetch('/api/theme-report', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({theme: currentThemeKey, sub_option: subOpt, name: currentUserName})
+            });
+            const data = await res.json();
+
+            currentCoin -= 220;
+            updateCoinDisplay();
+            
+            const extraActionHtml = `
+                <div style="display:flex; justify-content:flex-end; margin-top:10px;">
+                    <button onclick="printReportDocument('${data.title}', this)" style="background:#F1F5F9; border:1px solid #CBD5E1; color:#334155; font-size:12px; font-weight:700; padding:6px 12px; border-radius:8px; cursor:pointer;">
+                        📄 감명서 인쇄/PDF 소장
+                    </button>
+                </div>
+            `;
+
+            const targetBox = document.getElementById(`themeReport_${currentThemeKey}`);
+            targetBox.innerHTML = data.content + extraActionHtml;
+            targetBox.classList.remove('hidden');
+            document.getElementById(`btnTheme_${currentThemeKey}`).classList.add('hidden');
+            
+            saveUnlockedReport(currentThemeKey, data.title, data.content);
+            closeThemeSelectModal();
+        }
+
+        function saveUnlockedReport(key, title, content) {
+            const pKey = getProfileKey();
+            const currentList = getUnlockedReports();
+            const todayStr = new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' });
+            
+            const existingIdx = currentList.findIndex(r => r.key === key);
+            if (existingIdx >= 0) {
+                currentList[existingIdx] = { key: key, title: title, content: content, date: todayStr };
+            } else {
+                currentList.unshift({ key: key, title: title, content: content, date: todayStr });
+            }
+            
+            try {
+                localStorage.setItem(`unlocked_reports_${pKey}`, JSON.stringify(currentList));
+            } catch(e) {}
+            
+            renderUnlockedArchive();
+        }
+
+        function checkUnlockedStates() {
+            const currentList = getUnlockedReports();
+            resetUnlockedUI();
+
+            currentList.forEach(item => {
+                const extraActionHtml = `
+                    <div style="display:flex; justify-content:flex-end; margin-top:10px;">
+                        <button onclick="printReportDocument('${item.title}', this)" style="background:#F1F5F9; border:1px solid #CBD5E1; color:#334155; font-size:12px; font-weight:700; padding:6px 12px; border-radius:8px; cursor:pointer;">
+                            📄 감명서 인쇄/PDF 소장
+                        </button>
+                    </div>
+                `;
+
+                if (item.key === 'daewoon') {
+                    const box = document.getElementById('daewoonBox');
+                    const teaser = document.getElementById('daewoonTeaserBox');
+                    const btn = document.getElementById('btnDaewoon');
+                    if (box && btn) {
+                        box.innerHTML = item.content + extraActionHtml;
+                        box.classList.remove('hidden');
+                        if (teaser) teaser.classList.add('hidden');
+                        btn.classList.add('hidden');
+                    }
+                } else if (item.key === 'sinnian') {
+                    const box = document.getElementById('sinnianBox');
+                    const teaser = document.getElementById('sinnianTeaserBox');
+                    const btn = document.getElementById('btnSinnian');
+                    if (box && btn) {
+                        box.innerHTML = item.content + extraActionHtml;
+                        box.classList.remove('hidden');
+                        if (teaser) teaser.classList.add('hidden');
+                        btn.classList.add('hidden');
+                    }
+                } else if (['wealth', 'love', 'business', 'health'].includes(item.key)) {
+                    const box = document.getElementById(`themeReport_${item.key}`);
+                    const btn = document.getElementById(`btnTheme_${item.key}`);
+                    if (box && btn) {
+                        box.innerHTML = item.content + extraActionHtml;
+                        box.classList.remove('hidden');
+                        btn.classList.add('hidden');
+                    }
+                }
+            });
+        }
+
+        function openArchiveDetail(idx) {
+            const currentList = getUnlockedReports();
+            const item = currentList[idx];
+            if (!item) return;
+
+            document.getElementById('archiveModalTitle').innerText = item.title;
+            document.getElementById('archiveModalBody').innerHTML = item.content;
+            document.getElementById('archiveDetailModal').classList.remove('hidden');
+        }
+
+        function closeArchiveDetailModal() {
+            document.getElementById('archiveDetailModal').classList.add('hidden');
+        }
+
+        function renderUnlockedArchive() {
+            const currentList = getUnlockedReports();
+            const container = document.getElementById('unlockedArchiveList');
+            const countBadge = document.getElementById('archiveCountBadge');
+            
+            if (countBadge) {
+                countBadge.innerText = `${currentList.length}건`;
+                countBadge.style.background = currentList.length > 0 ? '#2D6A4F' : '#E2E8F0';
+                countBadge.style.color = currentList.length > 0 ? '#FFFFFF' : '#475569';
+            }
+
+            if (!container) return;
+
+            if (currentList.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 20px 0; color: #94A3B8; font-size: 13px;">
+                        <p style="font-size: 28px; margin-bottom: 4px;">📂</p>
+                        <p style="font-weight: 700; color: #64748B;">현재 사주 정보로 구매한 감명서가 없습니다.</p>
+                    </div>`;
+                return;
+            }
+
+            container.innerHTML = currentList.map((r, idx) => `
+                <div style="background: #F8FAFC; border: 1.5px solid #2D6A4F; border-radius: 16px; padding: 12px 14px; text-align: left; display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+                    <div style="flex: 1; overflow: hidden;">
+                        <span style="font-size: 11px; background: #2D6A4F; color: #FFFFFF; font-weight: 700; padding: 2px 6px; border-radius: 4px;">열람완료</span>
+                        <h4 style="font-weight: 800; color: #0F172A; font-size: 14px; margin-top: 4px; font-family: 'Noto Serif KR', serif;">${r.title}</h4>
+                    </div>
+                    <button onclick="openArchiveDetail(${idx})" style="background: #2D6A4F; color: #FFFFFF; border: none; font-size: 13px; font-weight: 700; padding: 8px 12px; border-radius: 10px; cursor: pointer;">
+                        📄 다시보기
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function updateCoinDisplay() {
+            document.getElementById('coinHeader').innerText = currentCoin;
+            document.getElementById('coinMypage').innerText = currentCoin;
+        }
+
+        function openChargeStore() { document.getElementById('chargeModal').classList.remove('hidden'); }
+        function closeChargeStore() { document.getElementById('chargeModal').classList.add('hidden'); }
+        function addCoin(amt) {
+            currentCoin += amt;
+            updateCoinDisplay();
+            closeChargeStore();
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const headerCoin = document.getElementById('headerCoinSvg');
+            if (headerCoin) headerCoin.innerHTML = getGoldCoinSvg(16, "#F59E0B");
+            const mypageCoin = document.getElementById('mypageCoinSvg');
+            if (mypageCoin) mypageCoin.innerHTML = getGoldCoinSvg(19, "#F59E0B");
+            const chargeModalCoin = document.getElementById('chargeModalHeaderCoinSvg');
+            if (chargeModalCoin) chargeModalCoin.innerHTML = getGoldCoinSvg(18, "#F59E0B");
+
+            document.querySelectorAll('.btn-coin-icon').forEach(el => { el.innerHTML = getGoldCoinSvg(16, "#D97706"); });
+            document.querySelectorAll('.btn-coin-icon-white').forEach(el => { el.innerHTML = getGoldCoinSvg(16, "#F59E0B"); });
+            document.querySelectorAll('.coin-icon-svg-inline').forEach(el => { el.innerHTML = getGoldCoinSvg(14, "#F59E0B"); });
+
+            const svgMarkup = getTarotCardBackSvg();
+            ['tarotSvgSlot1', 'tarotSvgSlot2', 'tarotSvgSlot3'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.innerHTML = svgMarkup;
+            });
+
+            const talismanPreview = document.getElementById('talismanBannerPreview');
+            if (talismanPreview) talismanPreview.innerHTML = renderAuthenticCinnabarTalisman('metal', 72, 110);
+
+            renderUnlockedArchive();
+            checkUnlockedStates();
+        });
+    </script>
+</body>
+</html>
