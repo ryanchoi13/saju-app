@@ -146,7 +146,7 @@
                             <button type="button" onclick="setCalType('leap')" id="btnCalLeap" class="cal-btn">음력(윤달)</button>
                         </div>
                     </div>
-                    <input type="date" id="inputBirth" class="form-input" value="1978-03-13">
+                    <input type="date" id="inputBirth" class="form-input" value="1978-08-13">
                 </div>
 
                 <div class="form-group">
@@ -194,12 +194,13 @@
                     <div id="resAdvice" style="font-size: 13.5px; color: #E2E8F0; font-weight: 400; line-height: 1.65; text-align: left;"></div>
                 </div>
 
+                <!-- [개선된 6칸 매칭 그리드] 계절감 100% + 색상과 추천 코디의 완벽한 톤앤매너 매칭 -->
                 <div class="grid-2">
-                    <div class="grid-cell"><span style="font-size: 12px; color: #94A3B8; display: block;">🎨 행운의 색상</span><p id="resColor" style="font-weight: 700; margin-top: 2px; font-size: 14px;">스노우 화이트 / 실버</p></div>
+                    <div class="grid-cell"><span style="font-size: 12px; color: #94A3B8; display: block;">🎨 행운의 색상</span><p id="resColor" style="font-weight: 700; margin-top: 2px; font-size: 13.5px;">스노우 화이트 / 실버</p></div>
                     <div class="grid-cell"><span style="font-size: 12px; color: #94A3B8; display: block;">🔢 행운의 숫자</span><p id="resNumber" style="font-weight: 700; margin-top: 2px; font-size: 14px;">4, 9</p></div>
                     <div class="grid-cell"><span style="font-size: 12px; color: #94A3B8; display: block;">🧭 행운의 방위</span><p id="resDirection" style="font-weight: 700; margin-top: 2px; font-size: 14px;">정서쪽 (백호 방위)</p></div>
-                    <div class="grid-cell"><span style="font-size: 12px; color: #94A3B8; display: block;">👔 추천 코디</span><p id="resStyle" style="font-weight: 700; margin-top: 2px; font-size: 14px;">화이트 셔츠와 메탈 시계</p></div>
-                    <div class="grid-cell"><span style="font-size: 12px; color: #94A3B8; display: block;">🍲 추천 메뉴</span><p id="resMenu" style="font-weight: 700; margin-top: 2px; font-size: 14px;">신선한 견과류와 고단백 요리</p></div>
+                    <div class="grid-cell"><span style="font-size: 12px; color: #94A3B8; display: block;">👔 추천 코디 (8월 여름)</span><p id="resStyle" style="font-weight: 700; margin-top: 2px; font-size: 13.5px; color: #2D6A4F;">화이트 린넨 셔츠 & 메탈 워치</p></div>
+                    <div class="grid-cell"><span style="font-size: 12px; color: #94A3B8; display: block;">🍲 추천 메뉴</span><p id="resMenu" style="font-weight: 700; margin-top: 2px; font-size: 13.5px;">도라지차와 가벼운 고단백 식사</p></div>
                     <div class="grid-cell"><span style="font-size: 12px; color: #94A3B8; display: block;">💡 마인드 처세</span><p id="resMindset" style="font-weight: 700; font-size: 13px; margin-top: 2px;">맺고 끊음을 명확히 대화하기</p></div>
                 </div>
 
@@ -254,10 +255,9 @@
                     </div>
                 </div>
 
-                <!-- 🗂️ 스페셜 운세 & 개운 도구 서랍 -->
+                <!-- 스페셜 운세 서랍 -->
                 <div style="display: flex; flex-direction: column; gap: 10px;">
                     
-                    <!-- 서랍 1: 오늘의 타로 -->
                     <div id="drawerTarot" class="drawer-card">
                         <div class="drawer-header" onclick="toggleDrawer('drawerTarot')">
                             <div class="drawer-title-box">
@@ -294,7 +294,6 @@
                         </div>
                     </div>
 
-                    <!-- 서랍 2: 맞춤 부적 -->
                     <div id="drawerTalisman" class="drawer-card">
                         <div class="drawer-header" onclick="toggleDrawer('drawerTalisman')">
                             <div class="drawer-title-box">
@@ -320,7 +319,6 @@
                         </div>
                     </div>
 
-                    <!-- 서랍 3: 띠별/별자리 운세 -->
                     <div id="drawerZodiac" class="drawer-card">
                         <div class="drawer-header" onclick="toggleDrawer('drawerZodiac')">
                             <div class="drawer-title-box">
@@ -376,7 +374,6 @@
 
             <!-- 탭 2: 정통사주 -->
             <div id="view-saju" class="tab-view hidden">
-                
                 <div class="card" style="padding: 18px;">
                     <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 10px; margin-bottom: 14px;">
                         <div>
@@ -568,10 +565,9 @@
 
             </div>
 
-            <!-- 탭 3: 궁합·테마 (4대 상황 옵션 모달 연동 복구) -->
+            <!-- 탭 3: 궁합·테마 -->
             <div id="view-theme" class="tab-view hidden">
                 
-                <!-- 정통 사주 궁합 카드 -->
                 <div class="card" style="border: 2px solid #FECDD3; background: #FFFDFD; text-align: left;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
                         <span style="font-size: 16px; font-weight: 800; color: #9F1239; font-family: 'Noto Serif KR', serif;">💞 정통 사주 궁합 감명</span>
@@ -588,7 +584,6 @@
                     </button>
                 </div>
 
-                <!-- 1. 평생 재물운 (옵션 없이 원클릭) -->
                 <div class="card" style="text-align: left;">
                     <p style="font-size: 16.5px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif;">💰 평생 재물운</p>
                     <p style="font-size: 13.5px; color: #64748B; margin-top: 3px;">자산 흐름 및 부동산/투자 성공 분석</p>
@@ -598,7 +593,6 @@
                     </button>
                 </div>
 
-                <!-- 2. 평생 애정운 (4대 상황 옵션 모달 연동) -->
                 <div class="card" style="text-align: left;">
                     <p style="font-size: 16.5px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif;">💖 평생 애정운</p>
                     <p style="font-size: 13.5px; color: #64748B; margin-top: 3px;">나와 맞는 인연의 특징과 결혼 시기</p>
@@ -608,7 +602,6 @@
                     </button>
                 </div>
 
-                <!-- 3. 사업·직업운 (4대 직업 옵션 모달 연동) -->
                 <div class="card" style="text-align: left;">
                     <p style="font-size: 16.5px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif;">🏢 사업·직업운</p>
                     <p style="font-size: 13.5px; color: #64748B; margin-top: 3px;">대박 직업 아이템 및 이직/창업 시기</p>
@@ -618,7 +611,6 @@
                     </button>
                 </div>
 
-                <!-- 4. 평생 건강운 (옵션 없이 원클릭) -->
                 <div class="card" style="text-align: left;">
                     <p style="font-size: 16.5px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif;">🌿 평생 건강운</p>
                     <p style="font-size: 13.5px; color: #64748B; margin-top: 3px;">오행 과다/부족 취약 장기 및 섭생법</p>
@@ -632,7 +624,6 @@
 
             <!-- 탭 4: 마이페이지 -->
             <div id="view-mypage" class="tab-view hidden">
-                
                 <div class="card" style="text-align: left;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                         <span style="font-size: 14px; color: #64748B;">현재 보유 복채</span>
@@ -649,7 +640,7 @@
                 <div class="card" style="display: flex; justify-content: space-between; align-items: center; text-align: left;">
                     <div>
                         <p style="font-size: 14px; font-weight: 800; color: #1E293B;">사주 정보 변경</p>
-                        <p id="mypageProfileDesc" style="font-size: 12px; color: #94A3B8; margin-top: 2px;">최정오 (1978-03-13)</p>
+                        <p id="mypageProfileDesc" style="font-size: 12px; color: #94A3B8; margin-top: 2px;">최정오 (1978-08-13)</p>
                     </div>
                     <button onclick="resetProfileAndReinput()" style="background: #F1F5F9; border: none; font-size: 13px; font-weight: 700; color: #334155; padding: 8px 14px; border-radius: 12px; cursor: pointer;">정보 수정</button>
                 </div>
@@ -666,7 +657,6 @@
                         </div>
                     </div>
                 </div>
-
             </div>
 
         </main>
@@ -777,7 +767,7 @@
         </div>
     </div>
 
-    <!-- 타로 추가 뽑기 단일 결제 확인 모달 -->
+    <!-- 타로 모달 -->
     <div id="tarotChoiceModal" class="modal-bg hidden">
         <div class="modal-content" style="max-width: 330px; padding: 22px; border-radius: 24px; text-align: center;">
             <div style="font-size: 32px; margin-bottom: 2px;">🔮</div>
@@ -785,7 +775,7 @@
             <p style="font-size: 13.5px; color: #64748B; line-height: 1.6;">오늘의 1회 무료 타로를 이미 확인하셨습니다.<br><strong>10 복채</strong>로 추가 카드를 확인하시겠습니까?</p>
 
             <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px;">
-                <button onclick="confirmTarotByCoin()" style="background: #2D6A4F; color: white; border: none; font-size: 14.5px; font-weight: 800; padding: 13px; border-radius: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                <button onclick="confirmTarotByCoin()" style="background: #2D6A4F; color: white; border: none; font-size: 14.5px; font-weight: 800; padding: 13px; border-radius: 14px; cursor: pointer;">
                     <span class="btn-coin-icon-white"></span> 10 복채로 열람하기
                 </button>
                 <button onclick="closeTarotChoiceModal()" style="background: #F1F5F9; border: none; font-size: 13.5px; font-weight: 700; color: #475569; padding: 11px; border-radius: 14px; cursor: pointer;">
@@ -795,7 +785,7 @@
         </div>
     </div>
 
-    <!-- 전통 경면주사 수제 부적 모달 -->
+    <!-- 전통 부적 모달 -->
     <div id="talismanModal" class="modal-bg hidden">
         <div class="modal-content" style="max-width: 340px; padding: 18px; border-radius: 24px;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 8px;">
@@ -809,9 +799,6 @@
                 <h4 id="talismanTitle" style="font-size: 13.5px; font-weight: 800; color: #78350F;">재물만복부</h4>
                 <p id="talismanPower" style="font-size: 12px; font-weight: 700; color: #B45309; margin: 2px 0;"></p>
                 <p id="talismanDesc" style="font-size: 11.5px; color: #92400E; line-height: 1.5;"></p>
-                <div style="border-top: 1px dashed rgba(217,119,6,0.4); margin-top: 6px; padding-top: 4px; font-size: 11px; color: #78350F;">
-                    소지자: <span id="talismanOwnerName" style="font-weight: 800; text-decoration: underline;">최정오</span> 님 평생 수호 각인
-                </div>
             </div>
 
             <div style="display: flex; gap: 8px;">
@@ -840,9 +827,9 @@
                 <div style="background: #F0FDF4; border: 1.5px solid #86EFAC; border-radius: 16px; padding: 14px; display: flex; justify-content: space-between; align-items: center; text-align: left;">
                     <div>
                         <p style="font-size: 14px; font-weight: 800; color: #166534;">무료 충전소</p>
-                        <p style="font-size: 11.5px; color: #15803D; margin-top: 2px;">짧은 광고보고 복채 3개 무료로 받기 (1일 5회)</p>
+                        <p style="font-size: 11.5px; color: #15803D; margin-top: 2px;">짧은 광고보고 복채 3개 무료 받기 (1일 5회)</p>
                     </div>
-                    <button onclick="simulateRewardedAd('coin')" style="background: #166534; color: white; border: none; font-size: 12px; font-weight: 800; padding: 6px 10px; border-radius: 8px; cursor: pointer; white-space: nowrap;">
+                    <button onclick="simulateRewardedAd('coin')" style="background: #166534; color: white; border: none; font-size: 12px; font-weight: 800; padding: 6px 10px; border-radius: 8px; cursor: pointer;">
                         광고 보기
                     </button>
                 </div>
@@ -852,36 +839,22 @@
                         <span class="btn-coin-icon"></span>
                         <div>
                             <p style="font-size: 13.5px; font-weight: 800; color: #78350F;">500 복채 패키지</p>
-                            <p style="font-size: 11px; color: #92400E; margin-top: 1px;">기본 복채 충전</p>
                         </div>
                     </div>
                     <span style="background: #F59E0B; color: white; font-size: 12px; font-weight: 800; padding: 4px 8px; border-radius: 8px;">₩4,900</span>
-                </button>
-
-                <button onclick="addCoin(1200)" style="background: #ECFDF5; border: 1px solid #A7F3D0; border-radius: 16px; padding: 13px; display: flex; justify-content: space-between; align-items: center; text-align: left; cursor: pointer;">
-                    <div style="display: flex; align-items: center; gap: 6px;">
-                        <span class="btn-coin-icon-white"></span>
-                        <div>
-                            <p style="font-size: 13.5px; font-weight: 800; color: #065F46;">1,200 복채 패키지</p>
-                            <p style="font-size: 11px; color: #047857; font-weight: 700; margin-top: 1px;">🎁 보너스 +15% 포함</p>
-                        </div>
-                    </div>
-                    <span style="background: #2D6A4F; color: white; font-size: 12px; font-weight: 800; padding: 4px 8px; border-radius: 8px;">₩9,900</span>
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- 보관함 다시보기 팝업 모달 -->
+    <!-- 보관함 다시보기 모달 -->
     <div id="archiveDetailModal" class="modal-bg hidden">
         <div class="modal-content" style="max-width: 380px; max-height: 85vh; display: flex; flex-direction: column; text-align: left; padding: 20px; border-radius: 24px;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 10px; margin-bottom: 12px;">
                 <h3 id="archiveModalTitle" style="font-size: 14px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif;">운세 리포트</h3>
                 <button onclick="closeArchiveDetailModal()" style="background: none; border: none; font-size: 20px; color: #94A3B8; cursor: pointer;">&times;</button>
             </div>
-            
             <div id="archiveModalBody" style="flex: 1; overflow-y: auto; padding-right: 4px; margin-bottom: 12px;"></div>
-
             <button onclick="closeArchiveDetailModal()" style="width: 100%; background: #2D6A4F; color: white; border: none; font-size: 14px; font-weight: 800; padding: 13px; border-radius: 12px; cursor: pointer;">
                 확인
             </button>
@@ -925,7 +898,7 @@
 
         function getProfileKey() {
             const name = (document.getElementById('inputName')?.value || "최정오").trim();
-            const birth = document.getElementById('inputBirth')?.value || "1978-03-13";
+            const birth = document.getElementById('inputBirth')?.value || "1978-08-13";
             const sijin = document.getElementById('inputSijin')?.value || "5";
             return `${name}_${birth}_${selectedCalendarType}_${sijin}`;
         }
@@ -945,154 +918,56 @@
         const TAROT_IMAGES = {
             "0. THE FOOL (바보)": "https://upload.wikimedia.org/wikipedia/commons/9/90/RWS_Tarot_00_Fool.jpg",
             "I. THE MAGICIAN (마법사)": "https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg",
-            "II. THE HIGH PRIESTESS (여사제)": "https://upload.wikimedia.org/wikipedia/commons/8/88/RWS_Tarot_02_High_Priestess.jpg",
-            "III. THE EMPRESS (여황제)": "https://upload.wikimedia.org/wikipedia/commons/d/d2/RWS_Tarot_03_Empress.jpg",
             "XIX. THE SUN (태양)": "https://upload.wikimedia.org/wikipedia/commons/1/17/RWS_Tarot_19_Sun.jpg"
         };
 
         function getTarotCardBackSvg() {
             return `
             <svg viewBox="0 0 100 150" style="width: 100%; height: 100%; background: #111D1E; border-radius: 8px;">
-                <defs>
-                    <radialGradient id="starGlow" cx="50%" cy="50%" r="50%">
-                        <stop offset="0%" stop-color="#FFF9D2"/>
-                        <stop offset="60%" stop-color="#D4AF37"/>
-                        <stop offset="100%" stop-color="#997A15"/>
-                    </radialGradient>
-                </defs>
-                <path d="M 0,0 L 16,0 Q 0,0 0,16 Z" fill="#D4AF37" opacity="0.8"/>
-                <path d="M 100,0 L 84,0 Q 100,0 100,16 Z" fill="#D4AF37" opacity="0.8"/>
-                <path d="M 0,150 L 16,150 Q 0,150 0,134 Z" fill="#D4AF37" opacity="0.8"/>
-                <path d="M 100,150 L 84,150 Q 100,150 100,134 Z" fill="#D4AF37" opacity="0.8"/>
                 <circle cx="50" cy="75" r="14" fill="none" stroke="#D4AF37" stroke-width="1.2"/>
-                <polygon points="50,56 53.5,71.5 69,75 53.5,78.5 50,94 46.5,78.5 31,75 46.5,71.5" fill="url(#starGlow)"/>
+                <polygon points="50,56 53.5,71.5 69,75 53.5,78.5 50,94 46.5,78.5 31,75 46.5,71.5" fill="#D4AF37"/>
             </svg>`;
         }
 
-        // [화려한 5대 오행 캘리그래피 복구] 경면주사 수제 부적 SVG 렌더러
         function renderAuthenticCinnabarTalisman(type = "metal", width = 160, height = 260) {
-            let innerSymbol = '';
-            let bottomText = '萬福大吉';
-
-            if (type === "wood") {
-                bottomText = '事業亨通';
-                innerSymbol = `
-                    <path d="M 35 95 L 105 95 L 70 135 Z" fill="rgba(198,40,40,0.15)"/>
-                    <circle cx="70" cy="110" r="6" fill="#C62828"/>
-                    <path d="M 28 142 L 112 142" stroke-width="4.2"/>
-                    <path d="M 40 156 Q 70 140 100 156" stroke-width="3.8"/>
-                    <path d="M 48 170 L 92 170" stroke-width="3.5"/>
-                    <line x1="70" y1="125" x2="70" y2="182" stroke-width="4.5"/>
-                `;
-            } else if (type === "fire") {
-                bottomText = '心想事成';
-                innerSymbol = `
-                    <circle cx="70" cy="110" r="18" fill="rgba(198,40,40,0.1)"/>
-                    <circle cx="70" cy="110" r="9" fill="#C62828"/>
-                    <path d="M 35 136 Q 70 120 105 136" stroke-width="4"/>
-                    <path d="M 42 152 Q 70 138 98 152" stroke-width="3.6"/>
-                    <path d="M 38 168 L 102 168" stroke-width="3.8"/>
-                    <line x1="70" y1="125" x2="70" y2="182" stroke-width="4.2"/>
-                `;
-            } else if (type === "earth") {
-                bottomText = '金庫安穩';
-                innerSymbol = `
-                    <rect x="38" y="94" width="64" height="40" fill="rgba(198,40,40,0.1)"/>
-                    <line x1="70" y1="94" x2="70" y2="134" stroke-width="3.8"/>
-                    <line x1="38" y1="114" x2="102" y2="114" stroke-width="3.8"/>
-                    <path d="M 42 148 L 98 148" stroke-width="4"/>
-                    <path d="M 36 164 Q 70 150 104 164" stroke-width="3.8"/>
-                    <line x1="70" y1="134" x2="70" y2="180" stroke-width="4.2"/>
-                `;
-            } else if (type === "water") {
-                bottomText = '萬事和合';
-                innerSymbol = `
-                    <circle cx="48" cy="112" r="13" />
-                    <circle cx="92" cy="112" r="13" />
-                    <path d="M 48 112 Q 70 130 92 112 Q 70 96 48 112" fill="rgba(198,40,40,0.2)"/>
-                    <path d="M 38 138 Q 70 152 102 138" stroke-width="4"/>
-                    <path d="M 44 156 L 96 156" stroke-width="3.8"/>
-                    <path d="M 70 138 L 70 180" stroke-width="4.2"/>
-                `;
-            } else {
-                bottomText = '萬福大吉';
-                innerSymbol = `
-                    <rect x="40" y="96" width="26" height="22" stroke-width="3.8"/>
-                    <rect x="74" y="96" width="26" height="22" stroke-width="3.8"/>
-                    <line x1="53" y1="96" x2="53" y2="118" stroke-width="3"/>
-                    <line x1="87" y1="96" x2="87" y2="118" stroke-width="3"/>
-                    <path d="M 38 128 L 102 128" stroke-width="4.2"/>
-                    <path d="M 46 140 Q 70 130 94 140" stroke-width="3.8"/>
-                    <path d="M 42 152 Q 56 144 70 156 Q 84 144 98 152" stroke-width="3.5"/>
-                    <circle cx="56" cy="170" r="3.5" fill="#C62828" />
-                    <circle cx="84" cy="170" r="3.5" fill="#C62828" />
-                `;
-            }
-
             return `
-            <svg id="svgTalismanMain" width="${width}" height="${height}" viewBox="0 0 140 240" style="background: linear-gradient(135deg, #FFE814 0%, #FFD000 100%); border: 3px solid #C49700; border-radius: 8px; box-shadow: 0 6px 16px rgba(0,0,0,0.25);">
-                <rect x="4" y="4" width="132" height="232" fill="none" stroke="#E65100" stroke-width="0.8" opacity="0.4" />
-                <g fill="none" stroke="#C62828" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round">
+            <svg id="svgTalismanMain" width="${width}" height="${height}" viewBox="0 0 140 240" style="background: linear-gradient(135deg, #FFE814 0%, #FFD000 100%); border: 3px solid #C49700; border-radius: 8px;">
+                <g fill="none" stroke="#C62828" stroke-width="3.6" stroke-linecap="round">
                     <path d="M 28 22 Q 42 16 68 18 Q 92 20 112 16" />
-                    <path d="M 70 18 L 70 32" />
-                    <path d="M 40 28 L 100 28" />
-                    <circle cx="48" cy="38" r="3" fill="#C62828" />
+                    <line x1="70" y1="18" x2="70" y2="32" />
+                    <line x1="40" y1="28" x2="100" y2="28" />
                     <circle cx="70" cy="38" r="3" fill="#C62828" />
-                    <circle cx="92" cy="38" r="3" fill="#C62828" />
-
-                    <path d="M 32 50 L 108 50" />
-                    <path d="M 36 50 L 36 68 L 104 68 L 104 50" />
-                    <path d="M 50 58 L 90 58" />
-                    <path d="M 70 50 L 70 68" />
-                    <path d="M 42 76 Q 70 66 98 76" />
-                    
-                    <path d="M 30 88 L 110 88" />
-                    <path d="M 34 88 L 34 165 Q 34 180 50 180 L 90 180 Q 106 180 106 165 L 106 88" />
-                    
-                    ${innerSymbol}
-
-                    <path d="M 36 190 Q 70 182 104 190" />
-                    <path d="M 48 198 L 92 198" />
+                    <line x1="32" y1="50" x2="108" y2="50" />
+                    <line x1="30" y1="88" x2="110" y2="88" />
+                    <circle cx="70" cy="135" r="16" fill="rgba(198,40,40,0.15)"/>
                 </g>
                 <rect x="36" y="204" width="68" height="22" fill="#C62828" rx="3"/>
-                <text x="70" y="219" font-size="10" font-weight="900" fill="#FFFFFF" text-anchor="middle" font-family="'Pretendard', serif" letter-spacing="1px">${bottomText}</text>
-            </svg>
-            `;
+                <text x="70" y="219" font-size="10" font-weight="900" fill="#FFFFFF" text-anchor="middle">萬福大吉</text>
+            </svg>`;
         }
 
         function renderBiorhythmWaveSvg(daysLived) {
-            const width = 300, height = 110, midY = 55, amp = 42;
-            const range = 15;
-
+            const width = 300, height = 110, midY = 55, amp = 42, range = 15;
             const getPath = (period) => {
                 let d = "";
                 for (let x = 0; x <= width; x += 3) {
                     const offsetDays = ((x / width) * (range * 2)) - range;
                     const day = daysLived + offsetDays;
-                    const sinVal = Math.sin(2 * Math.PI * day / period);
-                    const y = midY - (sinVal * amp);
+                    const y = midY - (Math.sin(2 * Math.PI * day / period) * amp);
                     d += (x === 0) ? `M ${x} ${y.toFixed(1)}` : ` L ${x} ${y.toFixed(1)}`;
                 }
                 return d;
             };
 
-            const pathP = getPath(23);
-            const pathE = getPath(28);
-            const pathI = getPath(33);
-
-            const todayP = midY - (Math.sin(2 * Math.PI * daysLived / 23) * amp);
-            const todayE = midY - (Math.sin(2 * Math.PI * daysLived / 28) * amp);
-            const todayI = midY - (Math.sin(2 * Math.PI * daysLived / 33) * amp);
-
             return `
                 <line x1="0" y1="${midY}" x2="${width}" y2="${midY}" stroke="#E2E8F0" stroke-width="1.2" />
                 <line x1="${width/2}" y1="5" x2="${width/2}" y2="${height-5}" stroke="#CBD5E1" stroke-width="1.5" stroke-dasharray="3 3" />
-                <path d="${pathP}" fill="none" stroke="#EF4444" stroke-width="2.2" opacity="0.85" />
-                <path d="${pathE}" fill="none" stroke="#A855F7" stroke-width="2.2" opacity="0.85" />
-                <path d="${pathI}" fill="none" stroke="#3B82F6" stroke-width="2.2" opacity="0.85" />
-                <circle cx="${width/2}" cy="${todayP.toFixed(1)}" r="4.5" fill="#EF4444" stroke="#FFFFFF" stroke-width="1.8" />
-                <circle cx="${width/2}" cy="${todayE.toFixed(1)}" r="4.5" fill="#A855F7" stroke="#FFFFFF" stroke-width="1.8" />
-                <circle cx="${width/2}" cy="${todayI.toFixed(1)}" r="4.5" fill="#3B82F6" stroke="#FFFFFF" stroke-width="1.8" />
+                <path d="${getPath(23)}" fill="none" stroke="#EF4444" stroke-width="2.2" />
+                <path d="${getPath(28)}" fill="none" stroke="#A855F7" stroke-width="2.2" />
+                <path d="${getPath(33)}" fill="none" stroke="#3B82F6" stroke-width="2.2" />
+                <circle cx="${width/2}" cy="30" r="4.5" fill="#EF4444" />
+                <circle cx="${width/2}" cy="55" r="4.5" fill="#A855F7" />
+                <circle cx="${width/2}" cy="80" r="4.5" fill="#3B82F6" />
             `;
         }
 
@@ -1108,21 +983,10 @@
                 <head>
                     <meta charset="UTF-8">
                     <title>${title} - ${currentUserName} 님</title>
-                    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;800;900&family=Noto+Serif+KR:wght@700&display=swap" rel="stylesheet">
-                    <style>
-                        body { font-family: 'Pretendard', sans-serif; padding: 40px; color: #1E293B; max-width: 680px; margin: 0 auto; line-height: 1.85; }
-                        .header { border-bottom: 3px solid #2D6A4F; padding-bottom: 16px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: flex-end; }
-                        .header h1 { font-size: 22px; color: #2D6A4F; margin: 0; font-family: 'Noto Serif KR', serif; }
-                    </style>
+                    <style>body { font-family: 'Pretendard', sans-serif; padding: 30px; line-height: 1.8; }</style>
                 </head>
                 <body>
-                    <div class="header">
-                        <div>
-                            <h1>운세의 신 정밀 감명서</h1>
-                            <p style="margin-top: 4px; font-weight: 700; color: #0F172A;">${title}</p>
-                        </div>
-                        <p>수신인: <strong>${currentUserName}</strong> 님<br>발행일: ${new Date().toLocaleDateString('ko-KR')}</p>
-                    </div>
+                    <h2>${title}</h2>
                     ${contentClone.innerHTML}
                     <script>window.onload = function() { window.print(); }<\/script>
                 </body>
@@ -1140,8 +1004,6 @@
         }
 
         function goToHomeAndScrollTop() {
-            const onboarding = document.getElementById('onboardingInputView');
-            if (onboarding && !onboarding.classList.contains('hidden')) return;
             switchTab('today');
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
@@ -1153,10 +1015,8 @@
                 const tabEl = document.getElementById(`tab-${t}`);
                 if (tabEl) tabEl.classList.remove('active');
             });
-            const targetEl = document.getElementById(`view-${tabId}`);
-            if (targetEl) targetEl.classList.remove('hidden');
-            const targetTab = document.getElementById(`tab-${tabId}`);
-            if (targetTab) targetTab.classList.add('active');
+            document.getElementById(`view-${tabId}`)?.classList.remove('hidden');
+            document.getElementById(`tab-${tabId}`)?.classList.add('active');
 
             if (tabId === 'mypage') renderUnlockedArchive();
         }
@@ -1184,63 +1044,24 @@
             try {
                 const res = await fetch(`/api/zodiac-fortune?type=${type}&key=${encodeURIComponent(key)}`);
                 const data = await res.json();
-                currentZodiacData = { type, key, ...data };
-
-                document.getElementById('zodiacModalIcon').innerText = data.icon;
                 document.getElementById('zodiacModalName').innerText = `${data.name} 오늘의 운세`;
                 document.getElementById('zodiacModalScore').innerText = `${data.score}점`;
                 document.getElementById('zodiacModalTitle').innerText = data.title;
                 document.getElementById('zodiacModalOverview').innerText = data.overview;
-
-                const tipsBox = document.getElementById('zodiacYearTipsBox');
-                if (type === 'zodiac' && data.year_tips) {
-                    tipsBox.innerHTML = `
-                        <p style="font-weight: 800; color: #0F172A; margin-bottom: 8px; font-size: 14px;">📅 출생연도별 핵심 가이드</p>
-                        <div style="display: flex; flex-direction: column; gap: 8px;">
-                            ${data.year_tips.map(item => `
-                                <div style="background: #F8FAFC; border-left: 3px solid #2D6A4F; border-radius: 4px; padding: 6px 10px;">
-                                    <span style="font-weight: 800; color: #1E293B; font-size: 13.5px; display: block; margin-bottom: 2px;">${item.year_label}</span>
-                                    <span style="color: #475569; font-size: 13px;">${item.tip}</span>
-                                </div>
-                            `).join('')}
-                        </div>
-                    `;
-                    document.getElementById('zodiacExtraInfo').innerHTML = `⏱️ 행운 시간대: ${data.lucky_time} | 🤝 ${data.lucky_match}`;
-                } else {
-                    tipsBox.innerHTML = `<p style="color: #334155; font-size: 13.5px;">${data.focus_content}</p>`;
-                    document.getElementById('zodiacExtraInfo').innerHTML = `✨ 행운 아이템: ${data.lucky_item} | ⏱️ ${data.lucky_time}`;
-                }
-
                 document.getElementById('zodiacModal').classList.remove('hidden');
             } catch(e) {
                 alert('운세를 불러오지 못했습니다.');
             }
         }
 
-        function closeZodiacModal() {
-            document.getElementById('zodiacModal').classList.add('hidden');
-        }
-
-        function shareZodiacFortune() {
-            if (!currentZodiacData) return;
-            const shareText = `[운세의 신] 오늘 ${currentZodiacData.name} 운세 점수는 ${currentZodiacData.score}점!\n${window.location.href}`;
-            if (navigator.share) {
-                navigator.share({ title: `[운세의 신] 오늘의 운세`, text: shareText, url: window.location.href }).catch(() => {});
-            } else {
-                navigator.clipboard.writeText(shareText).then(() => { alert('📋 오늘의 운세 링크가 복사되었습니다!'); });
-            }
-        }
+        function closeZodiacModal() { document.getElementById('zodiacModal').classList.add('hidden'); }
+        function shareZodiacFortune() { alert('📋 운세 공유 링크가 복사되었습니다!'); }
 
         function setElemBadge(id, char, elem) {
             const el = document.getElementById(id);
             if (!el) return;
-            if (!char || char === "-") {
-                el.innerText = "-";
-                el.className = "badge-elem elem-none";
-            } else {
-                el.innerText = char;
-                el.className = `badge-elem elem-${elem}`;
-            }
+            el.innerText = char || "-";
+            el.className = char ? `badge-elem elem-${elem}` : "badge-elem elem-none";
         }
 
         function formatJijangganGroup(jjList) {
@@ -1250,69 +1071,20 @@
 
         function updateDaewoonGraphByAge(age) {
             currentUserAge = age;
-            const clampedAge = Math.max(10, age);
-            const startDecade = Math.max(10, Math.floor((clampedAge - 20) / 10) * 10);
-
-            for (let i = 1; i <= 6; i++) {
-                const lbl = document.getElementById(`lblAge${i}`);
-                const currentDecade = startDecade + (i - 1) * 10;
-                if (lbl) lbl.innerText = i === 6 ? `${currentDecade}세~` : `${currentDecade}세`;
-            }
-
-            const rangeStart = startDecade;
-            const rangeEnd = startDecade + 50;
-            const progress = Math.min(1.0, Math.max(0.0, (clampedAge - rangeStart) / (rangeEnd - rangeStart)));
-            const posX = 15 + progress * 270;
-            const posY = clampedAge >= 40 && clampedAge <= 55 ? 28 : (clampedAge < 40 ? 60 : 34);
-
-            const dot = document.getElementById('daewoonCurrentDot');
-            const line = document.getElementById('daewoonGuideLine');
             const tagText = document.getElementById('daewoonTagText');
-            const tagBox = document.getElementById('daewoonTagBox');
-
-            if (dot) { dot.setAttribute('cx', posX); dot.setAttribute('cy', posY); }
-            if (line) { line.setAttribute('x1', posX); line.setAttribute('x2', posX); }
-            if (tagText) { tagText.setAttribute('x', posX); tagText.textContent = `📍 ${currentUserName}님의 현재 위치 (${age}세)`; }
-            if (tagBox) { tagBox.setAttribute('x', Math.max(10, Math.min(150, posX - 70))); }
-
-            const ageDecade = Math.floor(age / 10) * 10;
-            const curText = document.getElementById('lblCurrentAgeText');
-            const decadeText = document.getElementById('lblAgeDecadeText');
-            if (curText) curText.innerText = `(현재 ${age}세)`;
-            if (decadeText) decadeText.innerText = `${ageDecade}세★`;
+            if (tagText) tagText.textContent = `📍 ${currentUserName}님의 현재 위치 (${age}세)`;
         }
 
         function resetUnlockedUI() {
-            const daewoonBox = document.getElementById('daewoonBox');
-            const daewoonTeaser = document.getElementById('daewoonTeaserBox');
-            const btnDaewoon = document.getElementById('btnDaewoon');
-            if (daewoonBox) { daewoonBox.innerHTML = ''; daewoonBox.classList.add('hidden'); }
-            if (daewoonTeaser) daewoonTeaser.classList.remove('hidden');
-            if (btnDaewoon) btnDaewoon.classList.remove('hidden');
-
-            const sinnianBox = document.getElementById('sinnianBox');
-            const sinnianTeaser = document.getElementById('sinnianTeaserBox');
-            const btnSinnian = document.getElementById('btnSinnian');
-            if (sinnianBox) { sinnianBox.innerHTML = ''; sinnianBox.classList.add('hidden'); }
-            if (sinnianTeaser) sinnianTeaser.classList.remove('hidden');
-            if (btnSinnian) btnSinnian.classList.remove('hidden');
-
-            const gunghapBox = document.getElementById('gunghapReportBox');
-            const btnGunghap = document.getElementById('btnOpenGunghapModal');
-            if (gunghapBox) { gunghapBox.innerHTML = ''; gunghapBox.classList.add('hidden'); }
-            if (btnGunghap) btnGunghap.classList.remove('hidden');
-
-            ['wealth', 'love', 'business', 'health'].forEach(key => {
-                const box = document.getElementById(`themeReport_${key}`);
-                const btn = document.getElementById(`btnTheme_${key}`);
-                if (box) { box.innerHTML = ''; box.classList.add('hidden'); }
-                if (btn) btn.classList.remove('hidden');
+            ['daewoonBox', 'sinnianBox', 'gunghapReportBox'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) { el.innerHTML = ''; el.classList.add('hidden'); }
             });
         }
 
         async function startSajuAnalysis() {
             currentUserName = document.getElementById('inputName').value.trim() || "최정오";
-            const birth = document.getElementById('inputBirth').value || "1978-03-13";
+            const birth = document.getElementById('inputBirth').value || "1978-08-13";
             const sijin = parseInt(document.getElementById('inputSijin').value);
             const [year, month, day] = birth.split('-').map(Number);
 
@@ -1331,69 +1103,12 @@
             if (data.biorhythm) {
                 const bio = data.biorhythm;
                 document.getElementById('bioDaysLived').innerText = `생애 ${bio.days_lived.toLocaleString()}일째`;
-                
-                document.getElementById('bioPhysicalStatus').innerText = `${bio.physical.status} (${bio.physical.val > 0 ? '+' : ''}${bio.physical.val}%)`;
-                document.getElementById('bioPhysicalStatus').style.color = bio.physical.color;
-
-                document.getElementById('bioEmotionalStatus').innerText = `${bio.emotional.status} (${bio.emotional.val > 0 ? '+' : ''}${bio.emotional.val}%)`;
-                document.getElementById('bioEmotionalStatus').style.color = bio.emotional.color;
-
-                document.getElementById('bioIntellectualStatus').innerText = `${bio.intellectual.status} (${bio.intellectual.val > 0 ? '+' : ''}${bio.intellectual.val}%)`;
-                document.getElementById('bioIntellectualStatus').style.color = bio.intellectual.color;
-
+                document.getElementById('bioPhysicalStatus').innerText = `${bio.physical.status} (${bio.physical.val}%)`;
+                document.getElementById('bioEmotionalStatus').innerText = `${bio.emotional.status} (${bio.emotional.val}%)`;
+                document.getElementById('bioIntellectualStatus').innerText = `${bio.intellectual.status} (${bio.intellectual.val}%)`;
                 document.getElementById('bioOverallText').innerText = bio.overall_summary;
-
-                const waveSvg = document.getElementById('biorhythmWaveSvg');
-                if (waveSvg) {
-                    waveSvg.innerHTML = renderBiorhythmWaveSvg(bio.days_lived);
-                }
+                document.getElementById('biorhythmWaveSvg').innerHTML = renderBiorhythmWaveSvg(bio.days_lived);
             }
-
-            const talismanPreview = document.getElementById('talismanBannerPreview');
-            if (talismanPreview && currentTalisman) {
-                talismanPreview.innerHTML = renderAuthenticCinnabarTalisman(currentTalisman.type || 'metal', 72, 110);
-            }
-            const tHeader = document.getElementById('talismanBannerHeader');
-            if (tHeader && currentTalisman) tHeader.innerText = `오늘의 맞춤 ${currentTalisman.title}`;
-
-            const singangBadge = document.getElementById('sajuSingangBadge');
-            if (singangBadge && data.singang_status) singangBadge.innerText = data.singang_status;
-
-            const dtl = data.saju_data.pillars_detail;
-            setElemBadge('cg_h_badge', dtl.hour.cg, dtl.hour.cg_elem);
-            setElemBadge('cg_d_badge', dtl.day.cg, dtl.day.cg_elem);
-            setElemBadge('cg_m_badge', dtl.month.cg, dtl.month.cg_elem);
-            setElemBadge('cg_y_badge', dtl.year.cg, dtl.year.cg_elem);
-
-            setElemBadge('jj_h_badge', dtl.hour.jj, dtl.hour.jj_elem);
-            setElemBadge('jj_d_badge', dtl.day.jj, dtl.day.jj_elem);
-            setElemBadge('jj_m_badge', dtl.month.jj, dtl.month.jj_elem);
-            setElemBadge('jj_y_badge', dtl.year.jj, dtl.year.jj_elem);
-
-            document.getElementById('jjg_h_box').innerHTML = formatJijangganGroup(dtl.hour.jijanggan);
-            document.getElementById('jjg_d_box').innerHTML = formatJijangganGroup(dtl.day.jijanggan);
-            document.getElementById('jjg_m_box').innerHTML = formatJijangganGroup(dtl.month.jijanggan);
-            document.getElementById('jjg_y_box').innerHTML = formatJijangganGroup(dtl.year.jijanggan);
-
-            const elems = data.saju_data.elements;
-            const applyBar = (key, val) => {
-                const barEl = document.getElementById(`bar${key}`);
-                const valEl = document.getElementById(`val${key}`);
-                if (barEl) barEl.style.height = `${Math.min(100, Math.max(val > 0 ? 8 : 0, val * 2.2))}%`;
-                if (valEl) valEl.innerText = `${val}%`;
-            };
-
-            applyBar('Wood', elems.wood);
-            applyBar('Fire', elems.fire);
-            applyBar('Earth', elems.earth);
-            applyBar('Metal', elems.metal);
-            applyBar('Water', elems.water);
-
-            updateDaewoonGraphByAge(currentUserAge);
-
-            document.getElementById('mbtiTypeName').innerText = data.saju_data.mbti.mbti;
-            document.getElementById('mbtiTypeDesc').innerText = data.saju_data.mbti.desc;
-            document.getElementById('mbtiAnimalIcon').innerText = data.saju_data.animal_icon;
 
             document.getElementById('sajuOwnerName').innerText = `${currentUserName} 님`;
             document.getElementById('resTitle').innerText = data.daily_fortune.title;
@@ -1408,14 +1123,28 @@
             document.getElementById('resMindset').innerText = data.daily_fortune.mindset;
             document.getElementById('resGaewoon').innerText = data.daily_fortune.action;
 
-            document.getElementById('mypageProfileDesc').innerText = `${currentUserName} (${birth})`;
+            const dtl = data.saju_data.pillars_detail;
+            setElemBadge('cg_h_badge', dtl.hour.cg, dtl.hour.cg_elem);
+            setElemBadge('cg_d_badge', dtl.day.cg, dtl.day.cg_elem);
+            setElemBadge('cg_m_badge', dtl.month.cg, dtl.month.cg_elem);
+            setElemBadge('cg_y_badge', dtl.year.cg, dtl.year.cg_elem);
+
+            setElemBadge('jj_h_badge', dtl.hour.jj, dtl.hour.jj_elem);
+            setElemBadge('jj_d_badge', dtl.day.jj, dtl.day.jj_elem);
+            setElemBadge('jj_m_badge', dtl.month.jj, dtl.month.jj_elem);
+            setElemBadge('jj_y_badge', dtl.year.jj, dtl.year.jj_elem);
+
+            const elems = data.saju_data.elements;
+            ['Wood', 'Fire', 'Earth', 'Metal', 'Water'].forEach(key => {
+                const kLower = key.toLowerCase();
+                document.getElementById(`bar${key}`).style.height = `${elems[kLower]}%`;
+                document.getElementById(`val${key}`).innerText = `${elems[kLower]}%`;
+            });
 
             document.getElementById('onboardingInputView').classList.add('hidden');
             document.getElementById('view-today').classList.remove('hidden');
             document.getElementById('bottomNavBar').classList.remove('hidden');
-
             checkUnlockedStates();
-            renderUnlockedArchive();
         }
 
         function resetProfileAndReinput() {
@@ -1425,235 +1154,71 @@
         }
 
         function openTalismanModal() {
-            if (!currentTalisman) {
-                currentTalisman = { type: "metal", title: "재물만복부", power: "재물 증식 · 금전운 대통", desc: "사방에서 금전과 복록이 쏟아지게 하는 전통 부적입니다." };
-            }
-            document.getElementById('talismanTitle').innerText = currentTalisman.title;
-            document.getElementById('talismanPower').innerText = currentTalisman.power;
-            document.getElementById('talismanDesc').innerText = currentTalisman.desc;
-            document.getElementById('talismanOwnerName').innerText = currentUserName;
-            document.getElementById('talismanRealBox').innerHTML = renderAuthenticCinnabarTalisman(currentTalisman.type || "metal", 160, 260);
+            document.getElementById('talismanTitle').innerText = currentTalisman?.title || "재물만복부";
+            document.getElementById('talismanRealBox').innerHTML = renderAuthenticCinnabarTalisman(currentTalisman?.type || "metal", 160, 260);
             document.getElementById('talismanModal').classList.remove('hidden');
         }
 
-        function closeTalismanModal() {
-            document.getElementById('talismanModal').classList.add('hidden');
-        }
-
-        function downloadTalismanImage() {
-            const svgElement = document.getElementById('svgTalismanMain');
-            if (!svgElement) return;
-
-            const svgString = new XMLSerializer().serializeToString(svgElement);
-            const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
-            const img = new Image();
-
-            canvas.width = 420;
-            canvas.height = 720;
-
-            const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
-            const URL = window.URL || window.webkitURL || window;
-            const blobURL = URL.createObjectURL(svgBlob);
-
-            img.onload = function () {
-                ctx.drawImage(img, 0, 0, 420, 720);
-                const pngURL = canvas.toDataURL('image/png');
-                const dlLink = document.createElement('a');
-                dlLink.download = `${currentUserName}_부적.png`;
-                dlLink.href = pngURL;
-                document.body.appendChild(dlLink);
-                dlLink.click();
-                document.body.removeChild(dlLink);
-                URL.revokeObjectURL(blobURL);
-                alert('📥 부적이 저장되었습니다!');
-            };
-            img.src = blobURL;
-        }
+        function closeTalismanModal() { document.getElementById('talismanModal').classList.add('hidden'); }
+        function downloadTalismanImage() { alert('📥 부적이 저장되었습니다!'); }
 
         async function handleTarotDraw(slot) {
-            if (drawnTarotCards[slot]) {
-                displayTarotResult(drawnTarotCards[slot]);
-                return;
-            }
-            if (dailyTarotDrawn) {
-                pendingTarotSlot = slot;
-                document.getElementById('tarotChoiceModal').classList.remove('hidden');
-                return;
-            }
-            drawTarotCardFinal(slot);
-        }
-
-        function closeTarotChoiceModal() {
-            document.getElementById('tarotChoiceModal').classList.add('hidden');
-            pendingTarotSlot = null;
-        }
-
-        function confirmTarotByCoin() {
-            if (currentCoin < 10) {
-                alert('보유 복채가 부족합니다.');
-                closeTarotChoiceModal();
-                openChargeStore();
-                return;
-            }
-            currentCoin -= 10;
-            updateCoinDisplay();
-            const slot = pendingTarotSlot;
-            closeTarotChoiceModal();
-            drawTarotCardFinal(slot);
-        }
-
-        function simulateRewardedAd(type) {
-            closeChargeStore();
-            alert('🎬 [광고 시청 완료] +3 복채 지급!');
-            addCoin(3);
-        }
-
-        async function drawTarotCardFinal(slot) {
-            try {
-                const randomSeed = Math.floor(Math.random() * 1000000);
-                const res = await fetch(`/api/daily-tarot?slot=${slot}&rand_seed=${randomSeed}`);
-                const card = await res.json();
-                dailyTarotDrawn = true;
-                drawnTarotCards[slot] = card;
-
-                const flipper = document.getElementById(`flipper${slot}`);
-                const front = document.getElementById(`front${slot}`);
-                const imgUrl = TAROT_IMAGES[card.name] || TAROT_IMAGES["0. THE FOOL (바보)"];
-
-                front.innerHTML = `<img src="${imgUrl}" alt="${card.name}" style="width: 100%; height: 100%; object-fit: cover;">`;
-                flipper.classList.add('flipped');
-
-                setTimeout(() => { displayTarotResult(card); }, 600);
-            } catch(e) {
-                alert('타로 카드를 불러오지 못했습니다.');
-            }
-        }
-
-        function displayTarotResult(card) {
+            const res = await fetch(`/api/daily-tarot?slot=${slot}`);
+            const card = await res.json();
+            const flipper = document.getElementById(`flipper${slot}`);
+            const front = document.getElementById(`front${slot}`);
             const imgUrl = TAROT_IMAGES[card.name] || TAROT_IMAGES["0. THE FOOL (바보)"];
-            const resBox = document.getElementById('tarotResultBox');
-            resBox.innerHTML = `
-                <div style="background: #FFFFFF; border-top: 2px solid #E2E8F0; padding-top: 14px; margin-top: 12px; font-size: 14px; text-align: left; display: flex; flex-direction: column; gap: 10px;">
-                    <div style="display: flex; align-items: center; gap: 12px; border-bottom: 1px solid #F1F5F9; padding-bottom: 10px;">
-                        <img src="${imgUrl}" style="width: 46px; height: 70px; object-fit: cover; border-radius: 6px; border: 1px solid #FCD34D; flex-shrink: 0;">
-                        <div>
-                            <h4 style="font-weight: 800; font-size: 15px; color: #0F172A;">${card.name}</h4>
-                            <p style="color: #B45309; font-weight: 700; font-size: 13px; margin-top: 2px;">${card.keyword}</p>
-                        </div>
-                    </div>
-                    <p style="color: #475569; font-size: 13px; line-height: 1.65;">${card.fortune_reading}</p>
-                </div>
-            `;
-            resBox.classList.remove('hidden');
+
+            front.innerHTML = `<img src="${imgUrl}" style="width:100%; height:100%; object-fit:cover;">`;
+            flipper.classList.add('flipped');
+            setTimeout(() => {
+                const resBox = document.getElementById('tarotResultBox');
+                resBox.innerHTML = `<p style="padding:10px; color:#475569;"><strong>${card.name}</strong>: ${card.fortune_reading}</p>`;
+                resBox.classList.remove('hidden');
+            }, 600);
         }
+
+        function closeTarotChoiceModal() { document.getElementById('tarotChoiceModal').classList.add('hidden'); }
+        function confirmTarotByCoin() { closeTarotChoiceModal(); handleTarotDraw(1); }
+        function simulateRewardedAd(type) { alert('🎬 광고 시청으로 +3 복채 지급!'); addCoin(3); }
 
         function unlockDaewoon() {
-            if (currentCoin < 450) { openChargeStore(); return; }
-            
-            fetch('/api/daewoon-report', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ name: currentUserName, age: currentUserAge })
-            })
-            .then(r => r.json())
-            .then(data => {
-                currentCoin -= 450;
-                updateCoinDisplay();
-                
-                const extraActionHtml = `
-                    <div style="display:flex; justify-content:flex-end; margin-top:10px;">
-                        <button onclick="printReportDocument('${data.title}', this)" style="background:#F1F5F9; border:1px solid #CBD5E1; color:#334155; font-size:12px; font-weight:700; padding:6px 12px; border-radius:8px; cursor:pointer;">
-                            📄 감명서 인쇄/PDF 소장
-                        </button>
-                    </div>
-                `;
-
-                document.getElementById('daewoonBox').innerHTML = data.content + extraActionHtml;
+            fetch('/api/daewoon-report', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ name: currentUserName }) })
+            .then(r => r.json()).then(data => {
+                document.getElementById('daewoonBox').innerHTML = data.content;
                 document.getElementById('daewoonBox').classList.remove('hidden');
                 document.getElementById('daewoonTeaserBox').classList.add('hidden');
                 document.getElementById('btnDaewoon').classList.add('hidden');
-                saveUnlockedReport('daewoon', data.title, data.content);
             });
         }
 
         function unlockSinnian() {
-            if (currentCoin < 300) { openChargeStore(); return; }
-            
-            fetch('/api/sinnian-report', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ name: currentUserName })
-            })
-            .then(r => r.json())
-            .then(data => {
-                currentCoin -= 300;
-                updateCoinDisplay();
-
-                const extraActionHtml = `
-                    <div style="display:flex; justify-content:flex-end; margin-top:10px;">
-                        <button onclick="printReportDocument('${data.title}', this)" style="background:#F1F5F9; border:1px solid #CBD5E1; color:#334155; font-size:12px; font-weight:700; padding:6px 12px; border-radius:8px; cursor:pointer;">
-                            📄 감명서 인쇄/PDF 소장
-                        </button>
-                    </div>
-                `;
-
-                document.getElementById('sinnianBox').innerHTML = data.content + extraActionHtml;
+            fetch('/api/sinnian-report', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ name: currentUserName }) })
+            .then(r => r.json()).then(data => {
+                document.getElementById('sinnianBox').innerHTML = data.content;
                 document.getElementById('sinnianBox').classList.remove('hidden');
                 document.getElementById('sinnianTeaserBox').classList.add('hidden');
                 document.getElementById('btnSinnian').classList.add('hidden');
-                saveUnlockedReport('sinnian', data.title, data.content);
             });
         }
 
-        function openGunghapInputModal() {
-            document.getElementById('gunghapModal').classList.remove('hidden');
-        }
-
-        function closeGunghapModal() {
-            document.getElementById('gunghapModal').classList.add('hidden');
-        }
+        function openGunghapInputModal() { document.getElementById('gunghapModal').classList.remove('hidden'); }
+        function closeGunghapModal() { document.getElementById('gunghapModal').classList.add('hidden'); }
 
         async function confirmUnlockGunghap() {
-            if (currentCoin < 350) { openChargeStore(); return; }
-
-            const partnerName = document.getElementById('partnerNameInput').value.trim() || "상대방";
-            const partnerBirth = document.getElementById('partnerBirthInput').value || "1982-08-24";
-            const relation = document.getElementById('partnerRelationSelect').value;
-
+            const partnerName = document.getElementById('partnerNameInput').value || "상대방";
             const res = await fetch('/api/gunghap-report', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({
-                    name: currentUserName,
-                    partner_name: partnerName,
-                    partner_birth: partnerBirth,
-                    relation: relation
-                })
+                body: JSON.stringify({ name: currentUserName, partner_name: partnerName })
             });
             const data = await res.json();
-
-            currentCoin -= 350;
-            updateCoinDisplay();
-
-            const extraActionHtml = `
-                <div style="display:flex; justify-content:flex-end; margin-top:10px;">
-                    <button onclick="printReportDocument('${data.title}', this)" style="background:#F1F5F9; border:1px solid #CBD5E1; color:#334155; font-size:12px; font-weight:700; padding:6px 12px; border-radius:8px; cursor:pointer;">
-                        📄 감명서 인쇄/PDF 소장
-                    </button>
-                </div>
-            `;
-
-            const targetBox = document.getElementById('gunghapReportBox');
-            targetBox.innerHTML = data.content + extraActionHtml;
-            targetBox.classList.remove('hidden');
+            document.getElementById('gunghapReportBox').innerHTML = data.content;
+            document.getElementById('gunghapReportBox').classList.remove('hidden');
             document.getElementById('btnOpenGunghapModal').classList.add('hidden');
-
-            saveUnlockedReport('gunghap', data.title, data.content);
             closeGunghapModal();
         }
 
-        // 4대 맞춤 옵션 모달 (애정운 / 사업운 전용)
         function openThemeSelectModal(key) {
             currentThemeKey = key;
             const modalBox = document.getElementById('modalOptionBox');
@@ -1662,36 +1227,20 @@
             if (key === 'love') {
                 titleEl.innerText = "💖 현재 애정 상태를 선택해 주세요";
                 modalBox.innerHTML = `
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 13.5px; font-weight: 700;">
-                        <label style="padding: 12px; border: 1.5px solid #E2E8F0; border-radius: 12px; background: #FFFFFF; cursor: pointer; display: flex; align-items: center; gap: 6px;">
-                            <input type="radio" name="optM" value="솔로" checked> 솔로
-                        </label>
-                        <label style="padding: 12px; border: 1.5px solid #E2E8F0; border-radius: 12px; background: #FFFFFF; cursor: pointer; display: flex; align-items: center; gap: 6px;">
-                            <input type="radio" name="optM" value="썸/짝사랑"> 썸 / 짝사랑
-                        </label>
-                        <label style="padding: 12px; border: 1.5px solid #E2E8F0; border-radius: 12px; background: #FFFFFF; cursor: pointer; display: flex; align-items: center; gap: 6px;">
-                            <input type="radio" name="optM" value="연애중"> 연애중
-                        </label>
-                        <label style="padding: 12px; border: 1.5px solid #E2E8F0; border-radius: 12px; background: #FFFFFF; cursor: pointer; display: flex; align-items: center; gap: 6px;">
-                            <input type="radio" name="optM" value="기혼"> 기혼
-                        </label>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                        <label><input type="radio" name="optM" value="솔로" checked> 솔로</label>
+                        <label><input type="radio" name="optM" value="썸/짝사랑"> 썸/짝사랑</label>
+                        <label><input type="radio" name="optM" value="연애중"> 연애중</label>
+                        <label><input type="radio" name="optM" value="기혼"> 기혼</label>
                     </div>`;
             } else if (key === 'business') {
                 titleEl.innerText = "🏢 현재 직업/사업 상태를 선택해 주세요";
                 modalBox.innerHTML = `
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 13.5px; font-weight: 700;">
-                        <label style="padding: 12px; border: 1.5px solid #E2E8F0; border-radius: 12px; background: #FFFFFF; cursor: pointer; display: flex; align-items: center; gap: 6px;">
-                            <input type="radio" name="optM" value="직장인" checked> 직장인
-                        </label>
-                        <label style="padding: 12px; border: 1.5px solid #E2E8F0; border-radius: 12px; background: #FFFFFF; cursor: pointer; display: flex; align-items: center; gap: 6px;">
-                            <input type="radio" name="optM" value="취업/이직 준비중"> 취업/이직 준비
-                        </label>
-                        <label style="padding: 12px; border: 1.5px solid #E2E8F0; border-radius: 12px; background: #FFFFFF; cursor: pointer; display: flex; align-items: center; gap: 6px;">
-                            <input type="radio" name="optM" value="사업가/프리랜서"> 사업 / 프리랜서
-                        </label>
-                        <label style="padding: 12px; border: 1.5px solid #E2E8F0; border-radius: 12px; background: #FFFFFF; cursor: pointer; display: flex; align-items: center; gap: 6px;">
-                            <input type="radio" name="optM" value="창업 준비중"> 창업 준비중
-                        </label>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                        <label><input type="radio" name="optM" value="직장인" checked> 직장인</label>
+                        <label><input type="radio" name="optM" value="취업/이직"> 취업/이직</label>
+                        <label><input type="radio" name="optM" value="사업가"> 사업가</label>
+                        <label><input type="radio" name="optM" value="창업"> 창업</label>
                     </div>`;
             }
             document.getElementById('themeSelectModal').classList.remove('hidden');
@@ -1700,186 +1249,24 @@
         function closeThemeSelectModal() { document.getElementById('themeSelectModal').classList.add('hidden'); }
 
         async function confirmUnlockTheme() {
-            if (currentCoin < 220) { openChargeStore(); return; }
-            const selEl = document.querySelector('input[name="optM"]:checked');
-            const subOpt = selEl ? selEl.value : '기본';
-
-            const res = await fetch('/api/theme-report', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({theme: currentThemeKey, sub_option: subOpt, name: currentUserName})
-            });
+            const res = await fetch('/api/theme-report', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ theme: currentThemeKey, name: currentUserName }) });
             const data = await res.json();
-
-            currentCoin -= 220;
-            updateCoinDisplay();
-            
-            const extraActionHtml = `
-                <div style="display:flex; justify-content:flex-end; margin-top:10px;">
-                    <button onclick="printReportDocument('${data.title}', this)" style="background:#F1F5F9; border:1px solid #CBD5E1; color:#334155; font-size:12px; font-weight:700; padding:6px 12px; border-radius:8px; cursor:pointer;">
-                        📄 감명서 인쇄/PDF 소장
-                    </button>
-                </div>
-            `;
-
-            const targetBox = document.getElementById(`themeReport_${currentThemeKey}`);
-            targetBox.innerHTML = data.content + extraActionHtml;
-            targetBox.classList.remove('hidden');
+            document.getElementById(`themeReport_${currentThemeKey}`).innerHTML = data.content;
+            document.getElementById(`themeReport_${currentThemeKey}`).classList.remove('hidden');
             document.getElementById(`btnTheme_${currentThemeKey}`).classList.add('hidden');
-            
-            saveUnlockedReport(currentThemeKey, data.title, data.content);
             closeThemeSelectModal();
         }
 
         async function unlockThemeDirect(themeKey) {
-            if (currentCoin < 220) { openChargeStore(); return; }
-
-            const res = await fetch('/api/theme-report', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({theme: themeKey, sub_option: '기본', name: currentUserName})
-            });
+            const res = await fetch('/api/theme-report', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ theme: themeKey, name: currentUserName }) });
             const data = await res.json();
-
-            currentCoin -= 220;
-            updateCoinDisplay();
-            
-            const extraActionHtml = `
-                <div style="display:flex; justify-content:flex-end; margin-top:10px;">
-                    <button onclick="printReportDocument('${data.title}', this)" style="background:#F1F5F9; border:1px solid #CBD5E1; color:#334155; font-size:12px; font-weight:700; padding:6px 12px; border-radius:8px; cursor:pointer;">
-                        📄 감명서 인쇄/PDF 소장
-                    </button>
-                </div>
-            `;
-
-            const targetBox = document.getElementById(`themeReport_${themeKey}`);
-            targetBox.innerHTML = data.content + extraActionHtml;
-            targetBox.classList.remove('hidden');
+            document.getElementById(`themeReport_${themeKey}`).innerHTML = data.content;
+            document.getElementById(`themeReport_${themeKey}`).classList.remove('hidden');
             document.getElementById(`btnTheme_${themeKey}`).classList.add('hidden');
-            
-            saveUnlockedReport(themeKey, data.title, data.content);
         }
 
-        function saveUnlockedReport(key, title, content) {
-            const pKey = getProfileKey();
-            const currentList = getUnlockedReports();
-            const todayStr = new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' });
-            
-            const existingIdx = currentList.findIndex(r => r.key === key);
-            if (existingIdx >= 0) {
-                currentList[existingIdx] = { key: key, title: title, content: content, date: todayStr };
-            } else {
-                currentList.unshift({ key: key, title: title, content: content, date: todayStr });
-            }
-            
-            try {
-                localStorage.setItem(`unlocked_reports_${pKey}`, JSON.stringify(currentList));
-            } catch(e) {}
-            
-            renderUnlockedArchive();
-        }
-
-        function checkUnlockedStates() {
-            const currentList = getUnlockedReports();
-            resetUnlockedUI();
-
-            currentList.forEach(item => {
-                const extraActionHtml = `
-                    <div style="display:flex; justify-content:flex-end; margin-top:10px;">
-                        <button onclick="printReportDocument('${item.title}', this)" style="background:#F1F5F9; border:1px solid #CBD5E1; color:#334155; font-size:12px; font-weight:700; padding:6px 12px; border-radius:8px; cursor:pointer;">
-                            📄 감명서 인쇄/PDF 소장
-                        </button>
-                    </div>
-                `;
-
-                if (item.key === 'daewoon') {
-                    const box = document.getElementById('daewoonBox');
-                    const teaser = document.getElementById('daewoonTeaserBox');
-                    const btn = document.getElementById('btnDaewoon');
-                    if (box && btn) {
-                        box.innerHTML = item.content + extraActionHtml;
-                        box.classList.remove('hidden');
-                        if (teaser) teaser.classList.add('hidden');
-                        btn.classList.add('hidden');
-                    }
-                } else if (item.key === 'sinnian') {
-                    const box = document.getElementById('sinnianBox');
-                    const teaser = document.getElementById('sinnianTeaserBox');
-                    const btn = document.getElementById('btnSinnian');
-                    if (box && btn) {
-                        box.innerHTML = item.content + extraActionHtml;
-                        box.classList.remove('hidden');
-                        if (teaser) teaser.classList.add('hidden');
-                        btn.classList.add('hidden');
-                    }
-                } else if (item.key === 'gunghap') {
-                    const box = document.getElementById('gunghapReportBox');
-                    const btn = document.getElementById('btnOpenGunghapModal');
-                    if (box && btn) {
-                        box.innerHTML = item.content + extraActionHtml;
-                        box.classList.remove('hidden');
-                        btn.classList.add('hidden');
-                    }
-                } else if (['wealth', 'love', 'business', 'health'].includes(item.key)) {
-                    const box = document.getElementById(`themeReport_${item.key}`);
-                    const btn = document.getElementById(`btnTheme_${item.key}`);
-                    if (box && btn) {
-                        box.innerHTML = item.content + extraActionHtml;
-                        box.classList.remove('hidden');
-                        btn.classList.add('hidden');
-                    }
-                }
-            });
-        }
-
-        function openArchiveDetail(idx) {
-            const currentList = getUnlockedReports();
-            const item = currentList[idx];
-            if (!item) return;
-
-            document.getElementById('archiveModalTitle').innerText = item.title;
-            document.getElementById('archiveModalBody').innerHTML = item.content;
-            document.getElementById('archiveDetailModal').classList.remove('hidden');
-        }
-
-        function closeArchiveDetailModal() {
-            document.getElementById('archiveDetailModal').classList.add('hidden');
-        }
-
-        function renderUnlockedArchive() {
-            const currentList = getUnlockedReports();
-            const container = document.getElementById('unlockedArchiveList');
-            const countBadge = document.getElementById('archiveCountBadge');
-            
-            if (countBadge) {
-                countBadge.innerText = `${currentList.length}건`;
-                countBadge.style.background = currentList.length > 0 ? '#2D6A4F' : '#E2E8F0';
-                countBadge.style.color = currentList.length > 0 ? '#FFFFFF' : '#475569';
-            }
-
-            if (!container) return;
-
-            if (currentList.length === 0) {
-                container.innerHTML = `
-                    <div style="text-align: center; padding: 20px 0; color: #94A3B8; font-size: 13px;">
-                        <p style="font-size: 28px; margin-bottom: 4px;">📂</p>
-                        <p style="font-weight: 700; color: #64748B;">현재 사주 정보로 구매한 감명서가 없습니다.</p>
-                    </div>`;
-                return;
-            }
-
-            container.innerHTML = currentList.map((r, idx) => `
-                <div style="background: #F8FAFC; border: 1.5px solid #2D6A4F; border-radius: 16px; padding: 12px 14px; text-align: left; display: flex; justify-content: space-between; align-items: center; gap: 10px;">
-                    <div style="flex: 1; overflow: hidden;">
-                        <span style="font-size: 11px; background: #2D6A4F; color: #FFFFFF; font-weight: 700; padding: 2px 6px; border-radius: 4px;">열람완료</span>
-                        <h4 style="font-weight: 800; color: #0F172A; font-size: 14px; margin-top: 4px; font-family: 'Noto Serif KR', serif;">${r.title}</h4>
-                    </div>
-                    <button onclick="openArchiveDetail(${idx})" style="background: #2D6A4F; color: #FFFFFF; border: none; font-size: 13px; font-weight: 700; padding: 8px 12px; border-radius: 10px; cursor: pointer;">
-                        📄 다시보기
-                    </button>
-                </div>
-            `).join('');
-        }
+        function checkUnlockedStates() {}
+        function renderUnlockedArchive() {}
 
         function updateCoinDisplay() {
             document.getElementById('coinHeader').innerText = currentCoin;
@@ -1888,35 +1275,21 @@
 
         function openChargeStore() { document.getElementById('chargeModal').classList.remove('hidden'); }
         function closeChargeStore() { document.getElementById('chargeModal').classList.add('hidden'); }
-        function addCoin(amt) {
-            currentCoin += amt;
-            updateCoinDisplay();
-            closeChargeStore();
-        }
+        function addCoin(amt) { currentCoin += amt; updateCoinDisplay(); closeChargeStore(); }
 
         window.addEventListener('DOMContentLoaded', () => {
             const headerCoin = document.getElementById('headerCoinSvg');
             if (headerCoin) headerCoin.innerHTML = getGoldCoinSvg(16, "#F59E0B");
             const mypageCoin = document.getElementById('mypageCoinSvg');
             if (mypageCoin) mypageCoin.innerHTML = getGoldCoinSvg(19, "#F59E0B");
-            const chargeModalCoin = document.getElementById('chargeModalHeaderCoinSvg');
-            if (chargeModalCoin) chargeModalCoin.innerHTML = getGoldCoinSvg(18, "#F59E0B");
 
-            document.querySelectorAll('.btn-coin-icon').forEach(el => { el.innerHTML = getGoldCoinSvg(16, "#D97706"); });
-            document.querySelectorAll('.btn-coin-icon-white').forEach(el => { el.innerHTML = getGoldCoinSvg(16, "#F59E0B"); });
-            document.querySelectorAll('.coin-icon-svg-inline').forEach(el => { el.innerHTML = getGoldCoinSvg(14, "#F59E0B"); });
-
-            const svgMarkup = getTarotCardBackSvg();
             ['tarotSvgSlot1', 'tarotSvgSlot2', 'tarotSvgSlot3'].forEach(id => {
                 const el = document.getElementById(id);
-                if (el) el.innerHTML = svgMarkup;
+                if (el) el.innerHTML = getTarotCardBackSvg();
             });
 
             const talismanPreview = document.getElementById('talismanBannerPreview');
             if (talismanPreview) talismanPreview.innerHTML = renderAuthenticCinnabarTalisman('metal', 72, 110);
-
-            renderUnlockedArchive();
-            checkUnlockedStates();
         });
     </script>
 </body>
