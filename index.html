@@ -377,7 +377,6 @@
             <!-- 탭 2: 정통사주 -->
             <div id="view-saju" class="tab-view hidden">
                 
-                <!-- 사주 명식표 -->
                 <div class="card" style="padding: 18px;">
                     <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 10px; margin-bottom: 14px;">
                         <div>
@@ -434,7 +433,6 @@
                         </div>
                     </div>
 
-                    <!-- 오행 실질 에너지 5단 막대 기둥 차트 -->
                     <div style="margin-top: 18px; text-align: left;">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                             <span style="font-size: 14px; font-weight: 800; color: #0F172A;">오행(五行) 실질 에너지 세력 분포</span>
@@ -570,7 +568,7 @@
 
             </div>
 
-            <!-- 탭 3: 궁합·테마 (4대 옵션 복구 및 건강/재물 원클릭) -->
+            <!-- 탭 3: 궁합·테마 (4대 상황 옵션 모달 연동 복구) -->
             <div id="view-theme" class="tab-view hidden">
                 
                 <!-- 정통 사주 궁합 카드 -->
@@ -971,6 +969,7 @@
             </svg>`;
         }
 
+        // [화려한 5대 오행 캘리그래피 복구] 경면주사 수제 부적 SVG 렌더러
         function renderAuthenticCinnabarTalisman(type = "metal", width = 160, height = 260) {
             let innerSymbol = '';
             let bottomText = '萬福大吉';
@@ -1040,14 +1039,18 @@
                     <circle cx="48" cy="38" r="3" fill="#C62828" />
                     <circle cx="70" cy="38" r="3" fill="#C62828" />
                     <circle cx="92" cy="38" r="3" fill="#C62828" />
+
                     <path d="M 32 50 L 108 50" />
                     <path d="M 36 50 L 36 68 L 104 68 L 104 50" />
                     <path d="M 50 58 L 90 58" />
                     <path d="M 70 50 L 70 68" />
                     <path d="M 42 76 Q 70 66 98 76" />
+                    
                     <path d="M 30 88 L 110 88" />
                     <path d="M 34 88 L 34 165 Q 34 180 50 180 L 90 180 Q 106 180 106 165 L 106 88" />
+                    
                     ${innerSymbol}
+
                     <path d="M 36 190 Q 70 182 104 190" />
                     <path d="M 48 198 L 92 198" />
                 </g>
@@ -1650,7 +1653,7 @@
             closeGunghapModal();
         }
 
-        // [4대 맞춤 옵션 복구] 애정운 / 사업운 전용 모달 열기
+        // 4대 맞춤 옵션 모달 (애정운 / 사업운 전용)
         function openThemeSelectModal(key) {
             currentThemeKey = key;
             const modalBox = document.getElementById('modalOptionBox');
@@ -1696,7 +1699,6 @@
 
         function closeThemeSelectModal() { document.getElementById('themeSelectModal').classList.add('hidden'); }
 
-        // [옵션 있는 테마 결제] 애정운 / 사업운
         async function confirmUnlockTheme() {
             if (currentCoin < 220) { openChargeStore(); return; }
             const selEl = document.querySelector('input[name="optM"]:checked');
@@ -1729,7 +1731,6 @@
             closeThemeSelectModal();
         }
 
-        // [옵션 없는 테마 원클릭 결제] 재물운 / 건강운
         async function unlockThemeDirect(themeKey) {
             if (currentCoin < 220) { openChargeStore(); return; }
 
@@ -1912,4 +1913,11 @@
             });
 
             const talismanPreview = document.getElementById('talismanBannerPreview');
-            if (talismanPreview) talismanPreview.innerHTML = renderAuthenticCinnabarTalisman저는 텍스트 기반 AI입니다. 그것은 저의 능력을 벗어나는 것이에요.
+            if (talismanPreview) talismanPreview.innerHTML = renderAuthenticCinnabarTalisman('metal', 72, 110);
+
+            renderUnlockedArchive();
+            checkUnlockedStates();
+        });
+    </script>
+</body>
+</html>
