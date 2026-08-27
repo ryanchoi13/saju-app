@@ -126,7 +126,7 @@
 
         <main>
             
-            <!-- 사주 입력 화면 (성별 선택 추가) -->
+            <!-- 사주 입력 화면 (성별 선택 기능 포함) -->
             <div id="onboardingInputView" class="card" style="text-align: center;">
                 <div class="gift-badge">🎁 가입 축하 1,000 복채 지급</div>
                 <h2 style="font-size: 21px; font-weight: 800; margin-bottom: 2px; font-family: 'Noto Serif KR', serif;">정밀 명식 감명</h2>
@@ -137,7 +137,7 @@
                     <input type="text" id="inputName" class="form-input" value="최정오">
                 </div>
 
-                <!-- [신규] 성별 선택 온보딩 입력창 -->
+                <!-- 성별 선택 온보딩 입력창 -->
                 <div class="form-group">
                     <label class="form-label">성별</label>
                     <div class="cal-toggle" style="width: 100%;">
@@ -203,7 +203,7 @@
                     <div id="resAdvice" style="font-size: 13.5px; color: #E2E8F0; font-weight: 400; line-height: 1.65; text-align: left;"></div>
                 </div>
 
-                <!-- [개선] 행운의 색상 삭제 -> 성별/연령대/8월여름 맞춤 코디 및 행운 아이템 배치 -->
+                <!-- 6칸 그리드: 성별/연령대/8월여름 맞춤 코디 및 행운 아이템 -->
                 <div class="grid-2">
                     <div class="grid-cell" style="grid-column: span 2; background: #F0FDF4; border: 1.5px solid #86EFAC;">
                         <span style="font-size: 12px; color: #166534; font-weight: 800; display: block;">👔 맞춤 추천 코디 (성별·나이·8월 여름)</span>
@@ -1133,7 +1133,7 @@
             <p style="font-size: 13.5px; color: #64748B; line-height: 1.6;">오늘의 1회 무료 타로를 이미 확인하셨습니다.<br><strong>10 복채</strong>로 추가 카드를 확인하시겠습니까?</p>
 
             <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px;">
-                <button onclick="confirmTarotByCoin()" style="background: #2D6A4F; color: white; border: none; font-size: 14.5px; font-weight: 800; padding: 13px; border-radius: 14px; cursor: pointer;">
+                <button onclick="confirmTarotByCoin()" style="background: #2D6A4F; color: white; border: none; font-size: 14.5px; font-weight: 800; padding: 13px; border-radius: 12px; cursor: pointer;">
                     <span class="btn-coin-icon-white"></span> 10 복채로 열람하기
                 </button>
                 <button onclick="closeTarotChoiceModal()" style="background: #F1F5F9; border: none; font-size: 13.5px; font-weight: 700; color: #475569; padding: 11px; border-radius: 14px; cursor: pointer;">
