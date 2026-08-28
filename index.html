@@ -24,6 +24,11 @@
         
         .card { background: #FFFFFF; border-radius: 20px; border: 1px solid #E2E8F0; padding: 18px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.03); position: relative; }
         
+        /* 사용자 프로필 헤더 바 */
+        .user-profile-bar { background: linear-gradient(135deg, #111D1E 0%, #1A2E2B 100%); border-radius: 16px; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #D4AF37; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin-bottom: 4px; }
+        .user-profile-name { font-size: 15px; font-weight: 800; color: #FDE68A; font-family: 'Noto Serif KR', serif; }
+        .user-profile-birth { font-size: 12px; color: #CBD5E1; font-weight: 600; }
+
         .gift-badge { display: inline-flex; align-items: center; background: #FEF3C7; border: 1px solid #FDE68A; color: #78350F; font-size: 13px; font-weight: 700; padding: 4px 12px; border-radius: 9999px; margin-bottom: 12px; }
         .form-group { background: #F8FAFC; border-radius: 14px; border: 1px solid #E2E8F0; padding: 12px; margin-bottom: 10px; text-align: left; }
         .form-label { font-size: 12px; color: #64748B; font-weight: 600; display: block; margin-bottom: 4px; }
@@ -184,6 +189,12 @@
             <!-- 탭 1: 오늘운세 -->
             <div id="view-today" class="tab-view hidden">
                 
+                <!-- [신규] 오늘운세 최상단 사용자 프로필 요약 바 -->
+                <div class="user-profile-bar">
+                    <div class="user-profile-name" id="userProfileBarName">최정오 님</div>
+                    <div class="user-profile-birth" id="userProfileBarBirth">1978년 3월 13일생 (사시 생)</div>
+                </div>
+
                 <div class="mbti-card">
                     <div class="mbti-top">
                         <div id="mbtiAnimalIcon" class="mbti-icon">🐶</div>
@@ -198,7 +209,7 @@
                 <div class="daily-banner">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
                         <span style="font-size: 13px; color: #FDE68A;">오늘의 일진</span>
-                        <span id="resScoreBadge" style="background: #FBBF24; color: #1E293B; font-size: 12px; font-weight: 800; padding: 3px 10px; border-radius: 9999px;">운세 97점</span>
+                        <span id="resScoreBadge" style="background: #FBBF24; color: #1E293B; font-size: 12px; font-weight: 800; padding: 3px 10px; border-radius: 9999px;">운세 88점</span>
                     </div>
                     <h3 id="resTitle" style="font-size: 16px; font-weight: 700; text-align: left; line-height: 1.5; margin-bottom: 14px;">도약의 하루</h3>
                     <div id="resAdvice" style="font-size: 13.5px; color: #E2E8F0; font-weight: 400; line-height: 1.65; text-align: left;"></div>
@@ -263,8 +274,9 @@
                         </div>
                     </div>
 
-                    <div style="background: #F8FAFC; border-radius: 10px; padding: 8px 10px; font-size: 12.5px; color: #334155; line-height: 1.5; border-left: 3px solid #2D6A4F;">
-                        <span style="font-weight: 800; color: #2D6A4F;">💡 바이오 조언:</span> <span id="bioOverallText">생체 에너지를 분석 중입니다.</span>
+                    <div style="background: #F8FAFC; border-radius: 10px; padding: 10px 12px; font-size: 13px; color: #334155; line-height: 1.6; border-left: 3.5px solid #2D6A4F;">
+                        <span style="font-weight: 800; color: #2D6A4F;">💡 바이오 맞춤 조언:</span><br>
+                        <span id="bioOverallText">생체 에너지를 정밀 분석 중입니다.</span>
                     </div>
                 </div>
 
@@ -718,7 +730,7 @@
 
     </div>
 
-    <!-- 궁합 상대방 정보 입력 모달 -->
+    <!-- 궁합 모달 -->
     <div id="gunghapModal" class="modal-bg hidden">
         <div class="modal-content" style="max-width: 350px; text-align: left;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 8px;">
@@ -801,7 +813,7 @@
             <h3 style="font-size: 16.5px; font-weight: 800; color: #0F172A;">타로 카드 추가 열람</h3>
             <p style="font-size: 13.5px; color: #64748B; line-height: 1.6;">오늘의 1회 무료 타로를 확인하셨습니다.<br><strong>10 복채</strong>로 추가 카드를 확인하시겠습니까?</p>
             <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px;">
-                <button onclick="confirmTarotByCoin()" style="background: #2D6A4F; color: white; border: none; font-size: 14.5px; font-weight: 800; padding: 13px; border-radius: 12px; cursor: pointer;">
+                <button onclick="confirmTarotByCoin()" style="background: #2D6A4F; color: white; border: none; font-size: 14.5px; font-weight: 800; padding: 13px; border-radius: 14px; cursor: pointer;">
                     <span class="btn-coin-icon-white"></span> 10 복채로 열람하기
                 </button>
                 <button onclick="closeTarotChoiceModal()" style="background: #F1F5F9; border: none; font-size: 13.5px; font-weight: 700; color: #475569; padding: 11px; border-radius: 14px; cursor: pointer;">
@@ -1006,6 +1018,7 @@
             } catch(e) { return []; }
         }
 
+        // [정통 라이더 웨이트 고화질 타로 카드 이미지 CDN URL 매핑]
         const TAROT_IMAGES = {
             "0. THE FOOL (바보)": "[https://upload.wikimedia.org/wikipedia/commons/9/90/RWS_Tarot_00_Fool.jpg](https://upload.wikimedia.org/wikipedia/commons/9/90/RWS_Tarot_00_Fool.jpg)",
             "I. THE MAGICIAN (마법사)": "[https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg](https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg)",
@@ -1249,6 +1262,10 @@
             currentTalisman = data.daily_fortune.talisman;
             currentUserAge = data.current_age;
 
+            // [추가] 최상단 프로필 바 업데이트
+            document.getElementById('userProfileBarName').innerText = `${currentUserName} 님 (${selectedGender === 'male' ? '남성' : '여성'})`;
+            document.getElementById('userProfileBarBirth').innerText = data.birth_summary || `${year}년 ${month}월 ${day}일생`;
+
             if (data.biorhythm) {
                 const bio = data.biorhythm;
                 document.getElementById('bioDaysLived').innerText = `생애 ${bio.days_lived.toLocaleString()}일째`;
@@ -1354,6 +1371,7 @@
             img.src = blobURL;
         }
 
+        // [심층 풀버전 타로 뒤집기 & 100% 로딩 보장 렌더러]
         async function handleTarotDraw(slot) {
             const res = await fetch(`/api/daily-tarot?slot=${slot}`);
             const card = await res.json();
@@ -1371,11 +1389,20 @@
             flipper.classList.add('flipped');
             setTimeout(() => {
                 const resBox = document.getElementById('tarotResultBox');
-                const reading = selectedGender === 'female' ? card.fortune_reading_female : card.fortune_reading_male;
+                const reading = selectedGender === 'female' ? card.reading_female : card.reading_male;
                 resBox.innerHTML = `
-                    <div style="background:#FFFFFF; border-top:2px solid #E2E8F0; padding-top:12px; margin-top:12px; text-align:left;">
-                        <h4 style="font-weight:800; color:#0F172A; font-size:14.5px;">${card.name} (${card.keyword})</h4>
-                        <p style="color:#475569; font-size:13px; line-height:1.65; margin-top:4px;">${reading}</p>
+                    <div style="background:#FFFFFF; border:1px solid #E2E8F0; border-radius:14px; padding:16px; margin-top:14px; text-align:left; box-shadow:0 4px 6px -1px rgba(0,0,0,0.03);">
+                        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1.5px solid #F1F5F9; padding-bottom:8px; margin-bottom:10px;">
+                            <h4 style="font-weight:900; color:#0F172A; font-size:15.5px; font-family:'Noto Serif KR', serif;">${card.name}</h4>
+                            <span style="font-size:11.5px; background:#FEF3C7; color:#78350F; font-weight:800; padding:2px 8px; border-radius:6px;">${card.keyword}</span>
+                        </div>
+                        <div style="display:flex; flex-direction:column; gap:8px; font-size:13.5px; line-height:1.75; color:#334155;">
+                            <p><strong>📖 카드의 상징과 본질:</strong> ${card.symbolism}</p>
+                            <p style="color:#0F172A; font-weight:600; background:#F8FAFC; padding:8px 10px; border-radius:8px; border-left:3px solid #D4AF37;">
+                                <strong>🔮 오늘의 실전 운세:</strong> ${reading}
+                            </p>
+                            <p style="color:#065F46;"><strong>💡 실천 행동 수칙:</strong> ${card.action_guide}</p>
+                        </div>
                     </div>
                 `;
                 resBox.classList.remove('hidden');
