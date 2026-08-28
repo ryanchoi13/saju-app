@@ -24,7 +24,7 @@
         
         .card { background: #FFFFFF; border-radius: 20px; border: 1px solid #E2E8F0; padding: 18px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.03); position: relative; }
         
-        /* 화이트 바탕의 단정한 상단 프로필 바 */
+        /* 사용자 프로필 바 (화이트 배경) */
         .user-profile-bar { background: #FFFFFF; border-radius: 16px; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; border: 1.5px solid #E2E8F0; box-shadow: 0 2px 4px rgba(0,0,0,0.02); margin-bottom: 2px; }
         .user-profile-name { font-size: 15.5px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif; }
         .user-profile-birth { font-size: 12.5px; color: #64748B; font-weight: 500; }
@@ -376,7 +376,7 @@
                                 <div onclick="openZodiacModal('zodiac', '말')" class="zodiac-btn"><span class="zodiac-icon">🐴</span><span class="zodiac-label">말</span></div>
                                 <div onclick="openZodiacModal('zodiac', '양')" class="zodiac-btn"><span class="zodiac-icon">🐑</span><span class="zodiac-label">양</span></div>
                                 <div onclick="openZodiacModal('zodiac', '원숭이')" class="zodiac-btn"><span class="zodiac-icon">🐵</span><span class="zodiac-label">원숭이</span></div>
-                                <div onclick="openZodiacModal('zodiac', '닭')" class="zodiac-btn"><span class="zodiac-icon">🐔</span><span class="zodiac-label">닭</span></div>
+                                <div onclick="openZodiacModal('닭', '닭')" class="zodiac-btn"><span class="zodiac-icon">🐔</span><span class="zodiac-label">닭</span></div>
                                 <div onclick="openZodiacModal('zodiac', '개')" class="zodiac-btn"><span class="zodiac-icon">🐶</span><span class="zodiac-label">개</span></div>
                                 <div onclick="openZodiacModal('zodiac', '돼지')" class="zodiac-btn"><span class="zodiac-icon">🐷</span><span class="zodiac-label">돼지</span></div>
                             </div>
@@ -520,7 +520,7 @@
                     <span>📢 광고 영역 (Google AdSense / Kakao AdFit 슬롯 2)</span>
                 </div>
 
-                <!-- 1. 자미두수 평생운세 -->
+                <!-- 1. 자미두수 평생운세 (대운 그래프 사이즈 확대 & 나이 표시 2줄 강조) -->
                 <div class="card" style="border: 2px solid #FCD34D;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                         <span style="font-size: 15px; font-weight: 800; font-family: 'Noto Serif KR', serif;">👑 자미두수 평생운세</span>
@@ -1179,7 +1179,7 @@
                 btnStar.className = 'sub-tab-btn active';
                 btnZodiac.className = 'sub-tab-btn';
                 gridStar.classList.remove('hidden');
-                gridZodiac.classList.add('hidden');
+                gridStar.classList.add('hidden');
             }
         }
 
@@ -1238,7 +1238,7 @@
             if (tag2) tag2.textContent = `(${age}세)`;
         }
 
-        // [초기화 1] 모든 유료 리포트 화면 및 버튼 완전 초기화
+        // 모든 유료 리포트 화면 및 버튼 완전 초기화
         function resetUnlockedUI() {
             ['daewoonBox', 'sinnianBox', 'gunghapReportBox', 'themeReport_wealth', 'themeReport_love', 'themeReport_business', 'themeReport_health'].forEach(id => {
                 const el = document.getElementById(id);
@@ -1254,7 +1254,7 @@
             });
         }
 
-        // [초기화 2] 타로 카드 3장 모두 뒷면(Face-down) 상태로 완전 리셋
+        // 타로 카드 3장 모두 뒷면 상태로 리셋
         function resetTarotCards() {
             for (let i = 1; i <= 3; i++) {
                 const flipper = document.getElementById(`flipper${i}`);
@@ -1278,7 +1278,6 @@
             const sijin = parseInt(document.getElementById('inputSijin').value);
             const [year, month, day] = birth.split('-').map(Number);
 
-            // [핵심] 사주 정보 수정/분석 시 이전 데이터 잔존 차단
             resetUnlockedUI();
             resetTarotCards();
 
@@ -1347,8 +1346,6 @@
             document.getElementById('onboardingInputView').classList.add('hidden');
             switchTab('today');
             document.getElementById('bottomNavBar').classList.remove('hidden');
-            
-            // 변경된 사주 정보에 해당하는 보관함만 정확히 반영
             checkUnlockedStates();
         }
 
@@ -1404,7 +1401,6 @@
             img.src = blobURL;
         }
 
-        // [정통 라이더-웨이트 타로 카드 100% 로딩 보장 렌더러]
         async function handleTarotDraw(slot) {
             const res = await fetch(`/api/daily-tarot?slot=${slot}`);
             const card = await res.json();
@@ -1523,7 +1519,7 @@
             const extraActionHtml = `<div style="display:flex; justify-content:flex-end; margin-top:10px;"><button onclick="printReportDocument('${data.title}', this)" style="background:#F1F5F9; border:1px solid #CBD5E1; color:#334155; font-size:12px; font-weight:700; padding:6px 12px; border-radius:8px; cursor:pointer;">📄 감명서 인쇄/PDF 소장</button></div>`;
             document.getElementById('gunghapReportBox').innerHTML = data.content + extraActionHtml;
             document.getElementById('gunghapReportBox').classList.remove('hidden');
-            document.getElementById('btnOpenGunghapModal').classList.add('hidden');
+            document.getElementById('btnOpenGunghapModal')?.classList.add('hidden');
             saveUnlockedReport('gunghap', data.title, data.content);
             closeGunghapModal();
         }
