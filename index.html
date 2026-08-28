@@ -6,7 +6,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <title>운세의 신</title>
     
-    <link href="[https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800;900&family=Noto+Serif+KR:wght@600;800;900&display=swap](https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800;900&family=Noto+Serif+KR:wght@600;800;900&display=swap)" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800;900&family=Noto+Serif+KR:wght@600;800;900&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Pretendard', sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background-color: #0B1315; color: #1E293B; display: flex; justify-content: center; min-height: 100vh; }
@@ -24,7 +24,7 @@
         
         .card { background: #FFFFFF; border-radius: 20px; border: 1px solid #E2E8F0; padding: 18px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.03); position: relative; }
         
-        /* [개선] 화이트 바탕의 세련된 사용자 프로필 바 */
+        /* 사용자 프로필 바 (화이트 배경) */
         .user-profile-bar { background: #FFFFFF; border-radius: 16px; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; border: 1.5px solid #E2E8F0; box-shadow: 0 2px 4px rgba(0,0,0,0.02); margin-bottom: 2px; }
         .user-profile-name { font-size: 15.5px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif; }
         .user-profile-birth { font-size: 12.5px; color: #64748B; font-weight: 500; }
@@ -90,9 +90,9 @@
         .tarot-wrapper { perspective: 1000px; aspect-ratio: 2/3; cursor: pointer; }
         .flipper { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; transition: transform 0.6s ease; border-radius: 10px; }
         .flipper.flipped { transform: rotateY(180deg); }
-        .card-face { position: absolute; inset: 0; backface-visibility: hidden; border-radius: 10px; }
-        .card-back { background: #111D1E; border: 2px solid #D4AF37; box-shadow: 0 4px 8px rgba(0,0,0,0.2); overflow: hidden; }
-        .card-front { transform: rotateY(180deg); background: white; overflow: hidden; border: 2px solid #D4AF37; }
+        .card-face { position: absolute; inset: 0; backface-visibility: hidden; border-radius: 10px; overflow: hidden; }
+        .card-back { background: #111D1E; border: 2px solid #D4AF37; box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
+        .card-front { transform: rotateY(180deg); background: white; border: 2px solid #D4AF37; display: flex; align-items: center; justify-content: center; }
 
         .talisman-banner { background: linear-gradient(135deg, #FFFDF5 0%, #FFFBEB 100%); border: 2px solid #FCD34D; border-radius: 16px; padding: 16px; text-align: center; display: flex; flex-direction: column; gap: 12px; margin-top: 12px; }
         .talisman-art { height: 120px; background: rgba(254,243,199,0.5); border-radius: 14px; border: 1px solid rgba(253,230,138,0.8); display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
@@ -189,7 +189,7 @@
             <!-- 탭 1: 오늘운세 -->
             <div id="view-today" class="tab-view hidden">
                 
-                <!-- [수정] 화이트 바탕의 단정한 상단 프로필 바 -->
+                <!-- 상단 프로필 바 -->
                 <div class="user-profile-bar">
                     <div class="user-profile-name" id="userProfileBarName">최정오 님 (남성)</div>
                     <div class="user-profile-birth" id="userProfileBarBirth">1978년 8월 13일생 · 사시(巳時)생</div>
@@ -520,7 +520,7 @@
                     <span>📢 광고 영역 (Google AdSense / Kakao AdFit 슬롯 2)</span>
                 </div>
 
-                <!-- 1. 자미두수 평생운세 -->
+                <!-- 1. 자미두수 평생운세 (대운 그래프 사이즈 확대 & 나이 표시 2줄 강조) -->
                 <div class="card" style="border: 2px solid #FCD34D;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                         <span style="font-size: 15px; font-weight: 800; font-family: 'Noto Serif KR', serif;">👑 자미두수 평생운세</span>
@@ -730,7 +730,7 @@
 
     </div>
 
-    <!-- 궁합 상대방 정보 입력 모달 -->
+    <!-- 궁합 모달 -->
     <div id="gunghapModal" class="modal-bg hidden">
         <div class="modal-content" style="max-width: 350px; text-align: left;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 8px;">
@@ -1018,19 +1018,19 @@
             } catch(e) { return []; }
         }
 
-        // [안전 로딩 보장 정통 라이더-웨이트 타로 카드 이미지 URL 및 백업]
+        // [정통 라이더-웨이트 타로 카드 이미지 안전 매핑 & 로딩 시스템]
         const TAROT_IMG_MAP = {
             "0. THE FOOL (바보)": {
-                main: "[https://upload.wikimedia.org/wikipedia/commons/9/90/RWS_Tarot_00_Fool.jpg](https://upload.wikimedia.org/wikipedia/commons/9/90/RWS_Tarot_00_Fool.jpg)",
-                backup: "[https://raw.githubusercontent.com/effata/tarot-json/master/cards/fool.jpg](https://raw.githubusercontent.com/effata/tarot-json/master/cards/fool.jpg)"
+                main: "https://upload.wikimedia.org/wikipedia/commons/9/90/RWS_Tarot_00_Fool.jpg",
+                backup: "https://raw.githubusercontent.com/effata/tarot-json/master/cards/fool.jpg"
             },
             "I. THE MAGICIAN (마법사)": {
-                main: "[https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg](https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg)",
-                backup: "[https://raw.githubusercontent.com/effata/tarot-json/master/cards/magician.jpg](https://raw.githubusercontent.com/effata/tarot-json/master/cards/magician.jpg)"
+                main: "https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg",
+                backup: "https://raw.githubusercontent.com/effata/tarot-json/master/cards/magician.jpg"
             },
             "XIX. THE SUN (태양)": {
-                main: "[https://upload.wikimedia.org/wikipedia/commons/1/17/RWS_Tarot_19_Sun.jpg](https://upload.wikimedia.org/wikipedia/commons/1/17/RWS_Tarot_19_Sun.jpg)",
-                backup: "[https://raw.githubusercontent.com/effata/tarot-json/master/cards/sun.jpg](https://raw.githubusercontent.com/effata/tarot-json/master/cards/sun.jpg)"
+                main: "https://upload.wikimedia.org/wikipedia/commons/1/17/RWS_Tarot_19_Sun.jpg",
+                backup: "https://raw.githubusercontent.com/effata/tarot-json/master/cards/sun.jpg"
             }
         };
 
@@ -1179,7 +1179,7 @@
                 btnStar.className = 'sub-tab-btn active';
                 btnZodiac.className = 'sub-tab-btn';
                 gridStar.classList.remove('hidden');
-                gridStar.classList.add('hidden');
+                gridZodiac.classList.add('hidden');
             }
         }
 
@@ -1271,7 +1271,6 @@
             currentTalisman = data.daily_fortune.talisman;
             currentUserAge = data.current_age;
 
-            // [수정] 상단 프로필 바 내용 바인딩
             document.getElementById('userProfileBarName').innerText = `${currentUserName} 님 (${selectedGender === 'male' ? '남성' : '여성'})`;
             document.getElementById('userProfileBarBirth').innerText = data.birth_summary || `${year}년 ${month}월 ${day}일생`;
 
@@ -1380,7 +1379,7 @@
             img.src = blobURL;
         }
 
-        // [정통 라이더-웨이트 타로 카드 100% 로딩 보장 렌더러]
+        // [정통 라이더-웨이트 타로 카드 안전 로딩 렌더러]
         async function handleTarotDraw(slot) {
             const res = await fetch(`/api/daily-tarot?slot=${slot}`);
             const card = await res.json();
@@ -1391,7 +1390,6 @@
             const mainImgUrl = cardImgObj.main;
             const backupImgUrl = cardImgObj.backup;
 
-            // 크로스오리진 문제 및 로딩 실패 시 백업 이미지 즉시 교체
             front.innerHTML = `
                 <img src="${mainImgUrl}" 
                      alt="${card.name}" 
@@ -1460,8 +1458,8 @@
                 const extraActionHtml = `<div style="display:flex; justify-content:flex-end; margin-top:10px;"><button onclick="printReportDocument('${data.title}', this)" style="background:#F1F5F9; border:1px solid #CBD5E1; color:#334155; font-size:12px; font-weight:700; padding:6px 12px; border-radius:8px; cursor:pointer;">📄 감명서 인쇄/PDF 소장</button></div>`;
                 document.getElementById('daewoonBox').innerHTML = data.content + extraActionHtml;
                 document.getElementById('daewoonBox').classList.remove('hidden');
-                document.getElementById('daewoonTeaserBox').classList.add('hidden');
-                document.getElementById('btnDaewoon').classList.add('hidden');
+                document.getElementById('daewoonTeaserBox')?.classList.add('hidden');
+                document.getElementById('btnDaewoon')?.classList.add('hidden');
                 saveUnlockedReport('daewoon', data.title, data.content);
             });
         }
@@ -1475,8 +1473,8 @@
                 const extraActionHtml = `<div style="display:flex; justify-content:flex-end; margin-top:10px;"><button onclick="printReportDocument('${data.title}', this)" style="background:#F1F5F9; border:1px solid #CBD5E1; color:#334155; font-size:12px; font-weight:700; padding:6px 12px; border-radius:8px; cursor:pointer;">📄 감명서 인쇄/PDF 소장</button></div>`;
                 document.getElementById('sinnianBox').innerHTML = data.content + extraActionHtml;
                 document.getElementById('sinnianBox').classList.remove('hidden');
-                document.getElementById('sinnianTeaserBox').classList.add('hidden');
-                document.getElementById('btnSinnian').classList.add('hidden');
+                document.getElementById('sinnianTeaserBox')?.classList.add('hidden');
+                document.getElementById('btnSinnian')?.classList.add('hidden');
                 saveUnlockedReport('sinnian', data.title, data.content);
             });
         }
@@ -1500,7 +1498,7 @@
             const extraActionHtml = `<div style="display:flex; justify-content:flex-end; margin-top:10px;"><button onclick="printReportDocument('${data.title}', this)" style="background:#F1F5F9; border:1px solid #CBD5E1; color:#334155; font-size:12px; font-weight:700; padding:6px 12px; border-radius:8px; cursor:pointer;">📄 감명서 인쇄/PDF 소장</button></div>`;
             document.getElementById('gunghapReportBox').innerHTML = data.content + extraActionHtml;
             document.getElementById('gunghapReportBox').classList.remove('hidden');
-            document.getElementById('btnOpenGunghapModal').classList.add('hidden');
+            document.getElementById('btnOpenGunghapModal')?.classList.add('hidden');
             saveUnlockedReport('gunghap', data.title, data.content);
             closeGunghapModal();
         }
