@@ -7,7 +7,7 @@ from typing import Optional
 import os
 import random
 
-app = FastAPI(title="운세의 신 정통 명리학 엔진 - Mode 2 Ultimate", version="37.0.0")
+app = FastAPI(title="운세의 신 정통 명리학 엔진 - Mode 2 Ultimate", version="38.0.0")
 
 CHEONGAN_HANJA = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
 JIJI_HANJA = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"]
@@ -108,7 +108,6 @@ TALISMAN_OHEANG_MAP = {
     }
 }
 
-# [상세 심층 풀이로 확장된 타로 데이터]
 TAROT_CARDS = [
     {
         "name": "0. THE FOOL (바보)",
@@ -216,7 +215,6 @@ def serve_home():
         return FileResponse("index.html")
     return HTMLResponse("<h2>운세의 신 서비스 준비 중</h2>")
 
-# [심층 다변화 바이오리듬 조언 생성 엔진]
 def calculate_biorhythm(birth_date: datetime.date, target_date: datetime.date):
     days_lived = (target_date - birth_date).days
     p_val = round(math.sin(2 * math.pi * days_lived / 23) * 100)
@@ -236,7 +234,6 @@ def calculate_biorhythm(birth_date: datetime.date, target_date: datetime.date):
         else:
             return {"val": val, "pct": pct, "status": "침체기", "color": "#475569", "tip": f"충분한 휴식과 재충전으로 내실을 다지세요."}
 
-    # 종합 상황별 디테일 조언 분기
     is_critical_day = abs(p_val) <= 5 or abs(e_val) <= 5 or abs(i_val) <= 5
     
     if is_critical_day:
@@ -354,16 +351,16 @@ def analyze_saju(req: SajuRequest):
     mindset = MINDSETS_POOL[(daily_hash + 4) % len(MINDSETS_POOL)]
     action = ACTIONS_POOL[(daily_hash + 5) % len(ACTIONS_POOL)]
 
-    # [개선] 52점 ~ 98점 범위의 현실적인 일진 운세 점수 변동폭
-    daily_score = 52 + (daily_hash % 47)
+    # [수정] 65점 ~ 100점 범위의 정밀 일진 운세 점수
+    daily_score = 65 + (daily_hash % 36)
 
     today_diff = (today - base_date).days
     today_cg = CHEONGAN_HANJA[today_diff % 10]
     today_jj = JIJI_HANJA[(today_diff + 10) % 12]
     
-    if daily_score >= 85:
+    if daily_score >= 88:
         score_status_word = "대길(大吉)과 도약의 하루"
-    elif daily_score >= 70:
+    elif daily_score >= 75:
         score_status_word = "순조로운 화합과 발전의 하루"
     else:
         score_status_word = "내실을 다지고 신중을 기할 하루"
@@ -381,7 +378,6 @@ def analyze_saju(req: SajuRequest):
 
     biorhythm_data = calculate_biorhythm(target_date, today)
 
-    # 사용자 상단 프로필용 포맷팅 정보
     cal_name = "양력" if req.calendar_type == "solar" else ("음력(윤달)" if req.calendar_type == "leap" else "음력")
     birth_summary_str = f"{req.year}년 {req.month}월 {req.day}일생 ({cal_name}) · {sijin_korean}생"
 
@@ -915,7 +911,7 @@ def get_theme_report(req: dict):
             b_desc2 = f"""
             <p>지분 구조를 7:3 이상으로 확고히 쥐고 대표의 경영권을 지킬 때 투자 유치와 정부 지원 사업이 순조롭습니다.</p>
             """
-        else: # 직장인
+        else:
             b_ch1 = "🎖️ [직장인 초고속 승진] 사내 핵심 인재로 인정받는 처세술"
             b_desc1 = f"""
             <p>• <strong>승진 타이밍:</strong> 올해 인사 평가에서 당신의 기획안이 상급자의 두터운 신임을 얻습니다.</p>
@@ -950,7 +946,7 @@ def get_theme_report(req: dict):
             </div>
         </div>
         """
-    else: # 건강운
+    else:
         content = f"""
         <div style="display: flex; flex-direction: column; gap: 16px; font-size: 14.5px; color: #334155; line-height: 1.85; text-align: left;">
             <div style="border-left: 4px solid #059669; padding-left: 10px;">
