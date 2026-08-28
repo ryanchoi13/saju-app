@@ -7,7 +7,7 @@ from typing import Optional
 import os
 import random
 
-app = FastAPI(title="운세의 신 정통 명리학 엔진 - Mode 2 Master Edition", version="36.0.0")
+app = FastAPI(title="운세의 신 정통 명리학 엔진 - Mode 2 Ultimate", version="37.0.0")
 
 CHEONGAN_HANJA = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
 JIJI_HANJA = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"]
@@ -21,6 +21,22 @@ JIJI_ELEMENTS = {
     "子": "water", "丑": "earth", "寅": "wood", "卯": "wood", "辰": "earth",
     "巳": "fire", "午": "fire", "未": "earth", "申": "metal", "酉": "metal",
     "戌": "earth", "亥": "water"
+}
+
+SIJIN_KOREAN_MAP = {
+    -1: "시간 모름",
+    0: "자시(子時)",
+    1: "축시(丑時)",
+    2: "인시(寅時)",
+    3: "묘시(卯時)",
+    4: "진시(辰時)",
+    5: "사시(巳時)",
+    6: "오시(午時)",
+    7: "미시(未時)",
+    8: "신시(申時)",
+    9: "유시(酉時)",
+    10: "술시(戌時)",
+    11: "해시(亥時)"
 }
 
 JIJANGGAN_FULL_MAP = {
@@ -92,24 +108,31 @@ TALISMAN_OHEANG_MAP = {
     }
 }
 
+# [상세 심층 풀이로 확장된 타로 데이터]
 TAROT_CARDS = [
     {
         "name": "0. THE FOOL (바보)",
-        "keyword": "새로운 시작 · 순수한 열정 · 무한한 잠재력",
-        "fortune_reading_male": "오랫동안 머뭇거리던 사업이나 프로젝트의 시작 단추를 꿰기에 최적의 날입니다. 주도적으로 추진하세요.",
-        "fortune_reading_female": "새로운 인연이나 마음속 염원하던 일의 반가운 첫걸음이 시작됩니다. 직관을 믿고 나아가세요."
+        "keyword": "새로운 여정의 서막 · 순수한 직관 · 무한한 잠재력",
+        "symbolism": "화려한 옷을 입고 벼랑 끝에서 발걸음을 내딛는 청년과 곁에서 위험을 경고하는 흰 개, 그리고 찬란하게 빛나는 태양은 과거의 관습과 두려움을 벗어던진 순수한 영혼의 새로운 도약을 상징합니다.",
+        "reading_male": "오랫동안 가슴속에 품고 망설이던 프로젝트나 신규 투자의 첫 단추를 꿰기에 최상의 날입니다. 주변의 지나친 간섭보다 본인의 결단력과 도전 정신을 믿고 추진하세요.",
+        "reading_female": "새로운 인연이나 오랫동안 염원하던 소망에 뜻밖의 기회가 찾아옵니다. 계산적인 생각보다 마음이 이끄는 첫 느낌을 따를 때 대길한 결과가 따릅니다.",
+        "action_guide": "새로운 제안이 들어오면 편견 없이 경청하고, 떠오르는 창의적인 아이디어를 즉시 메모하세요."
     },
     {
         "name": "I. THE MAGICIAN (마법사)",
-        "keyword": "창조적 역량 · 완벽한 주도권 · 실력 발휘",
-        "fortune_reading_male": "전문 실력과 언변이 빛을 발하여 중요한 협상에서 판을 완벽히 리드합니다.",
-        "fortune_reading_female": "능숙한 소통 능력으로 주변 사람들을 내 편으로 만듭니다. 당당하게 의견을 피력하세요."
+        "keyword": "탁월한 창조력 · 완벽한 주도권 · 만사형통",
+        "symbolism": "머리 위의 무한대(∞) 기호와 제단 위에 놓인 4대 원소(지팡이·성배·검·펜타클)는 모든 상황을 내 뜻대로 통제하고 현실로 구현할 수 있는 완성된 지혜와 전문성을 뜻합니다.",
+        "reading_male": "당신의 전문 역량과 논리적인 언변이 빛을 발합니다. 중요한 회의나 계약 협상에서 상대방을 내 페이스로 완벽히 리드할 수 있습니다.",
+        "reading_female": "능숙한 대인관계 조율력과 따뜻한 카리스마로 주변 사람들을 내 든든한 아군으로 만듭니다. 본인의 의견을 당당하게 피력하세요.",
+        "action_guide": "본인의 핵심 강점을 자신감 있게 표현하고, 주도적으로 대화의 흐름을 이끌어가세요."
     },
     {
         "name": "XIX. THE SUN (태양)",
-        "keyword": "최고의 성공 · 밝은 활력 · 승리와 영광",
-        "fortune_reading_male": "목표하던 투자나 계약이 시원하게 성취되는 최고의 운세입니다.",
-        "fortune_reading_female": "내면의 밝은 에너지가 주변에 확산되어 칭찬과 축하받을 낭보가 울려 퍼집니다."
+        "keyword": "최고의 번영 · 찬란한 영광 · 축하받을 낭보",
+        "symbolism": "붉은 깃발을 든 채 백마를 타고 천진난만하게 웃는 아이와 활짝 핀 해바라기는 어둠과 장애물을 완전히 걷어내고 승리와 축복을 맞이하는 절정의 운세를 의미합니다.",
+        "reading_male": "그동안 막혀 있던 자금 흐름이나 프로젝트의 난관이 시원하게 뚫리며 성취의 결실을 맺습니다. 명예와 실속을 동시에 쟁취하는 날입니다.",
+        "reading_female": "내면의 밝고 긍정적인 에너지가 주변을 환하게 밝힙니다. 칭찬과 축하받을 소식이 들려오며 가문과 인간관계에 화목이 넘칩니다.",
+        "action_guide": "햇살을 받으며 가벼운 야외 산책을 즐기고, 기분 좋은 미소로 주변에 긍정적인 에너지를 전파하세요."
     }
 ]
 
@@ -193,6 +216,7 @@ def serve_home():
         return FileResponse("index.html")
     return HTMLResponse("<h2>운세의 신 서비스 준비 중</h2>")
 
+# [심층 다변화 바이오리듬 조언 생성 엔진]
 def calculate_biorhythm(birth_date: datetime.date, target_date: datetime.date):
     days_lived = (target_date - birth_date).days
     p_val = round(math.sin(2 * math.pi * days_lived / 23) * 100)
@@ -208,16 +232,32 @@ def calculate_biorhythm(birth_date: datetime.date, target_date: datetime.date):
         elif val == 0:
             return {"val": val, "pct": 50, "status": "전환점", "color": "#D97706", "tip": f"기운이 전환되는 구간이니 무리수를 피하세요."}
         elif val > -50:
-            return {"val": val, "pct": pct, "status": "하강기", "color": "#2563EB", "tip": f"에너지가 소진되는 구간이니 페이스 조절이 필요합니다."}
+            return {"val": val, "pct": pct, "status": "하강기", "color": "#2563EB", "tip": f"{cycle_name} 에너지가 소진되는 구간이니 페이스 조절이 필요합니다."}
         else:
             return {"val": val, "pct": pct, "status": "침체기", "color": "#475569", "tip": f"충분한 휴식과 재충전으로 내실을 다지세요."}
+
+    # 종합 상황별 디테일 조언 분기
+    is_critical_day = abs(p_val) <= 5 or abs(e_val) <= 5 or abs(i_val) <= 5
+    
+    if is_critical_day:
+        overall_advice = "바이오리듬이 영점(0%) 전환선에 걸쳐 기운이 전환되는 민감한 날입니다. 감정적 언쟁이나 무리한 일정, 충동적인 계약 판단을 피하고 매사 한 번 더 확인하세요."
+    elif p_val >= 30 and e_val >= 30 and i_val < 0:
+        overall_advice = "지성 리듬이 다소 낮으나 신체와 감성 에너지가 충만합니다. 복잡한 수치 계산이나 서류 검토보다는 활발한 야외 활동, 스포츠, 대인관계 미팅에서 최고의 성과를 거둘 수 있습니다."
+    elif i_val >= 30 and (p_val < 0 or e_val < 0):
+        overall_advice = "체력이나 기분은 다소 차분하나 두뇌 회전과 직관이 번뜩이는 날입니다. 무리한 육체 활동을 줄이고 전략 기획, 서류 정리, 자기계발 공부에 집중할 때 능률이 극대화됩니다."
+    elif p_val >= 40 and e_val >= 40 and i_val >= 40:
+        overall_advice = "신체·감성·지성 3대 생체 에너지가 모두 절정에 달한 골든 데이입니다. 오랫동안 망설이던 중요 과제나 승부처를 주도적으로 추진하면 대길한 성취를 이룹니다."
+    elif p_val < 0 and e_val < 0 and i_val < 0:
+        overall_advice = "3대 에너지가 모두 재충전 구간에 머물러 있습니다. 중요한 결정은 내일로 미루고, 따뜻한 족욕과 균형 잡힌 식사로 내실을 다지며 푹 쉬는 것이 최고의 개운법입니다."
+    else:
+        overall_advice = "신체와 마음의 에너지가 안정된 균형을 유지하고 있습니다. 평소의 루틴을 차분히 지켜나가며 순조롭게 일과를 완수하기 좋은 하루입니다."
 
     return {
         "days_lived": days_lived,
         "physical": get_status(p_val, "신체"),
         "emotional": get_status(e_val, "감성"),
         "intellectual": get_status(i_val, "지성"),
-        "overall_summary": "신체와 정신의 생체 에너지가 균형을 이루어 순조로운 하루입니다."
+        "overall_summary": overall_advice
     }
 
 def get_daewoon_info(y_cg: str, gender: str) -> tuple[str, bool]:
@@ -253,13 +293,16 @@ def analyze_saju(req: SajuRequest):
     m_cg_idx = (y_cg_idx % 5 * 2 + 2 + (month_adj - 2)) % 10
     m_cg, m_jj = CHEONGAN_HANJA[m_cg_idx], JIJI_HANJA[m_jj_idx]
 
-    if req.is_unknown_time or req.sijin_index is None or req.sijin_index < 0:
+    sijin_idx = req.sijin_index if req.sijin_index is not None else 5
+    if req.is_unknown_time or sijin_idx < 0:
         h_pillar, h_cg, h_jj = "時未詳", "-", "-"
+        sijin_korean = "시간 모름"
     else:
-        h_jj_idx = req.sijin_index
+        h_jj_idx = sijin_idx
         h_cg_idx = (d_cg_idx % 5 * 2 + h_jj_idx) % 10
         h_cg, h_jj = CHEONGAN_HANJA[h_cg_idx], JIJI_HANJA[h_jj_idx]
         h_pillar = f"{h_cg}{h_jj}"
+        sijin_korean = SIJIN_KOREAN_MAP.get(sijin_idx, "사시(巳時)")
 
     d_animal = ANIMAL_MAP.get(d_jj, "개")
     current_year = today.year
@@ -311,12 +354,21 @@ def analyze_saju(req: SajuRequest):
     mindset = MINDSETS_POOL[(daily_hash + 4) % len(MINDSETS_POOL)]
     action = ACTIONS_POOL[(daily_hash + 5) % len(ACTIONS_POOL)]
 
-    daily_score = 80 + (daily_hash % 19)
+    # [개선] 52점 ~ 98점 범위의 현실적인 일진 운세 점수 변동폭
+    daily_score = 52 + (daily_hash % 47)
 
     today_diff = (today - base_date).days
     today_cg = CHEONGAN_HANJA[today_diff % 10]
     today_jj = JIJI_HANJA[(today_diff + 10) % 12]
-    daily_title = f"[{today_cg}{today_jj}일] 활력과 기회의 하루"
+    
+    if daily_score >= 85:
+        score_status_word = "대길(大吉)과 도약의 하루"
+    elif daily_score >= 70:
+        score_status_word = "순조로운 화합과 발전의 하루"
+    else:
+        score_status_word = "내실을 다지고 신중을 기할 하루"
+        
+    daily_title = f"[{today_cg}{today_jj}일] {score_status_word}"
 
     three_stage_advice = (f"☀️ <strong>오전:</strong> 아이디어를 공유하며 활발히 소통하세요.<br>"
                           f"🌤️ <strong>오후:</strong> 본원({d_cg})의 리더십으로 주요 과제를 완수하세요.<br>"
@@ -329,9 +381,14 @@ def analyze_saju(req: SajuRequest):
 
     biorhythm_data = calculate_biorhythm(target_date, today)
 
+    # 사용자 상단 프로필용 포맷팅 정보
+    cal_name = "양력" if req.calendar_type == "solar" else ("음력(윤달)" if req.calendar_type == "leap" else "음력")
+    birth_summary_str = f"{req.year}년 {req.month}월 {req.day}일생 ({cal_name}) · {sijin_korean}생"
+
     return {
         "user_name": req.name,
         "gender": gender,
+        "birth_summary": birth_summary_str,
         "current_age": current_age,
         "singang_status": singang_status,
         "daewoon_direction": daewoon_dir_name,
@@ -541,7 +598,6 @@ def get_sinnian_report(req: dict):
         """
     }
 
-# [풀버전 10배 대확장] 정통 사주 궁합 (연인·결혼 / 동업·사업 / 친구·지인 3대 분기)
 @app.post("/api/gunghap-report")
 def get_gunghap_report(req: dict):
     user_name = req.get("name", "최정오")
@@ -571,7 +627,7 @@ def get_gunghap_report(req: dict):
         chapter3_desc = f"""
         <p>{partner_name}님은 {user_name}님이 인생의 고비나 번아웃에 직면했을 때 결정적인 멘탈 케어와 현실적 활로를 열어주는 귀인 역할을 담당합니다.</p>
         """
-    else: # 연인/결혼
+    else:
         chapter2_title = "💖 실전 생활/연애 케미 & 갈등 즉효성 해결 매뉴얼"
         chapter2_desc = f"""
         <p>• <strong>소통의 찰떡 포인트:</strong> {user_name}님의 당당한 통솔력과 {partner_name}님의 섬세한 배려가 결합하여 어떤 현실적 위기도 사랑으로 극복합니다.</p>
@@ -656,7 +712,6 @@ def get_gunghap_report(req: dict):
         """
     }
 
-# [풀버전 10배 대확장] 4대 테마운세 (재물·애정·사업·건강)
 @app.post("/api/theme-report")
 def get_theme_report(req: dict):
     theme = req.get("theme", "wealth")
@@ -774,7 +829,7 @@ def get_theme_report(req: dict):
             ch3_desc = f"""
             <p>야경이 아름다운 전망대나 조용한 강변 드라이브가 서로에 대한 애틋한 애정을 200% 증폭시킵니다.</p>
             """
-        else: # 기혼
+        else:
             ch1_title = "🏡 부부 금슬 증폭 & 가문 재물운 합일 비책"
             ch1_desc = f"""
             <p>부부간의 신뢰가 곧 가문의 자산으로 직결되는 명식입니다. 서로의 노고를 인정하는 따뜻한 말 한마디가 집안에 황금 복록을 부릅니다.</p>
