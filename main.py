@@ -7,7 +7,7 @@ from typing import Optional
 import os
 import random
 
-app = FastAPI(title="운세의 신 정통 명리학 엔진 - Mode 2 Ultimate Expanded", version="39.5.0")
+app = FastAPI(title="운세의 신 정통 명리학 엔진 - Mode 2 Ultimate Release", version="40.0.0")
 
 CHEONGAN_HANJA = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
 JIJI_HANJA = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"]
@@ -441,6 +441,7 @@ def get_daily_tarot(slot: int = 1, rand_seed: Optional[str] = None):
     random_idx = random.randint(0, len(TAROT_CARDS) - 1)
     return TAROT_CARDS[random_idx]
 
+# [방안 A 적용] 자미두수 평생운세 (가족운 3대 궁 & 평생 학업·시험운 5대 챕터 완전판)
 @app.post("/api/daewoon-report")
 def get_daewoon_report(req: dict):
     user_name = req.get("name", "최정오")
@@ -504,9 +505,42 @@ def get_daewoon_report(req: dict):
 
             <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
 
+            <!-- [신규] Chapter 3. 자미두수 12궁 가문·가족운 (부모궁·자녀궁·형제궁) -->
+            <div>
+                <div style="border-left: 4px solid #E11D48; padding-left: 10px; margin-bottom: 8px;">
+                    <span style="font-size: 12px; color: #E11D48; font-weight: 800;">Chapter 3. 자미두수 12궁 가문·가족운</span>
+                    <h4 style="font-size: 16.5px; font-weight: 800; color: #881337; margin-top: 2px;">
+                        🏡 부모덕 · 자녀 출세운 · 형제자매 우애 정밀 분석
+                    </h4>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 8px; font-size: 14px; color: #9F1239; line-height: 1.8;">
+                    <p>• <strong>👴 부모궁 (父母宮 - 부모덕 & 유산운):</strong> 부모님의 든든한 가치관과 정서적 지지를 바탕으로 성장하는 명식입니다. 중장년 이후 부모님의 가업이나 부동산 상속·증여의 기운이 온화하게 연결되며, 효도를 다할수록 본인의 사업운이 배가됩니다.</p>
+                    <p>• <strong>👶 자녀궁 (子女宮 - 자녀의 성품 & 미래 출세):</strong> 영민하고 도덕성이 높은 귀한 자손을 두는 명식입니다. 자녀가 전문직, 공직, 학계 등 사회적으로 인정받는 명예로운 분야로 진출하여 가문을 빛내는 효자·효녀가 됩니다.</p>
+                    <p>• <strong>🤝 형제궁 (兄弟宮 - 형제자매 우애 & 상호 조력):</strong> 형제자매 간에 서로의 독립성을 존중해 줄 때 성인이 된 후 중요한 인생의 고비마다 든든한 지원군이자 비상시의 귀인이 되어줍니다.</p>
+                </div>
+            </div>
+
+            <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
+
+            <!-- [신규] Chapter 4. 평생 학업·시험·합격·문서운 -->
+            <div>
+                <div style="border-left: 4px solid #2563EB; padding-left: 10px; margin-bottom: 8px;">
+                    <span style="font-size: 12px; color: #2563EB; font-weight: 800;">Chapter 4. 평생 학업·시험·문서운</span>
+                    <h4 style="font-size: 16.5px; font-weight: 800; color: #1E3A8A; margin-top: 2px;">
+                        🎓 관록궁 & 문창성 기반 고시/자격/승진 시험 합격운
+                    </h4>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 8px; font-size: 14px; color: #1E40AF; line-height: 1.8;">
+                    <p>• <strong>타고난 지적 역량:</strong> 한번 파고든 학문과 기술의 끝을 보는 '문창성(文昌星)'의 지혜를 타고났습니다. 벼락치기보다는 3~6개월의 꾸준한 루틴을 세울 때 시험 합격률이 98%에 달합니다.</p>
+                    <p>• <strong>국가공인/전문 자격증 합격운:</strong> 부동산, 금융, 법률, 기술 전문 자격 취득 및 공공기관/승진 시험에서 강력한 문서운(印星)이 발동하여 높은 점수로 합격증을 거머쥡니다.</p>
+                </div>
+            </div>
+
+            <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
+
             <div>
                 <div style="border-left: 4px solid #F59E0B; padding-left: 10px; margin-bottom: 8px;">
-                    <span style="font-size: 12px; color: #D97706; font-weight: 800;">Chapter 3. 실전 개운 솔루션</span>
+                    <span style="font-size: 12px; color: #D97706; font-weight: 800;">Chapter 5. 실전 개운 솔루션</span>
                     <h4 style="font-size: 16.5px; font-weight: 800; color: #78350F; margin-top: 2px;">
                         🔥 {gender_str} 맞춤 3대 개운(開運) 비책
                     </h4>
@@ -521,6 +555,7 @@ def get_daewoon_report(req: dict):
         """
     }
 
+# [방안 A 적용] 2026 신년운세 (올해 가족 화합운 & 소망 성취 골든타임 완전판)
 @app.post("/api/sinnian-report")
 def get_sinnian_report(req: dict):
     user_name = req.get("name", "최정오")
@@ -565,18 +600,35 @@ def get_sinnian_report(req: dict):
                 <div style="border-left: 4px solid #DC2626; padding-left: 10px; margin-bottom: 8px;">
                     <span style="font-size: 12px; color: #DC2626; font-weight: 800;">Chapter 1. 2026년 세운(歲運) 총론</span>
                     <h4 style="font-size: 16.5px; font-weight: 800; color: #991B1B; margin-top: 2px;">
-                        🔥 2026 丙午년(붉은 말의 해) {user_name}님의 도약 총운
+                        🔥 2026 丙午년(붉은 말의 해) {user_name}님의 도약 총운 & 가족 화합
                     </h4>
                 </div>
                 <p style="color: #7F1D1D; line-height: 1.85; margin-bottom: 12px;">
-                    2026년은 강렬한 불(火)의 기운이 어둠을 걷어내고 대지를 환하게 비추는 丙午년입니다. {user_name}님의 명식과 조화를 이루어 그동안 준비해 온 역량이 화려하게 꽃을 피우며 막혀 있던 활로가 시원하게 뚫리는 <strong>'비상(飛翔)의 한 해'</strong>가 됩니다.
+                    2026년은 강렬한 불(火)의 기운이 어둠을 걷어내고 대지를 환하게 비추는 丙午년입니다. {user_name}님의 명식과 조화를 이루어 그동안 준비해 온 역량이 화려하게 꽃을 피우며 막혀 있던 활로가 시원하게 뚫리는 <strong>'비상(飛翔)의 한 해'</strong>가 됩니다. 집안에 경사(자녀의 진학/취업, 부모님 건강 회복, 가문 합동 행사)가 깃들어 가족 간의 결속이 한층 두터워집니다.
                 </p>
             </div>
+
             <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
+
+            <!-- [신규] Chapter 2. 2026년 소망 성취 지수 & 핵심 골든타임 -->
+            <div>
+                <div style="border-left: 4px solid #F59E0B; padding-left: 10px; margin-bottom: 8px;">
+                    <span style="font-size: 12px; color: #D97706; font-weight: 800;">Chapter 2. 2026년 소망 성취 지수</span>
+                    <h4 style="font-size: 16.5px; font-weight: 800; color: #78350F; margin-top: 2px;">
+                        🎯 간절한 소원 성취 확률 92% & 달성 골든타임
+                    </h4>
+                </div>
+                <p style="color: #78350F; line-height: 1.85;">
+                    올해 품은 핵심 소망(이직, 계약 체결, 부동산 매매, 시험 합격 등)은 <strong>양력 5월과 10월</strong>에 천우신조의 기운을 만나 일사천리로 성취됩니다. 주저하지 말고 해당 시기에 적극적으로 실행에 옮기세요.
+                </p>
+            </div>
+
+            <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
+
             <div>
                 <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 8px;">
                     <div style="border-left: 4px solid #2D6A4F; padding-left: 10px;">
-                        <span style="font-size: 12px; color: #2D6A4F; font-weight: 800;">Chapter 2. 12개월 정밀 토정비결</span>
+                        <span style="font-size: 12px; color: #2D6A4F; font-weight: 800;">Chapter 3. 12개월 정밀 토정비결</span>
                         <h4 style="font-size: 16.5px; font-weight: 800; color: #0F172A; margin-top: 2px;">
                             📜 1월부터 12월까지 월별 기회와 주의점
                         </h4>
@@ -707,7 +759,7 @@ def get_gunghap_report(req: dict):
         """
     }
 
-# [대폭 확장] 4대 테마운세 (재물·애정·사업·건강) - 사업·직업운 5대 챕터 정밀 분석집
+# [방안 A 적용] 4대 테마운세 - 사업·직업운에 '시험/자격/승진 준비' 옵션 추가
 @app.post("/api/theme-report")
 def get_theme_report(req: dict):
     theme = req.get("theme", "wealth")
@@ -878,210 +930,84 @@ def get_theme_report(req: dict):
         """
     elif theme == "business":
         if sub_opt == "취업/이직":
-            content = f"""
-            <div style="display: flex; flex-direction: column; gap: 16px; font-size: 14.5px; color: #334155; line-height: 1.85; text-align: left;">
-                <div style="border-left: 4px solid #2563EB; padding-left: 10px;">
-                    <span style="font-size: 12px; color: #2563EB; font-weight: 800;">Chapter 1. 직무 적성 및 타고난 관성·식상 원국 분석</span>
-                    <h4 style="font-size: 16.5px; font-weight: 800; color: #1E3A8A; margin: 3px 0 6px;">[적성 원국] 복잡한 문제를 명쾌히 해결하는 전략가형 기질</h4>
-                    <p style="color: #1E40AF; font-size: 14.5px; line-height: 1.85;">
-                        {user_name}님의 명식은 사물과 현상의 본질을 빠르게 꿰뚫는 분석력과 탁월한 기획력을 겸비하고 있습니다. 단순 반복형 실무에 갇혀 있을 때보다 프로젝트의 기획, 전략 수립, 총괄 운영 등 스스로 판단하고 주도할 수 있는 권한이 주어질 때 역량이 300% 이상 폭발합니다.
-                    </p>
-                </div>
-
-                <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
-
-                <div>
-                    <div style="border-left: 4px solid #059669; padding-left: 10px; margin-bottom: 8px;">
-                        <span style="font-size: 12px; color: #059669; font-weight: 800;">Chapter 2. 이직/취업 성공 골든타임 & 합격률 200% 승부 시기</span>
-                        <h4 style="font-size: 16.5px; font-weight: 800; color: #065F46; margin-top: 2px;">📅 올해 가장 강력한 이직·합격 타이밍</h4>
-                    </div>
-                    <div style="display: flex; flex-direction: column; gap: 8px; font-size: 14px; color: #475569; line-height: 1.8;">
-                        <p>• <strong>★상반기 승부처 (양력 3월 ~ 5월):</strong> 관운(官運)이 강하게 결합하여 대기업, 외국계, 유망 중견기업의 수시 채용 및 스카우트 제안이 쏟아집니다.</p>
-                        <p>• <strong>★하반기 승부처 (양력 9월 ~ 11월):</strong> 귀인의 천거와 인맥을 통한 추천 이직의 문이 활짝 열립니다. 기존 직무보다 1.5단계 높은 직급으로 이직할 최적기입니다.</p>
-                    </div>
-                </div>
-
-                <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
-
-                <div>
-                    <div style="border-left: 4px solid #D97706; padding-left: 10px; margin-bottom: 8px;">
-                        <span style="font-size: 12px; color: #D97706; font-weight: 800;">Chapter 3. 면접 필승 전략 & 대체 불가능한 역량 어필법</span>
-                        <h4 style="font-size: 16.5px; font-weight: 800; color: #78350F; margin-top: 2px;">👔 면접관의 마음을 사로잡는 3대 실전 화법</h4>
-                    </div>
-                    <div style="display: flex; flex-direction: column; gap: 8px; font-size: 14px; color: #92400E; line-height: 1.8;">
-                        <p>• <strong>1. 성과를 숫자로 증명:</strong> "열심히 했습니다" 대신 "비용을 22% 절감하고 프로젝트 기간을 2주 단축했습니다"와 같이 수치 중심 포트폴리오를 제시하세요.</p>
-                        <p>• <strong>2. 당당한 태도와 안정된 톤:</strong> 당신의 사주 본원이 지닌 신뢰감을 무기로 조급해하지 않고 차분하고 명료하게 답변할 때 면접관의 압도적인 신임을 얻습니다.</p>
-                    </div>
-                </div>
-
-                <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
-
-                <div>
-                    <div style="border-left: 4px solid #DC2626; padding-left: 10px; margin-bottom: 8px;">
-                        <span style="font-size: 12px; color: #DC2626; font-weight: 800;">Chapter 4. 연봉 협상 비책 & 최적의 기업 형태</span>
-                        <h4 style="font-size: 16.5px; font-weight: 800; color: #991B1B; margin-top: 2px;">💰 최소 15% 이상 연봉 인상을 성사시키는 협상 가이드</h4>
-                    </div>
-                    <p style="color: #451A03; font-size: 14px; line-height: 1.8;">
-                        첫 오퍼를 덥석 수락하지 말고, 이전 직장에서의 핵심 기여도를 근거로 상한선(15~20% 인상)을 정중하면서도 확고하게 제시하세요. 수직적이고 폐쇄적인 조직보다는 자율성과 성과 보상이 명확한 혁신 기업 및 전문 직무에서 당신의 몸값이 매년 수직 상승합니다.
-                    </p>
-                </div>
-            </div>
+            b_ch1 = "🎯 [취업·이직 성공] 합격률 200% 승부처 & 면접 합격 비책"
+            b_desc1 = f"""
+            <p>• <strong>이직 골든타임:</strong> 상반기 3~5월과 하반기 9~11월에 당신의 이력서가 강력한 평가를 받습니다.</p>
+            <p>• <strong>면접 필승 처세:</strong> 겸손한 태도 속에 본인의 실전 프로젝트 문제 해결 역량을 숫자로 당당하게 어필하세요.</p>
+            <p>• <strong>연봉 협상:</strong> 본인의 성과 포트폴리오를 근거로 희망 연봉 상단을 제시할 때 15% 이상의 인상이 가능합니다.</p>
+            """
+            b_ch2 = "🏢 가장 운이 잘 풀리는 유망 직무 & 기업 형태"
+            b_desc2 = f"""
+            <p>대기업 기획실, 외국계 전문 직무, 공공기관 및 기술 기반 혁신 기업에서 당신의 직무 자율성이 극대화됩니다.</p>
+            <p>단순 반복 업무보다는 전략 수립과 의사결정 권한이 주어지는 포지션에서 초고속 승진합니다.</p>
             """
         elif sub_opt == "사업가":
-            content = f"""
-            <div style="display: flex; flex-direction: column; gap: 16px; font-size: 14.5px; color: #334155; line-height: 1.85; text-align: left;">
-                <div style="border-left: 4px solid #2563EB; padding-left: 10px;">
-                    <span style="font-size: 12px; color: #2563EB; font-weight: 800;">Chapter 1. 사업 대운맥 & 타고난 사업가 기질 원국 분석</span>
-                    <h4 style="font-size: 16.5px; font-weight: 800; color: #1E3A8A; margin: 3px 0 6px;">[사업 대성] 판을 짜고 사람을 움직이는 거상(巨商)의 그릇</h4>
-                    <p style="color: #1E40AF; font-size: 14.5px; line-height: 1.85;">
-                        {user_name}님의 명식은 소자본 장사에 머무르지 않고 시스템을 구축하여 사업을 확장시키는 강력한 사업가적 스케일을 품고 있습니다. 위기 상황에서도 흔들리지 않는 배짱과 결단력이 있어, 불황기일수록 경쟁사를 따돌리고 시장 점유율을 크게 확대하는 역발상 승부사입니다.
-                    </p>
-                </div>
-
-                <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
-
-                <div>
-                    <div style="border-left: 4px solid #059669; padding-left: 10px; margin-bottom: 8px;">
-                        <span style="font-size: 12px; color: #059669; font-weight: 800;">Chapter 2. 스케일업 & 매출 3배 폭발 전환점 타이밍</span>
-                        <h4 style="font-size: 16.5px; font-weight: 800; color: #065F46; margin-top: 2px;">🚀 신규 채널 확장 & 법인 규모 도약기</h4>
-                    </div>
-                    <div style="display: flex; flex-direction: column; gap: 8px; font-size: 14px; color: #475569; line-height: 1.8;">
-                        <p>• <strong>매출 퀀텀점프 시기:</strong> 올 하반기부터 내년 상반기까지 강력한 식신생재(食神生財)의 운이 들어와 신규 브랜드 런칭, B2B 대형 수주, 프랜차이즈 확장에서 폭발적 결실을 맺습니다.</p>
-                        <p>• <strong>핵심 전략:</strong> 저가 출혈 경쟁을 피하고 독보적인 서비스 품질과 프리미엄 포지셔닝으로 객단가를 40% 이상 높이세요.</p>
-                    </div>
-                </div>
-
-                <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
-
-                <div>
-                    <div style="border-left: 4px solid #D97706; padding-left: 10px; margin-bottom: 8px;">
-                        <span style="font-size: 12px; color: #D97706; font-weight: 800;">Chapter 3. 성공적인 조직 관리 & 권한 위임의 기술</span>
-                        <h4 style="font-size: 16.5px; font-weight: 800; color: #78350F; margin-top: 2px;">👥 핵심 인재 채용 및 리스크 방어</h4>
-                    </div>
-                    <div style="display: flex; flex-direction: column; gap: 8px; font-size: 14px; color: #92400E; line-height: 1.8;">
-                        <p>• 대표 혼자서 모든 실무를 처리하려 하면 성장의 한계에 부딪힙니다. 실행력이 검증된 실무 총괄 팀장에게 과감히 권한을 위임하고, 대표는 거시적 영업과 투자 유치에 집중하세요.</p>
-                        <p>• 핵심 인재에게는 성과급과 스톡옵션 등 확실한 인센티브를 부여할 때 조직 충성도가 극대화됩니다.</p>
-                    </div>
-                </div>
-
-                <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
-
-                <div>
-                    <div style="border-left: 4px solid #DC2626; padding-left: 10px; margin-bottom: 8px;">
-                        <span style="font-size: 12px; color: #DC2626; font-weight: 800;">Chapter 4. 세무·법률 리스크 완벽 방어</span>
-                        <h4 style="font-size: 16.5px; font-weight: 800; color: #991B1B; margin-top: 2px;">🛡️ 관재구설수 및 자금 유동성 관리</h4>
-                    </div>
-                    <p style="color: #451A03; font-size: 14px; line-height: 1.8;">
-                        사업이 급성장할 때일수록 세무 리스크와 계약서 독소 조항 검증에 만전을 기해야 합니다. 최소 3~6개월 치의 고정비를 안전 유동성 자금으로 비축해 두면 어떠한 시장 변동성 속에서도 흔들리지 않는 100년 기업의 기틀을 완성합니다.
-                    </p>
-                </div>
-            </div>
+            b_ch1 = "🚀 [사업 확장 & 매출 폭발] 매출 3배 성장의 전환점"
+            b_desc1 = f"""
+            <p>• <strong>스케일업 타이밍:</strong> 기존 아이템의 내실을 다진 후 하반기에 신규 채널과 파트너십을 확장할 때 폭발적 매출이 일어납니다.</p>
+            <p>• <strong>인사 관리:</strong> 실행력이 강한 실무 리더를 영입하고 권한을 위임할 때 사업 규모가 퀀텀점프합니다.</p>
+            <p>• <strong>마케팅 전략:</strong> 충성 고객 중심의 바이럴과 프리미엄 포지셔닝이 객단가를 40% 끌어올립니다.</p>
+            """
+            b_ch2 = "💼 법률·세무 리스크 방어 & 관재구설수 차단"
+            b_desc2 = f"""
+            <p>세무 검증과 계약서 조항을 철저히 정비하여 관재수를 원천 차단하세요. 동업자나 주요 거래처와의 계약은 전문가 감수를 필수적으로 거치세요.</p>
             """
         elif sub_opt == "창업":
-            content = f"""
-            <div style="display: flex; flex-direction: column; gap: 16px; font-size: 14.5px; color: #334155; line-height: 1.85; text-align: left;">
-                <div style="border-left: 4px solid #2563EB; padding-left: 10px;">
-                    <span style="font-size: 12px; color: #2563EB; font-weight: 800;">Chapter 1. 창업 성공 원국 & 타고난 식신생재 기운 감명</span>
-                    <h4 style="font-size: 16.5px; font-weight: 800; color: #1E3A8A; margin: 3px 0 6px;">[스타트업 성공] 무에서 유를 창조하는 개척자 사주</h4>
-                    <p style="color: #1E40AF; font-size: 14.5px; line-height: 1.85;">
-                        {user_name}님은 번뜩이는 아이디어를 현실적인 수익 모델로 구체화하는 '식신생재(食神生財)'의 기운이 매우 강합니다. 남의 밑에서 지시를 받기보다 본인의 철학과 감각이 담긴 독창적인 브랜드를 만들 때 사회적으로 가장 큰 명성과 부를 거머쥡니다.
-                    </p>
-                </div>
-
-                <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
-
-                <div>
-                    <div style="border-left: 4px solid #059669; padding-left: 10px; margin-bottom: 8px;">
-                        <span style="font-size: 12px; color: #059669; font-weight: 800;">Chapter 2. 실패 없는 대박 창업 아이템 & 상권 입지 분석</span>
-                        <h4 style="font-size: 16.5px; font-weight: 800; color: #065F46; margin-top: 2px;">💡 사주 오행 맞춤 대박 창업 분야</h4>
-                    </div>
-                    <div style="display: flex; flex-direction: column; gap: 8px; font-size: 14px; color: #475569; line-height: 1.8;">
-                        <p>• <strong>★최고 추천 분야:</strong> 전문 지식재산권(IP) 기반 컨설팅/교육, 프리미엄 라이프스타일/F&B, 플랫폼/B2B 테크 솔루션, 고급 웰니스/케어 서비스.</p>
-                        <p>• <strong>상권 입지 명당:</strong> 정동쪽과 서북쪽에 위치한 역세권 인근 및 유동인구의 소득 수준이 높은 배후 상권에서 고객 유입이 극대화됩니다.</p>
-                    </div>
-                </div>
-
-                <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
-
-                <div>
-                    <div style="border-left: 4px solid #D97706; padding-left: 10px; margin-bottom: 8px;">
-                        <span style="font-size: 12px; color: #D97706; font-weight: 800;">Chapter 3. 초기 자본금 세팅 & 6개월 내 손익분기점 달성법</span>
-                        <h4 style="font-size: 16.5px; font-weight: 800; color: #78350F; margin-top: 2px;">💰 린(Lean) 스타트업 실전 생존 수칙</h4>
-                    </div>
-                    <div style="display: flex; flex-direction: column; gap: 8px; font-size: 14px; color: #92400E; line-height: 1.8;">
-                        <p>• 처음부터 무리하게 거액의 대출이나 화려한 인테리어에 자금을 쏟지 마세요. 최소 기능 제품(MVP)으로 빠르게 시장 검증을 마치고 6개월 내 흑자 전환 구조를 구축하세요.</p>
-                        <p>• 정부 지원금, 청년/재창업 지원 패키지를 적극 활용하여 초기 고정비를 50% 이상 절감하세요.</p>
-                    </div>
-                </div>
-
-                <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
-
-                <div>
-                    <div style="border-left: 4px solid #DC2626; padding-left: 10px; margin-bottom: 8px;">
-                        <span style="font-size: 12px; color: #DC2626; font-weight: 800;">Chapter 4. 동업 지분 구조 & 투자 유치 필승법</span>
-                        <h4 style="font-size: 16.5px; font-weight: 800; color: #991B1B; margin-top: 2px;">🤝 대표의 경영권 수호와 초기 바이럴</h4>
-                    </div>
-                    <p style="color: #451A03; font-size: 14px; line-height: 1.8;">
-                        동업을 진행할 경우 대표 본인의 지분을 최소 70% 이상 확보하여 최종 의사결정의 주도권을 지키세요. 런칭 초기 진정성 있는 SNS 스토리텔링과 첫 100명의 단골 팬덤을 구축할 때 1년 안에 안정적인 자동 수익 궤도에 진입합니다.
-                    </p>
-                </div>
-            </div>
+            b_ch1 = "💡 [성공 창업 가이드] 실패 없는 창업 아이템 & 상권 분석"
+            b_desc1 = f"""
+            <p>• <strong>대박 아이템:</strong> 전문 지식재산권 기반 서비스, 프리미엄 식음료/라이프스타일, B2B 솔루션 사업.</p>
+            <p>• <strong>초기 전략:</strong> 고정비를 최소화하는 린(Lean) 스타트업 방식으로 시작하여 6개월 내 손익분기점을 달성하세요.</p>
+            <p>• <strong>상권 입지:</strong> 유동인구가 꾸준하고 배후 세대가 탄탄한 역세권 인근이 최적의 명당입니다.</p>
+            """
+            b_ch2 = "🤝 투자 유치 & 동업 파트너십 수칙"
+            b_desc2 = f"""
+            <p>지분 구조를 7:3 이상으로 확고히 쥐고 대표의 경영권을 지킬 때 투자 유치와 정부 지원 사업이 순조롭습니다.</p>
+            """
+        elif sub_opt == "시험/자격/승진":
+            b_ch1 = "🎓 [시험·자격·승진 합격] 단기 합격률 200% 비결 & 관운 집중기"
+            b_desc1 = f"""
+            <p>• <strong>시험 합격 골든타임:</strong> 관성(官星)과 인성(印星)이 합을 이루는 상반기(양력 4~6월)와 가을(양력 9~11월)에 시험을 치를 때 찍은 문제도 정답이 되는 강력한 합격운이 따릅니다.</p>
+            <p>• <strong>합격 공부 전략:</strong> 방대한 양을 무작정 암기하기보다 기출문제 중심의 핵심 20%를 반복 회독할 때 단기 고득점을 완성합니다.</p>
+            """
+            b_ch2 = "📖 집중력 극대화 풍수 & 슬럼프 극복 루틴"
+            b_desc2 = f"""
+            <p>책상을 북동쪽이나 정북쪽에 배치하고 조명을 은은한 주백색으로 맞추세요. 수면 시간을 6시간 이상 규칙적으로 확보할 때 두뇌 회전이 2배 빨라집니다.</p>
             """
         else: # 직장인
-            content = f"""
-            <div style="display: flex; flex-direction: column; gap: 16px; font-size: 14.5px; color: #334155; line-height: 1.85; text-align: left;">
-                <div style="border-left: 4px solid #2563EB; padding-left: 10px;">
-                    <span style="font-size: 12px; color: #2563EB; font-weight: 800;">Chapter 1. 사내 직무 역량 & 타고난 리더십 원국 감명</span>
-                    <h4 style="font-size: 16.5px; font-weight: 800; color: #1E3A8A; margin: 3px 0 6px;">[핵심 인재] 조직의 신뢰를 한 몸에 받는 대체 불가능한 에이스</h4>
-                    <p style="color: #1E40AF; font-size: 14.5px; line-height: 1.85;">
-                        {user_name}님의 명식은 원칙을 지키는 단단한 책임감과 위기 상황에서의 탁월한 중재력을 두루 갖추고 있습니다. 윗사람에게는 든든하고 신뢰할 수 있는 오른팔이 되고, 후배들에게는 듬직한 멘토가 되어 사내에서 가장 빠르게 핵심 보직으로 발탁되는 리더 사주입니다.
-                    </p>
-                </div>
-
-                <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
-
-                <div>
-                    <div style="border-left: 4px solid #059669; padding-left: 10px; margin-bottom: 8px;">
-                        <span style="font-size: 12px; color: #059669; font-weight: 800;">Chapter 2. 사내 초고속 승진 & 파격 발탁 타이밍</span>
-                        <h4 style="font-size: 16.5px; font-weight: 800; color: #065F46; margin-top: 2px;">🎖️ 올해 인사 평가 및 승진의 분수령</h4>
-                    </div>
-                    <div style="display: flex; flex-direction: column; gap: 8px; font-size: 14px; color: #475569; line-height: 1.8;">
-                        <p>• <strong>승진 운이 가장 강한 달:</strong> 올 하반기(양력 10월~12월)에 인사 고과에서 S등급의 최고 평가를 받으며 주요 부서장/팀장으로 영전할 강력한 천운이 작용합니다.</p>
-                        <p>• <strong>어필 포인트:</strong> 조직의 고질적인 비효율을 해결한 혁신안과 가시적인 실적 데이터를 경영진에게 선제적으로 보고하세요.</p>
-                    </div>
-                </div>
-
-                <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
-
-                <div>
-                    <div style="border-left: 4px solid #D97706; padding-left: 10px; margin-bottom: 8px;">
-                        <span style="font-size: 12px; color: #D97706; font-weight: 800;">Chapter 3. 사내 정치 돌파 & 대체 불가능한 실적 증명법</span>
-                        <h4 style="font-size: 16.5px; font-weight: 800; color: #78350F; margin-top: 2px;">👔 상사 및 유관 부서와의 황금 파트너십</h4>
-                    </div>
-                    <div style="display: flex; flex-direction: column; gap: 8px; font-size: 14px; color: #92400E; line-height: 1.8;">
-                        <p>• 사내 파벌이나 잡음에 절대 깊이 관여하지 마세요. 오직 명확한 데이터와 실력으로 승부할 때 양쪽 진영 모두로부터 두터운 신망과 러브콜을 받습니다.</p>
-                        <p>• 상급자의 가려운 곳을 선제적으로 긁어주는 1페이지 핵심 요약 보고서 작성이 당신의 승진 속도를 2배 앞당깁니다.</p>
-                    </div>
-                </div>
-
-                <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
-
-                <div>
-                    <div style="border-left: 4px solid #DC2626; padding-left: 10px; margin-bottom: 8px;">
-                        <span style="font-size: 12px; color: #DC2626; font-weight: 800;">Chapter 4. 직장인 부수입 파이프라인 & 멘탈 케어</span>
-                        <h4 style="font-size: 16.5px; font-weight: 800; color: #991B1B; margin-top: 2px;">🌿 본업의 안정감 위에 구축하는 N잡 전략</h4>
-                    </div>
-                    <p style="color: #451A03; font-size: 14px; line-height: 1.8;">
-                        본업의 전문성을 활용한 자문, 강연, 부동산 투자 및 배당 파이프라인을 구축하세요. 주말에는 완벽히 업무 연락을 차단하고 힐링 루틴을 확보할 때 번아웃 없이 50대까지 고액 연봉을 유지합니다.
-                    </p>
-                </div>
-            </div>
+            b_ch1 = "🎖️ [직장인 초고속 승진] 사내 핵심 인재로 인정받는 처세술"
+            b_desc1 = f"""
+            <p>• <strong>승진 타이밍:</strong> 올해 인사 평가에서 당신의 기획안이 상급자의 두터운 신임을 얻습니다.</p>
+            <p>• <strong>사내 정치 돌파:</strong> 잡음에 휩쓸리지 않고 독보적인 실적과 데이터로 증명할 때 파격 승진의 길이 열립니다.</p>
+            <p>• <strong>핵심 성과 창출:</strong> 조직의 병목 현상을 해결하는 개선안을 선제적으로 보고하세요.</p>
+            """
+            b_ch2 = "👔 상사 및 팀원과의 황금 파트너십 구축"
+            b_desc2 = f"""
+            <p>상급자의 가려운 곳을 긁어주는 보고서 작성과 팀원들을 배려하는 리더십으로 사내에서 대체 불가능한 인망을 얻으세요.</p>
             """
 
-        return {
-            "title": titles.get(theme, "심층 리포트"),
-            "content": content
-        }
+        content = f"""
+        <div style="display: flex; flex-direction: column; gap: 16px; font-size: 14.5px; color: #334155; line-height: 1.85; text-align: left;">
+            <div style="border-left: 4px solid #2563EB; padding-left: 10px;">
+                <span style="font-size: 12px; color: #2563EB; font-weight: 800;">Chapter 1. 직무/사업 맞춤 운세 ({sub_opt})</span>
+                <h4 style="font-size: 16.5px; font-weight: 800; color: #1E3A8A; margin: 3px 0 6px;">{b_ch1}</h4>
+                <div style="color: #1E40AF; font-size: 14.5px; line-height: 1.85;">
+                    {b_desc1}
+                </div>
+            </div>
+
+            <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
+
+            <div>
+                <div style="border-left: 4px solid #059669; padding-left: 10px; margin-bottom: 8px;">
+                    <span style="font-size: 12px; color: #059669; font-weight: 800;">Chapter 2. 유망 분야 & 실전 처세</span>
+                    <h4 style="font-size: 16.5px; font-weight: 800; color: #065F46; margin-top: 2px;">{b_ch2}</h4>
+                </div>
+                <div style="color: #047857; font-size: 14px; line-height: 1.8;">
+                    {b_desc2}
+                </div>
+            </div>
+        </div>
+        """
     else: # 건강운
         content = f"""
         <div style="display: flex; flex-direction: column; gap: 16px; font-size: 14.5px; color: #334155; line-height: 1.85; text-align: left;">
