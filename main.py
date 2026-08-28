@@ -7,7 +7,7 @@ from typing import Optional
 import os
 import random
 
-app = FastAPI(title="운세의 신 정통 명리학 엔진 - Mode 2 Ultimate", version="38.0.0")
+app = FastAPI(title="운세의 신 정통 명리학 엔진 - Mode 2 Master Edition", version="39.0.0")
 
 CHEONGAN_HANJA = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
 JIJI_HANJA = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"]
@@ -351,7 +351,7 @@ def analyze_saju(req: SajuRequest):
     mindset = MINDSETS_POOL[(daily_hash + 4) % len(MINDSETS_POOL)]
     action = ACTIONS_POOL[(daily_hash + 5) % len(ACTIONS_POOL)]
 
-    # [수정] 65점 ~ 100점 범위의 정밀 일진 운세 점수
+    # 65점 ~ 100점 범위의 정밀 일진 운세 점수
     daily_score = 65 + (daily_hash % 36)
 
     today_diff = (today - base_date).days
