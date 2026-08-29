@@ -349,13 +349,11 @@ def kakao_auth(req: KakaoLoginRequest):
     
     if user:
         user_id = user["id"]
-        # 기존 회원이면 등록된 사주 정보로 즉시 분석 데이터 생성
         saju_payload = compute_saju_full_payload(
             user["name"], user["gender"], user["birth_year"],
             user["birth_month"], user["birth_day"], user["calendar_type"], user["sijin_index"]
         )
         
-        # 구매 보관함 목록 조회
         cursor.execute("SELECT report_key, report_title, report_content, created_at FROM unlocked_reports WHERE user_id = ? ORDER BY id DESC", (user_id,))
         unlocked_list = [dict(row) for row in cursor.fetchall()]
         conn.close()
@@ -377,7 +375,6 @@ def kakao_auth(req: KakaoLoginRequest):
             "unlocked_reports": unlocked_list
         }
     else:
-        # 신규 회원인 경우 카카오에서 가져온 정보 가공
         b_year = int(req.birthyear) if req.birthyear and req.birthyear.isdigit() else 1978
         b_month, b_day = 8, 13
         if req.birthday and len(req.birthday) == 4:
@@ -387,11 +384,10 @@ def kakao_auth(req: KakaoLoginRequest):
         cal_type = "lunar" if req.birthday_type == "LUNAR" else "solar"
         gender_val = "female" if req.gender in ["female", "F"] else "male"
 
-        # 임시 가입 처리 (기본 1000 복채 지급)
         cursor.execute("""
         INSERT INTO users (kakao_id, name, gender, birth_year, birth_month, birth_day, calendar_type, sijin_index, coin_balance)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, 5)
-        """, (req.kakao_id, req.name, gender_val, b_year, b_month, b_day, cal_type))
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1000)
+        """, (req.kakao_id, req.name, gender_val, b_year, b_month, b_day, cal_type, 5))
         conn.commit()
         new_user_id = cursor.lastrowid
         conn.close()
@@ -467,7 +463,6 @@ def unlock_report(req: OrderReportRequest):
         conn.close()
         raise HTTPException(status_code=400, detail="보유 복채가 부족합니다.")
 
-    # 복채 차감
     new_balance = user["coin_balance"] - req.cost
     cursor.execute("UPDATE users SET coin_balance = ? WHERE id = ?", (new_balance, req.user_id))
 
@@ -495,7 +490,6 @@ def unlock_report(req: OrderReportRequest):
     """, (req.user_id, req.report_key, report_title, report_content, today_str))
     conn.commit()
 
-    # 최신 보관함 조회
     cursor.execute("SELECT report_key, report_title, report_content, created_at FROM unlocked_reports WHERE user_id = ? ORDER BY id DESC", (req.user_id,))
     unlocked_list = [dict(row) for row in cursor.fetchall()]
     conn.close()
@@ -561,7 +555,7 @@ def get_zodiac_fortune(type: str = "zodiac", key: str = "쥐"):
 def get_daily_tarot(slot: int = 1):
     return TAROT_CARDS[random.randint(0, len(TAROT_CARDS) - 1)]
 
-# 6. 리포트 생성기
+# 6. 리포트 생성 함수들
 def get_daewoon_report(req: dict):
     user_name = req.get("name", "최정오")
     gender = req.get("gender", "male")
