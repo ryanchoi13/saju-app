@@ -24,7 +24,6 @@
         
         .card { background: #FFFFFF; border-radius: 20px; border: 1px solid #E2E8F0; padding: 18px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.03); position: relative; }
         
-        /* 화이트 바탕의 단정한 상단 프로필 바 */
         .user-profile-bar { background: #FFFFFF; border-radius: 16px; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; border: 1.5px solid #E2E8F0; box-shadow: 0 2px 4px rgba(0,0,0,0.02); margin-bottom: 2px; }
         .user-profile-name { font-size: 15.5px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif; }
         .user-profile-birth { font-size: 12.5px; color: #64748B; font-weight: 500; }
@@ -48,7 +47,7 @@
         .elem-water { background: #EFF6FF; color: #2563EB; border: 1.5px solid #BFDBFE; }
         .elem-none { background: #F8FAFC; color: #94A3B8; border: 1px solid #E2E8F0; }
         
-        .daily-banner { background: linear-gradient(135deg, #111D1E 0%, #1E3A34 100%); border: 1px solid #D4AF37; border-radius: 20px; padding: 20px; color: white; display: flex; flex-direction: column; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); margin-top: 4px; }
+        .daily-banner { background: linear-gradient(135deg, #0D1527 0%, #17233D 100%); border: 1.5px solid #D4AF37; border-radius: 20px; padding: 20px; color: white; display: flex; flex-direction: column; box-shadow: 0 10px 20px -3px rgba(13,21,39,0.25); margin-top: 4px; }
         
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
         .grid-cell { background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 14px; padding: 12px; font-size: 14px; text-align: left; }
@@ -70,15 +69,21 @@
         .drawer-card.open .drawer-arrow { transform: rotate(180deg); color: #2D6A4F; }
         .drawer-body { padding: 0 16px 16px 16px; border-top: 1px solid #F1F5F9; }
 
-        .zodiac-grid-2x6 { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; margin-top: 8px; }
-        .zodiac-btn { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 8px 2px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; }
-        .zodiac-btn:hover, .zodiac-btn:active { background: #EBF5EE; border-color: #86EFAC; transform: translateY(-1px); }
+        /* [신규] 별자리 테마 전용 휠 배너 & 그리드 */
+        .zodiac-wheel-hero { background: radial-gradient(circle at center, #172746 0%, #0B1220 100%); border: 1px solid rgba(226,192,104,0.4); border-radius: 16px; padding: 16px 14px; text-align: center; color: #FAF9F6; margin-top: 8px; margin-bottom: 12px; display: flex; flex-direction: column; align-items: center; gap: 8px; box-shadow: inset 0 0 20px rgba(0,0,0,0.5); }
+        .zodiac-wheel-title { font-size: 17px; font-weight: 900; color: #F6E2A1; letter-spacing: -0.3px; font-family: 'Noto Serif KR', serif; }
+        
+        .zodiac-grid-2x6 { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
+        .zodiac-btn { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 10px 2px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; }
+        .zodiac-btn:hover, .zodiac-btn:active { background: #0D1527; border-color: #E2C068; transform: translateY(-2px); }
+        .zodiac-btn:hover .zodiac-label, .zodiac-btn:active .zodiac-label { color: #F6E2A1; }
+        .zodiac-btn:hover svg path, .zodiac-btn:hover svg circle, .zodiac-btn:hover svg line { stroke: #F6E2A1; fill: #F6E2A1; }
         .zodiac-icon { font-size: 19px; line-height: 1.2; }
-        .zodiac-label { font-size: 11px; font-weight: 700; color: #334155; margin-top: 2px; }
+        .zodiac-label { font-size: 11px; font-weight: 700; color: #334155; margin-top: 4px; }
 
         .sub-tab-box { display: flex; background: #F1F5F9; border-radius: 12px; padding: 3px; gap: 4px; margin-top: 12px; margin-bottom: 8px; }
         .sub-tab-btn { flex: 1; padding: 8px; font-size: 13px; font-weight: 700; color: #64748B; border: none; background: transparent; border-radius: 8px; cursor: pointer; }
-        .sub-tab-btn.active { background: #FFFFFF; color: #111D1E; box-shadow: 0 1px 2px rgba(0,0,0,0.06); }
+        .sub-tab-btn.active { background: #0D1527; color: #F6E2A1; box-shadow: 0 1px 3px rgba(0,0,0,0.15); font-weight: 800; }
 
         .ad-slot-box { background: #F8FAFC; border: 1px dashed #CBD5E1; border-radius: 14px; padding: 12px; text-align: center; color: #94A3B8; font-size: 12px; font-weight: 600; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 64px; }
 
@@ -87,8 +92,8 @@
         .flipper { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; transition: transform 0.6s ease; border-radius: 10px; }
         .flipper.flipped { transform: rotateY(180deg); }
         .card-face { position: absolute; inset: 0; backface-visibility: hidden; border-radius: 10px; overflow: hidden; }
-        .card-back { background: #111D1E; border: 2px solid #D4AF37; box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
-        .card-front { transform: rotateY(180deg); background: white; border: 2px solid #D4AF37; display: flex; align-items: center; justify-content: center; }
+        .card-back { background: #0D1527; border: 2px solid #E2C068; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        .card-front { transform: rotateY(180deg); background: white; border: 2px solid #E2C068; display: flex; align-items: center; justify-content: center; }
 
         .talisman-banner { background: linear-gradient(135deg, #FFFDF5 0%, #FFFBEB 100%); border: 2px solid #FCD34D; border-radius: 16px; padding: 16px; text-align: center; display: flex; flex-direction: column; gap: 12px; margin-top: 12px; }
         .talisman-art { height: 120px; background: rgba(254,243,199,0.5); border-radius: 14px; border: 1px solid rgba(253,230,138,0.8); display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
@@ -97,9 +102,9 @@
         .teaser-blur-text { filter: blur(4px); user-select: none; color: #64748B; font-size: 13.5px; line-height: 1.7; }
         .teaser-lock-badge { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(255,255,255,0.75); backdrop-filter: blur(2px); }
 
-        nav#bottomNavBar { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 448px; background: rgba(17,29,30,0.98); backdrop-filter: blur(8px); border-top: 1px solid rgba(212,175,55,0.3); padding: 10px 24px; display: flex; justify-content: space-between; align-items: center; z-index: 1000; }
-        .tab-btn { background: none; border: none; display: flex; flex-direction: column; align-items: center; gap: 4px; color: #64748B; font-size: 12px; cursor: pointer; font-weight: 500; }
-        .tab-btn.active { color: #FDE68A; font-weight: 800; }
+        nav#bottomNavBar { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 448px; background: rgba(13,21,39,0.98); backdrop-filter: blur(8px); border-top: 1px solid rgba(226,192,104,0.3); padding: 10px 24px; display: flex; justify-content: space-between; align-items: center; z-index: 1000; }
+        .tab-btn { background: none; border: none; display: flex; flex-direction: column; align-items: center; gap: 4px; color: #94A3B8; font-size: 12px; cursor: pointer; font-weight: 500; }
+        .tab-btn.active { color: #F6E2A1; font-weight: 800; }
         .tab-btn svg { width: 23px; height: 23px; stroke: currentColor; fill: none; stroke-width: 2; }
 
         .modal-bg { position: fixed; inset: 0; background: rgba(11,19,21,0.75); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; padding: 16px; z-index: 2000; }
@@ -182,7 +187,7 @@
                 <button onclick="startSajuAnalysis()" class="btn-primary">정밀 감명서 발행하기 ✨</button>
             </div>
 
-            <!-- 탭 1: 오늘운세 (MBTI 카드 제거) -->
+            <!-- 탭 1: 오늘운세 -->
             <div id="view-today" class="tab-view hidden">
                 
                 <!-- 상단 프로필 바 -->
@@ -191,12 +196,16 @@
                     <div class="user-profile-birth" id="userProfileBarBirth">1978년 8월 13일생 · 사시(巳時)생</div>
                 </div>
 
+                <!-- 오늘의 일진 배너 (미드나잇 네이비 & 골드) -->
                 <div class="daily-banner">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                        <span style="font-size: 13px; color: #FDE68A;">오늘의 일진</span>
-                        <span id="resScoreBadge" style="background: #FBBF24; color: #1E293B; font-size: 12px; font-weight: 800; padding: 3px 10px; border-radius: 9999px;">운세 88점</span>
+                        <div style="display: flex; align-items: center; gap: 6px;">
+                            <span style="color: #E2C068; font-size: 15px;">✦</span>
+                            <span style="font-size: 13.5px; color: #F6E2A1; font-weight: 700;">오늘의 일진</span>
+                        </div>
+                        <span id="resScoreBadge" style="background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%); color: #FFFFFF; font-size: 12px; font-weight: 800; padding: 3px 12px; border-radius: 9999px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">운세 88점</span>
                     </div>
-                    <h3 id="resTitle" style="font-size: 16px; font-weight: 700; text-align: left; line-height: 1.5; margin-bottom: 14px;">도약의 하루</h3>
+                    <h3 id="resTitle" style="font-size: 16.5px; font-weight: 800; text-align: left; line-height: 1.5; margin-bottom: 12px; color: #FFFFFF;">도약의 하루</h3>
                     <div id="resAdvice" style="font-size: 13.5px; color: #E2E8F0; font-weight: 400; line-height: 1.65; text-align: left;"></div>
                 </div>
 
@@ -334,13 +343,14 @@
                         </div>
                     </div>
 
+                    <!-- 12간지 & 12별자리 서랍 (골드 휠 & 심볼 글리프 적용) -->
                     <div id="drawerZodiac" class="drawer-card">
                         <div class="drawer-header" onclick="toggleDrawer('drawerZodiac')">
                             <div class="drawer-title-box">
-                                <div class="drawer-icon-circle">🐭</div>
+                                <div class="drawer-icon-circle">✨</div>
                                 <div style="text-align: left;">
                                     <h4 class="drawer-title">12간지 띠별 & 별자리 운세</h4>
-                                    <p class="drawer-sub">지인·가족의 운세 실시간 탐색</p>
+                                    <p class="drawer-sub">정통 천체 휠 & 띠별 실시간 감명</p>
                                 </div>
                             </div>
                             <span class="drawer-arrow">▼</span>
@@ -348,9 +358,10 @@
                         <div class="drawer-body hidden" id="drawerBodyZodiac">
                             <div class="sub-tab-box">
                                 <button type="button" onclick="switchZodiacSubTab('zodiac')" id="btnSubZodiac" class="sub-tab-btn active">🐭 12간지 띠별</button>
-                                <button type="button" onclick="switchZodiacSubTab('star')" id="btnSubStar" class="sub-tab-btn">♈ 12별자리</button>
+                                <button type="button" onclick="switchZodiacSubTab('star')" id="btnSubStar" class="sub-tab-btn">✦ 12별자리 운세</button>
                             </div>
 
+                            <!-- 12간지 그리드 -->
                             <div id="gridZodiacBox" class="zodiac-grid-2x6">
                                 <div onclick="openZodiacModal('zodiac', '쥐')" class="zodiac-btn"><span class="zodiac-icon">🐭</span><span class="zodiac-label">쥐</span></div>
                                 <div onclick="openZodiacModal('zodiac', '소')" class="zodiac-btn"><span class="zodiac-icon">🐮</span><span class="zodiac-label">소</span></div>
@@ -366,19 +377,27 @@
                                 <div onclick="openZodiacModal('zodiac', '돼지')" class="zodiac-btn"><span class="zodiac-icon">🐷</span><span class="zodiac-label">돼지</span></div>
                             </div>
 
-                            <div id="gridStarBox" class="zodiac-grid-2x6 hidden">
-                                <div onclick="openZodiacModal('star', '물병자리')" class="zodiac-btn"><span class="zodiac-icon">♒</span><span class="zodiac-label">물병</span></div>
-                                <div onclick="openZodiacModal('star', '물고기자리')" class="zodiac-btn"><span class="zodiac-icon">♓</span><span class="zodiac-label">물고기</span></div>
-                                <div onclick="openZodiacModal('star', '양자리')" class="zodiac-btn"><span class="zodiac-icon">♈</span><span class="zodiac-label">양</span></div>
-                                <div onclick="openZodiacModal('star', '황소자리')" class="zodiac-btn"><span class="zodiac-icon">♉</span><span class="zodiac-label">황소</span></div>
-                                <div onclick="openZodiacModal('star', '쌍둥이자리')" class="zodiac-btn"><span class="zodiac-icon">♊</span><span class="zodiac-label">쌍둥이</span></div>
-                                <div onclick="openZodiacModal('star', '게자리')" class="zodiac-btn"><span class="zodiac-icon">♋</span><span class="zodiac-label">게</span></div>
-                                <div onclick="openZodiacModal('star', '사자자리')" class="zodiac-btn"><span class="zodiac-icon">♌</span><span class="zodiac-label">사자</span></div>
-                                <div onclick="openZodiacModal('star', '처녀자리')" class="zodiac-btn"><span class="zodiac-icon">♍</span><span class="zodiac-label">처녀</span></div>
-                                <div onclick="openZodiacModal('star', '천칭자리')" class="zodiac-btn"><span class="zodiac-icon">♎</span><span class="zodiac-label">천칭</span></div>
-                                <div onclick="openZodiacModal('star', '전갈자리')" class="zodiac-btn"><span class="zodiac-icon">♏</span><span class="zodiac-label">전갈</span></div>
-                                <div onclick="openZodiacModal('star', '사수자리')" class="zodiac-btn"><span class="zodiac-icon">♐</span><span class="zodiac-label">사수</span></div>
-                                <div onclick="openZodiacModal('star', '염소자리')" class="zodiac-btn"><span class="zodiac-icon">♑</span><span class="zodiac-label">염소</span></div>
+                            <!-- [신규] 12별자리 골드 휠 & 심볼 글리프 그리드 -->
+                            <div id="gridStarBox" class="hidden">
+                                <div class="zodiac-wheel-hero">
+                                    <div id="zodiacWheelSvgHero"></div>
+                                    <h4 class="zodiac-wheel-title">오늘의 별자리 운세</h4>
+                                    <p style="font-size: 11.5px; color: #CBD5E1;">나의 탄생 별자리를 선택하여 오늘의 천체 흐름을 감명하세요</p>
+                                </div>
+                                <div class="zodiac-grid-2x6">
+                                    <div onclick="openZodiacModal('star', '양자리')" class="zodiac-btn"><span class="star-glyph-box" data-sign="양자리"></span><span class="zodiac-label">양</span></div>
+                                    <div onclick="openZodiacModal('star', '황소자리')" class="zodiac-btn"><span class="star-glyph-box" data-sign="황소자리"></span><span class="zodiac-label">황소</span></div>
+                                    <div onclick="openZodiacModal('star', '쌍둥이자리')" class="zodiac-btn"><span class="star-glyph-box" data-sign="쌍둥이자리"></span><span class="zodiac-label">쌍둥이</span></div>
+                                    <div onclick="openZodiacModal('star', '게자리')" class="zodiac-btn"><span class="star-glyph-box" data-sign="게자리"></span><span class="zodiac-label">게</span></div>
+                                    <div onclick="openZodiacModal('star', '사자자리')" class="zodiac-btn"><span class="star-glyph-box" data-sign="사자자리"></span><span class="zodiac-label">사자</span></div>
+                                    <div onclick="openZodiacModal('star', '처녀자리')" class="zodiac-btn"><span class="star-glyph-box" data-sign="처녀자리"></span><span class="zodiac-label">처녀</span></div>
+                                    <div onclick="openZodiacModal('star', '천칭자리')" class="zodiac-btn"><span class="star-glyph-box" data-sign="천칭자리"></span><span class="zodiac-label">천칭</span></div>
+                                    <div onclick="openZodiacModal('star', '전갈자리')" class="zodiac-btn"><span class="star-glyph-box" data-sign="전갈자리"></span><span class="zodiac-label">전갈</span></div>
+                                    <div onclick="openZodiacModal('star', '사수자리')" class="zodiac-btn"><span class="star-glyph-box" data-sign="사수자리"></span><span class="zodiac-label">사수</span></div>
+                                    <div onclick="openZodiacModal('star', '염소자리')" class="zodiac-btn"><span class="star-glyph-box" data-sign="염소자리"></span><span class="zodiac-label">염소</span></div>
+                                    <div onclick="openZodiacModal('star', '물병자리')" class="zodiac-btn"><span class="star-glyph-box" data-sign="물병자리"></span><span class="zodiac-label">물병</span></div>
+                                    <div onclick="openZodiacModal('star', '물고기자리')" class="zodiac-btn"><span class="star-glyph-box" data-sign="물고기자리"></span><span class="zodiac-label">물고기</span></div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -505,7 +524,7 @@
                     <span>📢 광고 영역 (Google AdSense / Kakao AdFit 슬롯 2)</span>
                 </div>
 
-                <!-- 1. 자미두수 평생운세 (대운 그래프 사이즈 확대 & 나이 표시 2줄 강조) -->
+                <!-- 1. 자미두수 평생운세 -->
                 <div class="card" style="border: 2px solid #FCD34D;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                         <span style="font-size: 15px; font-weight: 800; font-family: 'Noto Serif KR', serif;">👑 자미두수 평생운세</span>
@@ -744,7 +763,7 @@
         </div>
     </div>
 
-    <!-- 상황별 테마 모달 (시험/자격/승진 옵션 포함) -->
+    <!-- 상황별 테마 모달 -->
     <div id="themeSelectModal" class="modal-bg hidden">
         <div class="modal-content" style="text-align: left;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 8px;">
@@ -762,8 +781,8 @@
     <div id="zodiacModal" class="modal-bg hidden">
         <div class="modal-content" style="max-width: 360px; text-align: left; padding: 22px; border-radius: 24px;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #F1F5F9; padding-bottom: 10px;">
-                <div style="display: flex; align-items: center; gap: 8px;">
-                    <span id="zodiacModalIcon" style="font-size: 28px;">🐭</span>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <div id="zodiacModalIconBox" style="width: 44px; height: 44px; border-radius: 12px; background: #0D1527; display: flex; align-items: center; justify-content: center; border: 1px solid #E2C068;"></div>
                     <div>
                         <h3 id="zodiacModalName" style="font-size: 17px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif;">쥐띠 오늘의 운세</h3>
                         <p id="zodiacModalSub" style="font-size: 12px; color: #64748B;">오늘의 실시간 일진 분석</p>
@@ -958,6 +977,64 @@
         let currentZodiacData = null;
         let pendingCoinAmount = 0;
 
+        // [첨부 이미지 속 12별자리 정통 골드 라인 심볼 글리프 SVG 매핑]
+        const ZODIAC_GLYPHS = {
+            "양자리": `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#E2C068" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6a4 4 0 0 1 8 0v14M20 6a4 4 0 0 0-8 0"/></svg>`,
+            "황소자리": `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#E2C068" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3a7 7 0 0 0 14 0"/><circle cx="12" cy="14" r="6"/></svg>`,
+            "쌍둥이자리": `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#E2C068" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4a16 16 0 0 0 16 0M4 20a16 16 0 0 1 16 0M8 5v14M16 5v14"/></svg>`,
+            "게자리": `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#E2C068" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="8" r="3"/><path d="M10 8a7 7 0 0 0 10 4"/><circle cx="17" cy="16" r="3"/><path d="M14 16a7 7 0 0 0-10-4"/></svg>`,
+            "사자자리": `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#E2C068" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="14.5" r="2.5"/><path d="M9 13a6 6 0 1 1 8 4c0 2-2 3-3 3s-2-1.5-1-3.5"/></svg>`,
+            "처녀자리": `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#E2C068" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4v12a3 3 0 0 0 6 0V4M10 4v12a3 3 0 0 0 6 0V4M16 7a3 3 0 0 1 4 4v9M16 16l4 4"/></svg>`,
+            "천칭자리": `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#E2C068" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16M4 14h5a3 3 0 1 1 6 0h5"/></svg>`,
+            "전갈자리": `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#E2C068" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4v12a3 3 0 0 0 6 0V4M10 4v12a3 3 0 0 0 6 0V4M16 4v12a3 3 0 0 0 6 0v-2M19 14l3 2-3 2"/></svg>`,
+            "사수자리": `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#E2C068" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19L19 5M12 5h7v7M8 12l4 4"/></svg>`,
+            "염소자리": `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#E2C068" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4v11a4 4 0 0 0 8 0V5M12 9a4 4 0 0 1 8 4c0 3-3 7-5 7s-3-2-2-4"/></svg>`,
+            "물병자리": `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#E2C068" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8l3-3 3 3 3-3 3 3 3-3 3 3M3 16l3-3 3 3 3-3 3 3 3-3 3 3"/></svg>`,
+            "물고기자리": `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#E2C068" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4a14 14 0 0 1 0 16M19 4a14 14 0 0 0 0 16M3 12h18"/></svg>`
+        };
+
+        // [첨부 이미지 스타일의 정통 12궁도 천체 휠 SVG]
+        function getZodiacWheelHeroSvg() {
+            return `
+            <svg viewBox="0 0 120 120" width="80" height="80" style="filter: drop-shadow(0 0 8px rgba(226,192,104,0.4));">
+                <circle cx="60" cy="60" r="56" fill="none" stroke="#E2C068" stroke-width="1.8"/>
+                <circle cx="60" cy="60" r="44" fill="none" stroke="#E2C068" stroke-width="1.2" stroke-dasharray="3 2"/>
+                <circle cx="60" cy="60" r="22" fill="#0D1527" stroke="#E2C068" stroke-width="1.5"/>
+                <!-- 8각 별 엠블럼 -->
+                <polygon points="60,39 63,55 77,50 67,60 77,70 63,65 60,81 57,65 43,70 53,60 43,50 57,55" fill="#E2C068"/>
+                <circle cx="60" cy="60" r="3.5" fill="#0D1527"/>
+                <!-- 12분할선 -->
+                <line x1="60" y1="4" x2="60" y2="16" stroke="#E2C068" stroke-width="1"/>
+                <line x1="60" y1="104" x2="60" y2="116" stroke="#E2C068" stroke-width="1"/>
+                <line x1="4" y1="60" x2="16" y2="60" stroke="#E2C068" stroke-width="1"/>
+                <line x1="104" y1="60" x2="116" y2="60" stroke="#E2C068" stroke-width="1"/>
+            </svg>`;
+        }
+
+        // [타로 카드 뒷면: 12궁도 천체 휠 & 유성 라인 아트]
+        function getTarotCardBackSvg() {
+            return `
+            <svg viewBox="0 0 100 150" style="width:100%; height:100%; background: radial-gradient(circle at center, #172746 0%, #0D1527 100%); border-radius:8px;">
+                <rect x="3" y="3" width="94" height="144" fill="none" stroke="#E2C068" stroke-width="1.5" rx="5"/>
+                <rect x="6" y="6" width="88" height="138" fill="none" stroke="#E2C068" stroke-width="0.8" stroke-dasharray="2 1.5"/>
+                
+                <!-- 천체 휠 -->
+                <circle cx="50" cy="75" r="28" fill="none" stroke="#E2C068" stroke-width="1.2"/>
+                <circle cx="50" cy="75" r="22" fill="none" stroke="#E2C068" stroke-width="0.8" stroke-dasharray="2 1"/>
+                <circle cx="50" cy="75" r="12" fill="#0D1527" stroke="#E2C068" stroke-width="1"/>
+                <polygon points="50,65 52,73 59,71 54,75 59,79 52,77 50,85 48,77 41,79 46,75 41,71 48,73" fill="#E2C068"/>
+                <circle cx="50" cy="75" r="2" fill="#FAF9F6"/>
+
+                <!-- 별빛 & 유성 장식 -->
+                <path d="M 16 20 Q 22 22 28 16" stroke="#E2C068" stroke-width="0.8" fill="none"/>
+                <polygon points="16,20 18,22 15,24 17,21" fill="#E2C068"/>
+                <circle cx="82" cy="24" r="1.5" fill="#E2C068"/>
+                <circle cx="20" cy="130" r="1.5" fill="#E2C068"/>
+                <path d="M 84 130 Q 78 128 72 134" stroke="#E2C068" stroke-width="0.8" fill="none"/>
+                <polygon points="84,130 82,128 85,126 83,129" fill="#E2C068"/>
+            </svg>`;
+        }
+
         function setGenderType(gender) {
             selectedGender = gender;
             document.getElementById('btnGenderMale').className = (gender === 'male') ? "cal-btn active" : "cal-btn";
@@ -1017,17 +1094,6 @@
                 backup: "https://raw.githubusercontent.com/effata/tarot-json/master/cards/sun.jpg"
             }
         };
-
-        function getTarotCardBackSvg() {
-            return `
-            <svg viewBox="0 0 100 150" style="width:100%; height:100%; background:#111D1E; border-radius:8px;">
-                <rect x="3" y="3" width="94" height="144" fill="none" stroke="#D4AF37" stroke-width="1.5" rx="5"/>
-                <rect x="6" y="6" width="88" height="138" fill="none" stroke="#D4AF37" stroke-width="0.8" stroke-dasharray="2 1"/>
-                <circle cx="50" cy="75" r="20" fill="none" stroke="#D4AF37" stroke-width="1.2"/>
-                <polygon points="50,48 54,68 72,75 54,82 50,102 46,82 28,75 46,68" fill="#D4AF37"/>
-                <circle cx="50" cy="75" r="4" fill="#FFF9D2"/>
-            </svg>`;
-        }
 
         function renderAuthenticCinnabarTalisman(type = "metal", width = 160, height = 260) {
             let innerSymbol = '';
@@ -1163,7 +1229,7 @@
                 btnStar.className = 'sub-tab-btn active';
                 btnZodiac.className = 'sub-tab-btn';
                 gridStar.classList.remove('hidden');
-                gridStar.classList.add('hidden');
+                gridZodiac.classList.add('hidden');
             }
         }
 
@@ -1175,6 +1241,13 @@
                 document.getElementById('zodiacModalScore').innerText = `${data.score}점`;
                 document.getElementById('zodiacModalTitle').innerText = data.title;
                 document.getElementById('zodiacModalOverview').innerText = data.overview;
+
+                const iconBox = document.getElementById('zodiacModalIconBox');
+                if (type === 'star' && ZODIAC_GLYPHS[key]) {
+                    iconBox.innerHTML = ZODIAC_GLYPHS[key];
+                } else {
+                    iconBox.innerHTML = `<span style="font-size: 24px;">${data.icon || '🐾'}</span>`;
+                }
 
                 const tipsBox = document.getElementById('zodiacYearTipsBox');
                 if (type === 'zodiac' && data.year_tips) {
@@ -1678,6 +1751,16 @@
 
             document.querySelectorAll('.btn-coin-icon').forEach(el => { el.innerHTML = getGoldCoinSvg(16, "#D97706"); });
             document.querySelectorAll('.btn-coin-icon-white').forEach(el => { el.innerHTML = getGoldCoinSvg(16, "#F59E0B"); });
+
+            // 별자리 천체 휠 히어로 배너 삽입
+            const wheelHero = document.getElementById('zodiacWheelSvgHero');
+            if (wheelHero) wheelHero.innerHTML = getZodiacWheelHeroSvg();
+
+            // 12별자리 글리프 아이콘 삽입
+            document.querySelectorAll('.star-glyph-box').forEach(el => {
+                const sign = el.getAttribute('data-sign');
+                if (ZODIAC_GLYPHS[sign]) el.innerHTML = ZODIAC_GLYPHS[sign];
+            });
 
             resetTarotCards();
 
