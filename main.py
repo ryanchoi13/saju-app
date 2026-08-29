@@ -447,7 +447,7 @@ def register_saju(req: RegisterSajuRequest):
         "saju_analysis": saju_payload
     }
 
-# 3. 유료 감명서 결제 및 서버 DB 저장 API
+# 3. 유료 감명서 결제 및 서버 DB 저장 API (동적 사주 연동)
 @app.post("/api/reports/unlock")
 def unlock_report(req: OrderReportRequest):
     conn = get_db()
@@ -466,21 +466,34 @@ def unlock_report(req: OrderReportRequest):
     new_balance = user["coin_balance"] - req.cost
     cursor.execute("UPDATE users SET coin_balance = ? WHERE id = ?", (new_balance, req.user_id))
 
+    current_age = datetime.date.today().year - user["birth_year"] + 1
+    user_data = {
+        "name": user["name"],
+        "gender": user["gender"],
+        "age": current_age,
+        "year": user["birth_year"],
+        "month": user["birth_month"],
+        "day": user["birth_day"],
+        "sub_option": req.sub_option,
+        "partner_name": req.partner_name,
+        "relation": req.relation
+    }
+
     report_title = ""
     report_content = ""
-    current_age = datetime.date.today().year - user["birth_year"] + 1
 
     if req.report_key == "daewoon":
-        res = get_daewoon_report({"name": user["name"], "gender": user["gender"], "age": current_age})
+        res = get_daewoon_report(user_data)
         report_title, report_content = res["title"], res["content"]
     elif req.report_key == "sinnian":
-        res = get_sinnian_report({"name": user["name"], "gender": user["gender"]})
+        res = get_sinnian_report(user_data)
         report_title, report_content = res["title"], res["content"]
     elif req.report_key == "gunghap":
-        res = get_gunghap_report({"name": user["name"], "partner_name": req.partner_name, "relation": req.relation})
+        res = get_gunghap_report(user_data)
         report_title, report_content = res["title"], res["content"]
     elif req.report_key in ["wealth", "love", "business", "health"]:
-        res = get_theme_report({"theme": req.report_key, "sub_option": req.sub_option, "name": user["name"], "gender": user["gender"]})
+        user_data["theme"] = req.report_key
+        res = get_theme_report(user_data)
         report_title, report_content = res["title"], res["content"]
 
     today_str = datetime.date.today().strftime("%Y-%m-%d")
@@ -502,7 +515,7 @@ def unlock_report(req: OrderReportRequest):
         "unlocked_reports": unlocked_list
     }
 
-# 4. 복채 충전 API (서버 DB 동기화)
+# 4. 복채 충전 API
 @app.post("/api/user/charge-coin")
 def charge_coin(req: dict):
     user_id = req.get("user_id")
@@ -555,28 +568,26 @@ def get_zodiac_fortune(type: str = "zodiac", key: str = "쥐"):
 def get_daily_tarot(slot: int = 1):
     return TAROT_CARDS[random.randint(0, len(TAROT_CARDS) - 1)]
 
-# 6. 리포트 생성 함수들
+# 6. 리포트 생성 함수들 (회원별 동적 사주 엔진)
+
+# 6-1. 자미두수 평생운세 & 10년 대운 3단계 로드맵
 def get_daewoon_report(req: dict):
     user_name = req.get("name", "회원")
     gender = req.get("gender", "male")
     age = req.get("age", 35)
 
-    # 1. 10년 대운 시작/종료 나이 동적 계산 (예: 28세면 23~32세 대운, 49세면 43~52세 대운)
     start_age = (age // 10) * 10 + 3
     if age < start_age:
         start_age -= 10
     end_age = start_age + 9
 
-    # 2. 2~3년 주기별 연령대 동적 분할
-    p1_start, p1_end = start_age, start_age + 2       # 초반 (3년)
-    p2_start, p2_end = start_age + 3, start_age + 5   # 중반 (3년)
-    p3_start, p3_end = start_age + 6, end_age         # 후반 (4년)
+    p1_start, p1_end = start_age, start_age + 2
+    p2_start, p2_end = start_age + 3, start_age + 5
+    p3_start, p3_end = start_age + 6, end_age
 
-    # 3. 성별/연령대별 맞춤 키워드 동적 생성
     gender_str = "남성(男命)" if gender == "male" else "여성(女命)"
     spouse_star = "재성(財星 / 아내·실물자산)" if gender == "male" else "관성(官星 / 남편·명예관운)"
 
-    # 연령대 구간별 맞춤 테마
     if age < 30:
         stage_name = "청년 도약기 (기반 확립)"
         focus_goal = "전문 역량 축적 및 핵심 인맥 구축"
@@ -721,15 +732,15 @@ def get_daewoon_report(req: dict):
         </div>
         """
     }
+
+# 6-2. 2026 丙午년 총운 & 월별 토정비결 (점수+주역괘 동적 연동)
 def get_sinnian_report(req: dict):
     user_name = req.get("name", "최정오")
     gender = req.get("gender", "male")
     gender_str = "남성" if gender == "male" else "여성"
 
-    # 사용자 고유 해시 시드 생성 (이름, 성별 기반 동적 배정)
     seed = sum(ord(c) for c in user_name) + (17 if gender == "male" else 31)
 
-    # 12개월 주역 괘 및 맞춤 풀이 데이터 풀
     GUA_POOLS = [
         {"gua": "지천태(地天泰) 괘", "opp": "새해 첫 출발이 대길하여 신규 사업 및 프로젝트 착수에 최적입니다.", "warn": "초반의 빠른 성취에 자만하지 말고 세부 규정을 차분히 정비하세요."},
         {"gua": "수천수(水天需) 괘", "opp": "실력과 내실을 다지며 시장 상황의 흐름을 관망할 때 이익이 보존됩니다.", "warn": "서두른 결정이나 충동구매는 후회를 부르니 하루 이틀 시일을 두세요."},
@@ -747,11 +758,9 @@ def get_sinnian_report(req: dict):
 
     monthly_guides = []
     for m_idx in range(1, 13):
-        # 사용자 사주 시드와 월 번호를 조합하여 고유 점수 산출 (68점 ~ 98점)
         m_hash = (seed * 13 + m_idx * 37) % 100
         score = 68 + (m_hash % 31)
 
-        # 주역 괘 풀이 동적 배정
         item_idx = (seed + m_idx) % len(GUA_POOLS)
         pool_item = GUA_POOLS[item_idx]
 
@@ -763,7 +772,6 @@ def get_sinnian_report(req: dict):
             "warn": pool_item["warn"]
         })
 
-    # 12개월 중 가장 점수가 높은 상위 2개 골든타임 월 자동 추출
     sorted_months = sorted(monthly_guides, key=lambda x: x["score"], reverse=True)
     top1_month, top1_score = sorted_months[0]["m"], sorted_months[0]["score"]
     top2_month, top2_score = sorted_months[1]["m"], sorted_months[1]["score"]
@@ -835,10 +843,18 @@ def get_sinnian_report(req: dict):
         </div>
         """
     }
+
+# 6-3. 정통 사주 궁합 리포트 (상대방 이름, 관계 유형 동적 산출)
 def get_gunghap_report(req: dict):
     user_name = req.get("name", "최정오")
     partner_name = req.get("partner_name", "상대방")
     relation = req.get("relation", "연인/결혼")
+
+    seed = sum(ord(c) for c in user_name) + sum(ord(c) for c in partner_name)
+    total_score = 88 + (seed % 11)
+    love_score = 90 + ((seed * 3) % 9)
+    trust_score = 89 + ((seed * 7) % 10)
+    synergy_score = 91 + ((seed * 11) % 8)
 
     return {
         "title": f"💞 {user_name} & {partner_name} 정통 사주 궁합 ({relation})",
@@ -846,25 +862,30 @@ def get_gunghap_report(req: dict):
         <div style="display: flex; flex-direction: column; gap: 16px; font-size: 14.5px; color: #334155; line-height: 1.85; text-align: left;">
             <div style="background: linear-gradient(135deg, #FFF1F2 0%, #FFE4E6 100%); border: 1.5px solid #FECDD3; border-radius: 14px; padding: 16px; display: flex; justify-content: space-between; align-items: center;">
                 <div>
-                    <span style="font-size: 12px; color: #BE123C; font-weight: 800;">정통 오행 상생 궁합 지수</span>
-                    <h3 style="font-size: 20px; font-weight: 900; color: #9F1239; margin-top: 2px;">94점 (천생연분 대길합)</h3>
-                    <p style="font-size: 11.5px; color: #E11D48; margin-top: 2px;">애정합 96% · 신뢰합 92% · 재물시너지 95% · 성격조화 93%</p>
+                    <span style="font-size: 12px; color: #BE123C; font-weight: 800;">정통 오행 상생 궁합 지수 ({relation})</span>
+                    <h3 style="font-size: 20px; font-weight: 900; color: #9F1239; margin-top: 2px;">{total_score}점 (천생연분 대길합)</h3>
+                    <p style="font-size: 11.5px; color: #E11D48; margin-top: 2px;">애정합 {love_score}% · 신뢰합 {trust_score}% · 상생 시너지 {synergy_score}%</p>
                 </div>
                 <div style="font-size: 36px;">💖</div>
             </div>
             <div>
                 <div style="border-left: 4px solid #E11D48; padding-left: 10px; margin-bottom: 8px;">
-                    <span style="font-size: 12px; color: #E11D48; font-weight: 800;">Chapter 1. 두 사람의 천간·지지 기운과 인연의 깊이</span>
-                    <h4 style="font-size: 16.5px; font-weight: 800; color: #881337; margin-top: 2px;">🔗 {user_name}님과 {partner_name}님의 오행 상생 조화</h4>
+                    <span style="font-size: 12px; color: #E11D48; font-weight: 800;">Chapter 1. 두 사람의 기운과 인연의 깊이</span>
+                    <h4 style="font-size: 16.5px; font-weight: 800; color: #881337; margin-top: 2px;">🔗 {user_name}님과 {partner_name}님의 상생 조화</h4>
                 </div>
                 <p style="color: #9F1239; line-height: 1.85;">
-                    {user_name}님의 사주에 부족한 기운을 {partner_name}님이 풍부하게 품어주고 있어, 만날수록 자존감이 회복되는 <strong>'상호보완형 황금 인연'</strong>입니다.
+                    {user_name}님의 사주에 부족한 기운을 {partner_name}님이 풍부하게 품어주고 있어, 만날수록 서로의 자존감이 회복되고 미래를 도모하는 <strong>'상호보완형 황금 인연'</strong>입니다.
                 </p>
+            </div>
+            <div style="background: #F8FAFC; border-radius: 10px; padding: 12px; border-left: 3.5px solid #BE123C;">
+                <p style="font-weight: 800; color: #0F172A; font-size: 14px; margin-bottom: 4px;">💡 두 사람을 위한 맞춤 처세 팁:</p>
+                <p style="color: #475569; font-size: 13.5px;">사소한 의견 차이가 생길 때는 즉각적인 반론보다 3초간 경청 후 상대방의 입장을 인정해 주는 화법을 구사할 때 갈등 없이 백년해로합니다.</p>
             </div>
         </div>
         """
     }
 
+# 6-4. 4대 테마별 리포트 (재물/사업/애정/건강 동적 연동)
 def get_theme_report(req: dict):
     theme = req.get("theme", "wealth")
     sub_opt = req.get("sub_option", "기본")
@@ -881,6 +902,10 @@ def get_theme_report(req: dict):
                     {user_name}님의 사주는 겉으로 드러난 화려함보다 실속 있게 현금과 실물 자산을 차곡차곡 축적하는 전형적인 '황금 금고형' 명식입니다.
                 </p>
             </div>
+            <div style="background: #FFFBEB; border-radius: 10px; padding: 12px; border: 1px solid #FDE68A;">
+                <h5 style="font-weight: 800; color: #78350F; margin-bottom: 4px;">💎 대박 재물운 승부처</h5>
+                <p style="color: #92400E; font-size: 13.5px;">변동성이 큰 단타 매매보다는 실물 부동산 및 우량 배당 자산에 분산 투자할 때 평생 자산이 기하급수적으로 증식합니다.</p>
+            </div>
         </div>
         """
     elif theme == "business":
@@ -893,6 +918,10 @@ def get_theme_report(req: dict):
                     {user_name}님의 명식은 상황을 주도적으로 돌파하는 전략가형 기질을 품고 있어, 본인이 주도권을 쥔 환경에서 가장 큰 성과를 거둡니다.
                 </p>
             </div>
+            <div style="background: #EFF6FF; border-radius: 10px; padding: 12px; border: 1px solid #BFDBFE;">
+                <h5 style="font-weight: 800; color: #1E40AF; margin-bottom: 4px;">🚀 커리어 도약 전략</h5>
+                <p style="color: #1E3A8A; font-size: 13.5px;">위탁이나 타인에게 끌려다니는 구조보다, 본인의 전문 자격과 인망을 무기로 독자적인 영역을 개척할 때 승진과 매출이 보장됩니다.</p>
+            </div>
         </div>
         """
     elif theme == "love":
@@ -902,8 +931,12 @@ def get_theme_report(req: dict):
                 <span style="font-size: 12px; color: #E11D48; font-weight: 800;">Chapter 1. 상태 맞춤 애정 원국 ({sub_opt})</span>
                 <h4 style="font-size: 16.5px; font-weight: 800; color: #881337; margin: 3px 0 6px;">💖 인연의 기운과 결실의 타이밍</h4>
                 <p style="color: #9F1239; font-size: 14.5px; line-height: 1.85;">
-                    {user_name}님의 사주는 신뢰와 따뜻한 배려가 결합할 때 애정의 기운이 평생 동안 번창합니다.
+                    {user_name}님의 사주는 신뢰와 따뜻한 배려가 결합할 때 애정의 기운이 평생 동안 번창하는 온화한 명식입니다.
                 </p>
+            </div>
+            <div style="background: #FFF1F2; border-radius: 10px; padding: 12px; border: 1px solid #FECDD3;">
+                <h5 style="font-weight: 800; color: #9F1239; margin-bottom: 4px;">💌 천생연분의 인연 특징</h5>
+                <p style="color: #881337; font-size: 13.5px;">대화가 잘 통하고 본인의 지친 일상을 조용히 감싸주는 이해심 깊은 성향의 상대방과 최고의 조화를 이룹니다.</p>
             </div>
         </div>
         """
@@ -914,13 +947,19 @@ def get_theme_report(req: dict):
                 <span style="font-size: 12px; color: #059669; font-weight: 800;">Chapter 1. 오행 체질 장부 정밀 분석</span>
                 <h4 style="font-size: 16.5px; font-weight: 800; color: #065F46; margin: 3px 0 6px;">[평생 체질] 수승화강(水昇火降) 활력과 섭생법</h4>
                 <p style="color: #047857; font-size: 14.5px; line-height: 1.85;">
-                    두한족열(머리는 시원하게, 발은 따뜻하게)의 기본 수칙을 유지하면 평생 에너지가 고갈되지 않습니다.
+                    {user_name}님의 체질은 순환과 균형이 핵심입니다. 두한족열(머리는 시원하게, 발은 따뜻하게)의 기본 수칙을 유지하면 평생 에너지가 고갈되지 않습니다.
                 </p>
+            </div>
+            <div style="background: #ECFDF5; border-radius: 10px; padding: 12px; border: 1px solid #A7F3D0;">
+                <h5 style="font-weight: 800; color: #065F46; margin-bottom: 4px;">🌿 추천 건강 루틴</h5>
+                <p style="color: #047857; font-size: 13.5px;">아침 기상 직후 미온수 한 잔과 저녁 15분간의 가벼운 반신욕/족욕이 기혈 순환에 탁월한 보약이 됩니다.</p>
             </div>
         </div>
         """
 
     return {"title": titles.get(theme, "심층 리포트"), "content": content}
+
+# 7. SEO 및 정적 파일
 @app.get("/static/og_thumb.png")
 def get_og_thumbnail():
     svg_data = """<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
@@ -933,6 +972,7 @@ def get_og_thumbnail():
         <text x="600" y="500" font-size="26" font-family="'Pretendard', sans-serif" font-weight="500" fill="#94A3B8" text-anchor="middle">달빛이 비추는 당신의 운명 · 정통 사주 · 바이오리듬 · 타로</text>
     </svg>"""
     return Response(content=svg_data, media_type="image/svg+xml")
+
 @app.get("/robots.txt")
 def get_robots():
     data = "User-agent: *\nAllow: /\nSitemap: https://dalha.kr/sitemap.xml"
@@ -949,10 +989,12 @@ def get_sitemap():
   </url>
 </urlset>"""
     return Response(content=data, media_type="application/xml")
+
 # 네이버 검색 등록용 소유확인 라우트
 @app.get("/naverc5036aa02eca57807bf721e44ad78969.html")
 def naver_verification():
     return HTMLResponse("naver-site-verification: naverc5036aa02eca57807bf721e44ad78969.html")
+
 # 구글 서치 콘솔 소유확인 라우트
 @app.get("/google888b184f07770663.html")
 def google_verification():
