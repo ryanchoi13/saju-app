@@ -726,28 +726,56 @@ def get_sinnian_report(req: dict):
     gender = req.get("gender", "male")
     gender_str = "남성" if gender == "male" else "여성"
 
-    monthly_guides = [
-        {"m": "1월", "gua": "지천태(地天泰) 괘", "opp": "새해 첫 출발이 대길하여 신규 사업 및 프로젝트 착수에 최적입니다.", "warn": "초반의 빠른 성취에 자만하지 말고 세부 규정을 차분히 정비하세요."},
-        {"m": "2월", "gua": "수천수(水天需) 괘", "opp": "실력과 내실을 다지며 시장 상황의 흐름을 관망할 때 이익이 보존됩니다.", "warn": "서두른 결정이나 충동구매는 후회를 부르니 하루 이틀 시일을 두세요."},
-        {"m": "3월", "gua": "천화동인(天火同人) 괘", "opp": "귀인의 조력이 닿아 인간관계와 직무에서 강력한 협력자가 나타납니다.", "warn": "주변과의 이견 조율 시 감정적 대응을 피하고 데이터로 설득하세요."},
-        {"m": "4월", "gua": "풍천소축(風天小畜) 괘", "opp": "작은 성과가 차곡차곡 쌓여 종잣돈의 기틀이 한 단계 단단해집니다.", "warn": "무리한 대출이나 투자는 지양하고 현금 유동성을 확보하세요."},
-        {"m": "5월", "gua": "화천대유(火天大有) 괘", "opp": "★올해 상반기 최고의 재물운! 부동산/투자/계약에서 큰 결실을 맺습니다.", "warn": "성과를 독식하려 하지 말고 함께한 동료들에게 따뜻하게 베푸세요."},
-        {"m": "6월", "gua": "천풍구(天風姤) 괘", "opp": "새로운 제안과 이직/신규 프로젝트의 반가운 활로가 열립니다.", "warn": "계약서의 독소 조항과 구두 약속을 면밀히 검증하는 신중함이 필수입니다."},
-        {"m": "7월", "gua": "천수송(天水訟) 괘", "opp": "기존의 복잡했던 업무 체계를 깔끔히 정리하고 체질을 개선하는 달.", "warn": "사소한 언쟁이나 시비수를 피하기 위해 공감 화법을 철저히 유지하세요."},
-        {"m": "8월", "gua": "풍지관(風地觀) 괘", "opp": "상반기의 성과를 점검하고 하반기 대도약을 위한 전략을 세우기에 최적입니다.", "warn": "체력 저하와 간 피로를 방지하기 위해 충분한 수면과 족욕을 챙기세요."},
-        {"m": "9월", "gua": "산지박(山地剝) 괘", "opp": "불필요한 고정비와 낭비 요소를 말끔히 청산하여 실속을 챙깁니다.", "warn": "무리한 확장보다 기존 고객 및 핵심 업무 관리에 집중하세요."},
-        {"m": "10월", "gua": "지뢰복(地雷復) 괘", "opp": "★올해 하반기 최고의 승부처! 승진, 수주, 투자 회수에서 낭보가 울립니다.", "warn": "기회가 올 때 주저하지 말고 과감한 결단력으로 주도권을 쥐세요."},
-        {"m": "11월", "gua": "수뢰준(水雷屯) 괘", "opp": "내년을 위한 새로운 아이템이나 자격/학업의 씨앗을 뿌리기에 좋습니다.", "warn": "경험자의 조언을 경청하여 불필요한 시행착오를 사전에 방지하세요."},
-        {"m": "12월", "gua": "지화명이(地火明夷) 괘", "opp": "한 해 일군 풍성한 결실을 확정 짓고 가문과 가족의 화목을 누립니다.", "warn": "연말 과음과 과로를 피하고 따뜻한 온기로 몸과 마음을 달래세요."}
+    # 사용자 고유 해시 시드 생성 (이름, 성별 기반 동적 배정)
+    seed = sum(ord(c) for c in user_name) + (17 if gender == "male" else 31)
+
+    # 12개월 주역 괘 및 맞춤 풀이 데이터 풀
+    GUA_POOLS = [
+        {"gua": "지천태(地天泰) 괘", "opp": "새해 첫 출발이 대길하여 신규 사업 및 프로젝트 착수에 최적입니다.", "warn": "초반의 빠른 성취에 자만하지 말고 세부 규정을 차분히 정비하세요."},
+        {"gua": "수천수(水天需) 괘", "opp": "실력과 내실을 다지며 시장 상황의 흐름을 관망할 때 이익이 보존됩니다.", "warn": "서두른 결정이나 충동구매는 후회를 부르니 하루 이틀 시일을 두세요."},
+        {"gua": "천화동인(天火同人) 괘", "opp": "귀인의 조력이 닿아 인간관계와 직무에서 강력한 협력자가 나타납니다.", "warn": "주변과의 이견 조율 시 감정적 대응을 피하고 데이터로 설득하세요."},
+        {"gua": "풍천소축(風天小畜) 괘", "opp": "작은 성과가 차곡차곡 쌓여 종잣돈의 기틀이 한 단계 단단해집니다.", "warn": "무리한 대출이나 투자는 지양하고 현금 유동성을 확보하세요."},
+        {"gua": "화천대유(火天大有) 괘", "opp": "★대길의 재물운! 부동산/투자/계약에서 기대 이상의 큰 결실을 맺습니다.", "warn": "성과를 독식하려 하지 말고 함께한 동료들에게 따뜻하게 베푸세요."},
+        {"gua": "천풍구(天風姤) 괘", "opp": "새로운 제안과 이직/신규 프로젝트의 반가운 활로가 열립니다.", "warn": "계약서의 독소 조항과 구두 약속을 면밀히 검증하는 신중함이 필수입니다."},
+        {"gua": "천수송(天水訟) 괘", "opp": "기존의 복잡했던 업무 체계를 깔끔히 정리하고 체질을 개선하는 달.", "warn": "사소한 언쟁이나 시비수를 피하기 위해 공감 화법을 철저히 유지하세요."},
+        {"gua": "풍지관(風地觀) 괘", "opp": "성과를 점검하고 다음 도약을 위한 중장기 전략을 세우기에 최적입니다.", "warn": "체력 저하와 피로를 방지하기 위해 충분한 수면과 휴식을 챙기세요."},
+        {"gua": "산지박(山地剝) 괘", "opp": "불필요한 고정비와 낭비 요소를 말끔히 청산하여 실속을 챙깁니다.", "warn": "무리한 확장보다 기존 고객 및 핵심 업무 관리에 집중하세요."},
+        {"gua": "지뢰복(地雷復) 괘", "opp": "★강력한 승부처! 승진, 수주, 투자 회수에서 결정적 주도권을 쥡니다.", "warn": "기회가 올 때 주저하지 말고 과감한 결단력으로 밀어붙이세요."},
+        {"gua": "수뢰준(水雷屯) 괘", "opp": "새로운 아이템이나 자격/학업의 씨앗을 뿌려 미래를 준비하기 좋습니다.", "warn": "경험자의 조언을 경청하여 불필요한 시행착오를 사전에 방지하세요."},
+        {"gua": "지화명이(地火明夷) 괘", "opp": "한 해 일군 풍성한 결실을 확정 짓고 가문과 가족의 화목을 누립니다.", "warn": "연말 과음과 과로를 피하고 따뜻한 온기로 몸과 마음을 달래세요."}
     ]
+
+    monthly_guides = []
+    for m_idx in range(1, 13):
+        # 사용자 사주 시드와 월 번호를 조합하여 고유 점수 산출 (68점 ~ 98점)
+        m_hash = (seed * 13 + m_idx * 37) % 100
+        score = 68 + (m_hash % 31)
+
+        # 주역 괘 풀이 동적 배정
+        item_idx = (seed + m_idx) % len(GUA_POOLS)
+        pool_item = GUA_POOLS[item_idx]
+
+        monthly_guides.append({
+            "m": f"{m_idx}월",
+            "score": score,
+            "gua": pool_item["gua"],
+            "opp": pool_item["opp"],
+            "warn": pool_item["warn"]
+        })
+
+    # 12개월 중 가장 점수가 높은 상위 2개 골든타임 월 자동 추출
+    sorted_months = sorted(monthly_guides, key=lambda x: x["score"], reverse=True)
+    top1_month, top1_score = sorted_months[0]["m"], sorted_months[0]["score"]
+    top2_month, top2_score = sorted_months[1]["m"], sorted_months[1]["score"]
 
     months_html = "".join([f"""
         <div style="background: #F8FAFC; border-left: 3.5px solid #2D6A4F; border-radius: 8px; padding: 12px 14px; margin-bottom: 8px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
                 <span style="font-weight: 800; color: #0F172A; font-size: 15px;">📅 {item['m']} 세운 가이드</span>
-                <span style="font-size: 12px; background: #EBF5EE; color: #2D6A4F; font-weight: 800; padding: 2px 8px; border-radius: 6px;">{item['gua']}</span>
+                <span style="font-size: 12px; background: #FEF3C7; color: #92400E; font-weight: 800; padding: 2px 8px; border-radius: 6px;">이달의 운세 점수: {item['score']}점</span>
             </div>
-            <p style="color: #065F46; font-size: 13.5px; line-height: 1.6; margin-bottom: 2px;">
+            <p style="font-size: 11.5px; color: #64748B; margin-bottom: 8px; font-weight: 400;">(주역 본괘 : {item['gua']})</p>
+            <p style="color: #065F46; font-size: 13.5px; line-height: 1.6; margin-bottom: 3px;">
                 <strong>✨ 기회의 순간:</strong> {item['opp']}
             </p>
             <p style="color: #991B1B; font-size: 13px; line-height: 1.55;">
@@ -782,7 +810,7 @@ def get_sinnian_report(req: dict):
                     </h4>
                 </div>
                 <p style="color: #78350F; line-height: 1.85;">
-                    올해 품은 핵심 소망(이직, 계약 체결, 부동산 매매, 시험 합격 등)은 <strong>양력 5월과 10월</strong>에 천우신조의 기운을 만나 일사천리로 성취됩니다. 주저하지 말고 해당 시기에 적극적으로 실행에 옮기세요.
+                    올해 품은 핵심 소망(이직, 계약 체결, 부동산 매매, 시험 합격 등)은 <strong>양력 {top1_month}({top1_score}점)과 {top2_month}({top2_score}점)</strong>에 천우신조의 기운을 만나 일사천리로 성취됩니다. 주저하지 말고 해당 시기에 적극적으로 실행에 옮기세요.
                 </p>
             </div>
 
@@ -807,7 +835,6 @@ def get_sinnian_report(req: dict):
         </div>
         """
     }
-
 def get_gunghap_report(req: dict):
     user_name = req.get("name", "최정오")
     partner_name = req.get("partner_name", "상대방")
