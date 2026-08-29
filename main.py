@@ -850,3 +850,19 @@ def get_og_thumbnail():
         <text x="600" y="500" font-size="26" font-family="'Pretendard', sans-serif" font-weight="500" fill="#94A3B8" text-anchor="middle">달빛이 비추는 당신의 운명 · 정통 사주 · 바이오리듬 · 타로</text>
     </svg>"""
     return Response(content=svg_data, media_type="image/svg+xml")
+@app.get("/robots.txt")
+def get_robots():
+    data = "User-agent: *\nAllow: /\nSitemap: https://dalha.kr/sitemap.xml"
+    return Response(content=data, media_type="text/plain")
+
+@app.get("/sitemap.xml")
+def get_sitemap():
+    data = """<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://dalha.kr/</loc>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+</urlset>"""
+    return Response(content=data, media_type="application/xml")
