@@ -557,13 +557,44 @@ def get_daily_tarot(slot: int = 1):
 
 # 6. 리포트 생성 함수들
 def get_daewoon_report(req: dict):
-    user_name = req.get("name", "최정오")
+    user_name = req.get("name", "회원")
     gender = req.get("gender", "male")
-    age = req.get("age", 49)
+    age = req.get("age", 35)
+
+    # 1. 10년 대운 시작/종료 나이 동적 계산 (예: 28세면 23~32세 대운, 49세면 43~52세 대운)
     start_age = (age // 10) * 10 + 3
+    if age < start_age:
+        start_age -= 10
     end_age = start_age + 9
+
+    # 2. 2~3년 주기별 연령대 동적 분할
+    p1_start, p1_end = start_age, start_age + 2       # 초반 (3년)
+    p2_start, p2_end = start_age + 3, start_age + 5   # 중반 (3년)
+    p3_start, p3_end = start_age + 6, end_age         # 후반 (4년)
+
+    # 3. 성별/연령대별 맞춤 키워드 동적 생성
     gender_str = "남성(男命)" if gender == "male" else "여성(女命)"
-    spouse_star = "재성(財星 / 아내·재물)" if gender == "male" else "관성(官星 / 남편·명예)"
+    spouse_star = "재성(財星 / 아내·실물자산)" if gender == "male" else "관성(官星 / 남편·명예관운)"
+
+    # 연령대 구간별 맞춤 테마
+    if age < 30:
+        stage_name = "청년 도약기 (기반 확립)"
+        focus_goal = "전문 역량 축적 및 핵심 인맥 구축"
+        p1_desc = f"{p1_start}세 ~ {p1_end}세는 진로의 방향성을 확립하고 내실 있는 실무 감각을 연마하는 기초 다지기 시기입니다."
+        p2_desc = f"{p2_start}세 ~ {p2_end}세는 본인의 실력이 조직과 시장에서 인정받으며 새로운 기회가 열리는 성장기입니다."
+        p3_desc = f"{p3_start}세 ~ {p3_end}세는 30대 황금기로 넘어가기 위한 확고한 발판과 종잣돈 기틀을 마련하는 결실기입니다."
+    elif age < 50:
+        stage_name = "중장년 전성기 (황금 결실기)"
+        focus_goal = "실질 자산 증식 및 사회적 주도권 장악"
+        p1_desc = f"{p1_start}세 ~ {p1_end}세는 기존의 판도를 재편하고 본인이 주체가 되는 사업/투자 포트폴리오를 재구축하는 전환기였습니다."
+        p2_desc = f"{p2_start}세 ~ {p2_end}세는 귀인의 조력과 신뢰를 바탕으로 매출 신장 및 실물 자산 볼륨이 팽창하는 가속 구간입니다."
+        p3_desc = f"{p3_start}세 ~ {p3_end}세는 분산된 자금을 우량 자산으로 안착시키고 업계의 확고한 지위를 완성하는 대운의 절정기입니다."
+    else:
+        stage_name = "원숙 결실기 (자산 수성 및 가문 번영)"
+        focus_goal = "안정적 현금 흐름 완성 및 명예로운 번영"
+        p1_desc = f"{p1_start}세 ~ {p1_end}세는 불필요한 위험 자산을 정돈하고 안정적인 자산 방어 체계를 수립하는 시기입니다."
+        p2_desc = f"{p2_start}세 ~ {p2_end}세는 쌓아온 인망과 경험을 토대로 후배/자녀의 조력자이자 멘토로서 권위를 누리는 시기입니다."
+        p3_desc = f"{p3_start}세 ~ {p3_end}세는 평생 일군 결실을 평온히 누리며 가문의 유산을 견고히 안착시키는 태평성대의 구간입니다."
 
     return {
         "title": f"👑 자미두수 평생운세 ({gender_str})",
@@ -573,30 +604,30 @@ def get_daewoon_report(req: dict):
                 <div style="border-left: 4px solid #2D6A4F; padding-left: 10px; margin-bottom: 8px;">
                     <span style="font-size: 12px; color: #2D6A4F; font-weight: 800;">Chapter 1. 평생 대운맥 및 생애 주도권</span>
                     <h4 style="font-size: 16.5px; font-weight: 800; color: #0F172A; margin-top: 2px;">
-                        🌐 {user_name}님({gender_str})의 생애 4대 주기별 거시적 운명 흐름
+                        🌐 {user_name}님({gender_str} · 현재 {age}세)의 거시적 생애 운명 흐름
                     </h4>
                 </div>
                 <p style="color: #475569; margin-bottom: 10px;">
-                    자미두수 명반과 성별 명식을 교차 감명한 결과, {user_name}님은 초년의 배움과 역량 축적을 거쳐 중장년기에 폭발적인 {spouse_star}의 결실을 완성하는 <strong>'만성대기(晩成大器)형 거목의 명식'</strong>입니다.
+                    자미두수 명반을 정밀 감명한 결과, {user_name}님은 단계적 배움과 역량 축적을 거쳐 중장년기에 강력한 {spouse_star}의 결실을 맺는 <strong>'만성대기(晩成大器)형 명식'</strong>입니다.
                 </p>
                 <div style="display: flex; flex-direction: column; gap: 10px;">
                     <div style="background: #F8FAFC; border-radius: 8px; padding: 10px 12px;">
                         <p style="font-weight: 800; color: #0F172A; font-size: 14.5px; margin-bottom: 2px;">🌱 [유년기 : 근본 기틀 형성기]</p>
-                        <p style="color: #475569; font-size: 13.5px;">남다른 지적 호기심과 영민함으로 도덕적 기준과 가치관을 단단히 다지던 시기였습니다.</p>
+                        <p style="color: #475569; font-size: 13.5px;">남다른 탐구심과 도덕적 가치관을 단단히 다지던 기초 형성기입니다.</p>
                     </div>
                     <div style="background: #F8FAFC; border-radius: 8px; padding: 10px 12px;">
                         <p style="font-weight: 800; color: #0F172A; font-size: 14.5px; margin-bottom: 2px;">🌿 [청년기 : 역량 축적 및 실전기]</p>
-                        <p style="color: #475569; font-size: 13.5px;">사회에 진출하여 실무 전문성을 연마하고, 인맥과 실물 감각의 뼈대를 견고히 구축했습니다.</p>
+                        <p style="color: #475569; font-size: 13.5px;">실무 전문성을 다지고 사회적 인맥과 실전 감각의 뼈대를 구축하는 시기입니다.</p>
                     </div>
                     <div style="background: #FEF3C7; border: 1.5px solid #FCD34D; border-radius: 8px; padding: 10px 12px;">
-                        <p style="font-weight: 800; color: #78350F; font-size: 14.5px; margin-bottom: 2px;">🔥 [중장년기 (*현재 위치 / {start_age}세 ~ {end_age}세) : 황금 결실기]</p>
+                        <p style="font-weight: 800; color: #78350F; font-size: 14.5px; margin-bottom: 2px;">🔥 [{stage_name} (*현재 위치 / {start_age}세 ~ {end_age}세)]</p>
                         <p style="color: #92400E; font-size: 13.5px; font-weight: 600;">
-                            <strong>{user_name}님 인생 일대에서 가장 강력한 천운의 파도가 솟구치는 최고 전성기 구간입니다.</strong> 본인이 직접 주도권을 쥐고 설계한 판에서 자산과 사회적 지위가 수직 상승합니다.
+                            <strong>{user_name}님의 핵심 승부처 구간입니다.</strong> {focus_goal}을(를) 목표로 본인이 직접 주도권을 쥘 때 성과가 극대화됩니다.
                         </p>
                     </div>
                     <div style="background: #F8FAFC; border-radius: 8px; padding: 10px 12px;">
                         <p style="font-weight: 800; color: #0F172A; font-size: 14.5px; margin-bottom: 2px;">🍎 [말년기 : 태평성대 및 가문 번영기]</p>
-                        <p style="color: #475569; font-size: 13.5px;">평생 축적한 자산과 인망을 토대로 안락한 노후를 누리며 후대에 안정적 번영을 대물림합니다.</p>
+                        <p style="color: #475569; font-size: 13.5px;">축적한 자산과 인망을 토대로 안락한 노후와 가문의 번영을 누립니다.</p>
                     </div>
                 </div>
             </div>
@@ -607,12 +638,38 @@ def get_daewoon_report(req: dict):
                 <div style="border-left: 4px solid #D97706; padding-left: 10px; margin-bottom: 8px;">
                     <span style="font-size: 12px; color: #D97706; font-weight: 800;">Chapter 2. 현재 10년 대운 집중 감명</span>
                     <h4 style="font-size: 16.5px; font-weight: 800; color: #78350F; margin-top: 2px;">
-                        📈 Q. {user_name}님의 현재 10년 대운({start_age}세 ~ {end_age}세) 핵심 결실은?
+                        📈 {user_name}님의 {start_age}세 ~ {end_age}세 3단계 로드맵
                     </h4>
                 </div>
-                <p style="color: #78350F; line-height: 1.85;">
-                    현재 대운맥은 사주 본원에 귀인이 결합하는 절정기입니다. 끌려다니지 않고 본인의 통솔력으로 사업, 투자, 조직을 리드할 때 승률이 95% 이상으로 치솟습니다.
+                <p style="color: #78350F; line-height: 1.8; margin-bottom: 12px;">
+                    현재 대운({start_age}세 ~ {end_age}세)을 2~3년 주기의 3단계로 세분화한 실전 지침입니다.
                 </p>
+
+                <div style="display: flex; flex-direction: column; gap: 10px;">
+                    <div style="background: #F8FAFC; border-left: 3.5px solid #3B82F6; border-radius: 8px; padding: 12px 14px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                            <span style="font-weight: 800; color: #1E3A8A; font-size: 14.5px;">🚀 [1단계] {p1_start}세 ~ {p1_end}세 : 기반 구축기</span>
+                            <span style="font-size: 11px; background: #DBEAFE; color: #1E40AF; font-weight: 800; padding: 2px 6px; border-radius: 4px;">기반 정립</span>
+                        </div>
+                        <p style="color: #334155; font-size: 13.5px; line-height: 1.7;">{p1_desc}</p>
+                    </div>
+
+                    <div style="background: #F8FAFC; border-left: 3.5px solid #10B981; border-radius: 8px; padding: 12px 14px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                            <span style="font-weight: 800; color: #065F46; font-size: 14.5px;">⚡ [2단계] {p2_start}세 ~ {p2_end}세 : 확장 및 증식기</span>
+                            <span style="font-size: 11px; background: #D1FAE5; color: #065F46; font-weight: 800; padding: 2px 6px; border-radius: 4px;">성장 가속</span>
+                        </div>
+                        <p style="color: #334155; font-size: 13.5px; line-height: 1.7;">{p2_desc}</p>
+                    </div>
+
+                    <div style="background: #FEF3C7; border: 1.5px solid #FCD34D; border-left: 4px solid #D97706; border-radius: 8px; padding: 12px 14px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                            <span style="font-weight: 800; color: #78350F; font-size: 14.5px;">🏆 [3단계] {p3_start}세 ~ {p3_end}세 : 대운의 총결실</span>
+                            <span style="font-size: 11px; background: #FDE68A; color: #78350F; font-weight: 800; padding: 2px 6px; border-radius: 4px;">대운의 절정</span>
+                        </div>
+                        <p style="color: #92400E; font-size: 13.5px; line-height: 1.7; font-weight: 600;">{p3_desc}</p>
+                    </div>
+                </div>
             </div>
 
             <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
@@ -621,13 +678,13 @@ def get_daewoon_report(req: dict):
                 <div style="border-left: 4px solid #E11D48; padding-left: 10px; margin-bottom: 8px;">
                     <span style="font-size: 12px; color: #E11D48; font-weight: 800;">Chapter 3. 자미두수 12궁 가문·가족운</span>
                     <h4 style="font-size: 16.5px; font-weight: 800; color: #881337; margin-top: 2px;">
-                        🏡 부모덕 · 자녀 출세운 · 형제자매 우애 정밀 분석
+                        🏡 부모덕 · 자녀 출세운 · 형제자매 우애 분석
                     </h4>
                 </div>
                 <div style="display: flex; flex-direction: column; gap: 8px; font-size: 14px; color: #9F1239; line-height: 1.8;">
-                    <p>• <strong>👴 부모궁 (父母宮 - 부모덕 & 유산운):</strong> 부모님의 든든한 가치관과 정서적 지지를 바탕으로 성장하는 명식입니다. 중장년 이후 부모님의 가업이나 부동산 상속·증여의 기운이 온화하게 연결되며, 효도를 다할수록 본인의 사업운이 배가됩니다.</p>
-                    <p>• <strong>👶 자녀궁 (子女宮 - 자녀의 성품 & 미래 출세):</strong> 영민하고 도덕성이 높은 귀한 자손을 두는 명식입니다. 자녀가 전문직, 공직, 학계 등 사회적으로 인정받는 명예로운 분야로 진출하여 가문을 빛내는 효자·효녀가 됩니다.</p>
-                    <p>• <strong>🤝 형제궁 (兄弟宮 - 형제자매 우애 & 상호 조력):</strong> 형제자매 간에 서로의 독립성을 존중해 줄 때 성인이 된 후 중요한 인생의 고비마다 든든한 지원군이자 비상시의 귀인이 되어줍니다.</p>
+                    <p>• <strong>👴 부모궁:</strong> 부모님의 든든한 정서적 지지와 가치관을 이어받는 운세입니다. 효를 다할수록 자신의 사업/직업운이 상승합니다.</p>
+                    <p>• <strong>👶 자녀궁:</strong> 전문직, 학계, 공직 등 명예로운 분야로 진출하여 가문을 빛낼 귀한 자손을 두는 흐름입니다.</p>
+                    <p>• <strong>🤝 형제궁:</strong> 독립성을 서로 존중할 때 고비마다 든든한 지원군이 되어주는 상호 조력 관계입니다.</p>
                 </div>
             </div>
 
@@ -637,12 +694,12 @@ def get_daewoon_report(req: dict):
                 <div style="border-left: 4px solid #2563EB; padding-left: 10px; margin-bottom: 8px;">
                     <span style="font-size: 12px; color: #2563EB; font-weight: 800;">Chapter 4. 평생 학업·시험·문서운</span>
                     <h4 style="font-size: 16.5px; font-weight: 800; color: #1E3A8A; margin-top: 2px;">
-                        🎓 관록궁 & 문창성 기반 고시/자격/승진 시험 합격운
+                        🎓 관록궁 기반 고시/자격/승진 합격운
                     </h4>
                 </div>
                 <div style="display: flex; flex-direction: column; gap: 8px; font-size: 14px; color: #1E40AF; line-height: 1.8;">
-                    <p>• <strong>타고난 지적 역량:</strong> 한번 파고든 학문과 기술의 끝을 보는 '문창성(文昌星)'의 지혜를 타고났습니다. 벼락치기보다는 꾸준한 루틴을 세울 때 시험 합격률이 98%에 달합니다.</p>
-                    <p>• <strong>국가공인/전문 자격증 합격운:</strong> 부동산, 금융, 법률, 기술 전문 자격 취득 및 공공기관/승진 시험에서 강력한 문서운이 발동하여 높은 점수로 합격증을 거머쥡니다.</p>
+                    <p>• <strong>문창성의 지혜:</strong> 꾸준한 루틴을 세우고 집중할 때 시험 합격 및 문서 취득운이 매우 높게 발현됩니다.</p>
+                    <p>• <strong>전문 자격/승진:</strong> 공인 자격 취득 및 승진 심사에서 강력한 문서운이 작용하여 좋은 성과를 거둡니다.</p>
                 </div>
             </div>
 
@@ -656,15 +713,14 @@ def get_daewoon_report(req: dict):
                     </h4>
                 </div>
                 <div style="display: flex; flex-direction: column; gap: 8px; font-size: 14px; color: #451A03; line-height: 1.8;">
-                    <p>• <strong>[자산 수성]:</strong> 단기 단타 투자보다 실물 부동산 및 우량 자산 중심 고정 현금 흐름을 창출하세요.</p>
-                    <p>• <strong>[관계 처세]:</strong> 유능한 협력 파트너를 영입하여 위임의 기술을 발휘할 때 명예와 성취가 배가됩니다.</p>
-                    <p>• <strong>[건강 관리]:</strong> 머리는 시원하게 하체는 따뜻하게 유지하는 두한족열 루틴으로 평정심을 유지하세요.</p>
+                    <p>• <strong>[자산 수성]:</strong> 실물 우량 자산 중심으로 안정적인 현금 흐름을 구축하세요.</p>
+                    <p>• <strong>[관계 처세]:</strong> 유능한 협력 파트너를 믿고 위임할 때 성취가 배가됩니다.</p>
+                    <p>• <strong>[건강 관리]:</strong> 머리는 맑게, 하체는 따뜻하게 유지하는 생활 루틴을 지키세요.</p>
                 </div>
             </div>
         </div>
         """
     }
-
 def get_sinnian_report(req: dict):
     user_name = req.get("name", "최정오")
     gender = req.get("gender", "male")
