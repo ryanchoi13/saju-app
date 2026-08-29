@@ -32,6 +32,13 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800;900&family=Noto+Serif+KR:wght@600;800;900&display=swap" rel="stylesheet">
     <style>
+        /* 로그인 완료 후 게이트 카드 강제 숨김 */
+.is-logged-in #view-login-gate,
+.hidden,
+#view-login-gate.hidden,
+div[id*="login-gate"] {
+  display: none !important;
+}
         .hidden {
   display: none !important;
 }
