@@ -840,8 +840,9 @@
                                 serverUnlockedReports = sData.unlocked_reports || [];
                                 applySajuAnalysisToUI(sData.saju_analysis);
                                 renderServerArchive();
-                                document.getElementById('view-login-gate').classList.add('hidden');
-                                document.getElementById('onboardingInputView').classList.add('hidden');
+document.getElementById('view-login-gate').classList.add('hidden');
+document.getElementById('view-login-gate').style.display = 'none';
+document.getElementById('onboardingInputView').classList.add('hidden');
                                 switchTab('today');
                                 document.getElementById('bottomNavBar').classList.remove('hidden');
                                 restoreUnlockedUIFromReports();
