@@ -8,6 +8,7 @@
     
     <!-- 카카오 공식 Javascript SDK 로드 -->
     <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
+
     <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800;900&family=Noto+Serif+KR:wght@600;800;900&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Pretendard', sans-serif; -webkit-tap-highlight-color: transparent; }
@@ -33,6 +34,8 @@
         .login-gate-card { background: radial-gradient(circle at center, #172746 0%, #0D1527 100%); border: 1.5px solid #E2C068; border-radius: 24px; padding: 32px 20px; text-align: center; color: white; display: flex; flex-direction: column; align-items: center; gap: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.4); margin-top: 20px; }
         .kakao-login-btn { width: 100%; background: #FEE500; color: #191919; border: none; font-size: 15px; font-weight: 800; padding: 15px; border-radius: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); transition: all 0.2s; }
         .kakao-login-btn:hover { background: #FDD835; transform: translateY(-1px); }
+
+        .gift-badge { background: #FEF3C7; color: #78350F; font-size: 12px; font-weight: 800; padding: 4px 12px; border-radius: 9999px; display: inline-block; margin-bottom: 12px; }
 
         .user-profile-bar { background: #FFFFFF; border-radius: 16px; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; border: 1.5px solid #E2E8F0; box-shadow: 0 2px 4px rgba(0,0,0,0.02); margin-bottom: 2px; }
         .user-profile-name { font-size: 15.5px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif; }
@@ -239,7 +242,7 @@
                 <!-- 6칸 그리드 -->
                 <div class="grid-2">
                     <div class="grid-cell" style="grid-column: span 2; background: #F0FDF4; border: 1.5px solid #86EFAC;">
-                        <span style="font-size: 12px; color: #166534; font-weight: 800; display: block;">👔 맞춤 추천 코디 (성별·나이·8월 여름)</span>
+                        <span style="font-size: 12px; color: #166534; font-weight: 800; display: block;">👔 맞춤 추천 코디 (성별·나이·계절감 반영)</span>
                         <p id="resStyle" style="font-weight: 800; margin-top: 2px; font-size: 14px; color: #065F46;">화이트 린넨 셔츠 & 실버 메탈 워치</p>
                     </div>
                     <div class="grid-cell"><span style="font-size: 12px; color: #94A3B8; display: block;">🍀 행운의 아이템</span><p id="resItem" style="font-weight: 700; margin-top: 2px; font-size: 13.5px;">실버 메탈 액세서리</p></div>
@@ -566,7 +569,10 @@
 
                 <div class="card" style="display: flex; justify-content: space-between; align-items: center; text-align: left;">
                     <div><p style="font-size: 14px; font-weight: 800; color: #1E293B;">사주 정보 수정</p><p id="mypageProfileDesc" style="font-size: 12px; color: #94A3B8; margin-top: 2px;">최정오 (1978-08-13)</p></div>
-                    <button onclick="reopenSajuEditForm()" style="background: #F1F5F9; border: none; font-size: 13px; font-weight: 700; color: #334155; padding: 8px 14px; border-radius: 12px; cursor: pointer;">정보 수정</button>
+                    <div style="display: flex; gap: 6px;">
+                        <button onclick="reopenSajuEditForm()" style="background: #F1F5F9; border: none; font-size: 13px; font-weight: 700; color: #334155; padding: 8px 12px; border-radius: 12px; cursor: pointer;">정보 수정</button>
+                        <button onclick="logoutKakaoUser()" style="background: #FEF2F2; border: 1px solid #FECDD3; font-size: 13px; font-weight: 700; color: #DC2626; padding: 8px 12px; border-radius: 12px; cursor: pointer;">로그아웃</button>
+                    </div>
                 </div>
 
                 <!-- 구매한 감명서 보관함 -->
@@ -719,12 +725,12 @@
         let pendingCoinAmount = 0;
         let serverUnlockedReports = [];
 
-        // [실제 발급받으신 카카오 JS 키 초기화]
+        // [카카오 JS 키 초기화]
         const KAKAO_JS_KEY = "fde505a5042405dbac55d2e98e9f9b08";
 
         function initKakaoSDK() {
-            if (window.Kakao && !Kakao.isInitialized()) {
-                Kakao.init(KAKAO_JS_KEY);
+            if (window.Kakao && !window.Kakao.isInitialized()) {
+                window.Kakao.init(KAKAO_JS_KEY);
             }
         }
 
@@ -753,7 +759,10 @@
                                 birthday_type: kakaoAccount.birthday_type || "SOLAR"
                             };
 
-                            // 서버 DB에 전송하여 회원 가입/조회 처리
+                            // 브라우저 저장소에 카카오 계정 ID 저장 (자동 세션 유지)
+                            localStorage.setItem('dalha_kakao_id', payload.kakao_id);
+
+                            // 서버 DB 통신
                             const sRes = await fetch('/api/auth/kakao', {
                                 method: 'POST',
                                 headers: {'Content-Type': 'application/json'},
@@ -766,6 +775,7 @@
                             updateCoinDisplay();
 
                             if (sData.status === "existing_user") {
+                                // 기존 등록 회원은 입력창 없이 즉시 메인 운세 화면으로 다이렉트 진입
                                 serverUnlockedReports = sData.unlocked_reports || [];
                                 applySajuAnalysisToUI(sData.saju_analysis);
                                 renderServerArchive();
@@ -775,6 +785,7 @@
                                 document.getElementById('bottomNavBar').classList.remove('hidden');
                                 restoreUnlockedUIFromReports();
                             } else {
+                                // 신규 회원은 최초 1회 정보 확인 폼 표시
                                 const pre = sData.kakao_prefill;
                                 document.getElementById('inputName').value = pre.name;
                                 setGenderType(pre.gender);
@@ -789,7 +800,7 @@
                             }
                         },
                         fail: function(error) {
-                            alert("카카오 사용자 정보를 가져오지 못했습니다: " + JSON.stringify(error));
+                            alert("사용자 정보를 가져오지 못했습니다: " + JSON.stringify(error));
                         }
                     });
                 },
@@ -797,6 +808,41 @@
                     alert("카카오 로그인 실패: " + JSON.stringify(err));
                 }
             });
+        }
+
+        // 페이지 로드 시 자동 세션 복원 (새로고침/재방문 시 입력 없이 바로 운세로 직행)
+        async function checkAutoLoginSession() {
+            const savedKakaoId = localStorage.getItem('dalha_kakao_id');
+            if (!savedKakaoId) return;
+
+            try {
+                const sRes = await fetch('/api/auth/kakao', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ kakao_id: savedKakaoId })
+                });
+                const sData = await sRes.json();
+                if (sData.status === "existing_user") {
+                    currentUserId = sData.user_id;
+                    currentCoin = sData.coin_balance;
+                    updateCoinDisplay();
+                    serverUnlockedReports = sData.unlocked_reports || [];
+                    applySajuAnalysisToUI(sData.saju_analysis);
+                    renderServerArchive();
+                    document.getElementById('view-login-gate').classList.add('hidden');
+                    document.getElementById('onboardingInputView').classList.add('hidden');
+                    switchTab('today');
+                    document.getElementById('bottomNavBar').classList.remove('hidden');
+                    restoreUnlockedUIFromReports();
+                }
+            } catch(e) {
+                console.log("세션 복원 대기");
+            }
+        }
+
+        function logoutKakaoUser() {
+            localStorage.removeItem('dalha_kakao_id');
+            location.reload();
         }
 
         const ZODIAC_GLYPHS = {
@@ -1362,6 +1408,9 @@
 
             const talismanPreview = document.getElementById('talismanBannerPreview');
             if (talismanPreview) talismanPreview.innerHTML = renderAuthenticCinnabarTalisman('metal', 72, 110);
+
+            // 자동 세션 확인 및 복원 실행
+            checkAutoLoginSession();
         });
     </script>
 </body>
