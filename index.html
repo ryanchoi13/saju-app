@@ -737,7 +737,6 @@
             }
 
             Kakao.Auth.login({
-                scope: 'profile_nickname,gender,birthyear,birthday',
                 success: function(authObj) {
                     Kakao.API.request({
                         url: '/v2/user/me',
