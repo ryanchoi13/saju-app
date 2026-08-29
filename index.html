@@ -17,11 +17,6 @@
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
 
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="달하 — 당신의 앞날을 비추는 운명 나침반" />
-    <meta name="twitter:description" content="어두운 밤길을 밝히는 달빛처럼. 오늘의 무료운세와 정통 사주팔자 풀이" />
-    <meta name="twitter:image" content="https://dalha.kr/static/og_thumb.png" />
-
     <meta name="theme-color" content="#0D1527">
     <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800;900&family=Noto+Serif+KR:wght@600;800;900&display=swap" rel="stylesheet">
@@ -238,7 +233,6 @@
                     <div class="user-profile-birth" id="userProfileBarBirth">1978년 8월 13일생 · 사시(巳時)생</div>
                 </div>
 
-                <!-- 오늘의 일진 배너 -->
                 <div class="daily-banner">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
                         <div style="display: flex; align-items: center; gap: 6px;">
@@ -251,7 +245,6 @@
                     <div id="resAdvice" style="font-size: 13.5px; color: #E2E8F0; font-weight: 400; line-height: 1.65; text-align: left;"></div>
                 </div>
 
-                <!-- 6칸 그리드 (코디 배경 흰색으로 통일) -->
                 <div class="grid-2">
                     <div class="grid-cell" style="grid-column: span 2; background: #FFFFFF; border: 1px solid #E2E8F0;">
                         <span style="font-size: 12px; color: #64748B; font-weight: 700; display: block;">👔 맞춤 추천 코디</span>
@@ -264,13 +257,11 @@
                     <div class="grid-cell" style="grid-column: span 2;"><span style="font-size: 12px; color: #94A3B8; display: block;">💡 마인드 처세</span><p id="resMindset" style="font-weight: 700; margin-top: 2px; font-size: 13.5px; color: #0F172A;">원칙을 지키며 유연하게 대처하기</p></div>
                 </div>
 
-                <!-- 오늘의 조언 카드 -->
                 <div class="action-card">
                     <span style="font-weight: 800; color: #78350F; display: block; margin-bottom: 3px; font-size: 14px;">✨ 오늘의 조언</span>
                     <p id="resGaewoon" style="color: #92400E; font-weight: 500; font-size: 14px; line-height: 1.6;">오늘 완료해야 할 우선순위 3가지 메모하기</p>
                 </div>
 
-                <!-- 곡선 파동형 바이오리듬 카드 (빨강/초록/파랑 표준화) -->
                 <div class="biorhythm-card">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                         <h4 style="font-size: 15px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif;">🧬 오늘의 바이오리듬</h4>
@@ -304,12 +295,9 @@
                     </div>
                 </div>
 
-                <!-- 광고 슬롯 1 -->
                 <div class="ad-slot-box"><span>📢 광고 영역 (Google AdSense / Kakao AdFit 슬롯 1)</span></div>
 
-                <!-- 스페셜 운세 서랍 -->
                 <div style="display: flex; flex-direction: column; gap: 10px;">
-                    <!-- 타로 카드 (단순화 및 플랫 레이아웃 적용) -->
                     <div id="drawerTarot" class="drawer-card">
                         <div class="drawer-header" onclick="toggleDrawer('drawerTarot')">
                             <div class="drawer-title-box">
@@ -328,7 +316,6 @@
                         </div>
                     </div>
 
-                    <!-- 부적 서랍 -->
                     <div id="drawerTalisman" class="drawer-card">
                         <div class="drawer-header" onclick="toggleDrawer('drawerTalisman')">
                             <div class="drawer-title-box">
@@ -347,7 +334,6 @@
                         </div>
                     </div>
 
-                    <!-- 띠별 & 별자리 운세 서랍 (통일된 그리드) -->
                     <div id="drawerZodiac" class="drawer-card">
                         <div class="drawer-header" onclick="toggleDrawer('drawerZodiac')">
                             <div class="drawer-title-box">
@@ -395,7 +381,6 @@
                     </div>
                 </div>
 
-                <!-- 광고 슬롯 3 -->
                 <div class="ad-slot-box" style="margin-top: 6px;"><span>📢 광고 영역 (Google AdSense / Kakao AdFit 슬롯 3)</span></div>
             </div>
 
@@ -425,7 +410,6 @@
                             <div style="border-top: 1px dashed #CBD5E1; width: 100%; padding-top: 8px;"><div id="jjg_h_box" style="display: flex; flex-direction: column; align-items: center; gap: 4px;">-</div></div>
                         </div>
 
-                        <!-- 일주: 흰 배경 유지 + 은은한 골드/그린 보더로 본원 표시 -->
                         <div style="background: #FFFFFF; border: 1.5px solid #2D6A4F; border-radius: 14px; padding: 8px 4px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center;">
                             <span style="font-size: 12px; font-weight: 800; color: #2D6A4F;">일주 (본원)</span>
                             <div id="cg_d_badge" class="badge-elem elem-none">-</div><div id="jj_d_badge" class="badge-elem elem-none">-</div>
@@ -461,7 +445,6 @@
                     </div>
                 </div>
 
-                <!-- 1. 자미두수 평생운세 (생애 대운 그래프 높이 및 49세 좌표 정밀 보정) -->
                 <div class="card" style="border: 2px solid #FCD34D;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                         <span style="font-size: 15px; font-weight: 800; font-family: 'Noto Serif KR', serif;">👑 자미두수 평생운세</span>
@@ -506,7 +489,6 @@
                     </button>
                 </div>
 
-                <!-- 2. 2026 신년운세 -->
                 <div class="card" style="border: 2px solid #86EFAC;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                         <span style="font-size: 15px; font-weight: 800; color: #166534; font-family: 'Noto Serif KR', serif;">📅 2026 丙午년 총운 & 하반기 월별 가이드</span>
@@ -527,11 +509,11 @@
                 </div>
             </div>
 
-            <!-- 탭 3: 궁합·테마 -->
+            <!-- 탭 3: 궁합·테마 (제목 및 문구 개편) -->
             <div id="view-theme" class="tab-view hidden">
                 <div class="card" style="border: 2px solid #FECDD3; background: #FFFDFD; text-align: left;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                        <span style="font-size: 16px; font-weight: 800; color: #9F1239; font-family: 'Noto Serif KR', serif;">💞 정통 사주 궁합 감명</span>
+                        <span style="font-size: 16px; font-weight: 800; color: #9F1239; font-family: 'Noto Serif KR', serif;">💞 정통 사주 궁합 풀이</span>
                         <span style="font-size: 12px; background: #FFE4E6; color: #BE123C; padding: 4px 10px; border-radius: 9999px; font-weight: 800;">350 복채</span>
                     </div>
                     <p style="font-size: 13.5px; color: #64748B; margin-bottom: 12px;">연인·결혼, 동업·사업 파트너, 친구와의 오행 상생 밸런스를 1:1로 정밀 감명합니다.</p>
@@ -605,27 +587,37 @@
 
     </div>
 
-    <!-- 모달 창들 -->
+    <!-- 궁합 상대방 정보 모달 (빈칸 + 자동 포커스 + 버튼 문구 개편) -->
     <div id="gunghapModal" class="modal-bg hidden">
         <div class="modal-content" style="max-width: 350px; text-align: left;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 8px;">
                 <h3 style="font-size: 15px; font-weight: 800; color: #9F1239; font-family: 'Noto Serif KR', serif;">💞 상대방 사주 정보 입력</h3>
                 <button onclick="closeGunghapModal()" style="background: none; border: none; font-size: 20px; color: #94A3B8; cursor: pointer;">&times;</button>
             </div>
-            <div class="form-group" style="margin-top: 4px;"><label class="form-label">상대방 이름</label><input type="text" id="partnerNameInput" class="form-input" value="김지수"></div>
-            <div class="form-group"><label class="form-label">상대방 생년월일</label><input type="date" id="partnerBirthInput" class="form-input" value="1982-08-24"></div>
+            <div class="form-group" style="margin-top: 4px;">
+                <label class="form-label">상대방 이름</label>
+                <input type="text" id="partnerNameInput" class="form-input" placeholder="이름을 입력하세요" value="">
+            </div>
+            <div class="form-group">
+                <label class="form-label">상대방 생년월일</label>
+                <input type="date" id="partnerBirthInput" class="form-input" value="">
+            </div>
             <div class="form-group">
                 <label class="form-label">관계 유형</label>
                 <select id="partnerRelationSelect" class="form-input" style="cursor: pointer;">
-                    <option value="연인/결혼" selected>연인 / 결혼 궁합</option>
-                    <option value="동업/사업">동업 / 비즈니스 파트너</option>
-                    <option value="친구/지인">친구 / 지인 케미</option>
+                    <option value="" disabled selected>관계를 선택하세요</option>
+                    <option value="연인 / 결혼">연인 / 결혼</option>
+                    <option value="동업 / 비즈니스">동업 / 비즈니스 파트너</option>
+                    <option value="친구 / 지인">친구 / 지인</option>
                 </select>
             </div>
-            <button onclick="confirmUnlockGunghapOnServer()" style="width: 100%; background: #BE123C; color: white; border: none; font-size: 14.5px; font-weight: 800; padding: 13px; border-radius: 12px; cursor: pointer;"><span class="btn-coin-icon-white"></span> 350 복채로 궁합 감명서 열람</button>
+            <button onclick="confirmUnlockGunghapOnServer()" style="width: 100%; background: #BE123C; color: white; border: none; font-size: 14.5px; font-weight: 800; padding: 13px; border-radius: 12px; cursor: pointer;">
+                <span class="btn-coin-icon-white"></span> 350 복채로 두 사람의 인연 풀이 확인하기
+            </button>
         </div>
     </div>
 
+    <!-- 상황별 테마 모달 -->
     <div id="themeSelectModal" class="modal-bg hidden">
         <div class="modal-content" style="text-align: left;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 8px;">
@@ -637,6 +629,7 @@
         </div>
     </div>
 
+    <!-- 띠별 / 별자리 모달 -->
     <div id="zodiacModal" class="modal-bg hidden">
         <div class="modal-content" style="max-width: 360px; text-align: left; padding: 22px; border-radius: 24px;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #F1F5F9; padding-bottom: 10px;">
@@ -662,7 +655,7 @@
         </div>
     </div>
 
-    <!-- 전통 부적 모달 (버튼 1:1 크기 균등 분할) -->
+    <!-- 전통 부적 모달 -->
     <div id="talismanModal" class="modal-bg hidden">
         <div class="modal-content" style="max-width: 340px; padding: 18px; border-radius: 24px;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 8px;">
@@ -683,7 +676,7 @@
         </div>
     </div>
 
-    <!-- 복채 충전소 모달 -->
+    <!-- 복채 충전소 모달 (할인 체계 개편: 기본 / 10% / 25%) -->
     <div id="chargeModal" class="modal-bg hidden">
         <div class="modal-content" style="max-width: 340px;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 10px;">
@@ -691,9 +684,21 @@
                 <button onclick="closeChargeStore()" style="background: none; border: none; font-size: 20px; color: #94A3B8; cursor: pointer;">&times;</button>
             </div>
             <div style="display: flex; flex-direction: column; gap: 10px;">
-                <button onclick="openPgModal(250, 2900, '250 복채')" style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 16px; padding: 11px 14px; display: flex; justify-content: space-between; align-items: center; text-align: left; cursor: pointer;"><div style="display: flex; align-items: center; gap: 6px;"><span class="btn-coin-icon"></span><p style="font-size: 13px; font-weight: 800; color: #334155;">250 복채 체험팩</p></div><span style="background: #E2E8F0; color: #334155; font-size: 12px; font-weight: 800; padding: 3px 8px; border-radius: 6px;">₩2,900</span></button>
-                <button onclick="openPgModal(500, 4900, '500 복채')" style="background: #FFFBEB; border: 1px solid #FDE68A; border-radius: 16px; padding: 11px 14px; display: flex; justify-content: space-between; align-items: center; text-align: left; cursor: pointer;"><div style="display: flex; align-items: center; gap: 6px;"><span class="btn-coin-icon"></span><p style="font-size: 13px; font-weight: 800; color: #78350F;">500 복채 기본팩</p></div><span style="background: #F59E0B; color: white; font-size: 12px; font-weight: 800; padding: 3px 8px; border-radius: 6px;">₩4,900</span></button>
-                <button onclick="openPgModal(1200, 9900, '1,200 복채 (인기)')" style="background: #ECFDF5; border: 1.5px solid #86EFAC; border-radius: 16px; padding: 11px 14px; display: flex; justify-content: space-between; align-items: center; text-align: left; cursor: pointer;"><div style="display: flex; align-items: center; gap: 6px;"><span class="btn-coin-icon-white"></span><div><p style="font-size: 13px; font-weight: 800; color: #065F46;">1,200 복채 인기팩</p><p style="font-size: 10.5px; color: #047857; font-weight: 700;">🎁 +15% 보너스</p></div></div><span style="background: #2D6A4F; color: white; font-size: 12px; font-weight: 800; padding: 3px 8px; border-radius: 6px;">₩9,900</span></button>
+                <!-- 1단계: 할인 없음 -->
+                <button onclick="openPgModal(250, 2900, '250 복채')" style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 16px; padding: 11px 14px; display: flex; justify-content: space-between; align-items: center; text-align: left; cursor: pointer;">
+                    <div style="display: flex; align-items: center; gap: 6px;"><span class="btn-coin-icon"></span><p style="font-size: 13px; font-weight: 800; color: #334155;">250 복채 체험팩</p></div>
+                    <span style="background: #E2E8F0; color: #334155; font-size: 12px; font-weight: 800; padding: 3px 8px; border-radius: 6px;">₩2,900</span>
+                </button>
+                <!-- 2단계: 10% 보너스 -->
+                <button onclick="openPgModal(550, 4900, '550 복채 (추천)')" style="background: #FFFBEB; border: 1.5px solid #FDE68A; border-radius: 16px; padding: 11px 14px; display: flex; justify-content: space-between; align-items: center; text-align: left; cursor: pointer;">
+                    <div style="display: flex; align-items: center; gap: 6px;"><span class="btn-coin-icon"></span><div><p style="font-size: 13px; font-weight: 800; color: #78350F;">550 복채 실속팩</p><p style="font-size: 10.5px; color: #D97706; font-weight: 700;">🎁 +10% 보너스</p></div></div>
+                    <span style="background: #F59E0B; color: white; font-size: 12px; font-weight: 800; padding: 3px 8px; border-radius: 6px;">₩4,900</span>
+                </button>
+                <!-- 3단계: 25% 대박 보너스 -->
+                <button onclick="openPgModal(1300, 9900, '1,300 복채 (인기 최고)')" style="background: #ECFDF5; border: 1.5px solid #86EFAC; border-radius: 16px; padding: 11px 14px; display: flex; justify-content: space-between; align-items: center; text-align: left; cursor: pointer;">
+                    <div style="display: flex; align-items: center; gap: 6px;"><span class="btn-coin-icon-white"></span><div><p style="font-size: 13px; font-weight: 800; color: #065F46;">1,300 복채 인기팩</p><p style="font-size: 10.5px; color: #047857; font-weight: 700;">🔥 +25% 대박 보너스</p></div></div>
+                    <span style="background: #2D6A4F; color: white; font-size: 12px; font-weight: 800; padding: 3px 8px; border-radius: 6px;">₩9,900</span>
+                </button>
             </div>
         </div>
     </div>
@@ -702,7 +707,7 @@
     <div id="pgModal" class="modal-bg hidden">
         <div class="modal-content" style="max-width: 340px; text-align: left;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 8px;"><h3 style="font-size: 15px; font-weight: 800; color: #0F172A;">💳 안전 결제창</h3><button onclick="closePgModal()" style="background: none; border: none; font-size: 20px; color: #94A3B8; cursor: pointer;">&times;</button></div>
-            <div style="background: #F8FAFC; border-radius: 12px; padding: 12px; border: 1px solid #E2E8F0;"><span style="font-size: 12px; color: #64748B;">선택 상품</span><h4 id="pgItemName" style="font-size: 15px; font-weight: 800; color: #0F172A; margin: 2px 0 4px;">500 복채</h4><div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px dashed #CBD5E1; padding-top: 6px; margin-top: 4px;"><span style="font-size: 12px; font-weight: 700; color: #64748B;">최종 결제 금액</span><span id="pgItemPrice" style="font-size: 16px; font-weight: 900; color: #DC2626;">₩4,900</span></div></div>
+            <div style="background: #F8FAFC; border-radius: 12px; padding: 12px; border: 1px solid #E2E8F0;"><span style="font-size: 12px; color: #64748B;">선택 상품</span><h4 id="pgItemName" style="font-size: 15px; font-weight: 800; color: #0F172A; margin: 2px 0 4px;">550 복채</h4><div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px dashed #CBD5E1; padding-top: 6px; margin-top: 4px;"><span style="font-size: 12px; font-weight: 700; color: #64748B;">최종 결제 금액</span><span id="pgItemPrice" style="font-size: 16px; font-weight: 900; color: #DC2626;">₩4,900</span></div></div>
             <button onclick="processPgPaymentOnServer()" style="width: 100%; background: #2D6A4F; color: white; border: none; font-size: 14.5px; font-weight: 800; padding: 13px; border-radius: 12px; cursor: pointer; margin-top: 4px;">결제 완료하기 ✨</button>
         </div>
     </div>
@@ -1010,7 +1015,7 @@
             document.getElementById('mypageProfileDesc').innerText = `${currentUserName} (${data.birth_summary})`;
         }
 
-        async function handleUnlockReportOnServer(reportKey, cost, subOption = "기본", partnerName = "상대방", relation = "연인/결혼") {
+        async function handleUnlockReportOnServer(reportKey, cost, subOption = "기본", partnerName = "상대방", relation = "선택안함") {
             if (!currentUserId) { alert("로그인이 필요합니다."); return; }
             if (currentCoin < cost) { openChargeStore(); return; }
 
@@ -1101,13 +1106,64 @@
             alert(`🎉 결제가 완료되었습니다! (+${pendingCoinAmount.toLocaleString()} 복채)`);
         }
 
-        function confirmUnlockGunghapOnServer() {
-            const pName = document.getElementById('partnerNameInput').value.trim() || "상대방";
-            const rel = document.getElementById('partnerRelationSelect').value;
-            closeGunghapModal();
-            handleUnlockReportOnServer('gunghap', 350, "기본", pName, rel);
+        // 궁합 입력창 열기 (값 초기화 및 자동 포커스)
+        function openGunghapInputModal() {
+            const nameInput = document.getElementById('partnerNameInput');
+            const birthInput = document.getElementById('partnerBirthInput');
+            const relSelect = document.getElementById('partnerRelationSelect');
+
+            nameInput.value = '';
+            birthInput.value = '';
+            relSelect.selectedIndex = 0;
+
+            document.getElementById('gunghapModal').classList.remove('hidden');
+            setTimeout(() => { nameInput.focus(); }, 150);
         }
 
+        function closeGunghapModal() { document.getElementById('gunghapModal').classList.add('hidden'); }
+
+        function confirmUnlockGunghapOnServer() {
+            const pName = document.getElementById('partnerNameInput').value.trim();
+            const rel = document.getElementById('partnerRelationSelect').value;
+
+            if (!pName) {
+                alert("상대방 이름을 입력해 주세요.");
+                document.getElementById('partnerNameInput').focus();
+                return;
+            }
+
+            closeGunghapModal();
+            handleUnlockReportOnServer('gunghap', 350, "기본", pName, rel || "인연/조화");
+        }
+
+        function openThemeSelectModal(key) {
+            currentThemeKey = key;
+            const modalBox = document.getElementById('modalOptionBox');
+            const titleEl = document.getElementById('modalThemeTitle');
+
+            if (key === 'love') {
+                titleEl.innerText = "💖 현재 애정 상태를 선택해 주세요";
+                modalBox.innerHTML = `
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                        <label style="padding:10px; border:1px solid #E2E8F0; border-radius:8px; background:white; cursor:pointer;"><input type="radio" name="optM" value="솔로" checked> 솔로 (미혼)</label>
+                        <label style="padding:10px; border:1px solid #E2E8F0; border-radius:8px; background:white; cursor:pointer;"><input type="radio" name="optM" value="썸/짝사랑"> 썸 / 짝사랑</label>
+                        <label style="padding:10px; border:1px solid #E2E8F0; border-radius:8px; background:white; cursor:pointer;"><input type="radio" name="optM" value="연애중"> 연애중</label>
+                        <label style="padding:10px; border:1px solid #E2E8F0; border-radius:8px; background:white; cursor:pointer;"><input type="radio" name="optM" value="기혼"> 기혼 (부부)</label>
+                    </div>`;
+            } else if (key === 'business') {
+                titleEl.innerText = "🏢 현재 직업/사업 상태를 선택해 주세요";
+                modalBox.innerHTML = `
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                        <label style="padding:10px; border:1px solid #E2E8F0; border-radius:8px; background:white; cursor:pointer;"><input type="radio" name="optM" value="직장인" checked> 직장인</label>
+                        <label style="padding:10px; border:1px solid #E2E8F0; border-radius:8px; background:white; cursor:pointer;"><input type="radio" name="optM" value="취업/이직"> 취업 / 이직</label>
+                        <label style="padding:10px; border:1px solid #E2E8F0; border-radius:8px; background:white; cursor:pointer;"><input type="radio" name="optM" value="사업가"> 사업가</label>
+                        <label style="padding:10px; border:1px solid #E2E8F0; border-radius:8px; background:white; cursor:pointer;"><input type="radio" name="optM" value="창업"> 창업 준비</label>
+                    </div>`;
+            }
+            document.getElementById('themeSelectModal').classList.remove('hidden');
+        }
+
+        function closeThemeSelectModal() { document.getElementById('themeSelectModal').classList.add('hidden'); }
         function confirmUnlockThemeOnServer() {
             const selEl = document.querySelector('input[name="optM"]:checked');
             const subOpt = selEl ? selEl.value : '기본';
@@ -1226,7 +1282,6 @@
             return jjList.map(j => `<span class="badge-jjg elem-${j.elem}">${j.char}</span>`).join('');
         }
 
-        // 49세 좌표 (50세 눈금 바로 왼쪽 x=175) 정밀 보정
         function updateDaewoonGraphByAge(age) {
             currentUserAge = age;
             document.getElementById('daewoonTagText1').textContent = `📍 ${currentUserName}님의 현재 위치`;
@@ -1250,7 +1305,6 @@
             }
         }
 
-        // 타로 카드 플랫 레이아웃 출력
         async function handleTarotDraw(slot) {
             const res = await fetch(`/api/daily-tarot?slot=${slot}`);
             const card = await res.json();
@@ -1280,38 +1334,6 @@
             }, 600);
         }
 
-        function openGunghapInputModal() { document.getElementById('gunghapModal').classList.remove('hidden'); }
-        function closeGunghapModal() { document.getElementById('gunghapModal').classList.add('hidden'); }
-
-        function openThemeSelectModal(key) {
-            currentThemeKey = key;
-            const modalBox = document.getElementById('modalOptionBox');
-            const titleEl = document.getElementById('modalThemeTitle');
-
-            if (key === 'love') {
-                titleEl.innerText = "💖 현재 애정 상태를 선택해 주세요";
-                modalBox.innerHTML = `
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                        <label style="padding:10px; border:1px solid #E2E8F0; border-radius:8px; background:white; cursor:pointer;"><input type="radio" name="optM" value="솔로" checked> 솔로 (미혼)</label>
-                        <label style="padding:10px; border:1px solid #E2E8F0; border-radius:8px; background:white; cursor:pointer;"><input type="radio" name="optM" value="썸/짝사랑"> 썸 / 짝사랑</label>
-                        <label style="padding:10px; border:1px solid #E2E8F0; border-radius:8px; background:white; cursor:pointer;"><input type="radio" name="optM" value="연애중"> 연애중</label>
-                        <label style="padding:10px; border:1px solid #E2E8F0; border-radius:8px; background:white; cursor:pointer;"><input type="radio" name="optM" value="기혼"> 기혼 (부부)</label>
-                    </div>`;
-            } else if (key === 'business') {
-                titleEl.innerText = "🏢 현재 직업/사업 상태를 선택해 주세요";
-                modalBox.innerHTML = `
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                        <label style="padding:10px; border:1px solid #E2E8F0; border-radius:8px; background:white; cursor:pointer;"><input type="radio" name="optM" value="직장인" checked> 직장인</label>
-                        <label style="padding:10px; border:1px solid #E2E8F0; border-radius:8px; background:white; cursor:pointer;"><input type="radio" name="optM" value="취업/이직"> 취업 / 이직</label>
-                        <label style="padding:10px; border:1px solid #E2E8F0; border-radius:8px; background:white; cursor:pointer;"><input type="radio" name="optM" value="사업가"> 사업가</label>
-                        <label style="padding:10px; border:1px solid #E2E8F0; border-radius:8px; background:white; cursor:pointer;"><input type="radio" name="optM" value="창업"> 창업 준비</label>
-                    </div>`;
-            }
-            document.getElementById('themeSelectModal').classList.remove('hidden');
-        }
-
-        function closeThemeSelectModal() { document.getElementById('themeSelectModal').classList.add('hidden'); }
-
         function openTalismanModal() {
             document.getElementById('talismanTitle').innerText = currentTalisman?.title || "재물만복부";
             document.getElementById('talismanPower').innerText = currentTalisman?.power || "재물 증식 · 금전운 대통";
@@ -1323,7 +1345,6 @@
 
         function closeTalismanModal() { document.getElementById('talismanModal').classList.add('hidden'); }
         
-        // 부적 4면 테두리가 온전히 출력되는 캔버스 다운로드 로직
         function downloadTalismanImage() {
             const svgElement = document.querySelector('#talismanRealBox #svgTalismanMain');
             if (!svgElement) return;
@@ -1342,7 +1363,6 @@
 
                 ctx.fillStyle = "#FAF9F6";
                 ctx.fillRect(0, 0, 420, 720);
-                // 여백을 두고 정중앙에 배치하여 4면 테두리가 잘리지 않도록 렌더링
                 ctx.drawImage(img, 20, 20, 380, 680);
 
                 const dlLink = document.createElement('a');
