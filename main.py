@@ -874,3 +874,7 @@ def naver_verification():
 @app.get("/naverc5036aa02eca57807bf721e44ad78969.html")
 def naver_verification():
     return HTMLResponse("naver-site-verification: naverc5036aa02eca57807bf721e44ad78969.html")
+# 구글 서치 콘솔 소유확인 라우트
+@app.get("/google888b184f07770663.html")
+def google_verification():
+    return HTMLResponse("google-site-verification: google888b184f07770663.html")
