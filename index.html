@@ -6,6 +6,9 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <title>달하 (DALHA) - 정통 사주·별자리·타로</title>
     
+    <!-- 카카오 공식 Javascript SDK 로드 -->
+    <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js" integrity="sha384-TiCUE00h649CAMonG018J2mDixZZUCGPOVJMnyPlaTacEQ4JUOCJAHIbqdY0P74q" crossorigin="anonymous"></script>
+
     <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800;900&family=Noto+Serif+KR:wght@600;800;900&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Pretendard', sans-serif; -webkit-tap-highlight-color: transparent; }
@@ -28,7 +31,7 @@
         .card { background: #FFFFFF; border-radius: 20px; border: 1px solid #E2E8F0; padding: 18px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.03); position: relative; }
         
         /* 카카오 로그인 온보딩 게이트 카드 */
-        .login-gate-card { background: radial-gradient(circle at center, #172746 0%, #0D1527 100%); border: 1.5px solid #E2C068; border-radius: 24px; padding: 28px 20px; text-align: center; color: white; display: flex; flex-direction: column; align-items: center; gap: 14px; box-shadow: 0 10px 25px rgba(0,0,0,0.4); }
+        .login-gate-card { background: radial-gradient(circle at center, #172746 0%, #0D1527 100%); border: 1.5px solid #E2C068; border-radius: 24px; padding: 32px 20px; text-align: center; color: white; display: flex; flex-direction: column; align-items: center; gap: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.4); margin-top: 20px; }
         .kakao-login-btn { width: 100%; background: #FEE500; color: #191919; border: none; font-size: 15px; font-weight: 800; padding: 15px; border-radius: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); transition: all 0.2s; }
         .kakao-login-btn:hover { background: #FDD835; transform: translateY(-1px); }
 
@@ -145,17 +148,17 @@
             
             <!-- 1. 최초 카카오 로그인 화면 (온보딩 게이트) -->
             <div id="view-login-gate" class="login-gate-card">
-                <div class="logo-symbol" style="width: 54px; height: 54px; font-size: 26px;">月</div>
+                <div class="logo-symbol" style="width: 58px; height: 58px; font-size: 28px;">月</div>
                 <div>
                     <h2 style="font-size: 22px; font-weight: 900; color: #F6E2A1; font-family: 'Noto Serif KR', serif; margin-bottom: 4px;">달하 (DALHA)</h2>
                     <p style="font-size: 13.5px; color: #CBD5E1; line-height: 1.6;">달빛이 비추는 당신의 운명과 천운의 길목<br>카카오로 3초 만에 시작하세요</p>
                 </div>
                 
                 <div style="background: rgba(254,243,199,0.1); border: 1px dashed rgba(246,226,161,0.5); border-radius: 12px; padding: 10px 14px; width: 100%;">
-                    <span style="font-size: 12px; color: #FDE68A; font-weight: 700;">🎁 신규 회원 가입 축하 1,000 복채 즉시 지급</span>
+                    <span style="font-size: 12px; color: #FDE68A; font-weight: 700;">🎁 신규 가입 축하 1,000 복채 즉시 지급</span>
                 </div>
 
-                <button onclick="handleKakaoLoginFlow()" class="kakao-login-btn">
+                <button onclick="loginWithKakaoReal()" class="kakao-login-btn">
                     <svg viewBox="0 0 24 24" width="20" height="20" fill="#191919"><path d="M12 3C6.5 3 2 6.6 2 11c0 2.8 1.9 5.3 4.8 6.7L6 21.5c-.1.3.2.6.5.4l4.4-2.9c.4 0 .7.1 1.1.1 5.5 0 10-3.6 10-8s-4.5-8-10-8z"/></svg>
                     <span>카카오로 3초 만에 시작하기</span>
                 </button>
@@ -717,7 +720,87 @@
         let pendingCoinAmount = 0;
         let serverUnlockedReports = [];
 
-        // 별자리 심볼 SVG
+        // [실제 발급받으신 카카오 JS 키 초기화]
+        const KAKAO_JS_KEY = "fde505a5042405dbac55d2e98e9f9b08";
+
+        function initKakaoSDK() {
+            if (window.Kakao && !Kakao.isInitialized()) {
+                Kakao.init(KAKAO_JS_KEY);
+            }
+        }
+
+        // 실제 카카오 로그인 팝업 및 데이터 수신 핸들러
+        function loginWithKakaoReal() {
+            initKakaoSDK();
+            if (!window.Kakao) {
+                alert("카카오 SDK를 로드하지 못했습니다. 잠시 후 다시 시도해 주세요.");
+                return;
+            }
+
+            Kakao.Auth.login({
+                scope: 'profile_nickname,gender,birthyear,birthday',
+                success: function(authObj) {
+                    Kakao.API.request({
+                        url: '/v2/user/me',
+                        success: async function(res) {
+                            const kakaoAccount = res.kakao_account || {};
+                            const profile = kakaoAccount.profile || {};
+                            
+                            const payload = {
+                                kakao_id: String(res.id),
+                                name: profile.nickname || "달하 회원",
+                                gender: kakaoAccount.gender || "male",
+                                birthyear: kakaoAccount.birthyear || "1978",
+                                birthday: kakaoAccount.birthday || "0813",
+                                birthday_type: kakaoAccount.birthday_type || "SOLAR"
+                            };
+
+                            // 서버 DB에 전송하여 회원 가입/조회 처리
+                            const sRes = await fetch('/api/auth/kakao', {
+                                method: 'POST',
+                                headers: {'Content-Type': 'application/json'},
+                                body: JSON.stringify(payload)
+                            });
+                            const sData = await sRes.json();
+
+                            currentUserId = sData.user_id;
+                            currentCoin = sData.coin_balance;
+                            updateCoinDisplay();
+
+                            if (sData.status === "existing_user") {
+                                serverUnlockedReports = sData.unlocked_reports || [];
+                                applySajuAnalysisToUI(sData.saju_analysis);
+                                renderServerArchive();
+                                document.getElementById('view-login-gate').classList.add('hidden');
+                                document.getElementById('onboardingInputView').classList.add('hidden');
+                                switchTab('today');
+                                document.getElementById('bottomNavBar').classList.remove('hidden');
+                                restoreUnlockedUIFromReports();
+                            } else {
+                                const pre = sData.kakao_prefill;
+                                document.getElementById('inputName').value = pre.name;
+                                setGenderType(pre.gender);
+                                setCalType(pre.calendar_type);
+                                const mm = String(pre.birth_month).padStart(2, '0');
+                                const dd = String(pre.birth_day).padStart(2, '0');
+                                document.getElementById('inputBirth').value = `${pre.birth_year}-${mm}-${dd}`;
+                                document.getElementById('inputSijin').value = pre.sijin_index;
+
+                                document.getElementById('view-login-gate').classList.add('hidden');
+                                document.getElementById('onboardingInputView').classList.remove('hidden');
+                            }
+                        },
+                        fail: function(error) {
+                            alert("카카오 사용자 정보를 가져오지 못했습니다: " + JSON.stringify(error));
+                        }
+                    });
+                },
+                fail: function(err) {
+                    alert("카카오 로그인 실패: " + JSON.stringify(err));
+                }
+            });
+        }
+
         const ZODIAC_GLYPHS = {
             "양자리": `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#E2C068" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6a4 4 0 0 1 8 0v14M20 6a4 4 0 0 0-8 0"/></svg>`,
             "황소자리": `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#E2C068" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3a7 7 0 0 0 14 0"/><circle cx="12" cy="14" r="6"/></svg>`,
@@ -791,7 +874,8 @@
                 let d = "";
                 for (let x = 0; x <= width; x += 3) {
                     const offsetDays = ((x / width) * (range * 2)) - range;
-                    const y = midY - (Math.sin(2 * Math.PI * (daysLived + offsetDays) / period) * amp);
+                    const day = daysLived + offsetDays;
+                    const y = midY - (Math.sin(2 * Math.PI * day / period) * amp);
                     d += (x === 0) ? `M ${x} ${y.toFixed(1)}` : ` L ${x} ${y.toFixed(1)}`;
                 }
                 return d;
@@ -810,55 +894,6 @@
                 <circle cx="${width/2}" cy="${todayE.toFixed(1)}" r="4.5" fill="#A855F7" stroke="#FFFFFF" stroke-width="1.8" />
                 <circle cx="${width/2}" cy="${todayI.toFixed(1)}" r="4.5" fill="#3B82F6" stroke="#FFFFFF" stroke-width="1.8" />
             `;
-        }
-
-        // --- 카카오 로그인 & 회원 DB 연동 로직 ---
-        async function handleKakaoLoginFlow() {
-            // 카카오 소셜 로그인 모의/실제 연동 (로컬 및 실서버 공용)
-            const mockKakaoUser = {
-                kakao_id: "kakao_user_choi78",
-                name: "최정오",
-                gender: "male",
-                birthyear: "1978",
-                birthday: "0813",
-                birthday_type: "SOLAR"
-            };
-
-            const res = await fetch('/api/auth/kakao', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify(mockKakaoUser)
-            });
-            const data = await res.json();
-
-            currentUserId = data.user_id;
-            currentCoin = data.coin_balance;
-            updateCoinDisplay();
-
-            if (data.status === "existing_user") {
-                // 기존 회원이면 즉시 메인화면 렌더링 & 보관함 복원
-                serverUnlockedReports = data.unlocked_reports || [];
-                applySajuAnalysisToUI(data.saju_analysis);
-                renderServerArchive();
-                document.getElementById('view-login-gate').classList.add('hidden');
-                document.getElementById('onboardingInputView').classList.add('hidden');
-                switchTab('today');
-                document.getElementById('bottomNavBar').classList.remove('hidden');
-                restoreUnlockedUIFromReports();
-            } else {
-                // 신규 회원이면 온보딩 폼에 정보 채우고 시간 선택 유도
-                const pre = data.kakao_prefill;
-                document.getElementById('inputName').value = pre.name;
-                setGenderType(pre.gender);
-                setCalType(pre.calendar_type);
-                const mm = String(pre.birth_month).padStart(2, '0');
-                const dd = String(pre.birth_day).padStart(2, '0');
-                document.getElementById('inputBirth').value = `${pre.birth_year}-${mm}-${dd}`;
-                document.getElementById('inputSijin').value = pre.sijin_index;
-
-                document.getElementById('view-login-gate').classList.add('hidden');
-                document.getElementById('onboardingInputView').classList.remove('hidden');
-            }
         }
 
         async function submitSajuRegistration() {
@@ -956,7 +991,6 @@
             document.getElementById('mypageProfileDesc').innerText = `${currentUserName} (${data.birth_summary})`;
         }
 
-        // --- 유료 결제 및 DB 저장 ---
         async function handleUnlockReportOnServer(reportKey, cost, subOption = "기본", partnerName = "상대방", relation = "연인/결혼") {
             if (!currentUserId) { alert("로그인이 필요합니다."); return; }
             if (currentCoin < cost) { openChargeStore(); return; }
@@ -1066,7 +1100,6 @@
             handleUnlockReportOnServer(currentThemeKey, 220, subOpt);
         }
 
-        // --- 기타 UI 유틸 ---
         function setGenderType(gender) {
             selectedGender = gender;
             document.getElementById('btnGenderMale').className = (gender === 'male') ? "cal-btn active" : "cal-btn";
@@ -1309,6 +1342,7 @@
         function closePgModal() { document.getElementById('pgModal').classList.add('hidden'); }
 
         window.addEventListener('DOMContentLoaded', () => {
+            initKakaoSDK();
             document.getElementById('headerCoinSvg').innerHTML = getGoldCoinSvg(16, "#F59E0B");
             document.getElementById('mypageCoinSvg').innerHTML = getGoldCoinSvg(19, "#F59E0B");
             document.getElementById('chargeModalHeaderCoinSvg').innerHTML = getGoldCoinSvg(18, "#F59E0B");
