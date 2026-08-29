@@ -8,9 +8,8 @@ from fastapi import FastAPI, Request, HTTPException
 from fastapi.responses import HTMLResponse, FileResponse, Response
 from pydantic import BaseModel
 
-app = FastAPI(title="달하 (DALHA) - 정통 명리학 & 점성술 엔진", version="43.1.0")
+app = FastAPI(title="달하 (DALHA) - 정통 명리학 & 점성술 엔진", version="43.2.0")
 
-# --- SQLite 데이터베이스 초기화 ---
 DB_FILE = "dalha.db"
 
 def get_db():
@@ -52,7 +51,6 @@ def init_db():
 
 init_db()
 
-# --- 정통 명리학 상수 및 맵핑 데이터 ---
 CHEONGAN_HANJA = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
 JIJI_HANJA = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"]
 YANG_STEMS = ["甲", "丙", "戊", "庚", "壬"]
@@ -112,7 +110,7 @@ TAROT_CARDS = [
     {
         "name": "I. THE MAGICIAN (마법사)", "keyword": "탁월한 창조력 · 완벽한 주도권 · 만사형통",
         "symbolism": "머리 위의 무한대 기호와 제단 위의 4대 원소는 모든 상황을 내 뜻대로 통제하고 현실로 구현할 수 있는 완성된 지혜를 뜻합니다.",
-        "reading_male": "전문 역량과 논리적인 언변이 빛을 발합니다. 중요한 회의나 계약 협상에서 상대방을 내 페이스로 완벽히 리드할 수 있습니다.",
+        "reading_male": "전문 역량과 논리적인 언변이 빛을 발합니다. 중요한 회의나 계약 협상에서 상대방을 내 페이스로 리드할 수 있습니다.",
         "reading_female": "능숙한 대인관계 조율력과 따뜻한 카리스마로 주변 사람들을 내 아군으로 만듭니다. 의견을 당당하게 피력하세요.",
         "action_guide": "핵심 강점을 자신감 있게 표현하고 주도적으로 대화의 흐름을 이끌어가세요."
     },
@@ -120,27 +118,26 @@ TAROT_CARDS = [
         "name": "0. THE FOOL (바보)", "keyword": "새로운 여정의 서막 · 순수한 직관 · 무한한 잠재력",
         "symbolism": "벼랑 끝에서 발걸음을 내딛는 청년과 흰 개는 과거의 관습과 두려움을 벗어던진 순수한 영혼의 새로운 도약을 상징합니다.",
         "reading_male": "오랫동안 망설이던 프로젝트나 신규 투자의 첫 단추를 꿰기에 최상의 날입니다. 본인의 결단력을 믿고 추진하세요.",
-        "reading_female": "새로운 인연이나 오랫동안 염원하던 소망에 뜻밖의 기회가 찾아옵니다. 첫 느낌을 따를 때 대길합니다.",
+        "reading_female": "새로운 인연이나 소망에 뜻밖의 기회가 찾아옵니다. 첫 느낌을 따를 때 대길합니다.",
         "action_guide": "새로운 제안에 열린 마음을 갖고 떠오르는 아이디어를 즉시 메모하세요."
     },
     {
         "name": "XIX. THE SUN (태양)", "keyword": "최고의 번영 · 찬란한 영광 · 축하받을 낭보",
         "symbolism": "백마를 탄 아이와 해바라기는 어둠을 걷어내고 승리와 축복을 맞이하는 절정의 운세를 의미합니다.",
         "reading_male": "막혀 있던 자금 흐름이나 프로젝트의 난관이 시원하게 뚫리며 명예와 실속을 동시에 쟁취하는 날입니다.",
-        "reading_female": "내면의 밝은 에너지가 주변을 환하게 밝히며 축하받을 소식과 함께 인간관계에 화목이 넘칩니다.",
+        "reading_female": "내면의 밝은 에너지가 주변을 환하게 밝히며 축하받을 소식과 함께 화목이 넘칩니다.",
         "action_guide": "햇살을 받으며 산책을 즐기고 긍정적인 미소로 주변과 소통하세요."
     }
 ]
 
-# 간결하고 쉬운 계절 맞춤형 코디 풀
 DAILY_OUTFITS_POOL = {
     "male": {
-        "young": ["흰색 카라 반팔티 & 베이지 슬랙스", "네이비 린넨 셔츠 & 메탈 시계", "스카이블루 반팔 셔츠 & 그레이 팬츠", "블랙 무지 반팔티 & 와이드 슬랙스", "올리브 피케 셔츠 & 라이트 베이지 팬츠"],
-        "senior": ["흰색 린넨 셔츠 & 가죽 세미 워치", "네이비 쿨 셔츠 & 단정한 차콜 팬츠", "연베이지 셔츠 & 클래식 시계", "블루 스트라이프 반팔 & 그레이 슬랙스", "다크 올리브 린넨 셔츠 & 편안한 팬츠"]
+        "young": ["흰색 카라 반팔티 & 베이지 슬랙스", "네이비 린넨 셔츠 & 메탈 시계", "스카이블루 반팔 셔츠 & 그레이 팬츠", "블랙 무지 반팔티 & 와이드 슬랙스"],
+        "senior": ["흰색 린넨 셔츠 & 가죽 세미 워치", "네이비 쿨 셔츠 & 단정한 차콜 팬츠", "연베이지 셔츠 & 클래식 시계", "다크 올리브 린넨 셔츠 & 편안한 팬츠"]
     },
     "female": {
-        "young": ["흰색 린넨 블라우스 & 라이트 데님", "연한 하늘색 셔츠 & 화이트 슬랙스", "베이지 톤 반팔 니트 & 롱 스커트", "네이비 린넨 원피스 & 미니멀 실버 목걸이", "소프트 핑크 블라우스 & 슬랙스"],
-        "senior": ["아이보리 린넨 블라우스 & 은은한 시계", "네이비 쉬폰 블라우스 & 베이지 슬랙스", "소프트 핑크 린넨 자켓 & 진주 귀걸이", "올리브 그린 린넨 셋업 & 단정한 로퍼", "베이지 톤 오픈카라 셔츠 & 편안한 팬츠"]
+        "young": ["흰색 린넨 블라우스 & 라이트 데님", "연한 하늘색 셔츠 & 화이트 슬랙스", "베이지 톤 반팔 니트 & 롱 스커트", "네이비 린넨 원피스 & 미니멀 목걸이"],
+        "senior": ["아이보리 린넨 블라우스 & 은은한 시계", "네이비 쉬폰 블라우스 & 베이지 슬랙스", "소프트 핑크 린넨 자켓 & 진주 귀걸이", "베이지 톤 오픈카라 셔츠 & 편안한 팬츠"]
     }
 }
 
@@ -150,7 +147,6 @@ LUCKY_MENUS_POOL = ["속이 편안한 영양 솥밥", "신선한 샐러드와 �
 MINDSETS_POOL = ["원칙을 지키며 유연하게 대처하기", "상대의 말을 경청하고 공감하기", "맺고 끊음을 명확히 하기", "새로운 제안에 열린 마음 갖기", "서두르지 않고 꼼꼼히 확인하기"]
 ACTIONS_POOL = ["오늘 끝낼 우선순위 3가지 메모하기", "아침 5분간 가벼운 스트레칭하기", "점심 식사 후 10분간 햇볕 쬐며 산책하기", "책상 위 불필요한 서류 정리하기", "고마웠던 지인에게 안부 문자 보내기"]
 
-# 12별자리 상세 데이터
 STAR_FORTUNE_DETAILS = {
     "양자리": { "title": "과감한 결단력과 새로운 활로", "overview": "직관과 실행력이 최고조에 달하는 날입니다. 주저하던 일을 추진하기에 최적입니다.", "badge": "🔥 오늘 강력한 추진운", "focus": "압도적인 주도권으로 미뤄둔 제안을 성사시킵니다.", "item": "레드 포인트 소품", "time": "오전 09시 ~ 11시" },
     "황소자리": { "title": "안정적인 실속과 재물 결실", "overview": "침착한 안목이 빛을 발하며 재정 흐름이 단단하게 자리 잡는 날입니다.", "badge": "💰 오늘 중요한 재물운", "focus": "자산 관리나 지출 절감에서 실속 있는 이득을 봅니다.", "item": "가죽 카드 지갑", "time": "오후 01시 ~ 03시" },
@@ -294,25 +290,9 @@ def compute_saju_full_payload(name: str, gender: str, year: int, month: int, day
     score_status_word = "대길(大吉)과 도약의 하루" if daily_score >= 88 else ("순조로운 화합과 발전의 하루" if daily_score >= 75 else "내실을 다지고 신중을 기할 하루")
     daily_title = f"[{today_cg}{today_jj}일] {score_status_word}"
 
-    # 일진에 따라 매일 달라지는 오전/오후/저녁 3단계 실천 조언 풀
-    AM_ADVICES = [
-        "아이디어를 공유하며 주변과 활발히 소통하세요.",
-        "하루의 핵심 우선순위를 정하고 차분히 시작하세요.",
-        "새로운 제안이 오면 긍정적인 시각으로 검토하세요.",
-        "중요한 서류와 일정을 꼼꼼히 확인하고 출발하세요."
-    ]
-    PM_ADVICES = [
-        f"본원({d_cg})의 리더십으로 핵심 과제를 완수하세요.",
-        "협력 파트너와의 조율에서 주도권을 쥐고 진행하세요.",
-        "실속을 차리며 계약 및 약속을 확실히 매듭지으세요.",
-        "결단력을 발휘하여 지연되던 안건을 시원하게 해결하세요."
-    ]
-    EVE_ADVICES = [
-        "가볍게 하루 일과를 정리하고 편안히 충전하세요.",
-        "지친 몸과 마음을 따뜻한 차 한잔으로 달래세요.",
-        "내일의 계획을 메모하며 평온한 저녁을 보내세요.",
-        "소중한 사람들과 따뜻한 안부를 나누며 마무리하세요."
-    ]
+    AM_ADVICES = ["아이디어를 공유하며 주변과 활발히 소통하세요.", "하루의 핵심 우선순위를 정하고 차분히 시작하세요.", "새로운 제안이 오면 긍정적인 시각으로 검토하세요."]
+    PM_ADVICES = [f"본원({d_cg})의 리더십으로 핵심 과제를 완수하세요.", "협력 파트너와의 조율에서 주도권을 쥐고 진행하세요.", "실속을 차리며 계약 및 약속을 확실히 매듭지으세요."]
+    EVE_ADVICES = ["가볍게 하루 일과를 정리하고 편안히 충전하세요.", "지친 몸과 마음을 따뜻한 차 한잔으로 달래세요.", "내일의 계획을 메모하며 평온한 저녁을 보내세요."]
 
     am_text = AM_ADVICES[daily_hash % len(AM_ADVICES)]
     pm_text = PM_ADVICES[(daily_hash // 3) % len(PM_ADVICES)]
@@ -347,7 +327,6 @@ def compute_saju_full_payload(name: str, gender: str, year: int, month: int, day
         "biorhythm": biorhythm_data
     }
 
-# --- Pydantic 데이터 모델 ---
 class KakaoLoginRequest(BaseModel):
     kakao_id: str
     name: Optional[str] = "최정오"
@@ -372,10 +351,11 @@ class OrderReportRequest(BaseModel):
     cost: int
     sub_option: Optional[str] = "기본"
     partner_name: Optional[str] = "상대방"
-    relation: Optional[str] = "연인/결혼"
+    relation: Optional[str] = "선택안함"
 
 # --- API 엔드포인트 ---
 
+# 1. 카카오 로그인 API (기존 수정된 정보가 있으면 그대로 보존)
 @app.post("/api/auth/kakao")
 def kakao_auth(req: KakaoLoginRequest):
     conn = get_db()
@@ -434,6 +414,7 @@ def kakao_auth(req: KakaoLoginRequest):
             }
         }
 
+# 2. 사주 정보 수정 API (영구 저장)
 @app.post("/api/user/register-saju")
 def register_saju(req: RegisterSajuRequest):
     conn = get_db()
@@ -469,6 +450,7 @@ def register_saju(req: RegisterSajuRequest):
         "saju_analysis": saju_payload
     }
 
+# 3. 유료 감명서 결제 API
 @app.post("/api/reports/unlock")
 def unlock_report(req: OrderReportRequest):
     conn = get_db()
@@ -543,7 +525,7 @@ def charge_coin(req: dict):
 def get_zodiac_fortune(type: str = "zodiac", key: str = "쥐"):
     today = datetime.date.today()
     seed = today.toordinal() + hash(key)
-    score = 50 + (seed % 50)
+    score = 70 + (seed % 29)
     
     if type == "zodiac":
         years = [2012, 2000, 1988, 1976, 1964]
@@ -577,7 +559,6 @@ def get_zodiac_fortune(type: str = "zodiac", key: str = "쥐"):
 def get_daily_tarot(slot: int = 1):
     return TAROT_CARDS[random.randint(0, len(TAROT_CARDS) - 1)]
 
-# 6. 리포트 생성 함수들
 def get_daewoon_report(req: dict):
     user_name = req.get("name", "회원")
     gender = req.get("gender", "male")
@@ -678,6 +659,7 @@ def get_daewoon_report(req: dict):
         """
     }
 
+# 12개월 신년운세 (디자인 요소 제거 및 3~4줄 서술형 월별 총운 보강)
 def get_sinnian_report(req: dict):
     user_name = req.get("name", "최정오")
     gender = req.get("gender", "male")
@@ -685,31 +667,31 @@ def get_sinnian_report(req: dict):
 
     seed = sum(ord(c) for c in user_name) + (17 if gender == "male" else 31)
 
-    GUA_POOLS = [
-        {"gua": "지천태(地天泰) 괘", "opp": "새해 첫 출발이 대길하여 신규 사업 착수에 최적입니다.", "warn": "초반 성취에 자만하지 말고 규정을 정비하세요."},
-        {"gua": "수천수(水天需) 괘", "opp": "실력과 내실을 다지며 흐름을 관망할 때 이익이 보존됩니다.", "warn": "서두른 결정이나 충동구매를 피하세요."},
-        {"gua": "천화동인(天火同人) 괘", "opp": "귀인의 조력이 닿아 직무에서 강력한 협력자가 나타납니다.", "warn": "이견 조율 시 감정적 대응을 피하세요."},
-        {"gua": "풍천소축(風天小畜) 괘", "opp": "작은 성과가 쌓여 종잣돈의 기틀이 단단해집니다.", "warn": "무리한 대출은 지양하고 현금을 확보하세요."},
-        {"gua": "화천대유(火天大有) 괘", "opp": "★대길의 재물운! 부동산/투자/계약에서 큰 결실을 맺습니다.", "warn": "함께한 동료들에게 따뜻하게 베푸세요."},
-        {"gua": "천풍구(天風姤) 괘", "opp": "새로운 제안과 신규 프로젝트의 활로가 열립니다.", "warn": "계약서 독소 조항을 면밀히 검증하세요."},
-        {"gua": "천수송(天水訟) 괘", "opp": "기존 업무 체계를 정리하고 체질을 개선하는 달입니다.", "warn": "사소한 언쟁을 피하고 공감 화법을 유지하세요."},
-        {"gua": "풍지관(風地觀) 괘", "opp": "성과를 점검하고 다음 도약을 위한 전략을 세우기 좋습니다.", "warn": "체력 저하를 방지하기 위해 충분한 수면을 취하세요."},
-        {"gua": "산지박(山地剝) 괘", "opp": "불필요한 고정비를 청산하여 실속을 챙깁니다.", "warn": "무리한 확장보다 기존 업무 관리에 집중하세요."},
-        {"gua": "지뢰복(地雷복) 괘", "opp": "★강력한 승부처! 승진, 수주에서 결정적 주도권을 쥡니다.", "warn": "기회가 올 때 과감한 결단력으로 밀어붙이세요."},
-        {"gua": "수뢰준(水雷屯) 괘", "opp": "새로운 아이템이나 자격의 씨앗을 뿌리기 좋습니다.", "warn": "경험자의 조언을 경청해 시행착오를 줄이세요."},
-        {"gua": "지화명이(地火明夷) 괘", "opp": "풍성한 결실을 확정 짓고 가문의 화목을 누립니다.", "warn": "연말 과로를 피하고 몸과 마음을 달래세요."}
+    MONTH_NARRATIVES = [
+        {"gua": "지천태(地天泰) 괘", "story": f"{user_name}님의 명식에 丙火의 온기가 스며들며 얼어붙었던 환경이 풀리는 상서로운 달입니다. 주변 사람들과의 소통이 원활해지고 정체되었던 일에서 새로운 해결의 실마리를 찾게 됩니다. 조급하게 성과를 내기보다는 장기적인 플랜의 초석을 다지기에 가장 이상적인 시기입니다.", "opp": "새해 첫 출발이 대길하여 신규 사업 및 프로젝트 착수에 최적입니다.", "warn": "초반 성취에 자만하지 말고 세부 규정을 차분히 정비하세요."},
+        {"gua": "수천수(水天需) 괘", "story": f"내실을 기하고 에너지를 비축해야 하는 관망의 달입니다. 겉보기에는 진행이 다소 더뎌 보일 수 있으나, 이는 더 큰 도약을 위한 도움닫기 구간입니다. 충동적인 투자나 급격한 진로 변경은 피하고 자신의 전문성을 연마하며 때를 기다리는 지혜가 필요합니다.", "opp": "실력과 내실을 다지며 시장 흐름을 관망할 때 이익이 보존됩니다.", "warn": "서두른 결정이나 충동구매를 피하고 하루 이틀 시일을 두세요."},
+        {"gua": "천화동인(天火同人) 괘", "story": f"귀인의 조력이 강하게 작용하여 뜻을 같이하는 든든한 동반자가 나타나는 달입니다. {user_name}님의 매력과 리더십이 빛을 발하여 대인관계에서 큰 신뢰를 얻습니다. 협상이나 미팅에서 주도권을 잡고 유리한 고지를 점할 수 있습니다.", "opp": "귀인의 조력이 닿아 인간관계와 직무에서 강력한 협력자가 나타납니다.", "warn": "이견 조율 시 감정적 대응을 피하고 데이터로 설득하세요."},
+        {"gua": "풍천소축(風天小畜) 괘", "story": f"작은 결실들이 차곡차곡 쌓여 실속을 챙기는 실리 추구의 달입니다. 큰 한 방을 노리기보다는 일상의 루틴을 철저히 지키며 불필요한 누수를 막아야 합니다. 금융 자산의 기틀을 다지고 지출을 효율적으로 통제할 때 재물운이 안정됩니다.", "opp": "작은 성과가 차곡차곡 쌓여 종잣돈의 기틀이 단단해집니다.", "warn": "무리한 대출이나 투자는 지양하고 현금 유동성을 확보하세요."},
+        {"gua": "화천대유(火天大有) 괘", "story": f"★올해 상반기 최고의 황금기입니다! 그동안 땀 흘려 준비해 온 일들이 찬란한 결실로 이어지며 큰 보상과 명예를 얻게 됩니다. 부동산, 계약, 투자 회수 등에서 기대 이상의 이익이 발생하며 집안에도 경사스러운 소식이 전해집니다.", "opp": "대길의 재물운! 부동산/투자/계약에서 큰 결실을 맺습니다.", "warn": "성과를 독식하려 하지 말고 함께한 동료들에게 따뜻하게 베푸세요."},
+        {"gua": "천풍구(天風姤) 괘", "story": f"뜻밖의 제안이나 새로운 분야로의 활로가 활짝 열리는 역동적인 달입니다. 생각지 못했던 인연을 통해 귀중한 정보를 얻거나 이직·프로젝트 수주의 기회가 찾아옵니다. 겉포장에 현혹되지 않고 실질적인 조건을 꼼꼼히 따져보는 안목이 중요합니다.", "opp": "새로운 제안과 신규 프로젝트의 반가운 활로가 열립니다.", "warn": "계약서의 독소 조항과 구두 약속을 면밀히 검증하세요."},
+        {"gua": "천수송(天水訟) 괘", "story": f"복잡했던 업무 체계를 정리하고 불필요한 시비를 털어내는 체질 개선의 달입니다. 주변 사람들과의 사소한 오해가 생길 수 있으나, 솔직하고 유연한 태도로 대화하면 오히려 더 깊은 신뢰를 쌓는 전화위복의 계기가 됩니다.", "opp": "기존의 복잡했던 업무 체계를 깔끔히 정리하고 체질을 개선합니다.", "warn": "사소한 언쟁이나 시비수를 피하기 위해 공감 화법을 유지하세요."},
+        {"gua": "풍지관(風地觀) 괘", "story": f"상반기 달려온 궤적을 돌아보고 하반기 대도약을 위한 전략을 가다듬는 성찰의 달입니다. 과도한 활동보다는 심신의 여유를 찾고 건강 상태를 점검하기에 좋습니다. 차분히 계획을 재정비할 때 하반기 승부처에서 확실한 승기를 잡을 수 있습니다.", "opp": "성과를 점검하고 하반기 도약을 위한 전략을 세우기에 최적입니다.", "warn": "체력 저하와 피로를 방지하기 위해 충분한 수면과 휴식을 챙기세요."},
+        {"gua": "산지박(山地剝) 괘", "story": f"군더더기를 깎아내고 본질에 집중해야 하는 실속 다지기의 달입니다. 무리한 사업 확장이나 새로운 영역으로의 문어발식 진출은 피하고, 현재 본인이 가장 잘하는 핵심 역량에 집중해야 합니다. 불필요한 고정비를 청산하기에 좋습니다.", "opp": "불필요한 고정비와 낭비 요소를 말끔히 청산하여 실속을 챙깁니다.", "warn": "무리한 확장보다 기존 고객 및 핵심 업무 관리에 집중하세요."},
+        {"gua": "지뢰복(地雷復) 괘", "story": f"★올해 하반기 최고의 승부처입니다! 침체되었던 기운이 완전히 걷히고 강력한 상승 기류를 타게 됩니다. 승진, 영전, 대형 계약 수주, 투자 회수 등에서 눈부신 성취를 거두며 {user_name}님의 위상이 크게 격상되는 결정적인 타이밍입니다.", "opp": "강력한 승부처! 승진, 수주, 투자 회수에서 결정적 주도권을 쥡니다.", "warn": "기회가 올 때 주저하지 말고 과감한 결단력으로 밀어붙이세요."},
+        {"gua": "수뢰준(水雷屯) 괘", "story": f"내년을 위한 새로운 씨앗을 뿌리고 미래 먹거리를 준비하는 준비의 달입니다. 자격증 취득, 자기계발, 신규 아이템 기획 등에 공을 들이면 훗날 큰 자산으로 되돌아옵니다. 경험자의 조언을 귀담아듣고 기본기를 탄탄히 다지세요.", "opp": "새로운 아이템이나 자격/학업의 씨앗을 뿌려 미래를 준비하기 좋습니다.", "warn": "경험자의 조언을 경청하여 불필요한 시행착오를 사전에 방지하세요."},
+        {"gua": "지화명이(地火明夷) 괘", "story": f"한 해 동안 일군 풍성한 결실을 확정 짓고 가문과 가족의 화목을 누리는 평온한 달입니다. 그동안의 노고에 대한 정당한 보상을 받으며 주변 지인들과 따뜻한 온정을 나누게 됩니다. 몸과 마음을 편안히 달래며 새해를 맞이할 준비를 하세요.", "opp": "풍성한 결실을 확정 짓고 가문과 가족의 화목을 누립니다.", "warn": "연말 과음과 과로를 피하고 따뜻한 온기로 건강을 챙기세요."}
     ]
 
     monthly_guides = []
     for m_idx in range(1, 13):
         m_hash = (seed * 13 + m_idx * 37) % 100
         score = 68 + (m_hash % 31)
-        item_idx = (seed + m_idx) % len(GUA_POOLS)
-        pool_item = GUA_POOLS[item_idx]
+        item_idx = (seed + m_idx) % len(MONTH_NARRATIVES)
+        pool_item = MONTH_NARRATIVES[item_idx]
 
         monthly_guides.append({
             "m": f"{m_idx}월", "score": score, "gua": pool_item["gua"],
-            "opp": pool_item["opp"], "warn": pool_item["warn"]
+            "story": pool_item["story"], "opp": pool_item["opp"], "warn": pool_item["warn"]
         })
 
     sorted_months = sorted(monthly_guides, key=lambda x: x["score"], reverse=True)
@@ -717,18 +699,23 @@ def get_sinnian_report(req: dict):
     top2_month, top2_score = sorted_months[1]["m"], sorted_months[1]["score"]
 
     months_html = "".join([f"""
-        <div style="background: #F8FAFC; border-left: 3.5px solid #2D6A4F; border-radius: 8px; padding: 12px 14px; margin-bottom: 8px;">
+        <div style="background: #F8FAFC; border-radius: 12px; padding: 14px 16px; margin-bottom: 12px; border: 1px solid #E2E8F0;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
-                <span style="font-weight: 800; color: #0F172A; font-size: 15px;">📅 {item['m']} 세운 가이드</span>
+                <span style="font-weight: 800; color: #0F172A; font-size: 15px;">{item['m']} 세운 가이드</span>
                 <span style="font-size: 12px; background: #FEF3C7; color: #92400E; font-weight: 800; padding: 2px 8px; border-radius: 6px;">이달의 운세 점수: {item['score']}점</span>
             </div>
-            <p style="font-size: 11.5px; color: #64748B; margin-bottom: 8px; font-weight: 400;">(주역 본괘 : {item['gua']})</p>
-            <p style="color: #065F46; font-size: 13.5px; line-height: 1.6; margin-bottom: 3px;">
-                <strong>✨ 기회의 순간:</strong> {item['opp']}
+            <p style="font-size: 11.5px; color: #64748B; margin-bottom: 10px; font-weight: 400;">(주역 본괘 : {item['gua']})</p>
+            <p style="color: #334155; font-size: 13.5px; line-height: 1.75; margin-bottom: 10px;">
+                {item['story']}
             </p>
-            <p style="color: #991B1B; font-size: 13px; line-height: 1.55;">
-                <strong>⚠️ 주의할 처세:</strong> {item['warn']}
-            </p>
+            <div style="border-top: 1px dashed #CBD5E1; padding-top: 8px; display: flex; flex-direction: column; gap: 4px;">
+                <p style="color: #065F46; font-size: 13px; line-height: 1.55;">
+                    <strong>✨ 기회의 순간:</strong> {item['opp']}
+                </p>
+                <p style="color: #991B1B; font-size: 13px; line-height: 1.55;">
+                    <strong>⚠️ 주의할 처세:</strong> {item['warn']}
+                </p>
+            </div>
         </div>
     """ for item in monthly_guides])
 
@@ -762,9 +749,9 @@ def get_sinnian_report(req: dict):
             <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
             <div>
                 <div style="border-left: 4px solid #2D6A4F; padding-left: 10px; margin-bottom: 8px;">
-                    <span style="font-size: 12px; color: #2D6A4F; font-weight: 800;">Chapter 3. 12개월 정밀 토정비결</span>
+                    <span style="font-size: 12px; color: #2D6A4F; font-weight: 800;">Chapter 3. 월별 세운 흐름</span>
                     <h4 style="font-size: 16.5px; font-weight: 800; color: #0F172A; margin-top: 2px;">
-                        📜 월별 기회와 주의점
+                        📜 1월부터 12월까지 정밀 세운
                     </h4>
                 </div>
                 <div style="display: flex; flex-direction: column; gap: 4px;">{months_html}</div>
@@ -777,6 +764,8 @@ def get_gunghap_report(req: dict):
     user_name = req.get("name", "최정오")
     partner_name = req.get("partner_name", "상대방")
     relation = req.get("relation", "연인/결혼")
+    if relation == "선택안함" or not relation:
+        relation = "인연/조화"
 
     seed = sum(ord(c) for c in user_name) + sum(ord(c) for c in partner_name)
     total_score = 88 + (seed % 11)
@@ -804,6 +793,10 @@ def get_gunghap_report(req: dict):
                 <p style="color: #9F1239; line-height: 1.85;">
                     {user_name}님의 사주에 부족한 기운을 {partner_name}님이 풍부하게 품어주고 있어 만날수록 자존감이 회복되는 상호보완형 인연입니다.
                 </p>
+            </div>
+            <div style="background: #F8FAFC; border-radius: 10px; padding: 12px; border-left: 3.5px solid #BE123C;">
+                <p style="font-weight: 800; color: #0F172A; font-size: 14px; margin-bottom: 4px;">💡 두 사람을 위한 맞춤 처세 팁:</p>
+                <p style="color: #475569; font-size: 13.5px;">사소한 의견 차이가 생길 때는 즉각적인 반론보다 3초간 경청 후 상대방의 입장을 인정해 주는 화법을 구사할 때 갈등 없이 백년해로합니다.</p>
             </div>
         </div>
         """
