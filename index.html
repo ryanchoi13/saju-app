@@ -47,12 +47,8 @@
         .elem-metal { background: #F1F5F9; color: #475569; border: 1.5px solid #CBD5E1; }
         .elem-water { background: #EFF6FF; color: #2563EB; border: 1.5px solid #BFDBFE; }
         .elem-none { background: #F8FAFC; color: #94A3B8; border: 1px solid #E2E8F0; }
-
-        .mbti-card { display: flex; flex-direction: column; gap: 8px; background: white; border-radius: 20px; border: 1px solid #E2E8F0; padding: 16px; }
-        .mbti-top { display: flex; align-items: center; gap: 14px; }
-        .mbti-icon { width: 52px; height: 52px; border-radius: 16px; background: #FEF3C7; display: flex; align-items: center; justify-content: center; font-size: 28px; flex-shrink: 0; }
         
-        .daily-banner { background: linear-gradient(135deg, #111D1E 0%, #1E3A34 100%); border: 1px solid #D4AF37; border-radius: 20px; padding: 20px; color: white; display: flex; flex-direction: column; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+        .daily-banner { background: linear-gradient(135deg, #111D1E 0%, #1E3A34 100%); border: 1px solid #D4AF37; border-radius: 20px; padding: 20px; color: white; display: flex; flex-direction: column; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); margin-top: 4px; }
         
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
         .grid-cell { background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 14px; padding: 12px; font-size: 14px; text-align: left; }
@@ -186,24 +182,13 @@
                 <button onclick="startSajuAnalysis()" class="btn-primary">정밀 감명서 발행하기 ✨</button>
             </div>
 
-            <!-- 탭 1: 오늘운세 -->
+            <!-- 탭 1: 오늘운세 (MBTI 카드 제거) -->
             <div id="view-today" class="tab-view hidden">
                 
                 <!-- 상단 프로필 바 -->
                 <div class="user-profile-bar">
                     <div class="user-profile-name" id="userProfileBarName">최정오 님 (남성)</div>
                     <div class="user-profile-birth" id="userProfileBarBirth">1978년 8월 13일생 · 사시(巳時)생</div>
-                </div>
-
-                <div class="mbti-card">
-                    <div class="mbti-top">
-                        <div id="mbtiAnimalIcon" class="mbti-icon">🐶</div>
-                        <div style="text-align: left;">
-                            <span style="font-size: 11px; background: #D1FAE5; color: #065F46; padding: 2px 8px; border-radius: 9999px; font-weight: 700;">사주 MBTI</span>
-                            <h4 id="mbtiTypeName" style="font-size: 15px; font-weight: 700; margin-top: 2px;">대담한 통솔자 (ENTJ형)</h4>
-                            <p id="mbtiTypeDesc" style="font-size: 13px; color: #64748B;">목표를 향해 나아가는 전략적 사주</p>
-                        </div>
-                    </div>
                 </div>
 
                 <div class="daily-banner">
@@ -520,7 +505,7 @@
                     <span>📢 광고 영역 (Google AdSense / Kakao AdFit 슬롯 2)</span>
                 </div>
 
-                <!-- 1. 자미두수 평생운세 -->
+                <!-- 1. 자미두수 평생운세 (대운 그래프 사이즈 확대 & 나이 표시 2줄 강조) -->
                 <div class="card" style="border: 2px solid #FCD34D;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                         <span style="font-size: 15px; font-weight: 800; font-family: 'Noto Serif KR', serif;">👑 자미두수 평생운세</span>
@@ -759,7 +744,7 @@
         </div>
     </div>
 
-    <!-- 상황별 테마 모달 (시험/자격/승진 옵션 추가) -->
+    <!-- 상황별 테마 모달 (시험/자격/승진 옵션 포함) -->
     <div id="themeSelectModal" class="modal-bg hidden">
         <div class="modal-content" style="text-align: left;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 8px;">
@@ -1178,7 +1163,7 @@
                 btnStar.className = 'sub-tab-btn active';
                 btnZodiac.className = 'sub-tab-btn';
                 gridStar.classList.remove('hidden');
-                gridZodiac.classList.add('hidden');
+                gridStar.classList.add('hidden');
             }
         }
 
@@ -1290,12 +1275,6 @@
 
             document.getElementById('userProfileBarName').innerText = `${currentUserName} 님 (${selectedGender === 'male' ? '남성' : '여성'})`;
             document.getElementById('userProfileBarBirth').innerText = data.birth_summary || `${year}년 ${month}월 ${day}일생`;
-
-            // 16 MBTI 정보 화면에 바인딩
-            if (data.saju_data && data.saju_data.mbti) {
-                document.getElementById('mbtiTypeName').innerText = data.saju_data.mbti.mbti;
-                document.getElementById('mbtiTypeDesc').innerText = data.saju_data.mbti.desc;
-            }
 
             if (data.biorhythm) {
                 const bio = data.biorhythm;
