@@ -543,7 +543,7 @@ def charge_coin(req: dict):
 def get_zodiac_fortune(type: str = "zodiac", key: str = "쥐"):
     today = datetime.date.today()
     seed = today.toordinal() + hash(key)
-    score = 70 + (seed % 29)
+    score = 50 + (seed % 50)
     
     if type == "zodiac":
         years = [2012, 2000, 1988, 1976, 1964]
