@@ -150,21 +150,24 @@
     <div class="app-container">
         
         <header>
-            <div class="logo-box" onclick="goToHomeAndScrollTop()">
-                <div class="logo-symbol">月</div>
-                <div class="logo-text-group">
-                    <h1 class="logo-title">달하</h1>
-                    <span class="logo-sub">DALHA</span>
-                </div>
-            </div>
-            
-            <div id="headerAuthArea">
-                <button onclick="openChargeStore()" class="coin-btn">
-                    <span id="headerCoinSvg"></span>
-                    <span id="coinHeader">1000</span>
-                    <span class="charge-tag">충전</span>
-                </button>
-            </div>
+<div class="logo-box" onclick="goToHomeAndScrollTop()" style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+      <svg width="34" height="34" viewBox="0 0 100 100" fill="none" stroke="#D4AF37" xmlns="http://www.w3.org/2000/svg" style="flex-shrink: 0;">
+        <circle cx="50" cy="50" r="44" stroke-width="1.5" stroke-dasharray="4 2" stroke-opacity="0.4"/>
+        <circle cx="50" cy="50" r="41" stroke-width="1.8"/>
+        <path d="M50 14L54 44L84 50L54 56L50 86L46 56L16 50L46 44Z" fill="#D4AF37" fill-opacity="0.15" stroke-width="1.8" stroke-linejoin="round"/>
+        <path d="M50 14L50 86M16 50L84 50" stroke-width="1.2" stroke-opacity="0.6"/>
+        <path d="M50 14 C40 18, 40 32, 50 36 C45 32, 45 22, 50 14 Z" fill="#F3E5AB" stroke-width="1.2"/>
+        <circle cx="50" cy="94" r="3.5" stroke-width="1.5"/>
+        <path d="M50 90L50 86" stroke-width="1.5"/>
+      </svg>
+      <div style="display: flex; flex-direction: column; text-align: left;">
+        <div style="display: flex; align-items: baseline; gap: 5px;">
+          <span style="font-size: 19px; font-weight: bold; color: #F8F9FA; font-family: 'Maru Buri', 'Batang', serif; letter-spacing: 0.5px;">달하</span>
+          <span style="font-size: 9px; font-weight: 700; color: #D4AF37; letter-spacing: 1.5px;">DALHA</span>
+        </div>
+        <span style="font-size: 9px; color: #9CA3AF; letter-spacing: -0.3px; margin-top: 1px;">어두운 밤길을 밝히는 운명 나침반</span>
+      </div>
+    </div>
         </header>
 
         <main>
