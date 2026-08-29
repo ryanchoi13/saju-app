@@ -8,7 +8,7 @@ from fastapi import FastAPI, Request, HTTPException
 from fastapi.responses import HTMLResponse, FileResponse, Response
 from pydantic import BaseModel
 
-app = FastAPI(title="달하 (DALHA) - 정통 명리학 & 점성술 엔진", version="43.2.0")
+app = FastAPI(title="달하 (DALHA) - 정통 명리학 & 점성술 엔진", version="43.3.0")
 
 DB_FILE = "dalha.db"
 
@@ -283,6 +283,16 @@ def compute_saju_full_payload(name: str, gender: str, year: int, month: int, day
     mindset = MINDSETS_POOL[(daily_hash + 4) % len(MINDSETS_POOL)]
     action = ACTIONS_POOL[(daily_hash + 5) % len(ACTIONS_POOL)]
 
+    # 한 달에 약 3~4회(10~15% 확률)로 발동하는 시크릿 반전 코디 데이 계산
+    is_reverse_day = (daily_hash % 8 == 0)
+    reverse_color_map = {"wood": "코랄 레드 / 화이트", "fire": "딥 네이비 / 스카이블루", "earth": "포레스트 그린 / 올리브", "metal": "파스텔 핑크 / 와인", "water": "머스터드 옐로우 / 베이지"}
+    reverse_color = reverse_color_map.get(day_elem, "화사한 오렌지 / 옐로우")
+    
+    if is_reverse_day:
+        reverse_tip = f"✦ 오늘 일진이 평소 피하던 <strong>[{reverse_color}]</strong>을 완벽히 소화해 주는 황금의 날입니다! 아껴둔 밝은 아이템을 과감히 매치해보세요."
+    else:
+        reverse_tip = f"오늘의 일진은 사주 본원({d_cg})과 상생하는 <strong>차분한 뉴트럴 톤</strong>과 <strong>가죽/메탈 소품</strong>을 곁들일 때 기운이 가장 안정됩니다."
+
     daily_score = 68 + (daily_hash % 31)
     today_diff = (today - base_date).days
     today_cg, today_jj = CHEONGAN_HANJA[today_diff % 10], JIJI_HANJA[(today_diff + 10) % 12]
@@ -322,11 +332,12 @@ def compute_saju_full_payload(name: str, gender: str, year: int, month: int, day
             "score": daily_score, "title": daily_title, "advice": three_stage_advice,
             "lucky_number": lucky_number, "lucky_direction": lucky_direction, "lucky_item": lucky_item,
             "fashion_style": fashion_style, "recommended_menu": recommended_menu, "mindset": mindset, "action": action,
-            "talisman": user_talisman
+            "talisman": user_talisman, "is_reverse_day": is_reverse_day, "reverse_tip": reverse_tip
         },
         "biorhythm": biorhythm_data
     }
 
+# --- Pydantic 데이터 모델 ---
 class KakaoLoginRequest(BaseModel):
     kakao_id: str
     name: Optional[str] = "최정오"
@@ -353,9 +364,15 @@ class OrderReportRequest(BaseModel):
     partner_name: Optional[str] = "상대방"
     relation: Optional[str] = "선택안함"
 
+# 오행 옷장 분석 요청 모델
+class WardrobeDiagnoseRequest(BaseModel):
+    user_id: int
+    category: str
+    color: str
+    material: str
+
 # --- API 엔드포인트 ---
 
-# 1. 카카오 로그인 API (기존 수정된 정보가 있으면 그대로 보존)
 @app.post("/api/auth/kakao")
 def kakao_auth(req: KakaoLoginRequest):
     conn = get_db()
@@ -414,7 +431,6 @@ def kakao_auth(req: KakaoLoginRequest):
             }
         }
 
-# 2. 사주 정보 수정 API (영구 저장)
 @app.post("/api/user/register-saju")
 def register_saju(req: RegisterSajuRequest):
     conn = get_db()
@@ -450,7 +466,62 @@ def register_saju(req: RegisterSajuRequest):
         "saju_analysis": saju_payload
     }
 
-# 3. 유료 감명서 결제 API
+# 신규 기능: 오행 옷장 아이템 분석기 API
+@app.post("/api/wardrobe/diagnose")
+def diagnose_wardrobe_item(req: WardrobeDiagnoseRequest):
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM users WHERE id = ?", (req.user_id,))
+    user = cursor.fetchone()
+    conn.close()
+
+    user_name = user["name"] if user else "회원"
+    
+    # 색상 및 소재의 오행 맵핑
+    COLOR_ELEM_MAP = {"화이트": "metal", "블랙": "water", "네이비": "water", "레드": "fire", "핑크/와인": "fire", "옐로우": "earth", "베이지/브라운": "earth", "그린/올리브": "wood", "스카이블루": "wood", "그레이/실버": "metal"}
+    MATERIAL_ELEM_MAP = {"면/린넨": "wood", "실크/폴리": "fire", "가죽/세무": "earth", "메탈/금속": "metal", "데님/쉬폰": "water"}
+
+    item_c_elem = COLOR_ELEM_MAP.get(req.color, "metal")
+    item_m_elem = MATERIAL_ELEM_MAP.get(req.material, "earth")
+
+    # 기운 해석
+    POWER_MAP = {
+        "wood": "추진력과 새로운 시작",
+        "fire": "주목도와 화려한 열정",
+        "earth": "신뢰감과 자산 안착",
+        "metal": "결단력과 명예 권위",
+        "water": "유연한 소통과 친화력"
+    }
+
+    # 이번 달 착용 골든타임 날짜 2개 자동 산출 (오늘 기준 + 3~18일 뒤)
+    today = datetime.date.today()
+    seed = (today.toordinal() * 19 + sum(ord(c) for c in (req.color + req.material))) % 100
+    day1 = today + datetime.timedelta(days=(seed % 6 + 2))
+    day2 = today + datetime.timedelta(days=(seed % 7 + 10))
+
+    WEEKDAY_KOR = ["월", "화", "수", "목", "금", "토", "일"]
+    date_str1 = f"{day1.month}월 {day1.day}일({WEEKDAY_KOR[day1.weekday()]})"
+    date_str2 = f"{day2.month}월 {day2.day}일({WEEKDAY_KOR[day2.weekday()]})"
+
+    # 상생/중화 코디 믹스매치 처방
+    MIX_MATCH_TIPS = {
+        "fire": "베이지/크림색(土) 슬랙스나 가죽 소품을 곁들여 열기를 안정감 있게 흡수하세요.",
+        "wood": "화이트 셔츠(金)나 실버 메탈 시계를 매치해 기운의 깔끔한 마무리를 지어주세요.",
+        "water": "원목 액세서리(木)나 린넨 소재와 매치해 유연한 생명력을 더해주세요.",
+        "metal": "블루 톤(水) 이너나 데님 팬츠를 함께 매치해 차가운 느낌을 유연하게 풀어주세요.",
+        "earth": "골드 메탈(金) 포인트나 깔끔한 화이트 상의와 매치해 품격을 격상시키세요."
+    }
+
+    tip = MIX_MATCH_TIPS.get(item_c_elem, "단정한 뉴트럴 톤 아이템과 함께 매치하여 조화를 이루세요.")
+
+    return {
+        "status": "success",
+        "item_name": f"{req.color} {req.material} {req.category}",
+        "energy_summary": f"[{POWER_MAP.get(item_c_elem)}]과 [{POWER_MAP.get(item_m_elem)}]의 기운이 결합된 아이템입니다.",
+        "best_dates": f"✨ <strong>{date_str1}</strong> 및 <strong>{date_str2}</strong>에 착용하시면 천운의 상생을 받아 매력과 금전운이 극대화됩니다.",
+        "mix_match_tip": tip
+    }
+
 @app.post("/api/reports/unlock")
 def unlock_report(req: OrderReportRequest):
     conn = get_db()
@@ -659,7 +730,6 @@ def get_daewoon_report(req: dict):
         """
     }
 
-# 12개월 신년운세 (디자인 요소 제거 및 3~4줄 서술형 월별 총운 보강)
 def get_sinnian_report(req: dict):
     user_name = req.get("name", "최정오")
     gender = req.get("gender", "male")
@@ -668,18 +738,18 @@ def get_sinnian_report(req: dict):
     seed = sum(ord(c) for c in user_name) + (17 if gender == "male" else 31)
 
     MONTH_NARRATIVES = [
-        {"gua": "지천태(地天泰) 괘", "story": f"{user_name}님의 명식에 丙火의 온기가 스며들며 얼어붙었던 환경이 풀리는 상서로운 달입니다. 주변 사람들과의 소통이 원활해지고 정체되었던 일에서 새로운 해결의 실마리를 찾게 됩니다. 조급하게 성과를 내기보다는 장기적인 플랜의 초석을 다지기에 가장 이상적인 시기입니다.", "opp": "새해 첫 출발이 대길하여 신규 사업 및 프로젝트 착수에 최적입니다.", "warn": "초반 성취에 자만하지 말고 세부 규정을 차분히 정비하세요."},
-        {"gua": "수천수(水天需) 괘", "story": f"내실을 기하고 에너지를 비축해야 하는 관망의 달입니다. 겉보기에는 진행이 다소 더뎌 보일 수 있으나, 이는 더 큰 도약을 위한 도움닫기 구간입니다. 충동적인 투자나 급격한 진로 변경은 피하고 자신의 전문성을 연마하며 때를 기다리는 지혜가 필요합니다.", "opp": "실력과 내실을 다지며 시장 흐름을 관망할 때 이익이 보존됩니다.", "warn": "서두른 결정이나 충동구매를 피하고 하루 이틀 시일을 두세요."},
-        {"gua": "천화동인(天火同人) 괘", "story": f"귀인의 조력이 강하게 작용하여 뜻을 같이하는 든든한 동반자가 나타나는 달입니다. {user_name}님의 매력과 리더십이 빛을 발하여 대인관계에서 큰 신뢰를 얻습니다. 협상이나 미팅에서 주도권을 잡고 유리한 고지를 점할 수 있습니다.", "opp": "귀인의 조력이 닿아 인간관계와 직무에서 강력한 협력자가 나타납니다.", "warn": "이견 조율 시 감정적 대응을 피하고 데이터로 설득하세요."},
-        {"gua": "풍천소축(風天小畜) 괘", "story": f"작은 결실들이 차곡차곡 쌓여 실속을 챙기는 실리 추구의 달입니다. 큰 한 방을 노리기보다는 일상의 루틴을 철저히 지키며 불필요한 누수를 막아야 합니다. 금융 자산의 기틀을 다지고 지출을 효율적으로 통제할 때 재물운이 안정됩니다.", "opp": "작은 성과가 차곡차곡 쌓여 종잣돈의 기틀이 단단해집니다.", "warn": "무리한 대출이나 투자는 지양하고 현금 유동성을 확보하세요."},
-        {"gua": "화천대유(火天大有) 괘", "story": f"★올해 상반기 최고의 황금기입니다! 그동안 땀 흘려 준비해 온 일들이 찬란한 결실로 이어지며 큰 보상과 명예를 얻게 됩니다. 부동산, 계약, 투자 회수 등에서 기대 이상의 이익이 발생하며 집안에도 경사스러운 소식이 전해집니다.", "opp": "대길의 재물운! 부동산/투자/계약에서 큰 결실을 맺습니다.", "warn": "성과를 독식하려 하지 말고 함께한 동료들에게 따뜻하게 베푸세요."},
-        {"gua": "천풍구(天風姤) 괘", "story": f"뜻밖의 제안이나 새로운 분야로의 활로가 활짝 열리는 역동적인 달입니다. 생각지 못했던 인연을 통해 귀중한 정보를 얻거나 이직·프로젝트 수주의 기회가 찾아옵니다. 겉포장에 현혹되지 않고 실질적인 조건을 꼼꼼히 따져보는 안목이 중요합니다.", "opp": "새로운 제안과 신규 프로젝트의 반가운 활로가 열립니다.", "warn": "계약서의 독소 조항과 구두 약속을 면밀히 검증하세요."},
-        {"gua": "천수송(天水訟) 괘", "story": f"복잡했던 업무 체계를 정리하고 불필요한 시비를 털어내는 체질 개선의 달입니다. 주변 사람들과의 사소한 오해가 생길 수 있으나, 솔직하고 유연한 태도로 대화하면 오히려 더 깊은 신뢰를 쌓는 전화위복의 계기가 됩니다.", "opp": "기존의 복잡했던 업무 체계를 깔끔히 정리하고 체질을 개선합니다.", "warn": "사소한 언쟁이나 시비수를 피하기 위해 공감 화법을 유지하세요."},
-        {"gua": "풍지관(風地觀) 괘", "story": f"상반기 달려온 궤적을 돌아보고 하반기 대도약을 위한 전략을 가다듬는 성찰의 달입니다. 과도한 활동보다는 심신의 여유를 찾고 건강 상태를 점검하기에 좋습니다. 차분히 계획을 재정비할 때 하반기 승부처에서 확실한 승기를 잡을 수 있습니다.", "opp": "성과를 점검하고 하반기 도약을 위한 전략을 세우기에 최적입니다.", "warn": "체력 저하와 피로를 방지하기 위해 충분한 수면과 휴식을 챙기세요."},
-        {"gua": "산지박(山地剝) 괘", "story": f"군더더기를 깎아내고 본질에 집중해야 하는 실속 다지기의 달입니다. 무리한 사업 확장이나 새로운 영역으로의 문어발식 진출은 피하고, 현재 본인이 가장 잘하는 핵심 역량에 집중해야 합니다. 불필요한 고정비를 청산하기에 좋습니다.", "opp": "불필요한 고정비와 낭비 요소를 말끔히 청산하여 실속을 챙깁니다.", "warn": "무리한 확장보다 기존 고객 및 핵심 업무 관리에 집중하세요."},
-        {"gua": "지뢰복(地雷復) 괘", "story": f"★올해 하반기 최고의 승부처입니다! 침체되었던 기운이 완전히 걷히고 강력한 상승 기류를 타게 됩니다. 승진, 영전, 대형 계약 수주, 투자 회수 등에서 눈부신 성취를 거두며 {user_name}님의 위상이 크게 격상되는 결정적인 타이밍입니다.", "opp": "강력한 승부처! 승진, 수주, 투자 회수에서 결정적 주도권을 쥡니다.", "warn": "기회가 올 때 주저하지 말고 과감한 결단력으로 밀어붙이세요."},
-        {"gua": "수뢰준(水雷屯) 괘", "story": f"내년을 위한 새로운 씨앗을 뿌리고 미래 먹거리를 준비하는 준비의 달입니다. 자격증 취득, 자기계발, 신규 아이템 기획 등에 공을 들이면 훗날 큰 자산으로 되돌아옵니다. 경험자의 조언을 귀담아듣고 기본기를 탄탄히 다지세요.", "opp": "새로운 아이템이나 자격/학업의 씨앗을 뿌려 미래를 준비하기 좋습니다.", "warn": "경험자의 조언을 경청하여 불필요한 시행착오를 사전에 방지하세요."},
-        {"gua": "지화명이(地火明夷) 괘", "story": f"한 해 동안 일군 풍성한 결실을 확정 짓고 가문과 가족의 화목을 누리는 평온한 달입니다. 그동안의 노고에 대한 정당한 보상을 받으며 주변 지인들과 따뜻한 온정을 나누게 됩니다. 몸과 마음을 편안히 달래며 새해를 맞이할 준비를 하세요.", "opp": "풍성한 결실을 확정 짓고 가문과 가족의 화목을 누립니다.", "warn": "연말 과음과 과로를 피하고 따뜻한 온기로 건강을 챙기세요."}
+        {"gua": "지천태(地天泰) 괘", "story": f"{user_name}님의 명식에 丙火의 온기가 스며들며 얼어붙었던 환경이 풀리는 상서로운 달입니다. 주변과의 소통이 원활해지고 정체되었던 일에서 새로운 해결의 실마리를 찾게 됩니다. 장기적인 플랜의 초석을 다지기에 가장 이상적인 시기입니다.", "opp": "새해 첫 출발이 대길하여 신규 사업 및 프로젝트 착수에 최적입니다.", "warn": "초반 성취에 자만하지 말고 세부 규정을 차분히 정비하세요."},
+        {"gua": "수천수(水天需) 괘", "story": f"내실을 기하고 에너지를 비축해야 하는 관망의 달입니다. 겉보기에는 진행이 다소 더뎌 보일 수 있으나 더 큰 도약을 위한 도움닫기 구간입니다. 충동적인 투자나 급격한 변경은 피하고 전문성을 연마하며 때를 기다리세요.", "opp": "실력과 내실을 다지며 시장 흐름을 관망할 때 이익이 보존됩니다.", "warn": "서두른 결정이나 충동구매를 피하고 하루 이틀 시일을 두세요."},
+        {"gua": "천화동인(天火同人) 괘", "story": f"귀인의 조력이 강하게 작용하여 뜻을 같이하는 동반자가 나타나는 달입니다. {user_name}님의 매력과 리더십이 빛을 발하여 대인관계에서 큰 신뢰를 얻고 협상에서 주도권을 잡을 수 있습니다.", "opp": "귀인의 조력이 닿아 인간관계와 직무에서 강력한 협력자가 나타납니다.", "warn": "이견 조율 시 감정적 대응을 피하고 데이터로 설득하세요."},
+        {"gua": "풍천소축(風天小畜) 괘", "story": f"작은 결실들이 차곡차곡 쌓여 실속을 챙기는 실리 추구의 달입니다. 일상의 루틴을 철저히 지키며 불필요한 누수를 막아야 합니다. 금융 자산의 기틀을 다지고 지출을 효율적으로 통제할 때 재물운이 안정됩니다.", "opp": "작은 성과가 차곡차곡 쌓여 종잣돈의 기틀이 단단해집니다.", "warn": "무리한 대출이나 투자는 지양하고 현금 유동성을 확보하세요."},
+        {"gua": "화천대유(火天大有) 괘", "story": f"★올해 상반기 최고의 황금기입니다! 그동안 땀 흘려 준비해 온 일들이 찬란한 결실로 이어지며 큰 보상과 명예를 얻게 됩니다. 부동산, 계약, 투자 회수 등에서 기대 이상의 이익이 발생합니다.", "opp": "대길의 재물운! 부동산/투자/계약에서 큰 결실을 맺습니다.", "warn": "성과를 독식하려 하지 말고 함께한 동료들에게 따뜻하게 베푸세요."},
+        {"gua": "천풍구(天風姤) 괘", "story": f"뜻밖의 제안이나 새로운 분야로의 활로가 활짝 열리는 역동적인 달입니다. 생각지 못했던 인연을 통해 귀중한 정보를 얻거나 기회가 찾아옵니다. 실질적인 조건을 꼼꼼히 따져보는 안목이 중요합니다.", "opp": "새로운 제안과 신규 프로젝트의 반가운 활로가 열립니다.", "warn": "계약서의 독소 조항과 구두 약속을 면밀히 검증하세요."},
+        {"gua": "천수송(天水訟) 괘", "story": f"복잡했던 업무 체계를 정리하고 불필요한 시비를 털어내는 체질 개선의 달입니다. 사소한 오해가 생길 수 있으나 유연한 태도로 대화하면 오히려 더 깊은 신뢰를 쌓는 계기가 됩니다.", "opp": "기존의 복잡했던 업무 체계를 깔끔히 정리하고 체질을 개선합니다.", "warn": "사소한 언쟁이나 시비수를 피하기 위해 공감 화법을 유지하세요."},
+        {"gua": "풍지관(風地觀) 괘", "story": f"상반기 달려온 궤적을 돌아보고 하반기 도약을 위한 전략을 가다듬는 성찰의 달입니다. 심신의 여유를 찾고 건강 상태를 점검하기에 좋습니다. 차분히 계획을 재정비할 때 확실한 승기를 잡을 수 있습니다.", "opp": "성과를 점검하고 하반기 도약을 위한 전략을 세우기에 최적입니다.", "warn": "체력 저하와 피로를 방지하기 위해 충분한 수면과 휴식을 챙기세요."},
+        {"gua": "산지박(山地剝) 괘", "story": f"군더더기를 깎아내고 본질에 집중해야 하는 실속 다지기의 달입니다. 무리한 확장보다 본인이 가장 잘하는 핵심 역량에 집중해야 합니다. 불필요한 고정비를 청산하기에 좋습니다.", "opp": "불필요한 고정비와 낭비 요소를 말끔히 청산하여 실속을 챙깁니다.", "warn": "무리한 확장보다 기존 고객 및 핵심 업무 관리에 집중하세요."},
+        {"gua": "지뢰복(地雷復) 괘", "story": f"★올해 하반기 최고의 승부처입니다! 침체되었던 기운이 완전히 걷히고 강력한 상승 기류를 타게 됩니다. 승진, 대형 계약 수주, 투자 회수 등에서 눈부신 성취를 거두며 위상이 크게 격상됩니다.", "opp": "강력한 승부처! 승진, 수주, 투자 회수에서 결정적 주도권을 쥡니다.", "warn": "기회가 올 때 주저하지 말고 과감한 결단력으로 밀어붙이세요."},
+        {"gua": "수뢰준(水雷屯) 괘", "story": f"내년을 위한 새로운 씨앗을 뿌리고 미래 먹거리를 준비하는 준비의 달입니다. 자격증 취득, 자기계발 등에 공을 들이면 훗날 큰 자산으로 되돌아옵니다. 기본기를 탄탄히 다지세요.", "opp": "새로운 아이템이나 자격/학업의 씨앗을 뿌려 미래를 준비하기 좋습니다.", "warn": "경험자의 조언을 경청하여 불필요한 시행착오를 사전에 방지하세요."},
+        {"gua": "지화명이(地火明夷) 괘", "story": f"한 해 동안 일군 풍성한 결실을 확정 짓고 가문과 가족의 화목을 누리는 평온한 달입니다. 노고에 대한 정당한 보상을 받으며 주변과 따뜻한 온정을 나누게 됩니다. 건강을 잘 챙기세요.", "opp": "풍성한 결실을 확정 짓고 가문과 가족의 화목을 누립니다.", "warn": "연말 과음과 과로를 피하고 따뜻한 온기로 건강을 챙기세요."}
     ]
 
     monthly_guides = []
