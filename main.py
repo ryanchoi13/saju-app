@@ -7,7 +7,7 @@ from typing import Optional
 import os
 import random
 
-app = FastAPI(title="운세의 신 정통 명리학 엔진 - Mode 2 Ultimate Release", version="40.0.0")
+app = FastAPI(title="운세의 신 정통 명리학 엔진 - 16 MBTI Edition", version="41.0.0")
 
 CHEONGAN_HANJA = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
 JIJI_HANJA = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"]
@@ -54,17 +54,24 @@ JIJANGGAN_FULL_MAP = {
     "亥": [{"char": "戊", "elem": "earth", "weight": 7}, {"char": "甲", "elem": "wood", "weight": 7}, {"char": "壬", "elem": "water", "weight": 16}]
 }
 
-DAY_MBTI_MAP = {
-    "甲": {"mbti": "대담한 통솔자 (ENTJ형)", "desc": "강한 추진력과 당당한 리더십으로 조직을 이끄는 개척자 사주"},
-    "乙": {"mbti": "재기발랄한 활동가 (ENFP형)", "desc": "유연한 적응력과 풍부한 친화력으로 사람의 마음을 얻는 사주"},
-    "丙": {"mbti": "자유로운 영혼의 연예인 (ESFP형)", "desc": "태양 같은 열정과 밝은 에너지로 주변을 환하게 밝히는 사주"},
-    "丁": {"mbti": "용의주도한 전략가 (ENTJ형)", "desc": "치밀한 기획력과 은근한 카리스마로 목표를 완벽히 쟁취하는 사주"},
-    "戊": {"mbti": "청렴결백한 논리주의자 (ISTJ형)", "desc": "묵직한 신뢰감과 흔들리지 않는 원칙으로 책임을 다하는 사주"},
-    "己": {"mbti": "세심한 수호자 (ISFJ형)", "desc": "비옥한 땅처럼 주변을 묵묵히 품어주고 실속을 챙기는 사주"},
-    "庚": {"mbti": "엄격한 관리자 (ESTJ형)", "desc": "의리와 결단력으로 무장하여 난관을 돌파하는 단호한 실행가 사주"},
-    "辛": {"mbti": "용의주도한 완벽주의자 (INTJ형)", "desc": "보석처럼 예리한 감각과 높은 기준을 지닌 냉철한 분석가 사주"},
-    "壬": {"mbti": "뜨거운 논쟁을 즐기는 변론가 (ENTP형)", "desc": "바다처럼 넓은 지혜와 임기응변으로 판을 주도하는 아이디어 뱅크 사주"},
-    "癸": {"mbti": "선의의 옹호자 (INFJ형)", "desc": "맑은 이슬비처럼 깊은 직관과 통찰력으로 본질을 꿰뚫는 사색가 사주"}
+# [16가지 정밀 사주 MBTI 딕셔너리]
+FULL_16_MBTI_MAP = {
+    "ISTJ": {"mbti": "청렴결백한 논리주의자 (ISTJ형)", "desc": "묵직한 신뢰감과 흔들리지 않는 원칙으로 맡은 책임을 완벽히 다하는 사주"},
+    "ISFJ": {"mbti": "세심한 수호자 (ISFJ형)", "desc": "비옥한 대지처럼 주변을 따뜻하게 품어주고 헌신적으로 실속을 챙기는 사주"},
+    "INFJ": {"mbti": "선의의 옹호자 (INFJ형)", "desc": "맑은 이슬비처럼 깊은 직관과 통찰력으로 사물의 본질을 꿰뚫는 사색가 사주"},
+    "INTJ": {"mbti": "용의주도한 전략가 (INTJ형)", "desc": "보석처럼 예리한 지적 감각과 높은 기준을 지닌 냉철한 미래 설계가 사주"},
+    "ISTP": {"mbti": "만능 재주꾼 (ISTP형)", "desc": "과묵하지만 위기 상황에서 번뜩이는 기술과 임기응변으로 문제를 해결하는 사주"},
+    "ISFP": {"mbti": "호기심 많은 예술가 (ISFP형)", "desc": "유연한 감수성과 따뜻한 심성으로 삶의 균형과 조화를 추구하는 낭만 사주"},
+    "INFP": {"mbti": "열정적인 중재자 (INFP형)", "desc": "선한 가치관과 이상을 품고 사람들의 상처를 치유하는 따뜻한 사색가 사주"},
+    "INTP": {"mbti": "논리적인 사색가 (INTP형)", "desc": "지적 호기심과 독창적인 분석력으로 새로운 학문과 원리를 탐구하는 사주"},
+    "ESTP": {"mbti": "모험을 즐기는 사업가 (ESTP형)", "desc": "과감한 실행력과 탁월한 현장 감각으로 기회를 즉각 포착하는 승부사 사주"},
+    "ESFP": {"mbti": "자유로운 영혼의 연예인 (ESFP형)", "desc": "태양 같은 열정과 밝은 사교 에너지로 주변 분위기를 환하게 이끄는 사주"},
+    "ENFP": {"mbti": "재기발랄한 활동가 (ENFP형)", "desc": "풍부한 상상력과 친화력으로 사람의 마음을 얻고 새 바람을 일으키는 사주"},
+    "ENTP": {"mbti": "뜨거운 논쟁을 즐기는 변론가 (ENTP형)", "desc": "바다처럼 넓은 지혜와 거침없는 달변으로 판을 주도하는 아이디어 뱅크 사주"},
+    "ESTJ": {"mbti": "엄격한 관리자 (ESTJ형)", "desc": "강한 추진력과 조직 통솔력으로 체계를 바로잡고 결과를 증명하는 리더 사주"},
+    "ESFJ": {"mbti": "사교적인 외교관 (ESFJ형)", "desc": "남다른 친화력과 배려심으로 조직 구성원을 하나로 결속시키는 조력자 사주"},
+    "ENFJ": {"mbti": "정의로운 사회운동가 (ENFJ형)", "desc": "따뜻한 카리스마와 비전으로 사람들에게 영감을 불어넣는 멘토 사주"},
+    "ENTJ": {"mbti": "대담한 통솔자 (ENTJ형)", "desc": "확고한 비전과 강력한 결단력으로 조직과 사업을 성공으로 이끄는 개척자 사주"}
 }
 
 ANIMAL_MAP = {"子": "쥐", "丑": "소", "寅": "호랑이", "卯": "토끼", "辰": "용", "巳": "뱀", "午": "말", "未": "양", "申": "원숭이", "酉": "닭", "戌": "개", "亥": "돼지"}
@@ -262,6 +269,32 @@ def get_daewoon_info(y_cg: str, gender: str) -> tuple[str, bool]:
     is_male = (gender == "male")
     return ("순행(順行)", True) if ((is_male and is_yang) or (not is_male and not is_yang)) else ("역행(逆行)", False)
 
+# [핵심] 사주 원국 4차원 정밀 판별을 통한 16 MBTI 계산 함수
+def calculate_saju_16_mbti(d_cg: str, d_jj: str, y_cg: str, scores: dict, support_score: float) -> dict:
+    is_yang_day = d_cg in YANG_STEMS
+    
+    # 1. E vs I (일간 음양 + 신강신약 득령 지수)
+    dim_ei = "E" if (is_yang_day or support_score >= 50) else "I"
+    
+    # 2. S vs N (토/금 현실적 감각형 vs 목/화/수 통찰적 직관형)
+    earth_metal = scores.get("earth", 0) + scores.get("metal", 0)
+    wood_fire_water = scores.get("wood", 0) + scores.get("fire", 0) + scores.get("water", 0)
+    dim_sn = "S" if earth_metal >= wood_fire_water * 0.75 else "N"
+    
+    # 3. T vs F (금/수 냉철한 논리사고형 vs 목/화 따뜻한 감정공감형)
+    metal_water = scores.get("metal", 0) + scores.get("water", 0)
+    wood_fire = scores.get("wood", 0) + scores.get("fire", 0)
+    dim_tf = "T" if metal_water >= wood_fire else "F"
+    
+    # 4. J vs P (체계적 원칙형 vs 유연한 임기응변형)
+    # 丑辰未戌(사계절의 흙) 또는 申酉(금의 결단)가 강하면 J, 寅巳申亥(역마) 또는 卯午酉子(도화)가 강하면 P
+    j_elements = scores.get("earth", 0) + scores.get("metal", 0) * 0.5
+    p_elements = scores.get("wood", 0) + scores.get("fire", 0) + scores.get("water", 0) * 0.5
+    dim_jp = "J" if j_elements >= p_elements * 0.65 else "P"
+    
+    mbti_code = f"{dim_ei}{dim_sn}{dim_tf}{dim_jp}"
+    return FULL_16_MBTI_MAP.get(mbti_code, FULL_16_MBTI_MAP["ENTJ"])
+
 @app.post("/api/analyze")
 def analyze_saju(req: SajuRequest):
     base_date = datetime.date(1900, 1, 1)
@@ -372,7 +405,9 @@ def analyze_saju(req: SajuRequest):
 
     min_elem = min(elem_percentages, key=elem_percentages.get)
     user_talisman = TALISMAN_OHEANG_MAP.get(min_elem, TALISMAN_OHEANG_MAP["metal"])
-    user_mbti = DAY_MBTI_MAP.get(d_cg, {"mbti": "대담한 통솔자 (ENTJ형)", "desc": "목표를 향해 나아가는 전략적 사주"})
+    
+    # [16 MBTI 계산 반영]
+    user_mbti = calculate_saju_16_mbti(d_cg, d_jj, y_cg, scores, support_score)
     user_animal_icon = ANIMAL_ICONS.get(d_animal, "🐶")
 
     biorhythm_data = calculate_biorhythm(target_date, today)
@@ -441,7 +476,6 @@ def get_daily_tarot(slot: int = 1, rand_seed: Optional[str] = None):
     random_idx = random.randint(0, len(TAROT_CARDS) - 1)
     return TAROT_CARDS[random_idx]
 
-# [방안 A 적용] 자미두수 평생운세 (가족운 3대 궁 & 평생 학업·시험운 5대 챕터 완전판)
 @app.post("/api/daewoon-report")
 def get_daewoon_report(req: dict):
     user_name = req.get("name", "최정오")
@@ -505,7 +539,6 @@ def get_daewoon_report(req: dict):
 
             <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
 
-            <!-- [신규] Chapter 3. 자미두수 12궁 가문·가족운 (부모궁·자녀궁·형제궁) -->
             <div>
                 <div style="border-left: 4px solid #E11D48; padding-left: 10px; margin-bottom: 8px;">
                     <span style="font-size: 12px; color: #E11D48; font-weight: 800;">Chapter 3. 자미두수 12궁 가문·가족운</span>
@@ -522,7 +555,6 @@ def get_daewoon_report(req: dict):
 
             <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
 
-            <!-- [신규] Chapter 4. 평생 학업·시험·합격·문서운 -->
             <div>
                 <div style="border-left: 4px solid #2563EB; padding-left: 10px; margin-bottom: 8px;">
                     <span style="font-size: 12px; color: #2563EB; font-weight: 800;">Chapter 4. 평생 학업·시험·문서운</span>
@@ -555,7 +587,6 @@ def get_daewoon_report(req: dict):
         """
     }
 
-# [방안 A 적용] 2026 신년운세 (올해 가족 화합운 & 소망 성취 골든타임 완전판)
 @app.post("/api/sinnian-report")
 def get_sinnian_report(req: dict):
     user_name = req.get("name", "최정오")
@@ -610,7 +641,6 @@ def get_sinnian_report(req: dict):
 
             <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
 
-            <!-- [신규] Chapter 2. 2026년 소망 성취 지수 & 핵심 골든타임 -->
             <div>
                 <div style="border-left: 4px solid #F59E0B; padding-left: 10px; margin-bottom: 8px;">
                     <span style="font-size: 12px; color: #D97706; font-weight: 800;">Chapter 2. 2026년 소망 성취 지수</span>
@@ -759,7 +789,6 @@ def get_gunghap_report(req: dict):
         """
     }
 
-# [방안 A 적용] 4대 테마운세 - 사업·직업운에 '시험/자격/승진 준비' 옵션 추가
 @app.post("/api/theme-report")
 def get_theme_report(req: dict):
     theme = req.get("theme", "wealth")
