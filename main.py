@@ -5,7 +5,7 @@ import random
 import sqlite3
 from typing import Optional
 from fastapi import FastAPI, Request, HTTPException
-from fastapi.responses import HTMLResponse, FileResponse
+from fastapi.responses import HTMLResponse, FileResponse, Response
 from pydantic import BaseModel
 
 app = FastAPI(title="달하 (DALHA) - 정통 명리학 & 점성술 엔진", version="43.0.0")
@@ -838,3 +838,15 @@ def get_theme_report(req: dict):
         """
 
     return {"title": titles.get(theme, "심층 리포트"), "content": content}
+@app.get("/static/og_thumb.png")
+def get_og_thumbnail():
+    svg_data = """<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+        <rect width="1200" height="630" fill="#0D1527"/>
+        <circle cx="600" cy="220" r="90" fill="none" stroke="#E2C068" stroke-width="3"/>
+        <circle cx="600" cy="220" r="75" fill="#F6E2A1"/>
+        <text x="600" y="248" font-size="75" font-family="'Noto Serif KR', serif" font-weight="900" fill="#0D1527" text-anchor="middle">月</text>
+        <text x="600" y="380" font-size="58" font-family="'Noto Serif KR', sans-serif" font-weight="900" fill="#FAF9F6" text-anchor="middle" letter-spacing="-1px">달하 (DALHA)</text>
+        <text x="600" y="435" font-size="24" font-family="'Pretendard', sans-serif" font-weight="700" fill="#E2C068" text-anchor="middle" letter-spacing="4px">AUTHENTIC EASTERN FORTUNE</text>
+        <text x="600" y="500" font-size="26" font-family="'Pretendard', sans-serif" font-weight="500" fill="#94A3B8" text-anchor="middle">달빛이 비추는 당신의 운명 · 정통 사주 · 바이오리듬 · 타로</text>
+    </svg>"""
+    return Response(content=svg_data, media_type="image/svg+xml")
