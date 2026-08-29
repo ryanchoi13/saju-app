@@ -870,3 +870,7 @@ def get_sitemap():
 @app.get("/naverc5036aa02eca57807bf721e44ad78969.html")
 def naver_verification():
     return HTMLResponse("naver-site-verification: naverc5036aa02eca57807bf721e44ad78969.html")
+# 네이버 검색 등록용 소유확인 라우트
+@app.get("/naverc5036aa02eca57807bf721e44ad78969.html")
+def naver_verification():
+    return HTMLResponse("naver-site-verification: naverc5036aa02eca57807bf721e44ad78969.html")
