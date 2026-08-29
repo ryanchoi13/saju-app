@@ -18,12 +18,6 @@
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
 
-    <!-- 트위터 / X 카드 -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="달하 — 당신의 앞날을 비추는 운명 나침반" />
-    <meta name="twitter:description" content="어두운 밤길을 밝히는 달빛처럼. 오늘의 무료운세와 정통 사주팔자 풀이" />
-    <meta name="twitter:image" content="https://dalha.kr/static/og_thumb.png" />
-
     <!-- 모바일 테마 색상 -->
     <meta name="theme-color" content="#0D1527">
 
@@ -32,27 +26,15 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800;900&family=Noto+Serif+KR:wght@600;800;900&display=swap" rel="stylesheet">
     <style>
-        /* 로그인 완료 후 게이트 카드 강제 숨김 */
-.is-logged-in #view-login-gate,
-.hidden,
-#view-login-gate.hidden,
-div[id*="login-gate"] {
-  display: none !important;
-}
-        .hidden {
-  display: none !important;
-}
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Pretendard', sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background-color: #080D1A; color: #1E293B; display: flex; justify-content: center; min-height: 100vh; }
         .app-container { width: 100%; max-width: 448px; background: #FAF9F6; min-height: 100vh; display: flex; flex-direction: column; position: relative; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.6); padding-bottom: 90px; }
         
+        .hidden { display: none !important; }
+
         /* 헤더 (달하 DALHA 브랜드) */
         header { background: #0D1527; border-bottom: 1px solid rgba(226,192,104,0.3); padding: 14px 18px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 30; }
-        .logo-box { display: flex; align-items: center; gap: 8px; cursor: pointer; user-select: none; }
-        .logo-symbol { width: 30px; height: 30px; background: linear-gradient(135deg, #F6E2A1 0%, #D4AF37 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #0D1527; font-size: 16px; font-weight: 900; font-family: 'Noto Serif KR', serif; box-shadow: 0 0 12px rgba(246,226,161,0.5); }
-        .logo-text-group { display: flex; flex-direction: column; text-align: left; }
-        .logo-title { font-size: 19px; font-weight: 900; color: #F8FAFC; letter-spacing: -0.5px; font-family: 'Noto Serif KR', serif; line-height: 1.1; }
-        .logo-sub { font-size: 9.5px; color: #E2C068; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; }
+        .logo-box { display: flex; align-items: center; gap: 10px; cursor: pointer; user-select: none; }
         .coin-btn { display: flex; align-items: center; gap: 6px; background: rgba(254,243,199,0.1); border: 1px solid rgba(252,211,77,0.4); padding: 5px 12px; border-radius: 9999px; font-size: 13px; font-weight: 700; color: #FDE68A; cursor: pointer; }
         .charge-tag { font-size: 11px; background: #2D6A4F; color: white; padding: 2px 7px; border-radius: 9999px; margin-left: 2px; }
 
@@ -62,11 +44,11 @@ div[id*="login-gate"] {
         .card { background: #FFFFFF; border-radius: 20px; border: 1px solid #E2E8F0; padding: 18px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.03); position: relative; }
         
         /* 카카오 로그인 온보딩 게이트 카드 */
-        .login-gate-card { background: radial-gradient(circle at center, #172746 0%, #0D1527 100%); border: 1.5px solid #E2C068; border-radius: 24px; padding: 32px 20px; text-align: center; color: white; display: flex; flex-direction: column; align-items: center; gap: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.4); margin-top: 20px; }
+        .login-gate-card { background: radial-gradient(circle at center, #172746 0%, #0D1527 100%); border: 1.5px solid #E2C068; border-radius: 24px; padding: 32px 20px; text-align: center; color: white; display: flex; flex-direction: column; align-items: center; gap: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.4); margin-top: 10px; }
         .kakao-login-btn { width: 100%; background: #FEE500; color: #191919; border: none; font-size: 15px; font-weight: 800; padding: 15px; border-radius: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); transition: all 0.2s; }
         .kakao-login-btn:hover { background: #FDD835; transform: translateY(-1px); }
 
-        .gift-badge { background: #FEF3C7; color: #78350F; font-size: 12px; font-weight: 800; padding: 4px 12px; border-radius: 9999px; display: inline-block; margin-bottom: 12px; }
+        .gift-badge { background: #FEF3C7; color: #78350F; font-size: 12px; font-weight: 800; padding: 4px 12px; border-radius: 9999px; display: inline-block; }
 
         .user-profile-bar { background: #FFFFFF; border-radius: 16px; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; border: 1.5px solid #E2E8F0; box-shadow: 0 2px 4px rgba(0,0,0,0.02); margin-bottom: 2px; }
         .user-profile-name { font-size: 15.5px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif; }
@@ -151,84 +133,59 @@ div[id*="login-gate"] {
 
         .modal-bg { position: fixed; inset: 0; background: rgba(11,19,21,0.75); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; padding: 16px; z-index: 2000; }
         .modal-content { background: #FAF9F6; border-radius: 24px; padding: 20px; width: 100%; max-width: 350px; text-align: center; display: flex; flex-direction: column; gap: 14px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.4); border: 1px solid #E2E8F0; }
-
-        .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
     <div class="app-container">
-        
-        <div class="app-container">
 
-    <!-- 1. 상단 프리미엄 헤더 -->
-    <header>
-      <!-- 골드 라인 심볼 + 명조 타이틀 + 서브 슬로건 -->
-      <div class="logo-box" onclick="goToHomeAndScrollTop()" style="display: flex; align-items: center; gap: 10px; cursor: pointer; text-decoration: none;">
-        <svg width="34" height="34" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink: 0;">
-          <circle cx="20" cy="20" r="18" stroke="#D4AF37" stroke-width="1.2" stroke-opacity="0.5"/>
-          <circle cx="20" cy="20" r="15.5" stroke="#D4AF37" stroke-width="1.8"/>
-          <path d="M20 7L22.5 17.5L33 20L22.5 22.5L20 33L17.5 22.5L7 20L17.5 17.5Z" fill="#D4AF37" fill-opacity="0.2" stroke="#D4AF37" stroke-width="1.4" stroke-linejoin="round"/>
-          <path d="M20 6C15.5 8 15.5 14 20 16C17.5 14 17.5 9 20 6Z" fill="#FFEAA7" stroke="#D4AF37" stroke-width="0.8"/>
-          <circle cx="20" cy="20" r="2" fill="#D4AF37"/>
-        </svg>
-        <div style="display: flex; flex-direction: column; justify-content: center; text-align: left; line-height: 1.15;">
-          <div style="display: flex; align-items: baseline; gap: 6px;">
-            <span style="font-size: 19px; font-weight: 800; color: #FFFFFF; font-family: 'BatangChe', 'Batang', 'AppleMyungjo', 'Noto Serif KR', serif; letter-spacing: 0.5px;">달하</span>
-            <span style="font-size: 9.5px; font-weight: 700; color: #D4AF37; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; letter-spacing: 1.8px;">DALHA</span>
-          </div>
-          <span style="font-size: 9.5px; color: #94A3B8; font-weight: 400; letter-spacing: -0.3px; margin-top: 3px;">어두운 밤길을 밝히는 운명 나침반</span>
-        </div>
-      </div>
+        <!-- 1. 상단 프리미엄 헤더 -->
+        <header>
+            <div class="logo-box" onclick="goToHomeAndScrollTop()">
+                <svg width="34" height="34" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink: 0;">
+                    <circle cx="20" cy="20" r="18" stroke="#D4AF37" stroke-width="1.2" stroke-opacity="0.5"/>
+                    <circle cx="20" cy="20" r="15.5" stroke="#D4AF37" stroke-width="1.8"/>
+                    <path d="M20 7L22.5 17.5L33 20L22.5 22.5L20 33L17.5 22.5L7 20L17.5 17.5Z" fill="#D4AF37" fill-opacity="0.2" stroke="#D4AF37" stroke-width="1.4" stroke-linejoin="round"/>
+                    <path d="M20 6C15.5 8 15.5 14 20 16C17.5 14 17.5 9 20 6Z" fill="#FFEAA7" stroke="#D4AF37" stroke-width="0.8"/>
+                    <circle cx="20" cy="20" r="2" fill="#D4AF37"/>
+                </svg>
+                <div style="display: flex; flex-direction: column; justify-content: center; text-align: left; line-height: 1.15;">
+                    <div style="display: flex; align-items: baseline; gap: 6px;">
+                        <span style="font-size: 19px; font-weight: 800; color: #FFFFFF; font-family: 'Noto Serif KR', serif; letter-spacing: 0.5px;">달하</span>
+                        <span style="font-size: 9.5px; font-weight: 700; color: #D4AF37; letter-spacing: 1.8px;">DALHA</span>
+                    </div>
+                    <span style="font-size: 9.5px; color: #94A3B8; font-weight: 400; letter-spacing: -0.3px; margin-top: 3px;">어두운 밤길을 밝히는 운명 나침반</span>
+                </div>
+            </div>
 
-      <!-- 우측 복채/회원 영역 -->
-      <div id="headerAuthArea">
-        <button onclick="openChargeStore()" class="coin-btn">
-          <span id="headerCoinSvg"></span>
-          <span id="coinHeader">1000</span>
-          <span class="charge-tag">충전</span>
-        </button>
-      </div>
-    </header>
-
-    <main>
-      <!-- 2. 최초 카카오 로그인 화면 (온보딩 게이트) -->
-      <div id="view-login-gate" class="login-gate-card" style="display: none;">
-        <!-- 골드 라인 심볼 (중앙 배지) -->
-        <div style="width: 60px; height: 60px; margin: 0 auto 12px; display: flex; align-items: center; justify-content: center; border-radius: 16px; background: radial-gradient(circle, rgba(212,175,55,0.2) 0%, rgba(212,175,55,0.05) 100%); border: 1px solid rgba(212,175,55,0.3);">
-          <svg width="38" height="38" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="20" cy="20" r="18" stroke="#D4AF37" stroke-width="1.2" stroke-opacity="0.5"/>
-            <circle cx="20" cy="20" r="15.5" stroke="#D4AF37" stroke-width="1.8"/>
-            <path d="M20 7L22.5 17.5L33 20L22.5 22.5L20 33L17.5 22.5L7 20L17.5 17.5Z" fill="#D4AF37" fill-opacity="0.2" stroke="#D4AF37" stroke-width="1.4" stroke-linejoin="round"/>
-            <path d="M20 6C15.5 8 15.5 14 20 16C17.5 14 17.5 9 20 6Z" fill="#FFEAA7" stroke="#D4AF37" stroke-width="0.8"/>
-            <circle cx="20" cy="20" r="2" fill="#D4AF37"/>
-          </svg>
-        </div>
-
-        <h2 style="font-size: 20px; font-weight: 800; color: #FFFFFF; font-family: 'BatangChe', 'Batang', serif; margin-bottom: 4px;">달하 (DALHA)</h2>
-        <p style="font-size: 13px; color: #94A3B8; margin-bottom: 16px;">달빛이 비추는 당신의 운명과 천운의 길목<br>카카오로 3초 만에 시작하세요</p>
-        
-        <div class="gift-badge" style="margin-bottom: 16px;">
-          🎁 신규 가입 축하 1,000 복채 즉시 지급
-        </div>
-
-        <button onclick="handleKakaoLogin()" class="kakao-login-btn">
-          <span>💬</span> 카카오로 3초 만에 시작하기
-        </button>
-      </div>
+            <!-- 우측 복채 충전 버튼 -->
+            <div id="headerAuthArea">
+                <button onclick="openChargeStore()" class="coin-btn">
+                    <span id="headerCoinSvg"></span>
+                    <span id="coinHeader">1000</span>
+                    <span class="charge-tag">충전</span>
+                </button>
+            </div>
+        </header>
 
         <main>
-            
-            <!-- 1. 최초 카카오 로그인 화면 (온보딩 게이트) -->
+            <!-- 2. 최초 카카오 로그인 화면 (온보딩 게이트) -->
             <div id="view-login-gate" class="login-gate-card">
-                <div class="logo-symbol" style="width: 58px; height: 58px; font-size: 28px;">月</div>
-                <div>
-                    <h2 style="font-size: 22px; font-weight: 900; color: #F6E2A1; font-family: 'Noto Serif KR', serif; margin-bottom: 4px;">달하 (DALHA)</h2>
-                    <p style="font-size: 13.5px; color: #CBD5E1; line-height: 1.6;">달빛이 비추는 당신의 운명과 천운의 길목<br>카카오로 3초 만에 시작하세요</p>
+                <div style="width: 60px; height: 60px; margin: 0 auto 4px; display: flex; align-items: center; justify-content: center; border-radius: 16px; background: radial-gradient(circle, rgba(212,175,55,0.2) 0%, rgba(212,175,55,0.05) 100%); border: 1px solid rgba(212,175,55,0.3);">
+                    <svg width="38" height="38" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="20" cy="20" r="18" stroke="#D4AF37" stroke-width="1.2" stroke-opacity="0.5"/>
+                        <circle cx="20" cy="20" r="15.5" stroke="#D4AF37" stroke-width="1.8"/>
+                        <path d="M20 7L22.5 17.5L33 20L22.5 22.5L20 33L17.5 22.5L7 20L17.5 17.5Z" fill="#D4AF37" fill-opacity="0.2" stroke="#D4AF37" stroke-width="1.4" stroke-linejoin="round"/>
+                        <path d="M20 6C15.5 8 15.5 14 20 16C17.5 14 17.5 9 20 6Z" fill="#FFEAA7" stroke="#D4AF37" stroke-width="0.8"/>
+                        <circle cx="20" cy="20" r="2" fill="#D4AF37"/>
+                    </svg>
                 </div>
+
+                <h2 style="font-size: 22px; font-weight: 800; color: #FFFFFF; font-family: 'Noto Serif KR', serif; margin-bottom: 2px;">달하 (DALHA)</h2>
+                <p style="font-size: 13px; color: #94A3B8; margin-bottom: 4px;">달빛이 비추는 당신의 운명과 천운의 길목<br>카카오로 3초 만에 시작하세요</p>
                 
-                <div style="background: rgba(254,243,199,0.1); border: 1px dashed rgba(246,226,161,0.5); border-radius: 12px; padding: 10px 14px; width: 100%;">
-                    <span style="font-size: 12px; color: #FDE68A; font-weight: 700;">🎁 신규 가입 축하 1,000 복채 즉시 지급</span>
+                <div class="gift-badge">
+                    🎁 신규 가입 축하 1,000 복채 즉시 지급
                 </div>
 
                 <button onclick="loginWithKakaoReal()" class="kakao-login-btn">
@@ -237,9 +194,9 @@ div[id*="login-gate"] {
                 </button>
             </div>
 
-            <!-- 2. 신규 회원 사주 확인 및 '태어난 시간' 입력 폼 -->
+            <!-- 3. 신규 회원 사주 확인 및 '태어난 시간' 입력 폼 -->
             <div id="onboardingInputView" class="card hidden" style="text-align: center;">
-                <div class="gift-badge">🎁 카카오 연동 완료 (+1,000 복채 지급)</div>
+                <div class="gift-badge" style="margin-bottom: 12px;">🎁 카카오 연동 완료 (+1,000 복채 지급)</div>
                 <h2 style="font-size: 21px; font-weight: 800; margin-bottom: 2px; font-family: 'Noto Serif KR', serif;">사주 명식 확인</h2>
                 <p style="font-size: 13.5px; color: #64748B; margin-bottom: 16px;">가져온 정보가 맞는지 확인 후 <strong>태어난 시간</strong>을 선택하세요</p>
 
@@ -558,7 +515,7 @@ div[id*="login-gate"] {
 
                     <div id="daewoonTeaserBox" class="teaser-blur-box">
                         <div class="teaser-blur-text">
-                            <p><strong>Chapter 3. 가문·가족운 & 평생 학업운:</strong> {name}님의 사주에 부모궁과 자녀궁이 길합을 이루고 관록궁의 문창성이 빛을 발하여...</p>
+                            <p><strong>Chapter 3. 가문·가족운 & 평생 학업운:</strong> 최정오 님의 사주에 부모궁과 자녀궁이 길합을 이루고 관록궁의 문창성이 빛을 발하여...</p>
                         </div>
                         <div class="teaser-lock-badge"><span style="font-size: 20px; margin-bottom: 2px;">🔒</span><span style="font-size: 12.5px; font-weight: 800; color: #78350F;">450 복채로 평생운세 전체 리포트 잠금 해제</span></div>
                     </div>
@@ -655,8 +612,12 @@ div[id*="login-gate"] {
                     <div id="unlockedArchiveList" style="display: flex; flex-direction: column; gap: 10px;"></div>
                 </div>
             </div>
-
         </main>
+
+        <!-- 하단 소개 푸터 문구 -->
+        <footer style="width: 100%; text-align: center; padding: 24px 12px; font-size: 11px; color: #64748B; line-height: 1.6; border-top: 1px solid rgba(0,0,0,0.06); margin-top: 30px;">
+            <p>달하(DALHA)는 고대가요 정읍사의 달빛처럼<br>인생의 갈림길에서 당신의 앞날을 비춰주는 정통 명리학 운명 나침반입니다.</p>
+        </footer>
 
         <!-- 하단 네비게이션 -->
         <nav id="bottomNavBar" class="hidden">
@@ -850,9 +811,8 @@ div[id*="login-gate"] {
                                 serverUnlockedReports = sData.unlocked_reports || [];
                                 applySajuAnalysisToUI(sData.saju_analysis);
                                 renderServerArchive();
-document.getElementById('view-login-gate').classList.add('hidden');
-document.getElementById('view-login-gate').style.display = 'none';
-document.getElementById('onboardingInputView').classList.add('hidden');
+                                document.getElementById('view-login-gate').classList.add('hidden');
+                                document.getElementById('onboardingInputView').classList.add('hidden');
                                 switchTab('today');
                                 document.getElementById('bottomNavBar').classList.remove('hidden');
                                 restoreUnlockedUIFromReports();
@@ -882,7 +842,7 @@ document.getElementById('onboardingInputView').classList.add('hidden');
             });
         }
 
-        // 페이지 로드 시 자동 세션 복원 (새로고침/재방문 시 입력 없이 바로 운세로 직행)
+        // 페이지 로드 시 자동 세션 복원
         async function checkAutoLoginSession() {
             const savedKakaoId = localStorage.getItem('dalha_kakao_id');
             if (!savedKakaoId) return;
@@ -1485,17 +1445,5 @@ document.getElementById('onboardingInputView').classList.add('hidden');
             checkAutoLoginSession();
         });
     </script>
-   <!-- 하단 소개 푸터 문구 (앱 컨테이너 내부 안착) -->
-      <footer style="width: 100%; text-align: center; padding: 24px 12px; font-size: 11px; color: #64748B; line-height: 1.6; border-top: 1px solid rgba(255,255,255,0.06); margin-top: 30px;">
-        <p>달하(DALHA)는 고대가요 정읍사의 달빛처럼<br>인생의 갈림길에서 당신의 앞날을 비춰주는 정통 명리학 운명 나침반입니다.</p>
-      </footer>
-
-    </main>
-  </div> <!-- .app-container 닫기 -->
-
-  <script>
-    // 자동 세션 확인 및 복원 실행
-    checkAutoLoginSession();
-  </script>
 </body>
 </html>
