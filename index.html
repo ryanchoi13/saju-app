@@ -91,13 +91,14 @@
         .tile-btn .t-icon { font-size: 22px; }
         .tile-btn.selected { background: #FEF3C7; border-color: #D97706; color: #78350F; font-weight: 800; transform: scale(1.02); }
 
-        .color-chip-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-top: 6px; }
-        .color-chip { border: 1.5px solid #CBD5E1; border-radius: 10px; padding: 8px 4px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; cursor: pointer; font-size: 11px; font-weight: 700; color: #475569; background: #FFFFFF; transition: all 0.15s; }
-        .color-dot { width: 18px; height: 18px; border-radius: 9999px; border: 1px solid rgba(0,0,0,0.15); }
+        /* 세분화된 20개 컬러칩 그리드 */
+        .color-chip-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 6px; max-height: 240px; overflow-y: auto; padding-right: 2px; }
+        .color-chip { border: 1.5px solid #CBD5E1; border-radius: 10px; padding: 8px 4px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; cursor: pointer; font-size: 10.5px; font-weight: 600; color: #475569; background: #FFFFFF; transition: all 0.15s; }
+        .color-dot { width: 17px; height: 17px; border-radius: 9999px; border: 1px solid rgba(0,0,0,0.15); flex-shrink: 0; }
         .color-chip.selected { border-color: #2D6A4F; background: #EBF5EE; color: #166534; font-weight: 800; box-shadow: 0 0 0 1.5px #2D6A4F; }
 
         .mat-chip-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; margin-top: 6px; }
-        .mat-chip { border: 1.5px solid #CBD5E1; border-radius: 10px; padding: 10px 8px; display: flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer; font-size: 12px; font-weight: 700; color: #475569; background: #FFFFFF; transition: all 0.15s; }
+        .mat-chip { border: 1.5px solid #CBD5E1; border-radius: 10px; padding: 10px 8px; display: flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer; font-size: 12px; font-weight: 600; color: #475569; background: #FFFFFF; transition: all 0.15s; }
         .mat-chip.selected { border-color: #2D6A4F; background: #EBF5EE; color: #166534; font-weight: 800; box-shadow: 0 0 0 1.5px #2D6A4F; }
 
         .wardrobe-item-card { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 14px; padding: 12px 14px; display: flex; justify-content: space-between; align-items: center; text-align: left; margin-bottom: 8px; }
@@ -129,7 +130,7 @@
 
         .teaser-blur-box { background: #FFFFFF; border: 1.5px solid #FCD34D; border-radius: 18px; padding: 16px; text-align: left; position: relative; overflow: hidden; margin-bottom: 12px; }
         .teaser-blur-text { filter: blur(4px); user-select: none; color: #64748B; font-size: 13.5px; line-height: 1.7; }
-        .teaser-lock-badge { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(255,255,270,0.75); backdrop-filter: blur(2px); }
+        .teaser-lock-badge { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(255,255,255,0.75); backdrop-filter: blur(2px); }
 
         nav#bottomNavBar { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 448px; background: rgba(13,21,39,0.98); backdrop-filter: blur(8px); border-top: 1px solid rgba(226,192,104,0.3); padding: 10px 24px; display: flex; justify-content: space-between; align-items: center; z-index: 1000; }
         .tab-btn { background: none; border: none; display: flex; flex-direction: column; align-items: center; gap: 4px; color: #94A3B8; font-size: 12px; cursor: pointer; font-weight: 500; }
@@ -268,7 +269,7 @@
                     <div id="resAdvice" style="font-size: 13.5px; color: #E2E8F0; font-weight: 400; line-height: 1.65; text-align: left;"></div>
                 </div>
 
-                <!-- 1. 맞춤 추천 코디 카드 (내 옷장 연동 픽 포함) -->
+                <!-- 1. 맞춤 추천 코디 카드 -->
                 <div class="card" style="padding: 14px 16px; text-align: left;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
                         <span style="font-size: 12px; color: #64748B; font-weight: 700;">👔 맞춤 추천 코디</span>
@@ -276,7 +277,6 @@
                     </div>
                     <p id="resStyle" style="font-weight: 800; font-size: 14.5px; color: #0F172A; margin-bottom: 6px;">흰색 카라 반팔티 & 베이지 슬랙스</p>
                     
-                    <!-- 내 옷장 자동 매칭 추천 한줄 -->
                     <div id="wardrobeDailyMatchPick" style="font-size: 12.5px; color: #065F46; background: #ECFDF5; padding: 8px 10px; border-radius: 8px; border-left: 3.5px solid #10B981; margin-bottom: 4px;">
                         👗 <strong>오늘의 옷장 픽:</strong> 내 옷장에 아이템을 등록하면 오늘 일진에 딱 맞는 아이템을 추천해 드려요!
                     </div>
@@ -302,7 +302,7 @@
                         <span class="drawer-arrow">▼</span>
                     </div>
                     <div class="drawer-body hidden" id="drawerBodyWardrobe" style="padding: 14px 16px;">
-                        <button onclick="openWardrobeAddWizard()" style="width: 100%; background: #2D6A4F; color: white; border: none; font-size: 13.5px; font-weight: 800; padding: 11px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; margin-bottom: 12px;">
+                        <button onclick="openWardrobeAddWizard()" style="width: 100%; background: #2D6A4F; color: white; border: none; font-size: 13.5px; font-weight: 700; padding: 11px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; margin-bottom: 12px;">
                             <span>➕</span> 새 아이템 옷장에 등록하기 (3초)
                         </button>
 
@@ -653,13 +653,13 @@
 
     </div>
 
-    <!-- 비주얼 옷장 3단계 등록 위저드 모달 -->
+    <!-- 비주얼 옷장 3단계 등록 위저드 모달 (버튼 폰트 굵기 600으로 완화 및 20개 세부 컬러칩) -->
     <div id="wardrobeAddModal" class="modal-bg hidden">
         <div class="modal-content" style="max-width: 360px; text-align: left; padding: 20px;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 8px;">
                 <div>
                     <h3 style="font-size: 15px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif;">👗 내 옷장 아이템 등록</h3>
-                    <p id="wizardStepLabel" style="font-size: 11.5px; color: #2D6A4F; font-weight: 700; margin-top: 2px;">Step 1. 아이템 종류 선택 (단일)</p>
+                    <p id="wizardStepLabel" style="font-size: 11.5px; color: #2D6A4F; font-weight: 600; margin-top: 2px;">Step 1. 아이템 종류 선택 (단일)</p>
                 </div>
                 <button onclick="closeWardrobeAddWizard()" style="background: none; border: none; font-size: 20px; color: #94A3B8; cursor: pointer;">&times;</button>
             </div>
@@ -676,27 +676,41 @@
                     <div class="tile-btn" onclick="selectWizardCat('신발', this)"><span class="t-icon">👟</span><span>신발</span></div>
                     <div class="tile-btn" onclick="selectWizardCat('액세서리', this)" style="grid-column: span 3;"><span class="t-icon">💍</span><span>주얼리 / 모자 / 스카프</span></div>
                 </div>
-                <button onclick="goToWizardStep(2)" style="width: 100%; background: #0D1527; color: #F6E2A1; border: none; font-size: 14px; font-weight: 800; padding: 12px; border-radius: 12px; cursor: pointer; margin-top: 8px;">다음: 색상 선택하기 👉</button>
+                <button onclick="goToWizardStep(2)" style="width: 100%; background: #0D1527; color: #F6E2A1; border: none; font-size: 13.5px; font-weight: 600; padding: 12px; border-radius: 12px; cursor: pointer; margin-top: 8px;">다음: 색상 선택하기 👉</button>
             </div>
 
-            <!-- Step 2: 색상 선택 (멀티 초이스 가능) -->
+            <!-- Step 2: 세분화된 20개 색상 선택 (멀티 초이스 가능) -->
             <div id="wizardStep2" class="hidden" style="display: flex; flex-direction: column; gap: 6px;">
-                <p style="font-size: 12px; color: #64748B;">색상을 모두 선택하세요 (2개 이상 복수 가능):</p>
+                <p style="font-size: 12px; color: #64748B;">색상을 모두 선택하세요 (복수 가능):</p>
                 <div class="color-chip-grid">
                     <div class="color-chip" onclick="toggleColorChip('화이트', this)"><div class="color-dot" style="background:#FFFFFF;"></div><span>화이트</span></div>
+                    <div class="color-chip" onclick="toggleColorChip('아이보리/크림', this)"><div class="color-dot" style="background:#FDFBF7;"></div><span>아이보리</span></div>
+                    <div class="color-chip" onclick="toggleColorChip('베이지', this)"><div class="color-dot" style="background:#E5D3B3;"></div><span>베이지</span></div>
+                    <div class="color-chip" onclick="toggleColorChip('카멜/브라운', this)"><div class="color-dot" style="background:#965938;"></div><span>브라운</span></div>
+                    
                     <div class="color-chip" onclick="toggleColorChip('블랙', this)"><div class="color-dot" style="background:#18181B;"></div><span>블랙</span></div>
-                    <div class="color-chip" onclick="toggleColorChip('네이비', this)"><div class="color-dot" style="background:#1E3A8A;"></div><span>네이비</span></div>
-                    <div class="color-chip" onclick="toggleColorChip('레드', this)"><div class="color-dot" style="background:#DC2626;"></div><span>레드</span></div>
-                    <div class="color-chip" onclick="toggleColorChip('와인', this)"><div class="color-dot" style="background:#881337;"></div><span>와인</span></div>
+                    <div class="color-chip" onclick="toggleColorChip('차콜', this)"><div class="color-dot" style="background:#3F3F46;"></div><span>차콜</span></div>
+                    <div class="color-chip" onclick="toggleColorChip('그레이', this)"><div class="color-dot" style="background:#94A3B8;"></div><span>그레이</span></div>
+                    <div class="color-chip" onclick="toggleColorChip('실버', this)"><div class="color-dot" style="background:linear-gradient(135deg, #E2E8F0 0%, #94A3B8 100%);"></div><span>실버</span></div>
+
+                    <div class="color-chip" onclick="toggleColorChip('골드', this)"><div class="color-dot" style="background:linear-gradient(135deg, #FDE68A 0%, #D97706 100%);"></div><span>골드</span></div>
+                    <div class="color-chip" onclick="toggleColorChip('레드', this)"><div class="color-dot" style="background:#EF4444;"></div><span>레드</span></div>
+                    <div class="color-chip" onclick="toggleColorChip('와인/버건디', this)"><div class="color-dot" style="background:#881337;"></div><span>와인</span></div>
                     <div class="color-chip" onclick="toggleColorChip('핑크', this)"><div class="color-dot" style="background:#F472B6;"></div><span>핑크</span></div>
-                    <div class="color-chip" onclick="toggleColorChip('베이지', this)"><div class="color-dot" style="background:#D4B996;"></div><span>베이지</span></div>
+
+                    <div class="color-chip" onclick="toggleColorChip('코랄/오렌지', this)"><div class="color-dot" style="background:#FB923C;"></div><span>오렌지</span></div>
                     <div class="color-chip" onclick="toggleColorChip('옐로우', this)"><div class="color-dot" style="background:#FBBF24;"></div><span>옐로우</span></div>
-                    <div class="color-chip" onclick="toggleColorChip('그린', this)"><div class="color-dot" style="background:#15803D;"></div><span>그린</span></div>
-                    <div class="color-chip" onclick="toggleColorChip('실버/그레이', this)"><div class="color-dot" style="background:#94A3B8;"></div><span>실버</span></div>
+                    <div class="color-chip" onclick="toggleColorChip('머스터드', this)"><div class="color-dot" style="background:#D97706;"></div><span>머스터드</span></div>
+                    <div class="color-chip" onclick="toggleColorChip('올리브/카키', this)"><div class="color-dot" style="background:#656D4A;"></div><span>카키</span></div>
+
+                    <div class="color-chip" onclick="toggleColorChip('민트/라임', this)"><div class="color-dot" style="background:#6EE7B7;"></div><span>민트</span></div>
+                    <div class="color-chip" onclick="toggleColorChip('그린', this)"><div class="color-dot" style="background:#16A34A;"></div><span>그린</span></div>
+                    <div class="color-chip" onclick="toggleColorChip('스카이블루', this)"><div class="color-dot" style="background:#93C5FD;"></div><span>스카이블루</span></div>
+                    <div class="color-chip" onclick="toggleColorChip('네이비', this)"><div class="color-dot" style="background:#1E3A8A;"></div><span>네이비</span></div>
                 </div>
                 <div style="display: flex; gap: 6px; margin-top: 8px;">
-                    <button onclick="goToWizardStep(1)" style="flex: 1; background: #E2E8F0; color: #475569; border: none; font-size: 13px; font-weight: 700; padding: 11px; border-radius: 10px; cursor: pointer;">이전</button>
-                    <button onclick="goToWizardStep(3)" style="flex: 2; background: #0D1527; color: #F6E2A1; border: none; font-size: 14px; font-weight: 800; padding: 11px; border-radius: 10px; cursor: pointer;">다음: 소재 선택하기 👉</button>
+                    <button onclick="goToWizardStep(1)" style="flex: 1; background: #E2E8F0; color: #475569; border: none; font-size: 13px; font-weight: 600; padding: 11px; border-radius: 10px; cursor: pointer;">이전</button>
+                    <button onclick="goToWizardStep(3)" style="flex: 2; background: #0D1527; color: #F6E2A1; border: none; font-size: 13.5px; font-weight: 600; padding: 11px; border-radius: 10px; cursor: pointer;">다음: 소재 선택하기 👉</button>
                 </div>
             </div>
 
@@ -712,8 +726,8 @@
                     <div class="mat-chip" onclick="toggleMatChip('니트/울', this)"><span>🧶</span><span>니트 · 울 (土)</span></div>
                 </div>
                 <div style="display: flex; gap: 6px; margin-top: 8px;">
-                    <button onclick="goToWizardStep(2)" style="flex: 1; background: #E2E8F0; color: #475569; border: none; font-size: 13px; font-weight: 700; padding: 11px; border-radius: 10px; cursor: pointer;">이전</button>
-                    <button onclick="saveWardrobeItemToServer()" style="flex: 2; background: #2D6A4F; color: white; border: none; font-size: 14px; font-weight: 800; padding: 11px; border-radius: 10px; cursor: pointer;">✨ 내 옷장에 저장 완료</button>
+                    <button onclick="goToWizardStep(2)" style="flex: 1; background: #E2E8F0; color: #475569; border: none; font-size: 13px; font-weight: 600; padding: 11px; border-radius: 10px; cursor: pointer;">이전</button>
+                    <button onclick="saveWardrobeItemToServer()" style="flex: 2; background: #2D6A4F; color: white; border: none; font-size: 13.5px; font-weight: 600; padding: 11px; border-radius: 10px; cursor: pointer;">✨ 내 옷장에 저장 완료</button>
                 </div>
             </div>
         </div>
@@ -868,7 +882,7 @@
         let serverUnlockedReports = [];
         let userWardrobeItems = [];
 
-        // 위저드 선택 상태
+        // 위저드 선택 상태 (초기엔 비어있음)
         let wizardCategory = "상의";
         let wizardColors = [];
         let wizardMaterials = [];
@@ -1033,7 +1047,7 @@
             "사자자리": `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#E2C068" stroke-width="2"><circle cx="7.5" cy="14.5" r="2.5"/><path d="M9 13a6 6 0 1 1 8 4c0 2-2 3-3 3s-2-1.5-1-3.5"/></svg>`,
             "처녀자리": `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#E2C068" stroke-width="2"><path d="M4 4v12a3 3 0 0 0 6 0V4M10 4v12a3 3 0 0 0 6 0V4M16 7a3 3 0 0 1 4 4v9M16 16l4 4"/></svg>`,
             "천칭자리": `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#E2C068" stroke-width="2"><path d="M4 20h16M4 14h5a3 3 0 1 1 6 0h5"/></svg>`,
-            "전갈자리": `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#E2C068" stroke-width="2"><path d="M4 4v12a3 3 0 0 0 6 0V4M10 4v12a3 3 0 0 0 6 0v-2M19 14l3 2-3 2"/></svg>`,
+            "전갈자리": `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#E2C068" stroke-width="2"><path d="M4 4v12a3 3 0 0 0 6 0V4M10 4v12a3 3 0 0 0 6 0V4M16 4v12a3 3 0 0 0 6 0v-2M19 14l3 2-3 2"/></svg>`,
             "사수자리": `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#E2C068" stroke-width="2"><path d="M5 19L19 5M12 5h7v7M8 12l4 4"/></svg>`,
             "염소자리": `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#E2C068" stroke-width="2"><path d="M4 4v11a4 4 0 0 0 8 0V5M12 9a4 4 0 0 1 8 4c0 3-3 7-5 7s-3-2-2-4"/></svg>`,
             "물병자리": `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#E2C068" stroke-width="2"><path d="M3 8l3-3 3 3 3-3 3 3 3-3 3 3M3 16l3-3 3 3 3-3 3 3 3-3 3 3"/></svg>`,
@@ -1265,13 +1279,12 @@
             updateTodayWardrobeMatchPick();
         }
 
-        // 위저드 팝업 열기/닫기 (화면 및 선택 배열 완벽 초기화)
+        // 위저드 팝업 열기/닫기
         function openWardrobeAddWizard() {
             wizardCategory = "상의";
             wizardColors = [];
             wizardMaterials = [];
 
-            // UI 클래스 초기화
             document.querySelectorAll('#wizardStep1 .tile-btn').forEach(btn => btn.classList.remove('selected'));
             document.querySelector('#wizardStep1 .tile-btn:first-child')?.classList.add('selected');
 
@@ -1581,7 +1594,7 @@
                 btnStar.className = 'sub-tab-btn active';
                 btnZodiac.className = 'sub-tab-btn';
                 gridStar.classList.remove('hidden');
-                gridStar.classList.add('hidden');
+                gridZodiac.classList.add('hidden');
             }
         }
 
