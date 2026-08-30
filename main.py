@@ -8,7 +8,7 @@ from fastapi import FastAPI, Request, HTTPException
 from fastapi.responses import HTMLResponse, FileResponse, Response
 from pydantic import BaseModel
 
-app = FastAPI(title="달하 (DALHA) - 정통 명리학 & 점성술 엔진", version="43.7.0")
+app = FastAPI(title="달하 (DALHA) - 정통 명리학 & 점성술 엔진", version="43.8.0")
 
 DB_FILE = "dalha.db"
 
@@ -147,14 +147,15 @@ TAROT_CARDS = [
     }
 ]
 
+# 순수 상의 & 하의로만 구성된 기본 코디 풀 (소품 제거)
 DAILY_OUTFITS_POOL = {
     "male": {
-        "young": ["화이트 린넨 셔츠 & 베이지 슬랙스", "네이비 쿨 셔츠 & 메탈 시계", "스카이블루 반팔 셔츠 & 그레이 팬츠", "블랙 무지 반팔티 & 와이드 슬랙스"],
-        "senior": ["화이트 린넨 셔츠 & 가죽 세미 워치", "네이비 쿨 셔츠 & 단정한 차콜 팬츠", "베이지 톤 셔츠 & 클래식 시계", "다크 올리브 린넨 셔츠 & 편안한 팬츠"]
+        "young": ["화이트 린넨 셔츠 & 베이지 슬랙스", "네이비 쿨 셔츠 & 차콜 슬랙스", "스카이블루 반팔 셔츠 & 그레이 팬츠", "블랙 무지 반팔티 & 와이드 슬랙스"],
+        "senior": ["화이트 린넨 셔츠 & 베이지 슬랙스", "네이비 쿨 셔츠 & 단정한 차콜 팬츠", "베이지 톤 셔츠 & 다크 네이비 팬츠", "다크 올리브 린넨 셔츠 & 편안한 슬랙스"]
     },
     "female": {
-        "young": ["화이트 린넨 블라우스 & 라이트 데님", "연한 하늘색 셔츠 & 화이트 슬랙스", "베이지 톤 반팔 니트 & 롱 스커트", "네이비 린넨 원피스 & 미니멀 목걸이"],
-        "senior": ["아이보리 린넨 블라우스 & 은은한 시계", "네이비 쉬폰 블라우스 & 베이지 슬랙스", "소프트 핑크 린넨 자켓 & 진주 귀걸이", "베이지 톤 오픈카라 셔츠 & 편안한 팬츠"]
+        "young": ["화이트 린넨 블라우스 & 라이트 데님", "연한 하늘색 셔츠 & 화이트 슬랙스", "베이지 톤 반팔 니트 & 롱 스커트", "네이비 린넨 원피스 & 화이트 슬랙스"],
+        "senior": ["아이보리 린넨 블라우스 & 베이지 슬랙스", "네이비 쉬폰 블라우스 & 차콜 팬츠", "소프트 핑크 린넨 자켓 & 화이트 팬츠", "베이지 톤 오픈카라 셔츠 & 편안한 슬랙스"]
     }
 }
 
@@ -285,7 +286,6 @@ def compute_saju_full_payload(name: str, gender: str, year: int, month: int, day
     today_ordinal = today.toordinal()
     daily_hash = (today_ordinal * 31 + diff_days * 17 + (11 if gender == "male" else 23)) % 1000003
 
-    # 오늘의 행운 컬러 2종 매핑
     LUCKY_COLOR_PAIRS = {
         "wood": ["그린", "화이트"],
         "fire": ["네이비", "스카이블루"],
@@ -293,7 +293,7 @@ def compute_saju_full_payload(name: str, gender: str, year: int, month: int, day
         "metal": ["화이트", "네이비"],
         "water": ["머스터드", "베이지"]
     }
-    lucky_colors = LUCKY_COLOR_PAIRS.get(day_elem, ["화이트", "네이비"])
+    lucky_colors = LUCKY_COLOR_PAIRS.get(day_elem, ["그린", "화이트"])
 
     age_group = "young" if current_age < 40 else "senior"
     outfit_list = DAILY_OUTFITS_POOL[gender][age_group]
@@ -428,8 +428,6 @@ def fetch_user_wardrobe(user_id: int):
         })
     return items
 
-# --- API 엔드포인트 ---
-
 @app.post("/api/auth/kakao")
 def kakao_auth(req: KakaoLoginRequest):
     conn = get_db()
@@ -526,7 +524,6 @@ def register_saju(req: RegisterSajuRequest):
         "saju_analysis": saju_payload
     }
 
-# 내 옷장 아이템 추가 API (애칭 지원)
 @app.post("/api/wardrobe/add")
 def add_wardrobe_item(req: WardrobeAddRequest):
     conn = get_db()
@@ -544,7 +541,6 @@ def add_wardrobe_item(req: WardrobeAddRequest):
     conn.close()
     return {"status": "success", "wardrobe_items": fetch_user_wardrobe(req.user_id)}
 
-# 내 옷장 아이템 이름 수정 API
 @app.put("/api/wardrobe/rename/{item_id}")
 def rename_wardrobe_item(item_id: int, req: WardrobeRenameRequest):
     conn = get_db()
@@ -554,7 +550,6 @@ def rename_wardrobe_item(item_id: int, req: WardrobeRenameRequest):
     conn.close()
     return {"status": "success", "wardrobe_items": fetch_user_wardrobe(req.user_id)}
 
-# 내 옷장 아이템 삭제 API
 @app.delete("/api/wardrobe/delete/{item_id}")
 def delete_wardrobe_item(item_id: int, user_id: int):
     conn = get_db()
