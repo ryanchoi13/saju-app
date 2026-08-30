@@ -8,63 +8,125 @@ from fastapi import FastAPI, Request, HTTPException
 from fastapi.responses import HTMLResponse, FileResponse, Response
 from pydantic import BaseModel
 
-app = FastAPI(title="달하 (DALHA) - 정통 명리학 & 점성술 엔진", version="43.9.2")
+app = FastAPI(title="달하 (DALHA) - 정통 명리학 & 점성술 엔진", version="44.0.0")
+
+DATABASE_URL = os.getenv("DATABASE_URL")
+USE_POSTGRES = bool(DATABASE_URL)
+
+if USE_POSTGRES:
+    import psycopg2
+    from psycopg2.extras import RealDictCursor
 
 DB_FILE = "dalha.db"
 
+class DBWrapper:
+    def __init__(self, conn, is_pg=False):
+        self.conn = conn
+        self.is_pg = is_pg
+
+    def cursor(self):
+        if self.is_pg:
+            return self.conn.cursor(cursor_factory=RealDictCursor)
+        return self.conn.cursor()
+
+    def commit(self):
+        self.conn.commit()
+
+    def close(self):
+        self.conn.close()
+
 def get_db():
-    conn = sqlite3.connect(DB_FILE)
-    conn.row_factory = sqlite3.Row
-    return conn
+    if USE_POSTGRES:
+        conn = psycopg2.connect(DATABASE_URL)
+        return DBWrapper(conn, is_pg=True)
+    else:
+        conn = sqlite3.connect(DB_FILE)
+        conn.row_factory = sqlite3.Row
+        return DBWrapper(conn, is_pg=False)
 
 def init_db():
-    conn = get_db()
-    cursor = conn.cursor()
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS users (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        kakao_id VARCHAR(50) UNIQUE,
-        name VARCHAR(50),
-        gender VARCHAR(10),
-        birth_year INTEGER,
-        birth_month INTEGER,
-        birth_day INTEGER,
-        calendar_type VARCHAR(10),
-        sijin_index INTEGER,
-        coin_balance INTEGER DEFAULT 1000,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    )
-    """)
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS unlocked_reports (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        user_id INTEGER,
-        report_key VARCHAR(50),
-        report_title VARCHAR(100),
-        report_content TEXT,
-        created_at DATE,
-        FOREIGN KEY(user_id) REFERENCES users(id)
-    )
-    """)
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS wardrobe_items (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        user_id INTEGER,
-        nickname VARCHAR(100),
-        category VARCHAR(50),
-        colors VARCHAR(150),
-        materials VARCHAR(150),
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY(user_id) REFERENCES users(id)
-    )
-    """)
-    try:
-        cursor.execute("ALTER TABLE wardrobe_items ADD COLUMN nickname VARCHAR(100)")
-    except Exception:
-        pass
-
-    conn.commit()
-    conn.close()
+    db = get_db()
+    cursor = db.cursor()
+    
+    if USE_POSTGRES:
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS users (
+            id SERIAL PRIMARY KEY,
+            kakao_id VARCHAR(50) UNIQUE,
+            name VARCHAR(50),
+            gender VARCHAR(10),
+            birth_year INTEGER,
+            birth_month INTEGER,
+            birth_day INTEGER,
+            calendar_type VARCHAR(10),
+            sijin_index INTEGER,
+            coin_balance INTEGER DEFAULT 1000,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+        """)
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS unlocked_reports (
+            id SERIAL PRIMARY KEY,
+            user_id INTEGER REFERENCES users(id),
+            report_key VARCHAR(50),
+            report_title VARCHAR(100),
+            report_content TEXT,
+            created_at DATE
+        )
+        """)
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS wardrobe_items (
+            id SERIAL PRIMARY KEY,
+            user_id INTEGER REFERENCES users(id),
+            nickname VARCHAR(100),
+            category VARCHAR(50),
+            colors VARCHAR(150),
+            materials VARCHAR(150),
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+        """)
+    else:
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            kakao_id VARCHAR(50) UNIQUE,
+            name VARCHAR(50),
+            gender VARCHAR(10),
+            birth_year INTEGER,
+            birth_month INTEGER,
+            birth_day INTEGER,
+            calendar_type VARCHAR(10),
+            sijin_index INTEGER,
+            coin_balance INTEGER DEFAULT 1000,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+        """)
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS unlocked_reports (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER,
+            report_key VARCHAR(50),
+            report_title VARCHAR(100),
+            report_content TEXT,
+            created_at DATE,
+            FOREIGN KEY(user_id) REFERENCES users(id)
+        )
+        """)
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS wardrobe_items (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER,
+            nickname VARCHAR(100),
+            category VARCHAR(50),
+            colors VARCHAR(150),
+            materials VARCHAR(150),
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY(user_id) REFERENCES users(id)
+        )
+        """)
+    
+    db.commit()
+    db.close()
 
 init_db()
 
@@ -288,7 +350,6 @@ def compute_saju_full_payload(name: str, gender: str, year: int, month: int, day
 
     daily_hash = (today_ordinal * 31 + diff_days * 17 + (11 if gender == "male" else 23)) % 1000003
 
-    # 오늘의 기본 의류 룩을 위한 오행 행운 컬러
     LUCKY_COLOR_PAIRS = {
         "wood": ["네이비", "스카이블루"],
         "fire": ["네이비", "스카이블루"],
@@ -313,16 +374,12 @@ def compute_saju_full_payload(name: str, gender: str, year: int, month: int, day
     mindset = MINDSETS_POOL[(daily_hash + 4) % len(MINDSETS_POOL)]
     action = ACTIONS_POOL[(daily_hash + 5) % len(ACTIONS_POOL)]
 
-    # --- 정통 명리학 3대 원리(통관/조후/합화) 기반 실시간 스타일링 판정 엔진 ---
     styling_mode = "harmony"
     rule_title = "오행 상생(相生) 조화"
     rule_reason = "오늘 일진과 사주 본원이 조화롭게 상생하여 차분한 안정을 이룹니다."
 
-    # 1. 충돌(子午충, 卯酉충 등) 발생 시 통관용신 발동
     has_clash = (today_jj == "子" and y_jj == "午") or (today_jj == "午" and y_jj == "子") or (today_jj == "卯" and d_jj == "酉")
-    # 2. 한열 조후 발생 시 조후용신 발동
     is_cold_day = today_jj in ["子", "亥"] and day_elem in ["wood", "metal"]
-    # 3. 지지 삼합/육합 결합 시 합화 발동
     is_hap_day = (today_jj in ["巳", "酉", "丑"] and d_jj in ["巳", "酉", "丑"]) or (today_jj == "戌" and d_jj == "卯")
 
     if has_clash or is_cold_day:
@@ -335,13 +392,6 @@ def compute_saju_full_payload(name: str, gender: str, year: int, month: int, day
         rule_reason = f"오늘 일진({today_cg}{today_jj})이 사주 글자와 합(合)을 이루어 새로운 기운을 형성하는 날입니다. 합의 완성도를 높이는 [골드/메탈] 소품을 착용할 때 성취운이 발동합니다."
 
     is_reverse_day = (styling_mode != "harmony")
-    
-    # 문구 모순 완벽 해결: 의류와 소품의 역할을 명확히 분리
-    if is_reverse_day:
-        reverse_tip = f"✦ 오늘 일진은 기본 상생 룩(네이비/스카이블루) 위에, 평소 피하던 <strong>[와인/골드/메탈]</strong> 소품을 원포인트로 더할 때 기운이 극대화되는 날입니다!"
-    else:
-        reverse_tip = f"오늘의 일진은 사주 본원({d_cg})과 상생하는 <strong>차분한 톤</strong>과 <strong>정갈한 소품</strong>을 곁들일 때 기운이 가장 안정됩니다."
-
     daily_score = 68 + (daily_hash % 31)
     score_status_word = "대길(大吉)과 도약의 하루" if daily_score >= 88 else ("순조로운 화합과 발전의 하루" if daily_score >= 75 else "내실을 다지고 신중을 기할 하루")
     daily_title = f"[{today_cg}{today_jj}일] {score_status_word}"
@@ -379,7 +429,7 @@ def compute_saju_full_payload(name: str, gender: str, year: int, month: int, day
             "lucky_colors": lucky_colors,
             "lucky_number": lucky_number, "lucky_direction": lucky_direction, "lucky_item": lucky_item,
             "fashion_style": fashion_style, "recommended_menu": recommended_menu, "mindset": mindset, "action": action,
-            "talisman": user_talisman, "is_reverse_day": is_reverse_day, "reverse_tip": reverse_tip,
+            "talisman": user_talisman, "is_reverse_day": is_reverse_day,
             "styling_mode": styling_mode, "rule_title": rule_title, "rule_reason": rule_reason
         },
         "biorhythm": biorhythm_data
@@ -423,11 +473,11 @@ class WardrobeRenameRequest(BaseModel):
     nickname: str
 
 def fetch_user_wardrobe(user_id: int):
-    conn = get_db()
-    cursor = conn.cursor()
-    cursor.execute("SELECT id, nickname, category, colors, materials, created_at FROM wardrobe_items WHERE user_id = ? ORDER BY id DESC", (user_id,))
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute("SELECT id, nickname, category, colors, materials, created_at FROM wardrobe_items WHERE user_id = %s ORDER BY id DESC" if USE_POSTGRES else "SELECT id, nickname, category, colors, materials, created_at FROM wardrobe_items WHERE user_id = ? ORDER BY id DESC", (user_id,))
     rows = cursor.fetchall()
-    conn.close()
+    db.close()
     items = []
     for r in rows:
         colors_list = r["colors"].split(",") if r["colors"] else []
@@ -439,15 +489,15 @@ def fetch_user_wardrobe(user_id: int):
             "category": r["category"],
             "colors": colors_list,
             "materials": mats_list,
-            "created_at": r["created_at"]
+            "created_at": str(r["created_at"])
         })
     return items
 
 @app.post("/api/auth/kakao")
 def kakao_auth(req: KakaoLoginRequest):
-    conn = get_db()
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM users WHERE kakao_id = ?", (req.kakao_id,))
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute("SELECT * FROM users WHERE kakao_id = %s" if USE_POSTGRES else "SELECT * FROM users WHERE kakao_id = ?", (req.kakao_id,))
     user = cursor.fetchone()
     
     if user:
@@ -457,9 +507,9 @@ def kakao_auth(req: KakaoLoginRequest):
             user["birth_month"], user["birth_day"], user["calendar_type"], user["sijin_index"]
         )
         
-        cursor.execute("SELECT report_key, report_title, report_content, created_at FROM unlocked_reports WHERE user_id = ? ORDER BY id DESC", (user_id,))
+        cursor.execute("SELECT report_key, report_title, report_content, created_at FROM unlocked_reports WHERE user_id = %s ORDER BY id DESC" if USE_POSTGRES else "SELECT report_key, report_title, report_content, created_at FROM unlocked_reports WHERE user_id = ? ORDER BY id DESC", (user_id,))
         unlocked_list = [dict(row) for row in cursor.fetchall()]
-        conn.close()
+        db.close()
 
         wardrobe_list = fetch_user_wardrobe(user_id)
 
@@ -486,13 +536,21 @@ def kakao_auth(req: KakaoLoginRequest):
         cal_type = "lunar" if req.birthday_type == "LUNAR" else "solar"
         gender_val = "female" if req.gender in ["female", "F"] else "male"
 
-        cursor.execute("""
-        INSERT INTO users (kakao_id, name, gender, birth_year, birth_month, birth_day, calendar_type, sijin_index, coin_balance)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1000)
-        """, (req.kakao_id, req.name, gender_val, b_year, b_month, b_day, cal_type, 5))
-        conn.commit()
-        new_user_id = cursor.lastrowid
-        conn.close()
+        if USE_POSTGRES:
+            cursor.execute("""
+            INSERT INTO users (kakao_id, name, gender, birth_year, birth_month, birth_day, calendar_type, sijin_index, coin_balance)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, 1000) RETURNING id
+            """, (req.kakao_id, req.name, gender_val, b_year, b_month, b_day, cal_type, 5))
+            new_user_id = cursor.fetchone()["id"]
+        else:
+            cursor.execute("""
+            INSERT INTO users (kakao_id, name, gender, birth_year, birth_month, birth_day, calendar_type, sijin_index, coin_balance)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1000)
+            """, (req.kakao_id, req.name, gender_val, b_year, b_month, b_day, cal_type, 5))
+            new_user_id = cursor.lastrowid
+
+        db.commit()
+        db.close()
 
         return {
             "status": "new_user_needs_confirm",
@@ -506,18 +564,22 @@ def kakao_auth(req: KakaoLoginRequest):
 
 @app.post("/api/user/register-saju")
 def register_saju(req: RegisterSajuRequest):
-    conn = get_db()
-    cursor = conn.cursor()
+    db = get_db()
+    cursor = db.cursor()
     cursor.execute("""
+    UPDATE users 
+    SET name = %s, gender = %s, birth_year = %s, birth_month = %s, birth_day = %s, calendar_type = %s, sijin_index = %s
+    WHERE id = %s
+    """ if USE_POSTGRES else """
     UPDATE users 
     SET name = ?, gender = ?, birth_year = ?, birth_month = ?, birth_day = ?, calendar_type = ?, sijin_index = ?
     WHERE id = ?
     """, (req.name, req.gender, req.birth_year, req.birth_month, req.birth_day, req.calendar_type, req.sijin_index, req.user_id))
-    conn.commit()
+    db.commit()
     
-    cursor.execute("SELECT * FROM users WHERE id = ?", (req.user_id,))
+    cursor.execute("SELECT * FROM users WHERE id = %s" if USE_POSTGRES else "SELECT * FROM users WHERE id = ?", (req.user_id,))
     user = cursor.fetchone()
-    conn.close()
+    db.close()
 
     if not user:
         raise HTTPException(status_code=404, detail="사용자를 찾을 수 없습니다.")
@@ -541,8 +603,8 @@ def register_saju(req: RegisterSajuRequest):
 
 @app.post("/api/wardrobe/add")
 def add_wardrobe_item(req: WardrobeAddRequest):
-    conn = get_db()
-    cursor = conn.cursor()
+    db = get_db()
+    cursor = db.cursor()
     colors_str = ",".join(req.colors)
     mats_str = ",".join(req.materials)
     
@@ -550,47 +612,50 @@ def add_wardrobe_item(req: WardrobeAddRequest):
 
     cursor.execute("""
     INSERT INTO wardrobe_items (user_id, nickname, category, colors, materials)
+    VALUES (%s, %s, %s, %s, %s)
+    """ if USE_POSTGRES else """
+    INSERT INTO wardrobe_items (user_id, nickname, category, colors, materials)
     VALUES (?, ?, ?, ?, ?)
     """, (req.user_id, final_name, req.category, colors_str, mats_str))
-    conn.commit()
-    conn.close()
+    db.commit()
+    db.close()
     return {"status": "success", "wardrobe_items": fetch_user_wardrobe(req.user_id)}
 
 @app.put("/api/wardrobe/rename/{item_id}")
 def rename_wardrobe_item(item_id: int, req: WardrobeRenameRequest):
-    conn = get_db()
-    cursor = conn.cursor()
-    cursor.execute("UPDATE wardrobe_items SET nickname = ? WHERE id = ? AND user_id = ?", (req.nickname.strip(), item_id, req.user_id))
-    conn.commit()
-    conn.close()
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute("UPDATE wardrobe_items SET nickname = %s WHERE id = %s AND user_id = %s" if USE_POSTGRES else "UPDATE wardrobe_items SET nickname = ? WHERE id = ? AND user_id = ?", (req.nickname.strip(), item_id, req.user_id))
+    db.commit()
+    db.close()
     return {"status": "success", "wardrobe_items": fetch_user_wardrobe(req.user_id)}
 
 @app.delete("/api/wardrobe/delete/{item_id}")
 def delete_wardrobe_item(item_id: int, user_id: int):
-    conn = get_db()
-    cursor = conn.cursor()
-    cursor.execute("DELETE FROM wardrobe_items WHERE id = ? AND user_id = ?", (item_id, user_id))
-    conn.commit()
-    conn.close()
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute("DELETE FROM wardrobe_items WHERE id = %s AND user_id = %s" if USE_POSTGRES else "DELETE FROM wardrobe_items WHERE id = ? AND user_id = ?", (item_id, user_id))
+    db.commit()
+    db.close()
     return {"status": "success", "wardrobe_items": fetch_user_wardrobe(user_id)}
 
 @app.post("/api/reports/unlock")
 def unlock_report(req: OrderReportRequest):
-    conn = get_db()
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM users WHERE id = ?", (req.user_id,))
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute("SELECT * FROM users WHERE id = %s" if USE_POSTGRES else "SELECT * FROM users WHERE id = ?", (req.user_id,))
     user = cursor.fetchone()
 
     if not user:
-        conn.close()
+        db.close()
         raise HTTPException(status_code=404, detail="회원 정보가 없습니다.")
 
     if user["coin_balance"] < req.cost:
-        conn.close()
+        db.close()
         raise HTTPException(status_code=400, detail="보유 복채가 부족합니다.")
 
     new_balance = user["coin_balance"] - req.cost
-    cursor.execute("UPDATE users SET coin_balance = ? WHERE id = ?", (new_balance, req.user_id))
+    cursor.execute("UPDATE users SET coin_balance = %s WHERE id = %s" if USE_POSTGRES else "UPDATE users SET coin_balance = ? WHERE id = ?", (new_balance, req.user_id))
 
     current_age = datetime.date.today().year - user["birth_year"] + 1
     user_data = {
@@ -618,13 +683,16 @@ def unlock_report(req: OrderReportRequest):
     today_str = datetime.date.today().strftime("%Y-%m-%d")
     cursor.execute("""
     INSERT INTO unlocked_reports (user_id, report_key, report_title, report_content, created_at)
+    VALUES (%s, %s, %s, %s, %s)
+    """ if USE_POSTGRES else """
+    INSERT INTO unlocked_reports (user_id, report_key, report_title, report_content, created_at)
     VALUES (?, ?, ?, ?, ?)
     """, (req.user_id, req.report_key, report_title, report_content, today_str))
-    conn.commit()
+    db.commit()
 
-    cursor.execute("SELECT report_key, report_title, report_content, created_at FROM unlocked_reports WHERE user_id = ? ORDER BY id DESC", (req.user_id,))
+    cursor.execute("SELECT report_key, report_title, report_content, created_at FROM unlocked_reports WHERE user_id = %s ORDER BY id DESC" if USE_POSTGRES else "SELECT report_key, report_title, report_content, created_at FROM unlocked_reports WHERE user_id = ? ORDER BY id DESC", (req.user_id,))
     unlocked_list = [dict(row) for row in cursor.fetchall()]
-    conn.close()
+    db.close()
 
     return {
         "status": "success", "new_balance": new_balance,
@@ -635,13 +703,13 @@ def unlock_report(req: OrderReportRequest):
 def charge_coin(req: dict):
     user_id = req.get("user_id")
     amount = req.get("amount", 0)
-    conn = get_db()
-    cursor = conn.cursor()
-    cursor.execute("UPDATE users SET coin_balance = coin_balance + ? WHERE id = ?", (amount, user_id))
-    conn.commit()
-    cursor.execute("SELECT coin_balance FROM users WHERE id = ?", (user_id,))
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute("UPDATE users SET coin_balance = coin_balance + %s WHERE id = %s" if USE_POSTGRES else "UPDATE users SET coin_balance = coin_balance + ? WHERE id = ?", (amount, user_id))
+    db.commit()
+    cursor.execute("SELECT coin_balance FROM users WHERE id = %s" if USE_POSTGRES else "SELECT coin_balance FROM users WHERE id = ?", (user_id,))
     user = cursor.fetchone()
-    conn.close()
+    db.close()
     return {"status": "success", "new_balance": user["coin_balance"]}
 
 @app.get("/api/zodiac-fortune")
