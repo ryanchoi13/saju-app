@@ -8,7 +8,7 @@ from fastapi import FastAPI, Request, HTTPException
 from fastapi.responses import HTMLResponse, FileResponse, Response
 from pydantic import BaseModel
 
-app = FastAPI(title="달하 (DALHA) - 정통 명리학 & 점성술 엔진", version="43.5.0")
+app = FastAPI(title="달하 (DALHA) - 정통 명리학 & 점성술 엔진", version="43.6.0")
 
 DB_FILE = "dalha.db"
 
@@ -50,6 +50,7 @@ def init_db():
     CREATE TABLE IF NOT EXISTS wardrobe_items (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         user_id INTEGER,
+        nickname VARCHAR(100),
         category VARCHAR(50),
         colors VARCHAR(150),
         materials VARCHAR(150),
@@ -57,6 +58,12 @@ def init_db():
         FOREIGN KEY(user_id) REFERENCES users(id)
     )
     """)
+    # 기존 DB에 nickname 컬럼이 없을 경우를 위한 안전 마이그레이션
+    try:
+        cursor.execute("ALTER TABLE wardrobe_items ADD COLUMN nickname VARCHAR(100)")
+    except Exception:
+        pass
+
     conn.commit()
     conn.close()
 
@@ -171,20 +178,6 @@ STAR_FORTUNE_DETAILS = {
     "염소자리": { "title": "성실한 노력과 지위 안착", "overview": "꾸준히 쌓아온 노력이 결과물로 전환되며 신뢰를 한몸에 받습니다.", "badge": "📈 오늘 단단한 승진운", "focus": "상급자로부터 능력을 인정받아 권한이 격상됩니다.", "item": "원목 명함집", "time": "오전 08시 ~ 10시" },
     "물병자리": { "title": "독창적인 발상과 혁신", "overview": "틀에 얽매이지 않는 신선한 아이디어가 주변에 영감을 줍니다.", "badge": "💡 오늘 빛나는 기획운", "focus": "정체된 일에 새로운 방식을 적용해 돌파구를 엽니다.", "item": "실버 링", "time": "오후 03시 ~ 05시" },
     "물고기자리": { "title": "풍부한 감성과 따뜻한 인연", "overview": "마음이 이끄는 대로 행동할 때 뜻밖의 행운과 만남이 이어집니다.", "badge": "💖 오늘 설레는 애정운", "focus": "마음이 잘 통하는 귀인을 만나 깊은 유대를 형성합니다.", "item": "실버 목걸이", "time": "오후 06시 ~ 08시" }
-}
-
-# 20대 세분화 색상 및 소재 5대 오행 맵핑
-DETAILED_COLOR_ELEM_MAP = {
-    "화이트": "metal", "아이보리/크림": "metal", "베이지": "earth", "카멜/브라운": "earth",
-    "블랙": "water", "차콜": "water", "그레이": "metal", "실버": "metal",
-    "골드": "metal", "레드": "fire", "와인/버건디": "fire", "핑크": "fire",
-    "코랄/오렌지": "fire", "옐로우": "earth", "머스터드": "earth", "올리브/카키": "wood",
-    "민트/라임": "wood", "그린": "wood", "스카이블루": "wood", "네이비": "water"
-}
-
-DETAILED_MATERIAL_ELEM_MAP = {
-    "면/린넨": "wood", "실크/쉬폰": "fire", "가죽/세무": "earth",
-    "메탈/금속": "metal", "데님": "water", "니트/울": "earth"
 }
 
 @app.get("/")
@@ -396,22 +389,31 @@ class OrderReportRequest(BaseModel):
 class WardrobeAddRequest(BaseModel):
     user_id: int
     category: str
+    nickname: Optional[str] = ""
     colors: List[str]
     materials: List[str]
+
+class WardrobeRenameRequest(BaseModel):
+    user_id: int
+    nickname: str
 
 def fetch_user_wardrobe(user_id: int):
     conn = get_db()
     cursor = conn.cursor()
-    cursor.execute("SELECT id, category, colors, materials, created_at FROM wardrobe_items WHERE user_id = ? ORDER BY id DESC", (user_id,))
+    cursor.execute("SELECT id, nickname, category, colors, materials, created_at FROM wardrobe_items WHERE user_id = ? ORDER BY id DESC", (user_id,))
     rows = cursor.fetchall()
     conn.close()
     items = []
     for r in rows:
+        colors_list = r["colors"].split(",") if r["colors"] else []
+        mats_list = r["materials"].split(",") if r["materials"] else []
+        default_nick = f"{' '.join(colors_list)} {' '.join(mats_list)} {r['category']}".strip()
         items.append({
             "id": r["id"],
+            "nickname": r["nickname"] if (r["nickname"] and r["nickname"].strip()) else default_nick,
             "category": r["category"],
-            "colors": r["colors"].split(",") if r["colors"] else [],
-            "materials": r["materials"].split(",") if r["materials"] else [],
+            "colors": colors_list,
+            "materials": mats_list,
             "created_at": r["created_at"]
         })
     return items
@@ -514,17 +516,30 @@ def register_saju(req: RegisterSajuRequest):
         "saju_analysis": saju_payload
     }
 
-# 내 옷장 아이템 추가 API (20대 세분화 색상 및 복수 소재 맵핑)
+# 내 옷장 아이템 추가 API (애칭/닉네임 지원)
 @app.post("/api/wardrobe/add")
 def add_wardrobe_item(req: WardrobeAddRequest):
     conn = get_db()
     cursor = conn.cursor()
     colors_str = ",".join(req.colors)
     mats_str = ",".join(req.materials)
+    
+    final_name = req.nickname.strip() if (req.nickname and req.nickname.strip()) else f"{' '.join(req.colors)} {' '.join(req.materials)} {req.category}".strip()
+
     cursor.execute("""
-    INSERT INTO wardrobe_items (user_id, category, colors, materials)
-    VALUES (?, ?, ?, ?)
-    """, (req.user_id, req.category, colors_str, mats_str))
+    INSERT INTO wardrobe_items (user_id, nickname, category, colors, materials)
+    VALUES (?, ?, ?, ?, ?)
+    """, (req.user_id, final_name, req.category, colors_str, mats_str))
+    conn.commit()
+    conn.close()
+    return {"status": "success", "wardrobe_items": fetch_user_wardrobe(req.user_id)}
+
+# 내 옷장 아이템 이름 수정 API
+@app.put("/api/wardrobe/rename/{item_id}")
+def rename_wardrobe_item(item_id: int, req: WardrobeRenameRequest):
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("UPDATE wardrobe_items SET nickname = ? WHERE id = ? AND user_id = ?", (req.nickname.strip(), item_id, req.user_id))
     conn.commit()
     conn.close()
     return {"status": "success", "wardrobe_items": fetch_user_wardrobe(req.user_id)}
