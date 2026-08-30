@@ -1,974 +1,1559 @@
-import datetime
-import math
-import os
-import random
-import sqlite3
-from typing import Optional
-from fastapi import FastAPI, Request, HTTPException
-from fastapi.responses import HTMLResponse, FileResponse, Response
-from pydantic import BaseModel
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <title>달하 | 어두운 밤길을 밝히는 달빛, 인생의 운명 나침반 (무료운세·사주팔자)</title>
+    <meta name="description" content="어두운 밤길을 밝히는 달빛처럼 당신의 앞날을 비추는 운명 나침반, 달하. 정통 명리학 기반의 오늘의 운세, 무료 사주팔자, 연애운·재물운·10년 대운 심층 분석." />
+    <meta name="keywords" content="달하, 사주, 무료운세, 오늘의운세, 사주팔자, 무료사주, 신년운세, 궁합, 재물운, 연애운, 대운분석, 정통사주" />
+    <link rel="canonical" href="https://dalha.kr/" />
 
-app = FastAPI(title="달하 (DALHA) - 정통 명리학 & 점성술 엔진", version="43.3.0")
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://dalha.kr/" />
+    <meta property="og:title" content="달하 — 당신의 앞날을 비추는 운명 나침반" />
+    <meta property="og:description" content="어두운 밤길을 밝히는 달빛처럼. 오늘의 무료운세와 정통 사주팔자 풀이" />
+    <meta property="og:image" content="https://dalha.kr/static/og_thumb.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
 
-DB_FILE = "dalha.db"
+    <meta name="theme-color" content="#0D1527">
+    <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800;900&family=Noto+Serif+KR:wght@600;800;900&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Pretendard', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background-color: #080D1A; color: #1E293B; display: flex; justify-content: center; min-height: 100vh; }
+        .app-container { width: 100%; max-width: 448px; background: #FAF9F6; min-height: 100vh; display: flex; flex-direction: column; position: relative; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.6); padding-bottom: 90px; }
+        .hidden { display: none !important; }
 
-def get_db():
-    conn = sqlite3.connect(DB_FILE)
-    conn.row_factory = sqlite3.Row
-    return conn
+        header { background: #0D1527; border-bottom: 1px solid rgba(226,192,104,0.3); padding: 14px 18px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 30; }
+        .logo-box { display: flex; align-items: center; gap: 10px; cursor: pointer; user-select: none; }
+        .coin-btn { display: flex; align-items: center; gap: 6px; background: rgba(254,243,199,0.1); border: 1px solid rgba(252,211,77,0.4); padding: 5px 12px; border-radius: 9999px; font-size: 13px; font-weight: 700; color: #FDE68A; cursor: pointer; }
+        .charge-tag { font-size: 11px; background: #2D6A4F; color: white; padding: 2px 7px; border-radius: 9999px; margin-left: 2px; }
 
-def init_db():
-    conn = get_db()
-    cursor = conn.cursor()
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS users (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        kakao_id VARCHAR(50) UNIQUE,
-        name VARCHAR(50),
-        gender VARCHAR(10),
-        birth_year INTEGER,
-        birth_month INTEGER,
-        birth_day INTEGER,
-        calendar_type VARCHAR(10),
-        sijin_index INTEGER,
-        coin_balance INTEGER DEFAULT 1000,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    )
-    """)
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS unlocked_reports (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        user_id INTEGER,
-        report_key VARCHAR(50),
-        report_title VARCHAR(100),
-        report_content TEXT,
-        created_at DATE,
-        FOREIGN KEY(user_id) REFERENCES users(id)
-    )
-    """)
-    conn.commit()
-    conn.close()
-
-init_db()
-
-CHEONGAN_HANJA = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
-JIJI_HANJA = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"]
-YANG_STEMS = ["甲", "丙", "戊", "庚", "壬"]
-
-CHEONGAN_ELEMENTS = {
-    "甲": "wood", "乙": "wood", "丙": "fire", "丁": "fire", "戊": "earth",
-    "己": "earth", "庚": "metal", "辛": "metal", "壬": "water", "癸": "water"
-}
-JIJI_ELEMENTS = {
-    "子": "water", "丑": "earth", "寅": "wood", "卯": "wood", "辰": "earth",
-    "巳": "fire", "午": "fire", "未": "earth", "申": "metal", "酉": "metal",
-    "戌": "earth", "亥": "water"
-}
-
-SIJIN_KOREAN_MAP = {
-    -1: "시간 모름", 0: "자시(子時)", 1: "축시(丑時)", 2: "인시(寅時)",
-    3: "묘시(卯時)", 4: "진시(辰時)", 5: "사시(巳時)", 6: "오시(午時)",
-    7: "미시(未時)", 8: "신시(申時)", 9: "유시(酉時)", 10: "술시(戌時)", 11: "해시(亥時)"
-}
-
-JIJANGGAN_FULL_MAP = {
-    "子": [{"char": "壬", "elem": "water", "weight": 10}, {"char": "癸", "elem": "water", "weight": 20}],
-    "丑": [{"char": "癸", "elem": "water", "weight": 9}, {"char": "辛", "elem": "metal", "weight": 3}, {"char": "己", "elem": "earth", "weight": 18}],
-    "寅": [{"char": "戊", "elem": "earth", "weight": 7}, {"char": "丙", "elem": "fire", "weight": 7}, {"char": "甲", "elem": "wood", "weight": 16}],
-    "卯": [{"char": "甲", "elem": "wood", "weight": 10}, {"char": "乙", "elem": "wood", "weight": 20}],
-    "辰": [{"char": "乙", "elem": "wood", "weight": 9}, {"char": "癸", "elem": "water", "weight": 3}, {"char": "戊", "elem": "earth", "weight": 18}],
-    "巳": [{"char": "戊", "elem": "earth", "weight": 7}, {"char": "庚", "elem": "metal", "weight": 7}, {"char": "丙", "elem": "fire", "weight": 16}],
-    "午": [{"char": "丙", "elem": "fire", "weight": 10}, {"char": "己", "elem": "earth", "weight": 9}, {"char": "丁", "elem": "fire", "weight": 11}],
-    "未": [{"char": "丁", "elem": "fire", "weight": 9}, {"char": "乙", "elem": "wood", "weight": 3}, {"char": "己", "elem": "earth", "weight": 18}],
-    "申": [{"char": "戊", "elem": "earth", "weight": 7}, {"char": "壬", "elem": "water", "weight": 7}, {"char": "庚", "elem": "metal", "weight": 16}],
-    "酉": [{"char": "庚", "elem": "metal", "weight": 10}, {"char": "辛", "elem": "metal", "weight": 20}],
-    "戌": [{"char": "辛", "elem": "metal", "weight": 9}, {"char": "丁", "elem": "fire", "weight": 3}, {"char": "戊", "elem": "earth", "weight": 18}],
-    "亥": [{"char": "戊", "elem": "earth", "weight": 7}, {"char": "甲", "elem": "wood", "weight": 7}, {"char": "壬", "elem": "water", "weight": 16}]
-}
-
-ANIMAL_MAP = {"子": "쥐", "丑": "소", "寅": "호랑이", "卯": "토끼", "辰": "용", "巳": "뱀", "午": "말", "未": "양", "申": "원숭이", "酉": "닭", "戌": "개", "亥": "돼지"}
-ANIMAL_ICONS = {"쥐": "🐭", "소": "🐮", "호랑이": "🐯", "토끼": "🐰", "용": "🐲", "뱀": "🐍", "말": "🐴", "양": "🐑", "원숭이": "🐵", "닭": "🐔", "개": "🐶", "돼지": "🐷"}
-
-STAR_SIGNS = [
-    {"name": "물병자리", "icon": "♒", "period": "01.20 ~ 02.18"}, {"name": "물고기자리", "icon": "♓", "period": "02.19 ~ 03.20"},
-    {"name": "양자리", "icon": "♈", "period": "03.21 ~ 04.19"}, {"name": "황소자리", "icon": "♉", "period": "04.20 ~ 05.20"},
-    {"name": "쌍둥이자리", "icon": "♊", "period": "05.21 ~ 06.21"}, {"name": "게자리", "icon": "♋", "period": "06.22 ~ 07.22"},
-    {"name": "사자자리", "icon": "♌", "period": "07.23 ~ 08.22"}, {"name": "처녀자리", "icon": "♍", "period": "08.23 ~ 09.22"},
-    {"name": "천칭자리", "icon": "♎", "period": "09.23 ~ 10.22"}, {"name": "전갈자리", "icon": "♏", "period": "10.23 ~ 11.22"},
-    {"name": "사수자리", "icon": "♐", "period": "11.23 ~ 12.21"}, {"name": "염소자리", "icon": "♑", "period": "12.22 ~ 01.19"}
-]
-
-TALISMAN_OHEANG_MAP = {
-    "wood": { "type": "wood", "title": "사업대성부 (事業亨通符)", "power": "추진력 강화 · 사업 번창 · 승진운", "desc": "사주에 부족한 木(목)의 생명력을 불어넣어 막힌 활로를 뚫고 주도권을 쥐게 하는 비급 부적입니다." },
-    "fire": { "type": "fire", "title": "소원성취부 (心想事成符)", "power": "열정 회복 · 명예 상승 · 소원 성취", "desc": "사주에 부족한 火(화)의 찬란한 빛을 밝혀 염원하던 소망을 일사천리로 성취시키는 부적입니다." },
-    "earth": { "type": "earth", "title": "금고수호부 (金庫安穩符)", "power": "자산 방어 · 누수 차단 · 재물 안착", "desc": "사주에 부족한 土(토)의 단단한 대지를 마련하여 헛돈 지출을 막고 자산을 지켜주는 부적입니다." },
-    "metal": { "type": "metal", "title": "재물만복부 (萬福大吉符)", "power": "재물 증식 · 금전운 대통 · 투자 대박", "desc": "사주에 부족한 金(금)의 황금 기운을 채워 사방에서 금전과 복록이 쏟아지게 하는 전통 부적입니다." },
-    "water": { "type": "water", "title": "천생화합부 (萬事和合符)", "power": "인연 결속 · 애정 화합 · 귀인 유대", "desc": "사주에 부족한 水(수)의 지혜를 채워 엇갈린 인연을 묶어주고 귀인의 조력을 이끄는 부적입니다." }
-}
-
-TAROT_CARDS = [
-    {
-        "name": "I. THE MAGICIAN (마법사)", "keyword": "탁월한 창조력 · 완벽한 주도권 · 만사형통",
-        "symbolism": "머리 위의 무한대 기호와 제단 위의 4대 원소는 모든 상황을 내 뜻대로 통제하고 현실로 구현할 수 있는 완성된 지혜를 뜻합니다.",
-        "reading_male": "전문 역량과 논리적인 언변이 빛을 발합니다. 중요한 회의나 계약 협상에서 상대방을 내 페이스로 리드할 수 있습니다.",
-        "reading_female": "능숙한 대인관계 조율력과 따뜻한 카리스마로 주변 사람들을 내 아군으로 만듭니다. 의견을 당당하게 피력하세요.",
-        "action_guide": "핵심 강점을 자신감 있게 표현하고 주도적으로 대화의 흐름을 이끌어가세요."
-    },
-    {
-        "name": "0. THE FOOL (바보)", "keyword": "새로운 여정의 서막 · 순수한 직관 · 무한한 잠재력",
-        "symbolism": "벼랑 끝에서 발걸음을 내딛는 청년과 흰 개는 과거의 관습과 두려움을 벗어던진 순수한 영혼의 새로운 도약을 상징합니다.",
-        "reading_male": "오랫동안 망설이던 프로젝트나 신규 투자의 첫 단추를 꿰기에 최상의 날입니다. 본인의 결단력을 믿고 추진하세요.",
-        "reading_female": "새로운 인연이나 소망에 뜻밖의 기회가 찾아옵니다. 첫 느낌을 따를 때 대길합니다.",
-        "action_guide": "새로운 제안에 열린 마음을 갖고 떠오르는 아이디어를 즉시 메모하세요."
-    },
-    {
-        "name": "XIX. THE SUN (태양)", "keyword": "최고의 번영 · 찬란한 영광 · 축하받을 낭보",
-        "symbolism": "백마를 탄 아이와 해바라기는 어둠을 걷어내고 승리와 축복을 맞이하는 절정의 운세를 의미합니다.",
-        "reading_male": "막혀 있던 자금 흐름이나 프로젝트의 난관이 시원하게 뚫리며 명예와 실속을 동시에 쟁취하는 날입니다.",
-        "reading_female": "내면의 밝은 에너지가 주변을 환하게 밝히며 축하받을 소식과 함께 화목이 넘칩니다.",
-        "action_guide": "햇살을 받으며 산책을 즐기고 긍정적인 미소로 주변과 소통하세요."
-    }
-]
-
-DAILY_OUTFITS_POOL = {
-    "male": {
-        "young": ["흰색 카라 반팔티 & 베이지 슬랙스", "네이비 린넨 셔츠 & 메탈 시계", "스카이블루 반팔 셔츠 & 그레이 팬츠", "블랙 무지 반팔티 & 와이드 슬랙스"],
-        "senior": ["흰색 린넨 셔츠 & 가죽 세미 워치", "네이비 쿨 셔츠 & 단정한 차콜 팬츠", "연베이지 셔츠 & 클래식 시계", "다크 올리브 린넨 셔츠 & 편안한 팬츠"]
-    },
-    "female": {
-        "young": ["흰색 린넨 블라우스 & 라이트 데님", "연한 하늘색 셔츠 & 화이트 슬랙스", "베이지 톤 반팔 니트 & 롱 스커트", "네이비 린넨 원피스 & 미니멀 목걸이"],
-        "senior": ["아이보리 린넨 블라우스 & 은은한 시계", "네이비 쉬폰 블라우스 & 베이지 슬랙스", "소프트 핑크 린넨 자켓 & 진주 귀걸이", "베이지 톤 오픈카라 셔츠 & 편안한 팬츠"]
-    }
-}
-
-LUCKY_ITEMS_POOL = ["실버 메탈 시계", "가죽 카드 지갑", "클래식 만년필", "은은한 시트러스 향수", "블루라이트 차단 안경", "산뜻한 손수건"]
-LUCKY_DIRECTIONS_POOL = ["정서쪽 (백호 방위)", "정동쪽 (청룡 방위)", "정남쪽 (주작 방위)", "정북쪽 (현무 방위)", "동남쪽 (생기 방위)", "서북쪽 (금전 방위)"]
-LUCKY_MENUS_POOL = ["속이 편안한 영양 솥밥", "신선한 샐러드와 차가운 물", "따뜻한 전복죽과 과일", "도라지차와 가벼운 정식", "시원한 메밀소바"]
-MINDSETS_POOL = ["원칙을 지키며 유연하게 대처하기", "상대의 말을 경청하고 공감하기", "맺고 끊음을 명확히 하기", "새로운 제안에 열린 마음 갖기", "서두르지 않고 꼼꼼히 확인하기"]
-ACTIONS_POOL = ["오늘 끝낼 우선순위 3가지 메모하기", "아침 5분간 가벼운 스트레칭하기", "점심 식사 후 10분간 햇볕 쬐며 산책하기", "책상 위 불필요한 서류 정리하기", "고마웠던 지인에게 안부 문자 보내기"]
-
-STAR_FORTUNE_DETAILS = {
-    "양자리": { "title": "과감한 결단력과 새로운 활로", "overview": "직관과 실행력이 최고조에 달하는 날입니다. 주저하던 일을 추진하기에 최적입니다.", "badge": "🔥 오늘 강력한 추진운", "focus": "압도적인 주도권으로 미뤄둔 제안을 성사시킵니다.", "item": "레드 포인트 소품", "time": "오전 09시 ~ 11시" },
-    "황소자리": { "title": "안정적인 실속과 재물 결실", "overview": "침착한 안목이 빛을 발하며 재정 흐름이 단단하게 자리 잡는 날입니다.", "badge": "💰 오늘 중요한 재물운", "focus": "자산 관리나 지출 절감에서 실속 있는 이득을 봅니다.", "item": "가죽 카드 지갑", "time": "오후 01시 ~ 03시" },
-    "쌍둥이자리": { "title": "반짝이는 영감과 유쾌한 소통", "overview": "두뇌 회전이 빠르고 언변이 좋아 사람들을 내 편으로 끌어들이는 날입니다.", "badge": "🗣️ 오늘 빛나는 소통운", "focus": "미팅이나 대화 자리에서 든든한 조력자를 만납니다.", "item": "스마트 워치", "time": "오전 11시 ~ 오후 01시" },
-    "게자리": { "title": "내면의 평온과 소중한 화합", "overview": "따뜻한 공감 능력으로 오해를 풀고 신뢰를 회복하는 하루입니다.", "badge": "🏡 오늘 편안한 가족운", "focus": "가까운 지인과의 대화에서 뜻밖의 힐링을 얻습니다.", "item": "은은한 향수", "time": "저녁 07시 ~ 09시" },
-    "사자자리": { "title": "당당한 리더십과 성과", "overview": "자신감 넘치는 태도가 주변을 이끌며 리더로서 진가를 입증합니다.", "badge": "👑 오늘 돋보이는 명예운", "focus": "프로젝트를 리드하며 탁월한 성과를 인정받습니다.", "item": "골드 메탈 소품", "time": "오후 02시 ~ 04시" },
-    "처녀자리": { "title": "빈틈없는 분석과 업무 완수", "overview": "디테일을 짚어내는 감각으로 복잡한 문제를 명쾌하게 정리합니다.", "badge": "📊 오늘 확실한 성과운", "focus": "계획 수립과 서류 검토에서 실수를 완벽히 차단합니다.", "item": "깔끔한 메모장", "time": "오전 10시 ~ 12시" },
-    "천칭자리": { "title": "균형 잡힌 조율과 파트너십", "overview": "상대방의 마음을 정확히 파악하여 윈-윈 관계를 이끌어냅니다.", "badge": "🤝 오늘 유리한 협력운", "focus": "의견 대립을 매끄럽게 중재하여 계약을 매듭짓습니다.", "item": "클래식 안경", "time": "오후 04시 ~ 06시" },
-    "전갈자리": { "title": "예리한 통찰과 기회 포착", "overview": "이면의 흐름을 꿰뚫어 보며 결정적인 승부수를 던지기 좋습니다.", "badge": "🎯 오늘 강력한 승부운", "focus": "남들이 놓친 틈새시장을 발견해 실리를 챙깁니다.", "item": "블랙 가죽 키링", "time": "오후 05시 ~ 07시" },
-    "사수자리": { "title": "넓은 시야와 새로운 도약", "overview": "미래를 향한 원대한 비전과 도전 의욕이 샘솟는 하루입니다.", "badge": "🚀 오늘 활발한 확장운", "focus": "새로운 분야의 공부나 비즈니스 구상에서 실마리를 잡습니다.", "item": "가벼운 텀블러", "time": "오후 01시 ~ 03시" },
-    "염소자리": { "title": "성실한 노력과 지위 안착", "overview": "꾸준히 쌓아온 노력이 결과물로 전환되며 신뢰를 한몸에 받습니다.", "badge": "📈 오늘 단단한 승진운", "focus": "상급자로부터 능력을 인정받아 권한이 격상됩니다.", "item": "원목 명함집", "time": "오전 08시 ~ 10시" },
-    "물병자리": { "title": "독창적인 발상과 혁신", "overview": "틀에 얽매이지 않는 신선한 아이디어가 주변에 영감을 줍니다.", "badge": "💡 오늘 빛나는 기획운", "focus": "정체된 일에 새로운 방식을 적용해 돌파구를 엽니다.", "item": "실버 링", "time": "오후 03시 ~ 05시" },
-    "물고기자리": { "title": "풍부한 감성과 따뜻한 인연", "overview": "마음이 이끄는 대로 행동할 때 뜻밖의 행운과 만남이 이어집니다.", "badge": "💖 오늘 설레는 애정운", "focus": "마음이 잘 통하는 귀인을 만나 깊은 유대를 형성합니다.", "item": "실버 목걸이", "time": "오후 06시 ~ 08시" }
-}
-
-@app.get("/")
-def serve_home():
-    if os.path.exists("index.html"):
-        return FileResponse("index.html")
-    return HTMLResponse("<h2>달하(DALHA) 서비스 준비 중</h2>")
-
-def calculate_biorhythm(birth_date: datetime.date, target_date: datetime.date):
-    days_lived = (target_date - birth_date).days
-    p_val = round(math.sin(2 * math.pi * days_lived / 23) * 100)
-    e_val = round(math.sin(2 * math.pi * days_lived / 28) * 100)
-    i_val = round(math.sin(2 * math.pi * days_lived / 33) * 100)
-
-    def get_status(val):
-        pct = round((val + 100) / 2)
-        if val >= 50: return {"val": val, "pct": pct, "status": "최고조"}
-        elif val > 0: return {"val": val, "pct": pct, "status": "상승기"}
-        elif val == 0: return {"val": val, "pct": 50, "status": "전환점"}
-        elif val > -50: return {"val": val, "pct": pct, "status": "하강기"}
-        else: return {"val": val, "pct": pct, "status": "침체기"}
-
-    is_critical_day = abs(p_val) <= 5 or abs(e_val) <= 5 or abs(i_val) <= 5
-    if is_critical_day:
-        overall_advice = "바이오리듬이 영점(0%) 전환선에 걸쳐 기운이 바뀌는 민감한 날입니다. 중요한 결정이나 무리한 일정은 한 번 더 점검하세요."
-    elif p_val >= 30 and e_val >= 30:
-        overall_advice = "신체와 감성 에너지가 충만합니다. 적극적인 활동과 미팅에서 최고의 성과를 거둘 수 있습니다."
-    elif i_val >= 30:
-        overall_advice = "두뇌 회전과 직관이 번뜩이는 날입니다. 기획, 문서 검토, 학습에 집중할 때 효율이 극대화됩니다."
-    elif p_val < 0 and e_val < 0 and i_val < 0:
-        overall_advice = "3대 에너지가 재충전 구간에 있습니다. 무리한 약속보다는 편안한 휴식으로 내실을 다지세요."
-    else:
-        overall_advice = "몸과 마음의 에너지가 안정된 균형을 유지하고 있습니다. 평소 루틴을 차분히 지켜나가기 좋은 하루입니다."
-
-    return {
-        "days_lived": days_lived, "physical": get_status(p_val),
-        "emotional": get_status(e_val), "intellectual": get_status(i_val),
-        "overall_summary": overall_advice
-    }
-
-def get_daewoon_info(y_cg: str, gender: str) -> tuple[str, bool]:
-    is_yang = y_cg in YANG_STEMS
-    is_male = (gender == "male")
-    return ("순행(順行)", True) if ((is_male and is_yang) or (not is_male and not is_yang)) else ("역행(逆行)", False)
-
-def compute_saju_full_payload(name: str, gender: str, year: int, month: int, day: int, calendar_type: str, sijin_idx: int):
-    base_date = datetime.date(1900, 1, 1)
-    today = datetime.date.today()
-    target_date = datetime.date(year, month, day)
-    diff_days = (target_date - base_date).days
-
-    d_cg_idx = diff_days % 10
-    d_jj_idx = (diff_days + 10) % 12
-    d_cg, d_jj = CHEONGAN_HANJA[d_cg_idx], JIJI_HANJA[d_jj_idx]
-
-    year_offset = (year - 4) % 60
-    y_cg_idx, y_jj_idx = year_offset % 10, year_offset % 12
-    y_cg, y_jj = CHEONGAN_HANJA[y_cg_idx], JIJI_HANJA[y_jj_idx]
-
-    month_adj = month
-    if calendar_type == "lunar": month_adj = (month + 1)
-    elif calendar_type == "leap": month_adj = (month + 2)
-
-    m_jj_idx = (month_adj) % 12
-    m_cg_idx = (y_cg_idx % 5 * 2 + 2 + (month_adj - 2)) % 10
-    m_cg, m_jj = CHEONGAN_HANJA[m_cg_idx], JIJI_HANJA[m_jj_idx]
-
-    if sijin_idx < 0:
-        h_pillar, h_cg, h_jj = "時未詳", "-", "-"
-        sijin_korean = "시간 모름"
-    else:
-        h_jj_idx = sijin_idx
-        h_cg_idx = (d_cg_idx % 5 * 2 + h_jj_idx) % 10
-        h_cg, h_jj = CHEONGAN_HANJA[h_cg_idx], JIJI_HANJA[h_jj_idx]
-        h_pillar = f"{h_cg}{h_jj}"
-        sijin_korean = SIJIN_KOREAN_MAP.get(sijin_idx, "사시(巳時)")
-
-    d_animal = ANIMAL_MAP.get(d_jj, "개")
-    current_age = today.year - year + 1
-
-    pillars_detail = {
-        "hour": { "cg": h_cg, "cg_elem": CHEONGAN_ELEMENTS.get(h_cg, "none"), "jj": h_jj, "jj_elem": JIJI_ELEMENTS.get(h_jj, "none"), "jijanggan": JIJANGGAN_FULL_MAP.get(h_jj, []) },
-        "day": { "cg": d_cg, "cg_elem": CHEONGAN_ELEMENTS.get(d_cg, "none"), "jj": d_jj, "jj_elem": JIJI_ELEMENTS.get(d_jj, "none"), "jijanggan": JIJANGGAN_FULL_MAP.get(d_jj, []) },
-        "month": { "cg": m_cg, "cg_elem": CHEONGAN_ELEMENTS.get(m_cg, "none"), "jj": m_jj, "jj_elem": JIJI_ELEMENTS.get(m_jj, "none"), "jijanggan": JIJANGGAN_FULL_MAP.get(m_jj, []) },
-        "year": { "cg": y_cg, "cg_elem": CHEONGAN_ELEMENTS.get(y_cg, "none"), "jj": y_jj, "jj_elem": JIJI_ELEMENTS.get(y_jj, "none"), "jijanggan": JIJANGGAN_FULL_MAP.get(y_jj, []) }
-    }
-
-    scores = {"wood": 0.0, "fire": 0.0, "earth": 0.0, "metal": 0.0, "water": 0.0}
-    for cg in [y_cg, m_cg, d_cg]: scores[CHEONGAN_ELEMENTS[cg]] += 25.0
-    if h_cg != "-": scores[CHEONGAN_ELEMENTS[h_cg]] += 25.0
-
-    for idx, jj in enumerate([y_jj, m_jj, d_jj]):
-        mult = 1.5 if idx == 1 else 1.0
-        for item in JIJANGGAN_FULL_MAP.get(jj, []):
-            scores[item["elem"]] += item["weight"] * mult
-
-    total_score = sum(scores.values())
-    elem_percentages = { k: round((v / total_score) * 100, 1) for k, v in scores.items() }
-
-    day_elem = CHEONGAN_ELEMENTS[d_cg]
-    support_score = scores.get(day_elem, 0)
-    singang_status = "신약(身弱) 사주" if support_score < 45 else ("신강(身强) 사주" if support_score > 65 else "중화(中和) 사주")
-
-    daewoon_dir_name, is_daewoon_forward = get_daewoon_info(y_cg, gender)
-
-    today_ordinal = today.toordinal()
-    daily_hash = (today_ordinal * 31 + diff_days * 17 + (11 if gender == "male" else 23)) % 1000003
-
-    age_group = "young" if current_age < 40 else "senior"
-    outfit_list = DAILY_OUTFITS_POOL[gender][age_group]
-    fashion_style = outfit_list[daily_hash % len(outfit_list)]
-
-    num1 = ((daily_hash % 9) + 1)
-    num2 = (((daily_hash // 10) % 9) + 1)
-    if num1 == num2: num2 = (num1 % 9) + 1
-    lucky_number = f"{min(num1, num2)}, {max(num1, num2)}"
-
-    lucky_direction = LUCKY_DIRECTIONS_POOL[(daily_hash + 1) % len(LUCKY_DIRECTIONS_POOL)]
-    lucky_item = LUCKY_ITEMS_POOL[(daily_hash + 2) % len(LUCKY_ITEMS_POOL)]
-    recommended_menu = LUCKY_MENUS_POOL[(daily_hash + 3) % len(LUCKY_MENUS_POOL)]
-    mindset = MINDSETS_POOL[(daily_hash + 4) % len(MINDSETS_POOL)]
-    action = ACTIONS_POOL[(daily_hash + 5) % len(ACTIONS_POOL)]
-
-    # 한 달에 약 3~4회(10~15% 확률)로 발동하는 시크릿 반전 코디 데이 계산
-    is_reverse_day = (daily_hash % 8 == 0)
-    reverse_color_map = {"wood": "코랄 레드 / 화이트", "fire": "딥 네이비 / 스카이블루", "earth": "포레스트 그린 / 올리브", "metal": "파스텔 핑크 / 와인", "water": "머스터드 옐로우 / 베이지"}
-    reverse_color = reverse_color_map.get(day_elem, "화사한 오렌지 / 옐로우")
-    
-    if is_reverse_day:
-        reverse_tip = f"✦ 오늘 일진이 평소 피하던 <strong>[{reverse_color}]</strong>을 완벽히 소화해 주는 황금의 날입니다! 아껴둔 밝은 아이템을 과감히 매치해보세요."
-    else:
-        reverse_tip = f"오늘의 일진은 사주 본원({d_cg})과 상생하는 <strong>차분한 뉴트럴 톤</strong>과 <strong>가죽/메탈 소품</strong>을 곁들일 때 기운이 가장 안정됩니다."
-
-    daily_score = 68 + (daily_hash % 31)
-    today_diff = (today - base_date).days
-    today_cg, today_jj = CHEONGAN_HANJA[today_diff % 10], JIJI_HANJA[(today_diff + 10) % 12]
-    
-    score_status_word = "대길(大吉)과 도약의 하루" if daily_score >= 88 else ("순조로운 화합과 발전의 하루" if daily_score >= 75 else "내실을 다지고 신중을 기할 하루")
-    daily_title = f"[{today_cg}{today_jj}일] {score_status_word}"
-
-    AM_ADVICES = ["아이디어를 공유하며 주변과 활발히 소통하세요.", "하루의 핵심 우선순위를 정하고 차분히 시작하세요.", "새로운 제안이 오면 긍정적인 시각으로 검토하세요."]
-    PM_ADVICES = [f"본원({d_cg})의 리더십으로 핵심 과제를 완수하세요.", "협력 파트너와의 조율에서 주도권을 쥐고 진행하세요.", "실속을 차리며 계약 및 약속을 확실히 매듭지으세요."]
-    EVE_ADVICES = ["가볍게 하루 일과를 정리하고 편안히 충전하세요.", "지친 몸과 마음을 따뜻한 차 한잔으로 달래세요.", "내일의 계획을 메모하며 평온한 저녁을 보내세요."]
-
-    am_text = AM_ADVICES[daily_hash % len(AM_ADVICES)]
-    pm_text = PM_ADVICES[(daily_hash // 3) % len(PM_ADVICES)]
-    eve_text = EVE_ADVICES[(daily_hash // 7) % len(EVE_ADVICES)]
-
-    three_stage_advice = (f"☀️ <strong>오전:</strong> {am_text}<br>"
-                          f"🌤️ <strong>오후:</strong> {pm_text}<br>"
-                          f"🌙 <strong>저녁:</strong> {eve_text}")
-
-    min_elem = min(elem_percentages, key=elem_percentages.get)
-    user_talisman = TALISMAN_OHEANG_MAP.get(min_elem, TALISMAN_OHEANG_MAP["metal"])
-    user_animal_icon = ANIMAL_ICONS.get(d_animal, "🐶")
-
-    biorhythm_data = calculate_biorhythm(target_date, today)
-    cal_name = "양력" if calendar_type == "solar" else ("음력(윤달)" if calendar_type == "leap" else "음력")
-    birth_summary_str = f"{year}년 {month}월 {day}일생 ({cal_name}) · {sijin_korean}생"
-
-    return {
-        "user_name": name, "gender": gender, "birth_summary": birth_summary_str, "current_age": current_age,
-        "singang_status": singang_status, "daewoon_direction": daewoon_dir_name, "is_daewoon_forward": is_daewoon_forward,
-        "saju_data": {
-            "year_pillar": f"{y_cg}{y_jj}", "month_pillar": f"{m_cg}{m_jj}", "day_pillar": f"{d_cg}{d_jj}", "hour_pillar": h_pillar,
-            "pillars_detail": pillars_detail, "animal_symbol": d_animal, "animal_icon": user_animal_icon,
-            "elements": elem_percentages
-        },
-        "daily_fortune": {
-            "score": daily_score, "title": daily_title, "advice": three_stage_advice,
-            "lucky_number": lucky_number, "lucky_direction": lucky_direction, "lucky_item": lucky_item,
-            "fashion_style": fashion_style, "recommended_menu": recommended_menu, "mindset": mindset, "action": action,
-            "talisman": user_talisman, "is_reverse_day": is_reverse_day, "reverse_tip": reverse_tip
-        },
-        "biorhythm": biorhythm_data
-    }
-
-# --- Pydantic 데이터 모델 ---
-class KakaoLoginRequest(BaseModel):
-    kakao_id: str
-    name: Optional[str] = "최정오"
-    gender: Optional[str] = "male"
-    birthyear: Optional[str] = "1978"
-    birthday: Optional[str] = "0813"
-    birthday_type: Optional[str] = "SOLAR"
-
-class RegisterSajuRequest(BaseModel):
-    user_id: int
-    name: str
-    gender: str
-    birth_year: int
-    birth_month: int
-    birth_day: int
-    calendar_type: str
-    sijin_index: int
-
-class OrderReportRequest(BaseModel):
-    user_id: int
-    report_key: str
-    cost: int
-    sub_option: Optional[str] = "기본"
-    partner_name: Optional[str] = "상대방"
-    relation: Optional[str] = "선택안함"
-
-# 오행 옷장 분석 요청 모델
-class WardrobeDiagnoseRequest(BaseModel):
-    user_id: int
-    category: str
-    color: str
-    material: str
-
-# --- API 엔드포인트 ---
-
-@app.post("/api/auth/kakao")
-def kakao_auth(req: KakaoLoginRequest):
-    conn = get_db()
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM users WHERE kakao_id = ?", (req.kakao_id,))
-    user = cursor.fetchone()
-    
-    if user:
-        user_id = user["id"]
-        saju_payload = compute_saju_full_payload(
-            user["name"], user["gender"], user["birth_year"],
-            user["birth_month"], user["birth_day"], user["calendar_type"], user["sijin_index"]
-        )
+        main { flex: 1; padding: 16px; display: flex; flex-direction: column; gap: 16px; }
+        .tab-view { display: flex; flex-direction: column; gap: 16px; width: 100%; }
         
-        cursor.execute("SELECT report_key, report_title, report_content, created_at FROM unlocked_reports WHERE user_id = ? ORDER BY id DESC", (user_id,))
-        unlocked_list = [dict(row) for row in cursor.fetchall()]
-        conn.close()
+        .card { background: #FFFFFF; border-radius: 20px; border: 1px solid #E2E8F0; padding: 18px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.03); position: relative; }
+        .login-gate-card { background: radial-gradient(circle at center, #172746 0%, #0D1527 100%); border: 1.5px solid #E2C068; border-radius: 24px; padding: 32px 20px; text-align: center; color: white; display: flex; flex-direction: column; align-items: center; gap: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.4); margin-top: 10px; }
+        .kakao-login-btn { width: 100%; background: #FEE500; color: #191919; border: none; font-size: 15px; font-weight: 800; padding: 15px; border-radius: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); transition: all 0.2s; }
+        .kakao-login-btn:hover { background: #FDD835; transform: translateY(-1px); }
+        .gift-badge { background: #FEF3C7; color: #78350F; font-size: 12px; font-weight: 800; padding: 4px 12px; border-radius: 9999px; display: inline-block; }
 
-        return {
-            "status": "existing_user",
-            "user_id": user_id,
-            "coin_balance": user["coin_balance"],
-            "profile": {
-                "name": user["name"], "gender": user["gender"], "birth_year": user["birth_year"],
-                "birth_month": user["birth_month"], "birth_day": user["birth_day"],
-                "calendar_type": user["calendar_type"], "sijin_index": user["sijin_index"]
-            },
-            "saju_analysis": saju_payload,
-            "unlocked_reports": unlocked_list
-        }
-    else:
-        b_year = int(req.birthyear) if req.birthyear and req.birthyear.isdigit() else 1978
-        b_month, b_day = 8, 13
-        if req.birthday and len(req.birthday) == 4:
-            b_month = int(req.birthday[:2])
-            b_day = int(req.birthday[2:])
+        .user-profile-bar { background: #FFFFFF; border-radius: 16px; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; border: 1.5px solid #E2E8F0; box-shadow: 0 2px 4px rgba(0,0,0,0.02); margin-bottom: 2px; }
+        .user-profile-name { font-size: 15.5px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif; }
+        .user-profile-birth { font-size: 12.5px; color: #64748B; font-weight: 500; }
 
-        cal_type = "lunar" if req.birthday_type == "LUNAR" else "solar"
-        gender_val = "female" if req.gender in ["female", "F"] else "male"
+        .form-group { background: #F8FAFC; border-radius: 14px; border: 1px solid #E2E8F0; padding: 12px; margin-bottom: 10px; text-align: left; }
+        .form-label { font-size: 12px; color: #64748B; font-weight: 600; display: block; margin-bottom: 4px; }
+        .form-input { width: 100%; background: transparent; border: none; font-size: 15px; font-weight: 700; color: #1E293B; outline: none; }
+        .form-select-box { width: 100%; background: #FFFFFF; border: 1px solid #CBD5E1; border-radius: 8px; padding: 10px 8px; font-size: 14px; font-weight: 700; color: #1E293B; outline: none; cursor: pointer; }
+        .cal-toggle { display: flex; background: #E2E8F0; padding: 2px; border-radius: 8px; font-size: 12px; font-weight: 700; gap: 2px; }
+        .cal-btn { padding: 6px 12px; border-radius: 6px; border: none; background: transparent; color: #64748B; cursor: pointer; transition: all 0.2s; }
+        .cal-btn.active { background: #FFFFFF; color: #111D1E; box-shadow: 0 1px 2px rgba(0,0,0,0.05); font-weight: 800; }
+        .btn-primary { width: 100%; background: linear-gradient(135deg, #1B4D3E 0%, #111D1E 100%); color: #FDE68A; border: 1px solid #D4AF37; font-size: 15px; font-weight: 800; padding: 15px; border-radius: 16px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.2); margin-top: 8px; }
 
-        cursor.execute("""
-        INSERT INTO users (kakao_id, name, gender, birth_year, birth_month, birth_day, calendar_type, sijin_index, coin_balance)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1000)
-        """, (req.kakao_id, req.name, gender_val, b_year, b_month, b_day, cal_type, 5))
-        conn.commit()
-        new_user_id = cursor.lastrowid
-        conn.close()
+        .badge-elem { width: 42px; height: 42px; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; font-size: 19px; font-weight: 700; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+        .badge-jjg { width: 34px; height: 26px; border-radius: 6px; display: inline-flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; }
+        
+        .elem-wood { background: #ECFDF5; color: #047857; border: 1.5px solid #A7F3D0; }
+        .elem-fire { background: #FEF2F2; color: #DC2626; border: 1.5px solid #FECDD3; }
+        .elem-earth { background: #FFFBEB; color: #D97706; border: 1.5px solid #FDE68A; }
+        .elem-metal { background: #F1F5F9; color: #475569; border: 1.5px solid #CBD5E1; }
+        .elem-water { background: #EFF6FF; color: #2563EB; border: 1.5px solid #BFDBFE; }
+        .elem-none { background: #F8FAFC; color: #94A3B8; border: 1px solid #E2E8F0; }
+        
+        .daily-banner { background: linear-gradient(135deg, #0D1527 0%, #17233D 100%); border: 1.5px solid #D4AF37; border-radius: 20px; padding: 20px; color: white; display: flex; flex-direction: column; box-shadow: 0 10px 20px -3px rgba(13,21,39,0.25); margin-top: 4px; }
+        
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .grid-cell { background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 14px; padding: 12px; font-size: 14px; text-align: left; }
+        .action-card { background: #FFFBEB; border-left: 4px solid #F59E0B; border-radius: 14px; padding: 14px; text-align: left; font-size: 14px; }
 
-        return {
-            "status": "new_user_needs_confirm",
-            "user_id": new_user_id,
-            "coin_balance": 1000,
-            "kakao_prefill": {
-                "name": req.name, "gender": gender_val, "birth_year": b_year,
-                "birth_month": b_month, "birth_day": b_day, "calendar_type": cal_type, "sijin_index": 5
+        .biorhythm-card { background: #FFFFFF; border-radius: 20px; border: 1px solid #E2E8F0; padding: 18px; text-align: left; display: flex; flex-direction: column; gap: 14px; }
+        .bio-legend-box { display: flex; justify-content: center; gap: 12px; font-size: 12px; font-weight: 700; }
+        .bio-pill-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+        .bio-pill-cell { background: #F8FAFC; border-radius: 10px; padding: 8px 6px; text-align: center; border: 1px solid #E2E8F0; }
+
+        .drawer-card { background: #FFFFFF; border-radius: 18px; border: 1px solid #E2E8F0; overflow: hidden; transition: all 0.25s ease; }
+        .drawer-header { padding: 16px 18px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; background: #FFFFFF; user-select: none; }
+        .drawer-header:hover { background: #F8FAFC; }
+        .drawer-title-box { display: flex; align-items: center; gap: 10px; }
+        .drawer-icon-circle { width: 36px; height: 36px; border-radius: 10px; background: #F1F5F9; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+        .drawer-title { font-size: 15px; font-weight: 800; color: #0F172A; }
+        .drawer-sub { font-size: 12px; color: #64748B; margin-top: 2px; }
+        .drawer-arrow { font-size: 13px; color: #94A3B8; font-weight: 800; transition: transform 0.3s ease; }
+        .drawer-card.open .drawer-arrow { transform: rotate(180deg); color: #2D6A4F; }
+        .drawer-body { padding: 0 16px 16px 16px; border-top: 1px solid #F1F5F9; }
+
+        /* 비주얼 옷장 위저드 스타일 */
+        .tile-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 6px; }
+        .tile-btn { background: #F8FAFC; border: 1.5px solid #E2E8F0; border-radius: 12px; padding: 12px 6px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; cursor: pointer; transition: all 0.2s; font-size: 12px; font-weight: 700; color: #334155; }
+        .tile-btn .t-icon { font-size: 22px; }
+        .tile-btn.selected { background: #FEF3C7; border-color: #D97706; color: #78350F; font-weight: 800; transform: scale(1.02); }
+
+        .color-chip-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-top: 6px; }
+        .color-chip { border: 1.5px solid #CBD5E1; border-radius: 10px; padding: 8px 4px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; cursor: pointer; font-size: 11px; font-weight: 700; color: #475569; background: #FFFFFF; }
+        .color-dot { width: 18px; height: 18px; border-radius: 9999px; border: 1px solid rgba(0,0,0,0.15); }
+        .color-chip.selected { border-color: #2D6A4F; background: #EBF5EE; color: #166534; font-weight: 800; box-shadow: 0 0 0 1px #2D6A4F; }
+
+        .mat-chip-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; margin-top: 6px; }
+        .mat-chip { border: 1.5px solid #CBD5E1; border-radius: 10px; padding: 10px 8px; display: flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer; font-size: 12px; font-weight: 700; color: #475569; background: #FFFFFF; }
+        .mat-chip.selected { border-color: #2D6A4F; background: #EBF5EE; color: #166534; font-weight: 800; box-shadow: 0 0 0 1px #2D6A4F; }
+
+        .wardrobe-item-card { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 14px; padding: 12px 14px; display: flex; justify-content: space-between; align-items: center; text-align: left; margin-bottom: 8px; }
+
+        .zodiac-grid-2x6 { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; margin-top: 6px; }
+        .zodiac-btn { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 10px 2px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; }
+        .zodiac-btn:hover, .zodiac-btn:active { background: #0D1527; border-color: #E2C068; transform: translateY(-2px); }
+        .zodiac-btn:hover .zodiac-label, .zodiac-btn:active .zodiac-label { color: #F6E2A1; }
+        .zodiac-btn:hover svg path, .zodiac-btn:hover svg circle, .zodiac-btn:hover svg line { stroke: #F6E2A1; fill: #F6E2A1; }
+        .zodiac-icon { font-size: 19px; line-height: 1.2; }
+        .zodiac-label { font-size: 11px; font-weight: 700; color: #334155; margin-top: 4px; }
+
+        .sub-tab-box { display: flex; background: #F1F5F9; border-radius: 12px; padding: 3px; gap: 4px; margin-top: 12px; margin-bottom: 8px; }
+        .sub-tab-btn { flex: 1; padding: 8px; font-size: 13px; font-weight: 700; color: #64748B; border: none; background: transparent; border-radius: 8px; cursor: pointer; }
+        .sub-tab-btn.active { background: #0D1527; color: #F6E2A1; box-shadow: 0 1px 3px rgba(0,0,0,0.15); font-weight: 800; }
+
+        .ad-slot-box { background: #F8FAFC; border: 1px dashed #CBD5E1; border-radius: 14px; padding: 12px; text-align: center; color: #94A3B8; font-size: 12px; font-weight: 600; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 64px; }
+
+        .tarot-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 12px; }
+        .tarot-wrapper { perspective: 1000px; aspect-ratio: 2/3; cursor: pointer; }
+        .flipper { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; transition: transform 0.6s ease; border-radius: 10px; }
+        .flipper.flipped { transform: rotateY(180deg); }
+        .card-face { position: absolute; inset: 0; backface-visibility: hidden; border-radius: 10px; overflow: hidden; }
+        .card-back { background: #0D1527; border: 2px solid #E2C068; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        .card-front { transform: rotateY(180deg); background: white; border: 2px solid #E2C068; display: flex; align-items: center; justify-content: center; }
+
+        .talisman-banner { background: linear-gradient(135deg, #FFFDF5 0%, #FFFBEB 100%); border: 2px solid #FCD34D; border-radius: 16px; padding: 16px; text-align: center; display: flex; flex-direction: column; gap: 12px; margin-top: 12px; }
+        .talisman-art { height: 120px; background: rgba(254,243,199,0.5); border-radius: 14px; border: 1px solid rgba(253,230,138,0.8); display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+
+        .teaser-blur-box { background: #FFFFFF; border: 1.5px solid #FCD34D; border-radius: 18px; padding: 16px; text-align: left; position: relative; overflow: hidden; margin-bottom: 12px; }
+        .teaser-blur-text { filter: blur(4px); user-select: none; color: #64748B; font-size: 13.5px; line-height: 1.7; }
+        .teaser-lock-badge { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(255,255,255,0.75); backdrop-filter: blur(2px); }
+
+        nav#bottomNavBar { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 448px; background: rgba(13,21,39,0.98); backdrop-filter: blur(8px); border-top: 1px solid rgba(226,192,104,0.3); padding: 10px 24px; display: flex; justify-content: space-between; align-items: center; z-index: 1000; }
+        .tab-btn { background: none; border: none; display: flex; flex-direction: column; align-items: center; gap: 4px; color: #94A3B8; font-size: 12px; cursor: pointer; font-weight: 500; }
+        .tab-btn.active { color: #F6E2A1; font-weight: 800; }
+        .tab-btn svg { width: 23px; height: 23px; stroke: currentColor; fill: none; stroke-width: 2; }
+
+        .modal-bg { position: fixed; inset: 0; background: rgba(11,19,21,0.75); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; padding: 16px; z-index: 2000; }
+        .modal-content { background: #FAF9F6; border-radius: 24px; padding: 20px; width: 100%; max-width: 350px; text-align: center; display: flex; flex-direction: column; gap: 14px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.4); border: 1px solid #E2E8F0; }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+
+        <header>
+            <div class="logo-box" onclick="goToHomeAndScrollTop()">
+                <svg width="34" height="34" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink: 0;">
+                    <circle cx="20" cy="20" r="18" stroke="#D4AF37" stroke-width="1.2" stroke-opacity="0.5"/>
+                    <circle cx="20" cy="20" r="15.5" stroke="#D4AF37" stroke-width="1.8"/>
+                    <path d="M20 7L22.5 17.5L33 20L22.5 22.5L20 33L17.5 22.5L7 20L17.5 17.5Z" fill="#D4AF37" fill-opacity="0.2" stroke="#D4AF37" stroke-width="1.4" stroke-linejoin="round"/>
+                    <path d="M20 6C15.5 8 15.5 14 20 16C17.5 14 17.5 9 20 6Z" fill="#FFEAA7" stroke="#D4AF37" stroke-width="0.8"/>
+                    <circle cx="20" cy="20" r="2" fill="#D4AF37"/>
+                </svg>
+                <div style="display: flex; flex-direction: column; justify-content: center; text-align: left; line-height: 1.15;">
+                    <div style="display: flex; align-items: baseline; gap: 6px;">
+                        <span style="font-size: 19px; font-weight: 800; color: #FFFFFF; font-family: 'Noto Serif KR', serif; letter-spacing: 0.5px;">달하</span>
+                        <span style="font-size: 9.5px; font-weight: 700; color: #D4AF37; letter-spacing: 1.8px;">DALHA</span>
+                    </div>
+                    <span style="font-size: 9.5px; color: #94A3B8; font-weight: 400; letter-spacing: -0.3px; margin-top: 3px;">어두운 밤길을 밝히는 운명 나침반</span>
+                </div>
+            </div>
+
+            <div id="headerAuthArea">
+                <button onclick="openChargeStore()" class="coin-btn">
+                    <span id="headerCoinSvg"></span>
+                    <span id="coinHeader">1000</span>
+                    <span class="charge-tag">충전</span>
+                </button>
+            </div>
+        </header>
+
+        <main>
+            <!-- 최초 카카오 로그인 화면 -->
+            <div id="view-login-gate" class="login-gate-card">
+                <div style="width: 60px; height: 60px; margin: 0 auto 4px; display: flex; align-items: center; justify-content: center; border-radius: 16px; background: radial-gradient(circle, rgba(212,175,55,0.2) 0%, rgba(212,175,55,0.05) 100%); border: 1px solid rgba(212,175,55,0.3);">
+                    <svg width="38" height="38" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="20" cy="20" r="18" stroke="#D4AF37" stroke-width="1.2" stroke-opacity="0.5"/>
+                        <circle cx="20" cy="20" r="15.5" stroke="#D4AF37" stroke-width="1.8"/>
+                        <path d="M20 7L22.5 17.5L33 20L22.5 22.5L20 33L17.5 22.5L7 20L17.5 17.5Z" fill="#D4AF37" fill-opacity="0.2" stroke="#D4AF37" stroke-width="1.4" stroke-linejoin="round"/>
+                        <path d="M20 6C15.5 8 15.5 14 20 16C17.5 14 17.5 9 20 6Z" fill="#FFEAA7" stroke="#D4AF37" stroke-width="0.8"/>
+                        <circle cx="20" cy="20" r="2" fill="#D4AF37"/>
+                    </svg>
+                </div>
+
+                <h2 style="font-size: 22px; font-weight: 800; color: #FFFFFF; font-family: 'Noto Serif KR', serif; margin-bottom: 2px;">달하 (DALHA)</h2>
+                <p style="font-size: 13px; color: #94A3B8; margin-bottom: 4px;">달빛이 비추는 당신의 운명과 천운의 길목<br>카카오로 3초 만에 시작하세요</p>
+                
+                <div class="gift-badge">
+                    🎁 신규 가입 축하 1,000 복채 즉시 지급
+                </div>
+
+                <button onclick="loginWithKakaoReal()" class="kakao-login-btn">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="#191919"><path d="M12 3C6.5 3 2 6.6 2 11c0 2.8 1.9 5.3 4.8 6.7L6 21.5c-.1.3.2.6.5.4l4.4-2.9c.4 0 .7.1 1.1.1 5.5 0 10-3.6 10-8s-4.5-8-10-8z"/></svg>
+                    <span>카카오로 3초 만에 시작하기</span>
+                </button>
+            </div>
+
+            <!-- 신규 회원 사주 확인 폼 -->
+            <div id="onboardingInputView" class="card hidden" style="text-align: center;">
+                <div class="gift-badge" style="margin-bottom: 12px;">🎁 카카오 연동 완료 (+1,000 복채 지급)</div>
+                <h2 style="font-size: 21px; font-weight: 800; margin-bottom: 2px; font-family: 'Noto Serif KR', serif;">사주 명식 확인</h2>
+                <p style="font-size: 13.5px; color: #64748B; margin-bottom: 16px;">가져온 정보가 맞는지 확인 후 <strong>태어난 시간</strong>을 선택하세요</p>
+
+                <div class="form-group"><label class="form-label">이름</label><input type="text" id="inputName" class="form-input" value="최정오"></div>
+                <div class="form-group">
+                    <label class="form-label">성별</label>
+                    <div class="cal-toggle" style="width: 100%;">
+                        <button type="button" onclick="setGenderType('male')" id="btnGenderMale" class="cal-btn active" style="flex: 1;">남성 (男)</button>
+                        <button type="button" onclick="setGenderType('female')" id="btnGenderFemale" class="cal-btn" style="flex: 1;">여성 (女)</button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                        <label class="form-label" style="margin: 0;">생년월일</label>
+                        <div class="cal-toggle">
+                            <button type="button" onclick="setCalType('solar')" id="btnCalSolar" class="cal-btn active">양력</button>
+                            <button type="button" onclick="setCalType('lunar')" id="btnCalLunar" class="cal-btn">음력(평달)</button>
+                            <button type="button" onclick="setCalType('leap')" id="btnCalLeap" class="cal-btn">음력(윤달)</button>
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 6px; margin-top: 4px;">
+                        <select id="birthYearSelect" class="form-select-box"></select>
+                        <select id="birthMonthSelect" class="form-select-box"></select>
+                        <select id="birthDaySelect" class="form-select-box"></select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">태어난 시간 (30분 보정 적용)</label>
+                    <select id="inputSijin" class="form-select-box">
+                        <option value="-1">태어난 시간 모름</option>
+                        <option value="0">자시 (23:30 ~ 01:29)</option>
+                        <option value="1">축시 (01:30 ~ 03:29)</option>
+                        <option value="2">인시 (03:30 ~ 05:29)</option>
+                        <option value="3">묘시 (05:30 ~ 07:29)</option>
+                        <option value="4">진시 (07:30 ~ 09:29)</option>
+                        <option value="5" selected>사시 (09:30 ~ 11:29)</option>
+                        <option value="6">오시 (11:30 ~ 13:29)</option>
+                        <option value="7">미시 (13:30 ~ 15:29)</option>
+                        <option value="8">신시 (15:30 ~ 17:29)</option>
+                        <option value="9">유시 (17:30 ~ 19:29)</option>
+                        <option value="10">술시 (19:30 ~ 21:29)</option>
+                        <option value="11">해시 (21:30 ~ 23:29)</option>
+                    </select>
+                </div>
+                <button onclick="submitSajuRegistration()" class="btn-primary">정밀 감명서 발행하기 ✨</button>
+            </div>
+
+            <!-- 탭 1: 오늘운세 -->
+            <div id="view-today" class="tab-view hidden">
+                <div class="user-profile-bar">
+                    <div class="user-profile-name" id="userProfileBarName">최정오님 (남성)</div>
+                    <div class="user-profile-birth" id="userProfileBarBirth">1978년 8월 13일생 · 사시(巳時)생</div>
+                </div>
+
+                <div class="daily-banner">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                        <div style="display: flex; align-items: center; gap: 6px;">
+                            <span style="color: #E2C068; font-size: 15px;">✦</span>
+                            <span style="font-size: 13.5px; color: #F6E2A1; font-weight: 700;">오늘의 일진</span>
+                        </div>
+                        <span id="resScoreBadge" style="background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%); color: #FFFFFF; font-size: 12px; font-weight: 800; padding: 3px 12px; border-radius: 9999px;">운세 88점</span>
+                    </div>
+                    <h3 id="resTitle" style="font-size: 16.5px; font-weight: 800; text-align: left; line-height: 1.5; margin-bottom: 12px; color: #FFFFFF;">도약의 하루</h3>
+                    <div id="resAdvice" style="font-size: 13.5px; color: #E2E8F0; font-weight: 400; line-height: 1.65; text-align: left;"></div>
+                </div>
+
+                <!-- 1. 맞춤 추천 코디 카드 (내 옷장 연동 픽 포함) -->
+                <div class="card" style="padding: 14px 16px; text-align: left;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                        <span style="font-size: 12px; color: #64748B; font-weight: 700;">👔 맞춤 추천 코디</span>
+                        <span id="reverseDayBadge" class="hidden" style="font-size: 11px; background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%); color: #78350F; font-weight: 800; padding: 2px 8px; border-radius: 9999px; border: 1px solid #FCD34D;">✦ 시크릿 반전 코디 데이</span>
+                    </div>
+                    <p id="resStyle" style="font-weight: 800; font-size: 14.5px; color: #0F172A; margin-bottom: 6px;">흰색 카라 반팔티 & 베이지 슬랙스</p>
+                    
+                    <!-- 내 옷장 자동 매칭 추천 한줄 -->
+                    <div id="wardrobeDailyMatchPick" style="font-size: 12.5px; color: #065F46; background: #ECFDF5; padding: 8px 10px; border-radius: 8px; border-left: 3.5px solid #10B981; margin-bottom: 4px;">
+                        👗 <strong>오늘의 옷장 픽:</strong> 내 옷장에 아이템을 등록하면 오늘 일진에 딱 맞는 아이템을 추천해 드려요!
+                    </div>
+
+                    <p id="resReverseTip" style="font-size: 12px; color: #475569; line-height: 1.5; background: #F8FAFC; padding: 6px 10px; border-radius: 6px;">
+                        오늘의 일진에 맞춘 상생 코디 가이드를 불러오는 중입니다.
+                    </p>
+                </div>
+
+                <!-- 2. 내 옷장 아이템 서랍 (위치: 맞춤 추천 코디 바로 아래) -->
+                <div id="drawerWardrobe" class="drawer-card" style="border: 1.5px solid #CBD5E1;">
+                    <div class="drawer-header" onclick="toggleDrawer('drawerWardrobe')" style="background: #FAF9F6;">
+                        <div class="drawer-title-box">
+                            <div class="drawer-icon-circle" style="background: #FEF3C7; color: #78350F;">👗</div>
+                            <div style="text-align: left;">
+                                <div style="display: flex; align-items: center; gap: 6px;">
+                                    <h4 class="drawer-title" style="color: #0F172A;">내 옷장 아이템</h4>
+                                    <span id="wardrobeCountBadge" style="font-size: 11px; background: #0D1527; color: #F6E2A1; font-weight: 800; padding: 1px 6px; border-radius: 9999px;">0개</span>
+                                </div>
+                                <p class="drawer-sub">자주 착용하는 아이템을 등록하고 매일 매칭받기</p>
+                            </div>
+                        </div>
+                        <span class="drawer-arrow">▼</span>
+                    </div>
+                    <div class="drawer-body hidden" id="drawerBodyWardrobe" style="padding: 14px 16px;">
+                        <button onclick="openWardrobeAddWizard()" style="width: 100%; background: #2D6A4F; color: white; border: none; font-size: 13.5px; font-weight: 800; padding: 11px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; margin-bottom: 12px;">
+                            <span>➕</span> 새 아이템 옷장에 등록하기 (3초)
+                        </button>
+
+                        <!-- 저장된 옷장 아이템 리스트 -->
+                        <div id="wardrobeItemsList" style="display: flex; flex-direction: column; gap: 6px;"></div>
+                    </div>
+                </div>
+
+                <!-- 3. 행운 그리드 -->
+                <div class="grid-2">
+                    <div class="grid-cell"><span style="font-size: 12px; color: #94A3B8; display: block;">🍀 행운의 아이템</span><p id="resItem" style="font-weight: 700; margin-top: 2px; font-size: 13.5px;">실버 메탈 시계</p></div>
+                    <div class="grid-cell"><span style="font-size: 12px; color: #94A3B8; display: block;">🔢 행운의 숫자</span><p id="resNumber" style="font-weight: 700; margin-top: 2px; font-size: 14px;">4, 9</p></div>
+                    <div class="grid-cell"><span style="font-size: 12px; color: #94A3B8; display: block;">🧭 행운의 방위</span><p id="resDirection" style="font-weight: 700; margin-top: 2px; font-size: 14px;">정서쪽 (백호 방위)</p></div>
+                    <div class="grid-cell"><span style="font-size: 12px; color: #94A3B8; display: block;">🍲 추천 메뉴</span><p id="resMenu" style="font-weight: 700; margin-top: 2px; font-size: 13.5px;">속이 편안한 영양 솥밥</p></div>
+                    <div class="grid-cell" style="grid-column: span 2;"><span style="font-size: 12px; color: #94A3B8; display: block;">💡 마인드 처세</span><p id="resMindset" style="font-weight: 700; margin-top: 2px; font-size: 13.5px; color: #0F172A;">원칙을 지키며 유연하게 대처하기</p></div>
+                </div>
+
+                <!-- 오늘의 조언 카드 -->
+                <div class="action-card">
+                    <span style="font-weight: 800; color: #78350F; display: block; margin-bottom: 3px; font-size: 14px;">✨ 오늘의 조언</span>
+                    <p id="resGaewoon" style="color: #92400E; font-weight: 500; font-size: 14px; line-height: 1.6;">오늘 완료해야 할 우선순위 3가지 메모하기</p>
+                </div>
+
+                <!-- 바이오리듬 카드 -->
+                <div class="biorhythm-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <h4 style="font-size: 15px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif;">🧬 오늘의 바이오리듬</h4>
+                        <span id="bioDaysLived" style="font-size: 11px; background: #F1F5F9; color: #475569; padding: 3px 8px; border-radius: 9999px; font-weight: 700;">생애 계산중</span>
+                    </div>
+
+                    <div class="bio-legend-box">
+                        <span style="color: #DC2626;">● 신체(23일)</span>
+                        <span style="color: #16A34A;">● 감성(28일)</span>
+                        <span style="color: #2563EB;">● 지성(33일)</span>
+                    </div>
+
+                    <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 14px; padding: 6px; position: relative;">
+                        <svg id="biorhythmWaveSvg" viewBox="0 0 300 110" style="width: 100%; height: 110px; overflow: visible;"></svg>
+                        <div style="display: flex; justify-content: space-between; font-size: 10.5px; color: #94A3B8; font-weight: 600; padding: 0 4px; margin-top: 2px;">
+                            <span>-15일전</span>
+                            <span style="color: #DC2626; font-weight: 800;">📍 TODAY (오늘)</span>
+                            <span>+15일후</span>
+                        </div>
+                    </div>
+
+                    <div class="bio-pill-grid">
+                        <div class="bio-pill-cell"><span style="font-size: 11px; color: #64748B; display: block;">💪 신체</span><span id="bioPhysicalStatus" style="font-size: 12.5px; font-weight: 800; color: #DC2626;">-</span></div>
+                        <div class="bio-pill-cell"><span style="font-size: 11px; color: #64748B; display: block;">💖 감성</span><span id="bioEmotionalStatus" style="font-size: 12.5px; font-weight: 800; color: #16A34A;">-</span></div>
+                        <div class="bio-pill-cell"><span style="font-size: 11px; color: #64748B; display: block;">🧠 지성</span><span id="bioIntellectualStatus" style="font-size: 12.5px; font-weight: 800; color: #2563EB;">-</span></div>
+                    </div>
+
+                    <div style="background: #F8FAFC; border-radius: 10px; padding: 10px 12px; font-size: 13px; color: #334155; line-height: 1.6; border-left: 3.5px solid #2D6A4F;">
+                        <span style="font-weight: 800; color: #2D6A4F;">💡 바이오리듬 해석:</span><br>
+                        <span id="bioOverallText">생체 에너지를 정밀 분석 중입니다.</span>
+                    </div>
+                </div>
+
+                <!-- 광고 슬롯 1 -->
+                <div class="ad-slot-box"><span>📢 광고 영역 (Google AdSense / Kakao AdFit 슬롯 1)</span></div>
+
+                <!-- 스페셜 운세 서랍들 -->
+                <div style="display: flex; flex-direction: column; gap: 10px;">
+                    <div id="drawerTarot" class="drawer-card">
+                        <div class="drawer-header" onclick="toggleDrawer('drawerTarot')">
+                            <div class="drawer-title-box">
+                                <div class="drawer-icon-circle">🔮</div>
+                                <div style="text-align: left;"><h4 class="drawer-title">오늘의 타로 카드</h4><p class="drawer-sub">1일 1회 무료 카드 뽑기</p></div>
+                            </div>
+                            <span class="drawer-arrow">▼</span>
+                        </div>
+                        <div class="drawer-body hidden" id="drawerBodyTarot">
+                            <div class="tarot-grid">
+                                <div onclick="handleTarotDraw(1)" class="tarot-wrapper"><div id="flipper1" class="flipper"><div class="card-face card-back" id="tarotSvgSlot1"></div><div id="front1" class="card-face card-front"></div></div></div>
+                                <div onclick="handleTarotDraw(2)" class="tarot-wrapper"><div id="flipper2" class="flipper"><div class="card-face card-back" id="tarotSvgSlot2"></div><div id="front2" class="card-face card-front"></div></div></div>
+                                <div onclick="handleTarotDraw(3)" class="tarot-wrapper"><div id="flipper3" class="flipper"><div class="card-face card-back" id="tarotSvgSlot3"></div><div id="front3" class="card-face card-front"></div></div></div>
+                            </div>
+                            <div id="tarotResultBox" class="hidden"></div>
+                        </div>
+                    </div>
+
+                    <div id="drawerTalisman" class="drawer-card">
+                        <div class="drawer-header" onclick="toggleDrawer('drawerTalisman')">
+                            <div class="drawer-title-box">
+                                <div class="drawer-icon-circle">🎴</div>
+                                <div style="text-align: left;"><h4 class="drawer-title">오늘의 맞춤 부적</h4><p class="drawer-sub">나의 오행 맞춤 수제 비급 부적</p></div>
+                            </div>
+                            <span class="drawer-arrow">▼</span>
+                        </div>
+                        <div class="drawer-body hidden" id="drawerBodyTalisman">
+                            <div class="talisman-banner">
+                                <h3 id="talismanBannerHeader" style="font-size: 15px; font-weight: 800; color: #78350F; font-family: 'Noto Serif KR', serif;">오늘의 맞춤 경면주사 부적</h3>
+                                <div class="talisman-art"><div id="talismanBannerPreview" style="width: 72px; height: 110px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.15)); transform: rotate(1.5deg);"></div></div>
+                                <p style="font-size: 12px; color: #92400E;">매일 밤 12시 정각에 새로운 기운으로 업데이트됩니다.</p>
+                                <button onclick="openTalismanModal()" style="width: 100%; background: #D97706; color: white; border: none; font-size: 14px; font-weight: 800; padding: 12px; border-radius: 14px; cursor: pointer;">🎴 부적 크게보기 및 다운로드</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="drawerZodiac" class="drawer-card">
+                        <div class="drawer-header" onclick="toggleDrawer('drawerZodiac')">
+                            <div class="drawer-title-box">
+                                <div class="drawer-icon-circle">✨</div>
+                                <div style="text-align: left;"><h4 class="drawer-title">띠별 운세 & 별자리 운세</h4><p class="drawer-sub">간지 띠별 & 천체 별자리 실시간 감명</p></div>
+                            </div>
+                            <span class="drawer-arrow">▼</span>
+                        </div>
+                        <div class="drawer-body hidden" id="drawerBodyZodiac">
+                            <div class="sub-tab-box">
+                                <button type="button" onclick="switchZodiacSubTab('zodiac')" id="btnSubZodiac" class="sub-tab-btn active">🐭 띠별 운세</button>
+                                <button type="button" onclick="switchZodiacSubTab('star')" id="btnSubStar" class="sub-tab-btn">✦ 별자리 운세</button>
+                            </div>
+
+                            <div id="gridZodiacBox" class="zodiac-grid-2x6">
+                                <div onclick="openZodiacModal('zodiac', '쥐')" class="zodiac-btn"><span class="zodiac-icon">🐭</span><span class="zodiac-label">쥐</span></div>
+                                <div onclick="openZodiacModal('zodiac', '소')" class="zodiac-btn"><span class="zodiac-icon">🐮</span><span class="zodiac-label">소</span></div>
+                                <div onclick="openZodiacModal('zodiac', '호랑이')" class="zodiac-btn"><span class="zodiac-icon">🐯</span><span class="zodiac-label">호랑이</span></div>
+                                <div onclick="openZodiacModal('zodiac', '토끼')" class="zodiac-btn"><span class="zodiac-icon">🐰</span><span class="zodiac-label">토끼</span></div>
+                                <div onclick="openZodiacModal('zodiac', '용')" class="zodiac-btn"><span class="zodiac-icon">🐲</span><span class="zodiac-label">용</span></div>
+                                <div onclick="openZodiacModal('zodiac', '뱀')" class="zodiac-btn"><span class="zodiac-icon">🐍</span><span class="zodiac-label">뱀</span></div>
+                                <div onclick="openZodiacModal('zodiac', '말')" class="zodiac-btn"><span class="zodiac-icon">🐴</span><span class="zodiac-label">말</span></div>
+                                <div onclick="openZodiacModal('zodiac', '양')" class="zodiac-btn"><span class="zodiac-icon">🐑</span><span class="zodiac-label">양</span></div>
+                                <div onclick="openZodiacModal('zodiac', '원숭이')" class="zodiac-btn"><span class="zodiac-icon">🐵</span><span class="zodiac-label">원숭이</span></div>
+                                <div onclick="openZodiacModal('zodiac', '닭')" class="zodiac-btn"><span class="zodiac-icon">🐔</span><span class="zodiac-label">닭</span></div>
+                                <div onclick="openZodiacModal('zodiac', '개')" class="zodiac-btn"><span class="zodiac-icon">🐶</span><span class="zodiac-label">개</span></div>
+                                <div onclick="openZodiacModal('zodiac', '돼지')" class="zodiac-btn"><span class="zodiac-icon">🐷</span><span class="zodiac-label">돼지</span></div>
+                            </div>
+
+                            <div id="gridStarBox" class="zodiac-grid-2x6 hidden">
+                                <div onclick="openZodiacModal('star', '양자리')" class="zodiac-btn"><span class="star-glyph-box" data-sign="양자리"></span><span class="zodiac-label">양</span></div>
+                                <div onclick="openZodiacModal('star', '황소자리')" class="zodiac-btn"><span class="star-glyph-box" data-sign="황소자리"></span><span class="zodiac-label">황소</span></div>
+                                <div onclick="openZodiacModal('star', '쌍둥이자리')" class="zodiac-btn"><span class="star-glyph-box" data-sign="쌍둥이자리"></span><span class="zodiac-label">쌍둥이</span></div>
+                                <div onclick="openZodiacModal('star', '게자리')" class="zodiac-btn"><span class="star-glyph-box" data-sign="게자리"></span><span class="zodiac-label">게</span></div>
+                                <div onclick="openZodiacModal('star', '사자자리')" class="zodiac-btn"><span class="star-glyph-box" data-sign="사자자리"></span><span class="zodiac-label">사자</span></div>
+                                <div onclick="openZodiacModal('star', '처녀자리')" class="zodiac-btn"><span class="star-glyph-box" data-sign="처녀자리"></span><span class="zodiac-label">처녀</span></div>
+                                <div onclick="openZodiacModal('star', '천칭자리')" class="zodiac-btn"><span class="star-glyph-box" data-sign="천칭자리"></span><span class="zodiac-label">천칭</span></div>
+                                <div onclick="openZodiacModal('star', '전갈자리')" class="zodiac-btn"><span class="star-glyph-box" data-sign="전갈자리"></span><span class="zodiac-label">전갈</span></div>
+                                <div onclick="openZodiacModal('star', '사수자리')" class="zodiac-btn"><span class="star-glyph-box" data-sign="사수자리"></span><span class="zodiac-label">사수</span></div>
+                                <div onclick="openZodiacModal('star', '염소자리')" class="zodiac-btn"><span class="star-glyph-box" data-sign="염소자리"></span><span class="zodiac-label">염소</span></div>
+                                <div onclick="openZodiacModal('star', '물병자리')" class="zodiac-btn"><span class="star-glyph-box" data-sign="물병자리"></span><span class="zodiac-label">물병</span></div>
+                                <div onclick="openZodiacModal('star', '물고기자리')" class="zodiac-btn"><span class="star-glyph-box" data-sign="물고기자리"></span><span class="zodiac-label">물고기</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ad-slot-box" style="margin-top: 6px;"><span>📢 광고 영역 (Google AdSense / Kakao AdFit 슬롯 3)</span></div>
+            </div>
+
+            <!-- 탭 2: 정통사주 -->
+            <div id="view-saju" class="tab-view hidden">
+                <div class="card" style="padding: 18px;">
+                    <div style="display: flex; justify-content: space-between; align-items: baseline; border-bottom: 1px solid #F1F5F9; padding-bottom: 8px; margin-bottom: 8px;">
+                        <h3 style="font-size: 16.5px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif;">사주명식 (四柱命式)</h3>
+                        <span id="sajuOwnerName" style="font-size: 13.5px; color: #2D6A4F; font-weight: 700; text-align: right;">최정오님 (남성)</span>
+                    </div>
+
+                    <div style="margin-bottom: 12px; text-align: left;">
+                        <span id="sajuSingangBadge" style="font-size: 11.5px; background: #FEF3C7; color: #78350F; font-weight: 700; padding: 2px 8px; border-radius: 6px;">신약(身弱) 사주</span>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 56px 1fr 1fr 1fr 1fr; gap: 6px; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 18px; padding: 12px 8px;">
+                        <div style="display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; padding: 8px 0;">
+                            <span style="font-size: 12px; font-weight: 700; color: #64748B;">구분</span>
+                            <div style="height: 42px; display: flex; align-items: center; justify-content: center; color: #475569; font-size: 12px; font-weight: 700;">천간<br>(天干)</div>
+                            <div style="height: 42px; display: flex; align-items: center; justify-content: center; color: #475569; font-size: 12px; font-weight: 700;">지간<br>(地干)</div>
+                            <div style="border-top: 1px dashed #CBD5E1; width: 100%; padding-top: 8px; display: flex; flex-direction: column; align-items: center;"><div style="color: #475569; font-size: 12px; font-weight: 700;">지장간</div></div>
+                        </div>
+
+                        <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 14px; padding: 8px 4px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center;">
+                            <span style="font-size: 12px; font-weight: 700; color: #64748B;">시주 (時)</span>
+                            <div id="cg_h_badge" class="badge-elem elem-none">-</div><div id="jj_h_badge" class="badge-elem elem-none">-</div>
+                            <div style="border-top: 1px dashed #CBD5E1; width: 100%; padding-top: 8px;"><div id="jjg_h_box" style="display: flex; flex-direction: column; align-items: center; gap: 4px;">-</div></div>
+                        </div>
+
+                        <div style="background: #FFFFFF; border: 1.5px solid #2D6A4F; border-radius: 14px; padding: 8px 4px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center;">
+                            <span style="font-size: 12px; font-weight: 800; color: #2D6A4F;">일주 (본원)</span>
+                            <div id="cg_d_badge" class="badge-elem elem-none">-</div><div id="jj_d_badge" class="badge-elem elem-none">-</div>
+                            <div style="border-top: 1px dashed #CBD5E1; width: 100%; padding-top: 8px;"><div id="jjg_d_box" style="display: flex; flex-direction: column; align-items: center; gap: 4px;">-</div></div>
+                        </div>
+
+                        <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 14px; padding: 8px 4px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center;">
+                            <span style="font-size: 12px; font-weight: 700; color: #64748B;">월주 (月)</span>
+                            <div id="cg_m_badge" class="badge-elem elem-none">-</div><div id="jj_m_badge" class="badge-elem elem-none">-</div>
+                            <div style="border-top: 1px dashed #CBD5E1; width: 100%; padding-top: 8px;"><div id="jjg_m_box" style="display: flex; flex-direction: column; align-items: center; gap: 4px;">-</div></div>
+                        </div>
+
+                        <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 14px; padding: 8px 4px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center;">
+                            <span style="font-size: 12px; font-weight: 700; color: #64748B;">년주 (年)</span>
+                            <div id="cg_y_badge" class="badge-elem elem-none">-</div><div id="jj_y_badge" class="badge-elem elem-none">-</div>
+                            <div style="border-top: 1px dashed #CBD5E1; width: 100%; padding-top: 8px;"><div id="jjg_y_box" style="display: flex; flex-direction: column; align-items: center; gap: 4px;">-</div></div>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 18px; text-align: left;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <span style="font-size: 14px; font-weight: 800; color: #0F172A;">오행(五行) 실질 에너지 세력 분포</span>
+                            <span style="font-size: 12px; color: #64748B;">지장간 포함 100%</span>
+                        </div>
+
+                        <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 18px; padding: 16px 10px 12px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; text-align: center;">
+                            <div style="display: flex; flex-direction: column; align-items: center; gap: 6px;"><span id="valWood" style="font-size: 13px; font-weight: 700; color: #047857;">0%</span><div style="width: 28px; height: 95px; background: #E2E8F0; border-radius: 14px; display: flex; align-items: flex-end;"><div id="barWood" style="width: 100%; height: 0%; background: linear-gradient(180deg, #34D399 0%, #10B981 100%); border-radius: 14px; transition: height 0.6s ease;"></div></div><span style="font-size: 13px; font-weight: 800; color: #047857;">木</span></div>
+                            <div style="display: flex; flex-direction: column; align-items: center; gap: 6px;"><span id="valFire" style="font-size: 13px; font-weight: 700; color: #DC2626;">0%</span><div style="width: 28px; height: 95px; background: #E2E8F0; border-radius: 14px; display: flex; align-items: flex-end;"><div id="barFire" style="width: 100%; height: 0%; background: linear-gradient(180deg, #F87171 0%, #EF4444 100%); border-radius: 14px; transition: height 0.6s ease;"></div></div><span style="font-size: 13px; font-weight: 800; color: #DC2626;">火</span></div>
+                            <div style="display: flex; flex-direction: column; align-items: center; gap: 6px;"><span id="valEarth" style="font-size: 13px; font-weight: 700; color: #D97706;">0%</span><div style="width: 28px; height: 95px; background: #E2E8F0; border-radius: 14px; display: flex; align-items: flex-end;"><div id="barEarth" style="width: 100%; height: 0%; background: linear-gradient(180deg, #FBBF24 0%, #F59E0B 100%); border-radius: 14px; transition: height 0.6s ease;"></div></div><span style="font-size: 13px; font-weight: 800; color: #D97706;">土</span></div>
+                            <div style="display: flex; flex-direction: column; align-items: center; gap: 6px;"><span id="valMetal" style="font-size: 13px; font-weight: 700; color: #475569;">0%</span><div style="width: 28px; height: 95px; background: #E2E8F0; border-radius: 14px; display: flex; align-items: flex-end;"><div id="barMetal" style="width: 100%; height: 0%; background: linear-gradient(180deg, #CBD5E1 0%, #94A3B8 100%); border-radius: 14px; transition: height 0.6s ease;"></div></div><span style="font-size: 13px; font-weight: 800; color: #475569;">金</span></div>
+                            <div style="display: flex; flex-direction: column; align-items: center; gap: 6px;"><span id="valWater" style="font-size: 13px; font-weight: 700; color: #2563EB;">0%</span><div style="width: 28px; height: 95px; background: #E2E8F0; border-radius: 14px; display: flex; align-items: flex-end;"><div id="barWater" style="width: 100%; height: 0%; background: linear-gradient(180deg, #60A5FA 0%, #3B82F6 100%); border-radius: 14px; transition: height 0.6s ease;"></div></div><span style="font-size: 13px; font-weight: 800; color: #2563EB;">水</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card" style="border: 2px solid #FCD34D;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                        <span style="font-size: 15px; font-weight: 800; font-family: 'Noto Serif KR', serif;">👑 자미두수 평생운세</span>
+                        <span style="font-size: 12px; background: #FEF3C7; color: #78350F; padding: 4px 10px; border-radius: 9999px; font-weight: 700;">450 복채</span>
+                    </div>
+
+                    <div style="background: #F8FAFC; border-radius: 18px; border: 1px solid #E2E8F0; padding: 18px 12px 14px; margin-bottom: 14px; text-align: left;">
+                        <div style="font-size: 13.5px; font-weight: 800; color: #334155; margin-bottom: 12px;">📊 생애 대운 그래프</div>
+                        <div style="position: relative; width: 100%; height: 160px;">
+                            <svg viewBox="0 0 300 140" style="width: 100%; height: 130px; overflow: visible;">
+                                <defs>
+                                    <linearGradient id="fullCurveGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                        <stop offset="0%" stop-color="#F59E0B" /><stop offset="45%" stop-color="#DC2626" /><stop offset="70%" stop-color="#D97706" /><stop offset="100%" stop-color="#059669" />
+                                    </linearGradient>
+                                </defs>
+                                <path d="M 0,110 C 35,105 60,90 90,85 C 120,80 145,45 175,42 C 205,42 225,75 250,70 C 275,65 290,40 300,42" fill="none" stroke="url(#fullCurveGradient)" stroke-width="4" stroke-linecap="round" />
+                                <line id="daewoonGuideLine" x1="175" y1="10" x2="175" y2="125" stroke="#94A3B8" stroke-width="1.5" stroke-dasharray="3 3" />
+                                <g id="daewoonBadgeGroup" transform="translate(100, 2)">
+                                    <rect x="0" y="0" width="150" height="30" rx="8" fill="#FEF2F2" stroke="#FECDD3" stroke-width="1.2"/>
+                                    <text id="daewoonTagText1" x="75" y="14" font-size="10.5" font-weight="800" fill="#DC2626" text-anchor="middle">📍 최정오님의 현재 위치</text>
+                                    <text id="daewoonTagText2" x="75" y="25" font-size="11.5" font-weight="900" fill="#DC2626" text-anchor="middle">(49세)</text>
+                                </g>
+                                <circle id="daewoonCurrentDot" cx="175" cy="42" r="6.5" fill="#EF4444" stroke="#FFFFFF" stroke-width="2.5" />
+                            </svg>
+                            <div id="daewoonAgeLabels" style="display: grid; grid-template-columns: repeat(6, 1fr); text-align: center; font-size: 11.5px; color: #94A3B8; font-weight: 700; border-top: 1px solid #E2E8F0; padding-top: 8px;">
+                                <span>20세</span><span>30세</span><span>40세</span><span>50세</span><span>60세</span><span>70세~</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="daewoonTeaserBox" class="teaser-blur-box">
+                        <div class="teaser-blur-text">
+                            <p><strong>Chapter 3. 가문·가족운 & 평생 학업운:</strong> 사주에 부모궁과 자녀궁이 길합을 이루고 관록궁의 문창성이 빛을 발하여...</p>
+                        </div>
+                        <div class="teaser-lock-badge"><span style="font-size: 20px; margin-bottom: 2px;">🔒</span><span style="font-size: 12.5px; font-weight: 800; color: #78350F;">450 복채로 평생운세 전체 리포트 잠금 해제</span></div>
+                    </div>
+
+                    <div id="daewoonBox" class="hidden"></div>
+
+                    <button id="btnDaewoon" onclick="handleUnlockReportOnServer('daewoon', 450)" style="width: 100%; background: #FBBF24; color: #0F172A; border: none; font-size: 15px; font-weight: 800; padding: 14px; border-radius: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                        <span class="btn-coin-icon"></span> 450 복채로 즉시 열람하기
+                    </button>
+                </div>
+
+                <div class="card" style="border: 2px solid #86EFAC;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <span style="font-size: 15px; font-weight: 800; color: #166534; font-family: 'Noto Serif KR', serif;">📅 2026 丙午년 총운 & 하반기 월별 가이드</span>
+                        <span style="font-size: 12px; background: #DCFCE7; color: #166534; padding: 4px 10px; border-radius: 9999px; font-weight: 700;">300 복채</span>
+                    </div>
+                    <p style="font-size: 13px; color: #64748B; text-align: left; margin-bottom: 12px;">2026 丙午년 1년 총운 풀이와 올해 소망 성취 지수, 1월부터 12월까지 월별 정밀 토정비결을 제공합니다.</p>
+
+                    <div id="sinnianTeaserBox" class="teaser-blur-box">
+                        <div class="teaser-blur-text"><p><strong>Chapter 2. 2026년 소망 성취 지수:</strong> 올해 가장 큰돈과 소원이 이루어지는 황금의 달은 [🔒 0월]과 [00월]이며...</p></div>
+                        <div class="teaser-lock-badge"><span style="font-size: 20px; margin-bottom: 2px;">🔒</span><span style="font-size: 12.5px; font-weight: 800; color: #166534;">300 복채로 2026 신년운세 전체 리포트 잠금 해제</span></div>
+                    </div>
+
+                    <div id="sinnianBox" class="hidden" style="margin-bottom: 12px;"></div>
+
+                    <button id="btnSinnian" onclick="handleUnlockReportOnServer('sinnian', 300)" style="width: 100%; background: #2D6A4F; color: white; border: none; font-size: 15px; font-weight: 800; padding: 14px; border-radius: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                        <span class="btn-coin-icon-white"></span> 300 복채로 즉시 열람하기
+                    </button>
+                </div>
+            </div>
+
+            <!-- 탭 3: 궁합·테마 -->
+            <div id="view-theme" class="tab-view hidden">
+                <div class="card" style="border: 2px solid #FECDD3; background: #FFFDFD; text-align: left;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                        <span style="font-size: 16px; font-weight: 800; color: #9F1239; font-family: 'Noto Serif KR', serif;">💞 정통 사주 궁합 풀이</span>
+                        <span style="font-size: 12px; background: #FFE4E6; color: #BE123C; padding: 4px 10px; border-radius: 9999px; font-weight: 800;">350 복채</span>
+                    </div>
+                    <p style="font-size: 13.5px; color: #64748B; margin-bottom: 12px;">연인·결혼, 동업·사업 파트너, 친구와의 오행 상생 밸런스를 1:1로 정밀 감명합니다.</p>
+                    <div id="gunghapReportBox" class="hidden" style="margin-bottom: 12px;"></div>
+                    <button id="btnOpenGunghapModal" onclick="openGunghapInputModal()" style="width: 100%; background: linear-gradient(135deg, #BE123C 0%, #881337 100%); color: white; border: none; font-size: 15px; font-weight: 800; padding: 14px; border-radius: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;"><span>💘</span> 상대방 정보 입력하고 궁합 보기</button>
+                </div>
+
+                <div class="card" style="text-align: left;">
+                    <p style="font-size: 16.5px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif;">💰 평생 재물운</p><p style="font-size: 13.5px; color: #64748B; margin-top: 3px;">자산 흐름 및 부동산/투자 성공 분석</p>
+                    <div id="themeReport_wealth" class="hidden" style="margin-top: 14px; padding-top: 12px; border-top: 1px solid #F1F5F9;"></div>
+                    <button id="btnTheme_wealth" onclick="handleUnlockReportOnServer('wealth', 220)" style="width: 100%; background: #0D1527; color: white; border: none; font-size: 14.5px; font-weight: 700; padding: 14px; border-radius: 14px; cursor: pointer; margin-top: 14px; display: flex; align-items: center; justify-content: center; gap: 6px;"><span class="btn-coin-icon-white"></span> 220 복채로 상세 리포트 열람하기</button>
+                </div>
+
+                <div class="card" style="text-align: left;">
+                    <p style="font-size: 16.5px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif;">💖 평생 애정운</p><p style="font-size: 13.5px; color: #64748B; margin-top: 3px;">나와 맞는 인연의 특징과 결혼 시기</p>
+                    <div id="themeReport_love" class="hidden" style="margin-top: 14px; padding-top: 12px; border-top: 1px solid #F1F5F9;"></div>
+                    <button id="btnTheme_love" onclick="openThemeSelectModal('love')" style="width: 100%; background: #0D1527; color: white; border: none; font-size: 14.5px; font-weight: 700; padding: 14px; border-radius: 14px; cursor: pointer; margin-top: 14px; display: flex; align-items: center; justify-content: center; gap: 6px;"><span class="btn-coin-icon-white"></span> 220 복채로 상황별 리포트 열람하기</button>
+                </div>
+
+                <div class="card" style="text-align: left;">
+                    <p style="font-size: 16.5px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif;">🏢 사업·직업운</p><p style="font-size: 13.5px; color: #64748B; margin-top: 3px;">대박 직업 아이템, 승진, 창업 및 시험합격운</p>
+                    <div id="themeReport_business" class="hidden" style="margin-top: 14px; padding-top: 12px; border-top: 1px solid #F1F5F9;"></div>
+                    <button id="btnTheme_business" onclick="openThemeSelectModal('business')" style="width: 100%; background: #0D1527; color: white; border: none; font-size: 14.5px; font-weight: 700; padding: 14px; border-radius: 14px; cursor: pointer; margin-top: 14px; display: flex; align-items: center; justify-content: center; gap: 6px;"><span class="btn-coin-icon-white"></span> 220 복채로 상황별 리포트 열람하기</button>
+                </div>
+
+                <div class="card" style="text-align: left;">
+                    <p style="font-size: 16.5px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif;">🌿 평생 건강운</p><p style="font-size: 13.5px; color: #64748B; margin-top: 3px;">오행 과다/부족 취약 장기 및 섭생법</p>
+                    <div id="themeReport_health" class="hidden" style="margin-top: 14px; padding-top: 12px; border-top: 1px solid #F1F5F9;"></div>
+                    <button id="btnTheme_health" onclick="handleUnlockReportOnServer('health', 220)" style="width: 100%; background: #0D1527; color: white; border: none; font-size: 14.5px; font-weight: 700; padding: 14px; border-radius: 14px; cursor: pointer; margin-top: 14px; display: flex; align-items: center; justify-content: center; gap: 6px;"><span class="btn-coin-icon-white"></span> 220 복채로 상세 리포트 열람하기</button>
+                </div>
+            </div>
+
+            <!-- 탭 4: 마이페이지 -->
+            <div id="view-mypage" class="tab-view hidden">
+                <div class="card" style="text-align: left;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                        <span style="font-size: 14px; color: #64748B;">현재 보유 복채</span>
+                        <div style="display: flex; align-items: center; gap: 6px; font-size: 20px; font-weight: 800; color: #78350F;"><span id="coinMypage">1000</span><span id="mypageCoinSvg"></span></div>
+                    </div>
+                    <button onclick="openChargeStore()" style="width: 100%; background: #2D6A4F; color: white; border: none; font-size: 15px; font-weight: 700; padding: 14px; border-radius: 16px; cursor: pointer;">복채 충전하기</button>
+                </div>
+
+                <div class="card" style="display: flex; justify-content: space-between; align-items: center; text-align: left;">
+                    <div><p style="font-size: 14px; font-weight: 800; color: #1E293B;">사주 정보 수정</p><p id="mypageProfileDesc" style="font-size: 12px; color: #94A3B8; margin-top: 2px;">최정오 (1978년 8월 13일)</p></div>
+                    <div style="display: flex; gap: 6px;">
+                        <button onclick="reopenSajuEditForm()" style="background: #F1F5F9; border: none; font-size: 13px; font-weight: 700; color: #334155; padding: 8px 12px; border-radius: 12px; cursor: pointer;">정보 수정</button>
+                        <button onclick="logoutKakaoUser()" style="background: #FEF2F2; border: 1px solid #FECDD3; font-size: 13px; font-weight: 700; color: #DC2626; padding: 8px 12px; border-radius: 12px; cursor: pointer;">로그아웃</button>
+                    </div>
+                </div>
+
+                <div class="card" style="text-align: left;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                        <h3 style="font-size: 15px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif;">📂 구매한 감명서 보관함</h3>
+                        <span id="archiveCountBadge" style="font-size: 12px; background: #2D6A4F; color: #FFFFFF; padding: 3px 10px; border-radius: 9999px; font-weight: 700;">0건</span>
+                    </div>
+                    <div id="unlockedArchiveList" style="display: flex; flex-direction: column; gap: 10px;"></div>
+                </div>
+            </div>
+        </main>
+
+        <footer style="width: 100%; text-align: center; padding: 24px 12px; font-size: 11px; color: #64748B; line-height: 1.6; border-top: 1px solid rgba(0,0,0,0.06); margin-top: 30px;">
+            <p>달하(DALHA)는 고대가요 정읍사의 달빛처럼<br>인생의 갈림길에서 당신의 앞날을 비춰주는 정통 명리학 운명 나침반입니다.</p>
+        </footer>
+
+        <nav id="bottomNavBar" class="hidden">
+            <button onclick="switchTab('today')" id="tab-today" class="tab-btn active"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>오늘운세</span></button>
+            <button onclick="switchTab('saju')" id="tab-saju" class="tab-btn"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>정통사주</span></button>
+            <button onclick="switchTab('theme')" id="tab-theme" class="tab-btn"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg><span>궁합·테마</span></button>
+            <button onclick="switchTab('mypage')" id="tab-mypage" class="tab-btn"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>마이페이지</span></button>
+        </nav>
+
+    </div>
+
+    <!-- 신규: 시각적 옷장 3단계 등록 위저드 모달 -->
+    <div id="wardrobeAddModal" class="modal-bg hidden">
+        <div class="modal-content" style="max-width: 360px; text-align: left; padding: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 8px;">
+                <div>
+                    <h3 style="font-size: 15px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif;">👗 내 옷장 아이템 등록</h3>
+                    <p id="wizardStepLabel" style="font-size: 11.5px; color: #2D6A4F; font-weight: 700; margin-top: 2px;">Step 1. 아이템 종류 선택 (단일)</p>
+                </div>
+                <button onclick="closeWardrobeAddWizard()" style="background: none; border: none; font-size: 20px; color: #94A3B8; cursor: pointer;">&times;</button>
+            </div>
+
+            <!-- Step 1: 아이템 종류 타일 (단일 선택) -->
+            <div id="wizardStep1" style="display: flex; flex-direction: column; gap: 6px;">
+                <p style="font-size: 12px; color: #64748B;">등록할 아이템의 종류를 선택하세요:</p>
+                <div class="tile-grid">
+                    <div class="tile-btn selected" onclick="selectWizardCat('상의', this)"><span class="t-icon">👔</span><span>상의</span></div>
+                    <div class="tile-btn" onclick="selectWizardCat('하의', this)"><span class="t-icon">👖</span><span>하의</span></div>
+                    <div class="tile-btn" onclick="selectWizardCat('아우터', this)"><span class="t-icon">🧥</span><span>아우터</span></div>
+                    <div class="tile-btn" onclick="selectWizardCat('가방', this)"><span class="t-icon">👜</span><span>가방</span></div>
+                    <div class="tile-btn" onclick="selectWizardCat('시계', this)"><span class="t-icon">⌚</span><span>시계</span></div>
+                    <div class="tile-btn" onclick="selectWizardCat('신발', this)"><span class="t-icon">👟</span><span>신발</span></div>
+                    <div class="tile-btn" onclick="selectWizardCat('액세서리', this)" style="grid-column: span 3;"><span class="t-icon">💍</span><span>주얼리 / 모자 / 스카프</span></div>
+                </div>
+                <button onclick="goToWizardStep(2)" style="width: 100%; background: #0D1527; color: #F6E2A1; border: none; font-size: 14px; font-weight: 800; padding: 12px; border-radius: 12px; cursor: pointer; margin-top: 8px;">다음: 색상 선택하기 👉</button>
+            </div>
+
+            <!-- Step 2: 색상 선택 (멀티 초이스 가능) -->
+            <div id="wizardStep2" class="hidden" style="display: flex; flex-direction: column; gap: 6px;">
+                <p style="font-size: 12px; color: #64748B;">색상을 모두 선택하세요 (2개 이상 복수 가능):</p>
+                <div class="color-chip-grid">
+                    <div class="color-chip selected" onclick="toggleColorChip('화이트', this)"><div class="color-dot" style="background:#FFFFFF;"></div><span>화이트</span></div>
+                    <div class="color-chip" onclick="toggleColorChip('블랙', this)"><div class="color-dot" style="background:#18181B;"></div><span>블랙</span></div>
+                    <div class="color-chip" onclick="toggleColorChip('네이비', this)"><div class="color-dot" style="background:#1E3A8A;"></div><span>네이비</span></div>
+                    <div class="color-chip" onclick="toggleColorChip('레드', this)"><div class="color-dot" style="background:#DC2626;"></div><span>레드</span></div>
+                    <div class="color-chip" onclick="toggleColorChip('와인', this)"><div class="color-dot" style="background:#881337;"></div><span>와인</span></div>
+                    <div class="color-chip" onclick="toggleColorChip('핑크', this)"><div class="color-dot" style="background:#F472B6;"></div><span>핑크</span></div>
+                    <div class="color-chip" onclick="toggleColorChip('베이지', this)"><div class="color-dot" style="background:#D4B996;"></div><span>베이지</span></div>
+                    <div class="color-chip" onclick="toggleColorChip('옐로우', this)"><div class="color-dot" style="background:#FBBF24;"></div><span>옐로우</span></div>
+                    <div class="color-chip" onclick="toggleColorChip('그린', this)"><div class="color-dot" style="background:#15803D;"></div><span>그린</span></div>
+                    <div class="color-chip" onclick="toggleColorChip('실버/그레이', this)"><div class="color-dot" style="background:#94A3B8;"></div><span>실버</span></div>
+                </div>
+                <div style="display: flex; gap: 6px; margin-top: 8px;">
+                    <button onclick="goToWizardStep(1)" style="flex: 1; background: #E2E8F0; color: #475569; border: none; font-size: 13px; font-weight: 700; padding: 11px; border-radius: 10px; cursor: pointer;">이전</button>
+                    <button onclick="goToWizardStep(3)" style="flex: 2; background: #0D1527; color: #F6E2A1; border: none; font-size: 14px; font-weight: 800; padding: 11px; border-radius: 10px; cursor: pointer;">다음: 소재 선택하기 👉</button>
+                </div>
+            </div>
+
+            <!-- Step 3: 소재 선택 (멀티 초이스 가능) -->
+            <div id="wizardStep3" class="hidden" style="display: flex; flex-direction: column; gap: 6px;">
+                <p style="font-size: 12px; color: #64748B;">소재를 모두 선택하세요 (가죽+메탈 등 복수 가능):</p>
+                <div class="mat-chip-grid">
+                    <div class="mat-chip selected" onclick="toggleMatChip('면/린넨', this)"><span>🧵</span><span>면 · 린넨 (木)</span></div>
+                    <div class="mat-chip" onclick="toggleMatChip('실크/쉬폰', this)"><span>✨</span><span>실크 · 쉬폰 (火)</span></div>
+                    <div class="mat-chip" onclick="toggleMatChip('가죽/세무', this)"><span>👜</span><span>가죽 · 스웨이드 (土)</span></div>
+                    <div class="mat-chip" onclick="toggleMatChip('메탈/금속', this)"><span>⚙️</span><span>메탈 · 골드/은 (金)</span></div>
+                    <div class="mat-chip" onclick="toggleMatChip('데님', this)"><span>👖</span><span>데님 청바지 (水)</span></div>
+                    <div class="mat-chip" onclick="toggleMatChip('니트/울', this)"><span>🧶</span><span>니트 · 울 (土)</span></div>
+                </div>
+                <div style="display: flex; gap: 6px; margin-top: 8px;">
+                    <button onclick="goToWizardStep(2)" style="flex: 1; background: #E2E8F0; color: #475569; border: none; font-size: 13px; font-weight: 700; padding: 11px; border-radius: 10px; cursor: pointer;">이전</button>
+                    <button onclick="saveWardrobeItemToServer()" style="flex: 2; background: #2D6A4F; color: white; border: none; font-size: 14px; font-weight: 800; padding: 11px; border-radius: 10px; cursor: pointer;">✨ 내 옷장에 저장 완료</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 궁합 상대방 정보 모달 -->
+    <div id="gunghapModal" class="modal-bg hidden">
+        <div class="modal-content" style="max-width: 350px; text-align: left;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 8px;">
+                <h3 style="font-size: 15px; font-weight: 800; color: #9F1239; font-family: 'Noto Serif KR', serif;">💞 상대방 사주 정보 입력</h3>
+                <button onclick="closeGunghapModal()" style="background: none; border: none; font-size: 20px; color: #94A3B8; cursor: pointer;">&times;</button>
+            </div>
+            <div class="form-group" style="margin-top: 4px;">
+                <label class="form-label">상대방 이름</label>
+                <input type="text" id="partnerNameInput" class="form-input" placeholder="이름을 입력하세요" value="">
+            </div>
+            <div class="form-group">
+                <label class="form-label">상대방 생년월일</label>
+                <div style="display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 6px; margin-top: 4px;">
+                    <select id="partnerBirthYearSelect" class="form-select-box"></select>
+                    <select id="partnerBirthMonthSelect" class="form-select-box"></select>
+                    <select id="partnerBirthDaySelect" class="form-select-box"></select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">관계 유형</label>
+                <select id="partnerRelationSelect" class="form-select-box">
+                    <option value="" disabled selected>관계를 선택하세요</option>
+                    <option value="연인 / 결혼">연인 / 결혼</option>
+                    <option value="동업 / 비즈니스">동업 / 비즈니스 파트너</option>
+                    <option value="친구 / 지인">친구 / 지인</option>
+                </select>
+            </div>
+            <button onclick="confirmUnlockGunghapOnServer()" style="width: 100%; background: #BE123C; color: white; border: none; font-size: 14.5px; font-weight: 800; padding: 13px; border-radius: 12px; cursor: pointer;">
+                <span class="btn-coin-icon-white"></span> 350 복채로 두 사람의 인연 풀이 확인하기
+            </button>
+        </div>
+    </div>
+
+    <div id="themeSelectModal" class="modal-bg hidden">
+        <div class="modal-content" style="text-align: left;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 8px;">
+                <h3 id="modalThemeTitle" style="font-size: 15px; font-weight: 800; color: #1E293B; font-family: 'Noto Serif KR', serif;">상황별 맞춤 리포트 선택</h3>
+                <button onclick="closeThemeSelectModal()" style="background: none; border: none; font-size: 18px; color: #94A3B8; cursor: pointer;">&times;</button>
+            </div>
+            <div id="modalOptionBox" style="display: flex; flex-direction: column; gap: 8px;"></div>
+            <button onclick="confirmUnlockThemeOnServer()" style="width: 100%; background: #2D6A4F; color: white; border: none; font-size: 14.5px; font-weight: 800; padding: 13px; border-radius: 12px; cursor: pointer;"><span class="btn-coin-icon-white"></span> 220 복채로 즉시 열람하기</button>
+        </div>
+    </div>
+
+    <div id="zodiacModal" class="modal-bg hidden">
+        <div class="modal-content" style="max-width: 360px; text-align: left; padding: 22px; border-radius: 24px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #F1F5F9; padding-bottom: 10px;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <div id="zodiacModalIconBox" style="width: 44px; height: 44px; border-radius: 12px; background: #0D1527; display: flex; align-items: center; justify-content: center; border: 1px solid #E2C068;"></div>
+                    <div>
+                        <h3 id="zodiacModalName" style="font-size: 17px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif;">운세</h3>
+                        <p id="zodiacModalSub" style="font-size: 12px; color: #64748B;">오늘의 실시간 일진 분석</p>
+                    </div>
+                </div>
+                <button onclick="closeZodiacModal()" style="background: none; border: none; font-size: 22px; color: #94A3B8; cursor: pointer;">&times;</button>
+            </div>
+            <div style="display: flex; align-items: center; justify-content: space-between; border-left: 4px solid #10B981; padding-left: 10px; margin: 2px 0;">
+                <span style="font-size: 14px; font-weight: 700; color: #166534;">오늘의 종합 운세 지수</span>
+                <span id="zodiacModalScore" style="font-size: 19px; font-weight: 900; color: #047857;">95점</span>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 12px; max-height: 52vh; overflow-y: auto; padding-right: 2px;">
+                <div><h4 id="zodiacModalTitle" style="font-size: 15px; font-weight: 600; color: #0F172A; margin-bottom: 4px;">총평</h4><p id="zodiacModalOverview" style="font-size: 14px; color: #475569; line-height: 1.7;"></p></div>
+                <div style="border-top: 1px solid #F1F5F9; padding-top: 10px;"><div id="zodiacYearTipsBox"></div></div>
+                <div id="zodiacExtraInfo" style="font-size: 13px; color: #2D6A4F; font-weight: 600; border-top: 1px dashed #E2E8F0; padding-top: 8px;"></div>
+            </div>
+            <button onclick="shareZodiacFortune()" style="width: 100%; background: #FEE500; color: #191919; border: none; font-size: 14.5px; font-weight: 800; padding: 13px; border-radius: 14px; cursor: pointer;">💬 친구에게 이 운세 공유하기</button>
+        </div>
+    </div>
+
+    <!-- 전통 부적 모달 -->
+    <div id="talismanModal" class="modal-bg hidden">
+        <div class="modal-content" style="max-width: 340px; padding: 18px; border-radius: 24px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 8px;">
+                <h3 style="font-size: 14px; font-weight: 800; color: #1E293B; font-family: 'Noto Serif KR', serif;">🎴 전통 경면주사 비급 부적</h3>
+                <button onclick="closeTalismanModal()" style="background: none; border: none; font-size: 20px; color: #94A3B8; cursor: pointer;">&times;</button>
+            </div>
+            <div id="talismanRealBox" style="display: flex; justify-content: center; align-items: center; padding: 4px 0;"></div>
+            <div style="text-align: left; background: #FFFBEB; border: 1px solid #FDE68A; border-radius: 12px; padding: 12px;">
+                <h4 id="talismanTitle" style="font-size: 13.5px; font-weight: 800; color: #78350F;">재물만복부</h4>
+                <p id="talismanPower" style="font-size: 12px; font-weight: 700; color: #B45309; margin: 2px 0;"></p>
+                <p id="talismanDesc" style="font-size: 11.5px; color: #92400E; line-height: 1.5;"></p>
+                <div style="border-top: 1px dashed rgba(217,119,6,0.4); margin-top: 6px; padding-top: 4px; font-size: 11px; color: #78350F;">소지자: <span id="talismanOwnerName" style="font-weight: 800; text-decoration: underline;">최정오</span>님 평생 수호 각인</div>
+            </div>
+            <div style="display: flex; gap: 8px;">
+                <button onclick="downloadTalismanImage()" style="flex: 1; background: #D97706; color: white; border: none; font-size: 13.5px; font-weight: 800; padding: 12px; border-radius: 12px; cursor: pointer;">📥 부적 다운로드</button>
+                <button onclick="closeTalismanModal()" style="flex: 1; background: #E2E8F0; color: #334155; border: none; font-size: 13.5px; font-weight: 700; padding: 12px; border-radius: 12px; cursor: pointer;">확인</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 복채 충전소 모달 -->
+    <div id="chargeModal" class="modal-bg hidden">
+        <div class="modal-content" style="max-width: 340px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 10px;">
+                <div style="display: flex; align-items: center; gap: 6px;"><span id="chargeModalHeaderCoinSvg"></span><h3 style="font-size: 15px; font-weight: 800; color: #1E293B; font-family: 'Noto Serif KR', serif;">복채 충전소</h3></div>
+                <button onclick="closeChargeStore()" style="background: none; border: none; font-size: 20px; color: #94A3B8; cursor: pointer;">&times;</button>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <button onclick="openPgModal(250, 2900, '250 복채')" style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 16px; padding: 11px 14px; display: flex; justify-content: space-between; align-items: center; text-align: left; cursor: pointer;">
+                    <div style="display: flex; align-items: center; gap: 6px;"><span class="btn-coin-icon"></span><p style="font-size: 13px; font-weight: 800; color: #334155;">250 복채 체험팩</p></div>
+                    <span style="background: #E2E8F0; color: #334155; font-size: 12px; font-weight: 800; padding: 3px 8px; border-radius: 6px;">₩2,900</span>
+                </button>
+                <button onclick="openPgModal(550, 4900, '550 복채 (추천)')" style="background: #FFFBEB; border: 1.5px solid #FDE68A; border-radius: 16px; padding: 11px 14px; display: flex; justify-content: space-between; align-items: center; text-align: left; cursor: pointer;">
+                    <div style="display: flex; align-items: center; gap: 6px;"><span class="btn-coin-icon"></span><div><p style="font-size: 13px; font-weight: 800; color: #78350F;">550 복채 실속팩</p><p style="font-size: 10.5px; color: #D97706; font-weight: 700;">🎁 +10% 보너스</p></div></div>
+                    <span style="background: #F59E0B; color: white; font-size: 12px; font-weight: 800; padding: 3px 8px; border-radius: 6px;">₩4,900</span>
+                </button>
+                <button onclick="openPgModal(1300, 9900, '1,300 복채 (인기 최고)')" style="background: #ECFDF5; border: 1.5px solid #86EFAC; border-radius: 16px; padding: 11px 14px; display: flex; justify-content: space-between; align-items: center; text-align: left; cursor: pointer;">
+                    <div style="display: flex; align-items: center; gap: 6px;"><span class="btn-coin-icon-white"></span><div><p style="font-size: 13px; font-weight: 800; color: #065F46;">1,300 복채 인기팩</p><p style="font-size: 10.5px; color: #047857; font-weight: 700;">🔥 +25% 대박 보너스</p></div></div>
+                    <span style="background: #2D6A4F; color: white; font-size: 12px; font-weight: 800; padding: 3px 8px; border-radius: 6px;">₩9,900</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PG 결제 모달 -->
+    <div id="pgModal" class="modal-bg hidden">
+        <div class="modal-content" style="max-width: 340px; text-align: left;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 8px;"><h3 style="font-size: 15px; font-weight: 800; color: #0F172A;">💳 안전 결제창</h3><button onclick="closePgModal()" style="background: none; border: none; font-size: 20px; color: #94A3B8; cursor: pointer;">&times;</button></div>
+            <div style="background: #F8FAFC; border-radius: 12px; padding: 12px; border: 1px solid #E2E8F0;"><span style="font-size: 12px; color: #64748B;">선택 상품</span><h4 id="pgItemName" style="font-size: 15px; font-weight: 800; color: #0F172A; margin: 2px 0 4px;">550 복채</h4><div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px dashed #CBD5E1; padding-top: 6px; margin-top: 4px;"><span style="font-size: 12px; font-weight: 700; color: #64748B;">최종 결제 금액</span><span id="pgItemPrice" style="font-size: 16px; font-weight: 900; color: #DC2626;">₩4,900</span></div></div>
+            <button onclick="processPgPaymentOnServer()" style="width: 100%; background: #2D6A4F; color: white; border: none; font-size: 14.5px; font-weight: 800; padding: 13px; border-radius: 12px; cursor: pointer; margin-top: 4px;">결제 완료하기 ✨</button>
+        </div>
+    </div>
+
+    <!-- 보관함 다시보기 모달 -->
+    <div id="archiveDetailModal" class="modal-bg hidden">
+        <div class="modal-content" style="max-width: 380px; max-height: 85vh; display: flex; flex-direction: column; text-align: left; padding: 20px; border-radius: 24px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 10px; margin-bottom: 12px;">
+                <h3 id="archiveModalTitle" style="font-size: 14px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif;">운세 리포트</h3>
+                <button onclick="closeArchiveDetailModal()" style="background: none; border: none; font-size: 20px; color: #94A3B8; cursor: pointer;">&times;</button>
+            </div>
+            <div id="archiveModalBody" style="flex: 1; overflow-y: auto; padding-right: 4px; margin-bottom: 12px;"></div>
+            <button onclick="closeArchiveDetailModal()" style="width: 100%; background: #2D6A4F; color: white; border: none; font-size: 14px; font-weight: 800; padding: 13px; border-radius: 12px; cursor: pointer;">확인</button>
+        </div>
+    </div>
+
+    <script>
+        let currentUserId = null;
+        let currentCoin = 1000;
+        let selectedCalendarType = 'solar';
+        let selectedGender = 'male';
+        let currentThemeKey = '';
+        let currentTalisman = null;
+        let currentUserName = "최정오";
+        let currentUserAge = 49;
+        let pendingCoinAmount = 0;
+        let serverUnlockedReports = [];
+        let userWardrobeItems = [];
+
+        // 위저드 선택 상태
+        let wizardCategory = "상의";
+        let wizardColors = ["화이트"];
+        let wizardMaterials = ["면/린넨"];
+
+        const KAKAO_JS_KEY = "fde505a5042405dbac55d2e98e9f9b08";
+
+        function initKakaoSDK() {
+            if (window.Kakao && !window.Kakao.isInitialized()) {
+                window.Kakao.init(KAKAO_JS_KEY);
             }
         }
 
-@app.post("/api/user/register-saju")
-def register_saju(req: RegisterSajuRequest):
-    conn = get_db()
-    cursor = conn.cursor()
-    cursor.execute("""
-    UPDATE users 
-    SET name = ?, gender = ?, birth_year = ?, birth_month = ?, birth_day = ?, calendar_type = ?, sijin_index = ?
-    WHERE id = ?
-    """, (req.name, req.gender, req.birth_year, req.birth_month, req.birth_day, req.calendar_type, req.sijin_index, req.user_id))
-    conn.commit()
-    
-    cursor.execute("SELECT * FROM users WHERE id = ?", (req.user_id,))
-    user = cursor.fetchone()
-    conn.close()
+        function initDateDropdowns() {
+            const currentYear = new Date().getFullYear();
+            const yearSelects = ['birthYearSelect', 'partnerBirthYearSelect'];
+            const monthSelects = ['birthMonthSelect', 'partnerBirthMonthSelect'];
+            const daySelects = ['birthDaySelect', 'partnerBirthDaySelect'];
 
-    if not user:
-        raise HTTPException(status_code=404, detail="사용자를 찾을 수 없습니다.")
+            yearSelects.forEach(id => {
+                const el = document.getElementById(id);
+                if (!el) return;
+                el.innerHTML = '<option value="" disabled selected>년도</option>';
+                for (let y = currentYear; y >= 1930; y--) {
+                    el.innerHTML += `<option value="${y}">${y}년</option>`;
+                }
+            });
 
-    saju_payload = compute_saju_full_payload(
-        user["name"], user["gender"], user["birth_year"],
-        user["birth_month"], user["birth_day"], user["calendar_type"], user["sijin_index"]
-    )
+            monthSelects.forEach(id => {
+                const el = document.getElementById(id);
+                if (!el) return;
+                el.innerHTML = '<option value="" disabled selected>월</option>';
+                for (let m = 1; m <= 12; m++) {
+                    el.innerHTML += `<option value="${m}">${m}월</option>`;
+                }
+            });
 
-    return {
-        "status": "success",
-        "user_id": user["id"],
-        "coin_balance": user["coin_balance"],
-        "profile": {
-            "name": user["name"], "gender": user["gender"], "birth_year": user["birth_year"],
-            "birth_month": user["birth_month"], "birth_day": user["birth_day"],
-            "calendar_type": user["calendar_type"], "sijin_index": user["sijin_index"]
-        },
-        "saju_analysis": saju_payload
-    }
+            daySelects.forEach(id => {
+                const el = document.getElementById(id);
+                if (!el) return;
+                el.innerHTML = '<option value="" disabled selected>일</option>';
+                for (let d = 1; d <= 31; d++) {
+                    el.innerHTML += `<option value="${d}">${d}일</option>`;
+                }
+            });
 
-# 신규 기능: 오행 옷장 아이템 분석기 API
-@app.post("/api/wardrobe/diagnose")
-def diagnose_wardrobe_item(req: WardrobeDiagnoseRequest):
-    conn = get_db()
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM users WHERE id = ?", (req.user_id,))
-    user = cursor.fetchone()
-    conn.close()
-
-    user_name = user["name"] if user else "회원"
-    
-    # 색상 및 소재의 오행 맵핑
-    COLOR_ELEM_MAP = {"화이트": "metal", "블랙": "water", "네이비": "water", "레드": "fire", "핑크/와인": "fire", "옐로우": "earth", "베이지/브라운": "earth", "그린/올리브": "wood", "스카이블루": "wood", "그레이/실버": "metal"}
-    MATERIAL_ELEM_MAP = {"면/린넨": "wood", "실크/폴리": "fire", "가죽/세무": "earth", "메탈/금속": "metal", "데님/쉬폰": "water"}
-
-    item_c_elem = COLOR_ELEM_MAP.get(req.color, "metal")
-    item_m_elem = MATERIAL_ELEM_MAP.get(req.material, "earth")
-
-    # 기운 해석
-    POWER_MAP = {
-        "wood": "추진력과 새로운 시작",
-        "fire": "주목도와 화려한 열정",
-        "earth": "신뢰감과 자산 안착",
-        "metal": "결단력과 명예 권위",
-        "water": "유연한 소통과 친화력"
-    }
-
-    # 이번 달 착용 골든타임 날짜 2개 자동 산출 (오늘 기준 + 3~18일 뒤)
-    today = datetime.date.today()
-    seed = (today.toordinal() * 19 + sum(ord(c) for c in (req.color + req.material))) % 100
-    day1 = today + datetime.timedelta(days=(seed % 6 + 2))
-    day2 = today + datetime.timedelta(days=(seed % 7 + 10))
-
-    WEEKDAY_KOR = ["월", "화", "수", "목", "금", "토", "일"]
-    date_str1 = f"{day1.month}월 {day1.day}일({WEEKDAY_KOR[day1.weekday()]})"
-    date_str2 = f"{day2.month}월 {day2.day}일({WEEKDAY_KOR[day2.weekday()]})"
-
-    # 상생/중화 코디 믹스매치 처방
-    MIX_MATCH_TIPS = {
-        "fire": "베이지/크림색(土) 슬랙스나 가죽 소품을 곁들여 열기를 안정감 있게 흡수하세요.",
-        "wood": "화이트 셔츠(金)나 실버 메탈 시계를 매치해 기운의 깔끔한 마무리를 지어주세요.",
-        "water": "원목 액세서리(木)나 린넨 소재와 매치해 유연한 생명력을 더해주세요.",
-        "metal": "블루 톤(水) 이너나 데님 팬츠를 함께 매치해 차가운 느낌을 유연하게 풀어주세요.",
-        "earth": "골드 메탈(金) 포인트나 깔끔한 화이트 상의와 매치해 품격을 격상시키세요."
-    }
-
-    tip = MIX_MATCH_TIPS.get(item_c_elem, "단정한 뉴트럴 톤 아이템과 함께 매치하여 조화를 이루세요.")
-
-    return {
-        "status": "success",
-        "item_name": f"{req.color} {req.material} {req.category}",
-        "energy_summary": f"[{POWER_MAP.get(item_c_elem)}]과 [{POWER_MAP.get(item_m_elem)}]의 기운이 결합된 아이템입니다.",
-        "best_dates": f"✨ <strong>{date_str1}</strong> 및 <strong>{date_str2}</strong>에 착용하시면 천운의 상생을 받아 매력과 금전운이 극대화됩니다.",
-        "mix_match_tip": tip
-    }
-
-@app.post("/api/reports/unlock")
-def unlock_report(req: OrderReportRequest):
-    conn = get_db()
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM users WHERE id = ?", (req.user_id,))
-    user = cursor.fetchone()
-
-    if not user:
-        conn.close()
-        raise HTTPException(status_code=404, detail="회원 정보가 없습니다.")
-
-    if user["coin_balance"] < req.cost:
-        conn.close()
-        raise HTTPException(status_code=400, detail="보유 복채가 부족합니다.")
-
-    new_balance = user["coin_balance"] - req.cost
-    cursor.execute("UPDATE users SET coin_balance = ? WHERE id = ?", (new_balance, req.user_id))
-
-    current_age = datetime.date.today().year - user["birth_year"] + 1
-    user_data = {
-        "name": user["name"], "gender": user["gender"], "age": current_age,
-        "sub_option": req.sub_option, "partner_name": req.partner_name, "relation": req.relation
-    }
-
-    report_title = ""
-    report_content = ""
-
-    if req.report_key == "daewoon":
-        res = get_daewoon_report(user_data)
-        report_title, report_content = res["title"], res["content"]
-    elif req.report_key == "sinnian":
-        res = get_sinnian_report(user_data)
-        report_title, report_content = res["title"], res["content"]
-    elif req.report_key == "gunghap":
-        res = get_gunghap_report(user_data)
-        report_title, report_content = res["title"], res["content"]
-    elif req.report_key in ["wealth", "love", "business", "health"]:
-        user_data["theme"] = req.report_key
-        res = get_theme_report(user_data)
-        report_title, report_content = res["title"], res["content"]
-
-    today_str = datetime.date.today().strftime("%Y-%m-%d")
-    cursor.execute("""
-    INSERT INTO unlocked_reports (user_id, report_key, report_title, report_content, created_at)
-    VALUES (?, ?, ?, ?, ?)
-    """, (req.user_id, req.report_key, report_title, report_content, today_str))
-    conn.commit()
-
-    cursor.execute("SELECT report_key, report_title, report_content, created_at FROM unlocked_reports WHERE user_id = ? ORDER BY id DESC", (req.user_id,))
-    unlocked_list = [dict(row) for row in cursor.fetchall()]
-    conn.close()
-
-    return {
-        "status": "success", "new_balance": new_balance,
-        "title": report_title, "content": report_content, "unlocked_reports": unlocked_list
-    }
-
-@app.post("/api/user/charge-coin")
-def charge_coin(req: dict):
-    user_id = req.get("user_id")
-    amount = req.get("amount", 0)
-    conn = get_db()
-    cursor = conn.cursor()
-    cursor.execute("UPDATE users SET coin_balance = coin_balance + ? WHERE id = ?", (amount, user_id))
-    conn.commit()
-    cursor.execute("SELECT coin_balance FROM users WHERE id = ?", (user_id,))
-    user = cursor.fetchone()
-    conn.close()
-    return {"status": "success", "new_balance": user["coin_balance"]}
-
-@app.get("/api/zodiac-fortune")
-def get_zodiac_fortune(type: str = "zodiac", key: str = "쥐"):
-    today = datetime.date.today()
-    seed = today.toordinal() + hash(key)
-    score = 70 + (seed % 29)
-    
-    if type == "zodiac":
-        years = [2012, 2000, 1988, 1976, 1964]
-        zodiac_names = list(ANIMAL_MAP.values())
-        z_idx = zodiac_names.index(key) if key in zodiac_names else 0
-        adj_years = [y - ((4 - z_idx) % 12) for y in years]
-        
-        year_advices = [
-            {"year_label": f"{str(adj_years[0])[-2:]}년생 ({today.year - adj_years[0] + 1}세)", "tip": "학업과 진로에서 영감을 발휘해 인정을 받는 날입니다."},
-            {"year_label": f"{str(adj_years[1])[-2:]}년생 ({today.year - adj_years[1] + 1}세)", "tip": "주요 프로젝트에서 결정적 주도권을 쥐게 됩니다."},
-            {"year_label": f"{str(adj_years[2])[-2:]}년생 ({today.year - adj_years[2] + 1}세)", "tip": "실속을 차리고 금전적 결실을 확정 짓는 타이밍입니다."},
-            {"year_label": f"{str(adj_years[3])[-2:]}년생 ({today.year - adj_years[3] + 1}세)", "tip": "귀인의 도움으로 복잡했던 협상이 성사됩니다."},
-            {"year_label": f"{str(adj_years[4])[-2:]}년생 ({today.year - adj_years[4] + 1}세)", "tip": "무리한 확장보다 내실을 다지며 가문의 화목을 누립니다."}
-        ]
-        return {
-            "name": f"{key}띠", "icon": ANIMAL_ICONS.get(key, "🐾"), "score": score, "title": "귀인의 조력과 재물운이 합을 이루는 대길의 날",
-            "overview": f"오늘 {key}띠는 실력과 결단력이 빛을 발하는 날입니다. 큰 흐름을 보고 추진하면 성취가 따릅니다.",
-            "year_tips": year_advices, "lucky_time": "오후 2시 ~ 4시", "lucky_match": "소띠, 용띠"
-        }
-    else:
-        star_item = next((s for s in STAR_SIGNS if s["name"] == key), STAR_SIGNS[0])
-        detail = STAR_FORTUNE_DETAILS.get(key, STAR_FORTUNE_DETAILS["양자리"])
-        return {
-            "name": star_item["name"], "icon": star_item["icon"], "period": star_item["period"],
-            "score": score, "title": detail["title"], "overview": detail["overview"],
-            "focus_badge": detail["badge"], "focus_content": detail["focus"],
-            "lucky_item": detail["item"], "lucky_time": detail["time"]
+            document.getElementById('birthYearSelect').value = "1978";
+            document.getElementById('birthMonthSelect').value = "8";
+            document.getElementById('birthDaySelect').value = "13";
         }
 
-@app.get("/api/daily-tarot")
-def get_daily_tarot(slot: int = 1):
-    return TAROT_CARDS[random.randint(0, len(TAROT_CARDS) - 1)]
+        function saveUserSajuToLocal(data) { localStorage.setItem('dalha_custom_saju', JSON.stringify(data)); }
+        function getSavedUserSaju() {
+            try { const raw = localStorage.getItem('dalha_custom_saju'); return raw ? JSON.parse(raw) : null; } catch(e) { return null; }
+        }
 
-def get_daewoon_report(req: dict):
-    user_name = req.get("name", "회원")
-    gender = req.get("gender", "male")
-    age = req.get("age", 35)
+        function loginWithKakaoReal() {
+            initKakaoSDK();
+            if (!window.Kakao) { alert("카카오 SDK를 로드하지 못했습니다."); return; }
 
-    start_age = (age // 10) * 10 + 3
-    if age < start_age:
-        start_age -= 10
-    end_age = start_age + 9
+            Kakao.Auth.login({
+                success: function(authObj) {
+                    Kakao.API.request({
+                        url: '/v2/user/me',
+                        success: async function(res) {
+                            const kakaoAccount = res.kakao_account || {};
+                            const profile = kakaoAccount.profile || {};
+                            const localSaju = getSavedUserSaju();
 
-    p1_start, p1_end = start_age, start_age + 2
-    p2_start, p2_end = start_age + 3, start_age + 5
-    p3_start, p3_end = start_age + 6, end_age
+                            const payload = {
+                                kakao_id: String(res.id),
+                                name: localSaju?.name || profile.nickname || "달하 회원",
+                                gender: localSaju?.gender || kakaoAccount.gender || "male",
+                                birthyear: localSaju ? String(localSaju.birth_year) : (kakaoAccount.birthyear || "1978"),
+                                birthday: localSaju ? `${String(localSaju.birth_month).padStart(2, '0')}${String(localSaju.birth_day).padStart(2, '0')}` : (kakaoAccount.birthday || "0813"),
+                                birthday_type: localSaju ? (localSaju.calendar_type === 'lunar' ? 'LUNAR' : 'SOLAR') : (kakaoAccount.birthday_type || "SOLAR")
+                            };
 
-    gender_str = "남성(男命)" if gender == "male" else "여성(女命)"
-    spouse_star = "재성(財星 / 아내·실물자산)" if gender == "male" else "관성(官星 / 남편·명예관운)"
+                            localStorage.setItem('dalha_kakao_id', payload.kakao_id);
 
-    if age < 30:
-        stage_name = "청년 도약기 (기반 확립)"
-        focus_goal = "전문 역량 축적 및 핵심 인맥 구축"
-        p1_desc = f"{p1_start}세 ~ {p1_end}세는 진로의 방향성을 확립하고 내실 있는 실무 감각을 다지는 시기입니다."
-        p2_desc = f"{p2_start}세 ~ {p2_end}세는 본인의 실력이 조직에서 인정받으며 기회가 열리는 성장기입니다."
-        p3_desc = f"{p3_start}세 ~ {p3_end}세는 30대 황금기로 넘어가기 위한 확고한 발판을 마련하는 결실기입니다."
-    elif age < 50:
-        stage_name = "중장년 전성기 (황금 결실기)"
-        focus_goal = "실질 자산 증식 및 사회적 주도권 장악"
-        p1_desc = f"{p1_start}세 ~ {p1_end}세는 기존 판도를 재편하고 주체가 되는 사업/투자 포트폴리오를 구축한 전환기였습니다."
-        p2_desc = f"{p2_start}세 ~ {p2_end}세는 귀인의 조력을 바탕으로 자산 볼륨이 팽창하는 가속 구간입니다."
-        p3_desc = f"{p3_start}세 ~ {p3_end}세는 분산된 자금을 우량 자산으로 안착시키고 확고한 지위를 완성하는 대운의 절정기입니다."
-    else:
-        stage_name = "원숙 결실기 (자산 수성 및 가문 번영)"
-        focus_goal = "안정적 현금 흐름 완성 및 명예로운 번영"
-        p1_desc = f"{p1_start}세 ~ {p1_end}세는 불필요한 위험 자산을 정돈하고 안정적인 자산 방어 체계를 수립하는 시기입니다."
-        p2_desc = f"{p2_start}세 ~ {p2_end}세는 쌓아온 인망을 토대로 후배/자녀의 조력자이자 멘토로 권위를 누립니다."
-        p3_desc = f"{p3_start}세 ~ {p3_end}세는 평생 일군 결실을 평온히 누리며 가문의 유산을 안착시키는 구간입니다."
+                            const sRes = await fetch('/api/auth/kakao', {
+                                method: 'POST',
+                                headers: {'Content-Type': 'application/json'},
+                                body: JSON.stringify(payload)
+                            });
+                            const sData = await sRes.json();
 
-    return {
-        "title": f"👑 자미두수 평생운세 ({gender_str})",
-        "content": f"""
-        <div style="display: flex; flex-direction: column; gap: 16px; font-size: 14.5px; color: #334155; line-height: 1.85; text-align: left;">
-            <div>
-                <div style="border-left: 4px solid #2D6A4F; padding-left: 10px; margin-bottom: 8px;">
-                    <span style="font-size: 12px; color: #2D6A4F; font-weight: 800;">Chapter 1. 평생 대운맥 및 생애 주도권</span>
-                    <h4 style="font-size: 16.5px; font-weight: 800; color: #0F172A; margin-top: 2px;">
-                        {user_name}님({gender_str} · 현재 {age}세)의 거시적 생애 운명 흐름
-                    </h4>
-                </div>
-                <p style="color: #475569; margin-bottom: 12px;">
-                    자미두수 명반을 정밀 감명한 결과, {user_name}님은 단계적 배움과 역량 축적을 거쳐 중장년기에 강력한 {spouse_star}의 결실을 맺는 <strong>'만성대기(晩成大器)형 명식'</strong>입니다.
-                </p>
+                            currentUserId = sData.user_id;
+                            currentCoin = sData.coin_balance;
+                            updateCoinDisplay();
 
-                <!-- Chapter 1 통합 단일 박스 -->
-                <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; overflow: hidden;">
-                    <div style="padding: 12px 14px; border-bottom: 1px solid #E2E8F0;">
-                        <p style="font-weight: 600; color: #475569; font-size: 13.5px; margin-bottom: 2px;">[유년기 : 근본 기틀 형성기]</p>
-                        <p style="color: #64748B; font-size: 13px;">남다른 탐구심과 도덕적 가치관을 단단히 다지던 기초 형성기입니다.</p>
+                            if (sData.status === "existing_user") {
+                                serverUnlockedReports = sData.unlocked_reports || [];
+                                userWardrobeItems = sData.wardrobe_items || [];
+                                applySajuAnalysisToUI(sData.saju_analysis);
+                                renderWardrobeUI();
+                                renderServerArchive();
+                                document.getElementById('view-login-gate').classList.add('hidden');
+                                document.getElementById('onboardingInputView').classList.add('hidden');
+                                switchTab('today');
+                                document.getElementById('bottomNavBar').classList.remove('hidden');
+                                restoreUnlockedUIFromReports();
+                            } else {
+                                const pre = sData.kakao_prefill;
+                                document.getElementById('inputName').value = pre.name;
+                                setGenderType(pre.gender);
+                                setCalType(pre.calendar_type);
+                                document.getElementById('birthYearSelect').value = String(pre.birth_year);
+                                document.getElementById('birthMonthSelect').value = String(pre.birth_month);
+                                document.getElementById('birthDaySelect').value = String(pre.birth_day);
+                                document.getElementById('inputSijin').value = pre.sijin_index;
+
+                                document.getElementById('view-login-gate').classList.add('hidden');
+                                document.getElementById('onboardingInputView').classList.remove('hidden');
+                            }
+                        },
+                        fail: function() { alert("사용자 정보를 가져오지 못했습니다."); }
+                    });
+                },
+                fail: function() { alert("카카오 로그인 실패"); }
+            });
+        }
+
+        async function checkAutoLoginSession() {
+            const savedKakaoId = localStorage.getItem('dalha_kakao_id');
+            if (!savedKakaoId) return;
+
+            try {
+                const sRes = await fetch('/api/auth/kakao', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ kakao_id: savedKakaoId })
+                });
+                const sData = await sRes.json();
+                if (sData.status === "existing_user") {
+                    currentUserId = sData.user_id;
+                    currentCoin = sData.coin_balance;
+                    updateCoinDisplay();
+                    serverUnlockedReports = sData.unlocked_reports || [];
+                    userWardrobeItems = sData.wardrobe_items || [];
+                    applySajuAnalysisToUI(sData.saju_analysis);
+                    renderWardrobeUI();
+                    renderServerArchive();
+                    document.getElementById('view-login-gate').classList.add('hidden');
+                    document.getElementById('onboardingInputView').classList.add('hidden');
+                    switchTab('today');
+                    document.getElementById('bottomNavBar').classList.remove('hidden');
+                    restoreUnlockedUIFromReports();
+                }
+            } catch(e) {}
+        }
+
+        function logoutKakaoUser() {
+            localStorage.removeItem('dalha_kakao_id');
+            location.reload();
+        }
+
+        const ZODIAC_GLYPHS = {
+            "양자리": `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#E2C068" stroke-width="2"><path d="M4 6a4 4 0 0 1 8 0v14M20 6a4 4 0 0 0-8 0"/></svg>`,
+            "황소자리": `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#E2C068" stroke-width="2"><path d="M5 3a7 7 0 0 0 14 0"/><circle cx="12" cy="14" r="6"/></svg>`,
+            "쌍둥이자리": `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#E2C068" stroke-width="2"><path d="M4 4a16 16 0 0 0 16 0M4 20a16 16 0 0 1 16 0M8 5v14M16 5v14"/></svg>`,
+            "게자리": `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#E2C068" stroke-width="2"><circle cx="7" cy="8" r="3"/><path d="M10 8a7 7 0 0 0 10 4"/><circle cx="17" cy="16" r="3"/><path d="M14 16a7 7 0 0 0-10-4"/></svg>`,
+            "사자자리": `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#E2C068" stroke-width="2"><circle cx="7.5" cy="14.5" r="2.5"/><path d="M9 13a6 6 0 1 1 8 4c0 2-2 3-3 3s-2-1.5-1-3.5"/></svg>`,
+            "처녀자리": `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#E2C068" stroke-width="2"><path d="M4 4v12a3 3 0 0 0 6 0V4M10 4v12a3 3 0 0 0 6 0V4M16 7a3 3 0 0 1 4 4v9M16 16l4 4"/></svg>`,
+            "천칭자리": `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#E2C068" stroke-width="2"><path d="M4 20h16M4 14h5a3 3 0 1 1 6 0h5"/></svg>`,
+            "전갈자리": `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#E2C068" stroke-width="2"><path d="M4 4v12a3 3 0 0 0 6 0V4M10 4v12a3 3 0 0 0 6 0V4M16 4v12a3 3 0 0 0 6 0v-2M19 14l3 2-3 2"/></svg>`,
+            "사수자리": `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#E2C068" stroke-width="2"><path d="M5 19L19 5M12 5h7v7M8 12l4 4"/></svg>`,
+            "염소자리": `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#E2C068" stroke-width="2"><path d="M4 4v11a4 4 0 0 0 8 0V5M12 9a4 4 0 0 1 8 4c0 3-3 7-5 7s-3-2-2-4"/></svg>`,
+            "물병자리": `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#E2C068" stroke-width="2"><path d="M3 8l3-3 3 3 3-3 3 3 3-3 3 3M3 16l3-3 3 3 3-3 3 3 3-3 3 3"/></svg>`,
+            "물고기자리": `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#E2C068" stroke-width="2"><path d="M5 4a14 14 0 0 1 0 16M19 4a14 14 0 0 0 0 16M3 12h18"/></svg>`
+        };
+
+        const TAROT_IMG_MAP = {
+            "I. THE MAGICIAN (마법사)": { main: "https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg", backup: "https://raw.githubusercontent.com/effata/tarot-json/master/cards/magician.jpg" },
+            "0. THE FOOL (바보)": { main: "https://upload.wikimedia.org/wikipedia/commons/9/90/RWS_Tarot_00_Fool.jpg", backup: "https://raw.githubusercontent.com/effata/tarot-json/master/cards/fool.jpg" },
+            "XIX. THE SUN (태양)": { main: "https://upload.wikimedia.org/wikipedia/commons/1/17/RWS_Tarot_19_Sun.jpg", backup: "https://raw.githubusercontent.com/effata/tarot-json/master/cards/sun.jpg" }
+        };
+
+        function getTarotCardBackSvg() {
+            return `
+            <svg viewBox="0 0 100 150" style="width:100%; height:100%; background: radial-gradient(circle at center, #172746 0%, #0D1527 100%); border-radius:8px;">
+                <rect x="3" y="3" width="94" height="144" fill="none" stroke="#E2C068" stroke-width="1.5" rx="5"/>
+                <circle cx="50" cy="75" r="24" fill="none" stroke="#E2C068" stroke-width="1.2"/>
+                <circle cx="50" cy="75" r="14" fill="#0D1527" stroke="#E2C068" stroke-width="1"/>
+                <polygon points="50,65 52,73 59,71 54,75 59,79 52,77 50,85 48,77 41,79 46,75 41,71 48,73" fill="#E2C068"/>
+                <circle cx="50" cy="75" r="2" fill="#FAF9F6"/>
+            </svg>`;
+        }
+
+        function renderAuthenticCinnabarTalisman(type = "metal", width = 160, height = 260) {
+            let innerSymbol = '';
+            let bottomText = '萬福大吉';
+            if (type === "wood") { bottomText = '事業亨通'; innerSymbol = `<path d="M 35 95 L 105 95 L 70 135 Z" fill="rgba(198,40,40,0.15)"/><line x1="70" y1="125" x2="70" y2="182" stroke-width="4.5"/><line x1="45" y1="155" x2="95" y2="155" stroke-width="3.5"/>`; }
+            else if (type === "fire") { bottomText = '心想事成'; innerSymbol = `<circle cx="70" cy="110" r="18" fill="rgba(198,40,40,0.1)"/><circle cx="70" cy="110" r="8" fill="#C62828"/><line x1="70" y1="125" x2="70" y2="182" stroke-width="4.2"/><path d="M 45 140 Q 70 160 95 140" stroke-width="3.5"/>`; }
+            else if (type === "earth") { bottomText = '金庫安穩'; innerSymbol = `<rect x="38" y="94" width="64" height="40" fill="rgba(198,40,40,0.1)"/><line x1="70" y1="94" x2="70" y2="180" stroke-width="4.2"/><circle cx="50" cy="114" r="4" fill="#C62828"/><circle cx="90" cy="114" r="4" fill="#C62828"/>`; }
+            else if (type === "water") { bottomText = '萬事和合'; innerSymbol = `<circle cx="48" cy="112" r="13"/><circle cx="92" cy="112" r="13"/><line x1="70" y1="138" x2="70" y2="180" stroke-width="4.2"/><path d="M 35 160 Q 70 140 105 160" stroke-width="3.5"/>`; }
+            else { bottomText = '萬福大吉'; innerSymbol = `<rect x="40" y="96" width="26" height="22" stroke-width="3.8"/><rect x="74" y="96" width="26" height="22" stroke-width="3.8"/><line x1="70" y1="128" x2="70" y2="180" stroke-width="4.2"/><circle cx="53" cy="107" r="3" fill="#C62828"/><circle cx="87" cy="107" r="3" fill="#C62828"/>`; }
+
+            return `
+            <svg id="svgTalismanMain" width="${width}" height="${height}" viewBox="0 0 140 240" xmlns="http://www.w3.org/2000/svg" style="background: linear-gradient(135deg, #FFE814 0%, #FFD000 100%); border: 3px solid #C49700; border-radius: 8px; box-sizing: border-box;">
+                <rect x="6" y="6" width="128" height="228" fill="none" stroke="#E65100" stroke-width="1" opacity="0.5" />
+                <g fill="none" stroke="#C62828" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M 28 22 Q 42 16 68 18 Q 92 20 112 16" /><line x1="70" y1="18" x2="70" y2="34" /><line x1="40" y1="28" x2="100" y2="28" />
+                    <circle cx="48" cy="40" r="3.5" fill="#C62828" /><circle cx="70" cy="40" r="3.5" fill="#C62828" /><circle cx="92" cy="40" r="3.5" fill="#C62828" />
+                    <line x1="32" y1="52" x2="108" y2="52" /><line x1="30" y1="88" x2="110" y2="88" />${innerSymbol}
+                </g>
+                <rect x="36" y="202" width="68" height="24" fill="#C62828" rx="4"/>
+                <text x="70" y="218" font-size="11" font-weight="900" fill="#FFFFFF" text-anchor="middle" font-family="'Pretendard', sans-serif" letter-spacing="1px">${bottomText}</text>
+            </svg>`;
+        }
+
+        function renderBiorhythmWaveSvg(daysLived) {
+            const width = 300, height = 110, midY = 55, amp = 40, range = 15;
+            const getPath = (period) => {
+                let d = "";
+                for (let x = 0; x <= width; x += 3) {
+                    const offsetDays = ((x / width) * (range * 2)) - range;
+                    const day = daysLived + offsetDays;
+                    const y = midY - (Math.sin(2 * Math.PI * day / period) * amp);
+                    d += (x === 0) ? `M ${x} ${y.toFixed(1)}` : ` L ${x} ${y.toFixed(1)}`;
+                }
+                return d;
+            };
+            const todayP = midY - (Math.sin(2 * Math.PI * daysLived / 23) * amp);
+            const todayE = midY - (Math.sin(2 * Math.PI * daysLived / 28) * amp);
+            const todayI = midY - (Math.sin(2 * Math.PI * daysLived / 33) * amp);
+
+            return `
+                <line x1="0" y1="${midY}" x2="${width}" y2="${midY}" stroke="#E2E8F0" stroke-width="1.2" />
+                <line x1="${width/2}" y1="5" x2="${width/2}" y2="${height-5}" stroke="#CBD5E1" stroke-width="1.5" stroke-dasharray="3 3" />
+                <path d="${getPath(23)}" fill="none" stroke="#DC2626" stroke-width="2.2" opacity="0.85" />
+                <path d="${getPath(28)}" fill="none" stroke="#16A34A" stroke-width="2.2" opacity="0.85" />
+                <path d="${getPath(33)}" fill="none" stroke="#2563EB" stroke-width="2.2" opacity="0.85" />
+                <circle cx="${width/2}" cy="${todayP.toFixed(1)}" r="4.5" fill="#DC2626" stroke="#FFFFFF" stroke-width="1.8" />
+                <circle cx="${width/2}" cy="${todayE.toFixed(1)}" r="4.5" fill="#16A34A" stroke="#FFFFFF" stroke-width="1.8" />
+                <circle cx="${width/2}" cy="${todayI.toFixed(1)}" r="4.5" fill="#2563EB" stroke="#FFFFFF" stroke-width="1.8" />
+            `;
+        }
+
+        async function submitSajuRegistration() {
+            const name = document.getElementById('inputName').value.trim() || "최정오";
+            const y = parseInt(document.getElementById('birthYearSelect').value) || 1978;
+            const m = parseInt(document.getElementById('birthMonthSelect').value) || 8;
+            const d = parseInt(document.getElementById('birthDaySelect').value) || 13;
+            const sijin = parseInt(document.getElementById('inputSijin').value);
+
+            saveUserSajuToLocal({
+                name: name, gender: selectedGender, birth_year: y,
+                birth_month: m, birth_day: d, calendar_type: selectedCalendarType, sijin_index: sijin
+            });
+
+            const res = await fetch('/api/user/register-saju', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    user_id: currentUserId, name: name, gender: selectedGender,
+                    birth_year: y, birth_month: m, birth_day: d,
+                    calendar_type: selectedCalendarType, sijin_index: sijin
+                })
+            });
+            const data = await res.json();
+            
+            currentCoin = data.coin_balance;
+            updateCoinDisplay();
+            applySajuAnalysisToUI(data.saju_analysis);
+
+            document.getElementById('onboardingInputView').classList.add('hidden');
+            switchTab('today');
+            document.getElementById('bottomNavBar').classList.remove('hidden');
+        }
+
+        function reopenSajuEditForm() {
+            document.getElementById('onboardingInputView').classList.remove('hidden');
+            ['today', 'saju', 'theme', 'mypage'].forEach(t => document.getElementById(`view-${t}`).classList.add('hidden'));
+            document.getElementById('bottomNavBar').classList.add('hidden');
+        }
+
+        function applySajuAnalysisToUI(data) {
+            currentUserName = data.user_name;
+            currentTalisman = data.daily_fortune.talisman;
+            currentUserAge = data.current_age;
+
+            document.getElementById('userProfileBarName').innerText = `${currentUserName}님 (${selectedGender === 'male' ? '남성' : '여성'})`;
+            document.getElementById('userProfileBarBirth').innerText = data.birth_summary;
+
+            if (data.biorhythm) {
+                const bio = data.biorhythm;
+                document.getElementById('bioDaysLived').innerText = `생애 ${bio.days_lived.toLocaleString()}일째`;
+                document.getElementById('bioPhysicalStatus').innerText = `${bio.physical.status} (${bio.physical.val}%)`;
+                document.getElementById('bioEmotionalStatus').innerText = `${bio.emotional.status} (${bio.emotional.val}%)`;
+                document.getElementById('bioIntellectualStatus').innerText = `${bio.intellectual.status} (${bio.intellectual.val}%)`;
+                document.getElementById('bioOverallText').innerText = bio.overall_summary;
+                document.getElementById('biorhythmWaveSvg').innerHTML = renderBiorhythmWaveSvg(bio.days_lived);
+            }
+
+            document.getElementById('sajuOwnerName').innerText = `${currentUserName}님 (${selectedGender === 'male' ? '남성' : '여성'})`;
+            document.getElementById('resTitle').innerText = data.daily_fortune.title;
+            document.getElementById('resAdvice').innerHTML = data.daily_fortune.advice;
+            document.getElementById('resScoreBadge').innerText = `운세 ${data.daily_fortune.score}점`;
+
+            document.getElementById('resItem').innerText = data.daily_fortune.lucky_item;
+            document.getElementById('resNumber').innerText = data.daily_fortune.lucky_number;
+            document.getElementById('resDirection').innerText = data.daily_fortune.lucky_direction;
+            document.getElementById('resStyle').innerText = data.daily_fortune.fashion_style;
+            document.getElementById('resMenu').innerText = data.daily_fortune.recommended_menu;
+            document.getElementById('resMindset').innerText = data.daily_fortune.mindset;
+            document.getElementById('resGaewoon').innerText = data.daily_fortune.action;
+
+            const badgeEl = document.getElementById('reverseDayBadge');
+            const tipEl = document.getElementById('resReverseTip');
+            if (data.daily_fortune.is_reverse_day) {
+                badgeEl.classList.remove('hidden');
+            } else {
+                badgeEl.classList.add('hidden');
+            }
+            tipEl.innerHTML = data.daily_fortune.reverse_tip;
+
+            const dtl = data.saju_data.pillars_detail;
+            setElemBadge('cg_h_badge', dtl.hour.cg, dtl.hour.cg_elem);
+            setElemBadge('cg_d_badge', dtl.day.cg, dtl.day.cg_elem);
+            setElemBadge('cg_m_badge', dtl.month.cg, dtl.month.cg_elem);
+            setElemBadge('cg_y_badge', dtl.year.cg, dtl.year.cg_elem);
+
+            setElemBadge('jj_h_badge', dtl.hour.jj, dtl.hour.jj_elem);
+            setElemBadge('jj_d_badge', dtl.day.jj, dtl.day.jj_elem);
+            setElemBadge('jj_m_badge', dtl.month.jj, dtl.month.jj_elem);
+            setElemBadge('jj_y_badge', dtl.year.jj, dtl.year.jj_elem);
+
+            document.getElementById('jjg_h_box').innerHTML = formatJijangganGroup(dtl.hour.jijanggan);
+            document.getElementById('jjg_d_box').innerHTML = formatJijangganGroup(dtl.day.jijanggan);
+            document.getElementById('jjg_m_box').innerHTML = formatJijangganGroup(dtl.month.jijanggan);
+            document.getElementById('jjg_y_box').innerHTML = formatJijangganGroup(dtl.year.jijanggan);
+
+            const elems = data.saju_data.elements;
+            ['Wood', 'Fire', 'Earth', 'Metal', 'Water'].forEach(key => {
+                const kLower = key.toLowerCase();
+                document.getElementById(`bar${key}`).style.height = `${elems[kLower]}%`;
+                document.getElementById(`val${key}`).innerText = `${elems[kLower]}%`;
+            });
+
+            updateDaewoonGraphByAge(currentUserAge);
+            document.getElementById('mypageProfileDesc').innerText = `${currentUserName} (${data.birth_summary})`;
+            
+            updateTodayWardrobeMatchPick();
+        }
+
+        // 오늘의 맞춤 코디 카드에 내 옷장 매칭 픽 실시간 렌더링
+        function updateTodayWardrobeMatchPick() {
+            const pickEl = document.getElementById('wardrobeDailyMatchPick');
+            if (!pickEl) return;
+
+            if (!userWardrobeItems || userWardrobeItems.length === 0) {
+                pickEl.innerHTML = `👗 <strong>오늘의 옷장 픽:</strong> 아래 <strong>[내 옷장 아이템]</strong>에 평소 즐겨 쓰는 가방이나 옷을 등록해 보세요! 일진에 딱 맞는 날에 알림을 드려요.`;
+                return;
+            }
+
+            // 오늘 날짜 해시 기반으로 옷장 아이템 중 1개 가장 잘 맞는 것 자동 선별
+            const today = new Date();
+            const pickIdx = (today.getDate() + userWardrobeItems.length) % userWardrobeItems.length;
+            const item = userWardrobeItems[pickIdx];
+
+            const colorsStr = item.colors.join('/');
+            const matsStr = item.materials.join('/');
+            pickEl.innerHTML = `✨ <strong>오늘의 옷장 매칭:</strong> 오늘 일진과 조화로운 내 옷장의 <strong>[${colorsStr} ${matsStr} ${item.category}]</strong>을 착용해 보세요! 기운의 밸런스가 상승합니다.`;
+        }
+
+        // 내 옷장 UI 렌더링
+        function renderWardrobeUI() {
+            const listEl = document.getElementById('wardrobeItemsList');
+            const badgeEl = document.getElementById('wardrobeCountBadge');
+            if (badgeEl) badgeEl.innerText = `${userWardrobeItems.length}개`;
+            if (!listEl) return;
+
+            if (userWardrobeItems.length === 0) {
+                listEl.innerHTML = `<div style="text-align:center; padding:16px 0; color:#94A3B8; font-size:12.5px;">등록된 옷장 아이템이 없습니다.<br>새 아이템을 등록해 보세요!</div>`;
+                updateTodayWardrobeMatchPick();
+                return;
+            }
+
+            const CAT_ICONS = { "상의": "👔", "하의": "👖", "아우터": "🧥", "가방": "👜", "시계": "⌚", "신발": "👟", "액세서리": "💍" };
+
+            listEl.innerHTML = userWardrobeItems.map(item => `
+                <div class="wardrobe-item-card">
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <span style="font-size:22px;">${CAT_ICONS[item.category] || '👗'}</span>
+                        <div>
+                            <h5 style="font-size:13.5px; font-weight:800; color:#0F172A; margin-bottom:2px;">${item.category}</h5>
+                            <p style="font-size:11.5px; color:#64748B;">
+                                <span style="background:#FEF3C7; color:#78350F; font-weight:700; padding:1px 5px; border-radius:4px;">${item.colors.join(', ')}</span> · 
+                                <span>${item.materials.join(', ')}</span>
+                            </p>
+                        </div>
                     </div>
-                    <div style="padding: 12px 14px; border-bottom: 1px solid #E2E8F0;">
-                        <p style="font-weight: 600; color: #475569; font-size: 13.5px; margin-bottom: 2px;">[청년기 : 역량 축적 및 실전기]</p>
-                        <p style="color: #64748B; font-size: 13px;">실무 전문성을 다지고 인맥과 실전 감각의 뼈대를 구축하는 시기입니다.</p>
+                    <button onclick="deleteWardrobeItem(${item.id})" style="background:#F1F5F9; border:none; color:#EF4444; font-size:12px; font-weight:700; padding:5px 8px; border-radius:6px; cursor:pointer;">삭제</button>
+                </div>
+            `).join('');
+
+            updateTodayWardrobeMatchPick();
+        }
+
+        // 위저드 팝업 열기/닫기
+        function openWardrobeAddWizard() {
+            wizardCategory = "상의";
+            wizardColors = ["화이트"];
+            wizardMaterials = ["면/린넨"];
+            goToWizardStep(1);
+            document.getElementById('wardrobeAddModal').classList.remove('hidden');
+        }
+        function closeWardrobeAddWizard() { document.getElementById('wardrobeAddModal').classList.add('hidden'); }
+
+        function goToWizardStep(step) {
+            document.getElementById('wizardStep1').classList.add('hidden');
+            document.getElementById('wizardStep2').classList.add('hidden');
+            document.getElementById('wizardStep3').classList.add('hidden');
+
+            const label = document.getElementById('wizardStepLabel');
+            if (step === 1) {
+                label.innerText = "Step 1. 아이템 종류 선택 (단일)";
+                document.getElementById('wizardStep1').classList.remove('hidden');
+            } else if (step === 2) {
+                label.innerText = "Step 2. 색상 선택 (복수 가능)";
+                document.getElementById('wizardStep2').classList.remove('hidden');
+            } else if (step === 3) {
+                label.innerText = "Step 3. 소재 선택 (복수 가능)";
+                document.getElementById('wizardStep3').classList.remove('hidden');
+            }
+        }
+
+        function selectWizardCat(cat, el) {
+            wizardCategory = cat;
+            document.querySelectorAll('#wizardStep1 .tile-btn').forEach(btn => btn.classList.remove('selected'));
+            el.classList.add('selected');
+        }
+
+        function toggleColorChip(col, el) {
+            const idx = wizardColors.indexOf(col);
+            if (idx > -1) {
+                if (wizardColors.length > 1) { wizardColors.splice(idx, 1); el.classList.remove('selected'); }
+            } else {
+                wizardColors.push(col);
+                el.classList.add('selected');
+            }
+        }
+
+        function toggleMatChip(mat, el) {
+            const idx = wizardMaterials.indexOf(mat);
+            if (idx > -1) {
+                if (wizardMaterials.length > 1) { wizardMaterials.splice(idx, 1); el.classList.remove('selected'); }
+            } else {
+                wizardMaterials.push(mat);
+                el.classList.add('selected');
+            }
+        }
+
+        async function saveWardrobeItemToServer() {
+            if (!currentUserId) { alert("로그인이 필요합니다."); return; }
+
+            const res = await fetch('/api/wardrobe/add', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    user_id: currentUserId,
+                    category: wizardCategory,
+                    colors: wizardColors,
+                    materials: wizardMaterials
+                })
+            });
+            const data = await res.json();
+            userWardrobeItems = data.wardrobe_items;
+            closeWardrobeAddWizard();
+            renderWardrobeUI();
+            alert("✨ 내 옷장에 새 아이템이 등록되었습니다!");
+        }
+
+        async function deleteWardrobeItem(itemId) {
+            if (!confirm("이 아이템을 옷장에서 삭제하시겠습니까?")) return;
+            const res = await fetch(`/api/wardrobe/delete/${itemId}?user_id=${currentUserId}`, { method: 'DELETE' });
+            const data = await res.json();
+            userWardrobeItems = data.wardrobe_items;
+            renderWardrobeUI();
+        }
+
+        async function handleUnlockReportOnServer(reportKey, cost, subOption = "기본", partnerName = "상대방", relation = "선택안함") {
+            if (!currentUserId) { alert("로그인이 필요합니다."); return; }
+            if (currentCoin < cost) { openChargeStore(); return; }
+
+            const res = await fetch('/api/reports/unlock', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    user_id: currentUserId, report_key: reportKey, cost: cost,
+                    sub_option: subOption, partner_name: partnerName, relation: relation
+                })
+            });
+            const data = await res.json();
+            
+            currentCoin = data.new_balance;
+            updateCoinDisplay();
+            serverUnlockedReports = data.unlocked_reports;
+            renderServerArchive();
+            restoreUnlockedUIFromReports();
+        }
+
+        function restoreUnlockedUIFromReports() {
+            serverUnlockedReports.forEach(item => {
+                const extraActionHtml = `<div style="display:flex; justify-content:flex-end; margin-top:10px;"><button onclick="printReportDocument('${item.report_title}', this)" style="background:#F1F5F9; border:1px solid #CBD5E1; color:#334155; font-size:12px; font-weight:700; padding:6px 12px; border-radius:8px; cursor:pointer;">📄 감명서 인쇄/PDF 소장</button></div>`;
+                if (item.report_key === 'daewoon') {
+                    document.getElementById('daewoonBox').innerHTML = item.report_content + extraActionHtml;
+                    document.getElementById('daewoonBox').classList.remove('hidden');
+                    document.getElementById('daewoonTeaserBox')?.classList.add('hidden');
+                    document.getElementById('btnDaewoon')?.classList.add('hidden');
+                } else if (item.report_key === 'sinnian') {
+                    document.getElementById('sinnianBox').innerHTML = item.report_content + extraActionHtml;
+                    document.getElementById('sinnianBox').classList.remove('hidden');
+                    document.getElementById('sinnianTeaserBox')?.classList.add('hidden');
+                    document.getElementById('btnSinnian')?.classList.add('hidden');
+                } else if (item.report_key === 'gunghap') {
+                    document.getElementById('gunghapReportBox').innerHTML = item.report_content + extraActionHtml;
+                    document.getElementById('gunghapReportBox').classList.remove('hidden');
+                    document.getElementById('btnOpenGunghapModal')?.classList.add('hidden');
+                } else if (['wealth', 'love', 'business', 'health'].includes(item.report_key)) {
+                    document.getElementById(`themeReport_${item.report_key}`).innerHTML = item.report_content + extraActionHtml;
+                    document.getElementById(`themeReport_${item.report_key}`).classList.remove('hidden');
+                    document.getElementById(`btnTheme_${item.report_key}`)?.classList.add('hidden');
+                }
+            });
+        }
+
+        function renderServerArchive() {
+            const container = document.getElementById('unlockedArchiveList');
+            const countBadge = document.getElementById('archiveCountBadge');
+            if (countBadge) countBadge.innerText = `${serverUnlockedReports.length}건`;
+
+            if (!container) return;
+            if (serverUnlockedReports.length === 0) {
+                container.innerHTML = `<div style="text-align: center; padding: 20px 0; color: #94A3B8; font-size: 13px;"><p style="font-size: 28px; margin-bottom: 4px;">📂</p><p style="font-weight: 700; color: #64748B;">구매한 감명서가 없습니다.</p></div>`;
+                return;
+            }
+
+            container.innerHTML = serverUnlockedReports.map((r, idx) => `
+                <div style="background: #F8FAFC; border: 1.5px solid #2D6A4F; border-radius: 16px; padding: 12px 14px; text-align: left; display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+                    <div style="flex: 1; overflow: hidden;">
+                        <span style="font-size: 11px; background: #2D6A4F; color: #FFFFFF; font-weight: 700; padding: 2px 6px; border-radius: 4px;">열람완료 (${r.created_at || ''})</span>
+                        <h4 style="font-weight: 800; color: #0F172A; font-size: 14px; margin-top: 4px; font-family: 'Noto Serif KR', serif;">${r.report_title}</h4>
                     </div>
-                    <!-- 현재 구간 강조 -->
-                    <div style="background: #FEF3C7; padding: 12px 14px; border-bottom: 1px solid #FCD34D;">
-                        <p style="font-weight: 800; color: #78350F; font-size: 14px; margin-bottom: 2px;">[{stage_name} (*현재 위치 / {start_age}세 ~ {end_age}세)]</p>
-                        <p style="color: #92400E; font-size: 13px; font-weight: 600;">
-                            <strong>{user_name}님의 핵심 승부처 구간입니다.</strong> {focus_goal}을(를) 목표로 본인이 직접 주도권을 쥘 때 성과가 극대화됩니다.
-                        </p>
-                    </div>
-                    <div style="padding: 12px 14px;">
-                        <p style="font-weight: 600; color: #475569; font-size: 13.5px; margin-bottom: 2px;">[말년기 : 태평성대 및 가문 번영기]</p>
-                        <p style="color: #64748B; font-size: 13px;">축적한 자산과 인망을 토대로 안락한 노후와 가문의 번영을 누립니다.</p>
-                    </div>
+                    <button onclick="openServerArchiveDetail(${idx})" style="background: #2D6A4F; color: #FFFFFF; border: none; font-size: 13px; font-weight: 700; padding: 8px 12px; border-radius: 10px; cursor: pointer;">📄 다시보기</button>
                 </div>
-            </div>
+            `).join('');
+        }
 
-            <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
+        function openServerArchiveDetail(idx) {
+            const item = serverUnlockedReports[idx];
+            if (!item) return;
+            document.getElementById('archiveModalTitle').innerText = item.report_title;
+            document.getElementById('archiveModalBody').innerHTML = item.report_content;
+            document.getElementById('archiveDetailModal').classList.remove('hidden');
+        }
 
-            <div>
-                <div style="border-left: 4px solid #D97706; padding-left: 10px; margin-bottom: 8px;">
-                    <span style="font-size: 12px; color: #D97706; font-weight: 800;">Chapter 2. 현재 10년 대운 집중 감명</span>
-                    <h4 style="font-size: 16.5px; font-weight: 800; color: #78350F; margin-top: 2px;">
-                        {user_name}님의 {start_age}세 ~ {end_age}세 3단계 로드맵
-                    </h4>
-                </div>
+        function closeArchiveDetailModal() { document.getElementById('archiveDetailModal').classList.add('hidden'); }
 
-                <!-- Chapter 2 통합 단일 박스 (장식 요소 제거 & 점선 분할) -->
-                <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; overflow: hidden;">
-                    <div style="padding: 12px 14px; border-bottom: 1px dashed #CBD5E1;">
-                        <span style="font-weight: 700; color: #1E3A8A; font-size: 14px; display: block; margin-bottom: 3px;">[1단계] {p1_start}세 ~ {p1_end}세 : 기반 구축기</span>
-                        <p style="color: #475569; font-size: 13px; line-height: 1.65;">{p1_desc}</p>
-                    </div>
-                    <div style="padding: 12px 14px; border-bottom: 1px dashed #CBD5E1;">
-                        <span style="font-weight: 700; color: #065F46; font-size: 14px; display: block; margin-bottom: 3px;">[2단계] {p2_start}세 ~ {p2_end}세 : 확장 및 증식기</span>
-                        <p style="color: #475569; font-size: 13px; line-height: 1.65;">{p2_desc}</p>
-                    </div>
-                    <!-- 3단계(현재 집중기) 강조 -->
-                    <div style="background: #FFFBEB; padding: 12px 14px;">
-                        <span style="font-weight: 800; color: #78350F; font-size: 14px; display: block; margin-bottom: 3px;">[3단계] {p3_start}세 ~ {p3_end}세 : 대운의 총결실 (*현재)</span>
-                        <p style="color: #92400E; font-size: 13px; line-height: 1.65; font-weight: 600;">{p3_desc}</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        """
-    }
+        async function processPgPaymentOnServer() {
+            closePgModal();
+            const res = await fetch('/api/user/charge-coin', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ user_id: currentUserId, amount: pendingCoinAmount })
+            });
+            const data = await res.json();
+            currentCoin = data.new_balance;
+            updateCoinDisplay();
+            alert(`🎉 결제가 완료되었습니다! (+${pendingCoinAmount.toLocaleString()} 복채)`);
+        }
 
-def get_sinnian_report(req: dict):
-    user_name = req.get("name", "최정오")
-    gender = req.get("gender", "male")
-    gender_str = "남성" if gender == "male" else "여성"
+        function openGunghapInputModal() {
+            const nameInput = document.getElementById('partnerNameInput');
+            const relSelect = document.getElementById('partnerRelationSelect');
 
-    seed = sum(ord(c) for c in user_name) + (17 if gender == "male" else 31)
+            nameInput.value = '';
+            document.getElementById('partnerBirthYearSelect').selectedIndex = 0;
+            document.getElementById('partnerBirthMonthSelect').selectedIndex = 0;
+            document.getElementById('partnerBirthDaySelect').selectedIndex = 0;
+            relSelect.selectedIndex = 0;
 
-    MONTH_NARRATIVES = [
-        {"gua": "지천태(地天泰) 괘", "story": f"{user_name}님의 명식에 丙火의 온기가 스며들며 얼어붙었던 환경이 풀리는 상서로운 달입니다. 주변과의 소통이 원활해지고 정체되었던 일에서 새로운 해결의 실마리를 찾게 됩니다. 장기적인 플랜의 초석을 다지기에 가장 이상적인 시기입니다.", "opp": "새해 첫 출발이 대길하여 신규 사업 및 프로젝트 착수에 최적입니다.", "warn": "초반 성취에 자만하지 말고 세부 규정을 차분히 정비하세요."},
-        {"gua": "수천수(水天需) 괘", "story": f"내실을 기하고 에너지를 비축해야 하는 관망의 달입니다. 겉보기에는 진행이 다소 더뎌 보일 수 있으나 더 큰 도약을 위한 도움닫기 구간입니다. 충동적인 투자나 급격한 변경은 피하고 전문성을 연마하며 때를 기다리세요.", "opp": "실력과 내실을 다지며 시장 흐름을 관망할 때 이익이 보존됩니다.", "warn": "서두른 결정이나 충동구매를 피하고 하루 이틀 시일을 두세요."},
-        {"gua": "천화동인(天火同人) 괘", "story": f"귀인의 조력이 강하게 작용하여 뜻을 같이하는 동반자가 나타나는 달입니다. {user_name}님의 매력과 리더십이 빛을 발하여 대인관계에서 큰 신뢰를 얻고 협상에서 주도권을 잡을 수 있습니다.", "opp": "귀인의 조력이 닿아 인간관계와 직무에서 강력한 협력자가 나타납니다.", "warn": "이견 조율 시 감정적 대응을 피하고 데이터로 설득하세요."},
-        {"gua": "풍천소축(風天小畜) 괘", "story": f"작은 결실들이 차곡차곡 쌓여 실속을 챙기는 실리 추구의 달입니다. 일상의 루틴을 철저히 지키며 불필요한 누수를 막아야 합니다. 금융 자산의 기틀을 다지고 지출을 효율적으로 통제할 때 재물운이 안정됩니다.", "opp": "작은 성과가 차곡차곡 쌓여 종잣돈의 기틀이 단단해집니다.", "warn": "무리한 대출이나 투자는 지양하고 현금 유동성을 확보하세요."},
-        {"gua": "화천대유(火天大有) 괘", "story": f"★올해 상반기 최고의 황금기입니다! 그동안 땀 흘려 준비해 온 일들이 찬란한 결실로 이어지며 큰 보상과 명예를 얻게 됩니다. 부동산, 계약, 투자 회수 등에서 기대 이상의 이익이 발생합니다.", "opp": "대길의 재물운! 부동산/투자/계약에서 큰 결실을 맺습니다.", "warn": "성과를 독식하려 하지 말고 함께한 동료들에게 따뜻하게 베푸세요."},
-        {"gua": "천풍구(天風姤) 괘", "story": f"뜻밖의 제안이나 새로운 분야로의 활로가 활짝 열리는 역동적인 달입니다. 생각지 못했던 인연을 통해 귀중한 정보를 얻거나 기회가 찾아옵니다. 실질적인 조건을 꼼꼼히 따져보는 안목이 중요합니다.", "opp": "새로운 제안과 신규 프로젝트의 반가운 활로가 열립니다.", "warn": "계약서의 독소 조항과 구두 약속을 면밀히 검증하세요."},
-        {"gua": "천수송(天水訟) 괘", "story": f"복잡했던 업무 체계를 정리하고 불필요한 시비를 털어내는 체질 개선의 달입니다. 사소한 오해가 생길 수 있으나 유연한 태도로 대화하면 오히려 더 깊은 신뢰를 쌓는 계기가 됩니다.", "opp": "기존의 복잡했던 업무 체계를 깔끔히 정리하고 체질을 개선합니다.", "warn": "사소한 언쟁이나 시비수를 피하기 위해 공감 화법을 유지하세요."},
-        {"gua": "풍지관(風地觀) 괘", "story": f"상반기 달려온 궤적을 돌아보고 하반기 도약을 위한 전략을 가다듬는 성찰의 달입니다. 심신의 여유를 찾고 건강 상태를 점검하기에 좋습니다. 차분히 계획을 재정비할 때 확실한 승기를 잡을 수 있습니다.", "opp": "성과를 점검하고 하반기 도약을 위한 전략을 세우기에 최적입니다.", "warn": "체력 저하와 피로를 방지하기 위해 충분한 수면과 휴식을 챙기세요."},
-        {"gua": "산지박(山地剝) 괘", "story": f"군더더기를 깎아내고 본질에 집중해야 하는 실속 다지기의 달입니다. 무리한 확장보다 본인이 가장 잘하는 핵심 역량에 집중해야 합니다. 불필요한 고정비를 청산하기에 좋습니다.", "opp": "불필요한 고정비와 낭비 요소를 말끔히 청산하여 실속을 챙깁니다.", "warn": "무리한 확장보다 기존 고객 및 핵심 업무 관리에 집중하세요."},
-        {"gua": "지뢰복(地雷復) 괘", "story": f"★올해 하반기 최고의 승부처입니다! 침체되었던 기운이 완전히 걷히고 강력한 상승 기류를 타게 됩니다. 승진, 대형 계약 수주, 투자 회수 등에서 눈부신 성취를 거두며 위상이 크게 격상됩니다.", "opp": "강력한 승부처! 승진, 수주, 투자 회수에서 결정적 주도권을 쥡니다.", "warn": "기회가 올 때 주저하지 말고 과감한 결단력으로 밀어붙이세요."},
-        {"gua": "수뢰준(水雷屯) 괘", "story": f"내년을 위한 새로운 씨앗을 뿌리고 미래 먹거리를 준비하는 준비의 달입니다. 자격증 취득, 자기계발 등에 공을 들이면 훗날 큰 자산으로 되돌아옵니다. 기본기를 탄탄히 다지세요.", "opp": "새로운 아이템이나 자격/학업의 씨앗을 뿌려 미래를 준비하기 좋습니다.", "warn": "경험자의 조언을 경청하여 불필요한 시행착오를 사전에 방지하세요."},
-        {"gua": "지화명이(地火明夷) 괘", "story": f"한 해 동안 일군 풍성한 결실을 확정 짓고 가문과 가족의 화목을 누리는 평온한 달입니다. 노고에 대한 정당한 보상을 받으며 주변과 따뜻한 온정을 나누게 됩니다. 건강을 잘 챙기세요.", "opp": "풍성한 결실을 확정 짓고 가문과 가족의 화목을 누립니다.", "warn": "연말 과음과 과로를 피하고 따뜻한 온기로 건강을 챙기세요."}
-    ]
+            document.getElementById('gunghapModal').classList.remove('hidden');
+            setTimeout(() => { nameInput.focus(); }, 150);
+        }
 
-    monthly_guides = []
-    for m_idx in range(1, 13):
-        m_hash = (seed * 13 + m_idx * 37) % 100
-        score = 68 + (m_hash % 31)
-        item_idx = (seed + m_idx) % len(MONTH_NARRATIVES)
-        pool_item = MONTH_NARRATIVES[item_idx]
+        function closeGunghapModal() { document.getElementById('gunghapModal').classList.add('hidden'); }
 
-        monthly_guides.append({
-            "m": f"{m_idx}월", "score": score, "gua": pool_item["gua"],
-            "story": pool_item["story"], "opp": pool_item["opp"], "warn": pool_item["warn"]
-        })
+        function confirmUnlockGunghapOnServer() {
+            const pName = document.getElementById('partnerNameInput').value.trim();
+            const py = document.getElementById('partnerBirthYearSelect').value;
+            const pm = document.getElementById('partnerBirthMonthSelect').value;
+            const pd = document.getElementById('partnerBirthDaySelect').value;
+            const rel = document.getElementById('partnerRelationSelect').value;
 
-    sorted_months = sorted(monthly_guides, key=lambda x: x["score"], reverse=True)
-    top1_month, top1_score = sorted_months[0]["m"], sorted_months[0]["score"]
-    top2_month, top2_score = sorted_months[1]["m"], sorted_months[1]["score"]
+            if (!pName) {
+                alert("상대방 이름을 입력해 주세요.");
+                document.getElementById('partnerNameInput').focus();
+                return;
+            }
 
-    months_html = "".join([f"""
-        <div style="background: #F8FAFC; border-radius: 12px; padding: 14px 16px; margin-bottom: 12px; border: 1px solid #E2E8F0;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
-                <span style="font-weight: 800; color: #0F172A; font-size: 15px;">{item['m']} 세운 가이드</span>
-                <span style="font-size: 12px; background: #FEF3C7; color: #92400E; font-weight: 800; padding: 2px 8px; border-radius: 6px;">이달의 운세 점수: {item['score']}점</span>
-            </div>
-            <p style="font-size: 11.5px; color: #64748B; margin-bottom: 10px; font-weight: 400;">(주역 본괘 : {item['gua']})</p>
-            <p style="color: #334155; font-size: 13.5px; line-height: 1.75; margin-bottom: 10px;">
-                {item['story']}
-            </p>
-            <div style="border-top: 1px dashed #CBD5E1; padding-top: 8px; display: flex; flex-direction: column; gap: 4px;">
-                <p style="color: #065F46; font-size: 13px; line-height: 1.55;">
-                    <strong>✨ 기회의 순간:</strong> {item['opp']}
-                </p>
-                <p style="color: #991B1B; font-size: 13px; line-height: 1.55;">
-                    <strong>⚠️ 주의할 처세:</strong> {item['warn']}
-                </p>
-            </div>
-        </div>
-    """ for item in monthly_guides])
+            closeGunghapModal();
+            handleUnlockReportOnServer('gunghap', 350, "기본", pName, rel || "인연/조화");
+        }
 
-    return {
-        "title": f"📅 2026 丙午년 총운 & 하반기 정밀 월별 가이드 ({gender_str})",
-        "content": f"""
-        <div style="display: flex; flex-direction: column; gap: 16px; font-size: 14.5px; color: #334155; line-height: 1.85; text-align: left;">
-            <div>
-                <div style="border-left: 4px solid #DC2626; padding-left: 10px; margin-bottom: 8px;">
-                    <span style="font-size: 12px; color: #DC2626; font-weight: 800;">Chapter 1. 2026년 세운(歲運) 총론</span>
-                    <h4 style="font-size: 16.5px; font-weight: 800; color: #991B1B; margin-top: 2px;">
-                        🔥 2026 丙午년 {user_name}님의 도약 총운
-                    </h4>
-                </div>
-                <p style="color: #7F1D1D; line-height: 1.85;">
-                    2026년은 강렬한 불(火)의 기운이 대지를 환하게 비추는 丙午년입니다. {user_name}님의 명식과 조화를 이루어 준비해 온 역량이 꽃을 피우며 활로가 뚫리는 비상의 한 해가 됩니다.
-                </p>
-            </div>
-            <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
-            <div>
-                <div style="border-left: 4px solid #F59E0B; padding-left: 10px; margin-bottom: 8px;">
-                    <span style="font-size: 12px; color: #D97706; font-weight: 800;">Chapter 2. 소망 성취 골든타임</span>
-                    <h4 style="font-size: 16.5px; font-weight: 800; color: #78350F; margin-top: 2px;">
-                        🎯 성취 확률 92%의 황금 시기
-                    </h4>
-                </div>
-                <p style="color: #78350F; line-height: 1.85;">
-                    올해의 핵심 소망은 <strong>양력 {top1_month}({top1_score}점)과 {top2_month}({top2_score}점)</strong>에 천운을 만나 일사천리로 성취됩니다.
-                </p>
-            </div>
-            <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
-            <div>
-                <div style="border-left: 4px solid #2D6A4F; padding-left: 10px; margin-bottom: 8px;">
-                    <span style="font-size: 12px; color: #2D6A4F; font-weight: 800;">Chapter 3. 월별 세운 흐름</span>
-                    <h4 style="font-size: 16.5px; font-weight: 800; color: #0F172A; margin-top: 2px;">
-                        📜 1월부터 12월까지 정밀 세운
-                    </h4>
-                </div>
-                <div style="display: flex; flex-direction: column; gap: 4px;">{months_html}</div>
-            </div>
-        </div>
-        """
-    }
+        function openThemeSelectModal(key) {
+            currentThemeKey = key;
+            const modalBox = document.getElementById('modalOptionBox');
+            const titleEl = document.getElementById('modalThemeTitle');
 
-def get_gunghap_report(req: dict):
-    user_name = req.get("name", "최정오")
-    partner_name = req.get("partner_name", "상대방")
-    relation = req.get("relation", "연인/결혼")
-    if relation == "선택안함" or not relation:
-        relation = "인연/조화"
+            if (key === 'love') {
+                titleEl.innerText = "💖 현재 애정 상태를 선택해 주세요";
+                modalBox.innerHTML = `
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                        <label style="padding:10px; border:1px solid #E2E8F0; border-radius:8px; background:white; cursor:pointer;"><input type="radio" name="optM" value="솔로" checked> 솔로 (미혼)</label>
+                        <label style="padding:10px; border:1px solid #E2E8F0; border-radius:8px; background:white; cursor:pointer;"><input type="radio" name="optM" value="썸/짝사랑"> 썸 / 짝사랑</label>
+                        <label style="padding:10px; border:1px solid #E2E8F0; border-radius:8px; background:white; cursor:pointer;"><input type="radio" name="optM" value="연애중"> 연애중</label>
+                        <label style="padding:10px; border:1px solid #E2E8F0; border-radius:8px; background:white; cursor:pointer;"><input type="radio" name="optM" value="기혼"> 기혼 (부부)</label>
+                    </div>`;
+            } else if (key === 'business') {
+                titleEl.innerText = "🏢 현재 직업/사업 상태를 선택해 주세요";
+                modalBox.innerHTML = `
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                        <label style="padding:10px; border:1px solid #E2E8F0; border-radius:8px; background:white; cursor:pointer;"><input type="radio" name="optM" value="직장인" checked> 직장인</label>
+                        <label style="padding:10px; border:1px solid #E2E8F0; border-radius:8px; background:white; cursor:pointer;"><input type="radio" name="optM" value="취업/이직"> 취업 / 이직</label>
+                        <label style="padding:10px; border:1px solid #E2E8F0; border-radius:8px; background:white; cursor:pointer;"><input type="radio" name="optM" value="사업가"> 사업가</label>
+                        <label style="padding:10px; border:1px solid #E2E8F0; border-radius:8px; background:white; cursor:pointer;"><input type="radio" name="optM" value="창업"> 창업 준비</label>
+                    </div>`;
+            }
+            document.getElementById('themeSelectModal').classList.remove('hidden');
+        }
 
-    seed = sum(ord(c) for c in user_name) + sum(ord(c) for c in partner_name)
-    total_score = 88 + (seed % 11)
-    love_score = 90 + ((seed * 3) % 9)
-    trust_score = 89 + ((seed * 7) % 10)
-    synergy_score = 91 + ((seed * 11) % 8)
+        function closeThemeSelectModal() { document.getElementById('themeSelectModal').classList.add('hidden'); }
+        function confirmUnlockThemeOnServer() {
+            const selEl = document.querySelector('input[name="optM"]:checked');
+            const subOpt = selEl ? selEl.value : '기본';
+            closeThemeSelectModal();
+            handleUnlockReportOnServer(currentThemeKey, 220, subOpt);
+        }
 
-    return {
-        "title": f"💞 {user_name} & {partner_name} 정통 사주 궁합 ({relation})",
-        "content": f"""
-        <div style="display: flex; flex-direction: column; gap: 16px; font-size: 14.5px; color: #334155; line-height: 1.85; text-align: left;">
-            <div style="background: linear-gradient(135deg, #FFF1F2 0%, #FFE4E6 100%); border: 1.5px solid #FECDD3; border-radius: 14px; padding: 16px; display: flex; justify-content: space-between; align-items: center;">
-                <div>
-                    <span style="font-size: 12px; color: #BE123C; font-weight: 800;">정통 오행 상생 궁합 지수 ({relation})</span>
-                    <h3 style="font-size: 20px; font-weight: 900; color: #9F1239; margin-top: 2px;">{total_score}점 (천생연분 대길합)</h3>
-                    <p style="font-size: 11.5px; color: #E11D48; margin-top: 2px;">애정합 {love_score}% · 신뢰합 {trust_score}% · 상생 시너지 {synergy_score}%</p>
-                </div>
-                <div style="font-size: 36px;">💖</div>
-            </div>
-            <div>
-                <div style="border-left: 4px solid #E11D48; padding-left: 10px; margin-bottom: 8px;">
-                    <span style="font-size: 12px; color: #E11D48; font-weight: 800;">Chapter 1. 두 사람의 기운과 인연의 깊이</span>
-                    <h4 style="font-size: 16.5px; font-weight: 800; color: #881337; margin-top: 2px;">🔗 {user_name}님과 {partner_name}님의 상생 조화</h4>
-                </div>
-                <p style="color: #9F1239; line-height: 1.85;">
-                    {user_name}님의 사주에 부족한 기운을 {partner_name}님이 풍부하게 품어주고 있어 만날수록 자존감이 회복되는 상호보완형 인연입니다.
-                </p>
-            </div>
-            <div style="background: #F8FAFC; border-radius: 10px; padding: 12px; border-left: 3.5px solid #BE123C;">
-                <p style="font-weight: 800; color: #0F172A; font-size: 14px; margin-bottom: 4px;">💡 두 사람을 위한 맞춤 처세 팁:</p>
-                <p style="color: #475569; font-size: 13.5px;">사소한 의견 차이가 생길 때는 즉각적인 반론보다 3초간 경청 후 상대방의 입장을 인정해 주는 화법을 구사할 때 갈등 없이 백년해로합니다.</p>
-            </div>
-        </div>
-        """
-    }
+        function setGenderType(gender) {
+            selectedGender = gender;
+            document.getElementById('btnGenderMale').className = (gender === 'male') ? "cal-btn active" : "cal-btn";
+            document.getElementById('btnGenderFemale').className = (gender === 'female') ? "cal-btn active" : "cal-btn";
+        }
 
-def get_theme_report(req: dict):
-    theme = req.get("theme", "wealth")
-    sub_opt = req.get("sub_option", "기본")
-    user_name = req.get("name", "최정오")
-    titles = {"wealth": "💰 평생 재물운", "love": f"💖 평생 애정운 ({sub_opt})", "business": f"🏢 사업·직업운 ({sub_opt})", "health": "🌿 평생 건강운"}
+        function setCalType(type) {
+            selectedCalendarType = type;
+            ['solar', 'lunar', 'leap'].forEach(t => {
+                const btn = document.getElementById(`btnCal${t.charAt(0).toUpperCase() + t.slice(1)}`);
+                if (btn) btn.className = (t === type) ? "cal-btn active" : "cal-btn";
+            });
+        }
 
-    if theme == "wealth":
-        content = f"""
-        <div style="display: flex; flex-direction: column; gap: 16px; font-size: 14.5px; color: #334155; line-height: 1.85; text-align: left;">
-            <div style="border-left: 4px solid #D97706; padding-left: 10px;">
-                <span style="font-size: 12px; color: #D97706; font-weight: 800;">Chapter 1. 평생 재물 원국 정밀 감명</span>
-                <h4 style="font-size: 16.5px; font-weight: 800; color: #78350F; margin: 3px 0 6px;">[타고난 금고] '암장(暗藏) 황금 금고형' 자산 축적 원국</h4>
-                <p style="color: #92400E; font-size: 14.5px; line-height: 1.85;">
-                    {user_name}님의 사주는 겉으로 드러난 화려함보다 실속 있게 현금과 실물 자산을 차곡차곡 축적하는 전형적인 황금 금고형 명식입니다.
-                </p>
-            </div>
-        </div>
-        """
-    elif theme == "business":
-        content = f"""
-        <div style="display: flex; flex-direction: column; gap: 16px; font-size: 14.5px; color: #334155; line-height: 1.85; text-align: left;">
-            <div style="border-left: 4px solid #2563EB; padding-left: 10px;">
-                <span style="font-size: 12px; color: #2563EB; font-weight: 800;">Chapter 1. 직무/사업 맞춤 운세 ({sub_opt})</span>
-                <h4 style="font-size: 16.5px; font-weight: 800; color: #1E3A8A; margin: 3px 0 6px;">🎯 전문 직무 승부처 & 로드맵</h4>
-                <p style="color: #1E40AF; font-size: 14.5px; line-height: 1.85;">
-                    {user_name}님의 명식은 상황을 주도적으로 돌파하는 전략가형 기질을 품고 있어 본인이 주도권을 쥔 환경에서 큰 성과를 거둡니다.
-                </p>
-            </div>
-        </div>
-        """
-    elif theme == "love":
-        content = f"""
-        <div style="display: flex; flex-direction: column; gap: 16px; font-size: 14.5px; color: #334155; line-height: 1.85; text-align: left;">
-            <div style="border-left: 4px solid #E11D48; padding-left: 10px;">
-                <span style="font-size: 12px; color: #E11D48; font-weight: 800;">Chapter 1. 상태 맞춤 애정 원국 ({sub_opt})</span>
-                <h4 style="font-size: 16.5px; font-weight: 800; color: #881337; margin: 3px 0 6px;">💖 인연의 기운과 결실의 타이밍</h4>
-                <p style="color: #9F1239; font-size: 14.5px; line-height: 1.85;">
-                    {user_name}님의 사주는 신뢰와 따뜻한 배려가 결합할 때 애정의 기운이 평생 동안 번창하는 온화한 명식입니다.
-                </p>
-            </div>
-        </div>
-        """
-    else:
-        content = f"""
-        <div style="display: flex; flex-direction: column; gap: 16px; font-size: 14.5px; color: #334155; line-height: 1.85; text-align: left;">
-            <div style="border-left: 4px solid #059669; padding-left: 10px;">
-                <span style="font-size: 12px; color: #059669; font-weight: 800;">Chapter 1. 오행 체질 장부 정밀 분석</span>
-                <h4 style="font-size: 16.5px; font-weight: 800; color: #065F46; margin: 3px 0 6px;">[평생 체질] 수승화강(水昇火降) 활력과 섭생법</h4>
-                <p style="color: #047857; font-size: 14.5px; line-height: 1.85;">
-                    두한족열(머리는 시원하게, 발은 따뜻하게)의 기본 수칙을 유지하면 에너지가 고갈되지 않습니다.
-                </p>
-            </div>
-        </div>
-        """
+        function toggleDrawer(drawerId) {
+            const card = document.getElementById(drawerId);
+            const body = card.querySelector('.drawer-body');
+            if (!body) return;
+            const isOpen = card.classList.contains('open');
+            card.classList.toggle('open', !isOpen);
+            body.classList.toggle('hidden', isOpen);
+        }
 
-    return {"title": titles.get(theme, "심층 리포트"), "content": content}
+        function getGoldCoinSvg(size = 16, color = "#F59E0B") {
+            return `<svg viewBox="0 0 20 20" width="${size}" height="${size}" style="display:inline-block; vertical-align:middle;"><circle cx="10" cy="10" r="9" fill="${color}" stroke="#D97706" stroke-width="1.2"/><text x="10" y="14" font-size="11" font-weight="800" fill="#FFFFFF" text-anchor="middle">C</text></svg>`;
+        }
 
-@app.get("/static/og_thumb.png")
-def get_og_thumbnail():
-    svg_data = """<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
-        <rect width="1200" height="630" fill="#0D1527"/>
-        <circle cx="600" cy="220" r="90" fill="none" stroke="#E2C068" stroke-width="3"/>
-        <circle cx="600" cy="220" r="75" fill="#F6E2A1"/>
-        <text x="600" y="248" font-size="75" font-family="'Noto Serif KR', serif" font-weight="900" fill="#0D1527" text-anchor="middle">月</text>
-        <text x="600" y="380" font-size="58" font-family="'Noto Serif KR', sans-serif" font-weight="900" fill="#FAF9F6" text-anchor="middle" letter-spacing="-1px">달하 (DALHA)</text>
-        <text x="600" y="435" font-size="24" font-family="'Pretendard', sans-serif" font-weight="700" fill="#E2C068" text-anchor="middle" letter-spacing="4px">AUTHENTIC EASTERN FORTUNE</text>
-        <text x="600" y="500" font-size="26" font-family="'Pretendard', sans-serif" font-weight="500" fill="#94A3B8" text-anchor="middle">달빛이 비추는 당신의 운명 · 정통 사주 · 바이오리듬 · 타로</text>
-    </svg>"""
-    return Response(content=svg_data, media_type="image/svg+xml")
+        function goToHomeAndScrollTop() { switchTab('today'); window.scrollTo({ top: 0, behavior: 'smooth' }); }
 
-@app.get("/robots.txt")
-def get_robots():
-    data = "User-agent: *\nAllow: /\nSitemap: https://dalha.kr/sitemap.xml"
-    return Response(content=data, media_type="text/plain")
+        function switchTab(tabId) {
+            ['today', 'saju', 'theme', 'mypage'].forEach(t => {
+                document.getElementById(`view-${t}`)?.classList.add('hidden');
+                document.getElementById(`tab-${t}`)?.classList.remove('active');
+            });
+            document.getElementById(`view-${tabId}`)?.classList.remove('hidden');
+            document.getElementById(`tab-${tabId}`)?.classList.add('active');
+            if (tabId === 'mypage') renderServerArchive();
+        }
 
-@app.get("/sitemap.xml")
-def get_sitemap():
-    data = """<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://dalha.kr/</loc>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
-  </url>
-</urlset>"""
-    return Response(content=data, media_type="application/xml")
+        function switchZodiacSubTab(type) {
+            const btnZodiac = document.getElementById('btnSubZodiac');
+            const btnStar = document.getElementById('btnSubStar');
+            const gridZodiac = document.getElementById('gridZodiacBox');
+            const gridStar = document.getElementById('gridStarBox');
 
-@app.get("/naverc5036aa02eca57807bf721e44ad78969.html")
-def naver_verification():
-    return HTMLResponse("naver-site-verification: naverc5036aa02eca57807bf721e44ad78969.html")
-
-@app.get("/google888b184f07770663.html")
-def google_verification():
-    return HTMLResponse("google-site-verification: google888b184f07770663.html")
+            if (type === 'zodiac') {
+                btnZodiac.className = 'sub-tab-btn active';저는 언어 모델일 뿐이라 그것을 이해하고 대응할 능력이 없기 때문에 도와드릴 수가 없습니다.
