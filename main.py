@@ -8,7 +8,7 @@ from fastapi import FastAPI, Request, HTTPException
 from fastapi.responses import HTMLResponse, FileResponse, Response
 from pydantic import BaseModel
 
-app = FastAPI(title="달하 (DALHA) - 정통 명리학 & 점성술 엔진", version="43.6.0")
+app = FastAPI(title="달하 (DALHA) - 정통 명리학 & 점성술 엔진", version="43.6.1")
 
 DB_FILE = "dalha.db"
 
@@ -58,7 +58,6 @@ def init_db():
         FOREIGN KEY(user_id) REFERENCES users(id)
     )
     """)
-    # 기존 DB에 nickname 컬럼이 없을 경우를 위한 안전 마이그레이션
     try:
         cursor.execute("ALTER TABLE wardrobe_items ADD COLUMN nickname VARCHAR(100)")
     except Exception:
