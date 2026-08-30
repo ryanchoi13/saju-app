@@ -92,13 +92,13 @@
         .tile-btn.selected { background: #FEF3C7; border-color: #D97706; color: #78350F; font-weight: 800; transform: scale(1.02); }
 
         .color-chip-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-top: 6px; }
-        .color-chip { border: 1.5px solid #CBD5E1; border-radius: 10px; padding: 8px 4px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; cursor: pointer; font-size: 11px; font-weight: 700; color: #475569; background: #FFFFFF; }
+        .color-chip { border: 1.5px solid #CBD5E1; border-radius: 10px; padding: 8px 4px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; cursor: pointer; font-size: 11px; font-weight: 700; color: #475569; background: #FFFFFF; transition: all 0.15s; }
         .color-dot { width: 18px; height: 18px; border-radius: 9999px; border: 1px solid rgba(0,0,0,0.15); }
-        .color-chip.selected { border-color: #2D6A4F; background: #EBF5EE; color: #166534; font-weight: 800; box-shadow: 0 0 0 1px #2D6A4F; }
+        .color-chip.selected { border-color: #2D6A4F; background: #EBF5EE; color: #166534; font-weight: 800; box-shadow: 0 0 0 1.5px #2D6A4F; }
 
         .mat-chip-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; margin-top: 6px; }
-        .mat-chip { border: 1.5px solid #CBD5E1; border-radius: 10px; padding: 10px 8px; display: flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer; font-size: 12px; font-weight: 700; color: #475569; background: #FFFFFF; }
-        .mat-chip.selected { border-color: #2D6A4F; background: #EBF5EE; color: #166534; font-weight: 800; box-shadow: 0 0 0 1px #2D6A4F; }
+        .mat-chip { border: 1.5px solid #CBD5E1; border-radius: 10px; padding: 10px 8px; display: flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer; font-size: 12px; font-weight: 700; color: #475569; background: #FFFFFF; transition: all 0.15s; }
+        .mat-chip.selected { border-color: #2D6A4F; background: #EBF5EE; color: #166534; font-weight: 800; box-shadow: 0 0 0 1.5px #2D6A4F; }
 
         .wardrobe-item-card { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 14px; padding: 12px 14px; display: flex; justify-content: space-between; align-items: center; text-align: left; margin-bottom: 8px; }
 
@@ -129,7 +129,7 @@
 
         .teaser-blur-box { background: #FFFFFF; border: 1.5px solid #FCD34D; border-radius: 18px; padding: 16px; text-align: left; position: relative; overflow: hidden; margin-bottom: 12px; }
         .teaser-blur-text { filter: blur(4px); user-select: none; color: #64748B; font-size: 13.5px; line-height: 1.7; }
-        .teaser-lock-badge { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(255,255,255,0.75); backdrop-filter: blur(2px); }
+        .teaser-lock-badge { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(255,255,270,0.75); backdrop-filter: blur(2px); }
 
         nav#bottomNavBar { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 448px; background: rgba(13,21,39,0.98); backdrop-filter: blur(8px); border-top: 1px solid rgba(226,192,104,0.3); padding: 10px 24px; display: flex; justify-content: space-between; align-items: center; z-index: 1000; }
         .tab-btn { background: none; border: none; display: flex; flex-direction: column; align-items: center; gap: 4px; color: #94A3B8; font-size: 12px; cursor: pointer; font-weight: 500; }
@@ -286,7 +286,7 @@
                     </p>
                 </div>
 
-                <!-- 2. 내 옷장 아이템 서랍 (위치: 맞춤 추천 코디 바로 아래) -->
+                <!-- 2. 내 옷장 아이템 서랍 -->
                 <div id="drawerWardrobe" class="drawer-card" style="border: 1.5px solid #CBD5E1;">
                     <div class="drawer-header" onclick="toggleDrawer('drawerWardrobe')" style="background: #FAF9F6;">
                         <div class="drawer-title-box">
@@ -306,7 +306,6 @@
                             <span>➕</span> 새 아이템 옷장에 등록하기 (3초)
                         </button>
 
-                        <!-- 저장된 옷장 아이템 리스트 -->
                         <div id="wardrobeItemsList" style="display: flex; flex-direction: column; gap: 6px;"></div>
                     </div>
                 </div>
@@ -320,11 +319,13 @@
                     <div class="grid-cell" style="grid-column: span 2;"><span style="font-size: 12px; color: #94A3B8; display: block;">💡 마인드 처세</span><p id="resMindset" style="font-weight: 700; margin-top: 2px; font-size: 13.5px; color: #0F172A;">원칙을 지키며 유연하게 대처하기</p></div>
                 </div>
 
+                <!-- 오늘의 조언 카드 -->
                 <div class="action-card">
                     <span style="font-weight: 800; color: #78350F; display: block; margin-bottom: 3px; font-size: 14px;">✨ 오늘의 조언</span>
                     <p id="resGaewoon" style="color: #92400E; font-weight: 500; font-size: 14px; line-height: 1.6;">오늘 완료해야 할 우선순위 3가지 메모하기</p>
                 </div>
 
+                <!-- 바이오리듬 카드 -->
                 <div class="biorhythm-card">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                         <h4 style="font-size: 15px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif;">🧬 오늘의 바이오리듬</h4>
@@ -358,6 +359,7 @@
                     </div>
                 </div>
 
+                <!-- 광고 슬롯 1 -->
                 <div class="ad-slot-box"><span>📢 광고 영역 (Google AdSense / Kakao AdFit 슬롯 1)</span></div>
 
                 <!-- 스페셜 운세 서랍들 -->
@@ -651,7 +653,7 @@
 
     </div>
 
-    <!-- 신규: 시각적 옷장 3단계 등록 위저드 모달 -->
+    <!-- 비주얼 옷장 3단계 등록 위저드 모달 -->
     <div id="wardrobeAddModal" class="modal-bg hidden">
         <div class="modal-content" style="max-width: 360px; text-align: left; padding: 20px;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 8px;">
@@ -681,7 +683,7 @@
             <div id="wizardStep2" class="hidden" style="display: flex; flex-direction: column; gap: 6px;">
                 <p style="font-size: 12px; color: #64748B;">색상을 모두 선택하세요 (2개 이상 복수 가능):</p>
                 <div class="color-chip-grid">
-                    <div class="color-chip selected" onclick="toggleColorChip('화이트', this)"><div class="color-dot" style="background:#FFFFFF;"></div><span>화이트</span></div>
+                    <div class="color-chip" onclick="toggleColorChip('화이트', this)"><div class="color-dot" style="background:#FFFFFF;"></div><span>화이트</span></div>
                     <div class="color-chip" onclick="toggleColorChip('블랙', this)"><div class="color-dot" style="background:#18181B;"></div><span>블랙</span></div>
                     <div class="color-chip" onclick="toggleColorChip('네이비', this)"><div class="color-dot" style="background:#1E3A8A;"></div><span>네이비</span></div>
                     <div class="color-chip" onclick="toggleColorChip('레드', this)"><div class="color-dot" style="background:#DC2626;"></div><span>레드</span></div>
@@ -702,7 +704,7 @@
             <div id="wizardStep3" class="hidden" style="display: flex; flex-direction: column; gap: 6px;">
                 <p style="font-size: 12px; color: #64748B;">소재를 모두 선택하세요 (가죽+메탈 등 복수 가능):</p>
                 <div class="mat-chip-grid">
-                    <div class="mat-chip selected" onclick="toggleMatChip('면/린넨', this)"><span>🧵</span><span>면 · 린넨 (木)</span></div>
+                    <div class="mat-chip" onclick="toggleMatChip('면/린넨', this)"><span>🧵</span><span>면 · 린넨 (木)</span></div>
                     <div class="mat-chip" onclick="toggleMatChip('실크/쉬폰', this)"><span>✨</span><span>실크 · 쉬폰 (火)</span></div>
                     <div class="mat-chip" onclick="toggleMatChip('가죽/세무', this)"><span>👜</span><span>가죽 · 스웨이드 (土)</span></div>
                     <div class="mat-chip" onclick="toggleMatChip('메탈/금속', this)"><span>⚙️</span><span>메탈 · 골드/은 (金)</span></div>
@@ -868,8 +870,8 @@
 
         // 위저드 선택 상태
         let wizardCategory = "상의";
-        let wizardColors = ["화이트"];
-        let wizardMaterials = ["면/린넨"];
+        let wizardColors = [];
+        let wizardMaterials = [];
 
         const KAKAO_JS_KEY = "fde505a5042405dbac55d2e98e9f9b08";
 
@@ -1031,7 +1033,7 @@
             "사자자리": `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#E2C068" stroke-width="2"><circle cx="7.5" cy="14.5" r="2.5"/><path d="M9 13a6 6 0 1 1 8 4c0 2-2 3-3 3s-2-1.5-1-3.5"/></svg>`,
             "처녀자리": `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#E2C068" stroke-width="2"><path d="M4 4v12a3 3 0 0 0 6 0V4M10 4v12a3 3 0 0 0 6 0V4M16 7a3 3 0 0 1 4 4v9M16 16l4 4"/></svg>`,
             "천칭자리": `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#E2C068" stroke-width="2"><path d="M4 20h16M4 14h5a3 3 0 1 1 6 0h5"/></svg>`,
-            "전갈자리": `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#E2C068" stroke-width="2"><path d="M4 4v12a3 3 0 0 0 6 0V4M10 4v12a3 3 0 0 0 6 0V4M16 4v12a3 3 0 0 0 6 0v-2M19 14l3 2-3 2"/></svg>`,
+            "전갈자리": `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#E2C068" stroke-width="2"><path d="M4 4v12a3 3 0 0 0 6 0V4M10 4v12a3 3 0 0 0 6 0v-2M19 14l3 2-3 2"/></svg>`,
             "사수자리": `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#E2C068" stroke-width="2"><path d="M5 19L19 5M12 5h7v7M8 12l4 4"/></svg>`,
             "염소자리": `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#E2C068" stroke-width="2"><path d="M4 4v11a4 4 0 0 0 8 0V5M12 9a4 4 0 0 1 8 4c0 3-3 7-5 7s-3-2-2-4"/></svg>`,
             "물병자리": `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#E2C068" stroke-width="2"><path d="M3 8l3-3 3 3 3-3 3 3 3-3 3 3M3 16l3-3 3 3 3-3 3 3 3-3 3 3"/></svg>`,
@@ -1212,7 +1214,6 @@
             updateTodayWardrobeMatchPick();
         }
 
-        // 오늘의 맞춤 코디 카드에 내 옷장 매칭 픽 실시간 렌더링
         function updateTodayWardrobeMatchPick() {
             const pickEl = document.getElementById('wardrobeDailyMatchPick');
             if (!pickEl) return;
@@ -1231,7 +1232,6 @@
             pickEl.innerHTML = `✨ <strong>오늘의 옷장 매칭:</strong> 오늘 일진과 조화로운 내 옷장의 <strong>[${colorsStr} ${matsStr} ${item.category}]</strong>을 착용해 보세요! 기운의 밸런스가 상승합니다.`;
         }
 
-        // 내 옷장 UI 렌더링
         function renderWardrobeUI() {
             const listEl = document.getElementById('wardrobeItemsList');
             const badgeEl = document.getElementById('wardrobeCountBadge');
@@ -1265,16 +1265,35 @@
             updateTodayWardrobeMatchPick();
         }
 
+        // 위저드 팝업 열기/닫기 (화면 및 선택 배열 완벽 초기화)
         function openWardrobeAddWizard() {
             wizardCategory = "상의";
-            wizardColors = ["화이트"];
-            wizardMaterials = ["면/린넨"];
+            wizardColors = [];
+            wizardMaterials = [];
+
+            // UI 클래스 초기화
+            document.querySelectorAll('#wizardStep1 .tile-btn').forEach(btn => btn.classList.remove('selected'));
+            document.querySelector('#wizardStep1 .tile-btn:first-child')?.classList.add('selected');
+
+            document.querySelectorAll('#wizardStep2 .color-chip').forEach(chip => chip.classList.remove('selected'));
+            document.querySelectorAll('#wizardStep3 .mat-chip').forEach(chip => chip.classList.remove('selected'));
+
             goToWizardStep(1);
             document.getElementById('wardrobeAddModal').classList.remove('hidden');
         }
+
         function closeWardrobeAddWizard() { document.getElementById('wardrobeAddModal').classList.add('hidden'); }
 
         function goToWizardStep(step) {
+            if (step === 2 && !wizardCategory) {
+                alert("아이템 종류를 선택해 주세요.");
+                return;
+            }
+            if (step === 3 && wizardColors.length === 0) {
+                alert("색상을 1개 이상 선택해 주세요.");
+                return;
+            }
+
             document.getElementById('wizardStep1').classList.add('hidden');
             document.getElementById('wizardStep2').classList.add('hidden');
             document.getElementById('wizardStep3').classList.add('hidden');
@@ -1284,10 +1303,10 @@
                 label.innerText = "Step 1. 아이템 종류 선택 (단일)";
                 document.getElementById('wizardStep1').classList.remove('hidden');
             } else if (step === 2) {
-                label.innerText = "Step 2. 색상 선택 (복수 가능)";
+                label.innerText = "Step 2. 색상 선택 (2개 이상 복수 가능)";
                 document.getElementById('wizardStep2').classList.remove('hidden');
             } else if (step === 3) {
-                label.innerText = "Step 3. 소재 선택 (복수 가능)";
+                label.innerText = "Step 3. 소재 선택 (2개 이상 복수 가능)";
                 document.getElementById('wizardStep3').classList.remove('hidden');
             }
         }
@@ -1301,7 +1320,8 @@
         function toggleColorChip(col, el) {
             const idx = wizardColors.indexOf(col);
             if (idx > -1) {
-                if (wizardColors.length > 1) { wizardColors.splice(idx, 1); el.classList.remove('selected'); }
+                wizardColors.splice(idx, 1);
+                el.classList.remove('selected');
             } else {
                 wizardColors.push(col);
                 el.classList.add('selected');
@@ -1311,7 +1331,8 @@
         function toggleMatChip(mat, el) {
             const idx = wizardMaterials.indexOf(mat);
             if (idx > -1) {
-                if (wizardMaterials.length > 1) { wizardMaterials.splice(idx, 1); el.classList.remove('selected'); }
+                wizardMaterials.splice(idx, 1);
+                el.classList.remove('selected');
             } else {
                 wizardMaterials.push(mat);
                 el.classList.add('selected');
@@ -1320,6 +1341,7 @@
 
         async function saveWardrobeItemToServer() {
             if (!currentUserId) { alert("로그인이 필요합니다."); return; }
+            if (wizardMaterials.length === 0) { alert("소재를 1개 이상 선택해 주세요."); return; }
 
             const res = await fetch('/api/wardrobe/add', {
                 method: 'POST',
@@ -1559,7 +1581,7 @@
                 btnStar.className = 'sub-tab-btn active';
                 btnZodiac.className = 'sub-tab-btn';
                 gridStar.classList.remove('hidden');
-                gridZodiac.classList.add('hidden');
+                gridStar.classList.add('hidden');
             }
         }
 
