@@ -85,6 +85,23 @@
         .drawer-card.open .drawer-arrow { transform: rotate(180deg); color: #2D6A4F; }
         .drawer-body { padding: 0 16px 16px 16px; border-top: 1px solid #F1F5F9; }
 
+        /* 비주얼 옷장 위저드 스타일 */
+        .tile-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 6px; }
+        .tile-btn { background: #F8FAFC; border: 1.5px solid #E2E8F0; border-radius: 12px; padding: 12px 6px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; cursor: pointer; transition: all 0.2s; font-size: 12px; font-weight: 700; color: #334155; }
+        .tile-btn .t-icon { font-size: 22px; }
+        .tile-btn.selected { background: #FEF3C7; border-color: #D97706; color: #78350F; font-weight: 800; transform: scale(1.02); }
+
+        .color-chip-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-top: 6px; }
+        .color-chip { border: 1.5px solid #CBD5E1; border-radius: 10px; padding: 8px 4px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; cursor: pointer; font-size: 11px; font-weight: 700; color: #475569; background: #FFFFFF; }
+        .color-dot { width: 18px; height: 18px; border-radius: 9999px; border: 1px solid rgba(0,0,0,0.15); }
+        .color-chip.selected { border-color: #2D6A4F; background: #EBF5EE; color: #166534; font-weight: 800; box-shadow: 0 0 0 1px #2D6A4F; }
+
+        .mat-chip-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; margin-top: 6px; }
+        .mat-chip { border: 1.5px solid #CBD5E1; border-radius: 10px; padding: 10px 8px; display: flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer; font-size: 12px; font-weight: 700; color: #475569; background: #FFFFFF; }
+        .mat-chip.selected { border-color: #2D6A4F; background: #EBF5EE; color: #166534; font-weight: 800; box-shadow: 0 0 0 1px #2D6A4F; }
+
+        .wardrobe-item-card { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 14px; padding: 12px 14px; display: flex; justify-content: space-between; align-items: center; text-align: left; margin-bottom: 8px; }
+
         .zodiac-grid-2x6 { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; margin-top: 6px; }
         .zodiac-btn { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 10px 2px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; }
         .zodiac-btn:hover, .zodiac-btn:active { background: #0D1527; border-color: #E2C068; transform: translateY(-2px); }
@@ -127,7 +144,6 @@
 
     <div class="app-container">
 
-        <!-- 1. 상단 헤더 -->
         <header>
             <div class="logo-box" onclick="goToHomeAndScrollTop()">
                 <svg width="34" height="34" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink: 0;">
@@ -156,7 +172,7 @@
         </header>
 
         <main>
-            <!-- 2. 최초 카카오 로그인 화면 -->
+            <!-- 최초 카카오 로그인 화면 -->
             <div id="view-login-gate" class="login-gate-card">
                 <div style="width: 60px; height: 60px; margin: 0 auto 4px; display: flex; align-items: center; justify-content: center; border-radius: 16px; background: radial-gradient(circle, rgba(212,175,55,0.2) 0%, rgba(212,175,55,0.05) 100%); border: 1px solid rgba(212,175,55,0.3);">
                     <svg width="38" height="38" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -181,7 +197,7 @@
                 </button>
             </div>
 
-            <!-- 3. 신규 회원 사주 확인 폼 (년/월/일 3단 셀렉트) -->
+            <!-- 신규 회원 사주 확인 폼 -->
             <div id="onboardingInputView" class="card hidden" style="text-align: center;">
                 <div class="gift-badge" style="margin-bottom: 12px;">🎁 카카오 연동 완료 (+1,000 복채 지급)</div>
                 <h2 style="font-size: 21px; font-weight: 800; margin-bottom: 2px; font-family: 'Noto Serif KR', serif;">사주 명식 확인</h2>
@@ -252,93 +268,46 @@
                     <div id="resAdvice" style="font-size: 13.5px; color: #E2E8F0; font-weight: 400; line-height: 1.65; text-align: left;"></div>
                 </div>
 
-                <!-- 1. 맞춤 추천 코디 카드 (시크릿 반전 데이 알림 배지 포함) -->
+                <!-- 1. 맞춤 추천 코디 카드 (내 옷장 연동 픽 포함) -->
                 <div class="card" style="padding: 14px 16px; text-align: left;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
                         <span style="font-size: 12px; color: #64748B; font-weight: 700;">👔 맞춤 추천 코디</span>
                         <span id="reverseDayBadge" class="hidden" style="font-size: 11px; background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%); color: #78350F; font-weight: 800; padding: 2px 8px; border-radius: 9999px; border: 1px solid #FCD34D;">✦ 시크릿 반전 코디 데이</span>
                     </div>
                     <p id="resStyle" style="font-weight: 800; font-size: 14.5px; color: #0F172A; margin-bottom: 6px;">흰색 카라 반팔티 & 베이지 슬랙스</p>
-                    <p id="resReverseTip" style="font-size: 12px; color: #475569; line-height: 1.5; background: #F8FAFC; padding: 8px 10px; border-radius: 8px; border-left: 3px solid #D4AF37;">
+                    
+                    <!-- 내 옷장 자동 매칭 추천 한줄 -->
+                    <div id="wardrobeDailyMatchPick" style="font-size: 12.5px; color: #065F46; background: #ECFDF5; padding: 8px 10px; border-radius: 8px; border-left: 3.5px solid #10B981; margin-bottom: 4px;">
+                        👗 <strong>오늘의 옷장 픽:</strong> 내 옷장에 아이템을 등록하면 오늘 일진에 딱 맞는 아이템을 추천해 드려요!
+                    </div>
+
+                    <p id="resReverseTip" style="font-size: 12px; color: #475569; line-height: 1.5; background: #F8FAFC; padding: 6px 10px; border-radius: 6px;">
                         오늘의 일진에 맞춘 상생 코디 가이드를 불러오는 중입니다.
                     </p>
                 </div>
 
-                <!-- 2. 오행 옷장 & 컬러 체인저 서랍 -->
+                <!-- 2. 내 옷장 아이템 서랍 (위치: 맞춤 추천 코디 바로 아래) -->
                 <div id="drawerWardrobe" class="drawer-card" style="border: 1.5px solid #CBD5E1;">
                     <div class="drawer-header" onclick="toggleDrawer('drawerWardrobe')" style="background: #FAF9F6;">
                         <div class="drawer-title-box">
                             <div class="drawer-icon-circle" style="background: #FEF3C7; color: #78350F;">👗</div>
                             <div style="text-align: left;">
-                                <h4 class="drawer-title" style="color: #0F172A;">나만의 오행 옷장 & 컬러 체인저</h4>
-                                <p class="drawer-sub">내 아이템의 기운과 착용 골든타임 찾기</p>
+                                <div style="display: flex; align-items: center; gap: 6px;">
+                                    <h4 class="drawer-title" style="color: #0F172A;">내 옷장 아이템</h4>
+                                    <span id="wardrobeCountBadge" style="font-size: 11px; background: #0D1527; color: #F6E2A1; font-weight: 800; padding: 1px 6px; border-radius: 9999px;">0개</span>
+                                </div>
+                                <p class="drawer-sub">자주 착용하는 아이템을 등록하고 매일 매칭받기</p>
                             </div>
                         </div>
                         <span class="drawer-arrow">▼</span>
                     </div>
                     <div class="drawer-body hidden" id="drawerBodyWardrobe" style="padding: 14px 16px;">
-                        <p style="font-size: 12.5px; color: #64748B; margin-bottom: 12px; text-align: left;">
-                            입고 싶은 아이템의 <strong>종류, 색상, 소재</strong>를 선택하면 내 사주에 맞는 <strong>착용일</strong>과 <strong>중화 코디법</strong>을 처방해 드립니다.
-                        </p>
+                        <button onclick="openWardrobeAddWizard()" style="width: 100%; background: #2D6A4F; color: white; border: none; font-size: 13.5px; font-weight: 800; padding: 11px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; margin-bottom: 12px;">
+                            <span>➕</span> 새 아이템 옷장에 등록하기 (3초)
+                        </button>
 
-                        <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px;">
-                            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px;">
-                                <div>
-                                    <label style="font-size: 11px; color: #64748B; font-weight: 700; display: block; margin-bottom: 2px;">아이템</label>
-                                    <select id="wardrobeCategory" class="form-select-box" style="padding: 8px 4px; font-size: 12.5px;">
-                                        <option value="상의(셔츠/니트)">상의 (셔츠/티)</option>
-                                        <option value="하의(팬츠/스커트)">하의 (바지/치마)</option>
-                                        <option value="원피스/아우터">원피스 / 자켓</option>
-                                        <option value="핸드백/가방" selected>핸드백 / 가방</option>
-                                        <option value="시계/액세서리">시계 / 주얼리</option>
-                                        <option value="슈즈/신발">신발 / 구두</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label style="font-size: 11px; color: #64748B; font-weight: 700; display: block; margin-bottom: 2px;">색상</label>
-                                    <select id="wardrobeColor" class="form-select-box" style="padding: 8px 4px; font-size: 12.5px;">
-                                        <option value="화이트">화이트 / 아이보리</option>
-                                        <option value="블랙">블랙 (검정)</option>
-                                        <option value="네이비">네이비 (남색)</option>
-                                        <option value="레드">레드 (빨강)</option>
-                                        <option value="핑크/와인" selected>와인 / 핑크</option>
-                                        <option value="옐로우">옐로우 (노랑)</option>
-                                        <option value="베이지/브라운">베이지 / 브라운</option>
-                                        <option value="그린/올리브">연두 / 올리브</option>
-                                        <option value="스카이블루">스카이블루 (하늘)</option>
-                                        <option value="그레이/실버">그레이 / 실버</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label style="font-size: 11px; color: #64748B; font-weight: 700; display: block; margin-bottom: 2px;">소재/재질</label>
-                                    <select id="wardrobeMaterial" class="form-select-box" style="padding: 8px 4px; font-size: 12.5px;">
-                                        <option value="가죽/세무" selected>가죽 / 스웨이드</option>
-                                        <option value="면/린넨">면 / 린넨 (마)</option>
-                                        <option value="실크/폴리">실크 / 쉬폰 / 합성</option>
-                                        <option value="메탈/금속">메탈 / 골드 / 실버</option>
-                                        <option value="데님/쉬폰">데님 (청바지)</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <button onclick="diagnoseWardrobeItem()" style="width: 100%; background: #0D1527; color: #F6E2A1; border: 1px solid #E2C068; font-size: 13.5px; font-weight: 800; padding: 10px; border-radius: 10px; cursor: pointer;">
-                                ✦ 이 아이템의 오행 기운 & 착용 골든타임 진단하기
-                            </button>
-                        </div>
-
-                        <div id="wardrobeResultBox" class="hidden" style="background: #FFFFFF; border: 1.5px solid #2D6A4F; border-radius: 12px; padding: 12px; text-align: left;">
-                            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 6px; margin-bottom: 8px;">
-                                <h5 id="wardrobeResultTitle" style="font-size: 14px; font-weight: 800; color: #0F172A;">와인 가죽 핸드백</h5>
-                                <span style="font-size: 11px; background: #EBF5EE; color: #2D6A4F; font-weight: 800; padding: 2px 6px; border-radius: 4px;">오행 처방완료</span>
-                            </div>
-                            <div style="display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: #334155; line-height: 1.65;">
-                                <p id="wardrobeResultPower" style="color: #78350F; font-weight: 700;">기운 분석중...</p>
-                                <p id="wardrobeResultDates" style="background: #FEF3C7; padding: 6px 8px; border-radius: 6px; color: #92400E; font-size: 12.5px;">착용일 계산중...</p>
-                                <p style="color: #065F46; font-size: 12.5px; border-top: 1px dashed #E2E8F0; padding-top: 6px;">
-                                    <strong>💡 추천 믹스매치:</strong> <span id="wardrobeResultTip"></span>
-                                </p>
-                            </div>
-                        </div>
+                        <!-- 저장된 옷장 아이템 리스트 -->
+                        <div id="wardrobeItemsList" style="display: flex; flex-direction: column; gap: 6px;"></div>
                     </div>
                 </div>
 
@@ -391,6 +360,7 @@
 
                 <div class="ad-slot-box"><span>📢 광고 영역 (Google AdSense / Kakao AdFit 슬롯 1)</span></div>
 
+                <!-- 스페셜 운세 서랍들 -->
                 <div style="display: flex; flex-direction: column; gap: 10px;">
                     <div id="drawerTarot" class="drawer-card">
                         <div class="drawer-header" onclick="toggleDrawer('drawerTarot')">
@@ -681,7 +651,73 @@
 
     </div>
 
-    <!-- 궁합 상대방 정보 모달 (년/월/일 3단 셀렉트 적용) -->
+    <!-- 신규: 시각적 옷장 3단계 등록 위저드 모달 -->
+    <div id="wardrobeAddModal" class="modal-bg hidden">
+        <div class="modal-content" style="max-width: 360px; text-align: left; padding: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 8px;">
+                <div>
+                    <h3 style="font-size: 15px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif;">👗 내 옷장 아이템 등록</h3>
+                    <p id="wizardStepLabel" style="font-size: 11.5px; color: #2D6A4F; font-weight: 700; margin-top: 2px;">Step 1. 아이템 종류 선택 (단일)</p>
+                </div>
+                <button onclick="closeWardrobeAddWizard()" style="background: none; border: none; font-size: 20px; color: #94A3B8; cursor: pointer;">&times;</button>
+            </div>
+
+            <!-- Step 1: 아이템 종류 타일 (단일 선택) -->
+            <div id="wizardStep1" style="display: flex; flex-direction: column; gap: 6px;">
+                <p style="font-size: 12px; color: #64748B;">등록할 아이템의 종류를 선택하세요:</p>
+                <div class="tile-grid">
+                    <div class="tile-btn selected" onclick="selectWizardCat('상의', this)"><span class="t-icon">👔</span><span>상의</span></div>
+                    <div class="tile-btn" onclick="selectWizardCat('하의', this)"><span class="t-icon">👖</span><span>하의</span></div>
+                    <div class="tile-btn" onclick="selectWizardCat('아우터', this)"><span class="t-icon">🧥</span><span>아우터</span></div>
+                    <div class="tile-btn" onclick="selectWizardCat('가방', this)"><span class="t-icon">👜</span><span>가방</span></div>
+                    <div class="tile-btn" onclick="selectWizardCat('시계', this)"><span class="t-icon">⌚</span><span>시계</span></div>
+                    <div class="tile-btn" onclick="selectWizardCat('신발', this)"><span class="t-icon">👟</span><span>신발</span></div>
+                    <div class="tile-btn" onclick="selectWizardCat('액세서리', this)" style="grid-column: span 3;"><span class="t-icon">💍</span><span>주얼리 / 모자 / 스카프</span></div>
+                </div>
+                <button onclick="goToWizardStep(2)" style="width: 100%; background: #0D1527; color: #F6E2A1; border: none; font-size: 14px; font-weight: 800; padding: 12px; border-radius: 12px; cursor: pointer; margin-top: 8px;">다음: 색상 선택하기 👉</button>
+            </div>
+
+            <!-- Step 2: 색상 선택 (멀티 초이스 가능) -->
+            <div id="wizardStep2" class="hidden" style="display: flex; flex-direction: column; gap: 6px;">
+                <p style="font-size: 12px; color: #64748B;">색상을 모두 선택하세요 (2개 이상 복수 가능):</p>
+                <div class="color-chip-grid">
+                    <div class="color-chip selected" onclick="toggleColorChip('화이트', this)"><div class="color-dot" style="background:#FFFFFF;"></div><span>화이트</span></div>
+                    <div class="color-chip" onclick="toggleColorChip('블랙', this)"><div class="color-dot" style="background:#18181B;"></div><span>블랙</span></div>
+                    <div class="color-chip" onclick="toggleColorChip('네이비', this)"><div class="color-dot" style="background:#1E3A8A;"></div><span>네이비</span></div>
+                    <div class="color-chip" onclick="toggleColorChip('레드', this)"><div class="color-dot" style="background:#DC2626;"></div><span>레드</span></div>
+                    <div class="color-chip" onclick="toggleColorChip('와인', this)"><div class="color-dot" style="background:#881337;"></div><span>와인</span></div>
+                    <div class="color-chip" onclick="toggleColorChip('핑크', this)"><div class="color-dot" style="background:#F472B6;"></div><span>핑크</span></div>
+                    <div class="color-chip" onclick="toggleColorChip('베이지', this)"><div class="color-dot" style="background:#D4B996;"></div><span>베이지</span></div>
+                    <div class="color-chip" onclick="toggleColorChip('옐로우', this)"><div class="color-dot" style="background:#FBBF24;"></div><span>옐로우</span></div>
+                    <div class="color-chip" onclick="toggleColorChip('그린', this)"><div class="color-dot" style="background:#15803D;"></div><span>그린</span></div>
+                    <div class="color-chip" onclick="toggleColorChip('실버/그레이', this)"><div class="color-dot" style="background:#94A3B8;"></div><span>실버</span></div>
+                </div>
+                <div style="display: flex; gap: 6px; margin-top: 8px;">
+                    <button onclick="goToWizardStep(1)" style="flex: 1; background: #E2E8F0; color: #475569; border: none; font-size: 13px; font-weight: 700; padding: 11px; border-radius: 10px; cursor: pointer;">이전</button>
+                    <button onclick="goToWizardStep(3)" style="flex: 2; background: #0D1527; color: #F6E2A1; border: none; font-size: 14px; font-weight: 800; padding: 11px; border-radius: 10px; cursor: pointer;">다음: 소재 선택하기 👉</button>
+                </div>
+            </div>
+
+            <!-- Step 3: 소재 선택 (멀티 초이스 가능) -->
+            <div id="wizardStep3" class="hidden" style="display: flex; flex-direction: column; gap: 6px;">
+                <p style="font-size: 12px; color: #64748B;">소재를 모두 선택하세요 (가죽+메탈 등 복수 가능):</p>
+                <div class="mat-chip-grid">
+                    <div class="mat-chip selected" onclick="toggleMatChip('면/린넨', this)"><span>🧵</span><span>면 · 린넨 (木)</span></div>
+                    <div class="mat-chip" onclick="toggleMatChip('실크/쉬폰', this)"><span>✨</span><span>실크 · 쉬폰 (火)</span></div>
+                    <div class="mat-chip" onclick="toggleMatChip('가죽/세무', this)"><span>👜</span><span>가죽 · 스웨이드 (土)</span></div>
+                    <div class="mat-chip" onclick="toggleMatChip('메탈/금속', this)"><span>⚙️</span><span>메탈 · 골드/은 (金)</span></div>
+                    <div class="mat-chip" onclick="toggleMatChip('데님', this)"><span>👖</span><span>데님 청바지 (水)</span></div>
+                    <div class="mat-chip" onclick="toggleMatChip('니트/울', this)"><span>🧶</span><span>니트 · 울 (土)</span></div>
+                </div>
+                <div style="display: flex; gap: 6px; margin-top: 8px;">
+                    <button onclick="goToWizardStep(2)" style="flex: 1; background: #E2E8F0; color: #475569; border: none; font-size: 13px; font-weight: 700; padding: 11px; border-radius: 10px; cursor: pointer;">이전</button>
+                    <button onclick="saveWardrobeItemToServer()" style="flex: 2; background: #2D6A4F; color: white; border: none; font-size: 14px; font-weight: 800; padding: 11px; border-radius: 10px; cursor: pointer;">✨ 내 옷장에 저장 완료</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 궁합 상대방 정보 모달 -->
     <div id="gunghapModal" class="modal-bg hidden">
         <div class="modal-content" style="max-width: 350px; text-align: left;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 8px;">
@@ -828,6 +864,12 @@
         let currentUserAge = 49;
         let pendingCoinAmount = 0;
         let serverUnlockedReports = [];
+        let userWardrobeItems = [];
+
+        // 위저드 선택 상태
+        let wizardCategory = "상의";
+        let wizardColors = ["화이트"];
+        let wizardMaterials = ["면/린넨"];
 
         const KAKAO_JS_KEY = "fde505a5042405dbac55d2e98e9f9b08";
 
@@ -875,24 +917,14 @@
             document.getElementById('birthDaySelect').value = "13";
         }
 
-        // 브라우저 로컬 저장소에 사용자가 수정한 사주 정보 영구 보존
-        function saveUserSajuToLocal(data) {
-            localStorage.setItem('dalha_custom_saju', JSON.stringify(data));
-        }
-
+        function saveUserSajuToLocal(data) { localStorage.setItem('dalha_custom_saju', JSON.stringify(data)); }
         function getSavedUserSaju() {
-            try {
-                const raw = localStorage.getItem('dalha_custom_saju');
-                return raw ? JSON.parse(raw) : null;
-            } catch(e) { return null; }
+            try { const raw = localStorage.getItem('dalha_custom_saju'); return raw ? JSON.parse(raw) : null; } catch(e) { return null; }
         }
 
         function loginWithKakaoReal() {
             initKakaoSDK();
-            if (!window.Kakao) {
-                alert("카카오 SDK를 로드하지 못했습니다. 잠시 후 다시 시도해 주세요.");
-                return;
-            }
+            if (!window.Kakao) { alert("카카오 SDK를 로드하지 못했습니다."); return; }
 
             Kakao.Auth.login({
                 success: function(authObj) {
@@ -901,8 +933,6 @@
                         success: async function(res) {
                             const kakaoAccount = res.kakao_account || {};
                             const profile = kakaoAccount.profile || {};
-                            
-                            // 이전에 로컬에 저장해둔 사용자의 맞춤 사주(3월 등)가 있다면 우선 적용
                             const localSaju = getSavedUserSaju();
 
                             const payload = {
@@ -927,27 +957,11 @@
                             currentCoin = sData.coin_balance;
                             updateCoinDisplay();
 
-                            // 로컬스토리지에 저장된 사주가 있으면 서버 DB에 즉시 업데이트 동기화
-                            if (localSaju) {
-                                await fetch('/api/user/register-saju', {
-                                    method: 'POST',
-                                    headers: {'Content-Type': 'application/json'},
-                                    body: JSON.stringify({
-                                        user_id: currentUserId,
-                                        name: localSaju.name,
-                                        gender: localSaju.gender,
-                                        birth_year: localSaju.birth_year,
-                                        birth_month: localSaju.birth_month,
-                                        birth_day: localSaju.birth_day,
-                                        calendar_type: localSaju.calendar_type,
-                                        sijin_index: localSaju.sijin_index
-                                    })
-                                });
-                            }
-
                             if (sData.status === "existing_user") {
                                 serverUnlockedReports = sData.unlocked_reports || [];
+                                userWardrobeItems = sData.wardrobe_items || [];
                                 applySajuAnalysisToUI(sData.saju_analysis);
+                                renderWardrobeUI();
                                 renderServerArchive();
                                 document.getElementById('view-login-gate').classList.add('hidden');
                                 document.getElementById('onboardingInputView').classList.add('hidden');
@@ -968,10 +982,10 @@
                                 document.getElementById('onboardingInputView').classList.remove('hidden');
                             }
                         },
-                        fail: function(error) { alert("사용자 정보를 가져오지 못했습니다."); }
+                        fail: function() { alert("사용자 정보를 가져오지 못했습니다."); }
                     });
                 },
-                fail: function(err) { alert("카카오 로그인 실패"); }
+                fail: function() { alert("카카오 로그인 실패"); }
             });
         }
 
@@ -991,7 +1005,9 @@
                     currentCoin = sData.coin_balance;
                     updateCoinDisplay();
                     serverUnlockedReports = sData.unlocked_reports || [];
+                    userWardrobeItems = sData.wardrobe_items || [];
                     applySajuAnalysisToUI(sData.saju_analysis);
+                    renderWardrobeUI();
                     renderServerArchive();
                     document.getElementById('view-login-gate').classList.add('hidden');
                     document.getElementById('onboardingInputView').classList.add('hidden');
@@ -999,7 +1015,7 @@
                     document.getElementById('bottomNavBar').classList.remove('hidden');
                     restoreUnlockedUIFromReports();
                 }
-            } catch(e) { console.log("세션 복원 대기"); }
+            } catch(e) {}
         }
 
         function logoutKakaoUser() {
@@ -1096,15 +1112,9 @@
             const d = parseInt(document.getElementById('birthDaySelect').value) || 13;
             const sijin = parseInt(document.getElementById('inputSijin').value);
 
-            // 로컬 스토리지에 영구 저장 (서버가 슬립 후 깨어나도 3월 13일 유지)
             saveUserSajuToLocal({
-                name: name,
-                gender: selectedGender,
-                birth_year: y,
-                birth_month: m,
-                birth_day: d,
-                calendar_type: selectedCalendarType,
-                sijin_index: sijin
+                name: name, gender: selectedGender, birth_year: y,
+                birth_month: m, birth_day: d, calendar_type: selectedCalendarType, sijin_index: sijin
             });
 
             const res = await fetch('/api/user/register-saju', {
@@ -1198,30 +1208,142 @@
 
             updateDaewoonGraphByAge(currentUserAge);
             document.getElementById('mypageProfileDesc').innerText = `${currentUserName} (${data.birth_summary})`;
+            
+            updateTodayWardrobeMatchPick();
         }
 
-        async function diagnoseWardrobeItem() {
+        // 오늘의 맞춤 코디 카드에 내 옷장 매칭 픽 실시간 렌더링
+        function updateTodayWardrobeMatchPick() {
+            const pickEl = document.getElementById('wardrobeDailyMatchPick');
+            if (!pickEl) return;
+
+            if (!userWardrobeItems || userWardrobeItems.length === 0) {
+                pickEl.innerHTML = `👗 <strong>오늘의 옷장 픽:</strong> 아래 <strong>[내 옷장 아이템]</strong>에 평소 즐겨 쓰는 가방이나 옷을 등록해 보세요! 일진에 딱 맞는 날에 알림을 드려요.`;
+                return;
+            }
+
+            const today = new Date();
+            const pickIdx = (today.getDate() + userWardrobeItems.length) % userWardrobeItems.length;
+            const item = userWardrobeItems[pickIdx];
+
+            const colorsStr = item.colors.join('/');
+            const matsStr = item.materials.join('/');
+            pickEl.innerHTML = `✨ <strong>오늘의 옷장 매칭:</strong> 오늘 일진과 조화로운 내 옷장의 <strong>[${colorsStr} ${matsStr} ${item.category}]</strong>을 착용해 보세요! 기운의 밸런스가 상승합니다.`;
+        }
+
+        // 내 옷장 UI 렌더링
+        function renderWardrobeUI() {
+            const listEl = document.getElementById('wardrobeItemsList');
+            const badgeEl = document.getElementById('wardrobeCountBadge');
+            if (badgeEl) badgeEl.innerText = `${userWardrobeItems.length}개`;
+            if (!listEl) return;
+
+            if (userWardrobeItems.length === 0) {
+                listEl.innerHTML = `<div style="text-align:center; padding:16px 0; color:#94A3B8; font-size:12.5px;">등록된 옷장 아이템이 없습니다.<br>새 아이템을 등록해 보세요!</div>`;
+                updateTodayWardrobeMatchPick();
+                return;
+            }
+
+            const CAT_ICONS = { "상의": "👔", "하의": "👖", "아우터": "🧥", "가방": "👜", "시계": "⌚", "신발": "👟", "액세서리": "💍" };
+
+            listEl.innerHTML = userWardrobeItems.map(item => `
+                <div class="wardrobe-item-card">
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <span style="font-size:22px;">${CAT_ICONS[item.category] || '👗'}</span>
+                        <div>
+                            <h5 style="font-size:13.5px; font-weight:800; color:#0F172A; margin-bottom:2px;">${item.category}</h5>
+                            <p style="font-size:11.5px; color:#64748B;">
+                                <span style="background:#FEF3C7; color:#78350F; font-weight:700; padding:1px 5px; border-radius:4px;">${item.colors.join(', ')}</span> · 
+                                <span>${item.materials.join(', ')}</span>
+                            </p>
+                        </div>
+                    </div>
+                    <button onclick="deleteWardrobeItem(${item.id})" style="background:#F1F5F9; border:none; color:#EF4444; font-size:12px; font-weight:700; padding:5px 8px; border-radius:6px; cursor:pointer;">삭제</button>
+                </div>
+            `).join('');
+
+            updateTodayWardrobeMatchPick();
+        }
+
+        function openWardrobeAddWizard() {
+            wizardCategory = "상의";
+            wizardColors = ["화이트"];
+            wizardMaterials = ["면/린넨"];
+            goToWizardStep(1);
+            document.getElementById('wardrobeAddModal').classList.remove('hidden');
+        }
+        function closeWardrobeAddWizard() { document.getElementById('wardrobeAddModal').classList.add('hidden'); }
+
+        function goToWizardStep(step) {
+            document.getElementById('wizardStep1').classList.add('hidden');
+            document.getElementById('wizardStep2').classList.add('hidden');
+            document.getElementById('wizardStep3').classList.add('hidden');
+
+            const label = document.getElementById('wizardStepLabel');
+            if (step === 1) {
+                label.innerText = "Step 1. 아이템 종류 선택 (단일)";
+                document.getElementById('wizardStep1').classList.remove('hidden');
+            } else if (step === 2) {
+                label.innerText = "Step 2. 색상 선택 (복수 가능)";
+                document.getElementById('wizardStep2').classList.remove('hidden');
+            } else if (step === 3) {
+                label.innerText = "Step 3. 소재 선택 (복수 가능)";
+                document.getElementById('wizardStep3').classList.remove('hidden');
+            }
+        }
+
+        function selectWizardCat(cat, el) {
+            wizardCategory = cat;
+            document.querySelectorAll('#wizardStep1 .tile-btn').forEach(btn => btn.classList.remove('selected'));
+            el.classList.add('selected');
+        }
+
+        function toggleColorChip(col, el) {
+            const idx = wizardColors.indexOf(col);
+            if (idx > -1) {
+                if (wizardColors.length > 1) { wizardColors.splice(idx, 1); el.classList.remove('selected'); }
+            } else {
+                wizardColors.push(col);
+                el.classList.add('selected');
+            }
+        }
+
+        function toggleMatChip(mat, el) {
+            const idx = wizardMaterials.indexOf(mat);
+            if (idx > -1) {
+                if (wizardMaterials.length > 1) { wizardMaterials.splice(idx, 1); el.classList.remove('selected'); }
+            } else {
+                wizardMaterials.push(mat);
+                el.classList.add('selected');
+            }
+        }
+
+        async function saveWardrobeItemToServer() {
             if (!currentUserId) { alert("로그인이 필요합니다."); return; }
 
-            const cat = document.getElementById('wardrobeCategory').value;
-            const col = document.getElementById('wardrobeColor').value;
-            const mat = document.getElementById('wardrobeMaterial').value;
-
-            const res = await fetch('/api/wardrobe/diagnose', {
+            const res = await fetch('/api/wardrobe/add', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({
-                    user_id: currentUserId, category: cat, color: col, material: mat
+                    user_id: currentUserId,
+                    category: wizardCategory,
+                    colors: wizardColors,
+                    materials: wizardMaterials
                 })
             });
             const data = await res.json();
+            userWardrobeItems = data.wardrobe_items;
+            closeWardrobeAddWizard();
+            renderWardrobeUI();
+            alert("✨ 내 옷장에 새 아이템이 등록되었습니다!");
+        }
 
-            document.getElementById('wardrobeResultTitle').innerText = data.item_name;
-            document.getElementById('wardrobeResultPower').innerText = data.energy_summary;
-            document.getElementById('wardrobeResultDates').innerHTML = data.best_dates;
-            document.getElementById('wardrobeResultTip').innerText = data.mix_match_tip;
-
-            document.getElementById('wardrobeResultBox').classList.remove('hidden');
+        async function deleteWardrobeItem(itemId) {
+            if (!confirm("이 아이템을 옷장에서 삭제하시겠습니까?")) return;
+            const res = await fetch(`/api/wardrobe/delete/${itemId}?user_id=${currentUserId}`, { method: 'DELETE' });
+            const data = await res.json();
+            userWardrobeItems = data.wardrobe_items;
+            renderWardrobeUI();
         }
 
         async function handleUnlockReportOnServer(reportKey, cost, subOption = "기본", partnerName = "상대방", relation = "선택안함") {
