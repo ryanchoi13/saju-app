@@ -8,7 +8,7 @@ from fastapi import FastAPI, Request, HTTPException
 from fastapi.responses import HTMLResponse, FileResponse, Response
 from pydantic import BaseModel
 
-app = FastAPI(title="달하 (DALHA) - 정통 명리학 & 점성술 엔진", version="43.8.0")
+app = FastAPI(title="달하 (DALHA) - 정통 명리학 & 점성술 엔진", version="43.9.0")
 
 DB_FILE = "dalha.db"
 
@@ -147,7 +147,6 @@ TAROT_CARDS = [
     }
 ]
 
-# 순수 상의 & 하의로만 구성된 기본 코디 풀 (소품 제거)
 DAILY_OUTFITS_POOL = {
     "male": {
         "young": ["화이트 린넨 셔츠 & 베이지 슬랙스", "네이비 쿨 셔츠 & 차콜 슬랙스", "스카이블루 반팔 셔츠 & 그레이 팬츠", "블랙 무지 반팔티 & 와이드 슬랙스"],
@@ -286,6 +285,65 @@ def compute_saju_full_payload(name: str, gender: str, year: int, month: int, day
     today_ordinal = today.toordinal()
     daily_hash = (today_ordinal * 31 + diff_days * 17 + (11 if gender == "male" else 23)) % 1000003
 
+    # 정통 명리학 3대 원리 (통관용신, 조후용신, 삼합/육합 화기) 일진 연산
+    today_diff = (today - base_date).days
+    today_cg, today_jj = CHEONGAN_HANJA[today_diff % 10], JIJI_HANJA[(today_diff + 10) % 12]
+    today_cg_elem, today_jj_elem = CHEONGAN_ELEMENTS[today_cg], JIJI_ELEMENTS[today_jj]
+
+    # 1. 지지 육합/삼합 체크
+    SAMHAP_MAP = {
+        ("亥", "卯", "未"): "wood", ("寅", "午", "戌"): "fire",
+        ("巳", "酉", "丑"): "metal", ("申", "子", "辰"): "water"
+    }
+    YUKHAP_MAP = {
+        ("子", "丑"): "earth", ("寅", "亥"): "wood", ("卯", "戌"): "fire",
+        ("辰", "酉"): "metal", ("巳", "申"): "water", ("午", "未"): "fire"
+    }
+
+    styling_mode = "harmony"
+    rule_title = "오행 상생(相生) 조화"
+    rule_reason = f"오늘 일진({today_cg}{today_jj}일)은 사주 본원({d_cg})과 톤온톤으로 상생하여 차분한 밸런스를 이룹니다."
+    accent_color = "실버/가죽"
+
+    # 삼합 또는 육합 여부 검증
+    is_hap = False
+    for trio, target_elem in SAMHAP_MAP.items():
+        if today_jj in trio and (d_jj in trio or y_jj in trio or m_jj in trio):
+            is_hap = True
+            styling_mode = "samhap"
+            rule_title = "지지 삼합(三合) 화기(化氣)의 날"
+            rule_reason = f"오늘의 지지({today_jj})가 사주 명식과 삼합(三合)을 이루어 강력한 [{target_elem.upper()}] 기운으로 변화(化)합니다. 평소와 다른 화려한 악센트를 매치할 때 합의 성취운이 발동합니다."
+            accent_color = "와인/버건디 · 골드" if target_elem in ["fire", "metal"] else "스카이블루 · 실버"
+            break
+
+    if not is_hap:
+        for pair, target_elem in YUKHAP_MAP.items():
+            if (today_jj in pair) and (d_jj in pair or y_jj in pair or m_jj in pair):
+                is_hap = True
+                styling_mode = "yukhap"
+                rule_title = "지지 육합(六合) 인연 결속의 날"
+                rule_reason = f"오늘 일진이 사주와 육합(六合)을 이루는 귀인의 날입니다. 합의 결속력을 돋우는 포인트 소품을 곁들여 상대방의 시선을 사로잡으세요."
+                accent_color = "골드 · 와인" if target_elem in ["fire", "earth"] else "민트 · 네이비"
+                break
+
+    # 2. 통관용신 및 조후용신 검증 (극과 극 충돌 중재)
+    if not is_hap:
+        if (day_elem == "wood" and today_cg_elem == "metal") or (day_elem == "metal" and today_cg_elem == "wood"):
+            styling_mode = "tonggwan"
+            rule_title = "통관용신(通關用神) 살기(殺氣) 중재의 날"
+            rule_reason = f"사주 본원과 오늘 일진이 金-木 충돌을 이룹니다. 중간에서 기운을 부드럽게 통관시키는 [와인/레드(火)] 소품으로 부딪힘을 행운으로 반전시키세요."
+            accent_color = "와인/버건디 · 레드"
+        elif (day_elem == "fire" and today_cg_elem == "water") or (day_elem == "water" and today_cg_elem == "fire"):
+            styling_mode = "tonggwan"
+            rule_title = "통관용신(通關用神) 수화상통(水火相通)의 날"
+            rule_reason = f"水와 火가 대립하는 날로, 두 기운 사이에 다리를 놓아주는 [그린/올리브(木)] 포인트가 막힌 기운을 뚫어줍니다."
+            accent_color = "그린 · 카키"
+        elif today_jj_elem == "water" and elem_percentages.get("water", 0) > 30:
+            styling_mode = "johu"
+            rule_title = "조후용신(調候用神) 음양 온습도 보정의 날"
+            rule_reason = f"차가운 水 기운이 감도는 날입니다. 따뜻한 화기(火氣)를 품은 [와인/골드] 소품을 매치하여 신체의 온기와 운의 밸런스를 채우세요."
+            accent_color = "와인/버건디 · 골드"
+
     LUCKY_COLOR_PAIRS = {
         "wood": ["그린", "화이트"],
         "fire": ["네이비", "스카이블루"],
@@ -310,25 +368,10 @@ def compute_saju_full_payload(name: str, gender: str, year: int, month: int, day
     mindset = MINDSETS_POOL[(daily_hash + 4) % len(MINDSETS_POOL)]
     action = ACTIONS_POOL[(daily_hash + 5) % len(ACTIONS_POOL)]
 
-    is_reverse_day = (daily_hash % 8 == 0)
-    reverse_color_map = {
-        "wood": "코랄/오렌지 & 화이트",
-        "fire": "네이비/스카이블루 & 실버",
-        "earth": "그린/올리브 & 아이보리",
-        "metal": "핑크/와인 & 골드",
-        "water": "옐로우/머스터드 & 베이지"
-    }
-    reverse_color = reverse_color_map.get(day_elem, "화사한 코랄/오렌지 & 베이지")
-    
-    if is_reverse_day:
-        reverse_tip = f"✦ 오늘 일진이 평소 피하던 <strong>[{reverse_color}]</strong>을 완벽히 소화해 주는 황금의 날입니다! 아껴둔 밝은 아이템을 과감히 매치해보세요."
-    else:
-        reverse_tip = f"오늘의 일진은 사주 본원({d_cg})과 상생하는 <strong>차분한 뉴트럴 톤</strong>과 <strong>가죽/메탈 소품</strong>을 곁들일 때 기운이 가장 안정됩니다."
+    is_reverse_day = (styling_mode != "harmony")
+    reverse_tip = f"오늘의 일진은 사주 본원({d_cg})과 상생하는 <strong>차분한 뉴트럴 톤</strong>과 <strong>가죽/메탈 소품</strong>을 곁들일 때 기운이 가장 안정됩니다."
 
     daily_score = 68 + (daily_hash % 31)
-    today_diff = (today - base_date).days
-    today_cg, today_jj = CHEONGAN_HANJA[today_diff % 10], JIJI_HANJA[(today_diff + 10) % 12]
-    
     score_status_word = "대길(大吉)과 도약의 하루" if daily_score >= 88 else ("순조로운 화합과 발전의 하루" if daily_score >= 75 else "내실을 다지고 신중을 기할 하루")
     daily_title = f"[{today_cg}{today_jj}일] {score_status_word}"
 
@@ -365,7 +408,8 @@ def compute_saju_full_payload(name: str, gender: str, year: int, month: int, day
             "lucky_colors": lucky_colors,
             "lucky_number": lucky_number, "lucky_direction": lucky_direction, "lucky_item": lucky_item,
             "fashion_style": fashion_style, "recommended_menu": recommended_menu, "mindset": mindset, "action": action,
-            "talisman": user_talisman, "is_reverse_day": is_reverse_day, "reverse_tip": reverse_tip
+            "talisman": user_talisman, "is_reverse_day": is_reverse_day, "reverse_tip": reverse_tip,
+            "styling_mode": styling_mode, "rule_title": rule_title, "rule_reason": rule_reason, "accent_color": accent_color
         },
         "biorhythm": biorhythm_data
     }
