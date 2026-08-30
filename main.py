@@ -674,30 +674,33 @@ def get_daewoon_report(req: dict):
                 <div style="border-left: 4px solid #2D6A4F; padding-left: 10px; margin-bottom: 8px;">
                     <span style="font-size: 12px; color: #2D6A4F; font-weight: 800;">Chapter 1. 평생 대운맥 및 생애 주도권</span>
                     <h4 style="font-size: 16.5px; font-weight: 800; color: #0F172A; margin-top: 2px;">
-                        🌐 {user_name}님({gender_str} · 현재 {age}세)의 거시적 생애 운명 흐름
+                        {user_name}님({gender_str} · 현재 {age}세)의 거시적 생애 운명 흐름
                     </h4>
                 </div>
-                <p style="color: #475569; margin-bottom: 10px;">
+                <p style="color: #475569; margin-bottom: 12px;">
                     자미두수 명반을 정밀 감명한 결과, {user_name}님은 단계적 배움과 역량 축적을 거쳐 중장년기에 강력한 {spouse_star}의 결실을 맺는 <strong>'만성대기(晩成大器)형 명식'</strong>입니다.
                 </p>
-                <div style="display: flex; flex-direction: column; gap: 10px;">
-                    <div style="background: #F8FAFC; border-radius: 8px; padding: 10px 12px;">
-                        <p style="font-weight: 800; color: #0F172A; font-size: 14.5px; margin-bottom: 2px;">🌱 [유년기 : 근본 기틀 형성기]</p>
-                        <p style="color: #475569; font-size: 13.5px;">남다른 탐구심과 도덕적 가치관을 단단히 다지던 기초 형성기입니다.</p>
+
+                <!-- Chapter 1 통합 단일 박스 -->
+                <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; overflow: hidden;">
+                    <div style="padding: 12px 14px; border-bottom: 1px solid #E2E8F0;">
+                        <p style="font-weight: 600; color: #475569; font-size: 13.5px; margin-bottom: 2px;">[유년기 : 근본 기틀 형성기]</p>
+                        <p style="color: #64748B; font-size: 13px;">남다른 탐구심과 도덕적 가치관을 단단히 다지던 기초 형성기입니다.</p>
                     </div>
-                    <div style="background: #F8FAFC; border-radius: 8px; padding: 10px 12px;">
-                        <p style="font-weight: 800; color: #0F172A; font-size: 14.5px; margin-bottom: 2px;">🌿 [청년기 : 역량 축적 및 실전기]</p>
-                        <p style="color: #475569; font-size: 13.5px;">실무 전문성을 다지고 인맥과 실전 감각의 뼈대를 구축하는 시기입니다.</p>
+                    <div style="padding: 12px 14px; border-bottom: 1px solid #E2E8F0;">
+                        <p style="font-weight: 600; color: #475569; font-size: 13.5px; margin-bottom: 2px;">[청년기 : 역량 축적 및 실전기]</p>
+                        <p style="color: #64748B; font-size: 13px;">실무 전문성을 다지고 인맥과 실전 감각의 뼈대를 구축하는 시기입니다.</p>
                     </div>
-                    <div style="background: #FEF3C7; border: 1.5px solid #FCD34D; border-radius: 8px; padding: 10px 12px;">
-                        <p style="font-weight: 800; color: #78350F; font-size: 14.5px; margin-bottom: 2px;">🔥 [{stage_name} (*현재 위치 / {start_age}세 ~ {end_age}세)]</p>
-                        <p style="color: #92400E; font-size: 13.5px; font-weight: 600;">
+                    <!-- 현재 구간 강조 -->
+                    <div style="background: #FEF3C7; padding: 12px 14px; border-bottom: 1px solid #FCD34D;">
+                        <p style="font-weight: 800; color: #78350F; font-size: 14px; margin-bottom: 2px;">[{stage_name} (*현재 위치 / {start_age}세 ~ {end_age}세)]</p>
+                        <p style="color: #92400E; font-size: 13px; font-weight: 600;">
                             <strong>{user_name}님의 핵심 승부처 구간입니다.</strong> {focus_goal}을(를) 목표로 본인이 직접 주도권을 쥘 때 성과가 극대화됩니다.
                         </p>
                     </div>
-                    <div style="background: #F8FAFC; border-radius: 8px; padding: 10px 12px;">
-                        <p style="font-weight: 800; color: #0F172A; font-size: 14.5px; margin-bottom: 2px;">🍎 [말년기 : 태평성대 및 가문 번영기]</p>
-                        <p style="color: #475569; font-size: 13.5px;">축적한 자산과 인망을 토대로 안락한 노후와 가문의 번영을 누립니다.</p>
+                    <div style="padding: 12px 14px;">
+                        <p style="font-weight: 600; color: #475569; font-size: 13.5px; margin-bottom: 2px;">[말년기 : 태평성대 및 가문 번영기]</p>
+                        <p style="color: #64748B; font-size: 13px;">축적한 자산과 인망을 토대로 안락한 노후와 가문의 번영을 누립니다.</p>
                     </div>
                 </div>
             </div>
@@ -708,21 +711,24 @@ def get_daewoon_report(req: dict):
                 <div style="border-left: 4px solid #D97706; padding-left: 10px; margin-bottom: 8px;">
                     <span style="font-size: 12px; color: #D97706; font-weight: 800;">Chapter 2. 현재 10년 대운 집중 감명</span>
                     <h4 style="font-size: 16.5px; font-weight: 800; color: #78350F; margin-top: 2px;">
-                        📈 {user_name}님의 {start_age}세 ~ {end_age}세 3단계 로드맵
+                        {user_name}님의 {start_age}세 ~ {end_age}세 3단계 로드맵
                     </h4>
                 </div>
-                <div style="display: flex; flex-direction: column; gap: 10px;">
-                    <div style="background: #F8FAFC; border-left: 3.5px solid #3B82F6; border-radius: 8px; padding: 12px 14px;">
-                        <span style="font-weight: 800; color: #1E3A8A; font-size: 14.5px; display: block; margin-bottom: 4px;">🚀 [1단계] {p1_start}세 ~ {p1_end}세 : 기반 구축기</span>
-                        <p style="color: #334155; font-size: 13.5px; line-height: 1.7;">{p1_desc}</p>
+
+                <!-- Chapter 2 통합 단일 박스 (장식 요소 제거 & 점선 분할) -->
+                <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; overflow: hidden;">
+                    <div style="padding: 12px 14px; border-bottom: 1px dashed #CBD5E1;">
+                        <span style="font-weight: 700; color: #1E3A8A; font-size: 14px; display: block; margin-bottom: 3px;">[1단계] {p1_start}세 ~ {p1_end}세 : 기반 구축기</span>
+                        <p style="color: #475569; font-size: 13px; line-height: 1.65;">{p1_desc}</p>
                     </div>
-                    <div style="background: #F8FAFC; border-left: 3.5px solid #10B981; border-radius: 8px; padding: 12px 14px;">
-                        <span style="font-weight: 800; color: #065F46; font-size: 14.5px; display: block; margin-bottom: 4px;">⚡ [2단계] {p2_start}세 ~ {p2_end}세 : 확장 및 증식기</span>
-                        <p style="color: #334155; font-size: 13.5px; line-height: 1.7;">{p2_desc}</p>
+                    <div style="padding: 12px 14px; border-bottom: 1px dashed #CBD5E1;">
+                        <span style="font-weight: 700; color: #065F46; font-size: 14px; display: block; margin-bottom: 3px;">[2단계] {p2_start}세 ~ {p2_end}세 : 확장 및 증식기</span>
+                        <p style="color: #475569; font-size: 13px; line-height: 1.65;">{p2_desc}</p>
                     </div>
-                    <div style="background: #FEF3C7; border: 1.5px solid #FCD34D; border-left: 4px solid #D97706; border-radius: 8px; padding: 12px 14px;">
-                        <span style="font-weight: 800; color: #78350F; font-size: 14.5px; display: block; margin-bottom: 4px;">🏆 [3단계] {p3_start}세 ~ {p3_end}세 : 대운의 총결실</span>
-                        <p style="color: #92400E; font-size: 13.5px; line-height: 1.7; font-weight: 600;">{p3_desc}</p>
+                    <!-- 3단계(현재 집중기) 강조 -->
+                    <div style="background: #FFFBEB; padding: 12px 14px;">
+                        <span style="font-weight: 800; color: #78350F; font-size: 14px; display: block; margin-bottom: 3px;">[3단계] {p3_start}세 ~ {p3_end}세 : 대운의 총결실 (*현재)</span>
+                        <p style="color: #92400E; font-size: 13px; line-height: 1.65; font-weight: 600;">{p3_desc}</p>
                     </div>
                 </div>
             </div>
