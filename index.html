@@ -268,7 +268,7 @@
                     <div id="resAdvice" style="font-size: 13.5px; color: #E2E8F0; font-weight: 400; line-height: 1.65; text-align: left;"></div>
                 </div>
 
-                <!-- 1. 맞춤 추천 코디 카드 (행운 컬러 + 상/하의 1:1 스마트 코디 + 소품 매칭) -->
+                <!-- 1. 맞춤 추천 코디 카드 (정통 명리학 3대 원리 근거 박스 탑재) -->
                 <div class="card" style="padding: 16px; text-align: left; display: flex; flex-direction: column; gap: 10px;">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                         <span style="font-size: 12.5px; color: #64748B; font-weight: 700;">👔 맞춤 추천 코디</span>
@@ -281,7 +281,7 @@
                         <span id="todayLuckyColorsBadge" style="font-weight: 800; color: #2D6A4F;">그린 · 화이트</span>
                     </div>
 
-                    <!-- 2. 오늘의 추천 코디 (상의 1벌 + 하의 1벌 엄격 분리 적용) -->
+                    <!-- 2. 오늘의 추천 코디 (상의 1벌 + 하의 1벌) -->
                     <div>
                         <span style="font-size: 11.5px; color: #64748B; display: block; margin-bottom: 2px;">추천 스타일링:</span>
                         <p id="resStyle" style="font-weight: 800; font-size: 15px; color: #0F172A; margin: 0; line-height: 1.5;">화이트 린넨 셔츠 & 베이지 슬랙스</p>
@@ -292,8 +292,8 @@
                         오늘의 일진에 맞춘 상생 코디 가이드를 불러오는 중입니다.
                     </p>
 
-                    <!-- 4. 내 옷장 소품 포인트 매칭 (시계, 신발, 가방, 액세서리) -->
-                    <div id="wardrobeDailyMatchPick" style="font-size: 13px; color: #166534; background: #F4FBF7; padding: 10px 12px; border-radius: 10px; line-height: 1.6;">
+                    <!-- 4. 내 옷장 소품 포인트 매칭 & 명리학적 추천 근거 박스 -->
+                    <div id="wardrobeDailyMatchPick" style="font-size: 13px; color: #166534; background: #F4FBF7; padding: 12px 14px; border-radius: 12px; line-height: 1.6;">
                         👗 <strong>오늘의 옷장 픽:</strong> 내 옷장에 아이템을 등록하면 오늘 일진에 딱 맞는 아이템을 추천해 드려요!
                     </div>
                 </div>
@@ -899,6 +899,7 @@
         let serverUnlockedReports = [];
         let userWardrobeItems = [];
 
+        let currentFortuneData = null;
         let currentLuckyColors = ["그린", "화이트"];
         let baseFashionStyle = "화이트 린넨 셔츠 & 베이지 슬랙스";
 
@@ -1088,7 +1089,7 @@
             "사자자리": `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#E2C068" stroke-width="2"><circle cx="7.5" cy="14.5" r="2.5"/><path d="M9 13a6 6 0 1 1 8 4c0 2-2 3-3 3s-2-1.5-1-3.5"/></svg>`,
             "처녀자리": `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#E2C068" stroke-width="2"><path d="M4 4v12a3 3 0 0 0 6 0V4M10 4v12a3 3 0 0 0 6 0V4M16 7a3 3 0 0 1 4 4v9M16 16l4 4"/></svg>`,
             "천칭자리": `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#E2C068" stroke-width="2"><path d="M4 20h16M4 14h5a3 3 0 1 1 6 0h5"/></svg>`,
-            "전갈자리": `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#E2C068" stroke-width="2"><path d="M4 4v12a3 3 0 0 0 6 0V4M10 4v12a3 3 0 0 0 6 0V4M16 4v12a3 3 0 0 0 6 0v-2M19 14l3 2-3 2"/></svg>`,
+            "전갈자리": `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#E2C068" stroke-width="2"><path d="M4 4v12a3 3 0 0 0 6 0V4M10 4v12a3 3 0 0 0 6 0v-2M19 14l3 2-3 2"/></svg>`,
             "사수자리": `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#E2C068" stroke-width="2"><path d="M5 19L19 5M12 5h7v7M8 12l4 4"/></svg>`,
             "염소자리": `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#E2C068" stroke-width="2"><path d="M4 4v11a4 4 0 0 0 8 0V5M12 9a4 4 0 0 1 8 4c0 3-3 7-5 7s-3-2-2-4"/></svg>`,
             "물병자리": `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#E2C068" stroke-width="2"><path d="M3 8l3-3 3 3 3-3 3 3 3-3 3 3M3 16l3-3 3 3 3-3 3 3 3-3 3 3"/></svg>`,
@@ -1201,6 +1202,7 @@
         }
 
         function applySajuAnalysisToUI(data) {
+            currentFortuneData = data;
             currentUserName = data.user_name;
             currentTalisman = data.daily_fortune.talisman;
             currentUserAge = data.current_age;
@@ -1232,7 +1234,6 @@
 
             baseFashionStyle = data.daily_fortune.fashion_style || "화이트 린넨 셔츠 & 베이지 슬랙스";
             
-            // 오늘의 행운 컬러 2종 산출 및 상단 뱃지 반영
             const d_elem = data.saju_data?.pillars_detail?.day?.cg_elem || "metal";
             const LUCKY_COLOR_PAIRS = {
                 "wood": ["그린", "화이트"],
@@ -1280,11 +1281,10 @@
             updateDaewoonGraphByAge(currentUserAge);
             document.getElementById('mypageProfileDesc').innerText = `${currentUserName} (${data.birth_summary})`;
             
-            // 스마트 추천 코디 및 옷장 소품 매칭 렌더링
             updateTodayWardrobeMatchPick();
         }
 
-        // 스마트 추천 코디(상의 1벌 + 하의 1벌 엄격 분리 & 오행 컬러 패밀리 인식)
+        // 정통 명리학 3대 원리(통관, 조후, 합화) 연동 스마트 코디 추천
         function updateTodayWardrobeMatchPick() {
             const styleEl = document.getElementById('resStyle');
             const pickEl = document.getElementById('wardrobeDailyMatchPick');
@@ -1292,7 +1292,6 @@
 
             const ACCESSORY_CATS = ["시계", "신발", "가방", "액세서리"];
 
-            // 오행 컬러 패밀리 맵핑 (그린 계열, 네이비 계열, 화이트 계열 등 상호 포용)
             const COLOR_FAMILIES = {
                 "그린": ["그린", "올리브/카키", "민트/라임", "카키", "올리브", "민트"],
                 "화이트": ["화이트", "아이보리/크림", "실버", "그레이", "아이보리"],
@@ -1301,12 +1300,14 @@
                 "올리브": ["올리브/카키", "그린", "베이지", "카키"],
                 "아이보리": ["아이보리/크림", "화이트", "베이지"],
                 "베이지": ["베이지", "카멜/브라운", "아이보리/크림", "머스터드", "옐로우", "브라운"],
-                "머스터드": ["머스터드", "옐로우", "베이지", "카멜/브라운"]
+                "머스터드": ["머스터드", "옐로우", "베이지", "카멜/브라운"],
+                "와인/버건디": ["와인/버건디", "와인", "레드", "핑크", "골드"],
+                "골드": ["골드", "옐로우", "머스터드", "와인/버건디"]
             };
 
-            const isColorMatch = (item) => {
+            const isColorMatch = (item, targetColors) => {
                 return item.colors.some(col => {
-                    return currentLuckyColors.some(lc => {
+                    return targetColors.some(lc => {
                         if (col.includes(lc) || lc.includes(col)) return true;
                         const fam = COLOR_FAMILIES[lc] || [];
                         return fam.some(fc => col.includes(fc) || fc.includes(col));
@@ -1315,11 +1316,10 @@
             };
 
             // 1. [상의] 중 오늘 기운과 맞는 아이템 탐색
-            const matchedTops = userWardrobeItems.filter(item => item.category === "상의" && isColorMatch(item));
+            const matchedTops = userWardrobeItems.filter(item => item.category === "상의" && isColorMatch(item, currentLuckyColors));
             // 2. [하의] 중 오늘 기운과 맞는 아이템 탐색
-            const matchedBottoms = userWardrobeItems.filter(item => item.category === "하의" && isColorMatch(item));
+            const matchedBottoms = userWardrobeItems.filter(item => item.category === "하의" && isColorMatch(item, currentLuckyColors));
 
-            // 기본 상의와 기본 하의 디폴트값 안전 분리 (소품이 하의 자리에 들어가는 현상 차단)
             let defaultTop = "화이트 린넨 셔츠";
             let defaultBottom = "베이지 슬랙스";
 
@@ -1345,33 +1345,44 @@
 
             styleEl.innerHTML = `${finalTopText} & ${finalBottomText}`;
 
-            // 3. 내 옷장 소품(시계/신발/가방/액세서리) 포인트 매칭 (1~2개 선별)
+            // 3. 내 옷장 소품(시계/신발/가방/액세서리) 포인트 매칭 및 명리학적 근거 박스
             const matchedAccessories = userWardrobeItems.filter(item => ACCESSORY_CATS.includes(item.category));
 
             if (matchedAccessories.length === 0) {
-                pickEl.innerHTML = `👗 <strong>오늘의 옷장 팁:</strong> 옷장에 시계, 신발, 가방을 등록해 두시면 오늘 룩에 꼭 맞는 포인트 소품을 콕 짚어 추천해 드립니다!`;
+                pickEl.innerHTML = `👗 <strong>오늘의 옷장 팁:</strong> 옷장에 시계, 신발, 가방을 등록해 두시면 오늘 일진에 꼭 맞는 원포인트 악센트 소품을 추천해 드립니다!`;
             } else {
-                const today = new Date();
-                const seed = today.getFullYear() * 10000 + (today.getMonth() + 1) * 100 + today.getDate();
+                const fortune = currentFortuneData?.daily_fortune || {};
+                const stylingMode = fortune.styling_mode || "harmony";
+                const ruleTitle = fortune.rule_title || "오행 상생(相生) 조화";
+                const ruleReason = fortune.rule_reason || "오늘 일진과 상생하여 차분한 밸런스를 이룹니다.";
 
-                const accMap = {};
-                matchedAccessories.forEach(item => {
-                    if (!accMap[item.category]) accMap[item.category] = [];
-                    accMap[item.category].push(item);
-                });
-
-                const pickedAccs = [];
-                const accCats = Object.keys(accMap);
-                const pickCount = Math.min(2, accCats.length);
-
-                for (let i = 0; i < pickCount; i++) {
-                    const cat = accCats[i];
-                    const list = accMap[cat];
-                    const chosen = list[(seed + i * 5) % list.length];
-                    pickedAccs.push(`<strong>[${chosen.nickname}]</strong>`);
+                let selectedAcc = null;
+                if (stylingMode !== "harmony") {
+                    selectedAcc = matchedAccessories.find(i => isColorMatch(i, ["와인/버건디", "골드", "레드", "실버"])) || matchedAccessories[0];
+                } else {
+                    selectedAcc = matchedAccessories.find(i => isColorMatch(i, currentLuckyColors)) || matchedAccessories[0];
                 }
 
-                pickEl.innerHTML = `✨ <strong>오늘의 포인트 매칭:</strong> 위 추천 룩에 내 옷장의 ${pickedAccs.join('와(과) ')}을(를) 함께 매치해 보세요!`;
+                const otherAcc = matchedAccessories.find(i => i.id !== selectedAcc.id && i.category !== selectedAcc.category);
+                const pickList = [`<strong>[${selectedAcc.nickname}]</strong>`];
+                if (otherAcc) pickList.push(`<strong>[${otherAcc.nickname}]</strong>`);
+
+                let reasonBoxHtml = "";
+                if (stylingMode !== "harmony") {
+                    reasonBoxHtml = `
+                        <div style="background: rgba(255,255,255,0.7); border: 1px solid #D1FAE5; border-radius: 8px; padding: 8px 10px; margin-top: 6px; font-size: 11.5px; color: #065F46; line-height: 1.6;">
+                            <span style="font-weight: 800; color: #047857; display: block; margin-bottom: 2px;">📜 명리학 개운 비결 · ${ruleTitle}</span>
+                            <span>${ruleReason}</span>
+                        </div>
+                    `;
+                }
+
+                pickEl.innerHTML = `
+                    <div>
+                        <span>✨ <strong>오늘의 포인트 매칭:</strong> 위 추천 룩에 내 옷장의 ${pickList.join('와(과) ')}을(를) 함께 매치해 보세요!</span>
+                        ${reasonBoxHtml}
+                    </div>
+                `;
             }
         }
 
