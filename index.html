@@ -268,21 +268,25 @@
                     <div id="resAdvice" style="font-size: 13.5px; color: #E2E8F0; font-weight: 400; line-height: 1.65; text-align: left;"></div>
                 </div>
 
-                <!-- 1. 맞춤 추천 코디 카드 -->
-                <div class="card" style="padding: 14px 16px; text-align: left;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                        <span style="font-size: 12px; color: #64748B; font-weight: 700;">👔 맞춤 추천 코디</span>
+                <!-- 1. 맞춤 추천 코디 카드 (정리된 디자인 & 최하단 멀티 옷장 매칭) -->
+                <div class="card" style="padding: 16px; text-align: left; display: flex; flex-direction: column; gap: 8px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-size: 12.5px; color: #64748B; font-weight: 700;">👔 맞춤 추천 코디</span>
                         <span id="reverseDayBadge" class="hidden" style="font-size: 11px; background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%); color: #78350F; font-weight: 800; padding: 2px 8px; border-radius: 9999px; border: 1px solid #FCD34D;">✦ 시크릿 반전 코디 데이</span>
                     </div>
-                    <p id="resStyle" style="font-weight: 800; font-size: 14.5px; color: #0F172A; margin-bottom: 6px;">흰색 카라 반팔티 & 베이지 슬랙스</p>
-                    
-                    <div id="wardrobeDailyMatchPick" style="font-size: 12.5px; color: #065F46; background: #ECFDF5; padding: 8px 10px; border-radius: 8px; border-left: 3.5px solid #10B981; margin-bottom: 4px;">
-                        👗 <strong>오늘의 옷장 픽:</strong> 내 옷장에 아이템을 등록하면 오늘 일진에 딱 맞는 아이템을 추천해 드려요!
-                    </div>
 
-                    <p id="resReverseTip" style="font-size: 12px; color: #475569; line-height: 1.5; background: #F8FAFC; padding: 6px 10px; border-radius: 6px;">
+                    <!-- 추천 스타일 텍스트 -->
+                    <p id="resStyle" style="font-weight: 800; font-size: 15px; color: #0F172A; margin: 0;">흰색 카라 반팔티 & 베이지 슬랙스</p>
+                    
+                    <!-- 일진 상생 팁 -->
+                    <p id="resReverseTip" style="font-size: 12.5px; color: #475569; line-height: 1.6; margin: 0;">
                         오늘의 일진에 맞춘 상생 코디 가이드를 불러오는 중입니다.
                     </p>
+
+                    <!-- 내 옷장 매칭 픽 (외곽선/왼쪽 바 없는 깔끔한 톤으로 최하단 배치) -->
+                    <div id="wardrobeDailyMatchPick" style="font-size: 13px; color: #166534; background: #F4FBF7; padding: 10px 12px; border-radius: 10px; margin-top: 4px; line-height: 1.6;">
+                        👗 <strong>오늘의 옷장 픽:</strong> 내 옷장에 아이템을 등록하면 오늘 일진에 딱 맞는 아이템을 추천해 드려요!
+                    </div>
                 </div>
 
                 <!-- 2. 내 옷장 아이템 서랍 -->
@@ -305,6 +309,7 @@
                             <span>➕</span> 새 아이템 옷장에 등록하기 (3초)
                         </button>
 
+                        <!-- 저장된 옷장 아이템 리스트 (상단: 닉네임 / 하단: 카테고리 · 색상 · 소재 한줄 나란히) -->
                         <div id="wardrobeItemsList" style="display: flex; flex-direction: column; gap: 6px;"></div>
                     </div>
                 </div>
@@ -318,11 +323,13 @@
                     <div class="grid-cell" style="grid-column: span 2;"><span style="font-size: 12px; color: #94A3B8; display: block;">💡 마인드 처세</span><p id="resMindset" style="font-weight: 700; margin-top: 2px; font-size: 13.5px; color: #0F172A;">원칙을 지키며 유연하게 대처하기</p></div>
                 </div>
 
+                <!-- 오늘의 조언 카드 -->
                 <div class="action-card">
                     <span style="font-weight: 800; color: #78350F; display: block; margin-bottom: 3px; font-size: 14px;">✨ 오늘의 조언</span>
                     <p id="resGaewoon" style="color: #92400E; font-weight: 500; font-size: 14px; line-height: 1.6;">오늘 완료해야 할 우선순위 3가지 메모하기</p>
                 </div>
 
+                <!-- 바이오리듬 카드 -->
                 <div class="biorhythm-card">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                         <h4 style="font-size: 15px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif;">🧬 오늘의 바이오리듬</h4>
@@ -356,8 +363,10 @@
                     </div>
                 </div>
 
+                <!-- 광고 슬롯 1 -->
                 <div class="ad-slot-box"><span>📢 광고 영역 (Google AdSense / Kakao AdFit 슬롯 1)</span></div>
 
+                <!-- 스페셜 운세 서랍들 -->
                 <div style="display: flex; flex-direction: column; gap: 10px;">
                     <div id="drawerTarot" class="drawer-card">
                         <div class="drawer-header" onclick="toggleDrawer('drawerTarot')">
@@ -421,7 +430,7 @@
                                 <div onclick="openZodiacModal('zodiac', '원숭이')" class="zodiac-btn"><span class="zodiac-icon">🐵</span><span class="zodiac-label">원숭이</span></div>
                                 <div onclick="openZodiacModal('zodiac', '닭')" class="zodiac-btn"><span class="zodiac-icon">🐔</span><span class="zodiac-label">닭</span></div>
                                 <div onclick="openZodiacModal('zodiac', '개')" class="zodiac-btn"><span class="zodiac-icon">🐶</span><span class="zodiac-label">개</span></div>
-                                <div onclick="openZodiacModal('zodiac', '돼지')" class="zodiac-btn"><span class="zodiac-icon">🐷</span><span class="zodiac-label">돼지</span></div>
+                                <div onclick="openZodiacModal('돼지')" class="zodiac-btn"><span class="zodiac-icon">🐷</span><span class="zodiac-label">돼지</span></div>
                             </div>
 
                             <div id="gridStarBox" class="zodiac-grid-2x6 hidden">
@@ -1079,7 +1088,7 @@
             "사자자리": `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#E2C068" stroke-width="2"><circle cx="7.5" cy="14.5" r="2.5"/><path d="M9 13a6 6 0 1 1 8 4c0 2-2 3-3 3s-2-1.5-1-3.5"/></svg>`,
             "처녀자리": `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#E2C068" stroke-width="2"><path d="M4 4v12a3 3 0 0 0 6 0V4M10 4v12a3 3 0 0 0 6 0V4M16 7a3 3 0 0 1 4 4v9M16 16l4 4"/></svg>`,
             "천칭자리": `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#E2C068" stroke-width="2"><path d="M4 20h16M4 14h5a3 3 0 1 1 6 0h5"/></svg>`,
-            "전갈자리": `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#E2C068" stroke-width="2"><path d="M4 4v12a3 3 0 0 0 6 0V4M10 4v12a3 3 0 0 0 6 0V4M16 4v12a3 3 0 0 0 6 0v-2M19 14l3 2-3 2"/></svg>`,
+            "전갈자리": `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#E2C068" stroke-width="2"><path d="M4 4v12a3 3 0 0 0 6 0V4M10 4v12a3 3 0 0 0 6 0v-2M19 14l3 2-3 2"/></svg>`,
             "사수자리": `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#E2C068" stroke-width="2"><path d="M5 19L19 5M12 5h7v7M8 12l4 4"/></svg>`,
             "염소자리": `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#E2C068" stroke-width="2"><path d="M4 4v11a4 4 0 0 0 8 0V5M12 9a4 4 0 0 1 8 4c0 3-3 7-5 7s-3-2-2-4"/></svg>`,
             "물병자리": `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#E2C068" stroke-width="2"><path d="M3 8l3-3 3 3 3-3 3 3 3-3 3 3M3 16l3-3 3 3 3-3 3 3 3-3 3 3"/></svg>`,
@@ -1260,20 +1269,61 @@
             updateTodayWardrobeMatchPick();
         }
 
+        // 오늘의 맞춤 코디 카드 최하단에 카테고리 중복 없는 2~3개 아이템 세트 매칭 추천
         function updateTodayWardrobeMatchPick() {
             const pickEl = document.getElementById('wardrobeDailyMatchPick');
             if (!pickEl) return;
 
             if (!userWardrobeItems || userWardrobeItems.length === 0) {
-                pickEl.innerHTML = `👗 <strong>오늘의 옷장 픽:</strong> 아래 <strong>[내 옷장 아이템]</strong>에 평소 즐겨 쓰는 가방이나 옷을 등록해 보세요! 일진에 딱 맞는 날에 알림을 드려요.`;
+                pickEl.innerHTML = `👗 <strong>오늘의 옷장 픽:</strong> 아래 <strong>[내 옷장 아이템]</strong>에 옷이나 소품을 등록해 보세요! 오늘 일진에 맞춘 세트 코디를 제안해 드립니다.`;
                 return;
             }
 
-            const today = new Date();
-            const pickIdx = (today.getDate() + userWardrobeItems.length) % userWardrobeItems.length;
-            const item = userWardrobeItems[pickIdx];
+            // 카테고리별로 유니크하게 분류 (카테고리 중복 배제)
+            const catMap = {};
+            userWardrobeItems.forEach(item => {
+                if (!catMap[item.category]) {
+                    catMap[item.category] = [];
+                }
+                catMap[item.category].push(item);
+            });
 
-            pickEl.innerHTML = `✨ <strong>오늘의 옷장 매칭:</strong> 오늘 일진과 조화로운 내 옷장의 <strong>[${item.nickname}]</strong>을 착용해 보세요! 기운의 밸런스가 상승합니다.`;
+            const uniqueCats = Object.keys(catMap);
+            const today = new Date();
+            const seed = today.getFullYear() * 10000 + (today.getMonth() + 1) * 100 + today.getDate();
+
+            // 카테고리가 1개뿐인 경우: 해당 카테고리에서 오늘 픽 1개
+            if (uniqueCats.length === 1) {
+                const itemsInCat = catMap[uniqueCats[0]];
+                const chosen = itemsInCat[seed % itemsInCat.length];
+                pickEl.innerHTML = `✨ <strong>오늘의 옷장 매칭:</strong> 오늘 일진과 조화로운 내 옷장의 <strong>[${chosen.nickname}]</strong>을(를) 착용해 보세요!`;
+                return;
+            }
+
+            // 카테고리가 2개 이상인 경우: 서로 다른 카테고리에서 2~3개 세트 추천
+            // 선호 조합 순서: (상의/아우터 + 하의) 또는 (의류 + 시계/가방/액세서리)
+            const pickedItems = [];
+            const shuffledCats = [...uniqueCats].sort((a, b) => {
+                const hashA = (seed + a.charCodeAt(0)) % 100;
+                const hashB = (seed + b.charCodeAt(0)) % 100;
+                return hashA - hashB;
+            });
+
+            // 최대 2~3개 카테고리에서 1개씩 선별
+            const maxPickCount = Math.min(3, shuffledCats.length);
+            for (let i = 0; i < maxPickCount; i++) {
+                const cat = shuffledCats[i];
+                const itemsInCat = catMap[cat];
+                const chosen = itemsInCat[(seed + i * 7) % itemsInCat.length];
+                pickedItems.push(`<strong>[${chosen.nickname}]</strong>`);
+            }
+
+            let matchText = pickedItems.join('와 ') + '을(를) 함께 매치해 보세요!';
+            if (pickedItems.length === 3) {
+                matchText = pickedItems[0] + ', ' + pickedItems[1] + ', ' + pickedItems[2] + '의 조화로운 매치를 추천합니다!';
+            }
+
+            pickEl.innerHTML = `✨ <strong>오늘의 옷장 세트 매칭:</strong> ${matchText}`;
         }
 
         function renderWardrobeUI() {
