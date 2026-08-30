@@ -181,7 +181,7 @@
                 </button>
             </div>
 
-            <!-- 3. 신규 회원 사주 확인 폼 (년/월/일 3단 셀렉트 적용) -->
+            <!-- 3. 신규 회원 사주 확인 폼 (년/월/일 3단 셀렉트) -->
             <div id="onboardingInputView" class="card hidden" style="text-align: center;">
                 <div class="gift-badge" style="margin-bottom: 12px;">🎁 카카오 연동 완료 (+1,000 복채 지급)</div>
                 <h2 style="font-size: 21px; font-weight: 800; margin-bottom: 2px; font-family: 'Noto Serif KR', serif;">사주 명식 확인</h2>
@@ -205,7 +205,6 @@
                             <button type="button" onclick="setCalType('leap')" id="btnCalLeap" class="cal-btn">음력(윤달)</button>
                         </div>
                     </div>
-                    <!-- 브라우저 달력 대신 깔끔한 년/월/일 드롭다운 -->
                     <div style="display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 6px; margin-top: 4px;">
                         <select id="birthYearSelect" class="form-select-box"></select>
                         <select id="birthMonthSelect" class="form-select-box"></select>
@@ -265,7 +264,7 @@
                     </p>
                 </div>
 
-                <!-- 2. 신규 서랍: 나만의 오행 옷장 & 컬러 체인저 -->
+                <!-- 2. 오행 옷장 & 컬러 체인저 서랍 -->
                 <div id="drawerWardrobe" class="drawer-card" style="border: 1.5px solid #CBD5E1;">
                     <div class="drawer-header" onclick="toggleDrawer('drawerWardrobe')" style="background: #FAF9F6;">
                         <div class="drawer-title-box">
@@ -682,7 +681,7 @@
 
     </div>
 
-    <!-- 궁합 상대방 정보 모달 (년/월/일 드롭다운 적용) -->
+    <!-- 궁합 상대방 정보 모달 (년/월/일 3단 셀렉트 적용) -->
     <div id="gunghapModal" class="modal-bg hidden">
         <div class="modal-content" style="max-width: 350px; text-align: left;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 8px;">
@@ -838,7 +837,6 @@
             }
         }
 
-        // 년/월/일 3단 드롭다운 동적 생성 함수
         function initDateDropdowns() {
             const currentYear = new Date().getFullYear();
             const yearSelects = ['birthYearSelect', 'partnerBirthYearSelect'];
@@ -872,10 +870,21 @@
                 }
             });
 
-            // 기본값 설정 (1978년 8월 13일)
             document.getElementById('birthYearSelect').value = "1978";
             document.getElementById('birthMonthSelect').value = "8";
             document.getElementById('birthDaySelect').value = "13";
+        }
+
+        // 브라우저 로컬 저장소에 사용자가 수정한 사주 정보 영구 보존
+        function saveUserSajuToLocal(data) {
+            localStorage.setItem('dalha_custom_saju', JSON.stringify(data));
+        }
+
+        function getSavedUserSaju() {
+            try {
+                const raw = localStorage.getItem('dalha_custom_saju');
+                return raw ? JSON.parse(raw) : null;
+            } catch(e) { return null; }
         }
 
         function loginWithKakaoReal() {
@@ -893,13 +902,16 @@
                             const kakaoAccount = res.kakao_account || {};
                             const profile = kakaoAccount.profile || {};
                             
+                            // 이전에 로컬에 저장해둔 사용자의 맞춤 사주(3월 등)가 있다면 우선 적용
+                            const localSaju = getSavedUserSaju();
+
                             const payload = {
                                 kakao_id: String(res.id),
-                                name: profile.nickname || "달하 회원",
-                                gender: kakaoAccount.gender || "male",
-                                birthyear: kakaoAccount.birthyear || "1978",
-                                birthday: kakaoAccount.birthday || "0813",
-                                birthday_type: kakaoAccount.birthday_type || "SOLAR"
+                                name: localSaju?.name || profile.nickname || "달하 회원",
+                                gender: localSaju?.gender || kakaoAccount.gender || "male",
+                                birthyear: localSaju ? String(localSaju.birth_year) : (kakaoAccount.birthyear || "1978"),
+                                birthday: localSaju ? `${String(localSaju.birth_month).padStart(2, '0')}${String(localSaju.birth_day).padStart(2, '0')}` : (kakaoAccount.birthday || "0813"),
+                                birthday_type: localSaju ? (localSaju.calendar_type === 'lunar' ? 'LUNAR' : 'SOLAR') : (kakaoAccount.birthday_type || "SOLAR")
                             };
 
                             localStorage.setItem('dalha_kakao_id', payload.kakao_id);
@@ -914,6 +926,24 @@
                             currentUserId = sData.user_id;
                             currentCoin = sData.coin_balance;
                             updateCoinDisplay();
+
+                            // 로컬스토리지에 저장된 사주가 있으면 서버 DB에 즉시 업데이트 동기화
+                            if (localSaju) {
+                                await fetch('/api/user/register-saju', {
+                                    method: 'POST',
+                                    headers: {'Content-Type': 'application/json'},
+                                    body: JSON.stringify({
+                                        user_id: currentUserId,
+                                        name: localSaju.name,
+                                        gender: localSaju.gender,
+                                        birth_year: localSaju.birth_year,
+                                        birth_month: localSaju.birth_month,
+                                        birth_day: localSaju.birth_day,
+                                        calendar_type: localSaju.calendar_type,
+                                        sijin_index: localSaju.sijin_index
+                                    })
+                                });
+                            }
 
                             if (sData.status === "existing_user") {
                                 serverUnlockedReports = sData.unlocked_reports || [];
@@ -1065,6 +1095,17 @@
             const m = parseInt(document.getElementById('birthMonthSelect').value) || 8;
             const d = parseInt(document.getElementById('birthDaySelect').value) || 13;
             const sijin = parseInt(document.getElementById('inputSijin').value);
+
+            // 로컬 스토리지에 영구 저장 (서버가 슬립 후 깨어나도 3월 13일 유지)
+            saveUserSajuToLocal({
+                name: name,
+                gender: selectedGender,
+                birth_year: y,
+                birth_month: m,
+                birth_day: d,
+                calendar_type: selectedCalendarType,
+                sijin_index: sijin
+            });
 
             const res = await fetch('/api/user/register-saju', {
                 method: 'POST',
