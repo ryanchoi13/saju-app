@@ -8,7 +8,7 @@ from fastapi import FastAPI, Request, HTTPException
 from fastapi.responses import HTMLResponse, FileResponse, Response
 from pydantic import BaseModel
 
-app = FastAPI(title="달하 (DALHA) - 정통 명리학 & 점성술 엔진", version="43.4.0")
+app = FastAPI(title="달하 (DALHA) - 정통 명리학 & 점성술 엔진", version="43.5.0")
 
 DB_FILE = "dalha.db"
 
@@ -51,8 +51,8 @@ def init_db():
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         user_id INTEGER,
         category VARCHAR(50),
-        colors VARCHAR(100),
-        materials VARCHAR(100),
+        colors VARCHAR(150),
+        materials VARCHAR(150),
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY(user_id) REFERENCES users(id)
     )
@@ -171,6 +171,20 @@ STAR_FORTUNE_DETAILS = {
     "염소자리": { "title": "성실한 노력과 지위 안착", "overview": "꾸준히 쌓아온 노력이 결과물로 전환되며 신뢰를 한몸에 받습니다.", "badge": "📈 오늘 단단한 승진운", "focus": "상급자로부터 능력을 인정받아 권한이 격상됩니다.", "item": "원목 명함집", "time": "오전 08시 ~ 10시" },
     "물병자리": { "title": "독창적인 발상과 혁신", "overview": "틀에 얽매이지 않는 신선한 아이디어가 주변에 영감을 줍니다.", "badge": "💡 오늘 빛나는 기획운", "focus": "정체된 일에 새로운 방식을 적용해 돌파구를 엽니다.", "item": "실버 링", "time": "오후 03시 ~ 05시" },
     "물고기자리": { "title": "풍부한 감성과 따뜻한 인연", "overview": "마음이 이끄는 대로 행동할 때 뜻밖의 행운과 만남이 이어집니다.", "badge": "💖 오늘 설레는 애정운", "focus": "마음이 잘 통하는 귀인을 만나 깊은 유대를 형성합니다.", "item": "실버 목걸이", "time": "오후 06시 ~ 08시" }
+}
+
+# 20대 세분화 색상 및 소재 5대 오행 맵핑
+DETAILED_COLOR_ELEM_MAP = {
+    "화이트": "metal", "아이보리/크림": "metal", "베이지": "earth", "카멜/브라운": "earth",
+    "블랙": "water", "차콜": "water", "그레이": "metal", "실버": "metal",
+    "골드": "metal", "레드": "fire", "와인/버건디": "fire", "핑크": "fire",
+    "코랄/오렌지": "fire", "옐로우": "earth", "머스터드": "earth", "올리브/카키": "wood",
+    "민트/라임": "wood", "그린": "wood", "스카이블루": "wood", "네이비": "water"
+}
+
+DETAILED_MATERIAL_ELEM_MAP = {
+    "면/린넨": "wood", "실크/쉬폰": "fire", "가죽/세무": "earth",
+    "메탈/금속": "metal", "데님": "water", "니트/울": "earth"
 }
 
 @app.get("/")
@@ -295,8 +309,14 @@ def compute_saju_full_payload(name: str, gender: str, year: int, month: int, day
     action = ACTIONS_POOL[(daily_hash + 5) % len(ACTIONS_POOL)]
 
     is_reverse_day = (daily_hash % 8 == 0)
-    reverse_color_map = {"wood": "코랄 레드 / 화이트", "fire": "딥 네이비 / 스카이블루", "earth": "포레스트 그린 / 올리브", "metal": "파스텔 핑크 / 와인", "water": "머스터드 옐로우 / 베이지"}
-    reverse_color = reverse_color_map.get(day_elem, "화사한 오렌지 / 옐로우")
+    reverse_color_map = {
+        "wood": "코랄/오렌지 & 화이트",
+        "fire": "네이비/스카이블루 & 실버",
+        "earth": "그린/올리브 & 아이보리",
+        "metal": "핑크/와인 & 골드",
+        "water": "옐로우/머스터드 & 베이지"
+    }
+    reverse_color = reverse_color_map.get(day_elem, "화사한 코랄/오렌지 & 베이지")
     
     if is_reverse_day:
         reverse_tip = f"✦ 오늘 일진이 평소 피하던 <strong>[{reverse_color}]</strong>을 완벽히 소화해 주는 황금의 날입니다! 아껴둔 밝은 아이템을 과감히 매치해보세요."
@@ -494,7 +514,7 @@ def register_saju(req: RegisterSajuRequest):
         "saju_analysis": saju_payload
     }
 
-# 내 옷장 아이템 추가 API
+# 내 옷장 아이템 추가 API (20대 세분화 색상 및 복수 소재 맵핑)
 @app.post("/api/wardrobe/add")
 def add_wardrobe_item(req: WardrobeAddRequest):
     conn = get_db()
