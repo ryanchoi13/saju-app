@@ -268,7 +268,7 @@
                     <div id="resAdvice" style="font-size: 13.5px; color: #E2E8F0; font-weight: 400; line-height: 1.65; text-align: left;"></div>
                 </div>
 
-                <!-- 1. 맞춤 추천 코디 카드 (행운 컬러 + 상의/하의 1:1 스마트 코디 + 소품 매칭) -->
+                <!-- 1. 맞춤 추천 코디 카드 (행운 컬러 + 상/하의 1:1 스마트 코디 + 소품 매칭) -->
                 <div class="card" style="padding: 16px; text-align: left; display: flex; flex-direction: column; gap: 10px;">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                         <span style="font-size: 12.5px; color: #64748B; font-weight: 700;">👔 맞춤 추천 코디</span>
@@ -278,13 +278,13 @@
                     <!-- 1. 오늘의 행운 컬러 명확히 제시 -->
                     <div style="display: flex; align-items: center; gap: 8px; font-size: 13.5px; background: #F8FAFC; padding: 8px 12px; border-radius: 10px; border: 1px solid #E2E8F0;">
                         <span style="color: #0D1527; font-weight: 800;">🎨 오늘의 행운 컬러:</span>
-                        <span id="todayLuckyColorsBadge" style="font-weight: 800; color: #2D6A4F;">화이트 · 네이비</span>
+                        <span id="todayLuckyColorsBadge" style="font-weight: 800; color: #2D6A4F;">그린 · 화이트</span>
                     </div>
 
                     <!-- 2. 오늘의 추천 코디 (상의 1벌 + 하의 1벌 엄격 분리 적용) -->
                     <div>
                         <span style="font-size: 11.5px; color: #64748B; display: block; margin-bottom: 2px;">추천 스타일링:</span>
-                        <p id="resStyle" style="font-weight: 800; font-size: 15px; color: #0F172A; margin: 0; line-height: 1.5;">화이트 린넨 셔츠 & 네이비 슬랙스</p>
+                        <p id="resStyle" style="font-weight: 800; font-size: 15px; color: #0F172A; margin: 0; line-height: 1.5;">화이트 린넨 셔츠 & 베이지 슬랙스</p>
                     </div>
 
                     <!-- 3. 일진 코디 처세 팁 -->
@@ -437,7 +437,7 @@
                                 <div onclick="openZodiacModal('zodiac', '원숭이')" class="zodiac-btn"><span class="zodiac-icon">🐵</span><span class="zodiac-label">원숭이</span></div>
                                 <div onclick="openZodiacModal('zodiac', '닭')" class="zodiac-btn"><span class="zodiac-icon">🐔</span><span class="zodiac-label">닭</span></div>
                                 <div onclick="openZodiacModal('zodiac', '개')" class="zodiac-btn"><span class="zodiac-icon">🐶</span><span class="zodiac-label">개</span></div>
-                                <div onclick="openZodiacModal('zodiac', '돼지')" class="zodiac-btn"><span class="zodiac-icon">🐷</span><span class="zodiac-label">돼지</span></div>
+                                <div onclick="openZodiacModal('돼지')" class="zodiac-btn"><span class="zodiac-icon">🐷</span><span class="zodiac-label">돼지</span></div>
                             </div>
 
                             <div id="gridStarBox" class="zodiac-grid-2x6 hidden">
@@ -899,8 +899,8 @@
         let serverUnlockedReports = [];
         let userWardrobeItems = [];
 
-        let currentLuckyColors = ["화이트", "네이비"];
-        let baseFashionStyle = "화이트 린넨 셔츠 & 네이비 슬랙스";
+        let currentLuckyColors = ["그린", "화이트"];
+        let baseFashionStyle = "화이트 린넨 셔츠 & 베이지 슬랙스";
 
         let wizardCategory = "상의";
         let wizardColors = [];
@@ -910,10 +910,8 @@
 
         function initKakaoSDK() {
             try {
-                if (window.Kakao) {
-                    if (!window.Kakao.isInitialized()) {
-                        window.Kakao.init(KAKAO_JS_KEY);
-                    }
+                if (window.Kakao && !window.Kakao.isInitialized()) {
+                    window.Kakao.init(KAKAO_JS_KEY);
                 }
             } catch(e) { console.error("Kakao SDK Init Error:", e); }
         }
@@ -1090,7 +1088,7 @@
             "사자자리": `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#E2C068" stroke-width="2"><circle cx="7.5" cy="14.5" r="2.5"/><path d="M9 13a6 6 0 1 1 8 4c0 2-2 3-3 3s-2-1.5-1-3.5"/></svg>`,
             "처녀자리": `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#E2C068" stroke-width="2"><path d="M4 4v12a3 3 0 0 0 6 0V4M10 4v12a3 3 0 0 0 6 0V4M16 7a3 3 0 0 1 4 4v9M16 16l4 4"/></svg>`,
             "천칭자리": `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#E2C068" stroke-width="2"><path d="M4 20h16M4 14h5a3 3 0 1 1 6 0h5"/></svg>`,
-            "전갈자리": `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#E2C068" stroke-width="2"><path d="M4 4v12a3 3 0 0 0 6 0V4M10 4v12a3 3 0 0 0 6 0v-2M19 14l3 2-3 2"/></svg>`,
+            "전갈자리": `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#E2C068" stroke-width="2"><path d="M4 4v12a3 3 0 0 0 6 0V4M10 4v12a3 3 0 0 0 6 0V4M16 4v12a3 3 0 0 0 6 0v-2M19 14l3 2-3 2"/></svg>`,
             "사수자리": `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#E2C068" stroke-width="2"><path d="M5 19L19 5M12 5h7v7M8 12l4 4"/></svg>`,
             "염소자리": `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#E2C068" stroke-width="2"><path d="M4 4v11a4 4 0 0 0 8 0V5M12 9a4 4 0 0 1 8 4c0 3-3 7-5 7s-3-2-2-4"/></svg>`,
             "물병자리": `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#E2C068" stroke-width="2"><path d="M3 8l3-3 3 3 3-3 3 3 3-3 3 3M3 16l3-3 3 3 3-3 3 3 3-3 3 3"/></svg>`,
@@ -1232,7 +1230,7 @@
             document.getElementById('resMindset').innerText = data.daily_fortune.mindset;
             document.getElementById('resGaewoon').innerText = data.daily_fortune.action;
 
-            baseFashionStyle = data.daily_fortune.fashion_style || "화이트 린넨 셔츠 & 네이비 슬랙스";
+            baseFashionStyle = data.daily_fortune.fashion_style || "화이트 린넨 셔츠 & 베이지 슬랙스";
             
             // 오늘의 행운 컬러 2종 산출 및 상단 뱃지 반영
             const d_elem = data.saju_data?.pillars_detail?.day?.cg_elem || "metal";
@@ -1286,7 +1284,7 @@
             updateTodayWardrobeMatchPick();
         }
 
-        // 스마트 추천 코디(상의 1벌 + 하의 1벌 엄격 분리) & 내 옷장 소품 매칭
+        // 스마트 추천 코디(상의 1벌 + 하의 1벌 엄격 분리 & 오행 컬러 패밀리 인식)
         function updateTodayWardrobeMatchPick() {
             const styleEl = document.getElementById('resStyle');
             const pickEl = document.getElementById('wardrobeDailyMatchPick');
@@ -1294,26 +1292,49 @@
 
             const ACCESSORY_CATS = ["시계", "신발", "가방", "액세서리"];
 
-            // 색상 일치 검증 헬퍼 (확장 컬러명 포함 유연 매칭)
+            // 오행 컬러 패밀리 맵핑 (그린 계열, 네이비 계열, 화이트 계열 등 상호 포용)
+            const COLOR_FAMILIES = {
+                "그린": ["그린", "올리브/카키", "민트/라임", "카키", "올리브", "민트"],
+                "화이트": ["화이트", "아이보리/크림", "실버", "그레이", "아이보리"],
+                "네이비": ["네이비", "스카이블루", "블랙", "차콜", "블루"],
+                "스카이블루": ["스카이블루", "네이비", "블루", "민트"],
+                "올리브": ["올리브/카키", "그린", "베이지", "카키"],
+                "아이보리": ["아이보리/크림", "화이트", "베이지"],
+                "베이지": ["베이지", "카멜/브라운", "아이보리/크림", "머스터드", "옐로우", "브라운"],
+                "머스터드": ["머스터드", "옐로우", "베이지", "카멜/브라운"]
+            };
+
             const isColorMatch = (item) => {
-                return item.colors.some(col => 
-                    currentLuckyColors.some(lc => col.includes(lc) || lc.includes(col) || (lc === "네이비" && col.includes("블루")) || (lc === "화이트" && col.includes("아이보리")))
-                );
+                return item.colors.some(col => {
+                    return currentLuckyColors.some(lc => {
+                        if (col.includes(lc) || lc.includes(col)) return true;
+                        const fam = COLOR_FAMILIES[lc] || [];
+                        return fam.some(fc => col.includes(fc) || fc.includes(col));
+                    });
+                });
             };
 
             // 1. [상의] 중 오늘 기운과 맞는 아이템 탐색
             const matchedTops = userWardrobeItems.filter(item => item.category === "상의" && isColorMatch(item));
-            // 2. [하의] 중 오늘 기운과 맞는 아이템 탐색 (바지만 2개 들어가는 현상 원천 차단)
+            // 2. [하의] 중 오늘 기운과 맞는 아이템 탐색
             const matchedBottoms = userWardrobeItems.filter(item => item.category === "하의" && isColorMatch(item));
 
-            let finalTopText = "화이트 린넨 셔츠";
-            let finalBottomText = "네이비 슬랙스";
+            // 기본 상의와 기본 하의 디폴트값 안전 분리 (소품이 하의 자리에 들어가는 현상 차단)
+            let defaultTop = "화이트 린넨 셔츠";
+            let defaultBottom = "베이지 슬랙스";
 
             if (baseFashionStyle.includes("&")) {
-                const parts = baseFashionStyle.split("&");
-                finalTopText = parts[0].trim();
-                finalBottomText = parts[1].trim();
+                const parts = baseFashionStyle.split("&").map(s => s.trim());
+                if (parts[0]) defaultTop = parts[0];
+                if (parts[1] && !parts[1].includes("시계") && !parts[1].includes("목걸이")) {
+                    defaultBottom = parts[1];
+                } else {
+                    defaultBottom = "차콜 슬랙스";
+                }
             }
+
+            let finalTopText = defaultTop;
+            let finalBottomText = defaultBottom;
 
             if (matchedTops.length > 0) {
                 finalTopText = `내 옷장의 <strong>[${matchedTops[0].nickname}]</strong>`;
@@ -1333,7 +1354,6 @@
                 const today = new Date();
                 const seed = today.getFullYear() * 10000 + (today.getMonth() + 1) * 100 + today.getDate();
 
-                // 카테고리 중복 방지하여 최대 2개 소품 추출
                 const accMap = {};
                 matchedAccessories.forEach(item => {
                     if (!accMap[item.category]) accMap[item.category] = [];
@@ -1724,7 +1744,7 @@
                 btnStar.className = 'sub-tab-btn active';
                 btnZodiac.className = 'sub-tab-btn';
                 gridStar.classList.remove('hidden');
-                gridStar.classList.add('hidden');
+                gridZodiac.classList.add('hidden');
             }
         }
 
