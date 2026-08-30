@@ -100,7 +100,8 @@
         .mat-chip { border: 1.5px solid #CBD5E1; border-radius: 10px; padding: 10px 8px; display: flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer; font-size: 12px; font-weight: 600; color: #475569; background: #FFFFFF; transition: all 0.15s; }
         .mat-chip.selected { border-color: #2D6A4F; background: #EBF5EE; color: #166534; font-weight: 800; box-shadow: 0 0 0 1.5px #2D6A4F; }
 
-        .wardrobe-item-card { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 14px; padding: 12px 14px; display: flex; justify-content: space-between; align-items: center; text-align: left; margin-bottom: 8px; }
+        .wardrobe-item-card { background: #FFFFFF; border: 1.2px solid #E2E8F0; border-radius: 16px; padding: 12px 14px; display: flex; justify-content: space-between; align-items: center; text-align: left; margin-bottom: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
+        .item-icon-frame { width: 44px; height: 44px; border-radius: 12px; background: #F8FAFC; border: 1px solid #E2E8F0; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 
         .zodiac-grid-2x6 { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; margin-top: 6px; }
         .zodiac-btn { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 10px 2px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; }
@@ -268,7 +269,7 @@
                     <div id="resAdvice" style="font-size: 13.5px; color: #E2E8F0; font-weight: 400; line-height: 1.65; text-align: left;"></div>
                 </div>
 
-                <!-- 1. 맞춤 추천 코디 카드 (배치 재정돈: 스타일링 -> 뱃지 -> 포인트 매칭) -->
+                <!-- 1. 맞춤 추천 코디 카드 -->
                 <div class="card" style="padding: 16px; text-align: left; display: flex; flex-direction: column; gap: 10px;">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                         <span style="font-size: 12.5px; color: #64748B; font-weight: 700;">👔 맞춤 추천 코디</span>
@@ -299,7 +300,7 @@
                     </div>
                 </div>
 
-                <!-- 2. 내 옷장 아이템 서랍 -->
+                <!-- 2. 내 옷장 아이템 서랍 (다이내믹 맞춤 그래픽 아이콘 렌더링) -->
                 <div id="drawerWardrobe" class="drawer-card" style="border: 1.5px solid #CBD5E1;">
                     <div class="drawer-header" onclick="toggleDrawer('drawerWardrobe')" style="background: #FAF9F6;">
                         <div class="drawer-title-box">
@@ -1317,9 +1318,9 @@
             const topColor = currentLuckyColors[0] || "네이비";
             const bottomColor = currentLuckyColors[1] || "스카이블루";
 
-            // 1. [상의] 매칭 (첫번째 행운 컬러 우선 탐색)
+            // 1. [상의] 매칭
             const matchedTops = userWardrobeItems.filter(item => item.category === "상의" && isColorMatch(item, [topColor]));
-            // 2. [하의] 매칭 (두번째 행운 컬러 우선 탐색)
+            // 2. [하의] 매칭
             const matchedBottoms = userWardrobeItems.filter(item => item.category === "하의" && isColorMatch(item, [bottomColor]));
 
             // 행운 컬러 1:1 디폴트 텍스트
@@ -1355,10 +1356,8 @@
 
                 let selectedAcc = null;
                 if (stylingMode !== "harmony") {
-                    // 반전/통관 데이: 화려한 포인트 소품(와인, 골드, 레드, 메탈 등) 우선 매칭
                     selectedAcc = matchedAccessories.find(i => isColorMatch(i, ["와인/버건디", "골드", "레드", "실버"])) || matchedAccessories[0];
                 } else {
-                    // 일반 상생 데이: 톤온톤 조화 소품 우선 매칭
                     selectedAcc = matchedAccessories.find(i => isColorMatch(i, currentLuckyColors)) || matchedAccessories[0];
                 }
 
@@ -1385,6 +1384,130 @@
             }
         }
 
+        // --- 다이내믹 아이템 그래픽 SVG 생성 엔진 ---
+        const COLOR_HEX_MAP = {
+            "화이트": "#FFFFFF", "아이보리/크림": "#FAF5EA", "베이지": "#D9C3A5", "카멜/브라운": "#8B5A2B",
+            "블랙": "#1E293B", "차콜": "#334155", "그레이": "#94A3B8", "실버": "#CBD5E1",
+            "골드": "#EAB308", "레드": "#EF4444", "와인/버건디": "#881337", "핑크": "#F472B6",
+            "코랄/오렌지": "#FB923C", "옐로우": "#FBBF24", "머스터드": "#D97706", "올리브/카키": "#556B2F",
+            "민트/라임": "#10B981", "그린": "#16A34A", "스카이블루": "#60A5FA", "네이비": "#1E3A8A"
+        };
+
+        function getHexColor(colorName, fallback = "#64748B") {
+            if (!colorName) return fallback;
+            for (let k in COLOR_HEX_MAP) {
+                if (colorName.includes(k) || k.includes(colorName)) return COLOR_HEX_MAP[k];
+            }
+            return fallback;
+        }
+
+        function getDynamicItemIconSvg(item) {
+            const cat = item.category || "상의";
+            const colors = item.colors || [];
+            const materials = item.materials || [];
+
+            if (cat === "상의") {
+                const c1 = getHexColor(colors[0], "#FFFFFF");
+                const c2 = getHexColor(colors[1], c1);
+                const stroke = (c1 === "#FFFFFF" || c1 === "#FAF5EA") ? "#94A3B8" : "rgba(0,0,0,0.15)";
+                return `
+                <svg viewBox="0 0 36 36" width="30" height="30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M11 6L4 12L7.5 16.5L11 13.5V29H25V13.5L28.5 16.5L32 12L25 6C23 8.5 13 8.5 11 6Z" fill="${c1}" stroke="${stroke}" stroke-width="1.2" stroke-linejoin="round"/>
+                    <path d="M13 6.5C14.5 9 21.5 9 23 6.5" stroke="${c2 === c1 ? stroke : c2}" stroke-width="1.5" stroke-linecap="round"/>
+                    ${colors[1] ? `<path d="M4 12L7.5 16.5L11 13.5L8.5 10L4 12Z" fill="${c2}" opacity="0.9"/>` : ''}
+                </svg>`;
+            } 
+            else if (cat === "하의") {
+                const isDenim = materials.some(m => m.includes("데님"));
+                let defaultC = isDenim ? "#1E3A8A" : "#334155";
+                const c1 = getHexColor(colors[0], defaultC);
+                const c2 = getHexColor(colors[1], c1);
+                const stroke = (c1 === "#FFFFFF" || c1 === "#FAF5EA") ? "#94A3B8" : "rgba(0,0,0,0.2)";
+                return `
+                <svg viewBox="0 0 36 36" width="30" height="30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M9 7H27L25.5 29H19.5L18 16L16.5 29H10.5L9 7Z" fill="${c1}" stroke="${stroke}" stroke-width="1.2" stroke-linejoin="round"/>
+                    <line x1="9" y1="10.5" x2="27" y2="10.5" stroke="${stroke}" stroke-width="1.2"/>
+                    <line x1="18" y1="7" x2="18" y2="13" stroke="${c2 === c1 ? stroke : c2}" stroke-width="1.5"/>
+                </svg>`;
+            } 
+            else if (cat === "시계") {
+                // 시계 스마트 지능형 배색 분리
+                let strapColor = "#1E293B"; // 기본 블랙 가죽
+                let dialColor = "#E2E8F0";  // 기본 실버 알
+                let dialRim = "#94A3B8";
+
+                const metallicColors = ["골드", "실버"];
+                const strapColors = ["와인/버건디", "블랙", "차콜", "카멜/브라운", "베이지", "화이트", "네이비", "핑크", "그레이"];
+
+                colors.forEach(col => {
+                    if (metallicColors.some(mc => col.includes(mc))) {
+                        dialColor = getHexColor(col, "#E2E8F0");
+                        dialRim = col.includes("골드") ? "#D97706" : "#64748B";
+                    } else if (strapColors.some(sc => col.includes(sc))) {
+                        strapColor = getHexColor(col, "#1E293B");
+                    }
+                });
+
+                if (colors.length === 1) {
+                    if (metallicColors.some(mc => colors[0].includes(mc))) {
+                        dialColor = getHexColor(colors[0]);
+                        strapColor = dialColor;
+                    } else {
+                        strapColor = getHexColor(colors[0]);
+                    }
+                }
+
+                return `
+                <svg viewBox="0 0 36 36" width="30" height="30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="14" y="3" width="8" height="30" rx="2" fill="${strapColor}"/>
+                    <circle cx="18" cy="18" r="9.5" fill="${dialColor}" stroke="${dialRim}" stroke-width="2"/>
+                    <circle cx="18" cy="18" r="7.5" fill="#FFFFFF"/>
+                    <line x1="18" y1="18" x2="18" y2="13" stroke="#1E293B" stroke-width="1.3" stroke-linecap="round"/>
+                    <line x1="18" y1="18" x2="22" y2="18" stroke="#EF4444" stroke-width="1.1" stroke-linecap="round"/>
+                    <circle cx="18" cy="18" r="1" fill="#1E293B"/>
+                </svg>`;
+            } 
+            else if (cat === "신발") {
+                const c1 = getHexColor(colors[0], "#FFFFFF");
+                const c2 = getHexColor(colors[1], "#CBD5E1");
+                const stroke = (c1 === "#FFFFFF" || c1 === "#FAF5EA") ? "#94A3B8" : "rgba(0,0,0,0.2)";
+                return `
+                <svg viewBox="0 0 36 36" width="30" height="30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M5 21C5 17 8 16 12 16L18 17L27 12L31 16V25H5V21Z" fill="${c1}" stroke="${stroke}" stroke-width="1.2" stroke-linejoin="round"/>
+                    <path d="M4 25H32V28C32 29 31 30 30 30H6C5 30 4 29 4 28V25Z" fill="${c2}" stroke="${stroke}" stroke-width="1.2"/>
+                    <path d="M15 16.5L13 22M19 17.5L17 22" stroke="${c2 === c1 ? stroke : c2}" stroke-width="1.4" stroke-linecap="round"/>
+                </svg>`;
+            } 
+            else if (cat === "가방") {
+                const c1 = getHexColor(colors[0], "#8B5A2B");
+                const c2 = getHexColor(colors[1], "#D97706");
+                return `
+                <svg viewBox="0 0 36 36" width="30" height="30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M13 13V8C13 6.5 14.5 5 18 5C21.5 5 23 6.5 23 8V13" stroke="${c2}" stroke-width="2" stroke-linecap="round"/>
+                    <rect x="7" y="13" width="22" height="17" rx="3" fill="${c1}" stroke="rgba(0,0,0,0.15)" stroke-width="1.2"/>
+                    <path d="M16 13V18H20V13" fill="${c2}"/>
+                </svg>`;
+            } 
+            else if (cat === "아우터") {
+                const c1 = getHexColor(colors[0], "#334155");
+                const c2 = getHexColor(colors[1], "#E2E8F0");
+                return `
+                <svg viewBox="0 0 36 36" width="30" height="30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M10 5L3 12L7 16L10 13V30H26V13L29 16L33 12L26 5H10Z" fill="${c1}" stroke="rgba(0,0,0,0.15)" stroke-width="1.2" stroke-linejoin="round"/>
+                    <path d="M10 5L18 16L26 5" stroke="${c2}" stroke-width="1.5" stroke-linecap="round"/>
+                    <line x1="18" y1="16" x2="18" y2="30" stroke="rgba(0,0,0,0.2)" stroke-width="1.2"/>
+                </svg>`;
+            } 
+            else { // 액세서리
+                const c1 = getHexColor(colors[0], "#EAB308");
+                return `
+                <svg viewBox="0 0 36 36" width="30" height="30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="18" cy="20" r="10" stroke="${c1}" stroke-width="3"/>
+                    <path d="M15 7L18 4L21 7L18 10Z" fill="#38BDF8" stroke="${c1}" stroke-width="1"/>
+                </svg>`;
+            }
+        }
+
         function renderWardrobeUI() {
             const listEl = document.getElementById('wardrobeItemsList');
             const badgeEl = document.getElementById('wardrobeCountBadge');
@@ -1397,12 +1520,12 @@
                 return;
             }
 
-            const CAT_ICONS = { "상의": "👔", "하의": "👖", "아우터": "🧥", "가방": "👜", "시계": "⌚", "신발": "👟", "액세서리": "💍" };
-
             listEl.innerHTML = userWardrobeItems.map(item => `
                 <div class="wardrobe-item-card">
-                    <div style="display:flex; align-items:center; gap:10px; flex: 1; overflow: hidden;">
-                        <span style="font-size:22px; flex-shrink: 0;">${CAT_ICONS[item.category] || '👗'}</span>
+                    <div style="display:flex; align-items:center; gap:12px; flex: 1; overflow: hidden;">
+                        <div class="item-icon-frame">
+                            ${getDynamicItemIconSvg(item)}
+                        </div>
                         <div style="overflow: hidden;">
                             <h5 style="font-size:14px; font-weight:800; color:#0F172A; margin-bottom:3px; white-space:nowrap; text-overflow:ellipsis; overflow:hidden;">${item.nickname}</h5>
                             <p style="font-size:11.5px; color:#64748B; line-height: 1.4;">
@@ -1754,7 +1877,7 @@
                 btnStar.className = 'sub-tab-btn active';
                 btnZodiac.className = 'sub-tab-btn';
                 gridStar.classList.remove('hidden');
-                gridZodiac.classList.add('hidden');
+                gridStar.classList.add('hidden');
             }
         }
 
