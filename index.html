@@ -268,7 +268,7 @@
                     <div id="resAdvice" style="font-size: 13.5px; color: #E2E8F0; font-weight: 400; line-height: 1.65; text-align: left;"></div>
                 </div>
 
-                <!-- 1. 맞춤 추천 코디 카드 (행운 컬러 + 스마트 코디 + 내 옷장 소품 매칭) -->
+                <!-- 1. 맞춤 추천 코디 카드 (행운 컬러 + 상의/하의 1:1 스마트 코디 + 소품 매칭) -->
                 <div class="card" style="padding: 16px; text-align: left; display: flex; flex-direction: column; gap: 10px;">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                         <span style="font-size: 12.5px; color: #64748B; font-weight: 700;">👔 맞춤 추천 코디</span>
@@ -281,7 +281,7 @@
                         <span id="todayLuckyColorsBadge" style="font-weight: 800; color: #2D6A4F;">화이트 · 네이비</span>
                     </div>
 
-                    <!-- 2. 오늘의 추천 코디 (내 옷장에 맞는 의류가 있으면 우선 결합) -->
+                    <!-- 2. 오늘의 추천 코디 (상의 1벌 + 하의 1벌 엄격 분리 적용) -->
                     <div>
                         <span style="font-size: 11.5px; color: #64748B; display: block; margin-bottom: 2px;">추천 스타일링:</span>
                         <p id="resStyle" style="font-weight: 800; font-size: 15px; color: #0F172A; margin: 0; line-height: 1.5;">화이트 린넨 셔츠 & 네이비 슬랙스</p>
@@ -292,7 +292,7 @@
                         오늘의 일진에 맞춘 상생 코디 가이드를 불러오는 중입니다.
                     </p>
 
-                    <!-- 4. 내 옷장 소품 포인트 매칭 (시계, 가방, 신발, 액세서리 우선 결합) -->
+                    <!-- 4. 내 옷장 소품 포인트 매칭 (시계, 신발, 가방, 액세서리) -->
                     <div id="wardrobeDailyMatchPick" style="font-size: 13px; color: #166534; background: #F4FBF7; padding: 10px 12px; border-radius: 10px; line-height: 1.6;">
                         👗 <strong>오늘의 옷장 픽:</strong> 내 옷장에 아이템을 등록하면 오늘 일진에 딱 맞는 아이템을 추천해 드려요!
                     </div>
@@ -910,8 +910,10 @@
 
         function initKakaoSDK() {
             try {
-                if (window.Kakao && !window.Kakao.isInitialized()) {
-                    window.Kakao.init(KAKAO_JS_KEY);
+                if (window.Kakao) {
+                    if (!window.Kakao.isInitialized()) {
+                        window.Kakao.init(KAKAO_JS_KEY);
+                    }
                 }
             } catch(e) { console.error("Kakao SDK Init Error:", e); }
         }
@@ -1088,7 +1090,7 @@
             "사자자리": `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#E2C068" stroke-width="2"><circle cx="7.5" cy="14.5" r="2.5"/><path d="M9 13a6 6 0 1 1 8 4c0 2-2 3-3 3s-2-1.5-1-3.5"/></svg>`,
             "처녀자리": `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#E2C068" stroke-width="2"><path d="M4 4v12a3 3 0 0 0 6 0V4M10 4v12a3 3 0 0 0 6 0V4M16 7a3 3 0 0 1 4 4v9M16 16l4 4"/></svg>`,
             "천칭자리": `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#E2C068" stroke-width="2"><path d="M4 20h16M4 14h5a3 3 0 1 1 6 0h5"/></svg>`,
-            "전갈자리": `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#E2C068" stroke-width="2"><path d="M4 4v12a3 3 0 0 0 6 0V4M10 4v12a3 3 0 0 0 6 0V4M16 4v12a3 3 0 0 0 6 0v-2M19 14l3 2-3 2"/></svg>`,
+            "전갈자리": `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#E2C068" stroke-width="2"><path d="M4 4v12a3 3 0 0 0 6 0V4M10 4v12a3 3 0 0 0 6 0v-2M19 14l3 2-3 2"/></svg>`,
             "사수자리": `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#E2C068" stroke-width="2"><path d="M5 19L19 5M12 5h7v7M8 12l4 4"/></svg>`,
             "염소자리": `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#E2C068" stroke-width="2"><path d="M4 4v11a4 4 0 0 0 8 0V5M12 9a4 4 0 0 1 8 4c0 3-3 7-5 7s-3-2-2-4"/></svg>`,
             "물병자리": `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#E2C068" stroke-width="2"><path d="M3 8l3-3 3 3 3-3 3 3 3-3 3 3M3 16l3-3 3 3 3-3 3 3 3-3 3 3"/></svg>`,
@@ -1235,13 +1237,13 @@
             // 오늘의 행운 컬러 2종 산출 및 상단 뱃지 반영
             const d_elem = data.saju_data?.pillars_detail?.day?.cg_elem || "metal";
             const LUCKY_COLOR_PAIRS = {
-                "wood": ["포레스트 그린", "화이트"],
+                "wood": ["그린", "화이트"],
                 "fire": ["네이비", "스카이블루"],
                 "earth": ["올리브", "아이보리"],
                 "metal": ["화이트", "네이비"],
                 "water": ["머스터드", "베이지"]
             };
-            currentLuckyColors = LUCKY_COLOR_PAIRS[d_elem] || ["화이트", "네이비"];
+            currentLuckyColors = data.daily_fortune.lucky_colors || LUCKY_COLOR_PAIRS[d_elem] || ["화이트", "네이비"];
             const luckyColorText = currentLuckyColors.join(' · ');
             document.getElementById('todayLuckyColorsBadge').innerText = luckyColorText;
 
@@ -1280,42 +1282,49 @@
             updateDaewoonGraphByAge(currentUserAge);
             document.getElementById('mypageProfileDesc').innerText = `${currentUserName} (${data.birth_summary})`;
             
-            // 추천 코디 및 옷장 스마트 매칭 렌더링
+            // 스마트 추천 코디 및 옷장 소품 매칭 렌더링
             updateTodayWardrobeMatchPick();
         }
 
-        // 스마트 추천 코디(의류 룩) & 내 옷장 소품 매칭
+        // 스마트 추천 코디(상의 1벌 + 하의 1벌 엄격 분리) & 내 옷장 소품 매칭
         function updateTodayWardrobeMatchPick() {
             const styleEl = document.getElementById('resStyle');
             const pickEl = document.getElementById('wardrobeDailyMatchPick');
             if (!styleEl || !pickEl) return;
 
-            const CLOTHES_CATS = ["상의", "하의", "아우터"];
             const ACCESSORY_CATS = ["시계", "신발", "가방", "액세서리"];
 
-            // 1. 내 옷장 의류(상의/하의/아우터) 중 오늘 기운(컬러)과 맞는 아이템 탐색
-            const matchedClothes = userWardrobeItems.filter(item => 
-                CLOTHES_CATS.includes(item.category) &&
-                item.colors.some(col => currentLuckyColors.some(lc => col.includes(lc) || lc.includes(col)))
-            );
+            // 색상 일치 검증 헬퍼 (확장 컬러명 포함 유연 매칭)
+            const isColorMatch = (item) => {
+                return item.colors.some(col => 
+                    currentLuckyColors.some(lc => col.includes(lc) || lc.includes(col) || (lc === "네이비" && col.includes("블루")) || (lc === "화이트" && col.includes("아이보리")))
+                );
+            };
 
-            // 옷장에 어울리는 의류가 있으면 추천 룩에 직접 반영
-            if (matchedClothes.length >= 2) {
-                const top = matchedClothes.find(i => i.category === "상의") || matchedClothes[0];
-                const bottom = matchedClothes.find(i => i.category === "하의" && i.id !== top.id) || matchedClothes[1];
-                styleEl.innerHTML = `내 옷장의 <strong>[${top.nickname}]</strong> & <strong>[${bottom.nickname}]</strong>`;
-            } else if (matchedClothes.length === 1) {
-                const singleCloth = matchedClothes[0];
-                if (singleCloth.category === "하의") {
-                    styleEl.innerHTML = `화이트 린넨 셔츠 & 내 옷장의 <strong>[${singleCloth.nickname}]</strong>`;
-                } else {
-                    styleEl.innerHTML = `내 옷장의 <strong>[${singleCloth.nickname}]</strong> & 네이비 슬랙스`;
-                }
-            } else {
-                styleEl.innerText = baseFashionStyle;
+            // 1. [상의] 중 오늘 기운과 맞는 아이템 탐색
+            const matchedTops = userWardrobeItems.filter(item => item.category === "상의" && isColorMatch(item));
+            // 2. [하의] 중 오늘 기운과 맞는 아이템 탐색 (바지만 2개 들어가는 현상 원천 차단)
+            const matchedBottoms = userWardrobeItems.filter(item => item.category === "하의" && isColorMatch(item));
+
+            let finalTopText = "화이트 린넨 셔츠";
+            let finalBottomText = "네이비 슬랙스";
+
+            if (baseFashionStyle.includes("&")) {
+                const parts = baseFashionStyle.split("&");
+                finalTopText = parts[0].trim();
+                finalBottomText = parts[1].trim();
             }
 
-            // 2. 내 옷장 소품(시계/신발/가방/액세서리) 포인트 매칭 (1~2개 선별)
+            if (matchedTops.length > 0) {
+                finalTopText = `내 옷장의 <strong>[${matchedTops[0].nickname}]</strong>`;
+            }
+            if (matchedBottoms.length > 0) {
+                finalBottomText = `내 옷장의 <strong>[${matchedBottoms[0].nickname}]</strong>`;
+            }
+
+            styleEl.innerHTML = `${finalTopText} & ${finalBottomText}`;
+
+            // 3. 내 옷장 소품(시계/신발/가방/액세서리) 포인트 매칭 (1~2개 선별)
             const matchedAccessories = userWardrobeItems.filter(item => ACCESSORY_CATS.includes(item.category));
 
             if (matchedAccessories.length === 0) {
@@ -1715,7 +1724,7 @@
                 btnStar.className = 'sub-tab-btn active';
                 btnZodiac.className = 'sub-tab-btn';
                 gridStar.classList.remove('hidden');
-                gridZodiac.classList.add('hidden');
+                gridStar.classList.add('hidden');
             }
         }
 
