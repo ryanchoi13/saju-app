@@ -18,7 +18,7 @@
     <meta property="og:image:height" content="630" />
 
     <meta name="theme-color" content="#0D1527">
-    <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
+    <script src="https://developers.kakao.com/sdk/js/kakao.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800;900&family=Noto+Serif+KR:wght@600;800;900&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Pretendard', sans-serif; -webkit-tap-highlight-color: transparent; }
@@ -191,7 +191,7 @@
                     🎁 신규 가입 축하 1,000 복채 즉시 지급
                 </div>
 
-                <button onclick="loginWithKakaoReal()" class="kakao-login-btn">
+                <button id="btnKakaoLogin" onclick="loginWithKakaoReal()" class="kakao-login-btn">
                     <svg viewBox="0 0 24 24" width="20" height="20" fill="#191919"><path d="M12 3C6.5 3 2 6.6 2 11c0 2.8 1.9 5.3 4.8 6.7L6 21.5c-.1.3.2.6.5.4l4.4-2.9c.4 0 .7.1 1.1.1 5.5 0 10-3.6 10-8s-4.5-8-10-8z"/></svg>
                     <span>카카오로 3초 만에 시작하기</span>
                 </button>
@@ -268,7 +268,7 @@
                     <div id="resAdvice" style="font-size: 13.5px; color: #E2E8F0; font-weight: 400; line-height: 1.65; text-align: left;"></div>
                 </div>
 
-                <!-- 1. 맞춤 추천 코디 카드 (내 옷장 연동 픽 포함) -->
+                <!-- 1. 맞춤 추천 코디 카드 -->
                 <div class="card" style="padding: 14px 16px; text-align: left;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
                         <span style="font-size: 12px; color: #64748B; font-weight: 700;">👔 맞춤 추천 코디</span>
@@ -276,7 +276,6 @@
                     </div>
                     <p id="resStyle" style="font-weight: 800; font-size: 14.5px; color: #0F172A; margin-bottom: 6px;">흰색 카라 반팔티 & 베이지 슬랙스</p>
                     
-                    <!-- 내 옷장 자동 매칭 추천 한줄 (이름 노출) -->
                     <div id="wardrobeDailyMatchPick" style="font-size: 12.5px; color: #065F46; background: #ECFDF5; padding: 8px 10px; border-radius: 8px; border-left: 3.5px solid #10B981; margin-bottom: 4px;">
                         👗 <strong>오늘의 옷장 픽:</strong> 내 옷장에 아이템을 등록하면 오늘 일진에 딱 맞는 아이템을 추천해 드려요!
                     </div>
@@ -306,7 +305,6 @@
                             <span>➕</span> 새 아이템 옷장에 등록하기 (3초)
                         </button>
 
-                        <!-- 저장된 옷장 아이템 리스트 (상단: 닉네임 / 하단: 카테고리 · 색상 · 소재 한줄 나란히) -->
                         <div id="wardrobeItemsList" style="display: flex; flex-direction: column; gap: 6px;"></div>
                     </div>
                 </div>
@@ -358,10 +356,8 @@
                     </div>
                 </div>
 
-                <!-- 광고 슬롯 1 -->
                 <div class="ad-slot-box"><span>📢 광고 영역 (Google AdSense / Kakao AdFit 슬롯 1)</span></div>
 
-                <!-- 스페셜 운세 서랍들 -->
                 <div style="display: flex; flex-direction: column; gap: 10px;">
                     <div id="drawerTarot" class="drawer-card">
                         <div class="drawer-header" onclick="toggleDrawer('drawerTarot')">
@@ -652,7 +648,7 @@
 
     </div>
 
-    <!-- 비주얼 옷장 3단계 등록 위저드 모달 (부드러운 버튼 폰트 + 20대 컬러 + 아이템 이름 직접 입력) -->
+    <!-- 비주얼 옷장 3단계 등록 위저드 모달 -->
     <div id="wardrobeAddModal" class="modal-bg hidden">
         <div class="modal-content" style="max-width: 360px; text-align: left; padding: 20px;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 8px;">
@@ -713,7 +709,7 @@
                 </div>
             </div>
 
-            <!-- Step 3: 소재 선택 및 아이템 이름(애칭) 입력 -->
+            <!-- Step 3: 소재 선택 및 아이템 이름 입력 -->
             <div id="wizardStep3" class="hidden" style="display: flex; flex-direction: column; gap: 8px;">
                 <p style="font-size: 12px; color: #64748B;">소재를 모두 선택하세요 (복수 가능):</p>
                 <div class="mat-chip-grid">
@@ -725,7 +721,6 @@
                     <div class="mat-chip" onclick="toggleMatChip('니트/울', this)"><span>🧶</span><span>니트 · 울 (土)</span></div>
                 </div>
 
-                <!-- 아이템 별칭 입력창 추가 -->
                 <div class="form-group" style="margin-top: 6px; margin-bottom: 0;">
                     <label class="form-label" style="color: #2D6A4F; font-weight: 700;">🏷️ 아이템 애칭/이름 (선택)</label>
                     <input type="text" id="wardrobeNicknameInput" class="form-input" placeholder="예: 플랙 연청 청바지, 세이코 시계">
@@ -888,7 +883,6 @@
         let serverUnlockedReports = [];
         let userWardrobeItems = [];
 
-        // 위저드 선택 상태
         let wizardCategory = "상의";
         let wizardColors = [];
         let wizardMaterials = [];
@@ -896,8 +890,14 @@
         const KAKAO_JS_KEY = "fde505a5042405dbac55d2e98e9f9b08";
 
         function initKakaoSDK() {
-            if (window.Kakao && !window.Kakao.isInitialized()) {
-                window.Kakao.init(KAKAO_JS_KEY);
+            try {
+                if (window.Kakao) {
+                    if (!window.Kakao.isInitialized()) {
+                        window.Kakao.init(KAKAO_JS_KEY);
+                    }
+                }
+            } catch(e) {
+                console.error("Kakao SDK Init Error:", e);
             }
         }
 
@@ -945,70 +945,95 @@
         }
 
         function loginWithKakaoReal() {
-            initKakaoSDK();
-            if (!window.Kakao) { alert("카카오 SDK를 로드하지 못했습니다."); return; }
+            try {
+                initKakaoSDK();
+                if (!window.Kakao) {
+                    alert("카카오 SDK 로딩 중입니다. 1~2초 후 다시 눌러주세요.");
+                    return;
+                }
+                if (!window.Kakao.isInitialized()) {
+                    window.Kakao.init(KAKAO_JS_KEY);
+                }
 
-            Kakao.Auth.login({
-                success: function(authObj) {
-                    Kakao.API.request({
-                        url: '/v2/user/me',
-                        success: async function(res) {
-                            const kakaoAccount = res.kakao_account || {};
-                            const profile = kakaoAccount.profile || {};
-                            const localSaju = getSavedUserSaju();
+                Kakao.Auth.login({
+                    throughTalk: true,
+                    persistAccessToken: true,
+                    success: function(authObj) {
+                        Kakao.API.request({
+                            url: '/v2/user/me',
+                            success: async function(res) {
+                                try {
+                                    const kakaoAccount = res.kakao_account || {};
+                                    const profile = kakaoAccount.profile || {};
+                                    const localSaju = getSavedUserSaju();
 
-                            const payload = {
-                                kakao_id: String(res.id),
-                                name: localSaju?.name || profile.nickname || "달하 회원",
-                                gender: localSaju?.gender || kakaoAccount.gender || "male",
-                                birthyear: localSaju ? String(localSaju.birth_year) : (kakaoAccount.birthyear || "1978"),
-                                birthday: localSaju ? `${String(localSaju.birth_month).padStart(2, '0')}${String(localSaju.birth_day).padStart(2, '0')}` : (kakaoAccount.birthday || "0813"),
-                                birthday_type: localSaju ? (localSaju.calendar_type === 'lunar' ? 'LUNAR' : 'SOLAR') : (kakaoAccount.birthday_type || "SOLAR")
-                            };
+                                    const payload = {
+                                        kakao_id: String(res.id),
+                                        name: localSaju?.name || profile.nickname || "달하 회원",
+                                        gender: localSaju?.gender || kakaoAccount.gender || "male",
+                                        birthyear: localSaju ? String(localSaju.birth_year) : (kakaoAccount.birthyear || "1978"),
+                                        birthday: localSaju ? `${String(localSaju.birth_month).padStart(2, '0')}${String(localSaju.birth_day).padStart(2, '0')}` : (kakaoAccount.birthday || "0813"),
+                                        birthday_type: localSaju ? (localSaju.calendar_type === 'lunar' ? 'LUNAR' : 'SOLAR') : (kakaoAccount.birthday_type || "SOLAR")
+                                    };
 
-                            localStorage.setItem('dalha_kakao_id', payload.kakao_id);
+                                    localStorage.setItem('dalha_kakao_id', payload.kakao_id);
 
-                            const sRes = await fetch('/api/auth/kakao', {
-                                method: 'POST',
-                                headers: {'Content-Type': 'application/json'},
-                                body: JSON.stringify(payload)
-                            });
-                            const sData = await sRes.json();
+                                    const sRes = await fetch('/api/auth/kakao', {
+                                        method: 'POST',
+                                        headers: {'Content-Type': 'application/json'},
+                                        body: JSON.stringify(payload)
+                                    });
 
-                            currentUserId = sData.user_id;
-                            currentCoin = sData.coin_balance;
-                            updateCoinDisplay();
+                                    if (!sRes.ok) {
+                                        alert("서버 연결 실패 (" + sRes.status + "): 잠시 후 다시 시도해 주세요.");
+                                        return;
+                                    }
 
-                            if (sData.status === "existing_user") {
-                                serverUnlockedReports = sData.unlocked_reports || [];
-                                userWardrobeItems = sData.wardrobe_items || [];
-                                applySajuAnalysisToUI(sData.saju_analysis);
-                                renderWardrobeUI();
-                                renderServerArchive();
-                                document.getElementById('view-login-gate').classList.add('hidden');
-                                document.getElementById('onboardingInputView').classList.add('hidden');
-                                switchTab('today');
-                                document.getElementById('bottomNavBar').classList.remove('hidden');
-                                restoreUnlockedUIFromReports();
-                            } else {
-                                const pre = sData.kakao_prefill;
-                                document.getElementById('inputName').value = pre.name;
-                                setGenderType(pre.gender);
-                                setCalType(pre.calendar_type);
-                                document.getElementById('birthYearSelect').value = String(pre.birth_year);
-                                document.getElementById('birthMonthSelect').value = String(pre.birth_month);
-                                document.getElementById('birthDaySelect').value = String(pre.birth_day);
-                                document.getElementById('inputSijin').value = pre.sijin_index;
+                                    const sData = await sRes.json();
+                                    currentUserId = sData.user_id;
+                                    currentCoin = sData.coin_balance;
+                                    updateCoinDisplay();
 
-                                document.getElementById('view-login-gate').classList.add('hidden');
-                                document.getElementById('onboardingInputView').classList.remove('hidden');
+                                    if (sData.status === "existing_user") {
+                                        serverUnlockedReports = sData.unlocked_reports || [];
+                                        userWardrobeItems = sData.wardrobe_items || [];
+                                        applySajuAnalysisToUI(sData.saju_analysis);
+                                        renderWardrobeUI();
+                                        renderServerArchive();
+                                        document.getElementById('view-login-gate').classList.add('hidden');
+                                        document.getElementById('onboardingInputView').classList.add('hidden');
+                                        switchTab('today');
+                                        document.getElementById('bottomNavBar').classList.remove('hidden');
+                                        restoreUnlockedUIFromReports();
+                                    } else {
+                                        const pre = sData.kakao_prefill;
+                                        document.getElementById('inputName').value = pre.name;
+                                        setGenderType(pre.gender);
+                                        setCalType(pre.calendar_type);
+                                        document.getElementById('birthYearSelect').value = String(pre.birth_year);
+                                        document.getElementById('birthMonthSelect').value = String(pre.birth_month);
+                                        document.getElementById('birthDaySelect').value = String(pre.birth_day);
+                                        document.getElementById('inputSijin').value = pre.sijin_index;
+
+                                        document.getElementById('view-login-gate').classList.add('hidden');
+                                        document.getElementById('onboardingInputView').classList.remove('hidden');
+                                    }
+                                } catch(innerErr) {
+                                    alert("로그인 처리 중 오류가 발생했습니다: " + innerErr.message);
+                                }
+                            },
+                            fail: function(apiErr) {
+                                alert("카카오 프로필 정보를 가져오지 못했습니다.");
                             }
-                        },
-                        fail: function() { alert("사용자 정보를 가져오지 못했습니다."); }
-                    });
-                },
-                fail: function() { alert("카카오 로그인 실패"); }
-            });
+                        });
+                    },
+                    fail: function(err) {
+                        alert("카카오 로그인 창이 닫혔거나 실패했습니다: " + JSON.stringify(err));
+                    }
+                });
+            } catch(outerErr) {
+                alert("로그인 실행 오류: " + outerErr.message);
+            }
         }
 
         async function checkAutoLoginSession() {
@@ -1021,6 +1046,7 @@
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({ kakao_id: savedKakaoId })
                 });
+                if (!sRes.ok) return;
                 const sData = await sRes.json();
                 if (sData.status === "existing_user") {
                     currentUserId = sData.user_id;
@@ -1234,7 +1260,6 @@
             updateTodayWardrobeMatchPick();
         }
 
-        // 오늘의 맞춤 코디 카드에 내 옷장 매칭 픽 실시간 렌더링
         function updateTodayWardrobeMatchPick() {
             const pickEl = document.getElementById('wardrobeDailyMatchPick');
             if (!pickEl) return;
@@ -1251,7 +1276,6 @@
             pickEl.innerHTML = `✨ <strong>오늘의 옷장 매칭:</strong> 오늘 일진과 조화로운 내 옷장의 <strong>[${item.nickname}]</strong>을 착용해 보세요! 기운의 밸런스가 상승합니다.`;
         }
 
-        // 내 옷장 UI 렌더링 (상단: 닉네임 / 하단: 종류 · 색상 · 소재 한줄 나란히 정렬)
         function renderWardrobeUI() {
             const listEl = document.getElementById('wardrobeItemsList');
             const badgeEl = document.getElementById('wardrobeCountBadge');
@@ -1289,7 +1313,6 @@
             updateTodayWardrobeMatchPick();
         }
 
-        // 아이템 닉네임 수정
         async function renameWardrobeItemPrompt(itemId, currentNick) {
             const newName = prompt("아이템의 새로운 이름을 입력해 주세요:", currentNick);
             if (!newName || !newName.trim()) return;
@@ -1304,7 +1327,6 @@
             renderWardrobeUI();
         }
 
-        // 위저드 팝업 열기/닫기
         function openWardrobeAddWizard() {
             wizardCategory = "상의";
             wizardColors = [];
@@ -1544,4 +1566,285 @@
                 modalBox.innerHTML = `
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
                         <label style="padding:10px; border:1px solid #E2E8F0; border-radius:8px; background:white; cursor:pointer;"><input type="radio" name="optM" value="솔로" checked> 솔로 (미혼)</label>
-                        <label style="padding:10px; border:1px solid #E2E8F0; border-radius:저는 언어 모델로서 그것을 도와주도록 설계되지 않았습니다.
+                        <label style="padding:10px; border:1px solid #E2E8F0; border-radius:8px; background:white; cursor:pointer;"><input type="radio" name="optM" value="썸/짝사랑"> 썸 / 짝사랑</label>
+                        <label style="padding:10px; border:1px solid #E2E8F0; border-radius:8px; background:white; cursor:pointer;"><input type="radio" name="optM" value="연애중"> 연애중</label>
+                        <label style="padding:10px; border:1px solid #E2E8F0; border-radius:8px; background:white; cursor:pointer;"><input type="radio" name="optM" value="기혼"> 기혼 (부부)</label>
+                    </div>`;
+            } else if (key === 'business') {
+                titleEl.innerText = "🏢 현재 직업/사업 상태를 선택해 주세요";
+                modalBox.innerHTML = `
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                        <label style="padding:10px; border:1px solid #E2E8F0; border-radius:8px; background:white; cursor:pointer;"><input type="radio" name="optM" value="직장인" checked> 직장인</label>
+                        <label style="padding:10px; border:1px solid #E2E8F0; border-radius:8px; background:white; cursor:pointer;"><input type="radio" name="optM" value="취업/이직"> 취업 / 이직</label>
+                        <label style="padding:10px; border:1px solid #E2E8F0; border-radius:8px; background:white; cursor:pointer;"><input type="radio" name="optM" value="사업가"> 사업가</label>
+                        <label style="padding:10px; border:1px solid #E2E8F0; border-radius:8px; background:white; cursor:pointer;"><input type="radio" name="optM" value="창업"> 창업 준비</label>
+                    </div>`;
+            }
+            document.getElementById('themeSelectModal').classList.remove('hidden');
+        }
+
+        function closeThemeSelectModal() { document.getElementById('themeSelectModal').classList.add('hidden'); }
+        function confirmUnlockThemeOnServer() {
+            const selEl = document.querySelector('input[name="optM"]:checked');
+            const subOpt = selEl ? selEl.value : '기본';
+            closeThemeSelectModal();
+            handleUnlockReportOnServer(currentThemeKey, 220, subOpt);
+        }
+
+        function setGenderType(gender) {
+            selectedGender = gender;
+            document.getElementById('btnGenderMale').className = (gender === 'male') ? "cal-btn active" : "cal-btn";
+            document.getElementById('btnGenderFemale').className = (gender === 'female') ? "cal-btn active" : "cal-btn";
+        }
+
+        function setCalType(type) {
+            selectedCalendarType = type;
+            ['solar', 'lunar', 'leap'].forEach(t => {
+                const btn = document.getElementById(`btnCal${t.charAt(0).toUpperCase() + t.slice(1)}`);
+                if (btn) btn.className = (t === type) ? "cal-btn active" : "cal-btn";
+            });
+        }
+
+        function toggleDrawer(drawerId) {
+            const card = document.getElementById(drawerId);
+            const body = card.querySelector('.drawer-body');
+            if (!body) return;
+            const isOpen = card.classList.contains('open');
+            card.classList.toggle('open', !isOpen);
+            body.classList.toggle('hidden', isOpen);
+        }
+
+        function getGoldCoinSvg(size = 16, color = "#F59E0B") {
+            return `<svg viewBox="0 0 20 20" width="${size}" height="${size}" style="display:inline-block; vertical-align:middle;"><circle cx="10" cy="10" r="9" fill="${color}" stroke="#D97706" stroke-width="1.2"/><text x="10" y="14" font-size="11" font-weight="800" fill="#FFFFFF" text-anchor="middle">C</text></svg>`;
+        }
+
+        function goToHomeAndScrollTop() { switchTab('today'); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+
+        function switchTab(tabId) {
+            ['today', 'saju', 'theme', 'mypage'].forEach(t => {
+                document.getElementById(`view-${t}`)?.classList.add('hidden');
+                document.getElementById(`tab-${t}`)?.classList.remove('active');
+            });
+            document.getElementById(`view-${tabId}`)?.classList.remove('hidden');
+            document.getElementById(`tab-${tabId}`)?.classList.add('active');
+            if (tabId === 'mypage') renderServerArchive();
+        }
+
+        function switchZodiacSubTab(type) {
+            const btnZodiac = document.getElementById('btnSubZodiac');
+            const btnStar = document.getElementById('btnSubStar');
+            const gridZodiac = document.getElementById('gridZodiacBox');
+            const gridStar = document.getElementById('gridStarBox');
+
+            if (type === 'zodiac') {
+                btnZodiac.className = 'sub-tab-btn active';
+                btnStar.className = 'sub-tab-btn';
+                gridZodiac.classList.remove('hidden');
+                gridStar.classList.add('hidden');
+            } else {
+                btnStar.className = 'sub-tab-btn active';
+                btnZodiac.className = 'sub-tab-btn';
+                gridStar.classList.remove('hidden');
+                gridZodiac.classList.add('hidden');
+            }
+        }
+
+        async function openZodiacModal(type, key) {
+            try {
+                const res = await fetch(`/api/zodiac-fortune?type=${type}&key=${encodeURIComponent(key)}`);
+                const data = await res.json();
+                document.getElementById('zodiacModalName').innerText = `${data.name} 오늘의 운세`;
+                document.getElementById('zodiacModalScore').innerText = `${data.score}점`;
+                document.getElementById('zodiacModalTitle').innerText = data.title;
+                document.getElementById('zodiacModalOverview').innerText = data.overview;
+
+                const iconBox = document.getElementById('zodiacModalIconBox');
+                if (type === 'star' && ZODIAC_GLYPHS[key]) {
+                    iconBox.innerHTML = ZODIAC_GLYPHS[key];
+                } else {
+                    iconBox.innerHTML = `<span style="font-size: 24px;">${data.icon || '🐾'}</span>`;
+                }
+
+                const tipsBox = document.getElementById('zodiacYearTipsBox');
+                if (type === 'zodiac' && data.year_tips) {
+                    tipsBox.innerHTML = `
+                        <p style="font-weight: 800; color: #0F172A; margin-bottom: 8px; font-size: 14px;">📅 출생연도별 핵심 가이드</p>
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            ${data.year_tips.map(item => `
+                                <div style="background: #F8FAFC; border-left: 3px solid #2D6A4F; border-radius: 4px; padding: 6px 10px;">
+                                    <span style="font-weight: 800; color: #1E293B; font-size: 13.5px; display: block; margin-bottom: 2px;">${item.year_label}</span>
+                                    <span style="color: #475569; font-size: 13px;">${item.tip}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                    document.getElementById('zodiacExtraInfo').innerHTML = `⏱️ 행운 시간: ${data.lucky_time} | 🤝 ${data.lucky_match}`;
+                } else {
+                    tipsBox.innerHTML = `<p style="color: #334155; font-size: 13.5px;">${data.focus_content}</p>`;
+                    document.getElementById('zodiacExtraInfo').innerHTML = `✨ 행운 아이템: ${data.lucky_item} | ⏱️ ${data.lucky_time}`;
+                }
+                document.getElementById('zodiacModal').classList.remove('hidden');
+            } catch(e) { alert('운세를 불러오지 못했습니다.'); }
+        }
+
+        function closeZodiacModal() { document.getElementById('zodiacModal').classList.add('hidden'); }
+        function shareZodiacFortune() { alert('📋 오늘의 운세 링크가 복사되었습니다!'); }
+
+        function setElemBadge(id, char, elem) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            el.innerText = char || "-";
+            el.className = char ? `badge-elem elem-${elem}` : "badge-elem elem-none";
+        }
+
+        function formatJijangganGroup(jjList) {
+            if (!jjList || jjList.length === 0) return `<span style="font-size:11px; color:#94A3B8;">-</span>`;
+            return jjList.map(j => `<span class="badge-jjg elem-${j.elem}">${j.char}</span>`).join('');
+        }
+
+        function updateDaewoonGraphByAge(age) {
+            currentUserAge = age;
+            document.getElementById('daewoonTagText1').textContent = `📍 ${currentUserName}님의 현재 위치`;
+            document.getElementById('daewoonTagText2').textContent = `(${age}세)`;
+
+            let targetX = 30 + ((age - 20) / 50) * 250;
+            if (targetX < 20) targetX = 20;
+            if (targetX > 280) targetX = 280;
+
+            const guideLine = document.getElementById('daewoonGuideLine');
+            const currentDot = document.getElementById('daewoonCurrentDot');
+            const badgeGroup = document.getElementById('daewoonBadgeGroup');
+
+            if (guideLine) { guideLine.setAttribute('x1', targetX); guideLine.setAttribute('x2', targetX); }
+            if (currentDot) { currentDot.setAttribute('cx', targetX); }
+            if (badgeGroup) {
+                let badgeX = targetX - 75;
+                if (badgeX < 10) badgeX = 10;
+                if (badgeX > 140) badgeX = 140;
+                badgeGroup.setAttribute('transform', `translate(${badgeX}, 2)`);
+            }
+        }
+
+        async function handleTarotDraw(slot) {
+            const res = await fetch(`/api/daily-tarot?slot=${slot}`);
+            const card = await res.json();
+            const flipper = document.getElementById(`flipper${slot}`);
+            const front = document.getElementById(`front${slot}`);
+            
+            const cardImgObj = TAROT_IMG_MAP[card.name] || TAROT_IMG_MAP["I. THE MAGICIAN (마법사)"];
+            front.innerHTML = `<img src="${cardImgObj.main}" alt="${card.name}" referrerpolicy="no-referrer" style="width:100%; height:100%; object-fit:cover; display:block; border-radius:8px;" onerror="this.onerror=null; this.src='${cardImgObj.backup}';">`;
+            
+            flipper.classList.add('flipped');
+            setTimeout(() => {
+                const resBox = document.getElementById('tarotResultBox');
+                const reading = selectedGender === 'female' ? card.reading_female : card.reading_male;
+                resBox.innerHTML = `
+                    <div style="margin-top: 14px; text-align: left;">
+                        <h4 style="font-weight: 900; color: #0F172A; font-size: 16px; font-family: 'Noto Serif KR', serif; margin-bottom: 2px;">${card.name}</h4>
+                        <p style="font-size: 12.5px; color: #78350F; font-weight: 700; margin-bottom: 12px;">${card.keyword}</p>
+                        
+                        <div style="display: flex; flex-direction: column; gap: 8px; font-size: 13.5px; line-height: 1.7; color: #334155;">
+                            <p><strong>📖 카드의 상징:</strong> ${card.symbolism}</p>
+                            <p><strong>🔮 오늘의 실전 운세:</strong> ${reading}</p>
+                            <p style="color: #065F46;"><strong>💡 실천 행동 수칙:</strong> ${card.action_guide}</p>
+                        </div>
+                    </div>
+                `;
+                resBox.classList.remove('hidden');
+            }, 600);
+        }
+
+        function openTalismanModal() {
+            document.getElementById('talismanTitle').innerText = currentTalisman?.title || "재물만복부";
+            document.getElementById('talismanPower').innerText = currentTalisman?.power || "재물 증식 · 금전운 대통";
+            document.getElementById('talismanDesc').innerText = currentTalisman?.desc || "사방에서 금전과 복록이 쏟아지게 하는 전통 부적입니다.";
+            document.getElementById('talismanOwnerName').innerText = currentUserName;
+            document.getElementById('talismanRealBox').innerHTML = renderAuthenticCinnabarTalisman(currentTalisman?.type || "metal", 160, 260);
+            document.getElementById('talismanModal').classList.remove('hidden');
+        }
+
+        function closeTalismanModal() { document.getElementById('talismanModal').classList.add('hidden'); }
+        
+        function downloadTalismanImage() {
+            const svgElement = document.querySelector('#talismanRealBox #svgTalismanMain');
+            if (!svgElement) return;
+
+            const svgString = new XMLSerializer().serializeToString(svgElement);
+            const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+            const URL = window.URL || window.webkitURL || window;
+            const blobURL = URL.createObjectURL(svgBlob);
+
+            const img = new Image();
+            img.onload = function() {
+                const canvas = document.createElement('canvas');
+                canvas.width = 420;
+                canvas.height = 720;
+                const ctx = canvas.getContext('2d');
+
+                ctx.fillStyle = "#FAF9F6";
+                ctx.fillRect(0, 0, 420, 720);
+                ctx.drawImage(img, 20, 20, 380, 680);
+
+                const dlLink = document.createElement('a');
+                dlLink.download = `${currentUserName}_달하_맞춤부적.png`;
+                dlLink.href = canvas.toDataURL('image/png');
+                document.body.appendChild(dlLink);
+                dlLink.click();
+                document.body.removeChild(dlLink);
+                URL.revokeObjectURL(blobURL);
+            };
+            img.src = blobURL;
+        }
+
+        function printReportDocument(title, btnElement) {
+            const reportContainer = btnElement.closest('.card') || btnElement.parentElement;
+            const contentClone = reportContainer.cloneNode(true);
+            contentClone.querySelectorAll('button, .teaser-blur-box').forEach(el => el.remove());
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"><title>${title} - ${currentUserName} 님</title><style>body { font-family: 'Pretendard', sans-serif; padding: 30px; line-height: 1.85; color: #1E293B; }</style></head><body><h2>${title}</h2>${contentClone.innerHTML}<script>window.onload = function() { window.print(); }<\/script></body></html>`);
+            printWindow.document.close();
+        }
+
+        function updateCoinDisplay() {
+            document.getElementById('coinHeader').innerText = currentCoin;
+            document.getElementById('coinMypage').innerText = currentCoin;
+        }
+
+        function openChargeStore() { document.getElementById('chargeModal').classList.remove('hidden'); }
+        function closeChargeStore() { document.getElementById('chargeModal').classList.add('hidden'); }
+        function openPgModal(coinAmt, price, itemName) {
+            pendingCoinAmount = coinAmt;
+            document.getElementById('pgItemName').innerText = itemName;
+            document.getElementById('pgItemPrice').innerText = `₩${price.toLocaleString()}`;
+            closeChargeStore();
+            document.getElementById('pgModal').classList.remove('hidden');
+        }
+        function closePgModal() { document.getElementById('pgModal').classList.add('hidden'); }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            initKakaoSDK();
+            initDateDropdowns();
+            document.getElementById('headerCoinSvg').innerHTML = getGoldCoinSvg(16, "#F59E0B");
+            document.getElementById('mypageCoinSvg').innerHTML = getGoldCoinSvg(19, "#F59E0B");
+            document.getElementById('chargeModalHeaderCoinSvg').innerHTML = getGoldCoinSvg(18, "#F59E0B");
+            document.querySelectorAll('.btn-coin-icon').forEach(el => { el.innerHTML = getGoldCoinSvg(16, "#D97706"); });
+            document.querySelectorAll('.btn-coin-icon-white').forEach(el => { el.innerHTML = getGoldCoinSvg(16, "#F59E0B"); });
+
+            document.querySelectorAll('.star-glyph-box').forEach(el => {
+                const sign = el.getAttribute('data-sign');
+                if (ZODIAC_GLYPHS[sign]) el.innerHTML = ZODIAC_GLYPHS[sign];
+            });
+
+            for (let i = 1; i <= 3; i++) {
+                const back = document.getElementById(`tarotSvgSlot${i}`);
+                if (back) back.innerHTML = getTarotCardBackSvg();
+            }
+
+            const talismanPreview = document.getElementById('talismanBannerPreview');
+            if (talismanPreview) talismanPreview.innerHTML = renderAuthenticCinnabarTalisman('metal', 72, 110);
+
+            checkAutoLoginSession();
+        });
+    </script>
+</body>
+</html>
