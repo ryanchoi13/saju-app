@@ -8,7 +8,7 @@ from fastapi import FastAPI, Request, HTTPException
 from fastapi.responses import HTMLResponse, FileResponse, Response
 from pydantic import BaseModel
 
-app = FastAPI(title="달하 (DALHA) - 정통 명리학 & 점성술 엔진", version="43.9.0")
+app = FastAPI(title="달하 (DALHA) - 정통 명리학 & 점성술 엔진", version="43.9.2")
 
 DB_FILE = "dalha.db"
 
@@ -149,12 +149,12 @@ TAROT_CARDS = [
 
 DAILY_OUTFITS_POOL = {
     "male": {
-        "young": ["화이트 린넨 셔츠 & 베이지 슬랙스", "네이비 쿨 셔츠 & 차콜 슬랙스", "스카이블루 반팔 셔츠 & 그레이 팬츠", "블랙 무지 반팔티 & 와이드 슬랙스"],
-        "senior": ["화이트 린넨 셔츠 & 베이지 슬랙스", "네이비 쿨 셔츠 & 단정한 차콜 팬츠", "베이지 톤 셔츠 & 다크 네이비 팬츠", "다크 올리브 린넨 셔츠 & 편안한 슬랙스"]
+        "young": ["네이비 쿨 셔츠 & 차콜 슬랙스", "화이트 린넨 셔츠 & 베이지 슬랙스", "스카이블루 반팔 셔츠 & 그레이 팬츠", "블랙 무지 반팔티 & 와이드 슬랙스"],
+        "senior": ["네이비 쿨 셔츠 & 단정한 차콜 팬츠", "화이트 린넨 셔츠 & 베이지 슬랙스", "베이지 톤 셔츠 & 다크 네이비 팬츠", "다크 올리브 린넨 셔츠 & 편안한 슬랙스"]
     },
     "female": {
-        "young": ["화이트 린넨 블라우스 & 라이트 데님", "연한 하늘색 셔츠 & 화이트 슬랙스", "베이지 톤 반팔 니트 & 롱 스커트", "네이비 린넨 원피스 & 화이트 슬랙스"],
-        "senior": ["아이보리 린넨 블라우스 & 베이지 슬랙스", "네이비 쉬폰 블라우스 & 차콜 팬츠", "소프트 핑크 린넨 자켓 & 화이트 팬츠", "베이지 톤 오픈카라 셔츠 & 편안한 슬랙스"]
+        "young": ["네이비 린넨 블라우스 & 라이트 데님", "화이트 린넨 셔츠 & 슬랙스", "연한 하늘색 셔츠 & 화이트 슬랙스", "베이지 톤 반팔 니트 & 롱 스커트"],
+        "senior": ["네이비 쉬폰 블라우스 & 차콜 팬츠", "아이보리 린넨 블라우스 & 베이지 슬랙스", "소프트 핑크 린넨 자켓 & 화이트 팬츠", "베이지 톤 오픈카라 셔츠 & 편안한 슬랙스"]
     }
 }
 
@@ -288,14 +288,15 @@ def compute_saju_full_payload(name: str, gender: str, year: int, month: int, day
 
     daily_hash = (today_ordinal * 31 + diff_days * 17 + (11 if gender == "male" else 23)) % 1000003
 
+    # 오늘의 기본 의류 룩을 위한 오행 행운 컬러
     LUCKY_COLOR_PAIRS = {
-        "wood": ["그린", "화이트"],
+        "wood": ["네이비", "스카이블루"],
         "fire": ["네이비", "스카이블루"],
         "earth": ["올리브", "아이보리"],
         "metal": ["화이트", "네이비"],
         "water": ["머스터드", "베이지"]
     }
-    lucky_colors = LUCKY_COLOR_PAIRS.get(day_elem, ["그린", "화이트"])
+    lucky_colors = LUCKY_COLOR_PAIRS.get(day_elem, ["네이비", "스카이블루"])
 
     age_group = "young" if current_age < 40 else "senior"
     outfit_list = DAILY_OUTFITS_POOL[gender][age_group]
@@ -319,7 +320,7 @@ def compute_saju_full_payload(name: str, gender: str, year: int, month: int, day
 
     # 1. 충돌(子午충, 卯酉충 등) 발생 시 통관용신 발동
     has_clash = (today_jj == "子" and y_jj == "午") or (today_jj == "午" and y_jj == "子") or (today_jj == "卯" and d_jj == "酉")
-    # 2. 극단적 한열 조후 발생 시 조후용신 발동
+    # 2. 한열 조후 발생 시 조후용신 발동
     is_cold_day = today_jj in ["子", "亥"] and day_elem in ["wood", "metal"]
     # 3. 지지 삼합/육합 결합 시 합화 발동
     is_hap_day = (today_jj in ["巳", "酉", "丑"] and d_jj in ["巳", "酉", "丑"]) or (today_jj == "戌" and d_jj == "卯")
@@ -327,26 +328,19 @@ def compute_saju_full_payload(name: str, gender: str, year: int, month: int, day
     if has_clash or is_cold_day:
         styling_mode = "tonggwan"
         rule_title = "통관용신(通關) & 조후 개운"
-        rule_reason = f"오늘 일진({today_cg}{today_jj})의 차가운 水 기운이 사주 원국과 부딪힙니다. 평소 피하던 [와인/골드/메탈] 소품을 포인트로 얹어주면 충돌하던 기운이 매끄럽게 통관(通關)되어 막힌 재물과 추진력의 기운이 활짝 열립니다."
+        rule_reason = f"오늘 일진({today_cg}{today_jj})의 차가운 水 기운이 사주 원국과 부딪힙니다. 기본 의류 룩 위에 평소 피하던 [와인/골드/메탈] 소품을 원포인트로 얹어주면 충돌하던 기운이 매끄럽게 통관(通關)되어 막힌 재물과 추진력의 기운이 활짝 열립니다."
     elif is_hap_day:
         styling_mode = "hap"
         rule_title = "지지 합화(合化) 결실"
         rule_reason = f"오늘 일진({today_cg}{today_jj})이 사주 글자와 합(合)을 이루어 새로운 기운을 형성하는 날입니다. 합의 완성도를 높이는 [골드/메탈] 소품을 착용할 때 성취운이 발동합니다."
 
     is_reverse_day = (styling_mode != "harmony")
-    reverse_color_map = {
-        "wood": "와인/골드 & 브라운",
-        "fire": "네이비/스카이블루 & 실버",
-        "earth": "그린/올리브 & 아이보리",
-        "metal": "핑크/와인 & 골드",
-        "water": "옐로우/머스터드 & 베이지"
-    }
-    reverse_color = reverse_color_map.get(day_elem, "와인/골드 & 브라운")
     
+    # 문구 모순 완벽 해결: 의류와 소품의 역할을 명확히 분리
     if is_reverse_day:
-        reverse_tip = f"✦ 오늘 일진이 평소 피하던 <strong>[{reverse_color}]</strong>을 완벽히 소화해 주는 황금의 날입니다! 아껴둔 화려한 포인트 소품을 과감히 매치해보세요."
+        reverse_tip = f"✦ 오늘 일진은 기본 상생 룩(네이비/스카이블루) 위에, 평소 피하던 <strong>[와인/골드/메탈]</strong> 소품을 원포인트로 더할 때 기운이 극대화되는 날입니다!"
     else:
-        reverse_tip = f"오늘의 일진은 사주 본원({d_cg})과 상생하는 <strong>차분한 뉴트럴 톤</strong>과 <strong>가죽/메탈 소품</strong>을 곁들일 때 기운이 가장 안정됩니다."
+        reverse_tip = f"오늘의 일진은 사주 본원({d_cg})과 상생하는 <strong>차분한 톤</strong>과 <strong>정갈한 소품</strong>을 곁들일 때 기운이 가장 안정됩니다."
 
     daily_score = 68 + (daily_hash % 31)
     score_status_word = "대길(大吉)과 도약의 하루" if daily_score >= 88 else ("순조로운 화합과 발전의 하루" if daily_score >= 75 else "내실을 다지고 신중을 기할 하루")
