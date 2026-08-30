@@ -47,6 +47,7 @@
         .form-group { background: #F8FAFC; border-radius: 14px; border: 1px solid #E2E8F0; padding: 12px; margin-bottom: 10px; text-align: left; }
         .form-label { font-size: 12px; color: #64748B; font-weight: 600; display: block; margin-bottom: 4px; }
         .form-input { width: 100%; background: transparent; border: none; font-size: 15px; font-weight: 700; color: #1E293B; outline: none; }
+        .form-select-box { width: 100%; background: #FFFFFF; border: 1px solid #CBD5E1; border-radius: 8px; padding: 10px 8px; font-size: 14px; font-weight: 700; color: #1E293B; outline: none; cursor: pointer; }
         .cal-toggle { display: flex; background: #E2E8F0; padding: 2px; border-radius: 8px; font-size: 12px; font-weight: 700; gap: 2px; }
         .cal-btn { padding: 6px 12px; border-radius: 6px; border: none; background: transparent; color: #64748B; cursor: pointer; transition: all 0.2s; }
         .cal-btn.active { background: #FFFFFF; color: #111D1E; box-shadow: 0 1px 2px rgba(0,0,0,0.05); font-weight: 800; }
@@ -126,7 +127,7 @@
 
     <div class="app-container">
 
-        <!-- 1. 상단 프리미엄 헤더 -->
+        <!-- 1. 상단 헤더 -->
         <header>
             <div class="logo-box" onclick="goToHomeAndScrollTop()">
                 <svg width="34" height="34" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink: 0;">
@@ -180,7 +181,7 @@
                 </button>
             </div>
 
-            <!-- 3. 신규 회원 사주 확인 폼 -->
+            <!-- 3. 신규 회원 사주 확인 폼 (년/월/일 3단 셀렉트 적용) -->
             <div id="onboardingInputView" class="card hidden" style="text-align: center;">
                 <div class="gift-badge" style="margin-bottom: 12px;">🎁 카카오 연동 완료 (+1,000 복채 지급)</div>
                 <h2 style="font-size: 21px; font-weight: 800; margin-bottom: 2px; font-family: 'Noto Serif KR', serif;">사주 명식 확인</h2>
@@ -194,6 +195,7 @@
                         <button type="button" onclick="setGenderType('female')" id="btnGenderFemale" class="cal-btn" style="flex: 1;">여성 (女)</button>
                     </div>
                 </div>
+
                 <div class="form-group">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
                         <label class="form-label" style="margin: 0;">생년월일</label>
@@ -203,11 +205,17 @@
                             <button type="button" onclick="setCalType('leap')" id="btnCalLeap" class="cal-btn">음력(윤달)</button>
                         </div>
                     </div>
-                    <input type="date" id="inputBirth" class="form-input" value="1978-08-13">
+                    <!-- 브라우저 달력 대신 깔끔한 년/월/일 드롭다운 -->
+                    <div style="display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 6px; margin-top: 4px;">
+                        <select id="birthYearSelect" class="form-select-box"></select>
+                        <select id="birthMonthSelect" class="form-select-box"></select>
+                        <select id="birthDaySelect" class="form-select-box"></select>
+                    </div>
                 </div>
+
                 <div class="form-group">
                     <label class="form-label">태어난 시간 (30분 보정 적용)</label>
-                    <select id="inputSijin" class="form-input" style="cursor: pointer;">
+                    <select id="inputSijin" class="form-select-box">
                         <option value="-1">태어난 시간 모름</option>
                         <option value="0">자시 (23:30 ~ 01:29)</option>
                         <option value="1">축시 (01:30 ~ 03:29)</option>
@@ -257,7 +265,7 @@
                     </p>
                 </div>
 
-                <!-- 2. 신규 서랍: 나만의 오행 옷장 & 컬러 체인저 (접근성 극대화 위치) -->
+                <!-- 2. 신규 서랍: 나만의 오행 옷장 & 컬러 체인저 -->
                 <div id="drawerWardrobe" class="drawer-card" style="border: 1.5px solid #CBD5E1;">
                     <div class="drawer-header" onclick="toggleDrawer('drawerWardrobe')" style="background: #FAF9F6;">
                         <div class="drawer-title-box">
@@ -274,12 +282,11 @@
                             입고 싶은 아이템의 <strong>종류, 색상, 소재</strong>를 선택하면 내 사주에 맞는 <strong>착용일</strong>과 <strong>중화 코디법</strong>을 처방해 드립니다.
                         </p>
 
-                        <!-- 입력 폼 -->
                         <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px;">
                             <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px;">
                                 <div>
                                     <label style="font-size: 11px; color: #64748B; font-weight: 700; display: block; margin-bottom: 2px;">아이템</label>
-                                    <select id="wardrobeCategory" style="width: 100%; padding: 8px 4px; border: 1px solid #CBD5E1; border-radius: 8px; font-size: 12.5px; font-weight: 700; background: white;">
+                                    <select id="wardrobeCategory" class="form-select-box" style="padding: 8px 4px; font-size: 12.5px;">
                                         <option value="상의(셔츠/니트)">상의 (셔츠/티)</option>
                                         <option value="하의(팬츠/스커트)">하의 (바지/치마)</option>
                                         <option value="원피스/아우터">원피스 / 자켓</option>
@@ -290,7 +297,7 @@
                                 </div>
                                 <div>
                                     <label style="font-size: 11px; color: #64748B; font-weight: 700; display: block; margin-bottom: 2px;">색상</label>
-                                    <select id="wardrobeColor" style="width: 100%; padding: 8px 4px; border: 1px solid #CBD5E1; border-radius: 8px; font-size: 12.5px; font-weight: 700; background: white;">
+                                    <select id="wardrobeColor" class="form-select-box" style="padding: 8px 4px; font-size: 12.5px;">
                                         <option value="화이트">화이트 / 아이보리</option>
                                         <option value="블랙">블랙 (검정)</option>
                                         <option value="네이비">네이비 (남색)</option>
@@ -305,7 +312,7 @@
                                 </div>
                                 <div>
                                     <label style="font-size: 11px; color: #64748B; font-weight: 700; display: block; margin-bottom: 2px;">소재/재질</label>
-                                    <select id="wardrobeMaterial" style="width: 100%; padding: 8px 4px; border: 1px solid #CBD5E1; border-radius: 8px; font-size: 12.5px; font-weight: 700; background: white;">
+                                    <select id="wardrobeMaterial" class="form-select-box" style="padding: 8px 4px; font-size: 12.5px;">
                                         <option value="가죽/세무" selected>가죽 / 스웨이드</option>
                                         <option value="면/린넨">면 / 린넨 (마)</option>
                                         <option value="실크/폴리">실크 / 쉬폰 / 합성</option>
@@ -320,7 +327,6 @@
                             </button>
                         </div>
 
-                        <!-- 진단 결과 출력 박스 -->
                         <div id="wardrobeResultBox" class="hidden" style="background: #FFFFFF; border: 1.5px solid #2D6A4F; border-radius: 12px; padding: 12px; text-align: left;">
                             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 6px; margin-bottom: 8px;">
                                 <h5 id="wardrobeResultTitle" style="font-size: 14px; font-weight: 800; color: #0F172A;">와인 가죽 핸드백</h5>
@@ -337,7 +343,7 @@
                     </div>
                 </div>
 
-                <!-- 3. 행운 그리드 (5칸) -->
+                <!-- 3. 행운 그리드 -->
                 <div class="grid-2">
                     <div class="grid-cell"><span style="font-size: 12px; color: #94A3B8; display: block;">🍀 행운의 아이템</span><p id="resItem" style="font-weight: 700; margin-top: 2px; font-size: 13.5px;">실버 메탈 시계</p></div>
                     <div class="grid-cell"><span style="font-size: 12px; color: #94A3B8; display: block;">🔢 행운의 숫자</span><p id="resNumber" style="font-weight: 700; margin-top: 2px; font-size: 14px;">4, 9</p></div>
@@ -346,13 +352,11 @@
                     <div class="grid-cell" style="grid-column: span 2;"><span style="font-size: 12px; color: #94A3B8; display: block;">💡 마인드 처세</span><p id="resMindset" style="font-weight: 700; margin-top: 2px; font-size: 13.5px; color: #0F172A;">원칙을 지키며 유연하게 대처하기</p></div>
                 </div>
 
-                <!-- 오늘의 조언 카드 -->
                 <div class="action-card">
                     <span style="font-weight: 800; color: #78350F; display: block; margin-bottom: 3px; font-size: 14px;">✨ 오늘의 조언</span>
                     <p id="resGaewoon" style="color: #92400E; font-weight: 500; font-size: 14px; line-height: 1.6;">오늘 완료해야 할 우선순위 3가지 메모하기</p>
                 </div>
 
-                <!-- 바이오리듬 카드 -->
                 <div class="biorhythm-card">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                         <h4 style="font-size: 15px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif;">🧬 오늘의 바이오리듬</h4>
@@ -386,10 +390,8 @@
                     </div>
                 </div>
 
-                <!-- 광고 슬롯 1 -->
                 <div class="ad-slot-box"><span>📢 광고 영역 (Google AdSense / Kakao AdFit 슬롯 1)</span></div>
 
-                <!-- 스페셜 운세 서랍들 -->
                 <div style="display: flex; flex-direction: column; gap: 10px;">
                     <div id="drawerTarot" class="drawer-card">
                         <div class="drawer-header" onclick="toggleDrawer('drawerTarot')">
@@ -650,7 +652,7 @@
                 </div>
 
                 <div class="card" style="display: flex; justify-content: space-between; align-items: center; text-align: left;">
-                    <div><p style="font-size: 14px; font-weight: 800; color: #1E293B;">사주 정보 수정</p><p id="mypageProfileDesc" style="font-size: 12px; color: #94A3B8; margin-top: 2px;">최정오 (1978-08-13)</p></div>
+                    <div><p style="font-size: 14px; font-weight: 800; color: #1E293B;">사주 정보 수정</p><p id="mypageProfileDesc" style="font-size: 12px; color: #94A3B8; margin-top: 2px;">최정오 (1978년 8월 13일)</p></div>
                     <div style="display: flex; gap: 6px;">
                         <button onclick="reopenSajuEditForm()" style="background: #F1F5F9; border: none; font-size: 13px; font-weight: 700; color: #334155; padding: 8px 12px; border-radius: 12px; cursor: pointer;">정보 수정</button>
                         <button onclick="logoutKakaoUser()" style="background: #FEF2F2; border: 1px solid #FECDD3; font-size: 13px; font-weight: 700; color: #DC2626; padding: 8px 12px; border-radius: 12px; cursor: pointer;">로그아웃</button>
@@ -680,7 +682,7 @@
 
     </div>
 
-    <!-- 궁합 상대방 정보 모달 -->
+    <!-- 궁합 상대방 정보 모달 (년/월/일 드롭다운 적용) -->
     <div id="gunghapModal" class="modal-bg hidden">
         <div class="modal-content" style="max-width: 350px; text-align: left;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 8px;">
@@ -693,11 +695,15 @@
             </div>
             <div class="form-group">
                 <label class="form-label">상대방 생년월일</label>
-                <input type="date" id="partnerBirthInput" class="form-input" value="">
+                <div style="display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 6px; margin-top: 4px;">
+                    <select id="partnerBirthYearSelect" class="form-select-box"></select>
+                    <select id="partnerBirthMonthSelect" class="form-select-box"></select>
+                    <select id="partnerBirthDaySelect" class="form-select-box"></select>
+                </div>
             </div>
             <div class="form-group">
                 <label class="form-label">관계 유형</label>
-                <select id="partnerRelationSelect" class="form-input" style="cursor: pointer;">
+                <select id="partnerRelationSelect" class="form-select-box">
                     <option value="" disabled selected>관계를 선택하세요</option>
                     <option value="연인 / 결혼">연인 / 결혼</option>
                     <option value="동업 / 비즈니스">동업 / 비즈니스 파트너</option>
@@ -791,7 +797,7 @@
         </div>
     </div>
 
-    <!-- PG 모달 -->
+    <!-- PG 결제 모달 -->
     <div id="pgModal" class="modal-bg hidden">
         <div class="modal-content" style="max-width: 340px; text-align: left;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 8px;"><h3 style="font-size: 15px; font-weight: 800; color: #0F172A;">💳 안전 결제창</h3><button onclick="closePgModal()" style="background: none; border: none; font-size: 20px; color: #94A3B8; cursor: pointer;">&times;</button></div>
@@ -830,6 +836,46 @@
             if (window.Kakao && !window.Kakao.isInitialized()) {
                 window.Kakao.init(KAKAO_JS_KEY);
             }
+        }
+
+        // 년/월/일 3단 드롭다운 동적 생성 함수
+        function initDateDropdowns() {
+            const currentYear = new Date().getFullYear();
+            const yearSelects = ['birthYearSelect', 'partnerBirthYearSelect'];
+            const monthSelects = ['birthMonthSelect', 'partnerBirthMonthSelect'];
+            const daySelects = ['birthDaySelect', 'partnerBirthDaySelect'];
+
+            yearSelects.forEach(id => {
+                const el = document.getElementById(id);
+                if (!el) return;
+                el.innerHTML = '<option value="" disabled selected>년도</option>';
+                for (let y = currentYear; y >= 1930; y--) {
+                    el.innerHTML += `<option value="${y}">${y}년</option>`;
+                }
+            });
+
+            monthSelects.forEach(id => {
+                const el = document.getElementById(id);
+                if (!el) return;
+                el.innerHTML = '<option value="" disabled selected>월</option>';
+                for (let m = 1; m <= 12; m++) {
+                    el.innerHTML += `<option value="${m}">${m}월</option>`;
+                }
+            });
+
+            daySelects.forEach(id => {
+                const el = document.getElementById(id);
+                if (!el) return;
+                el.innerHTML = '<option value="" disabled selected>일</option>';
+                for (let d = 1; d <= 31; d++) {
+                    el.innerHTML += `<option value="${d}">${d}일</option>`;
+                }
+            });
+
+            // 기본값 설정 (1978년 8월 13일)
+            document.getElementById('birthYearSelect').value = "1978";
+            document.getElementById('birthMonthSelect').value = "8";
+            document.getElementById('birthDaySelect').value = "13";
         }
 
         function loginWithKakaoReal() {
@@ -883,9 +929,9 @@
                                 document.getElementById('inputName').value = pre.name;
                                 setGenderType(pre.gender);
                                 setCalType(pre.calendar_type);
-                                const mm = String(pre.birth_month).padStart(2, '0');
-                                const dd = String(pre.birth_day).padStart(2, '0');
-                                document.getElementById('inputBirth').value = `${pre.birth_year}-${mm}-${dd}`;
+                                document.getElementById('birthYearSelect').value = String(pre.birth_year);
+                                document.getElementById('birthMonthSelect').value = String(pre.birth_month);
+                                document.getElementById('birthDaySelect').value = String(pre.birth_day);
                                 document.getElementById('inputSijin').value = pre.sijin_index;
 
                                 document.getElementById('view-login-gate').classList.add('hidden');
@@ -1015,8 +1061,9 @@
 
         async function submitSajuRegistration() {
             const name = document.getElementById('inputName').value.trim() || "최정오";
-            const birth = document.getElementById('inputBirth').value || "1978-08-13";
-            const [y, m, d] = birth.split('-').map(Number);
+            const y = parseInt(document.getElementById('birthYearSelect').value) || 1978;
+            const m = parseInt(document.getElementById('birthMonthSelect').value) || 8;
+            const d = parseInt(document.getElementById('birthDaySelect').value) || 13;
             const sijin = parseInt(document.getElementById('inputSijin').value);
 
             const res = await fetch('/api/user/register-saju', {
@@ -1076,7 +1123,6 @@
             document.getElementById('resMindset').innerText = data.daily_fortune.mindset;
             document.getElementById('resGaewoon').innerText = data.daily_fortune.action;
 
-            // 시크릿 반전 데이 배지 & 팁 반영
             const badgeEl = document.getElementById('reverseDayBadge');
             const tipEl = document.getElementById('resReverseTip');
             if (data.daily_fortune.is_reverse_day) {
@@ -1113,7 +1159,6 @@
             document.getElementById('mypageProfileDesc').innerText = `${currentUserName} (${data.birth_summary})`;
         }
 
-        // 신규: 오행 옷장 아이템 진단 실행 함수
         async function diagnoseWardrobeItem() {
             if (!currentUserId) { alert("로그인이 필요합니다."); return; }
 
@@ -1231,11 +1276,12 @@
 
         function openGunghapInputModal() {
             const nameInput = document.getElementById('partnerNameInput');
-            const birthInput = document.getElementById('partnerBirthInput');
             const relSelect = document.getElementById('partnerRelationSelect');
 
             nameInput.value = '';
-            birthInput.value = '';
+            document.getElementById('partnerBirthYearSelect').selectedIndex = 0;
+            document.getElementById('partnerBirthMonthSelect').selectedIndex = 0;
+            document.getElementById('partnerBirthDaySelect').selectedIndex = 0;
             relSelect.selectedIndex = 0;
 
             document.getElementById('gunghapModal').classList.remove('hidden');
@@ -1246,6 +1292,9 @@
 
         function confirmUnlockGunghapOnServer() {
             const pName = document.getElementById('partnerNameInput').value.trim();
+            const py = document.getElementById('partnerBirthYearSelect').value;
+            const pm = document.getElementById('partnerBirthMonthSelect').value;
+            const pd = document.getElementById('partnerBirthDaySelect').value;
             const rel = document.getElementById('partnerRelationSelect').value;
 
             if (!pName) {
@@ -1525,6 +1574,7 @@
 
         window.addEventListener('DOMContentLoaded', () => {
             initKakaoSDK();
+            initDateDropdowns();
             document.getElementById('headerCoinSvg').innerHTML = getGoldCoinSvg(16, "#F59E0B");
             document.getElementById('mypageCoinSvg').innerHTML = getGoldCoinSvg(19, "#F59E0B");
             document.getElementById('chargeModalHeaderCoinSvg').innerHTML = getGoldCoinSvg(18, "#F59E0B");
