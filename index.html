@@ -278,13 +278,13 @@
                     <!-- 1. 오늘의 행운 컬러 명확히 제시 -->
                     <div style="display: flex; align-items: center; gap: 8px; font-size: 13.5px; background: #F8FAFC; padding: 8px 12px; border-radius: 10px; border: 1px solid #E2E8F0;">
                         <span style="color: #0D1527; font-weight: 800;">🎨 오늘의 행운 컬러:</span>
-                        <span id="todayLuckyColorsBadge" style="font-weight: 800; color: #2D6A4F;">그린 · 화이트</span>
+                        <span id="todayLuckyColorsBadge" style="font-weight: 800; color: #2D6A4F;">네이비 · 스카이블루</span>
                     </div>
 
                     <!-- 2. 오늘의 추천 코디 (상의 1벌 + 하의 1벌) -->
                     <div>
                         <span style="font-size: 11.5px; color: #64748B; display: block; margin-bottom: 2px;">추천 스타일링:</span>
-                        <p id="resStyle" style="font-weight: 800; font-size: 15px; color: #0F172A; margin: 0; line-height: 1.5;">화이트 린넨 셔츠 & 베이지 슬랙스</p>
+                        <p id="resStyle" style="font-weight: 800; font-size: 15px; color: #0F172A; margin: 0; line-height: 1.5;">네이비 쿨 셔츠 & 차콜 슬랙스</p>
                     </div>
 
                     <!-- 3. 일진 코디 처세 팁 -->
@@ -437,7 +437,7 @@
                                 <div onclick="openZodiacModal('zodiac', '원숭이')" class="zodiac-btn"><span class="zodiac-icon">🐵</span><span class="zodiac-label">원숭이</span></div>
                                 <div onclick="openZodiacModal('zodiac', '닭')" class="zodiac-btn"><span class="zodiac-icon">🐔</span><span class="zodiac-label">닭</span></div>
                                 <div onclick="openZodiacModal('zodiac', '개')" class="zodiac-btn"><span class="zodiac-icon">🐶</span><span class="zodiac-label">개</span></div>
-                                <div onclick="openZodiacModal('zodiac', '돼지')" class="zodiac-btn"><span class="zodiac-icon">🐷</span><span class="zodiac-label">돼지</span></div>
+                                <div onclick="openZodiacModal('돼지')" class="zodiac-btn"><span class="zodiac-icon">🐷</span><span class="zodiac-label">돼지</span></div>
                             </div>
 
                             <div id="gridStarBox" class="zodiac-grid-2x6 hidden">
@@ -900,8 +900,8 @@
         let userWardrobeItems = [];
 
         let currentFortuneData = null;
-        let currentLuckyColors = ["그린", "화이트"];
-        let baseFashionStyle = "화이트 린넨 셔츠 & 베이지 슬랙스";
+        let currentLuckyColors = ["네이비", "스카이블루"];
+        let baseFashionStyle = "네이비 쿨 셔츠 & 차콜 슬랙스";
 
         let wizardCategory = "상의";
         let wizardColors = [];
@@ -1089,7 +1089,7 @@
             "사자자리": `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#E2C068" stroke-width="2"><circle cx="7.5" cy="14.5" r="2.5"/><path d="M9 13a6 6 0 1 1 8 4c0 2-2 3-3 3s-2-1.5-1-3.5"/></svg>`,
             "처녀자리": `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#E2C068" stroke-width="2"><path d="M4 4v12a3 3 0 0 0 6 0V4M10 4v12a3 3 0 0 0 6 0V4M16 7a3 3 0 0 1 4 4v9M16 16l4 4"/></svg>`,
             "천칭자리": `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#E2C068" stroke-width="2"><path d="M4 20h16M4 14h5a3 3 0 1 1 6 0h5"/></svg>`,
-            "전갈자리": `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#E2C068" stroke-width="2"><path d="M4 4v12a3 3 0 0 0 6 0V4M10 4v12a3 3 0 0 0 6 0V4M16 4v12a3 3 0 0 0 6 0v-2M19 14l3 2-3 2"/></svg>`,
+            "전갈자리": `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#E2C068" stroke-width="2"><path d="M4 4v12a3 3 0 0 0 6 0V4M10 4v12a3 3 0 0 0 6 0v-2M19 14l3 2-3 2"/></svg>`,
             "사수자리": `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#E2C068" stroke-width="2"><path d="M5 19L19 5M12 5h7v7M8 12l4 4"/></svg>`,
             "염소자리": `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#E2C068" stroke-width="2"><path d="M4 4v11a4 4 0 0 0 8 0V5M12 9a4 4 0 0 1 8 4c0 3-3 7-5 7s-3-2-2-4"/></svg>`,
             "물병자리": `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#E2C068" stroke-width="2"><path d="M3 8l3-3 3 3 3-3 3 3 3-3 3 3M3 16l3-3 3 3 3-3 3 3 3-3 3 3"/></svg>`,
@@ -1232,17 +1232,17 @@
             document.getElementById('resMindset').innerText = data.daily_fortune.mindset;
             document.getElementById('resGaewoon').innerText = data.daily_fortune.action;
 
-            baseFashionStyle = data.daily_fortune.fashion_style || "화이트 린넨 셔츠 & 베이지 슬랙스";
+            baseFashionStyle = data.daily_fortune.fashion_style || "네이비 쿨 셔츠 & 차콜 슬랙스";
             
             const d_elem = data.saju_data?.pillars_detail?.day?.cg_elem || "metal";
             const LUCKY_COLOR_PAIRS = {
-                "wood": ["그린", "화이트"],
+                "wood": ["네이비", "스카이블루"],
                 "fire": ["네이비", "스카이블루"],
                 "earth": ["올리브", "아이보리"],
                 "metal": ["화이트", "네이비"],
                 "water": ["머스터드", "베이지"]
             };
-            currentLuckyColors = data.daily_fortune.lucky_colors || LUCKY_COLOR_PAIRS[d_elem] || ["화이트", "네이비"];
+            currentLuckyColors = data.daily_fortune.lucky_colors || LUCKY_COLOR_PAIRS[d_elem] || ["네이비", "스카이블루"];
             const luckyColorText = currentLuckyColors.join(' · ');
             document.getElementById('todayLuckyColorsBadge').innerText = luckyColorText;
 
@@ -1320,8 +1320,8 @@
             // 2. [하의] 중 오늘 기운과 맞는 아이템 탐색
             const matchedBottoms = userWardrobeItems.filter(item => item.category === "하의" && isColorMatch(item, currentLuckyColors));
 
-            let defaultTop = "화이트 린넨 셔츠";
-            let defaultBottom = "베이지 슬랙스";
+            let defaultTop = "네이비 쿨 셔츠";
+            let defaultBottom = "차콜 슬랙스";
 
             if (baseFashionStyle.includes("&")) {
                 const parts = baseFashionStyle.split("&").map(s => s.trim());
@@ -1757,7 +1757,7 @@
                 btnStar.className = 'sub-tab-btn active';
                 btnZodiac.className = 'sub-tab-btn';
                 gridStar.classList.remove('hidden');
-                gridZodiac.classList.add('hidden');
+                gridStar.classList.add('hidden');
             }
         }
 
