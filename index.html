@@ -19,7 +19,7 @@
 
     <meta name="theme-color" content="#0D1527">
     <script src="https://developers.kakao.com/sdk/js/kakao.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800;900&family=Noto+Serif+KR:wght@600;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800;900&family=Noto+Serif+KR:wght@600;700;800;900&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Pretendard', sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background-color: #080D1A; color: #1E293B; display: flex; justify-content: center; min-height: 100vh; }
@@ -63,7 +63,8 @@
         .elem-water { background: #EFF6FF; color: #2563EB; border: 1.5px solid #BFDBFE; }
         .elem-none { background: #F8FAFC; color: #94A3B8; border: 1px solid #E2E8F0; }
         
-        .daily-banner { background: linear-gradient(135deg, #0D1527 0%, #17233D 100%); border: 1.5px solid #D4AF37; border-radius: 20px; padding: 20px; color: white; display: flex; flex-direction: column; box-shadow: 0 10px 20px -3px rgba(13,21,39,0.25); margin-top: 4px; }
+        /* 오늘의 일진 배너 */
+        .daily-banner { background: linear-gradient(135deg, #0D1527 0%, #17233D 100%); border: 1.5px solid #D4AF37; border-radius: 20px; padding: 20px 18px; color: white; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 10px 20px -3px rgba(13,21,39,0.25); margin-top: 4px; }
         
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
         .grid-cell { background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 14px; padding: 12px; font-size: 14px; text-align: left; }
@@ -256,44 +257,64 @@
                     <div class="user-profile-birth" id="userProfileBarBirth">1978년 8월 13일생 · 사시(巳時)생</div>
                 </div>
 
+                <!-- 1. 오늘의 일진 배너 (제목 볼드 완화 + 뱃지 시인성 개선 + 5줄 상세 총평 + 시간대별 가이드) -->
                 <div class="daily-banner">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
                         <div style="display: flex; align-items: center; gap: 6px;">
-                            <span style="color: #E2C068; font-size: 15px;">✦</span>
+                            <span style="color: #E2C068; font-size: 14px;">✦</span>
                             <span style="font-size: 13.5px; color: #F6E2A1; font-weight: 700;">오늘의 일진</span>
                         </div>
-                        <span id="resScoreBadge" style="background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%); color: #FFFFFF; font-size: 12px; font-weight: 800; padding: 3px 12px; border-radius: 9999px;">운세 88점</span>
+                        <!-- 부드럽고 또렷한 앰버 뱃지 (주황+흰색 제거) -->
+                        <span id="resScoreBadge" style="background: #FEF3C7; color: #78350F; border: 1px solid #FDE68A; font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 9999px;">운세 88점</span>
                     </div>
-                    <h3 id="resTitle" style="font-size: 16.5px; font-weight: 800; text-align: left; line-height: 1.5; margin-bottom: 12px; color: #FFFFFF;">도약의 하루</h3>
-                    <div id="resAdvice" style="font-size: 13.5px; color: #E2E8F0; font-weight: 400; line-height: 1.65; text-align: left;"></div>
+
+                    <!-- 대제목 볼드 완화 (font-weight: 700 -> 600) -->
+                    <h3 id="resTitle" style="font-size: 17px; font-weight: 600; text-align: left; line-height: 1.4; color: #FFFFFF; font-family: 'Noto Serif KR', serif; margin-top: 2px;">도약과 결실의 하루</h3>
+                    
+                    <!-- 5줄 상세 종합 풀이 -->
+                    <div id="resAdvice" style="font-size: 13.5px; color: #E2E8F0; font-weight: 400; line-height: 1.7; text-align: left; white-space: pre-line;"></div>
+
+                    <!-- 시간대별 흐름 (오전 / 오후 / 저녁·밤) 카드 -->
+                    <div style="border-top: 1px solid rgba(255,255,255,0.12); margin-top: 4px; padding-top: 12px; display: flex; flex-direction: column; gap: 8px;">
+                        <div style="display: flex; align-items: flex-start; gap: 8px; font-size: 12.5px; line-height: 1.55; text-align: left;">
+                            <span style="background: rgba(254,243,199,0.15); color: #FDE68A; font-weight: 700; padding: 2px 7px; border-radius: 6px; flex-shrink: 0;">🌅 오전</span>
+                            <span id="timeMorningText" style="color: #CBD5E1;">-</span>
+                        </div>
+                        <div style="display: flex; align-items: flex-start; gap: 8px; font-size: 12.5px; line-height: 1.55; text-align: left;">
+                            <span style="background: rgba(254,243,199,0.15); color: #FDE68A; font-weight: 700; padding: 2px 7px; border-radius: 6px; flex-shrink: 0;">☀️ 오후</span>
+                            <span id="timeAfternoonText" style="color: #CBD5E1;">-</span>
+                        </div>
+                        <div style="display: flex; align-items: flex-start; gap: 8px; font-size: 12.5px; line-height: 1.55; text-align: left;">
+                            <span style="background: rgba(254,243,199,0.15); color: #FDE68A; font-weight: 700; padding: 2px 7px; border-radius: 6px; flex-shrink: 0;">🌙 저녁·밤</span>
+                            <span id="timeEveningText" style="color: #CBD5E1;">-</span>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- 1. 맞춤 추천 코디 카드 (단일 위계 + 오늘의 무드 뱃지 완벽 반영) -->
+                <!-- 2. 맞춤 추천 코디 카드 (단일 위계 + 오늘의 무드 뱃지) -->
                 <div class="card" style="padding: 20px 18px; text-align: left; display: flex; flex-direction: column; gap: 14px;">
                     
-                    <!-- 1-1. 팔레트 헤더 (우측에 오늘의 무드 뱃지 배치) -->
+                    <!-- 2-1. 팔레트 헤더 (우측에 오늘의 무드 뱃지) -->
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                         <div style="display: flex; align-items: center; gap: 6px;">
                             <span style="font-size: 15px;">🎨</span>
                             <h4 style="font-size: 15px; font-weight: 800; color: #0F172A;">오늘의 개운 팔레트</h4>
                         </div>
-                        <!-- Palette No. 대신 오늘의 스타일 무드 뱃지 배치 -->
                         <span id="todayStyleMoodBadge" style="font-size: 11.5px; background: #EBF5EE; color: #166534; font-weight: 800; padding: 3px 10px; border-radius: 9999px; border: 1px solid #BBF7D0;">🏃 캐주얼 & 액티브</span>
                     </div>
 
-                    <!-- 1-2. 컬러 칩 영역 (고유 색상명 + HEX 칩) -->
+                    <!-- 2-2. 컬러 칩 영역 -->
                     <div id="dynamicColorPaletteBox" style="display: flex; align-items: center; justify-content: flex-start; gap: 8px; flex-wrap: wrap;">
                     </div>
 
-                    <!-- 1-3. 감성 무드 해설 -->
+                    <!-- 2-3. 감성 무드 해설 -->
                     <p id="paletteMoodStoryBox" style="font-size: 12.5px; color: #64748B; line-height: 1.6; margin: 0; padding-left: 2px;">
                         깊은 미드나잇 인디고와 안개빛 스카이블루가 만나 사주의 금전운과 전문성을 견고히 세웁니다.
                     </p>
 
-                    <!-- 가느다란 정갈한 구분선 -->
                     <hr style="border: none; border-top: 1px solid #F1F5F9; margin: 2px 0;">
 
-                    <!-- 1-4. 오늘 추천 룩 (상의 & 하의) -->
+                    <!-- 2-4. 오늘 추천 룩 (상의 & 하의) -->
                     <div>
                         <span style="font-size: 11.5px; font-weight: 700; color: #64748B; display: block; margin-bottom: 4px;">👔 오늘 추천 룩</span>
                         <p id="resStyle" style="font-weight: 800; font-size: 15.5px; color: #0F172A; margin: 0; line-height: 1.5;">
@@ -301,7 +322,7 @@
                         </p>
                     </div>
 
-                    <!-- 1-5. 소품 포인트 매칭 -->
+                    <!-- 2-5. 소품 포인트 매칭 -->
                     <div id="wardrobeDailyMatchPick" style="background: #F8FAFC; border-radius: 12px; padding: 12px 14px; border: 1px solid #E2E8F0;">
                         <div style="font-size: 13px; color: #334155; line-height: 1.55;">
                             ✨ <strong>소품 매칭:</strong> 발끝에 내 옷장의 <strong>[호카 운동화]</strong>를 더해 완벽한 균형을 맞춰보세요!
@@ -310,7 +331,7 @@
 
                 </div>
 
-                <!-- 2. 내 옷장 아이템 서랍 -->
+                <!-- 3. 내 옷장 아이템 서랍 -->
                 <div id="drawerWardrobe" class="drawer-card" style="border: 1.5px solid #CBD5E1;">
                     <div class="drawer-header" onclick="toggleDrawer('drawerWardrobe')" style="background: #FAF9F6;">
                         <div class="drawer-title-box">
@@ -334,7 +355,7 @@
                     </div>
                 </div>
 
-                <!-- 3. 행운 그리드 -->
+                <!-- 4. 행운 그리드 -->
                 <div class="grid-2">
                     <div class="grid-cell"><span style="font-size: 12px; color: #94A3B8; display: block;">🍀 행운의 아이템</span><p id="resItem" style="font-weight: 700; margin-top: 2px; font-size: 13.5px;">실버 메탈 시계</p></div>
                     <div class="grid-cell"><span style="font-size: 12px; color: #94A3B8; display: block;">🔢 행운의 숫자</span><p id="resNumber" style="font-weight: 700; margin-top: 2px; font-size: 14px;">4, 9</p></div>
@@ -490,7 +511,7 @@
                             <span style="font-size: 12px; font-weight: 700; color: #64748B;">구분</span>
                             <div style="height: 42px; display: flex; align-items: center; justify-content: center; color: #475569; font-size: 12px; font-weight: 700;">천간<br>(天干)</div>
                             <div style="height: 42px; display: flex; align-items: center; justify-content: center; color: #475569; font-size: 12px; font-weight: 700;">지간<br>(地干)</div>
-                            <div style="border-top: 1px dashed #CBD5E1; width: 100%; padding-top: 8px; display: flex; flex-direction: column; align-items: center;"><div style="color: #475569; font-size: 12px; font-weight: 700;">지장간</div></div>
+                            <div style="border-top: 1px dashed #CBD5E1; width: 100%; padding-top: 8px;"><div style="color: #475569; font-size: 12px; font-weight: 700;">지장간</div></div>
                         </div>
 
                         <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 14px; padding: 8px 4px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center;">
@@ -1241,8 +1262,15 @@
 
             document.getElementById('sajuOwnerName').innerText = `${currentUserName}님 (${selectedGender === 'male' ? '남성' : '여성'})`;
             document.getElementById('resTitle').innerText = data.daily_fortune.title;
-            document.getElementById('resAdvice').innerHTML = data.daily_fortune.advice;
+            document.getElementById('resAdvice').innerText = data.daily_fortune.advice;
             document.getElementById('resScoreBadge').innerText = `운세 ${data.daily_fortune.score}점`;
+
+            // 시간대별 운세 텍스트 연동
+            if (data.daily_fortune.time_flow) {
+                document.getElementById('timeMorningText').innerText = data.daily_fortune.time_flow.morning;
+                document.getElementById('timeAfternoonText').innerText = data.daily_fortune.time_flow.afternoon;
+                document.getElementById('timeEveningText').innerText = data.daily_fortune.time_flow.evening;
+            }
 
             document.getElementById('resItem').innerText = data.daily_fortune.lucky_item;
             document.getElementById('resNumber').innerText = data.daily_fortune.lucky_number;
@@ -1329,7 +1357,6 @@
             return "smart_casual";
         }
 
-        // 오늘의 무드 뱃지와 단일 위계가 반영된 렌더러
         function updateTodayWardrobeMatchPick() {
             const styleEl = document.getElementById('resStyle');
             const pickEl = document.getElementById('wardrobeDailyMatchPick');
@@ -1355,7 +1382,6 @@
             const bottomColorStd = wada.bottom.standard_color;
             const todayMood = wada.style_mood || "casual";
 
-            // 상단 무드 뱃지 반영
             if (moodBadge) {
                 moodBadge.innerText = wada.mood_tag || (todayMood === "casual" ? "🏃 캐주얼 & 액티브" : "👔 클래식 & 포멀");
             }
