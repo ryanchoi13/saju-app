@@ -2,9 +2,7 @@ import os
 import random
 from typing import Optional, List
 from fastapi import FastAPI, Request
-from fastapi.responses import HTMLResponse, JSONResponse
-from fastapi.staticfiles import StaticFiles
-from fastapi.templating import Jinja2Templates
+from fastapi.responses import HTMLResponse, JSONResponse, FileResponse
 from pydantic import BaseModel
 import sqlite3
 
@@ -105,9 +103,6 @@ try:
     init_db()
 except Exception as e:
     print(f"DB Init Error: {e}")
-
-app.mount("/static", StaticFiles(directory="static"), name="static")
-templates = Jinja2Templates(directory="templates")
 
 # 와다 산조 배색사전 기반 오행 연동 팔레트 DB
 WADA_SANZO_PALETTES = {
@@ -229,13 +224,9 @@ def fetch_user_wardrobe(user_id: int):
     return items
 
 def generate_saju_analysis_payload(name, gender, y, m, d, cal_type, sijin):
-    elem_list = ["wood", "fire", "earth", "metal", "water"]
     day_elem = "metal" if (y + m + d) % 2 == 0 else "wood"
-    
     palettes = WADA_SANZO_PALETTES.get(day_elem, WADA_SANZO_PALETTES["metal"])
-    # 짝수일/특정 조건에 따라 3색 반전 또는 2색 조화 팔레트 선택
     chosen_palette = palettes[1] if len(palettes) > 1 and (d % 2 == 0) else palettes[0]
-
     is_reverse = (chosen_palette["mode"] == "reverse")
     
     return {
@@ -279,9 +270,14 @@ def generate_saju_analysis_payload(name, gender, y, m, d, cal_type, sijin):
         }
     }
 
-@app.get("/", response_class=HTMLResponse)
-def get_index(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
+# Jinja2 템플릿 의존성 없이 루트 또는 templates 경로의 index.html을 직접 반환
+@app.get("/")
+def get_index():
+    if os.path.exists("index.html"):
+        return FileResponse("index.html")
+    elif os.path.exists("templates/index.html"):
+        return FileResponse("templates/index.html")
+    return HTMLResponse("<h1>index.html 파일을 찾을 수 없습니다.</h1>", status_code=404)
 
 class KakaoAuthRequest(BaseModel):
     kakao_id: str
