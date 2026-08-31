@@ -377,19 +377,84 @@ def fetch_user_wardrobe(user_id: int):
         })
     return items
 
+def calculate_four_pillars(y: int, m: int, d: int, sijin_idx: int):
+    gan_list = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
+    ji_list = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"]
+    elem_map = {
+        "甲": "wood", "乙": "wood", "丙": "fire", "丁": "fire", "戊": "earth", "己": "earth", "庚": "metal", "辛": "metal", "壬": "water", "癸": "water",
+        "子": "water", "丑": "earth", "寅": "wood", "卯": "wood", "辰": "earth", "巳": "fire", "午": "fire", "未": "earth", "申": "metal", "酉": "metal", "戌": "earth", "亥": "water"
+    }
+    jjg_map = {
+        "子": [{"char": "壬", "elem": "water"}, {"char": "癸", "elem": "water"}],
+        "丑": [{"char": "癸", "elem": "water"}, {"char": "辛", "elem": "metal"}, {"char": "己", "elem": "earth"}],
+        "寅": [{"char": "戊", "elem": "earth"}, {"char": "丙", "elem": "fire"}, {"char": "甲", "elem": "wood"}],
+        "卯": [{"char": "甲", "elem": "wood"}, {"char": "乙", "elem": "wood"}],
+        "辰": [{"char": "乙", "elem": "wood"}, {"char": "癸", "elem": "water"}, {"char": "戊", "elem": "earth"}],
+        "巳": [{"char": "戊", "elem": "earth"}, {"char": "庚", "elem": "metal"}, {"char": "丙", "elem": "fire"}],
+        "午": [{"char": "丙", "elem": "fire"}, {"char": "己", "elem": "earth"}, {"char": "丁", "elem": "fire"}],
+        "未": [{"char": "丁", "elem": "fire"}, {"char": "乙", "elem": "wood"}, {"char": "己", "elem": "earth"}],
+        "申": [{"char": "戊", "elem": "earth"}, {"char": "壬", "elem": "water"}, {"char": "庚", "elem": "metal"}],
+        "酉": [{"char": "庚", "elem": "metal"}, {"char": "辛", "elem": "metal"}],
+        "戌": [{"char": "辛", "elem": "metal"}, {"char": "丁", "elem": "fire"}, {"char": "戊", "elem": "earth"}],
+        "亥": [{"char": "戊", "elem": "earth"}, {"char": "甲", "elem": "wood"}, {"char": "壬", "elem": "water"}]
+    }
+
+    y_gan = gan_list[(y - 4) % 10]
+    y_ji = ji_list[(y - 4) % 12]
+    
+    m_gan = gan_list[(y * 2 + m) % 10]
+    m_ji = ji_list[(m + 1) % 12]
+    
+    base_date = datetime.date(1900, 1, 1)
+    target_date = datetime.date(y, m, d)
+    diff_days = (target_date - base_date).days
+    d_gan = gan_list[(diff_days + 0) % 10]
+    d_ji = ji_list[(diff_days + 10) % 12]
+    
+    if sijin_idx >= 0:
+        h_ji = ji_list[sijin_idx % 12]
+        h_gan = gan_list[(diff_days * 2 + sijin_idx) % 10]
+    else:
+        h_gan = "-"
+        h_ji = "-"
+
+    counts = {"wood": 0, "fire": 0, "earth": 0, "metal": 0, "water": 0}
+    for char in [y_gan, y_ji, m_gan, m_ji, d_gan, d_ji, h_gan, h_ji]:
+        if char in elem_map:
+            counts[elem_map[char]] += 1
+    total_c = max(1, sum(counts.values()))
+    dist = {k: int((v / total_c) * 100) for k, v in counts.items()}
+    remainder = 100 - sum(dist.values())
+    dist["metal"] += remainder
+
+    return {
+        "pillars": {
+            "year": {"cg": y_gan, "cg_elem": elem_map[y_gan], "jj": y_ji, "jj_elem": elem_map[y_ji], "jijanggan": jjg_map[y_ji]},
+            "month": {"cg": m_gan, "cg_elem": elem_map[m_gan], "jj": m_ji, "jj_elem": elem_map[m_ji], "jijanggan": jjg_map[m_ji]},
+            "day": {"cg": d_gan, "cg_elem": elem_map[d_gan], "jj": d_ji, "jj_elem": elem_map[d_ji], "jijanggan": jjg_map[d_ji]},
+            "hour": {"cg": h_gan, "cg_elem": elem_map.get(h_gan, "none"), "jj": h_ji, "jj_elem": elem_map.get(h_ji, "none"), "jijanggan": jjg_map.get(h_ji, [])}
+        },
+        "elements": dist,
+        "day_elem": elem_map[d_gan],
+        "singang_label": "신강(身强) 사주" if dist[elem_map[d_gan]] >= 30 else "신약(身弱) 사주"
+    }
+
 def generate_saju_analysis_payload(name, gender, y, m, d, cal_type, sijin):
-    day_elem = "metal" if (y + m + d) % 2 == 0 else "wood"
+    saju_res = calculate_four_pillars(y, m, d, sijin)
+    day_elem = saju_res["day_elem"]
+    
     palettes = WADA_SANZO_PALETTES.get(day_elem, WADA_SANZO_PALETTES["metal"])
     chosen_palette = palettes[1] if len(palettes) > 1 and (d % 2 == 0) else palettes[0]
     is_reverse = (chosen_palette["mode"] == "reverse")
     
-    # 일진 테마 결정 (일진 날짜 합산 연산 기반: wealth, career, love, ward 순환)
     today_ord = datetime.date.today().toordinal()
     theme_keys = ["wealth", "career", "love", "ward"]
     today_theme_key = theme_keys[(today_ord + y + m + d) % 4]
-    
     talisman_info = AUTHENTIC_TALISMAN_MATRIX.get(day_elem, AUTHENTIC_TALISMAN_MATRIX["metal"]).get(today_theme_key)
-    
+
+    sijin_names = ["자시(子時)", "축시(丑時)", "인시(寅時)", "묘시(卯時)", "진시(辰時)", "사시(巳時)", "오시(午時)", "미시(未時)", "신시(申時)", "유시(酉時)", "술시(戌時)", "해시(亥時)"]
+    sijin_str = sijin_names[sijin] if 0 <= sijin < 12 else "시간모름"
+
     overview_text = f"""오늘 일진의 기운이 사주 본원과 상생하여 막혀있던 흐름이 시원하게 풀리는 형국입니다.
 미루어 두었던 중요한 계획이나 계약이 있다면 오늘 주도적으로 첫발을 내딛기에 매우 길합니다.
 대인관계에서도 귀인의 조력이 따르니, 핵심 목표 1~2가지에 에너지를 집중해 보세요.
@@ -404,7 +469,7 @@ def generate_saju_analysis_payload(name, gender, y, m, d, cal_type, sijin):
     return {
         "user_name": name,
         "current_age": 2026 - y + 1,
-        "birth_summary": f"{y}년 {m}월 {d}일생 · 사시(巳時)생",
+        "birth_summary": f"{y}년 {m}월 {d}일생 · {sijin_str}생",
         "daily_fortune": {
             "title": "도약과 결실의 하루",
             "score": 88,
@@ -427,16 +492,12 @@ def generate_saju_analysis_payload(name, gender, y, m, d, cal_type, sijin):
             "talisman": talisman_info
         },
         "saju_data": {
-            "pillars_detail": {
-                "year": {"cg": "戊", "cg_elem": "earth", "jj": "午", "jj_elem": "fire", "jijanggan": [{"char": "丙", "elem": "fire"}, {"char": "己", "elem": "earth"}, {"char": "丁", "elem": "fire"}]},
-                "month": {"cg": "庚", "cg_elem": "metal", "jj": "申", "jj_elem": "metal", "jijanggan": [{"char": "戊", "elem": "earth"}, {"char": "壬", "elem": "water"}, {"char": "庚", "elem": "metal"}]},
-                "day": {"cg": "辛", "cg_elem": "metal", "jj": "亥", "jj_elem": "water", "jijanggan": [{"char": "戊", "elem": "earth"}, {"char": "甲", "elem": "wood"}, {"char": "壬", "elem": "water"}]},
-                "hour": {"cg": "癸", "cg_elem": "water", "jj": "巳", "jj_elem": "fire", "jijanggan": [{"char": "戊", "elem": "earth"}, {"char": "庚", "elem": "metal"}, {"char": "丙", "elem": "fire"}]}
-            },
-            "elements": {"wood": 15, "fire": 20, "earth": 25, "metal": 30, "water": 10}
+            "pillars_detail": saju_res["pillars"],
+            "elements": saju_res["elements"],
+            "singang_label": saju_res["singang_label"]
         },
         "biorhythm": {
-            "days_lived": 17540,
+            "days_lived": (datetime.date.today() - datetime.date(y, m, d)).days,
             "physical": {"status": "고조기", "val": 85},
             "emotional": {"status": "안정기", "val": 60},
             "intellectual": {"status": "최고조", "val": 95},
@@ -614,6 +675,77 @@ def delete_wardrobe_item(item_id: int, user_id: int):
     db.close()
     return {"status": "success", "wardrobe_items": fetch_user_wardrobe(user_id)}
 
+# 심층 리포트 생성기 (줄바꿈 구분, 현재구간 하이라이트, 2026 총운 대폭 보강)
+def build_detailed_report_content(report_key: str, user_dict: dict, sub_opt: str, p_name: str, relation: str):
+    name = user_dict.get("name", "회원")
+    y = user_dict.get("birth_year", 1978)
+    age = 2026 - y + 1
+
+    if report_key == "daewoon":
+        return f"""
+        <div style="display:flex; flex-direction:column; gap:16px; font-size:13.5px; line-height:1.8; color:#334155;">
+            <div>
+                <h4 style="font-size:15px; font-weight:800; color:#0F172A; margin-bottom:6px;">Chapter 1. 생애 대운의 4대 주기 분석</h4>
+                <p style="margin-bottom:8px;">• 유년·청년기(20~39세): 초년의 진취적인 기운으로 다양한 배움과 시련을 거쳐 단단한 내면의 기틀을 확립한 시기입니다.</p>
+                <p style="margin-bottom:8px; color:#047857; font-weight:700;">• 중장년 황금기(40~59세) [현재 위치: {age}세]: 지금까지 축적한 지혜와 인맥이 결실을 맺는 시기로, 사주의 천을귀인이 작동하여 가장 큰 사회적 성취와 자산을 형성하는 핵심 황금기입니다.</p>
+                <p style="margin-bottom:8px;">• 노년 안락기(60세 이후): 이뤄놓은 성과를 안정적으로 지키며 후학을 도모하고 평온한 명예를 누리는 시기입니다.</p>
+            </div>
+            <hr style="border:none; border-top:1px solid #E2E8F0;">
+            <div>
+                <h4 style="font-size:15px; font-weight:800; color:#0F172A; margin-bottom:6px;">Chapter 2. {name}님의 인생 3대 도약 단계</h4>
+                <p style="margin-bottom:8px;">1단계 - 역량 축적기: 기반을 다지며 신뢰를 쌓아가는 준비 과정입니다.</p>
+                <p style="margin-bottom:8px; color:#047857; font-weight:700;">2단계 - 대도약 결실기 (현재 진행 중): 사주에 잠들어 있던 용신(用神)의 기운이 깨어나며 주도적인 결단이 재물과 명예로 직결되는 절정의 구간입니다.</p>
+                <p style="margin-bottom:8px;">3단계 - 명예 안착기: 쌓아온 성과를 확장하고 평생의 결실을 완성하는 수확의 단계입니다.</p>
+            </div>
+            <hr style="border:none; border-top:1px solid #E2E8F0;">
+            <div>
+                <h4 style="font-size:15px; font-weight:800; color:#0F172A; margin-bottom:6px;">Chapter 3. 평생 타고난 핵심 격국과 개운 처세</h4>
+                <p>귀하의 명조는 흔들림 없는 원칙과 유연한 처세가 조화를 이루고 있습니다. 40대 후반에서 50대 초반으로 이어지는 대운의 변곡점에서 불필요한 과욕을 경계하고 확실한 본업의 전문성을 극대화할 때 평생의 부(富)와 귀(貴)가 온전히 유지됩니다.</p>
+            </div>
+        </div>
+        """
+    elif report_key == "sinnian":
+        return f"""
+        <div style="display:flex; flex-direction:column; gap:16px; font-size:13.5px; line-height:1.8; color:#334155;">
+            <div>
+                <h4 style="font-size:15px; font-weight:800; color:#166534; margin-bottom:8px;">Chapter 1. 2026 丙午년 총운 심층 분석 (재물·애정·건강 종합)</h4>
+                <p style="margin-bottom:10px;"><strong>[전체 총평]</strong> 2026년 붉은 말의 해(丙午年)는 솟구치는 양기와 결실의 에너지가 공존하는 역동적인 해입니다. 귀하의 사주 원국과 병오년의 불꽃 같은 에너지가 화생토(火生土), 토생금(土生金)의 상생 구도를 형성하여 정체되었던 흐름이 시원하게 뚫리게 됩니다.</p>
+                <p style="margin-bottom:10px;"><strong>[💰 재물 & 직업운]</strong> 새로운 프로젝트나 자산 확장에 매우 유리한 기운이 작용합니다. 상반기에 뿌려둔 노력과 제안들이 하반기(음력 8월~10월)에 가시적인 수익과 실적으로 돌아오며, 특히 직장 내 승진이나 사업적 계약에서 우위를 점하게 됩니다.</p>
+                <p style="margin-bottom:10px;"><strong>[💖 애정 & 대인관계운]</strong> 도화(桃花)와 귀인의 기운이 동시에 빛을 발합니다. 싱글의 경우 사회적 모임이나 업무적 교류 속에서 품격 있는 인연을 만날 기회가 열리며, 기혼/연인의 경우 오랜 오해를 풀고 깊은 신뢰와 유대감을 회복하는 전환점이 됩니다.</p>
+                <p style="margin-bottom:10px;"><strong>[🌿 건강 & 심신 밸런스]</strong> 화(火) 기운이 왕성한 해인 만큼 심혈관계와 과로로 인한 피로 누적을 경계해야 합니다. 물(水)을 자주 섭취하고 차분한 명상과 가벼운 유산소 운동으로 조후의 균형을 맞추는 것이 건강 개운의 핵심입니다.</p>
+            </div>
+            <hr style="border:none; border-top:1px solid #E2E8F0;">
+            <div>
+                <h4 style="font-size:15px; font-weight:800; color:#166534; margin-bottom:10px;">Chapter 2. 2026 하반기 월별 정밀 가이드</h4>
+                <p style="margin-bottom:8px;"><strong>7월:</strong> 주변의 의견이 분분해지는 시기입니다. 중심을 지키고 내실을 다지세요.</p>
+                <hr style="border:none; border-top:1px dashed #E2E8F0; margin:6px 0;">
+                <p style="margin-bottom:8px; color:#047857; font-weight:700;"><strong>8월 [★ 황금의 달]:</strong> 계약, 승진, 자산 증식에서 가장 큰 성과가 터지는 절정기입니다.</p>
+                <hr style="border:none; border-top:1px dashed #E2E8F0; margin:6px 0;">
+                <p style="margin-bottom:8px;"><strong>9월:</strong> 귀인의 조력으로 새로운 협력 기회가 생깁니다. 유연하게 교섭하세요.</p>
+                <hr style="border:none; border-top:1px dashed #E2E8F0; margin:6px 0;">
+                <p style="margin-bottom:8px; color:#047857; font-weight:700;"><strong>10월 [★ 결실의 달]:</strong> 투자와 시험, 자격증 취득 등 노력했던 일의 결실을 쟁취합니다.</p>
+                <hr style="border:none; border-top:1px dashed #E2E8F0; margin:6px 0;">
+                <p style="margin-bottom:8px;"><strong>11월:</strong> 건강 관리에 유의하며 무리한 지출이나 투자를 차분히 정리하는 달입니다.</p>
+                <hr style="border:none; border-top:1px dashed #E2E8F0; margin:6px 0;">
+                <p style="margin-bottom:8px;"><strong>12월:</strong> 한 해를 정리하고 2027년의 새로운 도약을 준비하는 안정과 화합의 달입니다.</p>
+            </div>
+        </div>
+        """
+    elif report_key == "gunghap":
+        return f"""
+        <div style="display:flex; flex-direction:column; gap:12px; font-size:13.5px; line-height:1.8; color:#334155;">
+            <p><strong>💞 {name}님과 {p_name}님의 인연 궁합 ({relation})</strong></p>
+            <p>두 사람의 오행 배합은 서로의 결핍을 완벽히 메워주는 상생(相生)의 조화를 이루고 있습니다. {name}님의 추진력과 {p_name}님의 섬세한 배려가 결합하여 장기적인 신뢰와 발전을 이끌어내는 대길의 궁합입니다.</p>
+        </div>
+        """
+    else:
+        return f"""
+        <div style="display:flex; flex-direction:column; gap:12px; font-size:13.5px; line-height:1.8; color:#334155;">
+            <p><strong>{name}님을 위한 맞춤 심층 분석 리포트</strong></p>
+            <p>사주 원국의 오행 분포와 용신의 흐름을 대입한 결과, 귀하는 현재 자신에게 필요한 최적의 환경과 기운을 주도적으로 만들어갈 수 있는 강한 잠재력을 보유하고 있습니다.</p>
+        </div>
+        """
+
 class UnlockReportRequest(BaseModel):
     user_id: int
     report_key: str
@@ -626,7 +758,7 @@ class UnlockReportRequest(BaseModel):
 def unlock_report_endpoint(req: UnlockReportRequest):
     db = get_db()
     cursor = db.cursor()
-    cursor.execute("SELECT coin_balance, name FROM users WHERE id = %s" if USE_POSTGRES else "SELECT coin_balance, name FROM users WHERE id = ?", (req.user_id,))
+    cursor.execute("SELECT * FROM users WHERE id = %s" if USE_POSTGRES else "SELECT * FROM users WHERE id = ?", (req.user_id,))
     user = cursor.fetchone()
     if not user or user["coin_balance"] < req.cost:
         db.close()
@@ -645,7 +777,7 @@ def unlock_report_endpoint(req: UnlockReportRequest):
         "health": "🌿 평생 건강운 및 오행 치유 섭생법"
     }
     report_title = title_map.get(req.report_key, "정밀 감명서")
-    content = f"<p><strong>{user['name']}님을 위한 {report_title}</strong></p><p>사주 원국과 대운의 흐름을 대입한 결과, 귀하의 본원은 천을귀인의 조력을 받아 원하는 바를 성취하는 대길의 명조입니다.</p>"
+    content = build_detailed_report_content(req.report_key, dict(user), req.sub_option, req.partner_name, req.relation)
 
     created_at = datetime.datetime.now().strftime("%Y.%m.%d")
 
@@ -689,19 +821,65 @@ def get_daily_tarot(slot: int):
         "action_guide": "망설이던 아이디어가 있다면 오늘 바로 구체적인 실행 계획을 작성하세요."
     }
 
+# 띠별 5개 세대 연도 및 별자리 전용 데이터 분기 API
 @app.get("/api/zodiac-fortune")
 def get_zodiac_fortune(type: str, key: str):
-    return {
-        "name": key,
-        "score": 95,
-        "title": "막힘없이 활짝 열리는 운세",
-        "overview": "노력해 온 일들이 귀인을 만나 결실을 맺게 되는 뜻깊은 하루입니다.",
-        "lucky_time": "오전 10시 ~ 12시",
-        "lucky_match": "찰떡궁합: 소띠, 용띠",
-        "lucky_item": "블루 계열 액세서리",
-        "year_tips": [
-            {"year_label": "1972년생", "tip": "작은 양보가 큰 이득으로 돌아오는 날입니다."},
-            {"year_label": "1984년생", "tip": "적극적인 의견 개진이 좋은 성과를 냅니다."},
-            {"year_label": "1996년생", "tip": "새로운 사람과의 교류에서 기회를 잡습니다."}
+    if type == "star":
+        star_meta = {
+            "양자리": {"elem": "불 (Fire)", "planet": "화성 (Mars)", "color": "루비 레드", "time": "오전 07시 ~ 09시", "focus": "새로운 기획에 도전할 때 주변의 강력한 지지를 받습니다. 솔직한 표현이 매력을 높입니다."},
+            "황소자리": {"elem": "흙 (Earth)", "planet": "금성 (Venus)", "color": "에메랄드 그린", "time": "오후 01시 ~ 03시", "focus": "재정적 안정을 도모하기에 좋습니다. 미식이나 예술적 힐링이 행운을 부릅니다."},
+            "쌍둥이자리": {"elem": "공기 (Air)", "planet": "수성 (Mercury)", "color": "스카이 블루", "time": "오전 10시 ~ 12시", "focus": "활발한 정보 교류와 소통이 성과로 이어집니다. 가벼운 연락이 귀인으로 발전합니다."},
+            "게자리": {"elem": "물 (Water)", "planet": "달 (Moon)", "color": "실버 화이트", "time": "저녁 08시 ~ 10시", "focus": "가족과 연인에게서 따스한 위로를 얻습니다. 감성을 살린 창작 활동이 빛을 발합니다."},
+            "사자자리": {"elem": "불 (Fire)", "planet": "태양 (Sun)", "color": "로열 골드", "time": "오후 12시 ~ 02시", "focus": "당신의 리더십과 카리스마가 돋보이는 날입니다. 자신감 있는 제안이 성사됩니다."},
+            "처녀자리": {"elem": "흙 (Earth)", "planet": "수성 (Mercury)", "color": "올리브 카키", "time": "오전 09시 ~ 11시", "focus": "디테일한 업무 처리와 분석에서 독보적 성과를 냅니다. 컨디션 조절에 유의하세요."},
+            "천칭자리": {"elem": "공기 (Air)", "planet": "금성 (Venus)", "color": "로즈 핑크", "time": "오후 04시 ~ 06시", "focus": "협상과 파트너십에서 최적의 균형을 찾습니다. 세련된 스타일링이 인기를 부릅니다."},
+            "전갈자리": {"elem": "물 (Water)", "planet": "명왕성 (Pluto)", "color": "딥 버건디", "time": "밤 09시 ~ 11시", "focus": "깊은 직관과 통찰력이 빛을 발합니다. 비밀스러운 계획을 구체화하기에 길합니다."},
+            "사수자리": {"elem": "불 (Fire)", "planet": "목성 (Jupiter)", "color": "네이비 블루", "time": "오후 02시 ~ 04시", "focus": "먼 곳에서의 반가운 소식이나 여행, 확장의 기운이 강합니다. 시야를 넓히세요."},
+            "염소자리": {"elem": "흙 (Earth)", "planet": "토성 (Saturn)", "color": "차콜 그레이", "time": "오전 08시 ~ 10시", "focus": "오랜 시간 공들여온 일의 결실을 맺습니다. 성실함이 최고의 무기가 되는 날입니다."},
+            "물병자리": {"elem": "공기 (Air)", "planet": "천왕성 (Uranus)", "color": "터콰이즈 민트", "time": "오후 03시 ~ 05시", "focus": "독창적인 아이디어와 네트워킹이 활성화됩니다. 상식을 깨는 발상이 성공을 엽니다."},
+            "물고기자리": {"elem": "물 (Water)", "planet": "해왕성 (Neptune)", "color": "라벤더 퍼플", "time": "저녁 07시 ~ 09시", "focus": "공감 능력과 예술적 감각이 최고조입니다. 마음을 열고 진솔한 대화를 나누세요."}
+        }
+        meta = star_meta.get(key, star_meta["양자리"])
+        return {
+            "name": key,
+            "score": 93,
+            "title": "천체의 조화와 영감이 가득한 하루",
+            "overview": "행성의 순행 기운이 당신의 별자리를 비추어 창의적 아이디어와 인간관계의 확장이 일어납니다.",
+            "star_element": meta["elem"],
+            "star_planet": meta["planet"],
+            "lucky_color": meta["color"],
+            "lucky_time": meta["time"],
+            "focus_content": meta["focus"]
+        }
+    else:
+        zodiac_years_map = {
+            "쥐": ["2008년생 (만 18세)", "1996년생 (만 30세)", "1984년생 (만 42세)", "1972년생 (만 54세)", "1960년생 (만 66세)"],
+            "소": ["2009년생 (만 17세)", "1997년생 (만 29세)", "1985년생 (만 41세)", "1973년생 (만 53세)", "1961년생 (만 65세)"],
+            "호랑이": ["2010년생 (만 16세)", "1998년생 (만 28세)", "1986년생 (만 40세)", "1974년생 (만 52세)", "1962년생 (만 64세)"],
+            "토끼": ["2011년생 (만 15세)", "1999년생 (만 27세)", "1987년생 (만 39세)", "1975년생 (만 51세)", "1963년생 (만 63세)"],
+            "용": ["2000년생 (만 26세)", "1988년생 (만 38세)", "1976년생 (만 50세)", "1964년생 (만 62세)", "1952년생 (만 74세)"],
+            "뱀": ["2001년생 (만 25세)", "1989년생 (만 37세)", "1977년생 (만 49세)", "1965년생 (만 61세)", "1953년생 (만 73세)"],
+            "말": ["2002년생 (만 24세)", "1990년생 (만 36세)", "1978년생 (만 48세)", "1966년생 (만 60세)", "1954년생 (만 72세)"],
+            "양": ["2003년생 (만 23세)", "1991년생 (만 35세)", "1979년생 (만 47세)", "1967년생 (만 59세)", "1955년생 (만 71세)"],
+            "원숭이": ["2004년생 (만 22세)", "1992년생 (만 34세)", "1980년생 (만 46세)", "1968년생 (만 58세)", "1956년생 (만 70세)"],
+            "닭": ["2005년생 (만 21세)", "1993년생 (만 33세)", "1981년생 (만 45세)", "1969년생 (만 57세)", "1957년생 (만 69세)"],
+            "개": ["2006년생 (만 20세)", "1994년생 (만 32세)", "1982년생 (만 44세)", "1970년생 (만 56세)", "1958년생 (만 68세)"],
+            "돼지": ["2007년생 (만 19세)", "1995년생 (만 31세)", "1983년생 (만 43세)", "1971년생 (만 55세)", "1959년생 (만 67세)"]
+        }
+        years = zodiac_years_map.get(key, zodiac_years_map["말"])
+        tips = [
+            {"year_label": years[0], "tip": "새로운 도전과 배움에서 큰 성취를 얻는 활기찬 하루입니다."},
+            {"year_label": years[1], "tip": "적극적인 제안과 기획이 좋은 기회와 협력으로 이어집니다."},
+            {"year_label": years[2], "tip": "작은 양보와 신뢰가 훗날 큰 이득과 결실로 돌아옵니다."},
+            {"year_label": years[3], "tip": "주변의 조언을 수용하면 복잡한 문제가 순조롭게 풀립니다."},
+            {"year_label": years[4], "tip": "마음의 여유를 가질 때 건강과 재물 안정이 함께 찾아옵니다."}
         ]
-    }
+        return {
+            "name": key,
+            "score": 95,
+            "title": "막힘없이 활짝 열리는 대길의 일진",
+            "overview": "노력해 온 일들이 귀인을 만나 결실을 맺게 되는 뜻깊고 보람찬 하루입니다.",
+            "lucky_time": "오전 10시 ~ 12시",
+            "lucky_match": "찰떡궁합: 소띠, 양띠",
+            "year_tips": tips
+        }
