@@ -257,24 +257,20 @@
                     <div class="user-profile-birth" id="userProfileBarBirth">1978년 8월 13일생 · 사시(巳時)생</div>
                 </div>
 
-                <!-- 1. 오늘의 일진 배너 (제목 볼드 완화 + 뱃지 시인성 개선 + 5줄 상세 총평 + 시간대별 가이드) -->
+                <!-- 1. 오늘의 일진 배너 -->
                 <div class="daily-banner">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                         <div style="display: flex; align-items: center; gap: 6px;">
                             <span style="color: #E2C068; font-size: 14px;">✦</span>
                             <span style="font-size: 13.5px; color: #F6E2A1; font-weight: 700;">오늘의 일진</span>
                         </div>
-                        <!-- 부드럽고 또렷한 앰버 뱃지 (주황+흰색 제거) -->
                         <span id="resScoreBadge" style="background: #FEF3C7; color: #78350F; border: 1px solid #FDE68A; font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 9999px;">운세 88점</span>
                     </div>
 
-                    <!-- 대제목 볼드 완화 (font-weight: 700 -> 600) -->
                     <h3 id="resTitle" style="font-size: 17px; font-weight: 600; text-align: left; line-height: 1.4; color: #FFFFFF; font-family: 'Noto Serif KR', serif; margin-top: 2px;">도약과 결실의 하루</h3>
                     
-                    <!-- 5줄 상세 종합 풀이 -->
                     <div id="resAdvice" style="font-size: 13.5px; color: #E2E8F0; font-weight: 400; line-height: 1.7; text-align: left; white-space: pre-line;"></div>
 
-                    <!-- 시간대별 흐름 (오전 / 오후 / 저녁·밤) 카드 -->
                     <div style="border-top: 1px solid rgba(255,255,255,0.12); margin-top: 4px; padding-top: 12px; display: flex; flex-direction: column; gap: 8px;">
                         <div style="display: flex; align-items: flex-start; gap: 8px; font-size: 12.5px; line-height: 1.55; text-align: left;">
                             <span style="background: rgba(254,243,199,0.15); color: #FDE68A; font-weight: 700; padding: 2px 7px; border-radius: 6px; flex-shrink: 0;">🌅 오전</span>
@@ -291,10 +287,8 @@
                     </div>
                 </div>
 
-                <!-- 2. 맞춤 추천 코디 카드 (단일 위계 + 오늘의 무드 뱃지) -->
+                <!-- 2. 맞춤 추천 코디 카드 -->
                 <div class="card" style="padding: 20px 18px; text-align: left; display: flex; flex-direction: column; gap: 14px;">
-                    
-                    <!-- 2-1. 팔레트 헤더 (우측에 오늘의 무드 뱃지) -->
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                         <div style="display: flex; align-items: center; gap: 6px;">
                             <span style="font-size: 15px;">🎨</span>
@@ -303,18 +297,15 @@
                         <span id="todayStyleMoodBadge" style="font-size: 11.5px; background: #EBF5EE; color: #166534; font-weight: 800; padding: 3px 10px; border-radius: 9999px; border: 1px solid #BBF7D0;">🏃 캐주얼 & 액티브</span>
                     </div>
 
-                    <!-- 2-2. 컬러 칩 영역 -->
                     <div id="dynamicColorPaletteBox" style="display: flex; align-items: center; justify-content: flex-start; gap: 8px; flex-wrap: wrap;">
                     </div>
 
-                    <!-- 2-3. 감성 무드 해설 -->
                     <p id="paletteMoodStoryBox" style="font-size: 12.5px; color: #64748B; line-height: 1.6; margin: 0; padding-left: 2px;">
                         깊은 미드나잇 인디고와 안개빛 스카이블루가 만나 사주의 금전운과 전문성을 견고히 세웁니다.
                     </p>
 
                     <hr style="border: none; border-top: 1px solid #F1F5F9; margin: 2px 0;">
 
-                    <!-- 2-4. 오늘 추천 룩 (상의 & 하의) -->
                     <div>
                         <span style="font-size: 11.5px; font-weight: 700; color: #64748B; display: block; margin-bottom: 4px;">👔 오늘 추천 룩</span>
                         <p id="resStyle" style="font-weight: 800; font-size: 15.5px; color: #0F172A; margin: 0; line-height: 1.5;">
@@ -322,13 +313,11 @@
                         </p>
                     </div>
 
-                    <!-- 2-5. 소품 포인트 매칭 -->
                     <div id="wardrobeDailyMatchPick" style="background: #F8FAFC; border-radius: 12px; padding: 12px 14px; border: 1px solid #E2E8F0;">
                         <div style="font-size: 13px; color: #334155; line-height: 1.55;">
                             ✨ <strong>소품 매칭:</strong> 발끝에 내 옷장의 <strong>[호카 운동화]</strong>를 더해 완벽한 균형을 맞춰보세요!
                         </div>
                     </div>
-
                 </div>
 
                 <!-- 3. 내 옷장 아이템 서랍 -->
@@ -426,6 +415,7 @@
                         </div>
                     </div>
 
+                    <!-- 5. 전통 맞춤 부적 서랍 (20종 정통 비급 도교 부적) -->
                     <div id="drawerTalisman" class="drawer-card">
                         <div class="drawer-header" onclick="toggleDrawer('drawerTalisman')">
                             <div class="drawer-title-box">
@@ -708,7 +698,6 @@
                 <button onclick="closeWardrobeAddWizard()" style="background: none; border: none; font-size: 20px; color: #94A3B8; cursor: pointer;">&times;</button>
             </div>
 
-            <!-- Step 1: 아이템 종류 타일 -->
             <div id="wizardStep1" style="display: flex; flex-direction: column; gap: 6px;">
                 <p style="font-size: 12px; color: #64748B;">등록할 아이템의 종류를 선택하세요:</p>
                 <div class="tile-grid">
@@ -723,7 +712,6 @@
                 <button onclick="goToWizardStep(2)" style="width: 100%; background: #0D1527; color: #F6E2A1; border: none; font-size: 13.5px; font-weight: 600; padding: 12px; border-radius: 12px; cursor: pointer; margin-top: 8px;">다음: 색상 선택하기 👉</button>
             </div>
 
-            <!-- Step 2: 20대 세분화 색상 선택 -->
             <div id="wizardStep2" class="hidden" style="display: flex; flex-direction: column; gap: 6px;">
                 <p style="font-size: 12px; color: #64748B;">색상을 모두 선택하세요 (복수 가능):</p>
                 <div class="color-chip-grid">
@@ -758,7 +746,6 @@
                 </div>
             </div>
 
-            <!-- Step 3: 7대 핵심 소재 선택 (2열 균일 그리드 배치) -->
             <div id="wizardStep3" class="hidden" style="display: flex; flex-direction: column; gap: 8px;">
                 <p style="font-size: 12px; color: #64748B;">소재를 모두 선택하세요 (복수 가능):</p>
                 <div class="mat-chip-grid">
@@ -1153,25 +1140,83 @@
             </svg>`;
         }
 
-        function renderAuthenticCinnabarTalisman(type = "metal", width = 160, height = 260) {
-            let innerSymbol = '';
+        // 정통 20종 도교 비급 부적 렌더러
+        function renderAuthenticCinnabarTalisman(type = "metal_wealth", width = 160, height = 260) {
+            let symbolHtml = '';
             let bottomText = '萬福大吉';
-            if (type === "wood") { bottomText = '事業亨通'; innerSymbol = `<path d="M 35 95 L 105 95 L 70 135 Z" fill="rgba(198,40,40,0.15)"/><line x1="70" y1="125" x2="70" y2="182" stroke-width="4.5"/><line x1="45" y1="155" x2="95" y2="155" stroke-width="3.5"/>`; }
-            else if (type === "fire") { bottomText = '心想事成'; innerSymbol = `<circle cx="70" cy="110" r="18" fill="rgba(198,40,40,0.1)"/><circle cx="70" cy="110" r="8" fill="#C62828"/><line x1="70" y1="125" x2="70" y2="182" stroke-width="4.2"/><path d="M 45 140 Q 70 160 95 140" stroke-width="3.5"/>`; }
-            else if (type === "earth") { bottomText = '金庫安穩'; innerSymbol = `<rect x="38" y="94" width="64" height="40" fill="rgba(198,40,40,0.1)"/><line x1="70" y1="94" x2="70" y2="180" stroke-width="4.2"/><circle cx="50" cy="114" r="4" fill="#C62828"/><circle cx="90" cy="114" r="4" fill="#C62828"/>`; }
-            else if (type === "water") { bottomText = '萬事和合'; innerSymbol = `<circle cx="48" cy="112" r="13"/><circle cx="92" cy="112" r="13"/><line x1="70" y1="138" x2="70" y2="180" stroke-width="4.2"/><path d="M 35 160 Q 70 140 105 160" stroke-width="3.5"/>`; }
-            else { bottomText = '萬福大吉'; innerSymbol = `<rect x="40" y="96" width="26" height="22" stroke-width="3.8"/><rect x="74" y="96" width="26" height="22" stroke-width="3.8"/><line x1="70" y1="128" x2="70" y2="180" stroke-width="4.2"/><circle cx="53" cy="107" r="3" fill="#C62828"/><circle cx="87" cy="107" r="3" fill="#C62828"/>`; }
+
+            if (type.includes("wealth")) {
+                bottomText = '生財萬福';
+                symbolHtml = `
+                    <path d="M 40 85 L 100 85 L 50 105 L 90 105 L 60 125 L 80 125" stroke-width="3"/>
+                    <rect x="42" y="135" width="56" height="38" stroke-width="3" rx="3"/>
+                    <line x1="70" y1="135" x2="70" y2="173" stroke-width="2.5"/>
+                    <line x1="42" y1="154" x2="98" y2="154" stroke-width="2.5"/>
+                    <circle cx="56" cy="144" r="2.5" fill="#B91C1C"/><circle cx="84" cy="144" r="2.5" fill="#B91C1C"/>
+                `;
+            } else if (type.includes("career")) {
+                bottomText = '文昌登科';
+                symbolHtml = `
+                    <polygon points="70,80 82,100 58,100" stroke-width="3"/>
+                    <line x1="70" y1="100" x2="70" y2="135" stroke-width="4"/>
+                    <line x1="45" y1="115" x2="95" y2="115" stroke-width="3"/>
+                    <rect x="46" y="135" width="48" height="42" stroke-width="2.8"/>
+                    <line x1="70" y1="135" x2="70" y2="177" stroke-width="2.5"/>
+                `;
+            } else if (type.includes("love")) {
+                bottomText = '萬事和合';
+                symbolHtml = `
+                    <circle cx="53" cy="98" r="14" stroke-width="2.8"/><circle cx="87" cy="98" r="14" stroke-width="2.8"/>
+                    <circle cx="53" cy="98" r="4.5" fill="#B91C1C"/><circle cx="87" cy="98" r="4.5" fill="#B91C1C"/>
+                    <path d="M 40 135 Q 70 115 100 135" stroke-width="3.2"/>
+                    <path d="M 40 155 Q 70 175 100 155" stroke-width="3.2"/>
+                    <line x1="70" y1="125" x2="70" y2="170" stroke-width="3.5"/>
+                `;
+            } else {
+                bottomText = '辟邪鎭宅';
+                symbolHtml = `
+                    <line x1="70" y1="80" x2="70" y2="140" stroke-width="4.5"/>
+                    <path d="M 42 100 L 70 120 L 98 100" stroke-width="3.5"/>
+                    <path d="M 46 120 L 70 140 L 94 120" stroke-width="3.5"/>
+                    <rect x="44" y="140" width="52" height="34" stroke-width="3"/>
+                    <line x1="44" y1="140" x2="96" y2="174" stroke-width="2"/>
+                    <line x1="96" y1="140" x2="44" y2="174" stroke-width="2"/>
+                `;
+            }
+
+            const nameChar1 = currentUserName ? currentUserName.charAt(0) : "최";
+            const nameChar2 = (currentUserName && currentUserName.length > 1) ? currentUserName.charAt(1) : "정";
 
             return `
-            <svg id="svgTalismanMain" width="${width}" height="${height}" viewBox="0 0 140 240" xmlns="http://www.w3.org/2000/svg" style="background: linear-gradient(135deg, #FFE814 0%, #FFD000 100%); border: 3px solid #C49700; border-radius: 8px; box-sizing: border-box;">
-                <rect x="6" y="6" width="128" height="228" fill="none" stroke="#E65100" stroke-width="1" opacity="0.5" />
-                <g fill="none" stroke="#C62828" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M 28 22 Q 42 16 68 18 Q 92 20 112 16" /><line x1="70" y1="18" x2="70" y2="34" /><line x1="40" y1="28" x2="100" y2="28" />
-                    <circle cx="48" cy="40" r="3.5" fill="#C62828" /><circle cx="70" cy="40" r="3.5" fill="#C62828" /><circle cx="92" cy="40" r="3.5" fill="#C62828" />
-                    <line x1="32" y1="52" x2="108" y2="52" /><line x1="30" y1="88" x2="110" y2="88" />${innerSymbol}
+            <svg id="svgTalismanMain" width="${width}" height="${height}" viewBox="0 0 140 240" xmlns="http://www.w3.org/2000/svg" style="background: radial-gradient(circle at center, #FFE853 0%, #FFC800 80%, #E69D00 100%); border-radius: 8px; box-shadow: inset 0 0 10px rgba(180,83,9,0.25);">
+                <rect x="5" y="5" width="130" height="230" rx="6" fill="none" stroke="#B91C1C" stroke-width="1.4" opacity="0.6" />
+                <rect x="8" y="8" width="124" height="224" rx="4" fill="none" stroke="#B91C1C" stroke-width="0.8" stroke-dasharray="3 1.5" opacity="0.4" />
+                
+                <g fill="none" stroke="#B91C1C" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="70" cy="20" r="3" fill="#B91C1C"/>
+                    <circle cx="58" cy="23" r="2.2" fill="#B91C1C"/>
+                    <circle cx="82" cy="23" r="2.2" fill="#B91C1C"/>
+                    <path d="M 52 30 Q 70 25 88 30" stroke-width="2"/>
+                    <path d="M 70 26 L 70 42" stroke-width="3"/>
+                    <path d="M 45 38 Q 70 34 95 38" stroke-width="2.2"/>
+                    <path d="M 42 45 L 98 45" stroke-width="2"/>
+
+                    <path d="M 46 52 L 94 52 L 50 64 L 90 64 L 54 76 L 86 76" stroke-width="2.4"/>
+                    <line x1="70" y1="76" x2="70" y2="85" stroke-width="3"/>
+
+                    ${symbolHtml}
+
+                    <line x1="70" y1="174" x2="70" y2="200" stroke-width="3.5"/>
+                    <path d="M 48 186 L 70 198 L 92 186" stroke-width="2.5"/>
+                    <path d="M 54 198 L 70 208 L 86 198" stroke-width="2.5"/>
+                    <path d="M 70 208 L 70 224 Q 70 234 60 232 Q 52 229 57 220" stroke-width="3"/>
                 </g>
-                <rect x="36" y="202" width="68" height="24" fill="#C62828" rx="4"/>
-                <text x="70" y="218" font-size="11" font-weight="900" fill="#FFFFFF" text-anchor="middle" font-family="'Pretendard', sans-serif" letter-spacing="1px">${bottomText}</text>
+
+                <g transform="translate(90, 192)">
+                    <rect x="0" y="0" width="24" height="24" rx="3" fill="rgba(185,28,28,0.1)" stroke="#B91C1C" stroke-width="1.4"/>
+                    <text x="12" y="10" font-size="6.5" font-weight="900" fill="#B91C1C" text-anchor="middle" font-family="'Noto Serif KR', serif">${nameChar1}</text>
+                    <text x="12" y="19" font-size="6.5" font-weight="900" fill="#B91C1C" text-anchor="middle" font-family="'Noto Serif KR', serif">${nameChar2}</text>
+                </g>
             </svg>`;
         }
 
@@ -1265,7 +1310,6 @@
             document.getElementById('resAdvice').innerText = data.daily_fortune.advice;
             document.getElementById('resScoreBadge').innerText = `운세 ${data.daily_fortune.score}점`;
 
-            // 시간대별 운세 텍스트 연동
             if (data.daily_fortune.time_flow) {
                 document.getElementById('timeMorningText').innerText = data.daily_fortune.time_flow.morning;
                 document.getElementById('timeAfternoonText').innerText = data.daily_fortune.time_flow.afternoon;
@@ -1311,6 +1355,9 @@
             document.getElementById('mypageProfileDesc').innerText = `${currentUserName} (${data.birth_summary})`;
             
             updateTodayWardrobeMatchPick();
+
+            const talismanPreview = document.getElementById('talismanBannerPreview');
+            if (talismanPreview) talismanPreview.innerHTML = renderAuthenticCinnabarTalisman(currentTalisman?.talisman_type || "metal_wealth", 72, 110);
         }
 
         const COLOR_HEX_MAP = {
@@ -1389,9 +1436,7 @@
                 moodStoryEl.innerText = `"${wada.mood_desc}"`;
             }
 
-            // 1. [상의] 매칭
             const matchedTops = userWardrobeItems.filter(item => item.category === "상의" && item.colors.some(c => c.includes(topColorStd) || topColorStd.includes(c)));
-            // 2. [하의] 매칭
             const matchedBottoms = userWardrobeItems.filter(item => item.category === "하의" && item.colors.some(c => c.includes(bottomColorStd) || bottomColorStd.includes(c)));
 
             let defaultTop = (todayMood === "casual") ? `${topColorStd} 쿨 반팔티` : `${topColorStd} 드레스 셔츠`;
@@ -1409,7 +1454,6 @@
 
             styleEl.innerHTML = `${finalTopText} &nbsp;&amp;&nbsp; ${finalBottomText}`;
 
-            // 3. 소품 탐색 & [무드 필터링]
             const ACCESSORY_CATS = ["시계", "신발", "가방", "액세서리"];
             const matchedAccessories = userWardrobeItems.filter(item => ACCESSORY_CATS.includes(item.category));
             
@@ -1429,7 +1473,6 @@
                 }
             }
 
-            // 4. 고유 컬러 칩 렌더링
             let pointChipHtml = "";
             if (isReverse && wada.point) {
                 pointChipHtml = `
@@ -1453,7 +1496,6 @@
                 ${pointChipHtml}
             `;
 
-            // 5. 소품 가이드
             let matchText = "";
             if (selectedAcc) {
                 const otherAcc = moodCompatibleAccessories.find(i => i.id !== selectedAcc.id && i.category !== selectedAcc.category);
@@ -2103,11 +2145,11 @@
         }
 
         function openTalismanModal() {
-            document.getElementById('talismanTitle').innerText = currentTalisman?.title || "재물만복부";
-            document.getElementById('talismanPower').innerText = currentTalisman?.power || "재물 증식 · 금전운 대통";
-            document.getElementById('talismanDesc').innerText = currentTalisman?.desc || "사방에서 금전과 복록이 쏟아지게 하는 전통 부적입니다.";
+            document.getElementById('talismanTitle').innerText = currentTalisman?.title || "백호 금전부";
+            document.getElementById('talismanPower').innerText = currentTalisman?.power || "결단력 강화 · 투자 수익 실현";
+            document.getElementById('talismanDesc').innerText = currentTalisman?.desc || "사방에서 금전과 복록이 쏟아지게 하는 전통 비급 부적입니다.";
             document.getElementById('talismanOwnerName').innerText = currentUserName;
-            document.getElementById('talismanRealBox').innerHTML = renderAuthenticCinnabarTalisman(currentTalisman?.type || "metal", 160, 260);
+            document.getElementById('talismanRealBox').innerHTML = renderAuthenticCinnabarTalisman(currentTalisman?.talisman_type || "metal_wealth", 160, 260);
             document.getElementById('talismanModal').classList.remove('hidden');
         }
 
@@ -2187,9 +2229,6 @@
                 const back = document.getElementById(`tarotSvgSlot${i}`);
                 if (back) back.innerHTML = getTarotCardBackSvg();
             }
-
-            const talismanPreview = document.getElementById('talismanBannerPreview');
-            if (talismanPreview) talismanPreview.innerHTML = renderAuthenticCinnabarTalisman('metal', 72, 110);
 
             checkAutoLoginSession();
         });
