@@ -268,34 +268,45 @@
                     <div id="resAdvice" style="font-size: 13.5px; color: #E2E8F0; font-weight: 400; line-height: 1.65; text-align: left;"></div>
                 </div>
 
-                <!-- 1. 맞춤 추천 코디 카드 (와다 산조 클래식 배색 팔레트 연동) -->
-                <div class="card" style="padding: 18px 16px; text-align: left; display: flex; flex-direction: column; gap: 12px;">
+                <!-- 1. 맞춤 추천 코디 카드 (정갈한 단일 위계 스타일) -->
+                <div class="card" style="padding: 20px 18px; text-align: left; display: flex; flex-direction: column; gap: 14px;">
+                    
+                    <!-- 1-1. 팔레트 헤더 -->
                     <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <span style="font-size: 13px; color: #64748B; font-weight: 800;">🎨 오늘의 개운 배색 팔레트</span>
-                        <span id="paletteNumberBadge" style="font-size: 11px; background: #0D1527; color: #F6E2A1; font-weight: 800; padding: 2px 8px; border-radius: 6px;">Palette No. 84</span>
+                        <div style="display: flex; align-items: center; gap: 6px;">
+                            <span style="font-size: 15px;">🎨</span>
+                            <h4 style="font-size: 15px; font-weight: 800; color: #0F172A;">오늘의 개운 배색</h4>
+                        </div>
+                        <span id="paletteNumberBadge" style="font-size: 11px; background: #0D1527; color: #F6E2A1; font-weight: 800; padding: 3px 8px; border-radius: 6px; letter-spacing: 0.3px;">Palette No. 84</span>
                     </div>
 
-                    <!-- [와다 산조 고유 HEX & 명칭 칩 컨테이너] -->
-                    <div id="dynamicColorPaletteBox" style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 14px; padding: 12px 14px; display: flex; align-items: center; justify-content: flex-start; gap: 8px; overflow-x: auto;">
+                    <!-- 1-2. 와다 산조 컬러 칩 영역 (박스 중첩 제거, 깔끔한 칩 그리드) -->
+                    <div id="dynamicColorPaletteBox" style="display: flex; align-items: center; justify-content: flex-start; gap: 8px; flex-wrap: wrap;">
                     </div>
 
-                    <!-- 1문장 감성 무드 스토리 -->
-                    <div id="paletteMoodStoryBox" style="font-size: 12.5px; color: #475569; line-height: 1.55; background: #FAF9F6; border-left: 3px solid #2D6A4F; padding: 8px 10px; border-radius: 6px;">
+                    <!-- 1-3. 감성 해설 (은은한 서브텍스트) -->
+                    <p id="paletteMoodStoryBox" style="font-size: 12.5px; color: #64748B; line-height: 1.6; margin: 0; padding-left: 2px;">
                         깊은 미드나잇 인디고와 안개빛 스카이블루가 만나 사주의 금전운과 전문성을 견고히 세웁니다.
+                    </p>
+
+                    <!-- 가느다란 정갈한 구분선 -->
+                    <hr style="border: none; border-top: 1px solid #F1F5F9; margin: 2px 0;">
+
+                    <!-- 1-4. 오늘 추천 룩 (상의 & 하의) -->
+                    <div>
+                        <span style="font-size: 11.5px; font-weight: 700; color: #64748B; display: block; margin-bottom: 4px;">👔 오늘 추천 룩</span>
+                        <p id="resStyle" style="font-weight: 800; font-size: 15.5px; color: #0F172A; margin: 0; line-height: 1.5;">
+                            네이비 쿨 반팔티 & 내 옷장의 [플랙 연청바지]
+                        </p>
                     </div>
 
-                    <!-- 오늘의 추천 코디 -->
-                    <div style="margin-top: 2px;">
-                        <span style="font-size: 11.5px; color: #64748B; display: block; margin-bottom: 3px;">추천 스타일링:</span>
-                        <p id="resStyle" style="font-weight: 800; font-size: 15.5px; color: #0F172A; margin: 0; line-height: 1.5;">네이비 쿨 반팔티 & 플랙 연청 데님</p>
-                    </div>
-
-                    <!-- 일체형 소프트 개운 카드 -->
-                    <div id="wardrobeDailyMatchPick" style="border-radius: 14px; overflow: hidden; border: 1.2px solid #E2E8F0; background: #FAFAF7; box-shadow: 0 1px 3px rgba(0,0,0,0.02);">
-                        <div style="padding: 13px 14px; font-size: 13px; color: #64748B; line-height: 1.6;">
-                            👗 <strong>오늘의 옷장 픽:</strong> 내 옷장에 아이템을 등록하면 오늘 일진과 무드에 딱 맞는 아이템을 추천해 드려요!
+                    <!-- 1-5. 소품 포인트 매칭 (시선이 편안한 단일 가이드) -->
+                    <div id="wardrobeDailyMatchPick" style="background: #F8FAFC; border-radius: 12px; padding: 12px 14px; border: 1px solid #E2E8F0;">
+                        <div style="font-size: 13px; color: #334155; line-height: 1.55;">
+                            ✨ <strong>포인트 소품:</strong> 발끝에 내 옷장의 <strong>[호카 운동화]</strong>를 함께 매치해 보세요!
                         </div>
                     </div>
+
                 </div>
 
                 <!-- 2. 내 옷장 아이템 서랍 -->
@@ -1317,7 +1328,7 @@
             return "smart_casual";
         }
 
-        // 와다 산조 고유 배색 칩 & 옷장 매칭 렌더러
+        // 위계 정돈된 와다 산조 컬러 & 룩 & 포인트 렌더러
         function updateTodayWardrobeMatchPick() {
             const styleEl = document.getElementById('resStyle');
             const pickEl = document.getElementById('wardrobeDailyMatchPick');
@@ -1343,7 +1354,7 @@
                 numBadge.innerText = `Palette No. ${wada.palette_no}`;
             }
             if (moodStoryEl) {
-                moodStoryEl.innerText = wada.mood_desc;
+                moodStoryEl.innerText = `"${wada.mood_desc}"`;
             }
 
             const isReverse = (wada.mode === "reverse");
@@ -1369,7 +1380,7 @@
                 finalBottomText = `내 옷장의 <strong>[${matchedBottoms[0].nickname}]</strong>`;
             }
 
-            styleEl.innerHTML = `${finalTopText} & ${finalBottomText}`;
+            styleEl.innerHTML = `${finalTopText} &nbsp;&amp;&nbsp; ${finalBottomText}`;
 
             // 3. 소품 탐색 & [무드 필터링]
             const ACCESSORY_CATS = ["시계", "신발", "가방", "액세서리"];
@@ -1391,70 +1402,49 @@
                 }
             }
 
-            // 4. 와다 산조 예술적 컬러 칩 렌더링 (HEX + 고유 명칭)
+            // 4. 정돈된 와다 산조 컬러 칩 렌더링
             let pointChipHtml = "";
             if (isReverse && wada.point) {
                 pointChipHtml = `
-                    <span style="font-size: 14px; font-weight: 800; color: #D97706; margin: 0 2px;">➕</span>
-                    <div style="display: flex; align-items: center; gap: 6px; background: #FEF3C7; border: 1.5px solid #FCD34D; padding: 4px 10px; border-radius: 9999px;">
-                        <span style="width: 14px; height: 14px; border-radius: 9999px; background: ${wada.point.hex}; border: 1px solid rgba(0,0,0,0.15); display: inline-block;"></span>
-                        <span style="font-size: 11px; font-weight: 800; color: #78350F;">${wada.point.name} (${wada.point.hex})</span>
+                    <span style="font-size: 13px; font-weight: 800; color: #D97706; margin: 0 1px;">➕</span>
+                    <div style="display: flex; align-items: center; gap: 6px; background: #FEF3C7; border: 1.2px solid #FCD34D; padding: 5px 10px; border-radius: 9999px;">
+                        <span style="width: 13px; height: 13px; border-radius: 9999px; background: ${wada.point.hex}; border: 1px solid rgba(0,0,0,0.15); display: inline-block;"></span>
+                        <span style="font-size: 11.5px; font-weight: 800; color: #78350F;">${wada.point.name}</span>
                     </div>
                 `;
             }
 
             paletteBox.innerHTML = `
-                <div style="display: flex; align-items: center; gap: 6px; background: #FFFFFF; border: 1px solid #E2E8F0; padding: 4px 10px; border-radius: 9999px;">
-                    <span style="width: 14px; height: 14px; border-radius: 9999px; background: ${wada.top.hex}; border: 1px solid rgba(0,0,0,0.15); display: inline-block;"></span>
-                    <span style="font-size: 11px; font-weight: 800; color: #334155;">${wada.top.name} (${wada.top.hex})</span>
+                <div style="display: flex; align-items: center; gap: 6px; background: #F8FAFC; border: 1.2px solid #E2E8F0; padding: 5px 10px; border-radius: 9999px;">
+                    <span style="width: 13px; height: 13px; border-radius: 9999px; background: ${wada.top.hex}; border: 1px solid rgba(0,0,0,0.15); display: inline-block;"></span>
+                    <span style="font-size: 11.5px; font-weight: 700; color: #334155;">${wada.top.name}</span>
                 </div>
-                <div style="display: flex; align-items: center; gap: 6px; background: #FFFFFF; border: 1px solid #E2E8F0; padding: 4px 10px; border-radius: 9999px;">
-                    <span style="width: 14px; height: 14px; border-radius: 9999px; background: ${wada.bottom.hex}; border: 1px solid rgba(0,0,0,0.15); display: inline-block;"></span>
-                    <span style="font-size: 11px; font-weight: 800; color: #334155;">${wada.bottom.name} (${wada.bottom.hex})</span>
+                <div style="display: flex; align-items: center; gap: 6px; background: #F8FAFC; border: 1.2px solid #E2E8F0; padding: 5px 10px; border-radius: 9999px;">
+                    <span style="width: 13px; height: 13px; border-radius: 9999px; background: ${wada.bottom.hex}; border: 1px solid rgba(0,0,0,0.15); display: inline-block;"></span>
+                    <span style="font-size: 11.5px; font-weight: 700; color: #334155;">${wada.bottom.name}</span>
                 </div>
                 ${pointChipHtml}
             `;
 
-            // 5. 일체형 개운 카드 렌더링
-            const headerBg = isReverse ? "background: #FEF3C7; border-bottom: 1px solid #FDE68A; color: #78350F;" : "background: #F1F5F9; border-bottom: 1px solid #E2E8F0; color: #334155;";
-            const headerTitle = isReverse ? "✦ 시크릿 반전 코디 데이" : "✦ 오늘의 오행 상생 밸런스";
-            const subTag = isReverse ? `<span style="font-size: 11px; font-weight: 700; color: #92400E; opacity: 0.9;">포인트 소품 반전</span>` : `<span style="font-size: 11px; font-weight: 700; color: #64748B;">톤온톤 조화</span>`;
-
-            let reasonHtml = "";
-            if (isReverse) {
-                reasonHtml = `
-                    <div style="border-top: 1px dashed #CBD5E1; margin-top: 10px; padding-top: 10px;">
-                        <span style="font-weight: 800; color: #047857; font-size: 12px; display: block; margin-bottom: 3px;">📜 명리학 개운 비결 · ${wada.theme}</span>
-                        <p style="font-size: 12.5px; color: #334155; line-height: 1.6; margin: 0;">${wada.mood_desc}</p>
-                    </div>
-                `;
-            }
-
-            let matchContentHtml = "";
+            // 5. 소품 가이드 (시선이 편안한 단일 박스 형태)
+            let matchText = "";
             if (selectedAcc) {
                 const otherAcc = moodCompatibleAccessories.find(i => i.id !== selectedAcc.id && i.category !== selectedAcc.category);
-                let pickPhrase = `<strong>[${selectedAcc.nickname}]</strong>`;
+                let pickPhrase = `내 옷장의 <strong>[${selectedAcc.nickname}]</strong>`;
                 if (otherAcc) {
-                    pickPhrase = `<strong>[${selectedAcc.nickname}]</strong>를 매치하거나 <strong>[${otherAcc.nickname}]</strong> 중 편한 아이템`;
+                    pickPhrase = `내 옷장의 <strong>[${selectedAcc.nickname}]</strong> 또는 <strong>[${otherAcc.nickname}]</strong>`;
                 }
-                matchContentHtml = `✨ <strong>오늘의 포인트 매칭:</strong> 위 추천 룩에 내 옷장의 ${pickPhrase}을(를) 더해 보세요!`;
+                matchText = `발끝/손목에 ${pickPhrase}을(를) 더해 완벽한 균형을 맞춰보세요!`;
             } else {
                 const generalAccText = (todayMood === "casual") ? "캐주얼한 스니커즈나 러버/나토 밴드 시계" : "단정한 가죽/메탈 시계나 드레스 슈즈";
-                matchContentHtml = `✨ <strong>오늘의 스타일링 팁:</strong> ${todayMood === "casual" ? "편안한 캐주얼 룩" : "단정한 포멀 룩"}에 어울리는 <strong>${generalAccText}</strong> 등으로 자연스러운 포인트를 주시면 대길합니다!`;
+                matchText = `오늘 룩에는 <strong>${generalAccText}</strong> 등으로 자연스럽게 포인트를 주시면 대길합니다.`;
             }
 
+            const headerTag = isReverse ? `<span style="font-size:11px; background:#FEF3C7; color:#78350F; font-weight:800; padding:2px 7px; border-radius:4px; margin-right:6px;">✦ 반전 포인트</span>` : `<span style="font-size:11px; background:#F1F5F9; color:#475569; font-weight:700; padding:2px 7px; border-radius:4px; margin-right:6px;">소품 매칭</span>`;
+
             pickEl.innerHTML = `
-                <div>
-                    <div style="padding: 7px 14px; font-size: 12px; font-weight: 800; display: flex; justify-content: space-between; align-items: center; ${headerBg}">
-                        <span>${headerTitle}</span>
-                        ${subTag}
-                    </div>
-                    <div style="padding: 13px 14px;">
-                        <div style="font-size: 13.5px; color: #166534; line-height: 1.6;">
-                            ${matchContentHtml}
-                        </div>
-                        ${reasonHtml}
-                    </div>
+                <div style="font-size: 13px; color: #334155; line-height: 1.6;">
+                    ${headerTag} ${matchText}
                 </div>
             `;
         }
