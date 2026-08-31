@@ -269,16 +269,15 @@
                     <div id="resAdvice" style="font-size: 13.5px; color: #E2E8F0; font-weight: 400; line-height: 1.65; text-align: left;"></div>
                 </div>
 
-                <!-- 1. 맞춤 추천 코디 카드 (대안 1: 일체형 소프트 개운 카드 적용) -->
+                <!-- 1. 맞춤 추천 코디 카드 (원형 컬러 칩 + 면적 위계 [상의+하의 ➕ 포인트소품] 구조) -->
                 <div class="card" style="padding: 18px 16px; text-align: left; display: flex; flex-direction: column; gap: 12px;">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                         <span style="font-size: 13px; color: #64748B; font-weight: 800;">👔 맞춤 추천 코디</span>
                     </div>
 
-                    <!-- 오늘의 행운 컬러 제시 -->
-                    <div style="display: flex; align-items: center; gap: 8px; font-size: 13.5px; background: #F8FAFC; padding: 9px 12px; border-radius: 12px; border: 1px solid #E2E8F0;">
-                        <span style="color: #0D1527; font-weight: 800;">🎨 오늘의 행운 컬러:</span>
-                        <span id="todayLuckyColorsBadge" style="font-weight: 800; color: #2D6A4F;">네이비 · 스카이블루</span>
+                    <!-- [실제 원형 컬러 칩 컨테이너] 상의 + 하의 ➕ 포인트 소품 -->
+                    <div id="dynamicColorPaletteBox" style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 14px; padding: 12px 14px; display: flex; align-items: center; justify-content: flex-start; gap: 8px; overflow-x: auto;">
+                        <!-- JS에서 동적으로 실제 컬러 칩들을 렌더링 -->
                     </div>
 
                     <!-- 오늘의 추천 코디 (상의 1벌 + 하의 1벌 1:1 행운 컬러 매칭) -->
@@ -287,7 +286,7 @@
                         <p id="resStyle" style="font-weight: 800; font-size: 15.5px; color: #0F172A; margin: 0; line-height: 1.5;">네이비 쿨 셔츠 & 스카이블루 슬랙스</p>
                     </div>
 
-                    <!-- [대안 1] 일체형 소프트 개운 카드 (박스 중첩 완전 제거, 가느다란 점선 구분선 정돈) -->
+                    <!-- 일체형 소프트 개운 카드 (박스 중첩 완전 제거, 가느다란 점선 구분선 정돈) -->
                     <div id="wardrobeDailyMatchPick" style="border-radius: 14px; overflow: hidden; border: 1.2px solid #E2E8F0; background: #FAFAF7; box-shadow: 0 1px 3px rgba(0,0,0,0.02);">
                         <div style="padding: 13px 14px; font-size: 13px; color: #64748B; line-height: 1.6;">
                             👗 <strong>오늘의 옷장 픽:</strong> 내 옷장에 아이템을 등록하면 오늘 일진에 딱 맞는 아이템을 추천해 드려요!
@@ -1240,8 +1239,6 @@
                 "water": ["머스터드", "베이지"]
             };
             currentLuckyColors = data.daily_fortune.lucky_colors || LUCKY_COLOR_PAIRS[d_elem] || ["네이비", "스카이블루"];
-            const luckyColorText = currentLuckyColors.join(' · ');
-            document.getElementById('todayLuckyColorsBadge').innerText = luckyColorText;
 
             const dtl = data.saju_data.pillars_detail;
             setElemBadge('cg_h_badge', dtl.hour.cg, dtl.hour.cg_elem);
@@ -1272,11 +1269,29 @@
             updateTodayWardrobeMatchPick();
         }
 
-        // [대안 1 적용] 정통 명리학 3대 원리 연동 일체형 소프트 개운 카드 렌더링
+        // --- 다이내믹 아이템 그래픽 및 색상 맵 ---
+        const COLOR_HEX_MAP = {
+            "화이트": "#FFFFFF", "아이보리/크림": "#FAF5EA", "베이지": "#D9C3A5", "카멜/브라운": "#8B5A2B",
+            "블랙": "#1E293B", "차콜": "#334155", "그레이": "#94A3B8", "실버": "#CBD5E1",
+            "골드": "#EAB308", "레드": "#EF4444", "와인/버건디": "#881337", "핑크": "#F472B6",
+            "코랄/오렌지": "#FB923C", "옐로우": "#FBBF24", "머스터드": "#D97706", "올리브/카키": "#556B2F",
+            "민트/라임": "#10B981", "그린": "#16A34A", "스카이블루": "#60A5FA", "네이비": "#1E3A8A"
+        };
+
+        function getHexColor(colorName, fallback = "#64748B") {
+            if (!colorName) return fallback;
+            for (let k in COLOR_HEX_MAP) {
+                if (colorName.includes(k) || k.includes(colorName)) return COLOR_HEX_MAP[k];
+            }
+            return fallback;
+        }
+
+        // 실제 원형 컬러 칩 + [상의 + 하의 ➕ 포인트 소품] 면적 위계 렌더러
         function updateTodayWardrobeMatchPick() {
             const styleEl = document.getElementById('resStyle');
             const pickEl = document.getElementById('wardrobeDailyMatchPick');
-            if (!styleEl || !pickEl) return;
+            const paletteBox = document.getElementById('dynamicColorPaletteBox');
+            if (!styleEl || !pickEl || !paletteBox) return;
 
             const ACCESSORY_CATS = ["시계", "신발", "가방", "액세서리"];
 
@@ -1305,16 +1320,22 @@
 
             const topColor = currentLuckyColors[0] || "네이비";
             const bottomColor = currentLuckyColors[1] || "스카이블루";
+            const topHex = getHexColor(topColor, "#1E3A8A");
+            const bottomHex = getHexColor(bottomColor, "#60A5FA");
 
-            // 1. [상의] 매칭 (첫번째 행운 컬러 우선 탐색)
+            const fortune = currentFortuneData?.daily_fortune || {};
+            const isReverse = fortune.is_reverse_day;
+            const stylingMode = fortune.styling_mode || "harmony";
+            const ruleTitle = fortune.rule_title || "오행 상생(相生) 조화";
+            const ruleReason = fortune.rule_reason || "오늘 일진과 사주 본원이 조화롭게 상생하여 차분한 안정을 이룹니다.";
+
+            // 1. [상의] 매칭
             const matchedTops = userWardrobeItems.filter(item => item.category === "상의" && isColorMatch(item, [topColor]));
-            // 2. [하의] 매칭 (두번째 행운 컬러 우선 탐색)
+            // 2. [하의] 매칭
             const matchedBottoms = userWardrobeItems.filter(item => item.category === "하의" && isColorMatch(item, [bottomColor]));
 
-            // 행운 컬러 1:1 디폴트 텍스트
             let defaultTop = `${topColor} 쿨 셔츠`;
             let defaultBottom = `${bottomColor} 팬츠 (라이트 데님)`;
-
             if (topColor === "화이트") defaultTop = "화이트 린넨 셔츠";
             if (bottomColor === "베이지") defaultBottom = "베이지 슬랙스";
             if (bottomColor === "차콜") defaultBottom = "차콜 슬랙스";
@@ -1331,9 +1352,47 @@
 
             styleEl.innerHTML = `${finalTopText} & ${finalBottomText}`;
 
-            // 3. 내 옷장 소품(시계/신발/가방/액세서리) 포인트 매칭 및 일체형 카드 렌더링
+            // 3. 소품 탐색 및 포인트 컬러 결정
             const matchedAccessories = userWardrobeItems.filter(item => ACCESSORY_CATS.includes(item.category));
+            let pointColorName = "와인";
+            let pointHex = "#881337";
 
+            let selectedAcc = null;
+            if (stylingMode !== "harmony") {
+                selectedAcc = matchedAccessories.find(i => isColorMatch(i, ["와인/버건디", "골드", "레드", "실버"])) || matchedAccessories[0];
+                pointColorName = selectedAcc?.colors?.[0] || "와인/골드";
+                pointHex = getHexColor(pointColorName, "#881337");
+            } else {
+                selectedAcc = matchedAccessories.find(i => isColorMatch(i, currentLuckyColors)) || matchedAccessories[0];
+                pointColorName = selectedAcc?.colors?.[0] || topColor;
+                pointHex = getHexColor(pointColorName, topHex);
+            }
+
+            // 4. [동적 원형 컬러 칩 렌더링] 상의 + 하의 ➕ 포인트 소품
+            let pointChipHtml = "";
+            if (stylingMode !== "harmony") {
+                pointChipHtml = `
+                    <span style="font-size: 14px; font-weight: 800; color: #D97706; margin: 0 2px;">➕</span>
+                    <div style="display: flex; align-items: center; gap: 6px; background: #FEF3C7; border: 1.5px solid #FCD34D; padding: 4px 10px; border-radius: 9999px;">
+                        <span style="width: 14px; height: 14px; border-radius: 9999px; background: ${pointHex}; border: 1px solid rgba(0,0,0,0.15); display: inline-block;"></span>
+                        <span style="font-size: 11.5px; font-weight: 800; color: #78350F;">포인트 · ${pointColorName}</span>
+                    </div>
+                `;
+            }
+
+            paletteBox.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 6px; background: #FFFFFF; border: 1px solid #E2E8F0; padding: 4px 10px; border-radius: 9999px;">
+                    <span style="width: 14px; height: 14px; border-radius: 9999px; background: ${topHex}; border: 1px solid rgba(0,0,0,0.15); display: inline-block;"></span>
+                    <span style="font-size: 11.5px; font-weight: 800; color: #334155;">상의 · ${topColor}</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 6px; background: #FFFFFF; border: 1px solid #E2E8F0; padding: 4px 10px; border-radius: 9999px;">
+                    <span style="width: 14px; height: 14px; border-radius: 9999px; background: ${bottomHex}; border: 1px solid rgba(0,0,0,0.15); display: inline-block;"></span>
+                    <span style="font-size: 11.5px; font-weight: 800; color: #334155;">하의 · ${bottomColor}</span>
+                </div>
+                ${pointChipHtml}
+            `;
+
+            // 5. 일체형 개운 카드 렌더링
             if (matchedAccessories.length === 0) {
                 pickEl.innerHTML = `
                     <div style="padding: 13px 14px; font-size: 13px; color: #64748B; line-height: 1.6;">
@@ -1341,29 +1400,14 @@
                     </div>
                 `;
             } else {
-                const fortune = currentFortuneData?.daily_fortune || {};
-                const isReverse = fortune.is_reverse_day;
-                const stylingMode = fortune.styling_mode || "harmony";
-                const ruleTitle = fortune.rule_title || "오행 상생(相生) 조화";
-                const ruleReason = fortune.rule_reason || "오늘 일진과 사주 본원이 조화롭게 상생하여 차분한 안정을 이룹니다.";
-
-                let selectedAcc = null;
-                if (stylingMode !== "harmony") {
-                    selectedAcc = matchedAccessories.find(i => isColorMatch(i, ["와인/버건디", "골드", "레드", "실버"])) || matchedAccessories[0];
-                } else {
-                    selectedAcc = matchedAccessories.find(i => isColorMatch(i, currentLuckyColors)) || matchedAccessories[0];
-                }
-
                 const otherAcc = matchedAccessories.find(i => i.id !== selectedAcc.id && i.category !== selectedAcc.category);
                 const pickList = [`<strong>[${selectedAcc.nickname}]</strong>`];
                 if (otherAcc) pickList.push(`<strong>[${otherAcc.nickname}]</strong>`);
 
-                // 상단 헤더 바 (반전 데이 vs 일반 상생 데이)
                 const headerBg = isReverse ? "background: #FEF3C7; border-bottom: 1px solid #FDE68A; color: #78350F;" : "background: #F1F5F9; border-bottom: 1px solid #E2E8F0; color: #334155;";
                 const headerTitle = isReverse ? "✦ 시크릿 반전 코디 데이" : "✦ 오늘의 오행 상생 밸런스";
                 const subTag = isReverse ? `<span style="font-size: 11px; font-weight: 700; color: #92400E; opacity: 0.9;">포인트 소품 반전</span>` : `<span style="font-size: 11px; font-weight: 700; color: #64748B;">톤온톤 조화</span>`;
 
-                // 하단 개운 비결 (내부 박스 대신 가느다란 점선 구분선으로 일체화)
                 let reasonHtml = "";
                 if (stylingMode !== "harmony") {
                     reasonHtml = `
@@ -1389,23 +1433,6 @@
                     </div>
                 `;
             }
-        }
-
-        // --- 다이내믹 아이템 그래픽 SVG 생성 엔진 ---
-        const COLOR_HEX_MAP = {
-            "화이트": "#FFFFFF", "아이보리/크림": "#FAF5EA", "베이지": "#D9C3A5", "카멜/브라운": "#8B5A2B",
-            "블랙": "#1E293B", "차콜": "#334155", "그레이": "#94A3B8", "실버": "#CBD5E1",
-            "골드": "#EAB308", "레드": "#EF4444", "와인/버건디": "#881337", "핑크": "#F472B6",
-            "코랄/오렌지": "#FB923C", "옐로우": "#FBBF24", "머스터드": "#D97706", "올리브/카키": "#556B2F",
-            "민트/라임": "#10B981", "그린": "#16A34A", "스카이블루": "#60A5FA", "네이비": "#1E3A8A"
-        };
-
-        function getHexColor(colorName, fallback = "#64748B") {
-            if (!colorName) return fallback;
-            for (let k in COLOR_HEX_MAP) {
-                if (colorName.includes(k) || k.includes(colorName)) return COLOR_HEX_MAP[k];
-            }
-            return fallback;
         }
 
         function getDynamicItemIconSvg(item) {
