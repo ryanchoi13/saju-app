@@ -19,7 +19,7 @@
 
     <meta name="theme-color" content="#0D1527">
     <script src="https://developers.kakao.com/sdk/js/kakao.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800;900&family=Noto+Serif+KR:wght@600;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800;900&family=Noto+Serif+KR:wght@600;700;800;900&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Pretendard', sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background-color: #080D1A; color: #1E293B; display: flex; justify-content: center; min-height: 100vh; }
@@ -172,7 +172,6 @@
         </header>
 
         <main>
-            <!-- 최초 카카오 로그인 화면 -->
             <div id="view-login-gate" class="login-gate-card">
                 <div style="width: 60px; height: 60px; margin: 0 auto 4px; display: flex; align-items: center; justify-content: center; border-radius: 16px; background: radial-gradient(circle, rgba(212,175,55,0.2) 0%, rgba(212,175,55,0.05) 100%); border: 1px solid rgba(212,175,55,0.3);">
                     <svg width="38" height="38" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -197,7 +196,6 @@
                 </button>
             </div>
 
-            <!-- 신규 회원 사주 확인 폼 -->
             <div id="onboardingInputView" class="card hidden" style="text-align: center;">
                 <div class="gift-badge" style="margin-bottom: 12px;">🎁 카카오 연동 완료 (+1,000 복채 지급)</div>
                 <h2 style="font-size: 21px; font-weight: 800; margin-bottom: 2px; font-family: 'Noto Serif KR', serif;">사주 명식 확인</h2>
@@ -407,7 +405,6 @@
                         </div>
                     </div>
 
-                    <!-- 5. 전통 맞춤 부적 서랍 -->
                     <div id="drawerTalisman" class="drawer-card">
                         <div class="drawer-header" onclick="toggleDrawer('drawerTalisman')">
                             <div class="drawer-title-box">
@@ -452,7 +449,7 @@
                                 <div onclick="openZodiacModal('zodiac', '원숭이')" class="zodiac-btn"><span class="zodiac-icon">🐵</span><span class="zodiac-label">원숭이</span></div>
                                 <div onclick="openZodiacModal('zodiac', '닭')" class="zodiac-btn"><span class="zodiac-icon">🐔</span><span class="zodiac-label">닭</span></div>
                                 <div onclick="openZodiacModal('zodiac', '개')" class="zodiac-btn"><span class="zodiac-icon">🐶</span><span class="zodiac-label">개</span></div>
-                                <div onclick="openZodiacModal('zodiac', '돼지')" class="zodiac-btn"><span class="zodiac-icon">🐷</span><span class="zodiac-label">돼지</span></div>
+                                <div onclick="openZodiacModal('돼지')" class="zodiac-btn"><span class="zodiac-icon">🐷</span><span class="zodiac-label">돼지</span></div>
                             </div>
 
                             <div id="gridStarBox" class="zodiac-grid-2x6 hidden">
@@ -521,7 +518,6 @@
                         </div>
                     </div>
 
-                    <!-- 오행 에너지 분포 (간소화) -->
                     <div style="margin-top: 18px; text-align: left;">
                         <div style="margin-bottom: 8px;">
                             <span style="font-size: 14px; font-weight: 800; color: #0F172A;">오행(五行) 에너지 분포</span>
@@ -832,7 +828,6 @@
                 <div id="zodiacExtraInfo" style="font-size: 13px; color: #2D6A4F; font-weight: 600; border-top: 1px dashed #E2E8F0; padding-top: 8px;"></div>
             </div>
             
-            <!-- 하단 2단 버튼 (닫기 + 공유하기) -->
             <div style="display: flex; gap: 8px; margin-top: 4px;">
                 <button onclick="closeZodiacModal()" style="flex: 1; background: #E2E8F0; color: #475569; border: none; font-size: 14px; font-weight: 700; padding: 13px; border-radius: 12px; cursor: pointer;">닫기</button>
                 <button onclick="shareZodiacFortune()" style="flex: 2; background: #FEE500; color: #191919; border: none; font-size: 14px; font-weight: 800; padding: 13px; border-radius: 12px; cursor: pointer;">💬 친구에게 공유하기</button>
@@ -1363,7 +1358,7 @@
             "화이트": "#FFFFFF", "아이보리/크림": "#FAF5EA", "베이지": "#D9C3A5", "카멜/브라운": "#8B5A2B",
             "블랙": "#1E293B", "차콜": "#334155", "그레이": "#94A3B8", "실버": "#CBD5E1",
             "골드": "#EAB308", "레드": "#EF4444", "와인/버건디": "#881337", "핑크": "#F472B6",
-            "코ラル/오렌지": "#FB923C", "옐로우": "#FBBF24", "머스터드": "#D97706", "올리브/카키": "#556B2F",
+            "코랄/오렌지": "#FB923C", "옐로우": "#FBBF24", "머스터드": "#D97706", "올리브/카키": "#556B2F",
             "민트/라임": "#10B981", "그린": "#16A34A", "스카이블루": "#60A5FA", "네이비": "#1E3A8A"
         };
 
@@ -1957,4 +1952,286 @@
                         <label style="padding:10px; border:1px solid #E2E8F0; border-radius:8px; background:white; cursor:pointer;"><input type="radio" name="optM" value="솔로" checked> 솔로 (미혼)</label>
                         <label style="padding:10px; border:1px solid #E2E8F0; border-radius:8px; background:white; cursor:pointer;"><input type="radio" name="optM" value="썸/짝사랑"> 썸 / 짝사랑</label>
                         <label style="padding:10px; border:1px solid #E2E8F0; border-radius:8px; background:white; cursor:pointer;"><input type="radio" name="optM" value="연애중"> 연애중</label>
-                        <label style="padding:10px; border:1px solid #E2저는 언어 모델일 뿐이라 그것에 필요한 정보나 능력이 없어서 도와드릴 수가 없습니다.
+                        <label style="padding:10px; border:1px solid #E2E8F0; border-radius:8px; background:white; cursor:pointer;"><input type="radio" name="optM" value="기혼"> 기혼 (부부)</label>
+                    </div>`;
+            } else if (key === 'business') {
+                titleEl.innerText = "🏢 현재 직업/사업 상태를 선택해 주세요";
+                modalBox.innerHTML = `
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                        <label style="padding:10px; border:1px solid #E2E8F0; border-radius:8px; background:white; cursor:pointer;"><input type="radio" name="optM" value="직장인" checked> 직장인</label>
+                        <label style="padding:10px; border:1px solid #E2E8F0; border-radius:8px; background:white; cursor:pointer;"><input type="radio" name="optM" value="취업/이직"> 취업 / 이직</label>
+                        <label style="padding:10px; border:1px solid #E2E8F0; border-radius:8px; background:white; cursor:pointer;"><input type="radio" name="optM" value="사업가"> 사업가</label>
+                        <label style="padding:10px; border:1px solid #E2E8F0; border-radius:8px; background:white; cursor:pointer;"><input type="radio" name="optM" value="창업"> 창업 준비</label>
+                    </div>`;
+            }
+            document.getElementById('themeSelectModal').classList.remove('hidden');
+        }
+
+        function closeThemeSelectModal() { document.getElementById('themeSelectModal').classList.add('hidden'); }
+        function confirmUnlockThemeOnServer() {
+            const selEl = document.querySelector('input[name="optM"]:checked');
+            const subOpt = selEl ? selEl.value : '기본';
+            closeThemeSelectModal();
+            handleUnlockReportOnServer(currentThemeKey, 220, subOpt);
+        }
+
+        function setGenderType(gender) {
+            selectedGender = gender;
+            document.getElementById('btnGenderMale').className = (gender === 'male') ? "cal-btn active" : "cal-btn";
+            document.getElementById('btnGenderFemale').className = (gender === 'female') ? "cal-btn active" : "cal-btn";
+        }
+
+        function setCalType(type) {
+            selectedCalendarType = type;
+            ['solar', 'lunar', 'leap'].forEach(t => {
+                const btn = document.getElementById(`btnCal${t.charAt(0).toUpperCase() + t.slice(1)}`);
+                if (btn) btn.className = (t === type) ? "cal-btn active" : "cal-btn";
+            });
+        }
+
+        function toggleDrawer(drawerId) {
+            const card = document.getElementById(drawerId);
+            const body = card.querySelector('.drawer-body');
+            if (!body) return;
+            const isOpen = card.classList.contains('open');
+            card.classList.toggle('open', !isOpen);
+            body.classList.toggle('hidden', isOpen);
+        }
+
+        function getGoldCoinSvg(size = 16, color = "#F59E0B") {
+            return `<svg viewBox="0 0 20 20" width="${size}" height="${size}" style="display:inline-block; vertical-align:middle;"><circle cx="10" cy="10" r="9" fill="${color}" stroke="#D97706" stroke-width="1.2"/><text x="10" y="14" font-size="11" font-weight="800" fill="#FFFFFF" text-anchor="middle">C</text></svg>`;
+        }
+
+        function goToHomeAndScrollTop() { switchTab('today'); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+
+        function switchTab(tabId) {
+            ['today', 'saju', 'theme', 'mypage'].forEach(t => {
+                document.getElementById(`view-${t}`)?.classList.add('hidden');
+                document.getElementById(`tab-${t}`)?.classList.remove('active');
+            });
+            document.getElementById(`view-${tabId}`)?.classList.remove('hidden');
+            document.getElementById(`tab-${tabId}`)?.classList.add('active');
+            if (tabId === 'mypage') renderServerArchive();
+        }
+
+        function switchZodiacSubTab(type) {
+            const btnZodiac = document.getElementById('btnSubZodiac');
+            const btnStar = document.getElementById('btnSubStar');
+            const gridZodiac = document.getElementById('gridZodiacBox');
+            const gridStar = document.getElementById('gridStarBox');
+
+            if (type === 'zodiac') {
+                btnZodiac.className = 'sub-tab-btn active';
+                btnStar.className = 'sub-tab-btn';
+                gridZodiac.classList.remove('hidden');
+                gridStar.classList.add('hidden');
+            } else {
+                btnStar.className = 'sub-tab-btn active';
+                btnZodiac.className = 'sub-tab-btn';
+                gridStar.classList.remove('hidden');
+                gridStar.classList.add('hidden');
+            }
+        }
+
+        async function openZodiacModal(type, key) {
+            try {
+                const res = await fetch(`/api/zodiac-fortune?type=${type}&key=${encodeURIComponent(key)}`);
+                const data = await res.json();
+                document.getElementById('zodiacModalName').innerText = `${data.name} 오늘의 운세`;
+                document.getElementById('zodiacModalScore').innerText = `${data.score}점`;
+                document.getElementById('zodiacModalTitle').innerText = data.title;
+                document.getElementById('zodiacModalOverview').innerText = data.overview;
+
+                const iconBox = document.getElementById('zodiacModalIconBox');
+                if (type === 'star' && ZODIAC_GLYPHS[key]) {
+                    iconBox.innerHTML = ZODIAC_GLYPHS[key];
+                } else {
+                    iconBox.innerHTML = `<span style="font-size: 24px;">${data.name.includes('쥐')?'🐭':data.name.includes('소')?'🐮':data.name.includes('호랑이')?'🐯':data.name.includes('토끼')?'🐰':data.name.includes('용')?'🐲':data.name.includes('뱀')?'🐍':data.name.includes('말')?'🐴':data.name.includes('양')?'🐑':data.name.includes('원숭이')?'🐵':data.name.includes('닭')?'🐔':data.name.includes('개')?'🐶':'🐷'}</span>`;
+                }
+
+                const tipsBox = document.getElementById('zodiacYearTipsBox');
+                if (type === 'zodiac' && data.year_tips) {
+                    tipsBox.innerHTML = `
+                        <p style="font-weight: 800; color: #0F172A; margin-bottom: 8px; font-size: 14px;">📅 출생연도별 핵심 가이드</p>
+                        <div style="display: flex; flex-direction: column; gap: 6px;">
+                            ${data.year_tips.map(item => `
+                                <div style="display: flex; align-items: baseline; gap: 8px; font-size: 13px; line-height: 1.5; padding: 4px 0;">
+                                    <span style="background: #F1F5F9; color: #334155; font-weight: 800; font-size: 11.5px; padding: 2px 6px; border-radius: 4px; flex-shrink: 0;">${item.year_label}</span>
+                                    <span style="color: #475569;">${item.tip}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                    document.getElementById('zodiacExtraInfo').innerHTML = `⏱️ 행운 시간: ${data.lucky_time} &nbsp;|&nbsp; 🤝 ${data.lucky_match}`;
+                } else {
+                    tipsBox.innerHTML = `
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; font-size: 12.5px;">
+                            <div style="background: #F8FAFC; padding: 8px; border-radius: 8px;"><strong>✨ 4대 원소:</strong> ${data.star_element}</div>
+                            <div style="background: #F8FAFC; padding: 8px; border-radius: 8px;"><strong>🪐 수호성:</strong> ${data.star_planet}</div>
+                        </div>
+                        <p style="color: #334155; font-size: 13.5px; line-height: 1.6;">${data.focus_content}</p>
+                    `;
+                    document.getElementById('zodiacExtraInfo').innerHTML = `🎨 행운 컬러: ${data.lucky_color} &nbsp;|&nbsp; ⏱️ 행운 시간: ${data.lucky_time}`;
+                }
+                document.getElementById('zodiacModal').classList.remove('hidden');
+            } catch(e) { alert('운세를 불러오지 못했습니다.'); }
+        }
+
+        function closeZodiacModal() { document.getElementById('zodiacModal').classList.add('hidden'); }
+        function shareZodiacFortune() { alert('📋 오늘의 운세 링크가 복사되었습니다!'); }
+
+        function setElemBadge(id, char, elem) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            el.innerText = char || "-";
+            el.className = char ? `badge-elem elem-${elem}` : "badge-elem elem-none";
+        }
+
+        function formatJijangganGroup(jjList) {
+            if (!jjList || jjList.length === 0) return `<span style="font-size:11px; color:#94A3B8;">-</span>`;
+            return jjList.map(j => `<span class="badge-jjg elem-${j.elem}">${j.char}</span>`).join('');
+        }
+
+        function updateDaewoonGraphByAge(age) {
+            currentUserAge = age;
+            document.getElementById('daewoonTagText1').textContent = `📍 ${currentUserName}님의 현재 위치`;
+            document.getElementById('daewoonTagText2').textContent = `(${age}세)`;
+
+            let targetX = 30 + ((age - 20) / 50) * 250;
+            if (targetX < 20) targetX = 20;
+            if (targetX > 280) targetX = 280;
+
+            const guideLine = document.getElementById('daewoonGuideLine');
+            const currentDot = document.getElementById('daewoonCurrentDot');
+            const badgeGroup = document.getElementById('daewoonBadgeGroup');
+
+            if (guideLine) { guideLine.setAttribute('x1', targetX); guideLine.setAttribute('x2', targetX); }
+            if (currentDot) { currentDot.setAttribute('cx', targetX); }
+            if (badgeGroup) {
+                let badgeX = targetX - 80;
+                if (badgeX < 10) badgeX = 10;
+                if (badgeX > 135) badgeX = 135;
+                badgeGroup.setAttribute('transform', `translate(${badgeX}, 0)`);
+            }
+        }
+
+        async function handleTarotDraw(slot) {
+            const res = await fetch(`/api/daily-tarot?slot=${slot}`);
+            const card = await res.json();
+            const flipper = document.getElementById(`flipper${slot}`);
+            const front = document.getElementById(`front${slot}`);
+            
+            const cardImgObj = TAROT_IMG_MAP[card.name] || TAROT_IMG_MAP["I. THE MAGICIAN (마법사)"];
+            front.innerHTML = `<img src="${cardImgObj.main}" alt="${card.name}" referrerpolicy="no-referrer" style="width:100%; height:100%; object-fit:cover; display:block; border-radius:8px;" onerror="this.onerror=null; this.src='${cardImgObj.backup}';">`;
+            
+            flipper.classList.add('flipped');
+            setTimeout(() => {
+                const resBox = document.getElementById('tarotResultBox');
+                const reading = selectedGender === 'female' ? card.reading_female : card.reading_male;
+                resBox.innerHTML = `
+                    <div style="margin-top: 14px; text-align: left;">
+                        <h4 style="font-weight: 900; color: #0F172A; font-size: 16px; font-family: 'Noto Serif KR', serif; margin-bottom: 2px;">${card.name}</h4>
+                        <p style="font-size: 12.5px; color: #78350F; font-weight: 700; margin-bottom: 12px;">${card.keyword}</p>
+                        
+                        <div style="display: flex; flex-direction: column; gap: 8px; font-size: 13.5px; line-height: 1.7; color: #334155;">
+                            <p><strong>📖 카드의 상징:</strong> ${card.symbolism}</p>
+                            <p><strong>🔮 오늘의 실전 운세:</strong> ${reading}</p>
+                            <p style="color: #065F46;"><strong>💡 실천 행동 수칙:</strong> ${card.action_guide}</p>
+                        </div>
+                    </div>
+                `;
+                resBox.classList.remove('hidden');
+            }, 600);
+        }
+
+        function openTalismanModal() {
+            document.getElementById('talismanTitle').innerText = currentTalisman?.title || "백호 금전부";
+            document.getElementById('talismanPower').innerText = currentTalisman?.power || "결단력 강화 · 투자 수익 실현";
+            document.getElementById('talismanDesc').innerText = currentTalisman?.desc || "사방에서 금전과 복록이 쏟아지게 하는 전통 비급 부적입니다.";
+            document.getElementById('talismanOwnerName').innerText = currentUserName;
+            document.getElementById('talismanRealBox').innerHTML = renderAuthenticCinnabarTalisman(currentTalisman?.talisman_type || "metal_wealth", 160, 260);
+            document.getElementById('talismanModal').classList.remove('hidden');
+        }
+
+        function closeTalismanModal() { document.getElementById('talismanModal').classList.add('hidden'); }
+        
+        function downloadTalismanImage() {
+            const svgElement = document.querySelector('#talismanRealBox #svgTalismanMain');
+            if (!svgElement) return;
+
+            const svgString = new XMLSerializer().serializeToString(svgElement);
+            const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+            const URL = window.URL || window.webkitURL || window;
+            const blobURL = URL.createObjectURL(svgBlob);
+
+            const img = new Image();
+            img.onload = function() {
+                const canvas = document.createElement('canvas');
+                canvas.width = 420;
+                canvas.height = 720;
+                const ctx = canvas.getContext('2d');
+
+                ctx.fillStyle = "#FAF9F6";
+                ctx.fillRect(0, 0, 420, 720);
+                ctx.drawImage(img, 20, 20, 380, 680);
+
+                const dlLink = document.createElement('a');
+                dlLink.download = `${currentUserName}_달하_맞춤부적.png`;
+                dlLink.href = canvas.toDataURL('image/png');
+                document.body.appendChild(dlLink);
+                dlLink.click();
+                document.body.removeChild(dlLink);
+                URL.revokeObjectURL(blobURL);
+            };
+            img.src = blobURL;
+        }
+
+        function printReportDocument(title, btnElement) {
+            const reportContainer = btnElement.closest('.card') || btnElement.parentElement;
+            const contentClone = reportContainer.cloneNode(true);
+            contentClone.querySelectorAll('button, .teaser-blur-box').forEach(el => el.remove());
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"><title>${title} - ${currentUserName} 님</title><style>body { font-family: 'Pretendard', sans-serif; padding: 30px; line-height: 1.85; color: #1E293B; }</style></head><body><h2>${title}</h2>${contentClone.innerHTML}<script>window.onload = function() { window.print(); }<\/script></body></html>`);
+            printWindow.document.close();
+        }
+
+        function updateCoinDisplay() {
+            document.getElementById('coinHeader').innerText = currentCoin;
+            document.getElementById('coinMypage').innerText = currentCoin;
+        }
+
+        function openChargeStore() { document.getElementById('chargeModal').classList.remove('hidden'); }
+        function closeChargeStore() { document.getElementById('chargeModal').classList.add('hidden'); }
+        function openPgModal(coinAmt, price, itemName) {
+            pendingCoinAmount = coinAmt;
+            document.getElementById('pgItemName').innerText = itemName;
+            document.getElementById('pgItemPrice').innerText = `₩${price.toLocaleString()}`;
+            closeChargeStore();
+            document.getElementById('pgModal').classList.remove('hidden');
+        }
+        function closePgModal() { document.getElementById('pgModal').classList.add('hidden'); }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            initKakaoSDK();
+            initDateDropdowns();
+            document.getElementById('headerCoinSvg').innerHTML = getGoldCoinSvg(16, "#F59E0B");
+            document.getElementById('mypageCoinSvg').innerHTML = getGoldCoinSvg(19, "#F59E0B");
+            document.getElementById('chargeModalHeaderCoinSvg').innerHTML = getGoldCoinSvg(18, "#F59E0B");
+            document.querySelectorAll('.btn-coin-icon').forEach(el => { el.innerHTML = getGoldCoinSvg(16, "#D97706"); });
+            document.querySelectorAll('.btn-coin-icon-white').forEach(el => { el.innerHTML = getGoldCoinSvg(16, "#F59E0B"); });
+
+            document.querySelectorAll('.star-glyph-box').forEach(el => {
+                const sign = el.getAttribute('data-sign');
+                if (ZODIAC_GLYPHS[sign]) el.innerHTML = ZODIAC_GLYPHS[sign];
+            });
+
+            for (let i = 1; i <= 3; i++) {
+                const back = document.getElementById(`tarotSvgSlot${i}`);
+                if (back) back.innerHTML = getTarotCardBackSvg();
+            }
+
+            checkAutoLoginSession();
+        });
+    </script>
+</body>
+</html>
