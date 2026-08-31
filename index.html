@@ -268,23 +268,24 @@
                     <div id="resAdvice" style="font-size: 13.5px; color: #E2E8F0; font-weight: 400; line-height: 1.65; text-align: left;"></div>
                 </div>
 
-                <!-- 1. 맞춤 추천 코디 카드 (정갈한 단일 위계 스타일) -->
+                <!-- 1. 맞춤 추천 코디 카드 (단일 위계 + 오늘의 무드 뱃지 완벽 반영) -->
                 <div class="card" style="padding: 20px 18px; text-align: left; display: flex; flex-direction: column; gap: 14px;">
                     
-                    <!-- 1-1. 팔레트 헤더 -->
+                    <!-- 1-1. 팔레트 헤더 (우측에 오늘의 무드 뱃지 배치) -->
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                         <div style="display: flex; align-items: center; gap: 6px;">
                             <span style="font-size: 15px;">🎨</span>
-                            <h4 style="font-size: 15px; font-weight: 800; color: #0F172A;">오늘의 개운 배색</h4>
+                            <h4 style="font-size: 15px; font-weight: 800; color: #0F172A;">오늘의 개운 팔레트</h4>
                         </div>
-                        <span id="paletteNumberBadge" style="font-size: 11px; background: #0D1527; color: #F6E2A1; font-weight: 800; padding: 3px 8px; border-radius: 6px; letter-spacing: 0.3px;">Palette No. 84</span>
+                        <!-- Palette No. 대신 오늘의 스타일 무드 뱃지 배치 -->
+                        <span id="todayStyleMoodBadge" style="font-size: 11.5px; background: #EBF5EE; color: #166534; font-weight: 800; padding: 3px 10px; border-radius: 9999px; border: 1px solid #BBF7D0;">🏃 캐주얼 & 액티브</span>
                     </div>
 
-                    <!-- 1-2. 와다 산조 컬러 칩 영역 (박스 중첩 제거, 깔끔한 칩 그리드) -->
+                    <!-- 1-2. 컬러 칩 영역 (고유 색상명 + HEX 칩) -->
                     <div id="dynamicColorPaletteBox" style="display: flex; align-items: center; justify-content: flex-start; gap: 8px; flex-wrap: wrap;">
                     </div>
 
-                    <!-- 1-3. 감성 해설 (은은한 서브텍스트) -->
+                    <!-- 1-3. 감성 무드 해설 -->
                     <p id="paletteMoodStoryBox" style="font-size: 12.5px; color: #64748B; line-height: 1.6; margin: 0; padding-left: 2px;">
                         깊은 미드나잇 인디고와 안개빛 스카이블루가 만나 사주의 금전운과 전문성을 견고히 세웁니다.
                     </p>
@@ -300,10 +301,10 @@
                         </p>
                     </div>
 
-                    <!-- 1-5. 소품 포인트 매칭 (시선이 편안한 단일 가이드) -->
+                    <!-- 1-5. 소품 포인트 매칭 -->
                     <div id="wardrobeDailyMatchPick" style="background: #F8FAFC; border-radius: 12px; padding: 12px 14px; border: 1px solid #E2E8F0;">
                         <div style="font-size: 13px; color: #334155; line-height: 1.55;">
-                            ✨ <strong>포인트 소품:</strong> 발끝에 내 옷장의 <strong>[호카 운동화]</strong>를 함께 매치해 보세요!
+                            ✨ <strong>소품 매칭:</strong> 발끝에 내 옷장의 <strong>[호카 운동화]</strong>를 더해 완벽한 균형을 맞춰보세요!
                         </div>
                     </div>
 
@@ -1328,18 +1329,17 @@
             return "smart_casual";
         }
 
-        // 위계 정돈된 와다 산조 컬러 & 룩 & 포인트 렌더러
+        // 오늘의 무드 뱃지와 단일 위계가 반영된 렌더러
         function updateTodayWardrobeMatchPick() {
             const styleEl = document.getElementById('resStyle');
             const pickEl = document.getElementById('wardrobeDailyMatchPick');
             const paletteBox = document.getElementById('dynamicColorPaletteBox');
-            const numBadge = document.getElementById('paletteNumberBadge');
+            const moodBadge = document.getElementById('todayStyleMoodBadge');
             const moodStoryEl = document.getElementById('paletteMoodStoryBox');
             if (!styleEl || !pickEl || !paletteBox) return;
 
             const fortune = currentFortuneData?.daily_fortune || {};
             const wada = fortune.wada_palette || {
-                palette_no: 84,
                 theme: "명경지수(明鏡止水) · 지적인 냉철함",
                 mood_desc: "깊은 미드나잇 인디고와 안개빛 스카이블루가 만나 사주의 금전운과 전문성을 견고히 세웁니다.",
                 mode: "harmony",
@@ -1350,17 +1350,18 @@
                 point: null
             };
 
-            if (numBadge) {
-                numBadge.innerText = `Palette No. ${wada.palette_no}`;
-            }
-            if (moodStoryEl) {
-                moodStoryEl.innerText = `"${wada.mood_desc}"`;
-            }
-
             const isReverse = (wada.mode === "reverse");
             const topColorStd = wada.top.standard_color;
             const bottomColorStd = wada.bottom.standard_color;
             const todayMood = wada.style_mood || "casual";
+
+            // 상단 무드 뱃지 반영
+            if (moodBadge) {
+                moodBadge.innerText = wada.mood_tag || (todayMood === "casual" ? "🏃 캐주얼 & 액티브" : "👔 클래식 & 포멀");
+            }
+            if (moodStoryEl) {
+                moodStoryEl.innerText = `"${wada.mood_desc}"`;
+            }
 
             // 1. [상의] 매칭
             const matchedTops = userWardrobeItems.filter(item => item.category === "상의" && item.colors.some(c => c.includes(topColorStd) || topColorStd.includes(c)));
@@ -1402,7 +1403,7 @@
                 }
             }
 
-            // 4. 정돈된 와다 산조 컬러 칩 렌더링
+            // 4. 고유 컬러 칩 렌더링
             let pointChipHtml = "";
             if (isReverse && wada.point) {
                 pointChipHtml = `
@@ -1426,7 +1427,7 @@
                 ${pointChipHtml}
             `;
 
-            // 5. 소품 가이드 (시선이 편안한 단일 박스 형태)
+            // 5. 소품 가이드
             let matchText = "";
             if (selectedAcc) {
                 const otherAcc = moodCompatibleAccessories.find(i => i.id !== selectedAcc.id && i.category !== selectedAcc.category);
