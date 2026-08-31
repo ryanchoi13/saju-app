@@ -105,7 +105,6 @@ try:
 except Exception as e:
     print(f"DB Init Error: {e}")
 
-# 정통 20종 명리 개운 부적 매트릭스 DB
 AUTHENTIC_TALISMAN_MATRIX = {
     "wood": {
         "wealth": {
@@ -675,7 +674,6 @@ def delete_wardrobe_item(item_id: int, user_id: int):
     db.close()
     return {"status": "success", "wardrobe_items": fetch_user_wardrobe(user_id)}
 
-# 심층 리포트 생성기 (줄바꿈 구분, 현재구간 하이라이트, 2026 총운 대폭 보강)
 def build_detailed_report_content(report_key: str, user_dict: dict, sub_opt: str, p_name: str, relation: str):
     name = user_dict.get("name", "회원")
     y = user_dict.get("birth_year", 1978)
@@ -821,7 +819,6 @@ def get_daily_tarot(slot: int):
         "action_guide": "망설이던 아이디어가 있다면 오늘 바로 구체적인 실행 계획을 작성하세요."
     }
 
-# 띠별 5개 세대 연도 및 별자리 전용 데이터 분기 API
 @app.get("/api/zodiac-fortune")
 def get_zodiac_fortune(type: str, key: str):
     if type == "star":
