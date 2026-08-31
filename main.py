@@ -8,7 +8,7 @@ from fastapi import FastAPI, Request, HTTPException
 from fastapi.responses import HTMLResponse, FileResponse, Response
 from pydantic import BaseModel
 
-app = FastAPI(title="달하 (DALHA) - 정통 명리학 & 점성술 엔진", version="44.0.0")
+app = FastAPI(title="달하 (DALHA) - 정통 명리학 & 점성술 엔진", version="45.0.0")
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 USE_POSTGRES = bool(DATABASE_URL)
@@ -211,12 +211,14 @@ TAROT_CARDS = [
 
 DAILY_OUTFITS_POOL = {
     "male": {
-        "young": ["네이비 쿨 셔츠 & 차콜 슬랙스", "화이트 린넨 셔츠 & 베이지 슬랙스", "스카이블루 반팔 셔츠 & 그레이 팬츠", "블랙 무지 반팔티 & 와이드 슬랙스"],
-        "senior": ["네이비 쿨 셔츠 & 단정한 차콜 팬츠", "화이트 린넨 셔츠 & 베이지 슬랙스", "베이지 톤 셔츠 & 다크 네이비 팬츠", "다크 올리브 린넨 셔츠 & 편안한 슬랙스"]
+        "casual": ["네이비 쿨 반팔티 & 플랙 연청 데님", "화이트 면 티셔츠 & 베이지 코튼 팬츠", "스카이블루 린넨 셔츠 & 라이트 데님", "차콜 반팔티 & 편안한 조거 슬랙스"],
+        "formal": ["네이비 드레스 셔츠 & 차콜 슬랙스", "화이트 린넨 셔츠 & 테일러드 슬랙스", "클래식 블루 셔츠 & 네이비 트라우저", "소프트 그레이 셔츠 & 블랙 슬랙스"],
+        "smart_casual": ["네이비 쿨 셔츠 & 베이지 슬랙스", "화이트 린넨 셔츠 & 생지 데님 팬츠", "스카이블루 셔츠 & 차콜 슬랙스", "베이지 카라티 & 테이퍼드 슬랙스"]
     },
     "female": {
-        "young": ["네이비 린넨 블라우스 & 라이트 데님", "화이트 린넨 셔츠 & 슬랙스", "연한 하늘색 셔츠 & 화이트 슬랙스", "베이지 톤 반팔 니트 & 롱 스커트"],
-        "senior": ["네이비 쉬폰 블라우스 & 차콜 팬츠", "아이보리 린넨 블라우스 & 베이지 슬랙스", "소프트 핑크 린넨 자켓 & 화이트 팬츠", "베이지 톤 오픈카라 셔츠 & 편안한 슬랙스"]
+        "casual": ["네이비 린넨 반팔 & 라이트 데님", "화이트 코튼 티셔츠 & 코튼 팬츠", "스카이블루 셔츠 & 화이트 데님", "베이지 톤 반팔 니트 & 플리츠 스커트"],
+        "formal": ["네이비 쉬폰 블라우스 & 차콜 슬랙스", "아이보리 실크 블라우스 & 베이지 슬랙스", "소프트 블루 자켓 & 화이트 슬랙스", "블랙 드레스 블라우스 & 테일러드 팬츠"],
+        "smart_casual": ["스카이블루 린넨 블라우스 & 슬랙스", "화이트 셔츠 & 생지 데님 팬츠", "베이지 오픈카라 셔츠 & 차콜 팬츠", "소프트 핑크 린넨 자켓 & 데님"]
     }
 }
 
@@ -283,6 +285,45 @@ def get_daewoon_info(y_cg: str, gender: str) -> tuple[str, bool]:
     is_yang = y_cg in YANG_STEMS
     is_male = (gender == "male")
     return ("순행(順行)", True) if ((is_male and is_yang) or (not is_male and not is_yang)) else ("역행(逆行)", False)
+
+# 십신(十神) 및 오행 생극 판정 함수
+def calculate_ten_gods_mood(day_stem: str, today_stem: str, today_branch: str):
+    STEM_ELEMENTS = {
+        "甲": 0, "乙": 0, "丙": 1, "丁": 1, "戊": 2, "己": 2, "庚": 3, "辛": 3, "壬": 4, "癸": 4
+    }
+    BRANCH_ELEMENTS = {
+        "寅": 0, "卯": 0, "巳": 1, "午": 1, "辰": 2, "戌": 2, "丑": 2, "未": 2, "申": 3, "酉": 3, "亥": 4, "子": 4
+    }
+
+    my_elem = STEM_ELEMENTS.get(day_stem, 3) # 기본값 金 (3)
+    today_elem = STEM_ELEMENTS.get(today_stem, 1)
+
+    # 오행 관계: (today_elem - my_elem) % 5
+    # 0: 비겁 (비견/겁재)
+    # 1: 식상 (식신/상관)
+    # 2: 재성 (편재/정재)
+    # 3: 관성 (편관/정관)
+    # 4: 인성 (편인/정인)
+    relation = (today_elem - my_elem) % 5
+
+    if relation in [0, 1]: # 비겁, 식상
+        return {
+            "mood": "casual",
+            "tag": "🏃 캐주얼 & 액티브 무드",
+            "reason": "창의적인 영감과 활발한 소통이 요구되는 식상·비겁의 날입니다. 편안하고 경쾌한 캐주얼 룩이 대길합니다."
+        }
+    elif relation == 2: # 재성
+        return {
+            "mood": "smart_casual",
+            "tag": "💼 스마트 캐주얼 무드",
+            "reason": "실리적인 판단과 원만한 비즈니스 조율이 필요한 재성(財星)의 날입니다. 단정하면서도 유연한 룩을 추천합니다."
+        }
+    else: # 관성, 인성 (3, 4)
+        return {
+            "mood": "formal",
+            "tag": "👔 클래식 & 포멀 무드",
+            "reason": "신뢰감과 격식, 정돈된 집중력이 빛을 발하는 관성·인성의 날입니다. 셔츠와 슬랙스 등 단정한 클래식 룩이 성공운을 높입니다."
+        }
 
 def compute_saju_full_payload(name: str, gender: str, year: int, month: int, day: int, calendar_type: str, sijin_idx: int):
     base_date = datetime.date(1900, 1, 1)
@@ -359,8 +400,13 @@ def compute_saju_full_payload(name: str, gender: str, year: int, month: int, day
     }
     lucky_colors = LUCKY_COLOR_PAIRS.get(day_elem, ["네이비", "스카이블루"])
 
-    age_group = "young" if current_age < 40 else "senior"
-    outfit_list = DAILY_OUTFITS_POOL[gender][age_group]
+    # 십신 기반 무드 계산
+    mood_info = calculate_ten_gods_mood(d_cg, today_cg, today_jj)
+    selected_mood = mood_info["mood"]
+    mood_tag = mood_info["tag"]
+    mood_reason = mood_info["reason"]
+
+    outfit_list = DAILY_OUTFITS_POOL[gender][selected_mood]
     fashion_style = outfit_list[daily_hash % len(outfit_list)]
 
     num1 = ((daily_hash % 9) + 1)
@@ -430,7 +476,8 @@ def compute_saju_full_payload(name: str, gender: str, year: int, month: int, day
             "lucky_number": lucky_number, "lucky_direction": lucky_direction, "lucky_item": lucky_item,
             "fashion_style": fashion_style, "recommended_menu": recommended_menu, "mindset": mindset, "action": action,
             "talisman": user_talisman, "is_reverse_day": is_reverse_day,
-            "styling_mode": styling_mode, "rule_title": rule_title, "rule_reason": rule_reason
+            "styling_mode": styling_mode, "rule_title": rule_title, "rule_reason": rule_reason,
+            "style_mood": selected_mood, "mood_tag": mood_tag, "mood_reason": mood_reason
         },
         "biorhythm": biorhythm_data
     }
