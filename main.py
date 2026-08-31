@@ -1,48 +1,28 @@
-import datetime
-import math
 import os
 import random
-import sqlite3
 from typing import Optional, List
-from fastapi import FastAPI, Request, HTTPException
-from fastapi.responses import HTMLResponse, FileResponse, Response
+from fastapi import FastAPI, Request
+from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
+import sqlite3
 
-app = FastAPI(title="달하 (DALHA) - 정통 명리학 & 점성술 엔진", version="45.0.0")
+app = FastAPI()
 
-DATABASE_URL = os.getenv("DATABASE_URL")
+DATABASE_URL = os.environ.get("DATABASE_URL")
 USE_POSTGRES = bool(DATABASE_URL)
-
-if USE_POSTGRES:
-    import psycopg2
-    from psycopg2.extras import RealDictCursor
-
-DB_FILE = "dalha.db"
-
-class DBWrapper:
-    def __init__(self, conn, is_pg=False):
-        self.conn = conn
-        self.is_pg = is_pg
-
-    def cursor(self):
-        if self.is_pg:
-            return self.conn.cursor(cursor_factory=RealDictCursor)
-        return self.conn.cursor()
-
-    def commit(self):
-        self.conn.commit()
-
-    def close(self):
-        self.conn.close()
 
 def get_db():
     if USE_POSTGRES:
-        conn = psycopg2.connect(DATABASE_URL)
-        return DBWrapper(conn, is_pg=True)
+        import psycopg2
+        import psycopg2.extras
+        conn = psycopg2.connect(DATABASE_URL, cursor_factory=psycopg2.extras.RealDictCursor)
+        return conn
     else:
-        conn = sqlite3.connect(DB_FILE)
+        conn = sqlite3.connect("dalha_local.db")
         conn.row_factory = sqlite3.Row
-        return DBWrapper(conn, is_pg=False)
+        return conn
 
 def init_db():
     db = get_db()
@@ -52,443 +32,327 @@ def init_db():
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS users (
             id SERIAL PRIMARY KEY,
-            kakao_id VARCHAR(50) UNIQUE,
-            name VARCHAR(50),
-            gender VARCHAR(10),
-            birth_year INTEGER,
-            birth_month INTEGER,
-            birth_day INTEGER,
-            calendar_type VARCHAR(10),
-            sijin_index INTEGER,
-            coin_balance INTEGER DEFAULT 1000,
+            kakao_id VARCHAR(100) UNIQUE,
+            name VARCHAR(100),
+            gender VARCHAR(20),
+            birth_year INT,
+            birth_month INT,
+            birth_day INT,
+            calendar_type VARCHAR(20),
+            sijin_index INT,
+            coin_balance INT DEFAULT 1000,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
-        """)
-        cursor.execute("""
+        );
         CREATE TABLE IF NOT EXISTS unlocked_reports (
             id SERIAL PRIMARY KEY,
-            user_id INTEGER REFERENCES users(id),
+            user_id INT,
             report_key VARCHAR(50),
-            report_title VARCHAR(100),
+            report_title VARCHAR(150),
             report_content TEXT,
-            created_at DATE
-        )
-        """)
-        cursor.execute("""
+            created_at VARCHAR(50)
+        );
         CREATE TABLE IF NOT EXISTS wardrobe_items (
             id SERIAL PRIMARY KEY,
-            user_id INTEGER REFERENCES users(id),
-            nickname VARCHAR(100),
+            user_id INT,
             category VARCHAR(50),
-            colors VARCHAR(150),
-            materials VARCHAR(150),
+            nickname VARCHAR(100),
+            colors TEXT,
+            materials TEXT,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
+        );
         """)
     else:
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            kakao_id VARCHAR(50) UNIQUE,
-            name VARCHAR(50),
-            gender VARCHAR(10),
+            kakao_id TEXT UNIQUE,
+            name TEXT,
+            gender TEXT,
             birth_year INTEGER,
             birth_month INTEGER,
             birth_day INTEGER,
-            calendar_type VARCHAR(10),
+            calendar_type TEXT,
             sijin_index INTEGER,
             coin_balance INTEGER DEFAULT 1000,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        );
         """)
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS unlocked_reports (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             user_id INTEGER,
-            report_key VARCHAR(50),
-            report_title VARCHAR(100),
+            report_key TEXT,
+            report_title TEXT,
             report_content TEXT,
-            created_at DATE,
-            FOREIGN KEY(user_id) REFERENCES users(id)
-        )
+            created_at TEXT
+        );
         """)
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS wardrobe_items (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             user_id INTEGER,
-            nickname VARCHAR(100),
-            category VARCHAR(50),
-            colors VARCHAR(150),
-            materials VARCHAR(150),
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY(user_id) REFERENCES users(id)
-        )
+            category TEXT,
+            nickname TEXT,
+            colors TEXT,
+            materials TEXT,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        );
         """)
-    
     db.commit()
     db.close()
 
-init_db()
+try:
+    init_db()
+except Exception as e:
+    print(f"DB Init Error: {e}")
 
-CHEONGAN_HANJA = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
-JIJI_HANJA = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"]
-YANG_STEMS = ["甲", "丙", "戊", "庚", "壬"]
+app.mount("/static", StaticFiles(directory="static"), name="static")
+templates = Jinja2Templates(directory="templates")
 
-CHEONGAN_ELEMENTS = {
-    "甲": "wood", "乙": "wood", "丙": "fire", "丁": "fire", "戊": "earth",
-    "己": "earth", "庚": "metal", "辛": "metal", "壬": "water", "癸": "water"
-}
-JIJI_ELEMENTS = {
-    "子": "water", "丑": "earth", "寅": "wood", "卯": "wood", "辰": "earth",
-    "巳": "fire", "午": "fire", "未": "earth", "申": "metal", "酉": "metal",
-    "戌": "earth", "亥": "water"
-}
-
-SIJIN_KOREAN_MAP = {
-    -1: "시간 모름", 0: "자시(子時)", 1: "축시(丑時)", 2: "인시(寅時)",
-    3: "묘시(卯時)", 4: "진시(辰時)", 5: "사시(巳時)", 6: "오시(午時)",
-    7: "미시(未時)", 8: "신시(申時)", 9: "유시(酉時)", 10: "술시(戌時)", 11: "해시(亥時)"
-}
-
-JIJANGGAN_FULL_MAP = {
-    "子": [{"char": "壬", "elem": "water", "weight": 10}, {"char": "癸", "elem": "water", "weight": 20}],
-    "丑": [{"char": "癸", "elem": "water", "weight": 9}, {"char": "辛", "elem": "metal", "weight": 3}, {"char": "己", "elem": "earth", "weight": 18}],
-    "寅": [{"char": "戊", "elem": "earth", "weight": 7}, {"char": "丙", "elem": "fire", "weight": 7}, {"char": "甲", "elem": "wood", "weight": 16}],
-    "卯": [{"char": "甲", "elem": "wood", "weight": 10}, {"char": "乙", "elem": "wood", "weight": 20}],
-    "辰": [{"char": "乙", "elem": "wood", "weight": 9}, {"char": "癸", "elem": "water", "weight": 3}, {"char": "戊", "elem": "earth", "weight": 18}],
-    "巳": [{"char": "戊", "elem": "earth", "weight": 7}, {"char": "庚", "elem": "metal", "weight": 7}, {"char": "丙", "elem": "fire", "weight": 16}],
-    "午": [{"char": "丙", "elem": "fire", "weight": 10}, {"char": "己", "elem": "earth", "weight": 9}, {"char": "丁", "elem": "fire", "weight": 11}],
-    "未": [{"char": "丁", "elem": "fire", "weight": 9}, {"char": "乙", "elem": "wood", "weight": 3}, {"char": "己", "elem": "earth", "weight": 18}],
-    "申": [{"char": "戊", "elem": "earth", "weight": 7}, {"char": "壬", "elem": "water", "weight": 7}, {"char": "庚", "elem": "metal", "weight": 16}],
-    "酉": [{"char": "庚", "elem": "metal", "weight": 10}, {"char": "辛", "elem": "metal", "weight": 20}],
-    "戌": [{"char": "辛", "elem": "metal", "weight": 9}, {"char": "丁", "elem": "fire", "weight": 3}, {"char": "戊", "elem": "earth", "weight": 18}],
-    "亥": [{"char": "戊", "elem": "earth", "weight": 7}, {"char": "甲", "elem": "wood", "weight": 7}, {"char": "壬", "elem": "water", "weight": 16}]
-}
-
-ANIMAL_MAP = {"子": "쥐", "丑": "소", "寅": "호랑이", "卯": "토끼", "辰": "용", "巳": "뱀", "午": "말", "未": "양", "申": "원숭이", "酉": "닭", "戌": "개", "亥": "돼지"}
-ANIMAL_ICONS = {"쥐": "🐭", "소": "🐮", "호랑이": "🐯", "토끼": "🐰", "용": "🐲", "뱀": "🐍", "말": "🐴", "양": "🐑", "원숭이": "🐵", "닭": "🐔", "개": "🐶", "돼지": "🐷"}
-
-STAR_SIGNS = [
-    {"name": "물병자리", "icon": "♒", "period": "01.20 ~ 02.18"}, {"name": "물고기자리", "icon": "♓", "period": "02.19 ~ 03.20"},
-    {"name": "양자리", "icon": "♈", "period": "03.21 ~ 04.19"}, {"name": "황소자리", "icon": "♉", "period": "04.20 ~ 05.20"},
-    {"name": "쌍둥이자리", "icon": "♊", "period": "05.21 ~ 06.21"}, {"name": "게자리", "icon": "♋", "period": "06.22 ~ 07.22"},
-    {"name": "사자자리", "icon": "♌", "period": "07.23 ~ 08.22"}, {"name": "처녀자리", "icon": "♍", "period": "08.23 ~ 09.22"},
-    {"name": "천칭자리", "icon": "♎", "period": "09.23 ~ 10.22"}, {"name": "전갈자리", "icon": "♏", "period": "10.23 ~ 11.22"},
-    {"name": "사수자리", "icon": "♐", "period": "11.23 ~ 12.21"}, {"name": "염소자리", "icon": "♑", "period": "12.22 ~ 01.19"}
-]
-
-TALISMAN_OHEANG_MAP = {
-    "wood": { "type": "wood", "title": "사업대성부 (事業亨通符)", "power": "추진력 강화 · 사업 번창 · 승진운", "desc": "사주에 부족한 木(목)의 생명력을 불어넣어 막힌 활로를 뚫고 주도권을 쥐게 하는 비급 부적입니다." },
-    "fire": { "type": "fire", "title": "소원성취부 (心想事成符)", "power": "열정 회복 · 명예 상승 · 소원 성취", "desc": "사주에 부족한 火(화)의 찬란한 빛을 밝혀 염원하던 소망을 일사천리로 성취시키는 부적입니다." },
-    "earth": { "type": "earth", "title": "금고수호부 (金庫安穩符)", "power": "자산 방어 · 누수 차단 · 재물 안착", "desc": "사주에 부족한 土(토)의 단단한 대지를 마련하여 헛돈 지출을 막고 자산을 지켜주는 부적입니다." },
-    "metal": { "type": "metal", "title": "재물만복부 (萬福大吉符)", "power": "재물 증식 · 금전운 대통 · 투자 대박", "desc": "사주에 부족한 金(금)의 황금 기운을 채워 사방에서 금전과 복록이 쏟아지게 하는 전통 부적입니다." },
-    "water": { "type": "water", "title": "천생화합부 (萬事和合符)", "power": "인연 결속 · 애정 화합 · 귀인 유대", "desc": "사주에 부족한 水(수)의 지혜를 채워 엇갈린 인연을 묶어주고 귀인의 조력을 이끄는 부적입니다." }
-}
-
-TAROT_CARDS = [
-    {
-        "name": "I. THE MAGICIAN (마법사)", "keyword": "탁월한 창조력 · 완벽한 주도권 · 만사형통",
-        "symbolism": "머리 위의 무한대 기호와 제단 위의 4대 원소는 모든 상황을 내 뜻대로 통제하고 현실로 구현할 수 있는 완성된 지혜를 뜻합니다.",
-        "reading_male": "전문 역량과 논리적인 언변이 빛을 발합니다. 중요한 회의나 계약 협상에서 상대방을 내 페이스로 리드할 수 있습니다.",
-        "reading_female": "능숙한 대인관계 조율력과 따뜻한 카리스마로 주변 사람들을 내 아군으로 만듭니다. 의견을 당당하게 피력하세요.",
-        "action_guide": "핵심 강점을 자신감 있게 표현하고 주도적으로 대화의 흐름을 이끌어가세요."
-    },
-    {
-        "name": "0. THE FOOL (바보)", "keyword": "새로운 여정의 서막 · 순수한 직관 · 무한한 잠재력",
-        "symbolism": "벼랑 끝에서 발걸음을 내딛는 청년과 흰 개는 과거의 관습과 두려움을 벗어던진 순수한 영혼의 새로운 도약을 상징합니다.",
-        "reading_male": "오랫동안 망설이던 프로젝트나 신규 투자의 첫 단추를 꿰기에 최상의 날입니다. 본인의 결단력을 믿고 추진하세요.",
-        "reading_female": "새로운 인연이나 소망에 뜻밖의 기회가 찾아옵니다. 첫 느낌을 따를 때 대길합니다.",
-        "action_guide": "새로운 제안에 열린 마음을 갖고 떠오르는 아이디어를 즉시 메모하세요."
-    },
-    {
-        "name": "XIX. THE SUN (태양)", "keyword": "최고의 번영 · 찬란한 영광 · 축하받을 낭보",
-        "symbolism": "백마를 탄 아이와 해바라기는 어둠을 걷어내고 승리와 축복을 맞이하는 절정의 운세를 의미합니다.",
-        "reading_male": "막혀 있던 자금 흐름이나 프로젝트의 난관이 시원하게 뚫리며 명예와 실속을 동시에 쟁취하는 날입니다.",
-        "reading_female": "내면의 밝은 에너지가 주변을 환하게 밝히며 축하받을 소식과 함께 화목이 넘칩니다.",
-        "action_guide": "햇살을 받으며 산책을 즐기고 긍정적인 미소로 주변과 소통하세요."
-    }
-]
-
-DAILY_OUTFITS_POOL = {
-    "male": {
-        "casual": ["네이비 쿨 반팔티 & 플랙 연청 데님", "화이트 면 티셔츠 & 베이지 코튼 팬츠", "스카이블루 린넨 셔츠 & 라이트 데님", "차콜 반팔티 & 편안한 조거 슬랙스"],
-        "formal": ["네이비 드레스 셔츠 & 차콜 슬랙스", "화이트 린넨 셔츠 & 테일러드 슬랙스", "클래식 블루 셔츠 & 네이비 트라우저", "소프트 그레이 셔츠 & 블랙 슬랙스"],
-        "smart_casual": ["네이비 쿨 셔츠 & 베이지 슬랙스", "화이트 린넨 셔츠 & 생지 데님 팬츠", "스카이블루 셔츠 & 차콜 슬랙스", "베이지 카라티 & 테이퍼드 슬랙스"]
-    },
-    "female": {
-        "casual": ["네이비 린넨 반팔 & 라이트 데님", "화이트 코튼 티셔츠 & 코튼 팬츠", "스카이블루 셔츠 & 화이트 데님", "베이지 톤 반팔 니트 & 플리츠 스커트"],
-        "formal": ["네이비 쉬폰 블라우스 & 차콜 슬랙스", "아이보리 실크 블라우스 & 베이지 슬랙스", "소프트 블루 자켓 & 화이트 슬랙스", "블랙 드레스 블라우스 & 테일러드 팬츠"],
-        "smart_casual": ["스카이블루 린넨 블라우스 & 슬랙스", "화이트 셔츠 & 생지 데님 팬츠", "베이지 오픈카라 셔츠 & 차콜 팬츠", "소프트 핑크 린넨 자켓 & 데님"]
-    }
-}
-
-LUCKY_ITEMS_POOL = ["실버 메탈 시계", "가죽 카드 지갑", "클래식 만년필", "은은한 시트러스 향수", "블루라이트 차단 안경", "산뜻한 손수건"]
-LUCKY_DIRECTIONS_POOL = ["정서쪽 (백호 방위)", "정동쪽 (청룡 방위)", "정남쪽 (주작 방위)", "정북쪽 (현무 방위)", "동남쪽 (생기 방위)", "서북쪽 (금전 방위)"]
-LUCKY_MENUS_POOL = ["속이 편안한 영양 솥밥", "신선한 샐러드와 차가운 물", "따뜻한 전복죽과 과일", "도라지차와 가벼운 정식", "시원한 메밀소바"]
-MINDSETS_POOL = ["원칙을 지키며 유연하게 대처하기", "상대의 말을 경청하고 공감하기", "맺고 끊음을 명확히 하기", "새로운 제안에 열린 마음 갖기", "서두르지 않고 꼼꼼히 확인하기"]
-ACTIONS_POOL = ["오늘 끝낼 우선순위 3가지 메모하기", "아침 5분간 가벼운 스트레칭하기", "점심 식사 후 10분간 햇볕 쬐며 산책하기", "책상 위 불필요한 서류 정리하기", "고마웠던 지인에게 안부 문자 보내기"]
-
-STAR_FORTUNE_DETAILS = {
-    "양자리": { "title": "과감한 결단력과 새로운 활로", "overview": "직관과 실행력이 최고조에 달하는 날입니다. 주저하던 일을 추진하기에 최적입니다.", "badge": "🔥 오늘 강력한 추진운", "focus": "압도적인 주도권으로 미뤄둔 제안을 성사시킵니다.", "item": "레드 포인트 소품", "time": "오전 09시 ~ 11시" },
-    "황소자리": { "title": "안정적인 실속과 재물 결실", "overview": "침착한 안목이 빛을 발하며 재정 흐름이 단단하게 자리 잡는 날입니다.", "badge": "💰 오늘 중요한 재물운", "focus": "자산 관리나 지출 절감에서 실속 있는 이득을 봅니다.", "item": "가죽 카드 지갑", "time": "오후 01시 ~ 03시" },
-    "쌍둥이자리": { "title": "반짝이는 영감과 유쾌한 소통", "overview": "두뇌 회전이 빠르고 언변이 좋아 사람들을 내 편으로 끌어들이는 날입니다.", "badge": "🗣️ 오늘 빛나는 소통운", "focus": "미팅이나 대화 자리에서 든든한 조력자를 만납니다.", "item": "스마트 워치", "time": "오전 11시 ~ 오후 01시" },
-    "게자리": { "title": "내면의 평온과 소중한 화합", "overview": "따뜻한 공감 능력으로 오해를 풀고 신뢰를 회복하는 하루입니다.", "badge": "🏡 오늘 편안한 가족운", "focus": "가까운 지인과의 대화에서 뜻밖의 힐링을 얻습니다.", "item": "은은한 향수", "time": "저녁 07시 ~ 09시" },
-    "사자자리": { "title": "당당한 리더십과 성과", "overview": "자신감 넘치는 태도가 주변을 이끌며 리더로서 진가를 입증합니다.", "badge": "👑 오늘 돋보이는 명예운", "focus": "프로젝트를 리드하며 탁월한 성과를 인정받습니다.", "item": "골드 메탈 소품", "time": "오후 02시 ~ 04시" },
-    "처녀자리": { "title": "빈틈없는 분석과 업무 완수", "overview": "디테일을 짚어내는 감각으로 복잡한 문제를 명쾌하게 정리합니다.", "badge": "📊 오늘 확실한 성과운", "focus": "계획 수립과 서류 검토에서 실수를 완벽히 차단합니다.", "item": "깔끔한 메모장", "time": "오전 10시 ~ 12시" },
-    "천칭자리": { "title": "균형 잡힌 조율과 파트너십", "overview": "상대방의 마음을 정확히 파악하여 윈-윈 관계를 이끌어냅니다.", "badge": "🤝 오늘 유리한 협력운", "focus": "의견 대립을 매끄럽게 중재하여 계약을 매듭짓습니다.", "item": "클래식 안경", "time": "오후 04시 ~ 06시" },
-    "전갈자리": { "title": "예리한 통찰과 기회 포착", "overview": "이면의 흐름을 꿰뚫어 보며 결정적인 승부수를 던지기 좋습니다.", "badge": "🎯 오늘 강력한 승부운", "focus": "남들이 놓친 틈새시장을 발견해 실리를 챙깁니다.", "item": "블랙 가죽 키링", "time": "오후 05시 ~ 07시" },
-    "사수자리": { "title": "넓은 시야와 새로운 도약", "overview": "미래를 향한 원대한 비전과 도전 의욕이 샘솟는 하루입니다.", "badge": "🚀 오늘 활발한 확장운", "focus": "새로운 분야의 공부나 비즈니스 구상에서 실마리를 잡습니다.", "item": "가벼운 텀블러", "time": "오후 01시 ~ 03시" },
-    "염소자리": { "title": "성실한 노력과 지위 안착", "overview": "꾸준히 쌓아온 노력이 결과물로 전환되며 신뢰를 한몸에 받습니다.", "badge": "📈 오늘 단단한 승진운", "focus": "상급자로부터 능력을 인정받아 권한이 격상됩니다.", "item": "원목 명함집", "time": "오전 08시 ~ 10시" },
-    "물병자리": { "title": "독창적인 발상과 혁신", "overview": "틀에 얽매이지 않는 신선한 아이디어가 주변에 영감을 줍니다.", "badge": "💡 오늘 빛나는 기획운", "focus": "정체된 일에 새로운 방식을 적용해 돌파구를 엽니다.", "item": "실버 링", "time": "오후 03시 ~ 05시" },
-    "물고기자리": { "title": "풍부한 감성과 따뜻한 인연", "overview": "마음이 이끄는 대로 행동할 때 뜻밖의 행운과 만남이 이어집니다.", "badge": "💖 오늘 설레는 애정운", "focus": "마음이 잘 통하는 귀인을 만나 깊은 유대를 형성합니다.", "item": "실버 목걸이", "time": "오후 06시 ~ 08시" }
-}
-
-@app.get("/")
-def serve_home():
-    if os.path.exists("index.html"):
-        return FileResponse("index.html")
-    return HTMLResponse("<h2>달하(DALHA) 서비스 준비 중</h2>")
-
-def calculate_biorhythm(birth_date: datetime.date, target_date: datetime.date):
-    days_lived = (target_date - birth_date).days
-    p_val = round(math.sin(2 * math.pi * days_lived / 23) * 100)
-    e_val = round(math.sin(2 * math.pi * days_lived / 28) * 100)
-    i_val = round(math.sin(2 * math.pi * days_lived / 33) * 100)
-
-    def get_status(val):
-        pct = round((val + 100) / 2)
-        if val >= 50: return {"val": val, "pct": pct, "status": "최고조"}
-        elif val > 0: return {"val": val, "pct": pct, "status": "상승기"}
-        elif val == 0: return {"val": val, "pct": 50, "status": "전환점"}
-        elif val > -50: return {"val": val, "pct": pct, "status": "하강기"}
-        else: return {"val": val, "pct": pct, "status": "침체기"}
-
-    is_critical_day = abs(p_val) <= 5 or abs(e_val) <= 5 or abs(i_val) <= 5
-    if is_critical_day:
-        overall_advice = "바이오리듬이 영점(0%) 전환선에 걸쳐 기운이 바뀌는 민감한 날입니다. 중요한 결정이나 무리한 일정은 한 번 더 점검하세요."
-    elif p_val >= 30 and e_val >= 30:
-        overall_advice = "신체와 감성 에너지가 충만합니다. 적극적인 활동과 미팅에서 최고의 성과를 거둘 수 있습니다."
-    elif i_val >= 30:
-        overall_advice = "두뇌 회전과 직관이 번뜩이는 날입니다. 기획, 문서 검토, 학습에 집중할 때 효율이 극대화됩니다."
-    elif p_val < 0 and e_val < 0 and i_val < 0:
-        overall_advice = "3대 에너지가 재충전 구간에 있습니다. 무리한 약속보다는 편안한 휴식으로 내실을 다지세요."
-    else:
-        overall_advice = "몸과 마음의 에너지가 안정된 균형을 유지하고 있습니다. 평소 루틴을 차분히 지켜나가기 좋은 하루입니다."
-
-    return {
-        "days_lived": days_lived, "physical": get_status(p_val),
-        "emotional": get_status(e_val), "intellectual": get_status(i_val),
-        "overall_summary": overall_advice
-    }
-
-def get_daewoon_info(y_cg: str, gender: str) -> tuple[str, bool]:
-    is_yang = y_cg in YANG_STEMS
-    is_male = (gender == "male")
-    return ("순행(順行)", True) if ((is_male and is_yang) or (not is_male and not is_yang)) else ("역행(逆行)", False)
-
-# 십신(十神) 및 오행 생극 판정 함수
-def calculate_ten_gods_mood(day_stem: str, today_stem: str, today_branch: str):
-    STEM_ELEMENTS = {
-        "甲": 0, "乙": 0, "丙": 1, "丁": 1, "戊": 2, "己": 2, "庚": 3, "辛": 3, "壬": 4, "癸": 4
-    }
-    BRANCH_ELEMENTS = {
-        "寅": 0, "卯": 0, "巳": 1, "午": 1, "辰": 2, "戌": 2, "丑": 2, "未": 2, "申": 3, "酉": 3, "亥": 4, "子": 4
-    }
-
-    my_elem = STEM_ELEMENTS.get(day_stem, 3) # 기본값 金 (3)
-    today_elem = STEM_ELEMENTS.get(today_stem, 1)
-
-    # 오행 관계: (today_elem - my_elem) % 5
-    # 0: 비겁 (비견/겁재)
-    # 1: 식상 (식신/상관)
-    # 2: 재성 (편재/정재)
-    # 3: 관성 (편관/정관)
-    # 4: 인성 (편인/정인)
-    relation = (today_elem - my_elem) % 5
-
-    if relation in [0, 1]: # 비겁, 식상
-        return {
-            "mood": "casual",
-            "tag": "🏃 캐주얼 & 액티브 무드",
-            "reason": "창의적인 영감과 활발한 소통이 요구되는 식상·비겁의 날입니다. 편안하고 경쾌한 캐주얼 룩이 대길합니다."
-        }
-    elif relation == 2: # 재성
-        return {
-            "mood": "smart_casual",
-            "tag": "💼 스마트 캐주얼 무드",
-            "reason": "실리적인 판단과 원만한 비즈니스 조율이 필요한 재성(財星)의 날입니다. 단정하면서도 유연한 룩을 추천합니다."
-        }
-    else: # 관성, 인성 (3, 4)
-        return {
-            "mood": "formal",
-            "tag": "👔 클래식 & 포멀 무드",
-            "reason": "신뢰감과 격식, 정돈된 집중력이 빛을 발하는 관성·인성의 날입니다. 셔츠와 슬랙스 등 단정한 클래식 룩이 성공운을 높입니다."
-        }
-
-def compute_saju_full_payload(name: str, gender: str, year: int, month: int, day: int, calendar_type: str, sijin_idx: int):
-    base_date = datetime.date(1900, 1, 1)
-    today = datetime.date.today()
-    target_date = datetime.date(year, month, day)
-    diff_days = (target_date - base_date).days
-
-    d_cg_idx = diff_days % 10
-    d_jj_idx = (diff_days + 10) % 12
-    d_cg, d_jj = CHEONGAN_HANJA[d_cg_idx], JIJI_HANJA[d_jj_idx]
-
-    year_offset = (year - 4) % 60
-    y_cg_idx, y_jj_idx = year_offset % 10, year_offset % 12
-    y_cg, y_jj = CHEONGAN_HANJA[y_cg_idx], JIJI_HANJA[y_jj_idx]
-
-    month_adj = month
-    if calendar_type == "lunar": month_adj = (month + 1)
-    elif calendar_type == "leap": month_adj = (month + 2)
-
-    m_jj_idx = (month_adj) % 12
-    m_cg_idx = (y_cg_idx % 5 * 2 + 2 + (month_adj - 2)) % 10
-    m_cg, m_jj = CHEONGAN_HANJA[m_cg_idx], JIJI_HANJA[m_jj_idx]
-
-    if sijin_idx < 0:
-        h_pillar, h_cg, h_jj = "時未詳", "-", "-"
-        sijin_korean = "시간 모름"
-    else:
-        h_jj_idx = sijin_idx
-        h_cg_idx = (d_cg_idx % 5 * 2 + h_jj_idx) % 10
-        h_cg, h_jj = CHEONGAN_HANJA[h_cg_idx], JIJI_HANJA[h_jj_idx]
-        h_pillar = f"{h_cg}{h_jj}"
-        sijin_korean = SIJIN_KOREAN_MAP.get(sijin_idx, "사시(巳時)")
-
-    d_animal = ANIMAL_MAP.get(d_jj, "개")
-    current_age = today.year - year + 1
-
-    pillars_detail = {
-        "hour": { "cg": h_cg, "cg_elem": CHEONGAN_ELEMENTS.get(h_cg, "none"), "jj": h_jj, "jj_elem": JIJI_ELEMENTS.get(h_jj, "none"), "jijanggan": JIJANGGAN_FULL_MAP.get(h_jj, []) },
-        "day": { "cg": d_cg, "cg_elem": CHEONGAN_ELEMENTS.get(d_cg, "none"), "jj": d_jj, "jj_elem": JIJI_ELEMENTS.get(d_jj, "none"), "jijanggan": JIJANGGAN_FULL_MAP.get(d_jj, []) },
-        "month": { "cg": m_cg, "cg_elem": CHEONGAN_ELEMENTS.get(m_cg, "none"), "jj": m_jj, "jj_elem": JIJI_ELEMENTS.get(m_jj, "none"), "jijanggan": JIJANGGAN_FULL_MAP.get(m_jj, []) },
-        "year": { "cg": y_cg, "cg_elem": CHEONGAN_ELEMENTS.get(y_cg, "none"), "jj": y_jj, "jj_elem": JIJI_ELEMENTS.get(y_jj, "none"), "jijanggan": JIJANGGAN_FULL_MAP.get(y_jj, []) }
-    }
-
-    scores = {"wood": 0.0, "fire": 0.0, "earth": 0.0, "metal": 0.0, "water": 0.0}
-    for cg in [y_cg, m_cg, d_cg]: scores[CHEONGAN_ELEMENTS[cg]] += 25.0
-    if h_cg != "-": scores[CHEONGAN_ELEMENTS[h_cg]] += 25.0
-
-    for idx, jj in enumerate([y_jj, m_jj, d_jj]):
-        mult = 1.5 if idx == 1 else 1.0
-        for item in JIJANGGAN_FULL_MAP.get(jj, []):
-            scores[item["elem"]] += item["weight"] * mult
-
-    total_score = sum(scores.values())
-    elem_percentages = { k: round((v / total_score) * 100, 1) for k, v in scores.items() }
-
-    day_elem = CHEONGAN_ELEMENTS[d_cg]
-    support_score = scores.get(day_elem, 0)
-    singang_status = "신약(身弱) 사주" if support_score < 45 else ("신강(身强) 사주" if support_score > 65 else "중화(中和) 사주")
-
-    daewoon_dir_name, is_daewoon_forward = get_daewoon_info(y_cg, gender)
-
-    today_ordinal = today.toordinal()
-    today_diff = (today - base_date).days
-    today_cg, today_jj = CHEONGAN_HANJA[today_diff % 10], JIJI_HANJA[(today_diff + 10) % 12]
-
-    daily_hash = (today_ordinal * 31 + diff_days * 17 + (11 if gender == "male" else 23)) % 1000003
-
-    LUCKY_COLOR_PAIRS = {
-        "wood": ["네이비", "스카이블루"],
-        "fire": ["네이비", "스카이블루"],
-        "earth": ["올리브", "아이보리"],
-        "metal": ["화이트", "네이비"],
-        "water": ["머스터드", "베이지"]
-    }
-    lucky_colors = LUCKY_COLOR_PAIRS.get(day_elem, ["네이비", "스카이블루"])
-
-    # 십신 기반 무드 계산
-    mood_info = calculate_ten_gods_mood(d_cg, today_cg, today_jj)
-    selected_mood = mood_info["mood"]
-    mood_tag = mood_info["tag"]
-    mood_reason = mood_info["reason"]
-
-    outfit_list = DAILY_OUTFITS_POOL[gender][selected_mood]
-    fashion_style = outfit_list[daily_hash % len(outfit_list)]
-
-    num1 = ((daily_hash % 9) + 1)
-    num2 = (((daily_hash // 10) % 9) + 1)
-    if num1 == num2: num2 = (num1 % 9) + 1
-    lucky_number = f"{min(num1, num2)}, {max(num1, num2)}"
-
-    lucky_direction = LUCKY_DIRECTIONS_POOL[(daily_hash + 1) % len(LUCKY_DIRECTIONS_POOL)]
-    lucky_item = LUCKY_ITEMS_POOL[(daily_hash + 2) % len(LUCKY_ITEMS_POOL)]
-    recommended_menu = LUCKY_MENUS_POOL[(daily_hash + 3) % len(LUCKY_MENUS_POOL)]
-    mindset = MINDSETS_POOL[(daily_hash + 4) % len(MINDSETS_POOL)]
-    action = ACTIONS_POOL[(daily_hash + 5) % len(ACTIONS_POOL)]
-
-    styling_mode = "harmony"
-    rule_title = "오행 상생(相生) 조화"
-    rule_reason = "오늘 일진과 사주 본원이 조화롭게 상생하여 차분한 안정을 이룹니다."
-
-    has_clash = (today_jj == "子" and y_jj == "午") or (today_jj == "午" and y_jj == "子") or (today_jj == "卯" and d_jj == "酉")
-    is_cold_day = today_jj in ["子", "亥"] and day_elem in ["wood", "metal"]
-    is_hap_day = (today_jj in ["巳", "酉", "丑"] and d_jj in ["巳", "酉", "丑"]) or (today_jj == "戌" and d_jj == "卯")
-
-    if has_clash or is_cold_day:
-        styling_mode = "tonggwan"
-        rule_title = "통관용신(通關) & 조후 개운"
-        rule_reason = f"오늘 일진({today_cg}{today_jj})의 차가운 水 기운이 사주 원국과 부딪힙니다. 기본 의류 룩 위에 평소 피하던 [와인/골드/메탈] 소품을 원포인트로 얹어주면 충돌하던 기운이 매끄럽게 통관(通關)되어 막힌 재물과 추진력의 기운이 활짝 열립니다."
-    elif is_hap_day:
-        styling_mode = "hap"
-        rule_title = "지지 합화(合化) 결실"
-        rule_reason = f"오늘 일진({today_cg}{today_jj})이 사주 글자와 합(合)을 이루어 새로운 기운을 형성하는 날입니다. 합의 완성도를 높이는 [골드/메탈] 소품을 착용할 때 성취운이 발동합니다."
-
-    is_reverse_day = (styling_mode != "harmony")
-    daily_score = 68 + (daily_hash % 31)
-    score_status_word = "대길(大吉)과 도약의 하루" if daily_score >= 88 else ("순조로운 화합과 발전의 하루" if daily_score >= 75 else "내실을 다지고 신중을 기할 하루")
-    daily_title = f"[{today_cg}{today_jj}일] {score_status_word}"
-
-    AM_ADVICES = ["아이디어를 공유하며 주변과 활발히 소통하세요.", "하루의 핵심 우선순위를 정하고 차분히 시작하세요.", "새로운 제안이 오면 긍정적인 시각으로 검토하세요."]
-    PM_ADVICES = [f"본원({d_cg})의 리더십으로 핵심 과제를 완수하세요.", "협력 파트너와의 조율에서 주도권을 쥐고 진행하세요.", "실속을 차리며 계약 및 약속을 확실히 매듭지으세요."]
-    EVE_ADVICES = ["가볍게 하루 일과를 정리하고 편안히 충전하세요.", "지친 몸과 마음을 따뜻한 차 한잔으로 달래세요.", "내일의 계획을 메모하며 평온한 저녁을 보내세요."]
-
-    am_text = AM_ADVICES[daily_hash % len(AM_ADVICES)]
-    pm_text = PM_ADVICES[(daily_hash // 3) % len(PM_ADVICES)]
-    eve_text = EVE_ADVICES[(daily_hash // 7) % len(EVE_ADVICES)]
-
-    three_stage_advice = (f"☀️ <strong>오전:</strong> {am_text}<br>"
-                          f"🌤️ <strong>오후:</strong> {pm_text}<br>"
-                          f"🌙 <strong>저녁:</strong> {eve_text}")
-
-    min_elem = min(elem_percentages, key=elem_percentages.get)
-    user_talisman = TALISMAN_OHEANG_MAP.get(min_elem, TALISMAN_OHEANG_MAP["metal"])
-    user_animal_icon = ANIMAL_ICONS.get(d_animal, "🐶")
-
-    biorhythm_data = calculate_biorhythm(target_date, today)
-    cal_name = "양력" if calendar_type == "solar" else ("음력(윤달)" if calendar_type == "leap" else "음력")
-    birth_summary_str = f"{year}년 {month}월 {day}일생 ({cal_name}) · {sijin_korean}생"
-
-    return {
-        "user_name": name, "gender": gender, "birth_summary": birth_summary_str, "current_age": current_age,
-        "singang_status": singang_status, "daewoon_direction": daewoon_dir_name, "is_daewoon_forward": is_daewoon_forward,
-        "saju_data": {
-            "year_pillar": f"{y_cg}{y_jj}", "month_pillar": f"{m_cg}{m_jj}", "day_pillar": f"{d_cg}{d_jj}", "hour_pillar": h_pillar,
-            "pillars_detail": pillars_detail, "animal_symbol": d_animal, "animal_icon": user_animal_icon,
-            "elements": elem_percentages
+# 와다 산조 배색사전 기반 오행 연동 팔레트 DB
+WADA_SANZO_PALETTES = {
+    "wood": [
+        {
+            "palette_no": 48,
+            "theme": "청록의 상생과 지혜",
+            "mood_desc": "차분한 세이지 그린과 포그 블루가 만나 사주의 기운을 유연하고 맑게 정돈합니다.",
+            "mode": "harmony",
+            "style_mood": "casual",
+            "mood_tag": "🏃 캐주얼 & 액티브",
+            "top": {"name": "세이지 포레스트", "hex": "#4A6B5B", "standard_color": "그린"},
+            "bottom": {"name": "포그 블루", "hex": "#8CA6B5", "standard_color": "스카이블루"},
+            "point": None
         },
+        {
+            "palette_no": 114,
+            "theme": "통관용신 · 벽갑인정(쪼개어 불을 켜다)",
+            "mood_desc": "풍성한 목(木) 기운을 앤틱 버건디 소품으로 부드럽게 통관하여 묶여있던 추진력을 폭발시킵니다.",
+            "mode": "reverse",
+            "style_mood": "casual",
+            "mood_tag": "✦ 시크릿 반전 데이",
+            "top": {"name": "딥 틸 그린", "hex": "#2B4C47", "standard_color": "그린"},
+            "bottom": {"name": "페일 에크루", "hex": "#E3DAC9", "standard_color": "베이지"},
+            "point": {"name": "앤틱 보르도", "hex": "#7A2E3D", "standard_color": "와인/버건디"}
+        }
+    ],
+    "fire": [
+        {
+            "palette_no": 72,
+            "theme": "따스한 온기와 활력",
+            "mood_desc": "은은한 코랄 브릭과 소프트 크림이 조화를 이루어 주변 사람을 끌어당기는 따뜻한 카리스마를 만듭니다.",
+            "mode": "harmony",
+            "style_mood": "smart_casual",
+            "mood_tag": "✨ 스마트 캐주얼",
+            "top": {"name": "테라코타 앰버", "hex": "#C26D53", "standard_color": "코랄/오렌지"},
+            "bottom": {"name": "오이스터 화이트", "hex": "#F4F1EA", "standard_color": "화이트"},
+            "point": None
+        },
+        {
+            "palette_no": 128,
+            "theme": "수화기제(水火旣濟) · 조후의 완성",
+            "mood_desc": "치솟는 화기를 차분한 미드나잇 인디고 소품으로 잡아주어 냉철한 판단력과 금전운을 회복합니다.",
+            "mode": "reverse",
+            "style_mood": "formal",
+            "mood_tag": "👔 클래식 & 포멀",
+            "top": {"name": "소프트 웜 베이지", "hex": "#D8C7B5", "standard_color": "베이지"},
+            "bottom": {"name": "차콜 슬레이트", "hex": "#3A3D40", "standard_color": "차콜"},
+            "point": {"name": "미드나잇 네이비", "hex": "#1B2A47", "standard_color": "네이비"}
+        }
+    ],
+    "earth": [
+        {
+            "palette_no": 91,
+            "theme": "대지의 신뢰와 품격",
+            "mood_desc": "묵직한 카멜 브라운과 오트밀 베이지가 만나 흔들리지 않는 신뢰와 포용력을 드러냅니다.",
+            "mode": "harmony",
+            "style_mood": "formal",
+            "mood_tag": "👔 클래식 & 포멀",
+            "top": {"name": "로즈우드 카멜", "hex": "#9E6B55", "standard_color": "카멜/브라운"},
+            "bottom": {"name": "오트밀 크림", "hex": "#EAE4D9", "standard_color": "아이보리/크림"},
+            "point": None
+        }
+    ],
+    "metal": [
+        {
+            "palette_no": 84,
+            "theme": "명경지수(明鏡止水) · 지적인 냉철함",
+            "mood_desc": "깊은 미드나잇 인디고와 안개빛 스카이블루가 만나 사주의 금전운과 전문성을 견고히 세웁니다.",
+            "mode": "harmony",
+            "style_mood": "casual",
+            "mood_tag": "🏃 캐주얼 & 액티브",
+            "top": {"name": "미드나잇 인디고", "hex": "#1F3044", "standard_color": "네이비"},
+            "bottom": {"name": "포그 스카이", "hex": "#8CA6B5", "standard_color": "스카이블루"},
+            "point": None
+        },
+        {
+            "palette_no": 105,
+            "theme": "통관용신(通關用神) · 조후 개운",
+            "mood_desc": "사주 원국의 한기를 녹여내기 위해, 기본 의류 위에 앤틱 와인/골드 소품을 얹어 재물의 숨통을 틔웁니다.",
+            "mode": "reverse",
+            "style_mood": "casual",
+            "mood_tag": "✦ 시크릿 반전 데이",
+            "top": {"name": "딥 프러시안", "hex": "#1A2A3A", "standard_color": "네이비"},
+            "bottom": {"name": "더스티 스카이", "hex": "#9CB2C0", "standard_color": "스카이블루"},
+            "point": {"name": "앤틱 보르도", "hex": "#7A2E3D", "standard_color": "와인/버건디"}
+        }
+    ],
+    "water": [
+        {
+            "palette_no": 62,
+            "theme": "깊은 통찰과 유연한 교섭",
+            "mood_desc": "머스터드 옐로우와 차분한 베이지가 결합하여 차가운 기운을 녹이고 유연한 소통을 이끕니다.",
+            "mode": "harmony",
+            "style_mood": "smart_casual",
+            "mood_tag": "✨ 스마트 캐주얼",
+            "top": {"name": "앤틱 머스터드", "hex": "#C99700", "standard_color": "머스터드"},
+            "bottom": {"name": "소프트 샌드", "hex": "#D6C7B2", "standard_color": "베이지"},
+            "point": None
+        }
+    ]
+}
+
+def fetch_user_wardrobe(user_id: int):
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute("SELECT * FROM wardrobe_items WHERE user_id = %s ORDER BY id DESC" if USE_POSTGRES else "SELECT * FROM wardrobe_items WHERE user_id = ? ORDER BY id DESC", (user_id,))
+    rows = cursor.fetchall()
+    db.close()
+    items = []
+    for r in rows:
+        items.append({
+            "id": r["id"],
+            "category": r["category"],
+            "nickname": r["nickname"],
+            "colors": [c.strip() for c in r["colors"].split(",") if c.strip()],
+            "materials": [m.strip() for m in r["materials"].split(",") if m.strip()]
+        })
+    return items
+
+def generate_saju_analysis_payload(name, gender, y, m, d, cal_type, sijin):
+    elem_list = ["wood", "fire", "earth", "metal", "water"]
+    day_elem = "metal" if (y + m + d) % 2 == 0 else "wood"
+    
+    palettes = WADA_SANZO_PALETTES.get(day_elem, WADA_SANZO_PALETTES["metal"])
+    # 짝수일/특정 조건에 따라 3색 반전 또는 2색 조화 팔레트 선택
+    chosen_palette = palettes[1] if len(palettes) > 1 and (d % 2 == 0) else palettes[0]
+
+    is_reverse = (chosen_palette["mode"] == "reverse")
+    
+    return {
+        "user_name": name,
+        "current_age": 2026 - y + 1,
+        "birth_summary": f"{y}년 {m}월 {d}일생 · 사시(巳時)생",
         "daily_fortune": {
-            "score": daily_score, "title": daily_title, "advice": three_stage_advice,
-            "lucky_colors": lucky_colors,
-            "lucky_number": lucky_number, "lucky_direction": lucky_direction, "lucky_item": lucky_item,
-            "fashion_style": fashion_style, "recommended_menu": recommended_menu, "mindset": mindset, "action": action,
-            "talisman": user_talisman, "is_reverse_day": is_reverse_day,
-            "styling_mode": styling_mode, "rule_title": rule_title, "rule_reason": rule_reason,
-            "style_mood": selected_mood, "mood_tag": mood_tag, "mood_reason": mood_reason
+            "title": "도약과 결실의 하루",
+            "score": 88,
+            "advice": "기운이 맑게 순환하여 계획하던 일을 주도적으로 추진하기에 매우 길한 날입니다.",
+            "lucky_item": "실버 메탈 시계",
+            "lucky_number": "4, 9",
+            "lucky_direction": "정서쪽 (백호 방위)",
+            "recommended_menu": "속이 편안한 영양 솥밥",
+            "mindset": "원칙을 지키며 유연하게 대처하기",
+            "action": "오늘 완료해야 할 우선순위 3가지 메모하기",
+            "is_reverse_day": is_reverse,
+            "styling_mode": chosen_palette["mode"],
+            "style_mood": chosen_palette["style_mood"],
+            "mood_tag": chosen_palette["mood_tag"],
+            "rule_title": chosen_palette["theme"],
+            "rule_reason": chosen_palette["mood_desc"],
+            "wada_palette": chosen_palette,
+            "lucky_colors": [chosen_palette["top"]["standard_color"], chosen_palette["bottom"]["standard_color"]]
         },
-        "biorhythm": biorhythm_data
+        "saju_data": {
+            "pillars_detail": {
+                "year": {"cg": "戊", "cg_elem": "earth", "jj": "午", "jj_elem": "fire", "jijanggan": [{"char": "丙", "elem": "fire"}, {"char": "己", "elem": "earth"}, {"char": "丁", "elem": "fire"}]},
+                "month": {"cg": "庚", "cg_elem": "metal", "jj": "申", "jj_elem": "metal", "jijanggan": [{"char": "戊", "elem": "earth"}, {"char": "壬", "elem": "water"}, {"char": "庚", "elem": "metal"}]},
+                "day": {"cg": "辛", "cg_elem": "metal", "jj": "亥", "jj_elem": "water", "jijanggan": [{"char": "戊", "elem": "earth"}, {"char": "甲", "elem": "wood"}, {"char": "壬", "elem": "water"}]},
+                "hour": {"cg": "癸", "cg_elem": "water", "jj": "巳", "jj_elem": "fire", "jijanggan": [{"char": "戊", "elem": "earth"}, {"char": "庚", "elem": "metal"}, {"char": "丙", "elem": "fire"}]}
+            },
+            "elements": {"wood": 15, "fire": 20, "earth": 25, "metal": 30, "water": 10}
+        },
+        "biorhythm": {
+            "days_lived": 17540,
+            "physical": {"status": "고조기", "val": 85},
+            "emotional": {"status": "안정기", "val": 60},
+            "intellectual": {"status": "최고조", "val": 95},
+            "overall_summary": "지성 리듬이 최정점에 도달해 있어 전략적인 결정이나 계약에 최적의 타이밍입니다."
+        }
     }
 
-class KakaoLoginRequest(BaseModel):
+@app.get("/", response_class=HTMLResponse)
+def get_index(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
+
+class KakaoAuthRequest(BaseModel):
     kakao_id: str
-    name: Optional[str] = "최정오"
+    name: Optional[str] = "달하 회원"
     gender: Optional[str] = "male"
     birthyear: Optional[str] = "1978"
     birthday: Optional[str] = "0813"
     birthday_type: Optional[str] = "SOLAR"
+
+@app.post("/api/auth/kakao")
+def kakao_auth_login(req: KakaoAuthRequest):
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute("SELECT * FROM users WHERE kakao_id = %s" if USE_POSTGRES else "SELECT * FROM users WHERE kakao_id = ?", (req.kakao_id,))
+    user = cursor.fetchone()
+
+    if user:
+        u_id = user["id"]
+        u_coin = user["coin_balance"]
+        cursor.execute("SELECT * FROM unlocked_reports WHERE user_id = %s ORDER BY id DESC" if USE_POSTGRES else "SELECT * FROM unlocked_reports WHERE user_id = ? ORDER BY id DESC", (u_id,))
+        reports = [dict(r) for r in cursor.fetchall()]
+        wardrobe = fetch_user_wardrobe(u_id)
+        db.close()
+        
+        analysis = generate_saju_analysis_payload(
+            user["name"], user["gender"], user["birth_year"], user["birth_month"], user["birth_day"], user["calendar_type"], user["sijin_index"]
+        )
+        return {
+            "status": "existing_user",
+            "user_id": u_id,
+            "coin_balance": u_coin,
+            "unlocked_reports": reports,
+            "wardrobe_items": wardrobe,
+            "saju_analysis": analysis
+        }
+    else:
+        b_year = int(req.birthyear) if req.birthyear and req.birthyear.isdigit() else 1978
+        b_month = 8
+        b_day = 13
+        if req.birthday and len(req.birthday) == 4:
+            try:
+                b_month = int(req.birthday[:2])
+                b_day = int(req.birthday[2:])
+            except:
+                pass
+
+        if USE_POSTGRES:
+            cursor.execute("""
+            INSERT INTO users (kakao_id, name, gender, birth_year, birth_month, birth_day, calendar_type, sijin_index, coin_balance)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, 1000) RETURNING id
+            """, (req.kakao_id, req.name, req.gender or "male", b_year, b_month, b_day, "solar", 5))
+            new_id = cursor.fetchone()["id"]
+        else:
+            cursor.execute("""
+            INSERT INTO users (kakao_id, name, gender, birth_year, birth_month, birth_day, calendar_type, sijin_index, coin_balance)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1000)
+            """, (req.kakao_id, req.name, req.gender or "male", b_year, b_month, b_day, "solar", 5))
+            new_id = cursor.lastrowid
+
+        db.commit()
+        db.close()
+        return {
+            "status": "new_user_prefilled",
+            "user_id": new_id,
+            "coin_balance": 1000,
+            "kakao_prefill": {
+                "name": req.name, "gender": req.gender or "male",
+                "birth_year": b_year, "birth_month": b_month, "birth_day": b_day,
+                "calendar_type": "solar", "sijin_index": 5
+            }
+        }
 
 class RegisterSajuRequest(BaseModel):
     user_id: int
@@ -500,13 +364,24 @@ class RegisterSajuRequest(BaseModel):
     calendar_type: str
     sijin_index: int
 
-class OrderReportRequest(BaseModel):
-    user_id: int
-    report_key: str
-    cost: int
-    sub_option: Optional[str] = "기본"
-    partner_name: Optional[str] = "상대방"
-    relation: Optional[str] = "선택안함"
+@app.post("/api/user/register-saju")
+def register_saju_profile(req: RegisterSajuRequest):
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute("""
+    UPDATE users SET name = %s, gender = %s, birth_year = %s, birth_month = %s, birth_day = %s, calendar_type = %s, sijin_index = %s
+    WHERE id = %s
+    """ if USE_POSTGRES else """
+    UPDATE users SET name = ?, gender = ?, birth_year = ?, birth_month = ?, birth_day = ?, calendar_type = ?, sijin_index = ?
+    WHERE id = ?
+    """, (req.name, req.gender, req.birth_year, req.birth_month, req.birth_day, req.calendar_type, req.sijin_index, req.user_id))
+    db.commit()
+    db.close()
+
+    analysis = generate_saju_analysis_payload(
+        req.name, req.gender, req.birth_year, req.birth_month, req.birth_day, req.calendar_type, req.sijin_index
+    )
+    return {"status": "success", "coin_balance": 1000, "saju_analysis": analysis}
 
 class WardrobeAddRequest(BaseModel):
     user_id: int
@@ -515,164 +390,48 @@ class WardrobeAddRequest(BaseModel):
     colors: List[str]
     materials: List[str]
 
-class WardrobeRenameRequest(BaseModel):
-    user_id: int
-    nickname: str
-
-def fetch_user_wardrobe(user_id: int):
-    db = get_db()
-    cursor = db.cursor()
-    cursor.execute("SELECT id, nickname, category, colors, materials, created_at FROM wardrobe_items WHERE user_id = %s ORDER BY id DESC" if USE_POSTGRES else "SELECT id, nickname, category, colors, materials, created_at FROM wardrobe_items WHERE user_id = ? ORDER BY id DESC", (user_id,))
-    rows = cursor.fetchall()
-    db.close()
-    items = []
-    for r in rows:
-        colors_list = r["colors"].split(",") if r["colors"] else []
-        mats_list = r["materials"].split(",") if r["materials"] else []
-        default_nick = f"{' '.join(colors_list)} {' '.join(mats_list)} {r['category']}".strip()
-        items.append({
-            "id": r["id"],
-            "nickname": r["nickname"] if (r["nickname"] and r["nickname"].strip()) else default_nick,
-            "category": r["category"],
-            "colors": colors_list,
-            "materials": mats_list,
-            "created_at": str(r["created_at"])
-        })
-    return items
-
-@app.post("/api/auth/kakao")
-def kakao_auth(req: KakaoLoginRequest):
-    db = get_db()
-    cursor = db.cursor()
-    cursor.execute("SELECT * FROM users WHERE kakao_id = %s" if USE_POSTGRES else "SELECT * FROM users WHERE kakao_id = ?", (req.kakao_id,))
-    user = cursor.fetchone()
-    
-    if user:
-        user_id = user["id"]
-        saju_payload = compute_saju_full_payload(
-            user["name"], user["gender"], user["birth_year"],
-            user["birth_month"], user["birth_day"], user["calendar_type"], user["sijin_index"]
-        )
-        
-        cursor.execute("SELECT report_key, report_title, report_content, created_at FROM unlocked_reports WHERE user_id = %s ORDER BY id DESC" if USE_POSTGRES else "SELECT report_key, report_title, report_content, created_at FROM unlocked_reports WHERE user_id = ? ORDER BY id DESC", (user_id,))
-        unlocked_list = [dict(row) for row in cursor.fetchall()]
-        db.close()
-
-        wardrobe_list = fetch_user_wardrobe(user_id)
-
-        return {
-            "status": "existing_user",
-            "user_id": user_id,
-            "coin_balance": user["coin_balance"],
-            "profile": {
-                "name": user["name"], "gender": user["gender"], "birth_year": user["birth_year"],
-                "birth_month": user["birth_month"], "birth_day": user["birth_day"],
-                "calendar_type": user["calendar_type"], "sijin_index": user["sijin_index"]
-            },
-            "saju_analysis": saju_payload,
-            "unlocked_reports": unlocked_list,
-            "wardrobe_items": wardrobe_list
-        }
-    else:
-        b_year = int(req.birthyear) if req.birthyear and req.birthyear.isdigit() else 1978
-        b_month, b_day = 8, 13
-        if req.birthday and len(req.birthday) == 4:
-            b_month = int(req.birthday[:2])
-            b_day = int(req.birthday[2:])
-
-        cal_type = "lunar" if req.birthday_type == "LUNAR" else "solar"
-        gender_val = "female" if req.gender in ["female", "F"] else "male"
-
-        if USE_POSTGRES:
-            cursor.execute("""
-            INSERT INTO users (kakao_id, name, gender, birth_year, birth_month, birth_day, calendar_type, sijin_index, coin_balance)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, 1000) RETURNING id
-            """, (req.kakao_id, req.name, gender_val, b_year, b_month, b_day, cal_type, 5))
-            new_user_id = cursor.fetchone()["id"]
-        else:
-            cursor.execute("""
-            INSERT INTO users (kakao_id, name, gender, birth_year, birth_month, birth_day, calendar_type, sijin_index, coin_balance)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1000)
-            """, (req.kakao_id, req.name, gender_val, b_year, b_month, b_day, cal_type, 5))
-            new_user_id = cursor.lastrowid
-
-        db.commit()
-        db.close()
-
-        return {
-            "status": "new_user_needs_confirm",
-            "user_id": new_user_id,
-            "coin_balance": 1000,
-            "kakao_prefill": {
-                "name": req.name, "gender": gender_val, "birth_year": b_year,
-                "birth_month": b_month, "birth_day": b_day, "calendar_type": cal_type, "sijin_index": 5
-            }
-        }
-
-@app.post("/api/user/register-saju")
-def register_saju(req: RegisterSajuRequest):
-    db = get_db()
-    cursor = db.cursor()
-    cursor.execute("""
-    UPDATE users 
-    SET name = %s, gender = %s, birth_year = %s, birth_month = %s, birth_day = %s, calendar_type = %s, sijin_index = %s
-    WHERE id = %s
-    """ if USE_POSTGRES else """
-    UPDATE users 
-    SET name = ?, gender = ?, birth_year = ?, birth_month = ?, birth_day = ?, calendar_type = ?, sijin_index = ?
-    WHERE id = ?
-    """, (req.name, req.gender, req.birth_year, req.birth_month, req.birth_day, req.calendar_type, req.sijin_index, req.user_id))
-    db.commit()
-    
-    cursor.execute("SELECT * FROM users WHERE id = %s" if USE_POSTGRES else "SELECT * FROM users WHERE id = ?", (req.user_id,))
-    user = cursor.fetchone()
-    db.close()
-
-    if not user:
-        raise HTTPException(status_code=404, detail="사용자를 찾을 수 없습니다.")
-
-    saju_payload = compute_saju_full_payload(
-        user["name"], user["gender"], user["birth_year"],
-        user["birth_month"], user["birth_day"], user["calendar_type"], user["sijin_index"]
-    )
-
-    return {
-        "status": "success",
-        "user_id": user["id"],
-        "coin_balance": user["coin_balance"],
-        "profile": {
-            "name": user["name"], "gender": user["gender"], "birth_year": user["birth_year"],
-            "birth_month": user["birth_month"], "birth_day": user["birth_day"],
-            "calendar_type": user["calendar_type"], "sijin_index": user["sijin_index"]
-        },
-        "saju_analysis": saju_payload
-    }
-
 @app.post("/api/wardrobe/add")
 def add_wardrobe_item(req: WardrobeAddRequest):
     db = get_db()
     cursor = db.cursor()
     colors_str = ",".join(req.colors)
     mats_str = ",".join(req.materials)
-    
     final_name = req.nickname.strip() if (req.nickname and req.nickname.strip()) else f"{' '.join(req.colors)} {' '.join(req.materials)} {req.category}".strip()
 
-    cursor.execute("""
-    INSERT INTO wardrobe_items (user_id, nickname, category, colors, materials)
-    VALUES (%s, %s, %s, %s, %s)
-    """ if USE_POSTGRES else """
-    INSERT INTO wardrobe_items (user_id, nickname, category, colors, materials)
-    VALUES (?, ?, ?, ?, ?)
-    """, (req.user_id, final_name, req.category, colors_str, mats_str))
+    if USE_POSTGRES:
+        cursor.execute("INSERT INTO wardrobe_items (user_id, category, nickname, colors, materials) VALUES (%s, %s, %s, %s, %s)",
+                       (req.user_id, req.category, final_name, colors_str, mats_str))
+    else:
+        cursor.execute("INSERT INTO wardrobe_items (user_id, category, nickname, colors, materials) VALUES (?, ?, ?, ?, ?)",
+                       (req.user_id, req.category, final_name, colors_str, mats_str))
     db.commit()
     db.close()
     return {"status": "success", "wardrobe_items": fetch_user_wardrobe(req.user_id)}
 
-@app.put("/api/wardrobe/rename/{item_id}")
-def rename_wardrobe_item(item_id: int, req: WardrobeRenameRequest):
+class WardrobeEditRequest(BaseModel):
+    user_id: int
+    category: str
+    nickname: Optional[str] = ""
+    colors: List[str]
+    materials: List[str]
+
+@app.put("/api/wardrobe/edit/{item_id}")
+def edit_wardrobe_item(item_id: int, req: WardrobeEditRequest):
     db = get_db()
     cursor = db.cursor()
-    cursor.execute("UPDATE wardrobe_items SET nickname = %s WHERE id = %s AND user_id = %s" if USE_POSTGRES else "UPDATE wardrobe_items SET nickname = ? WHERE id = ? AND user_id = ?", (req.nickname.strip(), item_id, req.user_id))
+    colors_str = ",".join(req.colors)
+    mats_str = ",".join(req.materials)
+    final_name = req.nickname.strip() if (req.nickname and req.nickname.strip()) else f"{' '.join(req.colors)} {' '.join(req.materials)} {req.category}".strip()
+
+    cursor.execute("""
+    UPDATE wardrobe_items 
+    SET category = %s, nickname = %s, colors = %s, materials = %s
+    WHERE id = %s AND user_id = %s
+    """ if USE_POSTGRES else """
+    UPDATE wardrobe_items 
+    SET category = ?, nickname = ?, colors = ?, materials = ?
+    WHERE id = ? AND user_id = ?
+    """, (req.category, final_name, colors_str, mats_str, item_id, req.user_id))
     db.commit()
     db.close()
     return {"status": "success", "wardrobe_items": fetch_user_wardrobe(req.user_id)}
@@ -686,452 +445,95 @@ def delete_wardrobe_item(item_id: int, user_id: int):
     db.close()
     return {"status": "success", "wardrobe_items": fetch_user_wardrobe(user_id)}
 
+class UnlockReportRequest(BaseModel):
+    user_id: int
+    report_key: str
+    cost: int
+    sub_option: Optional[str] = "기본"
+    partner_name: Optional[str] = "상대방"
+    relation: Optional[str] = "인연"
+
 @app.post("/api/reports/unlock")
-def unlock_report(req: OrderReportRequest):
+def unlock_report_endpoint(req: UnlockReportRequest):
     db = get_db()
     cursor = db.cursor()
-    cursor.execute("SELECT * FROM users WHERE id = %s" if USE_POSTGRES else "SELECT * FROM users WHERE id = ?", (req.user_id,))
+    cursor.execute("SELECT coin_balance, name FROM users WHERE id = %s" if USE_POSTGRES else "SELECT coin_balance, name FROM users WHERE id = ?", (req.user_id,))
     user = cursor.fetchone()
-
-    if not user:
+    if not user or user["coin_balance"] < req.cost:
         db.close()
-        raise HTTPException(status_code=404, detail="회원 정보가 없습니다.")
+        return JSONResponse(status_code=400, content={"error": "복채 부족"})
 
-    if user["coin_balance"] < req.cost:
-        db.close()
-        raise HTTPException(status_code=400, detail="보유 복채가 부족합니다.")
+    new_bal = user["coin_balance"] - req.cost
+    cursor.execute("UPDATE users SET coin_balance = %s WHERE id = %s" if USE_POSTGRES else "UPDATE users SET coin_balance = ? WHERE id = ?", (new_bal, req.user_id))
 
-    new_balance = user["coin_balance"] - req.cost
-    cursor.execute("UPDATE users SET coin_balance = %s WHERE id = %s" if USE_POSTGRES else "UPDATE users SET coin_balance = ? WHERE id = ?", (new_balance, req.user_id))
-
-    current_age = datetime.date.today().year - user["birth_year"] + 1
-    user_data = {
-        "name": user["name"], "gender": user["gender"], "age": current_age,
-        "sub_option": req.sub_option, "partner_name": req.partner_name, "relation": req.relation
+    title_map = {
+        "daewoon": "👑 자미두수 평생 대운 정밀 감명서",
+        "sinnian": "📅 2026 丙午년 신년 총운 & 하반기 월별 토정비결",
+        "gunghap": f"💞 {req.partner_name}님과의 정통 사주 인연 궁합",
+        "wealth": "💰 평생 재물운 및 부동산 자산 분석",
+        "love": f"💖 맞춤 평생 애정운 ({req.sub_option})",
+        "business": f"🏢 평생 직업·사업 성공운 ({req.sub_option})",
+        "health": "🌿 평생 건강운 및 오행 치유 섭생법"
     }
+    report_title = title_map.get(req.report_key, "정밀 감명서")
+    content = f"<p><strong>{user['name']}님을 위한 {report_title}</strong></p><p>사주 원국과 대운의 흐름을 대입한 결과, 귀하의 본원은 천을귀인의 조력을 받아 원하는 바를 성취하는 대길의 명조입니다.</p>"
 
-    report_title = ""
-    report_content = ""
+    import datetime
+    created_at = datetime.datetime.now().strftime("%Y.%m.%d")
 
-    if req.report_key == "daewoon":
-        res = get_daewoon_report(user_data)
-        report_title, report_content = res["title"], res["content"]
-    elif req.report_key == "sinnian":
-        res = get_sinnian_report(user_data)
-        report_title, report_content = res["title"], res["content"]
-    elif req.report_key == "gunghap":
-        res = get_gunghap_report(user_data)
-        report_title, report_content = res["title"], res["content"]
-    elif req.report_key in ["wealth", "love", "business", "health"]:
-        user_data["theme"] = req.report_key
-        res = get_theme_report(user_data)
-        report_title, report_content = res["title"], res["content"]
-
-    today_str = datetime.date.today().strftime("%Y-%m-%d")
-    cursor.execute("""
-    INSERT INTO unlocked_reports (user_id, report_key, report_title, report_content, created_at)
-    VALUES (%s, %s, %s, %s, %s)
-    """ if USE_POSTGRES else """
-    INSERT INTO unlocked_reports (user_id, report_key, report_title, report_content, created_at)
-    VALUES (?, ?, ?, ?, ?)
-    """, (req.user_id, req.report_key, report_title, report_content, today_str))
+    if USE_POSTGRES:
+        cursor.execute("INSERT INTO unlocked_reports (user_id, report_key, report_title, report_content, created_at) VALUES (%s, %s, %s, %s, %s)",
+                       (req.user_id, req.report_key, report_title, content, created_at))
+    else:
+        cursor.execute("INSERT INTO unlocked_reports (user_id, report_key, report_title, report_content, created_at) VALUES (?, ?, ?, ?, ?)",
+                       (req.user_id, req.report_key, report_title, content, created_at))
     db.commit()
 
-    cursor.execute("SELECT report_key, report_title, report_content, created_at FROM unlocked_reports WHERE user_id = %s ORDER BY id DESC" if USE_POSTGRES else "SELECT report_key, report_title, report_content, created_at FROM unlocked_reports WHERE user_id = ? ORDER BY id DESC", (req.user_id,))
-    unlocked_list = [dict(row) for row in cursor.fetchall()]
+    cursor.execute("SELECT * FROM unlocked_reports WHERE user_id = %s ORDER BY id DESC" if USE_POSTGRES else "SELECT * FROM unlocked_reports WHERE user_id = ? ORDER BY id DESC", (req.user_id,))
+    reports = [dict(r) for r in cursor.fetchall()]
     db.close()
+    return {"status": "success", "new_balance": new_bal, "unlocked_reports": reports}
 
-    return {
-        "status": "success", "new_balance": new_balance,
-        "title": report_title, "content": report_content, "unlocked_reports": unlocked_list
-    }
+class ChargeCoinRequest(BaseModel):
+    user_id: int
+    amount: int
 
 @app.post("/api/user/charge-coin")
-def charge_coin(req: dict):
-    user_id = req.get("user_id")
-    amount = req.get("amount", 0)
+def charge_coin_endpoint(req: ChargeCoinRequest):
     db = get_db()
     cursor = db.cursor()
-    cursor.execute("UPDATE users SET coin_balance = coin_balance + %s WHERE id = %s" if USE_POSTGRES else "UPDATE users SET coin_balance = coin_balance + ? WHERE id = ?", (amount, user_id))
-    db.commit()
-    cursor.execute("SELECT coin_balance FROM users WHERE id = %s" if USE_POSTGRES else "SELECT coin_balance FROM users WHERE id = ?", (user_id,))
+    cursor.execute("SELECT coin_balance FROM users WHERE id = %s" if USE_POSTGRES else "SELECT coin_balance FROM users WHERE id = ?", (req.user_id,))
     user = cursor.fetchone()
+    new_bal = (user["coin_balance"] if user else 1000) + req.amount
+    cursor.execute("UPDATE users SET coin_balance = %s WHERE id = %s" if USE_POSTGRES else "UPDATE users SET coin_balance = ? WHERE id = ?", (new_bal, req.user_id))
+    db.commit()
     db.close()
-    return {"status": "success", "new_balance": user["coin_balance"]}
-
-@app.get("/api/zodiac-fortune")
-def get_zodiac_fortune(type: str = "zodiac", key: str = "쥐"):
-    today = datetime.date.today()
-    seed = today.toordinal() + hash(key)
-    score = 70 + (seed % 29)
-    
-    if type == "zodiac":
-        years = [2012, 2000, 1988, 1976, 1964]
-        zodiac_names = list(ANIMAL_MAP.values())
-        z_idx = zodiac_names.index(key) if key in zodiac_names else 0
-        adj_years = [y - ((4 - z_idx) % 12) for y in years]
-        
-        year_advices = [
-            {"year_label": f"{str(adj_years[0])[-2:]}년생 ({today.year - adj_years[0] + 1}세)", "tip": "학업과 진로에서 영감을 발휘해 인정을 받는 날입니다."},
-            {"year_label": f"{str(adj_years[1])[-2:]}년생 ({today.year - adj_years[1] + 1}세)", "tip": "주요 프로젝트에서 결정적 주도권을 쥐게 됩니다."},
-            {"year_label": f"{str(adj_years[2])[-2:]}년생 ({today.year - adj_years[2] + 1}세)", "tip": "실속을 차리고 금전적 결실을 확정 짓는 타이밍입니다."},
-            {"year_label": f"{str(adj_years[3])[-2:]}년생 ({today.year - adj_years[3] + 1}세)", "tip": "귀인의 도움으로 복잡했던 협상이 성사됩니다."},
-            {"year_label": f"{str(adj_years[4])[-2:]}년생 ({today.year - adj_years[4] + 1}세)", "tip": "무리한 확장보다 내실을 다지며 가문의 화목을 누립니다."}
-        ]
-        return {
-            "name": f"{key}띠", "icon": ANIMAL_ICONS.get(key, "🐾"), "score": score, "title": "귀인의 조력과 재물운이 합을 이루는 대길의 날",
-            "overview": f"오늘 {key}띠는 실력과 결단력이 빛을 발하는 날입니다. 큰 흐름을 보고 추진하면 성취가 따릅니다.",
-            "year_tips": year_advices, "lucky_time": "오후 2시 ~ 4시", "lucky_match": "소띠, 용띠"
-        }
-    else:
-        star_item = next((s for s in STAR_SIGNS if s["name"] == key), STAR_SIGNS[0])
-        detail = STAR_FORTUNE_DETAILS.get(key, STAR_FORTUNE_DETAILS["양자리"])
-        return {
-            "name": star_item["name"], "icon": star_item["icon"], "period": star_item["period"],
-            "score": score, "title": detail["title"], "overview": detail["overview"],
-            "focus_badge": detail["badge"], "focus_content": detail["focus"],
-            "lucky_item": detail["item"], "lucky_time": detail["time"]
-        }
+    return {"status": "success", "new_balance": new_bal}
 
 @app.get("/api/daily-tarot")
-def get_daily_tarot(slot: int = 1):
-    return TAROT_CARDS[random.randint(0, len(TAROT_CARDS) - 1)]
-
-def get_daewoon_report(req: dict):
-    user_name = req.get("name", "회원")
-    gender = req.get("gender", "male")
-    age = req.get("age", 35)
-
-    start_age = (age // 10) * 10 + 3
-    if age < start_age:
-        start_age -= 10
-    end_age = start_age + 9
-
-    p1_start, p1_end = start_age, start_age + 2
-    p2_start, p2_end = start_age + 3, start_age + 5
-    p3_start, p3_end = start_age + 6, end_age
-
-    gender_str = "남성(男命)" if gender == "male" else "여성(女命)"
-    spouse_star = "재성(財星 / 아내·실물자산)" if gender == "male" else "관성(官星 / 남편·명예관운)"
-
-    if age < 30:
-        stage_name = "청년 도약기 (기반 확립)"
-        focus_goal = "전문 역량 축적 및 핵심 인맥 구축"
-        p1_desc = f"{p1_start}세 ~ {p1_end}세는 진로의 방향성을 확립하고 내실 있는 실무 감각을 다지는 시기입니다."
-        p2_desc = f"{p2_start}세 ~ {p2_end}세는 본인의 실력이 조직에서 인정받으며 기회가 열리는 성장기입니다."
-        p3_desc = f"{p3_start}세 ~ {p3_end}세는 30대 황금기로 넘어가기 위한 확고한 발판을 마련하는 결실기입니다."
-    elif age < 50:
-        stage_name = "중장년 전성기 (황금 결실기)"
-        focus_goal = "실질 자산 증식 및 사회적 주도권 장악"
-        p1_desc = f"{p1_start}세 ~ {p1_end}세는 기존 판도를 재편하고 주체가 되는 사업/투자 포트폴리오를 구축한 전환기였습니다."
-        p2_desc = f"{p2_start}세 ~ {p2_end}세는 귀인의 조력을 바탕으로 자산 볼륨이 팽창하는 가속 구간입니다."
-        p3_desc = f"{p3_start}세 ~ {p3_end}세는 분산된 자금을 우량 자산으로 안착시키고 확고한 지위를 완성하는 대운의 절정기입니다."
-    else:
-        stage_name = "원숙 결실기 (자산 수성 및 가문 번영)"
-        focus_goal = "안정적 현금 흐름 완성 및 명예로운 번영"
-        p1_desc = f"{p1_start}세 ~ {p1_end}세는 불필요한 위험 자산을 정돈하고 안정적인 자산 방어 체계를 수립하는 시기입니다."
-        p2_desc = f"{p2_start}세 ~ {p2_end}세는 쌓아온 인망을 토대로 후배/자녀의 조력자이자 멘토로 권위를 누립니다."
-        p3_desc = f"{p3_start}세 ~ {p3_end}세는 평생 일군 결실을 평온히 누리며 가문의 유산을 안착시키는 구간입니다."
-
+def get_daily_tarot(slot: int):
     return {
-        "title": f"👑 자미두수 평생운세 ({gender_str})",
-        "content": f"""
-        <div style="display: flex; flex-direction: column; gap: 16px; font-size: 14.5px; color: #334155; line-height: 1.85; text-align: left;">
-            <div>
-                <div style="border-left: 4px solid #2D6A4F; padding-left: 10px; margin-bottom: 8px;">
-                    <span style="font-size: 12px; color: #2D6A4F; font-weight: 800;">Chapter 1. 평생 대운맥 및 생애 주도권</span>
-                    <h4 style="font-size: 16.5px; font-weight: 800; color: #0F172A; margin-top: 2px;">
-                        {user_name}님({gender_str} · 현재 {age}세)의 거시적 생애 운명 흐름
-                    </h4>
-                </div>
-                <p style="color: #475569; margin-bottom: 12px;">
-                    자미두수 명반을 정밀 감명한 결과, {user_name}님은 단계적 배움과 역량 축적을 거쳐 중장년기에 강력한 {spouse_star}의 결실을 맺는 <strong>'만성대기(晩成大器)형 명식'</strong>입니다.
-                </p>
-
-                <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; overflow: hidden;">
-                    <div style="padding: 12px 14px; border-bottom: 1px solid #E2E8F0;">
-                        <p style="font-weight: 600; color: #475569; font-size: 13.5px; margin-bottom: 2px;">[유년기 : 근본 기틀 형성기]</p>
-                        <p style="color: #64748B; font-size: 13px;">남다른 탐구심과 도덕적 가치관을 단단히 다지던 기초 형성기입니다.</p>
-                    </div>
-                    <div style="padding: 12px 14px; border-bottom: 1px solid #E2E8F0;">
-                        <p style="font-weight: 600; color: #475569; font-size: 13.5px; margin-bottom: 2px;">[청년기 : 역량 축적 및 실전기]</p>
-                        <p style="color: #64748B; font-size: 13px;">실무 전문성을 다지고 인맥과 실전 감각의 뼈대를 구축하는 시기입니다.</p>
-                    </div>
-                    <div style="background: #FEF3C7; padding: 12px 14px; border-bottom: 1px solid #FCD34D;">
-                        <p style="font-weight: 800; color: #78350F; font-size: 14px; margin-bottom: 2px;">[{stage_name} (*현재 위치 / {start_age}세 ~ {end_age}세)]</p>
-                        <p style="color: #92400E; font-size: 13px; font-weight: 600;">
-                            <strong>{user_name}님의 핵심 승부처 구간입니다.</strong> {focus_goal}을(를) 목표로 본인이 직접 주도권을 쥘 때 성과가 극대화됩니다.
-                        </p>
-                    </div>
-                    <div style="padding: 12px 14px;">
-                        <p style="font-weight: 600; color: #475569; font-size: 13.5px; margin-bottom: 2px;">[말년기 : 태평성대 및 가문 번영기]</p>
-                        <p style="color: #64748B; font-size: 13px;">축적한 자산과 인망을 토대로 안락한 노후와 가문의 번영을 누립니다.</p>
-                    </div>
-                </div>
-            </div>
-
-            <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
-
-            <div>
-                <div style="border-left: 4px solid #D97706; padding-left: 10px; margin-bottom: 8px;">
-                    <span style="font-size: 12px; color: #D97706; font-weight: 800;">Chapter 2. 현재 10년 대운 집중 감명</span>
-                    <h4 style="font-size: 16.5px; font-weight: 800; color: #78350F; margin-top: 2px;">
-                        {user_name}님의 {start_age}세 ~ {end_age}세 3단계 로드맵
-                    </h4>
-                </div>
-
-                <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; overflow: hidden;">
-                    <div style="padding: 12px 14px; border-bottom: 1px dashed #CBD5E1;">
-                        <span style="font-weight: 700; color: #1E3A8A; font-size: 14px; display: block; margin-bottom: 3px;">[1단계] {p1_start}세 ~ {p1_end}세 : 기반 구축기</span>
-                        <p style="color: #475569; font-size: 13px; line-height: 1.65;">{p1_desc}</p>
-                    </div>
-                    <div style="padding: 12px 14px; border-bottom: 1px dashed #CBD5E1;">
-                        <span style="font-weight: 700; color: #065F46; font-size: 14px; display: block; margin-bottom: 3px;">[2단계] {p2_start}세 ~ {p2_end}세 : 확장 및 증식기</span>
-                        <p style="color: #475569; font-size: 13px; line-height: 1.65;">{p2_desc}</p>
-                    </div>
-                    <div style="background: #FFFBEB; padding: 12px 14px;">
-                        <span style="font-weight: 800; color: #78350F; font-size: 14px; display: block; margin-bottom: 3px;">[3단계] {p3_start}세 ~ {p3_end}세 : 대운의 총결실 (*현재)</span>
-                        <p style="color: #92400E; font-size: 13px; line-height: 1.65; font-weight: 600;">{p3_desc}</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        """
+        "name": "I. THE MAGICIAN (마법사)",
+        "keyword": "창조적 잠재력 · 탁월한 실행력",
+        "symbolism": "4대 원소를 능숙히 다루는 마법사는 무한한 가능성과 시작을 의미합니다.",
+        "reading_male": "주도적으로 프로젝트나 만남을 이끌어가기에 완벽한 시기입니다.",
+        "reading_female": "빛나는 센스와 아이디어로 주변의 시선과 협력을 끌어당깁니다.",
+        "action_guide": "망설이던 아이디어가 있다면 오늘 바로 구체적인 실행 계획을 작성하세요."
     }
 
-def get_sinnian_report(req: dict):
-    user_name = req.get("name", "최정오")
-    gender = req.get("gender", "male")
-    gender_str = "남성" if gender == "male" else "여성"
-
-    seed = sum(ord(c) for c in user_name) + (17 if gender == "male" else 31)
-
-    MONTH_NARRATIVES = [
-        {"gua": "지천태(地天泰) 괘", "story": f"{user_name}님의 명식에 丙火의 온기가 스며들며 얼어붙었던 환경이 풀리는 상서로운 달입니다. 주변과의 소통이 원활해지고 정체되었던 일에서 새로운 해결의 실마리를 찾게 됩니다. 장기적인 플랜의 초석을 다지기에 가장 이상적인 시기입니다.", "opp": "새해 첫 출발이 대길하여 신규 사업 및 프로젝트 착수에 최적입니다.", "warn": "초반 성취에 자만하지 말고 세부 규정을 차분히 정비하세요."},
-        {"gua": "수천수(水天需) 괘", "story": f"내실을 기하고 에너지를 비축해야 하는 관망의 달입니다. 겉보기에는 진행이 다소 더뎌 보일 수 있으나 더 큰 도약을 위한 도움닫기 구간입니다. 충동적인 투자나 급격한 변경은 피하고 전문성을 연마하며 때를 기다리세요.", "opp": "실력과 내실을 다지며 시장 흐름을 관망할 때 이익이 보존됩니다.", "warn": "서두른 결정이나 충동구매를 피하고 하루 이틀 시일을 두세요."},
-        {"gua": "천화동인(天火同人) 괘", "story": f"귀인의 조력이 강하게 작용하여 뜻을 같이하는 동반자가 나타나는 달입니다. {user_name}님의 매력과 리더십이 빛을 발하여 대인관계에서 큰 신뢰를 얻고 협상에서 주도권을 잡을 수 있습니다.", "opp": "귀인의 조력이 닿아 인간관계와 직무에서 강력한 협력자가 나타납니다.", "warn": "이견 조율 시 감정적 대응을 피하고 데이터로 설득하세요."},
-        {"gua": "풍천소축(風天小畜) 괘", "story": f"작은 결실들이 차곡차곡 쌓여 실속을 챙기는 실리 추구의 달입니다. 일상의 루틴을 철저히 지키며 불필요한 누수를 막아야 합니다. 금융 자산의 기틀을 다지고 지출을 효율적으로 통제할 때 재물운이 안정됩니다.", "opp": "작은 성과가 차곡차곡 쌓여 종잣돈의 기틀이 단단해집니다.", "warn": "무리한 대출이나 투자는 지양하고 현금 유동성을 확보하세요."},
-        {"gua": "화천대유(火天大有) 괘", "story": f"★올해 상반기 최고의 황금기입니다! 그동안 땀 흘려 준비해 온 일들이 찬란한 결실로 이어지며 큰 보상과 명예를 얻게 됩니다. 부동산, 계약, 투자 회수 등에서 기대 이상의 이익이 발생합니다.", "opp": "대길의 재물운! 부동산/투자/계약에서 큰 결실을 맺습니다.", "warn": "성과를 독식하려 하지 말고 함께한 동료들에게 따뜻하게 베푸세요."},
-        {"gua": "천풍구(天風姤) 괘", "story": f"뜻밖의 제안이나 새로운 분야로의 활로가 활짝 열리는 역동적인 달입니다. 생각지 못했던 인연을 통해 귀중한 정보를 얻거나 기회가 찾아옵니다. 실질적인 조건을 꼼꼼히 따져보는 안목이 중요합니다.", "opp": "새로운 제안과 신규 프로젝트의 반가운 활로가 열립니다.", "warn": "계약서의 독소 조항과 구두 약속을 면밀히 검증하세요."},
-        {"gua": "천수송(天水訟) 괘", "story": f"복잡했던 업무 체계를 정리하고 불필요한 시비를 털어내는 체질 개선의 달입니다. 사소한 오해가 생길 수 있으나 유연한 태도로 대화하면 오히려 더 깊은 신뢰를 쌓는 계기가 됩니다.", "opp": "기존의 복잡했던 업무 체계를 깔끔히 정리하고 체질을 개선합니다.", "warn": "사소한 언쟁이나 시비수를 피하기 위해 공감 화법을 유지하세요."},
-        {"gua": "풍지관(風地觀) 괘", "story": f"상반기 달려온 궤적을 돌아보고 하반기 도약을 위한 전략을 가다듬는 성찰의 달입니다. 심신의 여유를 찾고 건강 상태를 점검하기에 좋습니다. 차분히 계획을 재정비할 때 확실한 승기를 잡을 수 있습니다.", "opp": "성과를 점검하고 하반기 도약을 위한 전략을 세우기에 최적입니다.", "warn": "체력 저하와 피로를 방지하기 위해 충분한 수면과 휴식을 챙기세요."},
-        {"gua": "산지박(山地剝) 괘", "story": f"군더더기를 깎아내고 본질에 집중해야 하는 실속 다지기의 달입니다. 무리한 확장보다 본인이 가장 잘하는 핵심 역량에 집중해야 합니다. 불필요한 고정비를 청산하기에 좋습니다.", "opp": "불필요한 고정비와 낭비 요소를 말끔히 청산하여 실속을 챙깁니다.", "warn": "무리한 확장보다 기존 고객 및 핵심 업무 관리에 집중하세요."},
-        {"gua": "지뢰복(地雷復) 괘", "story": f"★올해 하반기 최고의 승부처입니다! 침체되었던 기운이 완전히 걷히고 강력한 상승 기류를 타게 됩니다. 승진, 대형 계약 수주, 투자 회수 등에서 눈부신 성취를 거두며 위상이 크게 격상됩니다.", "opp": "강력한 승부처! 승진, 수주, 투자 회수에서 결정적 주도권을 쥡니다.", "warn": "기회가 올 때 주저하지 말고 과감한 결단력으로 밀어붙이세요."},
-        {"gua": "수뢰준(水雷屯) 괘", "story": f"내년을 위한 새로운 씨앗을 뿌리고 미래 먹거리를 준비하는 준비의 달입니다. 자격증 취득, 자기계발 등에 공을 들이면 훗날 큰 자산으로 되돌아옵니다. 기본기를 탄탄히 다지세요.", "opp": "새로운 아이템이나 자격/학업의 씨앗을 뿌려 미래를 준비하기 좋습니다.", "warn": "경험자의 조언을 경청하여 불필요한 시행착오를 사전에 방지하세요."},
-        {"gua": "지화명이(地火明夷) 괘", "story": f"한 해 동안 일군 풍성한 결실을 확정 짓고 가문과 가족의 화목을 누리는 평온한 달입니다. 노고에 대한 정당한 보상을 받으며 주변과 따뜻한 온정을 나누게 됩니다. 건강을 잘 챙기세요.", "opp": "풍성한 결실을 확정 짓고 가문과 가족의 화목을 누립니다.", "warn": "연말 과음과 과로를 피하고 따뜻한 온기로 건강을 챙기세요."}
-    ]
-
-    monthly_guides = []
-    for m_idx in range(1, 13):
-        m_hash = (seed * 13 + m_idx * 37) % 100
-        score = 68 + (m_hash % 31)
-        item_idx = (seed + m_idx) % len(MONTH_NARRATIVES)
-        pool_item = MONTH_NARRATIVES[item_idx]
-
-        monthly_guides.append({
-            "m": f"{m_idx}월", "score": score, "gua": pool_item["gua"],
-            "story": pool_item["story"], "opp": pool_item["opp"], "warn": pool_item["warn"]
-        })
-
-    sorted_months = sorted(monthly_guides, key=lambda x: x["score"], reverse=True)
-    top1_month, top1_score = sorted_months[0]["m"], sorted_months[0]["score"]
-    top2_month, top2_score = sorted_months[1]["m"], sorted_months[1]["score"]
-
-    months_html = "".join([f"""
-        <div style="background: #F8FAFC; border-radius: 12px; padding: 14px 16px; margin-bottom: 12px; border: 1px solid #E2E8F0;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
-                <span style="font-weight: 800; color: #0F172A; font-size: 15px;">{item['m']} 세운 가이드</span>
-                <span style="font-size: 12px; background: #FEF3C7; color: #92400E; font-weight: 800; padding: 2px 8px; border-radius: 6px;">이달의 운세 점수: {item['score']}점</span>
-            </div>
-            <p style="font-size: 11.5px; color: #64748B; margin-bottom: 10px; font-weight: 400;">(주역 본괘 : {item['gua']})</p>
-            <p style="color: #334155; font-size: 13.5px; line-height: 1.75; margin-bottom: 10px;">
-                {item['story']}
-            </p>
-            <div style="border-top: 1px dashed #CBD5E1; padding-top: 8px; display: flex; flex-direction: column; gap: 4px;">
-                <p style="color: #065F46; font-size: 13px; line-height: 1.55;">
-                    <strong>✨ 기회의 순간:</strong> {item['opp']}
-                </p>
-                <p style="color: #991B1B; font-size: 13px; line-height: 1.55;">
-                    <strong>⚠️ 주의할 처세:</strong> {item['warn']}
-                </p>
-            </div>
-        </div>
-    """ for item in monthly_guides])
-
+@app.get("/api/zodiac-fortune")
+def get_zodiac_fortune(type: str, key: str):
     return {
-        "title": f"📅 2026 丙午년 총운 & 하반기 정밀 월별 가이드 ({gender_str})",
-        "content": f"""
-        <div style="display: flex; flex-direction: column; gap: 16px; font-size: 14.5px; color: #334155; line-height: 1.85; text-align: left;">
-            <div>
-                <div style="border-left: 4px solid #DC2626; padding-left: 10px; margin-bottom: 8px;">
-                    <span style="font-size: 12px; color: #DC2626; font-weight: 800;">Chapter 1. 2026년 세운(歲運) 총론</span>
-                    <h4 style="font-size: 16.5px; font-weight: 800; color: #991B1B; margin-top: 2px;">
-                        🔥 2026 丙午년 {user_name}님의 도약 총운
-                    </h4>
-                </div>
-                <p style="color: #7F1D1D; line-height: 1.85;">
-                    2026년은 강렬한 불(火)의 기운이 대지를 환하게 비추는 丙午년입니다. {user_name}님의 명식과 조화를 이루어 준비해 온 역량이 꽃을 피우며 활로가 뚫리는 비상의 한 해가 됩니다.
-                </p>
-            </div>
-            <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
-            <div>
-                <div style="border-left: 4px solid #F59E0B; padding-left: 10px; margin-bottom: 8px;">
-                    <span style="font-size: 12px; color: #D97706; font-weight: 800;">Chapter 2. 소망 성취 골든타임</span>
-                    <h4 style="font-size: 16.5px; font-weight: 800; color: #78350F; margin-top: 2px;">
-                        🎯 성취 확률 92%의 황금 시기
-                    </h4>
-                </div>
-                <p style="color: #78350F; line-height: 1.85;">
-                    올해의 핵심 소망은 <strong>양력 {top1_month}({top1_score}점)과 {top2_month}({top2_score}점)</strong>에 천운을 만나 일사천리로 성취됩니다.
-                </p>
-            </div>
-            <div style="border-top: 2px solid #FCD34D; margin: 4px 0;"></div>
-            <div>
-                <div style="border-left: 4px solid #2D6A4F; padding-left: 10px; margin-bottom: 8px;">
-                    <span style="font-size: 12px; color: #2D6A4F; font-weight: 800;">Chapter 3. 월별 세운 흐름</span>
-                    <h4 style="font-size: 16.5px; font-weight: 800; color: #0F172A; margin-top: 2px;">
-                        📜 1월부터 12월까지 정밀 세운
-                    </h4>
-                </div>
-                <div style="display: flex; flex-direction: column; gap: 4px;">{months_html}</div>
-            </div>
-        </div>
-        """
+        "name": key,
+        "score": 95,
+        "title": "막힘없이 활짝 열리는 운세",
+        "overview": "노력해 온 일들이 귀인을 만나 결실을 맺게 되는 뜻깊은 하루입니다.",
+        "lucky_time": "오전 10시 ~ 12시",
+        "lucky_match": "찰떡궁합: 소띠, 용띠",
+        "lucky_item": "블루 계열 액세서리",
+        "year_tips": [
+            {"year_label": "1972년생", "tip": "작은 양보가 큰 이득으로 돌아오는 날입니다."},
+            {"year_label": "1984년생", "tip": "적극적인 의견 개진이 좋은 성과를 냅니다."},
+            {"year_label": "1996년생", "tip": "새로운 사람과의 교류에서 기회를 잡습니다."}
+        ]
     }
-
-def get_gunghap_report(req: dict):
-    user_name = req.get("name", "최정오")
-    partner_name = req.get("partner_name", "상대방")
-    relation = req.get("relation", "연인/결혼")
-    if relation == "선택안함" or not relation:
-        relation = "인연/조화"
-
-    seed = sum(ord(c) for c in user_name) + sum(ord(c) for c in partner_name)
-    total_score = 88 + (seed % 11)
-    love_score = 90 + ((seed * 3) % 9)
-    trust_score = 89 + ((seed * 7) % 10)
-    synergy_score = 91 + ((seed * 11) % 8)
-
-    return {
-        "title": f"💞 {user_name} & {partner_name} 정통 사주 궁합 ({relation})",
-        "content": f"""
-        <div style="display: flex; flex-direction: column; gap: 16px; font-size: 14.5px; color: #334155; line-height: 1.85; text-align: left;">
-            <div style="background: linear-gradient(135deg, #FFF1F2 0%, #FFE4E6 100%); border: 1.5px solid #FECDD3; border-radius: 14px; padding: 16px; display: flex; justify-content: space-between; align-items: center;">
-                <div>
-                    <span style="font-size: 12px; color: #BE123C; font-weight: 800;">정통 오행 상생 궁합 지수 ({relation})</span>
-                    <h3 style="font-size: 20px; font-weight: 900; color: #9F1239; margin-top: 2px;">{total_score}점 (천생연분 대길합)</h3>
-                    <p style="font-size: 11.5px; color: #E11D48; margin-top: 2px;">애정합 {love_score}% · 신뢰합 {trust_score}% · 상생 시너지 {synergy_score}%</p>
-                </div>
-                <div style="font-size: 36px;">💖</div>
-            </div>
-            <div>
-                <div style="border-left: 4px solid #E11D48; padding-left: 10px; margin-bottom: 8px;">
-                    <span style="font-size: 12px; color: #E11D48; font-weight: 800;">Chapter 1. 두 사람의 기운과 인연의 깊이</span>
-                    <h4 style="font-size: 16.5px; font-weight: 800; color: #881337; margin-top: 2px;">🔗 {user_name}님과 {partner_name}님의 상생 조화</h4>
-                </div>
-                <p style="color: #9F1239; line-height: 1.85;">
-                    {user_name}님의 사주에 부족한 기운을 {partner_name}님이 풍부하게 품어주고 있어 만날수록 자존감이 회복되는 상호보완형 인연입니다.
-                </p>
-            </div>
-            <div style="background: #F8FAFC; border-radius: 10px; padding: 12px; border-left: 3.5px solid #BE123C;">
-                <p style="font-weight: 800; color: #0F172A; font-size: 14px; margin-bottom: 4px;">💡 두 사람을 위한 맞춤 처세 팁:</p>
-                <p style="color: #475569; font-size: 13.5px;">사소한 의견 차이가 생길 때는 즉각적인 반론보다 3초간 경청 후 상대방의 입장을 인정해 주는 화법을 구사할 때 갈등 없이 백년해로합니다.</p>
-            </div>
-        </div>
-        """
-    }
-
-def get_theme_report(req: dict):
-    theme = req.get("theme", "wealth")
-    sub_opt = req.get("sub_option", "기본")
-    user_name = req.get("name", "최정오")
-    titles = {"wealth": "💰 평생 재물운", "love": f"💖 평생 애정운 ({sub_opt})", "business": f"🏢 사업·직업운 ({sub_opt})", "health": "🌿 평생 건강운"}
-
-    if theme == "wealth":
-        content = f"""
-        <div style="display: flex; flex-direction: column; gap: 16px; font-size: 14.5px; color: #334155; line-height: 1.85; text-align: left;">
-            <div style="border-left: 4px solid #D97706; padding-left: 10px;">
-                <span style="font-size: 12px; color: #D97706; font-weight: 800;">Chapter 1. 평생 재물 원국 정밀 감명</span>
-                <h4 style="font-size: 16.5px; font-weight: 800; color: #78350F; margin: 3px 0 6px;">[타고난 금고] '암장(暗藏) 황금 금고형' 자산 축적 원국</h4>
-                <p style="color: #92400E; font-size: 14.5px; line-height: 1.85;">
-                    {user_name}님의 사주는 겉으로 드러난 화려함보다 실속 있게 현금과 실물 자산을 차곡차곡 축적하는 전형적인 황금 금고형 명식입니다.
-                </p>
-            </div>
-        </div>
-        """
-    elif theme == "business":
-        content = f"""
-        <div style="display: flex; flex-direction: column; gap: 16px; font-size: 14.5px; color: #334155; line-height: 1.85; text-align: left;">
-            <div style="border-left: 4px solid #2563EB; padding-left: 10px;">
-                <span style="font-size: 12px; color: #2563EB; font-weight: 800;">Chapter 1. 직무/사업 맞춤 운세 ({sub_opt})</span>
-                <h4 style="font-size: 16.5px; font-weight: 800; color: #1E3A8A; margin: 3px 0 6px;">🎯 전문 직무 승부처 & 로드맵</h4>
-                <p style="color: #1E40AF; font-size: 14.5px; line-height: 1.85;">
-                    {user_name}님의 명식은 상황을 주도적으로 돌파하는 전략가형 기질을 품고 있어 본인이 주도권을 쥔 환경에서 큰 성과를 거둡니다.
-                </p>
-            </div>
-        </div>
-        """
-    elif theme == "love":
-        content = f"""
-        <div style="display: flex; flex-direction: column; gap: 16px; font-size: 14.5px; color: #334155; line-height: 1.85; text-align: left;">
-            <div style="border-left: 4px solid #E11D48; padding-left: 10px;">
-                <span style="font-size: 12px; color: #E11D48; font-weight: 800;">Chapter 1. 상태 맞춤 애정 원국 ({sub_opt})</span>
-                <h4 style="font-size: 16.5px; font-weight: 800; color: #881337; margin: 3px 0 6px;">💖 인연의 기운과 결실의 타이밍</h4>
-                <p style="color: #9F1239; font-size: 14.5px; line-height: 1.85;">
-                    {user_name}님의 사주는 신뢰와 따뜻한 배려가 결합할 때 애정의 기운이 평생 동안 번창하는 온화한 명식입니다.
-                </p>
-            </div>
-        </div>
-        """
-    else:
-        content = f"""
-        <div style="display: flex; flex-direction: column; gap: 16px; font-size: 14.5px; color: #334155; line-height: 1.85; text-align: left;">
-            <div style="border-left: 4px solid #059669; padding-left: 10px;">
-                <span style="font-size: 12px; color: #059669; font-weight: 800;">Chapter 1. 오행 체질 장부 정밀 분석</span>
-                <h4 style="font-size: 16.5px; font-weight: 800; color: #065F46; margin: 3px 0 6px;">[평생 체질] 수승화강(水昇火降) 활력과 섭생법</h4>
-                <p style="color: #047857; font-size: 14.5px; line-height: 1.85;">
-                    두한족열(머리는 시원하게, 발은 따뜻하게)의 기본 수칙을 유지하면 에너지가 고갈되지 않습니다.
-                </p>
-            </div>
-        </div>
-        """
-
-    return {"title": titles.get(theme, "심층 리포트"), "content": content}
-
-@app.get("/static/og_thumb.png")
-def get_og_thumbnail():
-    svg_data = """<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
-        <rect width="1200" height="630" fill="#0D1527"/>
-        <circle cx="600" cy="220" r="90" fill="none" stroke="#E2C068" stroke-width="3"/>
-        <circle cx="600" cy="220" r="75" fill="#F6E2A1"/>
-        <text x="600" y="248" font-size="75" font-family="'Noto Serif KR', serif" font-weight="900" fill="#0D1527" text-anchor="middle">月</text>
-        <text x="600" y="380" font-size="58" font-family="'Noto Serif KR', sans-serif" font-weight="900" fill="#FAF9F6" text-anchor="middle" letter-spacing="-1px">달하 (DALHA)</text>
-        <text x="600" y="435" font-size="24" font-family="'Pretendard', sans-serif" font-weight="700" fill="#E2C068" text-anchor="middle" letter-spacing="4px">AUTHENTIC EASTERN FORTUNE</text>
-        <text x="600" y="500" font-size="26" font-family="'Pretendard', sans-serif" font-weight="500" fill="#94A3B8" text-anchor="middle">달빛이 비추는 당신의 운명 · 정통 사주 · 바이오리듬 · 타로</text>
-    </svg>"""
-    return Response(content=svg_data, media_type="image/svg+xml")
-
-@app.get("/robots.txt")
-def get_robots():
-    data = "User-agent: *\nAllow: /\nSitemap: https://dalha.kr/sitemap.xml"
-    return Response(content=data, media_type="text/plain")
-
-@app.get("/sitemap.xml")
-def get_sitemap():
-    data = """<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://dalha.kr/</loc>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
-  </url>
-</urlset>"""
-    return Response(content=data, media_type="application/xml")
-
-@app.get("/naverc5036aa02eca57807bf721e44ad78969.html")
-def naver_verification():
-    return HTMLResponse("naver-site-verification: naverc5036aa02eca57807bf721e44ad78969.html")
-
-@app.get("/google888b184f07770663.html")
-def google_verification():
-    return HTMLResponse("google-site-verification: google888b184f07770663.html")
