@@ -96,7 +96,7 @@
         .color-chip.selected { border-color: #2D6A4F; background: #EBF5EE; color: #166534; font-weight: 800; box-shadow: 0 0 0 1.5px #2D6A4F; }
 
         .mat-chip-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; margin-top: 6px; }
-        .mat-chip { border: 1.5px solid #CBD5E1; border-radius: 10px; padding: 10px 8px; display: flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer; font-size: 12px; font-weight: 600; color: #475569; background: #FFFFFF; transition: all 0.15s; }
+        .mat-chip { border: 1.5px solid #CBD5E1; border-radius: 10px; padding: 10px 8px; display: flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer; font-size: 11.5px; font-weight: 600; color: #475569; background: #FFFFFF; transition: all 0.15s; }
         .mat-chip.selected { border-color: #2D6A4F; background: #EBF5EE; color: #166534; font-weight: 800; box-shadow: 0 0 0 1.5px #2D6A4F; }
 
         .wardrobe-item-card { background: #FFFFFF; border: 1.2px solid #E2E8F0; border-radius: 16px; padding: 12px 14px; display: flex; justify-content: space-between; align-items: center; text-align: left; margin-bottom: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
@@ -285,7 +285,7 @@
                         <p id="resStyle" style="font-weight: 800; font-size: 15.5px; color: #0F172A; margin: 0; line-height: 1.5;">네이비 쿨 반팔티 & 플랙 연청 데님</p>
                     </div>
 
-                    <!-- 일체형 소프트 개운 카드 (엄격한 무드 매칭 반영) -->
+                    <!-- 일체형 소프트 개운 카드 -->
                     <div id="wardrobeDailyMatchPick" style="border-radius: 14px; overflow: hidden; border: 1.2px solid #E2E8F0; background: #FAFAF7; box-shadow: 0 1px 3px rgba(0,0,0,0.02);">
                         <div style="padding: 13px 14px; font-size: 13px; color: #64748B; line-height: 1.6;">
                             👗 <strong>오늘의 옷장 픽:</strong> 내 옷장에 아이템을 등록하면 오늘 일진과 무드에 딱 맞는 아이템을 추천해 드려요!
@@ -720,18 +720,17 @@
                 </div>
             </div>
 
-            <!-- Step 3: 소재 선택 및 아이템 이름 입력 (러버/실리콘, 나토밴드 옵션 추가) -->
+            <!-- Step 3: 7대 핵심 소재 선택 (면·린넨·패브릭 통합) -->
             <div id="wizardStep3" class="hidden" style="display: flex; flex-direction: column; gap: 8px;">
                 <p style="font-size: 12px; color: #64748B;">소재를 모두 선택하세요 (복수 가능):</p>
                 <div class="mat-chip-grid">
-                    <div class="mat-chip" onclick="toggleMatChip('면/린넨', this)"><span>🧵</span><span>면 · 린넨 (木)</span></div>
+                    <div class="mat-chip" onclick="toggleMatChip('면/린넨/패브릭', this)"><span>🧵</span><span>면 · 린넨 · 패브릭 (木)</span></div>
                     <div class="mat-chip" onclick="toggleMatChip('실크/쉬폰', this)"><span>✨</span><span>실크 · 쉬폰 (火)</span></div>
                     <div class="mat-chip" onclick="toggleMatChip('가죽/세무', this)"><span>👜</span><span>가죽 · 스웨이드 (土)</span></div>
-                    <div class="mat-chip" onclick="toggleMatChip('메탈/금속', this)"><span>⚙️</span><span>메탈 · 골드/은 (金)</span></div>
+                    <div class="mat-chip" onclick="toggleMatChip('니트/울', this)"><span>🧶</span><span>니트 · 울 · 코튼 (土)</span></div>
+                    <div class="mat-chip" onclick="toggleMatChip('메탈/금속', this)"><span>⚙️</span><span>메탈 · 골드/실버 (金)</span></div>
                     <div class="mat-chip" onclick="toggleMatChip('데님', this)"><span>👖</span><span>데님 청바지 (水)</span></div>
-                    <div class="mat-chip" onclick="toggleMatChip('니트/울', this)"><span>🧶</span><span>니트 · 울 (土)</span></div>
-                    <div class="mat-chip" onclick="toggleMatChip('러버/실리콘', this)"><span>⌚</span><span>우레탄 · 러버/실리콘 (水)</span></div>
-                    <div class="mat-chip" onclick="toggleMatChip('나토/나일론', this)"><span>🎗️</span><span>나토밴드 · 패브릭 (木)</span></div>
+                    <div class="mat-chip" onclick="toggleMatChip('러버/실리콘', this)" style="grid-column: span 2;"><span>⌚</span><span>러버 · 실리콘/우레탄 (水)</span></div>
                 </div>
 
                 <div class="form-group" style="margin-top: 6px; margin-bottom: 0;">
@@ -1294,15 +1293,15 @@
             return fallback;
         }
 
-        // 아이템의 스타일 무드 (Casual vs Formal) 정밀 판정기
+        // 7대 소재 및 닉네임 기반 스타일 무드 정밀 판정기
         function getItemMood(item) {
             const nick = (item.nickname || "").toLowerCase();
             const cat = item.category || "";
             const mats = item.materials || [];
 
-            // 1. 시계 카테고리 정밀 판정
+            // 1. 시계 카테고리 정밀 판정 (러버/실리콘/나토/패브릭 선택 시 캐주얼로 완벽 분류)
             if (cat === "시계") {
-                const isCasualWatch = mats.some(m => m.includes("러버") || m.includes("실리콘") || m.includes("나토") || m.includes("나일론")) ||
+                const isCasualWatch = mats.some(m => m.includes("러버") || m.includes("실리콘") || m.includes("패브릭") || m.includes("면")) ||
                                       nick.includes("스마트") || nick.includes("애플") || nick.includes("갤럭시") || nick.includes("지샥") || nick.includes("전자");
                 if (isCasualWatch) return "casual";
                 return "formal";
@@ -1315,8 +1314,8 @@
                 return "casual";
             }
 
-            // 3. 의류 및 기타 소품 판정
-            if (mats.some(m => m.includes("데님")) || nick.includes("청바지") || nick.includes("티") || nick.includes("맨투맨") || nick.includes("후드") || nick.includes("볼캡") || (cat === "가방" && mats.some(m => m.includes("면/린넨")))) {
+            // 3. 의류 및 가방/기타 소품 판정
+            if (mats.some(m => m.includes("데님") || m.includes("러버") || m.includes("패브릭")) || nick.includes("청바지") || nick.includes("티") || nick.includes("맨투맨") || nick.includes("후드") || nick.includes("볼캡") || (cat === "가방" && mats.some(m => m.includes("면") || m.includes("패브릭")))) {
                 return "casual";
             }
             if (nick.includes("슬랙스") || nick.includes("셔츠") || nick.includes("블라우스") || nick.includes("자켓") || nick.includes("수트") || mats.some(m => m.includes("실크") || m.includes("가죽"))) {
@@ -1326,7 +1325,7 @@
             return "smart_casual";
         }
 
-        // 실제 원형 컬러 칩 + [상의 + 하의 ➕ 포인트 소품] + 엄격한 무드 충돌 방지 로직
+        // 실제 원형 컬러 칩 + [상의 + 하의 ➕ 포인트 소품] + 무드 충돌 완전 차단
         function updateTodayWardrobeMatchPick() {
             const styleEl = document.getElementById('resStyle');
             const pickEl = document.getElementById('wardrobeDailyMatchPick');
@@ -1390,7 +1389,7 @@
 
             styleEl.innerHTML = `${finalTopText} & ${finalBottomText}`;
 
-            // 3. 소품 탐색 & [엄격한 무드 상충 필터링]
+            // 3. 소품 탐색 & [무드 일치 엄격 필터링]
             const matchedAccessories = userWardrobeItems.filter(item => ACCESSORY_CATS.includes(item.category));
             
             const targetMood = (todayMood === "casual") ? "casual" : "formal";
