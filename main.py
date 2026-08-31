@@ -229,6 +229,20 @@ def generate_saju_analysis_payload(name, gender, y, m, d, cal_type, sijin):
     chosen_palette = palettes[1] if len(palettes) > 1 and (d % 2 == 0) else palettes[0]
     is_reverse = (chosen_palette["mode"] == "reverse")
     
+    # 5줄 분량의 명리 종합 풀이
+    overview_text = f"""오늘 일진의 기운이 사주 본원과 자연스럽게 상생하여 막혀있던 흐름이 시원하게 뚫리는 형국입니다.
+그동안 추진에 난항을 겪었거나 미루어 두었던 중요한 계획이 있다면 오늘 과감하게 첫발을 내딛기에 가장 이상적인 시기입니다.
+주변 동료나 지인과의 소통에서도 귀인의 조력이 따르니, 자신의 생각과 비전을 명확하고 유연하게 전달해 보세요.
+다만 지나친 확신으로 한 번에 많은 일을 벌이기보다는 핵심 우선순위 1~2가지에 온전히 에너지를 집중하는 것이 유리합니다.
+마음의 여유를 잃지 않고 차분함을 유지할 때 금전과 사람이라는 두 가지 결실을 온전히 거머쥘 수 있는 대길의 하루입니다."""
+
+    # 시간대별 흐름 가이드
+    time_flow_data = {
+        "morning": "머리가 맑고 집중력이 최고조에 이르는 시간입니다. 오늘 꼭 끝내야 할 가장 무겁고 중요한 업무나 의사결정을 오전에 집중 처리하세요.",
+        "afternoon": "대인관계운과 협상운이 크게 열립니다. 미팅, 계약, 주변 사람들과의 의견 조율 및 외근 활동에서 뜻밖의 좋은 소식과 협력을 얻게 됩니다.",
+        "evening": "활동 에너지를 차분하게 정돈하고 결실을 정리하는 때입니다. 무리한 약속보다는 편안한 식사와 가벼운 산책으로 내일을 위한 에너지를 충전하세요."
+    }
+
     return {
         "user_name": name,
         "current_age": 2026 - y + 1,
@@ -236,7 +250,8 @@ def generate_saju_analysis_payload(name, gender, y, m, d, cal_type, sijin):
         "daily_fortune": {
             "title": "도약과 결실의 하루",
             "score": 88,
-            "advice": "기운이 맑게 순환하여 계획하던 일을 주도적으로 추진하기에 매우 길한 날입니다.",
+            "advice": overview_text,
+            "time_flow": time_flow_data,
             "lucky_item": "실버 메탈 시계",
             "lucky_number": "4, 9",
             "lucky_direction": "정서쪽 (백호 방위)",
@@ -270,7 +285,6 @@ def generate_saju_analysis_payload(name, gender, y, m, d, cal_type, sijin):
         }
     }
 
-# Jinja2 템플릿 의존성 없이 루트 또는 templates 경로의 index.html을 직접 반환
 @app.get("/")
 def get_index():
     if os.path.exists("index.html"):
