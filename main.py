@@ -1,5 +1,6 @@
 import os
 import random
+import datetime
 from typing import Optional, List
 from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse, JSONResponse, FileResponse
@@ -103,6 +104,160 @@ try:
     init_db()
 except Exception as e:
     print(f"DB Init Error: {e}")
+
+# 정통 20종 명리 개운 부적 매트릭스 DB
+AUTHENTIC_TALISMAN_MATRIX = {
+    "wood": {
+        "wealth": {
+            "title": "청목 생재부 (靑木 生財符)",
+            "power": "사업 확장 · 신규 프로젝트 대박 · 활력 증진",
+            "desc": "움트는 봄날의 거목처럼 사업과 재물의 터전을 크게 넓히고 활력을 불어넣는 비급 부적입니다.",
+            "talisman_type": "wood_wealth",
+            "seal_text": "生財"
+        },
+        "career": {
+            "title": "문창 등과부 (文昌 登科符)",
+            "power": "학업 성취 · 시험 합격 · 승진 영달",
+            "desc": "문창성의 신령한 기운을 받아 학문과 시험, 승진의 관문을 단숨에 뚫어내는 부적입니다.",
+            "talisman_type": "wood_career",
+            "seal_text": "登科"
+        },
+        "love": {
+            "title": "수목 화합부 (水木 和合符)",
+            "power": "귀인 유입 · 좋은 인연 결속 · 대인 화합",
+            "desc": "물과 나무가 만나 꽃을 피우듯, 마음에 품은 인연과 깊은 신뢰를 맺어주는 화합 부적입니다.",
+            "talisman_type": "wood_love",
+            "seal_text": "和合"
+        },
+        "ward": {
+            "title": "벽사 청룡부 (辟邪 靑龍符)",
+            "power": "구설수 차단 · 침체 극복 · 심신 안정",
+            "desc": "청룡의 서기로 주변의 시기와 방해를 물리치고 올곧은 기운을 지켜내는 수호 부적입니다.",
+            "talisman_type": "wood_ward",
+            "seal_text": "辟邪"
+        }
+    },
+    "fire": {
+        "wealth": {
+            "title": "적염 취재부 (赤焰 聚財符)",
+            "power": "횡재수 포착 · 단기 매출 폭발 · 금전 회전",
+            "desc": "타오르는 불꽃처럼 재물과 고객을 강력하게 끌어당겨 금전 회전을 극대화하는 부적입니다.",
+            "talisman_type": "fire_wealth",
+            "seal_text": "聚財"
+        },
+        "career": {
+            "title": "천명 관운부 (天命 官運符)",
+            "power": "명예 상승 · 리더십 발휘 · 직장 안착",
+            "desc": "자신의 이름과 능력을 세상에 널리 알리고 조직 내에서 높은 명예를 얻게 돕는 부적입니다.",
+            "talisman_type": "fire_career",
+            "seal_text": "官運"
+        },
+        "love": {
+            "title": "홍란 결연부 (紅鸞 結緣符)",
+            "power": "도화 매력 발산 · 연애 성취 · 이성 호감",
+            "desc": "홍란성의 빛나는 도화 기운을 발산하여 이성의 마음을 사로잡고 사랑을 성취하는 부적입니다.",
+            "talisman_type": "fire_love",
+            "seal_text": "結緣"
+        },
+        "ward": {
+            "title": "주작 소재부 (朱雀 消災符)",
+            "power": "불안 해소 · 충살 소멸 · 마음 평안",
+            "desc": "불안정한 화기와 조급함을 정화하고 악살을 태워 마음의 평안을 되찾아주는 부적입니다.",
+            "talisman_type": "fire_ward",
+            "seal_text": "消災"
+        }
+    },
+    "earth": {
+        "wealth": {
+            "title": "금고 보관부 (金庫 保管符)",
+            "power": "자산 보존 · 부동산 취득 · 목돈 축적",
+            "desc": "넓은 대지처럼 흩어지는 돈을 단단히 묶어 큰 자산으로 축적시키는 전통 보관 부적입니다.",
+            "talisman_type": "earth_wealth",
+            "seal_text": "保管"
+        },
+        "career": {
+            "title": "태산 안착부 (泰山 安着符)",
+            "power": "취업 성공 · 안정적 정착 · 계약 체결",
+            "desc": "태산처럼 흔들림 없는 기반을 마련하여 원하는 직장이나 프로젝트에 안착하게 돕는 부적입니다.",
+            "talisman_type": "earth_career",
+            "seal_text": "安着"
+        },
+        "love": {
+            "title": "화토 상생부 (火土 相生符)",
+            "power": "가정 평안 · 신뢰 구축 · 백년해로",
+            "desc": "따스한 온기로 서로에 대한 신뢰를 두텁게 다져 장기적인 사랑과 안정을 이끄는 부적입니다.",
+            "talisman_type": "earth_love",
+            "seal_text": "相生"
+        },
+        "ward": {
+            "title": "황제 진택부 (黃帝 鎭宅符)",
+            "power": "우환 예방 · 터 안전 · 재앙 소멸",
+            "desc": "집안과 일터의 터를 안정시키고 예기치 못한 우환과 손실을 막아주는 비급 진택 부적입니다.",
+            "talisman_type": "earth_ward",
+            "seal_text": "鎭宅"
+        }
+    },
+    "metal": {
+        "wealth": {
+            "title": "백호 금전부 (白虎 金錢符)",
+            "power": "결단력 강화 · 투자 수익 실현 · 재물 쟁취",
+            "desc": "백호의 날카로운 기운으로 투자 기회를 정확히 포착하고 실리를 쟁취하게 돕는 부적입니다.",
+            "talisman_type": "metal_wealth",
+            "seal_text": "金錢"
+        },
+        "career": {
+            "title": "장원 급제부 (壯元 及第符)",
+            "power": "전문 자격 취득 · 경쟁 돌파 · 독보적 성과",
+            "desc": "치열한 경쟁 속에서 뛰어난 전문성을 발휘하여 당당히 정상에 오르게 하는 급제 부적입니다.",
+            "talisman_type": "metal_career",
+            "seal_text": "及第"
+        },
+        "love": {
+            "title": "금옥 만당부 (金玉 滿堂符)",
+            "power": "귀인 결속 · 품격 있는 만남 · 인복 확장",
+            "desc": "보석처럼 품격 있고 나에게 큰 도움이 되는 든든한 귀인을 곁에 머물게 하는 부적입니다.",
+            "talisman_type": "metal_love",
+            "seal_text": "滿堂"
+        },
+        "ward": {
+            "title": "참사 백호부 (斬邪 白虎符)",
+            "power": "액운 절단 · 관재구설 차단 · 신변 보호",
+            "desc": "날카로운 칼날처럼 나를 위협하는 사악한 기운과 관재구설을 일거에 베어내는 방어 부적입니다.",
+            "talisman_type": "metal_ward",
+            "seal_text": "斬邪"
+        }
+    },
+    "water": {
+        "wealth": {
+            "title": "유수 통재부 (流水 通財符)",
+            "power": "자금 유동성 확보 · 거래 성사 · 판로 개척",
+            "desc": "끊이지 않고 흐르는 큰 강물처럼 자금의 물꼬를 트고 거래를 원활하게 성사시키는 부적입니다.",
+            "talisman_type": "water_wealth",
+            "seal_text": "通財"
+        },
+        "career": {
+            "title": "지혜 총명부 (智慧 聰明符)",
+            "power": "전략적 통찰 · 협상 우위 · 기획 성공",
+            "desc": "깊은 바다와 같은 지혜와 직관력을 부여하여 중요한 협상과 기획을 승리로 이끄는 부적입니다.",
+            "talisman_type": "water_career",
+            "seal_text": "聰明"
+        },
+        "love": {
+            "title": "애정 화합부 (愛情 和合符)",
+            "power": "재회 성사 · 깊은 교감 · 짝사랑 성취",
+            "desc": "멀어진 마음을 유연하게 이어주고 서먹했던 관계에 깊은 교감을 불어넣는 화합 부적입니다.",
+            "talisman_type": "water_love",
+            "seal_text": "愛合"
+        },
+        "ward": {
+            "title": "현무 수호부 (玄武 守護符)",
+            "power": "위기 극복 · 건강 회복 · 정신 안정",
+            "desc": "현무의 두터운 방패로 갑작스러운 위기와 스트레스를 완벽히 막아내는 정통 수호 부적입니다.",
+            "talisman_type": "water_ward",
+            "seal_text": "守護"
+        }
+    }
+}
 
 WADA_SANZO_PALETTES = {
     "wood": [
@@ -228,13 +383,18 @@ def generate_saju_analysis_payload(name, gender, y, m, d, cal_type, sijin):
     chosen_palette = palettes[1] if len(palettes) > 1 and (d % 2 == 0) else palettes[0]
     is_reverse = (chosen_palette["mode"] == "reverse")
     
-    # 70~80% 분량으로 깔끔하게 정돈된 명리 총평 (3~4줄 압축)
+    # 일진 테마 결정 (일진 날짜 합산 연산 기반: wealth, career, love, ward 순환)
+    today_ord = datetime.date.today().toordinal()
+    theme_keys = ["wealth", "career", "love", "ward"]
+    today_theme_key = theme_keys[(today_ord + y + m + d) % 4]
+    
+    talisman_info = AUTHENTIC_TALISMAN_MATRIX.get(day_elem, AUTHENTIC_TALISMAN_MATRIX["metal"]).get(today_theme_key)
+    
     overview_text = f"""오늘 일진의 기운이 사주 본원과 상생하여 막혀있던 흐름이 시원하게 풀리는 형국입니다.
 미루어 두었던 중요한 계획이나 계약이 있다면 오늘 주도적으로 첫발을 내딛기에 매우 길합니다.
 대인관계에서도 귀인의 조력이 따르니, 핵심 목표 1~2가지에 에너지를 집중해 보세요.
 차분함과 유연성을 유지할 때 성과와 실리를 온전히 거머쥐는 알찬 하루가 될 것입니다."""
 
-    # 70~80% 분량으로 간결해진 시간대별 가이드
     time_flow_data = {
         "morning": "집중력과 판단력이 최고조에 이릅니다. 오늘 가장 중요한 핵심 업무나 결정을 오전에 처리하세요.",
         "afternoon": "대인관계와 소통운이 활짝 열립니다. 미팅, 조율, 외근 활동에서 뜻밖의 협력과 성과를 얻습니다.",
@@ -263,7 +423,8 @@ def generate_saju_analysis_payload(name, gender, y, m, d, cal_type, sijin):
             "rule_title": chosen_palette["theme"],
             "rule_reason": chosen_palette["mood_desc"],
             "wada_palette": chosen_palette,
-            "lucky_colors": [chosen_palette["top"]["standard_color"], chosen_palette["bottom"]["standard_color"]]
+            "lucky_colors": [chosen_palette["top"]["standard_color"], chosen_palette["bottom"]["standard_color"]],
+            "talisman": talisman_info
         },
         "saju_data": {
             "pillars_detail": {
@@ -486,7 +647,6 @@ def unlock_report_endpoint(req: UnlockReportRequest):
     report_title = title_map.get(req.report_key, "정밀 감명서")
     content = f"<p><strong>{user['name']}님을 위한 {report_title}</strong></p><p>사주 원국과 대운의 흐름을 대입한 결과, 귀하의 본원은 천을귀인의 조력을 받아 원하는 바를 성취하는 대길의 명조입니다.</p>"
 
-    import datetime
     created_at = datetime.datetime.now().strftime("%Y.%m.%d")
 
     if USE_POSTGRES:
