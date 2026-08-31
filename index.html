@@ -268,26 +268,24 @@
                     <div id="resAdvice" style="font-size: 13.5px; color: #E2E8F0; font-weight: 400; line-height: 1.65; text-align: left;"></div>
                 </div>
 
-                <!-- 1. 맞춤 추천 코디 카드 (원형 컬러 칩 + 십신 기반 무드 태그 연동) -->
+                <!-- 1. 맞춤 추천 코디 카드 -->
                 <div class="card" style="padding: 18px 16px; text-align: left; display: flex; flex-direction: column; gap: 12px;">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                         <span style="font-size: 13px; color: #64748B; font-weight: 800;">👔 맞춤 추천 코디</span>
-                        <!-- 십신 기반 오늘의 스타일 무드 뱃지 -->
                         <span id="todayStyleMoodBadge" style="font-size: 11.5px; background: #EBF5EE; color: #166534; font-weight: 800; padding: 3px 10px; border-radius: 9999px; border: 1px solid #BBF7D0;">🏃 캐주얼 & 액티브</span>
                     </div>
 
                     <!-- [실제 원형 컬러 칩 컨테이너] 상의 + 하의 ➕ 포인트 소품 -->
                     <div id="dynamicColorPaletteBox" style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 14px; padding: 12px 14px; display: flex; align-items: center; justify-content: flex-start; gap: 8px; overflow-x: auto;">
-                        <!-- JS에서 동적으로 실제 컬러 칩들을 렌더링 -->
                     </div>
 
-                    <!-- 오늘의 추천 코디 (상의 1벌 + 하의 1벌 1:1 행운 컬러 매칭) -->
+                    <!-- 오늘의 추천 코디 -->
                     <div>
                         <span style="font-size: 11.5px; color: #64748B; display: block; margin-bottom: 3px;">추천 스타일링:</span>
                         <p id="resStyle" style="font-weight: 800; font-size: 15.5px; color: #0F172A; margin: 0; line-height: 1.5;">네이비 쿨 반팔티 & 플랙 연청 데님</p>
                     </div>
 
-                    <!-- 일체형 소프트 개운 카드 (박스 중첩 완전 제거, 가느다란 점선 구분선 정돈) -->
+                    <!-- 일체형 소프트 개운 카드 -->
                     <div id="wardrobeDailyMatchPick" style="border-radius: 14px; overflow: hidden; border: 1.2px solid #E2E8F0; background: #FAFAF7; box-shadow: 0 1px 3px rgba(0,0,0,0.02);">
                         <div style="padding: 13px 14px; font-size: 13px; color: #64748B; line-height: 1.6;">
                             👗 <strong>오늘의 옷장 픽:</strong> 내 옷장에 아이템을 등록하면 오늘 일진에 딱 맞는 아이템을 추천해 드려요!
@@ -434,7 +432,7 @@
                                 <div onclick="openZodiacModal('zodiac', '원숭이')" class="zodiac-btn"><span class="zodiac-icon">🐵</span><span class="zodiac-label">원숭이</span></div>
                                 <div onclick="openZodiacModal('zodiac', '닭')" class="zodiac-btn"><span class="zodiac-icon">🐔</span><span class="zodiac-label">닭</span></div>
                                 <div onclick="openZodiacModal('zodiac', '개')" class="zodiac-btn"><span class="zodiac-icon">🐶</span><span class="zodiac-label">개</span></div>
-                                <div onclick="openZodiacModal('돼지')" class="zodiac-btn"><span class="zodiac-icon">🐷</span><span class="zodiac-label">돼지</span></div>
+                                <div onclick="openZodiacModal('zodiac', '돼지')" class="zodiac-btn"><span class="zodiac-icon">🐷</span><span class="zodiac-label">돼지</span></div>
                             </div>
 
                             <div id="gridStarBox" class="zodiac-grid-2x6 hidden">
@@ -969,7 +967,6 @@
                 }
 
                 Kakao.Auth.login({
-                    throughTalk: true,
                     persistAccessToken: true,
                     success: function(authObj) {
                         Kakao.API.request({
@@ -1035,12 +1032,18 @@
                                     alert("로그인 처리 중 오류가 발생했습니다: " + innerErr.message);
                                 }
                             },
-                            fail: function() { alert("카카오 프로필 정보를 가져오지 못했습니다."); }
+                            fail: function(err) { 
+                                alert("카카오 프로필 정보를 가져오지 못했습니다: " + JSON.stringify(err)); 
+                            }
                         });
                     },
-                    fail: function(err) { alert("카카오 로그인 창이 닫혔거나 실패했습니다: " + JSON.stringify(err)); }
+                    fail: function(err) { 
+                        alert("카카오 로그인 창 오류: " + JSON.stringify(err)); 
+                    }
                 });
-            } catch(outerErr) { alert("로그인 실행 오류: " + outerErr.message); }
+            } catch(outerErr) { 
+                alert("로그인 실행 오류: " + outerErr.message); 
+            }
         }
 
         async function checkAutoLoginSession() {
@@ -1231,7 +1234,6 @@
 
             baseFashionStyle = data.daily_fortune.fashion_style || "네이비 쿨 반팔티 & 플랙 연청 데님";
             
-            // 스타일 무드 뱃지 반영
             const moodTag = data.daily_fortune.mood_tag || "🏃 캐주얼 & 액티브";
             document.getElementById('todayStyleMoodBadge').innerText = moodTag;
 
@@ -1290,24 +1292,20 @@
             return fallback;
         }
 
-        // 아이템의 스타일 무드 (Casual vs Formal) 판별기
         function getItemMood(item) {
             const nick = (item.nickname || "").toLowerCase();
             const cat = item.category || "";
             const mats = item.materials || [];
 
-            // 캐주얼 판정
             if (mats.some(m => m.includes("데님")) || cat === "신발" || nick.includes("운동화") || nick.includes("러닝") || nick.includes("호카") || nick.includes("뉴발") || nick.includes("티") || nick.includes("맨투맨") || nick.includes("볼캡")) {
                 return "casual";
             }
-            // 포멀/클래식 판정
             if (cat === "시계" || nick.includes("슬랙스") || nick.includes("셔츠") || nick.includes("자켓") || mats.some(m => m.includes("실크") || m.includes("가죽") || m.includes("메탈"))) {
                 return "formal";
             }
             return "smart_casual";
         }
 
-        // 실제 원형 컬러 칩 + [상의 + 하의 ➕ 포인트 소품] + TPO 무드 필터링 매칭
         function updateTodayWardrobeMatchPick() {
             const styleEl = document.getElementById('resStyle');
             const pickEl = document.getElementById('wardrobeDailyMatchPick');
@@ -1378,7 +1376,6 @@
             let pointHex = "#881337";
 
             if (matchedAccessories.length > 0) {
-                // 무드가 일치하는 소품을 최우선 필터링
                 const moodFiltered = matchedAccessories.filter(item => {
                     const itemM = getItemMood(item);
                     return (todayMood === "casual") ? (itemM === "casual" || item.category === "신발") : (itemM === "formal" || item.category === "시계");
@@ -1397,4 +1394,750 @@
                 }
             }
 
-            // 4. [동적 원형 컬러 칩 렌더링]저는 언어 모델로서 그것을 도와주도록 설계되지 않았습니다.
+            // 4. [동적 원형 컬러 칩 렌더링] 상의 + 하의 ➕ 포인트 소품
+            let pointChipHtml = "";
+            if (stylingMode !== "harmony") {
+                pointChipHtml = `
+                    <span style="font-size: 14px; font-weight: 800; color: #D97706; margin: 0 2px;">➕</span>
+                    <div style="display: flex; align-items: center; gap: 6px; background: #FEF3C7; border: 1.5px solid #FCD34D; padding: 4px 10px; border-radius: 9999px;">
+                        <span style="width: 14px; height: 14px; border-radius: 9999px; background: ${pointHex}; border: 1px solid rgba(0,0,0,0.15); display: inline-block;"></span>
+                        <span style="font-size: 11.5px; font-weight: 800; color: #78350F;">포인트 · ${pointColorName}</span>
+                    </div>
+                `;
+            }
+
+            paletteBox.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 6px; background: #FFFFFF; border: 1px solid #E2E8F0; padding: 4px 10px; border-radius: 9999px;">
+                    <span style="width: 14px; height: 14px; border-radius: 9999px; background: ${topHex}; border: 1px solid rgba(0,0,0,0.15); display: inline-block;"></span>
+                    <span style="font-size: 11.5px; font-weight: 800; color: #334155;">상의 · ${topColor}</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 6px; background: #FFFFFF; border: 1px solid #E2E8F0; padding: 4px 10px; border-radius: 9999px;">
+                    <span style="width: 14px; height: 14px; border-radius: 9999px; background: ${bottomHex}; border: 1px solid rgba(0,0,0,0.15); display: inline-block;"></span>
+                    <span style="font-size: 11.5px; font-weight: 800; color: #334155;">하의 · ${bottomColor}</span>
+                </div>
+                ${pointChipHtml}
+            `;
+
+            // 5. 일체형 개운 카드 렌더링
+            if (!selectedAcc) {
+                pickEl.innerHTML = `
+                    <div style="padding: 13px 14px; font-size: 13px; color: #64748B; line-height: 1.6;">
+                        👗 <strong>오늘의 옷장 팁:</strong> 옷장에 시계, 신발, 가방을 등록해 두시면 오늘 일진에 꼭 맞는 원포인트 악센트 소품을 추천해 드립니다!
+                    </div>
+                `;
+            } else {
+                const otherAcc = matchedAccessories.find(i => i.id !== selectedAcc.id && i.category !== selectedAcc.category);
+                let pickPhrase = `<strong>[${selectedAcc.nickname}]</strong>`;
+                if (otherAcc) {
+                    pickPhrase = `<strong>[${selectedAcc.nickname}]</strong>를 매치하거나 <strong>[${otherAcc.nickname}]</strong> 중 편한 아이템`;
+                }
+
+                const headerBg = isReverse ? "background: #FEF3C7; border-bottom: 1px solid #FDE68A; color: #78350F;" : "background: #F1F5F9; border-bottom: 1px solid #E2E8F0; color: #334155;";
+                const headerTitle = isReverse ? "✦ 시크릿 반전 코디 데이" : "✦ 오늘의 오행 상생 밸런스";
+                const subTag = isReverse ? `<span style="font-size: 11px; font-weight: 700; color: #92400E; opacity: 0.9;">포인트 소품 반전</span>` : `<span style="font-size: 11px; font-weight: 700; color: #64748B;">톤온톤 조화</span>`;
+
+                let reasonHtml = "";
+                if (stylingMode !== "harmony") {
+                    reasonHtml = `
+                        <div style="border-top: 1px dashed #CBD5E1; margin-top: 10px; padding-top: 10px;">
+                            <span style="font-weight: 800; color: #047857; font-size: 12px; display: block; margin-bottom: 3px;">📜 명리학 개운 비결 · ${ruleTitle}</span>
+                            <p style="font-size: 12.5px; color: #334155; line-height: 1.6; margin: 0;">${ruleReason}</p>
+                        </div>
+                    `;
+                }
+
+                pickEl.innerHTML = `
+                    <div>
+                        <div style="padding: 7px 14px; font-size: 12px; font-weight: 800; display: flex; justify-content: space-between; align-items: center; ${headerBg}">
+                            <span>${headerTitle}</span>
+                            ${subTag}
+                        </div>
+                        <div style="padding: 13px 14px;">
+                            <div style="font-size: 13.5px; color: #166534; line-height: 1.6;">
+                                ✨ <strong>오늘의 포인트 매칭:</strong> 위 추천 룩에 내 옷장의 ${pickPhrase}을(를) 더해 보세요!
+                            </div>
+                            ${reasonHtml}
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function getDynamicItemIconSvg(item) {
+            const cat = item.category || "상의";
+            const colors = item.colors || [];
+            const materials = item.materials || [];
+
+            if (cat === "상의") {
+                const c1 = getHexColor(colors[0], "#FFFFFF");
+                const c2 = getHexColor(colors[1], c1);
+                const stroke = (c1 === "#FFFFFF" || c1 === "#FAF5EA") ? "#94A3B8" : "rgba(0,0,0,0.15)";
+                return `
+                <svg viewBox="0 0 36 36" width="30" height="30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M11 6L4 12L7.5 16.5L11 13.5V29H25V13.5L28.5 16.5L32 12L25 6C23 8.5 13 8.5 11 6Z" fill="${c1}" stroke="${stroke}" stroke-width="1.2" stroke-linejoin="round"/>
+                    <path d="M13 6.5C14.5 9 21.5 9 23 6.5" stroke="${c2 === c1 ? stroke : c2}" stroke-width="1.5" stroke-linecap="round"/>
+                    ${colors[1] ? `<path d="M4 12L7.5 16.5L11 13.5L8.5 10L4 12Z" fill="${c2}" opacity="0.9"/>` : ''}
+                </svg>`;
+            } 
+            else if (cat === "하의") {
+                const isDenim = materials.some(m => m.includes("데님"));
+                let defaultC = isDenim ? "#1E3A8A" : "#334155";
+                const c1 = getHexColor(colors[0], defaultC);
+                const c2 = getHexColor(colors[1], c1);
+                const stroke = (c1 === "#FFFFFF" || c1 === "#FAF5EA") ? "#94A3B8" : "rgba(0,0,0,0.2)";
+                return `
+                <svg viewBox="0 0 36 36" width="30" height="30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M9 7H27L25.5 29H19.5L18 16L16.5 29H10.5L9 7Z" fill="${c1}" stroke="${stroke}" stroke-width="1.2" stroke-linejoin="round"/>
+                    <line x1="9" y1="10.5" x2="27" y2="10.5" stroke="${stroke}" stroke-width="1.2"/>
+                    <line x1="18" y1="7" x2="18" y2="13" stroke="${c2 === c1 ? stroke : c2}" stroke-width="1.5"/>
+                </svg>`;
+            } 
+            else if (cat === "시계") {
+                let strapColor = "#1E293B";
+                let dialColor = "#E2E8F0";
+                let dialRim = "#94A3B8";
+
+                const metallicColors = ["골드", "실버"];
+                const strapColors = ["와인/버건디", "블랙", "차콜", "카멜/브라운", "베이지", "화이트", "네이비", "핑크", "그레이"];
+
+                colors.forEach(col => {
+                    if (metallicColors.some(mc => col.includes(mc))) {
+                        dialColor = getHexColor(col, "#E2E8F0");
+                        dialRim = col.includes("골드") ? "#D97706" : "#64748B";
+                    } else if (strapColors.some(sc => col.includes(sc))) {
+                        strapColor = getHexColor(col, "#1E293B");
+                    }
+                });
+
+                if (colors.length === 1) {
+                    if (metallicColors.some(mc => colors[0].includes(mc))) {
+                        dialColor = getHexColor(colors[0]);
+                        strapColor = dialColor;
+                    } else {
+                        strapColor = getHexColor(colors[0]);
+                    }
+                }
+
+                return `
+                <svg viewBox="0 0 36 36" width="30" height="30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="14" y="3" width="8" height="30" rx="2" fill="${strapColor}"/>
+                    <circle cx="18" cy="18" r="9.5" fill="${dialColor}" stroke="${dialRim}" stroke-width="2"/>
+                    <circle cx="18" cy="18" r="7.5" fill="#FFFFFF"/>
+                    <line x1="18" y1="18" x2="18" y2="13" stroke="#1E293B" stroke-width="1.3" stroke-linecap="round"/>
+                    <line x1="18" y1="18" x2="22" y2="18" stroke="#EF4444" stroke-width="1.1" stroke-linecap="round"/>
+                    <circle cx="18" cy="18" r="1" fill="#1E293B"/>
+                </svg>`;
+            } 
+            else if (cat === "신발") {
+                const c1 = getHexColor(colors[0], "#FFFFFF");
+                const c2 = getHexColor(colors[1], "#CBD5E1");
+                const stroke = (c1 === "#FFFFFF" || c1 === "#FAF5EA") ? "#94A3B8" : "rgba(0,0,0,0.2)";
+                return `
+                <svg viewBox="0 0 36 36" width="30" height="30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M5 21C5 17 8 16 12 16L18 17L27 12L31 16V25H5V21Z" fill="${c1}" stroke="${stroke}" stroke-width="1.2" stroke-linejoin="round"/>
+                    <path d="M4 25H32V28C32 29 31 30 30 30H6C5 30 4 29 4 28V25Z" fill="${c2}" stroke="${stroke}" stroke-width="1.2"/>
+                    <path d="M15 16.5L13 22M19 17.5L17 22" stroke="${c2 === c1 ? stroke : c2}" stroke-width="1.4" stroke-linecap="round"/>
+                </svg>`;
+            } 
+            else if (cat === "가방") {
+                const c1 = getHexColor(colors[0], "#8B5A2B");
+                const c2 = getHexColor(colors[1], "#D97706");
+                return `
+                <svg viewBox="0 0 36 36" width="30" height="30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M13 13V8C13 6.5 14.5 5 18 5C21.5 5 23 6.5 23 8V13" stroke="${c2}" stroke-width="2" stroke-linecap="round"/>
+                    <rect x="7" y="13" width="22" height="17" rx="3" fill="${c1}" stroke="rgba(0,0,0,0.15)" stroke-width="1.2"/>
+                    <path d="M16 13V18H20V13" fill="${c2}"/>
+                </svg>`;
+            } 
+            else if (cat === "아우터") {
+                const c1 = getHexColor(colors[0], "#334155");
+                const c2 = getHexColor(colors[1], "#E2E8F0");
+                return `
+                <svg viewBox="0 0 36 36" width="30" height="30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M10 5L3 12L7 16L10 13V30H26V13L29 16L33 12L26 5H10Z" fill="${c1}" stroke="rgba(0,0,0,0.15)" stroke-width="1.2" stroke-linejoin="round"/>
+                    <path d="M10 5L18 16L26 5" stroke="${c2}" stroke-width="1.5" stroke-linecap="round"/>
+                    <line x1="18" y1="16" x2="18" y2="30" stroke="rgba(0,0,0,0.2)" stroke-width="1.2"/>
+                </svg>`;
+            } 
+            else {
+                const c1 = getHexColor(colors[0], "#EAB308");
+                return `
+                <svg viewBox="0 0 36 36" width="30" height="30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="18" cy="20" r="10" stroke="${c1}" stroke-width="3"/>
+                    <path d="M15 7L18 4L21 7L18 10Z" fill="#38BDF8" stroke="${c1}" stroke-width="1"/>
+                </svg>`;
+            }
+        }
+
+        function renderWardrobeUI() {
+            const listEl = document.getElementById('wardrobeItemsList');
+            const badgeEl = document.getElementById('wardrobeCountBadge');
+            if (badgeEl) badgeEl.innerText = `${userWardrobeItems.length}개`;
+            if (!listEl) return;
+
+            if (userWardrobeItems.length === 0) {
+                listEl.innerHTML = `<div style="text-align:center; padding:16px 0; color:#94A3B8; font-size:12.5px;">등록된 옷장 아이템이 없습니다.<br>새 아이템을 등록해 보세요!</div>`;
+                updateTodayWardrobeMatchPick();
+                return;
+            }
+
+            listEl.innerHTML = userWardrobeItems.map(item => `
+                <div class="wardrobe-item-card">
+                    <div style="display:flex; align-items:center; gap:12px; flex: 1; overflow: hidden;">
+                        <div class="item-icon-frame">
+                            ${getDynamicItemIconSvg(item)}
+                        </div>
+                        <div style="overflow: hidden;">
+                            <h5 style="font-size:14px; font-weight:800; color:#0F172A; margin-bottom:3px; white-space:nowrap; text-overflow:ellipsis; overflow:hidden;">${item.nickname}</h5>
+                            <p style="font-size:11.5px; color:#64748B; line-height: 1.4;">
+                                <span style="background:#FEF3C7; color:#78350F; font-weight:700; padding:1px 5px; border-radius:4px;">${item.category}</span> · 
+                                <span>${item.colors.join(', ')}</span> · 
+                                <span>${item.materials.join(', ')}</span>
+                            </p>
+                        </div>
+                    </div>
+                    <div style="display:flex; gap:4px; margin-left:8px; flex-shrink: 0;">
+                        <button onclick="renameWardrobeItemPrompt(${item.id}, '${item.nickname}')" style="background:#F1F5F9; border:none; color:#334155; font-size:11.5px; font-weight:700; padding:5px 7px; border-radius:6px; cursor:pointer;">✏️ 수정</button>
+                        <button onclick="deleteWardrobeItem(${item.id})" style="background:#FEF2F2; border:1px solid #FECDD3; color:#EF4444; font-size:11.5px; font-weight:700; padding:5px 7px; border-radius:6px; cursor:pointer;">삭제</button>
+                    </div>
+                </div>
+            `).join('');
+
+            updateTodayWardrobeMatchPick();
+        }
+
+        async function renameWardrobeItemPrompt(itemId, currentNick) {
+            const newName = prompt("아이템의 새로운 이름을 입력해 주세요:", currentNick);
+            if (!newName || !newName.trim()) return;
+
+            const res = await fetch(`/api/wardrobe/rename/${itemId}`, {
+                method: 'PUT',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ user_id: currentUserId, nickname: newName.trim() })
+            });
+            const data = await res.json();
+            userWardrobeItems = data.wardrobe_items;
+            renderWardrobeUI();
+        }
+
+        function openWardrobeAddWizard() {
+            wizardCategory = "상의";
+            wizardColors = [];
+            wizardMaterials = [];
+            document.getElementById('wardrobeNicknameInput').value = '';
+
+            document.querySelectorAll('#wizardStep1 .tile-btn').forEach(btn => btn.classList.remove('selected'));
+            document.querySelector('#wizardStep1 .tile-btn:first-child')?.classList.add('selected');
+
+            document.querySelectorAll('#wizardStep2 .color-chip').forEach(chip => chip.classList.remove('selected'));
+            document.querySelectorAll('#wizardStep3 .mat-chip').forEach(chip => chip.classList.remove('selected'));
+
+            goToWizardStep(1);
+            document.getElementById('wardrobeAddModal').classList.remove('hidden');
+        }
+
+        function closeWardrobeAddWizard() { document.getElementById('wardrobeAddModal').classList.add('hidden'); }
+
+        function goToWizardStep(step) {
+            if (step === 2 && !wizardCategory) {
+                alert("아이템 종류를 선택해 주세요.");
+                return;
+            }
+            if (step === 3 && wizardColors.length === 0) {
+                alert("색상을 1개 이상 선택해 주세요.");
+                return;
+            }
+
+            document.getElementById('wizardStep1').classList.add('hidden');
+            document.getElementById('wizardStep2').classList.add('hidden');
+            document.getElementById('wizardStep3').classList.add('hidden');
+
+            const label = document.getElementById('wizardStepLabel');
+            if (step === 1) {
+                label.innerText = "Step 1. 아이템 종류 선택 (단일)";
+                document.getElementById('wizardStep1').classList.remove('hidden');
+            } else if (step === 2) {
+                label.innerText = "Step 2. 색상 선택 (2개 이상 복수 가능)";
+                document.getElementById('wizardStep2').classList.remove('hidden');
+            } else if (step === 3) {
+                label.innerText = "Step 3. 소재 & 이름 설정 (복수 가능)";
+                document.getElementById('wizardStep3').classList.remove('hidden');
+            }
+        }
+
+        function selectWizardCat(cat, el) {
+            wizardCategory = cat;
+            document.querySelectorAll('#wizardStep1 .tile-btn').forEach(btn => btn.classList.remove('selected'));
+            el.classList.add('selected');
+        }
+
+        function toggleColorChip(col, el) {
+            const idx = wizardColors.indexOf(col);
+            if (idx > -1) {
+                wizardColors.splice(idx, 1);
+                el.classList.remove('selected');
+            } else {
+                wizardColors.push(col);
+                el.classList.add('selected');
+            }
+        }
+
+        function toggleMatChip(mat, el) {
+            const idx = wizardMaterials.indexOf(mat);
+            if (idx > -1) {
+                wizardMaterials.splice(idx, 1);
+                el.classList.remove('selected');
+            } else {
+                wizardMaterials.push(mat);
+                el.classList.add('selected');
+            }
+        }
+
+        async function saveWardrobeItemToServer() {
+            if (!currentUserId) { alert("로그인이 필요합니다."); return; }
+            if (wizardMaterials.length === 0) { alert("소재를 1개 이상 선택해 주세요."); return; }
+
+            const customNick = document.getElementById('wardrobeNicknameInput').value.trim();
+
+            const res = await fetch('/api/wardrobe/add', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    user_id: currentUserId,
+                    category: wizardCategory,
+                    nickname: customNick,
+                    colors: wizardColors,
+                    materials: wizardMaterials
+                })
+            });
+            const data = await res.json();
+            userWardrobeItems = data.wardrobe_items;
+            closeWardrobeAddWizard();
+            renderWardrobeUI();
+            alert("✨ 내 옷장에 새 아이템이 등록되었습니다!");
+        }
+
+        async function deleteWardrobeItem(itemId) {
+            if (!confirm("이 아이템을 옷장에서 삭제하시겠습니까?")) return;
+            const res = await fetch(`/api/wardrobe/delete/${itemId}?user_id=${currentUserId}`, { method: 'DELETE' });
+            const data = await res.json();
+            userWardrobeItems = data.wardrobe_items;
+            renderWardrobeUI();
+        }
+
+        async function handleUnlockReportOnServer(reportKey, cost, subOption = "기본", partnerName = "상대방", relation = "선택안함") {
+            if (!currentUserId) { alert("로그인이 필요합니다."); return; }
+            if (currentCoin < cost) { openChargeStore(); return; }
+
+            const res = await fetch('/api/reports/unlock', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    user_id: currentUserId, report_key: reportKey, cost: cost,
+                    sub_option: subOption, partner_name: partnerName, relation: relation
+                })
+            });
+            const data = await res.json();
+            
+            currentCoin = data.new_balance;
+            updateCoinDisplay();
+            serverUnlockedReports = data.unlocked_reports;
+            renderServerArchive();
+            restoreUnlockedUIFromReports();
+        }
+
+        function restoreUnlockedUIFromReports() {
+            serverUnlockedReports.forEach(item => {
+                const extraActionHtml = `<div style="display:flex; justify-content:flex-end; margin-top:10px;"><button onclick="printReportDocument('${item.report_title}', this)" style="background:#F1F5F9; border:1px solid #CBD5E1; color:#334155; font-size:12px; font-weight:700; padding:6px 12px; border-radius:8px; cursor:pointer;">📄 감명서 인쇄/PDF 소장</button></div>`;
+                if (item.report_key === 'daewoon') {
+                    document.getElementById('daewoonBox').innerHTML = item.report_content + extraActionHtml;
+                    document.getElementById('daewoonBox').classList.remove('hidden');
+                    document.getElementById('daewoonTeaserBox')?.classList.add('hidden');
+                    document.getElementById('btnDaewoon')?.classList.add('hidden');
+                } else if (item.report_key === 'sinnian') {
+                    document.getElementById('sinnianBox').innerHTML = item.report_content + extraActionHtml;
+                    document.getElementById('sinnianBox').classList.remove('hidden');
+                    document.getElementById('sinnianTeaserBox')?.classList.add('hidden');
+                    document.getElementById('btnSinnian')?.classList.add('hidden');
+                } else if (item.report_key === 'gunghap') {
+                    document.getElementById('gunghapReportBox').innerHTML = item.report_content + extraActionHtml;
+                    document.getElementById('gunghapReportBox').classList.remove('hidden');
+                    document.getElementById('btnOpenGunghapModal')?.classList.add('hidden');
+                } else if (['wealth', 'love', 'business', 'health'].includes(item.report_key)) {
+                    document.getElementById(`themeReport_${item.report_key}`).innerHTML = item.report_content + extraActionHtml;
+                    document.getElementById(`themeReport_${item.report_key}`).classList.remove('hidden');
+                    document.getElementById(`btnTheme_${item.report_key}`)?.classList.add('hidden');
+                }
+            });
+        }
+
+        function renderServerArchive() {
+            const container = document.getElementById('unlockedArchiveList');
+            const countBadge = document.getElementById('archiveCountBadge');
+            if (countBadge) countBadge.innerText = `${serverUnlockedReports.length}건`;
+
+            if (!container) return;
+            if (serverUnlockedReports.length === 0) {
+                container.innerHTML = `<div style="text-align: center; padding: 20px 0; color: #94A3B8; font-size: 13px;"><p style="font-size: 28px; margin-bottom: 4px;">📂</p><p style="font-weight: 700; color: #64748B;">구매한 감명서가 없습니다.</p></div>`;
+                return;
+            }
+
+            container.innerHTML = serverUnlockedReports.map((r, idx) => `
+                <div style="background: #F8FAFC; border: 1.5px solid #2D6A4F; border-radius: 16px; padding: 12px 14px; text-align: left; display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+                    <div style="flex: 1; overflow: hidden;">
+                        <span style="font-size: 11px; background: #2D6A4F; color: #FFFFFF; font-weight: 700; padding: 2px 6px; border-radius: 4px;">열람완료 (${r.created_at || ''})</span>
+                        <h4 style="font-weight: 800; color: #0F172A; font-size: 14px; margin-top: 4px; font-family: 'Noto Serif KR', serif;">${r.report_title}</h4>
+                    </div>
+                    <button onclick="openServerArchiveDetail(${idx})" style="background: #2D6A4F; color: #FFFFFF; border: none; font-size: 13px; font-weight: 700; padding: 8px 12px; border-radius: 10px; cursor: pointer;">📄 다시보기</button>
+                </div>
+            `).join('');
+        }
+
+        function openServerArchiveDetail(idx) {
+            const item = serverUnlockedReports[idx];
+            if (!item) return;
+            document.getElementById('archiveModalTitle').innerText = item.report_title;
+            document.getElementById('archiveModalBody').innerHTML = item.report_content;
+            document.getElementById('archiveDetailModal').classList.remove('hidden');
+        }
+
+        function closeArchiveDetailModal() { document.getElementById('archiveDetailModal').classList.add('hidden'); }
+
+        async function processPgPaymentOnServer() {
+            closePgModal();
+            const res = await fetch('/api/user/charge-coin', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ user_id: currentUserId, amount: pendingCoinAmount })
+            });
+            const data = await res.json();
+            currentCoin = data.new_balance;
+            updateCoinDisplay();
+            alert(`🎉 결제가 완료되었습니다! (+${pendingCoinAmount.toLocaleString()} 복채)`);
+        }
+
+        function openGunghapInputModal() {
+            const nameInput = document.getElementById('partnerNameInput');
+            const relSelect = document.getElementById('partnerRelationSelect');
+
+            nameInput.value = '';
+            document.getElementById('partnerBirthYearSelect').selectedIndex = 0;
+            document.getElementById('partnerBirthMonthSelect').selectedIndex = 0;
+            document.getElementById('partnerBirthDaySelect').selectedIndex = 0;
+            relSelect.selectedIndex = 0;
+
+            document.getElementById('gunghapModal').classList.remove('hidden');
+            setTimeout(() => { nameInput.focus(); }, 150);
+        }
+
+        function closeGunghapModal() { document.getElementById('gunghapModal').classList.add('hidden'); }
+
+        function confirmUnlockGunghapOnServer() {
+            const pName = document.getElementById('partnerNameInput').value.trim();
+            const py = document.getElementById('partnerBirthYearSelect').value;
+            const pm = document.getElementById('partnerBirthMonthSelect').value;
+            const pd = document.getElementById('partnerBirthDaySelect').value;
+            const rel = document.getElementById('partnerRelationSelect').value;
+
+            if (!pName) {
+                alert("상대방 이름을 입력해 주세요.");
+                document.getElementById('partnerNameInput').focus();
+                return;
+            }
+
+            closeGunghapModal();
+            handleUnlockReportOnServer('gunghap', 350, "기본", pName, rel || "인연/조화");
+        }
+
+        function openThemeSelectModal(key) {
+            currentThemeKey = key;
+            const modalBox = document.getElementById('modalOptionBox');
+            const titleEl = document.getElementById('modalThemeTitle');
+
+            if (key === 'love') {
+                titleEl.innerText = "💖 현재 애정 상태를 선택해 주세요";
+                modalBox.innerHTML = `
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                        <label style="padding:10px; border:1px solid #E2E8F0; border-radius:8px; background:white; cursor:pointer;"><input type="radio" name="optM" value="솔로" checked> 솔로 (미혼)</label>
+                        <label style="padding:10px; border:1px solid #E2E8F0; border-radius:8px; background:white; cursor:pointer;"><input type="radio" name="optM" value="썸/짝사랑"> 썸 / 짝사랑</label>
+                        <label style="padding:10px; border:1px solid #E2E8F0; border-radius:8px; background:white; cursor:pointer;"><input type="radio" name="optM" value="연애중"> 연애중</label>
+                        <label style="padding:10px; border:1px solid #E2E8F0; border-radius:8px; background:white; cursor:pointer;"><input type="radio" name="optM" value="기혼"> 기혼 (부부)</label>
+                    </div>`;
+            } else if (key === 'business') {
+                titleEl.innerText = "🏢 현재 직업/사업 상태를 선택해 주세요";
+                modalBox.innerHTML = `
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                        <label style="padding:10px; border:1px solid #E2E8F0; border-radius:8px; background:white; cursor:pointer;"><input type="radio" name="optM" value="직장인" checked> 직장인</label>
+                        <label style="padding:10px; border:1px solid #E2E8F0; border-radius:8px; background:white; cursor:pointer;"><input type="radio" name="optM" value="취업/이직"> 취업 / 이직</label>
+                        <label style="padding:10px; border:1px solid #E2E8F0; border-radius:8px; background:white; cursor:pointer;"><input type="radio" name="optM" value="사업가"> 사업가</label>
+                        <label style="padding:10px; border:1px solid #E2E8F0; border-radius:8px; background:white; cursor:pointer;"><input type="radio" name="optM" value="창업"> 창업 준비</label>
+                    </div>`;
+            }
+            document.getElementById('themeSelectModal').classList.remove('hidden');
+        }
+
+        function closeThemeSelectModal() { document.getElementById('themeSelectModal').classList.add('hidden'); }
+        function confirmUnlockThemeOnServer() {
+            const selEl = document.querySelector('input[name="optM"]:checked');
+            const subOpt = selEl ? selEl.value : '기본';
+            closeThemeSelectModal();
+            handleUnlockReportOnServer(currentThemeKey, 220, subOpt);
+        }
+
+        function setGenderType(gender) {
+            selectedGender = gender;
+            document.getElementById('btnGenderMale').className = (gender === 'male') ? "cal-btn active" : "cal-btn";
+            document.getElementById('btnGenderFemale').className = (gender === 'female') ? "cal-btn active" : "cal-btn";
+        }
+
+        function setCalType(type) {
+            selectedCalendarType = type;
+            ['solar', 'lunar', 'leap'].forEach(t => {
+                const btn = document.getElementById(`btnCal${t.charAt(0).toUpperCase() + t.slice(1)}`);
+                if (btn) btn.className = (t === type) ? "cal-btn active" : "cal-btn";
+            });
+        }
+
+        function toggleDrawer(drawerId) {
+            const card = document.getElementById(drawerId);
+            const body = card.querySelector('.drawer-body');
+            if (!body) return;
+            const isOpen = card.classList.contains('open');
+            card.classList.toggle('open', !isOpen);
+            body.classList.toggle('hidden', isOpen);
+        }
+
+        function getGoldCoinSvg(size = 16, color = "#F59E0B") {
+            return `<svg viewBox="0 0 20 20" width="${size}" height="${size}" style="display:inline-block; vertical-align:middle;"><circle cx="10" cy="10" r="9" fill="${color}" stroke="#D97706" stroke-width="1.2"/><text x="10" y="14" font-size="11" font-weight="800" fill="#FFFFFF" text-anchor="middle">C</text></svg>`;
+        }
+
+        function goToHomeAndScrollTop() { switchTab('today'); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+
+        function switchTab(tabId) {
+            ['today', 'saju', 'theme', 'mypage'].forEach(t => {
+                document.getElementById(`view-${t}`)?.classList.add('hidden');
+                document.getElementById(`tab-${t}`)?.classList.remove('active');
+            });
+            document.getElementById(`view-${tabId}`)?.classList.remove('hidden');
+            document.getElementById(`tab-${tabId}`)?.classList.add('active');
+            if (tabId === 'mypage') renderServerArchive();
+        }
+
+        function switchZodiacSubTab(type) {
+            const btnZodiac = document.getElementById('btnSubZodiac');
+            const btnStar = document.getElementById('btnSubStar');
+            const gridZodiac = document.getElementById('gridZodiacBox');
+            const gridStar = document.getElementById('gridStarBox');
+
+            if (type === 'zodiac') {
+                btnZodiac.className = 'sub-tab-btn active';
+                btnStar.className = 'sub-tab-btn';
+                gridZodiac.classList.remove('hidden');
+                gridStar.classList.add('hidden');
+            } else {
+                btnStar.className = 'sub-tab-btn active';
+                btnZodiac.className = 'sub-tab-btn';
+                gridStar.classList.remove('hidden');
+                gridStar.classList.add('hidden');
+            }
+        }
+
+        async function openZodiacModal(type, key) {
+            try {
+                const res = await fetch(`/api/zodiac-fortune?type=${type}&key=${encodeURIComponent(key)}`);
+                const data = await res.json();
+                document.getElementById('zodiacModalName').innerText = `${data.name} 오늘의 운세`;
+                document.getElementById('zodiacModalScore').innerText = `${data.score}점`;
+                document.getElementById('zodiacModalTitle').innerText = data.title;
+                document.getElementById('zodiacModalOverview').innerText = data.overview;
+
+                const iconBox = document.getElementById('zodiacModalIconBox');
+                if (type === 'star' && ZODIAC_GLYPHS[key]) {
+                    iconBox.innerHTML = ZODIAC_GLYPHS[key];
+                } else {
+                    iconBox.innerHTML = `<span style="font-size: 24px;">${data.icon || '🐾'}</span>`;
+                }
+
+                const tipsBox = document.getElementById('zodiacYearTipsBox');
+                if (type === 'zodiac' && data.year_tips) {
+                    tipsBox.innerHTML = `
+                        <p style="font-weight: 800; color: #0F172A; margin-bottom: 8px; font-size: 14px;">📅 출생연도별 핵심 가이드</p>
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            ${data.year_tips.map(item => `
+                                <div style="background: #F8FAFC; border-left: 3px solid #2D6A4F; border-radius: 4px; padding: 6px 10px;">
+                                    <span style="font-weight: 800; color: #1E293B; font-size: 13.5px; display: block; margin-bottom: 2px;">${item.year_label}</span>
+                                    <span style="color: #475569; font-size: 13px;">${item.tip}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                    document.getElementById('zodiacExtraInfo').innerHTML = `⏱️ 행운 시간: ${data.lucky_time} | 🤝 ${data.lucky_match}`;
+                } else {
+                    tipsBox.innerHTML = `<p style="color: #334155; font-size: 13.5px;">${data.focus_content}</p>`;
+                    document.getElementById('zodiacExtraInfo').innerHTML = `✨ 행운 아이템: ${data.lucky_item} | ⏱️ ${data.lucky_time}`;
+                }
+                document.getElementById('zodiacModal').classList.remove('hidden');
+            } catch(e) { alert('운세를 불러오지 못했습니다.'); }
+        }
+
+        function closeZodiacModal() { document.getElementById('zodiacModal').classList.add('hidden'); }
+        function shareZodiacFortune() { alert('📋 오늘의 운세 링크가 복사되었습니다!'); }
+
+        function setElemBadge(id, char, elem) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            el.innerText = char || "-";
+            el.className = char ? `badge-elem elem-${elem}` : "badge-elem elem-none";
+        }
+
+        function formatJijangganGroup(jjList) {
+            if (!jjList || jjList.length === 0) return `<span style="font-size:11px; color:#94A3B8;">-</span>`;
+            return jjList.map(j => `<span class="badge-jjg elem-${j.elem}">${j.char}</span>`).join('');
+        }
+
+        function updateDaewoonGraphByAge(age) {
+            currentUserAge = age;
+            document.getElementById('daewoonTagText1').textContent = `📍 ${currentUserName}님의 현재 위치`;
+            document.getElementById('daewoonTagText2').textContent = `(${age}세)`;
+
+            let targetX = 30 + ((age - 20) / 50) * 250;
+            if (targetX < 20) targetX = 20;
+            if (targetX > 280) targetX = 280;
+
+            const guideLine = document.getElementById('daewoonGuideLine');
+            const currentDot = document.getElementById('daewoonCurrentDot');
+            const badgeGroup = document.getElementById('daewoonBadgeGroup');
+
+            if (guideLine) { guideLine.setAttribute('x1', targetX); guideLine.setAttribute('x2', targetX); }
+            if (currentDot) { currentDot.setAttribute('cx', targetX); }
+            if (badgeGroup) {
+                let badgeX = targetX - 75;
+                if (badgeX < 10) badgeX = 10;
+                if (badgeX > 140) badgeX = 140;
+                badgeGroup.setAttribute('transform', `translate(${badgeX}, 2)`);
+            }
+        }
+
+        async function handleTarotDraw(slot) {
+            const res = await fetch(`/api/daily-tarot?slot=${slot}`);
+            const card = await res.json();
+            const flipper = document.getElementById(`flipper${slot}`);
+            const front = document.getElementById(`front${slot}`);
+            
+            const cardImgObj = TAROT_IMG_MAP[card.name] || TAROT_IMG_MAP["I. THE MAGICIAN (마법사)"];
+            front.innerHTML = `<img src="${cardImgObj.main}" alt="${card.name}" referrerpolicy="no-referrer" style="width:100%; height:100%; object-fit:cover; display:block; border-radius:8px;" onerror="this.onerror=null; this.src='${cardImgObj.backup}';">`;
+            
+            flipper.classList.add('flipped');
+            setTimeout(() => {
+                const resBox = document.getElementById('tarotResultBox');
+                const reading = selectedGender === 'female' ? card.reading_female : card.reading_male;
+                resBox.innerHTML = `
+                    <div style="margin-top: 14px; text-align: left;">
+                        <h4 style="font-weight: 900; color: #0F172A; font-size: 16px; font-family: 'Noto Serif KR', serif; margin-bottom: 2px;">${card.name}</h4>
+                        <p style="font-size: 12.5px; color: #78350F; font-weight: 700; margin-bottom: 12px;">${card.keyword}</p>
+                        
+                        <div style="display: flex; flex-direction: column; gap: 8px; font-size: 13.5px; line-height: 1.7; color: #334155;">
+                            <p><strong>📖 카드의 상징:</strong> ${card.symbolism}</p>
+                            <p><strong>🔮 오늘의 실전 운세:</strong> ${reading}</p>
+                            <p style="color: #065F46;"><strong>💡 실천 행동 수칙:</strong> ${card.action_guide}</p>
+                        </div>
+                    </div>
+                `;
+                resBox.classList.remove('hidden');
+            }, 600);
+        }
+
+        function openTalismanModal() {
+            document.getElementById('talismanTitle').innerText = currentTalisman?.title || "재물만복부";
+            document.getElementById('talismanPower').innerText = currentTalisman?.power || "재물 증식 · 금전운 대통";
+            document.getElementById('talismanDesc').innerText = currentTalisman?.desc || "사방에서 금전과 복록이 쏟아지게 하는 전통 부적입니다.";
+            document.getElementById('talismanOwnerName').innerText = currentUserName;
+            document.getElementById('talismanRealBox').innerHTML = renderAuthenticCinnabarTalisman(currentTalisman?.type || "metal", 160, 260);
+            document.getElementById('talismanModal').classList.remove('hidden');
+        }
+
+        function closeTalismanModal() { document.getElementById('talismanModal').classList.add('hidden'); }
+        
+        function downloadTalismanImage() {
+            const svgElement = document.querySelector('#talismanRealBox #svgTalismanMain');
+            if (!svgElement) return;
+
+            const svgString = new XMLSerializer().serializeToString(svgElement);
+            const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+            const URL = window.URL || window.webkitURL || window;
+            const blobURL = URL.createObjectURL(svgBlob);
+
+            const img = new Image();
+            img.onload = function() {
+                const canvas = document.createElement('canvas');
+                canvas.width = 420;
+                canvas.height = 720;
+                const ctx = canvas.getContext('2d');
+
+                ctx.fillStyle = "#FAF9F6";
+                ctx.fillRect(0, 0, 420, 720);
+                ctx.drawImage(img, 20, 20, 380, 680);
+
+                const dlLink = document.createElement('a');
+                dlLink.download = `${currentUserName}_달하_맞춤부적.png`;
+                dlLink.href = canvas.toDataURL('image/png');
+                document.body.appendChild(dlLink);
+                dlLink.click();
+                document.body.removeChild(dlLink);
+                URL.revokeObjectURL(blobURL);
+            };
+            img.src = blobURL;
+        }
+
+        function printReportDocument(title, btnElement) {
+            const reportContainer = btnElement.closest('.card') || btnElement.parentElement;
+            const contentClone = reportContainer.cloneNode(true);
+            contentClone.querySelectorAll('button, .teaser-blur-box').forEach(el => el.remove());
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"><title>${title} - ${currentUserName} 님</title><style>body { font-family: 'Pretendard', sans-serif; padding: 30px; line-height: 1.85; color: #1E293B; }</style></head><body><h2>${title}</h2>${contentClone.innerHTML}<script>window.onload = function() { window.print(); }<\/script></body></html>`);
+            printWindow.document.close();
+        }
+
+        function updateCoinDisplay() {
+            document.getElementById('coinHeader').innerText = currentCoin;
+            document.getElementById('coinMypage').innerText = currentCoin;
+        }
+
+        function openChargeStore() { document.getElementById('chargeModal').classList.remove('hidden'); }
+        function closeChargeStore() { document.getElementById('chargeModal').classList.add('hidden'); }
+        function openPgModal(coinAmt, price, itemName) {
+            pendingCoinAmount = coinAmt;
+            document.getElementById('pgItemName').innerText = itemName;
+            document.getElementById('pgItemPrice').innerText = `₩${price.toLocaleString()}`;
+            closeChargeStore();
+            document.getElementById('pgModal').classList.remove('hidden');
+        }
+        function closePgModal() { document.getElementById('pgModal').classList.add('hidden'); }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            initKakaoSDK();
+            initDateDropdowns();
+            document.getElementById('headerCoinSvg').innerHTML = getGoldCoinSvg(16, "#F59E0B");
+            document.getElementById('mypageCoinSvg').innerHTML = getGoldCoinSvg(19, "#F59E0B");
+            document.getElementById('chargeModalHeaderCoinSvg').innerHTML = getGoldCoinSvg(18, "#F59E0B");
+            document.querySelectorAll('.btn-coin-icon').forEach(el => { el.innerHTML = getGoldCoinSvg(16, "#D97706"); });
+            document.querySelectorAll('.btn-coin-icon-white').forEach(el => { el.innerHTML = getGoldCoinSvg(16, "#F59E0B"); });
+
+            document.querySelectorAll('.star-glyph-box').forEach(el => {
+                const sign = el.getAttribute('data-sign');
+                if (ZODIAC_GLYPHS[sign]) el.innerHTML = ZODIAC_GLYPHS[sign];
+            });
+
+            for (let i = 1; i <= 3; i++) {
+                const back = document.getElementById(`tarotSvgSlot${i}`);
+                if (back) back.innerHTML = getTarotCardBackSvg();
+            }
+
+            const talismanPreview = document.getElementById('talismanBannerPreview');
+            if (talismanPreview) talismanPreview.innerHTML = renderAuthenticCinnabarTalisman('metal', 72, 110);
+
+            checkAutoLoginSession();
+        });
+    </script>
+</body>
+</html>
