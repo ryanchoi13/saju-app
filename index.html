@@ -2098,20 +2098,24 @@
                         iconBox.innerHTML = `<span style="font-size: 22px; color: #E2C068;">✦</span>`;
                     }
 
-                    tipsBox.innerHTML = `
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; font-size: 12.5px;">
-                            <div style="background: #F8FAFC; border: 1px solid #E2E8F0; padding: 10px; border-radius: 12px; text-align: left;">
-                                <span style="color: #64748B; font-size: 11px; display: block; margin-bottom: 2px;">✨ 4대 원소</span>
-                                <strong style="color: #0F172A; font-size: 13.5px;">${data.star_element || '불 (Fire)'}</strong>
-                            </div>
-                            <div style="background: #F8FAFC; border: 1px solid #E2E8F0; padding: 10px; border-radius: 12px; text-align: left;">
-                                <span style="color: #64748B; font-size: 11px; display: block; margin-bottom: 2px;">🪐 지배 수호성</span>
-                                <strong style="color: #0F172A; font-size: 13.5px;">${data.star_planet || '태양 (Sun)'}</strong>
-                            </div>
-                        </div>
-                        <div style="background: #FAF9F6; border: 1px solid #FCD34D; border-radius: 14px; padding: 14px; text-align: left;">
-                            <span style="font-size: 12px; font-weight: 800; color: #78350F; display: block; margin-bottom: 6px;">🔮 천체 에너지 데일리 가이드</span>
-                            <p style="color: #334155; font-size: 13.5px; line-height: 1.7; margin: 0;">${data.focus_content || ''}</p>
+                   tipsBox.innerHTML = `
+                        <p style="font-weight: 800; color: #0F172A; margin-bottom: 8px; font-size: 14px; text-align: left;">📅 출생연도별 핵심 가이드</p>
+                        <div style="display: flex; flex-direction: column; gap: 8px; text-align: left;">
+                            ${(data.year_tips || []).map(item => {
+                                const parts = item.year_label.split(' (');
+                                const yearMain = parts[0]; 
+                                const subInfo = parts[1] ? '(' + parts[1] : '';
+
+                                return `
+                                <div style="display: flex; align-items: center; gap: 10px; font-size: 13px; line-height: 1.5; padding: 6px 0; border-bottom: 1px solid #F1F5F9;">
+                                    <div style="background: #F1F5F9; color: #334155; padding: 4px 8px; border-radius: 8px; flex-shrink: 0; min-width: 82px; text-align: center; display: flex; flex-direction: column; gap: 2px;">
+                                        <span style="font-weight: 800; font-size: 12px; color: #0F172A;">${yearMain}</span>
+                                        <span style="font-size: 10.5px; color: #64748B; font-weight: 600;">${subInfo}</span>
+                                    </div>
+                                    <span style="color: #334155; flex: 1;">${item.tip}</span>
+                                </div>
+                                `;
+                            }).join('')}
                         </div>
                     `;
                     document.getElementById('zodiacExtraInfo').innerHTML = `🎨 행운 컬러: <strong>${data.lucky_color || '골드'}</strong> &nbsp;|&nbsp; ⏱️ 행운 시간: <strong>${data.lucky_time || '오전 10시'}</strong>`;
