@@ -1322,7 +1322,13 @@ const TAROT_IMG_MAP = {
             document.getElementById('sajuSingangBadge').innerText = data.saju_data?.singang_label || "신약(身弱) 사주";
             document.getElementById('resTitle').innerText = data.daily_fortune.title;
             document.getElementById('resAdvice').innerText = data.daily_fortune.advice;
-            document.getElementById('resScoreBadge').innerText = `운세 ${data.daily_fortune.score}점`;
+            const scoreBadgeEl = document.getElementById('resScoreBadge');
+if (scoreBadgeEl) {
+    scoreBadgeEl.innerText = data.daily_fortune.mode_badge || `운세 ${data.daily_fortune.score}점`;
+    if (data.daily_fortune.badge_style) {
+        scoreBadgeEl.style.cssText = data.daily_fortune.badge_style + " font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 9999px;";
+    }
+}
 
             if (data.daily_fortune.time_flow) {
                 document.getElementById('timeMorningText').innerText = data.daily_fortune.time_flow.morning;
