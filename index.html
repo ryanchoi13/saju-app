@@ -9,6 +9,7 @@
     <meta name="keywords" content="달하, 사주, 무료운세, 오늘의운세, 사주팔자, 무료사주, 신년운세, 궁합, 재물운, 연애운, 대운분석, 정통사주, 개운코디" />
     <link rel="canonical" href="https://dalha.kr/" />
 
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%230D1527'/><path d='M50 20 C40 25 40 40 50 45 C45 40 45 28 50 20 Z' fill='%23FFEAA7'/><circle cx='50' cy='50' r='5' fill='%23D4AF37'/></svg>">
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://dalha.kr/" />
     <meta property="og:title" content="달하 — 나를 바꾸는 스타일 운명학" />
@@ -18,7 +19,6 @@
     <meta property="og:image:height" content="630" />
 
     <meta name="theme-color" content="#0D1527">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%230D1527'/><path d='M50 20 C40 25 40 40 50 45 C45 40 45 28 50 20 Z' fill='%23FFEAA7'/><circle cx='50' cy='50' r='5' fill='%23D4AF37'/></svg>">
     <script src="https://developers.kakao.com/sdk/js/kakao.min.js"></script>
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@600;700;800;900&display=swap" rel="stylesheet">
@@ -39,10 +39,9 @@
         .card { background: #FFFFFF; border-radius: 20px; border: 1px solid #E2E8F0; padding: 18px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.03); position: relative; }
         .login-gate-card { background: radial-gradient(circle at center, #172746 0%, #0D1527 100%); border: 1.5px solid #E2C068; border-radius: 24px; padding: 32px 20px; text-align: center; color: white; display: flex; flex-direction: column; align-items: center; gap: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.4); margin-top: 10px; }
         .kakao-login-btn { width: 100%; background: #FEE500; color: #191919; border: none; font-size: 15px; font-weight: 800; padding: 15px; border-radius: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); transition: all 0.2s; }
-        .kakao-login-btn:hover { background: #FDD835; transform: translateY(-1px); }
         .gift-badge { background: #FEF3C7; color: #78350F; font-size: 12px; font-weight: 800; padding: 4px 12px; border-radius: 9999px; display: inline-block; }
 
-        .user-profile-bar { background: #FFFFFF; border-radius: 16px; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; border: 1.5px solid #E2E8F0; box-shadow: 0 2px 4px rgba(0,0,0,0.02); margin-bottom: 2px; }
+        .user-profile-bar { background: #FFFFFF; border-radius: 16px; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; border: 1.5px solid #E2E8F0; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
         .user-profile-name { font-size: 15.5px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif; }
         .user-profile-birth { font-size: 12.5px; color: #64748B; font-weight: 500; }
 
@@ -55,14 +54,22 @@
         .cal-btn.active { background: #FFFFFF; color: #111D1E; box-shadow: 0 1px 2px rgba(0,0,0,0.05); font-weight: 800; }
         .btn-primary { width: 100%; background: linear-gradient(135deg, #1B4D3E 0%, #111D1E 100%); color: #FDE68A; border: 1px solid #D4AF37; font-size: 15px; font-weight: 800; padding: 15px; border-radius: 16px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.2); margin-top: 8px; }
 
-        .badge-elem { width: 42px; height: 42px; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; font-size: 19px; font-weight: 700; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
-        .badge-jjg { width: 34px; height: 26px; border-radius: 6px; display: inline-flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; }
-        
-        .elem-wood { background: #ECFDF5; color: #047857; border: 1.5px solid #A7F3D0; }
-        .elem-fire { background: #FEF2F2; color: #DC2626; border: 1.5px solid #FECDD3; }
-        .elem-earth { background: #FFFBEB; color: #D97706; border: 1.5px solid #FDE68A; }
-        .elem-metal { background: #F1F5F9; color: #475569; border: 1.5px solid #CBD5E1; }
-        .elem-water { background: #EFF6FF; color: #2563EB; border: 1.5px solid #BFDBFE; }
+        /* 명식표 천간/지지 본체: 리버스 진한 배경 + 흰 글씨 */
+        .badge-elem-main { width: 44px; height: 44px; border-radius: 12px; display: inline-flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 900; color: #FFFFFF !important; box-shadow: 0 2px 4px rgba(0,0,0,0.12); }
+        .badge-main-wood { background: #059669; border: 1px solid #047857; }
+        .badge-main-fire { background: #DC2626; border: 1px solid #B91C1C; }
+        .badge-main-earth { background: #D97706; border: 1px solid #B45309; }
+        .badge-main-metal { background: #475569; border: 1px solid #334155; }
+        .badge-main-water { background: #2563EB; border: 1px solid #1D4ED8; }
+        .badge-main-none { background: #CBD5E1; color: #64748B !important; }
+
+        /* 지장간: 연한 파스텔 배경 + 컬러 글씨 */
+        .badge-jjg { width: 34px; height: 26px; border-radius: 6px; display: inline-flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; }
+        .elem-wood { background: #ECFDF5; color: #047857; border: 1px solid #A7F3D0; }
+        .elem-fire { background: #FEF2F2; color: #DC2626; border: 1px solid #FECDD3; }
+        .elem-earth { background: #FFFBEB; color: #D97706; border: 1px solid #FDE68A; }
+        .elem-metal { background: #F1F5F9; color: #475569; border: 1px solid #CBD5E1; }
+        .elem-water { background: #EFF6FF; color: #2563EB; border: 1px solid #BFDBFE; }
         .elem-none { background: #F8FAFC; color: #94A3B8; border: 1px solid #E2E8F0; }
         
         .daily-banner { background: linear-gradient(135deg, #0D1527 0%, #17233D 100%); border: 1.5px solid #D4AF37; border-radius: 20px; padding: 20px 18px; color: white; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 10px 20px -3px rgba(13,21,39,0.25); margin-top: 4px; }
@@ -72,7 +79,7 @@
         .action-card { background: #FFFBEB; border-left: 4px solid #F59E0B; border-radius: 14px; padding: 14px; text-align: left; font-size: 14px; }
 
         .biorhythm-card { background: #FFFFFF; border-radius: 20px; border: 1px solid #E2E8F0; padding: 18px; text-align: left; display: flex; flex-direction: column; gap: 14px; }
-        .bio-legend-box { display: flex; justify-content: center; gap: 12px; font-size: 12px; font-weight: 700; }
+        .bio-legend-box { display: flex; justify-content: center; gap: 16px; font-size: 12.5px; font-weight: 800; }
         .bio-pill-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
         .bio-pill-cell { background: #F8FAFC; border-radius: 10px; padding: 8px 6px; text-align: center; border: 1px solid #E2E8F0; }
 
@@ -94,7 +101,7 @@
 
         .color-chip-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 6px; max-height: 240px; overflow-y: auto; padding-right: 2px; }
         .color-chip { border: 1.5px solid #CBD5E1; border-radius: 10px; padding: 8px 4px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; cursor: pointer; font-size: 10.5px; font-weight: 600; color: #475569; background: #FFFFFF; transition: all 0.15s; }
-        .color-dot { width: 17px; height: 17px; border-radius: 9999px; border: 1px solid rgba(0,0,0,0.15); flex-shrink: 0; }
+        .color-dot { width: 18px; height: 18px; border-radius: 9999px; border: 1px solid rgba(0,0,0,0.15); flex-shrink: 0; }
         .color-chip.selected { border-color: #2D6A4F; background: #EBF5EE; color: #166534; font-weight: 800; box-shadow: 0 0 0 1.5px #2D6A4F; }
 
         .mat-chip-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; margin-top: 6px; }
@@ -108,7 +115,6 @@
         .zodiac-btn { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 10px 2px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; }
         .zodiac-btn:hover, .zodiac-btn:active { background: #0D1527; border-color: #E2C068; transform: translateY(-2px); }
         .zodiac-btn:hover .zodiac-label, .zodiac-btn:active .zodiac-label { color: #F6E2A1; }
-        .zodiac-btn:hover svg path, .zodiac-btn:hover svg circle, .zodiac-btn:hover svg line { stroke: #F6E2A1; }
         .zodiac-icon { font-size: 19px; line-height: 1.2; }
         .star-glyph-box { display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; }
         .star-glyph-box svg { width: 22px; height: 22px; }
@@ -176,6 +182,7 @@
         </header>
 
         <main>
+            <!-- 로그인 게이트 -->
             <div id="view-login-gate" class="login-gate-card">
                 <div style="width: 60px; height: 60px; margin: 0 auto 4px; display: flex; align-items: center; justify-content: center; border-radius: 16px; background: radial-gradient(circle, rgba(212,175,55,0.2) 0%, rgba(212,175,55,0.05) 100%); border: 1px solid rgba(212,175,55,0.3);">
                     <svg width="38" height="38" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -200,12 +207,17 @@
                 </button>
             </div>
 
+            <!-- 온보딩 명식 입력 폼 -->
             <div id="onboardingInputView" class="card hidden" style="text-align: center;">
                 <div class="gift-badge" style="margin-bottom: 12px;">🎁 카카오 연동 완료 (+1,000 복채 지급)</div>
-                <h2 style="font-size: 21px; font-weight: 800; margin-bottom: 2px; font-family: 'Noto Serif KR', serif;">사주 명식 확인</h2>
-                <p style="font-size: 13.5px; color: #64748B; margin-bottom: 16px;">가져온 정보가 맞는지 확인 후 <strong>태어난 시간</strong>을 선택하세요</p>
+                <h2 style="font-size: 21px; font-weight: 800; margin-bottom: 2px; font-family: 'Noto Serif KR', serif;">사주 명식 입력</h2>
+                <p style="font-size: 13px; color: #64748B; margin-bottom: 16px;">정밀 감명을 위해 <strong>이름, 생년월일, 태어난 시간</strong>을 확인해 주세요</p>
 
-                <div class="form-group"><label class="form-label">이름</label><input type="text" id="inputName" class="form-input" value="최정오"></div>
+                <div class="form-group">
+                    <label class="form-label">이름</label>
+                    <input type="text" id="inputName" class="form-input" placeholder="이름을 입력하세요" value="">
+                </div>
+                
                 <div class="form-group">
                     <label class="form-label">성별</label>
                     <div class="cal-toggle" style="width: 100%;">
@@ -267,7 +279,7 @@
                         <span id="resScoreBadge" style="background: #FEF3C7; color: #78350F; border: 1px solid #FDE68A; font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 9999px;">운세 88점</span>
                     </div>
 
-                    <h3 id="resTitle" style="font-size: 17px; font-weight: 600; text-align: left; line-height: 1.4; color: #FFFFFF; font-family: 'Noto Serif KR', serif; margin-top: 2px;">도약과 결실의 하루</h3>
+                    <h3 id="resTitle" style="font-size: 17px; font-weight: 600; text-align: left; line-height: 1.4; color: #FFFFFF; font-family: 'Noto Serif KR', serif; margin-top: 2px;">도약과 실속의 기운이 깃든 날</h3>
                     
                     <div id="resAdvice" style="font-size: 13.5px; color: #E2E8F0; font-weight: 400; line-height: 1.7; text-align: left; white-space: pre-line;"></div>
 
@@ -287,7 +299,7 @@
                     </div>
                 </div>
 
-                <!-- 1. 오늘 뭐 입을까? (Daily Style Nav 통합 카드) -->
+                <!-- 1. 오늘 뭐 입을까? (Daily Style Nav) -->
                 <div class="card" style="padding: 20px 18px; text-align: left; display: flex; flex-direction: column; gap: 16px; border: 1.5px solid #E2E8F0;">
                     <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 12px;">
                         <div style="display: flex; align-items: center; gap: 8px;">
@@ -300,19 +312,19 @@
                         <span id="todayStyleMoodBadge" style="font-size: 11.5px; background: #EBF5EE; color: #166534; font-weight: 800; padding: 4px 10px; border-radius: 9999px; border: 1px solid #BBF7D0;">🏃 캐주얼 & 액티브</span>
                     </div>
 
-                    <!-- 1) 오늘의 추천 색상 -->
+                    <!-- 개운 컬러 팔레트 (20px 확대 적용) -->
                     <div>
                         <span style="font-size: 12px; font-weight: 700; color: #64748B; display: flex; align-items: center; gap: 4px; margin-bottom: 8px;">
                             <span>🎨</span> 1. 오늘의 추천 색상 (개운 팔레트)
                         </span>
-                        <div id="dynamicColorPaletteBox" style="display: flex; align-items: center; justify-content: flex-start; gap: 8px; flex-wrap: wrap; margin-bottom: 8px;">
+                        <div id="dynamicColorPaletteBox" style="display: flex; align-items: center; justify-content: flex-start; gap: 10px; flex-wrap: wrap; margin-bottom: 8px;">
                         </div>
                         <p id="paletteMoodStoryBox" style="font-size: 12.5px; color: #475569; line-height: 1.6; margin: 0; background: #F8FAFC; border-radius: 10px; padding: 10px 12px; border-left: 3px solid #2D6A4F;">
                             "깊은 미드나잇 인디고와 안개빛 스카이블루가 만나 사주의 금전운과 전문성을 견고히 세웁니다."
                         </p>
                     </div>
 
-                    <!-- 2) 오늘 추천 룩 매칭 -->
+                    <!-- 오늘 추천 룩 매칭 -->
                     <div>
                         <span style="font-size: 12px; font-weight: 700; color: #64748B; display: flex; align-items: center; gap: 4px; margin-bottom: 6px;">
                             <span>✨</span> 2. 오늘 추천 룩
@@ -327,13 +339,13 @@
                         </div>
                     </div>
 
-                    <!-- 3) 내 옷장 아이템 일체형 아코디언 -->
+                    <!-- 내 옷장 아코디언 -->
                     <div id="drawerWardrobe" class="drawer-card" style="border: 1px solid #E2E8F0; background: #F8FAFC; border-radius: 14px;">
                         <div class="drawer-header" onclick="toggleDrawer('drawerWardrobe')" style="background: transparent; padding: 12px 14px;">
                             <div class="drawer-title-box" style="gap: 8px;">
                                 <span style="font-size: 16px;">👗</span>
                                 <div style="display: flex; align-items: center; gap: 6px;">
-                                    <h5 style="font-size: 13.5px; font-weight: 800; color: #0F172A;">내 옷장 열어보기 (뭐 꺼내 입을까?)</h5>
+                                    <h5 style="font-size: 13.5px; font-weight: 800; color: #0F172A;">내 옷장 열어보기 (뭘 꺼내 입지?)</h5>
                                     <span id="wardrobeCountBadge" style="font-size: 11px; background: #0D1527; color: #F6E2A1; font-weight: 800; padding: 1px 6px; border-radius: 9999px;">0개</span>
                                 </div>
                             </div>
@@ -348,7 +360,7 @@
                     </div>
                 </div>
 
-                <!-- 2. 오늘 나에게 행운을 주는 것들 (생활 밀착형 가이드 통합 카드) -->
+                <!-- 2. 오늘 나에게 행운을 주는 것들 (폰트 크기 16.5px 통일) -->
                 <div class="card" style="padding: 20px 18px; text-align: left; display: flex; flex-direction: column; gap: 14px; border: 1.5px solid #E2E8F0;">
                     <div style="display: flex; align-items: center; gap: 8px; border-bottom: 1px solid #F1F5F9; padding-bottom: 10px;">
                         <span style="font-size: 20px;">🍀</span>
@@ -378,6 +390,7 @@
                     <p id="resGaewoon" style="color: #92400E; font-weight: 500; font-size: 14px; line-height: 1.6;">오늘 완료해야 할 우선순위 3가지 메모하기</p>
                 </div>
 
+                <!-- 바이오리듬 (주기 텍스트 정리 완료) -->
                 <div class="biorhythm-card">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                         <h4 style="font-size: 15px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif;">🧬 오늘의 바이오리듬</h4>
@@ -385,9 +398,9 @@
                     </div>
 
                     <div class="bio-legend-box">
-                        <span style="color: #DC2626;">● 신체(23일)</span>
-                        <span style="color: #16A34A;">● 감성(28일)</span>
-                        <span style="color: #2563EB;">● 지성(33일)</span>
+                        <span style="color: #DC2626;">● 신체</span>
+                        <span style="color: #16A34A;">● 감성</span>
+                        <span style="color: #2563EB;">● 지성</span>
                     </div>
 
                     <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 14px; padding: 6px; position: relative;">
@@ -414,11 +427,12 @@
                 <div class="ad-slot-box"><span>📢 광고 영역 (Google AdSense / Kakao AdFit 슬롯 1)</span></div>
 
                 <div style="display: flex; flex-direction: column; gap: 10px;">
+                    <!-- 타로 카드 -->
                     <div id="drawerTarot" class="drawer-card">
                         <div class="drawer-header" onclick="toggleDrawer('drawerTarot')">
                             <div class="drawer-title-box">
                                 <div class="drawer-icon-circle">🔮</div>
-                                <div style="text-align: left;"><h4 class="drawer-title">오늘의 타로 카드</h4><p class="drawer-sub">1일 1회 무료 카드 뽑기</p></div>
+                                <div style="text-align: left;"><h4 class="drawer-title">오늘의 타로 카드</h4><p class="drawer-sub">1일 1회 무료 (2회부터 10 복채)</p></div>
                             </div>
                             <span class="drawer-arrow">▼</span>
                         </div>
@@ -432,7 +446,7 @@
                         </div>
                     </div>
 
-                    <!-- 전통 맞춤 부적 서랍 -->
+                    <!-- 맞춤 부적 서랍 -->
                     <div id="drawerTalisman" class="drawer-card">
                         <div class="drawer-header" onclick="toggleDrawer('drawerTalisman')">
                             <div class="drawer-title-box">
@@ -445,12 +459,13 @@
                             <div class="talisman-banner">
                                 <h3 id="talismanBannerHeader" style="font-size: 15px; font-weight: 800; color: #78350F; font-family: 'Noto Serif KR', serif;">오늘의 맞춤 경면주사 부적</h3>
                                 <div class="talisman-art"><div id="talismanBannerPreview" style="width: 72px; height: 110px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.15)); transform: rotate(1.5deg);"></div></div>
-                                <p style="font-size: 12px; color: #92400E;">매일 밤 12시 정각에 새로운 기운으로 업데이트됩니다.</p>
+                                <p style="font-size: 12px; color: #92400E;">💡 오늘 하루 생각날 때마다 꺼내보며 기운을 충전하세요.</p>
                                 <button onclick="openTalismanModal()" style="width: 100%; background: #D97706; color: white; border: none; font-size: 14px; font-weight: 800; padding: 12px; border-radius: 14px; cursor: pointer;">🎴 부적 크게보기 및 다운로드</button>
                             </div>
                         </div>
                     </div>
 
+                    <!-- 띠별 & 별자리 운세 서랍 -->
                     <div id="drawerZodiac" class="drawer-card">
                         <div class="drawer-header" onclick="toggleDrawer('drawerZodiac')">
                             <div class="drawer-title-box">
@@ -472,7 +487,7 @@
                                 <div onclick="openZodiacModal('zodiac', '토끼')" class="zodiac-btn"><span class="zodiac-icon">🐰</span><span class="zodiac-label">토끼</span></div>
                                 <div onclick="openZodiacModal('zodiac', '용')" class="zodiac-btn"><span class="zodiac-icon">🐲</span><span class="zodiac-label">용</span></div>
                                 <div onclick="openZodiacModal('zodiac', '뱀')" class="zodiac-btn"><span class="zodiac-icon">🐍</span><span class="zodiac-label">뱀</span></div>
-                                <div onclick="openZodiacModal('말')" class="zodiac-btn"><span class="zodiac-icon">🐴</span><span class="zodiac-label">말</span></div>
+                                <div onclick="openZodiacModal('zodiac', '말')" class="zodiac-btn"><span class="zodiac-icon">🐴</span><span class="zodiac-label">말</span></div>
                                 <div onclick="openZodiacModal('zodiac', '양')" class="zodiac-btn"><span class="zodiac-icon">🐑</span><span class="zodiac-label">양</span></div>
                                 <div onclick="openZodiacModal('zodiac', '원숭이')" class="zodiac-btn"><span class="zodiac-icon">🐵</span><span class="zodiac-label">원숭이</span></div>
                                 <div onclick="openZodiacModal('zodiac', '닭')" class="zodiac-btn"><span class="zodiac-icon">🐔</span><span class="zodiac-label">닭</span></div>
@@ -506,42 +521,47 @@
                 <div class="card" style="padding: 18px;">
                     <div style="display: flex; justify-content: space-between; align-items: baseline; border-bottom: 1px solid #F1F5F9; padding-bottom: 8px; margin-bottom: 8px;">
                         <h3 style="font-size: 16.5px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif;">사주명식 (四柱命式)</h3>
-                        <span id="sajuOwnerName" style="font-size: 13.5px; color: #2D6A4F; font-weight: 700; text-align: right;">최정오님 (남성)</span>
+                        <span id="sajuOwnerName" style="font-size: 13.5px; color: #2D6A4F; font-weight: 700; text-align: right;">-</span>
                     </div>
 
                     <div style="margin-bottom: 12px; text-align: left;">
                         <span id="sajuSingangBadge" style="font-size: 11.5px; background: #FEF3C7; color: #78350F; font-weight: 700; padding: 2px 8px; border-radius: 6px;">신약(身弱) 사주</span>
                     </div>
 
+                    <!-- 명식표 (천간/지지 리버스 진한 박스 적용) -->
                     <div style="display: grid; grid-template-columns: 56px 1fr 1fr 1fr 1fr; gap: 6px; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 18px; padding: 12px 8px;">
                         <div style="display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; padding: 8px 0;">
                             <span style="font-size: 12px; font-weight: 700; color: #64748B;">구분</span>
-                            <div style="height: 42px; display: flex; align-items: center; justify-content: center; color: #475569; font-size: 12px; font-weight: 700;">천간<br>(天干)</div>
-                            <div style="height: 42px; display: flex; align-items: center; justify-content: center; color: #475569; font-size: 12px; font-weight: 700;">지간<br>(地干)</div>
+                            <div style="height: 44px; display: flex; align-items: center; justify-content: center; color: #475569; font-size: 12px; font-weight: 700;">천간<br>(天干)</div>
+                            <div style="height: 44px; display: flex; align-items: center; justify-content: center; color: #475569; font-size: 12px; font-weight: 700;">지간<br>(地干)</div>
                             <div style="border-top: 1px dashed #CBD5E1; width: 100%; padding-top: 8px;"><div style="color: #475569; font-size: 12px; font-weight: 700;">지장간</div></div>
                         </div>
 
                         <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 14px; padding: 8px 4px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center;">
                             <span style="font-size: 12px; font-weight: 700; color: #64748B;">시주 (時)</span>
-                            <div id="cg_h_badge" class="badge-elem elem-none">-</div><div id="jj_h_badge" class="badge-elem elem-none">-</div>
+                            <div id="cg_h_badge" class="badge-elem-main badge-main-none">-</div>
+                            <div id="jj_h_badge" class="badge-elem-main badge-main-none">-</div>
                             <div style="border-top: 1px dashed #CBD5E1; width: 100%; padding-top: 8px;"><div id="jjg_h_box" style="display: flex; flex-direction: column; align-items: center; gap: 4px;">-</div></div>
                         </div>
 
-                        <div style="background: #FFFFFF; border: 1.5px solid #2D6A4F; border-radius: 14px; padding: 8px 4px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center;">
+                        <div style="background: #FFFFFF; border: 2px solid #2D6A4F; border-radius: 14px; padding: 8px 4px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center;">
                             <span style="font-size: 12px; font-weight: 800; color: #2D6A4F;">일주 (본원)</span>
-                            <div id="cg_d_badge" class="badge-elem elem-none">-</div><div id="jj_d_badge" class="badge-elem elem-none">-</div>
+                            <div id="cg_d_badge" class="badge-elem-main badge-main-none">-</div>
+                            <div id="jj_d_badge" class="badge-elem-main badge-main-none">-</div>
                             <div style="border-top: 1px dashed #CBD5E1; width: 100%; padding-top: 8px;"><div id="jjg_d_box" style="display: flex; flex-direction: column; align-items: center; gap: 4px;">-</div></div>
                         </div>
 
                         <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 14px; padding: 8px 4px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center;">
                             <span style="font-size: 12px; font-weight: 700; color: #64748B;">월주 (月)</span>
-                            <div id="cg_m_badge" class="badge-elem elem-none">-</div><div id="jj_m_badge" class="badge-elem elem-none">-</div>
+                            <div id="cg_m_badge" class="badge-elem-main badge-main-none">-</div>
+                            <div id="jj_m_badge" class="badge-elem-main badge-main-none">-</div>
                             <div style="border-top: 1px dashed #CBD5E1; width: 100%; padding-top: 8px;"><div id="jjg_m_box" style="display: flex; flex-direction: column; align-items: center; gap: 4px;">-</div></div>
                         </div>
 
                         <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 14px; padding: 8px 4px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center;">
                             <span style="font-size: 12px; font-weight: 700; color: #64748B;">년주 (年)</span>
-                            <div id="cg_y_badge" class="badge-elem elem-none">-</div><div id="jj_y_badge" class="badge-elem elem-none">-</div>
+                            <div id="cg_y_badge" class="badge-elem-main badge-main-none">-</div>
+                            <div id="jj_y_badge" class="badge-elem-main badge-main-none">-</div>
                             <div style="border-top: 1px dashed #CBD5E1; width: 100%; padding-top: 8px;"><div id="jjg_y_box" style="display: flex; flex-direction: column; align-items: center; gap: 4px;">-</div></div>
                         </div>
                     </div>
@@ -561,6 +581,7 @@
                     </div>
                 </div>
 
+                <!-- 자미두수 평생운세 (대운 그래프 마커 간격 12px 상향 조정) -->
                 <div class="card" style="border: 2px solid #FCD34D;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                         <span style="font-size: 15px; font-weight: 800; font-family: 'Noto Serif KR', serif;">👑 자미두수 평생운세</span>
@@ -579,9 +600,10 @@
                                 <path d="M 0,110 C 35,105 60,90 90,85 C 120,80 145,45 175,42 C 205,42 225,75 250,70 C 275,65 290,40 300,42" fill="none" stroke="url(#fullCurveGradient)" stroke-width="4" stroke-linecap="round" />
                                 <line id="daewoonGuideLine" x1="175" y1="10" x2="175" y2="125" stroke="#94A3B8" stroke-width="1.5" stroke-dasharray="3 3" />
                                 
-                                <g id="daewoonBadgeGroup" transform="translate(95, 0)">
+                                <!-- 마커 말풍선 간격을 위로 12px 이동 -->
+                                <g id="daewoonBadgeGroup" transform="translate(95, -12)">
                                     <rect x="0" y="0" width="160" height="34" rx="8" fill="#ECFDF5" stroke="#A7F3D0" stroke-width="1.2"/>
-                                    <text id="daewoonTagText1" x="80" y="14" font-size="10" font-weight="700" fill="#047857" text-anchor="middle">📍 최정오님의 현재 위치</text>
+                                    <text id="daewoonTagText1" x="80" y="14" font-size="10" font-weight="700" fill="#047857" text-anchor="middle">📍 회원님의 현재 위치</text>
                                     <text id="daewoonTagText2" x="80" y="27" font-size="11.5" font-weight="800" fill="#065F46" text-anchor="middle">(49세)</text>
                                 </g>
                                 <circle id="daewoonCurrentDot" cx="175" cy="42" r="6.5" fill="#2D6A4F" stroke="#FFFFFF" stroke-width="2.5" />
@@ -606,12 +628,13 @@
                     </button>
                 </div>
 
+                <!-- 2026 신년운세 -->
                 <div class="card" style="border: 2px solid #86EFAC;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                         <span style="font-size: 15px; font-weight: 800; color: #166534; font-family: 'Noto Serif KR', serif;">📅 2026 丙午년 총운 & 12개월 토정비결</span>
                         <span style="font-size: 12px; background: #DCFCE7; color: #166534; padding: 4px 10px; border-radius: 9999px; font-weight: 700;">300 복채</span>
                     </div>
-                    <p style="font-size: 13px; color: #64748B; text-align: left; margin-bottom: 12px;">2026 丙午년 1년 총운 풀이와 재물·애정·건강 밸런스, 1월부터 12월까지 전체 월별 정밀 토정비결을 제공합니다.</p>
+                    <p style="font-size: 13px; color: #64748B; text-align: left; margin-bottom: 12px;">2026 丙午년 1년 총운 풀이와 재물·직장·가정·대인관계 4대 테마, 1월부터 12월까지 전체 월별 정밀 토정비결을 제공합니다.</p>
 
                     <div id="sinnianTeaserBox" class="teaser-blur-box">
                         <div class="teaser-blur-text"><p><strong>Chapter 1. 2026 丙午년 총운 심층 분석:</strong> 2026년 붉은 말의 해는 타오르는 양기가 가득하여 재물과 애정에서...</p></div>
@@ -633,7 +656,7 @@
                         <span style="font-size: 16px; font-weight: 800; color: #9F1239; font-family: 'Noto Serif KR', serif;">💞 정통 사주 궁합 풀이</span>
                         <span style="font-size: 12px; background: #FFE4E6; color: #BE123C; padding: 4px 10px; border-radius: 9999px; font-weight: 800;">350 복채</span>
                     </div>
-                    <p style="font-size: 13.5px; color: #64748B; margin-bottom: 12px;">연인·결혼, 동업·사업 파트너, 친구와의 오행 상생 밸런스를 1:1로 정밀 감명합니다.</p>
+                    <p style="font-size: 13.5px; color: #64748B; margin-bottom: 12px;">연인·결혼, 동업·사업 파트너, 친구와의 겉궁합, 속궁합, 재물 시너지 및 갈등 처세술을 정밀 감명합니다.</p>
                     <div id="gunghapReportBox" class="hidden" style="margin-bottom: 12px;"></div>
                     <button id="btnOpenGunghapModal" onclick="openGunghapInputModal()" style="width: 100%; background: linear-gradient(135deg, #BE123C 0%, #881337 100%); color: white; border: none; font-size: 15px; font-weight: 800; padding: 14px; border-radius: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;"><span>💘</span> 상대방 정보 입력하고 궁합 보기</button>
                 </div>
@@ -674,7 +697,7 @@
                 </div>
 
                 <div class="card" style="display: flex; justify-content: space-between; align-items: center; text-align: left;">
-                    <div><p style="font-size: 14px; font-weight: 800; color: #1E293B;">사주 정보 수정</p><p id="mypageProfileDesc" style="font-size: 12px; color: #94A3B8; margin-top: 2px;">최정오 (1978년 8월 13일)</p></div>
+                    <div><p style="font-size: 14px; font-weight: 800; color: #1E293B;">사주 정보 수정</p><p id="mypageProfileDesc" style="font-size: 12px; color: #94A3B8; margin-top: 2px;">-</p></div>
                     <div style="display: flex; gap: 6px;">
                         <button onclick="reopenSajuEditForm()" style="background: #F1F5F9; border: none; font-size: 13px; font-weight: 700; color: #334155; padding: 8px 12px; border-radius: 12px; cursor: pointer;">정보 수정</button>
                         <button onclick="logoutKakaoUser()" style="background: #FEF2F2; border: 1px solid #FECDD3; font-size: 13px; font-weight: 700; color: #DC2626; padding: 8px 12px; border-radius: 12px; cursor: pointer;">로그아웃</button>
@@ -822,6 +845,7 @@
         </div>
     </div>
 
+    <!-- 상황별 테마 선택 모달 -->
     <div id="themeSelectModal" class="modal-bg hidden">
         <div class="modal-content" style="text-align: left;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 8px;">
@@ -875,7 +899,7 @@
                 <h4 id="talismanTitle" style="font-size: 13.5px; font-weight: 800; color: #78350F;">재물만복부</h4>
                 <p id="talismanPower" style="font-size: 12px; font-weight: 700; color: #B45309; margin: 2px 0;"></p>
                 <p id="talismanDesc" style="font-size: 11.5px; color: #92400E; line-height: 1.5;"></p>
-                <div style="border-top: 1px dashed rgba(217,119,6,0.4); margin-top: 6px; padding-top: 4px; font-size: 11px; color: #78350F;">소지자: <span id="talismanOwnerName" style="font-weight: 800; text-decoration: underline;">최정오</span>님 평생 수호 각인</div>
+                <div style="border-top: 1px dashed rgba(217,119,6,0.4); margin-top: 6px; padding-top: 4px; font-size: 11px; color: #78350F;">💡 오늘 하루 생각날 때마다 꺼내보며 기운을 충전하세요.</div>
             </div>
             <div style="display: flex; gap: 8px;">
                 <button onclick="downloadTalismanImage()" style="flex: 1; background: #D97706; color: white; border: none; font-size: 13.5px; font-weight: 800; padding: 12px; border-radius: 12px; cursor: pointer;">📥 부적 다운로드</button>
@@ -936,11 +960,12 @@
         let selectedGender = 'male';
         let currentThemeKey = '';
         let currentTalisman = null;
-        let currentUserName = "최정오";
+        let currentUserName = "회원";
         let currentUserAge = 49;
         let pendingCoinAmount = 0;
         let serverUnlockedReports = [];
         let userWardrobeItems = [];
+        let tarotDrawnToday = false;
 
         let currentFortuneData = null;
         let currentLuckyColors = ["네이비", "스카이블루"];
@@ -993,10 +1018,6 @@
                     el.innerHTML += `<option value="${d}">${d}일</option>`;
                 }
             });
-
-            document.getElementById('birthYearSelect').value = "1978";
-            document.getElementById('birthMonthSelect').value = "8";
-            document.getElementById('birthDaySelect').value = "13";
         }
 
         function saveUserSajuToLocal(data) { localStorage.setItem('dalha_custom_saju', JSON.stringify(data)); }
@@ -1029,7 +1050,7 @@
 
                                     const payload = {
                                         kakao_id: String(res.id),
-                                        name: localSaju?.name || profile.nickname || "달하 회원",
+                                        name: localSaju?.name || profile.nickname || "",
                                         gender: localSaju?.gender || kakaoAccount.gender || "male",
                                         birthyear: localSaju ? String(localSaju.birth_year) : (kakaoAccount.birthyear || "1978"),
                                         birthday: localSaju ? `${String(localSaju.birth_month).padStart(2, '0')}${String(localSaju.birth_day).padStart(2, '0')}` : (kakaoAccount.birthday || "0813"),
@@ -1067,13 +1088,13 @@
                                         restoreUnlockedUIFromReports();
                                     } else {
                                         const pre = sData.kakao_prefill;
-                                        document.getElementById('inputName').value = pre.name;
-                                        setGenderType(pre.gender);
-                                        setCalType(pre.calendar_type);
-                                        document.getElementById('birthYearSelect').value = String(pre.birth_year);
-                                        document.getElementById('birthMonthSelect').value = String(pre.birth_month);
-                                        document.getElementById('birthDaySelect').value = String(pre.birth_day);
-                                        document.getElementById('inputSijin').value = pre.sijin_index;
+                                        document.getElementById('inputName').value = pre.name || "";
+                                        setGenderType(pre.gender || "male");
+                                        setCalType(pre.calendar_type || "solar");
+                                        document.getElementById('birthYearSelect').value = String(pre.birth_year || 1978);
+                                        document.getElementById('birthMonthSelect').value = String(pre.birth_month || 8);
+                                        document.getElementById('birthDaySelect').value = String(pre.birth_day || 13);
+                                        document.getElementById('inputSijin').value = String(pre.sijin_index !== undefined ? pre.sijin_index : 5);
 
                                         document.getElementById('view-login-gate').classList.add('hidden');
                                         document.getElementById('onboardingInputView').classList.remove('hidden');
@@ -1148,27 +1169,7 @@
 
         const TAROT_IMG_MAP = {
             "0. THE FOOL (바보)": { main: "https://upload.wikimedia.org/wikipedia/commons/9/90/RWS_Tarot_00_Fool.jpg", backup: "https://raw.githubusercontent.com/effata/tarot-json/master/cards/fool.jpg" },
-            "I. THE MAGICIAN (마법사)": { main: "https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg", backup: "https://raw.githubusercontent.com/effata/tarot-json/master/cards/magician.jpg" },
-            "II. THE HIGH PRIESTESS (여사제)": { main: "https://upload.wikimedia.org/wikipedia/commons/8/88/RWS_Tarot_02_High_Priestess.jpg", backup: "https://raw.githubusercontent.com/effata/tarot-json/master/cards/high_priestess.jpg" },
-            "III. THE EMPRESS (여황제)": { main: "https://upload.wikimedia.org/wikipedia/commons/d/d2/RWS_Tarot_03_Empress.jpg", backup: "https://raw.githubusercontent.com/effata/tarot-json/master/cards/empress.jpg" },
-            "IV. THE EMPEROR (황제)": { main: "https://upload.wikimedia.org/wikipedia/commons/c/c3/RWS_Tarot_04_Emperor.jpg", backup: "https://raw.githubusercontent.com/effata/tarot-json/master/cards/emperor.jpg" },
-            "V. THE HIEROPHANT (교황)": { main: "https://upload.wikimedia.org/wikipedia/commons/8/8d/RWS_Tarot_05_Hierophant.jpg", backup: "https://raw.githubusercontent.com/effata/tarot-json/master/cards/hierophant.jpg" },
-            "VI. THE LOVERS (연인)": { main: "https://upload.wikimedia.org/wikipedia/commons/d/db/RWS_Tarot_06_Lovers.jpg", backup: "https://raw.githubusercontent.com/effata/tarot-json/master/cards/lovers.jpg" },
-            "VII. THE CHARIOT (전차)": { main: "https://upload.wikimedia.org/wikipedia/commons/9/9b/RWS_Tarot_07_Chariot.jpg", backup: "https://raw.githubusercontent.com/effata/tarot-json/master/cards/chariot.jpg" },
-            "VIII. STRENGTH (힘)": { main: "https://upload.wikimedia.org/wikipedia/commons/f/f5/RWS_Tarot_08_Strength.jpg", backup: "https://raw.githubusercontent.com/effata/tarot-json/master/cards/strength.jpg" },
-            "IX. THE HERMIT (은둔자)": { main: "https://upload.wikimedia.org/wikipedia/commons/4/4d/RWS_Tarot_09_Hermit.jpg", backup: "https://raw.githubusercontent.com/effata/tarot-json/master/cards/hermit.jpg" },
-            "X. WHEEL OF FORTUNE (운명의 수레바퀴)": { main: "https://upload.wikimedia.org/wikipedia/commons/3/3c/RWS_Tarot_10_Wheel_of_Fortune.jpg", backup: "https://raw.githubusercontent.com/effata/tarot-json/master/cards/wheel_of_fortune.jpg" },
-            "XI. JUSTICE (정의)": { main: "https://upload.wikimedia.org/wikipedia/commons/e/e0/RWS_Tarot_11_Justice.jpg", backup: "https://raw.githubusercontent.com/effata/tarot-json/master/cards/justice.jpg" },
-            "XII. THE HANGED MAN (매달린 사람)": { main: "https://upload.wikimedia.org/wikipedia/commons/2/2b/RWS_Tarot_12_Hanged_Man.jpg", backup: "https://raw.githubusercontent.com/effata/tarot-json/master/cards/hanged_man.jpg" },
-            "XIII. DEATH (죽음과 재생)": { main: "https://upload.wikimedia.org/wikipedia/commons/d/d7/RWS_Tarot_13_Death.jpg", backup: "https://raw.githubusercontent.com/effata/tarot-json/master/cards/death.jpg" },
-            "XIV. TEMPERANCE (절제)": { main: "https://upload.wikimedia.org/wikipedia/commons/f/f8/RWS_Tarot_14_Temperance.jpg", backup: "https://raw.githubusercontent.com/effata/tarot-json/master/cards/temperance.jpg" },
-            "XV. THE DEVIL (악마)": { main: "https://upload.wikimedia.org/wikipedia/commons/5/55/RWS_Tarot_15_Devil.jpg", backup: "https://raw.githubusercontent.com/effata/tarot-json/master/cards/devil.jpg" },
-            "XVI. THE TOWER (탑)": { main: "https://upload.wikimedia.org/wikipedia/commons/5/53/RWS_Tarot_16_Tower.jpg", backup: "https://raw.githubusercontent.com/effata/tarot-json/master/cards/tower.jpg" },
-            "XVII. THE STAR (별)": { main: "https://upload.wikimedia.org/wikipedia/commons/d/db/RWS_Tarot_17_Star.jpg", backup: "https://raw.githubusercontent.com/effata/tarot-json/master/cards/star.jpg" },
-            "XVIII. THE MOON (달)": { main: "https://upload.wikimedia.org/wikipedia/commons/7/7f/RWS_Tarot_18_Moon.jpg", backup: "https://raw.githubusercontent.com/effata/tarot-json/master/cards/moon.jpg" },
-            "XIX. THE SUN (태양)": { main: "https://upload.wikimedia.org/wikipedia/commons/1/17/RWS_Tarot_19_Sun.jpg", backup: "https://raw.githubusercontent.com/effata/tarot-json/master/cards/sun.jpg" },
-            "XX. JUDGEMENT (심판)": { main: "https://upload.wikimedia.org/wikipedia/commons/d/dd/RWS_Tarot_20_Judgement.jpg", backup: "https://raw.githubusercontent.com/effata/tarot-json/master/cards/judgement.jpg" },
-            "XXI. THE WORLD (세계)": { main: "https://upload.wikimedia.org/wikipedia/commons/f/ff/RWS_Tarot_21_World.jpg", backup: "https://raw.githubusercontent.com/effata/tarot-json/master/cards/world.jpg" }
+            "I. THE MAGICIAN (마법사)": { main: "https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg", backup: "https://raw.githubusercontent.com/effata/tarot-json/master/cards/magician.jpg" }
         };
 
         function getTarotCardBackSvg() {
@@ -1182,51 +1183,15 @@
             </svg>`;
         }
 
+        // 전통 낙관(大吉) 각인 부적 렌더링
         function renderAuthenticCinnabarTalisman(type = "metal_wealth", width = 160, height = 260) {
-            let symbolHtml = '';
-            let bottomText = '萬福大吉';
-
-            if (type.includes("wealth")) {
-                bottomText = '生財萬福';
-                symbolHtml = `
-                    <path d="M 40 85 L 100 85 L 50 105 L 90 105 L 60 125 L 80 125" stroke-width="3"/>
-                    <rect x="42" y="135" width="56" height="38" stroke-width="3" rx="3"/>
-                    <line x1="70" y1="135" x2="70" y2="173" stroke-width="2.5"/>
-                    <line x1="42" y1="154" x2="98" y2="154" stroke-width="2.5"/>
-                    <circle cx="56" cy="144" r="2.5" fill="#B91C1C"/><circle cx="84" cy="144" r="2.5" fill="#B91C1C"/>
-                `;
-            } else if (type.includes("career")) {
-                bottomText = '文昌登科';
-                symbolHtml = `
-                    <polygon points="70,80 82,100 58,100" stroke-width="3"/>
-                    <line x1="70" y1="100" x2="70" y2="135" stroke-width="4"/>
-                    <line x1="45" y1="115" x2="95" y2="115" stroke-width="3"/>
-                    <rect x="46" y="135" width="48" height="42" stroke-width="2.8"/>
-                    <line x1="70" y1="135" x2="70" y2="177" stroke-width="2.5"/>
-                `;
-            } else if (type.includes("love")) {
-                bottomText = '萬事和合';
-                symbolHtml = `
-                    <circle cx="53" cy="98" r="14" stroke-width="2.8"/><circle cx="87" cy="98" r="14" stroke-width="2.8"/>
-                    <circle cx="53" cy="98" r="4.5" fill="#B91C1C"/><circle cx="87" cy="98" r="4.5" fill="#B91C1C"/>
-                    <path d="M 40 135 Q 70 115 100 135" stroke-width="3.2"/>
-                    <path d="M 40 155 Q 70 175 100 155" stroke-width="3.2"/>
-                    <line x1="70" y1="125" x2="70" y2="170" stroke-width="3.5"/>
-                `;
-            } else {
-                bottomText = '辟邪鎭宅';
-                symbolHtml = `
-                    <line x1="70" y1="80" x2="70" y2="140" stroke-width="4.5"/>
-                    <path d="M 42 100 L 70 120 L 98 100" stroke-width="3.5"/>
-                    <path d="M 46 120 L 70 140 L 94 120" stroke-width="3.5"/>
-                    <rect x="44" y="140" width="52" height="34" stroke-width="3"/>
-                    <line x1="44" y1="140" x2="96" y2="174" stroke-width="2"/>
-                    <line x1="96" y1="140" x2="44" y2="174" stroke-width="2"/>
-                `;
-            }
-
-            const nameChar1 = currentUserName ? currentUserName.charAt(0) : "최";
-            const nameChar2 = (currentUserName && currentUserName.length > 1) ? currentUserName.charAt(1) : "정";
+            let symbolHtml = `
+                <path d="M 40 85 L 100 85 L 50 105 L 90 105 L 60 125 L 80 125" stroke-width="3"/>
+                <rect x="42" y="135" width="56" height="38" stroke-width="3" rx="3"/>
+                <line x1="70" y1="135" x2="70" y2="173" stroke-width="2.5"/>
+                <line x1="42" y1="154" x2="98" y2="154" stroke-width="2.5"/>
+                <circle cx="56" cy="144" r="2.5" fill="#B91C1C"/><circle cx="84" cy="144" r="2.5" fill="#B91C1C"/>
+            `;
 
             return `
             <svg id="svgTalismanMain" width="${width}" height="${height}" viewBox="0 0 140 240" xmlns="http://www.w3.org/2000/svg" style="background: radial-gradient(circle at center, #FFE853 0%, #FFC800 80%, #E69D00 100%); border-radius: 8px; box-shadow: inset 0 0 10px rgba(180,83,9,0.25);">
@@ -1253,10 +1218,11 @@
                     <path d="M 70 208 L 70 224 Q 70 234 60 232 Q 52 229 57 220" stroke-width="3"/>
                 </g>
 
+                <!-- 전통 길상 낙관 (大吉) -->
                 <g transform="translate(90, 192)">
-                    <rect x="0" y="0" width="24" height="24" rx="3" fill="rgba(185,28,28,0.1)" stroke="#B91C1C" stroke-width="1.4"/>
-                    <text x="12" y="10" font-size="6.5" font-weight="900" fill="#B91C1C" text-anchor="middle" font-family="'Noto Serif KR', serif">${nameChar1}</text>
-                    <text x="12" y="19" font-size="6.5" font-weight="900" fill="#B91C1C" text-anchor="middle" font-family="'Noto Serif KR', serif">${nameChar2}</text>
+                    <rect x="0" y="0" width="24" height="24" rx="3" fill="rgba(185,28,28,0.12)" stroke="#B91C1C" stroke-width="1.4"/>
+                    <text x="12" y="10" font-size="7" font-weight="900" fill="#B91C1C" text-anchor="middle" font-family="'Noto Serif KR', serif">大</text>
+                    <text x="12" y="20" font-size="7" font-weight="900" fill="#B91C1C" text-anchor="middle" font-family="'Noto Serif KR', serif">吉</text>
                 </g>
             </svg>`;
         }
@@ -1290,7 +1256,7 @@
         }
 
         async function submitSajuRegistration() {
-            const name = document.getElementById('inputName').value.trim() || "최정오";
+            const name = document.getElementById('inputName').value.trim() || "달하 회원";
             const y = parseInt(document.getElementById('birthYearSelect').value) || 1978;
             const m = parseInt(document.getElementById('birthMonthSelect').value) || 8;
             const d = parseInt(document.getElementById('birthDaySelect').value) || 13;
@@ -1329,7 +1295,7 @@
 
         function applySajuAnalysisToUI(data) {
             currentFortuneData = data;
-            currentUserName = data.user_name;
+            currentUserName = data.user_name || "회원";
             currentTalisman = data.daily_fortune.talisman;
             currentUserAge = data.current_age;
 
@@ -1376,15 +1342,15 @@
             currentLuckyColors = data.daily_fortune.lucky_colors || ["네이비", "스카이블루"];
 
             const dtl = data.saju_data.pillars_detail;
-            setElemBadge('cg_h_badge', dtl.hour.cg, dtl.hour.cg_elem);
-            setElemBadge('cg_d_badge', dtl.day.cg, dtl.day.cg_elem);
-            setElemBadge('cg_m_badge', dtl.month.cg, dtl.month.cg_elem);
-            setElemBadge('cg_y_badge', dtl.year.cg, dtl.year.cg_elem);
+            setMainElemBadge('cg_h_badge', dtl.hour.cg, dtl.hour.cg_elem);
+            setMainElemBadge('cg_d_badge', dtl.day.cg, dtl.day.cg_elem);
+            setMainElemBadge('cg_m_badge', dtl.month.cg, dtl.month.cg_elem);
+            setMainElemBadge('cg_y_badge', dtl.year.cg, dtl.year.cg_elem);
 
-            setElemBadge('jj_h_badge', dtl.hour.jj, dtl.hour.jj_elem);
-            setElemBadge('jj_d_badge', dtl.day.jj, dtl.day.jj_elem);
-            setElemBadge('jj_m_badge', dtl.month.jj, dtl.month.jj_elem);
-            setElemBadge('jj_y_badge', dtl.year.jj, dtl.year.jj_elem);
+            setMainElemBadge('jj_h_badge', dtl.hour.jj, dtl.hour.jj_elem);
+            setMainElemBadge('jj_d_badge', dtl.day.jj, dtl.day.jj_elem);
+            setMainElemBadge('jj_m_badge', dtl.month.jj, dtl.month.jj_elem);
+            setMainElemBadge('jj_y_badge', dtl.year.jj, dtl.year.jj_elem);
 
             document.getElementById('jjg_h_box').innerHTML = formatJijangganGroup(dtl.hour.jijanggan);
             document.getElementById('jjg_d_box').innerHTML = formatJijangganGroup(dtl.day.jijanggan);
@@ -1451,6 +1417,7 @@
             return "smart_casual";
         }
 
+        // Wada 개운 팔레트 (20px 원형 확대 적용)
         function updateTodayWardrobeMatchPick() {
             const styleEl = document.getElementById('resStyle');
             const pickEl = document.getElementById('wardrobeDailyMatchPick');
@@ -1553,22 +1520,22 @@
             let pointChipHtml = "";
             if (isReverse && wada.point) {
                 pointChipHtml = `
-                    <span style="font-size: 13px; font-weight: 800; color: #D97706; margin: 0 1px;">➕</span>
-                    <div style="display: flex; align-items: center; gap: 6px; background: #FEF3C7; border: 1.2px solid #FCD34D; padding: 5px 10px; border-radius: 9999px;">
-                        <span style="width: 13px; height: 13px; border-radius: 9999px; background: ${wada.point.hex}; border: 1px solid rgba(0,0,0,0.15); display: inline-block;"></span>
-                        <span style="font-size: 11.5px; font-weight: 800; color: #78350F;">${wada.point.name}</span>
+                    <span style="font-size: 14px; font-weight: 800; color: #D97706; margin: 0 2px;">➕</span>
+                    <div style="display: flex; align-items: center; gap: 8px; background: #FEF3C7; border: 1.5px solid #FCD34D; padding: 6px 12px; border-radius: 9999px;">
+                        <span style="width: 20px; height: 20px; border-radius: 9999px; background: ${wada.point.hex}; border: 1.2px solid rgba(0,0,0,0.15); display: inline-block;"></span>
+                        <span style="font-size: 13px; font-weight: 800; color: #78350F;">${wada.point.name}</span>
                     </div>
                 `;
             }
 
             paletteBox.innerHTML = `
-                <div style="display: flex; align-items: center; gap: 6px; background: #F8FAFC; border: 1.2px solid #E2E8F0; padding: 5px 10px; border-radius: 9999px;">
-                    <span style="width: 13px; height: 13px; border-radius: 9999px; background: ${wada.top.hex}; border: 1px solid rgba(0,0,0,0.15); display: inline-block;"></span>
-                    <span style="font-size: 11.5px; font-weight: 700; color: #334155;">${wada.top.name}</span>
+                <div style="display: flex; align-items: center; gap: 8px; background: #F8FAFC; border: 1.5px solid #E2E8F0; padding: 6px 12px; border-radius: 9999px;">
+                    <span style="width: 20px; height: 20px; border-radius: 9999px; background: ${wada.top.hex}; border: 1.2px solid rgba(0,0,0,0.15); display: inline-block;"></span>
+                    <span style="font-size: 13px; font-weight: 700; color: #334155;">${wada.top.name}</span>
                 </div>
-                <div style="display: flex; align-items: center; gap: 6px; background: #F8FAFC; border: 1.2px solid #E2E8F0; padding: 5px 10px; border-radius: 9999px;">
-                    <span style="width: 13px; height: 13px; border-radius: 9999px; background: ${wada.bottom.hex}; border: 1px solid rgba(0,0,0,0.15); display: inline-block;"></span>
-                    <span style="font-size: 11.5px; font-weight: 700; color: #334155;">${wada.bottom.name}</span>
+                <div style="display: flex; align-items: center; gap: 8px; background: #F8FAFC; border: 1.5px solid #E2E8F0; padding: 6px 12px; border-radius: 9999px;">
+                    <span style="width: 20px; height: 20px; border-radius: 9999px; background: ${wada.bottom.hex}; border: 1.2px solid rgba(0,0,0,0.15); display: inline-block;"></span>
+                    <span style="font-size: 13px; font-weight: 700; color: #334155;">${wada.bottom.name}</span>
                 </div>
                 ${pointChipHtml}
             `;
@@ -2001,9 +1968,6 @@
 
         function confirmUnlockGunghapOnServer() {
             const pName = document.getElementById('partnerNameInput').value.trim();
-            const py = document.getElementById('partnerBirthYearSelect').value;
-            const pm = document.getElementById('partnerBirthMonthSelect').value;
-            const pd = document.getElementById('partnerBirthDaySelect').value;
             const rel = document.getElementById('partnerRelationSelect').value;
 
             if (!pName) {
@@ -2157,21 +2121,12 @@
                     tipsBox.innerHTML = `
                         <p style="font-weight: 800; color: #0F172A; margin-bottom: 8px; font-size: 14px; text-align: left;">📅 출생연도별 핵심 가이드</p>
                         <div style="display: flex; flex-direction: column; gap: 8px; text-align: left;">
-                            ${(data.year_tips || []).map(item => {
-                                const parts = item.year_label.split(' (');
-                                const yearMain = parts[0]; 
-                                const subInfo = parts[1] ? '(' + parts[1] : '';
-
-                                return `
-                                <div style="display: flex; align-items: center; gap: 10px; font-size: 13px; line-height: 1.5; padding: 6px 0; border-bottom: 1px solid #F1F5F9;">
-                                    <div style="background: #F1F5F9; color: #334155; padding: 4px 8px; border-radius: 8px; flex-shrink: 0; min-width: 84px; text-align: center; display: flex; flex-direction: column; gap: 2px;">
-                                        <span style="font-weight: 800; font-size: 12px; color: #0F172A;">${yearMain}</span>
-                                        <span style="font-size: 10px; color: #64748B; font-weight: 600;">${subInfo}</span>
-                                    </div>
+                            ${(data.year_tips || []).map(item => `
+                                <div style="display: flex; align-items: flex-start; gap: 10px; font-size: 13px; line-height: 1.5; padding: 6px 0; border-bottom: 1px solid #F1F5F9;">
+                                    <span style="background: #F1F5F9; color: #0F172A; font-weight: 800; padding: 3px 6px; border-radius: 6px; flex-shrink: 0; font-size: 11.5px;">${item.year_label}</span>
                                     <span style="color: #334155; flex: 1;">${item.tip}</span>
                                 </div>
-                                `;
-                            }).join('')}
+                            `).join('')}
                         </div>
                     `;
                     document.getElementById('zodiacExtraInfo').innerHTML = `⏱️ 행운 시간: <strong>${data.lucky_time || ''}</strong> &nbsp;|&nbsp; 🤝 <strong>${data.lucky_match || ''}</strong>`;
@@ -2186,11 +2141,12 @@
         function closeZodiacModal() { document.getElementById('zodiacModal').classList.add('hidden'); }
         function shareZodiacFortune() { alert('📋 오늘의 운세 링크가 복사되었습니다!'); }
 
-        function setElemBadge(id, char, elem) {
+        // 명식표 천간/지지 본체 리버스 배지
+        function setMainElemBadge(id, char, elem) {
             const el = document.getElementById(id);
             if (!el) return;
             el.innerText = char || "-";
-            el.className = char ? `badge-elem elem-${elem}` : "badge-elem elem-none";
+            el.className = char ? `badge-elem-main badge-main-${elem}` : "badge-elem-main badge-main-none";
         }
 
         function formatJijangganGroup(jjList) {
@@ -2198,6 +2154,7 @@
             return jjList.map(j => `<span class="badge-jjg elem-${j.elem}">${j.char}</span>`).join('');
         }
 
+        // 대운 그래프 말풍선 간격 (위로 12px 띄움)
         function updateDaewoonGraphByAge(age) {
             currentUserAge = age;
             document.getElementById('daewoonTagText1').textContent = `📍 ${currentUserName}님의 현재 위치`;
@@ -2217,13 +2174,39 @@
                 let badgeX = targetX - 80;
                 if (badgeX < 10) badgeX = 10;
                 if (badgeX > 135) badgeX = 135;
-                badgeGroup.setAttribute('transform', `translate(${badgeX}, 0)`);
+                badgeGroup.setAttribute('transform', `translate(${badgeX}, -12)`);
             }
         }
 
-        async function handleTarotDraw(slot) {
-            const res = await fetch(`/api/daily-tarot?slot=${slot}`);
+        async function handleTarotDraw(slot, isPaid = false) {
+            if (tarotDrawnToday && !isPaid) {
+                alert("오늘의 1회 무료 카드를 이미 뽑으셨습니다. 10 복채로 다시 뽑으시겠습니까?");
+                return;
+            }
+
+            if (isPaid && currentCoin < 10) {
+                openChargeStore();
+                return;
+            }
+
+            const url = isPaid 
+                ? `/api/daily-tarot?slot=${slot}&user_id=${currentUserId}&is_paid=true` 
+                : `/api/daily-tarot?slot=${slot}`;
+
+            const res = await fetch(url);
+            if (!res.ok) {
+                alert("타로 카드를 가져오지 못했습니다.");
+                return;
+            }
+
             const card = await res.json();
+            if (isPaid) {
+                currentCoin -= 10;
+                updateCoinDisplay();
+            }
+
+            tarotDrawnToday = true;
+
             const flipper = document.getElementById(`flipper${slot}`);
             const front = document.getElementById(`front${slot}`);
             
@@ -2244,6 +2227,10 @@
                             <p><strong>🔮 오늘의 실전 운세:</strong> ${reading}</p>
                             <p style="color: #065F46;"><strong>💡 실천 행동 수칙:</strong> ${card.action_guide}</p>
                         </div>
+
+                        <button onclick="handleTarotDraw(${slot}, true)" style="width: 100%; background: #0D1527; color: #F6E2A1; border: 1px solid #D4AF37; font-size: 13.5px; font-weight: 800; padding: 12px; border-radius: 12px; cursor: pointer; margin-top: 14px; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                            <span>🔮</span> 10 복채로 타로 카드 한 번 더 뽑기
+                        </button>
                     </div>
                 `;
                 resBox.classList.remove('hidden');
@@ -2251,10 +2238,9 @@
         }
 
         function openTalismanModal() {
-            document.getElementById('talismanTitle').innerText = currentTalisman?.title || "백호 금전부";
-            document.getElementById('talismanPower').innerText = currentTalisman?.power || "결단력 강화 · 투자 수익 실현";
-            document.getElementById('talismanDesc').innerText = currentTalisman?.desc || "사방에서 금전과 복록이 쏟아지게 하는 전통 비급 부적입니다.";
-            document.getElementById('talismanOwnerName').innerText = currentUserName;
+            document.getElementById('talismanTitle').innerText = currentTalisman?.title || "재물만복부 (生財萬福)";
+            document.getElementById('talismanPower').innerText = currentTalisman?.power || "금전운 상승 · 투자 결실 극대화";
+            document.getElementById('talismanDesc').innerText = currentTalisman?.desc || "사방에서 재물과 복록이 깃들게 하는 전통 비급 수제 부적입니다.";
             document.getElementById('talismanRealBox').innerHTML = renderAuthenticCinnabarTalisman(currentTalisman?.talisman_type || "metal_wealth", 160, 260);
             document.getElementById('talismanModal').classList.remove('hidden');
         }
