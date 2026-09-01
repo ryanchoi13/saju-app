@@ -1514,37 +1514,42 @@
             let matchReason = "";
 
             if (moodCompatibleAccessories.length > 0) {
-                if (isReverse && wada.point) {
+                // 1순위: 하단 '행운의 아이템'(예: 실버 메탈 시계)의 색상과 소재가 모두 일치하는 옷장 아이템 (예: 세이코 시계)
+                selectedAcc = moodCompatibleAccessories.find(i => {
+                    const hasColorMatch = (i.colors || []).some(c => luckyItemText.includes(c));
+                    const hasMatMatch = (i.materials || []).some(m => luckyItemText.includes(m.split('/')[0]));
+                    return hasColorMatch && hasMatMatch;
+                });
+
+                if (selectedAcc) {
+                    matchReason = `오늘의 행운 아이템(<strong>${luckyItemText}</strong>)과 일치하는 내 옷장의 <strong>[${selectedAcc.nickname}]</strong>을 매칭하여 길한 기운을 배가시켜 보세요.`;
+                }
+
+                // 2순위: 반전 컬러(Point Color) 매칭
+                if (!selectedAcc && isReverse && wada.point) {
                     const pCol = wada.point.standard_color;
                     selectedAcc = moodCompatibleAccessories.find(i => i.colors.some(c => c.includes(pCol) || pCol.includes(c)));
                     if (selectedAcc) {
-                        matchReason = `오늘의 시크릿 반전 컬러(<strong>${pCol}</strong>)를 손목/발끝에 얹어 반전 개운 효과를 완성해보세요.`;
-                    }
-                }
-                
-                if (!selectedAcc) {
-                    selectedAcc = moodCompatibleAccessories.find(i => i.materials.some(m => m.includes("메탈") || m.includes("금속")));
-                    if (selectedAcc) {
-                        matchReason = `내 옷장의 <strong>[${selectedAcc.nickname}]</strong>(메탈 소재)을 더해 사주의 결단력과 금(金) 기운을 균형 있게 채워보세요.`;
-                    }
-                }
-                if (!selectedAcc) {
-                    selectedAcc = moodCompatibleAccessories.find(i => i.materials.some(m => m.includes("가죽") || m.includes("세무")));
-                    if (selectedAcc) {
-                        matchReason = `내 옷장의 <strong>[${selectedAcc.nickname}]</strong>(가죽 소재)을 매칭하여 신뢰감과 대지(土)의 안정감을 더해보세요.`;
+                        matchReason = `오늘의 시크릿 반전 컬러(<strong>${pCol}</strong>)를 담은 <strong>[${selectedAcc.nickname}]</strong>으로 반전 개운 효과를 완성해보세요.`;
                     }
                 }
 
+                // 3순위: 행운 아이템의 소재나 색상 중 하나라도 일치하는 경우
                 if (!selectedAcc) {
-                    selectedAcc = moodCompatibleAccessories.find(i => i.colors.some(c => c.includes(topColorStd) || c.includes(bottomColorStd)));
+                    selectedAcc = moodCompatibleAccessories.find(i => {
+                        const hasColorMatch = (i.colors || []).some(c => luckyItemText.includes(c));
+                        const hasMatMatch = (i.materials || []).some(m => luckyItemText.includes(m.split('/')[0]));
+                        return hasColorMatch || hasMatMatch;
+                    });
                     if (selectedAcc) {
-                        matchReason = `룩의 전체적인 톤과 결을 맞춘 <strong>[${selectedAcc.nickname}]</strong>으로 세련되고 단정한 기운을 완성해보세요.`;
+                        matchReason = `오늘의 길운을 돕는 <strong>[${selectedAcc.nickname}]</strong>을 더해 사주의 부족한 기운을 균형 있게 채워보세요.`;
                     }
                 }
 
+                // 4순위: 기본 호환 아이템 매칭
                 if (!selectedAcc) {
                     selectedAcc = moodCompatibleAccessories[0];
-                    matchReason = `오늘의 스타일에 내 옷장의 <strong>[${selectedAcc.nickname}]</strong>을 가볍게 매칭하여 밸런스를 맞춰보세요.`;
+                    matchReason = `오늘의 스타일에 내 옷장의 <strong>[${selectedAcc.nickname}]</strong>을 가볍게 매칭하여 룩의 완성도를 높여보세요.`;
                 }
             }
 
