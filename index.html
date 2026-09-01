@@ -1118,11 +1118,30 @@
             "물고기자리": `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#E2C068" stroke-width="2"><path d="M5 4a14 14 0 0 1 0 16M19 4a14 14 0 0 0 0 16M3 12h18"/></svg>`
         };
 
-        const TAROT_IMG_MAP = {
-            "I. THE MAGICIAN (마법사)": { main: "https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg", backup: "https://raw.githubusercontent.com/effata/tarot-json/master/cards/magician.jpg" },
-            "0. THE FOOL (바보)": { main: "https://upload.wikimedia.org/wikipedia/commons/9/90/RWS_Tarot_00_Fool.jpg", backup: "https://raw.githubusercontent.com/effata/tarot-json/master/cards/fool.jpg" },
-            "XIX. THE SUN (태양)": { main: "https://upload.wikimedia.org/wikipedia/commons/1/17/RWS_Tarot_19_Sun.jpg", backup: "https://raw.githubusercontent.com/effata/tarot-json/master/cards/sun.jpg" }
-        };
+const TAROT_IMG_MAP = {
+    "0. THE FOOL (바보)": { main: "https://upload.wikimedia.org/wikipedia/commons/9/90/RWS_Tarot_00_Fool.jpg", backup: "https://raw.githubusercontent.com/effata/tarot-json/master/cards/fool.jpg" },
+    "I. THE MAGICIAN (마법사)": { main: "https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg", backup: "https://raw.githubusercontent.com/effata/tarot-json/master/cards/magician.jpg" },
+    "II. THE HIGH PRIESTESS (여사제)": { main: "https://upload.wikimedia.org/wikipedia/commons/8/88/RWS_Tarot_02_High_Priestess.jpg", backup: "https://raw.githubusercontent.com/effata/tarot-json/master/cards/high_priestess.jpg" },
+    "III. THE EMPRESS (여황제)": { main: "https://upload.wikimedia.org/wikipedia/commons/d/d2/RWS_Tarot_03_Empress.jpg", backup: "https://raw.githubusercontent.com/effata/tarot-json/master/cards/empress.jpg" },
+    "IV. THE EMPEROR (황제)": { main: "https://upload.wikimedia.org/wikipedia/commons/c/c3/RWS_Tarot_04_Emperor.jpg", backup: "https://raw.githubusercontent.com/effata/tarot-json/master/cards/emperor.jpg" },
+    "V. THE HIEROPHANT (교황)": { main: "https://upload.wikimedia.org/wikipedia/commons/8/8d/RWS_Tarot_05_Hierophant.jpg", backup: "https://raw.githubusercontent.com/effata/tarot-json/master/cards/hierophant.jpg" },
+    "VI. THE LOVERS (연인)": { main: "https://upload.wikimedia.org/wikipedia/commons/d/db/RWS_Tarot_06_Lovers.jpg", backup: "https://raw.githubusercontent.com/effata/tarot-json/master/cards/lovers.jpg" },
+    "VII. THE CHARIOT (전차)": { main: "https://upload.wikimedia.org/wikipedia/commons/9/9b/RWS_Tarot_07_Chariot.jpg", backup: "https://raw.githubusercontent.com/effata/tarot-json/master/cards/chariot.jpg" },
+    "VIII. STRENGTH (힘)": { main: "https://upload.wikimedia.org/wikipedia/commons/f/f5/RWS_Tarot_08_Strength.jpg", backup: "https://raw.githubusercontent.com/effata/tarot-json/master/cards/strength.jpg" },
+    "IX. THE HERMIT (은둔자)": { main: "https://upload.wikimedia.org/wikipedia/commons/4/4d/RWS_Tarot_09_Hermit.jpg", backup: "https://raw.githubusercontent.com/effata/tarot-json/master/cards/hermit.jpg" },
+    "X. WHEEL OF FORTUNE (운명의 수레바퀴)": { main: "https://upload.wikimedia.org/wikipedia/commons/3/3c/RWS_Tarot_10_Wheel_of_Fortune.jpg", backup: "https://raw.githubusercontent.com/effata/tarot-json/master/cards/wheel_of_fortune.jpg" },
+    "XI. JUSTICE (정의)": { main: "https://upload.wikimedia.org/wikipedia/commons/e/e0/RWS_Tarot_11_Justice.jpg", backup: "https://raw.githubusercontent.com/effata/tarot-json/master/cards/justice.jpg" },
+    "XII. THE HANGED MAN (매달린 사람)": { main: "https://upload.wikimedia.org/wikipedia/commons/2/2b/RWS_Tarot_12_Hanged_Man.jpg", backup: "https://raw.githubusercontent.com/effata/tarot-json/master/cards/hanged_man.jpg" },
+    "XIII. DEATH (죽음과 재생)": { main: "https://upload.wikimedia.org/wikipedia/commons/d/d7/RWS_Tarot_13_Death.jpg", backup: "https://raw.githubusercontent.com/effata/tarot-json/master/cards/death.jpg" },
+    "XIV. TEMPERANCE (절제)": { main: "https://upload.wikimedia.org/wikipedia/commons/f/f8/RWS_Tarot_14_Temperance.jpg", backup: "https://raw.githubusercontent.com/effata/tarot-json/master/cards/temperance.jpg" },
+    "XV. THE DEVIL (악마)": { main: "https://upload.wikimedia.org/wikipedia/commons/5/55/RWS_Tarot_15_Devil.jpg", backup: "https://raw.githubusercontent.com/effata/tarot-json/master/cards/devil.jpg" },
+    "XVI. THE TOWER (탑)": { main: "https://upload.wikimedia.org/wikipedia/commons/5/53/RWS_Tarot_16_Tower.jpg", backup: "https://raw.githubusercontent.com/effata/tarot-json/master/cards/tower.jpg" },
+    "XVII. THE STAR (별)": { main: "https://upload.wikimedia.org/wikipedia/commons/d/db/RWS_Tarot_17_Star.jpg", backup: "https://raw.githubusercontent.com/effata/tarot-json/master/cards/star.jpg" },
+    "XVIII. THE MOON (달)": { main: "https://upload.wikimedia.org/wikipedia/commons/7/7f/RWS_Tarot_18_Moon.jpg", backup: "https://raw.githubusercontent.com/effata/tarot-json/master/cards/moon.jpg" },
+    "XIX. THE SUN (태양)": { main: "https://upload.wikimedia.org/wikipedia/commons/1/17/RWS_Tarot_19_Sun.jpg", backup: "https://raw.githubusercontent.com/effata/tarot-json/master/cards/sun.jpg" },
+    "XX. JUDGEMENT (심판)": { main: "https://upload.wikimedia.org/wikipedia/commons/d/dd/RWS_Tarot_20_Judgement.jpg", backup: "https://raw.githubusercontent.com/effata/tarot-json/master/cards/judgement.jpg" },
+    "XXI. THE WORLD (세계)": { main: "https://upload.wikimedia.org/wikipedia/commons/f/ff/RWS_Tarot_21_World.jpg", backup: "https://raw.githubusercontent.com/effata/tarot-json/master/cards/world.jpg" }
+};
 
         function getTarotCardBackSvg() {
             return `
