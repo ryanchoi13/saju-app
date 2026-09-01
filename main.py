@@ -696,16 +696,38 @@ def charge_coin_endpoint(req: ChargeCoinRequest):
     db.close()
     return {"status": "success", "new_balance": new_bal}
 
+# 22종 정통 메이저 아르카나 타로 풀버전 데이터베이스
+FULL_TAROT_DECK = [
+    {"name": "0. THE FOOL (바보)", "keyword": "새로운 시작 · 자유로운 모험", "symbolism": "절벽 끝에서도 당당한 바보는 틀에 얽매이지 않는 순수한 도약을 상징합니다.", "reading_male": "과거의 부담을 털어내고 새로운 시도를 하기에 최적의 타이밍입니다.", "reading_female": "선입견 없이 열린 마음으로 다가갈 때 뜻밖의 귀인과 기회를 얻습니다.", "action_guide": "가보지 않았던 새로운 방식이나 길을 과감히 선택하세요."},
+    {"name": "I. THE MAGICIAN (마법사)", "keyword": "창조적 잠재력 · 탁월한 실행력", "symbolism": "4대 원소를 능숙히 다루는 마법사는 무한한 기회와 탁월한 재능을 뜻합니다.", "reading_male": "주도적으로 프로젝트나 미팅을 이끌어 성과를 거머쥐기에 완벽합니다.", "reading_female": "빛나는 센스와 아이디어로 주변의 주목과 협력을 끌어당깁니다.", "action_guide": "망설이던 아이디어가 있다면 오늘 바로 구체적인 실행에 옮기세요."},
+    {"name": "II. THE HIGH PRIESTESS (여사제)", "keyword": "깊은 직관 · 지혜로운 통찰", "symbolism": "장막 뒤에 앉은 여사제는 내면의 비밀과 고요한 통찰을 상징합니다.", "reading_male": "말을 앞세우기보다 한 걸음 물러서서 상황을 관찰할 때 핵심을 봅니다.", "reading_female": "당신의 직관이 정확합니다. 주변 소음에 흔들리지 말고 내면을 믿으세요.", "action_guide": "중요한 결정 전 차분히 혼자만의 시간을 가지며 정리하세요."},
+    {"name": "III. THE EMPRESS (여황제)", "keyword": "풍요와 결실 · 따뜻한 포용", "symbolism": "곡식이 무르익은 숲속의 여황제는 물질적·정서적 번영을 의미합니다.", "reading_male": "투자나 사업에서 따스한 결실을 맺고 주변에 베풀기 좋은 날입니다.", "reading_female": "매력과 감성이 최고조에 달하며 주변의 사랑과 존중을 듬뿍 받습니다.", "action_guide": "자신을 위한 힐링과 풍요로운 식사로 기운을 북돋우세요."},
+    {"name": "IV. THE EMPEROR (황제)", "keyword": "강력한 리더십 · 안정된 권위", "symbolism": "돌보좌에 앉은 황제는 흔들리지 않는 규율과 책임감을 상징합니다.", "reading_male": "조직을 장악하고 결단력 있게 밀어붙일 때 확실한 성과가 따릅니다.", "reading_female": "원칙과 확고한 기준을 세워 상황을 주도적으로 통제하세요.", "action_guide": "책임감 있는 태도로 공적인 일과 사적인 감정을 명확히 구분하세요."},
+    {"name": "V. THE HIEROPHANT (교황)", "keyword": "귀인의 조력 · 전통과 신뢰", "symbolism": "신도를 이끄는 교황은 멘토, 계약, 도덕적 신뢰를 의미합니다.", "reading_male": "선배나 전문가의 조언을 수용할 때 오랜 난제가 단숨에 해결됩니다.", "reading_female": "신뢰할 수 있는 기관이나 조력자를 통해 합의와 계약이 성사됩니다.", "action_guide": "조언을 구하는 것을 주저하지 말고 예의와 원칙을 지키세요."},
+    {"name": "VI. THE LOVERS (연인)", "keyword": "조화로운 결합 · 올바른 선택", "symbolism": "천사의 축복을 받는 남녀는 진실한 사랑과 가치관의 일치를 상징합니다.", "reading_male": "마음에 둔 사람과의 교감이 깊어지고 파트너십이 공고해집니다.", "reading_female": "애정운이 만개하며, 중요한 갈림길에서 가슴이 이끄는 선택이 옳습니다.", "action_guide": "상대방의 마음에 귀를 기울이고 솔직한 감정을 전달하세요."},
+    {"name": "VII. THE CHARIOT (전차)", "keyword": "거침없는 돌파 · 승리의 질주", "symbolism": "두 마리의 스핑크스를 이끄는 전차는 불굴의 의지와 목표 달성을 뜻합니다.", "reading_male": "망설이지 말고 정면 돌파할 때 경쟁자를 압도하고 승리합니다.", "reading_female": "추진력이 폭발하는 날입니다. 집중력을 발휘해 목표를 쟁취하세요.", "action_guide": "방해 요소에 한눈팔지 말고 오직 목표를 향해 직진하세요."},
+    {"name": "VIII. STRENGTH (힘)", "keyword": "부드러운 카리스마 · 내면의 통제", "symbolism": "사자를 부드럽게 쓰다듬는 여인은 인내와 지혜로운 설득을 상징합니다.", "reading_male": "강압적인 태도 대신 부드러운 설득으로 상대의 마음을 완벽히 얻습니다.", "reading_female": "내면의 단단한 힘으로 까다로운 사람이나 위기를 유연하게 다룹니다.", "action_guide": "감정을 억누르기보다 온화한 미소와 유연함으로 상대를 포용하세요."},
+    {"name": "IX. THE HERMIT (은둔자)", "keyword": "자아 성찰 · 깊은 탐구", "symbolism": "등불을 들고 설산에 선 은둔자는 진리 탐구와 신중한 숙고를 의미합니다.", "reading_male": "외부 활동보다는 본질적인 문제 분석과 연구에 집중할 때 길합니다.", "reading_female": "남들의 시선에서 벗어나 나만의 기준과 비전을 차분히 정립하세요.", "action_guide": "불필요한 모임을 줄이고 조용한 환경에서 내실을 다지세요."},
+    {"name": "X. WHEEL OF FORTUNE (운명의 수레바퀴)", "keyword": "운명의 전환점 · 뜻밖의 행운", "symbolism": "끊임없이 회전하는 수레바퀴는 상승하는 운의 기류와 기회를 뜻합니다.", "reading_male": "정체되었던 흐름이 반전되어 뜻밖의 기회와 재물이 굴러들어옵니다.", "reading_female": "인생의 긍정적인 터닝포인트가 찾아옵니다. 변화의 파도를 타세요.", "action_guide": "우연처럼 다가오는 제안이나 만남을 가볍게 넘기지 마세요."},
+    {"name": "XI. JUSTICE (정의)", "keyword": "공정한 균형 · 합리적 판결", "symbolism": "저울과 칼을 든 정의의 여신은 객관성과 인과응보를 상징합니다.", "reading_male": "사리분별을 명확히 하고 공정한 계약과 결정을 내릴 최적의 날입니다.", "reading_female": "감정에 치우치지 않는 냉철한 시각이 당신의 권익을 지켜줍니다.", "action_guide": "서류와 계약 조건을 꼼꼼히 확인하고 균형을 유지하세요."},
+    {"name": "XII. THE HANGED MAN (매달린 사람)", "keyword": "새로운 관점 · 인내와 희생", "symbolism": "거꾸로 매달려 명상하는 남자는 관점의 전환과 가치 있는 기다림을 뜻합니다.", "reading_male": "당장 눈앞의 이익보다 장기적인 시각으로 판을 뒤집을 묘수를 찾습니다.", "reading_female": "조급해하지 않고 상황을 다른 각도에서 바라볼 때 해답이 보입니다.", "action_guide": "강제로 밀어붙이기보다 잠시 멈추고 발상의 전환을 꾀하세요."},
+    {"name": "XIII. DEATH (죽음과 재생)", "keyword": "과거의 종결 · 새로운 탄생", "symbolism": "말을 탄 사신은 낡은 것의 완전한 끝과 신선한 새 출발을 의미합니다.", "reading_male": "더 이상 도움이 되지 않는 낡은 습관이나 미련을 과감히 정리하세요.", "reading_female": "하나의 문이 닫히고 훨씬 더 좋은 새로운 문이 활짝 열립니다.", "action_guide": "붙잡고 있던 묵은 짐이나 미련을 정리하고 비워내세요."},
+    {"name": "XIV. TEMPERANCE (절제)", "keyword": "조화로운 융합 · 감정의 정화", "symbolism": "두 잔의 물을 섞는 천사는 중용과 치유, 완벽한 밸런스를 상징합니다.", "reading_male": "극단을 피하고 완급을 조절할 때 주변과의 갈등이 말끔히 해소됩니다.", "reading_female": "마음의 평온을 되찾고 일과 휴식의 건강한 밸런스를 맞춥니다.", "action_guide": "무리한 욕심을 내려놓고 마음의 온도를 차분하게 유지하세요."},
+    {"name": "XV. THE DEVIL (악마)", "keyword": "강한 집착 경계 · 유혹 타파", "symbolism": "사슬에 묶인 연인은 물질적 유혹과 과도한 집착을 경고합니다.", "reading_male": "달콤한 유혹이나 단기적인 투기에 현혹되지 말고 이성을 지키세요.", "reading_female": "나를 옭아매는 인간관계나 습관의 고리를 끊어내야 할 때입니다.", "action_guide": "쉽고 빠른 지름길을 경계하고 떳떳한 길을 선택하세요."},
+    {"name": "XVI. THE TOWER (탑)", "keyword": "예상 밖의 각성 · 거짓의 붕괴", "symbolism": "번개를 맞아 무너지는 탑은 껍데기가 깨지고 진실이 드러남을 뜻합니다.", "reading_male": "예기치 못한 변화가 있더라도 오히려 거품을 걷어내는 기회가 됩니다.", "reading_female": "억지로 유지하던 불안정한 관계나 틀에서 벗어나 자유를 얻습니다.", "action_guide": "변화를 두려워하지 말고 본질적인 기본기를 다시 다지세요."},
+    {"name": "XVII. THE STAR (별)", "keyword": "희망과 영감 · 밝은 미래", "symbolism": "밤하늘에 빛나는 팔각별은 치유와 미래를 향한 확신을 상징합니다.", "reading_male": "어둠이 걷히고 가야 할 명확한 비전과 영감이 샘솟는 하루입니다.", "reading_female": "맑은 긍정 에너지가 넘치며 당신의 꿈이 현실로 다가옵니다.", "action_guide": "자신의 재능과 희망을 믿고 밝은 미소로 하루를 시작하세요."},
+    {"name": "XVIII. THE MOON (달)", "keyword": "불안의 극복 · 숨겨진 진실", "symbolism": "달빛 아래 짖는 개와 가재는 환상과 내면의 막연한 두려움을 뜻합니다.", "reading_male": "막연한 불안감에 위축되지 말고 팩트에 기반하여 판단하세요.", "reading_female": "모호했던 사람의 본심이나 상황의 이면이 드러나게 됩니다.", "action_guide": "중요한 계약은 서두르지 말고 시간을 두고 신중히 살피세요."},
+    {"name": "XIX. THE SUN (태양)", "keyword": "확실한 성공 · 생명력과 축복", "symbolism": "빛나는 태양 아래 아이는 순수한 기쁨과 확실한 승리를 의미합니다.", "reading_male": "노력해 온 결과가 세상에 당당히 인정받아 큰 찬사를 받습니다.", "reading_female": "주변에 온기를 전파하며 모임과 일터의 주인공이 됩니다.", "action_guide": "자신감을 가지고 당신의 아이디어와 존재감을 마음껏 드러내세요."},
+    {"name": "XX. JUDGEMENT (심판)", "keyword": "부활과 보상 · 결정적 부름", "symbolism": "나팔을 부는 천사는 과거 노력에 대한 정당한 보상과 구원을 뜻합니다.", "reading_male": "오랫동안 기다려온 반가운 합격, 승진, 계약 소식이 찾아옵니다.", "reading_female": "과거의 노력이 빛을 발하며 새로운 인생 2막의 기회가 열립니다.", "action_guide": "망설이지 말고 당신에게 주어진 결정적인 기회를 잡으세요."},
+    {"name": "XXI. THE WORLD (세계)", "keyword": "완벽한 완성 · 대단원의 통합", "symbolism": "월계관 속 무희는 하나의 주기가 완벽히 마무리되고 완성됨을 상징합니다.", "reading_male": "프로젝트가 완벽히 성공하며 최고의 명예와 보람을 누립니다.", "reading_female": "목표했던 바를 온전히 이루고 더 큰 세계로 도약할 준비를 마칩니다.", "action_guide": "성취한 결실을 자축하고 다음 단계를 향한 큰 그림을 그리세요."}
+]
+
 @app.get("/api/daily-tarot")
 def get_daily_tarot(slot: int):
     today_ord = datetime.date.today().toordinal()
-    tarot_cards = [
-        {"name": "I. THE MAGICIAN (마법사)", "keyword": "창조적 잠재력 · 탁월한 실행력", "symbolism": "4대 원소를 능숙히 다루는 마법사는 무한한 가능성과 시작을 의미합니다.", "reading_male": "주도적으로 프로젝트나 만남을 이끌어가기에 완벽한 시기입니다.", "reading_female": "빛나는 센스와 아이디어로 주변의 시선과 협력을 끌어당깁니다.", "action_guide": "망설이던 아이디어가 있다면 오늘 바로 구체적인 실행 계획을 작성하세요."},
-        {"name": "0. THE FOOL (바보)", "keyword": "새로운 여정 · 순수한 모험심", "symbolism": "절벽 끝에서도 당당한 바보는 틀에 얽매이지 않는 자유로운 도약을 상징합니다.", "reading_male": "과거의 부담을 털어내고 새로운 방향을 모색할 때 뜻밖의 돌파구가 열립니다.", "reading_female": "선입견 없이 마음을 열고 다가갈 때 새로운 인연과 기쁨을 얻습니다.", "action_guide": "가보지 않았던 새로운 길이나 방식을 시도해 보세요."},
-        {"name": "XIX. THE SUN (태양)", "keyword": "명확한 성공 · 긍정의 생명력", "symbolism": "빛나는 태양 아래 아이는 순수한 행복과 확실한 승리를 의미합니다.", "reading_male": "노력해 온 결과가 세상에 당당히 드러나 높은 평가를 받습니다.", "reading_female": "주변에 따뜻한 에너지를 전파하며 중심적인 위치에 서게 됩니다.", "action_guide": "자신감을 가지고 당신의 성과와 제안을 널리 알리세요."}
-    ]
-    card = tarot_cards[(today_ord + slot) % len(tarot_cards)]
-    return card
+    # 날짜와 슬롯 번호를 결합하여 22종 중 매일 다르게 순환 선택
+    card_index = (today_ord * 7 + slot * 13) % len(FULL_TAROT_DECK)
+    return FULL_TAROT_DECK[card_index]
 
 # 띠별 5개 세대 연도 및 별자리 전용 데이터 분기 API (날짜별로 매일 업데이트)
 @app.get("/api/zodiac-fortune")
