@@ -1450,6 +1450,9 @@
             return "smart_casual";
         }
 
+        function updateTodayWardrobeMatchPick()을 찾으신 뒤, 해당 함수 전체를 아래 코드로 교체해 주세요.
+
+JavaScript
         function updateTodayWardrobeMatchPick() {
             const styleEl = document.getElementById('resStyle');
             const pickEl = document.getElementById('wardrobeDailyMatchPick');
@@ -1459,6 +1462,7 @@
             if (!styleEl || !pickEl || !paletteBox) return;
 
             const fortune = currentFortuneData?.daily_fortune || {};
+            const luckyItemText = fortune.lucky_item || document.getElementById('resItem')?.innerText || "";
             const wada = fortune.wada_palette || {
                 theme: "명경지수(明鏡止水) · 지적인 냉철함",
                 mood_desc: "깊은 미드나잇 인디고와 안개빛 스카이블루가 만나 사주의 금전운과 전문성을 견고히 세웁니다.",
@@ -1514,7 +1518,7 @@
             let matchReason = "";
 
             if (moodCompatibleAccessories.length > 0) {
-                // 1순위: 하단 '행운의 아이템'(예: 실버 메탈 시계)의 색상과 소재가 모두 일치하는 옷장 아이템 (예: 세이코 시계)
+                // 1순위: 하단 행운의 아이템(예: 실버 메탈 시계)의 색상과 소재가 모두 일치하는 옷장 아이템 (예: 세이코 시계)
                 selectedAcc = moodCompatibleAccessories.find(i => {
                     const hasColorMatch = (i.colors || []).some(c => luckyItemText.includes(c));
                     const hasMatMatch = (i.materials || []).some(m => luckyItemText.includes(m.split('/')[0]));
@@ -1563,6 +1567,33 @@
                     </div>
                 `;
             }
+
+            paletteBox.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 6px; background: #F8FAFC; border: 1.2px solid #E2E8F0; padding: 5px 10px; border-radius: 9999px;">
+                    <span style="width: 13px; height: 13px; border-radius: 9999px; background: ${wada.top.hex}; border: 1px solid rgba(0,0,0,0.15); display: inline-block;"></span>
+                    <span style="font-size: 11.5px; font-weight: 700; color: #334155;">${wada.top.name}</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 6px; background: #F8FAFC; border: 1.2px solid #E2E8F0; padding: 5px 10px; border-radius: 9999px;">
+                    <span style="width: 13px; height: 13px; border-radius: 9999px; background: ${wada.bottom.hex}; border: 1px solid rgba(0,0,0,0.15); display: inline-block;"></span>
+                    <span style="font-size: 11.5px; font-weight: 700; color: #334155;">${wada.bottom.name}</span>
+                </div>
+                ${pointChipHtml}
+            `;
+
+            let matchText = matchReason || ((todayMood === "casual") 
+                ? "오늘 룩에는 <strong>스포티한 스니커즈나 러버 밴드 시계</strong> 등으로 가볍게 포인트를 주시면 대길합니다." 
+                : "오늘 룩에는 <strong>단정한 가죽/메탈 시계나 드레스 슈즈</strong>로 중심을 잡아주시면 대길합니다.");
+
+            const headerTag = isReverse 
+                ? `<span style="font-size:11px; background:#FEF3C7; color:#78350F; font-weight:800; padding:2px 7px; border-radius:4px; margin-right:6px;">✦ 반전 포인트</span>` 
+                : `<span style="font-size:11px; background:#F1F5F9; color:#475569; font-weight:700; padding:2px 7px; border-radius:4px; margin-right:6px;">소품 매칭</span>`;
+
+            pickEl.innerHTML = `
+                <div style="font-size: 13px; color: #334155; line-height: 1.6;">
+                    ${headerTag} ${matchText}
+                </div>
+            `;
+        }
 
             paletteBox.innerHTML = `
                 <div style="display: flex; align-items: center; gap: 6px; background: #F8FAFC; border: 1.2px solid #E2E8F0; padding: 5px 10px; border-radius: 9999px;">
