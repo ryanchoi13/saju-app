@@ -159,8 +159,7 @@ WADA_SANZO_PALETTES = {
         {"palette_no": 88, "theme": "정제된 모던 클래식", "mood_desc": "차콜 블랙과 퓨어 화이트의 대비로 결단력과 명확한 전문성을 부각합니다.", "mode": "harmony", "style_mood": "formal", "mood_tag": "👔 클래식 & 포멀", "top": {"name": "퓨어 화이트", "hex": "#FFFFFF", "standard_color": "화이트"}, "bottom": {"name": "인텐스 블랙", "hex": "#18181B", "standard_color": "블랙"}, "point": None}
     ],
     "water": [
-        {"palette_no": 62, "theme": "유연한 교섭과 지혜", "mood_desc": "머스터드 옐로우와 차분한 베이지가 결합하여 차가운 기운을 녹이고 유연한 소통을 이끕니다.", "mode": "harmony", "style_mood": "smart_casual", "mood_tag": "✨ 스마트 캐주얼", "top": {"name": "앤틱 머스터드", "hex": "#C99700", "standard_color": "머스터드"}, "bottom": {"name": "소프트 샌드", "hex": "#D6C7B2", "standard_color": "베이지"}, "point": None},
-        {"palette_no": 66, "theme": "심해의 평온과 통찰", "mood_desc": "네이비와 민트 라임의 산뜻한 포인트가 사주의 활력을 빠르게 끌어올립니다.", "mode": "harmony", "style_mood": "casual", "mood_tag": "🏃 캐주얼 & 액티브", "top": {"name": "로열 네이비", "hex": "#1E3A8A", "standard_color": "네이비"}, "bottom": {"name": "민트 세이지", "hex": "#6EE7B7", "standard_color": "민트/라임"}, "point": None}
+        {"palette_no": 62, "theme": "유연한 교섭과 지혜", "mood_desc": "머스터드 옐로우와 차분한 베이지가 결합하여 차가운 기운을 녹이고 유연한 소통을 이끕니다.", "mode": "harmony", "style_mood": "smart_casual", "mood_tag": "✨ 스마트 캐주얼", "top": {"name": "앤틱 머스터드", "hex": "#C99700", "standard_color": "머스터드"}, "bottom": {"name": "소프트 샌드", "hex": "#D6C7B2", "standard_color": "베이지"}, "point": None}
     ]
 }
 
@@ -791,88 +790,87 @@ def get_daily_tarot(slot: int):
 def get_zodiac_fortune(type: str, key: str):
     today = datetime.date.today()
     today_ord = today.toordinal()
-    
     key_hash = sum(ord(c) for c in key)
     rng = random.Random(today_ord * 17 + key_hash * 31)
 
     if type == "star":
-        star_meta = {
-            "양자리": {
-                "elem": "불 (Fire)", "planet": "화성 (Mars)", "color": "루비 레드", "time": "오전 08시 ~ 10시",
-                "titles": ["새로운 도약과 용기가 빛을 발하는 날", "목표를 향해 거침없이 직진할 최적의 타이밍", "열정적인 제안이 큰 호응을 얻는 하루"],
-                "focus": ["새로운 프로젝트나 아이디어가 있다면 주저하지 말고 선두에 서서 추진하세요. 적극적인 자세가 행운을 부릅니다.", "불필요한 고집을 내려놓고 주변 동료들의 의견을 경청할 때 추진력이 배가됩니다."]
-            },
-            "황소자리": {
-                "elem": "흙 (Earth)", "planet": "금성 (Venus)", "color": "에메랄드 그린", "time": "오후 01시 ~ 03시",
-                "titles": ["안정적인 자산 관리와 실리를 챙기는 날", "오랜 인내가 달콤한 결실로 돌아오는 하루", "미식과 예술적 힐링이 행운을 부르는 시간"],
-                "focus": ["재정적인 계획을 재정비하거나 장기적인 자산 투자에 대해 숙고하기에 매우 길한 흐름입니다.", "서두르지 않고 당신만의 템포를 지켜나갈 때 주변의 두터운 신뢰를 확보합니다."]
-            },
-            "쌍둥이자리": {
-                "elem": "공기 (Air)", "planet": "수성 (Mercury)", "color": "스카이 블루", "time": "오전 10시 ~ 12시",
-                "titles": ["활발한 정보 교류와 소통이 열리는 날", "순발력 있는 대처가 난제를 해결하는 하루", "뜻밖의 반가운 연락이 귀인으로 이어질 때"],
-                "focus": ["다양한 채널을 통해 유익한 정보를 수집하세요. 가벼운 대화 속에서 핵심적인 인사이트를 발견합니다.", "한 가지 일에 지나치게 얽매이기보다 유연하게 상황에 적응하는 것이 유리합니다."]
-            },
-            "게자리": {
-                "elem": "물 (Water)", "planet": "달 (Moon)", "color": "실버 화이트", "time": "저녁 08시 ~ 10시",
-                "titles": ["따뜻한 공감과 신뢰가 관계를 돈독히 하는 날", "내면의 평온을 찾고 가정을 돌보는 하루", "섬세한 감각이 창의적 성과를 내는 시간"],
-                "focus": ["가까운 사람들과의 정서적 교감이 큰 위로와 힘이 됩니다. 따뜻한 안부 메시지를 먼저 건네보세요.", "지나친 감정 기복을 경계하고 나만의 차분한 루틴을 유지하는 데 집중하세요."]
-            },
-            "사자자리": {
-                "elem": "불 (Fire)", "planet": "태양 (Sun)", "color": "로열 골드", "time": "오후 12시 ~ 02시",
-                "titles": ["당당한 카리스마와 리더십이 돋보이는 날", "주변의 시선을 사로잡으며 주인공이 되는 하루", "자신감 넘치는 기획이 승리로 이어질 때"],
-                "focus": ["모임이나 업무 회의에서 주도권을 잡고 당신의 비전을 명확히 제시하세요. 높은 평가가 따릅니다.", "자신감은 가지되 독단적인 판단은 피하고 팀원들의 공로를 함께 칭찬해 주세요."]
-            },
-            "처녀자리": {
-                "elem": "흙 (Earth)", "planet": "수성 (Mercury)", "color": "올리브 카키", "time": "오전 09시 ~ 11시",
-                "titles": ["치밀한 분석과 꼼꼼함이 빛을 발하는 날", "복잡한 서류와 업무를 완벽히 정돈하는 하루", "건강 루틴을 정비하고 내실을 다질 때"],
-                "focus": ["놓치기 쉬운 세부 디테일을 점검하세요. 꼼꼼한 확인 작업이 큰 실수를 사전에 차단합니다.", "스스로에게 지나치게 엄격해지지 말고 적절한 휴식으로 마인드 컨트롤을 하세요."]
-            },
-            "천칭자리": {
-                "elem": "공기 (Air)", "planet": "금성 (Venus)", "color": "로즈 핑크", "time": "오후 04시 ~ 06시",
-                "titles": ["협상과 파트너십에서 완벽한 균형을 찾는 날", "세련된 매너와 스타일이 인기를 끄는 하루", "갈등을 중재하고 평화를 이끄는 지혜의 시간"],
-                "focus": ["상대방의 입장을 배려하는 온화한 태도가 교섭에서 유리한 고지를 점하게 돕습니다.", "결정을 내릴 때 지나치게 망설이지 말고 직관과 원칙에 따라 결단력을 발휘하세요."]
-            },
-            "전갈자리": {
-                "elem": "물 (Water)", "planet": "명왕성 (Pluto)", "color": "딥 버건디", "time": "밤 09시 ~ 11시",
-                "titles": ["깊은 직관과 통찰력이 핵심을 꿰뚫는 날", "물밑에서 치밀하게 준비한 계획이 무르익을 때", "진솔한 비밀을 나누며 깊은 유대를 맺는 하루"],
-                "focus": ["표면에 드러나지 않은 본질을 파악하세요. 조용히 핵심 역량을 집중하는 것이 성과의 열쇠입니다.", "과거의 서운한 감정을 털어내고 새로운 에너지를 받아들일 준비를 하세요."]
-            },
-            "사수자리": {
-                "elem": "불 (Fire)", "planet": "목성 (Jupiter)", "color": "네이비 블루", "time": "오후 02시 ~ 04시",
-                "titles": ["더 넓은 세상과 비전을 향해 도약하는 날", "먼 곳에서 반가운 소식과 행운이 찾아올 때", "긍정적인 낙관주의가 막힌 길을 뚫는 하루"],
-                "focus": ["새로운 학문이나 분야에 도전해 보세요. 시야를 넓힐수록 당신의 그릇이 커집니다.", "디테일한 실행 계획 없이 무리한 약속을 남발하지 않도록 주의하세요."]
-            },
-            "염소자리": {
-                "elem": "흙 (Earth)", "planet": "토성 (Saturn)", "color": "차콜 그레이", "time": "오전 08시 ~ 10시",
-                "titles": ["성실한 노력이 흔들리지 않는 권위가 되는 날", "오랜 시간 공들여온 목표의 결실을 맺을 때", "책임감 있는 태도로 신뢰를 독차지하는 하루"],
-                "focus": ["기본기에 충실하게 정진하세요. 묵묵히 쌓아온 당신의 내공이 비로소 인정받는 순간입니다.", "혼자 모든 짐을 짊어지려 하지 말고 주변에 역할을 적절히 분담하세요."]
-            },
-            "물병자리": {
-                "elem": "공기 (Air)", "planet": "천왕성 (Uranus)", "color": "터콰이즈 민트", "time": "오후 03시 ~ 05시",
-                "titles": ["독창적인 발상과 혁신이 환호받는 날", "고정관념을 깨고 새로운 해법을 제시할 때", "자유로운 영혼들과 뜻깊은 연대를 맺는 하루"],
-                "focus": ["남들과 다른 차별화된 아이디어를 과감히 제안하세요. 시대에 앞선 통찰이 주목받습니다.", "현실적인 실행 가능성과 예산을 함께 고려할 때 아이디어가 빛을 발합니다."]
-            },
-            "물고기자리": {
-                "elem": "물 (Water)", "planet": "해왕성 (Neptune)", "color": "라벤더 퍼플", "time": "저녁 07시 ~ 09시",
-                "titles": ["풍부한 예술적 영감과 힐링이 샘솟는 날", "따뜻한 연민과 나눔이 큰 복록으로 돌아올 때", "마음의 소리에 귀 기울이며 평화를 얻는 시간"],
-                "focus": ["창작 활동이나 명상, 음악 감상을 통해 감성을 충전하세요. 직관이 정답을 알려줍니다.", "현실의 문제를 회피하지 말고 담담하게 마주하여 하나씩 매듭지으세요."]
-            }
+        # [정통 서양 점성술 천체 트랜짓 & 원소 아스펙트 엔진]
+        star_signs_info = {
+            "양자리": {"elem": "불 (Fire)", "planet": "화성 (Mars)", "modality": "활동궁 (Cardinal)", "color": "루비 레드", "theme_domain": "용기와 추진력", "base_score": 88},
+            "황소자리": {"elem": "흙 (Earth)", "planet": "금성 (Venus)", "modality": "고정궁 (Fixed)", "color": "에메랄드 그린", "theme_domain": "자산과 안정감", "base_score": 86},
+            "쌍둥이자리": {"elem": "공기 (Air)", "planet": "수성 (Mercury)", "modality": "변통궁 (Mutable)", "color": "스카이 블루", "theme_domain": "소통과 아이디어", "base_score": 89},
+            "게자리": {"elem": "물 (Water)", "planet": "달 (Moon)", "modality": "활동궁 (Cardinal)", "color": "실버 화이트", "theme_domain": "공감과 유대감", "base_score": 85},
+            "사자자리": {"elem": "불 (Fire)", "planet": "태양 (Sun)", "modality": "고정궁 (Fixed)", "color": "로열 골드", "theme_domain": "리더십과 창조성", "base_score": 90},
+            "처녀자리": {"elem": "흙 (Earth)", "planet": "수성 (Mercury)", "modality": "변통궁 (Mutable)", "color": "올리브 카키", "theme_domain": "분석과 디테일", "base_score": 87},
+            "천칭자리": {"elem": "공기 (Air)", "planet": "금성 (Venus)", "modality": "활동궁 (Cardinal)", "color": "로즈 핑크", "theme_domain": "균형과 파트너십", "base_score": 88},
+            "전갈자리": {"elem": "물 (Water)", "planet": "명왕성 (Pluto)", "modality": "고정궁 (Fixed)", "color": "딥 버건디", "theme_domain": "직관과 통찰력", "base_score": 86},
+            "사수자리": {"elem": "불 (Fire)", "planet": "목성 (Jupiter)", "modality": "변통궁 (Mutable)", "color": "네이비 블루", "theme_domain": "비전과 확장", "base_score": 91},
+            "염소자리": {"elem": "흙 (Earth)", "planet": "토성 (Saturn)", "modality": "활동궁 (Cardinal)", "color": "차콜 그레이", "theme_domain": "책임과 성취", "base_score": 87},
+            "물병자리": {"elem": "공기 (Air)", "planet": "천왕성 (Uranus)", "modality": "고정궁 (Fixed)", "color": "터콰이즈 민트", "theme_domain": "혁신과 자유", "base_score": 89},
+            "물고기자리": {"elem": "물 (Water)", "planet": "해왕성 (Neptune)", "modality": "변통궁 (Mutable)", "color": "라벤더 퍼플", "theme_domain": "영감과 힐링", "base_score": 86}
         }
-        meta = star_meta.get(key, star_meta["양자리"])
-        title = rng.choice(meta["titles"])
-        focus_txt = rng.choice(meta["focus"])
-        score = rng.randint(86, 98)
+
+        zodiac_order = ["양자리", "황소자리", "쌍둥이자리", "게자리", "사자자리", "처녀자리", "천칭자리", "전갈자리", "사수자리", "염소자리", "물병자리", "물고기자리"]
+        
+        # 1. 당일 달(Moon)의 별자리 트랜짓 위치 산출 (27.3일 공전 주기 기반)
+        moon_sign_idx = int((today_ord % 27.3) / (27.3 / 12)) % 12
+        transit_moon_sign = zodiac_order[moon_sign_idx]
+        transit_moon_elem = star_signs_info[transit_moon_sign]["elem"].split()[0] # 불, 흙, 공기, 물
+
+        my_info = star_signs_info.get(key, star_signs_info["양자리"])
+        my_elem_name = my_info["elem"].split()[0]
+        my_sign_idx = zodiac_order.index(key) if key in zodiac_order else 0
+
+        # 2. 천체 아스펙트 각도 계산 (Moon vs Sun Sign)
+        aspect_diff = abs(my_sign_idx - moon_sign_idx)
+        if aspect_diff > 6: aspect_diff = 12 - aspect_diff
+
+        # 3. 원소 상생 및 아스펙트별 역학 풀이
+        elem_affinity = {
+            ("불", "불"): "Trine (120° 동일 원소 조화)", ("공기", "공기"): "Trine (120° 동일 원소 조화)",
+            ("흙", "흙"): "Trine (120° 동일 원소 조화)", ("물", "물"): "Trine (120° 동일 원소 조화)",
+            ("불", "공기"): "Sextile (60° 상호 발전)", ("공기", "불"): "Sextile (60° 상호 발전)",
+            ("흙", "물"): "Sextile (60° 비옥한 결실)", ("물", "흙"): "Sextile (60° 비옥한 결실)",
+            ("불", "물"): "Square (90° 긴장과 조율)", ("물", "불"): "Square (90° 긴장과 조율)",
+            ("흙", "공기"): "Square (90° 현실적 검토)", ("공기", "흙"): "Square (90° 현실적 검토)",
+            ("불", "흙"): "Inconjunct (완급 조절)", ("흙", "불"): "Inconjunct (완급 조절)",
+            ("공기", "물"): "Inconjunct (감정 조율)", ("물", "공기"): "Inconjunct (감정 조율)"
+        }
+        aspect_label = elem_affinity.get((my_elem_name, transit_moon_elem), "Neutral Aspect")
+
+        if aspect_diff == 0:
+            score = rng.randint(94, 98)
+            title = "달과 나의 별자리가 합(Conjunction)을 이루는 강력한 날"
+            overview = f"오늘의 달이 {key}에 진입하여 직관과 잠재력이 최고조로 상승합니다. 망설이던 일에 첫발을 떼면 우주의 서포트를 받습니다."
+            action_guide = f"수호성 {my_info['planet']}의 기운을 믿고 당신의 {my_info['theme_domain']} 영역에서 주도권을 잡으세요."
+        elif "Trine" in aspect_label or "Sextile" in aspect_label:
+            score = rng.randint(90, 96)
+            title = f"{transit_moon_sign} 달과의 길각({aspect_label.split()[0]})으로 순조로운 결실의 날"
+            overview = f"달의 {transit_moon_elem} 원소가 나의 {my_elem_name} 원소와 부드러운 상생을 이룹니다. 주변 사람들과의 원활한 소통 속에서 기분 좋은 성과를 냅니다."
+            action_guide = f"자연스럽게 흘러가는 에너지를 타세요. {my_info['theme_domain']}을 살려 적극적으로 의견을 나누기에 길합니다."
+        elif "Square" in aspect_label or aspect_diff == 6:
+            score = rng.randint(68, 76)
+            title = "천체 긴장각 형성 · 감정 조절과 내실 다지기의 날"
+            overview = f"달의 {transit_moon_elem} 에너지가 나의 원소와 각도를 이루어 일시적인 조율이 필요합니다. 조급함을 내려놓고 디테일을 점검하세요."
+            action_guide = f"중요한 계약이나 결정을 내릴 때는 수호성 {my_info['planet']}의 침착함을 발휘해 한 템포 쉬어가세요."
+        else:
+            score = rng.randint(80, 88)
+            title = "안정적인 궤도 속에서 나만의 리듬을 지키는 하루"
+            overview = f"천체의 흐름이 평온하게 유지되며 일상의 루틴을 정돈하기에 적합합니다. 내면의 목소리에 집중할 때 만족스러운 해답을 찾습니다."
+            action_guide = f"기본에 충실하며 당신만의 {my_info['theme_domain']}을 차분하게 실현해 나가세요."
+
+        times_pool = ["오전 08시 ~ 10시", "오전 10시 ~ 12시", "오후 01시 ~ 03시", "오후 03시 ~ 05시", "저녁 07시 ~ 09시", "밤 09시 ~ 11시"]
 
         return {
             "name": key,
             "score": score,
             "title": f"{today.strftime('%m월 %d일')} {title}",
-            "overview": f"수호성 {meta['planet']}의 기운이 {meta['elem']}의 원소와 조화를 이루어, 당신의 잠재력과 직관이 최고조에 달하는 활기찬 하루입니다.",
-            "star_element": meta["elem"],
-            "star_planet": meta["planet"],
-            "lucky_color": meta["color"],
-            "lucky_time": meta["time"],
-            "focus_content": focus_txt
+            "overview": overview,
+            "star_element": my_info["elem"],
+            "star_planet": my_info["planet"],
+            "lucky_color": my_info["color"],
+            "lucky_time": rng.choice(times_pool),
+            "focus_content": f"✦ <strong>천체 위치:</strong> 오늘의 달({transit_moon_sign}) · {aspect_label}<br>✦ <strong>실천 지침:</strong> {action_guide}"
         }
         
     else:
