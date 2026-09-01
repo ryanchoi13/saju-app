@@ -288,7 +288,6 @@
 
                 <!-- 1. 오늘 뭐 입을까? (Daily Style Nav 통합 카드) -->
                 <div class="card" style="padding: 20px 18px; text-align: left; display: flex; flex-direction: column; gap: 16px; border: 1.5px solid #E2E8F0;">
-                    <!-- 카드 헤더: 제목 & 무드 태그 -->
                     <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 12px;">
                         <div style="display: flex; align-items: center; gap: 8px;">
                             <span style="font-size: 20px;">👔</span>
@@ -300,7 +299,7 @@
                         <span id="todayStyleMoodBadge" style="font-size: 11.5px; background: #EBF5EE; color: #166534; font-weight: 800; padding: 4px 10px; border-radius: 9999px; border: 1px solid #BBF7D0;">🏃 캐주얼 & 액티브</span>
                     </div>
 
-                    <!-- 1) 오늘의 개운 컬러 & 무드 -->
+                    <!-- 1) 오늘의 추천 색상 -->
                     <div>
                         <span style="font-size: 12px; font-weight: 700; color: #64748B; display: flex; align-items: center; gap: 4px; margin-bottom: 8px;">
                             <span>🎨</span> 1. 오늘의 추천 색상 (개운 팔레트)
@@ -582,7 +581,7 @@
                                 <g id="daewoonBadgeGroup" transform="translate(95, 0)">
                                     <rect x="0" y="0" width="160" height="34" rx="8" fill="#ECFDF5" stroke="#A7F3D0" stroke-width="1.2"/>
                                     <text id="daewoonTagText1" x="80" y="14" font-size="10" font-weight="700" fill="#047857" text-anchor="middle">📍 최정오님의 현재 위치</text>
-                                    <text id="daewoonTagText2" x="80" y="27" font-size="11.5" font-weight: 800" fill="#065F46" text-anchor="middle">(49세)</text>
+                                    <text id="daewoonTagText2" x="80" y="27" font-size="11.5" font-weight="800" fill="#065F46" text-anchor="middle">(49세)</text>
                                 </g>
                                 <circle id="daewoonCurrentDot" cx="175" cy="42" r="6.5" fill="#2D6A4F" stroke="#FFFFFF" stroke-width="2.5" />
                             </svg>
@@ -1004,31 +1003,20 @@
             try { const raw = localStorage.getItem('dalha_custom_saju'); return raw ? JSON.parse(raw) : null; } catch(e) { return null; }
         }
 
-        function initKakaoSDK() {
-            try {
-                if (window.Kakao) {
-                    if (!window.Kakao.isInitialized()) {
-                        window.Kakao.init(KAKAO_JS_KEY);
-                    }
-                    return true;
-                }
-            } catch(e) {
-                console.error("Kakao SDK Init Error:", e);
-            }
-            return false;
-        }
-
         function loginWithKakaoReal() {
             try {
-                if (!initKakaoSDK()) {
-                    alert("카카오 로그인 라이브러리를 불러오는 중입니다. 1~2초 후 다시 눌러주세요.");
+                initKakaoSDK();
+                if (!window.Kakao) {
+                    alert("카카오 SDK 로딩 중입니다. 1~2초 후 다시 눌러주세요.");
                     return;
                 }
+                if (!window.Kakao.isInitialized()) {
+                    window.Kakao.init(KAKAO_JS_KEY);
+                }
 
-                // 카카오 로그인 요청 (팝업 방식)
                 Kakao.Auth.login({
                     persistAccessToken: true,
-                    throughTalk: false, // 브라우저 호환성 확보
+                    throughTalk: false,
                     success: function(authObj) {
                         Kakao.API.request({
                             url: '/v2/user/me',
@@ -1056,7 +1044,7 @@
                                     });
 
                                     if (!sRes.ok) {
-                                        alert("서버 통신 실패 (" + sRes.status + "): 잠시 후 다시 시도해 주세요.");
+                                        alert("서버 연결 실패 (" + sRes.status + "): 잠시 후 다시 시도해 주세요.");
                                         return;
                                     }
 
@@ -1090,20 +1078,20 @@
                                         document.getElementById('onboardingInputView').classList.remove('hidden');
                                     }
                                 } catch(innerErr) {
-                                    alert("데이터 처리 중 오류: " + innerErr.message);
+                                    alert("로그인 처리 중 오류가 발생했습니다: " + innerErr.message);
                                 }
                             },
-                            fail: function(err) {
-                                alert("카카오 프로필 정보 요청 실패: " + JSON.stringify(err));
+                            fail: function(err) { 
+                                alert("카카오 프로필 정보를 가져오지 못했습니다: " + JSON.stringify(err)); 
                             }
                         });
                     },
-                    fail: function(err) {
-                        alert("카카오 로그인 창 호출 실패: " + JSON.stringify(err));
+                    fail: function(err) { 
+                        alert("카카오 로그인 창 오류: " + JSON.stringify(err)); 
                     }
                 });
-            } catch(outerErr) {
-                alert("로그인 실행 오류: " + outerErr.message);
+            } catch(outerErr) { 
+                alert("로그인 실행 오류: " + outerErr.message); 
             }
         }
 
@@ -1462,7 +1450,6 @@
             return "smart_casual";
         }
 
-       
         function updateTodayWardrobeMatchPick() {
             const styleEl = document.getElementById('resStyle');
             const pickEl = document.getElementById('wardrobeDailyMatchPick');
@@ -1499,7 +1486,6 @@
             const matchedTops = userWardrobeItems.filter(item => item.category === "상의" && item.colors.some(c => c.includes(topColorStd) || topColorStd.includes(c)));
             const matchedBottoms = userWardrobeItems.filter(item => item.category === "하의" && item.colors.some(c => c.includes(bottomColorStd) || bottomColorStd.includes(c)));
 
-            // 슬래시 제거 및 세련된 감성 색상 명칭 매칭
             const cleanTopName = wada.top.name.replace(/\//g, ' ');
             const cleanBottomName = wada.bottom.name.replace(/\//g, ' ');
 
@@ -1528,7 +1514,6 @@
             let matchReason = "";
 
             if (moodCompatibleAccessories.length > 0) {
-                // 1순위: 하단 행운의 아이템(예: 실버 메탈 시계)의 색상과 소재가 모두 일치하는 옷장 아이템 (예: 세이코 시계)
                 selectedAcc = moodCompatibleAccessories.find(i => {
                     const hasColorMatch = (i.colors || []).some(c => luckyItemText.includes(c));
                     const hasMatMatch = (i.materials || []).some(m => luckyItemText.includes(m.split('/')[0]));
@@ -1539,7 +1524,6 @@
                     matchReason = `오늘의 행운 아이템(<strong>${luckyItemText}</strong>)과 일치하는 내 옷장의 <strong>[${selectedAcc.nickname}]</strong>을 매칭하여 길한 기운을 배가시켜 보세요.`;
                 }
 
-                // 2순위: 반전 컬러(Point Color) 매칭
                 if (!selectedAcc && isReverse && wada.point) {
                     const pCol = wada.point.standard_color;
                     selectedAcc = moodCompatibleAccessories.find(i => i.colors.some(c => c.includes(pCol) || pCol.includes(c)));
@@ -1548,7 +1532,6 @@
                     }
                 }
 
-                // 3순위: 행운 아이템의 소재나 색상 중 하나라도 일치하는 경우
                 if (!selectedAcc) {
                     selectedAcc = moodCompatibleAccessories.find(i => {
                         const hasColorMatch = (i.colors || []).some(c => luckyItemText.includes(c));
@@ -1560,7 +1543,6 @@
                     }
                 }
 
-                // 4순위: 기본 호환 아이템 매칭
                 if (!selectedAcc) {
                     selectedAcc = moodCompatibleAccessories[0];
                     matchReason = `오늘의 스타일에 내 옷장의 <strong>[${selectedAcc.nickname}]</strong>을 가볍게 매칭하여 룩의 완성도를 높여보세요.`;
@@ -1577,33 +1559,6 @@
                     </div>
                 `;
             }
-
-            paletteBox.innerHTML = `
-                <div style="display: flex; align-items: center; gap: 6px; background: #F8FAFC; border: 1.2px solid #E2E8F0; padding: 5px 10px; border-radius: 9999px;">
-                    <span style="width: 13px; height: 13px; border-radius: 9999px; background: ${wada.top.hex}; border: 1px solid rgba(0,0,0,0.15); display: inline-block;"></span>
-                    <span style="font-size: 11.5px; font-weight: 700; color: #334155;">${wada.top.name}</span>
-                </div>
-                <div style="display: flex; align-items: center; gap: 6px; background: #F8FAFC; border: 1.2px solid #E2E8F0; padding: 5px 10px; border-radius: 9999px;">
-                    <span style="width: 13px; height: 13px; border-radius: 9999px; background: ${wada.bottom.hex}; border: 1px solid rgba(0,0,0,0.15); display: inline-block;"></span>
-                    <span style="font-size: 11.5px; font-weight: 700; color: #334155;">${wada.bottom.name}</span>
-                </div>
-                ${pointChipHtml}
-            `;
-
-            let matchText = matchReason || ((todayMood === "casual") 
-                ? "오늘 룩에는 <strong>스포티한 스니커즈나 러버 밴드 시계</strong> 등으로 가볍게 포인트를 주시면 대길합니다." 
-                : "오늘 룩에는 <strong>단정한 가죽/메탈 시계나 드레스 슈즈</strong>로 중심을 잡아주시면 대길합니다.");
-
-            const headerTag = isReverse 
-                ? `<span style="font-size:11px; background:#FEF3C7; color:#78350F; font-weight:800; padding:2px 7px; border-radius:4px; margin-right:6px;">✦ 반전 포인트</span>` 
-                : `<span style="font-size:11px; background:#F1F5F9; color:#475569; font-weight:700; padding:2px 7px; border-radius:4px; margin-right:6px;">소품 매칭</span>`;
-
-            pickEl.innerHTML = `
-                <div style="font-size: 13px; color: #334155; line-height: 1.6;">
-                    ${headerTag} ${matchText}
-                </div>
-            `;
-        }
 
             paletteBox.innerHTML = `
                 <div style="display: flex; align-items: center; gap: 6px; background: #F8FAFC; border: 1.2px solid #E2E8F0; padding: 5px 10px; border-radius: 9999px;">
@@ -2198,7 +2153,6 @@
                     const zIcons = { '쥐':'🐭', '소':'🐮', '호랑이':'🐯', '토끼':'🐰', '용':'🐲', '뱀':'🐍', '말':'🐴', '양':'🐑', '원숭이':'🐵', '닭':'🐔', '개':'🐶', '돼지':'🐷' };
                     iconBox.innerHTML = `<span style="font-size: 24px;">${zIcons[key] || '✨'}</span>`;
 
-                    // [띠별 전용 렌더링 - 2줄 슬림 배지 및 줄바꿈 적용]
                     tipsBox.innerHTML = `
                         <p style="font-weight: 800; color: #0F172A; margin-bottom: 8px; font-size: 14px; text-align: left;">📅 출생연도별 핵심 가이드</p>
                         <div style="display: flex; flex-direction: column; gap: 8px; text-align: left;">
