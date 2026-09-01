@@ -108,255 +108,61 @@ except Exception as e:
 # 정통 20종 명리 개운 부적 매트릭스 DB
 AUTHENTIC_TALISMAN_MATRIX = {
     "wood": {
-        "wealth": {
-            "title": "청목 생재부 (靑木 生財符)",
-            "power": "사업 확장 · 신규 프로젝트 대박 · 활력 증진",
-            "desc": "움트는 봄날의 거목처럼 사업과 재물의 터전을 크게 넓히고 활력을 불어넣는 비급 부적입니다.",
-            "talisman_type": "wood_wealth",
-            "seal_text": "生財"
-        },
-        "career": {
-            "title": "문창 등과부 (文昌 登科符)",
-            "power": "학업 성취 · 시험 합격 · 승진 영달",
-            "desc": "문창성의 신령한 기운을 받아 학문과 시험, 승진의 관문을 단숨에 뚫어내는 부적입니다.",
-            "talisman_type": "wood_career",
-            "seal_text": "登科"
-        },
-        "love": {
-            "title": "수목 화합부 (水木 和合符)",
-            "power": "귀인 유입 · 좋은 인연 결속 · 대인 화합",
-            "desc": "물과 나무가 만나 꽃을 피우듯, 마음에 품은 인연과 깊은 신뢰를 맺어주는 화합 부적입니다.",
-            "talisman_type": "wood_love",
-            "seal_text": "和合"
-        },
-        "ward": {
-            "title": "벽사 청룡부 (辟邪 靑龍符)",
-            "power": "구설수 차단 · 침체 극복 · 심신 안정",
-            "desc": "청룡의 서기로 주변의 시기와 방해를 물리치고 올곧은 기운을 지켜내는 수호 부적입니다.",
-            "talisman_type": "wood_ward",
-            "seal_text": "辟邪"
-        }
+        "wealth": {"title": "청목 생재부 (靑木 生財符)", "power": "사업 확장 · 신규 프로젝트 대박 · 활력 증진", "desc": "움트는 봄날의 거목처럼 사업과 재물의 터전을 크게 넓히고 활력을 불어넣는 비급 부적입니다.", "talisman_type": "wood_wealth", "seal_text": "生財"},
+        "career": {"title": "문창 등과부 (文昌 登科符)", "power": "학업 성취 · 시험 합격 · 승진 영달", "desc": "문창성의 신령한 기운을 받아 학문과 시험, 승진의 관문을 단숨에 뚫어내는 부적입니다.", "talisman_type": "wood_career", "seal_text": "登科"},
+        "love": {"title": "수목 화합부 (水木 和合符)", "power": "귀인 유입 · 좋은 인연 결속 · 대인 화합", "desc": "물과 나무가 만나 꽃을 피우듯, 마음에 품은 인연과 깊은 신뢰를 맺어주는 화합 부적입니다.", "talisman_type": "wood_love", "seal_text": "和合"},
+        "ward": {"title": "벽사 청룡부 (辟邪 靑龍符)", "power": "구설수 차단 · 침체 극복 · 심신 안정", "desc": "청룡의 서기로 주변의 시기와 방해를 물리치고 올곧은 기운을 지켜내는 수호 부적입니다.", "talisman_type": "wood_ward", "seal_text": "辟邪"}
     },
     "fire": {
-        "wealth": {
-            "title": "적염 취재부 (赤焰 聚財符)",
-            "power": "횡재수 포착 · 단기 매출 폭발 · 금전 회전",
-            "desc": "타오르는 불꽃처럼 재물과 고객을 강력하게 끌어당겨 금전 회전을 극대화하는 부적입니다.",
-            "talisman_type": "fire_wealth",
-            "seal_text": "聚財"
-        },
-        "career": {
-            "title": "천명 관운부 (天命 官運符)",
-            "power": "명예 상승 · 리더십 발휘 · 직장 안착",
-            "desc": "자신의 이름과 능력을 세상에 널리 알리고 조직 내에서 높은 명예를 얻게 돕는 부적입니다.",
-            "talisman_type": "fire_career",
-            "seal_text": "官運"
-        },
-        "love": {
-            "title": "홍란 결연부 (紅鸞 結緣符)",
-            "power": "도화 매력 발산 · 연애 성취 · 이성 호감",
-            "desc": "홍란성의 빛나는 도화 기운을 발산하여 이성의 마음을 사로잡고 사랑을 성취하는 부적입니다.",
-            "talisman_type": "fire_love",
-            "seal_text": "結緣"
-        },
-        "ward": {
-            "title": "주작 소재부 (朱雀 消災符)",
-            "power": "불안 해소 · 충살 소멸 · 마음 평안",
-            "desc": "불안정한 화기와 조급함을 정화하고 악살을 태워 마음의 평안을 되찾아주는 부적입니다.",
-            "talisman_type": "fire_ward",
-            "seal_text": "消災"
-        }
+        "wealth": {"title": "적염 취재부 (赤焰 聚財符)", "power": "횡재수 포착 · 단기 매출 폭발 · 금전 회전", "desc": "타오르는 불꽃처럼 재물과 고객을 강력하게 끌어당겨 금전 회전을 극대화하는 부적입니다.", "talisman_type": "fire_wealth", "seal_text": "聚財"},
+        "career": {"title": "천명 관운부 (天命 官運符)", "power": "명예 상승 · 리더십 발휘 · 직장 안착", "desc": "자신의 이름과 능력을 세상에 널리 알리고 조직 내에서 높은 명예를 얻게 돕는 부적입니다.", "talisman_type": "fire_career", "seal_text": "官運"},
+        "love": {"title": "홍란 결연부 (紅鸞 結緣符)", "power": "도화 매력 발산 · 연애 성취 · 이성 호감", "desc": "홍란성의 빛나는 도화 기운을 발산하여 이성의 마음을 사로잡고 사랑을 성취하는 부적입니다.", "talisman_type": "fire_love", "seal_text": "結緣"},
+        "ward": {"title": "주작 소재부 (朱雀 消災符)", "power": "불안 해소 · 충살 소멸 · 마음 평안", "desc": "불안정한 화기와 조급함을 정화하고 악살을 태워 마음의 평안을 되찾아주는 부적입니다.", "talisman_type": "fire_ward", "seal_text": "消災"}
     },
     "earth": {
-        "wealth": {
-            "title": "금고 보관부 (金庫 保管符)",
-            "power": "자산 보존 · 부동산 취득 · 목돈 축적",
-            "desc": "넓은 대지처럼 흩어지는 돈을 단단히 묶어 큰 자산으로 축적시키는 전통 보관 부적입니다.",
-            "talisman_type": "earth_wealth",
-            "seal_text": "保管"
-        },
-        "career": {
-            "title": "태산 안착부 (泰山 安着符)",
-            "power": "취업 성공 · 안정적 정착 · 계약 체결",
-            "desc": "태산처럼 흔들림 없는 기반을 마련하여 원하는 직장이나 프로젝트에 안착하게 돕는 부적입니다.",
-            "talisman_type": "earth_career",
-            "seal_text": "安着"
-        },
-        "love": {
-            "title": "화토 상생부 (火土 相生符)",
-            "power": "가정 평안 · 신뢰 구축 · 백년해로",
-            "desc": "따스한 온기로 서로에 대한 신뢰를 두텁게 다져 장기적인 사랑과 안정을 이끄는 부적입니다.",
-            "talisman_type": "earth_love",
-            "seal_text": "相生"
-        },
-        "ward": {
-            "title": "황제 진택부 (黃帝 鎭宅符)",
-            "power": "우환 예방 · 터 안전 · 재앙 소멸",
-            "desc": "집안과 일터의 터를 안정시키고 예기치 못한 우환과 손실을 막아주는 비급 진택 부적입니다.",
-            "talisman_type": "earth_ward",
-            "seal_text": "鎭宅"
-        }
+        "wealth": {"title": "금고 보관부 (金庫 保管符)", "power": "자산 보존 · 부동산 취득 · 목돈 축적", "desc": "넓은 대지처럼 흩어지는 돈을 단단히 묶어 큰 자산으로 축적시키는 전통 보관 부적입니다.", "talisman_type": "earth_wealth", "seal_text": "保管"},
+        "career": {"title": "태산 안착부 (泰山 安着符)", "power": "취업 성공 · 안정적 정착 · 계약 체결", "desc": "태산처럼 흔들림 없는 기반을 마련하여 원하는 직장이나 프로젝트에 안착하게 돕는 부적입니다.", "talisman_type": "earth_career", "seal_text": "安着"},
+        "love": {"title": "화토 상생부 (火土 相生符)", "power": "가정 평안 · 신뢰 구축 · 백년해로", "desc": "따스한 온기로 서로에 대한 신뢰를 두텁게 다져 장기적인 사랑과 안정을 이끄는 부적입니다.", "talisman_type": "earth_love", "seal_text": "相生"},
+        "ward": {"title": "황제 진택부 (黃帝 鎭宅符)", "power": "우환 예방 · 터 안전 · 재앙 소멸", "desc": "집안과 일터의 터를 안정시키고 예기치 못한 우환과 손실을 막아주는 비급 진택 부적입니다.", "talisman_type": "earth_ward", "seal_text": "鎭宅"}
     },
     "metal": {
-        "wealth": {
-            "title": "백호 금전부 (白虎 金錢符)",
-            "power": "결단력 강화 · 투자 수익 실현 · 재물 쟁취",
-            "desc": "백호의 날카로운 기운으로 투자 기회를 정확히 포착하고 실리를 쟁취하게 돕는 부적입니다.",
-            "talisman_type": "metal_wealth",
-            "seal_text": "金錢"
-        },
-        "career": {
-            "title": "장원 급제부 (壯元 及第符)",
-            "power": "전문 자격 취득 · 경쟁 돌파 · 독보적 성과",
-            "desc": "치열한 경쟁 속에서 뛰어난 전문성을 발휘하여 당당히 정상에 오르게 하는 급제 부적입니다.",
-            "talisman_type": "metal_career",
-            "seal_text": "及第"
-        },
-        "love": {
-            "title": "금옥 만당부 (金玉 滿堂符)",
-            "power": "귀인 결속 · 품격 있는 만남 · 인복 확장",
-            "desc": "보석처럼 품격 있고 나에게 큰 도움이 되는 든든한 귀인을 곁에 머물게 하는 부적입니다.",
-            "talisman_type": "metal_love",
-            "seal_text": "滿堂"
-        },
-        "ward": {
-            "title": "참사 백호부 (斬邪 白虎符)",
-            "power": "액운 절단 · 관재구설 차단 · 신변 보호",
-            "desc": "날카로운 칼날처럼 나를 위협하는 사악한 기운과 관재구설을 일거에 베어내는 방어 부적입니다.",
-            "talisman_type": "metal_ward",
-            "seal_text": "斬邪"
-        }
+        "wealth": {"title": "백호 금전부 (白虎 金錢符)", "power": "결단력 강화 · 투자 수익 실현 · 재물 쟁취", "desc": "백호의 날카로운 기운으로 투자 기회를 정확히 포착하고 실리를 쟁취하게 돕는 부적입니다.", "talisman_type": "metal_wealth", "seal_text": "金錢"},
+        "career": {"title": "장원 급제부 (壯元 及第符)", "power": "전문 자격 취득 · 경쟁 돌파 · 독보적 성과", "desc": "치열한 경쟁 속에서 뛰어난 전문성을 발휘하여 당당히 정상에 오르게 하는 급제 부적입니다.", "talisman_type": "metal_career", "seal_text": "及第"},
+        "love": {"title": "금옥 만당부 (金玉 滿堂符)", "power": "귀인 결속 · 품격 있는 만남 · 인복 확장", "desc": "보석처럼 품격 있고 나에게 큰 도움이 되는 든든한 귀인을 곁에 머물게 하는 부적입니다.", "talisman_type": "metal_love", "seal_text": "滿堂"},
+        "ward": {"title": "참사 백호부 (斬邪 白虎符)", "power": "액운 절단 · 관재구설 차단 · 신변 보호", "desc": "날카로운 칼날처럼 나를 위협하는 사악한 기운과 관재구설을 일거에 베어내는 방어 부적입니다.", "talisman_type": "metal_ward", "seal_text": "斬邪"}
     },
     "water": {
-        "wealth": {
-            "title": "유수 통재부 (流水 通財符)",
-            "power": "자금 유동성 확보 · 거래 성사 · 판로 개척",
-            "desc": "끊이지 않고 흐르는 큰 강물처럼 자금의 물꼬를 트고 거래를 원활하게 성사시키는 부적입니다.",
-            "talisman_type": "water_wealth",
-            "seal_text": "通財"
-        },
-        "career": {
-            "title": "지혜 총명부 (智慧 聰明符)",
-            "power": "전략적 통찰 · 협상 우위 · 기획 성공",
-            "desc": "깊은 바다와 같은 지혜와 직관력을 부여하여 중요한 협상과 기획을 승리로 이끄는 부적입니다.",
-            "talisman_type": "water_career",
-            "seal_text": "聰明"
-        },
-        "love": {
-            "title": "애정 화합부 (愛情 和合符)",
-            "power": "재회 성사 · 깊은 교감 · 짝사랑 성취",
-            "desc": "멀어진 마음을 유연하게 이어주고 서먹했던 관계에 깊은 교감을 불어넣는 화합 부적입니다.",
-            "talisman_type": "water_love",
-            "seal_text": "愛合"
-        },
-        "ward": {
-            "title": "현무 수호부 (玄武 守護符)",
-            "power": "위기 극복 · 건강 회복 · 정신 안정",
-            "desc": "현무의 두터운 방패로 갑작스러운 위기와 스트레스를 완벽히 막아내는 정통 수호 부적입니다.",
-            "talisman_type": "water_ward",
-            "seal_text": "守護"
-        }
+        "wealth": {"title": "유수 통재부 (流水 通財符)", "power": "자금 유동성 확보 · 거래 성사 · 판로 개척", "desc": "끊이지 않고 흐르는 큰 강물처럼 자금의 물꼬를 트고 거래를 원활하게 성사시키는 부적입니다.", "talisman_type": "water_wealth", "seal_text": "通財"},
+        "career": {"title": "지혜 총명부 (智慧 聰明符)", "power": "전략적 통찰 · 협상 우위 · 기획 성공", "desc": "깊은 바다와 같은 지혜와 직관력을 부여하여 중요한 협상과 기획을 승리로 이끄는 부적입니다.", "talisman_type": "water_career", "seal_text": "聰明"},
+        "love": {"title": "애정 화합부 (愛情 和合符)", "power": "재회 성사 · 깊은 교감 · 짝사랑 성취", "desc": "멀어진 마음을 유연하게 이어주고 서먹했던 관계에 깊은 교감을 불어넣는 화합 부적입니다.", "talisman_type": "water_love", "seal_text": "愛合"},
+        "ward": {"title": "현무 수호부 (玄武 守護符)", "power": "위기 극복 · 건강 회복 · 정신 안정", "desc": "현무의 두터운 방패로 갑작스러운 위기와 스트레스를 완벽히 막아내는 정통 수호 부적입니다.", "talisman_type": "water_ward", "seal_text": "守護"}
     }
 }
 
+# 오행별 다채로운 배색 팔레트 풀
 WADA_SANZO_PALETTES = {
     "wood": [
-        {
-            "palette_no": 48,
-            "theme": "청록의 상생과 지혜",
-            "mood_desc": "차분한 세이지 그린과 포그 블루가 만나 사주의 기운을 유연하고 맑게 정돈합니다.",
-            "mode": "harmony",
-            "style_mood": "casual",
-            "mood_tag": "🏃 캐주얼 & 액티브",
-            "top": {"name": "세이지 포레스트", "hex": "#4A6B5B", "standard_color": "그린"},
-            "bottom": {"name": "포그 블루", "hex": "#8CA6B5", "standard_color": "스카이블루"},
-            "point": None
-        },
-        {
-            "palette_no": 114,
-            "theme": "통관용신 · 벽갑인정",
-            "mood_desc": "풍성한 목(木) 기운을 앤틱 버건디 소품으로 부드럽게 통관하여 추진력을 폭발시킵니다.",
-            "mode": "reverse",
-            "style_mood": "casual",
-            "mood_tag": "✦ 시크릿 반전 데이",
-            "top": {"name": "딥 틸 그린", "hex": "#2B4C47", "standard_color": "그린"},
-            "bottom": {"name": "페일 에크루", "hex": "#E3DAC9", "standard_color": "베이지"},
-            "point": {"name": "앤틱 보르도", "hex": "#7A2E3D", "standard_color": "와인/버건디"}
-        }
+        {"palette_no": 48, "theme": "청록의 상생과 지혜", "mood_desc": "세이지 그린과 포그 블루가 만나 사주의 기운을 유연하고 맑게 정돈합니다.", "mode": "harmony", "style_mood": "casual", "mood_tag": "🏃 캐주얼 & 액티브", "top": {"name": "세이지 포레스트", "hex": "#4A6B5B", "standard_color": "그린"}, "bottom": {"name": "포그 블루", "hex": "#8CA6B5", "standard_color": "스카이블루"}, "point": None},
+        {"palette_no": 114, "theme": "통관용신 · 벽갑인정", "mood_desc": "풍성한 목(木) 기운을 앤틱 버건디 소품으로 부드럽게 통관하여 추진력을 폭발시킵니다.", "mode": "reverse", "style_mood": "casual", "mood_tag": "✦ 시크릿 반전 데이", "top": {"name": "딥 틸 그린", "hex": "#2B4C47", "standard_color": "그린"}, "bottom": {"name": "페일 에크루", "hex": "#E3DAC9", "standard_color": "베이지"}, "point": {"name": "앤틱 보르도", "hex": "#7A2E3D", "standard_color": "와인/버건디"}},
+        {"palette_no": 52, "theme": "초목 성장의 활력", "mood_desc": "올리브 카키와 웜 화이트가 어우러져 안정적인 성장과 신뢰를 이끕니다.", "mode": "harmony", "style_mood": "smart_casual", "mood_tag": "✨ 스마트 캐주얼", "top": {"name": "올리브 카키", "hex": "#556B2F", "standard_color": "올리브/카키"}, "bottom": {"name": "오이스터 화이트", "hex": "#F4F1EA", "standard_color": "화이트"}, "point": None}
     ],
     "fire": [
-        {
-            "palette_no": 72,
-            "theme": "따스한 온기와 활력",
-            "mood_desc": "은은한 코랄 브릭과 소프트 크림이 조화를 이루어 주변을 끌어당기는 카리스마를 만듭니다.",
-            "mode": "harmony",
-            "style_mood": "smart_casual",
-            "mood_tag": "✨ 스마트 캐주얼",
-            "top": {"name": "테라코타 앰버", "hex": "#C26D53", "standard_color": "코랄/오렌지"},
-            "bottom": {"name": "오이스터 화이트", "hex": "#F4F1EA", "standard_color": "화이트"},
-            "point": None
-        },
-        {
-            "palette_no": 128,
-            "theme": "수화기제(水火旣濟)",
-            "mood_desc": "치솟는 화기를 차분한 미드나잇 인디고 소품으로 잡아주어 냉철한 판단력을 회복합니다.",
-            "mode": "reverse",
-            "style_mood": "formal",
-            "mood_tag": "👔 클래식 & 포멀",
-            "top": {"name": "소프트 웜 베이지", "hex": "#D8C7B5", "standard_color": "베이지"},
-            "bottom": {"name": "차콜 슬레이트", "hex": "#3A3D40", "standard_color": "차콜"},
-            "point": {"name": "미드나잇 네이비", "hex": "#1B2A47", "standard_color": "네이비"}
-        }
+        {"palette_no": 72, "theme": "따스한 온기와 활력", "mood_desc": "은은한 코랄 브릭과 소프트 크림이 조화를 이루어 주변을 끌어당기는 카리스마를 만듭니다.", "mode": "harmony", "style_mood": "smart_casual", "mood_tag": "✨ 스마트 캐주얼", "top": {"name": "테라코타 앰버", "hex": "#C26D53", "standard_color": "코랄/오렌지"}, "bottom": {"name": "오이스터 화이트", "hex": "#F4F1EA", "standard_color": "화이트"}, "point": None},
+        {"palette_no": 128, "theme": "수화기제(水火旣濟)", "mood_desc": "치솟는 화기를 차분한 미드나잇 인디고 소품으로 잡아주어 냉철한 판단력을 회복합니다.", "mode": "reverse", "style_mood": "formal", "mood_tag": "👔 클래식 & 포멀", "top": {"name": "소프트 웜 베이지", "hex": "#D8C7B5", "standard_color": "베이지"}, "bottom": {"name": "차콜 슬레이트", "hex": "#3A3D40", "standard_color": "차콜"}, "point": {"name": "미드나잇 네이비", "hex": "#1B2A47", "standard_color": "네이비"}},
+        {"palette_no": 78, "theme": "홍란 도화의 매력", "mood_desc": "소프트 로즈 핑크와 라이트 그레이가 결합하여 대인관계의 매력을 극대화합니다.", "mode": "harmony", "style_mood": "casual", "mood_tag": "🏃 캐주얼 & 액티브", "top": {"name": "더스티 로즈", "hex": "#D9828A", "standard_color": "핑크"}, "bottom": {"name": "쿨 그레이", "hex": "#A0AEC0", "standard_color": "그레이"}, "point": None}
     ],
     "earth": [
-        {
-            "palette_no": 91,
-            "theme": "대지의 신뢰와 품격",
-            "mood_desc": "묵직한 카멜 브라운과 오트밀 베이지가 만나 흔들리지 않는 신뢰와 포용력을 드러냅니다.",
-            "mode": "harmony",
-            "style_mood": "formal",
-            "mood_tag": "👔 클래식 & 포멀",
-            "top": {"name": "로즈우드 카멜", "hex": "#9E6B55", "standard_color": "카멜/브라운"},
-            "bottom": {"name": "오트밀 크림", "hex": "#EAE4D9", "standard_color": "아이보리/크림"},
-            "point": None
-        }
+        {"palette_no": 91, "theme": "대지의 신뢰와 품격", "mood_desc": "묵직한 카멜 브라운과 오트밀 베이지가 만나 흔들리지 않는 신뢰와 포용력을 드러냅니다.", "mode": "harmony", "style_mood": "formal", "mood_tag": "👔 클래식 & 포멀", "top": {"name": "로즈우드 카멜", "hex": "#9E6B55", "standard_color": "카멜/브라운"}, "bottom": {"name": "오트밀 크림", "hex": "#EAE4D9", "standard_color": "아이보리/크림"}, "point": None},
+        {"palette_no": 95, "theme": "화토상생(火土相生)", "mood_desc": "머스터드 옐로우와 차콜 팬츠가 만나 안정적인 자산 관리 능력을 높여줍니다.", "mode": "harmony", "style_mood": "smart_casual", "mood_tag": "✨ 스마트 캐주얼", "top": {"name": "머스터드 앰버", "hex": "#D97706", "standard_color": "머스터드"}, "bottom": {"name": "차콜 그레이", "hex": "#374151", "standard_color": "차콜"}, "point": None}
     ],
     "metal": [
-        {
-            "palette_no": 84,
-            "theme": "명경지수(明鏡止水) · 냉철함",
-            "mood_desc": "깊은 미드나잇 인디고와 안개빛 스카이블루가 만나 사주의 금전운과 전문성을 견고히 세웁니다.",
-            "mode": "harmony",
-            "style_mood": "casual",
-            "mood_tag": "🏃 캐주얼 & 액티브",
-            "top": {"name": "미드나잇 인디고", "hex": "#1F3044", "standard_color": "네이비"},
-            "bottom": {"name": "포그 스카이", "hex": "#8CA6B5", "standard_color": "스카이블루"},
-            "point": None
-        },
-        {
-            "palette_no": 105,
-            "theme": "통관용신 · 조후 개운",
-            "mood_desc": "사주 원국의 한기를 녹이기 위해 기본 의류 위에 앤틱 와인 소품을 얹어 재물의 숨통을 틔웁니다.",
-            "mode": "reverse",
-            "style_mood": "casual",
-            "mood_tag": "✦ 시크릿 반전 데이",
-            "top": {"name": "딥 프러시안", "hex": "#1A2A3A", "standard_color": "네이비"},
-            "bottom": {"name": "더스티 스카이", "hex": "#9CB2C0", "standard_color": "스카이블루"},
-            "point": {"name": "앤틱 보르도", "hex": "#7A2E3D", "standard_color": "와인/버건디"}
-        }
+        {"palette_no": 84, "theme": "명경지수(明鏡止水) · 냉철함", "mood_desc": "깊은 미드나잇 인디고와 안개빛 스카이블루가 만나 사주의 금전운과 전문성을 견고히 세웁니다.", "mode": "harmony", "style_mood": "casual", "mood_tag": "🏃 캐주얼 & 액티브", "top": {"name": "미드나잇 인디고", "hex": "#1F3044", "standard_color": "네이비"}, "bottom": {"name": "포그 스카이", "hex": "#8CA6B5", "standard_color": "스카이블루"}, "point": None},
+        {"palette_no": 105, "theme": "통관용신 · 조후 개운", "mood_desc": "사주 원국의 한기를 녹이기 위해 기본 의류 위에 앤틱 와인 소품을 얹어 재물의 숨통을 틔웁니다.", "mode": "reverse", "style_mood": "casual", "mood_tag": "✦ 시크릿 반전 데이", "top": {"name": "딥 프러시안", "hex": "#1A2A3A", "standard_color": "네이비"}, "bottom": {"name": "더스티 스카이", "hex": "#9CB2C0", "standard_color": "스카이블루"}, "point": {"name": "앤틱 보르도", "hex": "#7A2E3D", "standard_color": "와인/버건디"}},
+        {"palette_no": 88, "theme": "정제된 모던 클래식", "mood_desc": "차콜 블랙과 퓨어 화이트의 대비로 결단력과 명확한 전문성을 부각합니다.", "mode": "harmony", "style_mood": "formal", "mood_tag": "👔 클래식 & 포멀", "top": {"name": "퓨어 화이트", "hex": "#FFFFFF", "standard_color": "화이트"}, "bottom": {"name": "인텐스 블랙", "hex": "#18181B", "standard_color": "블랙"}, "point": None}
     ],
     "water": [
-        {
-            "palette_no": 62,
-            "theme": "유연한 교섭과 지혜",
-            "mood_desc": "머스터드 옐로우와 차분한 베이지가 결합하여 차가운 기운을 녹이고 유연한 소통을 이끕니다.",
-            "mode": "harmony",
-            "style_mood": "smart_casual",
-            "mood_tag": "✨ 스마트 캐주얼",
-            "top": {"name": "앤틱 머스터드", "hex": "#C99700", "standard_color": "머스터드"},
-            "bottom": {"name": "소프트 샌드", "hex": "#D6C7B2", "standard_color": "베이지"},
-            "point": None
-        }
+        {"palette_no": 62, "theme": "유연한 교섭과 지혜", "mood_desc": "머스터드 옐로우와 차분한 베이지가 결합하여 차가운 기운을 녹이고 유연한 소통을 이끕니다.", "mode": "harmony", "style_mood": "smart_casual", "mood_tag": "✨ 스마트 캐주얼", "top": {"name": "앤틱 머스터드", "hex": "#C99700", "standard_color": "머스터드"}, "bottom": {"name": "소프트 샌드", "hex": "#D6C7B2", "standard_color": "베이지"}, "point": None},
+        {"palette_no": 66, "theme": "심해의 평온과 통찰", "mood_desc": "네이비와 민트 라임의 산뜻한 포인트가 사주의 활력을 빠르게 끌어올립니다.", "mode": "harmony", "style_mood": "casual", "mood_tag": "🏃 캐주얼 & 액티브", "top": {"name": "로열 네이비", "hex": "#1E3A8A", "standard_color": "네이비"}, "bottom": {"name": "민트 세이지", "hex": "#6EE7B7", "standard_color": "민트/라임"}, "point": None}
     ]
 }
 
@@ -439,7 +245,7 @@ def calculate_four_pillars(y: int, m: int, d: int, sijin_idx: int):
         "singang_label": "신강(身强) 사주" if dist[elem_map[d_gan]] >= 30 else "신약(身弱) 사주"
     }
 
-# 매일 동적으로 변하는 오늘 일진 운세 생성기
+# 매일 자정에 당일 날짜 기반으로 완전히 새롭게 바뀌는 오늘운세 생성기
 def generate_saju_analysis_payload(name, gender, y, m, d, cal_type, sijin):
     saju_res = calculate_four_pillars(y, m, d, sijin)
     day_elem = saju_res["day_elem"]
@@ -447,13 +253,12 @@ def generate_saju_analysis_payload(name, gender, y, m, d, cal_type, sijin):
     today = datetime.date.today()
     today_ord = today.toordinal()
     
-    # 일진 기반 결정론적 난수 시드 (매일 정각에 모든 유저의 일진이 사주와 결합하여 새롭게 업데이트)
-    daily_seed = today_ord + (y * 10000) + (m * 100) + d + sijin
+    # 당일 날짜(연월일) + 사주 고유값을 결합한 시드 -> 날짜가 바뀌면 매일 달라짐
+    daily_seed = today_ord * 1000 + (y % 100) * 100 + m * 10 + d + sijin
     rng = random.Random(daily_seed)
     
     palettes = WADA_SANZO_PALETTES.get(day_elem, WADA_SANZO_PALETTES["metal"])
-    palette_idx = rng.choice(range(len(palettes)))
-    chosen_palette = palettes[palette_idx]
+    chosen_palette = palettes[rng.randint(0, len(palettes) - 1)]
     is_reverse = (chosen_palette["mode"] == "reverse")
     
     theme_keys = ["wealth", "career", "love", "ward"]
@@ -463,46 +268,64 @@ def generate_saju_analysis_payload(name, gender, y, m, d, cal_type, sijin):
     sijin_names = ["자시(子時)", "축시(丑時)", "인시(寅時)", "묘시(卯時)", "진시(辰時)", "사시(巳時)", "오시(午時)", "미시(未時)", "신시(申時)", "유시(酉時)", "술시(戌時)", "해시(亥時)"]
     sijin_str = sijin_names[sijin] if 0 <= sijin < 12 else "시간모름"
 
-    score_base = rng.randint(82, 98)
-    
+    # 날짜별 역동적 텍스트 풀
     titles_pool = [
         "도약과 결실이 함께하는 대길의 하루",
-        "귀인의 조력으로 막힌 물꼬가 트이는 날",
-        "지혜로운 판단이 뜻밖의 실리를 부르는 날",
-        "차분한 내실 경영이 큰 성과로 이어지는 하루"
+        "귀인의 조력으로 막힌 물꼬가 시원하게 트이는 날",
+        "지혜로운 판단이 뜻밖의 실리를 부르는 하루",
+        "차분한 내실 경영이 큰 성과로 이어지는 길일",
+        "새로운 기회와 좋은 인연이 찾아오는 상생의 날",
+        "탁월한 집중력으로 오랜 난제를 해결하는 하루"
     ]
-    today_title = rng.choice(titles_pool)
+    
+    advices_pool = [
+        f"{today.strftime('%m월 %d일')} 오늘의 일진 기운이 사주 본원과 상생하여 막혀있던 흐름이 시원하게 풀립니다.\n미루어 두었던 중요한 계획이나 제안이 있다면 오늘 주도적으로 첫발을 내딛기에 길합니다.\n핵심 목표 1~2가지에 에너지를 집중할 때 성과를 온전히 거머쥐게 됩니다.",
+        f"{today.strftime('%m월 %d일')} 대인관계에서 천을귀인의 서기가 비추는 날입니다.\n혼자 고민하기보다는 신뢰할 수 있는 동료나 지인과 상의할 때 명쾌한 해답을 얻습니다.\n유연하고 경청하는 자세가 뜻밖의 횡재와 기회를 부릅니다.",
+        f"{today.strftime('%m월 %d일')} 차분하게 내실을 다지며 실리를 챙기기에 최적인 일진입니다.\n불필요한 과욕을 경계하고 현재 진행 중인 일의 디테일을 점검하세요.\n원칙을 지키는 정직한 태도가 주변의 큰 신뢰와 지지를 이끌어냅니다.",
+        f"{today.strftime('%m월 %d일')} 활동 에너지와 지성 리듬이 조화를 이루는 역동적인 하루입니다.\n새로운 아이디어가 번뜩인다면 망설이지 말고 실행 계획으로 구체화하세요.\n발빠른 대처가 경쟁에서 우위를 점하는 결정적 무기가 됩니다."
+    ]
 
-    overview_text = f"""{today.strftime('%Y년 %m월 %d일')} 오늘의 일진 기운이 {name}님의 사주 본원({day_elem.upper()})과 길합을 이룹니다.
-미루어 두었던 중요한 계획이나 계약이 있다면 오늘 주도적으로 첫발을 내딛기에 매우 길합니다.
-대인관계에서도 귀인의 조력이 따르니, 핵심 목표 1~2가지에 에너지를 집중해 보세요.
-차분함과 유연성을 유지할 때 성과와 실리를 온전히 거머쥐는 알찬 하루가 될 것입니다."""
+    mindset_pool = [
+        "원칙을 지키며 유연하게 대처하기",
+        "상대방의 입장을 먼저 경청하고 배려하기",
+        "조급함을 내려놓고 차분한 호흡 유지하기",
+        "핵심 우선순위에 집중하고 잔가지는 쳐내기",
+        "작은 성공에도 감사하며 긍정의 기운 돋우기",
+        "자신의 직관과 노력을 굳게 신뢰하기"
+    ]
 
-    time_flow_data = {
-        "morning": f"오전 (09시~12시): 집중력과 직관이 최고조입니다. 오늘 가장 중요한 핵심 결정을 내리세요.",
-        "afternoon": f"오후 (13시~18시): 소통과 협상운이 열립니다. 미팅이나 외근에서 긍정적인 협력을 이끌어냅니다.",
-        "evening": f"저녁 (19시 이후): 심신을 정돈하는 시간입니다. 가벼운 산책과 따뜻한 차 한잔으로 내일의 기운을 충전하세요."
-    }
+    action_pool = [
+        "오늘 완료해야 할 우선순위 3가지 메모하기",
+        "가장 중요한 미팅이나 결정을 오전에 집중 처리하기",
+        "감사한 지인 1명에게 따뜻한 안부 메시지 보내기",
+        "점심 식사 후 10분간 가벼운 산책으로 기운 충전하기",
+        "퇴근 전 책상과 주변 환경을 깔끔하게 정돈하기",
+        "잠들기 전 오늘 하루의 감사한 일 3가지 되새기기"
+    ]
 
-    lucky_items_pool = ["실버 메탈 시계", "가죽 카드지갑", "미니멀 만년필", "심플한 옥 팔찌", "린넨 손수건"]
-    lucky_menus_pool = ["속이 편안한 영양 솥밥", "맑은 조개탕", "신선한 비빔밥", "담백한 두부 요리", "따뜻한 메밀 국수"]
-    lucky_dirs_pool = ["정동쪽 (청룡 방위)", "정남쪽 (주작 방위)", "정서쪽 (백호 방위)", "정북쪽 (현무 방위)"]
+    lucky_items_pool = ["실버 메탈 시계", "가죽 카드지갑", "심플한 만년필", "옥/원석 팔찌", "린넨 손수건", "미니멀 텀블러", "블루투스 이어폰"]
+    lucky_menus_pool = ["속이 편안한 영양 솥밥", "맑은 조개탕", "신선한 비빔밥", "담백한 두부 요리", "따뜻한 메밀 국수", "정갈한 생선구이 정식"]
+    lucky_dirs_pool = ["정동쪽 (청룡 방위)", "정남쪽 (주작 방위)", "정서쪽 (백호 방위)", "정북쪽 (현무 방위)", "남동쪽 (풍수 길방)"]
 
     return {
         "user_name": name,
         "current_age": 2026 - y + 1,
         "birth_summary": f"{y}년 {m}월 {d}일생 · {sijin_str}생",
         "daily_fortune": {
-            "title": today_title,
-            "score": score_base,
-            "advice": overview_text,
-            "time_flow": time_flow_data,
+            "title": rng.choice(titles_pool),
+            "score": rng.randint(84, 98),
+            "advice": rng.choice(advices_pool),
+            "time_flow": {
+                "morning": "오전 (09시~12시): 판단력과 집중력이 정점입니다. 핵심 업무와 결정을 처리하세요.",
+                "afternoon": "오후 (13시~18시): 소통과 협상운이 상승합니다. 미팅이나 협력에서 좋은 결과를 냅니다.",
+                "evening": "저녁 (19시 이후): 심신을 정돈하는 힐링의 시간. 가벼운 휴식으로 활력을 채우세요."
+            },
             "lucky_item": rng.choice(lucky_items_pool),
             "lucky_number": f"{rng.randint(1,9)}, {rng.randint(1,9)}",
             "lucky_direction": rng.choice(lucky_dirs_pool),
             "recommended_menu": rng.choice(lucky_menus_pool),
-            "mindset": "원칙을 지키며 유연하게 대처하기",
-            "action": "오늘 완료해야 할 우선순위 3가지 메모하기",
+            "mindset": rng.choice(mindset_pool),
+            "action": rng.choice(action_pool),
             "is_reverse_day": is_reverse,
             "styling_mode": chosen_palette["mode"],
             "style_mood": chosen_palette["style_mood"],
@@ -523,7 +346,7 @@ def generate_saju_analysis_payload(name, gender, y, m, d, cal_type, sijin):
             "physical": {"status": "고조기", "val": rng.randint(75, 95)},
             "emotional": {"status": "안정기", "val": rng.randint(60, 85)},
             "intellectual": {"status": "최고조", "val": rng.randint(85, 99)},
-            "overall_summary": "지성 리듬과 활동 에너지가 상위 구간에 위치하여 전략적 결정이나 협상에 최적인 날입니다."
+            "overall_summary": "지성 리듬과 활동 에너지가 상위 구간에 위치하여 전략적 결정이나 계약에 최적인 날입니다."
         }
     }
 
@@ -875,18 +698,22 @@ def charge_coin_endpoint(req: ChargeCoinRequest):
 
 @app.get("/api/daily-tarot")
 def get_daily_tarot(slot: int):
-    return {
-        "name": "I. THE MAGICIAN (마법사)",
-        "keyword": "창조적 잠재력 · 탁월한 실행력",
-        "symbolism": "4대 원소를 능숙히 다루는 마법사는 무한한 가능성과 시작을 의미합니다.",
-        "reading_male": "주도적으로 프로젝트나 만남을 이끌어가기에 완벽한 시기입니다.",
-        "reading_female": "빛나는 센스와 아이디어로 주변의 시선과 협력을 끌어당깁니다.",
-        "action_guide": "망설이던 아이디어가 있다면 오늘 바로 구체적인 실행 계획을 작성하세요."
-    }
+    today_ord = datetime.date.today().toordinal()
+    tarot_cards = [
+        {"name": "I. THE MAGICIAN (마법사)", "keyword": "창조적 잠재력 · 탁월한 실행력", "symbolism": "4대 원소를 능숙히 다루는 마법사는 무한한 가능성과 시작을 의미합니다.", "reading_male": "주도적으로 프로젝트나 만남을 이끌어가기에 완벽한 시기입니다.", "reading_female": "빛나는 센스와 아이디어로 주변의 시선과 협력을 끌어당깁니다.", "action_guide": "망설이던 아이디어가 있다면 오늘 바로 구체적인 실행 계획을 작성하세요."},
+        {"name": "0. THE FOOL (바보)", "keyword": "새로운 여정 · 순수한 모험심", "symbolism": "절벽 끝에서도 당당한 바보는 틀에 얽매이지 않는 자유로운 도약을 상징합니다.", "reading_male": "과거의 부담을 털어내고 새로운 방향을 모색할 때 뜻밖의 돌파구가 열립니다.", "reading_female": "선입견 없이 마음을 열고 다가갈 때 새로운 인연과 기쁨을 얻습니다.", "action_guide": "가보지 않았던 새로운 길이나 방식을 시도해 보세요."},
+        {"name": "XIX. THE SUN (태양)", "keyword": "명확한 성공 · 긍정의 생명력", "symbolism": "빛나는 태양 아래 아이는 순수한 행복과 확실한 승리를 의미합니다.", "reading_male": "노력해 온 결과가 세상에 당당히 드러나 높은 평가를 받습니다.", "reading_female": "주변에 따뜻한 에너지를 전파하며 중심적인 위치에 서게 됩니다.", "action_guide": "자신감을 가지고 당신의 성과와 제안을 널리 알리세요."}
+    ]
+    card = tarot_cards[(today_ord + slot) % len(tarot_cards)]
+    return card
 
-# 띠별 5개 세대 연도 및 별자리 전용 데이터 분기 API
+# 띠별 5개 세대 연도 및 별자리 전용 데이터 분기 API (날짜별로 매일 업데이트)
 @app.get("/api/zodiac-fortune")
 def get_zodiac_fortune(type: str, key: str):
+    today = datetime.date.today()
+    today_ord = today.toordinal()
+    rng = random.Random(today_ord + hash(key))
+
     if type == "star":
         star_meta = {
             "양자리": {"elem": "불 (Fire)", "planet": "화성 (Mars)", "color": "루비 레드", "time": "오전 07시 ~ 09시", "focus": "새로운 기획에 도전할 때 주변의 강력한 지지를 받습니다. 솔직한 표현이 매력을 높입니다."},
@@ -905,8 +732,8 @@ def get_zodiac_fortune(type: str, key: str):
         meta = star_meta.get(key, star_meta["양자리"])
         return {
             "name": key,
-            "score": 93,
-            "title": "천체의 조화와 영감이 가득한 하루",
+            "score": rng.randint(88, 98),
+            "title": f"{today.strftime('%m월 %d일')} 천체의 영감과 기운이 가득한 하루",
             "overview": "행성의 순행 기운이 당신의 별자리를 비추어 창의적 아이디어와 인간관계의 확장이 일어납니다.",
             "star_element": meta["elem"],
             "star_planet": meta["planet"],
@@ -939,8 +766,8 @@ def get_zodiac_fortune(type: str, key: str):
         ]
         return {
             "name": key,
-            "score": 95,
-            "title": "막힘없이 활짝 열리는 대길의 일진",
+            "score": rng.randint(86, 99),
+            "title": f"{today.strftime('%m월 %d일')} 막힘없이 활짝 열리는 대길의 일진",
             "overview": "노력해 온 일들이 귀인을 만나 결실을 맺게 되는 뜻깊고 보람찬 하루입니다.",
             "lucky_time": "오전 10시 ~ 12시",
             "lucky_match": "찰떡궁합: 소띠, 양띠",
