@@ -454,19 +454,19 @@
                             </div>
 
                             <div id="gridStarBox" class="zodiac-grid-2x6 hidden">
-                                <div onclick="openZodiacModal('star', '양자리')" class="zodiac-btn"><span class="star-glyph-box" data-sign="양자리"></span><span class="zodiac-label">양</span></div>
-                                <div onclick="openZodiacModal('star', '황소자리')" class="zodiac-btn"><span class="star-glyph-box" data-sign="황소자리"></span><span class="zodiac-label">황소</span></div>
-                                <div onclick="openZodiacModal('star', '쌍둥이자리')" class="zodiac-btn"><span class="star-glyph-box" data-sign="쌍둥이자리"></span><span class="zodiac-label">쌍둥이</span></div>
-                                <div onclick="openZodiacModal('star', '게자리')" class="zodiac-btn"><span class="star-glyph-box" data-sign="게자리"></span><span class="zodiac-label">게</span></div>
-                                <div onclick="openZodiacModal('star', '사자자리')" class="zodiac-btn"><span class="star-glyph-box" data-sign="사자자리"></span><span class="zodiac-label">사자</span></div>
-                                <div onclick="openZodiacModal('star', '처녀자리')" class="zodiac-btn"><span class="star-glyph-box" data-sign="처녀자리"></span><span class="zodiac-label">처녀</span></div>
-                                <div onclick="openZodiacModal('star', '천칭자리')" class="zodiac-btn"><span class="star-glyph-box" data-sign="천칭자리"></span><span class="zodiac-label">천칭</span></div>
-                                <div onclick="openZodiacModal('star', '전갈자리')" class="zodiac-btn"><span class="star-glyph-box" data-sign="전갈자리"></span><span class="zodiac-label">전갈</span></div>
-                                <div onclick="openZodiacModal('star', '사수자리')" class="zodiac-btn"><span class="star-glyph-box" data-sign="사수자리"></span><span class="zodiac-label">사수</span></div>
-                                <div onclick="openZodiacModal('star', '염소자리')" class="zodiac-btn"><span class="star-glyph-box" data-sign="염소자리"></span><span class="zodiac-label">염소</span></div>
-                                <div onclick="openZodiacModal('star', '물병자리')" class="zodiac-btn"><span class="star-glyph-box" data-sign="물병자리"></span><span class="zodiac-label">물병</span></div>
-                                <div onclick="openZodiacModal('star', '물고기자리')" class="zodiac-btn"><span class="star-glyph-box" data-sign="물고기자리"></span><span class="zodiac-label">물고기</span></div>
-                            </div>
+    <div onclick="openZodiacModal('star', '양자리')" class="zodiac-btn"><span class="star-glyph-box" data-sign="양자리"></span><span class="zodiac-label">양자리</span></div>
+    <div onclick="openZodiacModal('star', '황소자리')" class="zodiac-btn"><span class="star-glyph-box" data-sign="황소자리"></span><span class="zodiac-label">황소자리</span></div>
+    <div onclick="openZodiacModal('star', '쌍둥이자리')" class="zodiac-btn"><span class="star-glyph-box" data-sign="쌍둥이자리"></span><span class="zodiac-label">쌍둥이</span></div>
+    <div onclick="openZodiacModal('star', '게자리')" class="zodiac-btn"><span class="star-glyph-box" data-sign="게자리"></span><span class="zodiac-label">게자리</span></div>
+    <div onclick="openZodiacModal('star', '사자자리')" class="zodiac-btn"><span class="star-glyph-box" data-sign="사자자리"></span><span class="zodiac-label">사자자리</span></div>
+    <div onclick="openZodiacModal('star', '처녀자리')" class="zodiac-btn"><span class="star-glyph-box" data-sign="처녀자리"></span><span class="zodiac-label">처녀자리</span></div>
+    <div onclick="openZodiacModal('star', '천칭자리')" class="zodiac-btn"><span class="star-glyph-box" data-sign="천칭자리"></span><span class="zodiac-label">천칭자리</span></div>
+    <div onclick="openZodiacModal('star', '전갈자리')" class="zodiac-btn"><span class="star-glyph-box" data-sign="전갈자리"></span><span class="zodiac-label">전갈자리</span></div>
+    <div onclick="openZodiacModal('star', '사수자리')" class="zodiac-btn"><span class="star-glyph-box" data-sign="사수자리"></span><span class="zodiac-label">사수자리</span></div>
+    <div onclick="openZodiacModal('star', '염소자리')" class="zodiac-btn"><span class="star-glyph-box" data-sign="염소자리"></span><span class="zodiac-label">염소자리</span></div>
+    <div onclick="openZodiacModal('star', '물병자리')" class="zodiac-btn"><span class="star-glyph-box" data-sign="물병자리"></span><span class="zodiac-label">물병자리</span></div>
+    <div onclick="openZodiacModal('star', '물고기자리')" class="zodiac-btn"><span class="star-glyph-box" data-sign="물고기자리"></span><span class="zodiac-label">물고기</span></div>
+</div>
                         </div>
                     </div>
                 </div>
@@ -2081,66 +2081,71 @@
         }
 
         async function openZodiacModal(type, key) {
-            try {
-                const res = await fetch(`/api/zodiac-fortune?type=${type}&key=${encodeURIComponent(key)}`);
-                const data = await res.json();
-                
-                document.getElementById('zodiacModalName').innerText = `${data.name} 오늘의 운세`;
-                document.getElementById('zodiacModalSub').innerText = (type === 'star') ? '천체 성도 & 4대 원소 에너지 분석' : '오늘의 실시간 일진 분석';
-                document.getElementById('zodiacModalScore').innerText = `${data.score}점`;
-                document.getElementById('zodiacModalTitle').innerText = data.title;
-                document.getElementById('zodiacModalOverview').innerText = data.overview;
+    try {
+        const res = await fetch(`/api/zodiac-fortune?type=${type}&key=${encodeURIComponent(key)}`);
+        const data = await res.json();
+        
+        document.getElementById('zodiacModalName').innerText = `${data.name} 오늘의 운세`;
+        document.getElementById('zodiacModalScore').innerText = `${data.score}점`;
+        document.getElementById('zodiacModalTitle').innerText = data.title;
+        document.getElementById('zodiacModalOverview').innerText = data.overview;
 
-                const iconBox = document.getElementById('zodiacModalIconBox');
-                const tipsBox = document.getElementById('zodiacYearTipsBox');
+        const iconBox = document.getElementById('zodiacModalIconBox');
+        const tipsBox = document.getElementById('zodiacYearTipsBox');
+        const subLabel = document.getElementById('zodiacModalSub');
 
-                if (type === 'star') {
-                    if (ZODIAC_GLYPHS[key]) {
-                        iconBox.innerHTML = ZODIAC_GLYPHS[key];
-                    } else {
-                        iconBox.innerHTML = `<span style="font-size: 22px; color: #E2C068;">✦</span>`;
-                    }
-
-                    tipsBox.innerHTML = `
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; font-size: 12.5px;">
-                            <div style="background: #F8FAFC; border: 1px solid #E2E8F0; padding: 9px 10px; border-radius: 10px;">
-                                <span style="color: #64748B; font-size: 11px; display: block; margin-bottom: 2px;">✨ 4대 원소</span>
-                                <strong style="color: #0F172A; font-size: 13px;">${data.star_element || '-'}</strong>
-                            </div>
-                            <div style="background: #F8FAFC; border: 1px solid #E2E8F0; padding: 9px 10px; border-radius: 10px;">
-                                <span style="color: #64748B; font-size: 11px; display: block; margin-bottom: 2px;">🪐 수호성</span>
-                                <strong style="color: #0F172A; font-size: 13px;">${data.star_planet || '-'}</strong>
-                            </div>
-                        </div>
-                        <div style="background: #FAF9F6; border: 1px solid #FCD34D; border-radius: 12px; padding: 12px 14px;">
-                            <span style="font-size: 11.5px; font-weight: 800; color: #78350F; display: block; margin-bottom: 4px;">🔮 천체 에너지 가이드</span>
-                            <p style="color: #334155; font-size: 13.5px; line-height: 1.65; margin: 0;">${data.focus_content || ''}</p>
-                        </div>
-                    `;
-                    document.getElementById('zodiacExtraInfo').innerHTML = `🎨 행운 컬러: <strong>${data.lucky_color || '골드'}</strong> &nbsp;|&nbsp; ⏱️ 행운 시간: <strong>${data.lucky_time || '오전 10시'}</strong>`;
-                } else {
-                    const zIcons = { '쥐':'🐭', '소':'🐮', '호랑이':'🐯', '토끼':'🐰', '용':'🐲', '뱀':'🐍', '말':'🐴', '양':'🐑', '원숭이':'🐵', '닭':'🐔', '개':'🐶', '돼지':'🐷' };
-                    iconBox.innerHTML = `<span style="font-size: 24px;">${zIcons[key] || '✨'}</span>`;
-
-                    tipsBox.innerHTML = `
-                        <p style="font-weight: 800; color: #0F172A; margin-bottom: 8px; font-size: 14px;">📅 출생연도별 핵심 가이드</p>
-                        <div style="display: flex; flex-direction: column; gap: 6px;">
-                            ${(data.year_tips || []).map(item => `
-                                <div style="display: flex; align-items: baseline; gap: 8px; font-size: 13px; line-height: 1.5; padding: 4px 0;">
-                                    <span style="background: #F1F5F9; color: #334155; font-weight: 800; font-size: 11.5px; padding: 2px 6px; border-radius: 4px; flex-shrink: 0;">${item.year_label}</span>
-                                    <span style="color: #475569;">${item.tip}</span>
-                                </div>
-                            `).join('')}
-                        </div>
-                    `;
-                    document.getElementById('zodiacExtraInfo').innerHTML = `⏱️ 행운 시간: <strong>${data.lucky_time || ''}</strong> &nbsp;|&nbsp; 🤝 <strong>${data.lucky_match || ''}</strong>`;
-                }
-                
-                document.getElementById('zodiacModal').classList.remove('hidden');
-            } catch(e) { 
-                alert('운세를 불러오지 못했습니다.'); 
+        if (type === 'star') {
+            // [별자리 전용 렌더링 - 띠별 출생연도 박스 완전 제거 & 천체/원소 카드 렌더링]
+            if (subLabel) subLabel.innerText = '천체 성도 & 4대 원소 에너지 분석';
+            
+            if (ZODIAC_GLYPHS[key]) {
+                iconBox.innerHTML = ZODIAC_GLYPHS[key];
+            } else {
+                iconBox.innerHTML = `<span style="font-size: 22px; color: #E2C068;">✦</span>`;
             }
+
+            tipsBox.innerHTML = `
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; font-size: 12.5px;">
+                    <div style="background: #F8FAFC; border: 1px solid #E2E8F0; padding: 10px; border-radius: 12px; text-align: left;">
+                        <span style="color: #64748B; font-size: 11px; display: block; margin-bottom: 2px;">✨ 4대 원소</span>
+                        <strong style="color: #0F172A; font-size: 13.5px;">${data.star_element || '불 (Fire)'}</strong>
+                    </div>
+                    <div style="background: #F8FAFC; border: 1px solid #E2E8F0; padding: 10px; border-radius: 12px; text-align: left;">
+                        <span style="color: #64748B; font-size: 11px; display: block; margin-bottom: 2px;">🪐 지배 수호성</span>
+                        <strong style="color: #0F172A; font-size: 13.5px;">${data.star_planet || '태양 (Sun)'}</strong>
+                    </div>
+                </div>
+                <div style="background: #FAF9F6; border: 1px solid #FCD34D; border-radius: 14px; padding: 14px; text-align: left;">
+                    <span style="font-size: 12px; font-weight: 800; color: #78350F; display: block; margin-bottom: 6px;">🔮 천체 에너지 데일리 가이드</span>
+                    <p style="color: #334155; font-size: 13.5px; line-height: 1.7; margin: 0;">${data.focus_content || ''}</p>
+                </div>
+            `;
+            document.getElementById('zodiacExtraInfo').innerHTML = `🎨 행운 컬러: <strong>${data.lucky_color || '골드'}</strong> &nbsp;|&nbsp; ⏱️ 행운 시간: <strong>${data.lucky_time || '오전 10시'}</strong>`;
+        } else {
+            // [띠별 전용 렌더링]
+            if (subLabel) subLabel.innerText = '오늘의 실시간 일진 분석';
+            const zIcons = { '쥐':'🐭', '소':'🐮', '호랑이':'🐯', '토끼':'🐰', '용':'🐲', '뱀':'🐍', '말':'🐴', '양':'🐑', '원숭이':'🐵', '닭':'🐔', '개':'🐶', '돼지':'🐷' };
+            iconBox.innerHTML = `<span style="font-size: 24px;">${zIcons[key] || '✨'}</span>`;
+
+            tipsBox.innerHTML = `
+                <p style="font-weight: 800; color: #0F172A; margin-bottom: 8px; font-size: 14px; text-align: left;">📅 출생연도별 핵심 가이드</p>
+                <div style="display: flex; flex-direction: column; gap: 6px; text-align: left;">
+                    ${(data.year_tips || []).map(item => `
+                        <div style="display: flex; align-items: baseline; gap: 8px; font-size: 13px; line-height: 1.5; padding: 4px 0;">
+                            <span style="background: #F1F5F9; color: #334155; font-weight: 800; font-size: 11.5px; padding: 2px 6px; border-radius: 4px; flex-shrink: 0;">${item.year_label}</span>
+                            <span style="color: #475569;">${item.tip}</span>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            document.getElementById('zodiacExtraInfo').innerHTML = `⏱️ 행운 시간: <strong>${data.lucky_time || ''}</strong> &nbsp;|&nbsp; 🤝 <strong>${data.lucky_match || ''}</strong>`;
         }
+        
+        document.getElementById('zodiacModal').classList.remove('hidden');
+    } catch(e) { 
+        alert('운세를 불러오지 못했습니다.'); 
+    }
+}
 
         function closeZodiacModal() { document.getElementById('zodiacModal').classList.add('hidden'); }
         function shareZodiacFortune() { alert('📋 오늘의 운세 링크가 복사되었습니다!'); }
