@@ -1222,4 +1222,1087 @@
                     ${symbolHtml}
 
                     <line x1="70" y1="174" x2="70" y2="200" stroke-width="3.5"/>
-                    <path d="M 48 18저는 언어 모델일 뿐이라 그것에 필요한 정보나 능력이 없어서 도와드릴 수가 없습니다.
+                    <path d="M 48 186 L 70 198 L 92 186" stroke-width="2.5"/>
+                    <path d="M 54 198 L 70 208 L 86 198" stroke-width="2.5"/>
+                    <path d="M 70 208 L 70 224 Q 70 234 60 232 Q 52 229 57 220" stroke-width="3"/>
+                </g>
+
+                <g transform="translate(90, 192)">
+                    <rect x="0" y="0" width="24" height="24" rx="3" fill="rgba(185,28,28,0.1)" stroke="#B91C1C" stroke-width="1.4"/>
+                    <text x="12" y="10" font-size="6.5" font-weight="900" fill="#B91C1C" text-anchor="middle" font-family="'Noto Serif KR', serif">${nameChar1}</text>
+                    <text x="12" y="19" font-size="6.5" font-weight="900" fill="#B91C1C" text-anchor="middle" font-family="'Noto Serif KR', serif">${nameChar2}</text>
+                </g>
+            </svg>`;
+        }
+
+        function renderBiorhythmWaveSvg(daysLived) {
+            const width = 300, height = 110, midY = 55, amp = 40, range = 15;
+            const getPath = (period) => {
+                let d = "";
+                for (let x = 0; x <= width; x += 3) {
+                    const offsetDays = ((x / width) * (range * 2)) - range;
+                    const day = daysLived + offsetDays;
+                    const y = midY - (Math.sin(2 * Math.PI * day / period) * amp);
+                    d += (x === 0) ? `M ${x} ${y.toFixed(1)}` : ` L ${x} ${y.toFixed(1)}`;
+                }
+                return d;
+            };
+            const todayP = midY - (Math.sin(2 * Math.PI * daysLived / 23) * amp);
+            const todayE = midY - (Math.sin(2 * Math.PI * daysLived / 28) * amp);
+            const todayI = midY - (Math.sin(2 * Math.PI * daysLived / 33) * amp);
+
+            return `
+                <line x1="0" y1="${midY}" x2="${width}" y2="${midY}" stroke="#E2E8F0" stroke-width="1.2" />
+                <line x1="${width/2}" y1="5" x2="${width/2}" y2="${height-5}" stroke="#CBD5E1" stroke-width="1.5" stroke-dasharray="3 3" />
+                <path d="${getPath(23)}" fill="none" stroke="#DC2626" stroke-width="2.2" opacity="0.85" />
+                <path d="${getPath(28)}" fill="none" stroke="#16A34A" stroke-width="2.2" opacity="0.85" />
+                <path d="${getPath(33)}" fill="none" stroke="#2563EB" stroke-width="2.2" opacity="0.85" />
+                <circle cx="${width/2}" cy="${todayP.toFixed(1)}" r="4.5" fill="#DC2626" stroke="#FFFFFF" stroke-width="1.8" />
+                <circle cx="${width/2}" cy="${todayE.toFixed(1)}" r="4.5" fill="#16A34A" stroke="#FFFFFF" stroke-width="1.8" />
+                <circle cx="${width/2}" cy="${todayI.toFixed(1)}" r="4.5" fill="#2563EB" stroke="#FFFFFF" stroke-width="1.8" />
+            `;
+        }
+
+        async function submitSajuRegistration() {
+            const name = document.getElementById('inputName').value.trim() || "최정오";
+            const y = parseInt(document.getElementById('birthYearSelect').value) || 1978;
+            const m = parseInt(document.getElementById('birthMonthSelect').value) || 8;
+            const d = parseInt(document.getElementById('birthDaySelect').value) || 13;
+            const sijin = parseInt(document.getElementById('inputSijin').value);
+
+            saveUserSajuToLocal({
+                name: name, gender: selectedGender, birth_year: y,
+                birth_month: m, birth_day: d, calendar_type: selectedCalendarType, sijin_index: sijin
+            });
+
+            const res = await fetch('/api/user/register-saju', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    user_id: currentUserId, name: name, gender: selectedGender,
+                    birth_year: y, birth_month: m, birth_day: d,
+                    calendar_type: selectedCalendarType, sijin_index: sijin
+                })
+            });
+            const data = await res.json();
+            
+            currentCoin = data.coin_balance;
+            updateCoinDisplay();
+            applySajuAnalysisToUI(data.saju_analysis);
+
+            document.getElementById('onboardingInputView').classList.add('hidden');
+            switchTab('today');
+            document.getElementById('bottomNavBar').classList.remove('hidden');
+        }
+
+        function reopenSajuEditForm() {
+            document.getElementById('onboardingInputView').classList.remove('hidden');
+            ['today', 'saju', 'theme', 'mypage'].forEach(t => document.getElementById(`view-${t}`).classList.add('hidden'));
+            document.getElementById('bottomNavBar').classList.add('hidden');
+        }
+
+        function applySajuAnalysisToUI(data) {
+            currentFortuneData = data;
+            currentUserName = data.user_name;
+            currentTalisman = data.daily_fortune.talisman;
+            currentUserAge = data.current_age;
+
+            document.getElementById('userProfileBarName').innerText = `${currentUserName}님 (${selectedGender === 'male' ? '남성' : '여성'})`;
+            document.getElementById('userProfileBarBirth').innerText = data.birth_summary;
+
+            if (data.biorhythm) {
+                const bio = data.biorhythm;
+                document.getElementById('bioDaysLived').innerText = `생애 ${bio.days_lived.toLocaleString()}일째`;
+                document.getElementById('bioPhysicalStatus').innerText = `${bio.physical.status} (${bio.physical.val}%)`;
+                document.getElementById('bioEmotionalStatus').innerText = `${bio.emotional.status} (${bio.emotional.val}%)`;
+                document.getElementById('bioIntellectualStatus').innerText = `${bio.intellectual.status} (${bio.intellectual.val}%)`;
+                document.getElementById('bioOverallText').innerText = bio.overall_summary;
+                document.getElementById('biorhythmWaveSvg').innerHTML = renderBiorhythmWaveSvg(bio.days_lived);
+            }
+
+            document.getElementById('sajuOwnerName').innerText = `${currentUserName}님 (${selectedGender === 'male' ? '남성' : '여성'})`;
+            document.getElementById('sajuSingangBadge').innerText = data.saju_data?.singang_label || "신약(身弱) 사주";
+            document.getElementById('resTitle').innerText = data.daily_fortune.title;
+            document.getElementById('resAdvice').innerText = data.daily_fortune.advice;
+            
+            const scoreBadgeEl = document.getElementById('resScoreBadge');
+            if (scoreBadgeEl) {
+                scoreBadgeEl.innerText = data.daily_fortune.mode_badge || `운세 ${data.daily_fortune.score}점`;
+                if (data.daily_fortune.badge_style) {
+                    scoreBadgeEl.style.cssText = data.daily_fortune.badge_style + " font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 9999px;";
+                }
+            }
+
+            if (data.daily_fortune.time_flow) {
+                document.getElementById('timeMorningText').innerText = data.daily_fortune.time_flow.morning;
+                document.getElementById('timeAfternoonText').innerText = data.daily_fortune.time_flow.afternoon;
+                document.getElementById('timeEveningText').innerText = data.daily_fortune.time_flow.evening;
+            }
+
+            document.getElementById('resItem').innerText = data.daily_fortune.lucky_item;
+            document.getElementById('resNumber').innerText = data.daily_fortune.lucky_number;
+            document.getElementById('resDirection').innerText = data.daily_fortune.lucky_direction;
+            document.getElementById('resMenu').innerText = data.daily_fortune.recommended_menu;
+            document.getElementById('resMindset').innerText = data.daily_fortune.mindset;
+            document.getElementById('resGaewoon').innerText = data.daily_fortune.action;
+
+            baseFashionStyle = data.daily_fortune.fashion_style || "네이비 쿨 반팔티 & 플랙 연청 데님";
+            currentLuckyColors = data.daily_fortune.lucky_colors || ["네이비", "스카이블루"];
+
+            const dtl = data.saju_data.pillars_detail;
+            setElemBadge('cg_h_badge', dtl.hour.cg, dtl.hour.cg_elem);
+            setElemBadge('cg_d_badge', dtl.day.cg, dtl.day.cg_elem);
+            setElemBadge('cg_m_badge', dtl.month.cg, dtl.month.cg_elem);
+            setElemBadge('cg_y_badge', dtl.year.cg, dtl.year.cg_elem);
+
+            setElemBadge('jj_h_badge', dtl.hour.jj, dtl.hour.jj_elem);
+            setElemBadge('jj_d_badge', dtl.day.jj, dtl.day.jj_elem);
+            setElemBadge('jj_m_badge', dtl.month.jj, dtl.month.jj_elem);
+            setElemBadge('jj_y_badge', dtl.year.jj, dtl.year.jj_elem);
+
+            document.getElementById('jjg_h_box').innerHTML = formatJijangganGroup(dtl.hour.jijanggan);
+            document.getElementById('jjg_d_box').innerHTML = formatJijangganGroup(dtl.day.jijanggan);
+            document.getElementById('jjg_m_box').innerHTML = formatJijangganGroup(dtl.month.jijanggan);
+            document.getElementById('jjg_y_box').innerHTML = formatJijangganGroup(dtl.year.jijanggan);
+
+            const elems = data.saju_data.elements;
+            ['Wood', 'Fire', 'Earth', 'Metal', 'Water'].forEach(key => {
+                const kLower = key.toLowerCase();
+                document.getElementById(`bar${key}`).style.height = `${elems[kLower]}%`;
+                document.getElementById(`val${key}`).innerText = `${elems[kLower]}%`;
+            });
+
+            updateDaewoonGraphByAge(currentUserAge);
+            document.getElementById('mypageProfileDesc').innerText = `${currentUserName} (${data.birth_summary})`;
+            
+            updateTodayWardrobeMatchPick();
+
+            const talismanPreview = document.getElementById('talismanBannerPreview');
+            if (talismanPreview) talismanPreview.innerHTML = renderAuthenticCinnabarTalisman(currentTalisman?.talisman_type || "metal_wealth", 72, 110);
+        }
+
+        const COLOR_HEX_MAP = {
+            "화이트": "#FFFFFF", "아이보리/크림": "#FAF5EA", "베이지": "#D9C3A5", "카멜/브라운": "#8B5A2B",
+            "블랙": "#1E293B", "차콜": "#334155", "그레이": "#94A3B8", "실버": "#CBD5E1",
+            "골드": "#EAB308", "레드": "#EF4444", "와인/버건디": "#881337", "핑크": "#F472B6",
+            "코랄/오렌지": "#FB923C", "옐로우": "#FBBF24", "머스터드": "#D97706", "올리브/카키": "#556B2F",
+            "민트/라임": "#10B981", "그린": "#16A34A", "스카이블루": "#60A5FA", "네이비": "#1E3A8A"
+        };
+
+        function getHexColor(colorName, fallback = "#64748B") {
+            if (!colorName) return fallback;
+            for (let k in COLOR_HEX_MAP) {
+                if (colorName.includes(k) || k.includes(colorName)) return COLOR_HEX_MAP[k];
+            }
+            return fallback;
+        }
+
+        function getItemMood(item) {
+            const nick = (item.nickname || "").toLowerCase();
+            const cat = item.category || "";
+            const mats = item.materials || [];
+
+            if (cat === "시계") {
+                const isCasualWatch = mats.some(m => m.includes("러버") || m.includes("실리콘") || m.includes("패브릭") || m.includes("면")) ||
+                                      nick.includes("스마트") || nick.includes("애플") || nick.includes("갤럭시") || nick.includes("지샥") || nick.includes("전자");
+                if (isCasualWatch) return "casual";
+                return "formal";
+            }
+
+            if (cat === "신발") {
+                const isFormalShoes = nick.includes("구두") || nick.includes("로퍼") || nick.includes("더비") || nick.includes("옥스포드") || nick.includes("부츠") || nick.includes("힐");
+                if (isFormalShoes) return "formal";
+                return "casual";
+            }
+
+            if (mats.some(m => m.includes("데님") || m.includes("러버") || m.includes("패브릭")) || nick.includes("청바지") || nick.includes("티") || nick.includes("맨투맨") || nick.includes("후드") || nick.includes("볼캡") || (cat === "가방" && mats.some(m => m.includes("면") || m.includes("패브릭")))) {
+                return "casual";
+            }
+            if (nick.includes("슬랙스") || nick.includes("셔츠") || nick.includes("블라우스") || nick.includes("자켓") || nick.includes("수트") || mats.some(m => m.includes("실크") || m.includes("가죽"))) {
+                return "formal";
+            }
+
+            return "smart_casual";
+        }
+
+        function updateTodayWardrobeMatchPick() {
+            const styleEl = document.getElementById('resStyle');
+            const pickEl = document.getElementById('wardrobeDailyMatchPick');
+            const paletteBox = document.getElementById('dynamicColorPaletteBox');
+            const moodBadge = document.getElementById('todayStyleMoodBadge');
+            const moodStoryEl = document.getElementById('paletteMoodStoryBox');
+            if (!styleEl || !pickEl || !paletteBox) return;
+
+            const fortune = currentFortuneData?.daily_fortune || {};
+            const wada = fortune.wada_palette || {
+                theme: "명경지수(明鏡止水) · 지적인 냉철함",
+                mood_desc: "깊은 미드나잇 인디고와 안개빛 스카이블루가 만나 사주의 금전운과 전문성을 견고히 세웁니다.",
+                mode: "harmony",
+                style_mood: "casual",
+                mood_tag: "🏃 캐주얼 & 액티브",
+                top: {"name": "미드나잇 인디고", "hex": "#1F3044", "standard_color": "네이비"},
+                bottom: {"name": "포그 스카이", "hex": "#8CA6B5", "standard_color": "스카이블루"},
+                point: null
+            };
+
+            const isReverse = (wada.mode === "reverse");
+            const topColorStd = wada.top.standard_color;
+            const bottomColorStd = wada.bottom.standard_color;
+            const todayMood = wada.style_mood || "casual";
+
+            if (moodBadge) {
+                moodBadge.innerText = wada.mood_tag || (todayMood === "casual" ? "🏃 캐주얼 & 액티브" : "👔 클래식 & 포멀");
+            }
+            if (moodStoryEl) {
+                moodStoryEl.innerText = `"${wada.mood_desc}"`;
+            }
+
+            const matchedTops = userWardrobeItems.filter(item => item.category === "상의" && item.colors.some(c => c.includes(topColorStd) || topColorStd.includes(c)));
+            const matchedBottoms = userWardrobeItems.filter(item => item.category === "하의" && item.colors.some(c => c.includes(bottomColorStd) || bottomColorStd.includes(c)));
+
+            let defaultTop = (todayMood === "casual") ? `${topColorStd} 쿨 반팔티` : `${topColorStd} 드레스 셔츠`;
+            let defaultBottom = (todayMood === "casual") ? `${bottomColorStd} 데님 팬츠` : `${bottomColorStd} 슬랙스`;
+
+            let finalTopText = matchedTops.length > 0 ? `내 옷장의 <strong>[${matchedTops[0].nickname}]</strong>` : defaultTop;
+            let finalBottomText = matchedBottoms.length > 0 ? `내 옷장의 <strong>[${matchedBottoms[0].nickname}]</strong>` : defaultBottom;
+
+            styleEl.innerHTML = `${finalTopText} &nbsp;&amp;&nbsp; ${finalBottomText}`;
+
+            const ACCESSORY_CATS = ["시계", "신발", "가방", "액세서리"];
+            const matchedAccessories = userWardrobeItems.filter(item => ACCESSORY_CATS.includes(item.category));
+            
+            const targetMood = (todayMood === "casual") ? "casual" : "formal";
+            const moodCompatibleAccessories = matchedAccessories.filter(item => {
+                const itemM = getItemMood(item);
+                return (targetMood === "casual") ? (itemM === "casual") : (itemM === "formal");
+            });
+
+            let selectedAcc = null;
+            let matchReason = "";
+
+            if (moodCompatibleAccessories.length > 0) {
+                if (isReverse && wada.point) {
+                    const pCol = wada.point.standard_color;
+                    selectedAcc = moodCompatibleAccessories.find(i => i.colors.some(c => c.includes(pCol) || pCol.includes(c)));
+                    if (selectedAcc) {
+                        matchReason = `오늘의 시크릿 반전 컬러(<strong>${pCol}</strong>)를 손목/발끝에 얹어 반전 개운 효과를 완성해보세요.`;
+                    }
+                }
+                
+                if (!selectedAcc) {
+                    selectedAcc = moodCompatibleAccessories.find(i => i.materials.some(m => m.includes("메탈") || m.includes("금속")));
+                    if (selectedAcc) {
+                        matchReason = `내 옷장의 <strong>[${selectedAcc.nickname}]</strong>(메탈 소재)을 더해 사주의 결단력과 금(金) 기운을 균형 있게 채워보세요.`;
+                    }
+                }
+                if (!selectedAcc) {
+                    selectedAcc = moodCompatibleAccessories.find(i => i.materials.some(m => m.includes("가죽") || m.includes("세무")));
+                    if (selectedAcc) {
+                        matchReason = `내 옷장의 <strong>[${selectedAcc.nickname}]</strong>(가죽 소재)을 매칭하여 신뢰감과 대지(土)의 안정감을 더해보세요.`;
+                    }
+                }
+
+                if (!selectedAcc) {
+                    selectedAcc = moodCompatibleAccessories.find(i => i.colors.some(c => c.includes(topColorStd) || c.includes(bottomColorStd)));
+                    if (selectedAcc) {
+                        matchReason = `룩의 전체적인 톤과 결을 맞춘 <strong>[${selectedAcc.nickname}]</strong>으로 세련되고 단정한 기운을 완성해보세요.`;
+                    }
+                }
+
+                if (!selectedAcc) {
+                    selectedAcc = moodCompatibleAccessories[0];
+                    matchReason = `오늘의 스타일에 내 옷장의 <strong>[${selectedAcc.nickname}]</strong>을 가볍게 매칭하여 밸런스를 맞춰보세요.`;
+                }
+            }
+
+            let pointChipHtml = "";
+            if (isReverse && wada.point) {
+                pointChipHtml = `
+                    <span style="font-size: 13px; font-weight: 800; color: #D97706; margin: 0 1px;">➕</span>
+                    <div style="display: flex; align-items: center; gap: 6px; background: #FEF3C7; border: 1.2px solid #FCD34D; padding: 5px 10px; border-radius: 9999px;">
+                        <span style="width: 13px; height: 13px; border-radius: 9999px; background: ${wada.point.hex}; border: 1px solid rgba(0,0,0,0.15); display: inline-block;"></span>
+                        <span style="font-size: 11.5px; font-weight: 800; color: #78350F;">${wada.point.name}</span>
+                    </div>
+                `;
+            }
+
+            paletteBox.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 6px; background: #F8FAFC; border: 1.2px solid #E2E8F0; padding: 5px 10px; border-radius: 9999px;">
+                    <span style="width: 13px; height: 13px; border-radius: 9999px; background: ${wada.top.hex}; border: 1px solid rgba(0,0,0,0.15); display: inline-block;"></span>
+                    <span style="font-size: 11.5px; font-weight: 700; color: #334155;">${wada.top.name}</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 6px; background: #F8FAFC; border: 1.2px solid #E2E8F0; padding: 5px 10px; border-radius: 9999px;">
+                    <span style="width: 13px; height: 13px; border-radius: 9999px; background: ${wada.bottom.hex}; border: 1px solid rgba(0,0,0,0.15); display: inline-block;"></span>
+                    <span style="font-size: 11.5px; font-weight: 700; color: #334155;">${wada.bottom.name}</span>
+                </div>
+                ${pointChipHtml}
+            `;
+
+            let matchText = matchReason || ((todayMood === "casual") 
+                ? "오늘 룩에는 <strong>스포티한 스니커즈나 러버 밴드 시계</strong> 등으로 가볍게 포인트를 주시면 대길합니다." 
+                : "오늘 룩에는 <strong>단정한 가죽/메탈 시계나 드레스 슈즈</strong>로 중심을 잡아주시면 대길합니다.");
+
+            const headerTag = isReverse 
+                ? `<span style="font-size:11px; background:#FEF3C7; color:#78350F; font-weight:800; padding:2px 7px; border-radius:4px; margin-right:6px;">✦ 반전 포인트</span>` 
+                : `<span style="font-size:11px; background:#F1F5F9; color:#475569; font-weight:700; padding:2px 7px; border-radius:4px; margin-right:6px;">소품 매칭</span>`;
+
+            pickEl.innerHTML = `
+                <div style="font-size: 13px; color: #334155; line-height: 1.6;">
+                    ${headerTag} ${matchText}
+                </div>
+            `;
+        }
+
+        function getDynamicItemIconSvg(item) {
+            const cat = item.category || "상의";
+            const colors = item.colors || [];
+            const materials = item.materials || [];
+
+            if (cat === "상의") {
+                const c1 = getHexColor(colors[0], "#FFFFFF");
+                const c2 = getHexColor(colors[1], c1);
+                const stroke = (c1 === "#FFFFFF" || c1 === "#FAF5EA") ? "#94A3B8" : "rgba(0,0,0,0.15)";
+                return `
+                <svg viewBox="0 0 36 36" width="30" height="30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M11 6L4 12L7.5 16.5L11 13.5V29H25V13.5L28.5 16.5L32 12L25 6C23 8.5 13 8.5 11 6Z" fill="${c1}" stroke="${stroke}" stroke-width="1.2" stroke-linejoin="round"/>
+                    <path d="M13 6.5C14.5 9 21.5 9 23 6.5" stroke="${c2 === c1 ? stroke : c2}" stroke-width="1.5" stroke-linecap="round"/>
+                    ${colors[1] ? `<path d="M4 12L7.5 16.5L11 13.5L8.5 10L4 12Z" fill="${c2}" opacity="0.9"/>` : ''}
+                </svg>`;
+            } 
+            else if (cat === "하의") {
+                const isDenim = materials.some(m => m.includes("데님"));
+                let defaultC = isDenim ? "#1E3A8A" : "#334155";
+                const c1 = getHexColor(colors[0], defaultC);
+                const c2 = getHexColor(colors[1], c1);
+                const stroke = (c1 === "#FFFFFF" || c1 === "#FAF5EA") ? "#94A3B8" : "rgba(0,0,0,0.2)";
+                return `
+                <svg viewBox="0 0 36 36" width="30" height="30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M9 7H27L25.5 29H19.5L18 16L16.5 29H10.5L9 7Z" fill="${c1}" stroke="${stroke}" stroke-width="1.2" stroke-linejoin="round"/>
+                    <line x1="9" y1="10.5" x2="27" y2="10.5" stroke="${stroke}" stroke-width="1.2"/>
+                    <line x1="18" y1="7" x2="18" y2="13" stroke="${c2 === c1 ? stroke : c2}" stroke-width="1.5"/>
+                </svg>`;
+            } 
+            else if (cat === "시계") {
+                let strapColor = "#1E293B";
+                let dialColor = "#E2E8F0";
+                let dialRim = "#94A3B8";
+
+                const metallicColors = ["골드", "실버"];
+                const strapColors = ["와인/버건디", "블랙", "차콜", "카멜/브라운", "베이지", "화이트", "네이비", "핑크", "그레이"];
+
+                colors.forEach(col => {
+                    if (metallicColors.some(mc => col.includes(mc))) {
+                        dialColor = getHexColor(col, "#E2E8F0");
+                        dialRim = col.includes("골드") ? "#D97706" : "#64748B";
+                    } else if (strapColors.some(sc => col.includes(sc))) {
+                        strapColor = getHexColor(col, "#1E293B");
+                    }
+                });
+
+                if (colors.length === 1) {
+                    if (metallicColors.some(mc => colors[0].includes(mc))) {
+                        dialColor = getHexColor(colors[0]);
+                        strapColor = dialColor;
+                    } else {
+                        strapColor = getHexColor(colors[0]);
+                    }
+                }
+
+                return `
+                <svg viewBox="0 0 36 36" width="30" height="30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="14" y="3" width="8" height="30" rx="2" fill="${strapColor}"/>
+                    <circle cx="18" cy="18" r="9.5" fill="${dialColor}" stroke="${dialRim}" stroke-width="2"/>
+                    <circle cx="18" cy="18" r="7.5" fill="#FFFFFF"/>
+                    <line x1="18" y1="18" x2="18" y2="13" stroke="#1E293B" stroke-width="1.3" stroke-linecap="round"/>
+                    <line x1="18" y1="18" x2="22" y2="18" stroke="#EF4444" stroke-width="1.1" stroke-linecap="round"/>
+                    <circle cx="18" cy="18" r="1" fill="#1E293B"/>
+                </svg>`;
+            } 
+            else if (cat === "신발") {
+                const c1 = getHexColor(colors[0], "#FFFFFF");
+                const c2 = getHexColor(colors[1], "#CBD5E1");
+                const stroke = (c1 === "#FFFFFF" || c1 === "#FAF5EA") ? "#94A3B8" : "rgba(0,0,0,0.2)";
+                return `
+                <svg viewBox="0 0 36 36" width="30" height="30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M5 21C5 17 8 16 12 16L18 17L27 12L31 16V25H5V21Z" fill="${c1}" stroke="${stroke}" stroke-width="1.2" stroke-linejoin="round"/>
+                    <path d="M4 25H32V28C32 29 31 30 30 30H6C5 30 4 29 4 28V25Z" fill="${c2}" stroke="${stroke}" stroke-width="1.2"/>
+                    <path d="M15 16.5L13 22M19 17.5L17 22" stroke="${c2 === c1 ? stroke : c2}" stroke-width="1.4" stroke-linecap="round"/>
+                </svg>`;
+            } 
+            else if (cat === "가방") {
+                const c1 = getHexColor(colors[0], "#8B5A2B");
+                const c2 = getHexColor(colors[1], "#D97706");
+                return `
+                <svg viewBox="0 0 36 36" width="30" height="30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M13 13V8C13 6.5 14.5 5 18 5C21.5 5 23 6.5 23 8V13" stroke="${c2}" stroke-width="2" stroke-linecap="round"/>
+                    <rect x="7" y="13" width="22" height="17" rx="3" fill="${c1}" stroke="rgba(0,0,0,0.15)" stroke-width="1.2"/>
+                    <path d="M16 13V18H20V13" fill="${c2}"/>
+                </svg>`;
+            } 
+            else if (cat === "아우터") {
+                const c1 = getHexColor(colors[0], "#334155");
+                const c2 = getHexColor(colors[1], "#E2E8F0");
+                return `
+                <svg viewBox="0 0 36 36" width="30" height="30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M10 5L3 12L7 16L10 13V30H26V13L29 16L33 12L26 5H10Z" fill="${c1}" stroke="rgba(0,0,0,0.15)" stroke-width="1.2" stroke-linejoin="round"/>
+                    <path d="M10 5L18 16L26 5" stroke="${c2}" stroke-width="1.5" stroke-linecap="round"/>
+                    <line x1="18" y1="16" x2="18" y2="30" stroke="rgba(0,0,0,0.2)" stroke-width="1.2"/>
+                </svg>`;
+            } 
+            else {
+                const c1 = getHexColor(colors[0], "#EAB308");
+                return `
+                <svg viewBox="0 0 36 36" width="30" height="30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="18" cy="20" r="10" stroke="${c1}" stroke-width="3"/>
+                    <path d="M15 7L18 4L21 7L18 10Z" fill="#38BDF8" stroke="${c1}" stroke-width="1"/>
+                </svg>`;
+            }
+        }
+
+        function renderWardrobeUI() {
+            const listEl = document.getElementById('wardrobeItemsList');
+            const badgeEl = document.getElementById('wardrobeCountBadge');
+            if (badgeEl) badgeEl.innerText = `${userWardrobeItems.length}개`;
+            if (!listEl) return;
+
+            if (userWardrobeItems.length === 0) {
+                listEl.innerHTML = `<div style="text-align:center; padding:16px 0; color:#94A3B8; font-size:12.5px;">등록된 옷장 아이템이 없습니다.<br>새 아이템을 등록해 보세요!</div>`;
+                updateTodayWardrobeMatchPick();
+                return;
+            }
+
+            listEl.innerHTML = userWardrobeItems.map(item => `
+                <div class="wardrobe-item-card">
+                    <div style="display:flex; align-items:center; gap:12px; flex: 1; overflow: hidden;">
+                        <div class="item-icon-frame">
+                            ${getDynamicItemIconSvg(item)}
+                        </div>
+                        <div style="overflow: hidden;">
+                            <h5 style="font-size:14px; font-weight:800; color:#0F172A; margin-bottom:3px; white-space:nowrap; text-overflow:ellipsis; overflow:hidden;">${item.nickname}</h5>
+                            <p style="font-size:11.5px; color:#64748B; line-height: 1.4;">
+                                <span style="background:#FEF3C7; color:#78350F; font-weight:700; padding:1px 5px; border-radius:4px;">${item.category}</span> · 
+                                <span>${item.colors.join(', ')}</span> · 
+                                <span>${item.materials.join(', ')}</span>
+                            </p>
+                        </div>
+                    </div>
+                    <div style="display:flex; gap:4px; margin-left:8px; flex-shrink: 0;">
+                        <button onclick="openWardrobeEditWizard(${item.id})" style="background:#F1F5F9; border:none; color:#334155; font-size:11.5px; font-weight:700; padding:5px 7px; border-radius:6px; cursor:pointer;">✏️ 수정</button>
+                        <button onclick="deleteWardrobeItem(${item.id})" style="background:#FEF2F2; border:1px solid #FECDD3; color:#EF4444; font-size:11.5px; font-weight:700; padding:5px 7px; border-radius:6px; cursor:pointer;">삭제</button>
+                    </div>
+                </div>
+            `).join('');
+
+            updateTodayWardrobeMatchPick();
+        }
+
+        function openWardrobeAddWizard() {
+            editingWardrobeItemId = null;
+            wizardCategory = "상의";
+            wizardColors = [];
+            wizardMaterials = [];
+            document.getElementById('wardrobeNicknameInput').value = '';
+            document.getElementById('wardrobeModalMainTitle').innerText = "👗 내 옷장 아이템 등록";
+            document.getElementById('btnSaveWardrobeItem').innerText = "✨ 내 옷장에 저장 완료";
+
+            document.querySelectorAll('#wizardStep1 .tile-btn').forEach(btn => btn.classList.remove('selected'));
+            document.querySelector('#wizardStep1 .tile-btn:first-child')?.classList.add('selected');
+
+            document.querySelectorAll('#wizardStep2 .color-chip').forEach(chip => chip.classList.remove('selected'));
+            document.querySelectorAll('#wizardStep3 .mat-chip').forEach(chip => chip.classList.remove('selected'));
+
+            goToWizardStep(1);
+            document.getElementById('wardrobeAddModal').classList.remove('hidden');
+        }
+
+        function openWardrobeEditWizard(itemId) {
+            const item = userWardrobeItems.find(i => i.id === itemId);
+            if (!item) return;
+
+            editingWardrobeItemId = itemId;
+            wizardCategory = item.category || "상의";
+            wizardColors = [...(item.colors || [])];
+            wizardMaterials = [...(item.materials || [])];
+            document.getElementById('wardrobeNicknameInput').value = item.nickname || '';
+            document.getElementById('wardrobeModalMainTitle').innerText = "✏️ 내 옷장 아이템 수정";
+            document.getElementById('btnSaveWardrobeItem').innerText = "✨ 수정 완료하기";
+
+            document.querySelectorAll('#wizardStep1 .tile-btn').forEach(btn => {
+                const text = btn.innerText.trim();
+                if (text.includes(wizardCategory)) btn.classList.add('selected');
+                else btn.classList.remove('selected');
+            });
+
+            document.querySelectorAll('#wizardStep2 .color-chip').forEach(chip => {
+                const text = chip.innerText.trim();
+                if (wizardColors.some(c => text.includes(c) || c.includes(text))) chip.classList.add('selected');
+                else chip.classList.remove('selected');
+            });
+
+            document.querySelectorAll('#wizardStep3 .mat-chip').forEach(chip => {
+                const text = chip.innerText.trim();
+                if (wizardMaterials.some(m => text.includes(m) || m.includes(text))) chip.classList.add('selected');
+                else chip.classList.remove('selected');
+            });
+
+            goToWizardStep(1);
+            document.getElementById('wardrobeAddModal').classList.remove('hidden');
+        }
+
+        function closeWardrobeAddWizard() { document.getElementById('wardrobeAddModal').classList.add('hidden'); }
+
+        function goToWizardStep(step) {
+            if (step === 2 && !wizardCategory) {
+                alert("아이템 종류를 선택해 주세요.");
+                return;
+            }
+            if (step === 3 && wizardColors.length === 0) {
+                alert("색상을 1개 이상 선택해 주세요.");
+                return;
+            }
+
+            document.getElementById('wizardStep1').classList.add('hidden');
+            document.getElementById('wizardStep2').classList.add('hidden');
+            document.getElementById('wizardStep3').classList.add('hidden');
+
+            const label = document.getElementById('wizardStepLabel');
+            if (step === 1) {
+                label.innerText = "Step 1. 아이템 종류 선택 (단일)";
+                document.getElementById('wizardStep1').classList.remove('hidden');
+            } else if (step === 2) {
+                label.innerText = "Step 2. 색상 선택 (2개 이상 복수 가능)";
+                document.getElementById('wizardStep2').classList.remove('hidden');
+            } else if (step === 3) {
+                label.innerText = "Step 3. 소재 & 이름 설정 (복수 가능)";
+                document.getElementById('wizardStep3').classList.remove('hidden');
+            }
+        }
+
+        function selectWizardCat(cat, el) {
+            wizardCategory = cat;
+            document.querySelectorAll('#wizardStep1 .tile-btn').forEach(btn => btn.classList.remove('selected'));
+            el.classList.add('selected');
+        }
+
+        function toggleColorChip(col, el) {
+            const idx = wizardColors.indexOf(col);
+            if (idx > -1) {
+                wizardColors.splice(idx, 1);
+                el.classList.remove('selected');
+            } else {
+                wizardColors.push(col);
+                el.classList.add('selected');
+            }
+        }
+
+        function toggleMatChip(mat, el) {
+            const idx = wizardMaterials.indexOf(mat);
+            if (idx > -1) {
+                wizardMaterials.splice(idx, 1);
+                el.classList.remove('selected');
+            } else {
+                wizardMaterials.push(mat);
+                el.classList.add('selected');
+            }
+        }
+
+        async function saveWardrobeItemToServer() {
+            if (!currentUserId) { alert("로그인이 필요합니다."); return; }
+            if (wizardMaterials.length === 0) { alert("소재를 1개 이상 선택해 주세요."); return; }
+
+            const customNick = document.getElementById('wardrobeNicknameInput').value.trim();
+
+            if (editingWardrobeItemId) {
+                const res = await fetch(`/api/wardrobe/edit/${editingWardrobeItemId}`, {
+                    method: 'PUT',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        user_id: currentUserId,
+                        category: wizardCategory,
+                        nickname: customNick,
+                        colors: wizardColors,
+                        materials: wizardMaterials
+                    })
+                });
+                const data = await res.json();
+                userWardrobeItems = data.wardrobe_items;
+                closeWardrobeAddWizard();
+                renderWardrobeUI();
+                alert("✨ 옷장 아이템이 성공적으로 수정되었습니다!");
+            } else {
+                const res = await fetch('/api/wardrobe/add', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        user_id: currentUserId,
+                        category: wizardCategory,
+                        nickname: customNick,
+                        colors: wizardColors,
+                        materials: wizardMaterials
+                    })
+                });
+                const data = await res.json();
+                userWardrobeItems = data.wardrobe_items;
+                closeWardrobeAddWizard();
+                renderWardrobeUI();
+                alert("✨ 내 옷장에 새 아이템이 등록되었습니다!");
+            }
+        }
+
+        async function deleteWardrobeItem(itemId) {
+            if (!confirm("이 아이템을 옷장에서 삭제하시겠습니까?")) return;
+            const res = await fetch(`/api/wardrobe/delete/${itemId}?user_id=${currentUserId}`, { method: 'DELETE' });
+            const data = await res.json();
+            userWardrobeItems = data.wardrobe_items;
+            renderWardrobeUI();
+        }
+
+        async function handleUnlockReportOnServer(reportKey, cost, subOption = "기본", partnerName = "상대방", relation = "선택안함") {
+            if (!currentUserId) { alert("로그인이 필요합니다."); return; }
+            if (currentCoin < cost) { openChargeStore(); return; }
+
+            const res = await fetch('/api/reports/unlock', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    user_id: currentUserId, report_key: reportKey, cost: cost,
+                    sub_option: subOption, partner_name: partnerName, relation: relation
+                })
+            });
+            const data = await res.json();
+            
+            currentCoin = data.new_balance;
+            updateCoinDisplay();
+            serverUnlockedReports = data.unlocked_reports;
+            renderServerArchive();
+            restoreUnlockedUIFromReports();
+        }
+
+        function restoreUnlockedUIFromReports() {
+            serverUnlockedReports.forEach(item => {
+                const extraActionHtml = `<div style="display:flex; justify-content:flex-end; margin-top:10px;"><button onclick="printReportDocument('${item.report_title}', this)" style="background:#F1F5F9; border:1px solid #CBD5E1; color:#334155; font-size:12px; font-weight:700; padding:6px 12px; border-radius:8px; cursor:pointer;">📄 감명서 인쇄/PDF 소장</button></div>`;
+                if (item.report_key === 'daewoon') {
+                    document.getElementById('daewoonBox').innerHTML = item.report_content + extraActionHtml;
+                    document.getElementById('daewoonBox').classList.remove('hidden');
+                    document.getElementById('daewoonTeaserBox')?.classList.add('hidden');
+                    document.getElementById('btnDaewoon')?.classList.add('hidden');
+                } else if (item.report_key === 'sinnian') {
+                    document.getElementById('sinnianBox').innerHTML = item.report_content + extraActionHtml;
+                    document.getElementById('sinnianBox').classList.remove('hidden');
+                    document.getElementById('sinnianTeaserBox')?.classList.add('hidden');
+                    document.getElementById('btnSinnian')?.classList.add('hidden');
+                } else if (item.report_key === 'gunghap') {
+                    document.getElementById('gunghapReportBox').innerHTML = item.report_content + extraActionHtml;
+                    document.getElementById('gunghapReportBox').classList.remove('hidden');
+                    document.getElementById('btnOpenGunghapModal')?.classList.add('hidden');
+                } else if (['wealth', 'love', 'business', 'health'].includes(item.report_key)) {
+                    document.getElementById(`themeReport_${item.report_key}`).innerHTML = item.report_content + extraActionHtml;
+                    document.getElementById(`themeReport_${item.report_key}`).classList.remove('hidden');
+                    document.getElementById(`btnTheme_${item.report_key}`)?.classList.add('hidden');
+                }
+            });
+        }
+
+        function renderServerArchive() {
+            const container = document.getElementById('unlockedArchiveList');
+            const countBadge = document.getElementById('archiveCountBadge');
+            if (countBadge) countBadge.innerText = `${serverUnlockedReports.length}건`;
+
+            if (!container) return;
+            if (serverUnlockedReports.length === 0) {
+                container.innerHTML = `<div style="text-align: center; padding: 20px 0; color: #94A3B8; font-size: 13px;"><p style="font-size: 28px; margin-bottom: 4px;">📂</p><p style="font-weight: 700; color: #64748B;">구매한 감명서가 없습니다.</p></div>`;
+                return;
+            }
+
+            container.innerHTML = serverUnlockedReports.map((r, idx) => `
+                <div style="background: #F8FAFC; border: 1.5px solid #2D6A4F; border-radius: 16px; padding: 12px 14px; text-align: left; display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+                    <div style="flex: 1; overflow: hidden;">
+                        <span style="font-size: 11px; background: #2D6A4F; color: #FFFFFF; font-weight: 700; padding: 2px 6px; border-radius: 4px;">열람완료 (${r.created_at || ''})</span>
+                        <h4 style="font-weight: 800; color: #0F172A; font-size: 14px; margin-top: 4px; font-family: 'Noto Serif KR', serif;">${r.report_title}</h4>
+                    </div>
+                    <button onclick="openServerArchiveDetail(${idx})" style="background: #2D6A4F; color: #FFFFFF; border: none; font-size: 13px; font-weight: 700; padding: 8px 12px; border-radius: 10px; cursor: pointer;">📄 다시보기</button>
+                </div>
+            `).join('');
+        }
+
+        function openServerArchiveDetail(idx) {
+            const item = serverUnlockedReports[idx];
+            if (!item) return;
+            document.getElementById('archiveModalTitle').innerText = item.report_title;
+            document.getElementById('archiveModalBody').innerHTML = item.report_content;
+            document.getElementById('archiveDetailModal').classList.remove('hidden');
+        }
+
+        function closeArchiveDetailModal() { document.getElementById('archiveDetailModal').classList.add('hidden'); }
+
+        async function processPgPaymentOnServer() {
+            closePgModal();
+            const res = await fetch('/api/user/charge-coin', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ user_id: currentUserId, amount: pendingCoinAmount })
+            });
+            const data = await res.json();
+            currentCoin = data.new_balance;
+            updateCoinDisplay();
+            alert(`🎉 결제가 완료되었습니다! (+${pendingCoinAmount.toLocaleString()} 복채)`);
+        }
+
+        function openGunghapInputModal() {
+            const nameInput = document.getElementById('partnerNameInput');
+            const relSelect = document.getElementById('partnerRelationSelect');
+
+            nameInput.value = '';
+            document.getElementById('partnerBirthYearSelect').selectedIndex = 0;
+            document.getElementById('partnerBirthMonthSelect').selectedIndex = 0;
+            document.getElementById('partnerBirthDaySelect').selectedIndex = 0;
+            relSelect.selectedIndex = 0;
+
+            document.getElementById('gunghapModal').classList.remove('hidden');
+            setTimeout(() => { nameInput.focus(); }, 150);
+        }
+
+        function closeGunghapModal() { document.getElementById('gunghapModal').classList.add('hidden'); }
+
+        function confirmUnlockGunghapOnServer() {
+            const pName = document.getElementById('partnerNameInput').value.trim();
+            const py = document.getElementById('partnerBirthYearSelect').value;
+            const pm = document.getElementById('partnerBirthMonthSelect').value;
+            const pd = document.getElementById('partnerBirthDaySelect').value;
+            const rel = document.getElementById('partnerRelationSelect').value;
+
+            if (!pName) {
+                alert("상대방 이름을 입력해 주세요.");
+                document.getElementById('partnerNameInput').focus();
+                return;
+            }
+
+            closeGunghapModal();
+            handleUnlockReportOnServer('gunghap', 350, "기본", pName, rel || "인연/조화");
+        }
+
+        function openThemeSelectModal(key) {
+            currentThemeKey = key;
+            const modalBox = document.getElementById('modalOptionBox');
+            const titleEl = document.getElementById('modalThemeTitle');
+
+            if (key === 'love') {
+                titleEl.innerText = "💖 현재 애정 상태를 선택해 주세요";
+                modalBox.innerHTML = `
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                        <label style="padding:10px; border:1px solid #E2E8F0; border-radius:8px; background:white; cursor:pointer;"><input type="radio" name="optM" value="솔로" checked> 솔로 (미혼)</label>
+                        <label style="padding:10px; border:1px solid #E2E8F0; border-radius:8px; background:white; cursor:pointer;"><input type="radio" name="optM" value="썸/짝사랑"> 썸 / 짝사랑</label>
+                        <label style="padding:10px; border:1px solid #E2E8F0; border-radius:8px; background:white; cursor:pointer;"><input type="radio" name="optM" value="연애중"> 연애중</label>
+                        <label style="padding:10px; border:1px solid #E2E8F0; border-radius:8px; background:white; cursor:pointer;"><input type="radio" name="optM" value="기혼"> 기혼 (부부)</label>
+                    </div>`;
+            } else if (key === 'business') {
+                titleEl.innerText = "🏢 현재 직업/사업 상태를 선택해 주세요";
+                modalBox.innerHTML = `
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                        <label style="padding:10px; border:1px solid #E2E8F0; border-radius:8px; background:white; cursor:pointer;"><input type="radio" name="optM" value="직장인" checked> 직장인</label>
+                        <label style="padding:10px; border:1px solid #E2E8F0; border-radius:8px; background:white; cursor:pointer;"><input type="radio" name="optM" value="취업/이직"> 취업 / 이직</label>
+                        <label style="padding:10px; border:1px solid #E2E8F0; border-radius:8px; background:white; cursor:pointer;"><input type="radio" name="optM" value="사업가"> 사업가</label>
+                        <label style="padding:10px; border:1px solid #E2E8F0; border-radius:8px; background:white; cursor:pointer;"><input type="radio" name="optM" value="창업"> 창업 준비</label>
+                    </div>`;
+            }
+            document.getElementById('themeSelectModal').classList.remove('hidden');
+        }
+
+        function closeThemeSelectModal() { document.getElementById('themeSelectModal').classList.add('hidden'); }
+        function confirmUnlockThemeOnServer() {
+            const selEl = document.querySelector('input[name="optM"]:checked');
+            const subOpt = selEl ? selEl.value : '기본';
+            closeThemeSelectModal();
+            handleUnlockReportOnServer(currentThemeKey, 220, subOpt);
+        }
+
+        function setGenderType(gender) {
+            selectedGender = gender;
+            document.getElementById('btnGenderMale').className = (gender === 'male') ? "cal-btn active" : "cal-btn";
+            document.getElementById('btnGenderFemale').className = (gender === 'female') ? "cal-btn active" : "cal-btn";
+        }
+
+        function setCalType(type) {
+            selectedCalendarType = type;
+            ['solar', 'lunar', 'leap'].forEach(t => {
+                const btn = document.getElementById(`btnCal${t.charAt(0).toUpperCase() + t.slice(1)}`);
+                if (btn) btn.className = (t === type) ? "cal-btn active" : "cal-btn";
+            });
+        }
+
+        function toggleDrawer(drawerId) {
+            const card = document.getElementById(drawerId);
+            const body = card.querySelector('.drawer-body');
+            if (!body) return;
+            const isOpen = card.classList.contains('open');
+            card.classList.toggle('open', !isOpen);
+            body.classList.toggle('hidden', isOpen);
+        }
+
+        function getGoldCoinSvg(size = 16, color = "#F59E0B") {
+            return `<svg viewBox="0 0 20 20" width="${size}" height="${size}" style="display:inline-block; vertical-align:middle;"><circle cx="10" cy="10" r="9" fill="${color}" stroke="#D97706" stroke-width="1.2"/><text x="10" y="14" font-size="11" font-weight="800" fill="#FFFFFF" text-anchor="middle">C</text></svg>`;
+        }
+
+        function goToHomeAndScrollTop() { switchTab('today'); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+
+        function switchTab(tabId) {
+            ['today', 'saju', 'theme', 'mypage'].forEach(t => {
+                document.getElementById(`view-${t}`)?.classList.add('hidden');
+                document.getElementById(`tab-${t}`)?.classList.remove('active');
+            });
+            document.getElementById(`view-${tabId}`)?.classList.remove('hidden');
+            document.getElementById(`tab-${tabId}`)?.classList.add('active');
+            if (tabId === 'mypage') renderServerArchive();
+        }
+
+        function switchZodiacSubTab(type) {
+            const btnZodiac = document.getElementById('btnSubZodiac');
+            const btnStar = document.getElementById('btnSubStar');
+            const gridZodiac = document.getElementById('gridZodiacBox');
+            const gridStar = document.getElementById('gridStarBox');
+
+            if (type === 'zodiac') {
+                btnZodiac.className = 'sub-tab-btn active';
+                btnStar.className = 'sub-tab-btn';
+                gridZodiac.classList.remove('hidden');
+                gridStar.classList.add('hidden');
+            } else {
+                btnStar.className = 'sub-tab-btn active';
+                btnZodiac.className = 'sub-tab-btn';
+                gridZodiac.classList.add('hidden');
+                gridStar.classList.remove('hidden');
+            }
+        }
+
+        async function openZodiacModal(type, key) {
+            try {
+                const res = await fetch(`/api/zodiac-fortune?type=${type}&key=${encodeURIComponent(key)}`);
+                const data = await res.json();
+                
+                document.getElementById('zodiacModalName').innerText = `${data.name} 오늘의 운세`;
+                document.getElementById('zodiacModalScore').innerText = `${data.score}점`;
+                document.getElementById('zodiacModalTitle').innerText = data.title;
+                document.getElementById('zodiacModalOverview').innerText = data.overview;
+
+                const iconBox = document.getElementById('zodiacModalIconBox');
+                const tipsBox = document.getElementById('zodiacYearTipsBox');
+                const subLabel = document.getElementById('zodiacModalSub');
+
+                if (type === 'star') {
+                    if (subLabel) subLabel.innerText = '천체 성도 & 4대 원소 에너지 분석';
+                    
+                    if (ZODIAC_GLYPHS[key]) {
+                        iconBox.innerHTML = ZODIAC_GLYPHS[key];
+                    } else {
+                        iconBox.innerHTML = `<span style="font-size: 22px; color: #E2C068;">✦</span>`;
+                    }
+
+                    tipsBox.innerHTML = `
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; font-size: 12.5px;">
+                            <div style="background: #F8FAFC; border: 1px solid #E2E8F0; padding: 10px; border-radius: 12px; text-align: left;">
+                                <span style="color: #64748B; font-size: 11px; display: block; margin-bottom: 2px;">✨ 4대 원소</span>
+                                <strong style="color: #0F172A; font-size: 13.5px;">${data.star_element || '불 (Fire)'}</strong>
+                            </div>
+                            <div style="background: #F8FAFC; border: 1px solid #E2E8F0; padding: 10px; border-radius: 12px; text-align: left;">
+                                <span style="color: #64748B; font-size: 11px; display: block; margin-bottom: 2px;">🪐 지배 수호성</span>
+                                <strong style="color: #0F172A; font-size: 13.5px;">${data.star_planet || '태양 (Sun)'}</strong>
+                            </div>
+                        </div>
+                        <div style="background: #FAF9F6; border: 1px solid #FCD34D; border-radius: 14px; padding: 14px; text-align: left;">
+                            <span style="font-size: 12px; font-weight: 800; color: #78350F; display: block; margin-bottom: 6px;">🔮 천체 에너지 데일리 가이드</span>
+                            <p style="color: #334155; font-size: 13.5px; line-height: 1.7; margin: 0;">${data.focus_content || ''}</p>
+                        </div>
+                    `;
+                    document.getElementById('zodiacExtraInfo').innerHTML = `🎨 행운 컬러: <strong>${data.lucky_color || '골드'}</strong> &nbsp;|&nbsp; ⏱️ 행운 시간: <strong>${data.lucky_time || '오전 10시'}</strong>`;
+                } else {
+                    if (subLabel) subLabel.innerText = '오늘의 실시간 일진 분석';
+                    const zIcons = { '쥐':'🐭', '소':'🐮', '호랑이':'🐯', '토끼':'🐰', '용':'🐲', '뱀':'🐍', '말':'🐴', '양':'🐑', '원숭이':'🐵', '닭':'🐔', '개':'🐶', '돼지':'🐷' };
+                    iconBox.innerHTML = `<span style="font-size: 24px;">${zIcons[key] || '✨'}</span>`;
+
+                    tipsBox.innerHTML = `
+                        <p style="font-weight: 800; color: #0F172A; margin-bottom: 8px; font-size: 14px; text-align: left;">📅 출생연도별 핵심 가이드</p>
+                        <div style="display: flex; flex-direction: column; gap: 8px; text-align: left;">
+                            ${(data.year_tips || []).map(item => {
+                                const parts = item.year_label.split(' (');
+                                const yearMain = parts[0]; 
+                                const subInfo = parts[1] ? '(' + parts[1] : '';
+
+                                return `
+                                <div style="display: flex; align-items: center; gap: 10px; font-size: 13px; line-height: 1.5; padding: 6px 0; border-bottom: 1px solid #F1F5F9;">
+                                    <div style="background: #F1F5F9; color: #334155; padding: 4px 8px; border-radius: 8px; flex-shrink: 0; min-width: 82px; text-align: center; display: flex; flex-direction: column; gap: 2px;">
+                                        <span style="font-weight: 800; font-size: 12px; color: #0F172A;">${yearMain}</span>
+                                        <span style="font-size: 10.5px; color: #64748B; font-weight: 600;">${subInfo}</span>
+                                    </div>
+                                    <span style="color: #334155; flex: 1;">${item.tip}</span>
+                                </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    `;
+                    document.getElementById('zodiacExtraInfo').innerHTML = `⏱️ 행운 시간: <strong>${data.lucky_time || ''}</strong> &nbsp;|&nbsp; 🤝 <strong>${data.lucky_match || ''}</strong>`;
+                }
+                
+                document.getElementById('zodiacModal').classList.remove('hidden');
+            } catch(e) { 
+                alert('운세를 불러오지 못했습니다.'); 
+            }
+        }
+
+        function closeZodiacModal() { document.getElementById('zodiacModal').classList.add('hidden'); }
+        function shareZodiacFortune() { alert('📋 오늘의 운세 링크가 복사되었습니다!'); }
+
+        function setElemBadge(id, char, elem) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            el.innerText = char || "-";
+            el.className = char ? `badge-elem elem-${elem}` : "badge-elem elem-none";
+        }
+
+        function formatJijangganGroup(jjList) {
+            if (!jjList || jjList.length === 0) return `<span style="font-size:11px; color:#94A3B8;">-</span>`;
+            return jjList.map(j => `<span class="badge-jjg elem-${j.elem}">${j.char}</span>`).join('');
+        }
+
+        function updateDaewoonGraphByAge(age) {
+            currentUserAge = age;
+            document.getElementById('daewoonTagText1').textContent = `📍 ${currentUserName}님의 현재 위치`;
+            document.getElementById('daewoonTagText2').textContent = `(${age}세)`;
+
+            let targetX = 30 + ((age - 20) / 50) * 250;
+            if (targetX < 20) targetX = 20;
+            if (targetX > 280) targetX = 280;
+
+            const guideLine = document.getElementById('daewoonGuideLine');
+            const currentDot = document.getElementById('daewoonCurrentDot');
+            const badgeGroup = document.getElementById('daewoonBadgeGroup');
+
+            if (guideLine) { guideLine.setAttribute('x1', targetX); guideLine.setAttribute('x2', targetX); }
+            if (currentDot) { currentDot.setAttribute('cx', targetX); }
+            if (badgeGroup) {
+                let badgeX = targetX - 80;
+                if (badgeX < 10) badgeX = 10;
+                if (badgeX > 135) badgeX = 135;
+                badgeGroup.setAttribute('transform', `translate(${badgeX}, 0)`);
+            }
+        }
+
+        async function handleTarotDraw(slot) {
+            const res = await fetch(`/api/daily-tarot?slot=${slot}`);
+            const card = await res.json();
+            const flipper = document.getElementById(`flipper${slot}`);
+            const front = document.getElementById(`front${slot}`);
+            
+            const cardImgObj = TAROT_IMG_MAP[card.name] || TAROT_IMG_MAP["I. THE MAGICIAN (마법사)"];
+            front.innerHTML = `<img src="${cardImgObj.main}" alt="${card.name}" referrerpolicy="no-referrer" style="width:100%; height:100%; object-fit:cover; display:block; border-radius:8px;" onerror="this.onerror=null; this.src='${cardImgObj.backup}';">`;
+            
+            flipper.classList.add('flipped');
+            setTimeout(() => {
+                const resBox = document.getElementById('tarotResultBox');
+                const reading = selectedGender === 'female' ? card.reading_female : card.reading_male;
+                resBox.innerHTML = `
+                    <div style="margin-top: 14px; text-align: left;">
+                        <h4 style="font-weight: 900; color: #0F172A; font-size: 16px; font-family: 'Noto Serif KR', serif; margin-bottom: 2px;">${card.name}</h4>
+                        <p style="font-size: 12.5px; color: #78350F; font-weight: 700; margin-bottom: 12px;">${card.keyword}</p>
+                        
+                        <div style="display: flex; flex-direction: column; gap: 8px; font-size: 13.5px; line-height: 1.7; color: #334155;">
+                            <p><strong>📖 카드의 상징:</strong> ${card.symbolism}</p>
+                            <p><strong>🔮 오늘의 실전 운세:</strong> ${reading}</p>
+                            <p style="color: #065F46;"><strong>💡 실천 행동 수칙:</strong> ${card.action_guide}</p>
+                        </div>
+                    </div>
+                `;
+                resBox.classList.remove('hidden');
+            }, 600);
+        }
+
+        function openTalismanModal() {
+            document.getElementById('talismanTitle').innerText = currentTalisman?.title || "백호 금전부";
+            document.getElementById('talismanPower').innerText = currentTalisman?.power || "결단력 강화 · 투자 수익 실현";
+            document.getElementById('talismanDesc').innerText = currentTalisman?.desc || "사방에서 금전과 복록이 쏟아지게 하는 전통 비급 부적입니다.";
+            document.getElementById('talismanOwnerName').innerText = currentUserName;
+            document.getElementById('talismanRealBox').innerHTML = renderAuthenticCinnabarTalisman(currentTalisman?.talisman_type || "metal_wealth", 160, 260);
+            document.getElementById('talismanModal').classList.remove('hidden');
+        }
+
+        function closeTalismanModal() { document.getElementById('talismanModal').classList.add('hidden'); }
+        
+        function downloadTalismanImage() {
+            const svgElement = document.querySelector('#talismanRealBox #svgTalismanMain');
+            if (!svgElement) return;
+
+            const svgString = new XMLSerializer().serializeToString(svgElement);
+            const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+            const URL = window.URL || window.webkitURL || window;
+            const blobURL = URL.createObjectURL(svgBlob);
+
+            const img = new Image();
+            img.onload = function() {
+                const canvas = document.createElement('canvas');
+                canvas.width = 420;
+                canvas.height = 720;
+                const ctx = canvas.getContext('2d');
+
+                ctx.fillStyle = "#FAF9F6";
+                ctx.fillRect(0, 0, 420, 720);
+                ctx.drawImage(img, 20, 20, 380, 680);
+
+                const dlLink = document.createElement('a');
+                dlLink.download = `${currentUserName}_달하_맞춤부적.png`;
+                dlLink.href = canvas.toDataURL('image/png');
+                document.body.appendChild(dlLink);
+                dlLink.click();
+                document.body.removeChild(dlLink);
+                URL.revokeObjectURL(blobURL);
+            };
+            img.src = blobURL;
+        }
+
+        function printReportDocument(title, btnElement) {
+            const reportContainer = btnElement.closest('.card') || btnElement.parentElement;
+            const contentClone = reportContainer.cloneNode(true);
+            contentClone.querySelectorAll('button, .teaser-blur-box').forEach(el => el.remove());
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"><title>${title} - ${currentUserName} 님</title><style>body { font-family: 'Pretendard', sans-serif; padding: 30px; line-height: 1.85; color: #1E293B; }</style></head><body><h2>${title}</h2>${contentClone.innerHTML}<script>window.onload = function() { window.print(); }<\/script></body></html>`);
+            printWindow.document.close();
+        }
+
+        function updateCoinDisplay() {
+            document.getElementById('coinHeader').innerText = currentCoin;
+            document.getElementById('coinMypage').innerText = currentCoin;
+        }
+
+        function openChargeStore() { document.getElementById('chargeModal').classList.remove('hidden'); }
+        function closeChargeStore() { document.getElementById('chargeModal').classList.add('hidden'); }
+        function openPgModal(coinAmt, price, itemName) {
+            pendingCoinAmount = coinAmt;
+            document.getElementById('pgItemName').innerText = itemName;
+            document.getElementById('pgItemPrice').innerText = `₩${price.toLocaleString()}`;
+            closeChargeStore();
+            document.getElementById('pgModal').classList.remove('hidden');
+        }
+        function closePgModal() { document.getElementById('pgModal').classList.add('hidden'); }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            initKakaoSDK();
+            initDateDropdowns();
+            document.getElementById('headerCoinSvg').innerHTML = getGoldCoinSvg(16, "#F59E0B");
+            document.getElementById('mypageCoinSvg').innerHTML = getGoldCoinSvg(19, "#F59E0B");
+            document.getElementById('chargeModalHeaderCoinSvg').innerHTML = getGoldCoinSvg(18, "#F59E0B");
+            document.querySelectorAll('.btn-coin-icon').forEach(el => { el.innerHTML = getGoldCoinSvg(16, "#D97706"); });
+            document.querySelectorAll('.btn-coin-icon-white').forEach(el => { el.innerHTML = getGoldCoinSvg(16, "#F59E0B"); });
+
+            document.querySelectorAll('.star-glyph-box').forEach(el => {
+                const sign = el.getAttribute('data-sign');
+                if (ZODIAC_GLYPHS[sign]) el.innerHTML = ZODIAC_GLYPHS[sign];
+            });
+
+            for (let i = 1; i <= 3; i++) {
+                const back = document.getElementById(`tarotSvgSlot${i}`);
+                if (back) back.innerHTML = getTarotCardBackSvg();
+            }
+
+            checkAutoLoginSession();
+        });
+    </script>
+</body>
+</html>
