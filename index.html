@@ -19,7 +19,8 @@
 
     <meta name="theme-color" content="#0D1527">
     <script src="https://developers.kakao.com/sdk/js/kakao.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800;900&family=Noto+Serif+KR:wght@600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@600;700;800;900&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Pretendard', sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background-color: #080D1A; color: #1E293B; display: flex; justify-content: center; min-height: 100vh; }
@@ -285,67 +286,91 @@
                     </div>
                 </div>
 
-                <div class="card" style="padding: 20px 18px; text-align: left; display: flex; flex-direction: column; gap: 14px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <div style="display: flex; align-items: center; gap: 6px;">
-                            <span style="font-size: 15px;">🎨</span>
-                            <h4 style="font-size: 15px; font-weight: 800; color: #0F172A;">오늘의 개운 팔레트</h4>
+                <!-- 1. 오늘 뭐 입을까? (Daily Style Nav 통합 카드) -->
+                <div class="card" style="padding: 20px 18px; text-align: left; display: flex; flex-direction: column; gap: 16px; border: 1.5px solid #E2E8F0;">
+                    <!-- 카드 헤더: 제목 & 무드 태그 -->
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 12px;">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span style="font-size: 20px;">👔</span>
+                            <div>
+                                <h4 style="font-size: 16.5px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif; letter-spacing: -0.3px;">오늘 뭐 입을까?</h4>
+                                <p style="font-size: 11.5px; color: #64748B; margin-top: 1px;">나의 사주 오행 맞춤 데일리 스타일링</p>
+                            </div>
                         </div>
-                        <span id="todayStyleMoodBadge" style="font-size: 11.5px; background: #EBF5EE; color: #166534; font-weight: 800; padding: 3px 10px; border-radius: 9999px; border: 1px solid #BBF7D0;">🏃 캐주얼 & 액티브</span>
+                        <span id="todayStyleMoodBadge" style="font-size: 11.5px; background: #EBF5EE; color: #166534; font-weight: 800; padding: 4px 10px; border-radius: 9999px; border: 1px solid #BBF7D0;">🏃 캐주얼 & 액티브</span>
                     </div>
 
-                    <div id="dynamicColorPaletteBox" style="display: flex; align-items: center; justify-content: flex-start; gap: 8px; flex-wrap: wrap;">
-                    </div>
-
-                    <p id="paletteMoodStoryBox" style="font-size: 12.5px; color: #64748B; line-height: 1.6; margin: 0; padding-left: 2px;">
-                        깊은 미드나잇 인디고와 안개빛 스카이블루가 만나 사주의 금전운과 전문성을 견고히 세웁니다.
-                    </p>
-
-                    <hr style="border: none; border-top: 1px solid #F1F5F9; margin: 2px 0;">
-
+                    <!-- 1) 오늘의 개운 컬러 & 무드 -->
                     <div>
-                        <span style="font-size: 11.5px; font-weight: 700; color: #64748B; display: block; margin-bottom: 4px;">👔 오늘 추천 룩</span>
-                        <p id="resStyle" style="font-weight: 800; font-size: 15.5px; color: #0F172A; margin: 0; line-height: 1.5;">
-                            네이비 쿨 반팔티 & 내 옷장의 [플랙 연청바지]
+                        <span style="font-size: 12px; font-weight: 700; color: #64748B; display: flex; align-items: center; gap: 4px; margin-bottom: 8px;">
+                            <span>🎨</span> 1. 오늘의 추천 색상 (개운 팔레트)
+                        </span>
+                        <div id="dynamicColorPaletteBox" style="display: flex; align-items: center; justify-content: flex-start; gap: 8px; flex-wrap: wrap; margin-bottom: 8px;">
+                        </div>
+                        <p id="paletteMoodStoryBox" style="font-size: 12.5px; color: #475569; line-height: 1.6; margin: 0; background: #F8FAFC; border-radius: 10px; padding: 10px 12px; border-left: 3px solid #2D6A4F;">
+                            "깊은 미드나잇 인디고와 안개빛 스카이블루가 만나 사주의 금전운과 전문성을 견고히 세웁니다."
                         </p>
                     </div>
 
-                    <div id="wardrobeDailyMatchPick" style="background: #F8FAFC; border-radius: 12px; padding: 12px 14px; border: 1px solid #E2E8F0;">
-                        <div style="font-size: 13px; color: #334155; line-height: 1.55;">
-                            ✨ <strong>소품 매칭:</strong> 발끝에 내 옷장의 <strong>[호카 운동화]</strong>를 더해 완벽한 균형을 맞춰보세요!
-                        </div>
-                    </div>
-                </div>
-
-                <div id="drawerWardrobe" class="drawer-card" style="border: 1.5px solid #CBD5E1;">
-                    <div class="drawer-header" onclick="toggleDrawer('drawerWardrobe')" style="background: #FAF9F6;">
-                        <div class="drawer-title-box">
-                            <div class="drawer-icon-circle" style="background: #FEF3C7; color: #78350F;">👗</div>
-                            <div style="text-align: left;">
-                                <div style="display: flex; align-items: center; gap: 6px;">
-                                    <h4 class="drawer-title" style="color: #0F172A;">내 옷장 아이템</h4>
-                                    <span id="wardrobeCountBadge" style="font-size: 11px; background: #0D1527; color: #F6E2A1; font-weight: 800; padding: 1px 6px; border-radius: 9999px;">0개</span>
-                                </div>
-                                <p class="drawer-sub">자주 착용하는 아이템을 등록하고 매일 매칭받기</p>
+                    <!-- 2) 오늘 추천 룩 매칭 -->
+                    <div>
+                        <span style="font-size: 12px; font-weight: 700; color: #64748B; display: flex; align-items: center; gap: 4px; margin-bottom: 6px;">
+                            <span>✨</span> 2. 오늘 추천 룩
+                        </span>
+                        <p id="resStyle" style="font-weight: 800; font-size: 15.5px; color: #0F172A; margin: 0 0 8px 0; line-height: 1.5;">
+                            네이비 쿨 티셔츠 &nbsp;&amp;&nbsp; 스카이블루 데님 팬츠
+                        </p>
+                        <div id="wardrobeDailyMatchPick" style="background: #FFFBEB; border-radius: 12px; padding: 12px 14px; border: 1px solid #FDE68A;">
+                            <div style="font-size: 13px; color: #78350F; line-height: 1.6;">
+                                ✦ <strong>소품 매칭:</strong> 내 옷장의 <strong>[시계]</strong>를 더해 균형을 맞춰보세요.
                             </div>
                         </div>
-                        <span class="drawer-arrow">▼</span>
                     </div>
-                    <div class="drawer-body hidden" id="drawerBodyWardrobe" style="padding: 14px 16px;">
-                        <button onclick="openWardrobeAddWizard()" style="width: 100%; background: #2D6A4F; color: white; border: none; font-size: 13.5px; font-weight: 600; padding: 11px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; margin-bottom: 12px;">
-                            <span>➕</span> 새 아이템 옷장에 등록하기 (3초)
-                        </button>
 
-                        <div id="wardrobeItemsList" style="display: flex; flex-direction: column; gap: 6px;"></div>
+                    <!-- 3) 내 옷장 아이템 일체형 아코디언 -->
+                    <div id="drawerWardrobe" class="drawer-card" style="border: 1px solid #E2E8F0; background: #F8FAFC; border-radius: 14px;">
+                        <div class="drawer-header" onclick="toggleDrawer('drawerWardrobe')" style="background: transparent; padding: 12px 14px;">
+                            <div class="drawer-title-box" style="gap: 8px;">
+                                <span style="font-size: 16px;">👗</span>
+                                <div style="display: flex; align-items: center; gap: 6px;">
+                                    <h5 style="font-size: 13.5px; font-weight: 800; color: #0F172A;">내 옷장 열어보기 (뭐 꺼내 입을까?)</h5>
+                                    <span id="wardrobeCountBadge" style="font-size: 11px; background: #0D1527; color: #F6E2A1; font-weight: 800; padding: 1px 6px; border-radius: 9999px;">0개</span>
+                                </div>
+                            </div>
+                            <span class="drawer-arrow" style="font-size: 12px;">▼</span>
+                        </div>
+                        <div class="drawer-body hidden" id="drawerBodyWardrobe" style="padding: 12px 14px; border-top: 1px solid #E2E8F0; background: #FFFFFF;">
+                            <button onclick="openWardrobeAddWizard()" style="width: 100%; background: #2D6A4F; color: white; border: none; font-size: 13px; font-weight: 700; padding: 10px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; margin-bottom: 10px;">
+                                <span>➕</span> 새 아이템 옷장에 등록하기 (3초)
+                            </button>
+                            <div id="wardrobeItemsList" style="display: flex; flex-direction: column; gap: 6px;"></div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="grid-2">
-                    <div class="grid-cell"><span style="font-size: 12px; color: #94A3B8; display: block;">🍀 행운의 아이템</span><p id="resItem" style="font-weight: 700; margin-top: 2px; font-size: 13.5px;">실버 메탈 시계</p></div>
-                    <div class="grid-cell"><span style="font-size: 12px; color: #94A3B8; display: block;">🔢 행운의 숫자</span><p id="resNumber" style="font-weight: 700; margin-top: 2px; font-size: 14px;">4, 9</p></div>
-                    <div class="grid-cell"><span style="font-size: 12px; color: #94A3B8; display: block;">🧭 행운의 방위</span><p id="resDirection" style="font-weight: 700; margin-top: 2px; font-size: 14px;">정서쪽 (백호 방위)</p></div>
-                    <div class="grid-cell"><span style="font-size: 12px; color: #94A3B8; display: block;">🍲 추천 메뉴</span><p id="resMenu" style="font-weight: 700; margin-top: 2px; font-size: 13.5px;">속이 편안한 영양 솥밥</p></div>
-                    <div class="grid-cell" style="grid-column: span 2;"><span style="font-size: 12px; color: #94A3B8; display: block;">💡 마인드 처세</span><p id="resMindset" style="font-weight: 700; margin-top: 2px; font-size: 13.5px; color: #0F172A;">원칙을 지키며 유연하게 대처하기</p></div>
+                <!-- 2. 오늘 나에게 행운을 주는 것들 (생활 밀착형 가이드 통합 카드) -->
+                <div class="card" style="padding: 20px 18px; text-align: left; display: flex; flex-direction: column; gap: 14px; border: 1.5px solid #E2E8F0;">
+                    <div style="display: flex; align-items: center; gap: 8px; border-bottom: 1px solid #F1F5F9; padding-bottom: 10px;">
+                        <span style="font-size: 20px;">🍀</span>
+                        <div>
+                            <h4 style="font-size: 16.5px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif; letter-spacing: -0.3px;">오늘 나에게 행운을 주는 것들</h4>
+                            <p style="font-size: 11.5px; color: #64748B; margin-top: 1px;">풍수와 수리 역학으로 보는 일상 개운 가이드</p>
+                        </div>
+                    </div>
+
+                    <div class="grid-2">
+                        <div class="grid-cell"><span style="font-size: 12px; color: #64748B; font-weight: 600; display: block;">🍀 행운의 아이템</span><p id="resItem" style="font-weight: 800; margin-top: 3px; font-size: 14px; color: #0F172A;">실버 메탈 시계</p></div>
+                        <div class="grid-cell"><span style="font-size: 12px; color: #64748B; font-weight: 600; display: block;">🔢 행운의 숫자</span><p id="resNumber" style="font-weight: 800; margin-top: 3px; font-size: 14.5px; color: #0F172A;">4, 9</p></div>
+                        <div class="grid-cell"><span style="font-size: 12px; color: #64748B; font-weight: 600; display: block;">🧭 행운의 방위</span><p id="resDirection" style="font-weight: 800; margin-top: 3px; font-size: 14px; color: #0F172A;">정서쪽 (백호 방위)</p></div>
+                        <div class="grid-cell"><span style="font-size: 12px; color: #64748B; font-weight: 600; display: block;">🍲 추천 메뉴</span><p id="resMenu" style="font-weight: 800; margin-top: 3px; font-size: 14px; color: #0F172A;">속이 편안한 영양 솥밥</p></div>
+                    </div>
+
+                    <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 12px 14px;">
+                        <span style="font-size: 12px; font-weight: 700; color: #64748B; display: flex; align-items: center; gap: 4px; margin-bottom: 2px;">
+                            <span>💡</span> 마인드 처세 (오늘의 실천 수칙)
+                        </span>
+                        <p id="resMindset" style="font-weight: 800; font-size: 14px; color: #0F172A; margin: 0;">원칙을 지키며 유연하게 대처하기</p>
+                    </div>
                 </div>
 
                 <div class="action-card">
@@ -447,7 +472,7 @@
                                 <div onclick="openZodiacModal('zodiac', '토끼')" class="zodiac-btn"><span class="zodiac-icon">🐰</span><span class="zodiac-label">토끼</span></div>
                                 <div onclick="openZodiacModal('zodiac', '용')" class="zodiac-btn"><span class="zodiac-icon">🐲</span><span class="zodiac-label">용</span></div>
                                 <div onclick="openZodiacModal('zodiac', '뱀')" class="zodiac-btn"><span class="zodiac-icon">🐍</span><span class="zodiac-label">뱀</span></div>
-                                <div onclick="openZodiacModal('zodiac', '말')" class="zodiac-btn"><span class="zodiac-icon">🐴</span><span class="zodiac-label">말</span></div>
+                                <div onclick="openZodiacModal('말')" class="zodiac-btn"><span class="zodiac-icon">🐴</span><span class="zodiac-label">말</span></div>
                                 <div onclick="openZodiacModal('zodiac', '양')" class="zodiac-btn"><span class="zodiac-icon">🐑</span><span class="zodiac-label">양</span></div>
                                 <div onclick="openZodiacModal('zodiac', '원숭이')" class="zodiac-btn"><span class="zodiac-icon">🐵</span><span class="zodiac-label">원숭이</span></div>
                                 <div onclick="openZodiacModal('zodiac', '닭')" class="zodiac-btn"><span class="zodiac-icon">🐔</span><span class="zodiac-label">닭</span></div>
@@ -919,7 +944,7 @@
 
         let currentFortuneData = null;
         let currentLuckyColors = ["네이비", "스카이블루"];
-        let baseFashionStyle = "네이비 쿨 반팔티 & 플랙 연청 데님";
+        let baseFashionStyle = "네이비 쿨 티셔츠 & 플랙 연청 데님";
 
         let wizardCategory = "상의";
         let wizardColors = [];
@@ -1346,7 +1371,7 @@
             document.getElementById('resMindset').innerText = data.daily_fortune.mindset;
             document.getElementById('resGaewoon').innerText = data.daily_fortune.action;
 
-            baseFashionStyle = data.daily_fortune.fashion_style || "네이비 쿨 반팔티 & 플랙 연청 데님";
+            baseFashionStyle = data.daily_fortune.fashion_style || "네이비 쿨 티셔츠 & 플랙 연청 데님";
             currentLuckyColors = data.daily_fortune.lucky_colors || ["네이비", "스카이블루"];
 
             const dtl = data.saju_data.pillars_detail;
@@ -1460,8 +1485,16 @@
             const matchedTops = userWardrobeItems.filter(item => item.category === "상의" && item.colors.some(c => c.includes(topColorStd) || topColorStd.includes(c)));
             const matchedBottoms = userWardrobeItems.filter(item => item.category === "하의" && item.colors.some(c => c.includes(bottomColorStd) || bottomColorStd.includes(c)));
 
-            let defaultTop = (todayMood === "casual") ? `${topColorStd} 쿨 반팔티` : `${topColorStd} 드레스 셔츠`;
-            let defaultBottom = (todayMood === "casual") ? `${bottomColorStd} 데님 팬츠` : `${bottomColorStd} 슬랙스`;
+            // 슬래시 제거 및 세련된 감성 색상 명칭 매칭
+            const cleanTopName = wada.top.name.replace(/\//g, ' ');
+            const cleanBottomName = wada.bottom.name.replace(/\//g, ' ');
+
+            let defaultTop = (todayMood === "casual") 
+                ? `${cleanTopName} 쿨 티셔츠` 
+                : (todayMood === "smart_casual" ? `${cleanTopName} 캐주얼 셔츠` : `${cleanTopName} 드레스 셔츠`);
+            let defaultBottom = (todayMood === "casual") 
+                ? `${cleanBottomName} 데님 팬츠` 
+                : (todayMood === "smart_casual" ? `${cleanBottomName} 치노 팬츠` : `${cleanBottomName} 슬랙스`);
 
             let finalTopText = matchedTops.length > 0 ? `내 옷장의 <strong>[${matchedTops[0].nickname}]</strong>` : defaultTop;
             let finalBottomText = matchedBottoms.length > 0 ? `내 옷장의 <strong>[${matchedBottoms[0].nickname}]</strong>` : defaultBottom;
@@ -1666,7 +1699,7 @@
             if (!listEl) return;
 
             if (userWardrobeItems.length === 0) {
-                listEl.innerHTML = `<div style="text-align:center; padding:16px 0; color:#94A3B8; font-size:12.5px;">등록된 옷장 아이템이 없습니다.<br>새 아이템을 등록해 보세요!</div>`;
+                listEl.innerHTML = `<div style="text-align:center; padding:14px 0; color:#94A3B8; font-size:12px;">등록된 옷장 아이템이 없습니다.<br>새 아이템을 등록해 보세요!</div>`;
                 updateTodayWardrobeMatchPick();
                 return;
             }
@@ -2119,6 +2152,7 @@
                     const zIcons = { '쥐':'🐭', '소':'🐮', '호랑이':'🐯', '토끼':'🐰', '용':'🐲', '뱀':'🐍', '말':'🐴', '양':'🐑', '원숭이':'🐵', '닭':'🐔', '개':'🐶', '돼지':'🐷' };
                     iconBox.innerHTML = `<span style="font-size: 24px;">${zIcons[key] || '✨'}</span>`;
 
+                    // [띠별 전용 렌더링 - 2줄 슬림 배지 및 줄바꿈 적용]
                     tipsBox.innerHTML = `
                         <p style="font-weight: 800; color: #0F172A; margin-bottom: 8px; font-size: 14px; text-align: left;">📅 출생연도별 핵심 가이드</p>
                         <div style="display: flex; flex-direction: column; gap: 8px; text-align: left;">
@@ -2129,9 +2163,9 @@
 
                                 return `
                                 <div style="display: flex; align-items: center; gap: 10px; font-size: 13px; line-height: 1.5; padding: 6px 0; border-bottom: 1px solid #F1F5F9;">
-                                    <div style="background: #F1F5F9; color: #334155; padding: 4px 8px; border-radius: 8px; flex-shrink: 0; min-width: 82px; text-align: center; display: flex; flex-direction: column; gap: 2px;">
+                                    <div style="background: #F1F5F9; color: #334155; padding: 4px 8px; border-radius: 8px; flex-shrink: 0; min-width: 84px; text-align: center; display: flex; flex-direction: column; gap: 2px;">
                                         <span style="font-weight: 800; font-size: 12px; color: #0F172A;">${yearMain}</span>
-                                        <span style="font-size: 10.5px; color: #64748B; font-weight: 600;">${subInfo}</span>
+                                        <span style="font-size: 10px; color: #64748B; font-weight: 600;">${subInfo}</span>
                                     </div>
                                     <span style="color: #334155; flex: 1;">${item.tip}</span>
                                 </div>
