@@ -120,15 +120,15 @@ AUTHENTIC_TALISMAN_MATRIX = {
         "ward": {"title": "주작 소재부 (朱雀 消災符)", "power": "불안 해소 · 충살 소멸 · 마음 평안", "desc": "불안정한 화기와 조급함을 정화하고 악살을 태워 마음의 평안을 되찾아주는 부적입니다.", "talisman_type": "fire_ward", "seal_text": "消災"}
     },
     "earth": {
-        "wealth": {"title": "금고 보관부 (金庫 保管符)", "power": "자산 보존 · 부동산 취득 · 목돈 축적", "desc": "넓은 대지처럼 흩어지는 돈을 단단히 묶어 큰 자산으로 축적시키는 전통 보관 부적입니다.", "talisman_type": "earth_wealth", "seal_text": "保管"},
+        "wealth": {"title": "금고 보관부 (金庫 保管符)", "power": "자산 보존 · 부동산 취득 · 목돈 축적", "desc": "넓은 대지처럼 흩어지는 돈을 단단히 묶어 큰 자산으로 축적시키는 전통 보관 부적입니다.", "talisman_type": "earth_wealth", "seal_text": "保管"},
         "career": {"title": "태산 안착부 (泰山 安着符)", "power": "취업 성공 · 안정적 정착 · 계약 체결", "desc": "태산처럼 흔들림 없는 기반을 마련하여 원하는 직장이나 프로젝트에 안착하게 돕는 부적입니다.", "talisman_type": "earth_career", "seal_text": "安着"},
         "love": {"title": "화토 상생부 (火土 相生符)", "power": "가정 평안 · 신뢰 구축 · 백년해로", "desc": "따스한 온기로 서로에 대한 신뢰를 두텁게 다져 장기적인 사랑과 안정을 이끄는 부적입니다.", "talisman_type": "earth_love", "seal_text": "相生"},
-        "ward": {"title": "황제 진택부 (黃帝 鎭宅符)", "power": "우환 예방 · 터 안전 · 재앙 소멸", "desc": "집안과 일터의 터를 안정시키고 예기치 못한 우환과 손실을 막아주는 비급 진택 부적입니다.", "talisman_type": "earth_ward", "seal_text": "鎭宅"}
+        "ward": {"title": "황제 진택부 (黃帝 鎭宅符)", "power": "우환 예방 · 터 안전 · 재앙 소멸", "desc": "집안과 일터의 터를 안정시키고 예기치 못한 우환과 손실을 막아주는 비급 진택 부적입니다.", "talisman_type": "earth_ward", "seal_text": "鎭宅"}
     },
     "metal": {
-        "wealth": {"title": "백호 금전부 (白虎 金錢符)", "power": "결단력 강화 · 투자 수익 실현 · 재물 쟁취", "desc": "백호의 날카로운 기운으로 투자 기회를 정확히 포착하고 실리를 쟁취하게 돕는 부적입니다.", "talisman_type": "metal_wealth", "seal_text": "金錢"},
+        "wealth": {"title": "백호 금전부 (白虎 金錢符)", "power": "결단력 강화 · 투자 수익 실현 · 재물 쟁취", "desc": "백호의 날카로운 기운으로 투자 기회를 정확히 포착하고 실리를 쟁취하게 돕는 부적입니다.", "talisman_type": "metal_wealth", "seal_text": "金錢"},
         "career": {"title": "장원 급제부 (壯元 及第符)", "power": "전문 자격 취득 · 경쟁 돌파 · 독보적 성과", "desc": "치열한 경쟁 속에서 뛰어난 전문성을 발휘하여 당당히 정상에 오르게 하는 급제 부적입니다.", "talisman_type": "metal_career", "seal_text": "及第"},
-        "love": {"title": "금옥 만당부 (金玉 滿堂符)", "power": "귀인 결속 · 품격 있는 만남 · 인복 확장", "desc": "보석처럼 품격 있고 나에게 큰 도움이 되는 든든한 귀인을 곁에 머물게 하는 부적입니다.", "talisman_type": "metal_love", "seal_text": "滿堂"},
+        "love": {"title": "금옥 만당부 (金玉 滿堂符)", "power": "귀인 결속 · 품격 있는 만남 · 인복 확장", "desc": "보석처럼 품격 있고 나에게 큰 도움이 되는 든든한 귀인을 곁에 머물게 하는 부적입니다.", "talisman_type": "metal_love", "seal_text": "滿堂"},
         "ward": {"title": "참사 백호부 (斬邪 白虎符)", "power": "액운 절단 · 관재구설 차단 · 신변 보호", "desc": "날카로운 칼날처럼 나를 위협하는 사악한 기운과 관재구설을 일거에 베어내는 방어 부적입니다.", "talisman_type": "metal_ward", "seal_text": "斬邪"}
     },
     "water": {
@@ -165,6 +165,32 @@ WADA_SANZO_PALETTES = {
         {"palette_no": 66, "theme": "심해의 평온과 통찰", "mood_desc": "네이비와 민트 라임의 산뜻한 포인트가 사주의 활력을 빠르게 끌어올립니다.", "mode": "harmony", "style_mood": "casual", "mood_tag": "🏃 캐주얼 & 액티브", "top": {"name": "로열 네이비", "hex": "#1E3A8A", "standard_color": "네이비"}, "bottom": {"name": "민트 세이지", "hex": "#6EE7B7", "standard_color": "민트/라임"}, "point": None}
     ]
 }
+
+# 22종 정통 메이저 아르카나 타로 풀버전 데이터베이스
+FULL_TAROT_DECK = [
+    {"name": "0. THE FOOL (바보)", "keyword": "새로운 시작 · 자유로운 모험", "symbolism": "절벽 끝에서도 당당한 바보는 틀에 얽매이지 않는 순수한 도약을 상징합니다.", "reading_male": "과거의 부담을 털어내고 새로운 시도를 하기에 최적의 타이밍입니다.", "reading_female": "선입견 없이 열린 마음으로 다가갈 때 뜻밖의 귀인과 기회를 얻습니다.", "action_guide": "가보지 않았던 새로운 방식이나 길을 과감히 선택하세요."},
+    {"name": "I. THE MAGICIAN (마법사)", "keyword": "창조적 잠재력 · 탁월한 실행력", "symbolism": "4대 원소를 능숙히 다루는 마법사는 무한한 기회와 탁월한 재능을 뜻합니다.", "reading_male": "주도적으로 프로젝트나 미팅을 이끌어 성과를 거머쥐기에 완벽합니다.", "reading_female": "빛나는 센스와 아이디어로 주변의 주목과 협력을 끌어당깁니다.", "action_guide": "망설이던 아이디어가 있다면 오늘 바로 구체적인 실행에 옮기세요."},
+    {"name": "II. THE HIGH PRIESTESS (여사제)", "keyword": "깊은 직관 · 지혜로운 통찰", "symbolism": "장막 뒤에 앉은 여사제는 내면의 비밀과 고요한 통찰을 상징합니다.", "reading_male": "말을 앞세우기보다 한 걸음 물러서서 상황을 관찰할 때 핵심을 봅니다.", "reading_female": "당신의 직관이 정확합니다. 주변 소음에 흔들리지 말고 내면을 믿으세요.", "action_guide": "중요한 결정 전 차분히 혼자만의 시간을 가지며 정리하세요."},
+    {"name": "III. THE EMPRESS (여황제)", "keyword": "풍요와 결실 · 따뜻한 포용", "symbolism": "곡식이 무르익은 숲속의 여황제는 물질적·정서적 번영을 의미합니다.", "reading_male": "투자나 사업에서 따스한 결실을 맺고 주변에 베풀기 좋은 날입니다.", "reading_female": "매력과 감성이 최고조에 달하며 주변의 사랑과 존중을 듬뿍 받습니다.", "action_guide": "자신을 위한 힐링과 풍요로운 식사로 기운을 북돋우세요."},
+    {"name": "IV. THE EMPEROR (황제)", "keyword": "강력한 리더십 · 안정된 권위", "symbolism": "돌보좌에 앉은 황제는 흔들리지 않는 규율과 책임감을 상징합니다.", "reading_male": "조직을 장악하고 결단력 있게 밀어붙일 때 확실한 성과가 따릅니다.", "reading_female": "원칙과 확고한 기준을 세워 상황을 주도적으로 통제하세요.", "action_guide": "책임감 있는 태도로 공적인 일과 사적인 감정을 명확히 구분하세요."},
+    {"name": "V. THE HIEROPHANT (교황)", "keyword": "귀인의 조력 · 전통과 신뢰", "symbolism": "신도를 이끄는 교황은 멘토, 계약, 도덕적 신뢰를 의미합니다.", "reading_male": "선배나 전문가의 조언을 수용할 때 오랜 난제가 단숨에 해결됩니다.", "reading_female": "신뢰할 수 있는 기관이나 조력자를 통해 합의와 계약이 성사됩니다.", "action_guide": "조언을 구하는 것을 주저하지 말고 예의와 원칙을 지키세요."},
+    {"name": "VI. THE LOVERS (연인)", "keyword": "조화로운 결합 · 올바른 선택", "symbolism": "천사의 축복을 받는 남녀는 진실한 사랑과 가치관의 일치를 상징합니다.", "reading_male": "마음에 둔 사람과의 교감이 깊어지고 파트너십이 공고해집니다.", "reading_female": "애정운이 만개하며, 중요한 갈림길에서 가슴이 이끄는 선택이 옳습니다.", "action_guide": "상대방의 마음에 귀를 기울이고 솔직한 감정을 전달하세요."},
+    {"name": "VII. THE CHARIOT (전차)", "keyword": "거침없는 돌파 · 승리의 질주", "symbolism": "두 마리의 스핑크스를 이끄는 전차는 불굴의 의지와 목표 달성을 뜻합니다.", "reading_male": "망설이지 말고 정면 돌파할 때 경쟁자를 압도하고 승리합니다.", "reading_female": "추진력이 폭발하는 날입니다. 집중력을 발휘해 목표를 쟁취하세요.", "action_guide": "방해 요소에 한눈팔지 말고 오직 목표를 향해 직진하세요."},
+    {"name": "VIII. STRENGTH (힘)", "keyword": "부드러운 카리스마 · 내면의 통제", "symbolism": "사자를 부드럽게 쓰다듬는 여인은 인내와 지혜로운 설득을 상징합니다.", "reading_male": "강압적인 태도 대신 부드러운 설득으로 상대의 마음을 완벽히 얻습니다.", "reading_female": "내면의 단단한 힘으로 까다로운 사람이나 위기를 유연하게 다룹니다.", "action_guide": "감정을 억누르기보다 온화한 미소와 유연함으로 상대를 포용하세요."},
+    {"name": "IX. THE HERMIT (은둔자)", "keyword": "자아 성찰 · 깊은 탐구", "symbolism": "등불을 들고 설산에 선 은둔자는 진리 탐구와 신중한 숙고를 의미합니다.", "reading_male": "외부 활동보다는 본질적인 문제 분석과 연구에 집중할 때 길합니다.", "reading_female": "남들의 시선에서 벗어나 나만의 기준과 비전을 차분히 정립하세요.", "action_guide": "불필요한 모임을 줄이고 조용한 환경에서 내실을 다지세요."},
+    {"name": "X. WHEEL OF FORTUNE (운명의 수레바퀴)", "keyword": "운명의 전환점 · 뜻밖의 행운", "symbolism": "끊임없이 회전하는 수레바퀴는 상승하는 운의 기류와 기회를 뜻합니다.", "reading_male": "정체되었던 흐름이 반전되어 뜻밖의 기회와 재물이 굴러들어옵니다.", "reading_female": "인생의 긍정적인 터닝포인트가 찾아옵니다. 변화의 파도를 타세요.", "action_guide": "우연처럼 다가오는 제안이나 만남을 가볍게 넘기지 마세요."},
+    {"name": "XI. JUSTICE (정의)", "keyword": "공정한 균형 · 합리적 판결", "symbolism": "저울과 칼을 든 정의의 여신은 객관성과 인과응보를 상징합니다.", "reading_male": "사리분별을 명확히 하고 공정한 계약과 결정을 내릴 최적의 날입니다.", "reading_female": "감정에 치우치지 않는 냉철한 시각이 당신의 권익을 지켜줍니다.", "action_guide": "서류와 계약 조건을 꼼꼼히 확인하고 균형을 유지하세요."},
+    {"name": "XII. THE HANGED MAN (매달린 사람)", "keyword": "새로운 관점 · 인내와 희생", "symbolism": "거꾸로 매달려 명상하는 남자는 관점의 전환과 가치 있는 기다림을 뜻합니다.", "reading_male": "당장 눈앞의 이익보다 장기적인 시각으로 판을 뒤집을 묘수를 찾습니다.", "reading_female": "조급해하지 않고 상황을 다른 각도에서 바라볼 때 해답이 보입니다.", "action_guide": "강제로 밀어붙이기보다 잠시 멈추고 발상의 전환을 꾀하세요."},
+    {"name": "XIII. DEATH (죽음과 재생)", "keyword": "과거의 종결 · 새로운 탄생", "symbolism": "말을 탄 사신은 낡은 것의 완전한 끝과 신선한 새 출발을 의미합니다.", "reading_male": "더 이상 도움이 되지 않는 낡은 습관이나 미련을 과감히 정리하세요.", "reading_female": "하나의 문이 닫히고 훨씬 더 좋은 새로운 문이 활짝 열립니다.", "action_guide": "붙잡고 있던 묵은 짐이나 미련을 정리하고 비워내세요."},
+    {"name": "XIV. TEMPERANCE (절제)", "keyword": "조화로운 융합 · 감정의 정화", "symbolism": "두 잔의 물을 섞는 천사는 중용과 치유, 완벽한 밸런스를 상징합니다.", "reading_male": "극단을 피하고 완급을 조절할 때 주변과의 갈등이 말끔히 해소됩니다.", "reading_female": "마음의 평온을 되찾고 일과 휴식의 건강한 밸런스를 맞춥니다.", "action_guide": "무리한 욕심을 내려놓고 마음의 온도를 차분하게 유지하세요."},
+    {"name": "XV. THE DEVIL (악마)", "keyword": "강한 집착 경계 · 유혹 타파", "symbolism": "사슬에 묶인 연인은 물질적 유혹과 과도한 집착을 경고합니다.", "reading_male": "달콤한 유혹이나 단기적인 투기에 현혹되지 말고 이성을 지키세요.", "reading_female": "나를 옭아매는 인간관계나 습관의 고리를 끊어내야 할 때입니다.", "action_guide": "쉽고 빠른 지름길을 경계하고 떳떳한 길을 선택하세요."},
+    {"name": "XVI. THE TOWER (탑)", "keyword": "예상 밖의 각성 · 거짓의 붕괴", "symbolism": "번개를 맞아 무너지는 탑은 껍데기가 깨지고 진실이 드러남을 뜻합니다.", "reading_male": "예기치 못한 변화가 있더라도 오히려 거품을 걷어내는 기회가 됩니다.", "reading_female": "억지로 유지하던 불안정한 관계나 틀에서 벗어나 자유를 얻습니다.", "action_guide": "변화를 두려워하지 말고 본질적인 기본기를 다시 다지세요."},
+    {"name": "XVII. THE STAR (별)", "keyword": "희망과 영감 · 밝은 미래", "symbolism": "밤하늘에 빛나는 팔각별은 치유와 미래를 향한 확신을 상징합니다.", "reading_male": "어둠이 걷히고 가야 할 명확한 비전과 영감이 샘솟는 하루입니다.", "reading_female": "맑은 긍정 에너지가 넘치며 당신의 꿈이 현실로 다가옵니다.", "action_guide": "자신의 재능과 희망을 믿고 밝은 미소로 하루를 시작하세요."},
+    {"name": "XVIII. THE MOON (달)", "keyword": "불안의 극복 · 숨겨진 진실", "symbolism": "달빛 아래 짖는 개와 가재는 환상과 내면의 막연한 두려움을 뜻합니다.", "reading_male": "막연한 불안감에 위축되지 말고 팩트에 기반하여 판단하세요.", "reading_female": "모호했던 사람의 본심이나 상황의 이면이 드러나게 됩니다.", "action_guide": "중요한 계약은 서두르지 말고 시간을 두고 신중히 살피세요."},
+    {"name": "XIX. THE SUN (태양)", "keyword": "확실한 성공 · 생명력과 축복", "symbolism": "빛나는 태양 아래 아이는 순수한 기쁨과 확실한 승리를 의미합니다.", "reading_male": "노력해 온 결과가 세상에 당당히 인정받아 큰 찬사를 받습니다.", "reading_female": "주변에 온기를 전파하며 모임과 일터의 주인공이 됩니다.", "action_guide": "자신감을 가지고 당신의 아이디어와 존재감을 마음껏 드러내세요."},
+    {"name": "XX. JUDGEMENT (심판)", "keyword": "부활과 보상 · 결정적 부름", "symbolism": "나팔을 부는 천사는 과거 노력에 대한 정당한 보상과 구원을 뜻합니다.", "reading_male": "오랫동안 기다려온 반가운 합격, 승진, 계약 소식이 찾아옵니다.", "reading_female": "과거의 노력이 빛을 발하며 새로운 인생 2막의 기회가 열립니다.", "action_guide": "망설이지 말고 당신에게 주어진 결정적인 기회를 잡으세요."},
+    {"name": "XXI. THE WORLD (세계)", "keyword": "완벽한 완성 · 대단원의 통합", "symbolism": "월계관 속 무희는 하나의 주기가 완벽히 마무리되고 완성됨을 상징합니다.", "reading_male": "프로젝트가 완벽히 성공하며 최고의 명예와 보람을 누립니다.", "reading_female": "목표했던 바를 온전히 이루고 더 큰 세계로 도약할 준비를 마칩니다.", "action_guide": "성취한 결실을 자축하고 다음 단계를 향한 큰 그림을 그리세요."}
+]
 
 def fetch_user_wardrobe(user_id: int):
     db = get_db()
@@ -245,7 +271,7 @@ def calculate_four_pillars(y: int, m: int, d: int, sijin_idx: int):
         "singang_label": "신강(身强) 사주" if dist[elem_map[d_gan]] >= 30 else "신약(身弱) 사주"
     }
 
-# 매일 자정에 당일 날짜 기반으로 완전히 새롭게 바뀌는 오늘운세 생성기
+# 매일 자정에 당일 날짜 기반으로 완전히 새롭게 바뀌는 오늘운세 생성기 (대길 / 평온 / 신중 / 충전 4단계 빈틈없는 점수 모델)
 def generate_saju_analysis_payload(name, gender, y, m, d, cal_type, sijin):
     saju_res = calculate_four_pillars(y, m, d, sijin)
     day_elem = saju_res["day_elem"]
@@ -257,13 +283,13 @@ def generate_saju_analysis_payload(name, gender, y, m, d, cal_type, sijin):
     daily_seed = today_ord * 1000 + (y % 100) * 100 + m * 10 + d + sijin
     rng = random.Random(daily_seed)
     
-    # 오늘 운세 모드 결정 (0: 대길 60%, 1: 신중 25%, 2: 충전 15%)
+    # 오늘 운세 모드 결정 (대길 45%, 평온 30%, 신중 15%, 충전 10%)
     mode_dice = rng.randint(1, 100)
     
-    if mode_dice <= 60:
-        # [✨ 대길 모드]
+    if mode_dice <= 45:
+        # [✨ 대길 모드: 85 ~ 98점]
         mode_type = "fortune"
-        score = rng.randint(86, 98)
+        score = rng.randint(85, 98)
         mode_badge = f"✨ 대길의 날 · {score}점"
         badge_style = "background: #FEF3C7; color: #78350F; border: 1px solid #FDE68A;"
         
@@ -278,18 +304,44 @@ def generate_saju_analysis_payload(name, gender, y, m, d, cal_type, sijin):
             f"{today.strftime('%m월 %d일')} 대인관계에서 천을귀인의 서기가 비추는 날입니다.\n혼자 고민하기보다는 신뢰할 수 있는 동료나 지인과 상의할 때 명쾌한 해답을 얻습니다.\n유연하고 경청하는 자세가 뜻밖의 횡재와 기회를 부릅니다."
         ]
         time_flow = {
-            "morning": "오전 (09시~12시): 판단력과 집중력이 정점입니다. 핵심 결정을 내리세요.",
-            "afternoon": "오후 (13시~18시): 소통과 협상운이 상승합니다. 미팅에서 큰 성과를 냅니다.",
-            "evening": "저녁 (19시 이후): 가벼운 산책과 따뜻한 차 한잔으로 활력을 채우세요."
+            "morning": "오전 (~12시): 판단력과 집중력이 정점입니다. 오늘 가장 중요한 핵심 결정을 내리세요.",
+            "afternoon": "오후 (12시~18시): 소통과 협상운이 최고조입니다. 미팅이나 제안에서 큰 성과를 냅니다.",
+            "evening": "저녁·밤 (18시~24시): 하루의 성과를 정리하고 가벼운 휴식으로 긍정 에너지를 충전하세요."
         }
         mindset_pool = ["원칙을 지키며 유연하게 대처하기", "핵심 우선순위에 집중하고 전진하기"]
         action_pool = ["오늘 완료해야 할 우선순위 3가지 메모하기", "가장 중요한 미팅이나 결정을 오전에 집중 처리하기"]
         lucky_items_pool = ["실버 메탈 시계", "가죽 카드지갑", "심플한 만년필"]
+
+    elif mode_dice <= 75:
+        # [🌿 평온 순항 모드: 75 ~ 84점]
+        mode_type = "smooth"
+        score = rng.randint(75, 84)
+        mode_badge = f"🌿 평온 순항 · {score}점"
+        badge_style = "background: #ECFDF5; color: #065F46; border: 1px solid #A7F3D0;"
         
-    elif mode_dice <= 85:
-        # [🛡️ 신중 모드]
+        titles_pool = [
+            "순풍에 돛을 단 듯 평온하게 흘러가는 하루",
+            "차분한 루틴 속에서 확실한 실리를 다지는 날",
+            "주변과의 원만한 조화로 안정을 유지하는 길일",
+            "작은 성취들이 모여 든든한 기반이 되는 날"
+        ]
+        advices_pool = [
+            f"{today.strftime('%m월 %d일')} 기운이 모나지 않고 순조롭게 흘러가는 평온한 하루입니다.\n무리한 승부수를 띄우기보다는 매일의 기본 루틴을 차분히 지켜나갈 때 만족스러운 결실을 봅니다.\n동료나 가족과의 편안한 대화 속에서 유익한 정보를 얻게 됩니다.",
+            f"{today.strftime('%m월 %d일')} 주변과의 화합과 안정감이 돋보이는 일진입니다.\n예상 밖의 큰 변수 없이 계획했던 일들을 차근차근 매듭짓기에 매우 유리합니다.\n정돈된 마음가짐으로 일상을 차분히 가꿔보세요."
+        ]
+        time_flow = {
+            "morning": "오전 (~12시): 하루 루틴을 점검하고 계획된 업무를 차분하게 시작하기 좋은 시간입니다.",
+            "afternoon": "오후 (12시~18시): 동료들과의 협력과 원만한 소통이 부드럽게 이어지는 시간입니다.",
+            "evening": "저녁·밤 (18시~24시): 편안한 취미 생활이나 가족과의 대화로 평온하게 하루를 마무리하세요."
+        }
+        mindset_pool = ["조급해하지 않고 페이스 유지하기", "주변 사람들에게 긍정의 미소 건네기"]
+        action_pool = ["오늘 끝내야 할 일들을 체크리스트로 정리하기", "감사한 사람에게 따뜻한 메시지 전하기"]
+        lucky_items_pool = ["클래식 볼펜", "베이지 손수건", "가벼운 토트백"]
+        
+    elif mode_dice <= 90:
+        # [🛡️ 신중 모드: 65 ~ 74점]
         mode_type = "caution"
-        score = rng.randint(68, 78)
+        score = rng.randint(65, 74)
         mode_badge = f"🛡️ 신중 모드 · {score}점"
         badge_style = "background: #EFF6FF; color: #1E3A8A; border: 1px solid #BFDBFE;"
         
@@ -304,18 +356,18 @@ def generate_saju_analysis_payload(name, gender, y, m, d, cal_type, sijin):
             f"{today.strftime('%m월 %d일')} 순간적인 감정으로 지출이 커지거나 에너지가 분산될 수 있습니다.\n새로운 일을 벌이기보다는 진행 중인 작업의 디테일을 점검하세요.\n차분한 태도가 예상치 못한 손실을 완벽히 방어해 줍니다."
         ]
         time_flow = {
-            "morning": "오전 (09시~12시): 서류나 메일을 보낼 때 두 번 점검하세요. 꼼꼼함이 무기입니다.",
-            "afternoon": "오후 (13시~18시): 감정적인 대화나 충동구매를 피하고 담담하게 일상을 유지하세요.",
-            "evening": "저녁 (19시 이후): 조용한 환경에서 음악을 듣거나 독서로 마음을 가라앉히세요."
+            "morning": "오전 (~12시): 서류나 메일을 보낼 때 두 번 점검하세요. 꼼꼼한 확인이 실수를 막습니다.",
+            "afternoon": "오후 (12시~18시): 감정적인 대화나 충동 소비를 피하고 담담하게 일상을 유지하세요.",
+            "evening": "저녁·밤 (18시~24시): 조용한 환경에서 음악을 듣거나 독서로 마음을 차분히 가라앉히세요."
         }
         mindset_pool = ["상대방의 입장을 먼저 경청하고 배려하기", "조급함을 내려놓고 차분한 호흡 유지하기"]
         action_pool = ["장바구니 결제나 고가 소비 내일로 미루기", "대화 중 말실수 방지를 위해 3초 생각하고 답변하기"]
         lucky_items_pool = ["차분한 네이비 린넨 손수건", "미니멀 텀블러", "안정감을 주는 원석 팔찌"]
         
     else:
-        # [💡 충전 모드]
+        # [💡 충전 모드: 55 ~ 64점]
         mode_type = "rest"
-        score = rng.randint(58, 66)
+        score = rng.randint(55, 64)
         mode_badge = f"💡 내실 충전일 · {score}점"
         badge_style = "background: #F1F5F9; color: #475569; border: 1px solid #CBD5E1;"
         
@@ -330,9 +382,9 @@ def generate_saju_analysis_payload(name, gender, y, m, d, cal_type, sijin):
             f"{today.strftime('%m월 %d일')} 운이 멈춘 것이 아니라 다음 도약을 위해 숨을 고르는 시간입니다.\n복잡한 머릿속을 비우고 가벼운 산책이나 명상으로 마음을 환기하세요.\n충분한 수면과 휴식이 내일의 큰 기운을 만들어냅니다."
         ]
         time_flow = {
-            "morning": "오전 (09시~12시): 무리한 일정 대신 꼭 해야 할 최소한의 일에만 집중하세요.",
-            "afternoon": "오후 (13시~18시): 따뜻한 차나 물을 자주 마시며 수분과 컨디션을 챙기세요.",
-            "evening": "저녁 (19시 이후): 평소보다 30분 일찍 잠자리에 들어 깊은 숙면을 취하세요."
+            "morning": "오전 (~12시): 무리한 일정 대신 꼭 해야 할 최소한의 일에만 에너지를 쓰세요.",
+            "afternoon": "오후 (12시~18시): 따뜻한 차나 물을 자주 마시며 수분과 컨디션을 챙기세요.",
+            "evening": "저녁·밤 (18시~24시): 평소보다 30분 일찍 잠자리에 들어 깊은 숙면으로 기운을 채우세요."
         }
         mindset_pool = ["무리하지 말고 내 페이스 지키기", "스스로를 칭찬하며 편안한 마음 갖기"]
         action_pool = ["평소보다 30분 일찍 귀가하여 푹 쉬기", "따뜻한 물로 샤워 후 가벼운 스트레칭하기"]
@@ -740,40 +792,13 @@ def charge_coin_endpoint(req: ChargeCoinRequest):
     db.close()
     return {"status": "success", "new_balance": new_bal}
 
-# 22종 정통 메이저 아르카나 타로 풀버전 데이터베이스
-FULL_TAROT_DECK = [
-    {"name": "0. THE FOOL (바보)", "keyword": "새로운 시작 · 자유로운 모험", "symbolism": "절벽 끝에서도 당당한 바보는 틀에 얽매이지 않는 순수한 도약을 상징합니다.", "reading_male": "과거의 부담을 털어내고 새로운 시도를 하기에 최적의 타이밍입니다.", "reading_female": "선입견 없이 열린 마음으로 다가갈 때 뜻밖의 귀인과 기회를 얻습니다.", "action_guide": "가보지 않았던 새로운 방식이나 길을 과감히 선택하세요."},
-    {"name": "I. THE MAGICIAN (마법사)", "keyword": "창조적 잠재력 · 탁월한 실행력", "symbolism": "4대 원소를 능숙히 다루는 마법사는 무한한 기회와 탁월한 재능을 뜻합니다.", "reading_male": "주도적으로 프로젝트나 미팅을 이끌어 성과를 거머쥐기에 완벽합니다.", "reading_female": "빛나는 센스와 아이디어로 주변의 주목과 협력을 끌어당깁니다.", "action_guide": "망설이던 아이디어가 있다면 오늘 바로 구체적인 실행에 옮기세요."},
-    {"name": "II. THE HIGH PRIESTESS (여사제)", "keyword": "깊은 직관 · 지혜로운 통찰", "symbolism": "장막 뒤에 앉은 여사제는 내면의 비밀과 고요한 통찰을 상징합니다.", "reading_male": "말을 앞세우기보다 한 걸음 물러서서 상황을 관찰할 때 핵심을 봅니다.", "reading_female": "당신의 직관이 정확합니다. 주변 소음에 흔들리지 말고 내면을 믿으세요.", "action_guide": "중요한 결정 전 차분히 혼자만의 시간을 가지며 정리하세요."},
-    {"name": "III. THE EMPRESS (여황제)", "keyword": "풍요와 결실 · 따뜻한 포용", "symbolism": "곡식이 무르익은 숲속의 여황제는 물질적·정서적 번영을 의미합니다.", "reading_male": "투자나 사업에서 따스한 결실을 맺고 주변에 베풀기 좋은 날입니다.", "reading_female": "매력과 감성이 최고조에 달하며 주변의 사랑과 존중을 듬뿍 받습니다.", "action_guide": "자신을 위한 힐링과 풍요로운 식사로 기운을 북돋우세요."},
-    {"name": "IV. THE EMPEROR (황제)", "keyword": "강력한 리더십 · 안정된 권위", "symbolism": "돌보좌에 앉은 황제는 흔들리지 않는 규율과 책임감을 상징합니다.", "reading_male": "조직을 장악하고 결단력 있게 밀어붙일 때 확실한 성과가 따릅니다.", "reading_female": "원칙과 확고한 기준을 세워 상황을 주도적으로 통제하세요.", "action_guide": "책임감 있는 태도로 공적인 일과 사적인 감정을 명확히 구분하세요."},
-    {"name": "V. THE HIEROPHANT (교황)", "keyword": "귀인의 조력 · 전통과 신뢰", "symbolism": "신도를 이끄는 교황은 멘토, 계약, 도덕적 신뢰를 의미합니다.", "reading_male": "선배나 전문가의 조언을 수용할 때 오랜 난제가 단숨에 해결됩니다.", "reading_female": "신뢰할 수 있는 기관이나 조력자를 통해 합의와 계약이 성사됩니다.", "action_guide": "조언을 구하는 것을 주저하지 말고 예의와 원칙을 지키세요."},
-    {"name": "VI. THE LOVERS (연인)", "keyword": "조화로운 결합 · 올바른 선택", "symbolism": "천사의 축복을 받는 남녀는 진실한 사랑과 가치관의 일치를 상징합니다.", "reading_male": "마음에 둔 사람과의 교감이 깊어지고 파트너십이 공고해집니다.", "reading_female": "애정운이 만개하며, 중요한 갈림길에서 가슴이 이끄는 선택이 옳습니다.", "action_guide": "상대방의 마음에 귀를 기울이고 솔직한 감정을 전달하세요."},
-    {"name": "VII. THE CHARIOT (전차)", "keyword": "거침없는 돌파 · 승리의 질주", "symbolism": "두 마리의 스핑크스를 이끄는 전차는 불굴의 의지와 목표 달성을 뜻합니다.", "reading_male": "망설이지 말고 정면 돌파할 때 경쟁자를 압도하고 승리합니다.", "reading_female": "추진력이 폭발하는 날입니다. 집중력을 발휘해 목표를 쟁취하세요.", "action_guide": "방해 요소에 한눈팔지 말고 오직 목표를 향해 직진하세요."},
-    {"name": "VIII. STRENGTH (힘)", "keyword": "부드러운 카리스마 · 내면의 통제", "symbolism": "사자를 부드럽게 쓰다듬는 여인은 인내와 지혜로운 설득을 상징합니다.", "reading_male": "강압적인 태도 대신 부드러운 설득으로 상대의 마음을 완벽히 얻습니다.", "reading_female": "내면의 단단한 힘으로 까다로운 사람이나 위기를 유연하게 다룹니다.", "action_guide": "감정을 억누르기보다 온화한 미소와 유연함으로 상대를 포용하세요."},
-    {"name": "IX. THE HERMIT (은둔자)", "keyword": "자아 성찰 · 깊은 탐구", "symbolism": "등불을 들고 설산에 선 은둔자는 진리 탐구와 신중한 숙고를 의미합니다.", "reading_male": "외부 활동보다는 본질적인 문제 분석과 연구에 집중할 때 길합니다.", "reading_female": "남들의 시선에서 벗어나 나만의 기준과 비전을 차분히 정립하세요.", "action_guide": "불필요한 모임을 줄이고 조용한 환경에서 내실을 다지세요."},
-    {"name": "X. WHEEL OF FORTUNE (운명의 수레바퀴)", "keyword": "운명의 전환점 · 뜻밖의 행운", "symbolism": "끊임없이 회전하는 수레바퀴는 상승하는 운의 기류와 기회를 뜻합니다.", "reading_male": "정체되었던 흐름이 반전되어 뜻밖의 기회와 재물이 굴러들어옵니다.", "reading_female": "인생의 긍정적인 터닝포인트가 찾아옵니다. 변화의 파도를 타세요.", "action_guide": "우연처럼 다가오는 제안이나 만남을 가볍게 넘기지 마세요."},
-    {"name": "XI. JUSTICE (정의)", "keyword": "공정한 균형 · 합리적 판결", "symbolism": "저울과 칼을 든 정의의 여신은 객관성과 인과응보를 상징합니다.", "reading_male": "사리분별을 명확히 하고 공정한 계약과 결정을 내릴 최적의 날입니다.", "reading_female": "감정에 치우치지 않는 냉철한 시각이 당신의 권익을 지켜줍니다.", "action_guide": "서류와 계약 조건을 꼼꼼히 확인하고 균형을 유지하세요."},
-    {"name": "XII. THE HANGED MAN (매달린 사람)", "keyword": "새로운 관점 · 인내와 희생", "symbolism": "거꾸로 매달려 명상하는 남자는 관점의 전환과 가치 있는 기다림을 뜻합니다.", "reading_male": "당장 눈앞의 이익보다 장기적인 시각으로 판을 뒤집을 묘수를 찾습니다.", "reading_female": "조급해하지 않고 상황을 다른 각도에서 바라볼 때 해답이 보입니다.", "action_guide": "강제로 밀어붙이기보다 잠시 멈추고 발상의 전환을 꾀하세요."},
-    {"name": "XIII. DEATH (죽음과 재생)", "keyword": "과거의 종결 · 새로운 탄생", "symbolism": "말을 탄 사신은 낡은 것의 완전한 끝과 신선한 새 출발을 의미합니다.", "reading_male": "더 이상 도움이 되지 않는 낡은 습관이나 미련을 과감히 정리하세요.", "reading_female": "하나의 문이 닫히고 훨씬 더 좋은 새로운 문이 활짝 열립니다.", "action_guide": "붙잡고 있던 묵은 짐이나 미련을 정리하고 비워내세요."},
-    {"name": "XIV. TEMPERANCE (절제)", "keyword": "조화로운 융합 · 감정의 정화", "symbolism": "두 잔의 물을 섞는 천사는 중용과 치유, 완벽한 밸런스를 상징합니다.", "reading_male": "극단을 피하고 완급을 조절할 때 주변과의 갈등이 말끔히 해소됩니다.", "reading_female": "마음의 평온을 되찾고 일과 휴식의 건강한 밸런스를 맞춥니다.", "action_guide": "무리한 욕심을 내려놓고 마음의 온도를 차분하게 유지하세요."},
-    {"name": "XV. THE DEVIL (악마)", "keyword": "강한 집착 경계 · 유혹 타파", "symbolism": "사슬에 묶인 연인은 물질적 유혹과 과도한 집착을 경고합니다.", "reading_male": "달콤한 유혹이나 단기적인 투기에 현혹되지 말고 이성을 지키세요.", "reading_female": "나를 옭아매는 인간관계나 습관의 고리를 끊어내야 할 때입니다.", "action_guide": "쉽고 빠른 지름길을 경계하고 떳떳한 길을 선택하세요."},
-    {"name": "XVI. THE TOWER (탑)", "keyword": "예상 밖의 각성 · 거짓의 붕괴", "symbolism": "번개를 맞아 무너지는 탑은 껍데기가 깨지고 진실이 드러남을 뜻합니다.", "reading_male": "예기치 못한 변화가 있더라도 오히려 거품을 걷어내는 기회가 됩니다.", "reading_female": "억지로 유지하던 불안정한 관계나 틀에서 벗어나 자유를 얻습니다.", "action_guide": "변화를 두려워하지 말고 본질적인 기본기를 다시 다지세요."},
-    {"name": "XVII. THE STAR (별)", "keyword": "희망과 영감 · 밝은 미래", "symbolism": "밤하늘에 빛나는 팔각별은 치유와 미래를 향한 확신을 상징합니다.", "reading_male": "어둠이 걷히고 가야 할 명확한 비전과 영감이 샘솟는 하루입니다.", "reading_female": "맑은 긍정 에너지가 넘치며 당신의 꿈이 현실로 다가옵니다.", "action_guide": "자신의 재능과 희망을 믿고 밝은 미소로 하루를 시작하세요."},
-    {"name": "XVIII. THE MOON (달)", "keyword": "불안의 극복 · 숨겨진 진실", "symbolism": "달빛 아래 짖는 개와 가재는 환상과 내면의 막연한 두려움을 뜻합니다.", "reading_male": "막연한 불안감에 위축되지 말고 팩트에 기반하여 판단하세요.", "reading_female": "모호했던 사람의 본심이나 상황의 이면이 드러나게 됩니다.", "action_guide": "중요한 계약은 서두르지 말고 시간을 두고 신중히 살피세요."},
-    {"name": "XIX. THE SUN (태양)", "keyword": "확실한 성공 · 생명력과 축복", "symbolism": "빛나는 태양 아래 아이는 순수한 기쁨과 확실한 승리를 의미합니다.", "reading_male": "노력해 온 결과가 세상에 당당히 인정받아 큰 찬사를 받습니다.", "reading_female": "주변에 온기를 전파하며 모임과 일터의 주인공이 됩니다.", "action_guide": "자신감을 가지고 당신의 아이디어와 존재감을 마음껏 드러내세요."},
-    {"name": "XX. JUDGEMENT (심판)", "keyword": "부활과 보상 · 결정적 부름", "symbolism": "나팔을 부는 천사는 과거 노력에 대한 정당한 보상과 구원을 뜻합니다.", "reading_male": "오랫동안 기다려온 반가운 합격, 승진, 계약 소식이 찾아옵니다.", "reading_female": "과거의 노력이 빛을 발하며 새로운 인생 2막의 기회가 열립니다.", "action_guide": "망설이지 말고 당신에게 주어진 결정적인 기회를 잡으세요."},
-    {"name": "XXI. THE WORLD (세계)", "keyword": "완벽한 완성 · 대단원의 통합", "symbolism": "월계관 속 무희는 하나의 주기가 완벽히 마무리되고 완성됨을 상징합니다.", "reading_male": "프로젝트가 완벽히 성공하며 최고의 명예와 보람을 누립니다.", "reading_female": "목표했던 바를 온전히 이루고 더 큰 세계로 도약할 준비를 마칩니다.", "action_guide": "성취한 결실을 자축하고 다음 단계를 향한 큰 그림을 그리세요."}
-]
-
 @app.get("/api/daily-tarot")
 def get_daily_tarot(slot: int):
     today_ord = datetime.date.today().toordinal()
-    # 날짜와 슬롯 번호를 결합하여 22종 중 매일 다르게 순환 선택
     card_index = (today_ord * 7 + slot * 13) % len(FULL_TAROT_DECK)
     return FULL_TAROT_DECK[card_index]
 
-# 띠별 5개 세대 연도 및 별자리 전용 데이터 분기 API (날짜별로 매일 업데이트)
+# 띠별 5개 세대 연도 및 12별자리 전용 데이터 분기 API (날짜별 자동 업데이트)
 @app.get("/api/zodiac-fortune")
 def get_zodiac_fortune(type: str, key: str):
     today = datetime.date.today()
@@ -782,18 +807,18 @@ def get_zodiac_fortune(type: str, key: str):
 
     if type == "star":
         star_meta = {
-            "양자리": {"elem": "불 (Fire)", "planet": "화성 (Mars)", "color": "루비 레드", "time": "오전 07시 ~ 09시", "focus": "새로운 기획에 도전할 때 주변의 강력한 지지를 받습니다. 솔직한 표현이 매력을 높입니다."},
-            "황소자리": {"elem": "흙 (Earth)", "planet": "금성 (Venus)", "color": "에메랄드 그린", "time": "오후 01시 ~ 03시", "focus": "재정적 안정을 도모하기에 좋습니다. 미식이나 예술적 힐링이 행운을 부릅니다."},
-            "쌍둥이자리": {"elem": "공기 (Air)", "planet": "수성 (Mercury)", "color": "스카이 블루", "time": "오전 10시 ~ 12시", "focus": "활발한 정보 교류와 소통이 성과로 이어집니다. 가벼운 연락이 귀인으로 발전합니다."},
-            "게자리": {"elem": "물 (Water)", "planet": "달 (Moon)", "color": "실버 화이트", "time": "저녁 08시 ~ 10시", "focus": "가족과 연인에게서 따스한 위로를 얻습니다. 감성을 살린 창작 활동이 빛을 발합니다."},
-            "사자자리": {"elem": "불 (Fire)", "planet": "태양 (Sun)", "color": "로열 골드", "time": "오후 12시 ~ 02시", "focus": "당신의 리더십과 카리스마가 돋보이는 날입니다. 자신감 있는 제안이 성사됩니다."},
-            "처녀자리": {"elem": "흙 (Earth)", "planet": "수성 (Mercury)", "color": "올리브 카키", "time": "오전 09시 ~ 11시", "focus": "디테일한 업무 처리와 분석에서 독보적 성과를 냅니다. 컨디션 조절에 유의하세요."},
-            "천칭자리": {"elem": "공기 (Air)", "planet": "금성 (Venus)", "color": "로즈 핑크", "time": "오후 04시 ~ 06시", "focus": "협상과 파트너십에서 최적의 균형을 찾습니다. 세련된 스타일링이 인기를 부릅니다."},
-            "전갈자리": {"elem": "물 (Water)", "planet": "명왕성 (Pluto)", "color": "딥 버건디", "time": "밤 09시 ~ 11시", "focus": "깊은 직관과 통찰력이 빛을 발합니다. 비밀스러운 계획을 구체화하기에 길합니다."},
-            "사수자리": {"elem": "불 (Fire)", "planet": "목성 (Jupiter)", "color": "네이비 블루", "time": "오후 02시 ~ 04시", "focus": "먼 곳에서의 반가운 소식이나 여행, 확장의 기운이 강합니다. 시야를 넓히세요."},
-            "염소자리": {"elem": "흙 (Earth)", "planet": "토성 (Saturn)", "color": "차콜 그레이", "time": "오전 08시 ~ 10시", "focus": "오랜 시간 공들여온 일의 결실을 맺습니다. 성실함이 최고의 무기가 되는 날입니다."},
-            "물병자리": {"elem": "공기 (Air)", "planet": "천왕성 (Uranus)", "color": "터콰이즈 민트", "time": "오후 03시 ~ 05시", "focus": "독창적인 아이디어와 네트워킹이 활성화됩니다. 상식을 깨는 발상이 성공을 엽니다."},
-            "물고기자리": {"elem": "물 (Water)", "planet": "해왕성 (Neptune)", "color": "라벤더 퍼플", "time": "저녁 07시 ~ 09시", "focus": "공감 능력과 예술적 감각이 최고조입니다. 마음을 열고 진솔한 대화를 나누세요."}
+            "양자리": {"elem": "불 (Fire)", "planet": "화성 (Mars)", "color": "루비 레드", "time": "오전 07시 ~ 09시", "focus": "새로운 기획에 도전할 때 주변의 강력한 지지를 받습니다. 솔직하고 당당한 표현이 당신의 매력을 한층 높여줍니다."},
+            "황소자리": {"elem": "흙 (Earth)", "planet": "금성 (Venus)", "color": "에메랄드 그린", "time": "오후 01시 ~ 03시", "focus": "재정적 안정을 도모하기에 좋습니다. 미식이나 예술적 힐링으로 오감을 깨울 때 뜻밖의 행운이 찾아옵니다."},
+            "쌍둥이자리": {"elem": "공기 (Air)", "planet": "수성 (Mercury)", "color": "스카이 블루", "time": "오전 10시 ~ 12시", "focus": "활발한 정보 교류와 소통이 성과로 이어집니다. 가벼운 연락 한 통이 소중한 귀인으로 발전할 수 있습니다."},
+            "게자리": {"elem": "물 (Water)", "planet": "달 (Moon)", "color": "실버 화이트", "time": "저녁 08시 ~ 10시", "focus": "가족과 연인에게서 따스한 위로를 얻습니다. 섬세한 감성을 살린 창작 활동이나 정돈이 큰 보람을 줍니다."},
+            "사자자리": {"elem": "불 (Fire)", "planet": "태양 (Sun)", "color": "로열 골드", "time": "오후 12시 ~ 02시", "focus": "당신의 리더십과 당당한 카리스마가 돋보이는 날입니다. 주저하지 말고 자신감 있게 프로젝트를 제안해 보세요."},
+            "처녀자리": {"elem": "흙 (Earth)", "planet": "수성 (Mercury)", "color": "올리브 카키", "time": "오전 09시 ~ 11시", "focus": "디테일한 업무 처리와 분석에서 독보적 성과를 냅니다. 완벽주의로 인한 피로를 덜기 위해 완급 조절에 유의하세요."},
+            "천칭자리": {"elem": "공기 (Air)", "planet": "금성 (Venus)", "color": "로즈 핑크", "time": "오후 04시 ~ 06시", "focus": "협상과 파트너십에서 최적의 균형을 찾습니다. 세련된 스타일링과 온화한 미소가 주변 사람들의 호감을 부릅니다."},
+            "전갈자리": {"elem": "물 (Water)", "planet": "명왕성 (Pluto)", "color": "딥 버건디", "time": "밤 09시 ~ 11시", "focus": "깊은 직관과 통찰력이 번뜩입니다. 겉으로 드러내지 않고 물밑에서 치밀하게 계획을 구체화하기에 길합니다."},
+            "사수자리": {"elem": "불 (Fire)", "planet": "목성 (Jupiter)", "color": "네이비 블루", "time": "오후 02시 ~ 04시", "focus": "먼 곳에서의 반가운 소식이나 여행, 확장의 기운이 강합니다. 시야를 넓혀 새로운 분야에 관심을 가져보세요."},
+            "염소자리": {"elem": "흙 (Earth)", "planet": "토성 (Saturn)", "color": "차콜 그레이", "time": "오전 08시 ~ 10시", "focus": "오랜 시간 공들여온 일의 결실을 맺습니다. 흔들리지 않는 성실함이 오늘 최고의 무기가 됩니다."},
+            "물병자리": {"elem": "공기 (Air)", "planet": "천왕성 (Uranus)", "color": "터콰이즈 민트", "time": "오후 03시 ~ 05시", "focus": "독창적인 아이디어와 네트워킹이 활성화됩니다. 고정관념을 깨는 참신한 발상이 성공의 문을 엽니다."},
+            "물고기자리": {"elem": "물 (Water)", "planet": "해왕성 (Neptune)", "color": "라벤더 퍼플", "time": "저녁 07시 ~ 09시", "focus": "공감 능력과 예술적 감각이 최고조입니다. 상대방의 마음에 깊이 귀 기울이며 진솔한 대화를 나눠보세요."}
         }
         meta = star_meta.get(key, star_meta["양자리"])
         return {
@@ -823,19 +848,31 @@ def get_zodiac_fortune(type: str, key: str):
             "돼지": ["2007년생 (만 19세)", "1995년생 (만 31세)", "1983년생 (만 43세)", "1971년생 (만 55세)", "1959년생 (만 67세)"]
         }
         years = zodiac_years_map.get(key, zodiac_years_map["말"])
-        tips = [
-            {"year_label": years[0], "tip": "새로운 도전과 배움에서 큰 성취를 얻는 활기찬 하루입니다."},
-            {"year_label": years[1], "tip": "적극적인 제안과 기획이 좋은 기회와 협력으로 이어집니다."},
-            {"year_label": years[2], "tip": "작은 양보와 신뢰가 훗날 큰 이득과 결실로 돌아옵니다."},
-            {"year_label": years[3], "tip": "주변의 조언을 수용하면 복잡한 문제가 순조롭게 풀립니다."},
-            {"year_label": years[4], "tip": "마음의 여유를 가질 때 건강과 재물 안정이 함께 찾아옵니다."}
+        
+        tips_pool = [
+            "새로운 도전과 배움에서 큰 성취를 얻는 활기찬 하루입니다.",
+            "적극적인 제안과 기획이 좋은 기회와 협력으로 이어집니다.",
+            "작은 양보와 신뢰가 훗날 큰 이득과 결실로 돌아옵니다.",
+            "주변의 조언을 수용하면 복잡한 문제가 순조롭게 풀립니다.",
+            "마음의 여유를 가질 때 건강과 재물 안정이 함께 찾아옵니다.",
+            "신중한 언행과 원칙 준수가 소중한 신뢰를 지켜줍니다.",
+            "미뤄왔던 일들을 매듭짓기에 매우 유리한 결실의 일진입니다."
         ]
+        
+        selected_tips = []
+        for i, y_label in enumerate(years):
+            tip_idx = (today_ord + hash(key) + i * 3) % len(tips_pool)
+            selected_tips.append({"year_label": y_label, "tip": tips_pool[tip_idx]})
+
+        times_pool = ["오전 08시 ~ 10시", "오전 10시 ~ 12시", "오후 01시 ~ 03시", "오후 03시 ~ 05시", "오후 05시 ~ 07시"]
+        matches_pool = ["소띠, 양띠", "말띠, 개띠", "용띠, 원숭이띠", "토끼띠, 돼지띠", "호랑이띠, 말띠"]
+
         return {
             "name": key,
             "score": rng.randint(86, 99),
             "title": f"{today.strftime('%m월 %d일')} 막힘없이 활짝 열리는 대길의 일진",
             "overview": "노력해 온 일들이 귀인을 만나 결실을 맺게 되는 뜻깊고 보람찬 하루입니다.",
-            "lucky_time": "오전 10시 ~ 12시",
-            "lucky_match": "찰떡궁합: 소띠, 양띠",
-            "year_tips": tips
+            "lucky_time": times_pool[(today_ord + hash(key)) % len(times_pool)],
+            "lucky_match": f"찰떡궁합: {matches_pool[(today_ord + hash(key)) % len(matches_pool)]}",
+            "year_tips": selected_tips
         }
