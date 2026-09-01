@@ -257,6 +257,87 @@ def generate_saju_analysis_payload(name, gender, y, m, d, cal_type, sijin):
     daily_seed = today_ord * 1000 + (y % 100) * 100 + m * 10 + d + sijin
     rng = random.Random(daily_seed)
     
+    # 오늘 운세 모드 결정 (0: 대길 60%, 1: 신중 25%, 2: 충전 15%)
+    mode_dice = rng.randint(1, 100)
+    
+    if mode_dice <= 60:
+        # [✨ 대길 모드]
+        mode_type = "fortune"
+        score = rng.randint(86, 98)
+        mode_badge = f"✨ 대길의 날 · {score}점"
+        badge_style = "background: #FEF3C7; color: #78350F; border: 1px solid #FDE68A;"
+        
+        titles_pool = [
+            "도약과 결실이 함께하는 대길의 하루",
+            "귀인의 조력으로 막힌 물꼬가 시원하게 트이는 날",
+            "지혜로운 판단이 뜻밖의 실리를 부르는 하루",
+            "새로운 기회와 좋은 인연이 찾아오는 상생의 날"
+        ]
+        advices_pool = [
+            f"{today.strftime('%m월 %d일')} 오늘의 일진 기운이 사주 본원과 상생하여 막혀있던 흐름이 시원하게 풀립니다.\n미루어 두었던 중요한 계획이나 제안이 있다면 오늘 주도적으로 첫발을 내딛기에 길합니다.\n핵심 목표 1~2가지에 에너지를 집중할 때 성과를 온전히 거머쥐게 됩니다.",
+            f"{today.strftime('%m월 %d일')} 대인관계에서 천을귀인의 서기가 비추는 날입니다.\n혼자 고민하기보다는 신뢰할 수 있는 동료나 지인과 상의할 때 명쾌한 해답을 얻습니다.\n유연하고 경청하는 자세가 뜻밖의 횡재와 기회를 부릅니다."
+        ]
+        time_flow = {
+            "morning": "오전 (09시~12시): 판단력과 집중력이 정점입니다. 핵심 결정을 내리세요.",
+            "afternoon": "오후 (13시~18시): 소통과 협상운이 상승합니다. 미팅에서 큰 성과를 냅니다.",
+            "evening": "저녁 (19시 이후): 가벼운 산책과 따뜻한 차 한잔으로 활력을 채우세요."
+        }
+        mindset_pool = ["원칙을 지키며 유연하게 대처하기", "핵심 우선순위에 집중하고 전진하기"]
+        action_pool = ["오늘 완료해야 할 우선순위 3가지 메모하기", "가장 중요한 미팅이나 결정을 오전에 집중 처리하기"]
+        lucky_items_pool = ["실버 메탈 시계", "가죽 카드지갑", "심플한 만년필"]
+        
+    elif mode_dice <= 85:
+        # [🛡️ 신중 모드]
+        mode_type = "caution"
+        score = rng.randint(68, 78)
+        mode_badge = f"🛡️ 신중 모드 · {score}점"
+        badge_style = "background: #EFF6FF; color: #1E3A8A; border: 1px solid #BFDBFE;"
+        
+        titles_pool = [
+            "말 한마디를 삼키고 내실을 다지는 날",
+            "충동적인 지출을 멈추고 한 템포 쉬어갈 때",
+            "논쟁을 피하고 원칙을 지키는 것이 이기는 날",
+            "작은 오해를 경계하고 계약서를 재점검할 하루"
+        ]
+        advices_pool = [
+            f"{today.strftime('%m월 %d일')} 내 의도와 다르게 말이 와전되거나 서운한 감정이 오가기 쉬운 흐름입니다.\n불필요한 언쟁에는 한 걸음 물러서서 경청하는 자세를 유지하세요.\n중요한 계약이나 고가의 결제는 하루 정도 시간을 두고 검토하는 것이 안전합니다.",
+            f"{today.strftime('%m월 %d일')} 순간적인 감정으로 지출이 커지거나 에너지가 분산될 수 있습니다.\n새로운 일을 벌이기보다는 진행 중인 작업의 디테일을 점검하세요.\n차분한 태도가 예상치 못한 손실을 완벽히 방어해 줍니다."
+        ]
+        time_flow = {
+            "morning": "오전 (09시~12시): 서류나 메일을 보낼 때 두 번 점검하세요. 꼼꼼함이 무기입니다.",
+            "afternoon": "오후 (13시~18시): 감정적인 대화나 충동구매를 피하고 담담하게 일상을 유지하세요.",
+            "evening": "저녁 (19시 이후): 조용한 환경에서 음악을 듣거나 독서로 마음을 가라앉히세요."
+        }
+        mindset_pool = ["상대방의 입장을 먼저 경청하고 배려하기", "조급함을 내려놓고 차분한 호흡 유지하기"]
+        action_pool = ["장바구니 결제나 고가 소비 내일로 미루기", "대화 중 말실수 방지를 위해 3초 생각하고 답변하기"]
+        lucky_items_pool = ["차분한 네이비 린넨 손수건", "미니멀 텀블러", "안정감을 주는 원석 팔찌"]
+        
+    else:
+        # [💡 충전 모드]
+        mode_type = "rest"
+        score = rng.randint(58, 66)
+        mode_badge = f"💡 내실 충전일 · {score}점"
+        badge_style = "background: #F1F5F9; color: #475569; border: 1px solid #CBD5E1;"
+        
+        titles_pool = [
+            "씨앗이 땅속에서 힘을 기르듯 쉬어가는 날",
+            "무리한 달리기보다 몸과 마음에 쉼표를 찍는 하루",
+            "방향을 재점검하고 체력을 보충할 충전의 날",
+            "주변의 시선에서 벗어나 나를 돌보는 평온한 날"
+        ]
+        advices_pool = [
+            f"{today.strftime('%m월 %d일')} 몸의 에너지가 일시적으로 가라앉아 휴식을 요구하는 날입니다.\n성과를 재촉하기보다 나를 돌보고 피로를 풀어주는 것이 가장 훌륭한 개운(開運)법입니다.\n무리한 약속이나 과격한 운동은 피하고 가벼운 스트레칭과 일찍 귀가해 보세요.",
+            f"{today.strftime('%m월 %d일')} 운이 멈춘 것이 아니라 다음 도약을 위해 숨을 고르는 시간입니다.\n복잡한 머릿속을 비우고 가벼운 산책이나 명상으로 마음을 환기하세요.\n충분한 수면과 휴식이 내일의 큰 기운을 만들어냅니다."
+        ]
+        time_flow = {
+            "morning": "오전 (09시~12시): 무리한 일정 대신 꼭 해야 할 최소한의 일에만 집중하세요.",
+            "afternoon": "오후 (13시~18시): 따뜻한 차나 물을 자주 마시며 수분과 컨디션을 챙기세요.",
+            "evening": "저녁 (19시 이후): 평소보다 30분 일찍 잠자리에 들어 깊은 숙면을 취하세요."
+        }
+        mindset_pool = ["무리하지 말고 내 페이스 지키기", "스스로를 칭찬하며 편안한 마음 갖기"]
+        action_pool = ["평소보다 30분 일찍 귀가하여 푹 쉬기", "따뜻한 물로 샤워 후 가벼운 스트레칭하기"]
+        lucky_items_pool = ["편안한 착용감의 스니커즈", "심플한 수면 안대", "따뜻한 보온병"]
+
     palettes = WADA_SANZO_PALETTES.get(day_elem, WADA_SANZO_PALETTES["metal"])
     chosen_palette = palettes[rng.randint(0, len(palettes) - 1)]
     is_reverse = (chosen_palette["mode"] == "reverse")
@@ -268,42 +349,6 @@ def generate_saju_analysis_payload(name, gender, y, m, d, cal_type, sijin):
     sijin_names = ["자시(子時)", "축시(丑時)", "인시(寅時)", "묘시(卯時)", "진시(辰時)", "사시(巳時)", "오시(午時)", "미시(未時)", "신시(申時)", "유시(酉時)", "술시(戌時)", "해시(亥時)"]
     sijin_str = sijin_names[sijin] if 0 <= sijin < 12 else "시간모름"
 
-    # 날짜별 역동적 텍스트 풀
-    titles_pool = [
-        "도약과 결실이 함께하는 대길의 하루",
-        "귀인의 조력으로 막힌 물꼬가 시원하게 트이는 날",
-        "지혜로운 판단이 뜻밖의 실리를 부르는 하루",
-        "차분한 내실 경영이 큰 성과로 이어지는 길일",
-        "새로운 기회와 좋은 인연이 찾아오는 상생의 날",
-        "탁월한 집중력으로 오랜 난제를 해결하는 하루"
-    ]
-    
-    advices_pool = [
-        f"{today.strftime('%m월 %d일')} 오늘의 일진 기운이 사주 본원과 상생하여 막혀있던 흐름이 시원하게 풀립니다.\n미루어 두었던 중요한 계획이나 제안이 있다면 오늘 주도적으로 첫발을 내딛기에 길합니다.\n핵심 목표 1~2가지에 에너지를 집중할 때 성과를 온전히 거머쥐게 됩니다.",
-        f"{today.strftime('%m월 %d일')} 대인관계에서 천을귀인의 서기가 비추는 날입니다.\n혼자 고민하기보다는 신뢰할 수 있는 동료나 지인과 상의할 때 명쾌한 해답을 얻습니다.\n유연하고 경청하는 자세가 뜻밖의 횡재와 기회를 부릅니다.",
-        f"{today.strftime('%m월 %d일')} 차분하게 내실을 다지며 실리를 챙기기에 최적인 일진입니다.\n불필요한 과욕을 경계하고 현재 진행 중인 일의 디테일을 점검하세요.\n원칙을 지키는 정직한 태도가 주변의 큰 신뢰와 지지를 이끌어냅니다.",
-        f"{today.strftime('%m월 %d일')} 활동 에너지와 지성 리듬이 조화를 이루는 역동적인 하루입니다.\n새로운 아이디어가 번뜩인다면 망설이지 말고 실행 계획으로 구체화하세요.\n발빠른 대처가 경쟁에서 우위를 점하는 결정적 무기가 됩니다."
-    ]
-
-    mindset_pool = [
-        "원칙을 지키며 유연하게 대처하기",
-        "상대방의 입장을 먼저 경청하고 배려하기",
-        "조급함을 내려놓고 차분한 호흡 유지하기",
-        "핵심 우선순위에 집중하고 잔가지는 쳐내기",
-        "작은 성공에도 감사하며 긍정의 기운 돋우기",
-        "자신의 직관과 노력을 굳게 신뢰하기"
-    ]
-
-    action_pool = [
-        "오늘 완료해야 할 우선순위 3가지 메모하기",
-        "가장 중요한 미팅이나 결정을 오전에 집중 처리하기",
-        "감사한 지인 1명에게 따뜻한 안부 메시지 보내기",
-        "점심 식사 후 10분간 가벼운 산책으로 기운 충전하기",
-        "퇴근 전 책상과 주변 환경을 깔끔하게 정돈하기",
-        "잠들기 전 오늘 하루의 감사한 일 3가지 되새기기"
-    ]
-
-    lucky_items_pool = ["실버 메탈 시계", "가죽 카드지갑", "심플한 만년필", "옥/원석 팔찌", "린넨 손수건", "미니멀 텀블러", "블루투스 이어폰"]
     lucky_menus_pool = ["속이 편안한 영양 솥밥", "맑은 조개탕", "신선한 비빔밥", "담백한 두부 요리", "따뜻한 메밀 국수", "정갈한 생선구이 정식"]
     lucky_dirs_pool = ["정동쪽 (청룡 방위)", "정남쪽 (주작 방위)", "정서쪽 (백호 방위)", "정북쪽 (현무 방위)", "남동쪽 (풍수 길방)"]
 
@@ -312,14 +357,13 @@ def generate_saju_analysis_payload(name, gender, y, m, d, cal_type, sijin):
         "current_age": 2026 - y + 1,
         "birth_summary": f"{y}년 {m}월 {d}일생 · {sijin_str}생",
         "daily_fortune": {
+            "mode_type": mode_type,
+            "mode_badge": mode_badge,
+            "badge_style": badge_style,
             "title": rng.choice(titles_pool),
-            "score": rng.randint(84, 98),
+            "score": score,
             "advice": rng.choice(advices_pool),
-            "time_flow": {
-                "morning": "오전 (09시~12시): 판단력과 집중력이 정점입니다. 핵심 업무와 결정을 처리하세요.",
-                "afternoon": "오후 (13시~18시): 소통과 협상운이 상승합니다. 미팅이나 협력에서 좋은 결과를 냅니다.",
-                "evening": "저녁 (19시 이후): 심신을 정돈하는 힐링의 시간. 가벼운 휴식으로 활력을 채우세요."
-            },
+            "time_flow": time_flow,
             "lucky_item": rng.choice(lucky_items_pool),
             "lucky_number": f"{rng.randint(1,9)}, {rng.randint(1,9)}",
             "lucky_direction": rng.choice(lucky_dirs_pool),
@@ -343,10 +387,10 @@ def generate_saju_analysis_payload(name, gender, y, m, d, cal_type, sijin):
         },
         "biorhythm": {
             "days_lived": (today - datetime.date(y, m, d)).days,
-            "physical": {"status": "고조기", "val": rng.randint(75, 95)},
+            "physical": {"status": "고조기" if score > 75 else "충전기", "val": score},
             "emotional": {"status": "안정기", "val": rng.randint(60, 85)},
-            "intellectual": {"status": "최고조", "val": rng.randint(85, 99)},
-            "overall_summary": "지성 리듬과 활동 에너지가 상위 구간에 위치하여 전략적 결정이나 계약에 최적인 날입니다."
+            "intellectual": {"status": "최고조" if score > 75 else "안정기", "val": rng.randint(75, 95)},
+            "overall_summary": "오늘의 일진 흐름에 맞춰 활동량과 결정의 완급을 조절하는 것이 좋습니다."
         }
     }
 
