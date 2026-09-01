@@ -818,18 +818,18 @@ def get_zodiac_fortune(type: str, key: str):
     if type == "star":
         # [정통 서양 점성술 천체 트랜짓 & 원소 아스펙트 엔진]
         star_signs_info = {
-            "양자리": {"elem": "불 (Fire)", "planet": "화성 (Mars)", "modality": "활동궁 (Cardinal)", "color": "루비 레드", "theme_domain": "용기와 추진력"},
-            "황소자리": {"elem": "흙 (Earth)", "planet": "금성 (Venus)", "modality": "고정궁 (Fixed)", "color": "에메랄드 그린", "theme_domain": "자산과 안정감"},
-            "쌍둥이자리": {"elem": "공기 (Air)", "planet": "수성 (Mercury)", "modality": "변통궁 (Mutable)", "color": "스카이 블루", "theme_domain": "소통과 아이디어"},
-            "게자리": {"elem": "물 (Water)", "planet": "달 (Moon)", "modality": "활동궁 (Cardinal)", "color": "실버 화이트", "theme_domain": "공감과 유대감"},
-            "사자자리": {"elem": "불 (Fire)", "planet": "태양 (Sun)", "modality": "고정궁 (Fixed)", "color": "로열 골드", "theme_domain": "리더십과 창조성"},
-            "처녀자리": {"elem": "흙 (Earth)", "planet": "수성 (Mercury)", "modality": "변통궁 (Mutable)", "color": "올리브 카키", "theme_domain": "분석과 디테일"},
-            "천칭자리": {"elem": "공기 (Air)", "planet": "금성 (Venus)", "modality": "활동궁 (Cardinal)", "color": "로즈 핑크", "theme_domain": "균형과 파트너십"},
-            "전갈자리": {"elem": "물 (Water)", "planet": "명왕성 (Pluto)", "modality": "고정궁 (Fixed)", "color": "딥 버건디", "theme_domain": "직관과 통찰력"},
-            "사수자리": {"elem": "불 (Fire)", "planet": "목성 (Jupiter)", "modality": "변통궁 (Mutable)", "color": "네이비 블루", "theme_domain": "비전과 확장"},
-            "염소자리": {"elem": "흙 (Earth)", "planet": "토성 (Saturn)", "modality": "활동궁 (Cardinal)", "color": "차콜 그레이", "theme_domain": "책임과 성취"},
-            "물병자리": {"elem": "공기 (Air)", "planet": "천왕성 (Uranus)", "modality": "고정궁 (Fixed)", "color": "터콰이즈 민트", "theme_domain": "혁신과 자유"},
-            "물고기자리": {"elem": "물 (Water)", "planet": "해왕성 (Neptune)", "modality": "변통궁 (Mutable)", "color": "라벤더 퍼플", "theme_domain": "영감과 힐링"}
+            "양자리": {"elem": "불 (Fire)", "planet": "화성 (Mars)", "color": "루비 레드", "theme_domain": "용기와 추진력"},
+            "황소자리": {"elem": "흙 (Earth)", "planet": "금성 (Venus)", "color": "에메랄드 그린", "theme_domain": "자산과 안정감"},
+            "쌍둥이자리": {"elem": "공기 (Air)", "planet": "수성 (Mercury)", "color": "스카이 블루", "theme_domain": "소통과 아이디어"},
+            "게자리": {"elem": "물 (Water)", "planet": "달 (Moon)", "color": "실버 화이트", "theme_domain": "공감과 유대감"},
+            "사자자리": {"elem": "불 (Fire)", "planet": "태양 (Sun)", "color": "로열 골드", "theme_domain": "리더십과 창조성"},
+            "처녀자리": {"elem": "흙 (Earth)", "planet": "수성 (Mercury)", "color": "올리브 카키", "theme_domain": "분석과 디테일"},
+            "천칭자리": {"elem": "공기 (Air)", "planet": "금성 (Venus)", "color": "로즈 핑크", "theme_domain": "균형과 파트너십"},
+            "전갈자리": {"elem": "물 (Water)", "planet": "명왕성 (Pluto)", "color": "딥 버건디", "theme_domain": "직관과 통찰력"},
+            "사수자리": {"elem": "불 (Fire)", "planet": "목성 (Jupiter)", "color": "네이비 블루", "theme_domain": "비전과 확장"},
+            "염소자리": {"elem": "흙 (Earth)", "planet": "토성 (Saturn)", "color": "차콜 그레이", "theme_domain": "책임과 성취"},
+            "물병자리": {"elem": "공기 (Air)", "planet": "천왕성 (Uranus)", "color": "터콰이즈 민트", "theme_domain": "혁신과 자유"},
+            "물고기자리": {"elem": "물 (Water)", "planet": "해왕성 (Neptune)", "color": "라벤더 퍼플", "theme_domain": "영감과 힐링"}
         }
 
         zodiac_order = ["양자리", "황소자리", "쌍둥이자리", "게자리", "사자자리", "처녀자리", "천칭자리", "전갈자리", "사수자리", "염소자리", "물병자리", "물고기자리"]
@@ -859,25 +859,26 @@ def get_zodiac_fortune(type: str, key: str):
         }
         aspect_label = elem_affinity.get((my_elem_name, transit_moon_elem), "Neutral Aspect")
 
+        # 4단계 현실적 점수 분배 곡선 (58~96점)
         if aspect_diff == 0:
-            score = rng.randint(94, 98)
-            title = "달과 나의 별자리가 합(Conjunction)을 이루는 강력한 날"
-            overview = f"오늘의 달이 {key}에 진입하여 직관과 잠재력이 최고조로 상승합니다. 망설이던 일에 첫발을 떼면 우주의 서포트를 받습니다."
-            action_guide = f"수호성 {my_info['planet']}의 기운을 믿고 당신의 {my_info['theme_domain']} 영역에서 주도권을 잡으세요."
-        elif "Trine" in aspect_label or "Sextile" in aspect_label:
             score = rng.randint(90, 96)
-            title = f"{transit_moon_sign} 달과의 길각({aspect_label.split()[0]})으로 순조로운 결실의 날"
-            overview = f"달의 {transit_moon_elem} 원소가 나의 {my_elem_name} 원소와 부드러운 상생을 이룹니다. 주변 사람들과의 원활한 소통 속에서 기분 좋은 성과를 냅니다."
-            action_guide = f"자연스럽게 흘러가는 에너지를 타세요. {my_info['theme_domain']}을 살려 적극적으로 의견을 나누기에 길합니다."
+            title = "달과 나의 별자리가 합(合)을 이루는 활력의 날"
+            overview = f"오늘의 달이 {key}에 진입하여 직관과 집중력이 살아납니다. 미뤄두었던 과제를 주도적으로 시작하기에 좋은 타이밍입니다."
+            action_guide = f"수호성 {my_info['planet']}의 긍정적인 기운을 활용해 당신의 {my_info['theme_domain']} 영역에서 주도권을 잡으세요."
+        elif "Trine" in aspect_label or "Sextile" in aspect_label:
+            score = rng.randint(78, 87)
+            title = f"{transit_moon_sign} 달과의 조화로 순조로운 하루"
+            overview = f"달의 {transit_moon_elem} 원소가 나의 {my_elem_name} 기운과 상생을 이룹니다. 주변과의 협업과 소통이 부드럽게 흘러갑니다."
+            action_guide = f"무리한 욕심을 내기보다 자연스러운 흐름에 맞춰 {my_info['theme_domain']}에 집중해 보세요."
         elif "Square" in aspect_label or aspect_diff == 6:
-            score = rng.randint(68, 76)
-            title = "천체 긴장각 형성 · 감정 조절과 내실 다지기의 날"
-            overview = f"달의 {transit_moon_elem} 에너지가 나의 원소와 각도를 이루어 일시적인 조율이 필요합니다. 조급함을 내려놓고 디테일을 점검하세요."
-            action_guide = f"중요한 계약이나 결정을 내릴 때는 수호성 {my_info['planet']}의 침착함을 발휘해 한 템포 쉬어가세요."
+            score = rng.randint(58, 67)
+            title = "천체 긴장각 형성 · 완급 조절과 점검의 날"
+            overview = f"천체의 에너지가 일시적인 조율을 요구하는 흐름입니다. 충동적인 결정을 경계하고 진행 중인 일의 디테일을 점검하세요."
+            action_guide = f"수호성 {my_info['planet']}의 차분함을 발휘해 서두르지 말고 한 템포 쉬어가는 지혜를 발휘하세요."
         else:
-            score = rng.randint(80, 88)
-            title = "안정적인 궤도 속에서 나만의 리듬을 지키는 하루"
-            overview = f"천체의 흐름이 평온하게 유지되며 일상의 루틴을 정돈하기에 적합합니다. 내면의 목소리에 집중할 때 만족스러운 해답을 찾습니다."
+            score = rng.randint(68, 77)
+            title = "안정된 루틴 속에서 나만의 페이스를 지키는 날"
+            overview = f"천체의 흐름이 평온하게 유지되며 기본기를 다지기에 적합합니다. 내면의 소리에 집중할 때 확실한 실리를 챙깁니다."
             action_guide = f"기본에 충실하며 당신만의 {my_info['theme_domain']}을 차분하게 실현해 나가세요."
 
         times_pool = ["오전 08시 ~ 10시", "오전 10시 ~ 12시", "오후 01시 ~ 03시", "오후 03시 ~ 05시", "저녁 07시 ~ 09시", "밤 09시 ~ 11시"]
@@ -934,21 +935,22 @@ def get_zodiac_fortune(type: str, key: str):
             ("wood","water"): "합(合)", ("fire","wood"): "합(合)", ("earth","fire"): "합(合)", ("metal","earth"): "합(合)", ("water","metal"): "합(合)"
         }
 
+        # 4단계 현실적 점수 분배 곡선 (56~96점)
         if is_yuk_hap or is_sam_hap:
-            score = rng.randint(93, 98)
-            overview = f"오늘의 일진 지지 {today_ji}(와)과 나의 본명 {target_ji}(이)가 길한 합(合)을 이루는 대길의 날입니다. 귀인의 조력이 따르고 추진 중인 일의 결실을 온전히 쟁취하는 형국입니다."
+            score = rng.randint(89, 96)
+            overview = f"오늘의 일진 지지 {today_ji}(와)과 나의 본명 {target_ji}(이)가 길한 합(合)을 이루는 도약의 날입니다. 귀인의 조력이 따르고 추진 중인 일의 결실을 쟁취하는 형국입니다."
         elif is_chung:
-            score = rng.randint(62, 70)
-            overview = f"오늘의 일진 {today_ji}(와)과 나의 지지 {target_ji}(이)가 충(沖)을 이루어 일상에 크고 작은 변동수가 발생하는 날입니다. 무리한 확장보다 차분히 내실을 점검하고 언행을 신중히 하세요."
+            score = rng.randint(56, 65)
+            overview = f"오늘의 일진 {today_ji}(와)과 나의 지지 {target_ji}(이)가 충(沖)을 이루어 완급 조절이 필요한 날입니다. 무리한 확장보다 차분히 기본기를 다지면 손실을 완벽히 방어합니다."
         elif t_elem == my_elem:
-            score = rng.randint(84, 91)
-            overview = f"오늘의 일진 오행({t_elem.upper()})과 나의 기운이 비화(比和)를 이루어 주도성과 에너지가 넘치는 하루입니다. 동료와의 협력으로 오랜 난제를 시원하게 매듭짓게 됩니다."
+            score = rng.randint(76, 84)
+            overview = f"오늘의 일진 오행({t_elem.upper()})과 나의 기운이 비화(比和)를 이루어 활력이 유지되는 하루입니다. 동료와의 협력으로 난제를 원만하게 풀어갈 수 있습니다."
         elif (t_elem, my_elem) in elem_rel:
-            score = rng.randint(85, 92)
-            overview = f"오늘의 일진이 사주를 따뜻하게 북돋아 주는 상생(相生)의 일진입니다. 지혜로운 판단과 원만한 소통이 뜻밖의 실리와 호감을 부릅니다."
+            score = rng.randint(78, 86)
+            overview = f"오늘의 일진이 사주를 따뜻하게 북돋아 주는 상생(相生)의 날입니다. 차분한 판단과 유연한 소통이 뜻밖의 실리와 호감을 부릅니다."
         else:
-            score = rng.randint(75, 83)
-            overview = f"모나지 않고 차분하게 흘러가는 평온한 하루입니다. 기본 루틴을 성실하게 유지하고 감정적 지출을 자제할 때 안정된 보람을 얻습니다."
+            score = rng.randint(67, 75)
+            overview = f"모나지 않고 차분하게 흘러가는 평온한 하루입니다. 기본 루틴을 성실하게 유지하고 감정적 지출을 자제할 때 안정된 성취를 얻습니다."
 
         # 3. 60갑자 출생연도별 십신(十神) 실시간 연산
         zodiac_years_map = {
