@@ -1004,19 +1004,31 @@
             try { const raw = localStorage.getItem('dalha_custom_saju'); return raw ? JSON.parse(raw) : null; } catch(e) { return null; }
         }
 
+        function initKakaoSDK() {
+            try {
+                if (window.Kakao) {
+                    if (!window.Kakao.isInitialized()) {
+                        window.Kakao.init(KAKAO_JS_KEY);
+                    }
+                    return true;
+                }
+            } catch(e) {
+                console.error("Kakao SDK Init Error:", e);
+            }
+            return false;
+        }
+
         function loginWithKakaoReal() {
             try {
-                initKakaoSDK();
-                if (!window.Kakao) {
-                    alert("카카오 SDK 로딩 중입니다. 1~2초 후 다시 눌러주세요.");
+                if (!initKakaoSDK()) {
+                    alert("카카오 로그인 라이브러리를 불러오는 중입니다. 1~2초 후 다시 눌러주세요.");
                     return;
                 }
-                if (!window.Kakao.isInitialized()) {
-                    window.Kakao.init(KAKAO_JS_KEY);
-                }
 
+                // 카카오 로그인 요청 (팝업 방식)
                 Kakao.Auth.login({
                     persistAccessToken: true,
+                    throughTalk: false, // 브라우저 호환성 확보
                     success: function(authObj) {
                         Kakao.API.request({
                             url: '/v2/user/me',
@@ -1044,7 +1056,7 @@
                                     });
 
                                     if (!sRes.ok) {
-                                        alert("서버 연결 실패 (" + sRes.status + "): 잠시 후 다시 시도해 주세요.");
+                                        alert("서버 통신 실패 (" + sRes.status + "): 잠시 후 다시 시도해 주세요.");
                                         return;
                                     }
 
@@ -1078,20 +1090,20 @@
                                         document.getElementById('onboardingInputView').classList.remove('hidden');
                                     }
                                 } catch(innerErr) {
-                                    alert("로그인 처리 중 오류가 발생했습니다: " + innerErr.message);
+                                    alert("데이터 처리 중 오류: " + innerErr.message);
                                 }
                             },
-                            fail: function(err) { 
-                                alert("카카오 프로필 정보를 가져오지 못했습니다: " + JSON.stringify(err)); 
+                            fail: function(err) {
+                                alert("카카오 프로필 정보 요청 실패: " + JSON.stringify(err));
                             }
                         });
                     },
-                    fail: function(err) { 
-                        alert("카카오 로그인 창 오류: " + JSON.stringify(err)); 
+                    fail: function(err) {
+                        alert("카카오 로그인 창 호출 실패: " + JSON.stringify(err));
                     }
                 });
-            } catch(outerErr) { 
-                alert("로그인 실행 오류: " + outerErr.message); 
+            } catch(outerErr) {
+                alert("로그인 실행 오류: " + outerErr.message);
             }
         }
 
