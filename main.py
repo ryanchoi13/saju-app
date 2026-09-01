@@ -246,14 +246,36 @@ def calculate_four_pillars(y: int, m: int, d: int, sijin_idx: int):
         h_gan = "-"
         h_ji = "-"
 
-    counts = {"wood": 0, "fire": 0, "earth": 0, "metal": 0, "water": 0}
-    for char in [y_gan, y_ji, m_gan, m_ji, d_gan, d_ji, h_gan, h_ji]:
-        if char in elem_map:
-            counts[elem_map[char]] += 1
-    total_c = max(1, sum(counts.values()))
-    dist = {k: int((v / total_c) * 100) for k, v in counts.items()}
-    remainder = 100 - sum(dist.values())
-    dist["metal"] += remainder
+    # 정통 명리학 100점 가중치 오행 분포 계산 (월령 30%, 일지 15%, 시지 15%, 년지 10%, 천간 각 7.5%)
+    weights = {"wood": 0.0, "fire": 0.0, "earth": 0.0, "metal": 0.0, "water": 0.0}
+    
+    # 천간 4자 (각 7.5점, 시간 모름일 때 삼주 균등 배분)
+    stem_w = 7.5 if h_gan != "-" else 10.0
+    for g in [y_gan, m_gan, d_gan, h_gan]:
+        if g in elem_map:
+            weights[elem_map[g]] += stem_w
+            
+    # 지지 4자 (월령 30점, 일지 15점, 시지 15점, 년지 10점)
+    if h_ji != "-":
+        weights[elem_map[m_ji]] += 30.0
+        weights[elem_map[d_ji]] += 15.0
+        weights[elem_map[h_ji]] += 15.0
+        weights[elem_map[y_ji]] += 10.0
+    else:
+        weights[elem_map[m_ji]] += 35.0
+        weights[elem_map[d_ji]] += 20.0
+        weights[elem_map[y_ji]] += 15.0
+
+    # 정수 퍼센테이지 변환 및 고정 정규화 (생년월일 입력 시 항상 100% 고정)
+    dist = {k: int(round(v)) for k, v in weights.items()}
+    total_val = sum(dist.values())
+    if total_val != 100:
+        max_elem = max(dist, key=dist.get)
+        dist[max_elem] += (100 - total_val)
+
+    day_e = elem_map[d_gan]
+    # 득령/득세 기반 신강·신약 판별
+    is_singang = (weights[day_e] >= 30.0) or (elem_map[m_ji] == day_e and weights[day_e] >= 25.0)
 
     return {
         "pillars": {
@@ -263,8 +285,8 @@ def calculate_four_pillars(y: int, m: int, d: int, sijin_idx: int):
             "hour": {"cg": h_gan, "cg_elem": elem_map.get(h_gan, "none"), "jj": h_ji, "jj_elem": elem_map.get(h_ji, "none"), "jijanggan": jjg_map.get(h_ji, [])}
         },
         "elements": dist,
-        "day_elem": elem_map[d_gan],
-        "singang_label": "신강(身强) 사주" if dist[elem_map[d_gan]] >= 30 else "신약(身弱) 사주"
+        "day_elem": day_e,
+        "singang_label": "신강(身强) 사주" if is_singang else "신약(身弱) 사주"
     }
 
 def generate_saju_analysis_payload(name, gender, y, m, d, cal_type, sijin):
@@ -796,18 +818,18 @@ def get_zodiac_fortune(type: str, key: str):
     if type == "star":
         # [정통 서양 점성술 천체 트랜짓 & 원소 아스펙트 엔진]
         star_signs_info = {
-            "양자리": {"elem": "불 (Fire)", "planet": "화성 (Mars)", "modality": "활동궁 (Cardinal)", "color": "루비 레드", "theme_domain": "용기와 추진력", "base_score": 88},
-            "황소자리": {"elem": "흙 (Earth)", "planet": "금성 (Venus)", "modality": "고정궁 (Fixed)", "color": "에메랄드 그린", "theme_domain": "자산과 안정감", "base_score": 86},
-            "쌍둥이자리": {"elem": "공기 (Air)", "planet": "수성 (Mercury)", "modality": "변통궁 (Mutable)", "color": "스카이 블루", "theme_domain": "소통과 아이디어", "base_score": 89},
-            "게자리": {"elem": "물 (Water)", "planet": "달 (Moon)", "modality": "활동궁 (Cardinal)", "color": "실버 화이트", "theme_domain": "공감과 유대감", "base_score": 85},
-            "사자자리": {"elem": "불 (Fire)", "planet": "태양 (Sun)", "modality": "고정궁 (Fixed)", "color": "로열 골드", "theme_domain": "리더십과 창조성", "base_score": 90},
-            "처녀자리": {"elem": "흙 (Earth)", "planet": "수성 (Mercury)", "modality": "변통궁 (Mutable)", "color": "올리브 카키", "theme_domain": "분석과 디테일", "base_score": 87},
-            "천칭자리": {"elem": "공기 (Air)", "planet": "금성 (Venus)", "modality": "활동궁 (Cardinal)", "color": "로즈 핑크", "theme_domain": "균형과 파트너십", "base_score": 88},
-            "전갈자리": {"elem": "물 (Water)", "planet": "명왕성 (Pluto)", "modality": "고정궁 (Fixed)", "color": "딥 버건디", "theme_domain": "직관과 통찰력", "base_score": 86},
-            "사수자리": {"elem": "불 (Fire)", "planet": "목성 (Jupiter)", "modality": "변통궁 (Mutable)", "color": "네이비 블루", "theme_domain": "비전과 확장", "base_score": 91},
-            "염소자리": {"elem": "흙 (Earth)", "planet": "토성 (Saturn)", "modality": "활동궁 (Cardinal)", "color": "차콜 그레이", "theme_domain": "책임과 성취", "base_score": 87},
-            "물병자리": {"elem": "공기 (Air)", "planet": "천왕성 (Uranus)", "modality": "고정궁 (Fixed)", "color": "터콰이즈 민트", "theme_domain": "혁신과 자유", "base_score": 89},
-            "물고기자리": {"elem": "물 (Water)", "planet": "해왕성 (Neptune)", "modality": "변통궁 (Mutable)", "color": "라벤더 퍼플", "theme_domain": "영감과 힐링", "base_score": 86}
+            "양자리": {"elem": "불 (Fire)", "planet": "화성 (Mars)", "modality": "활동궁 (Cardinal)", "color": "루비 레드", "theme_domain": "용기와 추진력"},
+            "황소자리": {"elem": "흙 (Earth)", "planet": "금성 (Venus)", "modality": "고정궁 (Fixed)", "color": "에메랄드 그린", "theme_domain": "자산과 안정감"},
+            "쌍둥이자리": {"elem": "공기 (Air)", "planet": "수성 (Mercury)", "modality": "변통궁 (Mutable)", "color": "스카이 블루", "theme_domain": "소통과 아이디어"},
+            "게자리": {"elem": "물 (Water)", "planet": "달 (Moon)", "modality": "활동궁 (Cardinal)", "color": "실버 화이트", "theme_domain": "공감과 유대감"},
+            "사자자리": {"elem": "불 (Fire)", "planet": "태양 (Sun)", "modality": "고정궁 (Fixed)", "color": "로열 골드", "theme_domain": "리더십과 창조성"},
+            "처녀자리": {"elem": "흙 (Earth)", "planet": "수성 (Mercury)", "modality": "변통궁 (Mutable)", "color": "올리브 카키", "theme_domain": "분석과 디테일"},
+            "천칭자리": {"elem": "공기 (Air)", "planet": "금성 (Venus)", "modality": "활동궁 (Cardinal)", "color": "로즈 핑크", "theme_domain": "균형과 파트너십"},
+            "전갈자리": {"elem": "물 (Water)", "planet": "명왕성 (Pluto)", "modality": "고정궁 (Fixed)", "color": "딥 버건디", "theme_domain": "직관과 통찰력"},
+            "사수자리": {"elem": "불 (Fire)", "planet": "목성 (Jupiter)", "modality": "변통궁 (Mutable)", "color": "네이비 블루", "theme_domain": "비전과 확장"},
+            "염소자리": {"elem": "흙 (Earth)", "planet": "토성 (Saturn)", "modality": "활동궁 (Cardinal)", "color": "차콜 그레이", "theme_domain": "책임과 성취"},
+            "물병자리": {"elem": "공기 (Air)", "planet": "천왕성 (Uranus)", "modality": "고정궁 (Fixed)", "color": "터콰이즈 민트", "theme_domain": "혁신과 자유"},
+            "물고기자리": {"elem": "물 (Water)", "planet": "해왕성 (Neptune)", "modality": "변통궁 (Mutable)", "color": "라벤더 퍼플", "theme_domain": "영감과 힐링"}
         }
 
         zodiac_order = ["양자리", "황소자리", "쌍둥이자리", "게자리", "사자자리", "처녀자리", "천칭자리", "전갈자리", "사수자리", "염소자리", "물병자리", "물고기자리"]
@@ -815,7 +837,7 @@ def get_zodiac_fortune(type: str, key: str):
         # 1. 당일 달(Moon)의 별자리 트랜짓 위치 산출 (27.3일 공전 주기 기반)
         moon_sign_idx = int((today_ord % 27.3) / (27.3 / 12)) % 12
         transit_moon_sign = zodiac_order[moon_sign_idx]
-        transit_moon_elem = star_signs_info[transit_moon_sign]["elem"].split()[0] # 불, 흙, 공기, 물
+        transit_moon_elem = star_signs_info[transit_moon_sign]["elem"].split()[0]
 
         my_info = star_signs_info.get(key, star_signs_info["양자리"])
         my_elem_name = my_info["elem"].split()[0]
@@ -825,7 +847,6 @@ def get_zodiac_fortune(type: str, key: str):
         aspect_diff = abs(my_sign_idx - moon_sign_idx)
         if aspect_diff > 6: aspect_diff = 12 - aspect_diff
 
-        # 3. 원소 상생 및 아스펙트별 역학 풀이
         elem_affinity = {
             ("불", "불"): "Trine (120° 동일 원소 조화)", ("공기", "공기"): "Trine (120° 동일 원소 조화)",
             ("흙", "흙"): "Trine (120° 동일 원소 조화)", ("물", "물"): "Trine (120° 동일 원소 조화)",
