@@ -197,6 +197,36 @@ def get_saju_pillars_and_analysis(name: str, gender: str, y: int, m: int, d: int
 
     current_age = datetime.date.today().year - y + 1
 
+    relation_fortunes = {
+        "same": {
+            "score": 78,
+            "title": "내 기운을 단단히 다지는 날",
+            "advice": "오늘은 나와 비슷한 기운이 강해집니다. 자신감은 살리되 고집이 앞서지 않도록 균형을 잡는 것이 좋습니다."
+        },
+        "supported": {
+            "score": 90,
+            "title": "도움과 기회가 따라오는 날",
+            "advice": "오늘의 기운이 나를 북돋아 주는 흐름입니다. 새로운 제안이나 주변의 도움을 적극적으로 활용해 보세요."
+        },
+        "output": {
+            "score": 82,
+            "title": "능력을 펼치고 표현하기 좋은 날",
+            "advice": "내 기운을 밖으로 발산하기 좋은 날입니다. 아이디어를 표현하거나 미뤄둔 일을 실행하면 성과를 만들기 좋습니다."
+        },
+        "wealth": {
+            "score": 86,
+            "title": "실속과 성과를 챙기기 좋은 날",
+            "advice": "현실적인 결과와 재물의 흐름에 집중하기 좋은 날입니다. 계획을 구체적인 행동으로 옮겨 보세요."
+        },
+        "pressure": {
+            "score": 68,
+            "title": "서두르기보다 균형이 필요한 날",
+            "advice": "외부의 요구나 부담을 크게 느낄 수 있습니다. 무리하게 밀어붙이기보다 우선순위를 정해 차분히 대응하는 것이 좋습니다."
+        }
+    }
+
+    today_fortune = relation_fortunes[element_relation]
+
     return {
         "user_name": name,
         "birth_summary": f"{y}년 {m}월 {d}일생 · {'남성' if gender == 'male' else '여성'}",
@@ -213,8 +243,8 @@ def get_saju_pillars_and_analysis(name: str, gender: str, y: int, m: int, d: int
             "elements": elements_weight
         },
         "daily_fortune": {
-            "title": "도약과 실속의 기운이 깃든 날",
-            "score": 88,
+            "title": today_fortune["title"],
+            "score": today_fortune["score"],
             "mode_badge": "운세 88점 · 길운(吉運)",
             "badge_style": "background:#FEF3C7; color:#78350F; border:1px solid #FDE68A;",
             "advice": f"지혜롭게 내실을 다질 때입니다. 사주의 화(火) 기운과 토(土) 기운이 조화를 이루어, 오늘 내리는 결정이 향후 큰 결실로 이어집니다.",
