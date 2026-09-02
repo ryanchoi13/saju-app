@@ -136,7 +136,22 @@ def get_saju_pillars_and_analysis(name: str, gender: str, y: int, m: int, d: int
     jj_m = backend_saju.month.zhi
     cg_d = backend_saju.day.gan
     jj_d = backend_saju.day.zhi
+    kst_now = datetime.datetime.now(
+        datetime.timezone(datetime.timedelta(hours=9))
+    )
+    today_date = kst_now.date()
 
+    today_solar = Solar.fromYmd(
+        today_date.year,
+        today_date.month,
+        today_date.day
+    )
+    today_lunar = today_solar.getLunar()
+
+    today_gan = today_lunar.getDayGan()
+    today_zhi = today_lunar.getDayZhi()
+    today_ganji = today_lunar.getDayInGanZhi()
+    
     if sijin >= 0:
         cg_h = CHEONGAN[(sijin * 2) % 10]
         jj_h = JIJI[sijin % 12]
