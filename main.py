@@ -1,6 +1,8 @@
 import os
 import sys
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "backend"))
+from datetime import date
+from app.engine.pillars import calculate_saju
 from lunar_python import Solar
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
