@@ -118,12 +118,24 @@ def calculate_biorhythm(birth_year: int, birth_month: int, birth_day: int):
     }
 
 def get_saju_pillars_and_analysis(name: str, gender: str, y: int, m: int, d: int, cal_type: str, sijin: int):
-    cg_y = CHEONGAN[(y - 4) % 10]
-    jj_y = JIJI[(y - 4) % 12]
-    cg_m = CHEONGAN[(y * 2 + m) % 10]
-    jj_m = JIJI[(m + 1) % 12]
-    cg_d = CHEONGAN[(y * 5 + d) % 10]
-    jj_d = JIJI[(d + 3) % 12]
+    backend_calendar_type = "lunar" if cal_type in ["lunar", "leap"] else "solar"
+    backend_is_leap = (cal_type == "leap")
+
+    backend_saju = calculate_saju(
+        birth_date=date(y, m, d),
+        calendar_type=backend_calendar_type,
+        is_leap_month=backend_is_leap,
+        birth_time=None,
+        time_unknown=True,
+        gender=gender
+    )
+
+    cg_y = backend_saju.year.gan
+    jj_y = backend_saju.year.zhi
+    cg_m = backend_saju.month.gan
+    jj_m = backend_saju.month.zhi
+    cg_d = backend_saju.day.gan
+    jj_d = backend_saju.day.zhi
 
     if sijin >= 0:
         cg_h = CHEONGAN[(sijin * 2) % 10]
