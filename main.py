@@ -245,9 +245,9 @@ def get_saju_pillars_and_analysis(name: str, gender: str, y: int, m: int, d: int
         "daily_fortune": {
             "title": today_fortune["title"],
             "score": today_fortune["score"],
-            "mode_badge": "운세 88점 · 길운(吉運)",
+            "mode_badge": f"운세 {today_fortune['score']}점",
             "badge_style": "background:#FEF3C7; color:#78350F; border:1px solid #FDE68A;",
-            "advice": f"지혜롭게 내실을 다질 때입니다. 사주의 화(火) 기운과 토(土) 기운이 조화를 이루어, 오늘 내리는 결정이 향후 큰 결실로 이어집니다.",
+            "advice": today_fortune["advice"],
             "time_flow": {
                 "morning": "준비와 기획에 최적화된 시간대입니다. 차분히 일정을 정돈하세요.",
                 "afternoon": "대인관계 및 비즈니스 협상에서 유리한 주도권을 쥐게 됩니다.",
