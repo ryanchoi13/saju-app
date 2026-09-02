@@ -3,6 +3,7 @@ import sys
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "backend"))
 from datetime import date
 from app.engine.pillars import calculate_saju
+from app.engine.constants import GAN_WUXING
 from lunar_python import Solar
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -151,6 +152,37 @@ def get_saju_pillars_and_analysis(name: str, gender: str, y: int, m: int, d: int
     today_gan = today_lunar.getDayGan()
     today_zhi = today_lunar.getDayZhi()
     today_ganji = today_lunar.getDayInGanZhi()
+
+    natal_gan_han = backend_saju.day_master_han
+    natal_element = GAN_WUXING[natal_gan_han]
+    today_element = GAN_WUXING[today_gan]
+    
+    generates = {
+        "木": "火",
+        "火": "土",
+        "土": "金",
+        "金": "水",
+        "水": "木"
+    }
+
+    controls = {
+        "木": "土",
+        "土": "水",
+        "水": "火",
+        "火": "金",
+        "金": "木"
+    }
+
+    if natal_element == today_element:
+        element_relation = "same"
+    elif generates[today_element] == natal_element:
+        element_relation = "supported"
+    elif generates[natal_element] == today_element:
+        element_relation = "output"
+    elif controls[natal_element] == today_element:
+        element_relation = "wealth"
+    else:
+        element_relation = "pressure"
     
     if sijin >= 0:
         cg_h = CHEONGAN[(sijin * 2) % 10]
