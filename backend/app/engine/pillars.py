@@ -75,7 +75,11 @@ def _ko_wx(han: str) -> str:
     return WUXING_KO.get(han, han)
 
 
-def _ko_shishen(raw: str | None) -> str | None:
+def _ko_shishen(raw) -> str | None:
+    if not raw:
+        return None
+    if isinstance(raw, list):
+        raw = raw[0] if raw else None
     if not raw:
         return None
     return SHISHEN_KO.get(raw, raw)
