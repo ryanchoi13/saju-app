@@ -716,6 +716,81 @@ def get_today_ganji():
         "ganji": lunar.getDayInGanZhi()
     }
 
+@app.get("/api/test-saju-engine")
+def test_saju_engine(
+    y: int = 1978,
+    m: int = 8,
+    d: int = 13,
+    cal_type: str = "solar",
+    gender: str = "male"
+):
+    # A. 현재 root main.py 계산 결과
+    root_result = get_saju_pillars_and_analysis(
+        name="테스트",
+        gender=gender,
+        y=y,
+        m=m,
+        d=d,
+        cal_type=cal_type,
+        sijin=-1
+    )
+    root_pillars = root_result["saju_data"]["pillars_detail"]
+
+    root_year = f"{root_pillars['year']['cg']}{root_pillars['year']['jj']}"
+    root_month = f"{root_pillars['month']['cg']}{root_pillars['month']['jj']}"
+    root_day = f"{root_pillars['day']['cg']}{root_pillars['day']['jj']}"
+    root_day_master = root_pillars["day"]["cg"]
+
+    # B. backend 엔진 계산 결과
+    b_calendar_type = "lunar" if cal_type in ["lunar", "leap"] else "solar"
+    b_is_leap = (cal_type == "leap")
+
+    backend_result = calculate_saju(
+        birth_date=date(y, m, d),
+        calendar_type=b_calendar_type,
+        is_leap_month=b_is_leap,
+        birth_time=None,
+        time_unknown=True,
+        gender=gender
+    )
+
+    backend_year = backend_result.year.label
+    backend_month = backend_result.month.label
+    backend_day = backend_result.day.label
+    backend_day_master = backend_result.day_master
+
+    return {
+        "input": {
+            "year": y,
+            "month": m,
+            "day": d,
+            "cal_type": cal_type,
+            "gender": gender
+        },
+        "comparison": {
+            "year_pillar": {
+                "root_main": root_year,
+                "backend_engine": backend_year,
+                "is_match": root_year == backend_year
+            },
+            "month_pillar": {
+                "root_main": root_month,
+                "backend_engine": backend_month,
+                "is_match": root_month == backend_month
+            },
+            "day_pillar": {
+                "root_main": root_day,
+                "backend_engine": backend_day,
+                "is_match": root_day == backend_day
+            },
+            "day_master": {
+                "root_main": root_day_master,
+                "backend_engine": backend_day_master,
+                "is_match": root_day_master == backend_day_master
+            }
+        }
+    }
+    
 if os.path.exists("index.html"):
     @app.get("/")
     def serve_index():
