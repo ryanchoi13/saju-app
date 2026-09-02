@@ -1,6 +1,7 @@
 import os
 import sys
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "backend"))
+from lunar_python import Solar
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
@@ -691,6 +692,27 @@ def charge_coin(req: ChargeCoinRequest):
         users_db[req.user_id] = {"coin": 0}
     users_db[req.user_id]["coin"] += req.amount
     return {"status": "success", "new_balance": users_db[req.user_id]["coin"]}
+
+@app.get("/api/today-ganji")
+def get_today_ganji():
+    kst_now = datetime.datetime.now(
+        datetime.timezone(datetime.timedelta(hours=9))
+    )
+    today_date = kst_now.date()
+
+    solar = Solar.fromYmd(
+        today_date.year,
+        today_date.month,
+        today_date.day
+    )
+    lunar = solar.getLunar()
+
+    return {
+        "date": today_date.strftime("%Y-%m-%d"),
+        "cheongan": lunar.getDayGan(),
+        "jiji": lunar.getDayZhi(),
+        "ganji": lunar.getDayInGanZhi()
+    }
 
 if os.path.exists("index.html"):
     @app.get("/")
