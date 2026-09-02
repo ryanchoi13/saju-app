@@ -14,7 +14,7 @@ from typing import List, Optional, Dict, Any
 import datetime
 import os
 import random
-
+ 
 app = FastAPI(title="DALHA - Style Destiny Backend Engine")
 
 app.add_middleware(
