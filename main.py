@@ -4,6 +4,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "backend"))
 from datetime import date
 from app.engine.pillars import calculate_saju
 from app.engine.constants import GAN_WUXING
+from wada_context_placement import WADA_CONTEXT_PLACEMENT
 from lunar_python import Solar
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -251,6 +252,26 @@ def get_saju_pillars_and_analysis(name: str, gender: str, y: int, m: int, d: int
     }
 
     today_fortune = relation_fortunes[element_relation]
+
+    current_month = today_date.month
+
+    if current_month in [3, 4, 5]:
+        outfit_season = "spring"
+    elif current_month in [6, 7, 8]:
+        outfit_season = "summer"
+    elif current_month in [9, 10, 11]:
+        outfit_season = "autumn"
+    else:
+        outfit_season = "winter"
+
+    age = today_date.year - y + 1
+
+    if age < 40:
+        outfit_age_group = "20s_30s"
+    elif age < 60:
+        outfit_age_group = "40s_50s"
+    else:
+        outfit_age_group = "60plus"
 
     return {
         "user_name": name,
