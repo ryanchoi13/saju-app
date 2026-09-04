@@ -122,6 +122,18 @@ def calculate_biorhythm(birth_year: int, birth_month: int, birth_day: int):
         "overall_summary": f"신체 에너지가 {get_status(p_val)}이며 지성적 판단력이 우수한 흐름입니다. 중요한 의사결정에 적합한 타이밍입니다."
     }
 
+def with_wa_gwa(word: str):
+    if not word:
+        return word
+
+    last_char = word[-1]
+
+    if "가" <= last_char <= "힣":
+        has_batchim = (ord(last_char) - ord("가")) % 28 != 0
+        return word + ("과" if has_batchim else "와")
+
+    return word + "와"
+ 
 def get_saju_pillars_and_analysis(name: str, gender: str, y: int, m: int, d: int, cal_type: str, sijin: int):
     backend_calendar_type = "lunar" if cal_type in ["lunar", "leap"] else "solar"
     backend_is_leap = (cal_type == "leap")
@@ -332,7 +344,7 @@ def get_saju_pillars_and_analysis(name: str, gender: str, y: int, m: int, d: int
             },
             "wada_palette": {
                 "theme": f"Wada Duo #{wada_duo_no}",
-                "mood_desc": f"{wada_top_color['name_ko']}와 {wada_bottom_color['name_ko']}의 오늘의 컬러 조합입니다.",
+                "mood_desc": f"{with_wa_gwa(wada_top_color['name_ko'])} {wada_bottom_color['name_ko']}으로 오늘의 의상 컬러를 조합해 보세요.",
                 "mode": "harmony",
                 "style_mood": outfit_tpo,
                 "mood_tag": "캐주얼",
