@@ -5,6 +5,8 @@ from datetime import date
 from app.engine.pillars import calculate_saju
 from app.engine.constants import GAN_WUXING
 from wada_context_placement import WADA_CONTEXT_PLACEMENT
+from wada_color_rules import evaluate_duo
+from wada_wuxing_selector import select_wada_duo
 from lunar_python import Solar
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -273,6 +275,24 @@ def get_saju_pillars_and_analysis(name: str, gender: str, y: int, m: int, d: int
     else:
         outfit_age_group = "60plus"
 
+    wada_selection = select_wada_duo(
+        natal_element,
+        today_element,
+        int(today_date.strftime("%Y%m%d"))
+    )
+
+    wada_duo_no = wada_selection["duo_no"]
+    wada_duo = wada_selection["duo"]   
+
+    outfit_tpo = "casual"
+
+    wada_placement = WADA_CONTEXT_PLACEMENT[wada_duo_no][gender][outfit_tpo][outfit_season][outfit_age_group]
+
+    wada_top_name = wada_placement["top"]
+    wada_top_hex = wada_placement["top_hex"]
+    wada_bottom_name = wada_placement["bottom"]
+    wada_bottom_hex = wada_placement["bottom_hex"]
+ 
     return {
         "user_name": name,
         "birth_summary": f"{y}년 {m}월 {d}일생 · {'남성' if gender == 'male' else '여성'}",
