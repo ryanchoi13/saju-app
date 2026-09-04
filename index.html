@@ -1454,8 +1454,8 @@
             const matchedTops = userWardrobeItems.filter(item => item.category === "상의" && item.colors.some(c => c.includes(topColorStd) || topColorStd.includes(c)));
             const matchedBottoms = userWardrobeItems.filter(item => item.category === "하의" && item.colors.some(c => c.includes(bottomColorStd) || bottomColorStd.includes(c)));
 
-            const cleanTopName = wada.top.name.replace(/\//g, ' ');
-            const cleanBottomName = wada.bottom.name.replace(/\//g, ' ');
+            const cleanTopName = (wada.top.name_ko || wada.top.standard_color || wada.top.name).replace(/\//g, ' ');
+            const cleanBottomName = (wada.bottom.name_ko || wada.bottom.standard_color || wada.bottom.name).replace(/\//g, ' ');
 
             let defaultTop = (todayMood === "casual") 
                 ? `${cleanTopName} 쿨 티셔츠` 
@@ -1531,11 +1531,17 @@
             paletteBox.innerHTML = `
                 <div style="display: flex; align-items: center; gap: 8px; background: #F8FAFC; border: 1.5px solid #E2E8F0; padding: 6px 12px; border-radius: 9999px;">
                     <span style="width: 20px; height: 20px; border-radius: 9999px; background: ${wada.top.hex}; border: 1.2px solid rgba(0,0,0,0.15); display: inline-block;"></span>
-                    <span style="font-size: 13px; font-weight: 700; color: #334155;">${wada.top.name}</span>
+                    <div style="display: flex; flex-direction: column; line-height: 1.2;">
+                        <span style="font-size: 13px; font-weight: 700; color: #334155;">${wada.top.name}</span>
+                        <span style="font-size: 10px; font-weight: 500; color: #94A3B8;">${wada.top.hex.toUpperCase()}</span>
+                    </div>
                 </div>
                 <div style="display: flex; align-items: center; gap: 8px; background: #F8FAFC; border: 1.5px solid #E2E8F0; padding: 6px 12px; border-radius: 9999px;">
                     <span style="width: 20px; height: 20px; border-radius: 9999px; background: ${wada.bottom.hex}; border: 1.2px solid rgba(0,0,0,0.15); display: inline-block;"></span>
-                    <span style="font-size: 13px; font-weight: 700; color: #334155;">${wada.bottom.name}</span>
+                    <div style="display: flex; flex-direction: column; line-height: 1.2;">
+                        <span style="font-size: 13px; font-weight: 700; color: #334155;">${wada.bottom.name}</span>
+                        <span style="font-size: 10px; font-weight: 500; color: #94A3B8;">${wada.bottom.hex.toUpperCase()}</span>
+                    </div>
                 </div>
                 ${pointChipHtml}
             `;
