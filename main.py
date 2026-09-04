@@ -337,12 +337,14 @@ def get_saju_pillars_and_analysis(name: str, gender: str, y: int, m: int, d: int
                 "style_mood": outfit_tpo,
                 "mood_tag": "캐주얼",
                 "top": {
-                    "name": wada_top_color["name_ko"],
+                    "name": wada_top_color["original_name"],
+                    "name_ko": wada_top_color["name_ko"],
                     "hex": wada_top_hex,
                     "standard_color": wada_top_color["standard_color"]
                 },
                 "bottom": {
-                    "name": wada_bottom_color["name_ko"],
+                    "name": wada_bottom_color["original_name"],
+                    "name_ko": wada_bottom_color["name_ko"],
                     "hex": wada_bottom_hex,
                     "standard_color": wada_bottom_color["standard_color"]
                 },
