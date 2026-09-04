@@ -6,6 +6,7 @@ from app.engine.pillars import calculate_saju
 from app.engine.constants import GAN_WUXING
 from wada_context_placement import WADA_CONTEXT_PLACEMENT
 from wada_color_rules import evaluate_duo
+from wada_color_ko import get_wada_color_ko
 from wada_wuxing_selector import select_wada_duo
 from lunar_python import Solar
 from fastapi import FastAPI, HTTPException
@@ -293,6 +294,16 @@ def get_saju_pillars_and_analysis(name: str, gender: str, y: int, m: int, d: int
     wada_bottom_name = wada_placement["bottom"]
     wada_bottom_hex = wada_placement["bottom_hex"]
  
+    wada_top_color = get_wada_color_ko(
+        wada_top_hex,
+        wada_top_name
+    )
+
+    wada_bottom_color = get_wada_color_ko(
+        wada_bottom_hex,
+        wada_bottom_name
+    )
+ 
     return {
         "user_name": name,
         "birth_summary": f"{y}년 {m}월 {d}일생 · {'남성' if gender == 'male' else '여성'}",
@@ -320,13 +331,21 @@ def get_saju_pillars_and_analysis(name: str, gender: str, y: int, m: int, d: int
                 "evening": today_fortune["evening"]
             },
             "wada_palette": {
-                "theme": "명경지수(明鏡止水) · 지적인 냉철함",
-                "mood_desc": "깊은 미드나잇 인디고와 안개빛 스카이블루가 만나 사주의 금전운과 전문성을 견고히 세웁니다.",
+                "theme": f"Wada Duo #{wada_duo_no}",
+                "mood_desc": f"{wada_top_color['name_ko']}와 {wada_bottom_color['name_ko']}의 오늘의 컬러 조합입니다.",
                 "mode": "harmony",
-                "style_mood": "casual",
-                "mood_tag": "🏃 캐주얼 & 액티브",
-                "top": {"name": "미드나잇 인디고", "hex": "#1F3044", "standard_color": "네이비"},
-                "bottom": {"name": "포그 스카이", "hex": "#8CA6B5", "standard_color": "스카이블루"},
+                "style_mood": outfit_tpo,
+                "mood_tag": "캐주얼",
+                "top": {
+                    "name": wada_top_color["name_ko"],
+                    "hex": wada_top_hex,
+                    "standard_color": wada_top_color["standard_color"]
+                },
+                "bottom": {
+                    "name": wada_bottom_color["name_ko"],
+                    "hex": wada_bottom_hex,
+                    "standard_color": wada_bottom_color["standard_color"]
+                },
                 "point": None
             },
             "lucky_item": "실버 메탈 시계",
