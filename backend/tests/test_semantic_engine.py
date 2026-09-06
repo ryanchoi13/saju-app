@@ -43,12 +43,13 @@ class SemanticEngineTests(TestCase):
         self.assertEqual(state.indicators["score_used"], "false")
         self.assertFalse(evidence[0].source_values["shensha_can_override_core"])
 
-    def test_lifetime_query_excludes_timing(self):
+    def test_lifetime_query_includes_all_luck_cycles_but_no_calendar_overlay(self):
         core = self._core()
         view = build_service_query(core, "lifetime_overall")
-        self.assertEqual(view["scope"], "natal")
-        self.assertEqual(view["timing"], {})
-        self.assertIsNone(view["activated_state"])
+        self.assertEqual(view["scope"], "natal+all_luck_cycles")
+        self.assertEqual(set(view["timing"]), {"luck_cycles"})
+        self.assertNotIn("annual", view["timing"])
+        self.assertIsNotNone(view["activated_state"])
 
     def test_annual_query_includes_only_daeyun_and_annual(self):
         core = self._core()
