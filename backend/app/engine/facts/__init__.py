@@ -18,6 +18,14 @@ from app.engine.facts.twelve_stages import (
     calculate_twelve_stages,
     get_twelve_stage,
 )
+from app.engine.facts.element_inventory import (
+    ELEMENT_INVENTORY_RULE_VERSION,
+    calculate_element_inventory,
+)
+from app.engine.facts.relationship_candidates import (
+    RELATIONSHIP_CANDIDATE_RULE_VERSION,
+    calculate_relationship_candidates,
+)
 
 __all__ = [
     "HIDDEN_STEM_RULE_VERSION",
@@ -34,4 +42,8 @@ __all__ = [
     "TWELVE_STAGE_RULE_VERSION",
     "calculate_twelve_stages",
     "get_twelve_stage",
+    "ELEMENT_INVENTORY_RULE_VERSION",
+    "calculate_element_inventory",
+    "RELATIONSHIP_CANDIDATE_RULE_VERSION",
+    "calculate_relationship_candidates",
 ]
