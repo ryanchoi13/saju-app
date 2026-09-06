@@ -169,6 +169,51 @@ class TwelveStageFacts(CoreModel):
     rule_version: str = "twelve-stages-v1"
 
 
+class ElementOccurrence(CoreModel):
+    pillar: str
+    position: Literal["visible_stem", "branch", "hidden_stem"]
+    symbol: str
+    element: str
+    hidden_role: HiddenStemRole | None = None
+
+
+class ElementInventory(CoreModel):
+    occurrences: list[ElementOccurrence] = Field(default_factory=list)
+    rule_version: str = "element-inventory-v1"
+
+
+class RelationshipCandidateType(str, Enum):
+    STEM_COMBINATION = "stem_combination"
+    STEM_CONTROL = "stem_control"
+    BRANCH_SIX_COMBINATION = "branch_six_combination"
+    BRANCH_CLASH = "branch_clash"
+    BRANCH_THREE_COMBINATION = "branch_three_combination"
+    BRANCH_HALF_COMBINATION = "branch_half_combination"
+    BRANCH_DIRECTIONAL_COMBINATION = "branch_directional_combination"
+    BRANCH_PUNISHMENT = "branch_punishment"
+    BRANCH_HARM = "branch_harm"
+    BRANCH_BREAK = "branch_break"
+
+
+class RelationshipCandidateMember(CoreModel):
+    pillar: str
+    position: Literal["visible_stem", "branch"]
+    symbol: str
+
+
+class RelationshipCandidate(CoreModel):
+    id: str
+    type: RelationshipCandidateType
+    members: list[RelationshipCandidateMember]
+    target_element: str | None = None
+    rule_code: str
+
+
+class RelationshipCandidates(CoreModel):
+    items: list[RelationshipCandidate] = Field(default_factory=list)
+    rule_version: str = "relationship-candidates-v1"
+
+
 class NatalFacts(CoreModel):
     calendar: dict[str, Any] = Field(default_factory=dict)
     pillars: dict[str, PillarFact | None] = Field(default_factory=dict)
@@ -177,9 +222,9 @@ class NatalFacts(CoreModel):
     ten_gods: TenGodFacts = Field(default_factory=TenGodFacts)
     roots: RootFacts = Field(default_factory=RootFacts)
     exposed_stems: ExposedStemFacts = Field(default_factory=ExposedStemFacts)
-    element_inventory: dict[str, Any] = Field(default_factory=dict)
+    element_inventory: ElementInventory = Field(default_factory=ElementInventory)
     twelve_stages: TwelveStageFacts | None = None
-    relationship_candidates: list[dict[str, Any]] = Field(default_factory=list)
+    relationship_candidates: RelationshipCandidates = Field(default_factory=RelationshipCandidates)
     calculation_meta: dict[str, Any] = Field(default_factory=dict)
 
 
