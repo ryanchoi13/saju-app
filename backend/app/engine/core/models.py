@@ -40,6 +40,12 @@ class EvidenceLayer(str, Enum):
     TRANSLATION = "translation"
 
 
+class HiddenStemRole(str, Enum):
+    MAIN = "main"
+    MIDDLE = "middle"
+    RESIDUAL = "residual"
+
+
 class BirthInput(CoreModel):
     name: str = Field(min_length=1)
     gender: Gender
@@ -68,11 +74,23 @@ class DayMasterFact(CoreModel):
     yin_yang: str
 
 
+class HiddenStemFact(CoreModel):
+    stem: str
+    element: str
+    role: HiddenStemRole
+
+
+class BranchHiddenStems(CoreModel):
+    branch: str
+    stems: list[HiddenStemFact]
+    rule_version: str = "hidden-stems-v1"
+
+
 class NatalFacts(CoreModel):
     calendar: dict[str, Any] = Field(default_factory=dict)
     pillars: dict[str, PillarFact | None] = Field(default_factory=dict)
     day_master: DayMasterFact | None = None
-    hidden_stems: dict[str, Any] = Field(default_factory=dict)
+    hidden_stems: dict[str, BranchHiddenStems] = Field(default_factory=dict)
     ten_gods: dict[str, Any] = Field(default_factory=dict)
     roots: list[dict[str, Any]] = Field(default_factory=list)
     exposed_stems: list[dict[str, Any]] = Field(default_factory=list)
