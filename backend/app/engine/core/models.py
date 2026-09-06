@@ -214,6 +214,19 @@ class RelationshipCandidates(CoreModel):
     rule_version: str = "relationship-candidates-v1"
 
 
+class TransformationStatus(str, Enum):
+    NOT_ESTABLISHED = "not_established"
+    POSSIBLE = "possible"
+    CONDITIONAL = "conditional"
+    ESTABLISHED = "established"
+
+
+class TransformationResult(CoreModel):
+    target_element: str
+    status: TransformationStatus
+    reasons: list[str] = Field(default_factory=list)
+
+
 class NatalFacts(CoreModel):
     calendar: dict[str, Any] = Field(default_factory=dict)
     pillars: dict[str, PillarFact | None] = Field(default_factory=dict)
@@ -249,7 +262,7 @@ class RelationshipResult(CoreModel):
     ]
     outcome: str | None = None
     strength: Literal["weak", "moderate", "strong"] | None = None
-    transformation: dict[str, Any] | None = None
+    transformation: TransformationResult | None = None
     affected_facts: list[dict[str, Any]] = Field(default_factory=list)
     supporting_conditions: list[str] = Field(default_factory=list)
     blocking_conditions: list[str] = Field(default_factory=list)
