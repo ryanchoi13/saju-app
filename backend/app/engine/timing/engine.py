@@ -120,6 +120,10 @@ def calculate_timing(
             start_age=cycle.getStartAge(),
             end_age=cycle.getEndAge(),
         )
+        cycle_pillar = PillarFact.model_validate(item["pillar"])
+        item["relationship_changes"] = _relationship_changes(
+            natal_pillars, {"luck_cycle": cycle_pillar}
+        )
         cycles.append(item)
         if cycle.getStartYear() <= target.year <= cycle.getEndYear():
             current_cycle = item
