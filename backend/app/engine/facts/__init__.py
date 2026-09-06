@@ -12,6 +12,12 @@ from app.engine.facts.rooting import (
     calculate_exposed_stems,
     calculate_roots,
 )
+from app.engine.facts.twelve_stages import (
+    TWELVE_STAGE_CONVENTION,
+    TWELVE_STAGE_RULE_VERSION,
+    calculate_twelve_stages,
+    get_twelve_stage,
+)
 
 __all__ = [
     "HIDDEN_STEM_RULE_VERSION",
@@ -24,4 +30,8 @@ __all__ = [
     "ROOTING_RULE_VERSION",
     "calculate_exposed_stems",
     "calculate_roots",
+    "TWELVE_STAGE_CONVENTION",
+    "TWELVE_STAGE_RULE_VERSION",
+    "calculate_twelve_stages",
+    "get_twelve_stage",
 ]
