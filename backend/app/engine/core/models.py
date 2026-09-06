@@ -141,6 +141,34 @@ class ExposedStemFacts(CoreModel):
     rule_version: str = "exposed-stems-v1"
 
 
+class TwelveStage(str, Enum):
+    BIRTH = "birth"
+    BATH = "bath"
+    CROWN_BELT = "crown_belt"
+    OFFICIAL = "official"
+    PROSPERITY = "prosperity"
+    DECLINE = "decline"
+    SICKNESS = "sickness"
+    DEATH = "death"
+    TOMB = "tomb"
+    EXTINCTION = "extinction"
+    EMBRYO = "embryo"
+    NOURISHMENT = "nourishment"
+
+
+class TwelveStageFact(CoreModel):
+    pillar: str
+    branch: str
+    stage: TwelveStage
+
+
+class TwelveStageFacts(CoreModel):
+    day_master: str
+    items: list[TwelveStageFact] = Field(default_factory=list)
+    convention: Literal["traditional-yin-reverse"] = "traditional-yin-reverse"
+    rule_version: str = "twelve-stages-v1"
+
+
 class NatalFacts(CoreModel):
     calendar: dict[str, Any] = Field(default_factory=dict)
     pillars: dict[str, PillarFact | None] = Field(default_factory=dict)
@@ -150,7 +178,7 @@ class NatalFacts(CoreModel):
     roots: RootFacts = Field(default_factory=RootFacts)
     exposed_stems: ExposedStemFacts = Field(default_factory=ExposedStemFacts)
     element_inventory: dict[str, Any] = Field(default_factory=dict)
-    twelve_stages: dict[str, Any] = Field(default_factory=dict)
+    twelve_stages: TwelveStageFacts | None = None
     relationship_candidates: list[dict[str, Any]] = Field(default_factory=list)
     calculation_meta: dict[str, Any] = Field(default_factory=dict)
 
