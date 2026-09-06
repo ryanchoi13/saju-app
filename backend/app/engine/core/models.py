@@ -221,6 +221,14 @@ class TransformationStatus(str, Enum):
     ESTABLISHED = "established"
 
 
+class StrengthState(str, Enum):
+    EXTREMELY_WEAK = "extremely_weak"
+    WEAK = "weak"
+    BALANCED = "balanced"
+    STRONG = "strong"
+    EXTREMELY_STRONG = "extremely_strong"
+
+
 class TransformationResult(CoreModel):
     target_element: str
     status: TransformationStatus
