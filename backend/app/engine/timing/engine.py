@@ -166,6 +166,9 @@ def calculate_timing(
         source_values={
             "solar_birth_date": solar_birth.isoformat(),
             "target_date": target.isoformat(),
+            "birth_time_assumption": (
+                "noon_proxy_for_daeyun_start" if birth.time_unknown else "provided_time"
+            ),
             "forward": forward,
             "yun_start": {
                 "years": yun.getStartYear(),
@@ -177,7 +180,9 @@ def calculate_timing(
             "fixed_weight_used": False,
         },
         supports=["timing:current-overlays"],
-        reliability=ConfidenceLevel.MEDIUM,
+        reliability=(
+            ConfidenceLevel.LOW if birth.time_unknown else ConfidenceLevel.MEDIUM
+        ),
     )
     timing = TimingResult(
         luck_cycle={
