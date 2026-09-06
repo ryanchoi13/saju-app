@@ -33,6 +33,8 @@ from app.engine.core.models import (
     TwelveStageFact,
     TwelveStageFacts,
     TimingResult,
+    TransformationResult,
+    TransformationStatus,
     UncertaintyResult,
 )
 
@@ -69,5 +71,7 @@ __all__ = [
     "TwelveStageFact",
     "TwelveStageFacts",
     "TimingResult",
+    "TransformationResult",
+    "TransformationStatus",
     "UncertaintyResult",
 ]
