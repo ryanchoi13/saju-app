@@ -24,7 +24,7 @@ ServiceQuery = Literal[
 
 _PROFILES = {
     "lifetime_overall": {
-        "scope": "natal",
+        "scope": "natal+all_luck_cycles",
         "diagnostics": ["structure", "strength", "climate", "pathology", "mediation", "special_structure"],
         "ten_gods": [],
     },
@@ -44,7 +44,7 @@ _PROFILES = {
         "ten_gods": [],
     },
     "lifetime_wealth": {
-        "scope": "natal",
+        "scope": "natal+all_luck_cycles",
         "diagnostics": ["structure", "strength", "pathology", "mediation", "special_structure"],
         "ten_gods": ["direct_wealth", "indirect_wealth", "eating_god", "hurting_officer"],
     },
@@ -54,28 +54,28 @@ _PROFILES = {
         "ten_gods": ["direct_wealth", "indirect_wealth", "eating_god", "hurting_officer"],
     },
     "health": {
-        "scope": "natal+selected_timing",
+        "scope": "natal+all_luck_cycles",
         "diagnostics": ["strength", "climate", "pathology", "mediation"],
         "ten_gods": [],
         "medical_claim_allowed": False,
     },
     "love": {
-        "scope": "natal+selected_timing",
+        "scope": "natal+all_luck_cycles",
         "diagnostics": ["structure", "strength", "mediation"],
         "ten_gods": ["direct_wealth", "indirect_wealth", "direct_officer", "seven_killings", "peer", "rob_wealth"],
     },
     "business": {
-        "scope": "natal+selected_timing",
+        "scope": "natal+all_luck_cycles",
         "diagnostics": ["structure", "strength", "pathology", "mediation"],
         "ten_gods": ["direct_wealth", "indirect_wealth", "eating_god", "hurting_officer", "peer", "rob_wealth"],
     },
     "study": {
-        "scope": "natal+selected_timing",
+        "scope": "natal+all_luck_cycles",
         "diagnostics": ["structure", "strength", "climate"],
         "ten_gods": ["direct_resource", "indirect_resource", "eating_god", "hurting_officer"],
     },
     "career": {
-        "scope": "natal+selected_timing",
+        "scope": "natal+all_luck_cycles",
         "diagnostics": ["structure", "strength", "pathology", "mediation"],
         "ten_gods": ["direct_officer", "seven_killings", "direct_wealth", "indirect_wealth", "eating_god", "hurting_officer"],
     },
@@ -84,7 +84,9 @@ _PROFILES = {
 
 def _timing_for_scope(core: MyeongriCoreResult, scope: str) -> dict:
     timing = {}
-    if "luck_cycle" in scope:
+    if "all_luck_cycles" in scope:
+        timing["luck_cycles"] = core.timing.luck_cycle
+    elif "luck_cycle" in scope:
         timing["luck_cycle"] = core.timing.luck_cycle.get("current")
     if "annual" in scope:
         timing["annual"] = core.timing.annual
