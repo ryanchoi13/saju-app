@@ -114,14 +114,41 @@ class TenGodFacts(CoreModel):
     rule_version: str = "ten-gods-v1"
 
 
+class RootFact(CoreModel):
+    stem_pillar: str
+    branch_pillar: str
+    visible_stem: str
+    hidden_stem: str
+    element: str
+    hidden_role: HiddenStemRole
+    exact_stem: bool
+
+
+class RootFacts(CoreModel):
+    items: list[RootFact] = Field(default_factory=list)
+    rule_version: str = "rooting-v1"
+
+
+class ExposedStemFact(CoreModel):
+    hidden_pillar: str
+    visible_pillar: str
+    stem: str
+    hidden_role: HiddenStemRole
+
+
+class ExposedStemFacts(CoreModel):
+    items: list[ExposedStemFact] = Field(default_factory=list)
+    rule_version: str = "exposed-stems-v1"
+
+
 class NatalFacts(CoreModel):
     calendar: dict[str, Any] = Field(default_factory=dict)
     pillars: dict[str, PillarFact | None] = Field(default_factory=dict)
     day_master: DayMasterFact | None = None
     hidden_stems: dict[str, BranchHiddenStems] = Field(default_factory=dict)
     ten_gods: TenGodFacts = Field(default_factory=TenGodFacts)
-    roots: list[dict[str, Any]] = Field(default_factory=list)
-    exposed_stems: list[dict[str, Any]] = Field(default_factory=list)
+    roots: RootFacts = Field(default_factory=RootFacts)
+    exposed_stems: ExposedStemFacts = Field(default_factory=ExposedStemFacts)
     element_inventory: dict[str, Any] = Field(default_factory=dict)
     twelve_stages: dict[str, Any] = Field(default_factory=dict)
     relationship_candidates: list[dict[str, Any]] = Field(default_factory=list)
