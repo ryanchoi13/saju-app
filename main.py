@@ -4,6 +4,9 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "backend"))
 from datetime import date
 from app.engine.pillars import calculate_saju
 from app.engine.constants import GAN_WUXING
+from app.engine.core.models import BirthInput
+from app.engine.orchestrator import calculate_myeongri_core
+from app.engine.services import build_lifetime_overall_report
 from wada_context_placement import WADA_CONTEXT_PLACEMENT
 from wada_color_rules import evaluate_duo
 from wada_color_ko import get_wada_color_ko
@@ -378,7 +381,14 @@ def get_saju_pillars_and_analysis(name: str, gender: str, y: int, m: int, d: int
     }
 
 # --- Detailed Report Generator Engine ---
-def generate_detailed_report(report_key: str, sub_option: str, partner_name: str, relation: str, user_name: str) -> Dict[str, str]:
+def generate_detailed_report(
+    report_key: str,
+    sub_option: str,
+    partner_name: str,
+    relation: str,
+    user_name: str,
+    user: Optional[Dict[str, Any]] = None,
+) -> Dict[str, str]:
     if report_key == "sinnian":
         title = f"2026 丙午년 {user_name}님 정밀 신년운세 & 12개월 토정비결"
         content = f"""
@@ -510,24 +520,24 @@ def generate_detailed_report(report_key: str, sub_option: str, partner_name: str
         </div>
         """
     elif report_key == "daewoon":
-        title = f"{user_name}님 자미두수 평생운세 & 10년 대운 심층 감명"
-        content = f"""
-        <div style="text-align:left; line-height:1.85; color:#1E293B;">
-            <div style="background:#FFFBEB; border-left:4px solid #F59E0B; padding:16px; border-radius:14px; margin-bottom:16px;">
-                <h4 style="font-size:16px; font-weight:800; color:#78350F; margin-bottom:6px;">👑 평생 본명궁(本命宮) 및 생애 총평</h4>
-                <p style="font-size:13.5px; color:#92400E; margin:0; line-height:1.75;">
-                    타고난 기개가 당당하고 스스로 일가를 이루는 자수성가형 귀격(貴格) 명식입니다. 
-                    청년기의 치열한 담금질을 거쳐 40대 중반부터 60대까지 지속적인 번영과 성취를 이루는 '대기만성(大器晩成)'의 전형입니다.
-                </p>
-            </div>
-            <div style="background:#F8FAFC; border:1px solid #E2E8F0; padding:14px 16px; border-radius:14px; margin-bottom:12px;">
-                <h5 style="font-size:14px; font-weight:800; color:#0F172A; margin-bottom:4px;">📊 10년 대운(大運)의 황금기 분석</h5>
-                <p style="font-size:13px; color:#475569; margin:0; line-height:1.7;">
-                    현재 진입해 있는 대운은 사주의 용신(用神)과 희신이 힘을 얻는 구간으로, 자신의 사회적 역량을 인정받고 확고한 자산 기반을 확립하는 가장 중요한 인생 분기점입니다.
-                </p>
-            </div>
-        </div>
-        """
+        if not user:
+            raise ValueError("평생운세 생성에 사용자 사주 정보가 필요합니다.")
+        calendar_type = "lunar" if user["calendar_type"] in {"lunar", "leap"} else "solar"
+        kst_today = datetime.datetime.now(
+            datetime.timezone(datetime.timedelta(hours=9))
+        ).date()
+        core = calculate_myeongri_core(
+            BirthInput(
+                name=user_name or "회원",
+                gender=user["gender"],
+                birth_date=date(user["birth_year"], user["birth_month"], user["birth_day"]),
+                calendar_type=calendar_type,
+                is_leap_month=user["calendar_type"] == "leap",
+                time_unknown=True,
+            ),
+            target_date=kst_today,
+        )
+        return build_lifetime_overall_report(core, user_name)
     else:
         title = f"{user_name}님 {sub_option} 맞춤 심층 감명서"
         content = f"""
@@ -661,8 +671,15 @@ def unlock_report(req: UnlockReportRequest):
     if user["coin"] < req.cost:
         raise HTTPException(status_code=400, detail="Insufficient coins")
     
+    rep_data = generate_detailed_report(
+        req.report_key,
+        req.sub_option,
+        req.partner_name,
+        req.relation,
+        user.get("name", "회원"),
+        user=user,
+    )
     user["coin"] -= req.cost
-    rep_data = generate_detailed_report(req.report_key, req.sub_option, req.partner_name, req.relation, user.get("name", "회원"))
 
     new_report = {
         "report_key": req.report_key,
