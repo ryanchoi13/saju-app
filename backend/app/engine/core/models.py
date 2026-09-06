@@ -46,6 +46,20 @@ class HiddenStemRole(str, Enum):
     RESIDUAL = "residual"
 
 
+class TenGod(str, Enum):
+    DAY_MASTER = "day_master"
+    PEER = "peer"
+    ROB_WEALTH = "rob_wealth"
+    EATING_GOD = "eating_god"
+    HURTING_OFFICER = "hurting_officer"
+    INDIRECT_WEALTH = "indirect_wealth"
+    DIRECT_WEALTH = "direct_wealth"
+    SEVEN_KILLINGS = "seven_killings"
+    DIRECT_OFFICER = "direct_officer"
+    INDIRECT_RESOURCE = "indirect_resource"
+    DIRECT_RESOURCE = "direct_resource"
+
+
 class BirthInput(CoreModel):
     name: str = Field(min_length=1)
     gender: Gender
@@ -86,12 +100,26 @@ class BranchHiddenStems(CoreModel):
     rule_version: str = "hidden-stems-v1"
 
 
+class TenGodFact(CoreModel):
+    pillar: str
+    position: Literal["visible_stem", "hidden_stem"]
+    stem: str
+    ten_god: TenGod
+    hidden_role: HiddenStemRole | None = None
+
+
+class TenGodFacts(CoreModel):
+    visible: list[TenGodFact] = Field(default_factory=list)
+    hidden: list[TenGodFact] = Field(default_factory=list)
+    rule_version: str = "ten-gods-v1"
+
+
 class NatalFacts(CoreModel):
     calendar: dict[str, Any] = Field(default_factory=dict)
     pillars: dict[str, PillarFact | None] = Field(default_factory=dict)
     day_master: DayMasterFact | None = None
     hidden_stems: dict[str, BranchHiddenStems] = Field(default_factory=dict)
-    ten_gods: dict[str, Any] = Field(default_factory=dict)
+    ten_gods: TenGodFacts = Field(default_factory=TenGodFacts)
     roots: list[dict[str, Any]] = Field(default_factory=list)
     exposed_stems: list[dict[str, Any]] = Field(default_factory=list)
     element_inventory: dict[str, Any] = Field(default_factory=dict)
