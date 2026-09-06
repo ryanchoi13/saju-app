@@ -62,7 +62,7 @@ class CoreOrchestratorTests(TestCase):
         annual = build_service_query(result, "annual_wealth")
         lifetime = build_service_query(result, "lifetime_wealth")
         self.assertEqual(set(annual["timing"]), {"luck_cycle", "annual"})
-        self.assertEqual(lifetime["timing"], {})
+        self.assertEqual(set(lifetime["timing"]), {"luck_cycles"})
 
     def test_missing_time_requires_explicit_unknown_flag(self):
         with self.assertRaises(ValueError):
