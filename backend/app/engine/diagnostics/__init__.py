@@ -5,6 +5,10 @@ from app.engine.diagnostics.strength import STRENGTH_DIAGNOSTIC_VERSION, diagnos
 from app.engine.diagnostics.climate import CLIMATE_DIAGNOSTIC_VERSION, diagnose_climate
 from app.engine.diagnostics.pathology import PATHOLOGY_DIAGNOSTIC_VERSION, diagnose_pathology
 from app.engine.diagnostics.mediation import MEDIATION_DIAGNOSTIC_VERSION, diagnose_mediation
+from app.engine.diagnostics.special_structure import (
+    SPECIAL_STRUCTURE_DIAGNOSTIC_VERSION,
+    diagnose_special_structure,
+)
 
 __all__ = [
     "STRUCTURE_DIAGNOSTIC_VERSION",
@@ -15,6 +19,8 @@ __all__ = [
     "diagnose_pathology",
     "MEDIATION_DIAGNOSTIC_VERSION",
     "diagnose_mediation",
+    "SPECIAL_STRUCTURE_DIAGNOSTIC_VERSION",
+    "diagnose_special_structure",
     "diagnose_structure",
     "diagnose_strength",
 ]
