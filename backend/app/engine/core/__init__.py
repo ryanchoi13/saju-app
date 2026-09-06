@@ -16,6 +16,9 @@ from app.engine.core.models import (
     SemanticState,
     ShenshaResult,
     SynthesisResult,
+    TenGod,
+    TenGodFact,
+    TenGodFacts,
     TimingResult,
     UncertaintyResult,
 )
@@ -36,6 +39,9 @@ __all__ = [
     "SemanticState",
     "ShenshaResult",
     "SynthesisResult",
+    "TenGod",
+    "TenGodFact",
+    "TenGodFacts",
     "TimingResult",
     "UncertaintyResult",
 ]
