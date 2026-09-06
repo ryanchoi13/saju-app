@@ -23,6 +23,9 @@ from app.engine.core.models import (
     TenGod,
     TenGodFact,
     TenGodFacts,
+    TwelveStage,
+    TwelveStageFact,
+    TwelveStageFacts,
     TimingResult,
     UncertaintyResult,
 )
@@ -50,6 +53,9 @@ __all__ = [
     "TenGod",
     "TenGodFact",
     "TenGodFacts",
+    "TwelveStage",
+    "TwelveStageFact",
+    "TwelveStageFacts",
     "TimingResult",
     "UncertaintyResult",
 ]
