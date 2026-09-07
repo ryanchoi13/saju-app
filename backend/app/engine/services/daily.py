@@ -7,6 +7,7 @@ from datetime import date
 from app.engine.constants import GAN_KO, ZHI_KO
 from app.engine.core.models import MyeongriCoreResult
 from app.engine.semantic.queries import build_service_query
+from app.engine.services.daily_menu import recommend_daily_menus
 
 
 DAILY_FORTUNE_VERSION = "daily-fortune-core-v1"
@@ -139,35 +140,30 @@ _ELEMENT_GUIDE = {
         "numbers": "3, 8",
         "direction": "동쪽",
         "colors": ["그린", "청록"],
-        "menu": "푸른 채소와 담백한 곡물이 들어간 식사",
     },
     "火": {
         "ko": "화",
         "numbers": "2, 7",
         "direction": "남쪽",
         "colors": ["레드", "코랄"],
-        "menu": "따뜻하게 조리한 음식이나 온기 있는 차",
     },
     "土": {
         "ko": "토",
         "numbers": "5, 10",
         "direction": "중앙·생활권 안쪽",
         "colors": ["베이지", "브라운"],
-        "menu": "곡물과 뿌리채소가 들어간 든든한 식사",
     },
     "金": {
         "ko": "금",
         "numbers": "4, 9",
         "direction": "서쪽",
         "colors": ["화이트", "실버"],
-        "menu": "재료 구성이 단순하고 깔끔한 식사",
     },
     "水": {
         "ko": "수",
         "numbers": "1, 6",
         "direction": "북쪽",
         "colors": ["네이비", "블랙"],
-        "menu": "수분을 충분히 보충할 수 있는 국물 음식",
     },
 }
 
@@ -337,6 +333,8 @@ def build_daily_fortune(
     core: MyeongriCoreResult,
     user_name: str,
     target_date: date,
+    *,
+    current_hour: int | None = None,
 ) -> dict:
     """Render one evidence-aware day without allowing shensha to decide it alone."""
 
@@ -411,6 +409,15 @@ def build_daily_fortune(
     item = _ITEMS[item_group][lucky_element]
     element = _ELEMENT_GUIDE[lucky_element]
     talisman_title, talisman_power, talisman_type = _TALISMAN[lucky_element]
+    menu_selection = recommend_daily_menus(
+        target_date=target_date,
+        current_hour=current_hour,
+        day_master=core.natal_facts.day_master.stem,
+        daily_ganji=ganji_han,
+        lucky_element=lucky_element,
+        primary_operation=operation_name,
+        count=2,
+    )
 
     advice_parts = [
         f"{target_date.month}월 {target_date.day}일은 {ganji_display} 일진이며, "
@@ -455,7 +462,15 @@ def build_daily_fortune(
         ),
         "lucky_number": element["numbers"],
         "lucky_direction": f"{element['direction']} ({element['ko']} 기운)",
-        "recommended_menu": element["menu"],
+        "recommended_menu": " · ".join(menu_selection["menus"]),
+        "recommended_menus": menu_selection["menus"],
+        "recommended_menu_reason": menu_selection["reason"],
+        "menu_pool_size": menu_selection["pool_size"],
+        "menu_pool_version": menu_selection["pool_version"],
+        "menu_context": {
+            "season": menu_selection["season"],
+            "meal_period": menu_selection["meal_period"],
+        },
         "talisman": {
             "title": talisman_title,
             "power": talisman_power,

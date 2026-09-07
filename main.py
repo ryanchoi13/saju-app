@@ -304,7 +304,12 @@ def get_saju_pillars_and_analysis(name: str, gender: str, y: int, m: int, d: int
 
     current_age = datetime.date.today().year - y + 1
 
-    today_fortune = build_daily_fortune(core, name, today_date)
+    today_fortune = build_daily_fortune(
+        core,
+        name,
+        today_date,
+        current_hour=kst_now.hour,
+    )
     today_element = core.timing.daily["pillar"]["stem_element"]
     lucky_element = today_fortune["lucky_element"]
 
