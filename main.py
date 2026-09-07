@@ -47,11 +47,12 @@ reports_db: Dict[str, List[Dict[str, Any]]] = {}
 # --- Request/Response Models ---
 class KakaoAuthRequest(BaseModel):
     kakao_id: str
-    name: Optional[str] = "달하 회원"
-    gender: Optional[str] = "male"
-    birthyear: Optional[str] = "1978"
-    birthday: Optional[str] = "0813"
-    birthday_type: Optional[str] = "SOLAR"
+    name: Optional[str] = None
+    gender: Optional[str] = None
+    birthyear: Optional[str] = None
+    birthday: Optional[str] = None
+    birthday_type: Optional[str] = None
+    sijin_index: Optional[int] = None
 
 class RegisterSajuRequest(BaseModel):
     user_id: str
@@ -660,54 +661,98 @@ def generate_detailed_report(
     return {"title": title, "content": content}
 
 # --- API Endpoints ---
+def _profile_from_kakao_request(req: KakaoAuthRequest) -> Optional[Dict[str, Any]]:
+    """Return a complete client-restored profile, never a fabricated birthday."""
+
+    if not req.birthyear or not req.birthday or len(req.birthday) != 4:
+        return None
+    try:
+        year = int(req.birthyear)
+        month = int(req.birthday[:2])
+        day = int(req.birthday[2:])
+        datetime.date(year, month, day)
+    except (TypeError, ValueError):
+        return None
+    calendar_type = {
+        "SOLAR": "solar", "LUNAR": "lunar", "LEAP": "leap",
+    }.get((req.birthday_type or "SOLAR").upper(), "solar")
+    sijin_index = req.sijin_index if req.sijin_index is not None else -1
+    if not -1 <= sijin_index <= 11:
+        sijin_index = -1
+    return {
+        "name": (req.name or "").strip() or "달하 회원",
+        "gender": req.gender if req.gender in {"male", "female"} else "male",
+        "birth_year": year,
+        "birth_month": month,
+        "birth_day": day,
+        "calendar_type": calendar_type,
+        "sijin_index": sijin_index,
+        "profile_complete": True,
+    }
+
+
+def _public_profile(user: Dict[str, Any]) -> Dict[str, Any]:
+    return {
+        "name": user.get("name", ""),
+        "gender": user.get("gender", "male"),
+        "birth_year": user.get("birth_year"),
+        "birth_month": user.get("birth_month"),
+        "birth_day": user.get("birth_day"),
+        "calendar_type": user.get("calendar_type", "solar"),
+        "sijin_index": user.get("sijin_index", -1),
+    }
+
+
 @app.post("/api/auth/kakao")
 def auth_kakao(req: KakaoAuthRequest):
     user_id = f"user_{req.kakao_id}"
-    
-    if user_id in users_db:
-        u = users_db[user_id]
-        saju_res = get_saju_pillars_and_analysis(
-            u["name"], u["gender"], u["birth_year"], u["birth_month"], u["birth_day"],
-            u["calendar_type"], u["sijin_index"]
-        )
-        return {
-            "status": "existing_user",
-            "user_id": user_id,
-            "coin_balance": u["coin"],
-            "unlocked_reports": reports_db.get(user_id, []),
-            "wardrobe_items": wardrobe_db.get(user_id, []),
-            "saju_analysis": saju_res
-        }
-    else:
+    incoming_profile = _profile_from_kakao_request(req)
+
+    if user_id not in users_db:
         users_db[user_id] = {
             "user_id": user_id,
             "kakao_id": req.kakao_id,
-            "name": req.name if req.name != "달하 회원" else "",
-            "gender": req.gender or "male",
-            "birth_year": 1978,
-            "birth_month": 8,
-            "birth_day": 13,
+            "name": (req.name or "").strip(),
+            "gender": req.gender if req.gender in {"male", "female"} else "male",
+            "birth_year": None,
+            "birth_month": None,
+            "birth_day": None,
             "calendar_type": "solar",
-            "sijin_index": 5,
-            "coin": 1000
+            "sijin_index": -1,
+            "profile_complete": False,
+            "coin": 1000,
         }
         reports_db[user_id] = []
         wardrobe_db[user_id] = []
 
+    user = users_db[user_id]
+    if incoming_profile:
+        user.update(incoming_profile)
+
+    has_profile = bool(user.get("profile_complete")) or all(
+        user.get(key) is not None for key in ("birth_year", "birth_month", "birth_day")
+    )
+    if has_profile:
+        saju_res = get_saju_pillars_and_analysis(
+            user["name"], user["gender"], user["birth_year"],
+            user["birth_month"], user["birth_day"], user["calendar_type"],
+            user["sijin_index"],
+        )
         return {
-            "status": "new_user",
+            "status": "existing_user",
             "user_id": user_id,
-            "coin_balance": 1000,
-            "kakao_prefill": {
-                "name": users_db[user_id]["name"],
-                "gender": users_db[user_id]["gender"],
-                "calendar_type": "solar",
-                "birth_year": 1978,
-                "birth_month": 8,
-                "birth_day": 13,
-                "sijin_index": 5
-            }
+            "coin_balance": user["coin"],
+            "unlocked_reports": reports_db.get(user_id, []),
+            "wardrobe_items": wardrobe_db.get(user_id, []),
+            "saju_analysis": saju_res,
+            "profile": _public_profile(user),
         }
+    return {
+        "status": "new_user",
+        "user_id": user_id,
+        "coin_balance": user["coin"],
+        "kakao_prefill": _public_profile(user),
+    }
 
 @app.post("/api/user/register-saju")
 def register_saju(req: RegisterSajuRequest):
@@ -721,7 +766,8 @@ def register_saju(req: RegisterSajuRequest):
         "birth_month": req.birth_month,
         "birth_day": req.birth_day,
         "calendar_type": req.calendar_type,
-        "sijin_index": req.sijin_index
+        "sijin_index": req.sijin_index,
+        "profile_complete": True,
     })
 
     saju_res = get_saju_pillars_and_analysis(
@@ -732,7 +778,8 @@ def register_saju(req: RegisterSajuRequest):
     return {
         "status": "success",
         "coin_balance": users_db[req.user_id]["coin"],
-        "saju_analysis": saju_res
+        "saju_analysis": saju_res,
+        "profile": _public_profile(users_db[req.user_id]),
     }
 
 @app.post("/api/wardrobe/add")
