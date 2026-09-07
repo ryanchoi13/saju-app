@@ -38,7 +38,12 @@ class DailyFortuneServiceTests(TestCase):
 
     def test_lucky_item_comes_from_core_operation_and_element(self):
         target = date(2026, 9, 8)
-        result = build_daily_fortune(self._core(target), "테스트", target)
+        result = build_daily_fortune(
+            self._core(target),
+            "테스트",
+            target,
+            current_hour=12,
+        )
 
         self.assertEqual(result["lucky_element"], "火")
         self.assertEqual(result["lucky_item"], "붉은색 포인트 파우치")
@@ -46,6 +51,12 @@ class DailyFortuneServiceTests(TestCase):
         self.assertIn("보조 근거", result["lucky_item_reason"])
         self.assertEqual(result["lucky_number"], "2, 7")
         self.assertEqual(result["lucky_direction"], "남쪽 (화 기운)")
+        self.assertEqual(result["menu_pool_size"], 250)
+        self.assertEqual(len(result["recommended_menus"]), 2)
+        self.assertEqual(
+            result["recommended_menu"],
+            " · ".join(result["recommended_menus"]),
+        )
 
     def test_fortune_changes_with_the_actual_daily_pillar(self):
         first_date = date(2026, 9, 7)
