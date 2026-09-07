@@ -328,7 +328,10 @@ class ActivatedState(CoreModel):
 
 
 class ShenshaResult(CoreModel):
-    name: Literal["travel_horse", "peach_blossom", "solitary_star", "literary_star", "heavenly_noble"]
+    name: Literal[
+        "travel_horse", "peach_blossom", "flower_canopy",
+        "solitary_star", "widow_star", "literary_star", "heavenly_noble",
+    ]
     source: str
     basis: str
     activation: Literal["observed", "active", "strongly_active"]
