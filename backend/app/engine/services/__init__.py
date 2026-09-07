@@ -2,6 +2,7 @@
 
 from app.engine.services.annual import build_annual_overall_report
 from app.engine.services.compatibility import build_compatibility_report
+from app.engine.services.daily import build_daily_fortune
 from app.engine.services.career import build_lifetime_career_report
 from app.engine.services.health import build_lifetime_health_report
 from app.engine.services.lifetime import build_lifetime_overall_report
@@ -12,6 +13,7 @@ from app.engine.services.wealth import build_lifetime_wealth_report
 __all__ = [
     "build_annual_overall_report",
     "build_compatibility_report",
+    "build_daily_fortune",
     "build_lifetime_career_report",
     "build_lifetime_health_report",
     "build_lifetime_love_report",
