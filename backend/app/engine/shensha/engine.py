@@ -1,4 +1,4 @@
-"""Detect the five approved shensha without treating them as core judgments."""
+"""Detect approved shensha without treating them as standalone verdicts."""
 
 from __future__ import annotations
 
@@ -15,7 +15,17 @@ from app.engine.core.models import (
 )
 
 
-SHENSHA_ENGINE_VERSION = "shensha-support-v1"
+SHENSHA_ENGINE_VERSION = "shensha-support-v2"
+
+_RULE_PROVENANCE = {
+    "travel_horse": "traditional-triad-twelve-stage",
+    "peach_blossom": "traditional-triad-hamji",
+    "flower_canopy": "traditional-triad-storage-branch",
+    "solitary_star": "sanmingtonghui-seasonal-group",
+    "widow_star": "sanmingtonghui-seasonal-group",
+    "literary_star": "traditional-day-stem",
+    "heavenly_noble": "traditional-day-stem",
+}
 
 _TRIAD_RULES = {
     "travel_horse": {
@@ -30,11 +40,29 @@ _TRIAD_RULES = {
         "巳": "午", "酉": "午", "丑": "午",
         "亥": "子", "卯": "子", "未": "子",
     },
-    "solitary_star": {
+    "flower_canopy": {
         "申": "辰", "子": "辰", "辰": "辰",
         "寅": "戌", "午": "戌", "戌": "戌",
         "巳": "丑", "酉": "丑", "丑": "丑",
         "亥": "未", "卯": "未", "未": "未",
+    },
+}
+
+# Classical 孤辰/寡宿: derive from the natal year branch's seasonal group.
+# These are deliberately kept separate from flower_canopy, whose targets are
+# the four storage branches (辰戌丑未).
+_YEAR_BRANCH_RULES = {
+    "solitary_star": {
+        "亥": "寅", "子": "寅", "丑": "寅",
+        "寅": "巳", "卯": "巳", "辰": "巳",
+        "巳": "申", "午": "申", "未": "申",
+        "申": "亥", "酉": "亥", "戌": "亥",
+    },
+    "widow_star": {
+        "亥": "戌", "子": "戌", "丑": "戌",
+        "寅": "丑", "卯": "丑", "辰": "丑",
+        "巳": "辰", "午": "辰", "未": "辰",
+        "申": "未", "酉": "未", "戌": "未",
     },
 }
 
@@ -107,6 +135,13 @@ def calculate_shensha(
             "basis_type": "natal_year_or_day_branch",
             "basis_values": sorted(basis_branches),
         }))
+    year = natal_pillars.get("year")
+    if year is not None:
+        for name, rule in _YEAR_BRANCH_RULES.items():
+            definitions.append((name, {rule[year.branch]}, {
+                "basis_type": "natal_year_branch_seasonal_group",
+                "basis_values": [year.branch],
+            }))
     for name, rule in _DAY_STEM_RULES.items():
         targets = set(rule[day.stem])
         definitions.append((name, targets, {
@@ -136,7 +171,7 @@ def calculate_shensha(
             id=evidence_id,
             layer=EvidenceLayer.SHENSHA,
             source_module=SHENSHA_ENGINE_VERSION,
-            rule_code=f"{name}-traditional-v1",
+            rule_code=f"{name}-traditional-v2",
             description="전통 위치식을 만족한 보조 신호이며 독립 길흉 판단에 사용하지 않음",
             source_values={
                 **basis,
@@ -144,6 +179,8 @@ def calculate_shensha(
                 "natal_matches": natal_matches,
                 "timing_matches": timing_matches,
                 "standalone_judgment_allowed": False,
+                "provenance": _RULE_PROVENANCE[name],
+                "service_specific_weighting_allowed": True,
             },
             supports=[f"shensha:{name}"],
             reliability=ConfidenceLevel.MEDIUM,
@@ -157,6 +194,7 @@ def calculate_shensha(
                 "relationship_results",
                 "diagnostic_synthesis",
                 "supporting_signal_only",
+                "service_specific_weighting",
             ],
             evidence_ids=[evidence_id],
             confidence=ConfidenceLevel.MEDIUM,
