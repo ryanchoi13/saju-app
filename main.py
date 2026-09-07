@@ -91,6 +91,23 @@ _STRENGTH_LABEL = {
     "strong": "신강(身强)",
     "extremely_strong": "매우 신강(身强)",
 }
+# 화면용 오행 구성 비율. 천간 1칸, 지지 1칸을 동일 총량으로 두고
+# 지지 1칸은 엔진의 지장간(본기·중기·여기)에 전통적 상대 비중으로 배분한다.
+# 이는 길흉/강약 점수가 아니며 월령·통근·합충·조후는 진단 엔진에서 별도 평가한다.
+_HIDDEN_STEM_COMPOSITION_WEIGHTS = {
+    "子": {"main": 1.0},
+    "丑": {"main": 0.6, "middle": 0.3, "residual": 0.1},
+    "寅": {"main": 16 / 30, "middle": 7 / 30, "residual": 7 / 30},
+    "卯": {"main": 1.0},
+    "辰": {"main": 0.6, "middle": 0.3, "residual": 0.1},
+    "巳": {"main": 16 / 30, "middle": 7 / 30, "residual": 7 / 30},
+    "午": {"main": 0.7, "middle": 0.3},
+    "未": {"main": 0.6, "middle": 0.3, "residual": 0.1},
+    "申": {"main": 16 / 30, "middle": 7 / 30, "residual": 7 / 30},
+    "酉": {"main": 1.0},
+    "戌": {"main": 0.6, "middle": 0.1, "residual": 0.3},
+    "亥": {"main": 0.7, "middle": 0.3},
+}
 
 
 def _sijin_midpoint(sijin: int) -> time | None:
@@ -116,17 +133,21 @@ def _birth_input_from_user(user: Dict[str, Any], name: str) -> BirthInput:
     )
 
 
-def _visible_element_percent(pillars: Dict[str, Any]) -> Dict[str, float]:
-    """Describe the visible stems and branches; this is not a strength score."""
+def _element_composition_percent(core) -> Dict[str, float]:
+    """Describe visible stems plus role-weighted hidden stems, not strength."""
 
     counts = {key: 0 for key in _ELEMENT_KEY.values()}
-    total = 0
-    for pillar in pillars.values():
+    for pillar_name, pillar in core.natal_facts.pillars.items():
         if pillar is None:
             continue
+        # 드러난 천간 한 글자 = 1칸
         counts[_ELEMENT_KEY[pillar.stem_element]] += 1
-        counts[_ELEMENT_KEY[pillar.branch_element]] += 1
-        total += 2
+        # 지지 한 글자 = 1칸. 그 안을 해당 지장간 비중으로 나눈다.
+        hidden = core.natal_facts.hidden_stems.get(pillar_name)
+        branch_weights = _HIDDEN_STEM_COMPOSITION_WEIGHTS[pillar.branch]
+        for item in hidden.stems if hidden else []:
+            counts[_ELEMENT_KEY[item.element]] += branch_weights[item.role.value]
+    total = sum(counts.values())
     if not total:
         return {key: 0 for key in counts}
     values = {key: round(count / total * 100, 1) for key, count in counts.items()}
@@ -312,7 +333,7 @@ def get_saju_pillars_and_analysis(name: str, gender: str, y: int, m: int, d: int
     else:
         element_relation = "pressure"
     
-    elements_weight = _visible_element_percent(core.natal_facts.pillars)
+    elements_weight = _element_composition_percent(core)
     singang_label = _STRENGTH_LABEL.get(
         core.synthesis.strength_state,
         "강약 판정 보류",
@@ -442,9 +463,9 @@ def get_saju_pillars_and_analysis(name: str, gender: str, y: int, m: int, d: int
             },
             "elements": elements_weight,
             "elements_note": (
-                "천간·지지 8글자의 표면 구성입니다. 지장간·월령·통근은 강약 판단에 별도로 반영합니다."
+                "천간 4글자와 지지 속 지장간의 본기·중기·여기 비중을 합산한 원국 구성입니다. 월령·통근·합충·조후는 강약과 해석에 별도로 반영합니다."
                 if birth_clock else
-                "생시를 제외한 6글자의 표면 구성입니다. 지장간·월령·통근은 강약 판단에 별도로 반영합니다."
+                "생시를 제외한 천간 3글자와 지지 속 지장간 비중을 합산한 원국 구성입니다. 생시 관련 비율은 확정하지 않으며 월령·통근·합충·조후는 별도로 판단합니다."
             ),
             "daeyun_phase": _daeyun_phase(core.timing.luck_cycle.get("current")),
         },
