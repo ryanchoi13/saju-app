@@ -674,6 +674,12 @@
                     <div id="themeReport_health" class="hidden" style="margin-top: 14px; padding-top: 12px; border-top: 1px solid #F1F5F9;"></div>
                     <button id="btnTheme_health" onclick="handleUnlockReportOnServer('health', 220)" style="width: 100%; background: #0D1527; color: white; border: none; font-size: 14.5px; font-weight: 700; padding: 14px; border-radius: 14px; cursor: pointer; margin-top: 14px; display: flex; align-items: center; justify-content: center; gap: 6px;"><span class="btn-coin-icon-white"></span> 220 복채로 상세 리포트 열람하기</button>
                 </div>
+
+                <div class="card" style="text-align: left;">
+                    <p style="font-size: 16.5px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif;">📚 평생 학업·시험운</p><p style="font-size: 13.5px; color: #64748B; margin-top: 3px;">학습·표현·규율의 구조와 대운별 공부 흐름</p>
+                    <div id="themeReport_study" class="hidden" style="margin-top: 14px; padding-top: 12px; border-top: 1px solid #F1F5F9;"></div>
+                    <button id="btnTheme_study" onclick="handleUnlockReportOnServer('study', 220)" style="width: 100%; background: #0D1527; color: white; border: none; font-size: 14.5px; font-weight: 700; padding: 14px; border-radius: 14px; cursor: pointer; margin-top: 14px; display: flex; align-items: center; justify-content: center; gap: 6px;"><span class="btn-coin-icon-white"></span> 220 복채로 상세 리포트 열람하기</button>
+                </div>
             </div>
 
             <!-- 탭 4: 마이페이지 -->
@@ -1959,7 +1965,7 @@
                     document.getElementById('gunghapReportBox').innerHTML = item.report_content + extraActionHtml;
                     document.getElementById('gunghapReportBox').classList.remove('hidden');
                     document.getElementById('btnOpenGunghapModal')?.classList.add('hidden');
-                } else if (['wealth', 'love', 'business', 'health'].includes(item.report_key)) {
+                } else if (['wealth', 'love', 'business', 'health', 'study'].includes(item.report_key)) {
                     document.getElementById(`themeReport_${item.report_key}`).innerHTML = item.report_content + extraActionHtml;
                     document.getElementById(`themeReport_${item.report_key}`).classList.remove('hidden');
                     document.getElementById(`btnTheme_${item.report_key}`)?.classList.add('hidden');

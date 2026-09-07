@@ -72,7 +72,10 @@ _PROFILES = {
     "study": {
         "scope": "natal+all_luck_cycles",
         "diagnostics": ["structure", "strength", "climate"],
-        "ten_gods": ["direct_resource", "indirect_resource", "eating_god", "hurting_officer"],
+        "ten_gods": [
+            "direct_resource", "indirect_resource", "eating_god", "hurting_officer",
+            "direct_officer", "seven_killings",
+        ],
     },
     "career": {
         "scope": "natal+all_luck_cycles",

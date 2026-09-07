@@ -12,6 +12,7 @@ from app.engine.services import (
     build_lifetime_health_report,
     build_lifetime_love_report,
     build_lifetime_overall_report,
+    build_lifetime_study_report,
     build_lifetime_wealth_report,
 )
 from wada_context_placement import WADA_CONTEXT_PLACEMENT
@@ -645,6 +646,17 @@ def generate_detailed_report(
             target_date=kst_today,
         )
         return build_lifetime_health_report(core, user_name)
+    elif report_key == "study":
+        if not user:
+            raise ValueError("평생 학업·시험운 생성에 사용자 사주 정보가 필요합니다.")
+        kst_today = datetime.datetime.now(
+            datetime.timezone(datetime.timedelta(hours=9))
+        ).date()
+        core = calculate_myeongri_core(
+            _birth_input_from_user(user, user_name),
+            target_date=kst_today,
+        )
+        return build_lifetime_study_report(core, user_name)
     else:
         title = f"{user_name}님 {sub_option} 맞춤 심층 감명서"
         content = f"""
