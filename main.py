@@ -3,12 +3,13 @@ import sys
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "backend"))
 from datetime import date, time
 from app.engine.pillars import calculate_saju
-from app.engine.constants import GAN_KO, GAN_WUXING, ZHI_KO
+from app.engine.constants import GAN_KO, ZHI_KO
 from app.engine.core.models import BirthInput
 from app.engine.orchestrator import calculate_myeongri_core
 from app.engine.services import (
     build_annual_overall_report,
     build_compatibility_report,
+    build_daily_fortune,
     build_lifetime_career_report,
     build_lifetime_health_report,
     build_lifetime_love_report,
@@ -19,7 +20,7 @@ from app.engine.services import (
 from wada_context_placement import WADA_CONTEXT_PLACEMENT
 from wada_color_rules import evaluate_duo
 from wada_color_ko import get_wada_color_ko
-from wada_wuxing_selector import select_wada_duo
+from wada_wuxing_selector import select_wada_duo_for_targets
 from lunar_python import Solar
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -275,15 +276,6 @@ def get_saju_pillars_and_analysis(name: str, gender: str, y: int, m: int, d: int
     backend_is_leap = (cal_type == "leap")
     birth_clock = _sijin_midpoint(sijin)
 
-    backend_saju = calculate_saju(
-        birth_date=date(y, m, d),
-        calendar_type=backend_calendar_type,
-        is_leap_month=backend_is_leap,
-        birth_time=birth_clock,
-        time_unknown=birth_clock is None,
-        gender=gender
-    )
-
     kst_now = datetime.datetime.now(
         datetime.timezone(datetime.timedelta(hours=9))
     )
@@ -301,54 +293,6 @@ def get_saju_pillars_and_analysis(name: str, gender: str, y: int, m: int, d: int
         target_date=today_date,
     )
 
-    cg_y = backend_saju.year.gan
-    jj_y = backend_saju.year.zhi
-    cg_m = backend_saju.month.gan
-    jj_m = backend_saju.month.zhi
-    cg_d = backend_saju.day.gan
-    jj_d = backend_saju.day.zhi
-    today_solar = Solar.fromYmd(
-        today_date.year,
-        today_date.month,
-        today_date.day
-    )
-    today_lunar = today_solar.getLunar()
-
-    today_gan = today_lunar.getDayGan()
-    today_zhi = today_lunar.getDayZhi()
-    today_ganji = today_lunar.getDayInGanZhi()
-
-    natal_gan_han = backend_saju.day_master_han
-    natal_element = GAN_WUXING[natal_gan_han]
-    today_element = GAN_WUXING[today_gan]
-    
-    generates = {
-        "木": "火",
-        "火": "土",
-        "土": "金",
-        "金": "水",
-        "水": "木"
-    }
-
-    controls = {
-        "木": "土",
-        "土": "水",
-        "水": "火",
-        "火": "金",
-        "金": "木"
-    }
-
-    if natal_element == today_element:
-        element_relation = "same"
-    elif generates[today_element] == natal_element:
-        element_relation = "supported"
-    elif generates[natal_element] == today_element:
-        element_relation = "output"
-    elif controls[natal_element] == today_element:
-        element_relation = "wealth"
-    else:
-        element_relation = "pressure"
-    
     elements_weight = _element_composition_percent(core)
     singang_label = _STRENGTH_LABEL.get(
         core.synthesis.strength_state,
@@ -360,60 +304,9 @@ def get_saju_pillars_and_analysis(name: str, gender: str, y: int, m: int, d: int
 
     current_age = datetime.date.today().year - y + 1
 
-    relation_fortunes = {
-        "same": {
-            "score": 78,
-            "title": "내 기운을 단단히 다지는 날",
-            "advice": "오늘은 나와 비슷한 기운이 강해집니다. 자신감은 살리되 고집이 앞서지 않도록 균형을 잡는 것이 좋습니다.",
-            "mindset": "내 생각을 믿되 다른 사람의 의견에도 귀 기울이기",
-            "action": "오늘 꼭 끝낼 일 한 가지를 정하고 집중해서 마무리하기",
-            "morning": "내 페이스를 정돈하며 중요한 일의 우선순위를 잡기 좋은 시간입니다.",
-            "afternoon": "자신감이 살아나는 시간입니다. 다만 내 주장만 앞세우지 않도록 주변 의견도 살펴보세요.",
-            "evening": "오늘의 선택을 돌아보고 내일을 위한 방향을 차분히 정리해 보세요."
-        },
-        "supported": {
-            "score": 90,
-            "title": "도움과 기회가 따라오는 날",
-            "advice": "오늘의 기운이 나를 북돋아 주는 흐름입니다. 새로운 제안이나 주변의 도움을 적극적으로 활용해 보세요.",
-            "mindset": "혼자 해결하려 하기보다 좋은 도움과 제안을 열린 마음으로 받아들이기",
-            "action": "오늘 받은 제안이나 도움 중 하나를 실제 행동으로 연결하기",
-            "morning": "주변의 도움을 받으며 하루의 방향을 잡기 좋은 시간입니다.",
-            "afternoon": "협력과 소통에서 좋은 흐름이 들어옵니다. 제안이나 기회를 적극적으로 살펴보세요.",
-            "evening": "무리하게 더 나아가기보다 오늘 얻은 도움과 성과를 편안하게 정리해 보세요."
-        },
-        "output": {
-            "score": 82,
-            "title": "능력을 펼치고 표현하기 좋은 날",
-            "advice": "내 기운을 밖으로 발산하기 좋은 날입니다. 아이디어를 표현하거나 미뤄둔 일을 실행하면 성과를 만들기 좋습니다.",
-            "mindset": "완벽하게 준비하려 하기보다 내 생각과 능력을 자연스럽게 표현하기",
-            "action": "미뤄둔 아이디어나 계획 하나를 오늘 직접 실행해보기",
-            "morning": "아이디어를 정리하고 오늘 표현할 것을 구체적으로 정하기 좋은 시간입니다.",
-            "afternoon": "내 능력과 생각을 적극적으로 보여주기 좋은 시간입니다. 미뤄둔 일도 실행으로 옮겨보세요.",
-            "evening": "하루 동안 쏟은 에너지를 정리하고 과하게 벌인 일은 가볍게 정돈해 보세요."
-        },
-        "wealth": {
-            "score": 86,
-            "title": "실속과 성과를 챙기기 좋은 날",
-            "advice": "현실적인 결과와 재물의 흐름에 집중하기 좋은 날입니다. 계획을 구체적인 행동으로 옮겨 보세요.",
-            "mindset": "눈앞의 결과에 조급해하지 말고 실속 있는 선택에 집중하기",
-            "action": "오늘 처리할 일 중 실제 성과로 이어질 한 가지를 우선 실행하기",
-            "morning": "오늘 얻고 싶은 결과를 분명히 정하고 현실적인 계획을 세우기 좋은 시간입니다.",
-            "afternoon": "실질적인 성과를 만들기 좋은 시간입니다. 중요한 일이나 금전 관련 판단에 집중해 보세요.",
-            "evening": "오늘의 성과와 지출을 가볍게 점검하고 불필요한 것은 정리해 보세요."
-        },
-        "pressure": {
-            "score": 68,
-            "title": "서두르기보다 균형이 필요한 날",
-            "advice": "외부의 요구나 부담을 크게 느낄 수 있습니다. 무리하게 밀어붙이기보다 우선순위를 정해 차분히 대응하는 것이 좋습니다.",
-            "mindset": "모든 요구에 바로 반응하기보다 내 페이스와 우선순위를 지키기",
-            "action": "오늘 해야 할 일을 중요도 순으로 정리하고 가장 중요한 것부터 처리하기",
-            "morning": "서두르기보다 오늘 해야 할 일을 차분히 정리하며 시작하는 것이 좋습니다.",
-            "afternoon": "주변의 요구나 예상치 못한 일이 늘어날 수 있습니다. 중요한 일부터 하나씩 처리하세요.",
-            "evening": "긴장을 내려놓고 충분히 쉬면서 오늘 쌓인 피로와 부담을 정리해 보세요."
-        }
-    }
-
-    today_fortune = relation_fortunes[element_relation]
+    today_fortune = build_daily_fortune(core, name, today_date)
+    today_element = core.timing.daily["pillar"]["stem_element"]
+    lucky_element = today_fortune["lucky_element"]
 
     current_month = today_date.month
 
@@ -435,8 +328,8 @@ def get_saju_pillars_and_analysis(name: str, gender: str, y: int, m: int, d: int
     else:
         outfit_age_group = "60plus"
 
-    wada_selection = select_wada_duo(
-        natal_element,
+    wada_selection = select_wada_duo_for_targets(
+        lucky_element,
         today_element,
         int(today_date.strftime("%Y%m%d"))
     )
@@ -486,16 +379,7 @@ def get_saju_pillars_and_analysis(name: str, gender: str, y: int, m: int, d: int
             "daeyun_phase": _daeyun_phase(core.timing.luck_cycle.get("current")),
         },
         "daily_fortune": {
-            "title": today_fortune["title"],
-            "score": today_fortune["score"],
-            "mode_badge": f"운세 {today_fortune['score']}점",
-            "badge_style": "background:#FEF3C7; color:#78350F; border:1px solid #FDE68A;",
-            "advice": today_fortune["advice"],
-            "time_flow": {
-                "morning": today_fortune["morning"],
-                "afternoon": today_fortune["afternoon"],
-                "evening": today_fortune["evening"]
-            },
+            **today_fortune,
             "wada_palette": {
                 "theme": f"Wada Duo #{wada_duo_no}",
                 "mood_desc": f"{with_wa_gwa(wada_top_color['name_ko'])} {wada_bottom_color['name_ko']}으로 오늘의 의상 컬러를 조합해 보세요.",
@@ -516,18 +400,10 @@ def get_saju_pillars_and_analysis(name: str, gender: str, y: int, m: int, d: int
                 },
                 "point": None
             },
-            "lucky_item": "실버 메탈 시계",
-            "lucky_number": "4, 9",
-            "lucky_direction": "정서쪽 (백호 방위)",
-            "recommended_menu": "속이 편안한 영양 솥밥",
-            "mindset": today_fortune["mindset"],
-            "action": today_fortune["action"],
-            "talisman": {
-                "title": "재물만복부 (生財萬福)",
-                "power": "금전운 상승 · 투자 결실 극대화",
-                "desc": "사방에서 재물과 복록이 깃들게 하는 전통 비급 수제 부적입니다.",
-                "talisman_type": "metal_wealth"
-            }
+            "lucky_colors": [
+                wada_top_color["standard_color"],
+                wada_bottom_color["standard_color"],
+            ],
         }
     }
 
