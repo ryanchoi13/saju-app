@@ -1,12 +1,12 @@
 import os
 import sys
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "backend"))
-from datetime import date
+from datetime import date, time
 from app.engine.pillars import calculate_saju
-from app.engine.constants import GAN_WUXING
+from app.engine.constants import GAN_KO, GAN_WUXING, ZHI_KO
 from app.engine.core.models import BirthInput
 from app.engine.orchestrator import calculate_myeongri_core
-from app.engine.services import build_lifetime_overall_report
+from app.engine.services import build_annual_overall_report, build_lifetime_overall_report
 from wada_context_placement import WADA_CONTEXT_PLACEMENT
 from wada_color_rules import evaluate_duo
 from wada_color_ko import get_wada_color_ko
@@ -79,6 +79,102 @@ class ChargeCoinRequest(BaseModel):
 CHEONGAN = ["갑", "을", "병", "정", "무", "기", "경", "신", "임", "계"]
 JIJI = ["자", "축", "인", "묘", "진", "사", "오", "미", "신", "유", "술", "해"]
 
+SIJIN_LABELS = [
+    "자(子)시", "축(丑)시", "인(寅)시", "묘(卯)시", "진(辰)시", "사(巳)시",
+    "오(午)시", "미(未)시", "신(申)시", "유(酉)시", "술(戌)시", "해(亥)시",
+]
+_ELEMENT_KEY = {"木": "wood", "火": "fire", "土": "earth", "金": "metal", "水": "water"}
+_STRENGTH_LABEL = {
+    "extremely_weak": "매우 신약(身弱)",
+    "weak": "신약(身弱)",
+    "balanced": "중화(中和)",
+    "strong": "신강(身强)",
+    "extremely_strong": "매우 신강(身强)",
+}
+
+
+def _sijin_midpoint(sijin: int) -> time | None:
+    """Return a representative midpoint for the two-hour UI time range."""
+
+    if not 0 <= sijin <= 11:
+        return None
+    return time((sijin * 2) % 24, 30)
+
+
+def _birth_input_from_user(user: Dict[str, Any], name: str) -> BirthInput:
+    sijin = int(user.get("sijin_index", -1))
+    clock = _sijin_midpoint(sijin)
+    calendar_type = "lunar" if user["calendar_type"] in {"lunar", "leap"} else "solar"
+    return BirthInput(
+        name=name or "회원",
+        gender=user["gender"],
+        birth_date=date(user["birth_year"], user["birth_month"], user["birth_day"]),
+        calendar_type=calendar_type,
+        is_leap_month=user["calendar_type"] == "leap",
+        birth_time=clock,
+        time_unknown=clock is None,
+    )
+
+
+def _visible_element_percent(pillars: Dict[str, Any]) -> Dict[str, float]:
+    """Describe the visible stems and branches; this is not a strength score."""
+
+    counts = {key: 0 for key in _ELEMENT_KEY.values()}
+    total = 0
+    for pillar in pillars.values():
+        if pillar is None:
+            continue
+        counts[_ELEMENT_KEY[pillar.stem_element]] += 1
+        counts[_ELEMENT_KEY[pillar.branch_element]] += 1
+        total += 2
+    if not total:
+        return {key: 0 for key in counts}
+    values = {key: round(count / total * 100, 1) for key, count in counts.items()}
+    drift = round(100 - sum(values.values()), 1)
+    if drift:
+        strongest = max(values, key=values.get)
+        values[strongest] = round(values[strongest] + drift, 1)
+    return values
+
+
+def _pillar_detail(core, pillar_name: str) -> Dict[str, Any]:
+    pillar = core.natal_facts.pillars.get(pillar_name)
+    if pillar is None:
+        return {"cg": "", "cg_elem": "", "jj": "", "jj_elem": "", "jijanggan": []}
+    hidden = core.natal_facts.hidden_stems.get(pillar_name)
+    return {
+        "cg": GAN_KO[pillar.stem],
+        "cg_elem": _ELEMENT_KEY[pillar.stem_element],
+        "jj": ZHI_KO[pillar.branch],
+        "jj_elem": _ELEMENT_KEY[pillar.branch_element],
+        "jijanggan": [
+            {"char": GAN_KO[item.stem], "elem": _ELEMENT_KEY[item.element]}
+            for item in (hidden.stems if hidden else [])
+        ],
+    }
+
+
+def _daeyun_phase(current_cycle: Dict[str, Any] | None) -> Dict[str, Any]:
+    index = (current_cycle or {}).get("index")
+    if index is None:
+        phase = "대운 시작 전"
+    elif index <= 2:
+        phase = "초년기"
+    elif index <= 4:
+        phase = "청년기"
+    elif index <= 7:
+        phase = "중장년기"
+    else:
+        phase = "말년기"
+    return {
+        "name": phase,
+        "cycle": (current_cycle or {}).get("pillar", {}).get("ganji"),
+        "age_range": (
+            f'{current_cycle["start_age"]}~{current_cycle["end_age"]}세'
+            if current_cycle else None
+        ),
+    }
+
 ELEM_MAP = {
     "갑": "wood", "을": "wood", "인": "wood", "묘": "wood",
     "병": "fire", "정": "fire", "사": "fire", "오": "fire",
@@ -140,14 +236,32 @@ def with_wa_gwa(word: str):
 def get_saju_pillars_and_analysis(name: str, gender: str, y: int, m: int, d: int, cal_type: str, sijin: int):
     backend_calendar_type = "lunar" if cal_type in ["lunar", "leap"] else "solar"
     backend_is_leap = (cal_type == "leap")
+    birth_clock = _sijin_midpoint(sijin)
 
     backend_saju = calculate_saju(
         birth_date=date(y, m, d),
         calendar_type=backend_calendar_type,
         is_leap_month=backend_is_leap,
-        birth_time=None,
-        time_unknown=True,
+        birth_time=birth_clock,
+        time_unknown=birth_clock is None,
         gender=gender
+    )
+
+    kst_now = datetime.datetime.now(
+        datetime.timezone(datetime.timedelta(hours=9))
+    )
+    today_date = kst_now.date()
+    core = calculate_myeongri_core(
+        BirthInput(
+            name=name or "회원",
+            gender=gender,
+            birth_date=date(y, m, d),
+            calendar_type=backend_calendar_type,
+            is_leap_month=backend_is_leap,
+            birth_time=birth_clock,
+            time_unknown=birth_clock is None,
+        ),
+        target_date=today_date,
     )
 
     cg_y = backend_saju.year.gan
@@ -156,11 +270,6 @@ def get_saju_pillars_and_analysis(name: str, gender: str, y: int, m: int, d: int
     jj_m = backend_saju.month.zhi
     cg_d = backend_saju.day.gan
     jj_d = backend_saju.day.zhi
-    kst_now = datetime.datetime.now(
-        datetime.timezone(datetime.timedelta(hours=9))
-    )
-    today_date = kst_now.date()
-
     today_solar = Solar.fromYmd(
         today_date.year,
         today_date.month,
@@ -203,16 +312,14 @@ def get_saju_pillars_and_analysis(name: str, gender: str, y: int, m: int, d: int
     else:
         element_relation = "pressure"
     
-    if sijin >= 0:
-        cg_h = CHEONGAN[(sijin * 2) % 10]
-        jj_h = JIJI[sijin % 12]
-    else:
-        cg_h, jj_h = "무", "진"
-
-    elements_weight = {"wood": 15, "fire": 25, "earth": 45, "metal": 0, "water": 15}
-    if cg_d in ["경", "신"] or jj_d in ["신", "유"]:
-        elements_weight["metal"] = 20
-        elements_weight["earth"] = 25
+    elements_weight = _visible_element_percent(core.natal_facts.pillars)
+    singang_label = _STRENGTH_LABEL.get(
+        core.synthesis.strength_state,
+        "강약 판정 보류",
+    )
+    time_text = SIJIN_LABELS[sijin] + "생" if 0 <= sijin <= 11 else "생시 미상"
+    gender_text = "남성" if gender == "male" else "여성"
+    profile_detail = f"{y}년 {m}월 {d}일 · {time_text} · {gender_text}"
 
     current_age = datetime.date.today().year - y + 1
 
@@ -321,18 +428,25 @@ def get_saju_pillars_and_analysis(name: str, gender: str, y: int, m: int, d: int
  
     return {
         "user_name": name,
-        "birth_summary": f"{y}년 {m}월 {d}일생 · {'남성' if gender == 'male' else '여성'}",
+        "birth_summary": profile_detail,
+        "saju_profile_detail": profile_detail,
         "current_age": current_age,
         "biorhythm": calculate_biorhythm(y, m, d),
         "saju_data": {
-            "singang_label": "신약(身弱) 사주 · 보완형",
+            "singang_label": singang_label,
             "pillars_detail": {
-                "year": {"cg": cg_y, "cg_elem": ELEM_MAP.get(cg_y, "earth"), "jj": jj_y, "jj_elem": ELEM_MAP.get(jj_y, "earth"), "jijanggan": JIJANGGAN_MAP.get(jj_y, [])},
-                "month": {"cg": cg_m, "cg_elem": ELEM_MAP.get(cg_m, "fire"), "jj": jj_m, "jj_elem": ELEM_MAP.get(jj_m, "metal"), "jijanggan": JIJANGGAN_MAP.get(jj_m, [])},
-                "day": {"cg": cg_d, "cg_elem": ELEM_MAP.get(cg_d, "earth"), "jj": jj_d, "jj_elem": ELEM_MAP.get(jj_d, "fire"), "jijanggan": JIJANGGAN_MAP.get(jj_d, [])},
-                "hour": {"cg": cg_h, "cg_elem": ELEM_MAP.get(cg_h, "earth"), "jj": jj_h, "jj_elem": ELEM_MAP.get(jj_h, "earth"), "jijanggan": JIJANGGAN_MAP.get(jj_h, [])}
+                "year": _pillar_detail(core, "year"),
+                "month": _pillar_detail(core, "month"),
+                "day": _pillar_detail(core, "day"),
+                "hour": _pillar_detail(core, "hour"),
             },
-            "elements": elements_weight
+            "elements": elements_weight,
+            "elements_note": (
+                "천간·지지 8글자의 표면 구성입니다. 지장간·월령·통근은 강약 판단에 별도로 반영합니다."
+                if birth_clock else
+                "생시를 제외한 6글자의 표면 구성입니다. 지장간·월령·통근은 강약 판단에 별도로 반영합니다."
+            ),
+            "daeyun_phase": _daeyun_phase(core.timing.luck_cycle.get("current")),
         },
         "daily_fortune": {
             "title": today_fortune["title"],
@@ -390,88 +504,16 @@ def generate_detailed_report(
     user: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, str]:
     if report_key == "sinnian":
-        title = f"2026 丙午년 {user_name}님 정밀 신년운세 & 12개월 토정비결"
-        content = f"""
-        <div style="text-align:left; line-height:1.85; color:#1E293B;">
-            <div style="background:#ECFDF5; border-left:4px solid #10B981; padding:16px; border-radius:14px; margin-bottom:18px;">
-                <h4 style="font-size:16px; font-weight:800; color:#065F46; margin-bottom:6px;">📜 Chapter 1. 2026 丙午년 총운 (總論)</h4>
-                <p style="font-size:13.5px; color:#047857; margin:0; line-height:1.75;">
-                    2026년 丙午(병오)년은 타오르는 태양과 질주하는 적토마가 만난 형국으로, 사주 명식 내에 웅크리고 있던 잠재력이 본격적으로 발현되는 '도약과 대발(大發)의 해'입니다. 
-                    그동안 준비해 온 역량이 외부로 드러나며 정체되었던 문제들이 일시에 해결의 실마리를 찾게 됩니다. 특히 상반기에는 내실과 기틀을 닦고, 하반기로 접어들수록 재물과 명예가 배가되는 비도진천(飛渡震天)의 강렬한 운의 흐름을 타게 됩니다.
-                </p>
-            </div>
-
-            <div style="display:flex; flex-direction:column; gap:12px; margin-bottom:20px;">
-                <div style="background:#F8FAFC; border:1px solid #E2E8F0; padding:14px 16px; border-radius:14px;">
-                    <h5 style="font-size:14.5px; font-weight:800; color:#D97706; margin-bottom:4px;">💰 Chapter 2. 2026 재물운 & 투자 가이드</h5>
-                    <p style="font-size:13px; color:#475569; margin:0; line-height:1.7;">
-                        문서운(文書運)과 정재(正財)의 흐름이 견고하게 맞물려 실속 있는 자산 증식이 가능합니다. 단기적인 투기나 고위험 상품보다는 중장기 부동산, 안정적인 배당 자산, 실물 자산과의 궁합이 매우 우수합니다. 5월과 10월에 목돈이 들어올 운기가 강하며, 불필요한 충동 소비와 남을 위한 보증·무리한 대출만 피한다면 든든한 곳간을 채우는 한 해가 됩니다.
-                    </p>
-                </div>
-
-                <div style="background:#F8FAFC; border:1px solid #E2E8F0; padding:14px 16px; border-radius:14px;">
-                    <h5 style="font-size:14.5px; font-weight:800; color:#2563EB; margin-bottom:4px;">🏢 Chapter 3. 2026 직장·사업 & 커리어운</h5>
-                    <p style="font-size:13px; color:#475569; margin:0; line-height:1.7;">
-                        조직 내에서 자신의 발언권과 입지가 강화되며 승진, 영전, 프로젝트 총괄 등 주도적인 역할을 맡게 됩니다. 사업가라면 새로운 시장 개척이나 거래처 확대에 최적의 시기입니다. 다만 자신의 주장을 너무 강하게 밀어붙이면 주변의 시기나 견제를 부를 수 있으니, 성과는 팀원 및 파트너와 나누는 포용력을 발휘할 때 명예가 더욱 빛납니다.
-                    </p>
-                </div>
-
-                <div style="background:#F8FAFC; border:1px solid #E2E8F0; padding:14px 16px; border-radius:14px;">
-                    <h5 style="font-size:14.5px; font-weight:800; color:#DC2626; margin-bottom:4px;">🌿 Chapter 4. 2026 가정·건강 & 섭생 가이드</h5>
-                    <p style="font-size:13px; color:#475569; margin:0; line-height:1.7;">
-                        화기(火氣)가 강해지는 여름철(음력 4~6월)에는 혈압, 심혈관계, 수면 부족에 각별히 유의해야 합니다. 과도한 열정을 식혀주는 충분한 수분 섭취와 규칙적인 유산소 운동이 필수적입니다. 가정적으로는 화목이 깃드나 집안의 사소한 결정에서 독단적인 판단을 피하고 가족들의 의견을 경청할 때 가정궁이 더욱 평안해집니다.
-                    </p>
-                </div>
-
-                <div style="background:#F8FAFC; border:1px solid #E2E8F0; padding:14px 16px; border-radius:14px;">
-                    <h5 style="font-size:14.5px; font-weight:800; color:#9333EA; margin-bottom:4px;">💖 Chapter 5. 2026 이성 & 대인관계운</h5>
-                    <p style="font-size:13px; color:#475569; margin:0; line-height:1.7;">
-                        나에게 실질적인 도움을 주는 귀인(貴人)들이 사방에서 모여듭니다. 미혼자는 지적이고 당찬 성향의 인연과 깊은 결실을 맺을 수 있으며, 기혼자는 배우자와의 협업을 통해 가정을 번창시키는 시기입니다. 겉치레보다는 진정성 있는 태도로 대인관계를 맺을 때 평생을 함께할 든든한 조력자를 얻게 됩니다.
-                    </p>
-                </div>
-            </div>
-
-            <h4 style="font-size:15.5px; font-weight:800; color:#0F172A; margin:20px 0 12px; border-bottom:2px solid #E2E8F0; padding-bottom:8px;">📅 Chapter 6. 1월부터 12월까지 월별 정밀 토정비결</h4>
-            <div style="display:flex; flex-direction:column; gap:10px;">
-                <div style="background:#F8FAFC; border:1px solid #E2E8F0; padding:12px 14px; border-radius:12px; border-left:4px solid #2D6A4F;">
-                    <strong style="color:#0F172A; font-size:13.5px;">1월 (正月):</strong> <span style="color:#475569; font-size:13px;">새로운 계획의 기틀을 다지는 달입니다. 조급하게 결론을 내리기보다 주변 동향을 살피고 기초 체력을 다지는 것이 유리합니다. (재물: 보통, 길방: 동쪽)</span>
-                </div>
-                <div style="background:#F8FAFC; border:1px solid #E2E8F0; padding:12px 14px; border-radius:12px; border-left:4px solid #2D6A4F;">
-                    <strong style="color:#0F172A; font-size:13.5px;">2월 (二月):</strong> <span style="color:#475569; font-size:13px;">막혔던 흐름이 풀리고 귀인의 소식이 들려옵니다. 성실히 준비해 온 일에서 작은 결실이 나타나기 시작합니다. (재물: 길, 길방: 남쪽)</span>
-                </div>
-                <div style="background:#F8FAFC; border:1px solid #E2E8F0; padding:12px 14px; border-radius:12px; border-left:4px solid #2D6A4F;">
-                    <strong style="color:#0F172A; font-size:13.5px;">3월 (三月):</strong> <span style="color:#475569; font-size:13px;">문서 계약이나 협상에서 매우 유리한 위치를 점합니다. 자산 매입이나 계약 체결에 길한 운이 따릅니다. (재물: 대길, 길방: 서북쪽)</span>
-                </div>
-                <div style="background:#F8FAFC; border:1px solid #E2E8F0; padding:12px 14px; border-radius:12px; border-left:4px solid #2D6A4F;">
-                    <strong style="color:#0F172A; font-size:13.5px;">4월 (四月):</strong> <span style="color:#475569; font-size:13px;">지출 관리가 필요한 달입니다. 불필요한 충동구매나 무리한 확장을 자제하고 현금 유동성을 확보하세요. (재물: 주의, 건강: 휴식 필요)</span>
-                </div>
-                <div style="background:#F8FAFC; border:1px solid #E2E8F0; padding:12px 14px; border-radius:12px; border-left:4px solid #2D6A4F;">
-                    <strong style="color:#0F172A; font-size:13.5px;">5월 (五月):</strong> <span style="color:#475569; font-size:13px;">상반기 최고의 황금기입니다. 직장 내 승진운과 사업상 대형 계약이 성사되며 명예가 크게 드높아집니다. (재물: 대길, 사업: 승승장구)</span>
-                </div>
-                <div style="background:#F8FAFC; border:1px solid #E2E8F0; padding:12px 14px; border-radius:12px; border-left:4px solid #2D6A4F;">
-                    <strong style="color:#0F172A; font-size:13.5px;">6월 (六月):</strong> <span style="color:#475569; font-size:13px;">체력 안배가 중요한 시기입니다. 무더위 속 무리한 일정은 피하고 충분한 수면과 휴식을 통해 내실을 다지세요. (건강: 유의, 대인: 원만)</span>
-                </div>
-                <div style="background:#F8FAFC; border:1px solid #E2E8F0; padding:12px 14px; border-radius:12px; border-left:4px solid #2D6A4F;">
-                    <strong style="color:#0F172A; font-size:13.5px;">7월 (七月):</strong> <span style="color:#475569; font-size:13px;">재물운이 안정세로 돌아서며 성과에 대한 합당한 보상이 주어집니다. 가족과 함께하는 시간이 큰 힘이 됩니다. (재물: 길, 가정: 평안)</span>
-                </div>
-                <div style="background:#F8FAFC; border:1px solid #E2E8F0; padding:12px 14px; border-radius:12px; border-left:4px solid #2D6A4F;">
-                    <strong style="color:#0F172A; font-size:13.5px;">8월 (八月):</strong> <span style="color:#475569; font-size:13px;">주변의 시기나 구설을 주의해야 합니다. 원칙을 엄격히 지키고 감정적인 대응을 삼가면 화가 복으로 바뀝니다. (대인: 신중, 재물: 보통)</span>
-                </div>
-                <div style="background:#F8FAFC; border:1px solid #E2E8F0; padding:12px 14px; border-radius:12px; border-left:4px solid #2D6A4F;">
-                    <strong style="color:#0F172A; font-size:13.5px;">9월 (九月):</strong> <span style="color:#475569; font-size:13px;">가을의 결실이 무르익습니다. 상반기에 뿌려둔 노력들이 풍성한 결과물로 수확되는 풍요로운 달입니다. (재물: 대길, 명예: 상승)</span>
-                </div>
-                <div style="background:#F8FAFC; border:1px solid #E2E8F0; padding:12px 14px; border-radius:12px; border-left:4px solid #2D6A4F;">
-                    <strong style="color:#0F172A; font-size:13.5px;">10월 (十月):</strong> <span style="color:#475569; font-size:13px;">뜻밖의 횡재수나 새로운 사업적 제안이 찾아옵니다. 신뢰할 수 있는 파트너와의 협업이 큰 성과를 냅니다. (재물: 횡재수, 사업: 확장)</span>
-                </div>
-                <div style="background:#F8FAFC; border:1px solid #E2E8F0; padding:12px 14px; border-radius:12px; border-left:4px solid #2D6A4F;">
-                    <strong style="color:#0F172A; font-size:13.5px;">11월 (十一月):</strong> <span style="color:#475569; font-size:13px;">한 해의 실적을 정돈하고 조직 내 인간관계를 다질 때입니다. 베푼 만큼 더 큰 신뢰로 되돌아옵니다. (대인: 길, 재물: 안정)</span>
-                </div>
-                <div style="background:#F8FAFC; border:1px solid #E2E8F0; padding:12px 14px; border-radius:12px; border-left:4px solid #2D6A4F;">
-                    <strong style="color:#0F172A; font-size:13.5px;">12월 (十二月):</strong> <span style="color:#475569; font-size:13px;">안정과 번영 속에 보람찬 한 해를 마무리합니다. 다음 해의 더 큰 도약을 위한 튼튼한 토대가 완성됩니다. (총평: 대길 만복)</span>
-                </div>
-            </div>
-        </div>
-        """
+        if not user:
+            raise ValueError("올해 운세 생성에 사용자 사주 정보가 필요합니다.")
+        kst_today = datetime.datetime.now(
+            datetime.timezone(datetime.timedelta(hours=9))
+        ).date()
+        core = calculate_myeongri_core(
+            _birth_input_from_user(user, user_name),
+            target_date=kst_today,
+        )
+        return build_annual_overall_report(core, user_name, kst_today.year)
     elif report_key == "gunghap":
         title = f"{user_name}님 & {partner_name}님 정통 사주 궁합 감명서"
         content = f"""
@@ -522,19 +564,11 @@ def generate_detailed_report(
     elif report_key == "daewoon":
         if not user:
             raise ValueError("평생운세 생성에 사용자 사주 정보가 필요합니다.")
-        calendar_type = "lunar" if user["calendar_type"] in {"lunar", "leap"} else "solar"
         kst_today = datetime.datetime.now(
             datetime.timezone(datetime.timedelta(hours=9))
         ).date()
         core = calculate_myeongri_core(
-            BirthInput(
-                name=user_name or "회원",
-                gender=user["gender"],
-                birth_date=date(user["birth_year"], user["birth_month"], user["birth_day"]),
-                calendar_type=calendar_type,
-                is_leap_month=user["calendar_type"] == "leap",
-                time_unknown=True,
-            ),
+            _birth_input_from_user(user, user_name),
             target_date=kst_today,
         )
         return build_lifetime_overall_report(core, user_name)
