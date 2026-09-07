@@ -27,6 +27,9 @@ class LifetimeCareerReportTests(unittest.TestCase):
             "초년기", "청년기", "중장년기", "말년기",
         ]:
             self.assertIn(marker, report["content"])
+        self.assertIn("중장년기 · 48~67세", report["content"])
+        self.assertIn("말년기 · 68~97세", report["content"])
+        self.assertNotIn("98~107세", report["content"])
         self.assertIn("성공을 보장하지 않습니다", report["content"])
         self.assertNotIn("정관·편관 0곳", report["content"])
         self.assertNotIn("대박", report["content"])
