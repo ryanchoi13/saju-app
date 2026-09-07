@@ -35,7 +35,7 @@ class SecondTabReportTests(TestCase):
         self.assertNotIn("Chapter", report["content"])
         self.assertNotIn("토정비결", report["title"])
 
-    def test_main_saju_surface_uses_real_hour_and_visible_elements(self):
+    def test_main_saju_surface_uses_real_hour_and_hidden_stem_composition(self):
         from main import get_saju_pillars_and_analysis
 
         result = get_saju_pillars_and_analysis(
@@ -45,8 +45,9 @@ class SecondTabReportTests(TestCase):
         self.assertEqual(result["saju_data"]["pillars_detail"]["hour"]["jj"], "사")
         self.assertEqual(
             result["saju_data"]["elements"],
-            {"wood": 37.5, "fire": 25.0, "earth": 37.5, "metal": 0.0, "water": 0.0},
+            {"wood": 37.5, "fire": 19.2, "earth": 39.1, "metal": 4.2, "water": 0.0},
         )
+        self.assertIn("지장간", result["saju_data"]["elements_note"])
         self.assertIn("사(巳)시생", result["saju_profile_detail"])
 
     def test_unknown_hour_is_not_fabricated(self):
