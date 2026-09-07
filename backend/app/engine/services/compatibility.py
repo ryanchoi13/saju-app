@@ -8,6 +8,7 @@ from itertools import product
 from app.engine.constants import GAN_WUXING
 from app.engine.core.models import MyeongriCoreResult
 from app.engine.facts.ten_gods import get_ten_god
+from app.engine.relationships.compatibility_shensha import calculate_relationship_shensha
 
 
 _GENERATES = {"木": "火", "火": "土", "土": "金", "金": "水", "水": "木"}
@@ -74,6 +75,7 @@ def _cross_interactions(left: MyeongriCoreResult, right: MyeongriCoreResult) -> 
         for kind, pairs, meaning in _BRANCH_RULES:
             if branch_pair in pairs:
                 found.append({"kind": kind, "left": lk, "right": rk, "symbols": lp.branch + rp.branch, "importance": importance, "meaning": meaning})
+    found.extend(calculate_relationship_shensha(left.natal_facts.pillars, right.natal_facts.pillars))
     return sorted(found, key=lambda item: (-item["importance"], item["kind"], item["symbols"]))
 
 
@@ -88,7 +90,7 @@ def _interaction_html(items: list[dict]) -> str:
 
 def _relationship_signals(items: list[dict]) -> tuple[list[dict], list[dict]]:
     supportive = [item for item in items if item["kind"] in {"천간합", "육합"}]
-    tense = [item for item in items if item["kind"] in {"천간극", "충", "형", "해", "파"}]
+    tense = [item for item in items if item["kind"] in {"천간극", "충", "형", "해", "파", "원진살"}]
     return supportive, tense
 
 
@@ -101,6 +103,20 @@ def _signal_level(items: list[dict]) -> str:
 
 
 def _plain_reason(supportive: list[dict], tense: list[dict]) -> str:
+    day_wonjin = [item for item in tense if item["kind"] == "원진살" and item["importance"] == 3]
+    independently_corroborated = any(
+        other is not wonjin
+        and not (
+            other["kind"] == "해"
+            and other["left"] == wonjin["left"]
+            and other["right"] == wonjin["right"]
+            and frozenset(other["symbols"]) == frozenset(wonjin["symbols"])
+        )
+        for wonjin in day_wonjin
+        for other in tense
+    )
+    if day_wonjin and independently_corroborated:
+        return "끌림과 별개로 감정을 묵히면 관계가 빠르게 틀어질 수 있습니다. 이 궁합은 서운함을 오래 쌓아 두면 안 됩니다."
     if supportive and tense:
         return "서로를 당기는 접점과 부딪히는 지점이 함께 있어, 끌림은 생기기 쉽지만 관계를 오래 유지하려면 생활 합의가 필요합니다."
     if supportive:
@@ -108,6 +124,54 @@ def _plain_reason(supportive: list[dict], tense: list[dict]) -> str:
     if tense:
         return "차이가 먼저 눈에 들어오는 관계라 강한 자극이 될 수 있지만, 말투와 결정 방식이 반복 갈등으로 굳지 않게 해야 합니다."
     return "강하게 붙거나 밀어내는 신호보다 서로를 알아 가는 과정이 중요한 관계입니다. 실제 대화와 생활 경험이 관계의 깊이를 좌우합니다."
+
+
+def _shensha_positions(core: MyeongriCoreResult, name: str) -> list[str]:
+    support_key = f"shensha:{name}"
+    positions = []
+    for item in core.evidence:
+        if support_key not in item.supports:
+            continue
+        for match in item.source_values.get("natal_matches", []):
+            position = match.get("position")
+            if position and position not in positions:
+                positions.append(position)
+    return positions
+
+
+def _relationship_shensha_text(
+    left: MyeongriCoreResult,
+    right: MyeongriCoreResult,
+    interactions: list[dict],
+    ln: str,
+    rn: str,
+) -> str:
+    sentences = []
+    wonjin = [item for item in interactions if item["kind"] == "원진살"]
+    peach = [item for item in interactions if item["kind"] == "도화살"]
+    if any(item["importance"] == 3 for item in wonjin):
+        sentences.append("두 사람의 일지에 <strong>원진살</strong>이 성립합니다. 가까울수록 사소한 서운함이 크게 남을 수 있어, 침묵이 길어지면 관계가 급격히 냉각될 수 있습니다.")
+    elif wonjin:
+        sentences.append("두 명식의 일부 자리에서 <strong>원진살</strong>이 확인됩니다. 상대의 의도를 추측해서 결론 내리면 오해가 길어질 수 있습니다.")
+    if any(item["importance"] >= 2 for item in peach):
+        sentences.append("<strong>도화살</strong>이 상대 명식과 맞물려 서로를 매력적으로 의식하기 쉽습니다. 다만 이것만으로 애정의 깊이나 외도를 판단하지는 않습니다.")
+    elif peach:
+        sentences.append("두 사람 사이에 약한 <strong>도화살</strong> 접점이 있어 첫인상이나 사회적인 매력이 호감에 영향을 줄 수 있습니다.")
+
+    isolation_labels = []
+    for core, name in ((left, ln), (right, rn)):
+        for key, label in (("solitary_star", "고신살"), ("widow_star", "과숙살")):
+            positions = _shensha_positions(core, key)
+            important = [position for position in positions if position in {"month", "day"}]
+            if important:
+                position_text = "·".join(_PILLAR_LABEL[position] for position in important)
+                isolation_labels.append(f"{name}님의 {label}({position_text})")
+    if isolation_labels:
+        joined = ", ".join(isolation_labels)
+        sentences.append(f"{joined}이 확인됩니다. 갈등할 때 혼자 정리하려는 경향이 강해질 수 있으므로, 시간을 갖더라도 다시 대화할 시점을 정해 두는 것이 중요합니다.")
+    if not sentences:
+        return "현재 확인된 핵심 자리에서는 관계 판단을 크게 바꿀 만한 원진·도화·고신·과숙 신호가 두드러지지 않습니다."
+    return " ".join(sentences)
 
 
 def _love_path(supportive: list[dict], tense: list[dict]) -> tuple[str, str]:
@@ -156,6 +220,7 @@ def build_compatibility_report(left: MyeongriCoreResult, right: MyeongriCoreResu
     conflict_level = _signal_level(tense)
     relationship_summary = _plain_reason(supportive, tense)
     deepening, cooling = _love_path(supportive, tense)
+    shensha_text = _relationship_shensha_text(left, right, interactions, ln, rn)
     left_view = _TEN_GOD_ROLE.get(left_to_right, "서로의 반응을 천천히 확인하게 하는 사람")
     right_view = _TEN_GOD_ROLE.get(right_to_left, "서로의 반응을 천천히 확인하게 하는 사람")
     marriage_text = (
@@ -195,6 +260,7 @@ def build_compatibility_report(left: MyeongriCoreResult, right: MyeongriCoreResu
       </div>
       <div style="display:grid;gap:10px;margin-bottom:14px;">
         <div style="background:#FFFFFF;border:1px solid #E2E8F0;padding:14px;border-radius:13px;"><h5 style="font-size:14px;font-weight:800;margin:0 0 5px;">서로를 어떻게 느끼는가</h5><p style="font-size:13px;color:#475569;margin:0;">{ln}님은 {rn}님을 <strong>{left_view}</strong>으로 느끼기 쉽습니다. 반대로 {rn}님은 {ln}님을 <strong>{right_view}</strong>으로 받아들이기 쉽습니다. 두 사람의 애정량을 수치로 재는 뜻이 아니라, 상대 앞에서 어떤 감정과 역할이 먼저 활성화되는지를 보여줍니다.</p></div>
+        <div style="background:#FFFFFF;border:1px solid #FBCFE8;padding:14px;border-radius:13px;"><h5 style="font-size:14px;font-weight:800;color:#9D174D;margin:0 0 5px;">관계에서 눈여겨볼 신살</h5><p style="font-size:13px;color:#475569;margin:0;">{shensha_text}</p></div>
         <div style="background:#FFFFFF;border:1px solid #E2E8F0;padding:14px;border-radius:13px;"><h5 style="font-size:14px;font-weight:800;margin:0 0 5px;">사랑이 깊어지는 방식</h5><p style="font-size:13px;color:#475569;margin:0;">{deepening}</p></div>
         <div style="background:#FFFFFF;border:1px solid #E2E8F0;padding:14px;border-radius:13px;"><h5 style="font-size:14px;font-weight:800;margin:0 0 5px;">사랑이 식을 수 있는 지점</h5><p style="font-size:13px;color:#475569;margin:0;">{cooling}</p></div>
         <div style="background:#FFFFFF;border:1px solid #E2E8F0;padding:14px;border-radius:13px;"><h5 style="font-size:14px;font-weight:800;margin:0 0 5px;">결혼하면 어떤가</h5><p style="font-size:13px;color:#475569;margin:0;">{marriage_text}</p></div>
@@ -204,7 +270,7 @@ def build_compatibility_report(left: MyeongriCoreResult, right: MyeongriCoreResu
       </div>
       <details style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:13px;padding:12px 14px;">
         <summary style="font-size:13px;font-weight:800;color:#334155;cursor:pointer;">판단 근거 보기 · 명리 용어 포함</summary>
-        <p style="font-size:12.5px;color:#64748B;margin:10px 0;">두 사람의 원국을 각각 계산한 뒤 일간 관계, 상대 일간이 만드는 십성 역할, 서로 다른 명식 사이의 천간합·천간극과 지지의 합·충·형·파·해를 함께 비교했습니다.</p>
+        <p style="font-size:12.5px;color:#64748B;margin:10px 0;">두 사람의 원국을 각각 계산한 뒤 일간 관계, 상대 일간이 만드는 십성 역할, 서로 다른 명식 사이의 천간합·천간극과 지지의 합·충·형·파·해, 원진·도화·고신·과숙을 함께 비교했습니다.</p>
         <p style="font-size:12.5px;color:#475569;margin:0 0 8px;"><strong>{ln} → {rn}</strong>: {_TEN_GOD.get(left_to_right, left_to_right)} · <strong>{rn} → {ln}</strong>: {_TEN_GOD.get(right_to_left, right_to_left)}</p>
         <p style="font-size:12.5px;color:#64748B;margin:0 0 10px;">일간 관계: {_day_master_relation(left_dm.stem, right_dm.stem)}</p>
         {_interaction_html(interactions)}
