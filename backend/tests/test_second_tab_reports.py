@@ -24,6 +24,9 @@ class SecondTabReportTests(TestCase):
             self.assertIn(phase, report["content"])
         self.assertIn("현재 대운", report["content"])
         self.assertIn("중심 주제로", report["content"])
+        self.assertIn("중장년기 · 48~67세", report["content"])
+        self.assertIn("말년기 · 68~97세", report["content"])
+        self.assertNotIn("98~107세", report["content"])
         self.assertNotIn("원국 관계 변화 후보", report["content"])
 
     def test_annual_report_has_hierarchy_and_twelve_richer_months(self):

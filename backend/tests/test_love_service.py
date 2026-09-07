@@ -27,6 +27,9 @@ class LifetimeLoveReportTests(unittest.TestCase):
             "초년기", "청년기", "중장년기", "말년기",
         ]:
             self.assertIn(marker, report["content"])
+        self.assertIn("중장년기 · 48~67세", report["content"])
+        self.assertIn("말년기 · 68~97세", report["content"])
+        self.assertNotIn("98~107세", report["content"])
         self.assertIn("관계 후보", report["content"])
         self.assertIn("특정 인연, 결혼, 재회, 이별을 확정", report["content"])
         self.assertNotIn("최상의 인연", report["content"])

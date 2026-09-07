@@ -26,6 +26,9 @@ class LifetimeWealthServiceTests(TestCase):
         self.assertIn("庚申", report["content"])
         for phase in ("초년기", "청년기", "중장년기", "말년기"):
             self.assertIn(phase, report["content"])
+        self.assertIn("중장년기 · 48~67세", report["content"])
+        self.assertIn("말년기 · 68~97세", report["content"])
+        self.assertNotIn("98~107세", report["content"])
 
     def test_report_avoids_guaranteed_investment_claims_and_scores(self):
         report = build_lifetime_wealth_report(self.core, "최정오")
