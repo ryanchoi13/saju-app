@@ -26,7 +26,7 @@ def _axis(stem, branch):
 
 
 class ShenshaEngineTests(TestCase):
-    def test_all_five_approved_signals_can_be_detected(self):
+    def test_core_signals_can_be_detected(self):
         # 甲子: 역마=寅, 도화=酉, 화개=辰, 문창=巳, 천을=丑/未
         natal = {
             "year": _pillar("甲", "子"),
@@ -41,8 +41,22 @@ class ShenshaEngineTests(TestCase):
         results, _ = calculate_shensha(natal, timing)
         self.assertEqual(
             {item.name for item in results},
-            {"travel_horse", "peach_blossom", "solitary_star", "literary_star", "heavenly_noble"},
+            {"travel_horse", "peach_blossom", "flower_canopy", "solitary_star", "literary_star", "heavenly_noble"},
         )
+
+    def test_solitary_and_widow_stars_use_year_seasonal_group(self):
+        # 亥子丑 group: 고신=寅, 과숙=戌
+        natal = {
+            "year": _pillar("甲", "子"),
+            "month": _pillar("丙", "寅"),
+            "day": _pillar("戊", "戌"),
+        }
+        results, evidence = calculate_shensha(natal)
+        names = {item.name for item in results}
+        self.assertIn("solitary_star", names)
+        self.assertIn("widow_star", names)
+        solitary_evidence = next(item for item in evidence if item.supports == ["shensha:solitary_star"])
+        self.assertEqual(solitary_evidence.source_values["basis_type"], "natal_year_branch_seasonal_group")
 
     def test_timing_only_signal_is_active(self):
         natal = {
