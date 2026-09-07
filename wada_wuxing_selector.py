@@ -65,3 +65,18 @@ def select_wada_duo(natal_element, today_element, date_key):
         "target_elements": [e1, e2],
         "duo": WADA_DUOS[duo_no],
     }
+
+
+def select_wada_duo_for_targets(primary_element, secondary_element, date_key):
+    """Select an intact Wada pair for two elements already judged by the core."""
+
+    pool = CANDIDATES[_candidate_key(primary_element, secondary_element)]
+    order = "木火土金水"
+    seed = int(date_key) + order.index(primary_element) * 17 + order.index(secondary_element) * 31
+    duo_no = pool[seed % len(pool)]
+    return {
+        "duo_no": duo_no,
+        "relation": "core_targets",
+        "target_elements": [primary_element, secondary_element],
+        "duo": WADA_DUOS[duo_no],
+    }
