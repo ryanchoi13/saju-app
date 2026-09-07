@@ -8,6 +8,7 @@ from app.engine.core.models import BirthInput
 from app.engine.orchestrator import calculate_myeongri_core
 from app.engine.services import (
     build_annual_overall_report,
+    build_compatibility_report,
     build_lifetime_career_report,
     build_lifetime_health_report,
     build_lifetime_love_report,
@@ -79,6 +80,12 @@ class UnlockReportRequest(BaseModel):
     sub_option: Optional[str] = "기본"
     partner_name: Optional[str] = "상대방"
     relation: Optional[str] = "인연/조화"
+    partner_gender: Optional[str] = None
+    partner_birth_year: Optional[int] = None
+    partner_birth_month: Optional[int] = None
+    partner_birth_day: Optional[int] = None
+    partner_calendar_type: Optional[str] = "solar"
+    partner_sijin_index: Optional[int] = -1
 
 class ChargeCoinRequest(BaseModel):
     user_id: str
@@ -532,6 +539,7 @@ def generate_detailed_report(
     relation: str,
     user_name: str,
     user: Optional[Dict[str, Any]] = None,
+    partner: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, str]:
     if report_key == "sinnian":
         if not user:
@@ -545,52 +553,20 @@ def generate_detailed_report(
         )
         return build_annual_overall_report(core, user_name, kst_today.year)
     elif report_key == "gunghap":
-        title = f"{user_name}님 & {partner_name}님 정통 사주 궁합 감명서"
-        content = f"""
-        <div style="text-align:left; line-height:1.85; color:#1E293B;">
-            <div style="background:#FFF1F2; border-left:4px solid #E11D48; padding:16px; border-radius:14px; margin-bottom:18px;">
-                <h4 style="font-size:16px; font-weight:800; color:#9F1239; margin-bottom:6px;">💞 인연 총평 ({relation}) : 수화기제(水火旣濟)의 조화</h4>
-                <p style="font-size:13.5px; color:#BE123C; margin:0; line-height:1.75;">
-                    두 사람의 사주는 서로의 부족한 오행 기운을 완벽하게 채워주는 상생(相生)의 명식입니다. 
-                    한 사람의 뜨거운 열정과 결단력을 다른 한 사람의 차분한 지혜와 포용력이 균형 있게 감싸 안아, 함께할수록 서로의 인생 운기가 배가되는 최상의 인연 배합을 이루고 있습니다.
-                </p>
-            </div>
-
-            <div style="display:flex; flex-direction:column; gap:14px;">
-                <div style="background:#F8FAFC; border:1px solid #E2E8F0; padding:16px; border-radius:14px;">
-                    <h5 style="font-size:14.5px; font-weight:800; color:#0F172A; margin-bottom:6px;">1. 겉궁합 (성격, 기질 및 소통 스타일의 조화)</h5>
-                    <p style="font-size:13px; color:#475569; margin:0; line-height:1.7;">
-                        {user_name}님의 논리정연하고 신중한 면모와 {partner_name}님의 따뜻하고 배려 깊은 성향이 만나 일상에서 깊은 정서적 유대감을 형성합니다. 
-                        서로의 대화 방식이 달라 생길 수 있는 작은 오해도 진솔한 대화를 통해 쉽게 풀리며, 함께 있을 때 가장 나다운 편안함을 느끼게 됩니다.
-                    </p>
-                </div>
-
-                <div style="background:#F8FAFC; border:1px solid #E2E8F0; padding:16px; border-radius:14px;">
-                    <h5 style="font-size:14.5px; font-weight:800; color:#0F172A; margin-bottom:6px;">2. 속궁합 (오행 상생 밸런스 & 무의식적 애착도)</h5>
-                    <p style="font-size:13px; color:#475569; margin:0; line-height:1.7;">
-                        사주 명식의 일간(日干)과 지지(地支)가 은근한 합(合)을 이루고 있어 시간이 흐를수록 신뢰와 애정이 더욱 견고해집니다. 
-                        갈등이 생기더라도 쉽게 인연의 끈이 끊어지지 않으며, 서로의 존재 자체가 심리적인 안식처 역할을 해주는 깊은 속궁합을 자랑합니다.
-                    </p>
-                </div>
-
-                <div style="background:#F8FAFC; border:1px solid #E2E8F0; padding:16px; border-radius:14px;">
-                    <h5 style="font-size:14.5px; font-weight:800; color:#0F172A; margin-bottom:6px;">3. 재물 및 공동 목표 달성 시너지</h5>
-                    <p style="font-size:13px; color:#475569; margin:0; line-height:1.7;">
-                        두 사람이 공동의 재정 목표를 세우거나 동업을 진행할 경우 한 사람의 직관적인 추진력과 다른 한 사람의 치밀한 자산 관리 능력이 결합됩니다. 
-                        돈이 새어나가는 구멍을 철저히 막고 큰 자산을 모으는 강력한 재물 시너지를 발휘하게 됩니다.
-                    </p>
-                </div>
-
-                <div style="background:#F8FAFC; border:1px solid #E2E8F0; padding:16px; border-radius:14px;">
-                    <h5 style="font-size:14.5px; font-weight:800; color:#0F172A; margin-bottom:6px;">4. 장기적인 갈등 예방법 & 맞춤 개운 처세술</h5>
-                    <p style="font-size:13px; color:#475569; margin:0; line-height:1.7;">
-                        서로의 독립적인 시간과 취미 영역을 존중해 주는 것이 백년가약의 핵심 비결입니다. 의견 차이가 생겼을 때는 즉각적으로 반박하기보다 
-                        반나절 정도 생각을 정리한 후 대화를 나누는 것이 화기애애한 관계를 평생 유지하는 최고의 개운법입니다.
-                    </p>
-                </div>
-            </div>
-        </div>
-        """
+        if not user or not partner:
+            raise ValueError("궁합 생성에 두 사람의 사주 정보가 필요합니다.")
+        kst_today = datetime.datetime.now(
+            datetime.timezone(datetime.timedelta(hours=9))
+        ).date()
+        user_core = calculate_myeongri_core(
+            _birth_input_from_user(user, user_name), target_date=kst_today
+        )
+        partner_core = calculate_myeongri_core(
+            _birth_input_from_user(partner, partner_name), target_date=kst_today
+        )
+        return build_compatibility_report(
+            user_core, partner_core, user_name, partner_name, relation
+        )
     elif report_key == "daewoon":
         if not user:
             raise ValueError("평생운세 생성에 사용자 사주 정보가 필요합니다.")
@@ -835,6 +811,23 @@ def unlock_report(req: UnlockReportRequest):
     user = users_db[req.user_id]
     if user["coin"] < req.cost:
         raise HTTPException(status_code=400, detail="Insufficient coins")
+    if req.report_key == "gunghap":
+        required = (
+            req.partner_name, req.partner_gender, req.partner_birth_year,
+            req.partner_birth_month, req.partner_birth_day,
+        )
+        if not all(required):
+            raise HTTPException(status_code=400, detail="상대방 사주 정보를 모두 입력해 주세요.")
+        if req.partner_gender not in {"male", "female"}:
+            raise HTTPException(status_code=400, detail="상대방 성별 값이 올바르지 않습니다.")
+        if req.partner_calendar_type not in {"solar", "lunar", "leap"}:
+            raise HTTPException(status_code=400, detail="상대방 달력 구분이 올바르지 않습니다.")
+        if req.partner_sijin_index is None or not -1 <= req.partner_sijin_index <= 11:
+            raise HTTPException(status_code=400, detail="상대방 출생시간 값이 올바르지 않습니다.")
+        try:
+            date(req.partner_birth_year, req.partner_birth_month, req.partner_birth_day)
+        except ValueError as exc:
+            raise HTTPException(status_code=400, detail="상대방 생년월일이 올바르지 않습니다.") from exc
     
     rep_data = generate_detailed_report(
         req.report_key,
@@ -843,6 +836,15 @@ def unlock_report(req: UnlockReportRequest):
         req.relation,
         user.get("name", "회원"),
         user=user,
+        partner={
+            "name": req.partner_name,
+            "gender": req.partner_gender,
+            "birth_year": req.partner_birth_year,
+            "birth_month": req.partner_birth_month,
+            "birth_day": req.partner_birth_day,
+            "calendar_type": req.partner_calendar_type,
+            "sijin_index": req.partner_sijin_index,
+        } if req.report_key == "gunghap" else None,
     )
     user["coin"] -= req.cost
 
