@@ -598,8 +598,8 @@
                         <div id="daewoonPhaseTimeline" style="display:grid;grid-template-columns:repeat(4,1fr);gap:5px;">
                             <div data-phase="초년기" style="border:1px solid #E2E8F0;border-radius:10px;padding:10px 4px;text-align:center;background:#FFFFFF;"><div style="font-size:12px;font-weight:800;">초년기</div><div style="font-size:10px;color:#94A3B8;margin-top:3px;">대운 1~2</div></div>
                             <div data-phase="청년기" style="border:1px solid #E2E8F0;border-radius:10px;padding:10px 4px;text-align:center;background:#FFFFFF;"><div style="font-size:12px;font-weight:800;">청년기</div><div style="font-size:10px;color:#94A3B8;margin-top:3px;">대운 3~4</div></div>
-                            <div data-phase="중장년기" style="border:1px solid #E2E8F0;border-radius:10px;padding:10px 4px;text-align:center;background:#FFFFFF;"><div style="font-size:12px;font-weight:800;">중장년기</div><div style="font-size:10px;color:#94A3B8;margin-top:3px;">대운 5~7</div></div>
-                            <div data-phase="말년기" style="border:1px solid #E2E8F0;border-radius:10px;padding:10px 4px;text-align:center;background:#FFFFFF;"><div style="font-size:12px;font-weight:800;">말년기</div><div style="font-size:10px;color:#94A3B8;margin-top:3px;">대운 8 이후</div></div>
+                            <div data-phase="중장년기" style="border:1px solid #E2E8F0;border-radius:10px;padding:10px 4px;text-align:center;background:#FFFFFF;"><div style="font-size:12px;font-weight:800;">중장년기</div><div style="font-size:10px;color:#94A3B8;margin-top:3px;">대운 5~6</div></div>
+                            <div data-phase="말년기" style="border:1px solid #E2E8F0;border-radius:10px;padding:10px 4px;text-align:center;background:#FFFFFF;"><div style="font-size:12px;font-weight:800;">말년기</div><div style="font-size:10px;color:#94A3B8;margin-top:3px;">대운 7~9</div></div>
                         </div>
                         <div id="daewoonCurrentPhaseText" style="font-size:12.5px;font-weight:800;color:#047857;margin-top:10px;">현재 대운 구간을 계산 중입니다.</div>
                     </div>
@@ -952,6 +952,7 @@
         let currentTalisman = null;
         let currentUserName = "회원";
         let currentUserAge = 49;
+        let currentSajuProfile = null;
         let pendingCoinAmount = 0;
         let serverUnlockedReports = [];
         let userWardrobeItems = [];
@@ -1010,9 +1011,61 @@
             });
         }
 
-        function saveUserSajuToLocal(data) { localStorage.setItem('dalha_custom_saju', JSON.stringify(data)); }
-        function getSavedUserSaju() {
-            try { const raw = localStorage.getItem('dalha_custom_saju'); return raw ? JSON.parse(raw) : null; } catch(e) { return null; }
+        function getSajuStorageKey(kakaoId) {
+            return kakaoId ? `dalha_custom_saju:${kakaoId}` : 'dalha_custom_saju';
+        }
+
+        function saveUserSajuToLocal(data, kakaoId = localStorage.getItem('dalha_kakao_id')) {
+            if (!data) return;
+            currentSajuProfile = data;
+            localStorage.setItem(getSajuStorageKey(kakaoId), JSON.stringify(data));
+        }
+
+        function getSavedUserSaju(kakaoId = localStorage.getItem('dalha_kakao_id')) {
+            try {
+                const scopedRaw = kakaoId ? localStorage.getItem(getSajuStorageKey(kakaoId)) : null;
+                const legacyOwner = localStorage.getItem('dalha_kakao_id');
+                const legacyRaw = !kakaoId || legacyOwner === String(kakaoId)
+                    ? localStorage.getItem('dalha_custom_saju')
+                    : null;
+                const data = JSON.parse(scopedRaw || legacyRaw || 'null');
+                if (data && kakaoId && !scopedRaw) {
+                    localStorage.setItem(getSajuStorageKey(kakaoId), JSON.stringify(data));
+                }
+                return data;
+            } catch(e) { return null; }
+        }
+
+        function populateSajuForm(profile) {
+            if (!profile) return;
+            currentSajuProfile = profile;
+            document.getElementById('inputName').value = profile.name || '';
+            setGenderType(profile.gender || 'male');
+            setCalType(profile.calendar_type || 'solar');
+            document.getElementById('birthYearSelect').value = profile.birth_year ? String(profile.birth_year) : '';
+            document.getElementById('birthMonthSelect').value = profile.birth_month ? String(profile.birth_month) : '';
+            document.getElementById('birthDaySelect').value = profile.birth_day ? String(profile.birth_day) : '';
+            document.getElementById('inputSijin').value = String(
+                profile.sijin_index !== undefined && profile.sijin_index !== null ? profile.sijin_index : -1
+            );
+        }
+
+        function buildKakaoAuthPayload(kakaoId, kakaoAccount = {}) {
+            const localSaju = getSavedUserSaju(kakaoId);
+            const profile = kakaoAccount.profile || {};
+            return {
+                kakao_id: String(kakaoId),
+                name: localSaju?.name || profile.nickname || null,
+                gender: localSaju?.gender || kakaoAccount.gender || null,
+                birthyear: localSaju?.birth_year ? String(localSaju.birth_year) : (kakaoAccount.birthyear || null),
+                birthday: localSaju?.birth_month && localSaju?.birth_day
+                    ? `${String(localSaju.birth_month).padStart(2, '0')}${String(localSaju.birth_day).padStart(2, '0')}`
+                    : (kakaoAccount.birthday || null),
+                birthday_type: localSaju?.calendar_type
+                    ? localSaju.calendar_type.toUpperCase()
+                    : (kakaoAccount.birthday_type || null),
+                sijin_index: localSaju?.sijin_index ?? null,
+            };
         }
 
         function loginWithKakaoReal() {
@@ -1035,17 +1088,8 @@
                             success: async function(res) {
                                 try {
                                     const kakaoAccount = res.kakao_account || {};
-                                    const profile = kakaoAccount.profile || {};
-                                    const localSaju = getSavedUserSaju();
-
-                                    const payload = {
-                                        kakao_id: String(res.id),
-                                        name: localSaju?.name || profile.nickname || "",
-                                        gender: localSaju?.gender || kakaoAccount.gender || "male",
-                                        birthyear: localSaju ? String(localSaju.birth_year) : (kakaoAccount.birthyear || "1978"),
-                                        birthday: localSaju ? `${String(localSaju.birth_month).padStart(2, '0')}${String(localSaju.birth_day).padStart(2, '0')}` : (kakaoAccount.birthday || "0813"),
-                                        birthday_type: localSaju ? (localSaju.calendar_type === 'lunar' ? 'LUNAR' : 'SOLAR') : (kakaoAccount.birthday_type || "SOLAR")
-                                    };
+                                    const payload = buildKakaoAuthPayload(String(res.id), kakaoAccount);
+                                    const localSaju = getSavedUserSaju(payload.kakao_id);
 
                                     localStorage.setItem('dalha_kakao_id', payload.kakao_id);
 
@@ -1066,6 +1110,11 @@
                                     updateCoinDisplay();
 
                                     if (sData.status === "existing_user") {
+                                        const resolvedProfile = sData.profile || localSaju;
+                                        if (resolvedProfile) {
+                                            saveUserSajuToLocal(resolvedProfile, payload.kakao_id);
+                                            populateSajuForm(resolvedProfile);
+                                        }
                                         serverUnlockedReports = sData.unlocked_reports || [];
                                         userWardrobeItems = sData.wardrobe_items || [];
                                         applySajuAnalysisToUI(sData.saju_analysis);
@@ -1077,14 +1126,7 @@
                                         document.getElementById('bottomNavBar').classList.remove('hidden');
                                         restoreUnlockedUIFromReports();
                                     } else {
-                                        const pre = sData.kakao_prefill;
-                                        document.getElementById('inputName').value = pre.name || "";
-                                        setGenderType(pre.gender || "male");
-                                        setCalType(pre.calendar_type || "solar");
-                                        document.getElementById('birthYearSelect').value = String(pre.birth_year || 1978);
-                                        document.getElementById('birthMonthSelect').value = String(pre.birth_month || 8);
-                                        document.getElementById('birthDaySelect').value = String(pre.birth_day || 13);
-                                        document.getElementById('inputSijin').value = String(pre.sijin_index !== undefined ? pre.sijin_index : 5);
+                                        populateSajuForm(sData.kakao_prefill || localSaju);
 
                                         document.getElementById('view-login-gate').classList.add('hidden');
                                         document.getElementById('onboardingInputView').classList.remove('hidden');
@@ -1112,10 +1154,11 @@
             if (!savedKakaoId) return;
 
             try {
+                const localSaju = getSavedUserSaju(savedKakaoId);
                 const sRes = await fetch('/api/auth/kakao', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ kakao_id: savedKakaoId })
+                    body: JSON.stringify(buildKakaoAuthPayload(savedKakaoId))
                 });
                 if (!sRes.ok) return;
                 const sData = await sRes.json();
@@ -1125,6 +1168,11 @@
                     updateCoinDisplay();
                     serverUnlockedReports = sData.unlocked_reports || [];
                     userWardrobeItems = sData.wardrobe_items || [];
+                    const resolvedProfile = sData.profile || localSaju;
+                    if (resolvedProfile) {
+                        saveUserSajuToLocal(resolvedProfile, savedKakaoId);
+                        populateSajuForm(resolvedProfile);
+                    }
                     applySajuAnalysisToUI(sData.saju_analysis);
                     renderWardrobeUI();
                     renderServerArchive();
@@ -1133,6 +1181,13 @@
                     switchTab('today');
                     document.getElementById('bottomNavBar').classList.remove('hidden');
                     restoreUnlockedUIFromReports();
+                } else {
+                    currentUserId = sData.user_id;
+                    currentCoin = sData.coin_balance;
+                    updateCoinDisplay();
+                    populateSajuForm(sData.kakao_prefill || localSaju);
+                    document.getElementById('view-login-gate').classList.add('hidden');
+                    document.getElementById('onboardingInputView').classList.remove('hidden');
                 }
             } catch(e) {}
         }
@@ -1247,15 +1302,18 @@
 
         async function submitSajuRegistration() {
             const name = document.getElementById('inputName').value.trim() || "달하 회원";
-            const y = parseInt(document.getElementById('birthYearSelect').value) || 1978;
-            const m = parseInt(document.getElementById('birthMonthSelect').value) || 8;
-            const d = parseInt(document.getElementById('birthDaySelect').value) || 13;
+            const y = parseInt(document.getElementById('birthYearSelect').value);
+            const m = parseInt(document.getElementById('birthMonthSelect').value);
+            const d = parseInt(document.getElementById('birthDaySelect').value);
             const sijin = parseInt(document.getElementById('inputSijin').value);
-
-            saveUserSajuToLocal({
+            if (!y || !m || !d) {
+                alert("생년월일을 모두 선택해 주세요.");
+                return;
+            }
+            const profile = {
                 name: name, gender: selectedGender, birth_year: y,
                 birth_month: m, birth_day: d, calendar_type: selectedCalendarType, sijin_index: sijin
-            });
+            };
 
             const res = await fetch('/api/user/register-saju', {
                 method: 'POST',
@@ -1266,7 +1324,12 @@
                     calendar_type: selectedCalendarType, sijin_index: sijin
                 })
             });
+            if (!res.ok) {
+                alert("사주 정보 저장에 실패했습니다. 잠시 후 다시 시도해 주세요.");
+                return;
+            }
             const data = await res.json();
+            saveUserSajuToLocal(data.profile || profile);
             
             currentCoin = data.coin_balance;
             updateCoinDisplay();
@@ -1278,6 +1341,7 @@
         }
 
         function reopenSajuEditForm() {
+            populateSajuForm(currentSajuProfile || getSavedUserSaju());
             document.getElementById('onboardingInputView').classList.remove('hidden');
             ['today', 'saju', 'theme', 'mypage'].forEach(t => document.getElementById(`view-${t}`).classList.add('hidden'));
             document.getElementById('bottomNavBar').classList.add('hidden');
