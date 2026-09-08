@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from datetime import date
 
 
-MENU_POOL_VERSION = "daily-menu-pool-v1"
+MENU_POOL_VERSION = "daily-menu-pool-v2"
 
 
 @dataclass(frozen=True)
@@ -18,6 +18,72 @@ class MenuCandidate:
     seasons: frozenset[str]
     periods: frozenset[str]
     tags: frozenset[str]
+    ingredient: str
+    cuisine: str
+    familiarity: int
+
+
+_INGREDIENT_RULES = (
+    ("beef", ("소고기", "차돌", "불고기", "설렁탕", "곰탕", "스테이크")),
+    ("pork", ("돼지", "제육", "삼겹살", "보쌈", "수육", "돈가스", "감자탕", "뼈해장국", "순대국밥")),
+    ("chicken", ("닭", "치킨", "삼계탕")),
+    ("seafood", ("해물", "해산물", "해초", "새우", "오징어", "주꾸미", "낙지", "조개", "홍합", "바지락", "굴", "꼬막", "문어", "아귀", "대구", "복국", "생선", "연어", "참치", "고등어", "갈치", "꽁치", "장어", "매생이", "재첩", "톳")),
+    ("tofu_bean", ("두부", "콩", "된장", "청국장", "비지", "두유")),
+    ("egg_dairy", ("계란", "달걀", "에그", "치즈", "요거트", "우유", "크림")),
+    ("noodle_wheat", ("라면", "짜파게티", "비빔면", "국수", "파스타", "우동", "칼국수", "수제비", "베이글", "빵", "토스트", "샌드위치", "피자", "라자냐", "크루아상", "팬케이크")),
+    ("rice_grain", ("밥", "죽", "솥밥", "김밥", "떡", "오트밀", "그래놀라")),
+    ("root", ("감자", "고구마", "단호박", "연근", "우엉", "토란")),
+    ("vegetable", ("채소", "나물", "샐러드", "아보카도", "시금치", "청경채", "가지", "오이", "배추", "무생채")),
+    ("mushroom", ("버섯",)),
+    ("fruit", ("과일", "사과", "키위", "배숙", "유자", "자몽")),
+)
+
+_LOW_FAMILIARITY = {
+    "아라비아타 파스타", "해산물 빠에야", "스키야키", "오뎅나베",
+    "돈코츠라멘", "감자뇨키", "똠얌꿍", "참치타다키",
+}
+
+_HIGH_FAMILIARITY = {
+    "라면", "짜파게티", "비빔면", "후라이드치킨", "양념치킨", "간장치킨",
+    "치킨버거", "햄버거", "불고기버거", "치즈버거", "새우버거",
+    "제육볶음", "된장찌개", "김치찌개", "감자탕", "뼈해장국", "돼지국밥",
+    "순대국밥", "돈가스", "불고기", "오징어뭇국", "해물찜", "조개구이",
+}
+
+_INGREDIENT_KO = {
+    "beef": "소고기",
+    "pork": "돼지고기",
+    "chicken": "닭고기",
+    "seafood": "생선·해산물",
+    "tofu_bean": "두부·콩",
+    "egg_dairy": "달걀·유제품",
+    "noodle_wheat": "면·밀가루",
+    "rice_grain": "쌀·곡물",
+    "root": "뿌리채소",
+    "vegetable": "채소·나물",
+    "mushroom": "버섯",
+    "fruit": "과일",
+    "mixed": "균형 재료",
+}
+
+
+def _ingredient_for(name: str) -> str:
+    for ingredient, keywords in _INGREDIENT_RULES:
+        if any(keyword in name for keyword in keywords):
+            return ingredient
+    return "mixed"
+
+
+def _cuisine_for(name: str, group: str) -> str:
+    if any(word in name for word in ("파스타", "피자", "리조또", "샐러드", "스테이크", "버거")):
+        return "western"
+    if any(word in name for word in ("라멘", "우동", "오차즈케", "타다키", "스키야키", "나베")):
+        return "japanese"
+    if any(word in name for word in ("쌀국수", "팟타이", "똠얌꿍", "월남쌈")):
+        return "southeast_asian"
+    if any(word in name for word in ("짬뽕", "유산슬", "중화")):
+        return "chinese"
+    return "korean"
 
 
 def _group(
@@ -36,6 +102,13 @@ def _group(
             seasons=frozenset(seasons.split()),
             periods=frozenset(periods.split()),
             tags=frozenset(tags.split()),
+            ingredient=_ingredient_for(name.strip()),
+            cuisine=_cuisine_for(name.strip(), group),
+            familiarity=(
+                4 if name.strip() in _HIGH_FAMILIARITY
+                else 2 if name.strip() in _LOW_FAMILIARITY
+                else 3
+            ),
         )
         for name in names.split("|")
         if name.strip()
@@ -49,11 +122,11 @@ MENU_POOL = tuple(
     )
     + _group(
         "木", "wood_noodle", "spring summer autumn", "lunch dinner", "fresh light create",
-        "바질페스토 파스타|들기름 막국수|메밀 비빔국수|채소 쌀국수|잔치국수|부추 칼국수|깻잎 비빔면|루꼴라 파스타|미나리 국수|허브 치킨 누들",
+        "바질페스토 파스타|들기름 막국수|메밀 비빔국수|채소 쌀국수|잔치국수|부추 칼국수|비빔면|루꼴라 파스타|미나리 국수|짜파게티",
     )
     + _group(
         "木", "wood_warm", "autumn winter spring", "lunch dinner", "balanced warm organize",
-        "채소카레|버섯덮밥|가지덮밥|청경채볶음|채소볶음밥|두부채소볶음|버섯리조또|시금치오믈렛|채소라자냐|팔라펠 플레이트",
+        "채소카레|버섯덮밥|가지덮밥|청경채볶음|채소볶음밥|두부채소볶음|버섯리조또|시금치오믈렛|채소라자냐|잡채",
     )
     + _group(
         "木", "wood_breakfast", "spring summer", "breakfast snack", "fresh light record",
@@ -61,7 +134,7 @@ MENU_POOL = tuple(
     )
     + _group(
         "木", "wood_tangy", "summer autumn", "lunch dinner", "fresh cool mediate",
-        "열무비빔밥|김치말이국수|묵은지 두부김치|오이냉국 정식|초계국수|유부초밥|매실소스 닭구이|레몬 허브 치킨|사워크라우트 소시지 플레이트|라임 치킨 타코",
+        "열무비빔밥|김치말이국수|묵은지 두부김치|오이냉국 정식|초계국수|유부초밥|매실소스 닭구이|불고기|불고기버거|치킨버거",
     )
     + _group(
         "火", "fire_spicy_soup", "autumn winter", "lunch dinner", "warm hearty support",
@@ -69,11 +142,11 @@ MENU_POOL = tuple(
     )
     + _group(
         "火", "fire_grill", "spring summer autumn winter", "lunch dinner", "warm create move",
-        "닭갈비|제육볶음|주꾸미볶음|오징어볶음|고추장삼겹살|탄두리치킨|케밥 플레이트|화덕피자|그릴드 스테이크|매콤한 바비큐 폭립",
+        "닭갈비|제육볶음|주꾸미볶음|오징어볶음|고추장삼겹살|탄두리치킨|후라이드치킨|화덕피자|그릴드 스테이크|양념치킨",
     )
     + _group(
         "火", "fire_red_meal", "spring summer autumn winter", "lunch dinner", "warm create organize",
-        "토마토파스타|아라비아타 파스타|로제파스타|김치볶음밥|낙지볶음밥|매콤한 치킨카레|칠리콘카르네|잠발라야|해산물 빠에야|매운 소고기 쌀국수",
+        "토마토파스타|아라비아타 파스타|로제파스타|김치볶음밥|낙지볶음밥|매콤한 치킨카레|간장치킨|페퍼로니피자|해산물 빠에야|매운 소고기 쌀국수",
     )
     + _group(
         "火", "fire_snack", "autumn winter spring", "breakfast snack", "warm move record",
@@ -81,7 +154,7 @@ MENU_POOL = tuple(
     )
     + _group(
         "火", "fire_gentle_warmth", "autumn winter", "lunch dinner", "warm balanced mediate",
-        "닭한마리|삼계탕|소고기 샤브샤브|스키야키|버섯전골|오뎅나베|돈코츠라멘|유부우동|치킨수프|구운 토마토수프",
+        "닭한마리|삼계탕|소고기 샤브샤브|스키야키|버섯전골|오뎅나베|돈코츠라멘|유부우동|치킨수프|라면",
     )
     + _group(
         "土", "earth_rice", "spring summer autumn winter", "lunch dinner", "balanced hearty organize",
@@ -89,7 +162,7 @@ MENU_POOL = tuple(
     )
     + _group(
         "土", "earth_root", "autumn winter", "lunch dinner", "warm hearty support",
-        "감자옹심이|감자수제비|고구마그라탱|단호박죽|팥죽|뿌리채소카레|우엉잡채|연근조림 정식|토란국|당근라페 샌드위치",
+        "감자옹심이|감자수제비|고구마그라탱|단호박죽|팥죽|뿌리채소카레|우엉잡채|연근조림 정식|토란국|햄버거",
     )
     + _group(
         "土", "earth_comfort", "spring autumn winter", "lunch dinner", "balanced warm stabilize",
@@ -101,15 +174,15 @@ MENU_POOL = tuple(
     )
     + _group(
         "土", "earth_global", "autumn winter spring", "lunch dinner", "hearty create stabilize",
-        "감자뇨키|버섯크림리조또|볼로네제 라자냐|셰퍼드파이|코티지파이|병아리콩커리|렌틸콩스튜|후무스 플레이트|감자뢰스티|옥수수타코",
+        "감자뇨키|버섯크림리조또|고구마피자|감자탕|뼈해장국|카레라이스|오므라이스|돼지국밥|순대국밥|돈가스",
     )
     + _group(
         "金", "metal_clear_soup", "autumn winter spring", "breakfast lunch dinner", "warm clear support",
-        "설렁탕|소고기곰탕|닭곰탕|떡국|만둣국|콩나물국밥|북엇국|황태해장국|백합맑은탕|맑은 순두부국",
+        "설렁탕|소고기곰탕|닭곰탕|떡국|만둣국|콩나물국밥|북엇국|황태해장국|오징어뭇국|맑은 순두부국",
     )
     + _group(
         "金", "metal_crisp", "spring summer autumn", "lunch dinner", "fresh light organize",
-        "무밥|소고기무국|무생채비빔밥|도토리묵밥|메밀묵밥|배추전|양배추롤|콜슬로 샌드위치|배 리코타샐러드|백김치국수",
+        "무밥|소고기무국|무생채비빔밥|도토리묵밥|메밀묵밥|배추전|양배추롤|콜슬로 샌드위치|조개구이|백김치국수",
     )
     + _group(
         "金", "metal_simple_protein", "spring summer autumn winter", "lunch dinner", "clear balanced protect",
@@ -121,7 +194,7 @@ MENU_POOL = tuple(
     )
     + _group(
         "金", "metal_breakfast", "spring summer autumn winter", "breakfast snack", "light clear record",
-        "배도라지차와 쌀과자|유자차와 백설기|흰콩두유|플레인요거트|리코타치즈샐러드|치즈샌드위치|달걀샌드위치|소금빵|배숙|코코넛 요거트볼",
+        "배도라지차와 쌀과자|유자차와 백설기|흰콩두유|플레인요거트|치즈버거|치즈샌드위치|달걀샌드위치|소금빵|배숙|새우버거",
     )
     + _group(
         "水", "water_sea_soup", "autumn winter spring", "breakfast lunch dinner", "broth warm moisten",
@@ -137,11 +210,11 @@ MENU_POOL = tuple(
     )
     + _group(
         "水", "water_cool_light", "spring summer", "lunch dinner snack", "cool light moisten",
-        "물냉면|서리태콩국수|냉우동|연어 오차즈케|연두부국|도토리묵사발|해파리냉채|과일화채|나박김치국수|오이참깨 냉파스타",
+        "물냉면|서리태콩국수|냉우동|연어 오차즈케|연두부국|도토리묵사발|해파리냉채|과일화채|나박김치국수|냉모밀",
     )
     + _group(
         "水", "water_global", "spring summer autumn winter", "lunch dinner", "broth create move",
-        "해산물파스타|해산물리조또|피시앤칩스|연어스테이크|참치타다키|새우팟타이|해물볶음우동|똠얌꿍|부야베스|클램차우더",
+        "해산물파스타|해산물리조또|생선가스|연어스테이크|참치타다키|새우팟타이|해물볶음우동|똠얌꿍|해물찜|조개찜",
     )
 )
 
@@ -215,7 +288,7 @@ def recommend_daily_menus(
         f"{lucky_element}|{primary_operation}"
     )
 
-    def rank(candidate: MenuCandidate) -> tuple[int, str]:
+    def context_score(candidate: MenuCandidate) -> int:
         score = 0
         # The Myeongri result is the primary axis. Season, time and action only
         # rank candidates inside that direction; they must not overturn it.
@@ -223,9 +296,32 @@ def recommend_daily_menus(
         score += 4 if season in candidate.seasons else 0
         score += 8 if period in candidate.periods else 0
         score += 3 if operation_tag in candidate.tags else 0
+        score += candidate.familiarity - 2
+        return score
+
+    ingredient_scores: dict[str, int] = {}
+    for candidate in MENU_POOL:
+        if candidate.element != lucky_element or candidate.ingredient == "mixed":
+            continue
+        ingredient_scores[candidate.ingredient] = max(
+            ingredient_scores.get(candidate.ingredient, 0),
+            context_score(candidate),
+        )
+    ingredient_theme = min(
+        ingredient_scores,
+        key=lambda ingredient: (
+            -ingredient_scores[ingredient],
+            hashlib.sha256(f"{seed}|{ingredient}".encode("utf-8")).hexdigest(),
+        ),
+    )
+
+    def rank(candidate: MenuCandidate) -> tuple[int, str]:
+        score = context_score(candidate)
+        score += 9 if candidate.ingredient == ingredient_theme else 0
         return (-score, _tie_breaker(seed, candidate))
 
-    ranked = sorted(MENU_POOL, key=rank)
+    period_candidates = [item for item in MENU_POOL if period in item.periods]
+    ranked = sorted(period_candidates or list(MENU_POOL), key=rank)
     selected: list[MenuCandidate] = []
     used_groups = set()
     while len(selected) < count:
@@ -250,10 +346,13 @@ def recommend_daily_menus(
         "pool_version": MENU_POOL_VERSION,
         "pool_size": len(MENU_POOL),
         "menus": [item.name for item in selected],
+        "ingredient_theme": ingredient_theme,
+        "ingredient_theme_ko": _INGREDIENT_KO[ingredient_theme],
         "season": season,
         "meal_period": period,
         "reason": (
-            f"오늘의 보완 방향과 {_SEASON_KO[season]}·{_PERIOD_KO[period]} 시간대, "
-            "필요한 행동을 함께 반영한 음식 추천입니다. 특정 음식의 효능을 뜻하지는 않습니다."
+            f"오늘의 보완 방향에서 {_INGREDIENT_KO[ingredient_theme]} 재료군을 잡고, "
+            f"{_SEASON_KO[season]}·{_PERIOD_KO[period]} 시간대와 필요한 행동을 함께 "
+            "반영한 음식 추천입니다. 특정 음식의 효능을 뜻하지는 않습니다."
         ),
     }
