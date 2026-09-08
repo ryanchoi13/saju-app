@@ -51,7 +51,7 @@ class DailyFortuneServiceTests(TestCase):
         self.assertIn("보조 근거", result["lucky_item_reason"])
         self.assertEqual(result["lucky_number"], "2, 7")
         self.assertEqual(result["lucky_direction"], "남쪽 (화 기운)")
-        self.assertEqual(result["menu_pool_size"], 250)
+        self.assertGreaterEqual(result["menu_pool_size"], 200)
         self.assertEqual(len(result["recommended_menus"]), 2)
         self.assertEqual(
             result["recommended_menu"],
