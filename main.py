@@ -26,7 +26,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any
 import datetime
 import os
@@ -271,7 +271,7 @@ def with_wa_gwa(word: str):
 
     return word + "와"
  
-def get_saju_pillars_and_analysis(name: str, gender: str, y: int, m: int, d: int, cal_type: str, sijin: int):
+def get_saju_pillars_and_analysis(name: str, gender: str, y: int, m: int, d: int, cal_type: str, sijin: int, menu_account_id: str | None = None):
     backend_calendar_type = "lunar" if cal_type in ["lunar", "leap"] else "solar"
     backend_is_leap = (cal_type == "leap")
     birth_clock = _sijin_midpoint(sijin)
@@ -309,6 +309,7 @@ def get_saju_pillars_and_analysis(name: str, gender: str, y: int, m: int, d: int
         name,
         today_date,
         current_hour=kst_now.hour,
+        account_key=menu_account_id,
     )
     today_element = core.timing.daily["pillar"]["stem_element"]
     lucky_element = today_fortune["lucky_element"]
@@ -572,6 +573,20 @@ def _public_profile(user: Dict[str, Any]) -> Dict[str, Any]:
     }
 
 
+class MealFeedbackRequest(BaseModel):
+    token: str = Field(min_length=32, max_length=128)
+    liked: Optional[bool] = None
+
+
+@app.post("/api/menu/feedback")
+def menu_feedback(req: MealFeedbackRequest):
+    from app.engine.services.meal_feedback import update
+    try:
+        return update(req.token, liked=req.liked, seen=req.liked is None)
+    except KeyError:
+        raise HTTPException(status_code=404, detail="식단을 다시 불러와 주세요.")
+
+
 @app.post("/api/auth/kakao")
 def auth_kakao(req: KakaoAuthRequest):
     user_id = f"user_{req.kakao_id}"
@@ -605,7 +620,7 @@ def auth_kakao(req: KakaoAuthRequest):
         saju_res = get_saju_pillars_and_analysis(
             user["name"], user["gender"], user["birth_year"],
             user["birth_month"], user["birth_day"], user["calendar_type"],
-            user["sijin_index"],
+            user["sijin_index"], menu_account_id=user_id,
         )
         return {
             "status": "existing_user",
@@ -641,7 +656,7 @@ def register_saju(req: RegisterSajuRequest):
 
     saju_res = get_saju_pillars_and_analysis(
         req.name, req.gender, req.birth_year, req.birth_month, req.birth_day,
-        req.calendar_type, req.sijin_index
+        req.calendar_type, req.sijin_index, menu_account_id=req.user_id
     )
 
     return {

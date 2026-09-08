@@ -7,11 +7,7 @@ from datetime import date
 from app.engine.constants import GAN_KO, ZHI_KO
 from app.engine.core.models import MyeongriCoreResult
 from app.engine.semantic.queries import build_service_query
-from app.engine.services.daily_menu import (
-    recommend_daily_diet_plan,
-    recommend_daily_general_plan,
-    recommend_daily_menus,
-)
+from app.engine.services.simple_menu import daily_choices
 
 
 DAILY_FORTUNE_VERSION = "daily-fortune-core-v1"
@@ -287,6 +283,42 @@ def _lucky_element(query: dict, daily_element: str) -> str:
     return favorable[0] if favorable else daily_element
 
 
+def _menu_timing_element_weights(timing: dict, semantic: dict | None = None) -> dict[str, int]:
+    """Conservative service translation, not a classical food prescription.
+
+    Presence does not imply dietary need. Timing only modulates directions already
+    assessed by the core; uncertain relationships never become transformations here.
+    """
+    semantic = semantic or {}
+    favorable = set(semantic.get("favorable_elements", []))
+    caution = set(semantic.get("caution_elements", []))
+    exposure: dict[str, int] = {}
+    for axis, weight in (("luck_cycle", 1), ("annual", 1), ("monthly", 2), ("daily", 3)):
+        pillar = (timing.get(axis) or {}).get("pillar") or {}
+        for key in ("stem_element", "branch_element"):
+            element = pillar.get(key)
+            if element:
+                exposure[element] = exposure.get(element, 0) + weight
+    cap = 4 if semantic.get("confidence") in {"low", "undetermined", None} else 6
+    result = {}
+    for element in favorable | caution:
+        if element in favorable and element in caution:
+            result[element] = 0  # Conflicting core directions: no invented resolution.
+        else:
+            value = min(cap, 3 + exposure.get(element, 0) // 3)
+            result[element] = -value if element in caution else value
+    return result
+
+
+def _menu_climate_tags(query: dict) -> frozenset[str]:
+    climate = query.get("diagnostics", {}).get("climate", {})
+    if climate.get("status") == "insufficient":
+        return frozenset()
+    mapping = {"warming": "warm", "cooling": "cool", "moistening": "moisten", "stabilizing": "stabilize"}
+    return frozenset(mapping[item["operation"]] for item in climate.get("recommended_operations", [])
+                     if item.get("operation") in mapping)
+
+
 def _item_group(operation: str, daily_god: str) -> str:
     # The daily ten-god decides the practical item category so the recommendation
     # can change with the day. The natal synthesis decides why and which element.
@@ -339,6 +371,7 @@ def build_daily_fortune(
     target_date: date,
     *,
     current_hour: int | None = None,
+    account_key: str | None = None,
     recent_menus: frozenset[str] = frozenset(),
     used_cuisines: frozenset[str] = frozenset(),
     used_menus: frozenset[str] = frozenset(),
@@ -368,6 +401,7 @@ def build_daily_fortune(
     positive_shensha = sum(name in {"literary_star", "heavenly_noble"} for name in shensha)
     caution_shensha = sum(name in {"solitary_star", "widow_star"} for name in shensha)
     lucky_element = _lucky_element(query, daily_element)
+    timing_element_weights = _menu_timing_element_weights(timing, query["semantic_state"])
     aligned = daily_element in set(query["semantic_state"].get("favorable_elements", []))
     confidence = str(query["semantic_state"].get("confidence", "undetermined"))
     score = _score(
@@ -416,34 +450,7 @@ def build_daily_fortune(
     item = _ITEMS[item_group][lucky_element]
     element = _ELEMENT_GUIDE[lucky_element]
     talisman_title, talisman_power, talisman_type = _TALISMAN[lucky_element]
-    menu_selection = recommend_daily_menus(
-        target_date=target_date,
-        current_hour=current_hour,
-        day_master=core.natal_facts.day_master.stem,
-        daily_ganji=ganji_han,
-        lucky_element=lucky_element,
-        primary_operation=operation_name,
-        count=1,
-        recent_menus=recent_menus,
-        used_cuisines=used_cuisines,
-        used_menus=used_menus,
-    )
-    diet_meal_plan = recommend_daily_diet_plan(
-        target_date=target_date,
-        day_master=core.natal_facts.day_master.stem,
-        daily_ganji=ganji_han,
-        lucky_element=lucky_element,
-        primary_operation=operation_name,
-        recent_menus=recent_menus,
-    )
-    general_meal_plan = recommend_daily_general_plan(
-        target_date=target_date,
-        day_master=core.natal_facts.day_master.stem,
-        daily_ganji=ganji_han,
-        lucky_element=lucky_element,
-        primary_operation=operation_name,
-        recent_menus=recent_menus,
-    )
+    menu_selection = daily_choices(core.input, target_date, timing_element_weights, account_key)
 
     advice_parts = [
         f"{target_date.month}월 {target_date.day}일은 {ganji_display} 일진이며, "
@@ -493,8 +500,6 @@ def build_daily_fortune(
         "recommended_menu_reason": menu_selection["reason"],
         "menu_pool_size": menu_selection["pool_size"],
         "menu_pool_version": menu_selection["pool_version"],
-        "general_meal_plan": general_meal_plan,
-        "diet_meal_plan": diet_meal_plan,
         "menu_context": {
             "season": menu_selection["season"],
             "meal_period": menu_selection["meal_period"],

@@ -73,12 +73,8 @@ class ProfilePersistenceTests(TestCase):
         self.assertIn("대운 7~9", html)
         self.assertNotIn("대운 8 이후", html)
 
-    def test_diet_menu_mode_is_user_scoped_and_restored(self):
+    def test_simple_menu_hides_paused_controls(self):
         html = (Path(__file__).parents[2] / "index.html").read_text(encoding="utf-8")
-        self.assertIn("`dalha_menu_mode:${kakaoId}`", html)
-        self.assertIn("currentMenuMode = getSavedMenuMode();", html)
-        self.assertIn("saveMenuMode(currentMenuMode);", html)
-        self.assertIn("다이어트 식단으로 보기", html)
-        self.assertIn("fortune.diet_meal_plan?.meals", html)
-        self.assertIn("fortune.general_meal_plan?.meals", html)
-        self.assertIn("오늘의 일반 식단", html)
+        self.assertIn("fortune.recommended_menus", html)
+        self.assertIn("document.getElementById('menuModeToggle').hidden = true", html)
+        self.assertIn("document.getElementById('menuPlanLike').hidden = true", html)

@@ -377,7 +377,9 @@
                         <div class="grid-cell">
                             <span id="resMenuLabel" style="font-size: 12px; color: #64748B; font-weight: 600; display: block;">🍲 추천 메뉴</span>
                             <p id="resMenu" style="font-weight: 800; margin: 3px 0 8px; font-size: 14px; line-height: 1.65; white-space: pre-line; color: #0F172A;">속이 편안한 영양 솥밥</p>
-                            <button id="menuModeToggle" type="button" onclick="toggleMenuMode()" style="width: 100%; border: 1px solid #BBF7D0; background: #F0FDF4; color: #166534; border-radius: 8px; padding: 6px 8px; font-size: 11.5px; font-weight: 800; cursor: pointer;">다이어트 식단으로 보기</button>
+                            <button id="menuPlanLike" type="button" onclick="togglePlanLike()" aria-label="오늘 식단 좋아요" aria-pressed="false" hidden style="border:0;background:transparent;color:#64748B;font-size:25px;cursor:pointer;padding:4px 10px;min-width:44px;min-height:44px;">♡</button>
+                            <span id="menuLikeStatus" role="status" style="font-size:11px;color:#64748B;"></span>
+                            <button id="menuModeToggle" hidden type="button" onclick="toggleMenuMode()" style="width: 100%; border: 1px solid #BBF7D0; background: #F0FDF4; color: #166534; border-radius: 8px; padding: 6px 8px; font-size: 11.5px; font-weight: 800; cursor: pointer;">다이어트 식단으로 보기</button>
                         </div>
                     </div>
 
@@ -1066,32 +1068,82 @@
             localStorage.setItem(getMenuModeStorageKey(), mode);
         }
 
+        let mealExposureObserver = null;
+        const recordedPlanViews = new Set();
+        const pendingPlanLikes = new Set();
+
+        function visibleMealPlan() {
+            return currentFortuneData?.daily_fortune?.[`${currentMenuMode}_meal_plan`];
+        }
+
+        function paintPlanLike() {
+            const button = document.getElementById('menuPlanLike');
+            const feedback = visibleMealPlan()?.feedback;
+            button.hidden = !feedback?.token;
+            button.disabled = feedback ? pendingPlanLikes.has(feedback.token) : false;
+            button.innerText = feedback?.liked ? '♥' : '♡';
+            button.style.color = feedback?.liked ? '#E85D75' : '#64748B';
+            button.setAttribute('aria-pressed', String(!!feedback?.liked));
+            button.setAttribute('aria-label', feedback?.liked ? '오늘 식단 좋아요 취소' : '오늘 식단 좋아요');
+        }
+
+        async function recordPlanView(token) {
+            if (!token || visibleMealPlan()?.feedback?.token !== token || recordedPlanViews.has(token) || document.visibilityState !== 'visible') return;
+            recordedPlanViews.add(token);
+            try {
+                const response = await fetch('/api/menu/feedback', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({token})});
+                if (!response.ok) recordedPlanViews.delete(token);
+            } catch (_) { recordedPlanViews.delete(token); }
+        }
+
+        function observePlanView() {
+            mealExposureObserver?.disconnect();
+            const token = visibleMealPlan()?.feedback?.token;
+            const element = document.getElementById('resMenu');
+            if (!token || !element || !('IntersectionObserver' in window)) return;
+            mealExposureObserver = new IntersectionObserver(entries => {
+                if (entries.some(entry => entry.isIntersecting && entry.intersectionRatio >= .5)) recordPlanView(token);
+            }, {threshold:.5});
+            mealExposureObserver.observe(element);
+        }
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible') observePlanView();
+        });
+
+        async function togglePlanLike() {
+            const feedback = visibleMealPlan()?.feedback;
+            if (!feedback?.token || pendingPlanLikes.has(feedback.token)) return;
+            const token = feedback.token;
+            pendingPlanLikes.add(token);
+            document.getElementById('menuLikeStatus').innerText = '';
+            paintPlanLike();
+            try {
+                const response = await fetch('/api/menu/feedback', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({token, liked:!feedback.liked})});
+                if (!response.ok) throw new Error('save failed');
+                feedback.liked = (await response.json()).liked;
+            } catch (_) {
+                if (visibleMealPlan()?.feedback?.token === token) document.getElementById('menuLikeStatus').innerText = '저장하지 못했어요. 다시 눌러 주세요.';
+            } finally {
+                pendingPlanLikes.delete(token);
+                paintPlanLike();
+            }
+        }
+
         function renderRecommendedMenu() {
             const fortune = currentFortuneData?.daily_fortune || {};
             const menuEl = document.getElementById('resMenu');
             const labelEl = document.getElementById('resMenuLabel');
-            const toggleEl = document.getElementById('menuModeToggle');
-            if (!menuEl || !labelEl || !toggleEl) return;
-
-            const dietMeals = fortune.diet_meal_plan?.meals || [];
-            const generalMeals = fortune.general_meal_plan?.meals || [];
-            const periodNames = { breakfast: '아침', lunch: '점심', dinner: '저녁' };
-            if (currentMenuMode === 'diet' && dietMeals.length) {
-                labelEl.innerText = '🥗 오늘의 다이어트 식단';
-                menuEl.innerText = dietMeals
-                    .map(meal => `${periodNames[meal.period] || meal.period} · ${meal.menu}`)
-                    .join('\n');
-                toggleEl.innerText = '일반 메뉴로 보기';
-            } else {
-                currentMenuMode = 'general';
-                labelEl.innerText = '🍲 오늘의 일반 식단';
-                menuEl.innerText = generalMeals.length
-                    ? generalMeals
-                        .map(meal => `${periodNames[meal.period] || meal.period} · ${meal.menu}`)
-                        .join('\n')
-                    : (fortune.recommended_menu || '추천 메뉴를 준비하고 있어요');
-                toggleEl.innerText = '다이어트 식단으로 보기';
-            }
+            if (!menuEl || !labelEl) return;
+            currentMenuMode = 'general';
+            labelEl.innerText = '🍲 오늘의 추천 메뉴';
+            const menus = fortune.recommended_menus || [fortune.recommended_menu].filter(Boolean);
+            menuEl.innerText = menus.length
+                ? menus.slice(0, 2).map((menu, index) => `${index ? '다른 선택' : '오늘의 메뉴'} · ${menu}`).join('\n')
+                : '추천 메뉴를 준비하고 있어요';
+            document.getElementById('menuModeToggle').hidden = true;
+            document.getElementById('menuPlanLike').hidden = true;
+            document.getElementById('menuLikeStatus').innerText = '';
+            mealExposureObserver?.disconnect();
         }
 
         function toggleMenuMode() {
