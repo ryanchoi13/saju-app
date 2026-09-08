@@ -639,6 +639,57 @@ def recommend_diet_menus(
     }
 
 
+def recommend_daily_general_plan(
+    *,
+    target_date: date,
+    day_master: str,
+    daily_ganji: str,
+    lucky_element: str,
+    primary_operation: str,
+    recent_menus: frozenset[str] = frozenset(),
+) -> dict:
+    """Build a breakfast, lunch and dinner plan from the general menu pool."""
+
+    hours = {"breakfast": 8, "lunch": 12, "dinner": 19}
+    used_menus: set[str] = set()
+    used_cuisines: set[str] = set()
+    used_ingredients: set[str] = set()
+    ingredient_counts: dict[str, int] = {}
+    meals: list[dict] = []
+
+    for period, hour in hours.items():
+        selection = recommend_daily_menus(
+            target_date=target_date,
+            current_hour=hour,
+            day_master=day_master,
+            daily_ganji=daily_ganji,
+            lucky_element=lucky_element,
+            primary_operation=primary_operation,
+            count=1,
+            recent_menus=recent_menus,
+            used_cuisines=frozenset(used_cuisines),
+            used_menus=frozenset(used_menus),
+            used_ingredients=frozenset(used_ingredients),
+            excluded_ingredients=frozenset(
+                ingredient for ingredient, count in ingredient_counts.items()
+                if count >= 2
+            ),
+        )
+        name = selection["menus"][0]
+        candidate = next(item for item in MENU_POOL if item.name == name)
+        used_menus.add(name)
+        used_cuisines.add(candidate.cuisine)
+        used_ingredients.add(candidate.ingredient)
+        ingredient_counts[candidate.ingredient] = ingredient_counts.get(candidate.ingredient, 0) + 1
+        meals.append({"period": period, "menu": name})
+
+    return {
+        "date": target_date.isoformat(),
+        "mode": "general",
+        "meals": meals,
+    }
+
+
 def recommend_daily_diet_plan(
     *,
     target_date: date,

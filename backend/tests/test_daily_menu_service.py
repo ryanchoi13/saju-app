@@ -8,6 +8,7 @@ from app.engine.services.daily_menu import (
     DIET_MENU_POOL,
     MENU_POOL,
     recommend_daily_diet_plan,
+    recommend_daily_general_plan,
     recommend_daily_menus,
     recommend_diet_menus,
 )
@@ -180,3 +181,18 @@ class DailyMenuServiceTests(TestCase):
                     item.ingredient for item in pool if item.name == meal["menu"]
                 ))
             self.assertGreater(len(set(ingredients)), 1)
+
+    def test_general_plan_returns_three_distinct_meal_periods(self):
+        result = recommend_daily_general_plan(
+            target_date=date(2026, 9, 20),
+            day_master="甲",
+            daily_ganji="丁酉",
+            lucky_element="水",
+            primary_operation="protect",
+        )
+        self.assertEqual(result["mode"], "general")
+        self.assertEqual(
+            [meal["period"] for meal in result["meals"]],
+            ["breakfast", "lunch", "dinner"],
+        )
+        self.assertEqual(len({meal["menu"] for meal in result["meals"]}), 3)
