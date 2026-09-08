@@ -2,7 +2,15 @@ from collections import Counter
 from datetime import date
 from unittest import TestCase
 
-from app.engine.services.daily_menu import MENU_POOL, recommend_daily_menus
+from app.engine.services.daily_menu import (
+    DIET_DEFAULT_EXCLUSIONS,
+    DIET_BREAKFAST_EXCLUSIONS,
+    DIET_MENU_POOL,
+    MENU_POOL,
+    recommend_daily_diet_plan,
+    recommend_daily_menus,
+    recommend_diet_menus,
+)
 
 
 class DailyMenuServiceTests(TestCase):
@@ -52,6 +60,33 @@ class DailyMenuServiceTests(TestCase):
         self.assertEqual(by_name["떡볶이"].periods, frozenset({"snack"}))
         self.assertNotIn("snack", by_name["토마토 에그스크램블"].periods)
         self.assertNotIn("breakfast", by_name["치즈버거"].periods)
+        self.assertNotIn("breakfast", by_name["김밥"].periods)
+        self.assertEqual(by_name["문어숙회정식"].periods, frozenset({"dinner"}))
+
+    def test_recent_menu_is_only_a_weak_tie_breaker(self):
+        first = self._recommend(hour=12)
+        repeated = recommend_daily_menus(
+            target_date=date(2026, 9, 8),
+            current_hour=12,
+            day_master="甲",
+            daily_ganji="乙酉",
+            lucky_element="火",
+            primary_operation="protect",
+            count=2,
+            recent_menus=frozenset(first["menus"]),
+        )
+        self.assertEqual(len(repeated["menus"]), 2)
+        self.assertTrue(all(menu in {item.name for item in MENU_POOL} for menu in repeated["menus"]))
+
+    def test_an_already_selected_meal_is_not_repeated_on_the_same_day(self):
+        first = self._recommend(hour=12)["menus"][0]
+        dinner = recommend_daily_menus(
+            target_date=date(2026, 9, 8), current_hour=20,
+            day_master="甲", daily_ganji="乙酉", lucky_element="火",
+            primary_operation="protect", count=1,
+            used_menus=frozenset({first}),
+        )
+        self.assertNotEqual(dinner["menus"][0], first)
 
     def test_recommendation_is_deterministic_and_diverse(self):
         first = self._recommend()
@@ -60,7 +95,7 @@ class DailyMenuServiceTests(TestCase):
         self.assertEqual(first, second)
         selected = [item for item in MENU_POOL if item.name in first["menus"]]
         self.assertEqual(len(selected), 2)
-        self.assertTrue(all(item.element == "火" for item in selected))
+        self.assertTrue(any(item.element in {"火", "木"} for item in selected))
         self.assertTrue(all("lunch" in item.periods for item in selected))
         self.assertIn("ingredient_theme", first)
         self.assertIn("ingredient_theme_ko", first)
@@ -89,3 +124,59 @@ class DailyMenuServiceTests(TestCase):
                     all(expected_period in item.periods for item in selected),
                     (element, hour, result),
                 )
+
+    def test_diet_pool_is_separate_and_has_about_sixty_real_meals(self):
+        self.assertGreaterEqual(len(DIET_MENU_POOL), 55)
+        self.assertLessEqual(len(DIET_MENU_POOL), 65)
+        self.assertEqual(
+            len({item.name for item in DIET_MENU_POOL}),
+            len(DIET_MENU_POOL),
+        )
+        names = {item.name for item in DIET_MENU_POOL}
+        self.assertTrue({
+            "계란후라이와 통밀토스트", "밥과 계란후라이",
+            "토마토 에그스크램블·무가당 차", "연어 오차즈케",
+            "달걀 오차즈케", "닭가슴살 포케", "두부버섯전골",
+        }.issubset(names))
+        self.assertTrue(DIET_DEFAULT_EXCLUSIONS.isdisjoint(names))
+        self.assertTrue({
+            "고추장삼겹살", "감자탕", "뼈해장국", "돼지국밥",
+            "순대국밥", "부대찌개", "짜장면", "오므라이스",
+        }.issubset(DIET_DEFAULT_EXCLUSIONS))
+
+    def test_diet_recommendation_has_no_calorie_claim(self):
+        result = recommend_diet_menus(
+            target_date=date(2026, 9, 8), current_hour=8,
+            day_master="甲", daily_ganji="乙酉", lucky_element="水",
+            primary_operation="protect",
+        )
+        self.assertEqual(result["calorie_status"], "deferred")
+        self.assertEqual(len(result["menus"]), 1)
+        selected = next(item for item in DIET_MENU_POOL if item.name == result["menus"][0])
+        self.assertIn("breakfast", selected.periods)
+
+    def test_diet_plan_uses_one_or_two_diet_meals_and_excludes_flagged_foods(self):
+        for offset in range(30):
+            target = date(2026, 9, 8).fromordinal(date(2026, 9, 8).toordinal() + offset)
+            result = recommend_daily_diet_plan(
+                target_date=target,
+                day_master="甲",
+                daily_ganji="乙酉",
+                lucky_element="水",
+                primary_operation="protect",
+            )
+            menus = [meal["menu"] for meal in result["meals"]]
+            self.assertIn(result["diet_meal_count"], {1, 2})
+            self.assertEqual(len(menus), 3)
+            self.assertEqual(len(set(menus)), 3)
+            self.assertTrue(DIET_DEFAULT_EXCLUSIONS.isdisjoint(menus))
+            self.assertNotIn(menus[0], DIET_BREAKFAST_EXCLUSIONS)
+            self.assertEqual(result["calorie_status"], "deferred")
+
+            ingredients = []
+            for meal in result["meals"]:
+                pool = DIET_MENU_POOL if meal["diet_menu"] else MENU_POOL
+                ingredients.append(next(
+                    item.ingredient for item in pool if item.name == meal["menu"]
+                ))
+            self.assertGreater(len(set(ingredients)), 1)
