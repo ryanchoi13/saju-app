@@ -9,6 +9,7 @@ from app.engine.core.models import MyeongriCoreResult
 from app.engine.semantic.queries import build_service_query
 from app.engine.services.daily_menu import (
     recommend_daily_diet_plan,
+    recommend_daily_general_plan,
     recommend_daily_menus,
 )
 
@@ -435,6 +436,14 @@ def build_daily_fortune(
         primary_operation=operation_name,
         recent_menus=recent_menus,
     )
+    general_meal_plan = recommend_daily_general_plan(
+        target_date=target_date,
+        day_master=core.natal_facts.day_master.stem,
+        daily_ganji=ganji_han,
+        lucky_element=lucky_element,
+        primary_operation=operation_name,
+        recent_menus=recent_menus,
+    )
 
     advice_parts = [
         f"{target_date.month}월 {target_date.day}일은 {ganji_display} 일진이며, "
@@ -484,6 +493,7 @@ def build_daily_fortune(
         "recommended_menu_reason": menu_selection["reason"],
         "menu_pool_size": menu_selection["pool_size"],
         "menu_pool_version": menu_selection["pool_version"],
+        "general_meal_plan": general_meal_plan,
         "diet_meal_plan": diet_meal_plan,
         "menu_context": {
             "season": menu_selection["season"],

@@ -80,3 +80,5 @@ class ProfilePersistenceTests(TestCase):
         self.assertIn("saveMenuMode(currentMenuMode);", html)
         self.assertIn("다이어트 식단으로 보기", html)
         self.assertIn("fortune.diet_meal_plan?.meals", html)
+        self.assertIn("fortune.general_meal_plan?.meals", html)
+        self.assertIn("오늘의 일반 식단", html)

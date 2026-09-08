@@ -1074,8 +1074,9 @@
             if (!menuEl || !labelEl || !toggleEl) return;
 
             const dietMeals = fortune.diet_meal_plan?.meals || [];
+            const generalMeals = fortune.general_meal_plan?.meals || [];
+            const periodNames = { breakfast: '아침', lunch: '점심', dinner: '저녁' };
             if (currentMenuMode === 'diet' && dietMeals.length) {
-                const periodNames = { breakfast: '아침', lunch: '점심', dinner: '저녁' };
                 labelEl.innerText = '🥗 오늘의 다이어트 식단';
                 menuEl.innerText = dietMeals
                     .map(meal => `${periodNames[meal.period] || meal.period} · ${meal.menu}`)
@@ -1083,8 +1084,12 @@
                 toggleEl.innerText = '일반 메뉴로 보기';
             } else {
                 currentMenuMode = 'general';
-                labelEl.innerText = '🍲 추천 메뉴';
-                menuEl.innerText = fortune.recommended_menu || '추천 메뉴를 준비하고 있어요';
+                labelEl.innerText = '🍲 오늘의 일반 식단';
+                menuEl.innerText = generalMeals.length
+                    ? generalMeals
+                        .map(meal => `${periodNames[meal.period] || meal.period} · ${meal.menu}`)
+                        .join('\n')
+                    : (fortune.recommended_menu || '추천 메뉴를 준비하고 있어요');
                 toggleEl.innerText = '다이어트 식단으로 보기';
             }
         }
