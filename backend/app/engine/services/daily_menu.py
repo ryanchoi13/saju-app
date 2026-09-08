@@ -8,6 +8,7 @@ from datetime import date
 
 
 MENU_POOL_VERSION = "daily-menu-pool-v3"
+DIET_MENU_POOL_VERSION = "diet-menu-pool-v1"
 
 
 @dataclass(frozen=True)
@@ -50,6 +51,18 @@ _HIGH_FAMILIARITY = {
     "순대국밥", "경양식 돈가스", "소고기불고기", "오징어뭇국", "해물찜", "조개구이",
 }
 
+_CUISINE_OVERRIDES = {
+    "분짜": "southeast_asian", "어향가지": "chinese", "짜장면": "chinese",
+    "탕수육": "chinese", "깐풍기": "chinese", "오코노미야키": "japanese",
+    "모둠초밥": "japanese", "연어초밥": "japanese", "광어회": "japanese",
+    "유부초밥": "japanese", "일본식 돈카츠": "japanese",
+    "경양식 돈가스": "western", "알리오 올리오": "western",
+}
+_INGREDIENT_OVERRIDES = {
+    "짜장면": "noodle_wheat", "탕수육": "pork", "깐풍기": "chicken",
+    "어향가지": "vegetable", "오코노미야키": "noodle_wheat",
+}
+
 # Group defaults express the dish's energy direction. Meal-time suitability is
 # intentionally overridden per dish so breakfast and snack never blur together.
 _PERIOD_OVERRIDES = {
@@ -76,12 +89,19 @@ _PERIOD_OVERRIDES = {
     "야채수프": "breakfast lunch",
     "새우버거": "lunch dinner", "검은콩밥": "lunch dinner",
     "흑미밥": "lunch dinner", "검은깨죽": "breakfast",
-    "들깨미역국": "breakfast lunch dinner", "김밥": "breakfast lunch dinner snack",
+    "들깨미역국": "breakfast lunch dinner",
     "온메밀소바": "lunch dinner", "메밀전병": "snack",
     "김국": "breakfast lunch dinner", "톳밥": "lunch dinner",
     "검은콩국수": "lunch dinner", "과일화채": "snack",
+    "김밥": "lunch dinner snack", "문어숙회정식": "dinner",
+    "삶은 계란과 토스트": "breakfast", "계란프라이와 토스트": "breakfast",
+    "햄에그 토스트": "breakfast", "밥과 계란프라이": "breakfast",
+    "콩나물국밥": "breakfast lunch dinner", "북엇국": "breakfast lunch dinner",
+    "황태해장국": "breakfast lunch dinner", "오징어뭇국": "breakfast lunch dinner",
+    "맑은 순두부국": "breakfast lunch dinner", "소고기미역국": "breakfast lunch dinner",
+    "매생이국": "breakfast lunch dinner", "굴국밥": "breakfast lunch",
+    "재첩국": "breakfast lunch dinner",
 }
-
 
 def _periods_for(name: str, default_periods: str) -> frozenset[str]:
     return frozenset(_PERIOD_OVERRIDES.get(name, default_periods).split())
@@ -104,6 +124,8 @@ _INGREDIENT_KO = {
 
 
 def _ingredient_for(name: str) -> str:
+    if name in _INGREDIENT_OVERRIDES:
+        return _INGREDIENT_OVERRIDES[name]
     for ingredient, keywords in _INGREDIENT_RULES:
         if any(keyword in name for keyword in keywords):
             return ingredient
@@ -111,13 +133,19 @@ def _ingredient_for(name: str) -> str:
 
 
 def _cuisine_for(name: str, group: str) -> str:
-    if any(word in name for word in ("파스타", "피자", "리조또", "샐러드", "스테이크", "버거")):
+    if name in _CUISINE_OVERRIDES:
+        return _CUISINE_OVERRIDES[name]
+    if any(word in name for word in (
+        "파스타", "피자", "리조또", "샐러드", "스테이크", "버거",
+        "토스트", "샌드위치", "베이글", "크루아상", "팬케이크",
+        "오트밀", "요거트", "그래놀라", "콘수프", "양송이스프",
+    )):
         return "western"
-    if any(word in name for word in ("라멘", "우동", "오차즈케", "타다키", "스키야키", "나베")):
+    if any(word in name for word in ("라멘", "우동", "오차즈케", "타다키", "스키야키", "나베", "초밥")):
         return "japanese"
     if any(word in name for word in ("쌀국수", "팟타이", "똠얌꿍", "월남쌈")):
         return "southeast_asian"
-    if any(word in name for word in ("짬뽕", "유산슬", "중화")):
+    if any(word in name for word in ("짬뽕", "유산슬", "중화", "짜장", "어향", "탕수육", "깐풍기")):
         return "chinese"
     return "korean"
 
@@ -186,7 +214,7 @@ MENU_POOL = tuple(
     )
     + _group(
         "火", "fire_snack", "autumn winter spring", "breakfast snack", "warm move record",
-        "토마토 에그스크램블|햄치즈 토스트|시나몬토스트|길거리 토스트|떡볶이|닭꼬치|핫도그|생강차와 구운 떡|계피차와 호두빵|자몽차와 에그타르트",
+        "토마토 에그스크램블|햄치즈 토스트|햄에그 토스트|시나몬토스트|길거리 토스트|삶은 계란과 토스트|계란프라이와 토스트|떡볶이|닭꼬치|핫도그|생강차와 구운 떡|계피차와 호두빵|자몽차와 에그타르트",
     )
     + _group(
         "火", "fire_gentle_warmth", "autumn winter", "lunch dinner", "warm balanced mediate",
@@ -210,10 +238,10 @@ MENU_POOL = tuple(
     )
     + _group(
         "土", "earth_global", "autumn winter spring", "lunch dinner", "hearty create stabilize",
-        "감자뇨키|버섯크림리조또|고구마피자|감자탕|뼈해장국|카레라이스|오므라이스|돼지국밥|순대국밥|경양식 돈가스|일본식 돈카츠",
+        "감자뇨키|버섯크림리조또|고구마피자|감자탕|뼈해장국|카레라이스|오므라이스|밥과 계란프라이|돼지국밥|순대국밥|경양식 돈가스|일본식 돈카츠",
     )
     + _group(
-        "金", "metal_clear_soup", "autumn winter spring", "breakfast lunch dinner", "warm clear support",
+        "金", "metal_clear_soup", "autumn winter spring", "lunch dinner", "warm clear support",
         "설렁탕|소고기곰탕|닭곰탕|떡국|만둣국|콩나물국밥|북엇국|황태해장국|오징어뭇국|맑은 순두부국",
     )
     + _group(
@@ -226,14 +254,14 @@ MENU_POOL = tuple(
     )
     + _group(
         "金", "metal_clean_meal", "spring summer autumn winter", "lunch dinner", "clear create mediate",
-        "어향가지|봉골레파스타|버섯크림파스타|치킨크림리조또|새우필라프|유산슬덮밥|중화잡채밥|닭고기쌀국수|하얀짬뽕|차돌숙주볶음밥",
+        "어향가지|짜장면|탕수육|깐풍기|봉골레파스타|버섯크림파스타|치킨크림리조또|새우필라프|유산슬덮밥|중화잡채밥|닭고기쌀국수|하얀짬뽕|차돌숙주볶음밥",
     )
     + _group(
         "金", "metal_breakfast", "spring summer autumn winter", "breakfast snack", "light clear record",
         "배도라지차와 쌀과자|유자차와 백설기|흰콩두유|플레인요거트|치즈버거|치즈샌드위치|달걀샌드위치|소금빵|양송이스프|야채수프|새우버거",
     )
     + _group(
-        "水", "water_sea_soup", "autumn winter spring", "breakfast lunch dinner", "broth warm moisten",
+        "水", "water_sea_soup", "autumn winter spring", "lunch dinner", "broth warm moisten",
         "소고기미역국|해물탕|매생이국|굴국밥|대구탕|복국|재첩국|홍합탕|바지락칼국수|해물순두부찌개",
     )
     + _group(
@@ -241,7 +269,7 @@ MENU_POOL = tuple(
         "연어덮밥|참치회덮밥|장어덮밥|고등어구이정식|갈치조림|꽁치김치조림|아귀찜|꼬막비빔밥|해초비빔밥|문어숙회정식",
     )
     + _group(
-        "水", "water_black_food", "autumn winter spring", "breakfast lunch dinner", "balanced moisten record",
+        "水", "water_black_food", "autumn winter spring", "lunch dinner", "balanced moisten record",
         "검은콩밥|흑미밥|검은깨죽|들깨미역국|김밥|온메밀소바|메밀전병|김국|톳밥|검은콩국수",
     )
     + _group(
@@ -253,6 +281,128 @@ MENU_POOL = tuple(
         "해산물파스타|해산물리조또|생선가스|연어스테이크|참치타다키|새우팟타이|해물볶음우동|똠얌꿍|해물찜|조개찜|모둠초밥|연어초밥|광어회|오코노미야키",
     )
 )
+
+
+# The diet pool is intentionally separate from the general pool.  These are
+# complete, familiar meals rather than smaller portions of high-energy dishes.
+# Calories and exact serving sizes are deliberately deferred until verified
+# nutrition data is connected.
+def _diet_group(
+    element: str,
+    group: str,
+    periods: str,
+    tags: str,
+    ingredient: str,
+    cuisine: str,
+    names: str,
+) -> list[MenuCandidate]:
+    return [
+        MenuCandidate(
+            name=name.strip(),
+            element=element,
+            group=group,
+            seasons=frozenset({"spring", "summer", "autumn", "winter"}),
+            periods=frozenset(periods.split()),
+            tags=frozenset(tags.split()),
+            ingredient=(
+                _ingredient_for(name.strip())
+                if _ingredient_for(name.strip()) != "mixed"
+                else ingredient
+            ),
+            cuisine=cuisine,
+            familiarity=4,
+        )
+        for name in names.split("|")
+        if name.strip()
+    ]
+
+
+DIET_MENU_POOL = tuple(
+    _diet_group(
+        "木", "diet_breakfast_fresh", "breakfast", "fresh light balanced",
+        "fruit", "western",
+        "그릭요거트·저당 그래놀라·베리|그릭요거트·바나나·견과류|오트밀·사과·견과류",
+    )
+    + _diet_group(
+        "火", "diet_breakfast_egg", "breakfast", "warm balanced hearty",
+        "egg_dairy", "western",
+        "계란후라이와 통밀토스트|토마토 에그스크램블·무가당 차|버섯 에그스크램블·통밀빵|닭가슴살 에그샌드위치|감자 에그샌드위치|햄치즈 통밀토스트·커피",
+    )
+    + _diet_group(
+        "土", "diet_breakfast_korean", "breakfast", "warm balanced stabilize",
+        "rice_grain", "korean",
+        "밥과 계란후라이|북엇국과 밥|단호박 달걀찜|고구마·삶은 달걀·우유",
+    )
+    + _diet_group(
+        "水", "diet_breakfast_light", "breakfast", "fresh light moisten",
+        "tofu_bean", "korean",
+        "블루베리 검은콩 스무디·삶은 달걀|케일 바나나 두유 스무디|당근 사과주스·달걀치즈 토스트|연어 오차즈케|달걀 오차즈케",
+    )
+    + _diet_group(
+        "木", "diet_poke", "lunch", "fresh balanced hearty",
+        "rice_grain", "western",
+        "닭가슴살 포케|닭다리살 구이 포케|연어 포케|참치 포케|새우 포케|소고기 불고기 포케|두부버섯 포케",
+    )
+    + _diet_group(
+        "土", "diet_rice", "lunch", "balanced hearty stabilize",
+        "rice_grain", "korean",
+        "닭고기 현미비빔밥|소고기 나물비빔밥|두부 나물비빔밥|보리밥 된장찌개|순두부찌개·잡곡밥",
+    )
+    + _diet_group(
+        "火", "diet_lunch_warm", "lunch", "warm balanced hearty",
+        "chicken", "korean",
+        "닭고기 채소카레·잡곡밥|소고기 채소덮밥|오징어 채소볶음·잡곡밥|돼지고기 숙주볶음·밥",
+    )
+    + _diet_group(
+        "木", "diet_noodle_wrap", "lunch", "fresh light balanced",
+        "noodle_wheat", "southeast_asian",
+        "닭고기 쌀국수|소고기 양지 쌀국수|닭고기 메밀국수|들기름 메밀국수·달걀|닭고기 월남쌈|새우 월남쌈|닭가슴살 샐러드 파스타|새우 토마토 파스타|통밀 치킨랩",
+    )
+    + _diet_group(
+        "金", "diet_dinner_meat", "dinner", "warm balanced protect",
+        "chicken", "korean",
+        "훈제치킨 채소구이|닭다리살 소금구이·샐러드|닭고기 버섯볶음|닭고기 두부전골|닭고기 양배추쌈",
+    )
+    + _diet_group(
+        "金", "diet_dinner_beef_pork", "dinner", "warm balanced hearty",
+        "beef", "korean",
+        "소고기 숙주볶음|소고기 버섯전골|돼지고기 양배추찜|돼지고기 두부김치|소고기 샤브샤브",
+    )
+    + _diet_group(
+        "水", "diet_dinner_seafood", "dinner", "light balanced moisten",
+        "seafood", "korean",
+        "고등어구이·채소 반찬|연어구이·구운 채소|흰살생선구이·버섯|새우 두부찜|오징어 숙회·채소무침|해물 샤브샤브",
+    )
+    + _diet_group(
+        "土", "diet_dinner_tofu", "dinner", "warm light stabilize",
+        "tofu_bean", "korean",
+        "두부버섯전골|순두부 달걀탕|두부스테이크·구운 채소|버섯 두부 샤브샤브",
+    )
+)
+
+
+DIET_DEFAULT_EXCLUSIONS = frozenset({
+    "피자", "화덕피자", "페퍼로니피자", "고구마피자",
+    "후라이드치킨", "양념치킨", "간장치킨",
+    "햄버거", "치즈버거", "불고기버거", "치킨버거", "새우버거", "햄버거 세트",
+    "김밥", "떡볶이", "라면", "짜파게티", "비빔면",
+    "경양식 돈가스", "일본식 돈카츠", "버터 크루아상",
+    "로제파스타", "버섯크림파스타", "치킨크림리조또",
+    "오코노미야키", "생선가스", "탕수육", "깐풍기",
+    "새우팟타이", "해물볶음우동", "고구마그라탱",
+    "시금치라자냐", "고추장삼겹살", "삼겹살",
+    "감자탕", "뼈해장국", "돼지국밥", "순대국밥", "부대찌개",
+    "짜장면", "오므라이스",
+})
+
+DIET_BREAKFAST_EXCLUSIONS = frozenset({
+    "굴국밥", "매생이국", "검은깨죽",
+})
+
+DIET_CONDITIONAL_MENUS = frozenset({
+    "제육볶음", "소고기불고기", "토마토파스타", "알리오 올리오",
+    "두부김치", "카레라이스",
+})
 
 
 _OPERATION_TAG = {
@@ -273,8 +423,15 @@ _OPERATION_TAG = {
 
 _SEASON_KO = {"spring": "봄", "summer": "여름", "autumn": "가을", "winter": "겨울"}
 _PERIOD_KO = {"breakfast": "아침", "lunch": "점심", "snack": "간식", "dinner": "저녁"}
-
-
+_GAN_ELEMENT = {
+    "甲": "木", "乙": "木", "丙": "火", "丁": "火", "戊": "土",
+    "己": "土", "庚": "金", "辛": "金", "壬": "水", "癸": "水",
+}
+_GAN_INGREDIENT = {
+    "甲": "vegetable", "乙": "noodle_wheat", "丙": "chicken",
+    "丁": "pork", "戊": "rice_grain", "己": "root", "庚": "beef",
+    "辛": "egg_dairy", "壬": "seafood", "癸": "tofu_bean",
+}
 def season_for(month: int) -> str:
     if month in {3, 4, 5}:
         return "spring"
@@ -311,6 +468,12 @@ def recommend_daily_menus(
     lucky_element: str,
     primary_operation: str,
     count: int = 2,
+    recent_menus: frozenset[str] = frozenset(),
+    used_cuisines: frozenset[str] = frozenset(),
+    used_menus: frozenset[str] = frozenset(),
+    used_ingredients: frozenset[str] = frozenset(),
+    excluded_ingredients: frozenset[str] = frozenset(),
+    excluded_menus: frozenset[str] = frozenset(),
 ) -> dict:
     """Choose diverse real dishes; the element is guidance, not a health claim."""
 
@@ -319,6 +482,7 @@ def recommend_daily_menus(
     season = season_for(target_date.month)
     period = meal_period_for(current_hour)
     operation_tag = _OPERATION_TAG.get(primary_operation, "balanced")
+    daily_element = _GAN_ELEMENT.get(daily_ganji[:1], lucky_element)
     seed = (
         f"{target_date.isoformat()}|{current_hour}|{day_master}|{daily_ganji}|"
         f"{lucky_element}|{primary_operation}"
@@ -326,57 +490,69 @@ def recommend_daily_menus(
 
     def context_score(candidate: MenuCandidate) -> int:
         score = 0
-        # The Myeongri result is the primary axis. Season, time and action only
-        # rank candidates inside that direction; they must not overturn it.
-        score += 20 if candidate.element == lucky_element else 0
+        # The natal correction and changing daily stem share the main axis.
+        score += 6 if candidate.element == lucky_element else 0
+        score += 8 if candidate.element == daily_element else 0
         score += 4 if season in candidate.seasons else 0
         score += 8 if period in candidate.periods else 0
         score += 3 if operation_tag in candidate.tags else 0
         score += candidate.familiarity - 2
+        # Cuisine balance and recent repetition are weak tie-breakers only.
+        score -= 4 if candidate.cuisine in used_cuisines else 0
+        score -= 10 if candidate.ingredient in used_ingredients else 0
+        score -= 1 if candidate.name in recent_menus else 0
         return score
 
-    ingredient_scores: dict[str, int] = {}
-    for candidate in MENU_POOL:
-        if candidate.element != lucky_element or candidate.ingredient == "mixed":
-            continue
-        ingredient_scores[candidate.ingredient] = max(
-            ingredient_scores.get(candidate.ingredient, 0),
-            context_score(candidate),
+    period_candidates = [
+        item for item in MENU_POOL
+        if (
+            period in item.periods
+            and item.name not in used_menus
+            and item.name not in excluded_menus
+            and item.ingredient not in excluded_ingredients
         )
-    ingredient_theme = min(
-        ingredient_scores,
-        key=lambda ingredient: (
-            -ingredient_scores[ingredient],
-            hashlib.sha256(f"{seed}|{ingredient}".encode("utf-8")).hexdigest(),
-        ),
-    )
+    ]
+    eligible_candidates = period_candidates
+
+    ingredient_theme = _GAN_INGREDIENT.get(daily_ganji[:1], "mixed")
+    if not any(item.ingredient == ingredient_theme for item in eligible_candidates):
+        ingredient_scores: dict[str, int] = {}
+        for candidate in eligible_candidates:
+            if candidate.ingredient == "mixed":
+                continue
+            ingredient_scores[candidate.ingredient] = max(
+                ingredient_scores.get(candidate.ingredient, 0),
+                context_score(candidate),
+            )
+        ingredient_theme = min(
+            ingredient_scores,
+            key=lambda ingredient: (
+                -ingredient_scores[ingredient],
+                hashlib.sha256(f"{seed}|{ingredient}".encode("utf-8")).hexdigest(),
+            ),
+        )
 
     def rank(candidate: MenuCandidate) -> tuple[int, str]:
         score = context_score(candidate)
-        score += 9 if candidate.ingredient == ingredient_theme else 0
+        score += 12 if candidate.ingredient == ingredient_theme else 0
         return (-score, _tie_breaker(seed, candidate))
 
-    period_candidates = [item for item in MENU_POOL if period in item.periods]
-    ranked = sorted(period_candidates or list(MENU_POOL), key=rank)
+    ranked = sorted(eligible_candidates, key=rank)
     selected: list[MenuCandidate] = []
-    used_groups = set()
     while len(selected) < count:
         remaining = [candidate for candidate in ranked if candidate not in selected]
         if not remaining:
             break
-        best_score = rank(remaining[0])[0]
-        equally_suitable = [
-            candidate for candidate in remaining if rank(candidate)[0] == best_score
-        ]
-        candidate = next(
-            (
-                item for item in equally_suitable
-                if item.group not in used_groups
+        candidate = min(
+            remaining,
+            key=lambda item: (
+                rank(item)[0]
+                + (10 if any(x.cuisine == item.cuisine for x in selected) else 0)
+                + (3 if any(x.group == item.group for x in selected) else 0),
+                rank(item)[1],
             ),
-            equally_suitable[0],
         )
         selected.append(candidate)
-        used_groups.add(candidate.group)
 
     return {
         "pool_version": MENU_POOL_VERSION,
@@ -386,9 +562,152 @@ def recommend_daily_menus(
         "ingredient_theme_ko": _INGREDIENT_KO[ingredient_theme],
         "season": season,
         "meal_period": period,
+        "daily_element": daily_element,
         "reason": (
             f"오늘의 보완 방향에서 {_INGREDIENT_KO[ingredient_theme]} 재료군을 잡고, "
-            f"{_SEASON_KO[season]}·{_PERIOD_KO[period]} 시간대와 필요한 행동을 함께 "
+            f"{_SEASON_KO[season]}·{_PERIOD_KO[period]} 시간대와 오늘의 변화 흐름을 함께 "
             "반영한 음식 추천입니다. 특정 음식의 효능을 뜻하지는 않습니다."
         ),
+    }
+
+
+def recommend_diet_menus(
+    *,
+    target_date: date,
+    current_hour: int | None,
+    day_master: str,
+    daily_ganji: str,
+    lucky_element: str,
+    primary_operation: str,
+    count: int = 1,
+    recent_menus: frozenset[str] = frozenset(),
+    used_cuisines: frozenset[str] = frozenset(),
+    used_menus: frozenset[str] = frozenset(),
+    used_ingredients: frozenset[str] = frozenset(),
+    excluded_ingredients: frozenset[str] = frozenset(),
+) -> dict:
+    """Select filling diet meals without attaching unverified calorie claims."""
+
+    if count < 1:
+        raise ValueError("추천 메뉴 수는 1개 이상이어야 합니다.")
+    season = season_for(target_date.month)
+    period = meal_period_for(current_hour)
+    operation_tag = _OPERATION_TAG.get(primary_operation, "balanced")
+    daily_element = _GAN_ELEMENT.get(daily_ganji[:1], lucky_element)
+    ingredient_theme = _GAN_INGREDIENT.get(daily_ganji[:1], "mixed")
+    seed = (
+        f"diet|{target_date.isoformat()}|{current_hour}|{day_master}|{daily_ganji}|"
+        f"{lucky_element}|{primary_operation}"
+    )
+    eligible = [
+        item for item in DIET_MENU_POOL
+        if (
+            period in item.periods
+            and item.name not in used_menus
+            and item.ingredient not in excluded_ingredients
+        )
+    ]
+
+    def score(candidate: MenuCandidate) -> int:
+        value = 0
+        value += 6 if candidate.element == lucky_element else 0
+        value += 8 if candidate.element == daily_element else 0
+        value += 4 if season in candidate.seasons else 0
+        value += 8 if period in candidate.periods else 0
+        value += 3 if operation_tag in candidate.tags else 0
+        value += 12 if candidate.ingredient == ingredient_theme else 0
+        value -= 4 if candidate.cuisine in used_cuisines else 0
+        value -= 10 if candidate.ingredient in used_ingredients else 0
+        value -= 1 if candidate.name in recent_menus else 0
+        return value
+
+    ranked = sorted(
+        eligible,
+        key=lambda item: (-score(item), _tie_breaker(seed, item)),
+    )
+    selected = ranked[:count]
+    return {
+        "pool_version": DIET_MENU_POOL_VERSION,
+        "pool_size": len(DIET_MENU_POOL),
+        "menus": [item.name for item in selected],
+        "ingredient_theme": ingredient_theme,
+        "ingredient_theme_ko": _INGREDIENT_KO[ingredient_theme],
+        "season": season,
+        "meal_period": period,
+        "daily_element": daily_element,
+        "calorie_status": "deferred",
+    }
+
+
+def recommend_daily_diet_plan(
+    *,
+    target_date: date,
+    day_master: str,
+    daily_ganji: str,
+    lucky_element: str,
+    primary_operation: str,
+    recent_menus: frozenset[str] = frozenset(),
+) -> dict:
+    """Build three meals with one or two diet-pool substitutions."""
+
+    patterns = (
+        frozenset({"breakfast", "dinner"}),
+        frozenset({"breakfast", "lunch"}),
+        frozenset({"dinner"}),
+    )
+    digest = hashlib.sha256(target_date.isoformat().encode("utf-8")).hexdigest()
+    diet_periods = patterns[int(digest[:2], 16) % len(patterns)]
+    hours = {"breakfast": 8, "lunch": 12, "dinner": 19}
+    used_menus: set[str] = set()
+    used_cuisines: set[str] = set()
+    used_ingredients: set[str] = set()
+    ingredient_counts: dict[str, int] = {}
+    meals: list[dict] = []
+
+    for period, hour in hours.items():
+        kwargs = dict(
+            target_date=target_date,
+            current_hour=hour,
+            day_master=day_master,
+            daily_ganji=daily_ganji,
+            lucky_element=lucky_element,
+            primary_operation=primary_operation,
+            count=1,
+            recent_menus=recent_menus,
+            used_cuisines=frozenset(used_cuisines),
+            used_menus=frozenset(used_menus),
+            used_ingredients=frozenset(used_ingredients),
+            excluded_ingredients=frozenset(
+                ingredient for ingredient, count in ingredient_counts.items()
+                if count >= 2
+            ),
+        )
+        is_diet = period in diet_periods
+        selection = (
+            recommend_diet_menus(**kwargs)
+            if is_diet else
+            recommend_daily_menus(
+                **kwargs,
+                excluded_menus=(
+                    DIET_DEFAULT_EXCLUSIONS | DIET_BREAKFAST_EXCLUSIONS
+                    if period == "breakfast" else
+                    DIET_DEFAULT_EXCLUSIONS
+                ),
+            )
+        )
+        name = selection["menus"][0]
+        pool = DIET_MENU_POOL if is_diet else MENU_POOL
+        candidate = next(item for item in pool if item.name == name)
+        used_menus.add(name)
+        used_cuisines.add(candidate.cuisine)
+        used_ingredients.add(candidate.ingredient)
+        ingredient_counts[candidate.ingredient] = ingredient_counts.get(candidate.ingredient, 0) + 1
+        meals.append({"period": period, "menu": name, "diet_menu": is_diet})
+
+    return {
+        "date": target_date.isoformat(),
+        "mode": "diet",
+        "diet_meal_count": len(diet_periods),
+        "meals": meals,
+        "calorie_status": "deferred",
     }
