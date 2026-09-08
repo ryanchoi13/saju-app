@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from datetime import date
 
 
-MENU_POOL_VERSION = "daily-menu-pool-v2"
+MENU_POOL_VERSION = "daily-menu-pool-v3"
 
 
 @dataclass(frozen=True)
@@ -24,31 +24,67 @@ class MenuCandidate:
 
 
 _INGREDIENT_RULES = (
-    ("beef", ("소고기", "차돌", "불고기", "설렁탕", "곰탕", "스테이크")),
-    ("pork", ("돼지", "제육", "삼겹살", "보쌈", "수육", "돈가스", "감자탕", "뼈해장국", "순대국밥")),
+    ("beef", ("소고기", "양지", "차돌", "불고기", "설렁탕", "곰탕", "스테이크")),
+    ("pork", ("돼지", "제육", "삼겹살", "보쌈", "수육", "돈가스", "돈카츠", "감자탕", "뼈해장국", "순대국밥")),
     ("chicken", ("닭", "치킨", "삼계탕")),
-    ("seafood", ("해물", "해산물", "해초", "새우", "오징어", "주꾸미", "낙지", "조개", "홍합", "바지락", "굴", "꼬막", "문어", "아귀", "대구", "복국", "생선", "연어", "참치", "고등어", "갈치", "꽁치", "장어", "매생이", "재첩", "톳")),
+    ("seafood", ("해물", "해산물", "해초", "새우", "오징어", "주꾸미", "낙지", "조개", "홍합", "바지락", "굴", "꼬막", "문어", "아귀", "대구", "복국", "생선", "연어", "참치", "광어", "초밥", "회", "고등어", "갈치", "꽁치", "장어", "매생이", "재첩", "톳")),
     ("tofu_bean", ("두부", "콩", "된장", "청국장", "비지", "두유")),
     ("egg_dairy", ("계란", "달걀", "에그", "치즈", "요거트", "우유", "크림")),
-    ("noodle_wheat", ("라면", "짜파게티", "비빔면", "국수", "파스타", "우동", "칼국수", "수제비", "베이글", "빵", "토스트", "샌드위치", "피자", "라자냐", "크루아상", "팬케이크")),
+    ("noodle_wheat", ("라면", "짜파게티", "비빔면", "국수", "분짜", "파스타", "우동", "칼국수", "수제비", "베이글", "빵", "토스트", "샌드위치", "피자", "라자냐", "크루아상", "팬케이크")),
     ("rice_grain", ("밥", "죽", "솥밥", "김밥", "떡", "오트밀", "그래놀라")),
     ("root", ("감자", "고구마", "단호박", "연근", "우엉", "토란")),
     ("vegetable", ("채소", "나물", "샐러드", "아보카도", "시금치", "청경채", "가지", "오이", "배추", "무생채")),
     ("mushroom", ("버섯",)),
-    ("fruit", ("과일", "사과", "키위", "배숙", "유자", "자몽")),
+    ("fruit", ("과일", "사과", "키위", "유자", "자몽")),
 )
 
 _LOW_FAMILIARITY = {
-    "아라비아타 파스타", "해산물 빠에야", "스키야키", "오뎅나베",
-    "돈코츠라멘", "감자뇨키", "똠얌꿍", "참치타다키",
+    "해산물 빠에야", "스키야키", "오뎅나베", "돈코츠라멘",
+    "감자뇨키", "똠얌꿍", "참치타다키",
 }
 
 _HIGH_FAMILIARITY = {
     "라면", "짜파게티", "비빔면", "후라이드치킨", "양념치킨", "간장치킨",
     "치킨버거", "햄버거", "불고기버거", "치즈버거", "새우버거",
     "제육볶음", "된장찌개", "김치찌개", "감자탕", "뼈해장국", "돼지국밥",
-    "순대국밥", "돈가스", "불고기", "오징어뭇국", "해물찜", "조개구이",
+    "순대국밥", "경양식 돈가스", "소고기불고기", "오징어뭇국", "해물찜", "조개구이",
 }
+
+# Group defaults express the dish's energy direction. Meal-time suitability is
+# intentionally overridden per dish so breakfast and snack never blur together.
+_PERIOD_OVERRIDES = {
+    "그린 스무디": "breakfast snack", "사과 셀러리 주스": "breakfast snack",
+    "키위 요거트": "breakfast snack", "말차 오트밀": "breakfast",
+    "아보카도 토스트": "breakfast", "BLT 샌드위치": "breakfast lunch",
+    "루꼴라 샌드위치": "breakfast lunch", "햄에그 샌드위치": "breakfast lunch",
+    "에그 샐러드 샌드위치": "breakfast lunch", "과일 그래놀라 볼": "breakfast snack",
+    "쑥떡과 차": "snack", "바질 토마토 파니니": "breakfast lunch",
+    "토마토 에그스크램블": "breakfast", "햄치즈 토스트": "breakfast snack",
+    "시나몬토스트": "breakfast snack", "길거리 토스트": "breakfast snack",
+    "떡볶이": "snack", "닭꼬치": "snack", "핫도그": "snack",
+    "생강차와 구운 떡": "snack", "계피차와 호두빵": "snack",
+    "자몽차와 에그타르트": "snack", "오트밀죽": "breakfast",
+    "딸기잼 토스트": "breakfast snack", "감자샐러드 샌드위치": "breakfast lunch",
+    "단호박샌드위치": "breakfast lunch", "통밀베이글": "breakfast snack",
+    "버터 크루아상": "breakfast snack", "바나나 팬케이크": "breakfast snack",
+    "프렌치토스트": "breakfast snack", "그래놀라 요거트": "breakfast snack",
+    "콘수프와 모닝빵": "breakfast", "배도라지차와 쌀과자": "snack",
+    "유자차와 백설기": "snack", "흰콩두유": "breakfast snack",
+    "플레인요거트": "breakfast snack", "치즈버거": "lunch dinner",
+    "치즈샌드위치": "breakfast lunch", "달걀샌드위치": "breakfast lunch",
+    "소금빵": "breakfast snack", "양송이스프": "breakfast lunch",
+    "야채수프": "breakfast lunch",
+    "새우버거": "lunch dinner", "검은콩밥": "lunch dinner",
+    "흑미밥": "lunch dinner", "검은깨죽": "breakfast",
+    "들깨미역국": "breakfast lunch dinner", "김밥": "breakfast lunch dinner snack",
+    "온메밀소바": "lunch dinner", "메밀전병": "snack",
+    "김국": "breakfast lunch dinner", "톳밥": "lunch dinner",
+    "검은콩국수": "lunch dinner", "과일화채": "snack",
+}
+
+
+def _periods_for(name: str, default_periods: str) -> frozenset[str]:
+    return frozenset(_PERIOD_OVERRIDES.get(name, default_periods).split())
 
 _INGREDIENT_KO = {
     "beef": "소고기",
@@ -100,7 +136,7 @@ def _group(
             element=element,
             group=group,
             seasons=frozenset(seasons.split()),
-            periods=frozenset(periods.split()),
+            periods=_periods_for(name.strip(), periods),
             tags=frozenset(tags.split()),
             ingredient=_ingredient_for(name.strip()),
             cuisine=_cuisine_for(name.strip(), group),
@@ -122,35 +158,35 @@ MENU_POOL = tuple(
     )
     + _group(
         "木", "wood_noodle", "spring summer autumn", "lunch dinner", "fresh light create",
-        "바질페스토 파스타|들기름 막국수|메밀 비빔국수|채소 쌀국수|잔치국수|부추 칼국수|비빔면|루꼴라 파스타|미나리 국수|짜파게티",
+        "바질페스토 파스타|들기름 막국수|메밀 비빔국수|양지 소고기 쌀국수|잔치국수|해물칼국수|비빔면|루꼴라 파스타|분짜|짜파게티",
     )
     + _group(
         "木", "wood_warm", "autumn winter spring", "lunch dinner", "balanced warm organize",
-        "채소카레|버섯덮밥|가지덮밥|청경채볶음|채소볶음밥|두부채소볶음|버섯리조또|시금치오믈렛|채소라자냐|잡채",
+        "소고기카레|버섯덮밥|가지덮밥|청경채볶음|채소볶음밥|두부채소볶음|버섯리조또|시금치오믈렛|시금치라자냐|잡채",
     )
     + _group(
         "木", "wood_breakfast", "spring summer", "breakfast snack", "fresh light record",
-        "그린 스무디|사과 셀러리 주스|키위 요거트|말차 오트밀|아보카도 토스트|허브 치즈 샌드위치|에그 샐러드 샌드위치|과일 그래놀라 볼|쑥떡과 차|바질 토마토 파니니",
+        "그린 스무디|사과 셀러리 주스|키위 요거트|말차 오트밀|아보카도 토스트|BLT 샌드위치|루꼴라 샌드위치|햄에그 샌드위치|에그 샐러드 샌드위치|과일 그래놀라 볼|쑥떡과 차|바질 토마토 파니니",
     )
     + _group(
         "木", "wood_tangy", "summer autumn", "lunch dinner", "fresh cool mediate",
-        "열무비빔밥|김치말이국수|묵은지 두부김치|오이냉국 정식|초계국수|유부초밥|매실소스 닭구이|불고기|불고기버거|치킨버거",
+        "열무비빔밥|김치말이국수|두부김치|오이냉국 정식|초계국수|유부초밥|닭다리살구이|소고기불고기|불고기버거|치킨버거",
     )
     + _group(
         "火", "fire_spicy_soup", "autumn winter", "lunch dinner", "warm hearty support",
-        "육개장|순두부찌개|김치찌개|부대찌개|해물짬뽕|마라탕|매운 닭개장|고추장찌개|알탕|매운 어묵탕",
+        "육개장|순두부찌개|김치찌개|부대찌개|해물짬뽕|마라탕|매운 닭개장|고추장찌개|알탕|매운탕|매운 어묵탕",
     )
     + _group(
         "火", "fire_grill", "spring summer autumn winter", "lunch dinner", "warm create move",
-        "닭갈비|제육볶음|주꾸미볶음|오징어볶음|고추장삼겹살|탄두리치킨|후라이드치킨|화덕피자|그릴드 스테이크|양념치킨",
+        "닭갈비|제육볶음|주꾸미볶음|오징어볶음|오징어제육볶음|고추장삼겹살|탄두리치킨|후라이드치킨|화덕피자|그릴드 스테이크|양념치킨",
     )
     + _group(
         "火", "fire_red_meal", "spring summer autumn winter", "lunch dinner", "warm create organize",
-        "토마토파스타|아라비아타 파스타|로제파스타|김치볶음밥|낙지볶음밥|매콤한 치킨카레|간장치킨|페퍼로니피자|해산물 빠에야|매운 소고기 쌀국수",
+        "토마토파스타|알리오 올리오|로제파스타|김치볶음밥|낙지볶음밥|매콤한 치킨카레|간장치킨|페퍼로니피자|해산물 빠에야|매운 소고기 쌀국수",
     )
     + _group(
         "火", "fire_snack", "autumn winter spring", "breakfast snack", "warm move record",
-        "토마토 에그스크램블|햄치즈 핫샌드위치|시나몬토스트|구운 파프리카 샌드위치|떡볶이|닭꼬치|매운 핫도그|생강차와 구운 떡|계피차와 호두빵|자몽차와 에그타르트",
+        "토마토 에그스크램블|햄치즈 토스트|시나몬토스트|길거리 토스트|떡볶이|닭꼬치|핫도그|생강차와 구운 떡|계피차와 호두빵|자몽차와 에그타르트",
     )
     + _group(
         "火", "fire_gentle_warmth", "autumn winter", "lunch dinner", "warm balanced mediate",
@@ -158,11 +194,11 @@ MENU_POOL = tuple(
     )
     + _group(
         "土", "earth_rice", "spring summer autumn winter", "lunch dinner", "balanced hearty organize",
-        "영양솥밥|버섯솥밥|곤드레밥|전복솥밥|오곡밥 정식|현미밥 정식|콩나물밥|시래기밥|밤밥|연근밥",
+        "영양솥밥|버섯솥밥|곤드레밥|전복솥밥|오곡밥 정식|현미밥 정식|콩밥|콩나물밥|시래기밥|밤밥|연근밥",
     )
     + _group(
         "土", "earth_root", "autumn winter", "lunch dinner", "warm hearty support",
-        "감자옹심이|감자수제비|고구마그라탱|단호박죽|팥죽|뿌리채소카레|우엉잡채|연근조림 정식|토란국|햄버거",
+        "감자옹심이|감자수제비|고구마그라탱|단호박죽|팥죽|야채카레|우엉잡채|연근조림 정식|토란국|햄버거",
     )
     + _group(
         "土", "earth_comfort", "spring autumn winter", "lunch dinner", "balanced warm stabilize",
@@ -170,11 +206,11 @@ MENU_POOL = tuple(
     )
     + _group(
         "土", "earth_breakfast", "spring summer autumn winter", "breakfast snack", "balanced support pace",
-        "오트밀죽|고구마토스트|감자샌드위치|단호박샌드위치|통밀베이글|버터 크루아상|바나나 팬케이크|프렌치토스트|그래놀라 요거트|콘수프와 모닝빵",
+        "오트밀죽|딸기잼 토스트|감자샐러드 샌드위치|단호박샌드위치|통밀베이글|버터 크루아상|바나나 팬케이크|프렌치토스트|그래놀라 요거트|콘수프와 모닝빵",
     )
     + _group(
         "土", "earth_global", "autumn winter spring", "lunch dinner", "hearty create stabilize",
-        "감자뇨키|버섯크림리조또|고구마피자|감자탕|뼈해장국|카레라이스|오므라이스|돼지국밥|순대국밥|돈가스",
+        "감자뇨키|버섯크림리조또|고구마피자|감자탕|뼈해장국|카레라이스|오므라이스|돼지국밥|순대국밥|경양식 돈가스|일본식 돈카츠",
     )
     + _group(
         "金", "metal_clear_soup", "autumn winter spring", "breakfast lunch dinner", "warm clear support",
@@ -186,15 +222,15 @@ MENU_POOL = tuple(
     )
     + _group(
         "金", "metal_simple_protein", "spring summer autumn winter", "lunch dinner", "clear balanced protect",
-        "돼지고기수육|보쌈 정식|편백찜|닭가슴살구이|흰살생선구이|두부스테이크|계란찜 정식|새우소금구이|소고기편채|오리훈제샐러드",
+        "돼지고기수육|보쌈 정식|편백찜|닭가슴살구이|흰살생선구이|두부스테이크|계란찜|새우소금구이|소고기편채|오리훈제샐러드",
     )
     + _group(
         "金", "metal_clean_meal", "spring summer autumn winter", "lunch dinner", "clear create mediate",
-        "소금라멘|봉골레파스타|버섯크림파스타|치킨크림리조또|새우필라프|유산슬덮밥|중화잡채밥|닭고기쌀국수|하얀짬뽕|차돌숙주볶음밥",
+        "어향가지|봉골레파스타|버섯크림파스타|치킨크림리조또|새우필라프|유산슬덮밥|중화잡채밥|닭고기쌀국수|하얀짬뽕|차돌숙주볶음밥",
     )
     + _group(
         "金", "metal_breakfast", "spring summer autumn winter", "breakfast snack", "light clear record",
-        "배도라지차와 쌀과자|유자차와 백설기|흰콩두유|플레인요거트|치즈버거|치즈샌드위치|달걀샌드위치|소금빵|배숙|새우버거",
+        "배도라지차와 쌀과자|유자차와 백설기|흰콩두유|플레인요거트|치즈버거|치즈샌드위치|달걀샌드위치|소금빵|양송이스프|야채수프|새우버거",
     )
     + _group(
         "水", "water_sea_soup", "autumn winter spring", "breakfast lunch dinner", "broth warm moisten",
@@ -206,7 +242,7 @@ MENU_POOL = tuple(
     )
     + _group(
         "水", "water_black_food", "autumn winter spring", "breakfast lunch dinner", "balanced moisten record",
-        "검은콩밥|흑미밥|검은깨죽|들깨미역국|김밥 정식|온메밀소바|메밀전병|김국|톳밥|검은콩국수",
+        "검은콩밥|흑미밥|검은깨죽|들깨미역국|김밥|온메밀소바|메밀전병|김국|톳밥|검은콩국수",
     )
     + _group(
         "水", "water_cool_light", "spring summer", "lunch dinner snack", "cool light moisten",
@@ -214,7 +250,7 @@ MENU_POOL = tuple(
     )
     + _group(
         "水", "water_global", "spring summer autumn winter", "lunch dinner", "broth create move",
-        "해산물파스타|해산물리조또|생선가스|연어스테이크|참치타다키|새우팟타이|해물볶음우동|똠얌꿍|해물찜|조개찜",
+        "해산물파스타|해산물리조또|생선가스|연어스테이크|참치타다키|새우팟타이|해물볶음우동|똠얌꿍|해물찜|조개찜|모둠초밥|연어초밥|광어회|오코노미야키",
     )
 )
 

@@ -17,20 +17,23 @@ class DailyMenuServiceTests(TestCase):
             count=2,
         )
 
-    def test_pool_has_250_unique_real_menu_names(self):
-        self.assertEqual(len(MENU_POOL), 250)
-        self.assertEqual(len({item.name for item in MENU_POOL}), 250)
+    def test_pool_has_a_broad_unique_real_menu_selection(self):
+        self.assertGreaterEqual(len(MENU_POOL), 200)
+        self.assertEqual(len({item.name for item in MENU_POOL}), len(MENU_POOL))
 
     def test_pool_prefers_recognizable_korean_choices(self):
         names = {item.name for item in MENU_POOL}
         self.assertTrue({
             "라면", "짜파게티", "비빔면", "후라이드치킨", "양념치킨",
             "간장치킨", "햄버거", "치킨버거", "감자탕", "돼지국밥",
-            "오징어뭇국", "해물찜", "조개구이",
+            "오징어뭇국", "해물찜", "조개구이", "소고기불고기",
+            "콩밥", "분짜", "알리오 올리오", "어향가지", "모둠초밥",
+            "광어회", "오코노미야키", "양송이스프",
         }.issubset(names))
         self.assertTrue({
             "레몬 허브 치킨", "렌틸콩스튜", "배 리코타샐러드",
-            "사워크라우트 소시지 플레이트",
+            "사워크라우트 소시지 플레이트", "소금라멘", "계란찜 정식",
+            "배숙", "고구마토스트", "아라비아타 파스타",
         }.isdisjoint(names))
 
     def test_candidates_have_lifestyle_metadata(self):
@@ -38,14 +41,17 @@ class DailyMenuServiceTests(TestCase):
         self.assertTrue(all(item.cuisine for item in MENU_POOL))
         self.assertTrue(all(1 <= item.familiarity <= 4 for item in MENU_POOL))
 
-    def test_pool_is_evenly_distributed_by_element_and_group(self):
-        self.assertEqual(
-            Counter(item.element for item in MENU_POOL),
-            Counter({"木": 50, "火": 50, "土": 50, "金": 50, "水": 50}),
-        )
-        self.assertTrue(all(count == 10 for count in Counter(
-            item.group for item in MENU_POOL
-        ).values()))
+    def test_pool_has_broad_coverage_without_forcing_equal_counts(self):
+        element_counts = Counter(item.element for item in MENU_POOL)
+        self.assertEqual(set(element_counts), set("木火土金水"))
+        self.assertTrue(all(count >= 40 for count in element_counts.values()))
+
+    def test_breakfast_and_snack_are_classified_separately(self):
+        by_name = {item.name: item for item in MENU_POOL}
+        self.assertEqual(by_name["닭꼬치"].periods, frozenset({"snack"}))
+        self.assertEqual(by_name["떡볶이"].periods, frozenset({"snack"}))
+        self.assertNotIn("snack", by_name["토마토 에그스크램블"].periods)
+        self.assertNotIn("breakfast", by_name["치즈버거"].periods)
 
     def test_recommendation_is_deterministic_and_diverse(self):
         first = self._recommend()
