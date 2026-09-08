@@ -374,7 +374,11 @@
                         <div class="grid-cell"><span style="font-size: 12px; color: #64748B; font-weight: 600; display: block;">🍀 행운의 아이템</span><p id="resItem" style="font-weight: 800; margin-top: 3px; font-size: 14px; color: #0F172A;">실버 메탈 시계</p></div>
                         <div class="grid-cell"><span style="font-size: 12px; color: #64748B; font-weight: 600; display: block;">🔢 행운의 숫자</span><p id="resNumber" style="font-weight: 800; margin-top: 3px; font-size: 14.5px; color: #0F172A;">4, 9</p></div>
                         <div class="grid-cell"><span style="font-size: 12px; color: #64748B; font-weight: 600; display: block;">🧭 행운의 방위</span><p id="resDirection" style="font-weight: 800; margin-top: 3px; font-size: 14px; color: #0F172A;">정서쪽 (백호 방위)</p></div>
-                        <div class="grid-cell"><span style="font-size: 12px; color: #64748B; font-weight: 600; display: block;">🍲 추천 메뉴</span><p id="resMenu" style="font-weight: 800; margin-top: 3px; font-size: 14px; color: #0F172A;">속이 편안한 영양 솥밥</p></div>
+                        <div class="grid-cell">
+                            <span id="resMenuLabel" style="font-size: 12px; color: #64748B; font-weight: 600; display: block;">🍲 추천 메뉴</span>
+                            <p id="resMenu" style="font-weight: 800; margin: 3px 0 8px; font-size: 14px; line-height: 1.65; white-space: pre-line; color: #0F172A;">속이 편안한 영양 솥밥</p>
+                            <button id="menuModeToggle" type="button" onclick="toggleMenuMode()" style="width: 100%; border: 1px solid #BBF7D0; background: #F0FDF4; color: #166534; border-radius: 8px; padding: 6px 8px; font-size: 11.5px; font-weight: 800; cursor: pointer;">다이어트 식단으로 보기</button>
+                        </div>
                     </div>
 
                     <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 12px 14px;">
@@ -993,6 +997,7 @@
         let tarotDrawnToday = false;
 
         let currentFortuneData = null;
+        let currentMenuMode = 'general';
         let currentLuckyColors = ["네이비", "스카이블루"];
         let baseFashionStyle = "네이비 쿨 티셔츠 & 플랙 연청 데님";
 
@@ -1047,6 +1052,47 @@
 
         function getSajuStorageKey(kakaoId) {
             return kakaoId ? `dalha_custom_saju:${kakaoId}` : 'dalha_custom_saju';
+        }
+
+        function getMenuModeStorageKey(kakaoId = localStorage.getItem('dalha_kakao_id')) {
+            return kakaoId ? `dalha_menu_mode:${kakaoId}` : 'dalha_menu_mode';
+        }
+
+        function getSavedMenuMode() {
+            return localStorage.getItem(getMenuModeStorageKey()) === 'diet' ? 'diet' : 'general';
+        }
+
+        function saveMenuMode(mode) {
+            localStorage.setItem(getMenuModeStorageKey(), mode);
+        }
+
+        function renderRecommendedMenu() {
+            const fortune = currentFortuneData?.daily_fortune || {};
+            const menuEl = document.getElementById('resMenu');
+            const labelEl = document.getElementById('resMenuLabel');
+            const toggleEl = document.getElementById('menuModeToggle');
+            if (!menuEl || !labelEl || !toggleEl) return;
+
+            const dietMeals = fortune.diet_meal_plan?.meals || [];
+            if (currentMenuMode === 'diet' && dietMeals.length) {
+                const periodNames = { breakfast: '아침', lunch: '점심', dinner: '저녁' };
+                labelEl.innerText = '🥗 오늘의 다이어트 식단';
+                menuEl.innerText = dietMeals
+                    .map(meal => `${periodNames[meal.period] || meal.period} · ${meal.menu}`)
+                    .join('\n');
+                toggleEl.innerText = '일반 메뉴로 보기';
+            } else {
+                currentMenuMode = 'general';
+                labelEl.innerText = '🍲 추천 메뉴';
+                menuEl.innerText = fortune.recommended_menu || '추천 메뉴를 준비하고 있어요';
+                toggleEl.innerText = '다이어트 식단으로 보기';
+            }
+        }
+
+        function toggleMenuMode() {
+            currentMenuMode = currentMenuMode === 'diet' ? 'general' : 'diet';
+            saveMenuMode(currentMenuMode);
+            renderRecommendedMenu();
         }
 
         function saveUserSajuToLocal(data, kakaoId = localStorage.getItem('dalha_kakao_id')) {
@@ -1423,7 +1469,8 @@
             document.getElementById('resItem').innerText = data.daily_fortune.lucky_item;
             document.getElementById('resNumber').innerText = data.daily_fortune.lucky_number;
             document.getElementById('resDirection').innerText = data.daily_fortune.lucky_direction;
-            document.getElementById('resMenu').innerText = data.daily_fortune.recommended_menu;
+            currentMenuMode = getSavedMenuMode();
+            renderRecommendedMenu();
             document.getElementById('resMindset').innerText = data.daily_fortune.mindset;
             document.getElementById('resGaewoon').innerText = data.daily_fortune.action;
 

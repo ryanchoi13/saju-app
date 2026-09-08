@@ -52,11 +52,11 @@ class DailyFortuneServiceTests(TestCase):
         self.assertEqual(result["lucky_number"], "2, 7")
         self.assertEqual(result["lucky_direction"], "남쪽 (화 기운)")
         self.assertGreaterEqual(result["menu_pool_size"], 200)
-        self.assertEqual(len(result["recommended_menus"]), 2)
-        self.assertEqual(
-            result["recommended_menu"],
-            " · ".join(result["recommended_menus"]),
-        )
+        self.assertEqual(len(result["recommended_menus"]), 1)
+        self.assertEqual(result["recommended_menu"], result["recommended_menus"][0])
+        self.assertEqual(result["diet_meal_plan"]["mode"], "diet")
+        self.assertEqual(len(result["diet_meal_plan"]["meals"]), 3)
+        self.assertIn(result["diet_meal_plan"]["diet_meal_count"], {1, 2})
 
     def test_fortune_changes_with_the_actual_daily_pillar(self):
         first_date = date(2026, 9, 7)

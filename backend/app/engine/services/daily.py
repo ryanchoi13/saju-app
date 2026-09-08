@@ -7,7 +7,10 @@ from datetime import date
 from app.engine.constants import GAN_KO, ZHI_KO
 from app.engine.core.models import MyeongriCoreResult
 from app.engine.semantic.queries import build_service_query
-from app.engine.services.daily_menu import recommend_daily_menus
+from app.engine.services.daily_menu import (
+    recommend_daily_diet_plan,
+    recommend_daily_menus,
+)
 
 
 DAILY_FORTUNE_VERSION = "daily-fortune-core-v1"
@@ -335,6 +338,9 @@ def build_daily_fortune(
     target_date: date,
     *,
     current_hour: int | None = None,
+    recent_menus: frozenset[str] = frozenset(),
+    used_cuisines: frozenset[str] = frozenset(),
+    used_menus: frozenset[str] = frozenset(),
 ) -> dict:
     """Render one evidence-aware day without allowing shensha to decide it alone."""
 
@@ -416,7 +422,18 @@ def build_daily_fortune(
         daily_ganji=ganji_han,
         lucky_element=lucky_element,
         primary_operation=operation_name,
-        count=2,
+        count=1,
+        recent_menus=recent_menus,
+        used_cuisines=used_cuisines,
+        used_menus=used_menus,
+    )
+    diet_meal_plan = recommend_daily_diet_plan(
+        target_date=target_date,
+        day_master=core.natal_facts.day_master.stem,
+        daily_ganji=ganji_han,
+        lucky_element=lucky_element,
+        primary_operation=operation_name,
+        recent_menus=recent_menus,
     )
 
     advice_parts = [
@@ -462,11 +479,12 @@ def build_daily_fortune(
         ),
         "lucky_number": element["numbers"],
         "lucky_direction": f"{element['direction']} ({element['ko']} 기운)",
-        "recommended_menu": " · ".join(menu_selection["menus"]),
+        "recommended_menu": menu_selection["menus"][0],
         "recommended_menus": menu_selection["menus"],
         "recommended_menu_reason": menu_selection["reason"],
         "menu_pool_size": menu_selection["pool_size"],
         "menu_pool_version": menu_selection["pool_version"],
+        "diet_meal_plan": diet_meal_plan,
         "menu_context": {
             "season": menu_selection["season"],
             "meal_period": menu_selection["meal_period"],
