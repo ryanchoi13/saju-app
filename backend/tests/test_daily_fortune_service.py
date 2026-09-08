@@ -56,7 +56,7 @@ class DailyFortuneServiceTests(TestCase):
         self.assertEqual(result["recommended_menu"], result["recommended_menus"][0])
         self.assertNotIn("diet_meal_plan", result)
         self.assertNotIn("general_meal_plan", result)
-        self.assertEqual(result["menu_pool_version"], "simple-menu-v1")
+        self.assertEqual(result["menu_pool_version"], "simple-menu-v4-catalog-review")
 
     def test_fortune_changes_with_the_actual_daily_pillar(self):
         first_date = date(2026, 9, 7)

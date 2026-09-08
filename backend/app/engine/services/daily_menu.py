@@ -12,6 +12,7 @@ from app.engine.services.meal_nutrition import serving_suggestion, meal_estimate
 from app.engine.services.menu_frequency import frequency_evidence, frequency_bonus
 from app.engine.services.menu_demographics import demographic_evidence
 from app.engine.services.meal_feedback import preference_bonus
+from app.engine.services.menu_frequency_review import REVIEWED_POPULARITY
 
 
 MENU_POOL_VERSION = "daily-menu-pool-v3"
@@ -132,6 +133,7 @@ def _consumer_metadata(name: str, cuisine: str, familiarity: int) -> tuple[int, 
     if name in _LOW_FAMILIARITY:
         popularity, accessibility = 1, 2
     popularity, accessibility = _CONSUMER_OVERRIDES.get(name, (popularity, accessibility))
+    popularity = REVIEWED_POPULARITY.get(name, popularity)
     groups = {"young_adult", "middle_adult"}
     if any(word in name for word in _YOUTH_WORDS):
         groups.update({"child", "teen"})
@@ -478,6 +480,10 @@ MENU_POOL = tuple(
         "해산물파스타|해산물리조또|생선가스|연어스테이크|참치타다키|새우팟타이|해물볶음우동|똠얌꿍|해물찜|조개찜|모둠초밥|연어초밥|광어회|오코노미야키",
     )
 )
+
+
+from .menu_catalog_revision import apply_catalog_revision
+MENU_POOL = apply_catalog_revision(MENU_POOL, _group)
 
 
 # The diet pool is intentionally separate from the general pool.  These are

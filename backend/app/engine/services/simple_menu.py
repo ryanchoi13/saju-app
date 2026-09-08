@@ -7,7 +7,7 @@ import math
 from .daily_menu import MENU_POOL
 from .menu_categories import menu_category
 
-VERSION = "simple-menu-v1"
+VERSION = "simple-menu-v4-catalog-review"
 
 def variation(seed, key, scale=2):
     value = int(hashlib.sha256(f"{seed}|{key}".encode()).hexdigest()[:12], 16)
@@ -16,11 +16,12 @@ def variation(seed, key, scale=2):
 
 
 def eligible_menus():
-    excluded = {"drink", "snack", "smoothie", "bread", "breakfast_bowl", "vegetable_meal", "raw_fish", "western_soup"}
-    side_only = {"해파리냉채", "청경채볶음과 두부구이", "두부채소볶음", "콩밥", "검은콩밥", "톳밥", "홍합탕", "매운 어묵탕"}
-    pool = [m for m in MENU_POOL if m.periods & {"lunch", "dinner"} and m.name not in side_only
-            and m.familiarity >= 3 and m.accessibility >= 3 and menu_category(m.name) not in excluded]
-    return pool
+    """Food ideas for any time of day, not prescribed complete meals.
+
+    Familiarity and frequency affect ranking, never pool membership.
+    Keep the separately stored diet-only pool out of this general-food pool.
+    """
+    return list(MENU_POOL)
 
 
 def select_menus(*, day, seed, weights, history=(), saju_scale=0.5):
@@ -74,5 +75,5 @@ def daily_choices(birth, target_date, weights, account_key=None):
             db.rollback()
             raise
     return {"menus": names, "pool_size": len(eligible_menus()), "pool_version": VERSION,
-            "reason": "익숙한 음식에 사주 원국과 오늘의 흐름을 참고한 메뉴 제안입니다. 두 가지 중 하나를 골라보세요.",
+            "reason": "사주 원국과 오늘의 흐름을 참고한 음식 제안입니다. 식사나 간식으로 상황에 맞게 참고해보세요.",
             "season": None, "meal_period": "any"}
