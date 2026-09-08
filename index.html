@@ -1138,7 +1138,7 @@
             labelEl.innerText = '🍲 오늘의 추천 메뉴';
             const menus = fortune.recommended_menus || [fortune.recommended_menu].filter(Boolean);
             menuEl.innerText = menus.length
-                ? menus.slice(0, 2).map((menu, index) => `${index ? '다른 선택' : '오늘의 메뉴'} · ${menu}`).join('\n')
+                ? menus.slice(0, 2).join(' / ')
                 : '추천 메뉴를 준비하고 있어요';
             document.getElementById('menuModeToggle').hidden = true;
             document.getElementById('menuPlanLike').hidden = true;
