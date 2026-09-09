@@ -34,7 +34,9 @@ class DailyFortuneServiceTests(TestCase):
             result["evidence_summary"]["scope"],
             "natal+luck_cycle+annual+monthly+daily",
         )
-        self.assertIn("을유(乙酉) 일진", result["advice"])
+        self.assertNotIn("일진", result["advice"])
+        self.assertNotIn("겁재", result["advice"])
+        self.assertIn("역할", result["advice"])
 
     def test_lucky_item_comes_from_core_operation_and_element(self):
         target = date(2026, 9, 8)
