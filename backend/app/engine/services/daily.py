@@ -8,6 +8,7 @@ from app.engine.constants import GAN_KO, ZHI_KO
 from app.engine.core.models import MyeongriCoreResult
 from app.engine.semantic.queries import build_service_query
 from app.engine.services.simple_menu import daily_choices
+from app.engine.services.daily_guidance import build_daily_guidance
 
 
 DAILY_FORTUNE_VERSION = "daily-fortune-core-v1"
@@ -466,7 +467,8 @@ def build_daily_fortune(
     advice = " ".join(advice_parts)
 
     morning = f"오늘의 중심인 {theme['topic']}에 맞춰 해야 할 일과 확인할 일을 먼저 나눠보세요."
-    afternoon = theme["action"]
+    guidance = build_daily_guidance(query, daily_god, relations)
+    afternoon = guidance["action"]
     evening = (
         "낮에 생긴 변수와 약속을 다시 확인하고, 내일로 넘길 일은 분명히 구분해 두세요."
         if tensions else
@@ -485,8 +487,8 @@ def build_daily_fortune(
         "badge_style": _badge_style(score),
         "advice": advice,
         "time_flow": {"morning": morning, "afternoon": afternoon, "evening": evening},
-        "mindset": theme["mindset"],
-        "action": theme["action"],
+        "mindset": guidance["mindset"],
+        "action": guidance["action"],
         "lucky_element": lucky_element,
         "lucky_item": item,
         "lucky_item_reason": (
@@ -512,6 +514,7 @@ def build_daily_fortune(
         },
         "supporting_shensha": [_SHENSHA_KO[name][0] for name in shensha],
         "evidence_summary": {
+            "guidance": guidance["evidence"],
             "scope": query["scope"],
             "daily_ten_god": daily_god,
             "daily_relationship_types": list(dict.fromkeys(item["type"] for item in relations)),
