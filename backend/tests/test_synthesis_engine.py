@@ -39,6 +39,99 @@ def _complete_diagnostics():
 
 
 class SynthesisEngineTests(TestCase):
+    def test_completed_observation_does_not_approve_conditional_operation(self):
+        diagnostics = _complete_diagnostics()
+        diagnostics['mediation'] = _diagnostic('mediation', 'mediation_absent', operations=[{
+            'operation': 'mediate_control_conflict', 'element': '水',
+            'assessment_status': 'conditional', 'conflict_id': 'metal-controls-wood',
+            'availability': 'absent', 'unresolved_requirements': ['verify_need'],
+        }])
+        result, _ = synthesize_diagnostics(diagnostics)
+        self.assertFalse(any('水' in o['elements'] for o in result.favorable_operations))
+        pending = result.pending_operations[0]
+        self.assertEqual(pending['reason'], 'operation_judgment_unconfirmed')
+        self.assertEqual(pending['conflict_id'], 'metal-controls-wood')
+        self.assertEqual(pending['unresolved_requirements'], ['verify_need'])
+        self.assertIn('preserve_balance', [o['operation'] for o in result.favorable_operations])
+
+    def test_completed_operation_label_cannot_hide_unresolved_requirements(self):
+        diagnostics = _complete_diagnostics()
+        diagnostics['mediation'] = _diagnostic('mediation', 'mediation_available', operations=[{
+            'operation': 'mediate_control_conflict', 'element': '木',
+            'assessment_status': 'completed', 'unresolved_requirements': ['verify_endpoint_role'],
+        }])
+        result, _ = synthesize_diagnostics(diagnostics)
+        self.assertFalse(any('木' in o['elements'] for o in result.favorable_operations))
+        self.assertEqual(result.pending_operations[0]['reason'], 'operation_judgment_unconfirmed')
+
+    def test_confirmed_operations_remain_available_beside_pending_ones(self):
+        diagnostics = _complete_diagnostics()
+        diagnostics['climate'] = _diagnostic('climate', 'cool', operations=[
+            {'operation': 'warming', 'element': '火', 'assessment_status': 'completed'},
+            {'operation': 'moistening', 'element': '水', 'assessment_status': 'conditional'},
+        ])
+        result, _ = synthesize_diagnostics(diagnostics)
+        self.assertIn('火', [e for o in result.favorable_operations for e in o['elements']])
+        self.assertNotIn('水', [e for o in result.favorable_operations for e in o['elements']])
+        self.assertEqual(result.pending_operations[0]['element'], '水')
+
+    def test_conditional_urgency_cannot_override_completed_direction(self):
+        diagnostics = _complete_diagnostics()
+        diagnostics['climate'] = _diagnostic('climate', 'cool', operations=[
+            {'operation': 'warming', 'element': '火', 'urgency': 'low'}])
+        diagnostics['mediation'] = _diagnostic('mediation', 'mediation_conditional',
+            status='conditional', operations=[
+                {'operation': 'cooling', 'element': '水', 'urgency': 'high'}])
+        result, _ = synthesize_diagnostics(diagnostics)
+        self.assertIn('warm', [o['operation'] for o in result.favorable_operations])
+        self.assertNotIn('cool', [o['operation'] for o in result.favorable_operations])
+        self.assertNotIn('cool', [o['operation'] for o in result.caution_operations])
+        self.assertEqual(result.pending_operations[0]['operation'], 'cool')
+
+    def test_pending_duplicate_does_not_inflate_evidence_or_urgency(self):
+        diagnostics = _complete_diagnostics()
+        diagnostics['strength'] = _diagnostic('strength', 'weak')
+        diagnostics['climate'] = _diagnostic('climate', 'mixed', status='conditional', operations=[
+            {'operation': 'stabilize_root_or_support', 'urgency': 'high'}])
+        result, _ = synthesize_diagnostics(diagnostics)
+        support = next(o for o in result.favorable_operations if o['operation'] == 'support')
+        self.assertEqual(support['independent_evidence_sources'], ['strength'])
+        self.assertEqual(support['urgency'], 'low')
+
+    def test_completed_wrapper_does_not_certify_conditional_origin(self):
+        diagnostics = _complete_diagnostics()
+        diagnostics['strength'] = _diagnostic('strength', 'weak', status='conditional')
+        diagnostics['pathology'] = _diagnostic('pathology', 'deficiency', operations=[
+            {'operation': 'restore_supporting_capacity', 'bottleneck_id': 'bottleneck:deficiency'}])
+        result, _ = synthesize_diagnostics(diagnostics)
+        self.assertFalse(any(o['operation'] == 'support' for o in result.favorable_operations))
+        self.assertEqual(len(result.pending_operations), 2)
+
+    def test_pending_element_neither_becomes_lucky_nor_unlucky(self):
+        from app.engine.semantic.engine import build_semantic_state
+        from app.engine.core.models import ActivatedState
+        diagnostics = _complete_diagnostics()
+        diagnostics['mediation'] = _diagnostic('mediation', 'mediation_conditional',
+            status='conditional', operations=[{'operation':'mediate_control_conflict', 'element':'水'}])
+        result, _ = synthesize_diagnostics(diagnostics)
+        state, _ = build_semantic_state(result, ActivatedState())
+        self.assertNotIn('水', state.favorable_elements)
+        self.assertNotIn('水', state.caution_elements)
+        self.assertNotIn('mediate', state.action_tendencies)
+
+    def test_pending_operation_is_not_used_as_temporal_prescription(self):
+        from app.engine.timing.direction import compare_temporal_directions
+        diagnostics = _complete_diagnostics()
+        diagnostics['climate'] = _diagnostic('climate', 'dry', status='conditional',
+            operations=[{'operation':'moistening', 'element':'水'}])
+        result, _ = synthesize_diagnostics(diagnostics)
+        conditions = {'records': [{'relationship_id':'test:clash', 'scope':'daily',
+            'type':'branch_clash', 'eligibility':'conditional', 'evidence_ids':['test:condition'],
+            'checks': {'member_supply': {'水': {}}}}]}
+        comparison, _ = compare_temporal_directions(conditions, result)
+        self.assertEqual(comparison['records'][0]['comparisons'], [])
+        self.assertEqual(comparison['records'][0]['comparison_summary'], 'unresolved')
+
     def test_complete_ordinary_chart_produces_medium_confidence_summary(self):
         result, evidence = synthesize_diagnostics(_complete_diagnostics())
 

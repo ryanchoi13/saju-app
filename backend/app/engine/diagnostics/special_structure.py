@@ -17,10 +17,11 @@ from app.engine.core.models import (
     RootFacts,
     TenGod,
     TenGodFacts,
+    TransformationStatus,
 )
 
 
-SPECIAL_STRUCTURE_DIAGNOSTIC_VERSION = "special-structure-diagnostic-v1"
+SPECIAL_STRUCTURE_DIAGNOSTIC_VERSION = "special-structure-diagnostic-v3-scoped-classification"
 SPECIAL_STRUCTURE_RULE_VERSION = "special-structure-conservative-v1"
 
 _SUPPORTING_GODS = {
@@ -227,6 +228,23 @@ def _transformation_candidates(
 
         target = relation.transformation.target_element
         supply = _element_supply(target, inventory, roots)
+        assessment = relation.transformation.assessment
+        if (relation.transformation.scope == 'day_master_structure'
+                and relation.transformation.kind in {'true', 'fake'}
+                and assessment.get('classification_status') == 'established'):
+            results.append({
+                'type': 'transformation_structure',
+                'subtype': f'{relation.transformation.kind}_transform_to_{target}',
+                'formation_status': 'conditional', 'classification_status': 'established',
+                'transformation_kind': relation.transformation.kind,
+                'relationship_id': relation.id, 'target_element': target,
+                'target_supply': supply, 'source_assessment': assessment,
+                'prescription_status': 'unresolved',
+                'evidence_ids': list(relation.evidence_ids),
+                'supporting_conditions': ['선행 원국 판정에서 일간이 참여하는 변화의 종류를 구별함'],
+                'breaking_conditions': ['변화 종류의 판정과 세력·조절 방향의 판정은 별도임'],
+            })
+            continue
 
         supports = ["일간이 천간합의 구성원임"]
         breakers = []
@@ -251,13 +269,15 @@ def _transformation_candidates(
 
         core_formed = (
             relation.action_status in {"active", "resolved"}
-            and relation.transformation.status.value in {"conditional", "established"}
+            and relation.transformation.status is TransformationStatus.ESTABLISHED
             and month_element == target
             and supply["availability"] == "visible_and_rooted"
             and not day_roots
             and not relation.competing_relationship_ids
         )
-        if core_formed:
+        if relation.transformation.status is TransformationStatus.NOT_ESTABLISHED:
+            formation_status = "not_established"
+        elif core_formed:
             formation_status = "established"
         elif relation.action_status != "blocked" and target != day_element:
             formation_status = "conditional"
@@ -326,7 +346,8 @@ def diagnose_special_structure(
         status = "conditional"
         confidence = ConfidenceLevel.LOW
     elif conditional:
-        conclusion = "special_structure_possible"
+        classified = [item for item in conditional if item.get('classification_status') == 'established']
+        conclusion = classified[0]['subtype'] if len(classified) == 1 else "special_structure_possible"
         status = "conditional"
         confidence = ConfidenceLevel.LOW
     else:

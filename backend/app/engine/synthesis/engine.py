@@ -14,7 +14,7 @@ from app.engine.core.models import (
 )
 
 
-SYNTHESIS_ENGINE_VERSION = "diagnostic-synthesis-v1"
+SYNTHESIS_ENGINE_VERSION = "diagnostic-synthesis-v4-extreme-direction-assessment"
 SYNTHESIS_PRIORITY_VERSION = "special-urgent-common-conflict-v1"
 
 _REQUIRED_MODULES = (
@@ -43,6 +43,7 @@ _PURPOSES = {
 }
 _META_OPERATIONS = {
     "verify_formation",
+    "verify_relationship_effect",
     "preserve_alternatives",
     "recheck_after_relationship_changes",
     "prioritize_special_structure_in_synthesis",
@@ -122,6 +123,9 @@ def _raw_operations(diagnostics: Mapping[str, DiagnosticResult]) -> tuple[list[d
                 "element": item.get("element"),
                 "side_effects": list(item.get("side_effects", [])),
                 "evidence_ids": list(diagnostic.evidence_ids),
+                "assessment_status": item.get("assessment_status"),
+                "unresolved_requirements": list(item.get("unresolved_requirements", [])),
+                "conflict_id": item.get("conflict_id"),
             }
             operations.append(record)
 
@@ -213,6 +217,45 @@ def _group_operations(raw: list[dict]) -> list[dict]:
             item["operation"],
         ),
     )
+
+
+def _split_pending_operations(raw, diagnostics):
+    """Unconfirmed evidence is neither favorable nor harmful evidence.
+
+    Check known upstream origins too: a completed pathology wrapper cannot
+    certify a conditional strength/climate diagnosis it was derived from.
+    """
+    ready, pending = [], []
+    for item in raw:
+        modules = {item['source_module']}
+        if item['evidence_origin'] in diagnostics:
+            modules.add(item['evidence_origin'])
+        source_states = {module: (
+            'missing' if module not in diagnostics else
+            'undetermined' if diagnostics[module].conclusion == 'undetermined' else
+            diagnostics[module].status
+        ) for module in sorted(modules)}
+        assessment = item.get('assessment_status')
+        strength = diagnostics.get('strength')
+        extreme_direction_unjudged = (
+            item['evidence_origin'] == 'strength' and strength is not None
+            and strength.conclusion in {'extremely_strong', 'extremely_weak'}
+            and not _established_special(diagnostics.get('special_structure'))
+        )
+        if extreme_direction_unjudged:
+            pending.append({**item, 'reason': 'extreme_strength_direction_unconfirmed',
+                            'unresolved_requirements': sorted(set(item.get('unresolved_requirements', []))
+                                | {'extreme_structure_response_direction'}),
+                            'source_states': source_states})
+        elif (assessment is not None and assessment != 'completed') or item.get('unresolved_requirements'):
+            pending.append({**item, 'reason': 'operation_judgment_unconfirmed',
+                            'source_states': source_states})
+        elif any(status != 'completed' for status in source_states.values()):
+            pending.append({**item, 'reason': 'source_judgment_unconfirmed',
+                            'source_states': source_states})
+        else:
+            ready.append(item)
+    return ready, pending
 
 
 def _established_special(diagnostic: DiagnosticResult | None) -> str | None:
@@ -348,6 +391,7 @@ def synthesize_diagnostics(
     ]
 
     raw, cautions = _raw_operations(diagnostics)
+    raw, pending = _split_pending_operations(raw, diagnostics)
     raw, cautions, special_conflicts = _apply_special_precedence(
         raw, cautions, diagnostics.get("special_structure")
     )
@@ -376,6 +420,12 @@ def synthesize_diagnostics(
         "special_status": special.status if special else "missing",
         "special_precedence": bool(established_special),
         "ordinary_alternative_preserved": not bool(established_special) or bool(diagnostic_conflicts),
+        "special_classifications": [
+            {key: item.get(key) for key in ('subtype', 'transformation_kind', 'classification_status',
+                                           'target_element', 'prescription_status', 'evidence_ids')}
+            for item in (special.signals if special else [])
+            if item.get('classification_status') == 'established'
+        ],
     }
     climate_state = {
         "state": climate.conclusion if climate else None,
@@ -396,7 +446,7 @@ def synthesize_diagnostics(
     if missing or insufficient:
         confidence = ConfidenceLevel.UNDETERMINED
         summary = "일부 독립 진단이 부족해 사용 가능한 결과만 보존한 부분 종합"
-    elif conditional or unresolved_conflicts or directional_conflicts_present:
+    elif conditional or pending or unresolved_conflicts or directional_conflicts_present:
         confidence = ConfidenceLevel.LOW
         summary = "진단 간 조건과 충돌을 보존하며 우선 작용을 정리한 조건부 종합"
     elif established_special:
@@ -427,6 +477,7 @@ def synthesize_diagnostics(
             "insufficient_modules": insufficient,
             "conditional_modules": conditional,
             "favorable_operations": favorable,
+            "pending_operations": pending,
             "caution_operations": cautions,
             "diagnostic_conflicts": diagnostic_conflicts,
             "fixed_weight_used": False,
@@ -442,6 +493,7 @@ def synthesize_diagnostics(
             strength_state=strength.conclusion if strength else None,
             climate_state=climate_state,
             favorable_operations=favorable,
+            pending_operations=pending,
             caution_operations=cautions,
             diagnostic_conflicts=diagnostic_conflicts,
             summary=summary,

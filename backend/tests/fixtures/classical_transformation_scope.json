@@ -1,0 +1,20 @@
+{
+  "version": "transformation-scope-development-v1",
+  "scope": "natal_day_master_classification",
+  "selection": "구현 중 읽은 化象·假化 사례. 정답을 보고 개발했으며 독립 평가 사례가 아님. 기존 8개와 중복하는 가화 명식 1개를 포함함.",
+  "sources": {
+    "ren": {"work":"滴天髓闡微", "attribution":"任鐵樵 주석", "url":"https://zh.wikisource.org/zh-hant/滴天髓闡微"},
+    "xu": {"work":"子平真詮評注", "attribution":"徐樂吾 평주 — 任氏의 같은 명식도 대조하되 판정 출처를 분리", "url":"https://www.ncc.com.tw/fate/paleo/bg/bg_032.htm"}
+  },
+  "cases": [
+    {"id":"ren-true-wood", "source":"ren", "locator":"六親論十三、化象 — 己卯 丁卯 壬午 甲辰", "pillars":["己卯","丁卯","壬午","甲辰"], "target":["month","day"], "expected_transformation_kind":"true", "implementation_expectation":"matched", "guards":[]},
+    {"id":"ren-true-earth", "source":"ren", "locator":"六親論十三、化象 — 戊辰 壬戌 甲辰 己巳", "pillars":["戊辰","壬戌","甲辰","己巳"], "target":["day","hour"], "expected_transformation_kind":"true", "implementation_expectation":"matched", "guards":[]},
+    {"id":"ren-fake-separate-pairs", "source":"ren", "locator":"六親論十五、假化 — 己卯 甲戌 甲子 己巳", "pillars":["己卯","甲戌","甲子","己巳"], "target":["day","hour"], "expected_transformation_kind":"fake", "implementation_expectation":"matched", "guards":["do_not_certify_true_conversion"], "overlap_with_previous":"ren-fake-conversion-roots"},
+    {"id":"ren-fake-native-root", "source":"ren", "locator":"六親論十五、假化 — 甲寅 丁丑 甲戌 己巳", "pillars":["甲寅","丁丑","甲戌","己巳"], "target":["day","hour"], "expected_transformation_kind":"fake", "implementation_expectation":"matched", "guards":["do_not_certify_true_conversion"]},
+    {"id":"xu-fake-resource", "source":"xu", "locator":"五、論十干合而不合 — 甲辰 丁卯 壬辰 辛亥; 假化 설명", "pillars":["甲辰","丁卯","壬辰","辛亥"], "target":["month","day"], "expected_transformation_kind":"fake", "implementation_expectation":"matched", "guards":["do_not_certify_true_conversion"], "note":"원래 수의 뿌리를 그대로 쓸 수 있다는 뜻으로 확대하지 않음. 화목 방해 辛의 존재와 변화 종류를 구분함."},
+    {"id":"ren-true-earth-off-season", "source":"ren", "locator":"六親論十三、化象 — 乙丑 甲申 甲辰 己巳", "pillars":["乙丑","甲申","甲辰","己巳"], "target":["day","hour"], "expected_transformation_kind":"true", "implementation_expectation":"unresolved", "guards":[], "remaining_reason":"월의 주된 오행 불일치에도 성립하는 지지 토와 경쟁자 제어 맥락은 이 묶음에 미구현"},
+    {"id":"ren-true-fire-off-season", "source":"ren", "locator":"六親論十三、化象 — 丙戌 戊戌 癸巳 壬戌", "pillars":["丙戌","戊戌","癸巳","壬戌"], "target":["month","day"], "expected_transformation_kind":"true", "implementation_expectation":"unresolved", "guards":[], "remaining_reason":"일간의 화기격 중 화 전환 및 토 계절에서의 제어 경로 미구현"},
+    {"id":"ren-fake-earth-off-season", "source":"ren", "locator":"六親論十五、假化 — 甲子 丙子 甲申 己巳", "pillars":["甲子","丙子","甲申","己巳"], "target":["day","hour"], "expected_transformation_kind":"fake", "implementation_expectation":"unresolved", "guards":["do_not_certify_true_conversion"], "remaining_reason":"득령하지 못한 약한 변화 세력의 가화 유형 미구현"},
+    {"id":"ren-true-wood-with-peer", "source":"ren", "locator":"六親論十三、化象 — 己卯 丁卯 壬午 癸卯", "pillars":["己卯","丁卯","壬午","癸卯"], "target":["month","day"], "expected_transformation_kind":"true", "implementation_expectation":"unresolved", "guards":[], "remaining_reason":"뿌리 없는 동류가 있어도 방해하지 않는 세력 비교 미구현"}
+  ]
+}

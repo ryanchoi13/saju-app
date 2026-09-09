@@ -383,12 +383,6 @@
                         </div>
                     </div>
 
-                    <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 12px 14px;">
-                        <span style="font-size: 12px; font-weight: 700; color: #64748B; display: flex; align-items: center; gap: 4px; margin-bottom: 2px;">
-                            <span>💡</span> 마인드 처세 (오늘의 실천 수칙)
-                        </span>
-                        <p id="resMindset" style="font-weight: 800; font-size: 14px; color: #0F172A; margin: 0;">원칙을 지키며 유연하게 대처하기</p>
-                    </div>
                 </div>
 
                 <div class="action-card">
@@ -1528,8 +1522,7 @@
             document.getElementById('resDirection').innerText = data.daily_fortune.lucky_direction;
             currentMenuMode = getSavedMenuMode();
             renderRecommendedMenu();
-            document.getElementById('resMindset').innerText = data.daily_fortune.mindset;
-            document.getElementById('resGaewoon').innerText = data.daily_fortune.action;
+            document.getElementById('resGaewoon').innerText = data.daily_fortune.unified_advice || data.daily_fortune.action;
 
             baseFashionStyle = data.daily_fortune.fashion_style || "네이비 쿨 티셔츠 & 플랙 연청 데님";
             currentLuckyColors = data.daily_fortune.lucky_colors || ["네이비", "스카이블루"];

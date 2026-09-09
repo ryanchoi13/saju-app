@@ -222,6 +222,7 @@ class TransformationStatus(str, Enum):
 
 
 class StrengthState(str, Enum):
+    UNDETERMINED = "undetermined"
     EXTREMELY_WEAK = "extremely_weak"
     WEAK = "weak"
     BALANCED = "balanced"
@@ -233,6 +234,9 @@ class TransformationResult(CoreModel):
     target_element: str
     status: TransformationStatus
     reasons: list[str] = Field(default_factory=list)
+    kind: Literal["unclassified", "pair", "true", "fake"] = "unclassified"
+    scope: Literal["pair", "day_master_structure"] = "pair"
+    assessment: dict[str, Any] = Field(default_factory=dict)
 
 
 class NatalFacts(CoreModel):
@@ -275,6 +279,10 @@ class RelationshipResult(CoreModel):
     supporting_conditions: list[str] = Field(default_factory=list)
     blocking_conditions: list[str] = Field(default_factory=list)
     competing_relationship_ids: list[str] = Field(default_factory=list)
+    overlapping_relationship_ids: list[str] = Field(default_factory=list)
+    member_function_assessments: list[dict[str, Any]] = Field(default_factory=list)
+    function_targets: list[dict[str, Any]] = Field(default_factory=list)
+    effect_assessment: dict[str, Any] = Field(default_factory=dict)
     reasons: list[str] = Field(default_factory=list)
     evidence_ids: list[str] = Field(default_factory=list)
     confidence: ConfidenceLevel = ConfidenceLevel.UNDETERMINED
@@ -299,6 +307,7 @@ class SynthesisResult(CoreModel):
     strength_state: str | None = None
     climate_state: dict[str, Any] = Field(default_factory=dict)
     favorable_operations: list[dict[str, Any]] = Field(default_factory=list)
+    pending_operations: list[dict[str, Any]] = Field(default_factory=list)
     caution_operations: list[dict[str, Any]] = Field(default_factory=list)
     diagnostic_conflicts: list[dict[str, Any]] = Field(default_factory=list)
     summary: str | None = None
@@ -316,6 +325,9 @@ class TimingResult(CoreModel):
 
 
 class ActivatedState(CoreModel):
+    temporal_observations: dict[str, Any] = Field(default_factory=dict)
+    temporal_conditions: dict[str, Any] = Field(default_factory=dict)
+    temporal_direction: dict[str, Any] = Field(default_factory=dict)
     activated_ten_gods: list[str] = Field(default_factory=list)
     strength_shift: str | None = None
     relationship_changes: list[dict[str, Any]] = Field(default_factory=list)

@@ -38,6 +38,8 @@ from app.engine.semantic import build_semantic_state
 from app.engine.shensha import calculate_shensha
 from app.engine.synthesis import synthesize_diagnostics
 from app.engine.timing import calculate_timing
+from app.engine.timing.conditions import assess_temporal_conditions
+from app.engine.timing.direction import compare_temporal_directions
 
 
 CORE_ENGINE_VERSION = "myeongri-core-v1"
@@ -233,6 +235,11 @@ def calculate_myeongri_core(
     timing, activated, timing_evidence = calculate_timing(
         birth, facts.pillars, target_date=target_date
     )
+    conditions, condition_evidence = assess_temporal_conditions(facts.pillars, timing, synthesis)
+    activated.temporal_conditions = conditions
+    direction, direction_evidence = compare_temporal_directions(conditions, synthesis)
+    activated.temporal_direction = direction
+    timing_evidence += condition_evidence + direction_evidence
     shensha, shensha_evidence = calculate_shensha(facts.pillars, timing)
     semantic, semantic_evidence = build_semantic_state(
         synthesis, activated, relationships, shensha

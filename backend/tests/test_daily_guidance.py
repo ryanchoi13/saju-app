@@ -36,7 +36,8 @@ class DailyGuidanceTests(TestCase):
         relation = {'type': 'branch_clash', 'status': 'candidate', 'relationship_id': 'daily:1', 'members': [{'pillar': 'timing:daily'}]}
         a = build_daily_guidance(q, 'direct_resource', [relation])
         self.assertEqual(a['evidence']['primary_operation'], 'support')
-        self.assertIn('조건 확인 후', a['action'])
+        self.assertNotIn('조건 확인 후', a['action'])
+        self.assertEqual(a['unified_advice'], build_daily_guidance(q, 'direct_resource', [])['unified_advice'])
         relation['members'] = [{'pillar': 'timing:annual'}]
         b = build_daily_guidance(q, 'direct_resource', [relation])
         self.assertNotIn('조건 확인 후', b['action'])
@@ -58,3 +59,19 @@ class DailyGuidanceTests(TestCase):
         self.assertEqual(result['evidence']['mode'], 'cautious_core_operation')
         self.assertIn('보충할 자료나 도움', result['action'])
         self.assertIn('확인하기', result['action'])
+
+    def test_unrelated_conflict_does_not_block_independent_advice(self):
+        q=self.query('support')
+        q['synthesis']['diagnostic_conflicts']=[{'operations':['warm','cool'],'resolution':'preserve_as_unresolved'}]
+        result=build_daily_guidance(q,'direct_resource',[])
+        self.assertEqual(result['evidence']['mode'],'core_operation')
+        self.assertEqual(result['evidence']['primary_operation'],'support')
+
+    def test_blocked_first_operation_does_not_hide_next_usable_operation(self):
+        q=self.query('warm')
+        q['synthesis']['favorable_operations'].append({'operation':'support','evidence_ids':['strength:1']})
+        q['synthesis']['diagnostic_conflicts']=[{'operations':['warm','cool'],'resolution':'preserve_as_unresolved'}]
+        result=build_daily_guidance(q,'direct_resource',[])
+        self.assertEqual(result['evidence']['primary_operation'],'support')
+        self.assertEqual(result['evidence']['held_operations'],[
+            {'operation':'warm','reason':'operation_has_unresolved_conflict'}])

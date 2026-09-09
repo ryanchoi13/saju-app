@@ -1,0 +1,132 @@
+{
+  "scope": "natal_only",
+  "pillar_order": [
+    "year",
+    "month",
+    "day",
+    "hour"
+  ],
+  "selection": "첫 단계 목적표집; 전체 문헌이나 모든 일간을 대표하지 않음",
+  "cases": [
+    {
+      "id": "dt-wood-excess",
+      "work": "적천수천미",
+      "source": "https://zh.wikisource.org/zh-hant/滴天髓闡微",
+      "locator": "十七、衰旺 첫 명식",
+      "pillars": [
+        "甲辰",
+        "丁卯",
+        "甲子",
+        "戊辰"
+      ],
+      "expected": "목이 지나치게 왕하고 丁을 사용",
+      "strength_side": "strong",
+      "expected_strength_state": "strong",
+      "needed_stems": [
+        "丁"
+      ]
+    },
+    {
+      "id": "dt-wood-extreme",
+      "work": "적천수천미",
+      "source": "https://zh.wikisource.org/zh-hant/滴天髓闡微",
+      "locator": "十七、衰旺 두 번째 명식",
+      "pillars": [
+        "癸卯",
+        "乙卯",
+        "甲寅",
+        "乙亥"
+      ],
+      "expected": "목이 극도로 왕함; 일반적인 억제와 다른 극왕 논의",
+      "strength_side": "strong",
+      "expected_strength_state": "extremely_strong",
+      "needed_stems": []
+    },
+    {
+      "id": "dt-wood-deficient",
+      "work": "적천수천미",
+      "source": "https://zh.wikisource.org/zh-hant/滴天髓闡微",
+      "locator": "十七、衰旺 세 번째 명식",
+      "pillars": [
+        "乙丑",
+        "甲申",
+        "甲申",
+        "辛未"
+      ],
+      "expected": "목이 지나치게 쇠약함",
+      "strength_side": "weak",
+      "expected_strength_state": "weak",
+      "needed_stems": [],
+      "note": "未 속 乙의 존재와 유효한 뿌리로 버티는지는 별개. 원문은 견고한 뿌리가 없다고 해석."
+    },
+    {
+      "id": "dt-wood-extremely-deficient",
+      "work": "적천수천미",
+      "source": "https://zh.wikisource.org/zh-hant/滴天髓闡微",
+      "locator": "十七、衰旺 네 번째 명식",
+      "pillars": [
+        "己巳",
+        "己巳",
+        "乙酉",
+        "丙戌"
+      ],
+      "expected": "목이 극도로 쇠약함",
+      "strength_side": "weak",
+      "expected_strength_state": "extremely_weak",
+      "needed_stems": []
+    },
+    {
+      "id": "qt-seasonal-earth-exception",
+      "work": "궁통보감",
+      "source": "https://www.ncc.com.tw/fate/paleo/bg/bg_11.htm",
+      "locator": "三秋甲木 九月: 반복 甲辰·甲戌 명식",
+      "pillars": [
+        "甲辰",
+        "甲戌",
+        "甲辰",
+        "甲戌"
+      ],
+      "expected": "비견을 만나 재를 쓰며 계절의 토를 취함",
+      "needed_stems": [],
+      "needed_element": "土",
+      "note": "丁이 좋다는 월별 일반론과 구분되는 명시적 사례 처방."
+    },
+    {
+      "id": "qt-visible-metal-fire",
+      "work": "궁통보감",
+      "source": "https://www.ncc.com.tw/fate/paleo/bg/bg_11.htm",
+      "locator": "三秋甲木 九月: 庚申年 丙戌月 사례",
+      "pillars": [
+        "庚申",
+        "丙戌",
+        "甲申",
+        "壬申"
+      ],
+      "expected": "庚·丙이 드러난 구성을 명시하고 부재 시와 구별",
+      "needed_stems": [
+        "庚",
+        "丙"
+      ],
+      "note": "사례의 사회적 성취 예언은 검증 대상에서 제외. 구성 인식과 그 역할 해석을 구분."
+    },
+    {
+      "id": "qt-hidden-vs-visible",
+      "work": "궁통보감",
+      "source": "https://www.ncc.com.tw/fate/paleo/bg/bg_11.htm",
+      "locator": "三秋甲木 九月: 戊戌 壬戌 甲子 甲申 사례",
+      "pillars": [
+        "戊戌",
+        "壬戌",
+        "甲子",
+        "甲申"
+      ],
+      "expected": "壬 투출, 庚·丁 미투출을 구별하여 해석",
+      "needed_stems": [],
+      "hidden_only_stems": [
+        "庚",
+        "丁"
+      ],
+      "note": "전재본은 支成水局이라 표현하지만 辰이 없다. 완전 申子辰 삼합으로 정답화하지 않음. 이 용어의 범위 또는 판본 확인은 보류."
+    }
+  ]
+}

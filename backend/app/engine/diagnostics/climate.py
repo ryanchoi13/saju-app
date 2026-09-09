@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
+from app.engine.relationships.assessment import requires_role_review
 
 from app.engine.core.models import (
     ConfidenceLevel,
@@ -16,7 +17,7 @@ from app.engine.core.models import (
 )
 
 
-CLIMATE_DIAGNOSTIC_VERSION = "climate-diagnostic-v1"
+CLIMATE_DIAGNOSTIC_VERSION = "climate-diagnostic-v2-baseline-vs-prescription"
 CLIMATE_BASELINE_VERSION = "seasonal-climate-baseline-v1"
 
 _MONTH_CLIMATE = {
@@ -98,7 +99,7 @@ def diagnose_climate(
 
     unstable = [
         relation for relation in relationships
-        if relation.action_status in {"competing", "blocked"}
+        if requires_role_review(relation)
         and any(member.get("pillar") == "month" for member in relation.members)
     ]
     missing_operations = [
@@ -128,12 +129,15 @@ def diagnose_climate(
     ]
     counter_evidence = []
     if available_operations:
-        counter_evidence.append("필요한 조후 작용 일부가 천간에 드러나 있어 계절 극단을 완화할 수 있음")
+        counter_evidence.append("계절 조절 후보가 천간에 있으나 개인에게 필요한 정도와 실효는 별도 판단임")
     if unstable:
-        counter_evidence.append("월주 관계의 경쟁·방해로 조절 요소의 사용 가능성이 달라질 수 있음")
+        counter_evidence.append("월주 관계의 작용이 미확정이므로 조절 요소의 사용 가능성이 달라질 수 있음")
 
     confidence = ConfidenceLevel.LOW if unstable else ConfidenceLevel.MEDIUM
-    status = "conditional" if unstable else "completed"
+    # A month-level baseline and inventory are observations, not a completed
+    # personal climate prescription. Removing a relation hold must not silently
+    # promote every winter chart to warming or every summer chart to cooling.
+    status = "conditional" if unstable or operations else "completed"
     evidence_id = "evidence:climate:seasonal-environment"
     evidence = Evidence(
         id=evidence_id,
@@ -147,6 +151,7 @@ def diagnose_climate(
             "operations": operations,
             "urgency": urgency,
             "single_yongshin_selected": False,
+            "personal_operation_assessment": "unresolved" if operations else "not_proposed",
         },
         supports=[f"climate:{conclusion}"],
         reliability=confidence,
@@ -154,10 +159,12 @@ def diagnose_climate(
     return (
         DiagnosticResult(
             module="climate", status=status, conclusion=conclusion,
-            summary="월령 환경과 실제 조절 가능성을 구분해 조후 상태를 판정함",
+            summary="월령 환경과 조절 후보의 존재를 기록하고 개인별 필요·실효 판단은 구별함",
             signals=signals,
             recommended_operations=[
-                {**item, "urgency": urgency} for item in operations
+                {**item, "urgency": urgency, "assessment_status": "conditional",
+                 "unresolved_requirements": ["personal_climate_need", "regulator_effectiveness"]}
+                for item in operations
             ],
             counter_evidence=counter_evidence,
             confidence=confidence,
