@@ -24,6 +24,9 @@ PROFILES = {
 
 
 def menu_category(name: str) -> str:
+    from .menu_catalog_revision import CATEGORIES
+    if name in CATEGORIES:
+        return CATEGORIES[name]
     overrides = {"육개장": "soup", "매운 닭개장": "soup", "감자옹심이": "noodles",
                  "고구마그라탱": "vegetable_meal", "연근조림 정식": "vegetable_meal",
                  "깐풍기": "chicken", "유자차와 백설기": "snack",
