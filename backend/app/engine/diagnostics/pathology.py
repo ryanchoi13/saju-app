@@ -7,6 +7,7 @@ module does not infer diseases, accidents, lifespan, or medical conditions.
 from __future__ import annotations
 
 from collections.abc import Sequence
+from app.engine.relationships.assessment import is_reference_only
 
 from app.engine.core.models import (
     ConfidenceLevel,
@@ -17,8 +18,8 @@ from app.engine.core.models import (
 )
 
 
-PATHOLOGY_DIAGNOSTIC_VERSION = "pathology-diagnostic-v1"
-PATHOLOGY_PRIORITY_VERSION = "pathology-priority-v1"
+PATHOLOGY_DIAGNOSTIC_VERSION = "pathology-diagnostic-v4-scoped-role-judgments"
+PATHOLOGY_PRIORITY_VERSION = "pathology-priority-v2-review"
 _URGENCY_ORDER = {"high": 0, "medium": 1, "low": 2}
 _TYPE_ORDER = {
     "structural_damage": 0,
@@ -29,6 +30,8 @@ _TYPE_ORDER = {
     "unstable_root": 5,
     "deficiency": 6,
     "excess": 7,
+    "structural_review": 8,
+    "relationship_review": 9,
 }
 
 
@@ -64,10 +67,10 @@ def diagnose_pathology(
     candidates: list[dict] = []
     if structure.status == "conditional" and structure.counter_evidence:
         candidates.append(_candidate(
-            "structural_damage", "high", list(structure.counter_evidence),
+            "structural_review", "low", list(structure.counter_evidence),
             [{
-                "operation": "protect_or_restore_structure",
-                "side_effects": ["다른 구조 후보를 약화시킬 수 있어 대안 구조와 함께 재검토"],
+                "operation": "verify_formation",
+                "side_effects": ["구조가 미확정이라는 사실만으로 손상이나 복구 필요를 추론하지 않음"],
             }],
         ))
 
@@ -77,55 +80,50 @@ def diagnose_pathology(
     if climate_high:
         candidates.append(_candidate(
             "climate_extreme", "high",
-            [f"조후의 {item.get('operation')} 작용이 높은 긴급도로 필요함" for item in climate_high],
+            [f"월령 기준 {item.get('operation')} 후보; 개인별 필요·실효 판단을 함께 확인" for item in climate_high],
             [{
                 "operation": item.get("operation"),
                 "element": item.get("element"),
                 "availability": item.get("availability"),
+                "assessment_status": item.get("assessment_status"),
+                "unresolved_requirements": list(item.get("unresolved_requirements", [])),
                 "side_effects": ["신강·신약 방향과 충돌하는지 종합 단계에서 확인"],
             } for item in climate_high],
         ))
 
-    competing = [item for item in relationships if item.action_status == "competing"]
-    active_disruption = [
+    # A relation's occurrence/action label does not establish damaged function.
+    # See interpretation-evidence-criteria.md R04/R06 and 滴天髓闡微 通關.
+    # Preserve facts for review without prescribing removal or restoration.
+    relation_reviews = [
         item for item in relationships
-        if item.action_status == "active"
-        and item.type in {"branch_clash", "branch_punishment", "branch_harm", "branch_break", "stem_control"}
+        if item.action_status not in {"inactive", "resolved"}
+        and not is_reference_only(item)
+        and item.type in {
+            "branch_clash", "branch_punishment", "branch_harm", "branch_break",
+            "stem_control", "stem_combination",
+        }
     ]
-    if competing:
-        candidates.append(_candidate(
-            "conflict", "high",
-            [f"경쟁 관계 {item.id}" for item in competing],
+    if relation_reviews:
+        review = _candidate(
+            "relationship_review", "low",
+            [f"작용의 대상과 효과를 확인할 관계 {item.id}" for item in relation_reviews],
             [{
-                "operation": "resolve_relationship_competition",
-                "side_effects": ["한 관계를 해소하면 공유 구성원의 다른 관계가 활성화될 수 있음"],
+                "operation": "verify_relationship_effect",
+                "side_effects": ["관계의 존재·경쟁만으로 손상이나 해소 필요를 추론하지 않음"],
             }],
-        ))
-    elif active_disruption:
-        candidates.append(_candidate(
-            "blocked_flow", "medium",
-            [f"활성 관계 {item.id}" for item in active_disruption],
-            [{
-                "operation": "restore_or_mediate_flow",
-                "side_effects": ["구체 통관 요소는 통관 진단에서 별도로 확인"],
-            }],
-        ))
-
-    bound = [
-        item for item in relationships
-        if item.type == "stem_combination"
-        and item.action_status in {"conditional", "competing"}
-        and any(member.get("pillar") == "day" for member in item.members)
-    ]
-    if bound:
-        candidates.append(_candidate(
-            "bound_element", "medium",
-            [f"일간이 합 관계 {item.id}에 관여함" for item in bound],
-            [{
-                "operation": "verify_or_release_binding",
-                "side_effects": ["합의 해제 여부는 실제 합화·경쟁 상태에 따라 달라짐"],
-            }],
-        ))
+        )
+        review["relationship_observations"] = [{
+            "id": item.id,
+            "type": item.type,
+            "action_status": item.action_status,
+            "members": item.members,
+            "member_function_assessments": item.member_function_assessments,
+            "function_targets": item.function_targets,
+            "role_assessment": item.effect_assessment,
+            # Function reduction does not establish harmful overall valence.
+            "effect": "undetermined",
+        } for item in relation_reviews]
+        candidates.append(review)
 
     rooting_signal = next(
         (item for item in strength.signals if item.get("step") == "rooting"), {}
@@ -164,9 +162,9 @@ def diagnose_pathology(
     conditional_inputs = [
         item.module for item in (structure, strength, climate) if item.status == "conditional"
     ]
-    status = "conditional" if conditional_inputs or competing else "completed"
+    status = "conditional" if conditional_inputs or relation_reviews else "completed"
     confidence = (
-        ConfidenceLevel.LOW if conditional_inputs
+        ConfidenceLevel.LOW if conditional_inputs or relation_reviews
         else ConfidenceLevel.MEDIUM if candidates
         else ConfidenceLevel.UNDETERMINED
     )
@@ -182,6 +180,7 @@ def diagnose_pathology(
             "conditional_input_modules": conditional_inputs,
             "medical_inference_performed": False,
             "fixed_score_used": False,
+            "relationship_occurrence_is_not_damage": True,
         },
         supports=[f"pathology:{primary}"],
         reliability=confidence,

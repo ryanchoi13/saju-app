@@ -1,0 +1,145 @@
+{
+  "source": {
+    "url": "https://www.ncc.com.tw/fate/paleo/bg/bg_032.htm",
+    "section": "五、論十干合而不合",
+    "attribution": "沈孝瞻 원저·徐樂吾 평주 전재"
+  },
+  "scope": "natal_only",
+  "cases": [
+    {
+      "id": "intervening-fire",
+      "pillars": [
+        "甲子",
+        "丁卯",
+        "己亥",
+        "戊辰"
+      ],
+      "target": [
+        "year",
+        "day"
+      ],
+      "source_interpretation": "중간 丁을 통한 목→화→토 작용으로 설명",
+      "expected_competition": null
+    },
+    {
+      "id": "intervening-wood",
+      "pillars": [
+        "癸巳",
+        "壬戌",
+        "乙巳",
+        "戊寅"
+      ],
+      "target": [
+        "year",
+        "hour"
+      ],
+      "source_interpretation": "乙이 사이에 있어 戊癸 합으로 보지 않음",
+      "expected_competition": null
+    },
+    {
+      "id": "distant-role-retained",
+      "pillars": [
+        "丁卯",
+        "丙午",
+        "丙子",
+        "壬辰"
+      ],
+      "target": [
+        "year",
+        "hour"
+      ],
+      "source_interpretation": "멀리 떨어진 丁壬 합에서 壬 역할 유지",
+      "expected_competition": null
+    },
+    {
+      "id": "distant-still-combines",
+      "pillars": [
+        "乙酉",
+        "甲申",
+        "丁巳",
+        "庚戌"
+      ],
+      "target": [
+        "year",
+        "hour"
+      ],
+      "source_interpretation": "월령과 전체 배합에 따라 멀리 떨어져도 합으로 해석",
+      "expected_competition": null
+    },
+    {
+      "id": "separated-partners",
+      "pillars": [
+        "庚申",
+        "乙酉",
+        "癸未",
+        "乙卯"
+      ],
+      "target": [
+        "year",
+        "month"
+      ],
+      "source_interpretation": "두 乙이 있으나 떨어져 있어 경쟁으로 보지 않음",
+      "expected_competition": false
+    },
+    {
+      "id": "separated-day-partners",
+      "pillars": [
+        "癸酉",
+        "癸亥",
+        "戊子",
+        "丁巳"
+      ],
+      "target": [
+        "month",
+        "day"
+      ],
+      "source_interpretation": "두 癸가 있으나 해당 사례에서는 경쟁·불전의 폐가 없다고 해설",
+      "expected_competition": false
+    },
+    {
+      "id": "flanking-partners",
+      "pillars": [
+        "丙戌",
+        "壬辰",
+        "丁未",
+        "壬寅"
+      ],
+      "target": [
+        "month",
+        "day"
+      ],
+      "source_interpretation": "두 壬이 丁을 양옆에서 끼워 경쟁으로 해석",
+      "expected_competition": true
+    },
+    {
+      "id": "day-master-officer",
+      "pillars": [
+        "戊戌",
+        "甲子",
+        "己巳",
+        "戊辰"
+      ],
+      "target": [
+        "month",
+        "day"
+      ],
+      "source_interpretation": "일간 己와 합한 甲의 관 역할을 사용",
+      "expected_competition": null
+    },
+    {
+      "id": "day-master-wealth",
+      "pillars": [
+        "戊寅",
+        "己未",
+        "甲寅",
+        "乙亥"
+      ],
+      "target": [
+        "month",
+        "day"
+      ],
+      "source_interpretation": "일간 甲과 합한 己의 재 역할이 일간을 향함",
+      "expected_competition": null
+    }
+  ]
+}

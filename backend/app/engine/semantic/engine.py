@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Sequence
 
+from app.engine.relationships.assessment import is_reference_only
 from app.engine.core.models import (
     ActivatedState,
     ConfidenceLevel,
@@ -16,7 +17,7 @@ from app.engine.core.models import (
 )
 
 
-SEMANTIC_ENGINE_VERSION = "semantic-state-v1"
+SEMANTIC_ENGINE_VERSION = "semantic-state-v2-natal-observation-policy"
 
 _TEN_GOD_TOPICS = {
     "day_master": "self_direction",
@@ -64,6 +65,7 @@ def build_semantic_state(
         item.id
         for item in relationships
         if item.action_status in {"active", "competing", "resolved"}
+        and not is_reference_only(item)
     ]
     interaction_ids.extend(
         item.get("relationship_id")

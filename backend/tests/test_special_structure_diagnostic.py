@@ -51,7 +51,7 @@ def _diagnose(pillars, strength, relationships=None):
     )
 
 
-def _transformation_relation(action_status="active", competing=None):
+def _transformation_relation(action_status="active", competing=None, transformation_status=TransformationStatus.CONDITIONAL):
     return RelationshipResult(
         id="relationship:stem-combination:day-month",
         type="stem_combination",
@@ -63,7 +63,7 @@ def _transformation_relation(action_status="active", competing=None):
         action_status=action_status,
         transformation=TransformationResult(
             target_element="土",
-            status=TransformationStatus.CONDITIONAL,
+            status=transformation_status,
             reasons=["월령과 별도 교차 확인"],
         ),
         competing_relationship_ids=competing or [],
@@ -120,10 +120,24 @@ class SpecialStructureDiagnosticTests(TestCase):
             "year": _pillar("戊", "戌"),
             "month": _pillar("己", "丑"),
             "day": _pillar("甲", "申"),
-        }, "balanced", [_transformation_relation()])
+        }, "balanced", [_transformation_relation(transformation_status=TransformationStatus.ESTABLISHED)])
         self.assertEqual(result.conclusion, "transform_to_土")
         transformed = next(item for item in result.signals if item["type"] == "transformation_structure")
         self.assertEqual(transformed["formation_status"], "established")
+
+    def test_conditional_conversion_is_not_certified_by_structure_wrapper(self):
+        result, _ = _diagnose({
+            "year": _pillar("戊", "戌"), "month": _pillar("己", "丑"), "day": _pillar("甲", "申"),
+        }, "balanced", [_transformation_relation()])
+        converted = next(s for s in result.signals if s['type'] == 'transformation_structure')
+        self.assertEqual(converted['formation_status'], 'conditional')
+
+    def test_negative_conversion_is_not_reopened_as_conditional(self):
+        result, _ = _diagnose({
+            "year": _pillar("戊", "戌"), "month": _pillar("己", "丑"), "day": _pillar("甲", "申"),
+        }, "balanced", [_transformation_relation(transformation_status=TransformationStatus.NOT_ESTABLISHED)])
+        converted = next(s for s in result.signals if s['type'] == 'transformation_structure')
+        self.assertEqual(converted['formation_status'], 'not_established')
 
     def test_competing_transformation_stays_conditional(self):
         result, _ = _diagnose({

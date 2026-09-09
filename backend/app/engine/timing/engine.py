@@ -20,9 +20,10 @@ from app.engine.core.models import (
 )
 from app.engine.facts.relationship_candidates import calculate_relationship_candidates
 from app.engine.facts.ten_gods import get_ten_god
+from app.engine.timing.observations import observe_temporal_structure
 
 
-TIMING_ENGINE_VERSION = "timing-overlay-v1"
+TIMING_ENGINE_VERSION = "timing-overlay-observations-v2"
 DAEYUN_CONVENTION_VERSION = "lunar-python-sect1-v1"
 _YANG_STEMS = frozenset("甲丙戊庚壬")
 _YANG_BRANCHES = frozenset("子寅辰午申戌")
@@ -203,6 +204,7 @@ def calculate_timing(
         evidence_ids=[evidence_id],
     )
     activated = ActivatedState(
+        temporal_observations=observe_temporal_structure(natal_pillars, overlay_pillars),
         activated_ten_gods=activated_gods,
         strength_shift=strength_shift,
         relationship_changes=relationship_changes,

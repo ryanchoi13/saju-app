@@ -71,7 +71,7 @@ class StructureDiagnosticTests(TestCase):
             "day": _pillar("甲", "寅"),
         })
         self.assertEqual(result.status, "conditional")
-        self.assertTrue(any("형충파해" in item for item in result.counter_evidence))
+        self.assertTrue(any("충 관계" in item for item in result.counter_evidence))
 
     def test_missing_month_is_insufficient(self):
         pillars = {"day": _pillar("甲", "寅")}

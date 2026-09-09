@@ -1,0 +1,48 @@
+{
+  "version": "classical-combination-benchmark-v1",
+  "scope": "natal_only",
+  "source": {
+    "url": "https://www.ncc.com.tw/fate/paleo/bg/bg_032.htm",
+    "work": "子平真詮評注",
+    "section": "四、論十干配合性情",
+    "attribution": "沈孝瞻 원저·徐樂吾 평주 전재",
+    "pillar_order": ["year", "month", "day", "hour"],
+    "limit": "문헌 내 해석 재현용. 실제 사건·일별 예측 정확성의 검증 자료가 아님."
+  },
+  "cases": [
+    {
+      "id": "ziping-rooted-metal-retained",
+      "pillars": ["癸未", "辛酉", "甲申", "丙寅"],
+      "relationship": {"type": "stem_combination", "pillars": ["month", "hour"]},
+      "expected_functions": [{"pillar": "month", "stem": "辛", "state": "retained"}],
+      "source_interpretation": "丙辛 합이 있어도 통근한 辛의 기능은 남음.",
+      "locator": "첫 번째 명식·丙辛相合 사례"
+    },
+    {
+      "id": "ziping-rooted-water-retained",
+      "pillars": ["戊子", "癸亥", "庚寅", "戊寅"],
+      "relationship": {"type": "stem_combination", "pillars": ["year", "month"]},
+      "expected_functions": [{"pillar": "month", "stem": "癸", "state": "retained"}],
+      "source_interpretation": "戊癸 합이 있어도 통근한 癸의 기능은 남음.",
+      "locator": "두 번째 명식·戊癸相合 사례",
+      "scope_note": "월간·시간에도 합 후보가 있으나, 그 존재만으로 경쟁 승패를 정하지 않음."
+    },
+    {
+      "id": "ziping-two-useful-functions-bound",
+      "pillars": ["丙午", "辛卯", "戊寅", "甲寅"],
+      "relationship": {"type": "stem_combination", "pillars": ["year", "month"]},
+      "expected_functions": [{"pillar": "year", "stem": "丙", "state": "reduced"}, {"pillar": "month", "stem": "辛", "state": "reduced"}],
+      "expected_transformation": "not_established",
+      "source_interpretation": "丙辛 합화는 성립하지 않고 두 천간의 역할은 제약됨.",
+      "locator": "두 기능이 모두 제약되는 예시의 첫 번째 명식"
+    },
+    {
+      "id": "ziping-two-unneeded-functions-bound",
+      "pillars": ["己卯", "甲戌", "乙亥", "己卯"],
+      "relationship": {"type": "stem_combination", "pillars": ["year", "month"]},
+      "expected_functions": [{"pillar": "year", "stem": "己", "state": "reduced"}, {"pillar": "month", "stem": "甲", "state": "reduced"}],
+      "source_interpretation": "연월 甲己의 역할이 합으로 제약되는 것으로 해석함.",
+      "locator": "두 기능이 모두 제약되는 예시의 두 번째 명식"
+    }
+  ]
+}

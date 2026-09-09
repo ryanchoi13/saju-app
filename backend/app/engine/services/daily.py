@@ -9,9 +9,11 @@ from app.engine.core.models import MyeongriCoreResult
 from app.engine.semantic.queries import build_service_query
 from app.engine.services.simple_menu import daily_choices
 from app.engine.services.daily_guidance import build_daily_guidance
+from app.engine.services.daily_scenarios import select_daily_scenario
+from app.engine.services.daily_topics import select_daily_topics
 
 
-DAILY_FORTUNE_VERSION = "daily-fortune-core-v1"
+DAILY_FORTUNE_VERSION = "daily-fortune-conditional-v4-shared-scenario"
 
 _TEN_GOD_KO = {
     "peer": "비견",
@@ -291,7 +293,7 @@ def _daily_shensha(core: MyeongriCoreResult) -> list[str]:
 
 def _primary_operation(query: dict) -> dict:
     operations = query.get("synthesis", {}).get("favorable_operations", [])
-    return operations[0] if operations else {"operation": "preserve_balance", "elements": []}
+    return operations[0] if operations else {"operation": "unconfirmed", "elements": []}
 
 
 def _lucky_element(query: dict, daily_element: str) -> str:
@@ -432,44 +434,27 @@ def build_daily_fortune(
         confidence=confidence,
     )
 
-    title = theme["title"]
-    if score >= 84 and supportive_count:
-        title = "기회와 실행력이 또렷하게 맞물리는 날"
-    elif score <= 68 and tension_count >= 2:
-        title = "서두르면 엇갈리기 쉬운 날"
-
-    relation_note = ""
-    if tensions:
-        relation_note = "중요한 말과 결정은 한 번 더 확인해 보세요."
-    elif supportive:
-        relation_note = "준비한 일은 작은 행동부터 옮겨보세요."
-
-    shensha_note = _SHENSHA_KO[shensha[0]][1] if shensha else ""
-
     operation = _primary_operation(query)
-    operation_name = operation.get("operation", "preserve_balance")
+    operation_name = operation.get("operation", "unconfirmed")
     operation_text = _OPERATION_KO.get(operation_name, "하루의 우선순위를 지키는 일")
     item_group = _item_group(operation_name, daily_god)
     item = _ITEMS[item_group][lucky_element]
     element = _ELEMENT_GUIDE[lucky_element]
     talisman_title, talisman_power, talisman_type = _TALISMAN[lucky_element]
+    core_operation_confirmed = bool(query["synthesis"].get("favorable_operations"))
+    core_element_confirmed = bool(query["semantic_state"].get("favorable_elements"))
+    recommendation_confirmed = core_operation_confirmed and core_element_confirmed
+    item_reason = (
+        f"오늘은 {operation_text}이 우선입니다. 추천 아이템은 {item}이며, "
+        f"{element['ko']} 기운의 색·소재는 보조 근거로만 반영했습니다."
+        if recommendation_confirmed else
+        f"추천 아이템은 {item}입니다. 오늘의 일진을 상징하는 색·소재로 고른 참고 아이템입니다."
+    )
     menu_selection = daily_choices(core.input, target_date, timing_element_weights, account_key)
 
-    advice_parts = [_DAILY_BODY[daily_god]]
-    if relation_note:
-        advice_parts.append(relation_note)
-    if shensha_note:
-        advice_parts.append(shensha_note)
-    advice = " ".join(advice_parts)
-
-    morning = f"오늘의 중심인 {theme['topic']}에 맞춰 해야 할 일과 확인할 일을 먼저 나눠보세요."
-    guidance = build_daily_guidance(query, daily_god, relations)
-    afternoon = guidance["action"]
-    evening = (
-        "낮에 생긴 변수와 약속을 다시 확인하고, 내일로 넘길 일은 분명히 구분해 두세요."
-        if tensions else
-        "오늘 만든 결과를 정리하고 더 벌이기보다 현재의 흐름을 안정적으로 마무리하세요."
-    )
+    scenario = select_daily_scenario(query)
+    guidance = build_daily_guidance(query, daily_god, relations, scenario=scenario)
+    topics = select_daily_topics(query, relations, shensha, scenario=scenario)
 
     return {
         "engine_version": DAILY_FORTUNE_VERSION,
@@ -477,20 +462,18 @@ def build_daily_fortune(
         "day_ganji": ganji_display,
         "day_ganji_han": ganji_han,
         "day_ten_god": _TEN_GOD_KO[daily_god],
-        "title": title,
+        "title": topics["title"],
         "score": score,
         "mode_badge": f"운세 {score}점",
         "badge_style": _badge_style(score),
-        "advice": advice,
-        "time_flow": {"morning": morning, "afternoon": afternoon, "evening": evening},
+        "advice": topics["advice"],
+        "time_flow": topics["time_flow"],
+        "unified_advice": guidance["unified_advice"],
         "mindset": guidance["mindset"],
         "action": guidance["action"],
         "lucky_element": lucky_element,
         "lucky_item": item,
-        "lucky_item_reason": (
-            f"오늘은 {operation_text}이 우선입니다. 추천 아이템은 {item}이며, "
-            f"{element['ko']} 기운의 색·소재는 보조 근거로만 반영했습니다."
-        ),
+        "lucky_item_reason": item_reason,
         "lucky_number": element["numbers"],
         "lucky_direction": f"{element['direction']} ({element['ko']} 기운)",
         "recommended_menu": menu_selection["menus"][0],
@@ -505,12 +488,17 @@ def build_daily_fortune(
         "talisman": {
             "title": talisman_title,
             "power": talisman_power,
-            "desc": f"오늘의 보완 방향인 {element['ko']} 기운을 상징적으로 담은 일일 부적입니다.",
+            "desc": (
+                f"오늘의 보완 방향인 {element['ko']} 기운을 상징적으로 담은 일일 부적입니다."
+                if recommendation_confirmed else
+                f"오늘의 일진에 해당하는 {element['ko']} 기운을 상징적으로 담은 일일 부적입니다."
+            ),
             "talisman_type": talisman_type,
         },
         "supporting_shensha": [_SHENSHA_KO[name][0] for name in shensha],
         "evidence_summary": {
             "guidance": guidance["evidence"],
+            "topics": topics["evidence"],
             "scope": query["scope"],
             "daily_ten_god": daily_god,
             "daily_relationship_types": list(dict.fromkeys(item["type"] for item in relations)),
@@ -518,6 +506,12 @@ def build_daily_fortune(
             "independent_tension_relations": tension_count,
             "primary_operation": operation_name,
             "lucky_element": lucky_element,
+            "lucky_recommendation_basis": {
+                "core_operation_confirmed": core_operation_confirmed,
+                "element_source": "core_favorable" if core_element_confirmed else "daily_symbolic_reference",
+                "recommendation_confirmed": recommendation_confirmed,
+                "fallback_is_not_a_prescription": not recommendation_confirmed,
+            },
             "confidence": confidence,
             "shensha_is_supporting_only": True,
         },

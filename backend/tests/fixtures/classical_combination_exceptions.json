@@ -1,0 +1,19 @@
+{
+  "version": "combination-exception-comparison-v1",
+  "scope": "natal_only",
+  "selection": "같은 원문 장에서 구현 중 확인한 긍정·부정·예외 사례. 개발 사례이며 미사용 검증 집합이 아님.",
+  "sources": {
+    "ziping": {"url": "https://www.ncc.com.tw/fate/paleo/bg/bg_032.htm", "work": "子平真詮評注", "attribution": "徐樂吾 평주; 원저와 구별"},
+    "ren": {"url": "https://zh.wikisource.org/zh-hant/滴天髓闡微", "work": "滴天髓闡微", "attribution": "任鐵樵 주석"}
+  },
+  "cases": [
+    {"id":"ziping-native-metal-conversion", "source":"ziping", "locator":"四、論十干配合性情; 五、論十干合而不合의 化金 재설명", "pillars":["庚申","乙酉","丁丑","庚戌"], "target":["year","month"], "expected_transformation":"established", "guards":["do_not_reject_conversion","do_not_reduce_native_metal"], "note":"합화의 긍정 사례. 월령이 돕는 원래 금의 역할을 일괄 삭제하지 않는지 확인."},
+    {"id":"ziping-wood-conversion", "source":"ziping", "locator":"五、論十干合而不合: 丁壬의 寅亥 기반 예시", "pillars":["丁亥","壬寅","丙子","丁酉"], "target":["year","month"], "expected_transformation":"established", "guards":["do_not_reject_conversion"]},
+    {"id":"ziping-fire-conversion", "source":"ziping", "locator":"五、論十干合而不合: 戊癸의 巳午 기반 예시", "pillars":["癸巳","戊午","丙午","庚寅"], "target":["year","month"], "expected_transformation":"established", "guards":["do_not_reject_conversion"]},
+    {"id":"ren-fake-conversion-roots", "source":"ren", "locator":"十五、假化 첫 번째 명식", "pillars":["己卯","甲戌","甲子","己巳"], "target":["year","month"], "expected_transformation_kind":"fake", "guards":["do_not_reject_conversion","do_not_certify_true_conversion"], "note":"뿌리가 남는다는 사실과 합화 전체 불성립은 다름. 가화 정답은 일간이 참여하는 원국 구조에 대한 것이며, 연월 쌍의 금지 조건과 구별한다. 2·3차에는 종류 미구현, 4차에서 판정 연결."},
+    {"id":"ren-shared-rooted-officer", "source":"ren", "locator":"通神論二十一、官殺 — 四曰合官留殺格의 壬申 丁未 丁未 癸卯", "pillars":["壬申","丁未","丁未","癸卯"], "target":["year","month"], "expected_transformation":"not_established", "guards":["do_not_reduce_both_roles"], "note":"관성 공유의 정체성과 실제 힘은 별도다. 자체 수의 기반에 따른 불합화 판단을 대조."},
+    {"id":"ziping-shared-officer", "source":"ziping", "locator":"五、論十干合而不合의 一丙合兩辛 예시", "pillars":["丙戌","辛卯","辛巳","戊戌"], "target":["year","month"], "expected_functions":[{"pillar":"year","stem":"丙","state":"retained"}], "guards":["do_not_reduce_both_roles"], "note":"관의 정체성이 남는 것과 역할이 전적으로 일간을 향하는 것을 구별."},
+    {"id":"ren-water-root-no-conversion", "source":"ren", "locator":"通神論二十一、官殺 — 四曰合官留殺格의 癸亥 戊午 壬午 己酉", "pillars":["癸亥","戊午","壬午","己酉"], "target":["year","month"], "expected_transformation":"not_established", "guards":["do_not_certify_true_conversion"], "note":"목표 오행의 계절을 얻어도 원래 뿌리와 배합 때문에 불합화하는 명시적 사례."},
+    {"id":"ren-clash-control-release", "source":"ren", "locator":"十一、閒神의 辛巳 丙申 壬寅 庚戌 사례", "pillars":["辛巳","丙申","壬寅","庚戌"], "target":["year","month"], "expected_transformation":"not_established", "guards":["do_not_reduce_both_roles"], "note":"일간의 극과 지지 충이 관여하는 해소 맥락. 검사 정답은 기존과 같은 천간합 불합화이며 지지합 전체의 해소를 포함하지 않음."}
+  ]
+}

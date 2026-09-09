@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
+from app.engine.relationships.assessment import is_reference_only
 
 from app.engine.core.models import (
     BranchHiddenStems,
@@ -20,7 +21,7 @@ from app.engine.core.models import (
 )
 
 
-STRUCTURE_DIAGNOSTIC_VERSION = "structure-diagnostic-v1"
+STRUCTURE_DIAGNOSTIC_VERSION = "structure-diagnostic-v2-natal-observation-policy"
 _ROLE_ORDER = {HiddenStemRole.MAIN: 0, HiddenStemRole.MIDDLE: 1, HiddenStemRole.RESIDUAL: 2}
 _DISRUPTIVE_RELATIONSHIPS = {
     "branch_clash", "branch_punishment", "branch_harm", "branch_break"
@@ -93,7 +94,8 @@ def diagnose_structure(
     month_interference = [
         relation for relation in relationships
         if relation.type in _DISRUPTIVE_RELATIONSHIPS
-        and relation.action_status in {"active", "competing"}
+        and not is_reference_only(relation)
+        and relation.action_status in {"active", "competing", "conditional"}
         and any(member.get("pillar") == "month" and member.get("position") == "branch" for member in relation.members)
     ]
 
@@ -127,7 +129,7 @@ def diagnose_structure(
     if len(exposed_candidates) > 1:
         counter_evidence.append("월지의 복수 지장간이 천간에 드러나 대안 구조가 함께 존재함")
     if month_interference:
-        counter_evidence.append("월지에 활성 또는 경쟁 상태의 형충파해 관계가 있음")
+        counter_evidence.append("월지에 충 관계가 있어 해당 역할의 실제 변화를 추가 확인해야 함")
     counter_evidence.extend(
         f"{value} 구조에 대응하는 견제 십성 {counter}이 원국에 존재함"
         for value in [primary["ten_god"]]

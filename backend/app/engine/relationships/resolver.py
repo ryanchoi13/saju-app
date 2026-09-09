@@ -5,6 +5,10 @@ from __future__ import annotations
 from collections.abc import Mapping
 
 from app.engine.constants import ZHI_WUXING
+from app.engine.facts.ten_gods import get_ten_god
+from app.engine.relationships.functions import describe_function_targets
+from app.engine.relationships.assessment import assess_natal_functions, REFERENCE_ONLY_TYPES
+from app.engine.relationships.transformation import assess_transformations
 from app.engine.core.models import (
     ConfidenceLevel,
     Evidence,
@@ -21,7 +25,7 @@ from app.engine.core.models import (
 )
 
 
-RELATIONSHIP_RESOLVER_VERSION = "relationship-resolver-v1"
+RELATIONSHIP_RESOLVER_VERSION = "relationship-resolver-v6-scoped-transformation"
 _PILLAR_ORDER = {"year": 0, "month": 1, "day": 2, "hour": 3}
 _COMBINATIONS = {
     RelationshipCandidateType.STEM_COMBINATION,
@@ -55,6 +59,27 @@ def _is_adjacent(candidate: RelationshipCandidate) -> bool:
     return len(ordered) > 1 and all(right - left == 1 for left, right in zip(ordered, ordered[1:]))
 
 
+def _flanking_stem_partners(candidate: RelationshipCandidate, other: RelationshipCandidate) -> bool:
+    """Narrow positional contention rule, not a winner or function-loss verdict.
+
+    Ziping Zhenquan Pingzhu, section 5: two 壬 immediately flank 丁.
+    Separated partners do not satisfy this rule; no rule for their winner is inferred.
+    """
+    if candidate.type != RelationshipCandidateType.STEM_COMBINATION or other.type != candidate.type:
+        return False
+    if candidate.id == other.id or not (_is_adjacent(candidate) and _is_adjacent(other)):
+        return False
+    shared = _member_keys(candidate) & _member_keys(other)
+    if len(shared) != 1:
+        return False
+    center = _PILLAR_ORDER.get(next(iter(shared))[1])
+    partners = [m for c in (candidate, other) for m in c.members
+                if (m.position, m.pillar) not in shared]
+    return (center is not None and len(partners) == 2
+            and partners[0].symbol == partners[1].symbol
+            and {_PILLAR_ORDER.get(m.pillar) for m in partners} == {center - 1, center + 1})
+
+
 def resolve_relationships(
     candidates: RelationshipCandidates,
     pillars: Mapping[str, PillarFact | None],
@@ -63,8 +88,8 @@ def resolve_relationships(
 ) -> tuple[list[RelationshipResult], list[Evidence]]:
     """Resolve candidate state while preserving uncertainty and evidence.
 
-    V1 never declares a transformation established. That stronger conclusion
-    requires the later structure and strength diagnostics.
+    Pair conversion and day-master structure classification have separate
+    scopes. Neither is a completed prescription or overall valence judgment.
     """
 
     rooted_pillars = {item.stem_pillar for item in roots.items}
@@ -75,14 +100,17 @@ def resolve_relationships(
 
     for candidate in candidates.items:
         member_keys = _member_keys(candidate)
-        competitors = [
+        overlaps = [
             other.id
             for other in candidates.items
             if other.id != candidate.id
             and member_keys & _member_keys(other)
-            and other.type != candidate.type
         ]
         adjacent = _is_adjacent(candidate)
+        is_stem_combination = candidate.type == RelationshipCandidateType.STEM_COMBINATION
+        # Shared input is context, not proof of competing effects.
+        competitors = [other.id for other in candidates.items
+                       if _flanking_stem_partners(candidate, other)]
         supported = any(
             member.pillar in rooted_pillars or member.pillar in exposed_pillars
             for member in candidate.members
@@ -102,10 +130,14 @@ def resolve_relationships(
         if month_support:
             reasons.append("월지 오행이 관계의 목표 오행과 같음")
 
-        if competitors:
+        if is_stem_combination and competitors:
             action_status = "competing"
-            reasons.append("동일 위치를 공유하는 다른 종류의 관계 후보가 있음")
+            reasons.append("동일한 두 합 상대가 공유 천간의 바로 양옆에 있어 위치상 경쟁 조건을 충족함")
             confidence = ConfidenceLevel.MEDIUM
+        elif [r for r in candidates.items if r.id in overlaps and r.type.value not in REFERENCE_ONLY_TYPES]:
+            action_status = "conditional"
+            reasons.append("구성원을 공유하는 관계가 있으나 작용의 경쟁 여부는 미확정임")
+            confidence = ConfidenceLevel.LOW
         elif candidate.type in _COMPLETE_GROUPS and month_support:
             action_status = "active"
             confidence = ConfidenceLevel.HIGH
@@ -130,6 +162,30 @@ def resolve_relationships(
             )
 
         evidence_id = f"evidence:{candidate.id}"
+        function_targets = describe_function_targets(candidate.type.value,
+            [m.model_dump(mode="json") for m in candidate.members], pillars, roots)
+        function_assessments = []
+        if is_stem_combination:
+            day = pillars.get("day")
+            includes_day = any(member.pillar == "day" for member in candidate.members)
+            for member in candidate.members:
+                member_roots = [root.model_dump(mode="json") for root in roots.items
+                                if root.stem_pillar == member.pillar]
+                function_assessments.append({
+                    "pillar": member.pillar,
+                    "stem": member.symbol,
+                    "role_to_day_master": ("day_master" if member.pillar == "day" else
+                        get_ten_god(day.stem, member.symbol).value if day else None),
+                    "root_connections": member_roots,
+                    "function_state": "undetermined",
+                    "scope": "day_master_combination" if includes_day else "other_stems_combination",
+                    "reasons": [
+                        "합의 존재만으로 역할 유지나 제약을 확정하지 않음",
+                        "통근의 존재와 실제 작용 능력은 별도 판단함",
+                    ] + (["일간과의 합에는 다른 천간끼리 합하는 규칙을 그대로 적용하지 않음"]
+                         if includes_day else []),
+                    "evidence_ids": [evidence_id],
+                })
         evidence.append(
             Evidence(
                 id=evidence_id,
@@ -142,6 +198,11 @@ def resolve_relationships(
                     "root_or_exposure_support": supported,
                     "month_element_support": month_support,
                     "competing_candidate_ids": competitors,
+                    "overlapping_candidate_ids": overlaps,
+                    "competition_rule": ("immediate-identical-partners-flanking-v1"
+                        if is_stem_combination and competitors else None),
+                    "member_function_assessments": function_assessments,
+                    "function_targets": function_targets,
                 },
                 supports=[candidate.id],
                 reliability=confidence,
@@ -157,10 +218,15 @@ def resolve_relationships(
                 transformation=transformation,
                 supporting_conditions=[reason for reason in reasons if "있음" in reason or "같음" in reason],
                 competing_relationship_ids=competitors,
+                overlapping_relationship_ids=overlaps,
+                member_function_assessments=function_assessments,
+                function_targets=function_targets,
                 reasons=reasons,
                 evidence_ids=[evidence_id],
                 confidence=confidence,
             )
         )
 
+    evidence.extend(assess_natal_functions(results, pillars, roots))
+    evidence.extend(assess_transformations(results, pillars, roots))
     return results, evidence

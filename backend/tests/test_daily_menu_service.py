@@ -82,11 +82,11 @@ class DailyMenuServiceTests(TestCase):
     def test_pool_prefers_recognizable_korean_choices(self):
         names = {item.name for item in MENU_POOL}
         self.assertTrue({
-            "라면", "짜파게티", "비빔국수", "후라이드치킨", "양념치킨",
+            "라면", "짜장라면", "비빔국수", "후라이드치킨", "양념치킨",
             "간장치킨", "햄버거", "치킨버거", "감자탕", "돼지국밥",
             "오징어뭇국", "해물찜", "조개구이", "소고기불고기",
             "콩밥", "분짜", "알리오 올리오", "어향가지", "모둠초밥",
-            "광어회", "오코노미야키", "양송이스프",
+            "생선회", "오코노미야키", "양송이스프",
         }.issubset(names))
         self.assertNotIn("비빔면", names)
         self.assertTrue({
@@ -137,11 +137,11 @@ class DailyMenuServiceTests(TestCase):
         self.assertEqual(by_name["닭꼬치"].periods, frozenset({"snack"}))
         self.assertEqual(by_name["떡볶이"].periods, frozenset({"snack"}))
         self.assertNotIn("snack", by_name["토마토 에그스크램블"].periods)
-        self.assertNotIn("breakfast", by_name["치즈버거"].periods)
+        self.assertNotIn("breakfast", by_name["햄버거"].periods)
         self.assertNotIn("breakfast", by_name["김밥"].periods)
         self.assertNotIn("breakfast", by_name["매생이국"].periods)
         self.assertNotIn("breakfast", by_name["굴국밥"].periods)
-        self.assertEqual(by_name["문어숙회정식"].periods, frozenset({"dinner"}))
+        self.assertEqual(by_name["문어숙회"].periods, frozenset({"dinner"}))
 
     def test_recent_menu_is_only_a_weak_tie_breaker(self):
         first = self._recommend(hour=12)

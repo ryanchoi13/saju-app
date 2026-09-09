@@ -36,12 +36,22 @@ class DailyFortuneServiceTests(TestCase):
         )
         self.assertNotIn("일진", result["advice"])
         self.assertNotIn("겁재", result["advice"])
-        self.assertIn("역할", result["advice"])
+        self.assertIn("사람", result["advice"])
 
-    def test_lucky_item_comes_from_core_operation_and_element(self):
+    def test_lucky_item_comes_from_confirmed_core_operation_and_element(self):
         target = date(2026, 9, 8)
+        core = self._core(target)
+        # Explicit renderer fixture: this is not a claim that this birth chart
+        # has an established 火/protect judgment in the current research engine.
+        core.synthesis = core.synthesis.model_copy(update={
+            'favorable_operations': [{
+                'operation': 'protect', 'elements': ['火'],
+                'evidence_ids': ['fixture:confirmed-protection'],
+            }],
+        })
+        core.semantic_state = core.semantic_state.model_copy(update={'favorable_elements': ['火']})
         result = build_daily_fortune(
-            self._core(target),
+            core,
             "테스트",
             target,
             current_hour=12,
@@ -53,12 +63,27 @@ class DailyFortuneServiceTests(TestCase):
         self.assertIn("보조 근거", result["lucky_item_reason"])
         self.assertEqual(result["lucky_number"], "2, 7")
         self.assertEqual(result["lucky_direction"], "남쪽 (화 기운)")
+        self.assertTrue(result['evidence_summary']['lucky_recommendation_basis']['recommendation_confirmed'])
         self.assertGreaterEqual(result["menu_pool_size"], 200)
         self.assertEqual(len(result["recommended_menus"]), 2)
         self.assertEqual(result["recommended_menu"], result["recommended_menus"][0])
         self.assertNotIn("diet_meal_plan", result)
         self.assertNotIn("general_meal_plan", result)
         self.assertEqual(result["menu_pool_version"], "simple-menu-v4-catalog-review")
+
+    def test_unconfirmed_core_is_not_presented_as_balance_or_needed_element(self):
+        target = date(2026, 9, 8)
+        core = self._core(target)
+        self.assertFalse(core.synthesis.favorable_operations)
+        self.assertTrue(core.synthesis.pending_operations)
+        result = build_daily_fortune(core, '테스트', target)
+        self.assertEqual(result['evidence_summary']['primary_operation'], 'unconfirmed')
+        basis = result['evidence_summary']['lucky_recommendation_basis']
+        self.assertFalse(basis['recommendation_confirmed'])
+        self.assertEqual(basis['element_source'], 'daily_symbolic_reference')
+        self.assertNotIn('우선입니다', result['lucky_item_reason'])
+        self.assertNotIn('보완 방향', result['talisman']['desc'])
+        self.assertIn('참고 아이템', result['lucky_item_reason'])
 
     def test_fortune_changes_with_the_actual_daily_pillar(self):
         first_date = date(2026, 9, 7)
@@ -105,5 +130,6 @@ class DailyFortuneServiceTests(TestCase):
         result = build_daily_fortune(core, '테스트', target)
         self.assertEqual(result['mindset'], expected['mindset'])
         self.assertEqual(result['action'], expected['action'])
-        self.assertEqual(result['time_flow']['afternoon'], result['action'])
+        self.assertEqual(result['unified_advice'], expected['unified_advice'])
+        self.assertNotEqual(result['time_flow']['afternoon'], result['unified_advice'])
         self.assertEqual(result['evidence_summary']['guidance'], expected['evidence'])

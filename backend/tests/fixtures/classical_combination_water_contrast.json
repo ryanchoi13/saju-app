@@ -1,0 +1,26 @@
+{
+  "version": "combination-water-contrast-v1",
+  "scope": "natal_only",
+  "selection": "3차 규칙 개발 중 확인한 동일 원문 내 두 명식 대조. 개발 사례이며 독립 검증 아님.",
+  "sources": {
+    "ren": {
+      "url": "https://zh.wikisource.org/zh-hant/滴天髓闡微#二十一、官殺",
+      "work": "滴天髓闡微", "attribution": "任鐵樵 주석"
+    }
+  },
+  "cases": [
+    {
+      "id": "ren-wet-reserve-retains-water", "source": "ren",
+      "locator": "通神論二十一、官殺 — 四曰合官留殺格의 癸丑 戊午 丙午 壬辰",
+      "pillars": ["癸丑", "戊午", "丙午", "壬辰"], "target": ["year", "month"],
+      "expected_transformation": "not_established", "guards": ["do_not_certify_true_conversion"]
+    },
+    {
+      "id": "ren-fire-branch-converts-despite-remote-water", "source": "ren",
+      "locator": "바로 뒤 임철초 자명식: 癸巳 戊午 丙午 壬辰",
+      "pillars": ["癸巳", "戊午", "丙午", "壬辰"], "target": ["year", "month"],
+      "expected_transformation": "established", "guards": ["do_not_reject_conversion"],
+      "note": "壬辰의 원거리 수 기반은 앞 사례와 같지만 연지 丑→巳로 원문 합화 결론이 달라진다. 긍정 합화는 아직 구현 범위 밖."
+    }
+  ]
+}
