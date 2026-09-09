@@ -36,10 +36,10 @@ class DailyGuidanceTests(TestCase):
         relation = {'type': 'branch_clash', 'status': 'candidate', 'relationship_id': 'daily:1', 'members': [{'pillar': 'timing:daily'}]}
         a = build_daily_guidance(q, 'direct_resource', [relation])
         self.assertEqual(a['evidence']['primary_operation'], 'support')
-        self.assertIn('조건을 확인한 뒤', a['action'])
+        self.assertIn('조건 확인 후', a['action'])
         relation['members'] = [{'pillar': 'timing:annual'}]
         b = build_daily_guidance(q, 'direct_resource', [relation])
-        self.assertNotIn('조건을 확인한 뒤', b['action'])
+        self.assertNotIn('조건 확인 후', b['action'])
 
     def test_priority_order_preserved_and_input_untouched(self):
         q = self.query('preserve_special_structure')

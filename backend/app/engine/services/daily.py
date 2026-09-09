@@ -99,6 +99,21 @@ _DAILY_THEME = {
     },
 }
 
+
+# Plain-language display copy; calculation details stay in structured evidence.
+_DAILY_BODY = {
+    "peer": "오늘은 내 기준을 분명히 세우는 날입니다. 남의 속도보다 내가 책임질 일에 집중해 보세요.",
+    "rob_wealth": "오늘은 함께하는 일의 역할을 정리하기 좋은 날입니다. 서로 맡을 일과 비용을 미리 확인해 보세요.",
+    "eating_god": "오늘은 하던 일을 차근차근 마무리하기 좋은 날입니다. 크게 벌이기보다 작은 일 하나를 완성하는 데 집중해 보세요.",
+    "hurting_officer": "오늘은 생각을 구체적인 제안으로 꺼내기 좋은 날입니다. 솔직하게 말하되 상대가 받아들일 표현을 골라보세요.",
+    "direct_wealth": "오늘은 실속 있는 결과를 챙기는 날입니다. 돈과 약속은 숫자와 조건을 살펴보세요.",
+    "indirect_wealth": "오늘은 새로운 제안이 눈에 들어오는 날입니다. 감당할 수 있는 것부터 작게 살펴보세요.",
+    "direct_officer": "오늘은 원칙과 책임을 분명히 하는 날입니다. 정해진 순서를 지키고 맡을 범위를 정해보세요.",
+    "seven_killings": "오늘은 급한 일의 우선순위를 좁히는 날입니다. 서두르기보다 필요한 확인부터 해보세요.",
+    "direct_resource": "오늘은 배우고 정리하는 시간이 도움이 되는 날입니다. 필요한 자료나 도움을 찾아보세요.",
+    "indirect_resource": "오늘은 익숙한 일을 새롭게 바라보는 날입니다. 떠오른 생각은 작은 검증을 거쳐보세요.",
+}
+
 _RELATION_KO = {
     "stem_combination": "천간합",
     "branch_six_combination": "육합",
@@ -423,26 +438,13 @@ def build_daily_fortune(
     elif score <= 68 and tension_count >= 2:
         title = "서두르면 엇갈리기 쉬운 날"
 
-    layers = []
-    if daily_god == monthly_god:
-        layers.append("오늘의 주제가 이달의 흐름과 겹쳐 체감이 더 선명합니다.")
-    elif daily_god == annual_god:
-        layers.append("오늘의 주제가 올해의 흐름과 맞물립니다.")
-    elif cycle.get("ten_god") == daily_god:
-        layers.append("오늘의 주제가 현재 대운의 흐름과 겹칩니다.")
-
     relation_note = ""
     if tensions:
-        names = list(dict.fromkeys(_RELATION_KO[item["type"]] for item in tensions))
-        relation_note = f"원국·시간 흐름과 오늘 사이에 {'·'.join(names[:3])}의 변수가 보여, 중요한 말과 결정은 한 번 더 확인하는 편이 좋습니다."
+        relation_note = "중요한 말과 결정은 한 번 더 확인해 보세요."
     elif supportive:
-        names = list(dict.fromkeys(_RELATION_KO[item["type"]] for item in supportive))
-        relation_note = f"원국·시간 흐름과 오늘 사이에 {'·'.join(names[:2])}의 연결이 보여, 이미 준비한 일을 실제 행동으로 옮기기 좋습니다."
+        relation_note = "준비한 일은 작은 행동부터 옮겨보세요."
 
-    shensha_note = ""
-    if shensha:
-        name, note = _SHENSHA_KO[shensha[0]]
-        shensha_note = f"보조 신호로 {name}이 활성화되어 {note}"
+    shensha_note = _SHENSHA_KO[shensha[0]][1] if shensha else ""
 
     operation = _primary_operation(query)
     operation_name = operation.get("operation", "preserve_balance")
@@ -453,13 +455,7 @@ def build_daily_fortune(
     talisman_title, talisman_power, talisman_type = _TALISMAN[lucky_element]
     menu_selection = daily_choices(core.input, target_date, timing_element_weights, account_key)
 
-    advice_parts = [
-        f"{target_date.month}월 {target_date.day}일은 {ganji_display} 일진이며, "
-        f"{user_name or '회원'}님에게는 {_with_ro(_TEN_GOD_KO[daily_god])} 들어옵니다.",
-        f"오늘의 중심은 {theme['topic']}입니다.",
-        theme["advice"],
-        *layers,
-    ]
+    advice_parts = [_DAILY_BODY[daily_god]]
     if relation_note:
         advice_parts.append(relation_note)
     if shensha_note:
