@@ -91,3 +91,17 @@ class DailyFortuneServiceTests(TestCase):
         self.assertGreaterEqual(len({item["lucky_item"] for item in results}), 4)
         self.assertTrue(all(62 <= item["score"] <= 91 for item in results))
         self.assertTrue(all(item["lucky_item_reason"] for item in results))
+
+    def test_short_guidance_is_connected_to_core_and_afternoon(self):
+        from app.engine.semantic.queries import build_service_query
+        from app.engine.services.daily_guidance import build_daily_guidance
+        from app.engine.services.daily import _daily_relationships
+        target = date(2026, 9, 9)
+        core = self._core(target)
+        query = build_service_query(core, 'daily_overall')
+        expected = build_daily_guidance(query, query['timing']['daily']['ten_god'], _daily_relationships(query))
+        result = build_daily_fortune(core, '테스트', target)
+        self.assertEqual(result['mindset'], expected['mindset'])
+        self.assertEqual(result['action'], expected['action'])
+        self.assertEqual(result['time_flow']['afternoon'], result['action'])
+        self.assertEqual(result['evidence_summary']['guidance'], expected['evidence'])
