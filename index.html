@@ -3318,7 +3318,10 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 ctx.drawImage(img, 21, 36, 378, 648);
 
                 const dlLink = document.createElement('a');
-                dlLink.download = `${currentUserName}_달하_맞춤부적.png`;
+                const downloadedAt = new Date(Date.now() + 9 * 60 * 60 * 1000).toISOString();
+                const datePart = downloadedAt.slice(0, 10).replaceAll('-', '');
+                const timePart = downloadedAt.slice(11, 19).replaceAll(':', '') + '_' + downloadedAt.slice(20, 23);
+                dlLink.download = `달하_부적_${datePart}_${timePart}.png`;
                 dlLink.href = canvas.toDataURL('image/png');
                 document.body.appendChild(dlLink);
                 dlLink.click();
