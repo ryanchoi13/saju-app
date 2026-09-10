@@ -35,6 +35,7 @@ import os
 import random
  
 app = FastAPI(title="DALHA - Style Destiny Backend Engine")
+app.mount("/assets", StaticFiles(directory=os.path.join(os.path.dirname(__file__), "assets")), name="assets")
 
 app.add_middleware(
     CORSMiddleware,
@@ -238,28 +239,23 @@ JIJANGGAN_MAP = {
     "해": [{"char": "무", "elem": "earth"}, {"char": "갑", "elem": "wood"}, {"char": "임", "elem": "water"}]
 }
 
-def calculate_biorhythm(birth_year: int, birth_month: int, birth_day: int):
+def calculate_biorhythm(birth_year: int, birth_month: int, birth_day: int, target_date=None):
     import math
-    today = datetime.date.today()
-    b_date = datetime.date(birth_year, birth_month, birth_day)
-    days_lived = (today - b_date).days
-
-    p_val = round(math.sin(2 * math.pi * days_lived / 23) * 100)
-    e_val = round(math.sin(2 * math.pi * days_lived / 28) * 100)
-    i_val = round(math.sin(2 * math.pi * days_lived / 33) * 100)
-
-    def get_status(v):
-        if v >= 50: return "고조기"
-        if v > -50: return "안정기"
-        return "저조기"
-
-    return {
-        "days_lived": days_lived,
-        "physical": {"val": p_val, "status": get_status(p_val)},
-        "emotional": {"val": e_val, "status": get_status(e_val)},
-        "intellectual": {"val": i_val, "status": get_status(i_val)},
-        "overall_summary": f"신체 에너지가 {get_status(p_val)}이며 지성적 판단력이 우수한 흐름입니다. 중요한 의사결정에 적합한 타이밍입니다."
-    }
+    today = target_date or datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=9))).date()
+    days_lived = (today - datetime.date(birth_year, birth_month, birth_day)).days
+    def status(value):
+        return "고조기" if value >= 50 else ("저조기" if value <= -50 else "안정기")
+    result = {"days_lived": days_lived}
+    for key, period in (("physical", 23), ("emotional", 28), ("intellectual", 33)):
+        value = round(math.sin(2 * math.pi * days_lived / period) * 100)
+        result[key] = {"val": value, "status": status(value)}
+    result["overall_summary"] = (
+        f"계산상 신체는 {result['physical']['status']}, 감성은 {result['emotional']['status']}, "
+        f"지성은 {result['intellectual']['status']}에 해당합니다. "
+        "수치는 −100~+100 사이의 주기 위치로, −100은 곡선의 최저점입니다. "
+        "실제 체력·감정·판단력을 측정한 점수는 아니며, 생일 기반 주기를 재미로 살펴보는 참고 정보입니다."
+    )
+    return result
 
 def with_wa_gwa(word: str):
     return josa(word, "과/와")
@@ -360,7 +356,7 @@ def get_saju_pillars_and_analysis(name: str, gender: str, y: int, m: int, d: int
         "birth_summary": profile_detail,
         "saju_profile_detail": profile_detail,
         "current_age": current_age,
-        "biorhythm": calculate_biorhythm(y, m, d),
+        "biorhythm": calculate_biorhythm(*map(int, core.natal_facts.calendar["solar_date"].split("-")), target_date=today_date),
         "saju_data": {
             "singang_label": singang_label,
             "pillars_detail": {
@@ -406,7 +402,7 @@ def get_saju_pillars_and_analysis(name: str, gender: str, y: int, m: int, d: int
         }
     }
 
-    result["daily_fortune"]["style_palettes"] = build_style_contexts(wada_duo_no, gender, result["daily_fortune"]["wada_palette"])
+    result["daily_fortune"]["style_palettes"] = build_style_contexts(wada_duo_no, gender, result["daily_fortune"]["wada_palette"], lucky_element)
     return result
 
 # --- Detailed Report Generator Engine ---

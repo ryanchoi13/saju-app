@@ -36,6 +36,9 @@ const tick = () => new Promise(resolve => setTimeout(resolve,30));
         const oldDoc = new JSDOM(oldHtml).window.document;
         const newHome = new JSDOM(homeBeforeBoot).window.document;
         newHome.getElementById('styleTpoControls').remove();
+        // Only the newly requested outfit/menu surfaces and loading copy differ.
+        for (const id of ['outfitCards','menuPhotoCards']) newHome.getElementById(id).remove();
+        newHome.getElementById('bioOverallText').textContent = oldDoc.getElementById('bioOverallText').textContent;
         assert.equal(newHome.getElementById('view-today').outerHTML.replace(/>\s+</g,'><'), oldDoc.getElementById('view-today').outerHTML.replace(/>\s+</g,'><'));
         const ids = [...doc.querySelectorAll('[id]')].map(el => el.id);
         assert.equal(ids.length, new Set(ids).size);

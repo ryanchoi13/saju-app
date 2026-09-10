@@ -394,6 +394,24 @@
             .palette-chip { padding:9px 8px; gap:6px; }
             .palette-swatch { width:16px; height:16px; flex-basis:16px; }
         }
+
+        .look-options { display:grid; grid-template-columns:1fr; gap:12px; margin:16px 0; }
+        .look-card { background:#F8F9FC; border:1px solid #E5E9F0; border-radius:18px; padding:14px; min-width:0; }
+        .look-card h4 { margin:0 0 12px; font-size:16px; line-height:1.5; color:#25334A; }
+        .look-pieces { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px 4px; }
+        .look-piece { margin:0; min-width:0; text-align:center; }
+        .garment { display:block; aspect-ratio:1; position:relative; isolation:isolate; }
+        .garment::before, .garment::after { content:''; position:absolute; inset:0; }
+        .garment::before { background:var(--garment-color); mask:url('/assets/outfit-atlas-v1.png') var(--pos) / 400% 400%; -webkit-mask:url('/assets/outfit-atlas-v1.png') var(--pos) / 400% 400%; }
+        .garment::after { background:url('/assets/outfit-atlas-v1.png') var(--pos) / 400% 400%; mix-blend-mode:multiply; }
+        .look-piece figcaption { font-size:14px!important; line-height:1.5; color:#4B586D; overflow-wrap:anywhere; }
+        .look-piece figcaption strong { display:block; font-size:14px!important; color:#25334A; }
+        .look-note { font-size:14px!important; line-height:1.6; color:#4B586D; margin:0 0 12px; }
+        .menu-photos { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; margin-top:12px; }
+        .menu-photo-card { margin:0; background:#FFF; border:1px solid #E5E9F0; border-radius:16px; overflow:hidden; }
+        .food-photo { display:block; aspect-ratio:1; background-image:url('/assets/food-atlas-v1.png'); background-size:400% 300%; }
+        .menu-photo-card figcaption { padding:10px; font-size:15px!important; font-weight:700; line-height:1.5; }
+        @media(max-width:380px) { .look-card { padding:12px; } }
     </style>
 <script id="dalha-hangul">
 /* es-hangul 2.4.0 | MIT | Copyright (c) Viva Republica, Inc. | third_party/es-hangul-LICENSE */
@@ -590,6 +608,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                         <p id="resStyle" style="font-weight: 800; font-size: 15.5px; color: #0F172A; margin: 0 0 8px 0; line-height: 1.5;">
                             네이비 쿨 티셔츠 &nbsp;&amp;&nbsp; 스카이블루 데님 팬츠
                         </p>
+                        <div id="outfitCards"></div>
                         <div id="wardrobeDailyMatchPick" style="background: #FFFBEB; border-radius: 12px; padding: 12px 14px; border: 1px solid #FDE68A;">
                             <div style="font-size: 13px; color: #78350F; line-height: 1.6;">
                                 ✦ <strong>소품 매칭:</strong> 내 옷장의 <strong>[시계]</strong>를 더해 균형을 맞춰보세요.
@@ -635,6 +654,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                         <div class="grid-cell">
                             <span id="resMenuLabel" style="font-size: 12px; color: #64748B; font-weight: 600; display: block;">🍲 추천 메뉴</span>
                             <p id="resMenu" style="font-weight: 800; margin: 3px 0 8px; font-size: 14px; line-height: 1.65; white-space: pre-line; color: #0F172A;">속이 편안한 영양 솥밥</p>
+                            <div id="menuPhotoCards" class="menu-photos"></div>
                             <button id="menuPlanLike" type="button" onclick="togglePlanLike()" aria-label="오늘 식단 좋아요" aria-pressed="false" hidden style="border:0;background:transparent;color:#64748B;font-size:25px;cursor:pointer;padding:4px 10px;min-width:44px;min-height:44px;">♡</button>
                             <span id="menuLikeStatus" role="status" style="font-size:11px;color:#64748B;"></span>
                             <button id="menuModeToggle" hidden type="button" onclick="toggleMenuMode()" style="width: 100%; border: 1px solid #BBF7D0; background: #F0FDF4; color: #166534; border-radius: 8px; padding: 6px 8px; font-size: 11.5px; font-weight: 800; cursor: pointer;">다이어트 식단으로 보기</button>
@@ -678,7 +698,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
 
                     <div style="background: #F8FAFC; border-radius: 10px; padding: 10px 12px; font-size: 13px; color: #334155; line-height: 1.6; border-left: 3.5px solid #2D6A4F;">
                         <span style="font-weight: 800; color: #2D6A4F;">💡 바이오리듬 해석:</span><br>
-                        <span id="bioOverallText">생체 에너지를 정밀 분석 중입니다.</span>
+                        <span id="bioOverallText">생일을 기준으로 주기 곡선을 계산하고 있어요.</span>
                     </div>
                 </div>
 
@@ -1413,6 +1433,34 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             }
         }
 
+        const FOOD_PHOTOS = new Map([
+            ['프라이드 치킨',0],['후라이드 치킨',0],['프라이드치킨',0],['후라이드치킨',0],
+            ['김치찌개',1],['돼지고기 김치찌개',1],['비빔밥',2],['제육볶음',3],
+            ['돈가스',4],['돈까스',4],['된장찌개',5],['잡채',6],['떡볶이',7],
+            ['김밥',8],['짜장면',9],['자장면',9],['짬뽕',10],['토마토 파스타',11],['토마토 스파게티',11]
+        ]);
+        function renderMenuPhotos(menus) {
+            const box = document.getElementById('menuPhotoCards');
+            if (!box) return;
+            box.innerHTML = menus.slice(0,2).map(name => {
+                const cell = FOOD_PHOTOS.get(String(name).trim());
+                // Never substitute a photo of a different dish.
+                const photo = cell === undefined ? '' : `<span class="food-photo" role="img" aria-label="${escapeStyleText(name)} 예시 이미지" style="background-position:${(cell%4)*100/3}% ${Math.floor(cell/4)*50}%"></span>`;
+                return `<figure class="menu-photo-card">${photo}<figcaption>${escapeStyleText(name)}</figcaption></figure>`;
+            }).join('');
+        }
+        function renderOutfitCards(palette) {
+            const box = document.getElementById('outfitCards');
+            if (!box) return;
+            const looks = palette?.looks || [];
+            box.innerHTML = looks.length ? `<div class="look-options">${looks.map((look,i) => `<article class="look-card"><h4>${i+1}. ${escapeStyleText(look.title)}</h4><div class="look-pieces">${look.items.map(item => {
+                const cell = Number(item.sprite);
+                if (!Number.isInteger(cell) || cell < 0 || cell > 15) return '';
+                const hex = /^#[0-9a-f]{6}$/i.test(item.hex) ? item.hex : '#CBD5E1';
+                return `<figure class="look-piece"><span class="garment" aria-hidden="true" style="--garment-color:${hex};--pos:${cell%4*100/3}% ${Math.floor(cell/4)*100/3}%"></span><figcaption>${escapeStyleText(item.color_name)}<strong>${escapeStyleText(item.label)}</strong></figcaption></figure>`;
+            }).join('')}</div></article>`).join('')}</div><p class="look-note">색상과 구성의 이해를 돕는 코디 예시입니다. 비슷한 옷으로 활용해 보세요.</p>` : '';
+        }
+
         function renderRecommendedMenu() {
             const fortune = currentFortuneData?.daily_fortune || {};
             const menuEl = document.getElementById('resMenu');
@@ -1424,6 +1472,8 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             menuEl.innerText = menus.length
                 ? menus.slice(0, 2).join(' / ')
                 : '추천 메뉴를 준비하고 있어요';
+            renderMenuPhotos(menus);
+            menuEl.hidden = menus.length > 0;
             document.getElementById('menuModeToggle').hidden = true;
             document.getElementById('menuPlanLike').hidden = true;
             document.getElementById('menuLikeStatus').innerText = '';
@@ -1780,9 +1830,9 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             if (data.biorhythm) {
                 const bio = data.biorhythm;
                 document.getElementById('bioDaysLived').innerText = `생애 ${bio.days_lived.toLocaleString()}일째`;
-                document.getElementById('bioPhysicalStatus').innerText = `${bio.physical.status} (${bio.physical.val}%)`;
-                document.getElementById('bioEmotionalStatus').innerText = `${bio.emotional.status} (${bio.emotional.val}%)`;
-                document.getElementById('bioIntellectualStatus').innerText = `${bio.intellectual.status} (${bio.intellectual.val}%)`;
+                document.getElementById('bioPhysicalStatus').innerText = `${bio.physical.status} (${bio.physical.val})`;
+                document.getElementById('bioEmotionalStatus').innerText = `${bio.emotional.status} (${bio.emotional.val})`;
+                document.getElementById('bioIntellectualStatus').innerText = `${bio.intellectual.status} (${bio.intellectual.val})`;
                 document.getElementById('bioOverallText').innerText = bio.overall_summary;
                 document.getElementById('biorhythmWaveSvg').innerHTML = renderBiorhythmWaveSvg(bio.days_lived);
             }
@@ -2013,6 +2063,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 styleEl.textContent = '오늘의 추천 색상을 불러온 뒤 옷차림을 안내합니다.';
                 pickEl.textContent = '오늘의 운세 정보가 아직 없습니다.';
                 paletteBox.replaceChildren();
+                renderOutfitCards(null);
                 if (moodStoryEl) moodStoryEl.textContent = '';
                 if (moodBadge) moodBadge.textContent = '정보 확인 중';
                 return;
@@ -2027,7 +2078,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 moodBadge.innerText = wada.mood_tag || (todayMood === "casual" ? "🏃 캐주얼 & 액티브" : "👔 클래식 & 포멀");
             }
             if (moodStoryEl) {
-                moodStoryEl.innerText = `"${wada.mood_desc}"`;
+                moodStoryEl.innerText = wada.mood_desc || "";
             }
 
             const matchedTops = userWardrobeItems.filter(item => item.category === "상의" && (item.colors || []).some(c => c.includes(topColorStd) || topColorStd.includes(c)));
@@ -2046,7 +2097,9 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             let finalTopText = matchedTops.length > 0 ? `내 옷장의 <strong>[${escapeStyleText(matchedTops[0].nickname)}]</strong>` : defaultTop;
             let finalBottomText = matchedBottoms.length > 0 ? `내 옷장의 <strong>[${escapeStyleText(matchedBottoms[0].nickname)}]</strong>` : defaultBottom;
 
-            if (selectedTpo === 'casual') styleEl.innerHTML = `${finalTopText} &nbsp;&amp;&nbsp; ${finalBottomText}`;
+            renderOutfitCards(wada);
+            if (wada.looks?.length) styleEl.textContent = `${wada.mood_tag} 코디 제안`;
+            else if (selectedTpo === 'casual') styleEl.innerHTML = `${finalTopText} &nbsp;&amp;&nbsp; ${finalBottomText}`;
             else styleEl.textContent = wada.outfit_guidance || '이 옷차림에 적용할 위치를 아직 확인하지 못했습니다.';
 
             const recommendation = selectDailyAccessory(userWardrobeItems, fortune, wada);
