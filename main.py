@@ -18,6 +18,7 @@ from app.engine.services import (
     build_lifetime_study_report,
     build_lifetime_wealth_report,
 )
+import wardrobe_store
 from style_context import build_style_contexts
 from wada_context_placement import WADA_CONTEXT_PLACEMENT
 from wada_color_rules import evaluate_duo
@@ -47,7 +48,6 @@ app.add_middleware(
 
 # --- In-Memory DB Models ---
 users_db: Dict[str, Dict[str, Any]] = {}
-wardrobe_db: Dict[str, List[Dict[str, Any]]] = {}
 reports_db: Dict[str, List[Dict[str, Any]]] = {}
 
 # --- Request/Response Models ---
@@ -72,10 +72,10 @@ class RegisterSajuRequest(BaseModel):
 
 class WardrobeItemRequest(BaseModel):
     user_id: str
-    category: str
-    nickname: Optional[str] = ""
-    colors: List[str]
-    materials: List[str]
+    category: str = Field(min_length=1, max_length=50)
+    nickname: Optional[str] = Field(default="", max_length=100)
+    colors: List[str] = Field(min_length=1, max_length=8)
+    materials: List[str] = Field(min_length=1, max_length=8)
 
 class UnlockReportRequest(BaseModel):
     user_id: str
@@ -245,15 +245,39 @@ def calculate_biorhythm(birth_year: int, birth_month: int, birth_day: int, targe
     days_lived = (today - datetime.date(birth_year, birth_month, birth_day)).days
     def status(value):
         return "고조기" if value >= 50 else ("저조기" if value <= -50 else "안정기")
+    # Presentation references and limits: docs/daily-polish-and-storage.md.
+    advice = {
+        "physical": {
+            "고조기": "몸이 가볍게 느껴진다면 산책이나 미뤄 둔 작은 활동을 즐겨 보세요. 평소의 페이스를 지키면 충분합니다.",
+            "저조기": "일정 사이에 쉴 틈을 넣어 보세요. 움직임의 양은 숫자보다 오늘 몸이 느끼는 편안함에 맞춰 주세요.",
+            "안정기": "익숙한 일과를 차분히 이어가 보세요. 바쁜 일정 중에도 잠깐 몸을 풀며 자기 페이스를 살펴보면 좋겠습니다.",
+        },
+        "emotional": {
+            "고조기": "고마웠던 사람에게 짧은 안부를 전하거나 좋아하는 취미를 즐겨 보세요. 마음을 표현하는 작은 시간이 하루를 풍성하게 해 줍니다.",
+            "저조기": "답장을 서두르기보다 내 마음을 먼저 살펴보세요. 혼자 편히 쉬는 시간이나 좋아하는 음악으로 여유를 만들어 보세요.",
+            "안정기": "대화에서는 내 생각만큼 상대의 이야기도 천천히 들어 보세요. 기분을 한두 문장 적으며 하루를 정리해도 좋겠습니다.",
+        },
+        "intellectual": {
+            "고조기": "궁금했던 주제를 짧게 읽거나 떠오른 아이디어를 메모해 보세요. 중요한 내용은 여느 때처럼 근거를 확인해 주세요.",
+            "저조기": "할 일을 작은 단계로 나누고 한 번에 하나씩 다뤄 보세요. 기억에만 맡기기보다 메모와 체크리스트를 곁에 두면 편합니다.",
+            "안정기": "새 일을 늘리기 전에 지금 하던 일의 순서를 정리해 보세요. 집중할 일 하나를 정하고 차분히 마무리해 보세요.",
+        },
+    }
     result = {"days_lived": days_lived}
-    for key, period in (("physical", 23), ("emotional", 28), ("intellectual", 33)):
+    summaries = []
+    for key, label, period in (("physical", "신체", 23), ("emotional", "감성", 28), ("intellectual", "지성", 33)):
         value = round(math.sin(2 * math.pi * days_lived / period) * 100)
-        result[key] = {"val": value, "status": status(value)}
-    result["overall_summary"] = (
-        f"계산상 신체는 {result['physical']['status']}, 감성은 {result['emotional']['status']}, "
-        f"지성은 {result['intellectual']['status']}에 해당합니다. "
-        "수치는 −100~+100 사이의 주기 위치로, −100은 곡선의 최저점입니다. "
-        "실제 체력·감정·판단력을 측정한 점수는 아니며, 생일 기반 주기를 재미로 살펴보는 참고 정보입니다."
+        tomorrow = math.sin(2 * math.pi * (days_lived + 1) / period) * 100
+        phase = status(value)
+        trend = "상승 중" if tomorrow > value else "하강 중"
+        position = "정점 부근" if value >= 95 else ("최저점 부근" if value <= -95 else trend)
+        text = f"{josa(label, '은/는')} {phase} · 곡선은 {position}입니다. {advice[key][phase]}"
+        result[key] = {"val": value, "status": phase, "trend": trend, "summary": text}
+        summaries.append(text)
+    result["overall_summary"] = "\n\n".join(summaries)
+    result["interpretation_note"] = (
+        "생일로 계산한 23·28·33일 주기를 재미로 살펴보는 해석입니다. "
+        "−100~+100은 곡선의 위치이며 실제 체력·감정·판단력을 측정한 점수가 아닙니다. 오늘 느끼는 컨디션을 먼저 살펴주세요."
     )
     return result
 
@@ -599,8 +623,8 @@ def auth_kakao(req: KakaoAuthRequest):
             "coin": 1000,
         }
         reports_db[user_id] = []
-        wardrobe_db[user_id] = []
 
+    wardrobe = _wardrobe_response(user_id)
     user = users_db[user_id]
     if incoming_profile:
         user.update(incoming_profile)
@@ -619,7 +643,7 @@ def auth_kakao(req: KakaoAuthRequest):
             "user_id": user_id,
             "coin_balance": user["coin"],
             "unlocked_reports": reports_db.get(user_id, []),
-            "wardrobe_items": wardrobe_db.get(user_id, []),
+            **wardrobe,
             "saju_analysis": saju_res,
             "profile": _public_profile(user),
         }
@@ -628,6 +652,7 @@ def auth_kakao(req: KakaoAuthRequest):
         "user_id": user_id,
         "coin_balance": user["coin"],
         "kakao_prefill": _public_profile(user),
+        **wardrobe,
     }
 
 @app.post("/api/user/register-saju")
@@ -658,38 +683,57 @@ def register_saju(req: RegisterSajuRequest):
         "profile": _public_profile(users_db[req.user_id]),
     }
 
+def _wardrobe_response(user_id):
+    try:
+        return {"wardrobe_items": wardrobe_store.list_items(user_id)}
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc))
+    except wardrobe_store.StorageUnavailable:
+        # An unavailable database is not an empty wardrobe.
+        return {"wardrobe_items": None, "wardrobe_error": "옷장을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요."}
+
+
+@app.get("/api/health/storage")
+def storage_health():
+    try:
+        return {"status": "ok", "wardrobe": wardrobe_store.health()}
+    except wardrobe_store.StorageUnavailable:
+        raise HTTPException(status_code=503, detail="Wardrobe storage unavailable")
+
+
+@app.get("/api/wardrobe")
+def get_wardrobe(user_id: str):
+    result = _wardrobe_response(user_id)
+    if result.get("wardrobe_error"):
+        raise HTTPException(status_code=503, detail=result["wardrobe_error"])
+    return result
+
+
+def _change_wardrobe(user_id, operation, item_id=None, item=None):
+    try:
+        items = wardrobe_store.mutate(user_id, operation, item_id, item)
+        return {"status": "success", "wardrobe_items": items}
+    except wardrobe_store.StorageUnavailable:
+        raise HTTPException(status_code=503, detail="옷장에 저장하지 못했습니다. 잠시 후 다시 시도해 주세요.")
+    except KeyError:
+        raise HTTPException(status_code=404, detail="아이템을 찾지 못했습니다. 옷장을 다시 불러와 주세요.")
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc))
+
+
 @app.post("/api/wardrobe/add")
 def add_wardrobe(req: WardrobeItemRequest):
-    if req.user_id not in wardrobe_db:
-        wardrobe_db[req.user_id] = []
-    
-    new_item = {
-        "id": int(datetime.datetime.now().timestamp() * 1000),
-        "category": req.category,
-        "nickname": req.nickname or f"{req.colors[0] if req.colors else ''} {req.category}",
-        "colors": req.colors,
-        "materials": req.materials
-    }
-    wardrobe_db[req.user_id].append(new_item)
-    return {"status": "success", "wardrobe_items": wardrobe_db[req.user_id]}
+    return _change_wardrobe(req.user_id, "add", item=req.model_dump())
+
 
 @app.put("/api/wardrobe/edit/{item_id}")
 def edit_wardrobe(item_id: int, req: WardrobeItemRequest):
-    items = wardrobe_db.get(req.user_id, [])
-    for item in items:
-        if item["id"] == item_id:
-            item["category"] = req.category
-            item["nickname"] = req.nickname or f"{req.colors[0] if req.colors else ''} {req.category}"
-            item["colors"] = req.colors
-            item["materials"] = req.materials
-            break
-    return {"status": "success", "wardrobe_items": items}
+    return _change_wardrobe(req.user_id, "edit", item_id, req.model_dump())
+
 
 @app.delete("/api/wardrobe/delete/{item_id}")
 def delete_wardrobe(item_id: int, user_id: str):
-    items = wardrobe_db.get(user_id, [])
-    wardrobe_db[user_id] = [i for i in items if i["id"] != item_id]
-    return {"status": "success", "wardrobe_items": wardrobe_db[user_id]}
+    return _change_wardrobe(user_id, "delete", item_id)
 
 @app.post("/api/reports/unlock")
 def unlock_report(req: UnlockReportRequest):

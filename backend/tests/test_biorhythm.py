@@ -7,7 +7,10 @@ class BiorhythmTests(TestCase):
     def test_reported_regression_uses_actual_three_phases(self):
         r = calculate_biorhythm(1978,3,13,date(2026,9,10))
         self.assertEqual([r[k]['val'] for k in ('physical','emotional','intellectual')],[73,-62,-100])
+        self.assertIn('신체는 고조기',r['overall_summary'])
         self.assertIn('지성은 저조기',r['overall_summary'])
+        self.assertIn('메모와 체크리스트',r['overall_summary'])
+        self.assertIn('실제 체력·감정·판단력을 측정한 점수가 아닙니다',r['interpretation_note'])
         self.assertNotIn('우수',r['overall_summary'])
         self.assertNotIn('의사결정에 적합',r['overall_summary'])
         self.assertIn('최저점',r['overall_summary'])

@@ -22,8 +22,14 @@ def build_catalog(manifest):
         for cell, name in enumerate(sheet["menus"]):
             assert name not in cells, f"Duplicate menu: {name}"
             cells[name] = [sheet_index, cell]
+    for sheet in manifest["sheets"]:
+        assert len(sheet["crop_rects"]) == len(sheet["menus"])
+        for x, y, width, height in sheet["crop_rects"]:
+            assert x >= 0 and y >= 0 and width > 0 and height > 0
+            assert x + width <= 896 and y + height <= 768
     return {"version": manifest["version"], "columns": 7, "rows": 6,
-            "files": [s["file"] for s in manifest["sheets"]], "menus": cells}
+            "files": [s["file"] for s in manifest["sheets"]],
+            "crops": [s["crop_rects"] for s in manifest["sheets"]], "menus": cells}
 
 
 def check_catalog(catalog):
