@@ -35,6 +35,31 @@ PANTS_PAIRS = {'wood': ('denim', 'beige'), 'fire': ('black', 'gray'),
                'earth': ('beige', 'brown'), 'metal': ('gray', 'navy'),
                'water': ('navy', 'denim')}
 
+# Shoes finish the outfit; these are practical coordination choices, not
+# additional lucky colors. Each pair is for a light top, then a dark top.
+SHOE_COLORS = {key: PANTS_COLORS[key] for key in ('black', 'navy', 'gray', 'beige', 'brown')}
+SHOE_COLORS['white'] = ('화이트', '#F5F4EF')
+CASUAL_SHOE_PAIRS = {
+    'denim': ('gray', 'white'), 'black': ('black', 'gray'),
+    'navy': ('gray', 'white'), 'gray': ('navy', 'black'),
+    'beige': ('brown', 'white'), 'brown': ('beige', 'white'),
+    'ivory': ('brown', 'black'), 'off_white': ('brown', 'black'),
+    'olive': ('brown', 'beige'),
+}
+
+
+def _shoe_color(pieces, tpo, pants):
+    if tpo == 'business_formal':
+        return SHOE_COLORS['black']
+    pants_key, _ = pants
+    if tpo == 'business_casual':
+        return SHOE_COLORS['brown' if pants_key in {'navy', 'beige', 'brown', 'ivory', 'off_white'} else 'black']
+    top = next(piece for piece in pieces if piece['item_type'] == 'top')
+    rgb = [int(top['hex'].lstrip('#')[i:i+2], 16) for i in (0, 2, 4)]
+    brightness = sum(channel * weight for channel, weight in zip(rgb, (0.2126, 0.7152, 0.0722)))
+    key = CASUAL_SHOE_PAIRS[pants_key][0 if brightness >= 150 else 1]
+    return SHOE_COLORS[key]
+
 
 def _pants_base(gender, tpo, element, variant):
     keys = list(PANTS_PAIRS.get(element, PANTS_PAIRS['water']))
@@ -54,7 +79,7 @@ def _piece(label, color, sprite, slot):
 
 def _look(color, other, gender, tpo, base, pants):
     female = gender == 'female'
-    white, black = ('화이트', '#F5F4EF'), ('블랙', '#252629')
+    white = ('화이트', '#F5F4EF')
     accent = (color['name_ko'], color['hex'])
     scores = dict(color['ranked_items'])
     other_scores = dict(other['ranked_items'])
@@ -97,7 +122,7 @@ def _look(color, other, gender, tpo, base, pants):
             if not female and meta['lightness'] >= 72 and meta['saturation'] <= 55 and score_color_for_item(other['hex'], 'male', 'business_formal', 'tie') >= 60:
                 pieces.append(_piece('넥타이 (선택)', (other['name_ko'], other['hex']), 5, 'tie'))
     pieces.append(_piece('로퍼' if tpo != 'casual' or female else '스니커즈',
-                         black if tpo != 'casual' or female else white,
+                         _shoe_color(pieces, tpo, pants),
                          15 if female else (7 if tpo == 'casual' else 6), 'shoes'))
     return {'title': f"{accent[0]} 포인트", 'items': pieces,
             'accent_slot': slot, 'description': ' · '.join(f"{x['color_name']} {x['label']}" for x in pieces)}

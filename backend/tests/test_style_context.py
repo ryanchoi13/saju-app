@@ -65,3 +65,36 @@ class StyleContextTests(TestCase):
         self.assertIn('정오님을 위해',build_style_contexts(6,'male',{},user_name=' 정오님 ')['casual']['mood_desc'])
         self.assertNotIn('님님',build_style_contexts(6,'male',{},user_name='정오님')['casual']['mood_desc'])
         self.assertTrue(build_style_contexts(6,'male',{},user_name='  ')['casual']['mood_desc'].startswith('오늘의 코디'))
+
+    def test_shoes_stay_wearable_and_are_not_fixed_across_outfits(self):
+        from style_context import SHOE_COLORS
+        for gender in ('male', 'female'):
+            seen = set()
+            for element in ('wood', 'fire', 'earth', 'metal', 'water'):
+                for duo_no in WADA_DUOS:
+                    for tpo, palette in build_style_contexts(duo_no, gender, {}, element).items():
+                        for look in palette['looks']:
+                            shoes = [p for p in look['items'] if p['item_type'] == 'shoes']
+                            self.assertEqual(len(shoes), 1)
+                            shoe = shoes[0]
+                            self.assertIn(shoe['hex'], {v[1] for v in SHOE_COLORS.values()})
+                            self.assertIn(f"{shoe['color_name']} {shoe['label']}", look['description'])
+                            self.assertEqual(shoe['sprite'], 15 if gender == 'female' else (7 if tpo == 'casual' else 6))
+                            if tpo == 'casual':
+                                seen.add(shoe['color_name'])
+                            else:
+                                self.assertIn(shoe['color_name'], {'블랙', '브라운'})
+            self.assertGreaterEqual(len(seen), 4)
+
+    def test_shoe_choice_uses_actual_top_and_trousers(self):
+        from style_context import _shoe_color, PANTS_COLORS
+        def choose(hex_value, pants_key, tpo='casual'):
+            return _shoe_color([{'item_type': 'top', 'hex': hex_value}], tpo,
+                               (pants_key, PANTS_COLORS[pants_key]))[0]
+        # An otherwise identical outfit changes only when its colors do.
+        self.assertEqual(choose('#FFFFFF', 'black'), '블랙')
+        self.assertEqual(choose('#222222', 'black'), '그레이')
+        self.assertEqual(choose('#FFFFFF', 'beige'), '브라운')
+        self.assertEqual(choose('#FFFFFF', 'brown'), '베이지')
+        self.assertEqual(choose('#FFFFFF', 'gray', 'business_casual'), '블랙')
+        self.assertEqual(choose('#FFFFFF', 'navy', 'business_casual'), '브라운')
