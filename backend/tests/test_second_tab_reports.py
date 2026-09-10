@@ -32,8 +32,12 @@ class SecondTabReportTests(TestCase):
     def test_annual_report_has_hierarchy_and_twelve_richer_months(self):
         report = build_annual_overall_report(self.core, "최정오", 2026)
         self.assertIn("올해 총운", report["content"])
-        self.assertIn("재물운", report["content"])
-        self.assertIn("직장·사업운", report["content"])
+        # Overall reports review all domains but do not insert unsupported
+        # money/career cards just to fill a fixed four-card layout.
+        reviewed = report["evidence_summary"]["annual"]["considered_domains"]
+        self.assertTrue({"money", "work", "love", "wellbeing", "learning"} <= {r["domain"] for r in reviewed})
+        for selected in report["evidence_summary"]["annual"]["selected"]:
+            self.assertIn(selected["label"], report["content"])
         self.assertEqual(report["content"].count("border-left:4px solid #2D6A4F"), 12)
         self.assertNotIn("Chapter", report["content"])
         self.assertNotIn("토정비결", report["title"])

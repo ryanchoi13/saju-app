@@ -6,6 +6,8 @@ from html import escape
 
 from app.engine.core.models import MyeongriCoreResult
 from app.engine.semantic import build_service_query
+from app.engine.semantic.overall import select_overall_domains, OVERALL_VERSION
+from app.engine.services.overall_narrative import render_overall, subjects_html, _object_particle
 
 
 _STRUCTURE = {
@@ -128,28 +130,14 @@ def _operation_text(query: dict) -> str:
     return " · ".join(labels) if labels else "확정된 우선 작용 없음"
 
 
-def _cycle_narrative(cycle: dict, strength: str | None) -> str:
-    god = cycle["ten_god"]
-    meaning = _TEN_GOD_MEANING.get(god, "새로운 역할과 선택")
-    changes = cycle.get("relationship_changes", [])
-    relation_labels = list(dict.fromkeys(
-        _RELATION_MEANING.get(item.get("type"), "관계 재조정") for item in changes
-    ))
-    relation_text = (
-        f" 특히 {'·'.join(relation_labels[:2])}이 함께 보여, 중요한 결정은 조건과 역할을 말로 확인하는 편이 좋습니다."
-        if relation_labels else
-        " 원국과의 큰 충돌 신호만으로 결론내리기보다, 실제 환경과 선택을 함께 살펴보는 시기입니다."
-    )
-    if strength in {"weak", "extremely_weak"} and god in {"peer", "rob_wealth", "direct_resource", "indirect_resource"}:
-        balance = "기반을 보강하는 방향과 맞닿아 있어, 준비·학습·협력의 힘을 받기 쉽습니다."
-    elif strength in {"strong", "extremely_strong"} and god in {"eating_god", "hurting_officer", "direct_wealth", "indirect_wealth", "direct_officer", "seven_killings"}:
-        balance = "강한 원국의 힘을 일·성과·책임으로 풀어내는 방향과 맞닿습니다."
-    else:
-        balance = "이 십성 자체가 길흉을 결정하지 않으며, 원국의 균형과 현실의 선택에 따라 쓰임이 달라집니다."
-    return f"이 대운에는 <strong>{meaning}</strong>이 중심 주제로 떠오릅니다. {balance}{relation_text}"
+def _cycle_narrative(interpretation: dict) -> str:
+    narrative = render_overall(interpretation)
+    labels = " · ".join(p["label"] for p in narrative["subjects"] if p["primary"])
+    intro = f"이 시기에는 <strong>{escape(labels)}</strong>{_object_particle(labels)} 중심 주제로 살펴봅니다. " if labels else ""
+    return intro + escape(narrative["advice"])
 
 
-def _cycle_card(cycle: dict, current_index: int | None, strength: str | None) -> str:
+def _cycle_card(cycle: dict, current_index: int | None, interpretation: dict) -> str:
     active = cycle.get("index") == current_index
     marker = " · 현재 대운" if active else ""
     style = "background:#ECFDF5;border-color:#A7F3D0;" if active else "background:#FFFFFF;"
@@ -161,15 +149,14 @@ def _cycle_card(cycle: dict, current_index: int | None, strength: str | None) ->
         f'<div style="font-size:12px;color:#64748B;margin-top:2px;">'
         f'{_TEN_GOD.get(cycle["ten_god"], cycle["ten_god"])}의 흐름</div>'
         f'<p style="font-size:12.8px;color:#475569;margin:6px 0 0;line-height:1.7;">'
-        f'{_cycle_narrative(cycle, strength)}</p></div>'
+        f'{_cycle_narrative(interpretation)}</p></div>'
     )
 
 
-def _cycle_html(query: dict) -> str:
+def _cycle_html(query: dict, core: MyeongriCoreResult, summaries: list) -> str:
     luck = query["timing"]["luck_cycles"]
     current = luck.get("current") or {}
     current_index = current.get("index")
-    strength = query["synthesis"].get("strength_state")
     cycles = luck.get("cycles", [])
     groups = []
     for phase_name, start, end, phase_desc in _PHASES:
@@ -178,17 +165,19 @@ def _cycle_html(query: dict) -> str:
             continue
         active = current_index is not None and start <= current_index <= end
         ages = f'{phase_cycles[0]["start_age"]}~{phase_cycles[-1]["end_age"]}세'
-        top_topics = list(dict.fromkeys(
-            _TEN_GOD_MEANING.get(cycle["ten_god"], "역할 변화") for cycle in phase_cycles
-        ))[:2]
-        cards = "".join(_cycle_card(cycle, current_index, strength) for cycle in phase_cycles)
+        interpretations = [select_overall_domains(core, "luck_cycle", cycle=c) for c in phase_cycles]
+        summaries.extend(dict(index=c["index"], start_age=c["start_age"], end_age=c["end_age"],
+                              interpretation=i) for c, i in zip(phase_cycles, interpretations))
+        top_topics = list(dict.fromkeys(s["label"] for i in interpretations for s in i["selected"]
+                                       if s["domain"] in i["primary_domains"]))
+        cards = "".join(_cycle_card(c, current_index, i) for c, i in zip(phase_cycles, interpretations))
         groups.append(f"""
         <details {'open' if active else ''} style="border:1px solid {'#6EE7B7' if active else '#E2E8F0'};border-radius:13px;background:{'#F0FDF4' if active else '#F8FAFC'};padding:11px 12px;">
           <summary style="cursor:pointer;font-size:14px;font-weight:800;color:#0F172A;">
             {phase_name} · {ages}{' · 현재 구간' if active else ''}
           </summary>
           <p style="font-size:12.5px;color:#64748B;margin:7px 0 9px;line-height:1.65;">
-            {phase_desc}입니다. 이 구간에서는 {'과 '.join(top_topics)}이 차례로 부각됩니다.
+            이 구간에서는 {' · '.join(top_topics) or '생활의 선택과 균형'}을 살펴봅니다.
           </p>
           <div style="display:grid;gap:7px;">{cards}</div>
         </details>""")
@@ -239,8 +228,17 @@ def build_lifetime_overall_report(
         "원국의 구조는 한 가지 성격표가 아니라, 반복되는 선택과 대응의 중심축을 보여줍니다.",
     )
     title = f"{name}님 정통 명리 평생운세 & 10년 대운 분석"
+    selection = select_overall_domains(core, "natal")
+    narrative = render_overall(selection)
+    cycle_summaries = []
+    cycles_html = _cycle_html(query, core, cycle_summaries)
     content = f"""
-    <div style="text-align:left;line-height:1.75;color:#1E293B;">
+    <div data-overall-version="{OVERALL_VERSION}" style="text-align:left;line-height:1.75;color:#1E293B;">
+      <div style="background:#ECFDF5;border-left:4px solid #10B981;padding:16px;border-radius:14px;margin-bottom:14px;">
+        <h4 style="font-size:16px;color:#065F46;margin:0 0 7px;">{escape(narrative['title'])}</h4>
+        <p style="font-size:13.5px;color:#047857;margin:0;">{escape(narrative['unified_advice'])}</p>
+      </div>
+      <div style="display:grid;gap:10px;margin-bottom:16px;">{subjects_html(narrative)}</div>
       <div style="background:#FFFBEB;border-left:4px solid #F59E0B;padding:16px;border-radius:14px;margin-bottom:14px;">
         <h4 style="font-size:16px;font-weight:800;color:#78350F;margin:0 0 6px;">원국 종합 판단</h4>
         <p style="font-size:13.5px;color:#92400E;margin:0;">
@@ -251,7 +249,6 @@ def build_lifetime_overall_report(
       </div>
       <div style="background:#F8FAFC;border:1px solid #E2E8F0;padding:14px;border-radius:14px;margin-bottom:14px;">
         <h5 style="font-size:14px;font-weight:800;color:#0F172A;margin:0 0 5px;">평생 기질과 선택의 기준</h5>
-        <p style="font-size:13px;color:#475569;margin:0 0 8px;">{structure_meaning}</p>
         <p style="font-size:13px;color:#475569;margin:0;">
           강약과 계절 환경까지 함께 보면 평생의 핵심은 ‘강한 점을 더 키우는 것’보다
           상황에 맞게 힘을 보강하거나 풀어내는 데 있습니다. 우선 방향은
@@ -264,7 +261,7 @@ def build_lifetime_overall_report(
           계산은 10년 대운을 그대로 보존하되, 읽기 쉽도록 초년·청년·중장년·말년 네 구간으로 묶었습니다.
           현재 구간은 펼쳐 두고 나머지는 눌러서 확인할 수 있습니다.
         </p>
-        <div style="display:grid;gap:8px;">{_cycle_html(query)}</div>
+        <div style="display:grid;gap:8px;">{cycles_html}</div>
       </div>
       {_uncertainty_html(core)}
       <p style="font-size:11.5px;color:#94A3B8;margin:12px 0 0;">
@@ -272,4 +269,5 @@ def build_lifetime_overall_report(
       </p>
     </div>
     """
-    return {"title": title, "content": content}
+    return {"title": title, "content": content, "engine_version": OVERALL_VERSION,
+            "evidence_summary": {"natal": selection, "cycles": cycle_summaries}}
