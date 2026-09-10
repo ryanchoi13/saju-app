@@ -1111,6 +1111,8 @@ if os.path.exists("index.html"):
 
     @app.get("/design/{variant}", include_in_schema=False)
     def serve_design_comparison(variant: str):
+        if variant == "compare":
+            return FileResponse("assets/design-compare.html", headers={"X-Robots-Tag": "noindex, nofollow"})
         if variant not in {"clear", "moonlight"}:
             raise HTTPException(status_code=404, detail="Unknown design")
         return FileResponse("index.html", headers={"X-Robots-Tag": "noindex, nofollow"})

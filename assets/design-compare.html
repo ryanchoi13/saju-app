@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>달하 · 두 디자인 비교</title>
+  <style>
+    *{box-sizing:border-box}body{margin:0;background:#EDEBE5;color:#182B38;font:16px/1.7 system-ui,-apple-system,sans-serif}
+    main{max-width:1240px;margin:auto;padding:32px 20px 48px}h1{font-size:28px;letter-spacing:-.04em;margin:0 0 8px}p{margin:0;color:#47545B}
+    .widths{display:flex;flex-wrap:wrap;gap:8px;margin:20px 0 28px}button,a{font:inherit;min-height:44px}button{padding:8px 16px;border:1px solid #A6B0B3;border-radius:8px;background:#FFFEFA;color:#183A4A;cursor:pointer}button[aria-pressed=true]{background:#183A4A;color:white}
+    button:focus-visible,a:focus-visible{outline:3px solid #183A4A;outline-offset:3px}.versions{display:flex;flex-wrap:wrap;justify-content:center;align-items:flex-start;gap:32px}.version{width:var(--preview-width,390px);max-width:100%;min-width:0}h2{font-size:20px;margin:0 0 4px}.version p{font-size:14px;min-height:48px;margin-bottom:8px}iframe{display:block;width:100%;height:820px;border:1px solid #B8BFC0;border-radius:12px;background:#fff;box-shadow:0 12px 32px #182B3812}.version>a{display:inline-flex;align-items:center;color:#183A4A;margin-top:8px;text-underline-offset:4px}
+  </style>
+</head>
+<body><main>
+  <h1>달하, 두 가지 디자인</h1>
+  <p>같은 예시 내용으로 비교해 보세요. 각 화면에서 탭과 팝업을 직접 열어볼 수 있습니다.</p>
+  <div class="widths" role="group" aria-label="화면 너비">
+    <button type="button" data-width="320" aria-pressed="false">320px</button>
+    <button type="button" data-width="360" aria-pressed="false">360px</button>
+    <button type="button" data-width="390" aria-pressed="true">390px</button>
+    <button type="button" data-width="520" aria-pressed="false">520px</button>
+  </div>
+  <div class="versions">
+    <section class="version"><h2>A · 클리어</h2><p>밝은 바탕, 진한 글씨, 청록색 강조.<br>기존 디자인의 가독성과 팝업을 개선했습니다.</p><iframe title="A 클리어 디자인 미리보기" src="/design/clear?sample=1"></iframe><a href="/design/clear?sample=1" target="_blank" rel="noopener">A 디자인 크게 보기 ↗</a></section>
+    <section class="version"><h2>B · 달빛 한지</h2><p>달빛 남색, 한지 아이보리, 절제된 금색.<br>사업계획서의 디자인 콘셉트를 반영했습니다.</p><iframe title="B 달빛 한지 디자인 미리보기" src="/design/moonlight?sample=1"></iframe><a href="/design/moonlight?sample=1" target="_blank" rel="noopener">B 디자인 크게 보기 ↗</a></section>
+  </div>
+</main><script>
+  document.querySelectorAll('[data-width]').forEach(button=>button.addEventListener('click',()=>{
+    document.documentElement.style.setProperty('--preview-width',`${button.dataset.width}px`);
+    document.querySelectorAll('[data-width]').forEach(el=>el.setAttribute('aria-pressed',String(el===button)));
+  }));
+</script></body></html>
