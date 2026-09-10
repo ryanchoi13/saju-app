@@ -142,7 +142,8 @@ def _cycle_card(cycle: dict, current_index: int | None, interpretation: dict) ->
     marker = " · 현재 대운" if active else ""
     style = "background:#ECFDF5;border-color:#A7F3D0;" if active else "background:#FFFFFF;"
     return (
-        f'<div style="border:1px solid #E2E8F0;border-radius:10px;padding:11px;{style}">'
+        f'<div data-report-cycle="{cycle["index"]}" data-cycle-ages="{cycle["start_age"]}~{cycle["end_age"]}세" '
+        f'data-current-cycle="{str(active).lower()}" style="border:1px solid #E2E8F0;border-radius:10px;padding:11px;{style}">'
         f'<div style="font-weight:800;color:#0F172A;">'
         f'{cycle["start_age"]}~{cycle["end_age"]}세 · {cycle["pillar"]["ganji"]}'
         f'<span style="color:#047857;">{marker}</span></div>'

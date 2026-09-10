@@ -89,7 +89,7 @@ def _monthly_html(core: MyeongriCoreResult, year: int, summaries: list | None = 
         representative = date(year, month, 15)
         if representative < birth_date:
             if (year, month) < (birth_date.year, birth_date.month):
-                cards.append(f'<div style="border-left:4px solid #2D6A4F;padding:13px;">{month}월 · 출생 전 기간</div>')
+                cards.append(f'<div data-report-month="{month}" style="border-left:4px solid #2D6A4F;padding:13px;">{month}월 · 출생 전 기간</div>')
                 continue
             representative = birth_date
         timing, _, _ = calculate_timing(
@@ -104,7 +104,7 @@ def _monthly_html(core: MyeongriCoreResult, year: int, summaries: list | None = 
         if summaries is not None:
             summaries.append(dict(month=month, representative_date=representative.isoformat(), interpretation=selection))
         cards.append(f"""
-        <div style="background:#F8FAFC;border:1px solid #E2E8F0;padding:13px 14px;border-radius:12px;border-left:4px solid #2D6A4F;">
+        <div data-report-month="{month}" style="background:#F8FAFC;border:1px solid #E2E8F0;padding:13px 14px;border-radius:12px;border-left:4px solid #2D6A4F;">
           <div style="font-size:13.5px;font-weight:800;color:#0F172A;">{month}월 · {escape(narrative['title'])}</div>
           <p style="font-size:13px;color:#475569;margin:5px 0 0;line-height:1.72;">
             {escape(narrative['advice'])}
@@ -135,7 +135,7 @@ def build_annual_overall_report(
     annual_pillar = annual["pillar"]
     title = f"{year} {annual_pillar['ganji']}년 {name}님 총운 & 12개월 명리 흐름"
     content = f"""
-    <div data-overall-version="{OVERALL_VERSION}" style="text-align:left;line-height:1.8;color:#1E293B;">
+    <div data-overall-version="{OVERALL_VERSION}" data-report-year="{year}" style="text-align:left;line-height:1.8;color:#1E293B;">
       <div style="background:#ECFDF5;border-left:4px solid #10B981;padding:16px;border-radius:14px;margin-bottom:16px;">
         <div style="font-size:11.5px;font-weight:700;color:#059669;margin-bottom:4px;">올해 총운</div>
         <h4 style="font-size:17px;font-weight:800;color:#065F46;margin:0 0 7px;">{escape(narrative['title'])}</h4>

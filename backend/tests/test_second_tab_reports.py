@@ -28,6 +28,8 @@ class SecondTabReportTests(TestCase):
         self.assertIn("말년기 · 68~97세", report["content"])
         self.assertNotIn("98~107세", report["content"])
         self.assertNotIn("원국 관계 변화 후보", report["content"])
+        self.assertEqual(report["content"].count('data-report-cycle="'), 9)
+        self.assertEqual(report["content"].count('data-current-cycle="true"'), 1)
 
     def test_annual_report_has_hierarchy_and_twelve_richer_months(self):
         report = build_annual_overall_report(self.core, "최정오", 2026)
@@ -41,6 +43,9 @@ class SecondTabReportTests(TestCase):
         self.assertEqual(report["content"].count("border-left:4px solid #2D6A4F"), 12)
         self.assertNotIn("Chapter", report["content"])
         self.assertNotIn("토정비결", report["title"])
+        self.assertIn('data-report-year="2026"', report["content"])
+        for month in range(1, 13):
+            self.assertEqual(report["content"].count(f'data-report-month="{month}"'), 1)
 
     def test_main_saju_surface_uses_real_hour_and_hidden_stem_composition(self):
         from main import get_saju_pillars_and_analysis
