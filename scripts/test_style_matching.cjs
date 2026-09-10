@@ -33,5 +33,18 @@ assert.equal(w.getStyleTpo(),'casual'); // No cross-account preference leak.
 w.updateTodayWardrobeMatchPick();
 const chips=w.document.querySelectorAll('#dynamicColorPaletteBox > .palette-chip');
 assert.equal(chips.length,2);assert.match(chips[0].textContent,/네이비/);assert.ok(!chips[0].textContent.includes('Long English'));
+w.renderMenuPhotos(['후라이드치킨','김치찌개']);
+assert.equal(w.document.querySelectorAll('.food-photo').length,2);
+assert.match(w.document.querySelector('.food-photo').getAttribute('aria-label'),/후라이드치킨/);
+w.renderMenuPhotos(['생선구이','<img src=x>']);
+assert.equal(w.document.querySelectorAll('.food-photo').length,0);
+assert.equal(w.document.querySelectorAll('#menuPhotoCards img').length,0);
+w.renderOutfitCards({looks:[{title:'페일 레드 포인트',items:[{label:'셔츠',color_name:'화이트',hex:'#FFFFFF',sprite:2}]}]});
+assert.equal(w.document.querySelectorAll('.look-card').length,1);
+assert.match(w.document.querySelector('.garment').getAttribute('style'),/#FFFFFF/);
+assert.match(w.document.querySelector('.look-piece').textContent,/화이트셔츠/);
+w.renderOutfitCards(null);
+assert.equal(w.document.getElementById('outfitCards').childElementCount,0);
+console.log('PASS images match menu names, unknown dishes abstain, outfit colors and item captions, empty state');
 console.log('PASS particles, escaping, TPO hard gate, empty/unknown abstention, independent lucky item, stable matching, account-scoped preference, palette');
 dom.window.close();

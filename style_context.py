@@ -3,7 +3,7 @@
 Color allowance scores are editorial clothing rules, not fortune scores.
 The original daily A/B selection is preserved across all three contexts.
 """
-from wada_color_rules import evaluate_duo
+from wada_color_rules import evaluate_duo, score_color_for_item, WADA_COLORS
 from wada_color_ko import get_wada_color_ko
 
 TPO_LABELS = {'casual': '캐주얼', 'business_casual': '비즈니스 캐주얼', 'business_formal': '비즈니스 포멀'}
@@ -14,29 +14,87 @@ ITEM_LABELS = {'top':'상의', 'bottom':'바지', 'outer':'겉옷', 'shoes':'신
                'suit_jacket':'정장 재킷', 'blouse':'블라우스', 'scarf':'스카프', 'jewelry':'주얼리'}
 
 
-def build_style_contexts(duo_no, gender, casual_palette):
+# Supporting neutrals translate the existing daily element into a restrained
+# styling choice. They are not extra lucky colors or new fortune scores.
+BASES = {'water': ('네이비', '#26354A'), 'wood': ('네이비', '#26354A'),
+         'fire': ('차콜', '#44474D'), 'earth': ('차콜', '#44474D'),
+         'metal': ('라이트 그레이', '#B6BAC1')}
+
+
+def _piece(label, color, sprite, slot):
+    return {'label': label, 'color_name': color[0], 'hex': color[1],
+            'sprite': sprite, 'item_type': slot}
+
+
+def _look(color, other, gender, tpo, base):
+    female = gender == 'female'
+    white, black = ('화이트', '#F5F4EF'), ('블랙', '#252629')
+    accent = (color['name_ko'], color['hex'])
+    scores = dict(color['ranked_items'])
+    other_scores = dict(other['ranked_items'])
+    top_slot = ('blouse' if female else 'shirt') if tpo == 'business_formal' else (
+        ('blouse_knit' if female else 'shirt_knit_polo') if tpo == 'business_casual' else 'top')
+    bottom_slot = 'bottom_skirt' if female else 'bottom'
+    pieces = []
+    if tpo == 'business_formal':
+        pieces = [_piece('정장 재킷', base, 8 if female else 0, 'suit_jacket' if female else 'suit'),
+                  _piece('정장 바지', base, 9 if female else 1, bottom_slot),
+                  _piece('블라우스' if female else '셔츠', white, 10 if female else 2, top_slot)]
+        slot = 'scarf' if female else 'tie'
+        if scores.get(slot, 0) >= 60:
+            pieces.append(_piece('스카프' if female else '넥타이', accent, 14 if female else 5, slot))
+        else:
+            slot = next((s for s in (top_slot, 'suit_jacket' if female else 'suit') if scores.get(s, 0) >= 60), None)
+            if slot == top_slot:
+                pieces[2].update(color_name=accent[0], hex=accent[1])
+            elif slot:
+                pieces[0].update(color_name=accent[0], hex=accent[1])
+                if not female:
+                    pieces[1].update(color_name=accent[0], hex=accent[1])
+        # Only use the other color on a shirt when it clears the stricter
+        # shirt gate. Otherwise the second card is an alternative accent.
+        if slot != top_slot and other_scores.get(top_slot, 0) >= 80:
+            pieces[2].update(color_name=other['name_ko'], hex=other['hex'])
+    else:
+        slot = top_slot if scores.get(top_slot, 0) >= 60 else None
+        pieces = [_piece('블라우스' if female and tpo != 'casual' else ('셔츠' if tpo != 'casual' else '티셔츠'),
+                         accent if slot else white, (11 if female else 3) if tpo == 'casual' else (10 if female else 2), top_slot),
+                  _piece('테일러드 팬츠' if female else '치노 팬츠', base, 9 if female else 4, bottom_slot)]
+        if other_scores.get(bottom_slot, 0) >= 72:
+            pieces[1].update(color_name=other['name_ko'], hex=other['hex'])
+        if tpo == 'business_casual':
+            pieces.insert(0, _piece('재킷', base, 8 if female else 0, 'jacket'))
+            # A tie is optional in business casual; a pale shirt can carry A
+            # while the tie carries B. Reuse the formal tie allowance gate.
+            meta = WADA_COLORS[color['hex'].lower()]
+            if not female and meta['lightness'] >= 72 and meta['saturation'] <= 55 and score_color_for_item(other['hex'], 'male', 'business_formal', 'tie') >= 60:
+                pieces[2].update(color_name=base[0], hex=base[1])
+                pieces.append(_piece('넥타이 (선택)', (other['name_ko'], other['hex']), 5, 'tie'))
+    pieces.append(_piece('로퍼' if tpo != 'casual' or female else '스니커즈',
+                         black if tpo != 'casual' or female else white,
+                         15 if female else (7 if tpo == 'casual' else 6), 'shoes'))
+    return {'title': f"{accent[0]} 포인트", 'items': pieces,
+            'accent_slot': slot, 'description': ' · '.join(f"{x['color_name']} {x['label']}" for x in pieces)}
+
+
+def build_style_contexts(duo_no, gender, casual_palette, daily_element=None):
+    gender = 'female' if gender == 'female' else 'male'
     result = {}
+    element = {'木':'wood','火':'fire','土':'earth','金':'metal','水':'water'}.get(daily_element, daily_element)
+    base = BASES.get(element, BASES['water'])
     for tpo, label in TPO_LABELS.items():
         evaluation = evaluate_duo(duo_no, gender, tpo)
-        colors, used, directions = [], set(), []
-        for key in ('color_a', 'color_b'):
-            entry = evaluation[key]
-            # A conservative presentation gate on the existing allowance scale.
-            # Try another clothing location before omitting this color from the outfit.
-            slot = next((item for item, score in entry['ranked_items'] if score >= 60 and item not in used), None)
-            color = {**get_wada_color_ko(entry['hex'], entry['name']), 'name':entry['name'], 'hex':entry['hex'],
-                     'role':ITEM_LABELS[slot] if slot else '착장 적용 생략', 'item_type':slot}
-            colors.append(color)
-            if slot:
-                used.add(slot)
-                directions.append(f"{color['name_ko']} {ITEM_LABELS[slot]}")
-        if tpo == 'casual':
-            # Preserve the existing casual upper/lower assignment.
-            palette = {**casual_palette, 'tpo':tpo, 'gender':gender, 'mood_tag':label}
-        else:
-            palette = {'top':colors[0], 'bottom':colors[1], 'point':None, 'mode':'harmony',
-                       'tpo':tpo, 'gender':gender, 'style_mood':tpo, 'mood_tag':label,
-                       'outfit_guidance':' · '.join(directions) or '두 색상을 억지로 착장에 적용하지 않아도 괜찮습니다.',
-                       'mood_desc':'선택한 옷차림에 자연스럽게 사용할 수 있는 위치를 안내합니다.'}
+        colors = [{**entry, **get_wada_color_ko(entry['hex'], entry['name'])}
+                  for entry in (evaluation['color_a'], evaluation['color_b'])]
+        looks = [_look(colors[i], colors[1-i], gender, tpo, base) for i in (0, 1)]
+        for color, look in zip(colors, looks):
+            slot = look['accent_slot']
+            color.update(item_type=slot, role=(ITEM_LABELS[slot] + ' 포인트') if slot else '오늘의 추천 색상')
+            color.pop('ranked_items')
+        palette = {**(casual_palette if tpo == 'casual' else {}),
+                   'top': colors[0], 'bottom': colors[1], 'point': None, 'mode': 'harmony',
+                   'tpo': tpo, 'gender': gender, 'style_mood': tpo, 'mood_tag': label,
+                   'looks': looks, 'outfit_guidance': looks[0]['description'],
+                   'mood_desc': '두 가지 코디 중 마음에 드는 차림을 골라 보세요. 기본색에 오늘의 추천 색상을 더했습니다.'}
         result[tpo] = palette
     return result
