@@ -39,3 +39,29 @@ class StyleContextTests(TestCase):
         for element, key in [('木','wood'),('火','fire'),('土','earth'),('金','metal'),('水','water')]:
             palette = build_style_contexts(6,'male',{},element)['business_formal']
             self.assertEqual(palette['looks'][0]['items'][0]['hex'], BASES[key][1])
+
+    def test_every_casual_bottom_stays_in_practical_color_range(self):
+        from style_context import PANTS_COLORS
+        mens = {'denim','black','navy','gray','beige','brown'}
+        for gender in ('male','female'):
+            allowed = mens | ({'ivory','off_white','olive'} if gender == 'female' else set())
+            for element in ('wood','fire','earth','metal','water'):
+                for duo_no in WADA_DUOS:
+                    contexts = build_style_contexts(duo_no,gender,{},element,user_name='정오')
+                    for tpo in ('casual','business_casual'):
+                        palette = contexts[tpo]
+                        self.assertTrue(palette['mood_desc'].startswith('정오님을 위해 두 가지'))
+                        bottom_hexes = []
+                        for color,look in zip((palette['top'],palette['bottom']),palette['looks']):
+                            bottom = next(item for item in look['items'] if item['item_type'] in ('bottom','bottom_skirt'))
+                            bottom_hexes.append(bottom['hex'])
+                            keys = allowed - ({'denim','olive'} if tpo == 'business_casual' else set())
+                            self.assertIn(bottom['hex'], {PANTS_COLORS[k][1] for k in keys})
+                            self.assertIn(color['hex'], [item['hex'] for item in look['items']])
+                            if tpo == 'business_casual': self.assertEqual(bottom['label'],'슬랙스')
+                        self.assertEqual(len(set(bottom_hexes)),2)
+
+    def test_name_suffix_and_blank_fallback(self):
+        self.assertIn('정오님을 위해',build_style_contexts(6,'male',{},user_name=' 정오님 ')['casual']['mood_desc'])
+        self.assertNotIn('님님',build_style_contexts(6,'male',{},user_name='정오님')['casual']['mood_desc'])
+        self.assertTrue(build_style_contexts(6,'male',{},user_name='  ')['casual']['mood_desc'].startswith('오늘의 코디'))

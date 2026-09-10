@@ -66,10 +66,14 @@ class DailyFortuneServiceTests(TestCase):
         self.assertTrue(result['evidence_summary']['lucky_recommendation_basis']['recommendation_confirmed'])
         self.assertGreaterEqual(result["menu_pool_size"], 200)
         self.assertEqual(len(result["recommended_menus"]), 2)
+        self.assertEqual([m['period'] for m in result['recommended_meals']], ['lunch','dinner'])
+        self.assertEqual([m['menu'] for m in result['recommended_meals']], result['recommended_menus'])
+        from app.engine.services.simple_menu import meal_comment
+        self.assertEqual(result['recommended_menu_reason'], meal_comment(result['recommended_menus']))
         self.assertEqual(result["recommended_menu"], result["recommended_menus"][0])
         self.assertNotIn("diet_meal_plan", result)
         self.assertNotIn("general_meal_plan", result)
-        self.assertEqual(result["menu_pool_version"], "simple-menu-v4-catalog-review")
+        self.assertEqual(result["menu_pool_version"], "simple-menu-v5-lunch-dinner")
 
     def test_unconfirmed_core_is_not_presented_as_balance_or_needed_element(self):
         target = date(2026, 9, 8)

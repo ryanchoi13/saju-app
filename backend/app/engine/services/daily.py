@@ -497,6 +497,7 @@ def build_daily_fortune(
         "lucky_direction": f"{element['direction']} ({element['ko']} 기운)",
         "recommended_menu": menu_selection["menus"][0],
         "recommended_menus": menu_selection["menus"],
+        "recommended_meals": menu_selection["meals"],
         "recommended_menu_reason": menu_selection["reason"],
         "menu_pool_size": menu_selection["pool_size"],
         "menu_pool_version": menu_selection["pool_version"],

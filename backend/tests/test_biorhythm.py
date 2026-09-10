@@ -8,12 +8,12 @@ class BiorhythmTests(TestCase):
         r = calculate_biorhythm(1978,3,13,date(2026,9,10))
         self.assertEqual([r[k]['val'] for k in ('physical','emotional','intellectual')],[73,-62,-100])
         self.assertIn('신체는 고조기',r['overall_summary'])
-        self.assertIn('지성은 저조기',r['overall_summary'])
-        self.assertIn('메모와 체크리스트',r['overall_summary'])
-        self.assertIn('실제 체력·감정·판단력을 측정한 점수가 아닙니다',r['interpretation_note'])
-        self.assertNotIn('우수',r['overall_summary'])
+        self.assertIn('감성·지성은 저조기',r['overall_summary'])
+        self.assertIn('하나씩 정리',r['overall_summary'])
+        self.assertNotIn('interpretation_note',r)
         self.assertNotIn('의사결정에 적합',r['overall_summary'])
-        self.assertIn('최저점',r['overall_summary'])
+        self.assertLessEqual(len(r['overall_summary']),110)
+        self.assertEqual(r['overall_summary'].count('.'),2)
 
     def test_lunar_and_equivalent_solar_birth_agree(self):
         solar = to_solar(date(1978,3,13),'lunar',False)
@@ -26,6 +26,8 @@ class BiorhythmTests(TestCase):
         start = date(2000,1,1)
         for days in range(70):
             r = calculate_biorhythm(2000,1,1,start+timedelta(days=days))
+            self.assertLessEqual(len(r['overall_summary']),110)
+            self.assertNotIn('\n',r['overall_summary'])
             for key in ('physical','emotional','intellectual'):
                 self.assertLessEqual(abs(r[key]['val']),100)
                 if days == 0: self.assertEqual(r[key]['val'],0)

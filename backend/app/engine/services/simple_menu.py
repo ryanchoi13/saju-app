@@ -1,4 +1,4 @@
-"""Two daily choices. Editorial food mapping, not nutritional or medical advice."""
+"""Lunch followed by dinner. Editorial food mapping, not dietary prescriptions."""
 from collections import Counter
 from datetime import date, timedelta
 import hashlib
@@ -6,8 +6,23 @@ import json
 import math
 from .daily_menu import MENU_POOL
 from .menu_categories import menu_category
+from app.engine.korean import josa
 
-VERSION = "simple-menu-v4-catalog-review"
+VERSION = "simple-menu-v5-lunch-dinner"
+DINNER_CHICKEN = frozenset({'후라이드치킨', '양념치킨', '간장치킨', '오븐구이 치킨', '탄두리치킨'})
+
+
+def suitable_for_meal(menu, period):
+    return period in menu.periods and not (period == 'lunch' and menu.name in DINNER_CHICKEN)
+
+
+def meal_comment(names):
+    descriptions = {'김치찌개': '칼칼한 김치찌개', '된장찌개': '구수한 된장찌개',
+                    '후라이드치킨': '바삭한 후라이드치킨', '양념치킨': '매콤달콤한 양념치킨',
+                    '간장치킨': '짭짤한 간장치킨', '콩나물국밥': '따뜻한 콩나물국밥',
+                    '해물칼국수': '따뜻한 해물칼국수', '잔치국수': '따뜻한 잔치국수'}
+    lunch, dinner = (descriptions.get(name, name) for name in names)
+    return f"오늘 점심에는 {josa(lunch, '을/를')}, 저녁에는 {josa(dinner, '을/를')} 즐겨 보세요."
 
 def variation(seed, key, scale=2):
     value = int(hashlib.sha256(f"{seed}|{key}".encode()).hexdigest()[:12], 16)
@@ -35,13 +50,19 @@ def select_menus(*, day, seed, weights, history=(), saju_scale=0.5):
         return ((m.familiarity - 3) + (m.popularity - 3) * 2 + weights.get(m.element, 0) * saju_scale
                 - recent[m.name] * 4 - categories[menu_category(m.name)])
 
-    groups = {}
-    for m in candidates:
-        groups.setdefault(menu_category(m.name), []).append(m)
-    ranked = sorted(groups, key=lambda c: (
-        max(score(m) for m in groups[c]) + variation(seed, c), c), reverse=True)
-    selected = [max(groups[c], key=lambda m: (
-        score(m) + variation(seed, m.name, 1), m.name)) for c in ranked[:2]]
+    selected = []
+    for period in ('lunch', 'dinner'):
+        used_categories = {menu_category(m.name) for m in selected}
+        groups = {}
+        for m in candidates:
+            category = menu_category(m.name)
+            if suitable_for_meal(m, period) and category not in used_categories:
+                groups.setdefault(category, []).append(m)
+        meal_seed = f'{seed}|{period}'
+        category = max(groups, key=lambda c: (
+            max(score(m) for m in groups[c]) + variation(meal_seed, c), c))
+        selected.append(max(groups[category], key=lambda m: (
+            score(m) + variation(meal_seed, m.name, 1), m.name)))
     assert len(selected) == 2 and len({m.name for m in selected}) == 2
     assert not yesterday & {m.name for m in selected}
     return [m.name for m in selected]
@@ -75,5 +96,6 @@ def daily_choices(birth, target_date, weights, account_key=None):
             db.rollback()
             raise
     return {"menus": names, "pool_size": len(eligible_menus()), "pool_version": VERSION,
-            "reason": "사주 원국과 오늘의 흐름을 참고한 음식 제안입니다. 식사나 간식으로 상황에 맞게 참고해보세요.",
-            "season": None, "meal_period": "any"}
+            "meals": [{"period": period, "label": label, "menu": name}
+                      for (period, label), name in zip((('lunch', '점심'), ('dinner', '저녁')), names)],
+            "reason": meal_comment(names), "season": None, "meal_period": "lunch_dinner"}

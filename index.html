@@ -400,10 +400,9 @@
         .look-card h4 { margin:0 0 12px; font-size:16px; line-height:1.5; color:#25334A; }
         .look-pieces { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px 4px; }
         .look-piece { margin:0; min-width:0; text-align:center; }
-        .garment { display:block; aspect-ratio:1; position:relative; isolation:isolate; }
-        .garment::before, .garment::after { content:''; position:absolute; inset:0; }
-        .garment::before { background:var(--garment-color); mask:url('/assets/outfit-atlas-v1.png') var(--pos) / 400% 400%; -webkit-mask:url('/assets/outfit-atlas-v1.png') var(--pos) / 400% 400%; }
-        .garment::after { background:url('/assets/outfit-atlas-v1.png') var(--pos) / 400% 400%; mix-blend-mode:multiply; }
+        .garment { display:block; width:100%; aspect-ratio:1; overflow:hidden; isolation:isolate; }
+        .menu-meal-label { display:block; padding:12px 14px 0; font-size:13px; font-weight:800; color:#2D6A4F; }
+        .menu-recommendation-comment { margin:12px 0 0; color:#475569; font-size:14px; line-height:1.7; }
         .look-piece figcaption { font-size:14px!important; line-height:1.5; color:#4B586D; overflow-wrap:anywhere; }
         .look-piece figcaption strong { display:block; font-size:14px!important; color:#25334A; }
         .look-note { font-size:14px!important; line-height:1.6; color:#4B586D; margin:0 0 12px; }
@@ -656,6 +655,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                             <span id="resMenuLabel" style="font-size: 12px; color: #64748B; font-weight: 600; display: block;">🍲 추천 메뉴</span>
                             <p id="resMenu" style="font-weight: 800; margin: 3px 0 8px; font-size: 14px; line-height: 1.65; white-space: pre-line; color: #0F172A;">속이 편안한 영양 솥밥</p>
                             <div id="menuPhotoCards" class="menu-photos"></div>
+                            <p id="menuRecommendationComment" class="menu-recommendation-comment" hidden></p>
                             <button id="menuPlanLike" type="button" onclick="togglePlanLike()" aria-label="오늘 식단 좋아요" aria-pressed="false" hidden style="border:0;background:transparent;color:#64748B;font-size:25px;cursor:pointer;padding:4px 10px;min-width:44px;min-height:44px;">♡</button>
                             <span id="menuLikeStatus" role="status" style="font-size:11px;color:#64748B;"></span>
                             <button id="menuModeToggle" hidden type="button" onclick="toggleMenuMode()" style="width: 100%; border: 1px solid #BBF7D0; background: #F0FDF4; color: #166534; border-radius: 8px; padding: 6px 8px; font-size: 11.5px; font-weight: 800; cursor: pointer;">다이어트 식단으로 보기</button>
@@ -700,7 +700,6 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                     <div style="background: #F8FAFC; border-radius: 10px; padding: 10px 12px; font-size: 13px; color: #334155; line-height: 1.6; border-left: 3.5px solid #2D6A4F;">
                         <span style="font-weight: 800; color: #2D6A4F;">💡 바이오리듬 해석:</span><br>
                         <span id="bioOverallText">생일을 기준으로 주기 곡선을 계산하고 있어요.</span>
-                        <p id="bioInterpretationNote" style="font-size:11.5px; color:#64748B; margin:10px 0 0; line-height:1.6;"></p>
                     </div>
                 </div>
 
@@ -1450,10 +1449,10 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             if (x < 0 || y < 0 || width <= 0 || height <= 0 || x+width > 896 || y+height > 768) return null;
             return {url:`/assets/food-thumbnails-v1/${file}`, x,y,width,height};
         }
-        function renderMenuPhotos(menus) {
+        function renderMenuPhotos(menus, mealLabels = []) {
             const box = document.getElementById('menuPhotoCards');
             if (!box) return;
-            box.innerHTML = menus.slice(0,2).map(name => {
+            box.innerHTML = menus.slice(0,2).map((name, i) => {
                 const thumbnail = foodThumbnail(name);
                 // New, unregistered dishes stay text-only until their exact image is added.
                 let photo = '';
@@ -1464,18 +1463,37 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                             <image href="${url}" x="${-x}" y="${-y}" width="896" height="768" />
                         </svg></svg>`;
                 }
-                return `<figure class="menu-photo-card">${photo}<figcaption>${escapeStyleText(name)}</figcaption></figure>`;
+                const mealLabel = mealLabels[i] ? `<span class="menu-meal-label">${escapeStyleText(mealLabels[i])}</span>` : '';
+                return `<figure class="menu-photo-card">${mealLabel}${photo}<figcaption>${escapeStyleText(name)}</figcaption></figure>`;
             }).join('');
+        }
+        // Measured item bounds: the generated atlas rows are not equal-height cells.
+        // Keep the source PNG unchanged and clip both the tint mask and detail image.
+        const OUTFIT_CROPS = [
+            [38,49,259,281], [399,49,141,283], [654,55,252,276], [957,62,275,261],
+            [101,346,135,283], [433,348,73,282], [677,383,207,238], [988,380,212,229],
+            [37,645,262,268], [405,644,129,275], [647,644,266,270], [966,656,256,255],
+            [40,933,255,284], [373,931,192,297], [687,932,189,293], [992,954,201,257]
+        ];
+        function renderGarmentSprite(cell, hex, maskId) {
+            const [x,y,width,height] = OUTFIT_CROPS[cell], size = Math.max(width,height)+12;
+            const source = `<image href="/assets/outfit-atlas-v1.png" x="${-x}" y="${-y}" width="1254" height="1254" />`;
+            return `<svg class="garment" aria-hidden="true" viewBox="0 0 ${size} ${size}">
+                <svg x="${(size-width)/2}" y="${(size-height)/2}" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" overflow="hidden">
+                    <defs><mask id="${maskId}" maskUnits="userSpaceOnUse" x="0" y="0" width="${width}" height="${height}" style="mask-type:alpha">${source}</mask></defs>
+                    <rect width="${width}" height="${height}" fill="${hex}" mask="url(#${maskId})" />
+                    <g style="mix-blend-mode:multiply">${source}</g>
+                </svg></svg>`;
         }
         function renderOutfitCards(palette) {
             const box = document.getElementById('outfitCards');
             if (!box) return;
             const looks = palette?.looks || [];
-            box.innerHTML = looks.length ? `<div class="look-options">${looks.map((look,i) => `<article class="look-card"><h4>${i+1}. ${escapeStyleText(look.title)}</h4><div class="look-pieces">${look.items.map(item => {
+            box.innerHTML = looks.length ? `<div class="look-options">${looks.map((look,i) => `<article class="look-card"><h4>${i+1}. ${escapeStyleText(look.title)}</h4><div class="look-pieces">${look.items.map((item,j) => {
                 const cell = Number(item.sprite);
                 if (!Number.isInteger(cell) || cell < 0 || cell > 15) return '';
                 const hex = /^#[0-9a-f]{6}$/i.test(item.hex) ? item.hex : '#CBD5E1';
-                return `<figure class="look-piece"><span class="garment" aria-hidden="true" style="--garment-color:${hex};--pos:${cell%4*100/3}% ${Math.floor(cell/4)*100/3}%"></span><figcaption>${escapeStyleText(item.color_name)}<strong>${escapeStyleText(item.label)}</strong></figcaption></figure>`;
+                return `<figure class="look-piece">${renderGarmentSprite(cell,hex,`outfit-mask-${i}-${j}`)}<figcaption>${escapeStyleText(item.color_name)}<strong>${escapeStyleText(item.label)}</strong></figcaption></figure>`;
             }).join('')}</div></article>`).join('')}</div><p class="look-note">색상과 구성의 이해를 돕는 코디 예시입니다. 비슷한 옷으로 활용해 보세요.</p>` : '';
         }
 
@@ -1486,11 +1504,18 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             if (!menuEl || !labelEl) return;
             currentMenuMode = 'general';
             labelEl.innerText = '🍲 오늘의 추천 메뉴';
-            const menus = fortune.recommended_menus || [fortune.recommended_menu].filter(Boolean);
+            const orderedMeals = ['lunch','dinner'].map(period =>
+                fortune.recommended_meals?.find(meal => meal.period === period && meal.menu));
+            const hasMealOrder = orderedMeals.every(Boolean);
+            const menus = hasMealOrder ? orderedMeals.map(meal => meal.menu)
+                : fortune.recommended_menus || [fortune.recommended_menu].filter(Boolean);
             menuEl.innerText = menus.length
                 ? menus.slice(0, 2).join(' / ')
                 : '추천 메뉴를 준비하고 있어요';
-            renderMenuPhotos(menus);
+            renderMenuPhotos(menus, hasMealOrder ? ['점심','저녁'] : []);
+            const commentEl = document.getElementById('menuRecommendationComment');
+            commentEl.textContent = hasMealOrder ? fortune.recommended_menu_reason || '' : '';
+            commentEl.hidden = !commentEl.textContent;
             menuEl.hidden = menus.length > 0;
             document.getElementById('menuModeToggle').hidden = true;
             document.getElementById('menuPlanLike').hidden = true;
@@ -1879,7 +1904,6 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 document.getElementById('bioEmotionalStatus').innerText = `${bio.emotional.status} (${bio.emotional.val})`;
                 document.getElementById('bioIntellectualStatus').innerText = `${bio.intellectual.status} (${bio.intellectual.val})`;
                 document.getElementById('bioOverallText').innerText = bio.overall_summary;
-                document.getElementById('bioInterpretationNote').textContent = bio.interpretation_note || '';
                 document.getElementById('biorhythmWaveSvg').innerHTML = renderBiorhythmWaveSvg(bio.days_lived);
             }
 

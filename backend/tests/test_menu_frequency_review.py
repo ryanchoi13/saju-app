@@ -35,4 +35,27 @@ class FrequencyReviewTests(unittest.TestCase):
         self.assertEqual(len(set(first)),2)
         self.assertEqual(len(set(second)),2)
         self.assertTrue(set(first).isdisjoint(second))
-        self.assertEqual(VERSION,'simple-menu-v4-catalog-review')
+        self.assertEqual(VERSION,'simple-menu-v5-lunch-dinner')
+
+    def test_lunch_then_dinner_respect_periods_and_never_repeat_yesterday(self):
+        from app.engine.services.simple_menu import DINNER_CHICKEN
+        from app.engine.services.menu_categories import menu_category
+        from datetime import timedelta
+        lookup = {m.name:m for m in MENU_POOL}
+        for person in range(12):
+            history = []
+            for offset in range(31):
+                day = date(2026,9,1) + timedelta(days=offset)
+                names = select_menus(day=day,seed=f'{person}|{day}',weights={},history=history[-7:])
+                lunch,dinner = [lookup[n] for n in names]
+                self.assertIn('lunch',lunch.periods)
+                self.assertNotIn(lunch.name,DINNER_CHICKEN)
+                self.assertIn('dinner',dinner.periods)
+                self.assertNotEqual(menu_category(lunch.name),menu_category(dinner.name))
+                if history: self.assertTrue(set(names).isdisjoint(m.name for m in history[-1]))
+                history.append((lunch,dinner))
+
+    def test_comment_follows_lunch_and_dinner_with_correct_particles(self):
+        from app.engine.services.simple_menu import meal_comment
+        self.assertEqual(meal_comment(['김치찌개','후라이드치킨']),
+                         '오늘 점심에는 칼칼한 김치찌개를, 저녁에는 바삭한 후라이드치킨을 즐겨 보세요.')

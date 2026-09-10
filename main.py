@@ -245,40 +245,30 @@ def calculate_biorhythm(birth_year: int, birth_month: int, birth_day: int, targe
     days_lived = (today - datetime.date(birth_year, birth_month, birth_day)).days
     def status(value):
         return "고조기" if value >= 50 else ("저조기" if value <= -50 else "안정기")
-    # Presentation references and limits: docs/daily-polish-and-storage.md.
-    advice = {
-        "physical": {
-            "고조기": "몸이 가볍게 느껴진다면 산책이나 미뤄 둔 작은 활동을 즐겨 보세요. 평소의 페이스를 지키면 충분합니다.",
-            "저조기": "일정 사이에 쉴 틈을 넣어 보세요. 움직임의 양은 숫자보다 오늘 몸이 느끼는 편안함에 맞춰 주세요.",
-            "안정기": "익숙한 일과를 차분히 이어가 보세요. 바쁜 일정 중에도 잠깐 몸을 풀며 자기 페이스를 살펴보면 좋겠습니다.",
-        },
-        "emotional": {
-            "고조기": "고마웠던 사람에게 짧은 안부를 전하거나 좋아하는 취미를 즐겨 보세요. 마음을 표현하는 작은 시간이 하루를 풍성하게 해 줍니다.",
-            "저조기": "답장을 서두르기보다 내 마음을 먼저 살펴보세요. 혼자 편히 쉬는 시간이나 좋아하는 음악으로 여유를 만들어 보세요.",
-            "안정기": "대화에서는 내 생각만큼 상대의 이야기도 천천히 들어 보세요. 기분을 한두 문장 적으며 하루를 정리해도 좋겠습니다.",
-        },
-        "intellectual": {
-            "고조기": "궁금했던 주제를 짧게 읽거나 떠오른 아이디어를 메모해 보세요. 중요한 내용은 여느 때처럼 근거를 확인해 주세요.",
-            "저조기": "할 일을 작은 단계로 나누고 한 번에 하나씩 다뤄 보세요. 기억에만 맡기기보다 메모와 체크리스트를 곁에 두면 편합니다.",
-            "안정기": "새 일을 늘리기 전에 지금 하던 일의 순서를 정리해 보세요. 집중할 일 하나를 정하고 차분히 마무리해 보세요.",
-        },
-    }
     result = {"days_lived": days_lived}
-    summaries = []
-    for key, label, period in (("physical", "신체", 23), ("emotional", "감성", 28), ("intellectual", "지성", 33)):
+    for key, period in (("physical", 23), ("emotional", 28), ("intellectual", 33)):
         value = round(math.sin(2 * math.pi * days_lived / period) * 100)
-        tomorrow = math.sin(2 * math.pi * (days_lived + 1) / period) * 100
-        phase = status(value)
-        trend = "상승 중" if tomorrow > value else "하강 중"
-        position = "정점 부근" if value >= 95 else ("최저점 부근" if value <= -95 else trend)
-        text = f"{josa(label, '은/는')} {phase} · 곡선은 {position}입니다. {advice[key][phase]}"
-        result[key] = {"val": value, "status": phase, "trend": trend, "summary": text}
-        summaries.append(text)
-    result["overall_summary"] = "\n\n".join(summaries)
-    result["interpretation_note"] = (
-        "생일로 계산한 23·28·33일 주기를 재미로 살펴보는 해석입니다. "
-        "−100~+100은 곡선의 위치이며 실제 체력·감정·판단력을 측정한 점수가 아닙니다. 오늘 느끼는 컨디션을 먼저 살펴주세요."
-    )
+        result[key] = {"val": value, "status": status(value)}
+    # One short interpretation combines all three phases without repeating
+    # the numeric legend or treating the curves as measured human abilities.
+    labels = (("physical", "신체"), ("emotional", "감성"), ("intellectual", "지성"))
+    groups = []
+    for phase in ("고조기", "안정기", "저조기"):
+        names = [label for key, label in labels if result[key]["status"] == phase]
+        if names:
+            groups.append(f"{josa('·'.join(names), '은/는')} {phase}")
+    low = tuple(key for key, _ in labels if result[key]["status"] == "저조기")
+    advice = {
+        (): "하고 싶은 일 하나를 골라, 평소의 페이스로 가볍게 시작해 보세요.",
+        ("physical",): "몸은 쉬엄쉬엄 움직이고, 대화나 생각을 정리하는 데 시간을 써 보세요.",
+        ("emotional",): "활동은 평소대로 이어가되, 대화에서는 잠깐 여유를 두세요.",
+        ("intellectual",): "활동과 대화를 즐기되, 중요한 내용은 짧게 메모해 보세요.",
+        ("physical", "emotional"): "조용히 생각을 정리하면서, 몸과 마음에 쉴 틈을 주세요.",
+        ("physical", "intellectual"): "편안한 대화로 하루를 채우고, 할 일은 하나씩 나눠 보세요.",
+        ("emotional", "intellectual"): "가볍게 움직이며 기분을 환기하고, 중요한 일은 하나씩 정리해 보세요.",
+        ("physical", "emotional", "intellectual"): "오늘은 속도를 조금 늦추고, 꼭 필요한 일부터 차분히 해보세요.",
+    }
+    result["overall_summary"] = ', '.join(groups) + "입니다. " + advice[low]
     return result
 
 def with_wa_gwa(word: str):
@@ -426,7 +416,7 @@ def get_saju_pillars_and_analysis(name: str, gender: str, y: int, m: int, d: int
         }
     }
 
-    result["daily_fortune"]["style_palettes"] = build_style_contexts(wada_duo_no, gender, result["daily_fortune"]["wada_palette"], lucky_element)
+    result["daily_fortune"]["style_palettes"] = build_style_contexts(wada_duo_no, gender, result["daily_fortune"]["wada_palette"], lucky_element, user_name=name)
     return result
 
 # --- Detailed Report Generator Engine ---

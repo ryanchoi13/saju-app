@@ -71,8 +71,33 @@ w.DALHA_FOOD_THUMBNAILS=foodCatalog;
 console.log(`PASS ${Object.keys(foodCatalog.menus).length} exact food illustrations and missing-catalog fallback`);
 w.renderOutfitCards({looks:[{title:'페일 레드 포인트',items:[{label:'셔츠',color_name:'화이트',hex:'#FFFFFF',sprite:2}]}]});
 assert.equal(w.document.querySelectorAll('.look-card').length,1);
-assert.match(w.document.querySelector('.garment').getAttribute('style'),/#FFFFFF/);
+assert.equal(w.document.querySelector('.garment rect').getAttribute('fill'),'#FFFFFF');
 assert.match(w.document.querySelector('.look-piece').textContent,/화이트셔츠/);
+// All sprites clip both the mask and detail source, including two shoe components.
+w.renderOutfitCards({looks:[0,1].map(n=>({title:'검증',items:Array.from({length:16},(_,sprite)=>({label:'옷',color_name:'네이비',hex:'#26354A',sprite}))}))});
+const garments=[...w.document.querySelectorAll('.garment')];
+assert.equal(garments.length,32);
+assert.equal(new Set(garments.map(el=>el.querySelector('mask').id)).size,32);
+for(const garment of garments) {
+    const clip=garment.querySelector('svg');
+    assert.equal(clip.getAttribute('overflow'),'hidden');
+    assert.equal(clip.querySelector('mask').style.maskType,'alpha');
+    assert.equal(clip.querySelectorAll('image').length,2);
+    const sources=[...clip.querySelectorAll('image')];
+    assert.equal(sources[0].outerHTML,sources[1].outerHTML);
+}
+const orderedFortune={recommended_menus:['후라이드치킨','김치찌개'],recommended_meals:[
+    {period:'dinner',menu:'후라이드치킨'},{period:'lunch',menu:'김치찌개'}],
+    recommended_menu_reason:'오늘 점심에는 칼칼한 김치찌개를, 저녁에는 바삭한 후라이드치킨을 즐겨 보세요.'};
+vm.runInContext('currentFortuneData='+JSON.stringify({daily_fortune:orderedFortune})+';renderRecommendedMenu();',dom.getInternalVMContext());
+assert.deepEqual([...w.document.querySelectorAll('#menuPhotoCards figcaption')].map(el=>el.textContent),['김치찌개','후라이드치킨']);
+assert.deepEqual([...w.document.querySelectorAll('.menu-meal-label')].map(el=>el.textContent),['점심','저녁']);
+assert.equal(w.document.getElementById('menuRecommendationComment').textContent,orderedFortune.recommended_menu_reason);
+assert.equal(w.document.getElementById('menuRecommendationComment').hidden,false);
+vm.runInContext('currentFortuneData={daily_fortune:{recommended_menus:["김치찌개","후라이드치킨"]}};renderRecommendedMenu();',dom.getInternalVMContext());
+assert.equal(w.document.querySelectorAll('.menu-meal-label').length,0);
+assert.equal(w.document.getElementById('menuRecommendationComment').hidden,true);
+assert.equal(w.document.getElementById('bioInterpretationNote'),null);
 w.renderOutfitCards(null);
 assert.equal(w.document.getElementById('outfitCards').childElementCount,0);
 console.log('PASS images match menu names, unknown dishes abstain, outfit colors and item captions, empty state');
