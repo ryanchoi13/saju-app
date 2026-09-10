@@ -138,6 +138,10 @@ html[data-design="moonlight"] .look-card, html[data-design="moonlight"] .menu-ph
 html[data-design="moonlight"] .action-card { background:var(--ui-tint); border-radius:12px; }
 html[data-design="moonlight"] .login-gate-card { background:var(--ui-surface); border-top:3px solid #B78B35; border-radius:12px; }
 @media(max-width:380px) {
+  .app-container > header { padding:16px!important; gap:10px; }
+  .logo-box > div > span { display:none!important; }
+  .coin-btn { flex-shrink:0; white-space:nowrap; }
+  .charge-tag { white-space:nowrap; }
   #modalOptionBox > div { grid-template-columns:1fr!important; }
   .modal-content .ui-option { word-break:keep-all; }
   .modal-bg { padding:10px; }
