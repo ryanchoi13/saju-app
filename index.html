@@ -20,6 +20,7 @@
 
     <meta name="theme-color" content="#F7F8F8">
     <script src="https://developers.kakao.com/sdk/js/kakao.min.js"></script>
+    <script src="/assets/food-thumbnails-v1/catalog.js" defer></script>
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
 
     <style>
@@ -409,7 +410,7 @@
         .look-note { font-size:14px!important; line-height:1.6; color:#4B586D; margin:0 0 12px; }
         .menu-photos { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; margin-top:12px; }
         .menu-photo-card { margin:0; background:#FFF; border:1px solid #E5E9F0; border-radius:16px; overflow:hidden; }
-        .food-photo { display:block; aspect-ratio:1; background-image:url('/assets/food-atlas-v1.png'); background-size:400% 300%; }
+        .food-photo { display:block; aspect-ratio:1; background-size:700% 600%; background-repeat:no-repeat; background-color:#FAF9F6; }
         .menu-photo-card figcaption { padding:10px; font-size:15px!important; font-weight:700; line-height:1.5; }
         @media(max-width:380px) { .look-card { padding:12px; } }
     </style>
@@ -1433,19 +1434,25 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             }
         }
 
-        const FOOD_PHOTOS = new Map([
-            ['프라이드 치킨',0],['후라이드 치킨',0],['프라이드치킨',0],['후라이드치킨',0],
-            ['김치찌개',1],['돼지고기 김치찌개',1],['비빔밥',2],['제육볶음',3],
-            ['돈가스',4],['돈까스',4],['된장찌개',5],['잡채',6],['떡볶이',7],
-            ['김밥',8],['짜장면',9],['자장면',9],['짬뽕',10],['토마토 파스타',11],['토마토 스파게티',11]
-        ]);
+        function foodThumbnail(name) {
+            const catalog = window.DALHA_FOOD_THUMBNAILS;
+            const cell = catalog?.menus?.[String(name).trim()];
+            if (!Array.isArray(cell) || cell.length !== 2) return null;
+            const [sheet, index] = cell;
+            if (!Number.isInteger(sheet) || !Number.isInteger(index)
+                || index < 0 || index >= 42 || sheet < 0) return null;
+            const file = catalog.files?.[sheet];
+            if (!/^food-\d{2}\.webp$/.test(file || '')) return null;
+            return {url:`/assets/food-thumbnails-v1/${file}`,
+                    x:(index % 7) * 100 / 6, y:Math.floor(index / 7) * 100 / 5};
+        }
         function renderMenuPhotos(menus) {
             const box = document.getElementById('menuPhotoCards');
             if (!box) return;
             box.innerHTML = menus.slice(0,2).map(name => {
-                const cell = FOOD_PHOTOS.get(String(name).trim());
-                // Never substitute a photo of a different dish.
-                const photo = cell === undefined ? '' : `<span class="food-photo" role="img" aria-label="${escapeStyleText(name)} 예시 이미지" style="background-position:${(cell%4)*100/3}% ${Math.floor(cell/4)*50}%"></span>`;
+                const thumbnail = foodThumbnail(name);
+                // New, unregistered dishes stay text-only until their exact image is added.
+                const photo = !thumbnail ? '' : `<span class="food-photo" role="img" aria-label="${escapeStyleText(name)} 예시 일러스트" style="background-image:url('${thumbnail.url}');background-position:${thumbnail.x}% ${thumbnail.y}%"></span>`;
                 return `<figure class="menu-photo-card">${photo}<figcaption>${escapeStyleText(name)}</figcaption></figure>`;
             }).join('');
         }

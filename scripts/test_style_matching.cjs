@@ -2,6 +2,7 @@ const {JSDOM}=require('jsdom');
 const fs=require('node:fs'), assert=require('node:assert/strict'), vm=require('node:vm');
 const dom=new JSDOM(fs.readFileSync('index.html','utf8'),{url:'https://dalha.example',runScripts:'outside-only'});
 const w=dom.window; w.scrollTo=()=>{};
+vm.runInContext(fs.readFileSync('assets/food-thumbnails-v1/catalog.js','utf8'),dom.getInternalVMContext());
 for(const s of w.document.querySelectorAll('script:not([src])')) vm.runInContext(s.textContent,dom.getInternalVMContext());
 const palette={tpo:'casual',gender:'male',style_mood:'casual',top:{name:'Long English Name',name_ko:'네이비',hex:'#123456',standard_color:'네이비'},bottom:{name:'Black',name_ko:'블랙',hex:'#111111',standard_color:'블랙'}};
 const formal={...palette,tpo:'business_formal',style_mood:'business_formal',outfit_guidance:'남색 정장 · 블랙 넥타이'};
@@ -39,6 +40,23 @@ assert.match(w.document.querySelector('.food-photo').getAttribute('aria-label'),
 w.renderMenuPhotos(['생선구이','<img src=x>']);
 assert.equal(w.document.querySelectorAll('.food-photo').length,0);
 assert.equal(w.document.querySelectorAll('#menuPhotoCards img').length,0);
+const foodCatalog=w.DALHA_FOOD_THUMBNAILS;
+const foodFiles=new Set();
+for(const name of Object.keys(foodCatalog.menus)) {
+    w.renderMenuPhotos([name]);
+    const photo=w.document.querySelector('#menuPhotoCards .food-photo');
+    assert.ok(photo,`Missing food illustration: ${name}`);
+    assert.equal(photo.getAttribute('aria-label'),`${name} 예시 일러스트`);
+    assert.equal(w.document.querySelector('#menuPhotoCards figcaption').textContent,name);
+    foodFiles.add(w.foodThumbnail(name).url);
+}
+assert.equal(foodFiles.size,foodCatalog.files.length);
+delete w.DALHA_FOOD_THUMBNAILS;
+w.renderMenuPhotos(['김치찌개']);
+assert.equal(w.document.querySelectorAll('#menuPhotoCards .food-photo').length,0);
+assert.equal(w.document.querySelector('#menuPhotoCards figcaption').textContent,'김치찌개');
+w.DALHA_FOOD_THUMBNAILS=foodCatalog;
+console.log(`PASS ${Object.keys(foodCatalog.menus).length} exact food illustrations and missing-catalog fallback`);
 w.renderOutfitCards({looks:[{title:'페일 레드 포인트',items:[{label:'셔츠',color_name:'화이트',hex:'#FFFFFF',sprite:2}]}]});
 assert.equal(w.document.querySelectorAll('.look-card').length,1);
 assert.match(w.document.querySelector('.garment').getAttribute('style'),/#FFFFFF/);
