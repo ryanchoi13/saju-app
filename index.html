@@ -20,7 +20,7 @@
 
     <meta name="theme-color" content="#F7F8F8">
     <script src="https://developers.kakao.com/sdk/js/kakao.min.js"></script>
-    <script src="/assets/food-thumbnails-v1/catalog.js" defer></script>
+    <script src="/assets/food-thumbnails-v1/catalog.js?v=2" defer></script>
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
 
     <style>
@@ -262,7 +262,6 @@
         #view-today :is(h4,.drawer-title), #view-mypage h3 { font-family:'Pretendard',sans-serif!important; font-size:1.2rem!important; line-height:1.6; color:var(--ui-ink)!important; letter-spacing:-.03em; }
         #view-today > .card > div:first-child { flex-wrap:wrap; gap:10px; border-bottom:0!important; padding-bottom:0!important; }
         #view-today > .card > div:first-child > div { min-width:0; }
-        #todayStyleMoodBadge { background:var(--ui-tint)!important; color:var(--ui-accent)!important; border:0!important; }
         #paletteMoodStoryBox, #wardrobeDailyMatchPick { background:var(--ui-tint)!important; color:var(--ui-ink)!important; border:0!important; border-radius:14px!important; padding:14px!important; line-height:1.8!important; }
         #wardrobeDailyMatchPick > div { color:var(--ui-ink)!important; font-size:1rem!important; }
         #resStyle { font-size:1.125rem!important; line-height:1.7!important; }
@@ -410,7 +409,11 @@
         .look-note { font-size:14px!important; line-height:1.6; color:#4B586D; margin:0 0 12px; }
         .menu-photos { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; margin-top:12px; }
         .menu-photo-card { margin:0; background:#FFF; border:1px solid #E5E9F0; border-radius:16px; overflow:hidden; }
-        .food-photo { display:block; aspect-ratio:1; background-size:700% 600%; background-repeat:no-repeat; background-color:#FAF9F6; }
+        .food-photo { display:block; width:100%; aspect-ratio:1; overflow:hidden; background-color:#FAF9F6; }
+        #styleTpoControls { display:flex; align-items:center; gap:12px; }
+        #styleTpoControls .form-label { flex-shrink:0; margin:0; }
+        #styleTpoSelect { flex:1; min-width:0; background:#F0F7F3; color:#166534; }
+        #bioOverallText { white-space:pre-line; }
         .menu-photo-card figcaption { padding:10px; font-size:15px!important; font-weight:700; line-height:1.5; }
         @media(max-width:380px) { .look-card { padding:12px; } }
     </style>
@@ -578,7 +581,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                                 <p style="font-size: 11.5px; color: #64748B; margin-top: 1px;">나의 사주 오행 맞춤 데일리 스타일링</p>
                             </div>
                         </div>
-                        <span id="todayStyleMoodBadge" style="font-size: 11.5px; background: #EBF5EE; color: #166534; font-weight: 800; padding: 4px 10px; border-radius: 9999px; border: 1px solid #BBF7D0;">🏃 캐주얼 & 액티브</span>
+
                     </div>
 
                     <div id="styleTpoControls">
@@ -610,11 +613,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                             네이비 쿨 티셔츠 &nbsp;&amp;&nbsp; 스카이블루 데님 팬츠
                         </p>
                         <div id="outfitCards"></div>
-                        <div id="wardrobeDailyMatchPick" style="background: #FFFBEB; border-radius: 12px; padding: 12px 14px; border: 1px solid #FDE68A;">
-                            <div style="font-size: 13px; color: #78350F; line-height: 1.6;">
-                                ✦ <strong>소품 매칭:</strong> 내 옷장의 <strong>[시계]</strong>를 더해 균형을 맞춰보세요.
-                            </div>
-                        </div>
+                        <div id="wardrobeDailyMatchPick" hidden style="background: #FFFBEB; border-radius: 12px; padding: 12px 14px; border: 1px solid #FDE68A;"></div>
                     </div>
 
                     <!-- 내 옷장 아코디언 -->
@@ -633,6 +632,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                             <button onclick="openWardrobeAddWizard()" style="width: 100%; background: #2D6A4F; color: white; border: none; font-size: 13px; font-weight: 700; padding: 10px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; margin-bottom: 10px;">
                                 <span>➕</span> 새 아이템 옷장에 등록하기 (3초)
                             </button>
+                            <p id="wardrobeStorageNotice" role="status" hidden style="font-size:12px; color:#92400E; margin:8px 0;"></p>
                             <div id="wardrobeItemsList" style="display: flex; flex-direction: column; gap: 6px;"></div>
                         </div>
                     </div>
@@ -700,6 +700,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                     <div style="background: #F8FAFC; border-radius: 10px; padding: 10px 12px; font-size: 13px; color: #334155; line-height: 1.6; border-left: 3.5px solid #2D6A4F;">
                         <span style="font-weight: 800; color: #2D6A4F;">💡 바이오리듬 해석:</span><br>
                         <span id="bioOverallText">생일을 기준으로 주기 곡선을 계산하고 있어요.</span>
+                        <p id="bioInterpretationNote" style="font-size:11.5px; color:#64748B; margin:10px 0 0; line-height:1.6;"></p>
                     </div>
                 </div>
 
@@ -1443,8 +1444,11 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 || index < 0 || index >= 42 || sheet < 0) return null;
             const file = catalog.files?.[sheet];
             if (!/^food-\d{2}\.webp$/.test(file || '')) return null;
-            return {url:`/assets/food-thumbnails-v1/${file}`,
-                    x:(index % 7) * 100 / 6, y:Math.floor(index / 7) * 100 / 5};
+            const crop = catalog.crops?.[sheet]?.[index];
+            if (!Array.isArray(crop) || crop.length !== 4 || !crop.every(Number.isInteger)) return null;
+            const [x,y,width,height] = crop;
+            if (x < 0 || y < 0 || width <= 0 || height <= 0 || x+width > 896 || y+height > 768) return null;
+            return {url:`/assets/food-thumbnails-v1/${file}`, x,y,width,height};
         }
         function renderMenuPhotos(menus) {
             const box = document.getElementById('menuPhotoCards');
@@ -1452,7 +1456,14 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             box.innerHTML = menus.slice(0,2).map(name => {
                 const thumbnail = foodThumbnail(name);
                 // New, unregistered dishes stay text-only until their exact image is added.
-                const photo = !thumbnail ? '' : `<span class="food-photo" role="img" aria-label="${escapeStyleText(name)} 예시 일러스트" style="background-image:url('${thumbnail.url}');background-position:${thumbnail.x}% ${thumbnail.y}%"></span>`;
+                let photo = '';
+                if (thumbnail) {
+                    const {url,x,y,width,height} = thumbnail, size = Math.max(width,height)+12;
+                    photo = `<svg class="food-photo" role="img" aria-label="${escapeStyleText(name)} 예시 일러스트" viewBox="0 0 ${size} ${size}">
+                        <svg x="${(size-width)/2}" y="${(size-height)/2}" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" overflow="hidden">
+                            <image href="${url}" x="${-x}" y="${-y}" width="896" height="768" />
+                        </svg></svg>`;
+                }
                 return `<figure class="menu-photo-card">${photo}<figcaption>${escapeStyleText(name)}</figcaption></figure>`;
             }).join('');
         }
@@ -1528,6 +1539,29 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             );
         }
 
+        function wardrobeCacheKey() { return 'dalha_wardrobe_v1:' + currentUserId; }
+        function cachedWardrobe() {
+            if (!currentUserId) return [];
+            try {
+                const saved = JSON.parse(localStorage.getItem(wardrobeCacheKey()));
+                return saved?.owner === currentUserId && Array.isArray(saved.items) ? saved.items : [];
+            } catch (_) { return []; }
+        }
+        function acceptWardrobeResponse(data) {
+            const notice = document.getElementById('wardrobeStorageNotice');
+            if (Array.isArray(data.wardrobe_items)) {
+                userWardrobeItems = data.wardrobe_items;
+                try { localStorage.setItem(wardrobeCacheKey(), JSON.stringify({owner:currentUserId,items:userWardrobeItems})); } catch (_) {}
+                if (notice) { notice.hidden = true; notice.textContent = ''; }
+            } else {
+                userWardrobeItems = cachedWardrobe();
+                if (notice) {
+                    notice.hidden = false;
+                    notice.textContent = data.wardrobe_error || '옷장을 불러오지 못했습니다. 잠시 후 다시 접속해 주세요.';
+                }
+            }
+        }
+
         function buildKakaoAuthPayload(kakaoId, kakaoAccount = {}) {
             const localSaju = getSavedUserSaju(kakaoId);
             const profile = kakaoAccount.profile || {};
@@ -1594,7 +1628,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                                             populateSajuForm(resolvedProfile);
                                         }
                                         serverUnlockedReports = sData.unlocked_reports || [];
-                                        userWardrobeItems = sData.wardrobe_items || [];
+                                        acceptWardrobeResponse(sData);
                                         applySajuAnalysisToUI(sData.saju_analysis);
                                         renderWardrobeUI();
                                         renderServerArchive();
@@ -1604,6 +1638,8 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                                         document.getElementById('bottomNavBar').classList.remove('hidden');
                                         restoreUnlockedUIFromReports();
                                     } else {
+                                        acceptWardrobeResponse(sData);
+                                        renderWardrobeUI();
                                         populateSajuForm(sData.kakao_prefill || localSaju);
 
                                         document.getElementById('view-login-gate').classList.add('hidden');
@@ -1645,7 +1681,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                     currentCoin = sData.coin_balance;
                     updateCoinDisplay();
                     serverUnlockedReports = sData.unlocked_reports || [];
-                    userWardrobeItems = sData.wardrobe_items || [];
+                    acceptWardrobeResponse(sData);
                     const resolvedProfile = sData.profile || localSaju;
                     if (resolvedProfile) {
                         saveUserSajuToLocal(resolvedProfile, savedKakaoId);
@@ -1663,6 +1699,8 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                     currentUserId = sData.user_id;
                     currentCoin = sData.coin_balance;
                     updateCoinDisplay();
+                    acceptWardrobeResponse(sData);
+                    renderWardrobeUI();
                     populateSajuForm(sData.kakao_prefill || localSaju);
                     document.getElementById('view-login-gate').classList.add('hidden');
                     document.getElementById('onboardingInputView').classList.remove('hidden');
@@ -1841,6 +1879,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 document.getElementById('bioEmotionalStatus').innerText = `${bio.emotional.status} (${bio.emotional.val})`;
                 document.getElementById('bioIntellectualStatus').innerText = `${bio.intellectual.status} (${bio.intellectual.val})`;
                 document.getElementById('bioOverallText').innerText = bio.overall_summary;
+                document.getElementById('bioInterpretationNote').textContent = bio.interpretation_note || '';
                 document.getElementById('biorhythmWaveSvg').innerHTML = renderBiorhythmWaveSvg(bio.days_lived);
             }
 
@@ -2046,7 +2085,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 && colorMatch(item));
             // Eligibility comes first. No lucky-item score or date-based anti-repeat.
             candidates.sort((a,b) => String(a.id || a.nickname).localeCompare(String(b.id || b.nickname),'ko'));
-            if (!candidates.length) return {item:null,text:'오늘의 옷차림과 추천 색상에 맞는 보유 소품이 없습니다. 소품을 더하지 않아도 괜찮습니다.'};
+            if (!candidates.length) return {item:null,text:''};
             const item = candidates[0], label = item.nickname || item.category;
             return {item,text:`내 옷장의 ${styleWord(label,'을/를')} 함께 매치해 보세요. 선택한 옷차림에 맞는 종류·소재인지 확인하고, 오늘 추천 색상과 맞춰 골랐습니다.`};
         }
@@ -2056,7 +2095,6 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             const styleEl = document.getElementById('resStyle');
             const pickEl = document.getElementById('wardrobeDailyMatchPick');
             const paletteBox = document.getElementById('dynamicColorPaletteBox');
-            const moodBadge = document.getElementById('todayStyleMoodBadge');
             const moodStoryEl = document.getElementById('paletteMoodStoryBox');
             if (!styleEl || !pickEl || !paletteBox) return;
 
@@ -2068,11 +2106,11 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 || (selectedTpo === 'casual' ? fortune.wada_palette : null);
             if (!wada?.top || !wada?.bottom) {
                 styleEl.textContent = '오늘의 추천 색상을 불러온 뒤 옷차림을 안내합니다.';
-                pickEl.textContent = '오늘의 운세 정보가 아직 없습니다.';
+                pickEl.hidden = true;
+                pickEl.replaceChildren();
                 paletteBox.replaceChildren();
                 renderOutfitCards(null);
                 if (moodStoryEl) moodStoryEl.textContent = '';
-                if (moodBadge) moodBadge.textContent = '정보 확인 중';
                 return;
             }
 
@@ -2081,9 +2119,6 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             const bottomColorStd = wada.bottom.standard_color;
             const todayMood = wada.style_mood || "casual";
 
-            if (moodBadge) {
-                moodBadge.innerText = wada.mood_tag || (todayMood === "casual" ? "🏃 캐주얼 & 액티브" : "👔 클래식 & 포멀");
-            }
             if (moodStoryEl) {
                 moodStoryEl.innerText = wada.mood_desc || "";
             }
@@ -2127,11 +2162,12 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 ? `<span style="font-size:11px; background:#FEF3C7; color:#78350F; font-weight:800; padding:2px 7px; border-radius:4px; margin-right:6px;">✦ 반전 포인트</span>` 
                 : `<span style="font-size:11px; background:#F1F5F9; color:#475569; font-weight:700; padding:2px 7px; border-radius:4px; margin-right:6px;">소품 매칭</span>`;
 
-            pickEl.innerHTML = `
+            pickEl.hidden = !recommendation.item;
+            pickEl.innerHTML = recommendation.item ? `
                 <div style="font-size: 13px; color: #334155; line-height: 1.6;">
                     ${headerTag} ${matchText}
                 </div>
-            `;
+            ` : '';
         }
 
         function getDynamicItemIconSvg(item) {
@@ -2387,55 +2423,48 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             }
         }
 
+        let wardrobeSavePending = false;
         async function saveWardrobeItemToServer() {
             if (!currentUserId) { alert("로그인이 필요합니다."); return; }
-            if (wizardMaterials.length === 0) { alert("소재를 1개 이상 선택해 주세요."); return; }
-
-            const customNick = document.getElementById('wardrobeNicknameInput').value.trim();
-
-            if (editingWardrobeItemId) {
-                const res = await fetch(`/api/wardrobe/edit/${editingWardrobeItemId}`, {
-                    method: 'PUT',
+            if (!wizardColors.length || !wizardMaterials.length) { alert("색상과 소재를 1개 이상 선택해 주세요."); return; }
+            if (wardrobeSavePending) return;
+            wardrobeSavePending = true;
+            const editing = editingWardrobeItemId;
+            try {
+                const res = await fetch(editing ? `/api/wardrobe/edit/${editing}` : '/api/wardrobe/add', {
+                    method: editing ? 'PUT' : 'POST',
                     headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({
-                        user_id: currentUserId,
-                        category: wizardCategory,
-                        nickname: customNick,
-                        colors: wizardColors,
-                        materials: wizardMaterials
-                    })
+                    body: JSON.stringify({user_id:currentUserId, category:wizardCategory,
+                        nickname:document.getElementById('wardrobeNicknameInput').value.trim(),
+                        colors:wizardColors, materials:wizardMaterials})
                 });
                 const data = await res.json();
-                userWardrobeItems = data.wardrobe_items;
+                if (!res.ok || !Array.isArray(data.wardrobe_items)) {
+                    throw Error(typeof data.detail === 'string' ? data.detail : '옷장에 저장하지 못했습니다. 잠시 후 다시 시도해 주세요.');
+                }
+                acceptWardrobeResponse(data);
                 closeWardrobeAddWizard();
                 renderWardrobeUI();
-                alert("✨ 옷장 아이템이 성공적으로 수정되었습니다!");
-            } else {
-                const res = await fetch('/api/wardrobe/add', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({
-                        user_id: currentUserId,
-                        category: wizardCategory,
-                        nickname: customNick,
-                        colors: wizardColors,
-                        materials: wizardMaterials
-                    })
-                });
-                const data = await res.json();
-                userWardrobeItems = data.wardrobe_items;
-                closeWardrobeAddWizard();
-                renderWardrobeUI();
-                alert("✨ 내 옷장에 새 아이템이 등록되었습니다!");
-            }
+                alert(editing ? "✨ 옷장 아이템이 수정되었습니다!" : "✨ 내 옷장에 새 아이템이 등록되었습니다!");
+            } catch (error) {
+                alert(error.message || '옷장에 저장하지 못했습니다. 다시 시도해 주세요.');
+            } finally { wardrobeSavePending = false; }
         }
 
         async function deleteWardrobeItem(itemId) {
+            if (!currentUserId || wardrobeSavePending) return;
             if (!confirm("이 아이템을 옷장에서 삭제하시겠습니까?")) return;
-            const res = await fetch(`/api/wardrobe/delete/${itemId}?user_id=${currentUserId}`, { method: 'DELETE' });
-            const data = await res.json();
-            userWardrobeItems = data.wardrobe_items;
-            renderWardrobeUI();
+            wardrobeSavePending = true;
+            try {
+                const res = await fetch(`/api/wardrobe/delete/${itemId}?user_id=${encodeURIComponent(currentUserId)}`, {method:'DELETE'});
+                const data = await res.json();
+                if (!res.ok || !Array.isArray(data.wardrobe_items)) {
+                    throw Error(typeof data.detail === 'string' ? data.detail : '아이템을 삭제하지 못했습니다. 다시 시도해 주세요.');
+                }
+                acceptWardrobeResponse(data);
+                renderWardrobeUI();
+            } catch (error) { alert(error.message || '아이템을 삭제하지 못했습니다. 다시 시도해 주세요.'); }
+            finally { wardrobeSavePending = false; }
         }
 
         async function handleUnlockReportOnServer(reportKey, cost, subOption = "기본", partnerName = "상대방", relation = "선택안함", partnerProfile = null) {

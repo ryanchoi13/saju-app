@@ -16,7 +16,7 @@ assert.equal(w.selectDailyAccessory([rubber],fortune,formal).item,null); // Luck
 assert.equal(w.selectDailyAccessory([rubber,leather],fortune,formal).item.id,'2');
 assert.equal(w.selectDailyAccessory([rubber],fortune,palette).item.id,'1');
 const empty=w.selectDailyAccessory([],fortune,palette);
-assert.equal(empty.item,null);assert.match(empty.text,/소품을 더하지 않아도/);assert.ok(!empty.text.includes('러버'));
+assert.equal(empty.item,null);assert.equal(empty.text,'');assert.ok(!empty.text.includes('러버'));
 assert.equal(w.selectDailyAccessory([{...leather,colors:['레드']}],fortune,palette).item,null);
 assert.equal(w.selectDailyAccessory([{...leather,materials:[]}],fortune,palette).item,null);
 assert.equal(w.selectDailyAccessory([{category:'액세서리',nickname:'포켓 스퀘어',materials:['실크/쉬폰'],colors:['블랙']}],fortune,formal).item,null);
@@ -24,8 +24,15 @@ assert.equal(w.selectDailyAccessory([rubber,leather],fortune,palette).item.id,
  w.selectDailyAccessory([leather,rubber],{date:'2026-09-12',lucky_item:'가죽 시계'},palette).item.id);
 vm.runInContext('currentUserId="style-account";currentFortuneData='+JSON.stringify({daily_fortune:{...fortune,wada_palette:palette,style_palettes:{casual:palette,business_formal:formal}}})+';userWardrobeItems=[];updateTodayWardrobeMatchPick();',dom.getInternalVMContext());
 assert.equal(w.getStyleTpo(),'casual');
+const pick=w.document.getElementById('wardrobeDailyMatchPick');
+assert.ok(pick.hidden); assert.equal(pick.textContent,'');
+assert.equal(w.document.getElementById('todayStyleMoodBadge'),null);
+assert.equal(w.document.querySelectorAll('#styleTpoControls select').length,1);
+vm.runInContext('userWardrobeItems='+JSON.stringify([rubber])+';updateTodayWardrobeMatchPick();',dom.getInternalVMContext());
+assert.ok(!pick.hidden); assert.match(pick.textContent,/스포츠 시계/);
 w.setStyleTpo('business_formal');
 assert.equal(w.localStorage.getItem('dalha_style_tpo:style-account'),'business_formal');
+assert.ok(pick.hidden);assert.equal(pick.textContent,'');
 assert.equal(w.document.getElementById('styleTpoSelect').value,'business_formal');
 assert.equal(w.document.getElementById('resStyle').textContent,formal.outfit_guidance);
 w.updateTodayWardrobeMatchPick();assert.equal(w.getStyleTpo(),'business_formal');
@@ -48,7 +55,12 @@ for(const name of Object.keys(foodCatalog.menus)) {
     assert.ok(photo,`Missing food illustration: ${name}`);
     assert.equal(photo.getAttribute('aria-label'),`${name} 예시 일러스트`);
     assert.equal(w.document.querySelector('#menuPhotoCards figcaption').textContent,name);
-    foodFiles.add(w.foodThumbnail(name).url);
+    const crop=w.foodThumbnail(name);
+    const clip=photo.querySelector('svg');
+    assert.equal(clip.getAttribute('overflow'),'hidden');
+    assert.equal(clip.getAttribute('viewBox'),`0 0 ${crop.width} ${crop.height}`);
+    assert.equal(clip.querySelector('image').getAttribute('x'),String(-crop.x));
+    foodFiles.add(crop.url);
 }
 assert.equal(foodFiles.size,foodCatalog.files.length);
 delete w.DALHA_FOOD_THUMBNAILS;

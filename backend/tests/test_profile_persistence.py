@@ -8,7 +8,6 @@ from main import (
     register_saju,
     reports_db,
     users_db,
-    wardrobe_db,
 )
 
 
@@ -18,7 +17,6 @@ class ProfilePersistenceTests(TestCase):
             user_id = f"user_test-{suffix}"
             users_db.pop(user_id, None)
             reports_db.pop(user_id, None)
-            wardrobe_db.pop(user_id, None)
 
     def test_complete_browser_profile_restores_after_server_restart(self):
         result = auth_kakao(KakaoAuthRequest(
@@ -39,7 +37,6 @@ class ProfilePersistenceTests(TestCase):
             "birth_day": 13, "calendar_type": "solar", "sijin_index": 5, "coin": 1000,
         }
         reports_db[user_id] = []
-        wardrobe_db[user_id] = []
         result = auth_kakao(KakaoAuthRequest(
             kakao_id="test-correct", name="최정오", gender="male",
             birthyear="1978", birthday="0313", birthday_type="SOLAR", sijin_index=5,
