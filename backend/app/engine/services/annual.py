@@ -7,6 +7,9 @@ from html import escape
 
 from app.engine.core.models import MyeongriCoreResult
 from app.engine.timing import calculate_timing
+from app.engine.calendar import to_solar
+from app.engine.semantic.overall import select_overall_domains, OVERALL_VERSION
+from app.engine.services.overall_narrative import render_overall, subjects_html
 
 
 _TEN_GOD = {
@@ -79,32 +82,34 @@ def _annual_sections(annual_god: str, cycle_god: str | None) -> dict[str, str]:
     return {"money": money, "career": career, "relation": relation, "rhythm": rhythm}
 
 
-def _monthly_html(core: MyeongriCoreResult, year: int) -> str:
+def _monthly_html(core: MyeongriCoreResult, year: int, summaries: list | None = None) -> str:
     cards = []
-    favorable = set(core.semantic_state.favorable_elements)
+    birth_date = to_solar(core.input.birth_date, core.input.calendar_type, core.input.is_leap_month)
     for month in range(1, 13):
+        representative = date(year, month, 15)
+        if representative < birth_date:
+            if (year, month) < (birth_date.year, birth_date.month):
+                cards.append(f'<div style="border-left:4px solid #2D6A4F;padding:13px;">{month}월 · 출생 전 기간</div>')
+                continue
+            representative = birth_date
         timing, _, _ = calculate_timing(
             core.input,
             core.natal_facts.pillars,
-            target_date=date(year, month, 15),
+            target_date=representative,
         )
         monthly = timing.monthly
-        god = monthly["ten_god"]
         pillar = monthly["pillar"]
-        element = pillar["stem_element"]
-        topic, caution = _topic(god)
-        balance = (
-            "이 기운은 원국의 보완 방향과 겹치므로 계획한 일을 차분히 진전시키기 좋습니다."
-            if element in favorable else
-            "이 기운이 곧 길흉을 뜻하지는 않으므로, 무리한 확대보다 반응을 살피며 조절하세요."
-        )
+        selection = select_overall_domains(core, "monthly", timing=timing)
+        narrative = render_overall(selection)
+        if summaries is not None:
+            summaries.append(dict(month=month, representative_date=representative.isoformat(), interpretation=selection))
         cards.append(f"""
         <div style="background:#F8FAFC;border:1px solid #E2E8F0;padding:13px 14px;border-radius:12px;border-left:4px solid #2D6A4F;">
-          <div style="font-size:13.5px;font-weight:800;color:#0F172A;">{month}월 · {pillar['ganji']}월 · {_TEN_GOD.get(god, god)}</div>
+          <div style="font-size:13.5px;font-weight:800;color:#0F172A;">{month}월 · {escape(narrative['title'])}</div>
           <p style="font-size:13px;color:#475569;margin:5px 0 0;line-height:1.72;">
-            이번 달에는 <strong>{topic}</strong>이 눈에 띕니다. {balance}
-            {_MONTH_ACTION.get(god, caution)}
+            {escape(narrative['advice'])}
           </p>
+          <div style="font-size:12px;color:#64748B;margin-top:7px;">{escape(narrative['unified_advice'])}</div>
         </div>""")
     return "".join(cards)
 
@@ -117,35 +122,35 @@ def build_annual_overall_report(
     """Render natal + current daeyun + annual + monthly layers without fake scores."""
 
     name = escape(user_name or "회원")
-    annual = core.timing.annual
-    cycle = core.timing.luck_cycle.get("current") or {}
-    annual_god = annual["ten_god"]
-    cycle_god = cycle.get("ten_god")
-    annual_topic, annual_advice = _topic(annual_god)
-    sections = _annual_sections(annual_god, cycle_god)
+    birth_date = to_solar(core.input.birth_date, core.input.calendar_type, core.input.is_leap_month)
+    representative = max(date(year, 7, 1), birth_date)
+    if representative.year != year:
+        raise ValueError("출생 전 연도의 운세는 생성할 수 없습니다.")
+    annual_timing, _, _ = calculate_timing(core.input, core.natal_facts.pillars, target_date=representative)
+    annual = annual_timing.annual
+    selection = select_overall_domains(core, "annual", timing=annual_timing)
+    narrative = render_overall(selection)
+    monthly_summaries = []
+    monthly_html = _monthly_html(core, year, monthly_summaries)
     annual_pillar = annual["pillar"]
     title = f"{year} {annual_pillar['ganji']}년 {name}님 총운 & 12개월 명리 흐름"
     content = f"""
-    <div style="text-align:left;line-height:1.8;color:#1E293B;">
+    <div data-overall-version="{OVERALL_VERSION}" style="text-align:left;line-height:1.8;color:#1E293B;">
       <div style="background:#ECFDF5;border-left:4px solid #10B981;padding:16px;border-radius:14px;margin-bottom:16px;">
         <div style="font-size:11.5px;font-weight:700;color:#059669;margin-bottom:4px;">올해 총운</div>
-        <h4 style="font-size:17px;font-weight:800;color:#065F46;margin:0 0 7px;">{year} {annual_pillar['ganji']}년의 핵심 흐름</h4>
+        <h4 style="font-size:17px;font-weight:800;color:#065F46;margin:0 0 7px;">{escape(narrative['title'])}</h4>
         <p style="font-size:13.5px;color:#047857;margin:0;line-height:1.75;">
-          원국 위에 현재 대운과 올해 세운을 함께 놓으면 <strong>{_TEN_GOD.get(annual_god, annual_god)}</strong>,
-          즉 <strong>{annual_topic}</strong>이 올해의 중심 주제로 드러납니다. {annual_advice}
-          이는 확정된 사건 예고가 아니라, 올해 선택과 대응에서 반복해서 살펴볼 방향입니다.
+          {escape(narrative['unified_advice'])}
         </p>
       </div>
       <div style="display:grid;gap:10px;margin-bottom:18px;">
-        <div style="background:#FFFBEB;border:1px solid #FDE68A;padding:14px;border-radius:13px;"><h5 style="font-size:14.5px;color:#92400E;margin:0 0 5px;">재물운</h5><p style="font-size:13px;color:#78350F;margin:0;">{sections['money']}</p></div>
-        <div style="background:#EFF6FF;border:1px solid #BFDBFE;padding:14px;border-radius:13px;"><h5 style="font-size:14.5px;color:#1D4ED8;margin:0 0 5px;">직장·사업운</h5><p style="font-size:13px;color:#1E40AF;margin:0;">{sections['career']}</p></div>
-        <div style="background:#FFF1F2;border:1px solid #FECDD3;padding:14px;border-radius:13px;"><h5 style="font-size:14.5px;color:#BE123C;margin:0 0 5px;">관계운</h5><p style="font-size:13px;color:#9F1239;margin:0;">{sections['relation']}</p></div>
-        <div style="background:#F5F3FF;border:1px solid #DDD6FE;padding:14px;border-radius:13px;"><h5 style="font-size:14.5px;color:#6D28D9;margin:0 0 5px;">생활 리듬</h5><p style="font-size:13px;color:#5B21B6;margin:0;">{sections['rhythm']}</p></div>
+        {subjects_html(narrative)}
       </div>
       <h4 style="font-size:15.5px;font-weight:800;color:#0F172A;margin:20px 0 5px;">12개월 흐름</h4>
       <p style="font-size:12px;color:#64748B;margin:0 0 10px;">각 달 15일의 절기 월주를 대표값으로 사용해 월별 중심 기운을 읽었습니다.</p>
-      <div style="display:grid;gap:9px;">{_monthly_html(core, year)}</div>
+      <div style="display:grid;gap:9px;">{monthly_html}</div>
       <p style="font-size:11.5px;color:#94A3B8;margin:12px 0 0;">정통 명리의 원국·대운·세운·월운을 근거로 한 해석이며, 별도의 토정비결 괘 계산과는 구분됩니다.</p>
     </div>
     """
-    return {"title": title, "content": content}
+    return {"title": title, "content": content, "engine_version": OVERALL_VERSION,
+            "evidence_summary": {"annual": selection, "months": monthly_summaries}}

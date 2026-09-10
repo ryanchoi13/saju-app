@@ -11,9 +11,11 @@ from app.engine.services.simple_menu import daily_choices
 from app.engine.services.daily_guidance import build_daily_guidance
 from app.engine.services.daily_scenarios import select_daily_scenario
 from app.engine.services.daily_topics import select_daily_topics
+from app.engine.semantic.overall import select_overall_domains
+from app.engine.services.overall_narrative import render_overall
 
 
-DAILY_FORTUNE_VERSION = "daily-fortune-conditional-v4-shared-scenario"
+DAILY_FORTUNE_VERSION = "daily-fortune-v5-overall-life-domains"
 
 _TEN_GOD_KO = {
     "peer": "비견",
@@ -455,6 +457,25 @@ def build_daily_fortune(
     scenario = select_daily_scenario(query)
     guidance = build_daily_guidance(query, daily_god, relations, scenario=scenario)
     topics = select_daily_topics(query, relations, shensha, scenario=scenario)
+    overall = select_overall_domains(core, "daily")
+    narrative = render_overall(overall)
+    # Supporting stars retain their practical note, never the power to select
+    # or reorder a life domain. Avoid restating a subject already in the body.
+    represented = {p["domain"] for p in narrative["subjects"]}
+    note_domains = {"reflection": "self", "learning": "learning", "relationships": "relationships",
+                    "movement": "change", "rest": "wellbeing"}
+    extra_notes = [n["text"] for n in topics["evidence"]["notes"]
+                   if n["origin"].startswith("shensha:")
+                   and note_domains.get(n["topic"], n["topic"]) not in represented
+                   and not (n["topic"] == "relationships" and "love" in represented)]
+    extra_notes.extend(n["text"] for n in topics["evidence"]["notes"]
+                       if n["status"] == "assessed" and n["origin"] == "timing:daily-conditions")
+    topics["evidence"]["legacy_primary_topic"] = topics["evidence"]["primary_topic"]
+    topics["evidence"]["primary_topic"] = overall["primary_domains"][0] if overall["primary_domains"] else "balance"
+    topics["evidence"]["primary_topics"] = overall["primary_domains"]
+    topics["evidence"]["topic_basis"] = overall["version"]
+    guidance["evidence"]["rendered_by"] = overall["version"]
+    guidance["evidence"]["legacy_operation_analysis_only"] = True
 
     return {
         "engine_version": DAILY_FORTUNE_VERSION,
@@ -462,15 +483,15 @@ def build_daily_fortune(
         "day_ganji": ganji_display,
         "day_ganji_han": ganji_han,
         "day_ten_god": _TEN_GOD_KO[daily_god],
-        "title": topics["title"],
+        "title": narrative["title"],
         "score": score,
         "mode_badge": f"운세 {score}점",
         "badge_style": _badge_style(score),
-        "advice": topics["advice"],
-        "time_flow": topics["time_flow"],
-        "unified_advice": guidance["unified_advice"],
-        "mindset": guidance["mindset"],
-        "action": guidance["action"],
+        "advice": " ".join([narrative["advice"]] + extra_notes),
+        "time_flow": narrative["time_flow"],
+        "unified_advice": narrative["unified_advice"],
+        "mindset": narrative["title"],
+        "action": narrative["unified_advice"],
         "lucky_element": lucky_element,
         "lucky_item": item,
         "lucky_item_reason": item_reason,
@@ -497,6 +518,7 @@ def build_daily_fortune(
         },
         "supporting_shensha": [_SHENSHA_KO[name][0] for name in shensha],
         "evidence_summary": {
+            "overall": overall,
             "guidance": guidance["evidence"],
             "topics": topics["evidence"],
             "scope": query["scope"],

@@ -128,8 +128,12 @@ class DailyFortuneServiceTests(TestCase):
         query = build_service_query(core, 'daily_overall')
         expected = build_daily_guidance(query, query['timing']['daily']['ten_god'], _daily_relationships(query))
         result = build_daily_fortune(core, '테스트', target)
-        self.assertEqual(result['mindset'], expected['mindset'])
-        self.assertEqual(result['action'], expected['action'])
-        self.assertEqual(result['unified_advice'], expected['unified_advice'])
+        # Legacy clients falling back to action must receive the same new
+        # overall advice, not the previous work-focused operation template.
+        self.assertEqual(result['mindset'], result['title'])
+        self.assertEqual(result['action'], result['unified_advice'])
         self.assertNotEqual(result['time_flow']['afternoon'], result['unified_advice'])
-        self.assertEqual(result['evidence_summary']['guidance'], expected['evidence'])
+        for key, value in expected['evidence'].items():
+            self.assertEqual(result['evidence_summary']['guidance'][key], value)
+        self.assertEqual(result['evidence_summary']['guidance']['rendered_by'],
+                         result['evidence_summary']['overall']['version'])

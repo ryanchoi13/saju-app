@@ -1028,6 +1028,8 @@ def test_saju_engine(
     backend_day_master = backend_result.day_master
 
     return {
+        "engine_version": root_result["daily_fortune"].get("engine_version"),
+        "overall_version": root_result["daily_fortune"].get("evidence_summary", {}).get("overall", {}).get("version"),
         "input": {
             "year": y,
             "month": m,
