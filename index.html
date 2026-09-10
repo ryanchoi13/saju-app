@@ -148,6 +148,63 @@
 
         .modal-bg { position: fixed; inset: 0; background: rgba(11,19,21,0.75); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; padding: 16px; z-index: 2000; }
         .modal-content { background: #FAF9F6; border-radius: 24px; padding: 20px; width: 100%; max-width: 350px; text-align: center; display: flex; flex-direction: column; gap: 14px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.4); border: 1px solid #E2E8F0; }
+
+        /* Reading tabs share one calm hierarchy; the today tab keeps its visual identity. */
+        .reading-view { gap:0; text-align:left; --reading-ink:#17243A; --reading-muted:#657080; }
+        .reading-heading { display:block; position:static; background:transparent; border:0; z-index:auto; padding:16px 4px 22px; }
+        .reading-eyebrow { display:block; color:#8B7048; font-size:11px; font-weight:800; letter-spacing:.08em; margin-bottom:9px; }
+        .reading-heading h2 { font-family:'Noto Serif KR',serif; color:#17243A; font-size:27px; letter-spacing:-.04em; margin:0 0 10px; }
+        .reading-heading p, .reading-view .card > p { color:#657080; font-size:13px; line-height:1.8; margin:8px 0 16px; }
+        .reading-profile { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:15px 16px; background:#F1EFE9; border-radius:14px; margin-bottom:17px; }
+        .reading-profile strong { color:#17243A; font-size:14px; }
+        .reading-profile p { font-size:11px; color:#657080; line-height:1.65; margin:3px 0 0; overflow-wrap:anywhere; }
+        .reading-profile > div { min-width:0; }
+        .reading-text-button { border:0; background:transparent; color:#44566B; padding:8px 3px; font-size:12px; font-weight:700; cursor:pointer; flex-shrink:0; }
+        .reading-tabs { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:3px; background:#EBEDF0; border-radius:12px; padding:4px; margin-bottom:20px; }
+        .reading-tabs button { border:0; background:transparent; color:#64748B; border-radius:9px; padding:12px 2px; font-size:13px; font-weight:700; cursor:pointer; }
+        .reading-tabs button[aria-selected="true"] { background:#fff; color:#17243A; box-shadow:0 2px 5px #17243A0D; }
+        .reading-view .card { text-align:left; border:1px solid #E6E4DE; padding:22px 20px; box-shadow:0 4px 15px #17243A04; border-radius:18px; }
+        .reading-view .card h3 { color:#17243A; font-family:'Noto Serif KR',serif; font-size:20px; font-weight:800; line-height:1.65; letter-spacing:-.035em; margin:0; }
+        .reading-view .reading-lead { background:linear-gradient(135deg,#FFFEFB,#F9F7F1); }
+        .report-facts { display:flex; flex-wrap:wrap; gap:6px 14px; color:#6B665B; font-size:11px; padding:11px 0; border-top:1px solid #E8E5DD; border-bottom:1px solid #E8E5DD; margin:16px 0 12px; }
+        .reading-caption, .reading-view .card > .reading-caption { font-size:11.5px; color:#707887; line-height:1.75; margin:9px 0 13px; }
+        .reading-primary, .reading-view .report-entry > button { width:100%; border:0!important; border-radius:12px!important; background:#17243A!important; color:white!important; padding:14px 12px!important; font-size:13px!important; font-weight:700; cursor:pointer; margin-top:10px; }
+        .reading-primary:disabled, .reading-view button:disabled { opacity:.55; cursor:wait; }
+        .reading-section-title { display:flex; justify-content:space-between; align-items:center; gap:10px; margin:24px 3px 13px; }
+        .reading-section-title h3 { color:#17243A; font-size:15px; margin:0; font-weight:800; }
+        .reading-section-title > span { font-size:11px; color:#89919B; }
+        .reading-links { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:9px; margin-bottom:20px; }
+        .reading-links button { text-align:left; background:#fff; border:1px solid #E6E4DE; border-radius:12px; padding:14px; cursor:pointer; }
+        .reading-links strong, .reading-links span { display:block; }
+        .reading-links strong { color:#28364A; font-size:13px; }
+        .reading-links span { color:#858A92; font-size:11px; margin-top:5px; }
+        .reading-evidence summary { color:#334155; font-size:13px; font-weight:800; cursor:pointer; }
+        .reading-evidence summary > span { color:#88909A; font-size:10px; font-weight:500; margin-left:5px; }
+        .reading-evidence[open] summary { margin-bottom:17px; }
+        .reading-archive-link { display:block; width:100%; border:0; border-top:1px solid #E6E4DE; background:transparent; color:#687484; padding:20px 8px; font-size:12px; cursor:pointer; text-align:center; }
+        .concern-choices { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:9px; }
+        .concern-choices button { text-align:left; border:1px solid #E6E4DE; background:#FFFEFB; color:#7C838C; border-radius:13px; padding:15px 13px; font-size:11px; line-height:1.7; cursor:pointer; }
+        .concern-choices button span { display:block; color:#28364A; font-size:14px; font-weight:800; margin-bottom:3px; }
+        .concern-choices button[aria-pressed="true"] { border-color:#17243A; background:#EEF0F3; }
+        .reading-view .report-entry { margin-top:16px; }
+        .reading-view .report-entry > p:first-child { font-size:16px!important; }
+        .reading-view .report-entry > p:not(:first-child) { font-size:12.5px!important; line-height:1.8; }
+        .period-choices { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:6px; margin:17px 0 12px; }
+        #lifeCycleChoices { grid-template-columns:repeat(3,minmax(0,1fr)); }
+        .period-choices button { border:1px solid #E4E6E9; border-radius:9px; padding:10px 3px; font-size:12px; color:#64748B; background:#fff; cursor:pointer; }
+        .period-choices button[aria-pressed="true"] { background:#17243A; border-color:#17243A; color:white; }
+        .period-reading { margin-bottom:16px; }
+        .reading-recent-list { display:grid; gap:7px; margin-bottom:16px; }
+        .reading-recent-list button { text-align:left; border:1px solid #E6E4DE; background:#fff; color:#44566B; border-radius:10px; padding:12px; font-size:12px; line-height:1.6; cursor:pointer; }
+        #archiveDetailModal .modal-content { width:100%; max-width:620px!important; max-height:92dvh!important; gap:8px; }
+        #archiveModalTitle { line-height:1.6; overflow-wrap:anywhere; padding-right:12px; }
+        #archiveModalBody { overscroll-behavior:contain; overflow-wrap:anywhere; min-height:0; }
+        #readingReportContents { display:flex; flex-wrap:wrap; gap:5px; max-height:90px; overflow:auto; flex-shrink:0; }
+        #readingReportContents button { font-size:11px; border:1px solid #E2E8F0; padding:6px 8px; background:#fff; color:#64748B; border-radius:6px; text-align:left; cursor:pointer; }
+        .reading-view button:focus-visible, .reading-view summary:focus-visible, #archiveDetailModal button:focus-visible { outline:3px solid #AE8D53; outline-offset:3px; }
+        @media(max-width:380px) { .reading-view .card { padding:18px 15px; } .reading-heading h2 { font-size:25px; } .reading-tabs button { font-size:12px; } }
+        @media(max-width:480px) { #archiveDetailModal { padding:0; } #archiveDetailModal .modal-content { max-height:100dvh!important; height:100dvh; border-radius:0!important; padding:20px 18px!important; padding-bottom:max(18px,env(safe-area-inset-bottom))!important; } }
+
     </style>
 </head>
 <body>
@@ -516,19 +573,44 @@
                 <div class="ad-slot-box" style="margin-top: 6px;"><span>📢 광고 영역 (Google AdSense / Kakao AdFit 슬롯 3)</span></div>
             </div>
 
-            <!-- 탭 2: 정통사주 -->
-            <div id="view-saju" class="tab-view hidden">
-                <div class="card" style="padding: 18px;">
-                    <div style="display: flex; justify-content: space-between; align-items: baseline; border-bottom: 1px solid #F1F5F9; padding-bottom: 8px; margin-bottom: 8px;">
-                        <h3 style="font-size: 16.5px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif;">사주명식 (四柱命式)</h3>
-                        <div style="text-align:right;line-height:1.35;max-width:62%;">
-                            <div id="sajuOwnerName" style="font-size:13.5px;color:#2D6A4F;font-weight:800;">-</div>
-                            <div id="sajuOwnerMeta" style="font-size:11.5px;color:#64748B;font-weight:600;margin-top:2px;">-</div>
-                        </div>
+            <!-- 탭 2: 나의 사주 — 기존 결과를 세 가지 관점으로 탐색 -->
+            <div id="view-saju" class="tab-view hidden reading-view">
+                <header class="reading-heading">
+                    <span class="reading-eyebrow">나를 이해하는 시간</span>
+                    <h2>나의 사주</h2>
+                    <p>타고난 모습부터 인생과 올해의 흐름까지.<br>정통 명리를 바탕으로 차근차근 살펴보세요.</p>
+                </header>
+                <div class="reading-profile">
+                    <div><strong id="sajuOwnerName">내 정보</strong><p id="sajuOwnerMeta">입력한 생년정보를 확인해 주세요.</p></div>
+                    <button class="reading-text-button" onclick="reopenSajuEditForm()">정보 확인</button>
+                </div>
+                <div class="reading-tabs" role="tablist" aria-label="나의 사주 살펴보기">
+                    <button id="saju-tab-basic" role="tab" aria-selected="true" aria-controls="saju-basic" onclick="selectSajuSection('basic')">나의 기본</button>
+                    <button id="saju-tab-life" role="tab" aria-selected="false" tabindex="-1" aria-controls="saju-life" onclick="selectSajuSection('life')">인생 흐름</button>
+                    <button id="saju-tab-year" role="tab" aria-selected="false" tabindex="-1" aria-controls="saju-year" onclick="selectSajuSection('year')">올해·월별</button>
+                </div>
+                <section id="saju-basic" class="saju-section" role="tabpanel" aria-labelledby="saju-tab-basic">
+                    <div class="card reading-lead">
+                        <span class="reading-eyebrow">나의 기본</span>
+                        <h3>내가 가진 모습과<br>삶에서 반복되는 선택</h3>
+                        <p>성향과 관계, 일과 배움, 돈과 생활을 함께 읽습니다. 평생운세에서 나를 이해할 실마리를 찾아보세요.</p>
+                        <div class="report-facts"><span>한 사람의 종합 풀이</span><span>450 복채</span></div>
+                        <p id="daewoonTeaserBox" class="reading-caption">포함 내용 · 타고난 기질과 균형 · 생활의 여러 분야 · 10년 대운</p>
+                        <div id="daewoonBox" class="hidden"></div>
+                        <button id="btnDaewoon" class="reading-primary" onclick="handleUnlockReportOnServer('daewoon', 450)">450 복채로 평생운세 읽기</button>
                     </div>
-
+                    <div class="reading-section-title"><h3>궁금한 부분부터</h3><span>주제별 풀이</span></div>
+                    <div class="reading-links">
+                        <button onclick="openConcern('business')"><strong>일·진로</strong><span>나에게 맞는 방향</span></button>
+                        <button onclick="openConcern('love')"><strong>애정·관계</strong><span>나의 관계 패턴</span></button>
+                        <button onclick="openConcern('wealth')"><strong>돈·생활</strong><span>돈을 대하는 성향</span></button>
+                        <button onclick="openConcern('health')"><strong>활동·회복</strong><span>생활의 균형</span></button>
+                    </div>
+                    <details id="sajuEvidence" class="card reading-evidence">
+                        <summary>내 사주명식과 해석 근거 <span>펼쳐 보기</span></summary>
+                        <p class="reading-caption">태어난 연·월·일·시와 오행 구성을 확인할 수 있습니다.</p>
                     <div style="margin-bottom: 12px; text-align: left;">
-                        <span id="sajuSingangBadge" style="font-size: 11.5px; background: #FEF3C7; color: #78350F; font-weight: 700; padding: 2px 8px; border-radius: 6px;">신약(身弱) 사주</span>
+                        <span id="sajuSingangBadge" style="font-size: 11.5px; background: #FEF3C7; color: #78350F; font-weight: 700; padding: 2px 8px; border-radius: 6px;">분석 결과 확인 중</span>
                     </div>
 
                     <!-- 명식표 (천간/지지 리버스 진한 박스 적용) -->
@@ -536,7 +618,7 @@
                         <div style="display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; padding: 8px 0;">
                             <span style="font-size: 12px; font-weight: 700; color: #64748B;">구분</span>
                             <div style="height: 44px; display: flex; align-items: center; justify-content: center; color: #475569; font-size: 12px; font-weight: 700;">천간<br>(天干)</div>
-                            <div style="height: 44px; display: flex; align-items: center; justify-content: center; color: #475569; font-size: 12px; font-weight: 700;">지간<br>(地干)</div>
+                            <div style="height: 44px; display: flex; align-items: center; justify-content: center; color: #475569; font-size: 12px; font-weight: 700;">지지<br>(地支)</div>
                             <div style="border-top: 1px dashed #CBD5E1; width: 100%; padding-top: 8px;"><div style="color: #475569; font-size: 12px; font-weight: 700;">지장간</div></div>
                         </div>
 
@@ -575,23 +657,20 @@
                         </div>
 
                         <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 18px; padding: 16px 10px 12px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; text-align: center;">
-                            <div style="display: flex; flex-direction: column; align-items: center; gap: 6px;"><span id="valWood" style="font-size: 13px; font-weight: 700; color: #047857;">0%</span><div style="width: 28px; height: 95px; background: #E2E8F0; border-radius: 14px; display: flex; align-items: flex-end;"><div id="barWood" style="width: 100%; height: 0%; background: linear-gradient(180deg, #34D399 0%, #10B981 100%); border-radius: 14px; transition: height 0.6s ease;"></div></div><span style="font-size: 13px; font-weight: 800; color: #047857;">木</span></div>
-                            <div style="display: flex; flex-direction: column; align-items: center; gap: 6px;"><span id="valFire" style="font-size: 13px; font-weight: 700; color: #DC2626;">0%</span><div style="width: 28px; height: 95px; background: #E2E8F0; border-radius: 14px; display: flex; align-items: flex-end;"><div id="barFire" style="width: 100%; height: 0%; background: linear-gradient(180deg, #F87171 0%, #EF4444 100%); border-radius: 14px; transition: height 0.6s ease;"></div></div><span style="font-size: 13px; font-weight: 800; color: #DC2626;">火</span></div>
-                            <div style="display: flex; flex-direction: column; align-items: center; gap: 6px;"><span id="valEarth" style="font-size: 13px; font-weight: 700; color: #D97706;">0%</span><div style="width: 28px; height: 95px; background: #E2E8F0; border-radius: 14px; display: flex; align-items: flex-end;"><div id="barEarth" style="width: 100%; height: 0%; background: linear-gradient(180deg, #FBBF24 0%, #F59E0B 100%); border-radius: 14px; transition: height 0.6s ease;"></div></div><span style="font-size: 13px; font-weight: 800; color: #D97706;">土</span></div>
-                            <div style="display: flex; flex-direction: column; align-items: center; gap: 6px;"><span id="valMetal" style="font-size: 13px; font-weight: 700; color: #475569;">0%</span><div style="width: 28px; height: 95px; background: #E2E8F0; border-radius: 14px; display: flex; align-items: flex-end;"><div id="barMetal" style="width: 100%; height: 0%; background: linear-gradient(180deg, #CBD5E1 0%, #94A3B8 100%); border-radius: 14px; transition: height 0.6s ease;"></div></div><span style="font-size: 13px; font-weight: 800; color: #475569;">金</span></div>
-                            <div style="display: flex; flex-direction: column; align-items: center; gap: 6px;"><span id="valWater" style="font-size: 13px; font-weight: 700; color: #2563EB;">0%</span><div style="width: 28px; height: 95px; background: #E2E8F0; border-radius: 14px; display: flex; align-items: flex-end;"><div id="barWater" style="width: 100%; height: 0%; background: linear-gradient(180deg, #60A5FA 0%, #3B82F6 100%); border-radius: 14px; transition: height 0.6s ease;"></div></div><span style="font-size: 13px; font-weight: 800; color: #2563EB;">水</span></div>
+                            <div style="display: flex; flex-direction: column; align-items: center; gap: 6px;"><span id="valWood" style="font-size: 13px; font-weight: 700; color: #047857;">—</span><div style="width: 28px; height: 95px; background: #E2E8F0; border-radius: 14px; display: flex; align-items: flex-end;"><div id="barWood" style="width: 100%; height: 0%; background: linear-gradient(180deg, #34D399 0%, #10B981 100%); border-radius: 14px; transition: height 0.6s ease;"></div></div><span style="font-size: 13px; font-weight: 800; color: #047857;">木</span></div>
+                            <div style="display: flex; flex-direction: column; align-items: center; gap: 6px;"><span id="valFire" style="font-size: 13px; font-weight: 700; color: #DC2626;">—</span><div style="width: 28px; height: 95px; background: #E2E8F0; border-radius: 14px; display: flex; align-items: flex-end;"><div id="barFire" style="width: 100%; height: 0%; background: linear-gradient(180deg, #F87171 0%, #EF4444 100%); border-radius: 14px; transition: height 0.6s ease;"></div></div><span style="font-size: 13px; font-weight: 800; color: #DC2626;">火</span></div>
+                            <div style="display: flex; flex-direction: column; align-items: center; gap: 6px;"><span id="valEarth" style="font-size: 13px; font-weight: 700; color: #D97706;">—</span><div style="width: 28px; height: 95px; background: #E2E8F0; border-radius: 14px; display: flex; align-items: flex-end;"><div id="barEarth" style="width: 100%; height: 0%; background: linear-gradient(180deg, #FBBF24 0%, #F59E0B 100%); border-radius: 14px; transition: height 0.6s ease;"></div></div><span style="font-size: 13px; font-weight: 800; color: #D97706;">土</span></div>
+                            <div style="display: flex; flex-direction: column; align-items: center; gap: 6px;"><span id="valMetal" style="font-size: 13px; font-weight: 700; color: #475569;">—</span><div style="width: 28px; height: 95px; background: #E2E8F0; border-radius: 14px; display: flex; align-items: flex-end;"><div id="barMetal" style="width: 100%; height: 0%; background: linear-gradient(180deg, #CBD5E1 0%, #94A3B8 100%); border-radius: 14px; transition: height 0.6s ease;"></div></div><span style="font-size: 13px; font-weight: 800; color: #475569;">金</span></div>
+                            <div style="display: flex; flex-direction: column; align-items: center; gap: 6px;"><span id="valWater" style="font-size: 13px; font-weight: 700; color: #2563EB;">—</span><div style="width: 28px; height: 95px; background: #E2E8F0; border-radius: 14px; display: flex; align-items: flex-end;"><div id="barWater" style="width: 100%; height: 0%; background: linear-gradient(180deg, #60A5FA 0%, #3B82F6 100%); border-radius: 14px; transition: height 0.6s ease;"></div></div><span style="font-size: 13px; font-weight: 800; color: #2563EB;">水</span></div>
                         </div>
                         <p id="sajuElementsNote" style="font-size:11.5px;color:#64748B;line-height:1.55;margin:8px 2px 0;">천간·지지의 표면 구성을 보여줍니다.</p>
                     </div>
-                </div>
-
-                <!-- 정통 명리 평생운세 -->
-                <div class="card" style="border: 2px solid #FCD34D;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                        <span style="font-size: 15px; font-weight: 800; font-family: 'Noto Serif KR', serif;">👑 정통 명리 평생운세</span>
-                        <span style="font-size: 12px; background: #FEF3C7; color: #78350F; padding: 4px 10px; border-radius: 9999px; font-weight: 700;">450 복채</span>
-                    </div>
-
+                    </details>
+                </section>
+                <section id="saju-life" class="saju-section hidden" role="tabpanel" aria-labelledby="saju-tab-life">
+                    <div class="card">
+                        <span class="reading-eyebrow">인생 흐름</span><h3>긴 흐름 속 지금의 나</h3>
+                        <p>현재 구간을 먼저 살펴보고, 앞뒤의 흐름으로 시선을 넓혀보세요.</p>
                     <div style="background: #F8FAFC; border-radius: 18px; border: 1px solid #E2E8F0; padding: 18px 12px 14px; margin-bottom: 14px; text-align: left;">
                         <div style="font-size:13.5px;font-weight:800;color:#334155;margin-bottom:6px;">생애 4단계 대운 흐름</div>
                         <p style="font-size:11.5px;color:#64748B;line-height:1.55;margin:0 0 11px;">실제 계산은 10년 대운을 유지하고, 화면에서는 읽기 쉽게 네 시기로 묶습니다.</p>
@@ -604,82 +683,89 @@
                         <div id="daewoonCurrentPhaseText" style="font-size:12.5px;font-weight:800;color:#047857;margin-top:10px;">현재 대운 구간을 계산 중입니다.</div>
                     </div>
 
-                    <div id="daewoonTeaserBox" class="teaser-blur-box">
-                        <div class="teaser-blur-text">
-                            <p><strong>원국 종합 & 10년 대운:</strong> 일간·월령·강약·조후와 대운별 십성 및 관계 변화를 근거로 분석합니다.</p>
+                        <div id="lifeCycleExplorer" class="hidden">
+                            <p class="reading-caption">구매 당시 평생운세의 대운별 풀이</p>
+                            <div id="lifeCycleChoices" class="period-choices" role="group" aria-label="대운 구간 선택"></div>
+                            <div id="lifeCycleReading" class="period-reading" aria-live="polite"></div>
                         </div>
-                        <div class="teaser-lock-badge"><span style="font-size: 20px; margin-bottom: 2px;">🔒</span><span style="font-size: 12.5px; font-weight: 800; color: #78350F;">450 복채로 평생운세 전체 리포트 잠금 해제</span></div>
+                        <button id="daewoonFlowOpen" class="reading-primary" onclick="handleUnlockReportOnServer('daewoon', 450)">450 복채로 평생운세 읽기</button>
+                        <p class="reading-caption">‘나의 기본’과 같은 평생운세입니다. 구매한 결과는 다시 읽을 수 있습니다.</p>
                     </div>
-
-                    <div id="daewoonBox" class="hidden"></div>
-
-                    <button id="btnDaewoon" onclick="handleUnlockReportOnServer('daewoon', 450)" style="width: 100%; background: #FBBF24; color: #0F172A; border: none; font-size: 15px; font-weight: 800; padding: 14px; border-radius: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
-                        <span class="btn-coin-icon"></span> 450 복채로 즉시 열람하기
-                    </button>
-                </div>
-
-                <!-- 2026 신년운세 -->
-                <div class="card" style="border: 2px solid #86EFAC;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                        <span style="font-size: 15px; font-weight: 800; color: #166534; font-family: 'Noto Serif KR', serif;">📅 올해 총운 & 12개월 명리 흐름</span>
-                        <span style="font-size: 12px; background: #DCFCE7; color: #166534; padding: 4px 10px; border-radius: 9999px; font-weight: 700;">300 복채</span>
+                </section>
+                <section id="saju-year" class="saju-section hidden" role="tabpanel" aria-labelledby="saju-tab-year">
+                    <div class="card reading-lead">
+                        <span id="annualYearLabel" class="reading-eyebrow">올해·월별</span>
+                        <h3>올해의 방향을 잡고<br>한 달씩 살펴보기</h3>
+                        <p>올해의 중심 흐름과 애정·관계·재물·일·학습·생활 리듬을 함께 살펴봅니다.</p>
+                        <div class="report-facts"><span>올해 총운 + 12개월</span><span>300 복채</span></div>
+                        <p id="sinnianTeaserBox" class="reading-caption">포함 내용 · 올해의 중요한 흐름 · 월별 풀이 · 참고할 행동</p>
+                        <div id="annualMonthExplorer" class="hidden">
+                            <div id="annualMonthChoices" class="period-choices" role="group" aria-label="월별 풀이 선택"></div>
+                            <div id="annualMonthReading" class="period-reading" aria-live="polite"></div>
+                        </div>
+                        <div id="sinnianBox" class="hidden"></div>
+                        <button id="btnSinnian" class="reading-primary" onclick="handleUnlockReportOnServer('sinnian', 300)">300 복채로 올해운세 읽기</button>
                     </div>
-                    <p style="font-size: 13px; color: #64748B; text-align: left; margin-bottom: 12px;">원국·현재 대운·올해 세운을 함께 본 총운과 재물·직장·관계·생활 리듬, 1월부터 12월까지의 월별 흐름을 제공합니다.</p>
-
-                    <div id="sinnianTeaserBox" class="teaser-blur-box">
-                        <div class="teaser-blur-text"><p><strong>올해 총운:</strong> 원국 위에 대운과 세운을 함께 놓아 올해 반복해서 살펴볼 선택과 대응의 방향을 분석합니다.</p></div>
-                        <div class="teaser-lock-badge"><span style="font-size: 20px; margin-bottom: 2px;">🔒</span><span style="font-size: 12.5px; font-weight: 800; color: #166534;">300 복채로 2026 신년운세 전체 리포트 잠금 해제</span></div>
-                    </div>
-
-                    <div id="sinnianBox" class="hidden" style="margin-bottom: 12px;"></div>
-
-                    <button id="btnSinnian" onclick="handleUnlockReportOnServer('sinnian', 300)" style="width: 100%; background: #2D6A4F; color: white; border: none; font-size: 15px; font-weight: 800; padding: 14px; border-radius: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
-                        <span class="btn-coin-icon-white"></span> 300 복채로 즉시 열람하기
-                    </button>
-                </div>
+                </section>
+                <button class="reading-archive-link" onclick="openReportArchive()">구매한 감명서 보관함 →</button>
             </div>
 
-            <!-- 탭 3: 궁합·테마 -->
-            <div id="view-theme" class="tab-view hidden">
-                <div class="card" style="border: 2px solid #FECDD3; background: #FFFDFD; text-align: left;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                        <span style="font-size: 16px; font-weight: 800; color: #9F1239; font-family: 'Noto Serif KR', serif;">💞 정통 사주 궁합 풀이</span>
-                        <span style="font-size: 12px; background: #FFE4E6; color: #BE123C; padding: 4px 10px; border-radius: 9999px; font-weight: 800;">350 복채</span>
-                    </div>
-                    <p style="font-size: 13.5px; color: #64748B; margin-bottom: 12px;">서로를 느끼는 방식부터 사랑과 갈등, 결혼생활, 함께하는 재정과 부모 역할까지 두 사람의 관계를 현실적인 언어로 풀이합니다.</p>
-                    <div id="gunghapReportBox" class="hidden" style="margin-bottom: 12px;"></div>
-                    <button id="btnOpenGunghapModal" onclick="openGunghapInputModal()" style="width: 100%; background: linear-gradient(135deg, #BE123C 0%, #881337 100%); color: white; border: none; font-size: 15px; font-weight: 800; padding: 14px; border-radius: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;"><span>💘</span> 상대방 정보 입력하고 궁합 보기</button>
+            <!-- 탭 3: 궁합·고민 — 질문에서 기존 리포트로 -->
+            <div id="view-theme" class="tab-view hidden reading-view">
+                <header class="reading-heading">
+                    <span class="reading-eyebrow">지금 마음에 있는 질문</span>
+                    <h2>궁합·고민</h2>
+                    <p>나의 고민은 주제별 풀이로,<br>두 사람의 관계는 궁합으로 살펴보세요.</p>
+                </header>
+                <div class="concern-choices" role="group" aria-label="궁금한 주제 선택">
+                    <button data-concern-choice="wealth" aria-pressed="false" onclick="selectConcern('wealth')"><span>돈·생활</span>돈 관리의 방향</button>
+                    <button data-concern-choice="love" aria-pressed="false" onclick="selectConcern('love')"><span>나의 애정운</span>반복되는 연애 패턴</button>
+                    <button data-concern-choice="business" aria-pressed="false" onclick="selectConcern('business')"><span>일·사업</span>직업과 진로 고민</button>
+                    <button data-concern-choice="study" aria-pressed="false" onclick="selectConcern('study')"><span>학업·시험</span>나에게 맞는 공부</button>
+                    <button data-concern-choice="health" aria-pressed="false" onclick="selectConcern('health')"><span>건강·생활</span>활동과 회복의 균형</button>
+                    <button data-concern-choice="gunghap" aria-pressed="false" onclick="selectConcern('gunghap')"><span>두 사람 궁합</span>서로를 이해하는 법</button>
                 </div>
-
-                <div class="card" style="text-align: left;">
-                    <p style="font-size: 16.5px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif;">💰 평생 재물운</p><p style="font-size: 13.5px; color: #64748B; margin-top: 3px;">수입·지출·기회·위험관리와 대운별 재물 흐름</p>
+                <div class="reading-section-title"><h3 id="concernSelectionTitle">어떤 부분이 궁금한가요?</h3><button class="reading-text-button" onclick="selectConcern('all')">전체 주제</button></div>
+                <p id="concernSelectionHint" class="reading-caption">위에서 하나를 고르면 관련 풀이를 안내해 드립니다.</p>
+                <div id="concern-wealth" class="card report-entry hidden" data-concern="wealth" style="text-align: left;">
+                    <p style="font-size: 16.5px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif;">💰 평생 재물운</p><p style="font-size: 13.5px; color: #64748B; margin-top: 3px;">수입·지출을 대하는 성향과 긴 흐름을 살펴봅니다. 투자 수익을 예측하지 않습니다.</p>
                     <div id="themeReport_wealth" class="hidden" style="margin-top: 14px; padding-top: 12px; border-top: 1px solid #F1F5F9;"></div>
                     <button id="btnTheme_wealth" onclick="handleUnlockReportOnServer('wealth', 220)" style="width: 100%; background: #0D1527; color: white; border: none; font-size: 14.5px; font-weight: 700; padding: 14px; border-radius: 14px; cursor: pointer; margin-top: 14px; display: flex; align-items: center; justify-content: center; gap: 6px;"><span class="btn-coin-icon-white"></span> 220 복채로 상세 리포트 열람하기</button>
                 </div>
 
-                <div class="card" style="text-align: left;">
-                    <p style="font-size: 16.5px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif;">💖 평생 애정운</p><p style="font-size: 13.5px; color: #64748B; margin-top: 3px;">나와 맞는 인연의 특징과 결혼 시기</p>
+                <div id="concern-love" class="card report-entry hidden" data-concern="love" style="text-align: left;">
+                    <p style="font-size: 16.5px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif;">💖 평생 애정운</p><p style="font-size: 13.5px; color: #64748B; margin-top: 3px;">한 사람의 연애 성향과 관계에서 반복되는 선택을 살펴봅니다.</p>
                     <div id="themeReport_love" class="hidden" style="margin-top: 14px; padding-top: 12px; border-top: 1px solid #F1F5F9;"></div>
                     <button id="btnTheme_love" onclick="openThemeSelectModal('love')" style="width: 100%; background: #0D1527; color: white; border: none; font-size: 14.5px; font-weight: 700; padding: 14px; border-radius: 14px; cursor: pointer; margin-top: 14px; display: flex; align-items: center; justify-content: center; gap: 6px;"><span class="btn-coin-icon-white"></span> 220 복채로 상황별 리포트 열람하기</button>
                 </div>
 
-                <div class="card" style="text-align: left;">
-                    <p style="font-size: 16.5px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif;">🏢 직업·사업운</p><p style="font-size: 13.5px; color: #64748B; margin-top: 3px;">직업 선택·승진·이직·사업 운영과 대운별 흐름</p>
+                <div id="concern-business" class="card report-entry hidden" data-concern="business" style="text-align: left;">
+                    <p style="font-size: 16.5px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif;">🏢 직업·사업운</p><p style="font-size: 13.5px; color: #64748B; margin-top: 3px;">일하는 성향과 직업·사업의 방향을 살펴봅니다. 특정 날짜의 이직 판단은 포함하지 않습니다.</p>
                     <div id="themeReport_business" class="hidden" style="margin-top: 14px; padding-top: 12px; border-top: 1px solid #F1F5F9;"></div>
                     <button id="btnTheme_business" onclick="openThemeSelectModal('business')" style="width: 100%; background: #0D1527; color: white; border: none; font-size: 14.5px; font-weight: 700; padding: 14px; border-radius: 14px; cursor: pointer; margin-top: 14px; display: flex; align-items: center; justify-content: center; gap: 6px;"><span class="btn-coin-icon-white"></span> 220 복채로 상황별 리포트 열람하기</button>
                 </div>
 
-                <div class="card" style="text-align: left;">
-                    <p style="font-size: 16.5px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif;">🌿 평생 건강운</p><p style="font-size: 13.5px; color: #64748B; margin-top: 3px;">조후·강약·소모 흐름으로 보는 활동과 회복 리듬</p>
+                <div id="concern-health" class="card report-entry hidden" data-concern="health" style="text-align: left;">
+                    <p style="font-size: 16.5px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif;">🌿 건강·생활 리듬</p><p style="font-size: 13.5px; color: #64748B; margin-top: 3px;">활동과 회복의 균형을 돌아봅니다. 질병을 진단하는 풀이가 아닙니다.</p>
                     <div id="themeReport_health" class="hidden" style="margin-top: 14px; padding-top: 12px; border-top: 1px solid #F1F5F9;"></div>
                     <button id="btnTheme_health" onclick="handleUnlockReportOnServer('health', 220)" style="width: 100%; background: #0D1527; color: white; border: none; font-size: 14.5px; font-weight: 700; padding: 14px; border-radius: 14px; cursor: pointer; margin-top: 14px; display: flex; align-items: center; justify-content: center; gap: 6px;"><span class="btn-coin-icon-white"></span> 220 복채로 상세 리포트 열람하기</button>
                 </div>
 
-                <div class="card" style="text-align: left;">
-                    <p style="font-size: 16.5px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif;">📚 평생 학업·시험운</p><p style="font-size: 13.5px; color: #64748B; margin-top: 3px;">학습·표현·규율의 구조와 대운별 공부 흐름</p>
+                <div id="concern-study" class="card report-entry hidden" data-concern="study" style="text-align: left;">
+                    <p style="font-size: 16.5px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif;">📚 평생 학업·시험운</p><p style="font-size: 13.5px; color: #64748B; margin-top: 3px;">나에게 맞는 공부 방식과 준비의 흐름을 살펴봅니다. 합격 여부를 단정하지 않습니다.</p>
                     <div id="themeReport_study" class="hidden" style="margin-top: 14px; padding-top: 12px; border-top: 1px solid #F1F5F9;"></div>
                     <button id="btnTheme_study" onclick="handleUnlockReportOnServer('study', 220)" style="width: 100%; background: #0D1527; color: white; border: none; font-size: 14.5px; font-weight: 700; padding: 14px; border-radius: 14px; cursor: pointer; margin-top: 14px; display: flex; align-items: center; justify-content: center; gap: 6px;"><span class="btn-coin-icon-white"></span> 220 복채로 상세 리포트 열람하기</button>
                 </div>
+                <div id="concern-gunghap" class="card report-entry">
+                    <span class="reading-eyebrow">두 사람의 관계</span><h3>함께여서 다른 우리</h3>
+                    <p>서로에게 끌리는 지점과 소통의 차이, 사랑과 함께하는 생활을 살펴봅니다.</p>
+                    <div class="report-facts"><span>연인·부부를 위한 궁합</span><span>350 복채</span></div>
+                    <p class="reading-caption">두 사람의 생년월일과 출생시간을 바탕으로 풀이합니다.</p>
+                    <div id="gunghapReportBox" class="hidden"></div>
+                    <button id="btnOpenGunghapModal" class="reading-primary" onclick="openGunghapInputModal()">상대방 정보 입력하고 궁합 보기</button>
+                </div>
+                <section id="recentReportSection" class="hidden"><div class="reading-section-title"><h3>최근 읽은 풀이</h3></div><div id="recentReportList" class="reading-recent-list"></div></section>
+                <button class="reading-archive-link" onclick="openReportArchive()">구매한 감명서 보관함 →</button>
             </div>
 
             <!-- 탭 4: 마이페이지 -->
@@ -687,7 +773,7 @@
                 <div class="card" style="text-align: left;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                         <span style="font-size: 14px; color: #64748B;">현재 보유 복채</span>
-                        <div style="display: flex; align-items: center; gap: 6px; font-size: 20px; font-weight: 800; color: #78350F;"><span id="coinMypage">1000</span><span id="mypageCoinSvg"></span></div>
+                        <div style="display: flex; align-items: center; gap: 6px; font-size: 20px; font-weight: 800; color: #78350F;"><span id="coinMypage">—</span><span id="mypageCoinSvg"></span></div>
                     </div>
                     <button onclick="openChargeStore()" style="width: 100%; background: #2D6A4F; color: white; border: none; font-size: 15px; font-weight: 700; padding: 14px; border-radius: 16px; cursor: pointer;">복채 충전하기</button>
                 </div>
@@ -716,8 +802,8 @@
 
         <nav id="bottomNavBar" class="hidden">
             <button onclick="switchTab('today')" id="tab-today" class="tab-btn active"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>오늘운세</span></button>
-            <button onclick="switchTab('saju')" id="tab-saju" class="tab-btn"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>정통사주</span></button>
-            <button onclick="switchTab('theme')" id="tab-theme" class="tab-btn"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg><span>궁합·테마</span></button>
+            <button onclick="switchTab('saju')" id="tab-saju" class="tab-btn"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>나의 사주</span></button>
+            <button onclick="switchTab('theme')" id="tab-theme" class="tab-btn"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg><span>궁합·고민</span></button>
             <button onclick="switchTab('mypage')" id="tab-mypage" class="tab-btn"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>마이페이지</span></button>
         </nav>
 
@@ -966,14 +1052,17 @@
     </div>
 
     <!-- 보관함 다시보기 모달 -->
-    <div id="archiveDetailModal" class="modal-bg hidden">
+    <div id="archiveDetailModal" class="modal-bg hidden" role="dialog" aria-modal="true" aria-labelledby="archiveModalTitle">
         <div class="modal-content" style="max-width: 380px; max-height: 85vh; display: flex; flex-direction: column; text-align: left; padding: 20px; border-radius: 24px;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 10px; margin-bottom: 12px;">
                 <h3 id="archiveModalTitle" style="font-size: 14px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif;">운세 리포트</h3>
-                <button onclick="closeArchiveDetailModal()" style="background: none; border: none; font-size: 20px; color: #94A3B8; cursor: pointer;">&times;</button>
+                <button id="readingCloseButton" aria-label="풀이 닫고 돌아가기" onclick="closeArchiveDetailModal()" style="background: none; border: none; font-size: 20px; color: #94A3B8; cursor: pointer;">&times;</button>
             </div>
+            <p id="readingReportMeta" class="reading-caption"></p>
+            <nav id="readingReportContents" aria-label="리포트 목차"></nav>
             <div id="archiveModalBody" style="flex: 1; overflow-y: auto; padding-right: 4px; margin-bottom: 12px;"></div>
-            <button onclick="closeArchiveDetailModal()" style="width: 100%; background: #2D6A4F; color: white; border: none; font-size: 14px; font-weight: 800; padding: 13px; border-radius: 12px; cursor: pointer;">확인</button>
+            <button onclick="closeArchiveDetailModal()" style="width: 100%; background: #2D6A4F; color: white; border: none; font-size: 14px; font-weight: 800; padding: 13px; border-radius: 12px; cursor: pointer;">이전 화면으로 돌아가기</button>
+            <button class="reading-text-button" onclick="printReadingReport()">감명서 인쇄 / PDF 소장</button>
         </div>
     </div>
 
@@ -1499,7 +1588,7 @@
 
             document.getElementById('sajuOwnerName').innerText = `${currentUserName}님`;
             document.getElementById('sajuOwnerMeta').innerText = data.saju_profile_detail || data.birth_summary;
-            document.getElementById('sajuSingangBadge').innerText = data.saju_data?.singang_label || "신약(身弱) 사주";
+            document.getElementById('sajuSingangBadge').innerText = data.saju_data?.singang_label || "강약 판단 정보 없음";
             document.getElementById('resTitle').innerText = data.daily_fortune.title;
             document.getElementById('resAdvice').innerText = data.daily_fortune.advice;
             
@@ -2054,8 +2143,14 @@
 
         async function handleUnlockReportOnServer(reportKey, cost, subOption = "기본", partnerName = "상대방", relation = "선택안함", partnerProfile = null) {
             if (!currentUserId) { alert("로그인이 필요합니다."); return; }
+            const ownedIndex = latestOwnedReportIndex(reportKey);
+            if (ownedIndex >= 0) { openReadingReport(ownedIndex); return; }
+            if (reportRequestPending) return;
             if (currentCoin < cost) { openChargeStore(); return; }
 
+            reportRequestPending = true;
+            setReportRequestState(true);
+            try {
             const res = await fetch('/api/reports/unlock', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
@@ -2076,31 +2171,17 @@
             serverUnlockedReports = data.unlocked_reports;
             renderServerArchive();
             restoreUnlockedUIFromReports();
+            openReadingReport(latestOwnedReportIndex(reportKey));
+            } catch (error) {
+                alert("응답을 확인하지 못했습니다. 새로고침 후 보관함을 먼저 확인해 주세요.");
+            } finally {
+                reportRequestPending = false;
+                setReportRequestState(false);
+            }
         }
 
         function restoreUnlockedUIFromReports() {
-            serverUnlockedReports.forEach(item => {
-                const extraActionHtml = `<div style="display:flex; justify-content:flex-end; margin-top:10px;"><button onclick="printReportDocument('${item.report_title}', this)" style="background:#F1F5F9; border:1px solid #CBD5E1; color:#334155; font-size:12px; font-weight:700; padding:6px 12px; border-radius:8px; cursor:pointer;">📄 감명서 인쇄/PDF 소장</button></div>`;
-                if (item.report_key === 'daewoon') {
-                    document.getElementById('daewoonBox').innerHTML = item.report_content + extraActionHtml;
-                    document.getElementById('daewoonBox').classList.remove('hidden');
-                    document.getElementById('daewoonTeaserBox')?.classList.add('hidden');
-                    document.getElementById('btnDaewoon')?.classList.add('hidden');
-                } else if (item.report_key === 'sinnian') {
-                    document.getElementById('sinnianBox').innerHTML = item.report_content + extraActionHtml;
-                    document.getElementById('sinnianBox').classList.remove('hidden');
-                    document.getElementById('sinnianTeaserBox')?.classList.add('hidden');
-                    document.getElementById('btnSinnian')?.classList.add('hidden');
-                } else if (item.report_key === 'gunghap') {
-                    document.getElementById('gunghapReportBox').innerHTML = item.report_content + extraActionHtml;
-                    document.getElementById('gunghapReportBox').classList.remove('hidden');
-                    document.getElementById('btnOpenGunghapModal')?.classList.add('hidden');
-                } else if (['wealth', 'love', 'business', 'health', 'study'].includes(item.report_key)) {
-                    document.getElementById(`themeReport_${item.report_key}`).innerHTML = item.report_content + extraActionHtml;
-                    document.getElementById(`themeReport_${item.report_key}`).classList.remove('hidden');
-                    document.getElementById(`btnTheme_${item.report_key}`)?.classList.add('hidden');
-                }
-            });
+            refreshReportEntrypoints();
         }
 
         function renderServerArchive() {
@@ -2125,15 +2206,11 @@
             `).join('');
         }
 
-        function openServerArchiveDetail(idx) {
-            const item = serverUnlockedReports[idx];
-            if (!item) return;
-            document.getElementById('archiveModalTitle').innerText = item.report_title;
-            document.getElementById('archiveModalBody').innerHTML = item.report_content;
-            document.getElementById('archiveDetailModal').classList.remove('hidden');
+        function openServerArchiveDetail(idx) { openReadingReport(idx); }
+        function closeArchiveDetailModal() {
+            if (history.state?.dalhaReader === true) history.back();
+            else dismissReadingReport();
         }
-
-        function closeArchiveDetailModal() { document.getElementById('archiveDetailModal').classList.add('hidden'); }
 
         async function processPgPaymentOnServer() {
             closePgModal();
@@ -2149,6 +2226,8 @@
         }
 
         function openGunghapInputModal() {
+            const ownedIndex = latestOwnedReportIndex('gunghap');
+            if (ownedIndex >= 0) { openReadingReport(ownedIndex); return; }
             const nameInput = document.getElementById('partnerNameInput');
             const relSelect = document.getElementById('partnerRelationSelect');
 
@@ -2208,6 +2287,8 @@
         }
 
         function openThemeSelectModal(key) {
+            const ownedIndex = latestOwnedReportIndex(key);
+            if (ownedIndex >= 0) { openReadingReport(ownedIndex); return; }
             currentThemeKey = key;
             const modalBox = document.getElementById('modalOptionBox');
             const titleEl = document.getElementById('modalThemeTitle');
@@ -2279,7 +2360,240 @@
             document.getElementById(`view-${tabId}`)?.classList.remove('hidden');
             document.getElementById(`tab-${tabId}`)?.classList.add('active');
             if (tabId === 'mypage') renderServerArchive();
+            if (tabId === 'saju' || tabId === 'theme') refreshReportEntrypoints();
         }
+
+        // Business interface v1: existing reports remain the only source of paid content.
+        let reportRequestPending = false;
+        let readingReturnState = null;
+        let readingReportIndex = -1;
+        let recentReportIndexes = [];
+        let currentSajuSection = 'basic';
+
+        function selectSajuSection(section) {
+            if (!['basic','life','year'].includes(section)) return;
+            currentSajuSection = section;
+            ['basic','life','year'].forEach(key => {
+                const active = key === section;
+                document.getElementById(`saju-${key}`).classList.toggle('hidden', !active);
+                const tab = document.getElementById(`saju-tab-${key}`);
+                tab.setAttribute('aria-selected', String(active));
+                tab.tabIndex = active ? 0 : -1;
+            });
+        }
+
+        function selectConcern(key) {
+            const labels = {wealth:'돈과 생활을 살펴보는 풀이', love:'나의 연애 패턴을 살펴보는 풀이', business:'일과 사업의 방향을 살펴보는 풀이', study:'공부 방식을 살펴보는 풀이', health:'활동과 회복을 살펴보는 풀이', gunghap:'두 사람의 관계를 살펴보는 풀이', all:'전체 주제별 풀이'};
+            if (!labels[key]) return;
+            document.querySelectorAll('[data-concern]').forEach(el => el.classList.toggle('hidden', key !== 'all' && el.dataset.concern !== key));
+            document.querySelectorAll('[data-concern-choice]').forEach(el => el.setAttribute('aria-pressed', String(el.dataset.concernChoice === key)));
+            document.getElementById('concernSelectionTitle').textContent = labels[key];
+            document.getElementById('concernSelectionHint').classList.add('hidden');
+        }
+
+        function openConcern(key) {
+            switchTab('theme');
+            selectConcern(key);
+            document.getElementById('view-theme').scrollIntoView({block:'start'});
+        }
+
+        function openReportArchive() {
+            switchTab('mypage');
+            document.getElementById('unlockedArchiveList').parentElement.scrollIntoView({block:'start'});
+        }
+
+        function latestOwnedReportIndex(key) {
+            for (let i = serverUnlockedReports.length - 1; i >= 0; i--) {
+                if (serverUnlockedReports[i].report_key === key) return i;
+            }
+            return -1;
+        }
+
+        function reportDocument(item) {
+            const template = document.createElement('template');
+            template.innerHTML = item.report_content || '';
+            return template.content;
+        }
+
+        function koreaYearMonth() {
+            const parts = new Intl.DateTimeFormat('en-US', {timeZone:'Asia/Seoul',year:'numeric',month:'numeric'}).formatToParts(new Date());
+            return {year:Number(parts.find(p => p.type === 'year').value), month:Number(parts.find(p => p.type === 'month').value)};
+        }
+
+        function renderPeriodChoices(item, kind) {
+            const doc = reportDocument(item);
+            const monthMode = kind === 'month';
+            const container = document.getElementById(monthMode ? 'annualMonthExplorer' : 'lifeCycleExplorer');
+            const choices = document.getElementById(monthMode ? 'annualMonthChoices' : 'lifeCycleChoices');
+            const reading = document.getElementById(monthMode ? 'annualMonthReading' : 'lifeCycleReading');
+            const cards = Array.from(doc.querySelectorAll(monthMode ? '[data-report-month]' : '[data-report-cycle]'));
+            choices.replaceChildren(); reading.replaceChildren();
+            container.classList.toggle('hidden', cards.length === 0);
+            if (!cards.length) return; // Legacy results stay available through the complete reader.
+            const year = Number(doc.querySelector('[data-report-year]')?.dataset.reportYear);
+            const today = koreaYearMonth();
+            const defaultIndex = monthMode ? (year === today.year ? cards.findIndex(c => Number(c.dataset.reportMonth) === today.month) : 0) : cards.findIndex(c => c.dataset.currentCycle === 'true');
+            const buttons = cards.map((card, index) => {
+                const button = document.createElement('button');
+                button.textContent = monthMode ? `${card.dataset.reportMonth}월` : card.dataset.cycleAges;
+                button.type = 'button';
+                button.setAttribute('aria-pressed', 'false');
+                button.onclick = () => {
+                    Array.from(choices.children).forEach(b => b.setAttribute('aria-pressed', String(b === button)));
+                    reading.replaceChildren(card.cloneNode(true));
+                };
+                choices.append(button);
+                return button;
+            });
+            buttons[Math.max(0, defaultIndex)].click();
+        }
+
+        function refreshReportEntrypoints() {
+            const configs = {
+                daewoon:['daewoonBox','btnDaewoon','daewoonTeaserBox'],
+                sinnian:['sinnianBox','btnSinnian','sinnianTeaserBox'],
+                gunghap:['gunghapReportBox','btnOpenGunghapModal',null],
+                ...Object.fromEntries(['wealth','love','business','health','study'].map(k => [k,[`themeReport_${k}`,`btnTheme_${k}`,null]]))
+            };
+            document.getElementById('annualMonthExplorer').classList.add('hidden');
+            document.getElementById('lifeCycleExplorer').classList.add('hidden');
+            document.getElementById('annualYearLabel').textContent = `${koreaYearMonth().year}년 · 올해와 월별`;
+            Object.entries(configs).forEach(([key, [slotId, buttonId, teaserId]]) => {
+                const index = latestOwnedReportIndex(key);
+                const slot = document.getElementById(slotId);
+                const button = document.getElementById(buttonId);
+                slot.replaceChildren();
+                slot.classList.toggle('hidden', index < 0);
+                button.classList.toggle('hidden', index >= 0);
+                if (teaserId) document.getElementById(teaserId).classList.toggle('hidden', index >= 0);
+                if (index < 0) return;
+                const item = serverUnlockedReports[index];
+                const note = document.createElement('p');
+                note.className = 'reading-caption';
+                note.textContent = `구매한 결과 · ${item.report_title}${item.created_at ? ` · ${item.created_at}` : ''}`;
+                const open = document.createElement('button');
+                open.className = 'reading-primary';
+                open.textContent = '구매한 풀이 다시 읽기';
+                open.onclick = () => openReadingReport(index);
+                slot.append(note, open);
+                if (key === 'sinnian') {
+                    const doc = reportDocument(item);
+                    const year = doc.querySelector('[data-report-year]')?.dataset.reportYear || item.report_title?.match(/^(\d{4})\b/)?.[1];
+                    document.getElementById('annualYearLabel').textContent = year ? `${year}년 · 구매한 올해운세` : '구매한 올해운세';
+                    renderPeriodChoices(item, 'month');
+                }
+                if (key === 'daewoon') renderPeriodChoices(item, 'cycle');
+            });
+            document.getElementById('daewoonFlowOpen').textContent = latestOwnedReportIndex('daewoon') >= 0 ? '구매한 평생운세 전체 읽기' : '450 복채로 평생운세 읽기';
+            renderRecentReadings();
+        }
+
+        function setReportRequestState(pending) {
+            document.querySelectorAll('#btnDaewoon,#btnSinnian,#daewoonFlowOpen,#btnOpenGunghapModal,[id^="btnTheme_"]').forEach(button => {
+                button.disabled = pending;
+                button.setAttribute('aria-busy', String(pending));
+            });
+        }
+
+        function openReadingReport(index) {
+            const item = serverUnlockedReports[index];
+            if (!item) return;
+            const modal = document.getElementById('archiveDetailModal');
+            if (modal.classList.contains('hidden')) {
+                readingReturnState = {scrollY:window.scrollY, focus:document.activeElement, overflow:document.body.style.overflow, url:location.href};
+                history.pushState({dalhaReader:true}, '', '#report');
+            }
+            readingReportIndex = index;
+            document.getElementById('archiveModalTitle').textContent = item.report_title;
+            document.getElementById('readingReportMeta').textContent = `구매 당시의 분석 결과${item.created_at ? ` · ${item.created_at}` : ''}`;
+            const body = document.getElementById('archiveModalBody');
+            body.innerHTML = item.report_content;
+            body.scrollTop = 0;
+            const contents = document.getElementById('readingReportContents');
+            contents.replaceChildren();
+            Array.from(body.querySelectorAll('h3')).forEach(heading => {
+                const button = document.createElement('button');
+                button.textContent = heading.textContent;
+                button.onclick = () => heading.scrollIntoView({block:'start',behavior:'smooth'});
+                contents.append(button);
+            });
+            contents.classList.toggle('hidden', !contents.childElementCount);
+            recentReportIndexes = [index, ...recentReportIndexes.filter(i => i !== index)].slice(0,3);
+            renderRecentReadings();
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+            document.getElementById('readingCloseButton').focus();
+        }
+
+        function dismissReadingReport() {
+            const modal = document.getElementById('archiveDetailModal');
+            if (modal.classList.contains('hidden')) return;
+            modal.classList.add('hidden');
+            document.getElementById('archiveModalBody').replaceChildren();
+            if (readingReturnState) {
+                document.body.style.overflow = readingReturnState.overflow;
+                window.scrollTo(0, readingReturnState.scrollY);
+                readingReturnState.focus?.focus({preventScroll:true});
+            }
+            readingReturnState = null;
+            readingReportIndex = -1;
+        }
+
+        function renderRecentReadings() {
+            const list = document.getElementById('recentReportList');
+            list.replaceChildren();
+            recentReportIndexes.filter(i => serverUnlockedReports[i]).forEach(index => {
+                const button = document.createElement('button');
+                button.textContent = serverUnlockedReports[index].report_title + ' →';
+                button.onclick = () => openReadingReport(index);
+                list.append(button);
+            });
+            document.getElementById('recentReportSection').classList.toggle('hidden', !list.childElementCount);
+        }
+
+        function printReadingReport() {
+            const item = serverUnlockedReports[readingReportIndex];
+            if (!item) return;
+            const printWindow = window.open('', '_blank');
+            if (!printWindow) { alert('인쇄를 위해 팝업을 허용해 주세요.'); return; }
+            printWindow.document.write('<!doctype html><html lang="ko"><head><meta charset="UTF-8"><title>달하 감명서</title><style>body{font-family:sans-serif;padding:24px;line-height:1.85;color:#1E293B}details{display:block}button{display:none}</style></head><body></body></html>');
+            const title = printWindow.document.createElement('h2');
+            title.textContent = item.report_title;
+            const report = printWindow.document.createElement('div');
+            report.innerHTML = item.report_content;
+            report.querySelectorAll('details').forEach(el => el.open = true);
+            printWindow.document.body.append(title, report);
+            printWindow.document.close();
+            printWindow.print();
+        }
+
+        function initReadingInterface() {
+            // A stale URL after reload never grants access to a report.
+            if (location.hash === '#report') history.replaceState(null, '', location.pathname + location.search);
+            refreshReportEntrypoints();
+            document.querySelector('.reading-tabs').addEventListener('keydown', event => {
+                const keys = ['basic','life','year'];
+                if (!['ArrowLeft','ArrowRight','Home','End'].includes(event.key)) return;
+                event.preventDefault();
+                const current = keys.indexOf(currentSajuSection);
+                const index = event.key === 'Home' ? 0 : event.key === 'End' ? 2 : (current + (event.key === 'ArrowRight' ? 1 : 2)) % 3;
+                selectSajuSection(keys[index]);
+                document.getElementById(`saju-tab-${keys[index]}`).focus();
+            });
+            window.addEventListener('popstate', () => {
+                if (!history.state?.dalhaReader) dismissReadingReport();
+                else { history.replaceState(null, '', location.pathname + location.search); dismissReadingReport(); }
+            });
+            document.getElementById('archiveDetailModal').addEventListener('keydown', event => {
+                if (event.key === 'Escape') { event.preventDefault(); closeArchiveDetailModal(); return; }
+                if (event.key !== 'Tab') return;
+                const focusable = Array.from(event.currentTarget.querySelectorAll('button,a[href],summary,[tabindex="0"]')).filter(el => !el.closest('.hidden'));
+                const first = focusable[0], last = focusable[focusable.length - 1];
+                if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
+                else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
+            });
+        }
+
 
         function switchZodiacSubTab(type) {
             const btnZodiac = document.getElementById('btnSubZodiac');
@@ -2523,6 +2837,7 @@
         function closePgModal() { document.getElementById('pgModal').classList.add('hidden'); }
 
         window.addEventListener('DOMContentLoaded', () => {
+            initReadingInterface();
             initKakaoSDK();
             initDateDropdowns();
             document.getElementById('headerCoinSvg').innerHTML = getGoldCoinSvg(16, "#F59E0B");
