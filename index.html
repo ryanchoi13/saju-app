@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <title>달하 | 나를 바꾸는 스타일 운명학, 인생의 운명 나침반 (무료운세·사주팔자)</title>
     <meta name="description" content="사주와 색채로 여는 운명 나침반, 달하. 정통 명리학 기반의 오늘의 운세, 개운 스타일링, 무료 사주팔자, 연애운·재물운·10년 대운 심층 분석." />
@@ -18,7 +18,7 @@
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
 
-    <meta name="theme-color" content="#0D1527">
+    <meta name="theme-color" content="#F7F8F8">
     <script src="https://developers.kakao.com/sdk/js/kakao.min.js"></script>
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@600;700;800;900&display=swap" rel="stylesheet">
@@ -204,6 +204,176 @@
         .reading-view button:focus-visible, .reading-view summary:focus-visible, #archiveDetailModal button:focus-visible { outline:3px solid #AE8D53; outline-offset:3px; }
         @media(max-width:380px) { .reading-view .card { padding:18px 15px; } .reading-heading h2 { font-size:25px; } .reading-tabs button { font-size:12px; } }
         @media(max-width:480px) { #archiveDetailModal { padding:0; } #archiveDetailModal .modal-content { max-height:100dvh!important; height:100dvh; border-radius:0!important; padding:20px 18px!important; padding-bottom:max(18px,env(safe-area-inset-bottom))!important; } }
+
+        /* Light reading theme: the September design reference, with existing data and actions. */
+        :root {
+            --ui-page:#F7F8F8; --ui-surface:#FFFFFF; --ui-ink:#142942;
+            --ui-muted:#526378; --ui-line:#E2E8EB; --ui-accent:#246B70;
+            --ui-tint:#EDF5F5; --ui-radius:22px;
+        }
+        html { font-size:100%; scroll-padding-top:90px; }
+        body { background:#EAF0F2; color:var(--ui-ink); font-size:1rem; line-height:1.65; }
+        .app-container { max-width:520px; background:var(--ui-page); padding-bottom:calc(100px + env(safe-area-inset-bottom)); box-shadow:0 0 60px #14294208; }
+        main { padding:22px 20px; gap:22px; }
+        .tab-view { gap:20px; }
+        button, input, select, summary { touch-action:manipulation; }
+        button { white-space:normal; line-height:1.5; }
+        button:focus-visible, summary:focus-visible, input:focus-visible, select:focus-visible, [tabindex]:focus-visible { outline:3px solid var(--ui-accent); outline-offset:4px; }
+        .app-container > header { background:rgba(247,248,248,.97); border-bottom:1px solid var(--ui-line); padding:18px 22px; gap:12px; }
+        .logo-box { gap:9px; }
+        .logo-box > svg { width:30px; height:30px; }
+        .logo-box svg [stroke] { stroke:var(--ui-accent); }
+        .logo-box svg [fill]:not([fill="none"]) { fill:var(--ui-accent); }
+        .logo-box > div > div > span:first-child { color:var(--ui-ink)!important; font-size:1.65rem!important; letter-spacing:-.04em!important; }
+        .logo-box > div > div > span:last-child { color:var(--ui-accent)!important; font-size:.75rem!important; letter-spacing:.1em!important; }
+        .logo-box > div > span { color:var(--ui-muted)!important; font-size:.75rem!important; margin-top:6px!important; }
+        .coin-btn { background:var(--ui-surface); color:var(--ui-ink); border:1px solid #CCDADD; padding:8px 10px; font-size:.875rem; min-height:44px; }
+        .charge-tag { background:var(--ui-tint); color:var(--ui-accent); font-size:.75rem; margin-left:0; }
+        .card, .biorhythm-card, .daily-banner, .reading-view .card {
+            background:var(--ui-surface); color:var(--ui-ink); border:1px solid var(--ui-line)!important;
+            border-radius:var(--ui-radius); padding:24px 22px!important; box-shadow:0 3px 16px #14294204;
+        }
+        .user-profile-bar { flex-direction:column; align-items:flex-start; gap:4px; padding:5px 2px 1px; border:0; background:transparent; box-shadow:none; }
+        .user-profile-name { color:var(--ui-ink); font-family:'Pretendard',sans-serif; font-size:1.125rem; }
+        .user-profile-birth { color:var(--ui-muted); font-size:.875rem; }
+        .daily-banner { margin-top:0; gap:16px; }
+        .daily-banner > div:first-child > div > span { color:var(--ui-ink)!important; font-size:1rem!important; }
+        #resScoreBadge { background:#DCEEEF!important; color:#205C61!important; border:0!important; font-size:1rem!important; padding:7px 12px!important; border-radius:14px!important; flex-shrink:0; }
+        #resTitle { color:var(--ui-ink)!important; font-size:1.65rem!important; font-weight:800!important; letter-spacing:-.04em; line-height:1.55!important; word-break:keep-all; overflow-wrap:anywhere; }
+        #resAdvice { color:var(--ui-muted)!important; font-size:1rem!important; line-height:1.85!important; }
+        .daily-banner > div:last-child { border-top:1px solid var(--ui-line)!important; padding-top:18px!important; gap:12px!important; }
+        .daily-banner > div:last-child > div { gap:12px!important; align-items:baseline!important; }
+        .daily-banner > div:last-child > div > span:first-child { background:var(--ui-tint)!important; color:var(--ui-accent)!important; font-size:.875rem!important; min-width:88px; padding:5px 8px!important; }
+        #timeMorningText, #timeAfternoonText, #timeEveningText { color:var(--ui-ink)!important; font-size:1rem!important; line-height:1.7; }
+        /* Legacy inline text is also produced at runtime. Raise its small type without changing templates. */
+        :is(.tab-view,.modal-content,#onboardingInputView) [style*="font-size: 9"],
+        :is(.tab-view,.modal-content,#onboardingInputView) [style*="font-size:9"],
+        :is(.tab-view,.modal-content,#onboardingInputView) [style*="font-size: 10"],
+        :is(.tab-view,.modal-content,#onboardingInputView) [style*="font-size:10"],
+        :is(.tab-view,.modal-content,#onboardingInputView) [style*="font-size: 11"],
+        :is(.tab-view,.modal-content,#onboardingInputView) [style*="font-size:11"],
+        :is(.tab-view,.modal-content,#onboardingInputView) [style*="font-size: 12"],
+        :is(.tab-view,.modal-content,#onboardingInputView) [style*="font-size:12"],
+        :is(.tab-view,.modal-content,#onboardingInputView) [style*="font-size: 13"],
+        :is(.tab-view,.modal-content,#onboardingInputView) [style*="font-size:13"] { font-size:.875rem!important; }
+        :is(.tab-view,.modal-content,#onboardingInputView) [style*="color: #94A3B8"],
+        :is(.tab-view,.modal-content,#onboardingInputView) [style*="color:#94A3B8"] { color:var(--ui-muted)!important; }
+        #view-today :is(h4,.drawer-title), #view-mypage h3 { font-family:'Pretendard',sans-serif!important; font-size:1.2rem!important; line-height:1.6; color:var(--ui-ink)!important; letter-spacing:-.03em; }
+        #view-today > .card > div:first-child { flex-wrap:wrap; gap:10px; border-bottom:0!important; padding-bottom:0!important; }
+        #view-today > .card > div:first-child > div { min-width:0; }
+        #todayStyleMoodBadge { background:var(--ui-tint)!important; color:var(--ui-accent)!important; border:0!important; }
+        #paletteMoodStoryBox, #wardrobeDailyMatchPick { background:var(--ui-tint)!important; color:var(--ui-ink)!important; border:0!important; border-radius:14px!important; padding:14px!important; line-height:1.8!important; }
+        #wardrobeDailyMatchPick > div { color:var(--ui-ink)!important; font-size:1rem!important; }
+        #resStyle { font-size:1.125rem!important; line-height:1.7!important; }
+        #drawerWardrobe { border:1px solid #CBDADD!important; background:transparent!important; border-radius:14px!important; }
+        #drawerWardrobe h5 { font-size:.875rem!important; line-height:1.65; }
+        .drawer-title-box { min-width:0; }
+        .drawer-title-box > div { flex-wrap:wrap; }
+        .drawer-header { padding:18px 16px; }
+        .drawer-card { border-color:var(--ui-line); box-shadow:none; }
+        .drawer-sub { font-size:.875rem; color:var(--ui-muted); }
+        #view-today .grid-2 { grid-template-columns:repeat(3,minmax(0,1fr)); gap:0; }
+        #view-today .grid-cell { border:0; border-radius:0; padding:12px 9px; min-width:0; overflow-wrap:anywhere; }
+        #view-today .grid-cell + .grid-cell { border-left:1px solid var(--ui-line); }
+        #view-today .grid-cell:last-child { grid-column:1/-1; border-left:0; border-top:1px solid var(--ui-line); margin-top:14px; padding:20px 0 0; }
+        #resItem, #resNumber, #resDirection { font-size:1rem!important; line-height:1.7; }
+        #resMenuLabel { font-size:1.125rem!important; font-weight:800!important; color:var(--ui-ink)!important; margin-bottom:8px; }
+        #resMenu { font-size:1.125rem!important; line-height:1.9!important; }
+        .action-card { background:var(--ui-tint); border:0; border-radius:20px; padding:20px 22px; }
+        .action-card > span { color:var(--ui-accent)!important; font-size:1rem!important; margin-bottom:7px!important; }
+        #resGaewoon { color:var(--ui-ink)!important; font-size:1rem!important; line-height:1.85!important; }
+        .bio-legend-box { font-size:.875rem; gap:16px; flex-wrap:wrap; }
+        .bio-pill-grid { gap:8px; }
+        .bio-pill-cell { border:0; background:var(--ui-page); padding:12px 4px; }
+        .zodiac-label { font-size:.875rem; }
+        .zodiac-btn { border-color:var(--ui-line); min-height:68px; }
+        .zodiac-btn:hover, .zodiac-btn:active { background:var(--ui-tint); border-color:var(--ui-accent); transform:none; }
+        .zodiac-btn:hover .zodiac-label, .zodiac-btn:active .zodiac-label { color:var(--ui-accent); }
+        .sub-tab-btn { font-size:.875rem; min-height:44px; }
+        .sub-tab-btn.active { background:var(--ui-accent); color:#fff; box-shadow:none; }
+        .talisman-banner { border:1px solid #E4D7BA; background:#FFFCF5; border-radius:18px; }
+        .reading-view { gap:0; --reading-ink:var(--ui-ink); --reading-muted:var(--ui-muted); }
+        .reading-heading { padding:6px 2px 24px; }
+        .reading-eyebrow { color:var(--ui-accent); font-size:.875rem; font-weight:700; letter-spacing:0; margin-bottom:8px; }
+        .reading-heading h2 { font-family:'Pretendard',sans-serif; color:var(--ui-ink); font-size:2rem; line-height:1.4; margin-bottom:12px; }
+        .reading-heading p, .reading-view .card > p { color:var(--ui-muted); font-size:1rem; line-height:1.85; margin:10px 0 18px; word-break:keep-all; overflow-wrap:anywhere; }
+        .reading-profile { background:var(--ui-tint); border-radius:16px; padding:16px; }
+        .reading-profile strong { font-size:1rem; color:var(--ui-ink); }
+        .reading-profile p { color:var(--ui-muted); font-size:.875rem; }
+        .reading-text-button { color:var(--ui-accent); font-size:.875rem; min-height:44px; }
+        .reading-tabs { background:transparent; border-radius:0; border-bottom:1px solid #CCDADD; padding:0; gap:8px; margin-bottom:24px; }
+        .reading-tabs button { border-radius:0; padding:14px 2px; font-size:.9375rem; color:var(--ui-muted); border-bottom:3px solid transparent; }
+        .reading-tabs button[aria-selected="true"] { color:var(--ui-accent); background:transparent; box-shadow:none; border-bottom-color:var(--ui-accent); }
+        .reading-view .card h3 { color:var(--ui-ink); font-size:1.375rem; line-height:1.6; }
+        .reading-view .reading-lead { background:var(--ui-surface); }
+        .report-facts { color:var(--ui-muted); border-color:var(--ui-line); font-size:.875rem; gap:6px 18px; padding:14px 0; }
+        .reading-caption, .reading-view .card > .reading-caption { color:var(--ui-muted); font-size:.875rem; line-height:1.85; }
+        .reading-primary, .reading-view .report-entry > button { background:var(--ui-accent)!important; font-size:1rem!important; border-radius:14px!important; padding:16px 14px!important; min-height:52px; line-height:1.6; }
+        .reading-section-title { margin:28px 2px 14px; flex-wrap:wrap; }
+        .reading-section-title h3 { font-size:1.125rem; color:var(--ui-ink); }
+        .reading-section-title > span { font-size:.875rem; color:var(--ui-muted); }
+        .reading-links { gap:0; background:var(--ui-surface); border:1px solid var(--ui-line); border-radius:18px; overflow:hidden; }
+        .reading-links button { border:0; border-radius:0; padding:20px 16px; }
+        .reading-links button:nth-child(even) { border-left:1px solid var(--ui-line); }
+        .reading-links button:nth-child(n+3) { border-top:1px solid var(--ui-line); }
+        .reading-links strong { font-size:1rem; color:var(--ui-ink); }
+        .reading-links span { font-size:.875rem; color:var(--ui-muted); line-height:1.7; }
+        .reading-evidence summary { font-size:1rem; color:var(--ui-ink); line-height:1.8; }
+        .reading-evidence summary > span { display:block; margin-left:0; color:var(--ui-muted); font-size:.875rem; }
+        .reading-archive-link { border-color:var(--ui-line); color:var(--ui-accent); font-size:.9375rem; margin-top:20px; }
+        .concern-choices { gap:12px; }
+        .concern-choices button { background:var(--ui-surface); border:1px solid var(--ui-line); border-radius:18px; padding:20px 16px; font-size:.875rem; color:var(--ui-muted); }
+        .concern-choices button span { color:var(--ui-ink); font-size:1.125rem; margin-bottom:6px; }
+        .concern-choices button[aria-pressed="true"] { border-color:var(--ui-accent); background:var(--ui-tint); box-shadow:inset 0 0 0 1px var(--ui-accent); }
+        .reading-view .report-entry > p:first-child { font-size:1.25rem!important; }
+        .reading-view .report-entry > p:not(:first-child) { font-size:1rem!important; line-height:1.85; }
+        .period-choices { gap:8px; }
+        .period-choices button { font-size:.9375rem; min-height:46px; border-color:var(--ui-line); color:var(--ui-muted); }
+        .period-choices button[aria-pressed="true"] { background:var(--ui-accent); border-color:var(--ui-accent); }
+        .reading-recent-list button { font-size:1rem; color:var(--ui-ink); line-height:1.8; padding:16px; }
+        #archiveModalBody { color:var(--ui-ink); font-size:1rem!important; line-height:1.9!important; }
+        #archiveModalBody :is(p,li), .period-reading :is(p,li) { font-size:1rem!important; line-height:1.9!important; }
+        #readingReportContents { gap:8px; max-height:120px; }
+        #readingReportContents button { font-size:.875rem; min-height:44px; padding:8px 12px; color:var(--ui-accent); border-color:var(--ui-line); }
+        #view-mypage > .card:nth-child(2) { flex-wrap:wrap; gap:16px; }
+        #view-mypage > .card:nth-child(2) > div:last-child { flex-wrap:wrap; }
+        #view-mypage button { min-height:44px; font-size:1rem!important; }
+        #coinMypage { font-size:1.75rem; color:var(--ui-ink); }
+        #unlockedArchiveList > div { flex-wrap:wrap; gap:12px; }
+        nav#bottomNavBar { max-width:520px; background:rgba(255,255,255,.98); border-top:1px solid var(--ui-line); padding:12px 10px calc(12px + env(safe-area-inset-bottom)); gap:4px; }
+        .tab-btn { flex:1; min-width:0; min-height:50px; color:var(--ui-muted); font-size:.875rem; gap:5px; line-height:1.5; }
+        .tab-btn.active { color:var(--ui-accent); }
+        .tab-btn svg { width:24px; height:24px; flex-shrink:0; }
+        .modal-content { background:var(--ui-surface); color:var(--ui-ink); max-width:420px; max-height:calc(100dvh - 32px); overflow:auto; padding:24px; gap:18px; }
+        .modal-bg { background:#14294299; }
+        .form-label { color:var(--ui-muted); font-size:.875rem; margin-bottom:8px; }
+        .form-input, .form-select-box { font-size:1rem; min-height:44px; }
+        .cal-btn, .tile-btn, .mat-chip, .color-chip { font-size:.875rem; min-height:44px; }
+        .cal-toggle { flex-wrap:wrap; }
+        .form-group > div:first-child { flex-wrap:wrap; gap:8px; }
+        .btn-primary { background:var(--ui-accent); color:#fff; border:0; box-shadow:none; font-size:1rem; }
+        .login-gate-card { background:#fff; color:var(--ui-ink); border:1px solid var(--ui-line); box-shadow:0 6px 24px #14294206; border-radius:24px; padding:36px 22px; gap:22px; }
+        .login-gate-card h2 { color:var(--ui-ink)!important; font-size:1.75rem!important; }
+        .login-gate-card > p { color:var(--ui-muted)!important; font-size:1rem!important; line-height:1.85; }
+        .gift-badge { font-size:.875rem; background:var(--ui-tint); color:var(--ui-accent); padding:8px 12px; }
+        .kakao-login-btn { font-size:1rem; min-height:54px; box-shadow:none; }
+        footer { font-size:.8125rem!important; color:var(--ui-muted)!important; line-height:1.85!important; }
+        @media(max-width:380px) {
+            main { padding:18px 14px; }
+            .app-container > header { padding:15px 16px; }
+            .logo-box > div > span { max-width:145px; line-height:1.5; }
+            .card, .biorhythm-card, .daily-banner, .reading-view .card { padding:20px 16px!important; border-radius:18px; }
+            #resTitle { font-size:1.5rem!important; }
+            .reading-heading h2 { font-size:1.75rem; }
+            .reading-tabs button { font-size:.875rem; }
+            .concern-choices { gap:8px; }
+            .concern-choices button { padding:16px 12px; }
+            .zodiac-grid-2x6 { grid-template-columns:repeat(3,minmax(0,1fr)); }
+            .tab-btn { font-size:.8125rem; }
+            #daewoonPhaseTimeline { grid-template-columns:repeat(2,minmax(0,1fr))!important; }
+            .color-chip-grid { grid-template-columns:repeat(3,minmax(0,1fr)); }
+        }
+        @media(prefers-reduced-motion:reduce) { *, *::before, *::after { scroll-behavior:auto!important; transition:none!important; animation:none!important; } }
 
     </style>
 </head>
