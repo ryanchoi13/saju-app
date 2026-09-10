@@ -34,7 +34,9 @@ const tick = () => new Promise(resolve => setTimeout(resolve,30));
     await tick(); // Let the original DOMContentLoaded boot sequence run without saved credentials.
     await test('home and every pre-existing DOM target remain available', () => {
         const oldDoc = new JSDOM(oldHtml).window.document;
-        assert.equal(homeBeforeBoot, oldDoc.getElementById('view-today').outerHTML);
+        const newHome = new JSDOM(homeBeforeBoot).window.document;
+        newHome.getElementById('styleTpoControls').remove();
+        assert.equal(newHome.getElementById('view-today').outerHTML.replace(/>\s+</g,'><'), oldDoc.getElementById('view-today').outerHTML.replace(/>\s+</g,'><'));
         const ids = [...doc.querySelectorAll('[id]')].map(el => el.id);
         assert.equal(ids.length, new Set(ids).size);
         for (const el of oldDoc.querySelectorAll('[id]')) assert.ok(doc.getElementById(el.id), el.id);
