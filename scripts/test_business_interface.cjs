@@ -36,6 +36,7 @@ const tick = () => new Promise(resolve => setTimeout(resolve,30));
         const oldDoc = new JSDOM(oldHtml).window.document;
         const newHome = new JSDOM(homeBeforeBoot).window.document;
         newHome.getElementById('styleTpoControls').remove();
+        for (const id of ['drawerTarot','drawerTalisman']) newHome.getElementById(id).replaceWith(oldDoc.getElementById(id).cloneNode(true));
         // Only the newly requested outfit/menu surfaces and loading copy differ.
         for (const id of ['outfitCards','menuPhotoCards','wardrobeStorageNotice','menuRecommendationComment']) newHome.getElementById(id).remove();
         oldDoc.getElementById('todayStyleMoodBadge').remove();

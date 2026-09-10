@@ -19,6 +19,7 @@ from app.engine.services import (
     build_lifetime_wealth_report,
 )
 import wardrobe_store
+import tarot_service
 from style_context import build_style_contexts
 from wada_context_placement import WADA_CONTEXT_PLACEMENT
 from wada_color_rules import evaluate_duo
@@ -768,7 +769,10 @@ def unlock_report(req: UnlockReportRequest):
             "sijin_index": req.partner_sijin_index,
         } if req.report_key == "gunghap" else None,
     )
-    user["coin"] -= req.cost
+    with tarot_service.LOCK:
+        if user["coin"] < req.cost:
+            raise HTTPException(status_code=400, detail="Insufficient coins")
+        user["coin"] -= req.cost
 
     new_report = {
         "report_key": req.report_key,
@@ -971,23 +975,36 @@ TAROT_DECK = [
     {"name": "I. THE MAGICIAN (마법사)", "keyword": "창조적 재능 · 탁월한 실행력", "symbolism": "모든 도구를 갖춘 완벽한 준비", "reading_male": "자신감을 가지고 주도권을 행사할 때 결과가 따릅니다.", "reading_female": "당신의 다재다능한 매력과 역량이 빛을 발합니다.", "action_guide": "준비된 실력을 주저 없이 세상에 드러내세요."}
 ]
 
+class TarotDrawRequest(BaseModel):
+    user_id: str = Field(min_length=1, max_length=100)
+    slot: int = Field(ge=1, le=3)
+    request_id: str = Field(min_length=16, max_length=80, pattern=r"^[a-zA-Z0-9_-]+$")
+    is_paid: bool = False
+
+
+@app.post("/api/daily-tarot/draw")
+def draw_daily_tarot(req: TarotDrawRequest):
+    try:
+        return tarot_service.draw(users_db, TAROT_DECK, random.choice, **req.model_dump())
+    except tarot_service.DrawError as exc:
+        raise HTTPException(status_code=exc.status, detail=exc.detail)
+
+
 @app.get("/api/daily-tarot")
 def get_daily_tarot(slot: int, user_id: Optional[str] = None, is_paid: Optional[bool] = False):
-    if is_paid and user_id:
-        if user_id in users_db and users_db[user_id]["coin"] >= 10:
-            users_db[user_id]["coin"] -= 10
-        else:
-            raise HTTPException(status_code=400, detail="Insufficient coins")
-    
+    # Legacy previews stay read-only: coin spending requires an explicit POST.
+    if is_paid:
+        raise HTTPException(status_code=405, detail="페이지를 새로고침한 뒤 카드를 선택해 주세요.")
     card = random.choice(TAROT_DECK)
-    return card
+    return {**card, "description": tarot_service.DESCRIPTIONS.get(card["name"], "")}
 
 @app.post("/api/user/charge-coin")
 def charge_coin(req: ChargeCoinRequest):
-    if req.user_id not in users_db:
-        users_db[req.user_id] = {"coin": 0}
-    users_db[req.user_id]["coin"] += req.amount
-    return {"status": "success", "new_balance": users_db[req.user_id]["coin"]}
+    with tarot_service.LOCK:
+        if req.user_id not in users_db:
+            users_db[req.user_id] = {"coin": 0}
+        users_db[req.user_id]["coin"] += req.amount
+        return {"status": "success", "new_balance": users_db[req.user_id]["coin"]}
 
 @app.get("/api/today-ganji")
 def get_today_ganji():
