@@ -42,6 +42,12 @@ async function boot(url) {
     screens.push(doc.getElementById('view-today').textContent.replace(/\s+/g,' ').trim());
     assert.equal(doc.querySelectorAll('.look-card').length,2);
     assert.equal(doc.querySelectorAll('.menu-photo-card').length,2);
+    for (const tpo of ['business_casual','business_formal','casual']) {
+      const select=doc.getElementById('styleTpoSelect');select.value=tpo;
+      select.dispatchEvent(new w.Event('change',{bubbles:true}));
+      assert.equal(doc.querySelectorAll('.look-card').length,2,`${design} ${tpo} must keep both looks`);
+      assert.ok(!doc.getElementById('resStyle').textContent.includes('불러온'));
+    }
     doc.getElementById('tab-saju').click(); doc.getElementById('saju-tab-year').click();
     assert.equal(doc.querySelectorAll('#annualMonthChoices button').length,12);
     doc.querySelectorAll('#annualMonthChoices button')[8].click();
