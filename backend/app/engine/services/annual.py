@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from app.engine.korean import josa
 from datetime import date
 from html import escape
 
@@ -73,10 +74,10 @@ def _annual_sections(annual_god: str, cycle_god: str | None) -> dict[str, str]:
         "hurting_officer": "낡은 방식을 개선하고 의견을 드러내는 힘이 커집니다. 표현의 순서를 다듬으면 제안이 더 잘 전달됩니다.",
     }.get(annual_god, "배우고 정리한 것을 실제 역할과 결과물로 연결할 때 흐름을 활용하기 좋습니다.")
     relation = (
-        f"올해는 {annual_topic}이 관계에서도 드러납니다. 상대의 반응을 예측하기보다 역할·기대·기한을 말로 확인하면 불필요한 오해를 줄일 수 있습니다."
+        f"올해는 {josa(annual_topic, '이/가')} 관계에서도 드러납니다. 상대의 반응을 예측하기보다 역할·기대·기한을 말로 확인하면 불필요한 오해를 줄일 수 있습니다."
     )
     rhythm = (
-        f"연간의 {annual_topic}과 대운의 {cycle_topic}이 함께 작동합니다. "
+        f"연간의 {josa(annual_topic, '과/와')} 대운의 {josa(cycle_topic, '이/가')} 함께 작동합니다. "
         f"{annual_advice} 활동량이 늘 때일수록 휴식과 재검토 시간을 일정 안에 먼저 넣어 두세요."
     )
     return {"money": money, "career": career, "relation": relation, "rhythm": rhythm}

@@ -21,7 +21,7 @@
     <meta name="theme-color" content="#F7F8F8">
     <script src="https://developers.kakao.com/sdk/js/kakao.min.js"></script>
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@600;700;800;900&display=swap" rel="stylesheet">
+
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Pretendard', sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background-color: #080D1A; color: #1E293B; display: flex; justify-content: center; min-height: 100vh; }
@@ -246,18 +246,18 @@
         .daily-banner > div:last-child > div > span:first-child { background:var(--ui-tint)!important; color:var(--ui-accent)!important; font-size:.875rem!important; min-width:88px; padding:5px 8px!important; }
         #timeMorningText, #timeAfternoonText, #timeEveningText { color:var(--ui-ink)!important; font-size:1rem!important; line-height:1.7; }
         /* Legacy inline text is also produced at runtime. Raise its small type without changing templates. */
-        :is(.tab-view,.modal-content,#onboardingInputView) [style*="font-size: 9"],
-        :is(.tab-view,.modal-content,#onboardingInputView) [style*="font-size:9"],
-        :is(.tab-view,.modal-content,#onboardingInputView) [style*="font-size: 10"],
-        :is(.tab-view,.modal-content,#onboardingInputView) [style*="font-size:10"],
-        :is(.tab-view,.modal-content,#onboardingInputView) [style*="font-size: 11"],
-        :is(.tab-view,.modal-content,#onboardingInputView) [style*="font-size:11"],
-        :is(.tab-view,.modal-content,#onboardingInputView) [style*="font-size: 12"],
-        :is(.tab-view,.modal-content,#onboardingInputView) [style*="font-size:12"],
-        :is(.tab-view,.modal-content,#onboardingInputView) [style*="font-size: 13"],
-        :is(.tab-view,.modal-content,#onboardingInputView) [style*="font-size:13"] { font-size:.875rem!important; }
-        :is(.tab-view,.modal-content,#onboardingInputView) [style*="color: #94A3B8"],
-        :is(.tab-view,.modal-content,#onboardingInputView) [style*="color:#94A3B8"] { color:var(--ui-muted)!important; }
+        :where(.tab-view,.modal-content,#onboardingInputView) [style*="font-size: 9"],
+        :where(.tab-view,.modal-content,#onboardingInputView) [style*="font-size:9"],
+        :where(.tab-view,.modal-content,#onboardingInputView) [style*="font-size: 10"],
+        :where(.tab-view,.modal-content,#onboardingInputView) [style*="font-size:10"],
+        :where(.tab-view,.modal-content,#onboardingInputView) [style*="font-size: 11"],
+        :where(.tab-view,.modal-content,#onboardingInputView) [style*="font-size:11"],
+        :where(.tab-view,.modal-content,#onboardingInputView) [style*="font-size: 12"],
+        :where(.tab-view,.modal-content,#onboardingInputView) [style*="font-size:12"],
+        :where(.tab-view,.modal-content,#onboardingInputView) [style*="font-size: 13"],
+        :where(.tab-view,.modal-content,#onboardingInputView) [style*="font-size:13"] { font-size:.875rem!important; }
+        :where(.tab-view,.modal-content,#onboardingInputView) [style*="color: #94A3B8"],
+        :where(.tab-view,.modal-content,#onboardingInputView) [style*="color:#94A3B8"] { color:var(--ui-muted)!important; }
         #view-today :is(h4,.drawer-title), #view-mypage h3 { font-family:'Pretendard',sans-serif!important; font-size:1.2rem!important; line-height:1.6; color:var(--ui-ink)!important; letter-spacing:-.03em; }
         #view-today > .card > div:first-child { flex-wrap:wrap; gap:10px; border-bottom:0!important; padding-bottom:0!important; }
         #view-today > .card > div:first-child > div { min-width:0; }
@@ -375,7 +375,30 @@
         }
         @media(prefers-reduced-motion:reduce) { *, *::before, *::after { scroll-behavior:auto!important; transition:none!important; animation:none!important; } }
 
+
+        /* One font family and explicit information hierarchy. */
+        body, body * { font-family:'Pretendard',-apple-system,BlinkMacSystemFont,'Noto Sans KR',sans-serif!important; }
+        #resTitle { font-size:1.625rem!important; line-height:1.5!important; font-weight:800!important; }
+        #resAdvice { font-size:1.125rem!important; line-height:1.85!important; color:var(--ui-ink)!important; }
+        #timeMorningText, #timeAfternoonText, #timeEveningText { font-size:.9375rem!important; color:var(--ui-muted)!important; line-height:1.75!important; }
+        #dynamicColorPaletteBox { display:grid!important; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px!important; align-items:stretch!important; }
+        .palette-chip { display:flex; align-items:center; gap:8px; min-width:0; background:var(--ui-page); border:1px solid var(--ui-line); border-radius:14px; padding:10px; }
+        .palette-swatch { width:20px; height:20px; border-radius:50%; flex:0 0 20px; border:1px solid #14294226; }
+        .palette-copy { min-width:0; line-height:1.5; }
+        .palette-name { display:block; font-size:.875rem; font-weight:700; color:var(--ui-ink); overflow-wrap:anywhere; }
+        .palette-role { display:block; font-size:.75rem; color:var(--ui-muted); margin-top:2px; }
+        .palette-point { grid-column:1/-1; }
+        @media(max-width:380px) {
+            #resTitle { font-size:1.5rem!important; }
+            #resAdvice { font-size:1.0625rem!important; }
+            .palette-chip { padding:9px 8px; gap:6px; }
+            .palette-swatch { width:16px; height:16px; flex-basis:16px; }
+        }
     </style>
+<script id="dalha-hangul">
+/* es-hangul 2.4.0 | MIT | Copyright (c) Viva Republica, Inc. | third_party/es-hangul-LICENSE */
+var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDescriptor;var N=Object.getOwnPropertyNames;var p=Object.prototype.hasOwnProperty;var S=(u,C)=>{for(var o in C)g(u,o,{get:C[o],enumerable:!0})},j=(u,C,o,n)=>{if(C&&typeof C=="object"||typeof C=="function")for(let t of N(C))!p.call(u,t)&&t!==o&&g(u,t,{get:()=>C[t],enumerable:!(n=d(C,t))||n.enumerable});return u};var O=u=>j(g({},"__esModule",{value:!0}),u);var R={};S(R,{josa:()=>D});var B=[..."\uAC01\uD7A3".normalize("NFD")].map(u=>u.charCodeAt(0)),c=44032,f=55203,i=28,E=21,_={"":"",\u3131:"\u3131",\u3132:"\u3132",\u3133:"\u3131\u3145",\u3134:"\u3134",\u3135:"\u3134\u3148",\u3136:"\u3134\u314E",\u3137:"\u3137",\u3138:"\u3138",\u3139:"\u3139",\u313A:"\u3139\u3131",\u313B:"\u3139\u3141",\u313C:"\u3139\u3142",\u313D:"\u3139\u3145",\u313E:"\u3139\u314C",\u313F:"\u3139\u314D",\u3140:"\u3139\u314E",\u3141:"\u3141",\u3142:"\u3142",\u3143:"\u3143",\u3144:"\u3142\u3145",\u3145:"\u3145",\u3146:"\u3146",\u3147:"\u3147",\u3148:"\u3148",\u3149:"\u3149",\u314A:"\u314A",\u314B:"\u314B",\u314C:"\u314C",\u314D:"\u314D",\u314E:"\u314E"},h={\u314F:"\u314F",\u3150:"\u3150",\u3151:"\u3151",\u3152:"\u3152",\u3153:"\u3153",\u3154:"\u3154",\u3155:"\u3155",\u3156:"\u3156",\u3157:"\u3157",\u3158:"\u3157\u314F",\u3159:"\u3157\u3150",\u315A:"\u3157\u3163",\u315B:"\u315B",\u315C:"\u315C",\u315D:"\u315C\u3153",\u315E:"\u315C\u3154",\u315F:"\u315C\u3163",\u3160:"\u3160",\u3161:"\u3161",\u3162:"\u3161\u3163",\u3163:"\u3163"},v=["\u3131","\u3132","\u3134","\u3137","\u3138","\u3139","\u3141","\u3142","\u3143","\u3145","\u3146","\u3147","\u3148","\u3149","\u314A","\u314B","\u314C","\u314D","\u314E"],m=Object.values(h),l=["","\u3131","\u3132","\u3133","\u3134","\u3135","\u3136","\u3137","\u3139","\u313A","\u313B","\u313C","\u313D","\u313E","\u313F","\u3140","\u3141","\u3142","\u3144","\u3145","\u3146","\u3147","\u3148","\u314A","\u314B","\u314C","\u314D","\u314E"].map(u=>_[u]),G=["","\uB9CC","\uC5B5","\uC870","\uACBD","\uD574","\uC790","\uC591","\uAD6C","\uAC04","\uC815","\uC7AC","\uADF9","\uD56D\uD558\uC0AC","\uC544\uC2B9\uAE30","\uB098\uC720\uD0C0","\uBD88\uAC00\uC0AC\uC758","\uBB34\uB7C9\uB300\uC218","\uAC81","\uC5C5"],P=G.length*4;var b={A:"\uC5D0\uC774",B:"\uBE44",C:"\uC528",D:"\uB514",E:"\uC774",F:"\uC5D0\uD504",G:"\uC9C0",H:"\uC5D0\uC774\uCE58",I:"\uC544\uC774",J:"\uC81C\uC774",K:"\uCF00\uC774",L:"\uC5D8",M:"\uC5E0",N:"\uC5D4",O:"\uC624",P:"\uD53C",Q:"\uD050",R:"\uC54C",S:"\uC5D0\uC2A4",T:"\uD2F0",U:"\uC720",V:"\uBE0C\uC774",W:"\uB354\uBE14\uC720",X:"\uC5D1\uC2A4",Y:"\uC640\uC774",Z:"\uC9C0"};function F(u){let C=u.charCodeAt(0);if(!(c<=C&&C<=f))return;let n=C-c,t=n%i,r=(n-t)/i%E,s=Math.floor((n-t)/i/E);return{choseong:v[s],jungseong:m[r],jongseong:l[t]}}function $(u,C){let o=u[u.length-1];if(o==null)return!1;let n=o.charCodeAt(0);if(n<c||n>f)return!1;let r=(n-c)%i,s=l[r].length;switch(C?.only){case"single":return s===1;case"double":return s===2;default:return r>0}}var e={START_CHOSEONG:B[0],START_JUNGSEONG:B[1],START_JONGSEONG:B[2],END_CHOSEONG:B[3],END_JUNGSEONG:B[4],END_JONGSEONG:B[5]};var x=new RegExp(`[^\\u${e.START_CHOSEONG.toString(16)}-\\u${e.END_CHOSEONG.toString(16)}\u3131-\u314E\\s]+`,"ug"),y=new RegExp(`[\\u${e.START_CHOSEONG.toString(16)}-\\u${e.END_CHOSEONG.toString(16)}]`,"g"),L=new RegExp(`[\\u${e.START_JUNGSEONG.toString(16)}-\\u${e.END_JUNGSEONG.toString(16)}\\u${e.START_JONGSEONG.toString(16)}-\\u${e.END_JONGSEONG.toString(16)}]+`,"ug");var U=new RegExp(`[^\\u${e.START_JUNGSEONG.toString(16)}-\\u${e.END_JUNGSEONG.toString(16)}\u314F-\u3163\\s]+`,"ug"),w=new RegExp(`[\\u${e.START_JUNGSEONG.toString(16)}-\\u${e.END_JUNGSEONG.toString(16)}]`,"g"),M=Object.keys(h);var k=new RegExp(`[^\\u${e.START_JONGSEONG.toString(16)}-\\u${e.END_JONGSEONG.toString(16)}\\s]+`,"ug"),W=new RegExp(`[\\u${e.START_JONGSEONG.toString(16)}-\\u${e.END_JONGSEONG.toString(16)}]`,"g"),V=l.slice(1).map(u=>Object.fromEntries(Object.entries(_).map(([C,o])=>[o,C]))[u]),T=["\uC73C\uB85C/\uB85C","\uC73C\uB85C\uC11C/\uB85C\uC11C","\uC73C\uB85C\uC368/\uB85C\uC368","\uC73C\uB85C\uBD80\uD130/\uB85C\uBD80\uD130"];function D(u,C){if(u.length===0)return u;if(/^[A-Z]+$/.test(u)){let o=u[u.length-1],n=b[o];return u+a(n,C)}return u+a(u,C)}D.pick=a;function a(u,C){var o;if(u.length===0)return C.split("/")[0];let n=$(u),t=n?0:1,r=n&&((o=F(u[u.length-1]))==null?void 0:o.jongseong)==="\u3139",s=n&&r&&T.includes(C);return(C==="\uC640/\uACFC"||s)&&(t=t===0?1:0),C.split("/")[t]}var J={\uBCA0\uAC2F\uC787:"\uBCA0\uAC20\uB2CF",\uAE7B\uC78E:"\uAE6C\uB2D9",\uB098\uBB47\uC78E:"\uB098\uBB38\uB2D9",\uB3C4\uB9AC\uAE7B\uC5F4:"\uB3C4\uB9AC\uAE6C\uB148",\uB4B7\uC737:"\uB4A8\uB27B"},H={\uC804\uC5ED:"\uC800\uB141"};var A=u=>C=>u[C],X=[A(J),A(H)];return O(R);})();
+</script>
 </head>
 <body>
 
@@ -539,6 +562,14 @@
                         <span id="todayStyleMoodBadge" style="font-size: 11.5px; background: #EBF5EE; color: #166534; font-weight: 800; padding: 4px 10px; border-radius: 9999px; border: 1px solid #BBF7D0;">🏃 캐주얼 & 액티브</span>
                     </div>
 
+                    <div id="styleTpoControls">
+                        <label for="styleTpoSelect" class="form-label">오늘의 옷차림</label>
+                        <select id="styleTpoSelect" class="form-select-box" onchange="setStyleTpo(this.value)">
+                            <option value="casual">캐주얼</option>
+                            <option value="business_casual">비즈니스 캐주얼</option>
+                            <option value="business_formal">비즈니스 포멀</option>
+                        </select>
+                    </div>
                     <!-- 개운 컬러 팔레트 (20px 확대 적용) -->
                     <div>
                         <span style="font-size: 12px; font-weight: 700; color: #64748B; display: flex; align-items: center; gap: 4px; margin-bottom: 8px;">
@@ -1863,6 +1894,106 @@
             return "smart_casual";
         }
 
+        function escapeStyleText(value) {
+            return String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+        }
+
+        function styleWord(word, particle) {
+            const clean = String(word || '');
+            return `<strong>${escapeStyleText(clean)}</strong>${DalhaHangul.josa.pick(clean, particle)}`;
+        }
+
+        const STYLE_TPOS = ['casual','business_casual','business_formal'];
+        const styleTpoMemory = new Map();
+        function styleTpoStorageKey() {
+            let owner = currentUserId;
+            try { owner = owner || localStorage.getItem('dalha_kakao_id'); } catch (_) {}
+            return 'dalha_style_tpo:' + (owner || 'guest');
+        }
+        function getStyleTpo() {
+            let value;
+            const key = styleTpoStorageKey();
+            try { value = localStorage.getItem(key); } catch (_) { value = styleTpoMemory.get(key); }
+            return STYLE_TPOS.includes(value) ? value : 'casual';
+        }
+        function setStyleTpo(value) {
+            if (!STYLE_TPOS.includes(value)) return;
+            const key = styleTpoStorageKey();
+            styleTpoMemory.set(key,value);
+            try { localStorage.setItem(key,value); } catch (_) {}
+            updateTodayWardrobeMatchPick();
+        }
+
+        function accessoryType(item) {
+            if (item.category === '시계') return 'watch';
+            if (item.category === '신발') return 'shoes';
+            if (item.category === '가방') return 'bag';
+            if (item.category !== '액세서리') return null;
+            const name = item.nickname || '';
+            if (/포켓.?스퀘어|행커치프/.test(name)) return null;
+            if (/넥타이/.test(name)) return 'tie';
+            if (/스카프/.test(name)) return 'scarf';
+            if (/벨트/.test(name)) return 'belt';
+            if (/목걸이|팔찌|반지|귀걸이|브로치/.test(name)) return 'jewelry';
+            return null; // Do not guess a natural item from a material alone.
+        }
+
+        function accessoryFitsContext(item, tpo) {
+            const type = accessoryType(item);
+            const mats = (item.materials || []).join(' ');
+            const name = item.nickname || '';
+            if (!type || !mats || !STYLE_TPOS.includes(tpo)) return false;
+            const leather = /가죽|세무|스웨이드/.test(mats);
+            const metal = /메탈|금속/.test(mats);
+            const cloth = /면|린넨|패브릭|니트|울/.test(mats);
+            const silk = /실크|쉬폰/.test(mats);
+            const rubber = /러버|실리콘/.test(mats);
+            const denim = /데님/.test(mats);
+            if (type === 'jewelry') return metal && !rubber && !denim;
+            if (type === 'tie') return (silk || cloth) && !rubber && !denim && !metal;
+            if (type === 'scarf') return (silk || cloth) && !rubber && !leather && !metal && !denim;
+            if (type === 'belt') return leather || (tpo === 'casual' && cloth);
+            if (type === 'watch') {
+                if (tpo !== 'casual' && (rubber || cloth || denim || /스마트|애플|갤럭시|지샥|스포츠/.test(name))) return false;
+                return leather || metal || (tpo === 'casual' && (rubber || cloth));
+            }
+            if (type === 'shoes') {
+                if (tpo === 'casual') return leather || cloth || rubber || denim;
+                if (!leather || denim || /러닝|운동화|스니커즈|샌들|슬리퍼/.test(name)) return false;
+                return /구두|로퍼|더비|옥스포드|부츠|힐|플랫/.test(name);
+            }
+            if (type === 'bag') {
+                if (tpo === 'casual') return leather || cloth || denim;
+                return leather && !denim && !rubber && !/백팩|스포츠|등산|에코백/.test(name);
+            }
+            return false;
+        }
+
+        function accessoryColorFits(item, tpo, gender) {
+            if (tpo === 'casual' || ['tie','scarf'].includes(accessoryType(item))) return true;
+            const type = accessoryType(item);
+            const allowed = type === 'watch' || type === 'jewelry'
+                ? ['블랙','그레이','차콜','실버','골드','화이트','브라운']
+                : (tpo === 'business_formal' && gender === 'male'
+                    ? ['블랙','브라운','와인','버건디'] : ['블랙','브라운','네이비','그레이','차콜','베이지','아이보리','화이트']);
+            return (item.colors || []).length > 0 && item.colors.every(c => c.split('/').some(part => allowed.includes(part)));
+        }
+
+        function selectDailyAccessory(items, fortune, wada) {
+            const tpo = wada.tpo || 'casual';
+            const colors = [wada.top, wada.bottom, wada.point].filter(Boolean);
+            const colorMatch = item => colors.some(color => (item.colors || []).some(value =>
+                value.split('/').some(token => token && token === color.standard_color)));
+            const candidates = items.filter(item =>
+                accessoryFitsContext(item,tpo) && accessoryColorFits(item,tpo,wada.gender)
+                && colorMatch(item));
+            // Eligibility comes first. No lucky-item score or date-based anti-repeat.
+            candidates.sort((a,b) => String(a.id || a.nickname).localeCompare(String(b.id || b.nickname),'ko'));
+            if (!candidates.length) return {item:null,text:'오늘의 옷차림과 추천 색상에 맞는 보유 소품이 없습니다. 소품을 더하지 않아도 괜찮습니다.'};
+            const item = candidates[0], label = item.nickname || item.category;
+            return {item,text:`내 옷장의 ${styleWord(label,'을/를')} 함께 매치해 보세요. 선택한 옷차림에 맞는 종류·소재인지 확인하고, 오늘 추천 색상과 맞춰 골랐습니다.`};
+        }
+
         // Wada 개운 팔레트 (20px 원형 확대 적용)
         function updateTodayWardrobeMatchPick() {
             const styleEl = document.getElementById('resStyle');
@@ -1873,17 +2004,19 @@
             if (!styleEl || !pickEl || !paletteBox) return;
 
             const fortune = currentFortuneData?.daily_fortune || {};
-            const luckyItemText = fortune.lucky_item || document.getElementById('resItem')?.innerText || "";
-            const wada = fortune.wada_palette || {
-                theme: "명경지수(明鏡止水) · 지적인 냉철함",
-                mood_desc: "깊은 미드나잇 인디고와 안개빛 스카이블루가 만나 사주의 금전운과 전문성을 견고히 세웁니다.",
-                mode: "harmony",
-                style_mood: "casual",
-                mood_tag: "🏃 캐주얼 & 액티브",
-                top: {"name": "미드나잇 인디고", "hex": "#1F3044", "standard_color": "네이비"},
-                bottom: {"name": "포그 스카이", "hex": "#8CA6B5", "standard_color": "스카이블루"},
-                point: null
-            };
+            const selectedTpo = getStyleTpo();
+            const tpoSelect = document.getElementById('styleTpoSelect');
+            if (tpoSelect) tpoSelect.value = selectedTpo;
+            const wada = fortune.style_palettes?.[selectedTpo]
+                || (selectedTpo === 'casual' ? fortune.wada_palette : null);
+            if (!wada?.top || !wada?.bottom) {
+                styleEl.textContent = '오늘의 추천 색상을 불러온 뒤 옷차림을 안내합니다.';
+                pickEl.textContent = '오늘의 운세 정보가 아직 없습니다.';
+                paletteBox.replaceChildren();
+                if (moodStoryEl) moodStoryEl.textContent = '';
+                if (moodBadge) moodBadge.textContent = '정보 확인 중';
+                return;
+            }
 
             const isReverse = (wada.mode === "reverse");
             const topColorStd = wada.top.standard_color;
@@ -1897,8 +2030,8 @@
                 moodStoryEl.innerText = `"${wada.mood_desc}"`;
             }
 
-            const matchedTops = userWardrobeItems.filter(item => item.category === "상의" && item.colors.some(c => c.includes(topColorStd) || topColorStd.includes(c)));
-            const matchedBottoms = userWardrobeItems.filter(item => item.category === "하의" && item.colors.some(c => c.includes(bottomColorStd) || bottomColorStd.includes(c)));
+            const matchedTops = userWardrobeItems.filter(item => item.category === "상의" && (item.colors || []).some(c => c.includes(topColorStd) || topColorStd.includes(c)));
+            const matchedBottoms = userWardrobeItems.filter(item => item.category === "하의" && (item.colors || []).some(c => c.includes(bottomColorStd) || bottomColorStd.includes(c)));
 
             const cleanTopName = (wada.top.name_ko || wada.top.standard_color || wada.top.name).replace(/\//g, ' ');
             const cleanBottomName = (wada.bottom.name_ko || wada.bottom.standard_color || wada.bottom.name).replace(/\//g, ' ');
@@ -1910,91 +2043,25 @@
                 ? `${cleanBottomName} 데님 팬츠` 
                 : (todayMood === "smart_casual" ? `${cleanBottomName} 치노 팬츠` : `${cleanBottomName} 슬랙스`);
 
-            let finalTopText = matchedTops.length > 0 ? `내 옷장의 <strong>[${matchedTops[0].nickname}]</strong>` : defaultTop;
-            let finalBottomText = matchedBottoms.length > 0 ? `내 옷장의 <strong>[${matchedBottoms[0].nickname}]</strong>` : defaultBottom;
+            let finalTopText = matchedTops.length > 0 ? `내 옷장의 <strong>[${escapeStyleText(matchedTops[0].nickname)}]</strong>` : defaultTop;
+            let finalBottomText = matchedBottoms.length > 0 ? `내 옷장의 <strong>[${escapeStyleText(matchedBottoms[0].nickname)}]</strong>` : defaultBottom;
 
-            styleEl.innerHTML = `${finalTopText} &nbsp;&amp;&nbsp; ${finalBottomText}`;
+            if (selectedTpo === 'casual') styleEl.innerHTML = `${finalTopText} &nbsp;&amp;&nbsp; ${finalBottomText}`;
+            else styleEl.textContent = wada.outfit_guidance || '이 옷차림에 적용할 위치를 아직 확인하지 못했습니다.';
 
-            const ACCESSORY_CATS = ["시계", "신발", "가방", "액세서리"];
-            const matchedAccessories = userWardrobeItems.filter(item => ACCESSORY_CATS.includes(item.category));
-            
-            const targetMood = (todayMood === "casual") ? "casual" : "formal";
-            const moodCompatibleAccessories = matchedAccessories.filter(item => {
-                const itemM = getItemMood(item);
-                return (targetMood === "casual") ? (itemM === "casual") : (itemM === "formal");
-            });
+            const recommendation = selectDailyAccessory(userWardrobeItems, fortune, wada);
+            const matchText = recommendation.text;
 
-            let selectedAcc = null;
-            let matchReason = "";
-
-            if (moodCompatibleAccessories.length > 0) {
-                selectedAcc = moodCompatibleAccessories.find(i => {
-                    const hasColorMatch = (i.colors || []).some(c => luckyItemText.includes(c));
-                    const hasMatMatch = (i.materials || []).some(m => luckyItemText.includes(m.split('/')[0]));
-                    return hasColorMatch && hasMatMatch;
-                });
-
-                if (selectedAcc) {
-                    matchReason = `오늘의 행운 아이템(<strong>${luckyItemText}</strong>)과 일치하는 내 옷장의 <strong>[${selectedAcc.nickname}]</strong>을 매칭하여 길한 기운을 배가시켜 보세요.`;
-                }
-
-                if (!selectedAcc && isReverse && wada.point) {
-                    const pCol = wada.point.standard_color;
-                    selectedAcc = moodCompatibleAccessories.find(i => i.colors.some(c => c.includes(pCol) || pCol.includes(c)));
-                    if (selectedAcc) {
-                        matchReason = `오늘의 시크릿 반전 컬러(<strong>${pCol}</strong>)를 담은 <strong>[${selectedAcc.nickname}]</strong>으로 반전 개운 효과를 완성해보세요.`;
-                    }
-                }
-
-                if (!selectedAcc) {
-                    selectedAcc = moodCompatibleAccessories.find(i => {
-                        const hasColorMatch = (i.colors || []).some(c => luckyItemText.includes(c));
-                        const hasMatMatch = (i.materials || []).some(m => luckyItemText.includes(m.split('/')[0]));
-                        return hasColorMatch || hasMatMatch;
-                    });
-                    if (selectedAcc) {
-                        matchReason = `오늘의 길운을 돕는 <strong>[${selectedAcc.nickname}]</strong>을 더해 사주의 부족한 기운을 균형 있게 채워보세요.`;
-                    }
-                }
-
-                if (!selectedAcc) {
-                    selectedAcc = moodCompatibleAccessories[0];
-                    matchReason = `오늘의 스타일에 내 옷장의 <strong>[${selectedAcc.nickname}]</strong>을 가볍게 매칭하여 룩의 완성도를 높여보세요.`;
-                }
-            }
-
-            let pointChipHtml = "";
-            if (isReverse && wada.point) {
-                pointChipHtml = `
-                    <span style="font-size: 14px; font-weight: 800; color: #D97706; margin: 0 2px;">➕</span>
-                    <div style="display: flex; align-items: center; gap: 8px; background: #FEF3C7; border: 1.5px solid #FCD34D; padding: 6px 12px; border-radius: 9999px;">
-                        <span style="width: 20px; height: 20px; border-radius: 9999px; background: ${wada.point.hex}; border: 1.2px solid rgba(0,0,0,0.15); display: inline-block;"></span>
-                        <span style="font-size: 13px; font-weight: 800; color: #78350F;">${wada.point.name}</span>
-                    </div>
-                `;
-            }
-
-            paletteBox.innerHTML = `
-                <div style="display: flex; align-items: center; gap: 8px; background: #F8FAFC; border: 1.5px solid #E2E8F0; padding: 6px 12px; border-radius: 9999px;">
-                    <span style="width: 20px; height: 20px; border-radius: 9999px; background: ${wada.top.hex}; border: 1.2px solid rgba(0,0,0,0.15); display: inline-block;"></span>
-                    <div style="display: flex; flex-direction: column; line-height: 1.2;">
-                        <span style="font-size: 13px; font-weight: 700; color: #334155;">${wada.top.name}</span>
-                        <span style="font-size: 10px; font-weight: 500; color: #94A3B8;">${wada.top.hex.toUpperCase()}</span>
-                    </div>
-                </div>
-                <div style="display: flex; align-items: center; gap: 8px; background: #F8FAFC; border: 1.5px solid #E2E8F0; padding: 6px 12px; border-radius: 9999px;">
-                    <span style="width: 20px; height: 20px; border-radius: 9999px; background: ${wada.bottom.hex}; border: 1.2px solid rgba(0,0,0,0.15); display: inline-block;"></span>
-                    <div style="display: flex; flex-direction: column; line-height: 1.2;">
-                        <span style="font-size: 13px; font-weight: 700; color: #334155;">${wada.bottom.name}</span>
-                        <span style="font-size: 10px; font-weight: 500; color: #94A3B8;">${wada.bottom.hex.toUpperCase()}</span>
-                    </div>
-                </div>
-                ${pointChipHtml}
-            `;
-
-            let matchText = matchReason || ((todayMood === "casual") 
-                ? "오늘 룩에는 <strong>스포티한 스니커즈나 러버 밴드 시계</strong> 등으로 가볍게 포인트를 주시면 좋습니다." 
-                : "오늘 룩에는 <strong>단정한 가죽/메탈 시계나 드레스 슈즈</strong>로 중심을 잡아주시면 좋습니다.");
+            const colorChip = (color, role, point = false) => {
+                const name = color.name_ko || color.standard_color || color.name || '추천 색상';
+                const hex = /^#[0-9a-f]{6}$/i.test(color.hex || '') ? color.hex : '#CBD5E1';
+                return `<div class="palette-chip${point ? ' palette-point' : ''}" title="${escapeStyleText(color.name || name)} · ${hex}">
+                    <span class="palette-swatch" style="background:${hex}"></span>
+                    <span class="palette-copy"><span class="palette-name">${escapeStyleText(name)}</span><span class="palette-role">${role}</span></span>
+                </div>`;
+            };
+            paletteBox.innerHTML = colorChip(wada.top, wada.top.role || '상의 색상') + colorChip(wada.bottom, wada.bottom.role || '하의 색상')
+                + (isReverse && wada.point ? colorChip(wada.point, '추가 포인트 색상', true) : '');
 
             const headerTag = isReverse 
                 ? `<span style="font-size:11px; background:#FEF3C7; color:#78350F; font-weight:800; padding:2px 7px; border-radius:4px; margin-right:6px;">✦ 반전 포인트</span>` 
@@ -2726,7 +2793,7 @@
             if (!item) return;
             const printWindow = window.open('', '_blank');
             if (!printWindow) { alert('인쇄를 위해 팝업을 허용해 주세요.'); return; }
-            printWindow.document.write('<!doctype html><html lang="ko"><head><meta charset="UTF-8"><title>달하 감명서</title><style>body{font-family:sans-serif;padding:24px;line-height:1.85;color:#1E293B}details{display:block}button{display:none}</style></head><body></body></html>');
+            printWindow.document.write('<!doctype html><html lang="ko"><head><meta charset="UTF-8"><title>달하 감명서</title><style>*{font-family:sans-serif!important}body{font-family:sans-serif;padding:24px;line-height:1.85;color:#1E293B}details{display:block}button{display:none}</style></head><body></body></html>');
             const title = printWindow.document.createElement('h2');
             title.textContent = item.report_title;
             const report = printWindow.document.createElement('div');
@@ -2986,7 +3053,7 @@
             const contentClone = reportContainer.cloneNode(true);
             contentClone.querySelectorAll('button, .teaser-blur-box').forEach(el => el.remove());
             const printWindow = window.open('', '_blank');
-            printWindow.document.write(`<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"><title>${title} - ${currentUserName} 님</title><style>body { font-family: 'Pretendard', sans-serif; padding: 30px; line-height: 1.85; color: #1E293B; }</style></head><body><h2>${title}</h2>${contentClone.innerHTML}<script>window.onload = function() { window.print(); }<\/script></body></html>`);
+            printWindow.document.write(`<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"><title>${title} - ${currentUserName} 님</title><style>*{font-family:sans-serif!important}body { font-family: 'Pretendard', sans-serif; padding: 30px; line-height: 1.85; color: #1E293B; }</style></head><body><h2>${title}</h2>${contentClone.innerHTML}<script>window.onload = function() { window.print(); }<\/script></body></html>`);
             printWindow.document.close();
         }
 

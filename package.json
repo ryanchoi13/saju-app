@@ -1,0 +1,7 @@
+{
+  "name": "dalha-ui-tools",
+  "private": true,
+  "scripts": {"build:hangul": "node scripts/build-hangul.cjs"},
+  "dependencies": {"es-hangul": "2.4.0"},
+  "devDependencies": {"esbuild": "0.28.2"}
+}

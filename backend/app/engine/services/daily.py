@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from app.engine.korean import josa
 from datetime import date
 
 from app.engine.constants import GAN_KO, ZHI_KO
@@ -379,10 +380,7 @@ def _badge_style(score: int) -> str:
 
 
 def _with_ro(word: str) -> str:
-    if not word or not ("가" <= word[-1] <= "힣"):
-        return f"{word}로"
-    jongseong = (ord(word[-1]) - ord("가")) % 28
-    return f"{word}{'로' if jongseong in {0, 8} else '으로'}"
+    return josa(word, "으로/로")
 
 
 def build_daily_fortune(
@@ -447,7 +445,7 @@ def build_daily_fortune(
     core_element_confirmed = bool(query["semantic_state"].get("favorable_elements"))
     recommendation_confirmed = core_operation_confirmed and core_element_confirmed
     item_reason = (
-        f"오늘은 {operation_text}이 우선입니다. 추천 아이템은 {item}이며, "
+        f"오늘은 {josa(operation_text, '이/가')} 우선입니다. 추천 아이템은 {item}이며, "
         f"{element['ko']} 기운의 색·소재는 보조 근거로만 반영했습니다."
         if recommendation_confirmed else
         f"추천 아이템은 {item}입니다. 오늘의 일진을 상징하는 색·소재로 고른 참고 아이템입니다."

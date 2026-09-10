@@ -2,6 +2,7 @@ import os
 import sys
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "backend"))
 from datetime import date, time
+from app.engine.korean import josa
 from app.engine.pillars import calculate_saju
 from app.engine.constants import GAN_KO, ZHI_KO
 from app.engine.core.models import BirthInput
@@ -17,6 +18,7 @@ from app.engine.services import (
     build_lifetime_study_report,
     build_lifetime_wealth_report,
 )
+from style_context import build_style_contexts
 from wada_context_placement import WADA_CONTEXT_PLACEMENT
 from wada_color_rules import evaluate_duo
 from wada_color_ko import get_wada_color_ko
@@ -260,17 +262,8 @@ def calculate_biorhythm(birth_year: int, birth_month: int, birth_day: int):
     }
 
 def with_wa_gwa(word: str):
-    if not word:
-        return word
+    return josa(word, "과/와")
 
-    last_char = word[-1]
-
-    if "가" <= last_char <= "힣":
-        has_batchim = (ord(last_char) - ord("가")) % 28 != 0
-        return word + ("과" if has_batchim else "와")
-
-    return word + "와"
- 
 def get_saju_pillars_and_analysis(name: str, gender: str, y: int, m: int, d: int, cal_type: str, sijin: int, menu_account_id: str | None = None):
     backend_calendar_type = "lunar" if cal_type in ["lunar", "leap"] else "solar"
     backend_is_leap = (cal_type == "leap")
@@ -362,7 +355,7 @@ def get_saju_pillars_and_analysis(name: str, gender: str, y: int, m: int, d: int
         wada_bottom_name
     )
  
-    return {
+    result = {
         "user_name": name,
         "birth_summary": profile_detail,
         "saju_profile_detail": profile_detail,
@@ -388,7 +381,7 @@ def get_saju_pillars_and_analysis(name: str, gender: str, y: int, m: int, d: int
             **today_fortune,
             "wada_palette": {
                 "theme": f"Wada Duo #{wada_duo_no}",
-                "mood_desc": f"{with_wa_gwa(wada_top_color['name_ko'])} {wada_bottom_color['name_ko']}으로 오늘의 의상 컬러를 조합해 보세요.",
+                "mood_desc": f"{with_wa_gwa(wada_top_color['name_ko'])} {josa(wada_bottom_color['name_ko'], '으로/로')} 오늘의 의상 컬러를 조합해 보세요.",
                 "mode": "harmony",
                 "style_mood": outfit_tpo,
                 "mood_tag": "캐주얼",
@@ -412,6 +405,9 @@ def get_saju_pillars_and_analysis(name: str, gender: str, y: int, m: int, d: int
             ],
         }
     }
+
+    result["daily_fortune"]["style_palettes"] = build_style_contexts(wada_duo_no, gender, result["daily_fortune"]["wada_palette"])
+    return result
 
 # --- Detailed Report Generator Engine ---
 def generate_detailed_report(

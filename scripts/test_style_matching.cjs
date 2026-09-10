@@ -1,0 +1,37 @@
+const {JSDOM}=require('jsdom');
+const fs=require('node:fs'), assert=require('node:assert/strict'), vm=require('node:vm');
+const dom=new JSDOM(fs.readFileSync('index.html','utf8'),{url:'https://dalha.example',runScripts:'outside-only'});
+const w=dom.window; w.scrollTo=()=>{};
+for(const s of w.document.querySelectorAll('script:not([src])')) vm.runInContext(s.textContent,dom.getInternalVMContext());
+const palette={tpo:'casual',gender:'male',style_mood:'casual',top:{name:'Long English Name',name_ko:'네이비',hex:'#123456',standard_color:'네이비'},bottom:{name:'Black',name_ko:'블랙',hex:'#111111',standard_color:'블랙'}};
+const formal={...palette,tpo:'business_formal',style_mood:'business_formal',outfit_guidance:'남색 정장 · 블랙 넥타이'};
+for(const [word,pair,expected] of [['시계','을/를','시계를'],['가방','을/를','가방을'],['네이비','과/와','네이비와'],['블랙','은/는','블랙은'],['하늘','으로/로','하늘로']]) assert.equal(w.DalhaHangul.josa(word,pair),expected);
+assert.match(w.styleWord('시계','을/를'),/시계<\/strong>를/);
+assert.ok(!w.styleWord('<img src=x>','을/를').includes('<img'));
+const fortune={date:'2026-09-10',lucky_item:'블랙 러버 시계'};
+const rubber={id:'1',category:'시계',nickname:'스포츠 시계',materials:['러버/실리콘'],colors:['블랙']};
+const leather={id:'2',category:'시계',nickname:'가죽 시계',materials:['가죽/세무'],colors:['블랙']};
+assert.equal(w.selectDailyAccessory([rubber],fortune,formal).item,null); // Lucky match cannot cross TPO boundary.
+assert.equal(w.selectDailyAccessory([rubber,leather],fortune,formal).item.id,'2');
+assert.equal(w.selectDailyAccessory([rubber],fortune,palette).item.id,'1');
+const empty=w.selectDailyAccessory([],fortune,palette);
+assert.equal(empty.item,null);assert.match(empty.text,/소품을 더하지 않아도/);assert.ok(!empty.text.includes('러버'));
+assert.equal(w.selectDailyAccessory([{...leather,colors:['레드']}],fortune,palette).item,null);
+assert.equal(w.selectDailyAccessory([{...leather,materials:[]}],fortune,palette).item,null);
+assert.equal(w.selectDailyAccessory([{category:'액세서리',nickname:'포켓 스퀘어',materials:['실크/쉬폰'],colors:['블랙']}],fortune,formal).item,null);
+assert.equal(w.selectDailyAccessory([rubber,leather],fortune,palette).item.id,
+ w.selectDailyAccessory([leather,rubber],{date:'2026-09-12',lucky_item:'가죽 시계'},palette).item.id);
+vm.runInContext('currentUserId="style-account";currentFortuneData='+JSON.stringify({daily_fortune:{...fortune,wada_palette:palette,style_palettes:{casual:palette,business_formal:formal}}})+';userWardrobeItems=[];updateTodayWardrobeMatchPick();',dom.getInternalVMContext());
+assert.equal(w.getStyleTpo(),'casual');
+w.setStyleTpo('business_formal');
+assert.equal(w.localStorage.getItem('dalha_style_tpo:style-account'),'business_formal');
+assert.equal(w.document.getElementById('styleTpoSelect').value,'business_formal');
+assert.equal(w.document.getElementById('resStyle').textContent,formal.outfit_guidance);
+w.updateTodayWardrobeMatchPick();assert.equal(w.getStyleTpo(),'business_formal');
+vm.runInContext('currentUserId="another-account";',dom.getInternalVMContext());
+assert.equal(w.getStyleTpo(),'casual'); // No cross-account preference leak.
+w.updateTodayWardrobeMatchPick();
+const chips=w.document.querySelectorAll('#dynamicColorPaletteBox > .palette-chip');
+assert.equal(chips.length,2);assert.match(chips[0].textContent,/네이비/);assert.ok(!chips[0].textContent.includes('Long English'));
+console.log('PASS particles, escaping, TPO hard gate, empty/unknown abstention, independent lucky item, stable matching, account-scoped preference, palette');
+dom.window.close();
