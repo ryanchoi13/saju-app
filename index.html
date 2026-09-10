@@ -2156,6 +2156,13 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             return false;
         }
 
+        function styleColorTokens(value) {
+            // Only normalize spelling; silver/gold and different shades remain distinct.
+            const aliases = { '옐로우': '옐로', '머스타드': '머스터드' };
+            return String(value || '').split('/').map(part => part.trim())
+                .filter(Boolean).map(part => aliases[part] || part);
+        }
+
         function accessoryColorFits(item, tpo, gender) {
             if (tpo === 'casual' || ['tie','scarf'].includes(accessoryType(item))) return true;
             const type = accessoryType(item);
@@ -2163,14 +2170,15 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 ? ['블랙','그레이','차콜','실버','골드','화이트','브라운']
                 : (tpo === 'business_formal' && gender === 'male'
                     ? ['블랙','브라운','와인','버건디'] : ['블랙','브라운','네이비','그레이','차콜','베이지','아이보리','화이트']);
-            return (item.colors || []).length > 0 && item.colors.every(c => c.split('/').some(part => allowed.includes(part)));
+            return (item.colors || []).length > 0 && item.colors.every(c => styleColorTokens(c).some(part => allowed.includes(part)));
         }
 
         function selectDailyAccessory(items, fortune, wada) {
             const tpo = wada.tpo || 'casual';
             const colors = [wada.top, wada.bottom, wada.point].filter(Boolean);
-            const colorMatch = item => colors.some(color => (item.colors || []).some(value =>
-                value.split('/').some(token => token && token === color.standard_color)));
+            const paletteColors = new Set(colors.flatMap(color => styleColorTokens(color.standard_color)));
+            const colorMatch = item => (item.colors || []).some(value =>
+                styleColorTokens(value).some(token => paletteColors.has(token)));
             const candidates = items.filter(item =>
                 accessoryFitsContext(item,tpo) && accessoryColorFits(item,tpo,wada.gender)
                 && colorMatch(item));

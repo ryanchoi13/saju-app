@@ -15,6 +15,27 @@ const leather={id:'2',category:'시계',nickname:'가죽 시계',materials:['가
 assert.equal(w.selectDailyAccessory([rubber],fortune,formal).item,null); // Lucky match cannot cross TPO boundary.
 assert.equal(w.selectDailyAccessory([rubber,leather],fortune,formal).item.id,'2');
 assert.equal(w.selectDailyAccessory([rubber],fortune,palette).item.id,'1');
+const sneaker={id:'3',category:'신발',nickname:'캐주얼 스니커즈',materials:['면/린넨'],colors:['블랙']};
+assert.equal(w.selectDailyAccessory([sneaker],fortune,palette).item.id,'3');
+assert.equal(w.selectDailyAccessory([sneaker],fortune,formal).item,null);
+// UI color labels and Wada spelling must match without broadening color families.
+for (const [saved, recommended] of [['머스터드','머스타드'],['옐로우','옐로'],[' 카멜 / 브라운 ','브라운']]) {
+    const p={...palette,top:{standard_color:recommended},bottom:null};
+    assert.equal(w.selectDailyAccessory([{...leather,colors:[saved]}],fortune,p).item.id,'2');
+}
+for (const [saved, recommended] of [['골드','머스타드'],['실버','그레이'],['핑크','레드']]) {
+    const p={...palette,top:{standard_color:recommended},bottom:null};
+    assert.equal(w.selectDailyAccessory([{...leather,colors:[saved]}],fortune,p).item,null);
+}
+// Representative owned accessories still produce no match on a mustard/brown day.
+const neutralAccessories=[
+    {...leather,colors:['블랙','실버']},
+    {...leather,id:'4',colors:['와인/버건디','골드']},
+    {...sneaker,colors:['화이트','실버']},
+    {...sneaker,id:'5',colors:['그레이']}
+];
+const warmPalette={...palette,top:{standard_color:'머스타드'},bottom:{standard_color:'브라운'}};
+assert.equal(w.selectDailyAccessory(neutralAccessories,fortune,warmPalette).item,null);
 const empty=w.selectDailyAccessory([],fortune,palette);
 assert.equal(empty.item,null);assert.equal(empty.text,'');assert.ok(!empty.text.includes('러버'));
 assert.equal(w.selectDailyAccessory([{...leather,colors:['레드']}],fortune,palette).item,null);
