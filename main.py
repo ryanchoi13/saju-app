@@ -19,6 +19,7 @@ from app.engine.services import (
     build_lifetime_wealth_report,
 )
 import wardrobe_store
+import menu_store
 import tarot_service
 from style_context import build_style_contexts
 from wada_context_placement import WADA_CONTEXT_PLACEMENT
@@ -314,6 +315,7 @@ def get_saju_pillars_and_analysis(name: str, gender: str, y: int, m: int, d: int
         today_date,
         current_hour=kst_now.hour,
         account_key=menu_account_id,
+        include_menu=False,
     )
     today_element = core.timing.daily["pillar"]["stem_element"]
     lucky_element = today_fortune["lucky_element"]
@@ -418,7 +420,30 @@ def get_saju_pillars_and_analysis(name: str, gender: str, y: int, m: int, d: int
     }
 
     result["daily_fortune"]["style_palettes"] = build_style_contexts(wada_duo_no, gender, result["daily_fortune"]["wada_palette"], lucky_element, user_name=name)
+    ranking = _build_menu_ranking(core, today_date)
+    fortune = result["daily_fortune"]
+    preview = ranking['rankings']['general'][:2]
+    fortune.update(recommended_menus=[item['menu'] for item in preview],
+                   recommended_menu=preview[0]['menu'] if preview else '',
+                   recommended_meals=[], recommended_menu_reason=ranking['basis_text'],
+                   menu_pool_size=ranking['pool_sizes']['general'], menu_pool_version=ranking['version'])
+    if menu_account_id:
+        try:
+            fortune['menu_recommendations'] = menu_store.load(menu_account_id, today_date, lambda: ranking)
+        except menu_store.StorageUnavailable:
+            fortune['menu_error'] = '추천 기록을 불러오지 못했습니다. 잠시 후 다시 접속해 주세요.'
     return result
+
+
+def _build_menu_ranking(core, day):
+    from app.engine.semantic.queries import build_service_query
+    from app.engine.services.daily import _menu_timing_element_weights
+    from app.engine.services.ranked_menu import build_rankings
+    query = build_service_query(core, 'daily_overall')
+    daily = query['timing']['daily']['pillar']
+    return build_rankings(core.input, day,
+                          _menu_timing_element_weights(query['timing'], query['semantic_state']),
+                          daily['stem_element'], query['semantic_state'].get('confidence'))
 
 # --- Detailed Report Generator Engine ---
 def generate_detailed_report(
@@ -580,6 +605,44 @@ def _public_profile(user: Dict[str, Any]) -> Dict[str, Any]:
     }
 
 
+@app.on_event('startup')
+def initialize_menu_storage():
+    try:
+        menu_store.initialize()
+    except menu_store.StorageUnavailable:
+        pass  # Other sections stay usable; menu writes explicitly return 503.
+
+
+class MenuExploreRequest(BaseModel):
+    user_id: str = Field(min_length=6, max_length=55)
+    token: str = Field(min_length=64, max_length=64)
+    mode: str
+    action: str
+    expected_day: str = Field(pattern=r'^\d{4}-\d{2}-\d{2}$')
+    expected_seen: int = Field(ge=0, le=10)
+
+
+@app.post('/api/menu/explore')
+def explore_menus(req: MenuExploreRequest):
+    user = users_db.get(req.user_id)
+    if not user or not user.get('profile_complete'):
+        raise HTTPException(status_code=401, detail='다시 접속해 추천 메뉴를 불러와 주세요.')
+    day = menu_store.today()
+    def build():
+        core = calculate_myeongri_core(_birth_input_from_user(user, user.get('name', '')), target_date=day)
+        return _build_menu_ranking(core, day)
+    try:
+        return menu_store.explore(req.user_id, day, build, token=req.token,
+                                  mode=req.mode, action=req.action,
+                                  expected_day=req.expected_day, expected_seen=req.expected_seen)
+    except KeyError:
+        raise HTTPException(status_code=403, detail='다시 접속해 추천 기록을 불러와 주세요.')
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc))
+    except menu_store.StorageUnavailable:
+        raise HTTPException(status_code=503, detail='추천 기록을 저장하지 못했습니다. 잠시 후 다시 시도해 주세요.')
+
+
 class MealFeedbackRequest(BaseModel):
     token: str = Field(min_length=32, max_length=128)
     liked: Optional[bool] = None
@@ -687,7 +750,7 @@ def _wardrobe_response(user_id):
 @app.get("/api/health/storage")
 def storage_health():
     try:
-        return {"status": "ok", "wardrobe": wardrobe_store.health()}
+        return {"status": "ok", "wardrobe": wardrobe_store.health(), "menus": menu_store.health()}
     except wardrobe_store.StorageUnavailable:
         raise HTTPException(status_code=503, detail="Wardrobe storage unavailable")
 

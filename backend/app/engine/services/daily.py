@@ -393,6 +393,7 @@ def build_daily_fortune(
     recent_menus: frozenset[str] = frozenset(),
     used_cuisines: frozenset[str] = frozenset(),
     used_menus: frozenset[str] = frozenset(),
+    include_menu: bool = True,
 ) -> dict:
     """Render one evidence-aware day without allowing shensha to decide it alone."""
 
@@ -450,7 +451,9 @@ def build_daily_fortune(
         if recommendation_confirmed else
         f"추천 아이템은 {item}입니다. 오늘의 일진을 상징하는 색·소재로 고른 참고 아이템입니다."
     )
-    menu_selection = daily_choices(core.input, target_date, timing_element_weights, account_key)
+    menu_selection = (daily_choices(core.input, target_date, timing_element_weights, account_key)
+                      if include_menu else dict(menus=[], meals=[], pool_size=0, pool_version=None,
+                                                reason='', season=None, meal_period=None))
 
     scenario = select_daily_scenario(query)
     guidance = build_daily_guidance(query, daily_god, relations, scenario=scenario)
@@ -495,7 +498,7 @@ def build_daily_fortune(
         "lucky_item_reason": item_reason,
         "lucky_number": element["numbers"],
         "lucky_direction": f"{element['direction']} ({element['ko']} 기운)",
-        "recommended_menu": menu_selection["menus"][0],
+        "recommended_menu": menu_selection["menus"][0] if menu_selection["menus"] else '',
         "recommended_menus": menu_selection["menus"],
         "recommended_meals": menu_selection["meals"],
         "recommended_menu_reason": menu_selection["reason"],

@@ -107,17 +107,14 @@ for(const garment of garments) {
     const sources=[...clip.querySelectorAll('image')];
     assert.equal(sources[0].outerHTML,sources[1].outerHTML);
 }
-const orderedFortune={recommended_menus:['후라이드치킨','김치찌개'],recommended_meals:[
+const legacyFortune={recommended_menus:['후라이드치킨','김치찌개'],recommended_meals:[
     {period:'dinner',menu:'후라이드치킨'},{period:'lunch',menu:'김치찌개'}],
-    recommended_menu_reason:'오늘 점심에는 칼칼한 김치찌개를, 저녁에는 바삭한 후라이드치킨을 즐겨 보세요.'};
-vm.runInContext('currentFortuneData='+JSON.stringify({daily_fortune:orderedFortune})+';renderRecommendedMenu();',dom.getInternalVMContext());
-assert.deepEqual([...w.document.querySelectorAll('#menuPhotoCards figcaption')].map(el=>el.textContent),['김치찌개','후라이드치킨']);
-assert.deepEqual([...w.document.querySelectorAll('.menu-meal-label')].map(el=>el.textContent),['점심','저녁']);
-assert.equal(w.document.getElementById('menuRecommendationComment').textContent,orderedFortune.recommended_menu_reason);
-assert.equal(w.document.getElementById('menuRecommendationComment').hidden,false);
-vm.runInContext('currentFortuneData={daily_fortune:{recommended_menus:["김치찌개","후라이드치킨"]}};renderRecommendedMenu();',dom.getInternalVMContext());
+    recommended_menu_reason:'이전 점심 저녁 문구'};
+vm.runInContext('currentFortuneData='+JSON.stringify({daily_fortune:legacyFortune})+';renderRecommendedMenu();',dom.getInternalVMContext());
+assert.deepEqual([...w.document.querySelectorAll('#menuPhotoCards figcaption')].map(el=>el.textContent),['후라이드치킨','김치찌개']);
 assert.equal(w.document.querySelectorAll('.menu-meal-label').length,0);
 assert.equal(w.document.getElementById('menuRecommendationComment').hidden,true);
+assert.equal(w.document.getElementById('menuExplorerControls').hidden,true);
 assert.equal(w.document.getElementById('bioInterpretationNote'),null);
 w.renderOutfitCards(null);
 assert.equal(w.document.getElementById('outfitCards').childElementCount,0);
