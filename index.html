@@ -21,7 +21,7 @@
     <meta name="theme-color" content="#F7F8F8">
     <script src="/assets/design-init.js?v=1"></script>
     <script src="https://developers.kakao.com/sdk/js/kakao.min.js"></script>
-    <script src="/assets/food-thumbnails-v1/catalog.js?v=2" defer></script>
+    <script src="/assets/food-thumbnails-v1/catalog.js?v=3" defer></script>
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
 
     <style>
@@ -1523,11 +1523,15 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 || index < 0 || index >= 42 || sheet < 0) return null;
             const file = catalog.files?.[sheet];
             if (!/^food-\d{2}\.webp$/.test(file || '')) return null;
+            const dimensions = catalog.sizes?.[sheet] || [896,768];
+            if (!Array.isArray(dimensions) || dimensions.length !== 2
+                || !dimensions.every(v=>Number.isInteger(v) && v > 0 && v <= 2048)) return null;
+            const [atlasWidth,atlasHeight] = dimensions;
             const crop = catalog.crops?.[sheet]?.[index];
             if (!Array.isArray(crop) || crop.length !== 4 || !crop.every(Number.isInteger)) return null;
             const [x,y,width,height] = crop;
-            if (x < 0 || y < 0 || width <= 0 || height <= 0 || x+width > 896 || y+height > 768) return null;
-            return {url:`/assets/food-thumbnails-v1/${file}`, x,y,width,height};
+            if (x < 0 || y < 0 || width <= 0 || height <= 0 || x+width > atlasWidth || y+height > atlasHeight) return null;
+            return {url:`/assets/food-thumbnails-v1/${file}`, x,y,width,height,atlasWidth,atlasHeight};
         }
         function renderMenuPhotos(menus, mealLabels = [], target = null) {
             const box = target || document.getElementById('menuPhotoCards');
@@ -1537,10 +1541,10 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 // Unknown dishes get a neutral icon, never another dish's photograph.
                 let photo = '<div class="menu-photo-placeholder" aria-hidden="true"><svg viewBox="0 0 80 80" fill="none" stroke="currentColor" stroke-width="2"><circle cx="40" cy="40" r="23"/><circle cx="40" cy="40" r="17"/><path d="M9 13v20m6-20v20m-3-20v54m-4-36q4 9 8 0M70 13v54m0-54q-10 10-5 26h5"/></svg></div>';
                 if (thumbnail) {
-                    const {url,x,y,width,height} = thumbnail, size = Math.max(width,height)+12;
+                    const {url,x,y,width,height,atlasWidth,atlasHeight} = thumbnail, size = Math.max(width,height)+12;
                     photo = `<svg class="food-photo" role="img" aria-label="${escapeStyleText(name)} 예시 일러스트" viewBox="0 0 ${size} ${size}">
                         <svg x="${(size-width)/2}" y="${(size-height)/2}" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" overflow="hidden">
-                            <image href="${url}" x="${-x}" y="${-y}" width="896" height="768" />
+                            <image href="${url}" x="${-x}" y="${-y}" width="${atlasWidth}" height="${atlasHeight}" />
                         </svg></svg>`;
                 }
                 const mealLabel = mealLabels[i] ? `<span class="menu-meal-label">${escapeStyleText(mealLabels[i])}</span>` : '';

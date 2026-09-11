@@ -16,7 +16,7 @@ from app.engine.services.menu_frequency_review import REVIEWED_POPULARITY
 
 
 MENU_POOL_VERSION = "daily-menu-pool-v3"
-DIET_MENU_POOL_VERSION = "diet-menu-pool-v1"
+DIET_MENU_POOL_VERSION = "diet-menu-pool-v2"
 
 
 @dataclass(frozen=True)
@@ -594,6 +594,10 @@ DIET_MENU_POOL = tuple(
         "두부버섯전골|순두부 달걀탕|두부스테이크·구운 채소|버섯 두부 샤브샤브",
     )
 )
+
+
+from .diet_catalog_revision import apply_diet_revision
+DIET_MENU_POOL = apply_diet_revision(DIET_MENU_POOL, _diet_group)
 
 
 DIET_DEFAULT_EXCLUSIONS = frozenset({
