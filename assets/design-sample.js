@@ -65,6 +65,10 @@
       saju_data:{singang_label:'예시',pillars_detail:{year:pillar,month:pillar,day:pillar,hour:pillar},elements:{wood:25,fire:15,earth:20,metal:15,water:25},elements_note:'디자인을 확인하기 위한 예시 수치입니다.',daeyun_phase:{name:'청년기',cycle:'대운 3~4',age_range:'예시'}},
       daily_fortune:{date:'2026-09-10',title:'나의 속도로, 한 걸음 더',advice:'익숙한 하루에도 작은 변화는 시작됩니다. 오늘은 가장 마음이 가는 일 하나에 집중해 보세요.',score:82,mode_badge:'차분한 흐름',time_flow:{morning:'중요한 일 하나를 정하며 시작해 보세요.',afternoon:'함께하는 사람의 이야기에 귀 기울여 보세요.',evening:'오늘 잘한 일을 돌아보고 편안하게 마무리하세요.'},lucky_item:'실버 시계',lucky_number:'3, 8',lucky_direction:'동쪽',unified_advice:'오늘의 작은 선택이 내일의 방향을 만듭니다. 해야 할 일 하나를 정하고, 나머지는 여유 있게 바라보세요.',talisman:currentTalisman,wada_palette:palette,style_palettes:{casual:palette,business_casual:business,business_formal:{...business,tpo:'business_formal',mood_tag:'비즈니스 포멀'}},recommended_meals:[{period:'lunch',menu:'김치찌개'},{period:'dinner',menu:'후라이드치킨'}],recommended_menu_reason:'점심에는 칼칼한 김치찌개를, 저녁에는 바삭한 후라이드치킨을 즐겨 보세요.'}
     });
+    DalhaMenu.startSample({
+      general:['김치찌개','후라이드치킨','된장찌개','제육볶음','콩나물국밥','햄버거','소고기불고기','잔치국수','치킨버거','해물칼국수','물냉면','짜장라면','김밥','라면','소고기미역국','보쌈','비빔밥','알리오 올리오','생선회','간장치킨'],
+      diet:['닭가슴살 포케','소고기 숙주볶음','계란후라이와 통밀토스트','두부버섯전골','연어 포케','닭고기 현미비빔밥','두부 나물비빔밥','연어구이·구운 채소','그릭요거트·저당 그래놀라·베리','두부스테이크·구운 채소']
+    });
     const cycles=[['18~27세',false],['28~37세',true],['38~47세',false]].map(([ages,active],i)=>`<section data-report-cycle="${i+1}" data-cycle-ages="${ages}" data-current-cycle="${active}"><h4>${ages} · ${active?'현재의 흐름':'삶의 흐름'}</h4>${paragraph}</section>`).join('');
     const months=Array.from({length:12},(_,i)=>`<section data-report-month="${i+1}"><h4>${i+1}월 · 나의 균형을 살펴보기</h4>${paragraph}</section>`).join('');
     serverUnlockedReports=[report('daewoon','나의 기질과 인생 흐름',intro+paragraph+cycles),report('sinnian','2026년 올해와 월별',`<div data-report-year="2026">${intro}${months}</div>`)];

@@ -48,6 +48,18 @@ async function boot(url) {
       assert.equal(doc.querySelectorAll('.look-card').length,2,`${design} ${tpo} must keep both looks`);
       assert.ok(!doc.getElementById('resStyle').textContent.includes('불러온'));
     }
+    for(let i=0;i<9;i++) await w.DalhaMenu.next();
+    w.DalhaMenu.next(); await new Promise(r=>setTimeout(r,0));
+    assert.equal(doc.getElementById('menuHistoryModal').getAttribute('role'),'dialog');
+    assert.equal(doc.querySelectorAll('#menuHistoryCards .menu-photo-card').length,20);
+    doc.dispatchEvent(new w.KeyboardEvent('keydown',{key:'Escape',bubbles:true}));
+    assert.equal(doc.getElementById('menuHistoryModal').classList.contains('hidden'),true);
+    await w.DalhaMenu.changeMode('diet');
+    for(let i=0;i<4;i++) await w.DalhaMenu.next();
+    w.DalhaMenu.next();
+    assert.equal(doc.querySelectorAll('#menuHistoryCards .menu-photo-card').length,10);
+    w.DalhaMenu.close();
+    assert.equal(app.apiCalls,0);
     doc.getElementById('tab-saju').click(); doc.getElementById('saju-tab-year').click();
     assert.equal(doc.querySelectorAll('#annualMonthChoices button').length,12);
     doc.querySelectorAll('#annualMonthChoices button')[8].click();

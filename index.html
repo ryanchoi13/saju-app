@@ -464,9 +464,10 @@
 /* es-hangul 2.4.0 | MIT | Copyright (c) Viva Republica, Inc. | third_party/es-hangul-LICENSE */
 var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDescriptor;var N=Object.getOwnPropertyNames;var p=Object.prototype.hasOwnProperty;var S=(u,C)=>{for(var o in C)g(u,o,{get:C[o],enumerable:!0})},j=(u,C,o,n)=>{if(C&&typeof C=="object"||typeof C=="function")for(let t of N(C))!p.call(u,t)&&t!==o&&g(u,t,{get:()=>C[t],enumerable:!(n=d(C,t))||n.enumerable});return u};var O=u=>j(g({},"__esModule",{value:!0}),u);var R={};S(R,{josa:()=>D});var B=[..."\uAC01\uD7A3".normalize("NFD")].map(u=>u.charCodeAt(0)),c=44032,f=55203,i=28,E=21,_={"":"",\u3131:"\u3131",\u3132:"\u3132",\u3133:"\u3131\u3145",\u3134:"\u3134",\u3135:"\u3134\u3148",\u3136:"\u3134\u314E",\u3137:"\u3137",\u3138:"\u3138",\u3139:"\u3139",\u313A:"\u3139\u3131",\u313B:"\u3139\u3141",\u313C:"\u3139\u3142",\u313D:"\u3139\u3145",\u313E:"\u3139\u314C",\u313F:"\u3139\u314D",\u3140:"\u3139\u314E",\u3141:"\u3141",\u3142:"\u3142",\u3143:"\u3143",\u3144:"\u3142\u3145",\u3145:"\u3145",\u3146:"\u3146",\u3147:"\u3147",\u3148:"\u3148",\u3149:"\u3149",\u314A:"\u314A",\u314B:"\u314B",\u314C:"\u314C",\u314D:"\u314D",\u314E:"\u314E"},h={\u314F:"\u314F",\u3150:"\u3150",\u3151:"\u3151",\u3152:"\u3152",\u3153:"\u3153",\u3154:"\u3154",\u3155:"\u3155",\u3156:"\u3156",\u3157:"\u3157",\u3158:"\u3157\u314F",\u3159:"\u3157\u3150",\u315A:"\u3157\u3163",\u315B:"\u315B",\u315C:"\u315C",\u315D:"\u315C\u3153",\u315E:"\u315C\u3154",\u315F:"\u315C\u3163",\u3160:"\u3160",\u3161:"\u3161",\u3162:"\u3161\u3163",\u3163:"\u3163"},v=["\u3131","\u3132","\u3134","\u3137","\u3138","\u3139","\u3141","\u3142","\u3143","\u3145","\u3146","\u3147","\u3148","\u3149","\u314A","\u314B","\u314C","\u314D","\u314E"],m=Object.values(h),l=["","\u3131","\u3132","\u3133","\u3134","\u3135","\u3136","\u3137","\u3139","\u313A","\u313B","\u313C","\u313D","\u313E","\u313F","\u3140","\u3141","\u3142","\u3144","\u3145","\u3146","\u3147","\u3148","\u314A","\u314B","\u314C","\u314D","\u314E"].map(u=>_[u]),G=["","\uB9CC","\uC5B5","\uC870","\uACBD","\uD574","\uC790","\uC591","\uAD6C","\uAC04","\uC815","\uC7AC","\uADF9","\uD56D\uD558\uC0AC","\uC544\uC2B9\uAE30","\uB098\uC720\uD0C0","\uBD88\uAC00\uC0AC\uC758","\uBB34\uB7C9\uB300\uC218","\uAC81","\uC5C5"],P=G.length*4;var b={A:"\uC5D0\uC774",B:"\uBE44",C:"\uC528",D:"\uB514",E:"\uC774",F:"\uC5D0\uD504",G:"\uC9C0",H:"\uC5D0\uC774\uCE58",I:"\uC544\uC774",J:"\uC81C\uC774",K:"\uCF00\uC774",L:"\uC5D8",M:"\uC5E0",N:"\uC5D4",O:"\uC624",P:"\uD53C",Q:"\uD050",R:"\uC54C",S:"\uC5D0\uC2A4",T:"\uD2F0",U:"\uC720",V:"\uBE0C\uC774",W:"\uB354\uBE14\uC720",X:"\uC5D1\uC2A4",Y:"\uC640\uC774",Z:"\uC9C0"};function F(u){let C=u.charCodeAt(0);if(!(c<=C&&C<=f))return;let n=C-c,t=n%i,r=(n-t)/i%E,s=Math.floor((n-t)/i/E);return{choseong:v[s],jungseong:m[r],jongseong:l[t]}}function $(u,C){let o=u[u.length-1];if(o==null)return!1;let n=o.charCodeAt(0);if(n<c||n>f)return!1;let r=(n-c)%i,s=l[r].length;switch(C?.only){case"single":return s===1;case"double":return s===2;default:return r>0}}var e={START_CHOSEONG:B[0],START_JUNGSEONG:B[1],START_JONGSEONG:B[2],END_CHOSEONG:B[3],END_JUNGSEONG:B[4],END_JONGSEONG:B[5]};var x=new RegExp(`[^\\u${e.START_CHOSEONG.toString(16)}-\\u${e.END_CHOSEONG.toString(16)}\u3131-\u314E\\s]+`,"ug"),y=new RegExp(`[\\u${e.START_CHOSEONG.toString(16)}-\\u${e.END_CHOSEONG.toString(16)}]`,"g"),L=new RegExp(`[\\u${e.START_JUNGSEONG.toString(16)}-\\u${e.END_JUNGSEONG.toString(16)}\\u${e.START_JONGSEONG.toString(16)}-\\u${e.END_JONGSEONG.toString(16)}]+`,"ug");var U=new RegExp(`[^\\u${e.START_JUNGSEONG.toString(16)}-\\u${e.END_JUNGSEONG.toString(16)}\u314F-\u3163\\s]+`,"ug"),w=new RegExp(`[\\u${e.START_JUNGSEONG.toString(16)}-\\u${e.END_JUNGSEONG.toString(16)}]`,"g"),M=Object.keys(h);var k=new RegExp(`[^\\u${e.START_JONGSEONG.toString(16)}-\\u${e.END_JONGSEONG.toString(16)}\\s]+`,"ug"),W=new RegExp(`[\\u${e.START_JONGSEONG.toString(16)}-\\u${e.END_JONGSEONG.toString(16)}]`,"g"),V=l.slice(1).map(u=>Object.fromEntries(Object.entries(_).map(([C,o])=>[o,C]))[u]),T=["\uC73C\uB85C/\uB85C","\uC73C\uB85C\uC11C/\uB85C\uC11C","\uC73C\uB85C\uC368/\uB85C\uC368","\uC73C\uB85C\uBD80\uD130/\uB85C\uBD80\uD130"];function D(u,C){if(u.length===0)return u;if(/^[A-Z]+$/.test(u)){let o=u[u.length-1],n=b[o];return u+a(n,C)}return u+a(u,C)}D.pick=a;function a(u,C){var o;if(u.length===0)return C.split("/")[0];let n=$(u),t=n?0:1,r=n&&((o=F(u[u.length-1]))==null?void 0:o.jongseong)==="\u3139",s=n&&r&&T.includes(C);return(C==="\uC640/\uACFC"||s)&&(t=t===0?1:0),C.split("/")[t]}var J={\uBCA0\uAC2F\uC787:"\uBCA0\uAC20\uB2CF",\uAE7B\uC78E:"\uAE6C\uB2D9",\uB098\uBB47\uC78E:"\uB098\uBB38\uB2D9",\uB3C4\uB9AC\uAE7B\uC5F4:"\uB3C4\uB9AC\uAE6C\uB148",\uB4B7\uC737:"\uB4A8\uB27B"},H={\uC804\uC5ED:"\uC800\uB141"};var A=u=>C=>u[C],X=[A(J),A(H)];return O(R);})();
 </script>
-    <link rel="stylesheet" href="/assets/design-system.css?v=4">
+    <link rel="stylesheet" href="/assets/design-system.css?v=5">
     <script src="/assets/design-controls.js?v=1" defer></script>
-    <script src="/assets/design-sample.js?v=2" defer></script>
+    <script src="/assets/menu-explorer.js?v=1" defer></script>
+    <script src="/assets/design-sample.js?v=3" defer></script>
 </head>
 <body>
 
@@ -703,6 +704,15 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                             <p id="resMenu" style="font-weight: 800; margin: 3px 0 8px; font-size: 14px; line-height: 1.65; white-space: pre-line; color: #0F172A;">속이 편안한 영양 솥밥</p>
                             <div id="menuPhotoCards" class="menu-photos"></div>
                             <p id="menuRecommendationComment" class="menu-recommendation-comment" hidden></p>
+                            <div id="menuExplorerControls" hidden>
+                                <div class="menu-mode-controls" role="group" aria-label="메뉴 종류">
+                                    <button id="menuMode-general" type="button" aria-pressed="true" onclick="DalhaMenu.changeMode('general')">일반식</button>
+                                    <button id="menuMode-diet" type="button" aria-pressed="false" onclick="DalhaMenu.changeMode('diet')">다이어트식</button>
+                                </div>
+                                <p id="menuStatus" class="menu-status" role="status"></p>
+                                <button id="menuNext" class="menu-next" type="button" onclick="DalhaMenu.next()">다른 메뉴 추천</button>
+                            </div>
+                            <p id="menuError" class="menu-error" role="alert"></p>
                             <button id="menuPlanLike" type="button" onclick="togglePlanLike()" aria-label="오늘 식단 좋아요" aria-pressed="false" hidden style="border:0;background:transparent;color:#64748B;font-size:25px;cursor:pointer;padding:4px 10px;min-width:44px;min-height:44px;">♡</button>
                             <span id="menuLikeStatus" role="status" style="font-size:11px;color:#64748B;"></span>
                             <button id="menuModeToggle" hidden type="button" onclick="toggleMenuMode()" style="width: 100%; border: 1px solid #BBF7D0; background: #F0FDF4; color: #166534; border-radius: 8px; padding: 6px 8px; font-size: 11.5px; font-weight: 800; cursor: pointer;">다이어트 식단으로 보기</button>
@@ -1087,6 +1097,17 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
     </div>
 
     <!-- 비주얼 옷장 등록 / 전면 수정 모달 위저드 -->
+    <div id="menuHistoryModal" class="modal-bg hidden" onclick="if(event.target===this) DalhaMenu.close()">
+        <div class="modal-content menu-history-content">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+                <h3 id="menuHistoryTitle">오늘 추천받은 메뉴</h3>
+                <button type="button" onclick="DalhaMenu.close()" aria-label="닫기">×</button>
+            </div>
+            <p id="menuHistorySummary" class="menu-status"></p>
+            <div id="menuHistoryCards" class="menu-photos menu-history-cards"></div>
+        </div>
+    </div>
+
     <div id="wardrobeAddModal" class="modal-bg hidden">
         <div class="modal-content" style="max-width: 360px; text-align: left; padding: 20px;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 8px;">
@@ -1508,13 +1529,13 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             if (x < 0 || y < 0 || width <= 0 || height <= 0 || x+width > 896 || y+height > 768) return null;
             return {url:`/assets/food-thumbnails-v1/${file}`, x,y,width,height};
         }
-        function renderMenuPhotos(menus, mealLabels = []) {
-            const box = document.getElementById('menuPhotoCards');
+        function renderMenuPhotos(menus, mealLabels = [], target = null) {
+            const box = target || document.getElementById('menuPhotoCards');
             if (!box) return;
-            box.innerHTML = menus.slice(0,2).map((name, i) => {
+            box.innerHTML = (target ? menus : menus.slice(0,2)).map((name, i) => {
                 const thumbnail = foodThumbnail(name);
-                // New, unregistered dishes stay text-only until their exact image is added.
-                let photo = '';
+                // Unknown dishes get a neutral icon, never another dish's photograph.
+                let photo = '<div class="menu-photo-placeholder" aria-hidden="true"><svg viewBox="0 0 80 80" fill="none" stroke="currentColor" stroke-width="2"><circle cx="40" cy="40" r="23"/><circle cx="40" cy="40" r="17"/><path d="M9 13v20m6-20v20m-3-20v54m-4-36q4 9 8 0M70 13v54m0-54q-10 10-5 26h5"/></svg></div>';
                 if (thumbnail) {
                     const {url,x,y,width,height} = thumbnail, size = Math.max(width,height)+12;
                     photo = `<svg class="food-photo" role="img" aria-label="${escapeStyleText(name)} 예시 일러스트" viewBox="0 0 ${size} ${size}">
@@ -1558,27 +1579,22 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
 
         function renderRecommendedMenu() {
             const fortune = currentFortuneData?.daily_fortune || {};
-            const menuEl = document.getElementById('resMenu');
-            const labelEl = document.getElementById('resMenuLabel');
-            if (!menuEl || !labelEl) return;
-            currentMenuMode = 'general';
-            labelEl.innerText = '🍲 오늘의 추천 메뉴';
-            const orderedMeals = ['lunch','dinner'].map(period =>
-                fortune.recommended_meals?.find(meal => meal.period === period && meal.menu));
-            const hasMealOrder = orderedMeals.every(Boolean);
-            const menus = hasMealOrder ? orderedMeals.map(meal => meal.menu)
-                : fortune.recommended_menus || [fortune.recommended_menu].filter(Boolean);
-            menuEl.innerText = menus.length
-                ? menus.slice(0, 2).join(' / ')
-                : '추천 메뉴를 준비하고 있어요';
-            renderMenuPhotos(menus, hasMealOrder ? ['점심','저녁'] : []);
-            const commentEl = document.getElementById('menuRecommendationComment');
-            commentEl.textContent = hasMealOrder ? fortune.recommended_menu_reason || '' : '';
-            commentEl.hidden = !commentEl.textContent;
-            menuEl.hidden = menus.length > 0;
+            if (window.DalhaMenu && fortune.menu_recommendations) {
+                DalhaMenu.mount(fortune.menu_recommendations);
+                return;
+            }
+            window.DalhaMenu?.reset();
+            const menus = fortune.recommended_menus || [fortune.recommended_menu].filter(Boolean);
+            document.getElementById('resMenuLabel').textContent = '🍲 오늘의 추천 메뉴';
+            document.getElementById('resMenu').textContent = menus.length ? menus.slice(0,2).join(' / ') : '추천 메뉴를 준비하고 있어요';
+            document.getElementById('resMenu').hidden = menus.length > 0;
+            renderMenuPhotos(menus);
+            document.getElementById('menuRecommendationComment').hidden = true;
+            document.getElementById('menuExplorerControls').hidden = true;
+            document.getElementById('menuError').textContent = fortune.menu_error || '';
             document.getElementById('menuModeToggle').hidden = true;
             document.getElementById('menuPlanLike').hidden = true;
-            document.getElementById('menuLikeStatus').innerText = '';
+            document.getElementById('menuLikeStatus').textContent = '';
             mealExposureObserver?.disconnect();
         }
 
@@ -1798,6 +1814,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
         }
 
         function logoutKakaoUser() {
+            window.DalhaMenu?.reset();
             localStorage.removeItem('dalha_kakao_id');
             location.reload();
         }
