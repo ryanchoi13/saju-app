@@ -6,10 +6,35 @@ intact: when no positive direction is confirmed, use the existing daily-symbol
 fallback and label that basis explicitly.
 """
 import hashlib
+from collections import Counter
 from .daily_menu import MENU_POOL, DIET_MENU_POOL, season_for
+from .diet_catalog_revision import diet_family
 
-VERSION = 'ranked-menu-v1'
+VERSION = 'ranked-menu-v2'
 LIMITS = {'general': 10, 'diet': 5}
+
+
+def _diet_order(candidates, key, limit):
+    """Spread culinary families inside equal element scores, deterministically.
+
+    Element score remains the absolute first key. Track families across the
+    whole list; when counts tie avoid repeating the preceding family, then
+    balance cuisine and use the existing everyday/daily tie breakers.
+    """
+    remaining = list(candidates)
+    chosen, families, cuisines = [], Counter(), Counter()
+    while remaining and len(chosen) < limit:
+        previous = diet_family(chosen[-1].name) if chosen else None
+        def diverse_key(item):
+            family = diet_family(item.name)
+            return (key(item)[0], families[family], int(family == previous),
+                    cuisines[item.cuisine], *key(item)[1:])
+        item = min(remaining, key=diverse_key)
+        remaining.remove(item)
+        chosen.append(item)
+        families[diet_family(item.name)] += 1
+        cuisines[item.cuisine] += 1
+    return chosen
 
 
 def build_rankings(birth, day, weights, daily_element, confidence):
@@ -25,7 +50,8 @@ def build_rankings(birth, day, weights, daily_element, confidence):
             else '오늘의 일진을 참고해 추천 순서로 골랐습니다.' if basis == 'daily_symbol'
             else '사주에서 주의할 방향을 참고해 골랐습니다.')
     identity = birth.model_dump_json(exclude={'name'})
-    seed = f'{VERSION}|{identity}|{day}'
+    # Keep the approved general-menu tie breaker unchanged.
+    seed = f'ranked-menu-v1|{identity}|{day}'
     season = season_for(day.month)
     rankings = {}
     for mode, pool in (('general', MENU_POOL), ('diet', DIET_MENU_POOL)):
@@ -36,7 +62,8 @@ def build_rankings(birth, day, weights, daily_element, confidence):
                         int(season in item.seasons))
             tie = hashlib.sha256(f'{seed}|{mode}|{item.name}'.encode()).hexdigest()
             return (-scores[item.element], *(-value for value in everyday), tie, item.name)
-        ordered = sorted(candidates, key=key)[:LIMITS[mode] * 2]
+        ordered = (_diet_order(candidates, key, LIMITS[mode] * 2) if mode == 'diet'
+                   else sorted(candidates, key=key)[:LIMITS[mode] * 2])
         ordered = ordered[:len(ordered)//2*2]
         rankings[mode] = [dict(menu=item.name, rank=i+1, element=item.element,
                                element_score=scores[item.element]) for i, item in enumerate(ordered)]

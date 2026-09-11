@@ -81,6 +81,8 @@ for(const name of Object.keys(foodCatalog.menus)) {
     assert.equal(clip.getAttribute('overflow'),'hidden');
     assert.equal(clip.getAttribute('viewBox'),`0 0 ${crop.width} ${crop.height}`);
     assert.equal(clip.querySelector('image').getAttribute('x'),String(-crop.x));
+    assert.equal(clip.querySelector('image').getAttribute('width'),String(crop.atlasWidth));
+    assert.equal(clip.querySelector('image').getAttribute('height'),String(crop.atlasHeight));
     foodFiles.add(crop.url);
 }
 assert.equal(foodFiles.size,foodCatalog.files.length);

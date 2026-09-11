@@ -22,6 +22,11 @@ uses that score first, then everyday popularity, familiarity, accessibility,
 season and a stable profile/day tie break. There is no random refresh and no
 liking, click, calorie, or diet-intensity inference.
 
+Diet catalog v2 reviews elements per dish and expands the pool to 90. Only for
+diet menus, equal element scores first spread culinary families and cuisines,
+then use the existing everyday keys. Lower element scores still cannot pass a
+higher one. General ordering is unchanged. See [diet expansion](diet-menu-expansion.md).
+
 The core can legitimately leave its favorable direction unconfirmed. In that
 case, reuse the existing daily-stem symbolic fallback with a small priority and
 explicitly display “오늘의 일진을 참고해…”. Never overwrite a caution/conflicting

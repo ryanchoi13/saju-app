@@ -55,9 +55,13 @@ async function boot(url) {
     doc.dispatchEvent(new w.KeyboardEvent('keydown',{key:'Escape',bubbles:true}));
     assert.equal(doc.getElementById('menuHistoryModal').classList.contains('hidden'),true);
     await w.DalhaMenu.changeMode('diet');
+    assert.equal(doc.querySelectorAll('#menuPhotoCards .food-photo').length,2);
+    assert.equal(doc.querySelectorAll('#menuPhotoCards .menu-photo-placeholder').length,0);
     for(let i=0;i<4;i++) await w.DalhaMenu.next();
     w.DalhaMenu.next();
     assert.equal(doc.querySelectorAll('#menuHistoryCards .menu-photo-card').length,10);
+    assert.equal(doc.querySelectorAll('#menuHistoryCards .food-photo').length,10);
+    assert.equal(doc.querySelectorAll('#menuHistoryCards .menu-photo-placeholder').length,0);
     w.DalhaMenu.close();
     assert.equal(app.apiCalls,0);
     doc.getElementById('tab-saju').click(); doc.getElementById('saju-tab-year').click();
