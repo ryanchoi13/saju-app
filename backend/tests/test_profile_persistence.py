@@ -1,5 +1,10 @@
 from pathlib import Path
 from unittest import TestCase
+from unittest.mock import patch
+from tempfile import TemporaryDirectory
+import os
+import account_store
+import menu_store
 
 from main import (
     KakaoAuthRequest,
@@ -12,6 +17,14 @@ from main import (
 
 
 class ProfilePersistenceTests(TestCase):
+    def setUp(self):
+        self.tmp = TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        env = patch.dict(os.environ, {'DATABASE_URL':'','RENDER':'','RENDER_SERVICE_ID':'',
+            'DALHA_WARDROBE_DB':self.tmp.name+'/profiles.sqlite','DALHA_MENU_DB':self.tmp.name+'/menus.sqlite'})
+        env.start(); self.addCleanup(env.stop)
+        ready=patch.object(menu_store,'_READY',False);ready.start();self.addCleanup(ready.stop)
+
     def tearDown(self):
         for suffix in ("restore", "correct", "empty", "register"):
             user_id = f"user_test-{suffix}"
@@ -51,6 +64,38 @@ class ProfilePersistenceTests(TestCase):
         self.assertIsNone(result["kakao_prefill"]["birth_month"])
         self.assertIsNone(result["kakao_prefill"]["birth_day"])
         self.assertEqual(result["kakao_prefill"]["sijin_index"], -1)
+
+    def test_durable_profile_wins_stale_browser_after_restart(self):
+        self.test_registration_returns_profile_for_form_prefill()
+        users_db.pop('user_test-register')
+        restored=auth_kakao(KakaoAuthRequest(kakao_id='test-register',name='stale',gender='male',
+            birthyear='1978',birthday='0813',sijin_index=5))
+        self.assertEqual(restored['profile']['birth_month'],3)
+        self.assertEqual(restored['profile']['name'],'최정오')
+
+    def test_partial_provider_fields_require_user_confirmation(self):
+        from main import _profile_from_kakao_request
+        profile=_profile_from_kakao_request(KakaoAuthRequest(kakao_id='partial',name='실명',
+            profile_source='kakao',birthday='0313'))
+        self.assertIsNone(profile['birth_year'])
+        self.assertEqual(profile['birth_month'],3)
+        self.assertFalse(profile['profile_complete'])
+
+    def test_kakao_server_uses_verified_consent_not_client_fields(self):
+        from main import _verified_kakao_request
+        from unittest.mock import MagicMock
+        import json
+        response=MagicMock()
+        response.__enter__.return_value.read.return_value=json.dumps({'id':321,'kakao_account':{
+            'name':'실명','profile':{'nickname':'별명'},'birthyear':'1992','birthday':'0921',
+            'gender':'female','birthday_needs_agreement':True}}).encode()
+        with patch('urllib.request.urlopen',return_value=response):
+            verified=_verified_kakao_request(KakaoAuthRequest(kakao_id='321',profile_source='kakao',
+                access_token='test-token',name='가짜',birthyear='1978',birthday='0813',sijin_index=5))
+        self.assertEqual(verified.name,'실명')
+        self.assertEqual(verified.birthyear,'1992')
+        self.assertIsNone(verified.birthday)
+        self.assertIsNone(verified.sijin_index)
 
     def test_registration_returns_profile_for_form_prefill(self):
         auth_kakao(KakaoAuthRequest(kakao_id="test-register"))

@@ -21,6 +21,7 @@ from app.engine.services import (
 import wardrobe_store
 import menu_store
 import tarot_service
+import account_store
 from style_context import build_style_contexts
 from wada_context_placement import WADA_CONTEXT_PLACEMENT
 from wada_color_rules import evaluate_duo
@@ -54,13 +55,16 @@ reports_db: Dict[str, List[Dict[str, Any]]] = {}
 
 # --- Request/Response Models ---
 class KakaoAuthRequest(BaseModel):
-    kakao_id: str
+    kakao_id: str = Field(min_length=1, max_length=50, pattern=r"^[A-Za-z0-9_-]+$")
     name: Optional[str] = None
     gender: Optional[str] = None
     birthyear: Optional[str] = None
     birthday: Optional[str] = None
     birthday_type: Optional[str] = None
     sijin_index: Optional[int] = None
+    profile_source: str = Field(default="saved", pattern=r"^(saved|kakao)$")
+    is_leap_month: bool = False
+    access_token: Optional[str] = Field(default=None, max_length=4096)
 
 class RegisterSajuRequest(BaseModel):
     user_id: str
@@ -564,33 +568,70 @@ def generate_detailed_report(
 
 # --- API Endpoints ---
 def _profile_from_kakao_request(req: KakaoAuthRequest) -> Optional[Dict[str, Any]]:
-    """Return a complete client-restored profile, never a fabricated birthday."""
-
-    if not req.birthyear or not req.birthday or len(req.birthday) != 4:
-        return None
+    """Preserve partial consented fields; provider data still needs confirmation."""
+    year = month = day = None
     try:
-        year = int(req.birthyear)
-        month = int(req.birthday[:2])
-        day = int(req.birthday[2:])
-        datetime.date(year, month, day)
+        if req.birthyear and len(req.birthyear) == 4 and req.birthyear.isdigit():
+            candidate = int(req.birthyear)
+            if 1900 <= candidate <= date.today().year:
+                year = candidate
+        if req.birthday and len(req.birthday) == 4 and req.birthday.isdigit():
+            month, day = int(req.birthday[:2]), int(req.birthday[2:])
+            if (req.birthday_type or 'SOLAR').upper() in {'LUNAR','LEAP'}:
+                if not (1 <= month <= 12 and 1 <= day <= 30):
+                    raise ValueError()
+            else:
+                date(year or 2000, month, day)
     except (TypeError, ValueError):
-        return None
+        month = day = None
     calendar_type = {
         "SOLAR": "solar", "LUNAR": "lunar", "LEAP": "leap",
     }.get((req.birthday_type or "SOLAR").upper(), "solar")
+    if calendar_type == 'lunar' and req.is_leap_month:
+        calendar_type = 'leap'
     sijin_index = req.sijin_index if req.sijin_index is not None else -1
     if not -1 <= sijin_index <= 11:
         sijin_index = -1
     return {
-        "name": (req.name or "").strip() or "달하 회원",
-        "gender": req.gender if req.gender in {"male", "female"} else "male",
+        "name": (req.name or "").strip(),
+        "gender": req.gender if req.gender in {"male", "female"} else None,
         "birth_year": year,
         "birth_month": month,
         "birth_day": day,
         "calendar_type": calendar_type,
         "sijin_index": sijin_index,
-        "profile_complete": True,
+        "profile_complete": bool(req.profile_source == 'saved' and year and month and day
+                                 and req.name and req.gender in {'male','female'}
+                                 and req.sijin_index is not None),
     }
+
+
+def _verified_kakao_request(req):
+    # New SDK logins are checked with Kakao. Keep the existing ID-only resume
+    # contract for old clients; a broader session-auth migration is separate.
+    if req.profile_source != 'kakao':
+        return req
+    if not req.access_token:
+        raise HTTPException(status_code=401, detail='카카오 로그인을 다시 진행해 주세요.')
+    import json
+    from urllib.request import Request, urlopen
+    try:
+        request = Request('https://kapi.kakao.com/v2/user/me',
+                          headers={'Authorization':'Bearer '+req.access_token})
+        with urlopen(request, timeout=8) as response:
+            data = json.load(response)
+        if str(data.get('id')) != req.kakao_id:
+            raise ValueError('identity mismatch')
+        account = data.get('kakao_account') or {}
+    except Exception:
+        raise HTTPException(status_code=401, detail='카카오 정보를 확인하지 못했습니다. 다시 로그인해 주세요.') from None
+    def shared(key):
+        return None if account.get(key+'_needs_agreement') else account.get(key)
+    return req.model_copy(update=dict(name=shared('name'), gender=shared('gender'),
+        birthyear=shared('birthyear'), birthday=shared('birthday'),
+        birthday_type=account.get('birthday_type'), is_leap_month=bool(account.get('is_leap_month')),
+        sijin_index=None, access_token=None))
+
 
 
 def _public_profile(user: Dict[str, Any]) -> Dict[str, Any]:
@@ -602,6 +643,7 @@ def _public_profile(user: Dict[str, Any]) -> Dict[str, Any]:
         "birth_day": user.get("birth_day"),
         "calendar_type": user.get("calendar_type", "solar"),
         "sijin_index": user.get("sijin_index", -1),
+        "profile_complete": bool(user.get("profile_complete")),
     }
 
 
@@ -659,15 +701,20 @@ def menu_feedback(req: MealFeedbackRequest):
 
 @app.post("/api/auth/kakao")
 def auth_kakao(req: KakaoAuthRequest):
+    req = _verified_kakao_request(req)
     user_id = f"user_{req.kakao_id}"
     incoming_profile = _profile_from_kakao_request(req)
+    try:
+        saved = account_store.load(user_id)
+    except account_store.StorageUnavailable:
+        raise HTTPException(status_code=503, detail='저장된 회원 정보를 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.')
 
     if user_id not in users_db:
         users_db[user_id] = {
             "user_id": user_id,
             "kakao_id": req.kakao_id,
             "name": (req.name or "").strip(),
-            "gender": req.gender if req.gender in {"male", "female"} else "male",
+            "gender": req.gender if req.gender in {"male", "female"} else None,
             "birth_year": None,
             "birth_month": None,
             "birth_day": None,
@@ -680,12 +727,20 @@ def auth_kakao(req: KakaoAuthRequest):
 
     wardrobe = _wardrobe_response(user_id)
     user = users_db[user_id]
-    if incoming_profile:
-        user.update(incoming_profile)
+    if saved and saved['confirmed']:
+        user.update(saved['profile'], profile_complete=True)
+    elif incoming_profile and any(incoming_profile.get(k) for k in ('name','birth_year','birth_month')):
+        if saved:
+            user.update(saved['profile'])
+        user.update({k:v for k,v in incoming_profile.items() if v is not None and v != ''})
+        try:
+            account_store.save(user_id, _public_profile(user), confirmed=user['profile_complete'])
+        except account_store.StorageUnavailable:
+            raise HTTPException(status_code=503, detail='회원 정보를 저장하지 못했습니다. 다시 시도해 주세요.')
+    elif saved:
+        user.update(saved['profile'], profile_complete=saved['confirmed'])
 
-    has_profile = bool(user.get("profile_complete")) or all(
-        user.get(key) is not None for key in ("birth_year", "birth_month", "birth_day")
-    )
+    has_profile = bool(user.get("profile_complete"))
     if has_profile:
         saju_res = get_saju_pillars_and_analysis(
             user["name"], user["gender"], user["birth_year"],
@@ -712,6 +767,33 @@ def auth_kakao(req: KakaoAuthRequest):
 @app.post("/api/user/register-saju")
 def register_saju(req: RegisterSajuRequest):
     if req.user_id not in users_db:
+        raise HTTPException(status_code=401, detail='로그인 상태를 확인해 주세요.')
+    if not req.name.strip():
+        raise HTTPException(status_code=422, detail='이름을 입력해 주세요.')
+    if req.gender not in {'male','female'} or req.calendar_type not in {'solar','lunar','leap'} or not -1 <= req.sijin_index <= 11:
+        raise HTTPException(status_code=422, detail='성별·달력·생시를 확인해 주세요.')
+    try:
+        if not 1900 <= req.birth_year <= date.today().year:
+            raise ValueError()
+        if req.calendar_type == 'solar':
+            if date(req.birth_year, req.birth_month, req.birth_day) > date.today():
+                raise ValueError()
+        elif not (1 <= req.birth_month <= 12 and 1 <= req.birth_day <= 30):
+            raise ValueError()
+    except ValueError:
+        raise HTTPException(status_code=422, detail='생년월일을 확인해 주세요.')
+    # Validate the converted lunar/solar input before persisting the profile.
+    try:
+        saju_res = get_saju_pillars_and_analysis(
+            req.name, req.gender, req.birth_year, req.birth_month, req.birth_day,
+            req.calendar_type, req.sijin_index, menu_account_id=req.user_id)
+    except (ValueError, TypeError):
+        raise HTTPException(status_code=422, detail='생년월일과 달력 구분을 확인해 주세요.')
+    try:
+        account_store.save(req.user_id, req.model_dump(exclude={'user_id'}), confirmed=True)
+    except account_store.StorageUnavailable:
+        raise HTTPException(status_code=503, detail='사주 정보를 저장하지 못했습니다. 다시 시도해 주세요.')
+    if req.user_id not in users_db:
         users_db[req.user_id] = {"coin": 1000}
 
     users_db[req.user_id].update({
@@ -724,11 +806,6 @@ def register_saju(req: RegisterSajuRequest):
         "sijin_index": req.sijin_index,
         "profile_complete": True,
     })
-
-    saju_res = get_saju_pillars_and_analysis(
-        req.name, req.gender, req.birth_year, req.birth_month, req.birth_day,
-        req.calendar_type, req.sijin_index, menu_account_id=req.user_id
-    )
 
     return {
         "status": "success",
