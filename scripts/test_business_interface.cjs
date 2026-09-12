@@ -35,6 +35,9 @@ const tick = () => new Promise(resolve => setTimeout(resolve,30));
     await test('home and every pre-existing DOM target remain available', () => {
         const oldDoc = new JSDOM(oldHtml).window.document;
         const newHome = new JSDOM(homeBeforeBoot).window.document;
+        // Login/profile fields intentionally have no fictional account defaults.
+        oldDoc.getElementById('userProfileBarName').textContent = '';
+        oldDoc.getElementById('userProfileBarBirth').textContent = '';
         newHome.getElementById('styleTpoControls').remove();
         for (const id of ['drawerTarot','drawerTalisman']) newHome.getElementById(id).replaceWith(oldDoc.getElementById(id).cloneNode(true));
         // Only the newly requested outfit/menu surfaces and loading copy differ.
