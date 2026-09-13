@@ -127,5 +127,43 @@ w.openFashionV2Modal();
 assert.equal(w.document.querySelectorAll('#fashionV2Modal .fashion-v2-board-photo').length,2);
 w.closeFashionV2Modal();
 
-console.log('PASS fashion v2 stage 3 summary, all male TPO buttons, bottom sheet, swipe tabs, single palette and legacy fallback');
+const femaleCasualDaily={id:'female-warm-transition-casual-daily',gender:'female',items:[
+  item('top','반팔 티셔츠','라이트 카멜','#ebd3a2'),item('bottom','경량 스트레이트 팬츠','그레이','#a2b0ad'),
+  item('shoes','가죽 운동화','그레이','#a2b0ad'),{category:'carry_outer',label:'얇은 바람막이',color_name:'베이지',wear_mode:'carry'}]};
+const femaleCasualTrend={id:'female-warm-transition-casual-trend',gender:'female',items:[
+  item('top','반팔 파인 니트','라이트 카멜','#ebd3a2'),item('bottom','라이트 플리츠 스커트','그레이','#a2b0ad'),
+  item('shoes','메리제인 플랫','블랙','#252629'),{category:'carry_outer',label:'얇은 크롭 셔츠',color_name:'아이보리',wear_mode:'carry'}]};
+const femaleBusinessCasualDaily={id:'female-warm-transition-business_casual-daily',gender:'female',items:[
+  item('top','반팔 니트','라이트 카멜','#ebd3a2'),item('bottom','서머 슬랙스','그레이','#a2b0ad'),
+  item('shoes','로퍼','다크 브라운','#4B352B'),{category:'carry_outer',label:'얇은 칼라리스 재킷',color_name:'베이지',wear_mode:'carry'}]};
+const femaleBusinessCasualTrend={id:'female-warm-transition-business_casual-trend',gender:'female',items:[
+  item('top','반팔 블라우스','라이트 카멜','#ebd3a2'),item('bottom','라이트 미디 스커트','그레이','#a2b0ad'),
+  item('shoes','슬링백 플랫','블랙','#252629'),{category:'carry_outer',label:'얇은 셔츠 재킷',color_name:'더스티 블루',wear_mode:'carry'}]};
+const femaleFormalDaily={id:'female-summer-business_formal-daily',gender:'female',items:[
+  item('outer','수트 재킷','그레이','#a2b0ad'),item('top','블라우스','라이트 카멜','#ebd3a2'),
+  item('bottom','수트 바지','그레이','#a2b0ad'),item('shoes','펌프스','블랙','#252629')]};
+const femaleFormalTrend={id:'female-summer-business_formal-trend',gender:'female',items:[
+  item('outer','경량 재킷','머스터드','#C89B3C'),item('dress','반팔 정장 원피스','그레이','#a2b0ad'),item('shoes','플랫','블랙','#252629')]};
+
+const femaleContexts={
+  casual:{looks:[femaleCasualDaily,femaleCasualTrend]},
+  business_casual:{looks:[femaleBusinessCasualDaily,femaleBusinessCasualTrend]},
+  business_formal:{looks:[femaleFormalDaily,femaleFormalTrend]}
+};
+for(const context of Object.values(femaleContexts)) for(const board of context.looks) {
+  const src=vm.runInContext('fashionV2BoardImage('+JSON.stringify(board)+')',dom.getInternalVMContext());
+  assert.ok(src.startsWith('/assets/fashion-v2-boards/female-'),`female reviewed board mapping is required: ${board.id}`);
+  assert.ok(fs.existsSync('.'+src),`female reviewed board asset must exist: ${src}`);
+  assert.ok(fs.statSync('.'+src).size>20000,`female reviewed board asset must not be an empty placeholder: ${src}`);
+}
+vm.runInContext('currentFortuneData='+JSON.stringify({daily_fortune:{wada_palette:palette,style_palettes:{casual:palette,business_casual:businessCasualPalette,business_formal:businessFormalPalette},fashion_v2:femaleContexts}})+';',dom.getInternalVMContext());
+for(const tpo of ['casual','business_casual','business_formal']) {
+  w.setStyleTpo(tpo);
+  assert.equal(open.hidden,false,`female ${tpo} shows the outfit button when both reviewed boards exist`);
+  w.openFashionV2Modal();
+  assert.equal(w.document.querySelectorAll('#fashionV2Modal .fashion-v2-board-photo').length,2);
+  w.closeFashionV2Modal();
+}
+
+console.log('PASS fashion v2 stage 3 summary, all male and female TPO buttons, bottom sheet, swipe tabs, single palette and legacy fallback');
 dom.window.close();

@@ -78,5 +78,6 @@ def test_temperature_band_not_calendar_month_selects_clothing_weight():
 def test_weather_board_gate_is_exact_to_reviewed_gender_and_colors():
     a, b = {"hex": "#EBD3A2"}, {"hex": "#A2B0AD"}
     assert reviewed_weather_board_available("male", a, b) is True
-    assert reviewed_weather_board_available("female", a, b) is False
+    assert reviewed_weather_board_available("female", a, b) is True
     assert reviewed_weather_board_available("male", b, a) is False
+    assert reviewed_weather_board_available("female", b, a) is False

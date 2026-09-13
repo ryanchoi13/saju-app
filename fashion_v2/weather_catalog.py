@@ -18,6 +18,7 @@ ROLES = ("daily", "trend")
 # colour result have passed visual review. Other users retain existing boards.
 REVIEWED_WEATHER_BOARD_PAIRS = {
     ("male", "#ebd3a2", "#a2b0ad"),
+    ("female", "#ebd3a2", "#a2b0ad"),
 }
 
 
