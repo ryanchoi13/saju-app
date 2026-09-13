@@ -40,12 +40,17 @@ async function boot(url) {
     assert.equal(w.localStorage.getItem('wardrobe:real-owner'),null);
     assert.equal(app.originalStorage.getItem('wardrobe:real-owner'),'keep these items');
     screens.push(doc.getElementById('view-today').textContent.replace(/\s+/g,' ').trim());
-    assert.equal(doc.querySelectorAll('.look-card').length,2);
+    assert.equal(doc.querySelectorAll('.look-card').length,0);
+    assert.equal(doc.getElementById('openOutfitModalButton').hidden,false);
     assert.equal(doc.querySelectorAll('.menu-photo-card').length,2);
     for (const tpo of ['business_casual','business_formal','casual']) {
       const select=doc.getElementById('styleTpoSelect');select.value=tpo;
       select.dispatchEvent(new w.Event('change',{bubbles:true}));
-      assert.equal(doc.querySelectorAll('.look-card').length,2,`${design} ${tpo} must keep both looks`);
+      assert.equal(doc.querySelectorAll('.look-card').length,0,`${design} ${tpo} must defer large looks`);
+      w.openFashionV2Modal();
+      assert.equal(doc.querySelectorAll('#fashionV2Slides .fashion-v2-slide').length,2,`${design} ${tpo} must keep both modal looks`);
+      assert.equal(doc.querySelectorAll('#fashionV2Modal .palette-chip').length,0);
+      w.closeFashionV2Modal();
       assert.ok(!doc.getElementById('resStyle').textContent.includes('불러온'));
     }
     for(let i=0;i<9;i++) await w.DalhaMenu.next();

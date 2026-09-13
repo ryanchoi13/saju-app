@@ -239,7 +239,7 @@ def build_colored_catalog_contexts(gender, season, color_a, color_b):
     result = {}
     for tpo in ('casual', 'business_casual', 'business_formal'):
         result[tpo] = {
-            'status': 'engine_ready_ui_pending',
+            'status': 'ui_connected_stage3',
             'looks': [apply_daily_colors(t, color_a, color_b)
                       for t in templates_for(gender, season, tpo)],
         }
