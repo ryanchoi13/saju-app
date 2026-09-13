@@ -49,5 +49,16 @@ assert.equal(open.hidden,true,'legacy responses hide the modal entry point');
 
 vm.runInContext('currentFortuneData='+JSON.stringify({daily_fortune:{wada_palette:palette,style_palettes:{casual:palette},fashion_v2:{casual:{looks:[{...daily,id:'unreviewed-daily'},trend]}}}})+';updateTodayWardrobeMatchPick();',dom.getInternalVMContext());
 assert.equal(open.hidden,true,'unreviewed scopes never reuse a mismatched board image');
+
+const maleDaily={id:'male-autumn-casual-daily',items:[
+  item('outer','필드 점퍼','네이비','#26354A'),item('top','맨투맨','라이트 카멜','#ebd3a2','A'),
+  item('bottom','스트레이트 청바지','그레이','#a2b0ad','B'),item('shoes','스웨이드 운동화','다크 브라운','#4B352B')
+]};
+const maleTrend={id:'male-autumn-casual-trend',items:[
+  item('outer','워크 재킷','차콜','#44474D'),item('top','후드 티셔츠','라이트 카멜','#ebd3a2','A'),
+  item('bottom','블랙 청바지','그레이','#a2b0ad','B'),item('shoes','가죽 운동화','블랙','#252629')
+]};
+assert.equal(vm.runInContext('fashionV2BoardImage('+JSON.stringify(maleDaily)+')',dom.getInternalVMContext()),'/assets/fashion-v2-boards/male-autumn-casual-daily-v1.webp');
+assert.equal(vm.runInContext('fashionV2BoardImage('+JSON.stringify(maleTrend)+')',dom.getInternalVMContext()),'/assets/fashion-v2-boards/male-autumn-casual-trend-v1.webp');
 console.log('PASS fashion v2 stage 3 summary, bottom sheet, swipe tabs, single palette and legacy fallback');
 dom.window.close();
