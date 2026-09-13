@@ -1662,7 +1662,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
         }
         function fashionV2Sprite(look, item) {
             const gender = look?.gender === 'female' ? 'female' : 'male';
-            if (gender === 'female' && look?.form === 'skirt' && item.category === 'bottom') return 12;
+            if (gender === 'female' && (look?.form === 'skirt' || /스커트/.test(item.label || '')) && item.category === 'bottom') return 12;
             if (gender === 'male' && look?.tpo === 'business_formal') {
                 if (item.category === 'outer') return 0;
                 if (item.category === 'bottom') return 1;
@@ -1696,7 +1696,8 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             const items = Array.isArray(look?.items) ? look.items : [];
             const detailItems = items.filter(item => !['shoes','tie','leg_layer'].includes(item.category)).slice(0,3);
             const role = (look?.look_role || (lookIndex ? 'trend' : 'daily')).toUpperCase();
-            const form = ['pants','skirt','dress'].includes(look?.form) ? look.form : 'pants';
+            const inferredForm = items.some(item => item.category === 'dress') ? 'dress' : items.some(item => /스커트/.test(item.label || '')) ? 'skirt' : look?.form;
+            const form = ['pants','skirt','dress'].includes(inferredForm) ? inferredForm : 'pants';
             return `<div class="fashion-v2-look-board form-${form}" aria-label="${escapeStyleText(fashionV2Summary(look))}">
                 <span class="fashion-v2-board-brand">DALHA</span>
                 <p class="fashion-v2-board-title">${fashionV2BoardTitle(look)}</p>
