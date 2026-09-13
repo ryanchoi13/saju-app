@@ -1479,6 +1479,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
         let baseFashionStyle = "네이비 쿨 티셔츠 & 플랙 연청 데님";
         let fashionV2ActiveSlide = 0;
         let fashionV2LastFocus = null;
+        let fashionV2ScrollLock = null;
         const FASHION_WARDROBE_UI_ENABLED = false;
         let fashionV2MoodText = '';
         let fashionV2AccessoryRecommendation = {item:null,text:''};
@@ -1811,6 +1812,34 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             fashionV2ActiveSlide = index;
             ['fashionV2DailyTab','fashionV2TrendTab'].forEach((id,i) => document.getElementById(id)?.setAttribute('aria-selected',String(i === index)));
         }
+        function lockFashionV2PageScroll() {
+            if (fashionV2ScrollLock) return;
+            const body = document.body;
+            const root = document.documentElement;
+            fashionV2ScrollLock = {
+                scrollY: window.scrollY || window.pageYOffset || 0,
+                body: {
+                    position:body.style.position, top:body.style.top, left:body.style.left,
+                    right:body.style.right, width:body.style.width, overflow:body.style.overflow
+                },
+                rootOverflow:root.style.overflow
+            };
+            body.style.position = 'fixed';
+            body.style.top = `-${fashionV2ScrollLock.scrollY}px`;
+            body.style.left = '0';
+            body.style.right = '0';
+            body.style.width = '100%';
+            body.style.overflow = 'hidden';
+            root.style.overflow = 'hidden';
+        }
+        function unlockFashionV2PageScroll() {
+            if (!fashionV2ScrollLock) return;
+            const saved = fashionV2ScrollLock;
+            fashionV2ScrollLock = null;
+            Object.assign(document.body.style,saved.body);
+            document.documentElement.style.overflow = saved.rootOverflow;
+            window.scrollTo(0,saved.scrollY);
+        }
         function openFashionV2Modal() {
             const context = fashionV2Context();
             if (!Array.isArray(context?.looks) || context.looks.length !== 2) return;
@@ -1819,15 +1848,15 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             const modal = document.getElementById('fashionV2Modal');
             document.getElementById('fashionV2ModalMeta').textContent = `${FASHION_V2_TPO_LABELS[getStyleTpo()] || '오늘의 옷차림'} · 좌우로 넘겨 비교해 보세요`;
             modal.classList.remove('hidden');
-            document.body.style.overflow = 'hidden';
+            lockFashionV2PageScroll();
             document.getElementById('fashionV2CloseButton')?.focus();
         }
         function closeFashionV2Modal() {
             const modal = document.getElementById('fashionV2Modal');
-            if (!modal || modal.classList.contains('hidden')) return;
+            if (!modal) return;
             modal.classList.add('hidden');
-            document.body.style.overflow = '';
-            fashionV2LastFocus?.focus?.();
+            unlockFashionV2PageScroll();
+            fashionV2LastFocus?.focus?.({preventScroll:true});
         }
         function connectFashionV2Summary() {
             const context = fashionV2Context();
