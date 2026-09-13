@@ -821,7 +821,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                         <div class="drawer-header" onclick="toggleDrawer('drawerTarot')">
                             <div class="drawer-title-box">
                                 <div class="drawer-icon-circle">🔮</div>
-                                <div style="text-align: left;"><h4 class="drawer-title">오늘의 타로 카드</h4><p class="drawer-sub">첫 카드는 무료 · 한 장 더 뽑기는 10 복채</p></div>
+                                <div style="text-align: left;"><h4 class="drawer-title">오늘의 타로 카드</h4><p class="drawer-sub">첫 카드는 무료 · 추가 카드는 C 10</p></div>
                             </div>
                             <span class="drawer-arrow">▼</span>
                         </div>
@@ -833,12 +833,6 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                                 <button type="button" id="tarotChoice3" onclick="handleTarotDraw(3)" class="tarot-wrapper" aria-label="3번째 카드 선택" aria-pressed="false"><span id="flipper3" class="flipper"><span class="card-face card-back" id="tarotSvgSlot3"></span><span id="front3" class="card-face card-front"></span></span></button>
                             </div>
                             <p id="tarotDrawStatus" class="tarot-draw-status" role="status" aria-live="polite"></p>
-                            <section id="tarotCheckout" class="tarot-checkout" aria-labelledby="tarotCheckoutTitle" hidden>
-                                <h4 id="tarotCheckoutTitle"></h4><p id="tarotBalanceSummary"></p>
-                                <div class="tarot-checkout-actions"><button type="button" id="tarotConfirmDraw" onclick="confirmTarotDraw()"></button>
-                                <button type="button" id="tarotCancelDraw" onclick="cancelTarotDraw()">지금은 여기까지</button></div>
-                            </section>
-                            <button type="button" id="tarotDrawAgain" class="tarot-again" onclick="chooseAnotherTarotCard()" hidden>한 장 더 고르기 · 10 복채</button>
                         </div>
                     </div>
 
@@ -1124,7 +1118,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 <div class="card" style="text-align: left;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                         <span style="font-size: 14px; color: #64748B;">현재 보유 복채</span>
-                        <div style="display: flex; align-items: center; gap: 6px; font-size: 20px; font-weight: 800; color: #78350F;"><span id="coinMypage">—</span><span id="mypageCoinSvg"></span></div>
+                        <div style="display: flex; align-items: center; gap: 6px; font-size: 20px; font-weight: 800; color: #78350F;"><span id="mypageCoinSvg"></span><span id="coinMypage">—</span></div>
                     </div>
                     <button onclick="openChargeStore()" style="width: 100%; background: #2D6A4F; color: white; border: none; font-size: 15px; font-weight: 700; padding: 14px; border-radius: 16px; cursor: pointer;">복채 충전하기</button>
                 </div>
@@ -2985,10 +2979,11 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 if (currentUserId !== owner) return;
                 currentCoin = data.new_balance; updateCoinDisplay();
                 const returnToTarot = tarotReturnAfterCharge;
+                if (returnToTarot) tarotReturnAfterCharge = false;
                 pgPaymentBusy = false; closePgModal(); status.textContent = '';
-                if (returnToTarot) {
-                    tarotMessage('복채 충전이 완료됐습니다. 선택한 카드를 펼쳐 보세요.');
-                    renderTarotCheckout();
+                if (returnToTarot && tarotPendingDraw) {
+                    tarotMessage('충전이 완료됐습니다. 선택한 카드를 펼치고 있어요.');
+                    await submitTarotDraw();
                 } else alert(`충전이 완료되었습니다. (+${amount.toLocaleString()} 복채)`);
             } catch (_) { status.textContent = '충전 결과를 확인하지 못했습니다. 잔액을 확인한 뒤 다시 시도해 주세요.'; }
             finally { pgPaymentBusy = false; button.disabled = false; }
@@ -3565,32 +3560,12 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 }
                 document.getElementById(`flipper${slot}`).classList.toggle('flipped', !!saved);
             }
-            const again = document.getElementById('tarotDrawAgain');
-            again.hidden = !tarotDrawnToday || count >= 3;
-            again.disabled = tarotBusy || !!tarotPendingDraw?.submitted;
-            again.textContent = '카드 한 장 더 뽑기 · 10 복채';
-            renderTarotCheckout();
-        }
-        function renderTarotCheckout() {
-            const box = document.getElementById('tarotCheckout'), pending = tarotPendingDraw;
-            box.hidden = !pending;
-            if (!pending) return;
-            const cost = pending.isPaid ? 10 : 0, shortfall = Math.max(0,cost-currentCoin);
-            document.getElementById('tarotCheckoutTitle').textContent = pending.submitted ? '선택한 카드의 결과를 확인할게요' : `${pending.slot}번째 카드를 한 장 더 펼쳐 볼까요?`;
-            document.getElementById('tarotBalanceSummary').textContent = shortfall
-                ? `보유 ${currentCoin.toLocaleString()} 복채 · ${shortfall} 복채가 더 필요해요`
-                : `보유 ${currentCoin.toLocaleString()} 복채 → 뽑은 뒤 ${(currentCoin-cost).toLocaleString()} 복채`;
-            const confirm = document.getElementById('tarotConfirmDraw');
-            confirm.textContent = tarotBusy ? '카드를 펼치고 있어요…' : pending.submitted ? '같은 카드 결과 다시 확인' : shortfall ? '복채 충전하고 돌아오기' : cost ? '10 복채 사용하고 카드 펼치기' : '무료 카드 다시 확인';
-            confirm.disabled = tarotBusy;
-            const cancel = document.getElementById('tarotCancelDraw');
-            cancel.disabled = tarotBusy; cancel.hidden = !!pending.submitted;
         }
         function renderTarotReading(result) {
             const card = result.card, reading = selectedGender === 'female' ? card.reading_female : card.reading_male;
             const esc = escapeStyleText;
             const box = document.getElementById('tarotResultBox');
-            box.innerHTML = `<article class="tarot-reading"><p class="tarot-reading-meta">${result.cost ? '10 복채로 펼친 카드' : '오늘의 무료 카드'}</p>
+            box.innerHTML = `<article class="tarot-reading"><p class="tarot-reading-meta">${result.cost ? 'C 10으로 펼친 카드' : '오늘의 무료 카드'}</p>
                 <h4>${esc(card.name)}</h4><p class="tarot-keyword">${esc(card.keyword)}</p>
                 ${card.description ? `<section class="tarot-card-intro"><h5>이 카드는</h5><p>${esc(card.description)}</p></section>` : ''}
                 <dl class="tarot-reading-details"><div><dt>카드의 상징</dt><dd>${esc(card.symbolism)}</dd></div>
@@ -3607,46 +3582,33 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             document.getElementById('tarotReadingModal').classList.remove('hidden');
         }
         function closeTarotReading() { document.getElementById('tarotReadingModal').classList.add('hidden'); }
-        function chooseAnotherTarotCard() {
-            ensureTarotSession();
-            if (tarotBusy || tarotPendingDraw?.submitted) return;
-            tarotPendingDraw = null;
-            if (Object.keys(tarotCards).length >= 3) return;
-            tarotActiveSlot = null;
-            saveTarotSession(); renderTarotChoices();
-            tarotMessage('마음에 드는 뒷면 카드를 골라 주세요. 선택한 뒤 복채 사용을 확인합니다.');
-            const slot = [1,2,3].find(n=>!tarotCards[n]);
-            document.getElementById(`tarotChoice${slot}`).focus({preventScroll:true});
-            document.getElementById('tarotDrawHint').scrollIntoView({behavior:'smooth',block:'nearest'});
-        }
-        function cancelTarotDraw() {
-            if (tarotBusy || tarotPendingDraw?.submitted) return;
-            const slot = tarotPendingDraw?.slot;
-            tarotPendingDraw = null; tarotReturnAfterCharge = false;
-            saveTarotSession(); renderTarotChoices(); tarotMessage('');
-            if (slot) document.getElementById(`tarotChoice${slot}`).focus({preventScroll:true});
-        }
         async function handleTarotDraw(slot) {
             if (tarotBusy || ![1,2,3].includes(slot)) return;
             ensureTarotSession();
             if (!currentUserId) { tarotMessage('로그인한 뒤 오늘의 카드를 골라 주세요.'); return; }
-            if (tarotPendingDraw?.submitted) { renderTarotCheckout(); document.getElementById('tarotConfirmDraw').focus(); return; }
             if (tarotCards[slot]) {
                 tarotActiveSlot = slot; tarotPendingDraw = null;
                 renderTarotReading(tarotCards[slot]); saveTarotSession(); renderTarotChoices();
                 tarotMessage('이미 뽑은 카드입니다. 복채를 사용하지 않고 다시 읽을 수 있어요.'); return;
             }
-            tarotPendingDraw = {slot,requestId:crypto.randomUUID(),isPaid:tarotDrawnToday,submitted:false,day:tarotTodayKey()};
+            if (tarotPendingDraw && tarotPendingDraw.slot !== slot) {
+                tarotMessage('먼저 선택한 카드를 다시 눌러 결과를 확인해 주세요.');
+                document.getElementById(`tarotChoice${tarotPendingDraw.slot}`).focus({preventScroll:true});
+                return;
+            }
+            tarotPendingDraw = tarotPendingDraw || {slot,requestId:crypto.randomUUID(),isPaid:tarotDrawnToday,submitted:false,day:tarotTodayKey()};
             saveTarotSession(); renderTarotChoices(); tarotMessage('');
             if (!tarotDrawnToday) return submitTarotDraw();
-            document.getElementById('tarotConfirmDraw').focus({preventScroll:true});
-        }
-        async function confirmTarotDraw() {
-            if (tarotBusy) return;
-            ensureTarotSession();
-            if (!tarotPendingDraw) return;
-            if (tarotPendingDraw.isPaid && currentCoin < 10 && !tarotPendingDraw.submitted) {
-                tarotReturnAfterCharge = true; openChargeStore(); return;
+            tarotPendingDraw.isPaid = true;
+            tarotPendingDraw.submitted = false;
+            if (!window.confirm('C 10을 사용해 한 번 더 보시겠어요?')) {
+                tarotPendingDraw = null; saveTarotSession(); renderTarotChoices();
+                tarotMessage('추가 카드 보기를 취소했습니다.'); return;
+            }
+            if (currentCoin < 10) {
+                tarotReturnAfterCharge = true;
+                tarotMessage('복채가 부족합니다. 충전 후 선택한 카드를 바로 펼쳐 드릴게요.');
+                openChargeStore(); return;
             }
             return submitTarotDraw();
         }
@@ -3662,9 +3624,16 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 if (pending.day !== tarotTodayKey()) { ensureTarotSession(); tarotMessage('새로운 하루가 시작됐어요. 오늘의 카드를 골라 주세요.'); return; }
                 if (!response.ok) {
                     const detail = result.detail || {};
-                    if (response.status < 500) pending.submitted = false;
+                    pending.submitted = false;
                     if (Number.isFinite(detail.new_balance)) { currentCoin = detail.new_balance; updateCoinDisplay(); }
-                    if (detail.code === 'payment_required') { tarotDrawnToday = true; pending.isPaid = true; }
+                    if (detail.code === 'payment_required') {
+                        tarotDrawnToday = true; tarotPendingDraw = null;
+                        tarotMessage('오늘의 무료 카드는 이미 확인했습니다. 남은 카드를 누르면 C 10으로 한 번 더 볼 수 있어요.');
+                        return;
+                    }
+                    if (detail.code === 'insufficient_coins') {
+                        tarotReturnAfterCharge = true; openChargeStore();
+                    }
                     tarotMessage(detail.message || '카드를 펼치지 못했습니다. 잠시 후 다시 확인해 주세요.');
                     return;
                 }
@@ -3672,9 +3641,10 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 currentCoin = result.new_balance; updateCoinDisplay();
                 tarotDrawnToday = true; tarotCards[pending.slot] = result; tarotActiveSlot = pending.slot; tarotPendingDraw = null;
                 renderTarotReading(result);
-                tarotMessage(result.cost ? `${result.cost} 복채를 사용해 새 카드를 펼쳤습니다.` : '오늘의 무료 카드를 펼쳤습니다.');
+                tarotMessage(result.cost ? `C ${result.cost}을 사용해 새 카드를 펼쳤습니다.` : '오늘의 무료 카드를 펼쳤습니다.');
             } catch (_) {
-                if (currentUserId === owner) tarotMessage('결과를 확인하지 못했습니다. 아래 버튼으로 같은 요청의 결과를 다시 확인해 주세요.');
+                pending.submitted = false;
+                if (currentUserId === owner) tarotMessage('결과를 확인하지 못했습니다. 선택한 카드를 다시 눌러 확인해 주세요.');
             } finally {
                 tarotBusy = false;
                 if (currentUserId === owner) { saveTarotSession(); renderTarotChoices(); }
@@ -3738,13 +3708,15 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
         function updateCoinDisplay() {
             document.getElementById('coinHeader').innerText = currentCoin;
             document.getElementById('coinMypage').innerText = currentCoin;
-            if (tarotPendingDraw) renderTarotCheckout();
         }
 
         function openChargeStore() { document.getElementById('chargeModal').classList.remove('hidden'); }
         function closeChargeStore(goingToPayment = false) {
             document.getElementById('chargeModal').classList.add('hidden');
-            if (tarotReturnAfterCharge && !goingToPayment) { tarotReturnAfterCharge = false; renderTarotCheckout(); document.getElementById('tarotConfirmDraw').focus(); }
+            if (tarotReturnAfterCharge && !goingToPayment) {
+                tarotReturnAfterCharge = false; tarotPendingDraw = null;
+                saveTarotSession(); renderTarotChoices(); tarotMessage('추가 카드 보기를 취소했습니다.');
+            }
         }
         function openPgModal(coinAmt, price, itemName) {
             pendingCoinAmount = coinAmt;
@@ -3757,7 +3729,8 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             if (pgPaymentBusy) return;
             document.getElementById('pgModal').classList.add('hidden');
             if (tarotReturnAfterCharge) {
-                tarotReturnAfterCharge = false; renderTarotCheckout(); document.getElementById('tarotConfirmDraw').focus();
+                tarotReturnAfterCharge = false; tarotPendingDraw = null;
+                saveTarotSession(); renderTarotChoices(); tarotMessage('추가 카드 보기를 취소했습니다.');
             }
         }
 
