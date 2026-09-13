@@ -38,6 +38,11 @@ assert.equal(w.document.querySelectorAll('#fashionV2Modal button[aria-label*="�
 assert.equal(w.document.getElementById('fashionV2CloseButton').textContent,'닫기');
 assert.match(w.document.getElementById('fashionV2ModalMeta').textContent,/좌우로 넘겨/);
 
+vm.runInContext('currentFortuneData.daily_fortune.weather_outfit={available:true,location:"경주",guidance:"낮에는 반팔이 알맞아요. 저녁에는 얇은 바람막이나 긴팔 셔츠를 챙기세요."};updateTodayWardrobeMatchPick();',dom.getInternalVMContext());
+assert.equal(w.document.getElementById('weatherOutfitGuidance').hidden,false);
+assert.equal(w.document.getElementById('weatherOutfitGuidance').textContent,'낮에는 반팔이 알맞아요. 저녁에는 얇은 바람막이나 긴팔 셔츠를 챙기세요.');
+assert.equal(w.document.getElementById('openOutfitModalButton').hidden,false,'weather copy must not hide reviewed boards');
+
 w.showFashionV2Slide(1,false);
 assert.equal(w.document.getElementById('fashionV2TrendTab').getAttribute('aria-selected'),'true');
 assert.equal(w.document.getElementById('fashionV2DailyTab').getAttribute('aria-selected'),'false');
@@ -60,5 +65,19 @@ const maleTrend={id:'male-autumn-casual-trend',items:[
 ]};
 assert.equal(vm.runInContext('fashionV2BoardImage('+JSON.stringify(maleDaily)+')',dom.getInternalVMContext()),'/assets/fashion-v2-boards/male-autumn-casual-daily-v1.webp');
 assert.equal(vm.runInContext('fashionV2BoardImage('+JSON.stringify(maleTrend)+')',dom.getInternalVMContext()),'/assets/fashion-v2-boards/male-autumn-casual-trend-v1.webp');
+
+const warmDaily={id:'male-warm-transition-casual-daily',gender:'male',season:'weather_transition',tpo:'casual',look_role:'daily',items:[
+  {label:'반팔 폴로',color_name:'라이트 카멜',wear_mode:'worn'},
+  {label:'경량 스트레이트 팬츠',color_name:'그레이',wear_mode:'worn'},
+  {label:'가죽 운동화',color_name:'다크 브라운',wear_mode:'worn'},
+  {label:'얇은 바람막이',color_name:'네이비',wear_mode:'carry'}]};
+const warmTrend={id:'male-warm-transition-casual-trend',gender:'male',season:'weather_transition',tpo:'casual',look_role:'trend',items:[
+  {label:'반팔 니트',color_name:'라이트 카멜',wear_mode:'worn'},
+  {label:'세미와이드 경량 팬츠',color_name:'그레이',wear_mode:'worn'},
+  {label:'레트로 가죽 운동화',color_name:'블랙',wear_mode:'worn'},
+  {label:'얇은 오버셔츠',color_name:'차콜',wear_mode:'carry'}]};
+assert.equal(vm.runInContext('fashionV2BoardImage('+JSON.stringify(warmDaily)+')',dom.getInternalVMContext()),'/assets/fashion-v2-boards/male-warm-transition-casual-daily-v1.webp');
+assert.equal(vm.runInContext('fashionV2BoardImage('+JSON.stringify(warmTrend)+')',dom.getInternalVMContext()),'/assets/fashion-v2-boards/male-warm-transition-casual-trend-v1.webp');
+assert.match(vm.runInContext('fashionV2Summary('+JSON.stringify(warmDaily)+')',dom.getInternalVMContext()),/얇은 바람막이 \(챙길 옷\)/);
 console.log('PASS fashion v2 stage 3 summary, bottom sheet, swipe tabs, single palette and legacy fallback');
 dom.window.close();

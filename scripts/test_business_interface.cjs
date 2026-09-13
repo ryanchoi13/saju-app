@@ -41,7 +41,7 @@ const tick = () => new Promise(resolve => setTimeout(resolve,30));
         newHome.getElementById('styleTpoControls').remove();
         for (const id of ['drawerTarot','drawerTalisman']) newHome.getElementById(id).replaceWith(oldDoc.getElementById(id).cloneNode(true));
         // Only the newly requested outfit/menu surfaces and loading copy differ.
-        for (const id of ['outfitCards','openOutfitModalButton','menuPhotoCards','wardrobeStorageNotice','menuRecommendationComment','menuExplorerControls','menuError']) newHome.getElementById(id).remove();
+        for (const id of ['outfitCards','openOutfitModalButton','weatherOutfitGuidance','menuPhotoCards','wardrobeStorageNotice','menuRecommendationComment','menuExplorerControls','menuError']) newHome.getElementById(id).remove();
         oldDoc.getElementById('todayStyleMoodBadge').remove();
         newHome.getElementById('wardrobeDailyMatchPick').replaceWith(oldDoc.getElementById('wardrobeDailyMatchPick').cloneNode(true));
         newHome.getElementById('bioOverallText').textContent = oldDoc.getElementById('bioOverallText').textContent;

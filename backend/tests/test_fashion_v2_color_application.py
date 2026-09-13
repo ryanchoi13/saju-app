@@ -2,6 +2,7 @@ from unittest import TestCase
 
 from fashion_v2.color_application import apply_daily_colors, build_colored_catalog_contexts
 from fashion_v2.template_catalog import TEMPLATES, templates_for
+from fashion_v2.weather_outfit import classify_weather
 from wada_color_ko import get_wada_color_ko
 from wada_color_rules import WADA_DUOS
 
@@ -81,6 +82,48 @@ class FashionV2ColorApplicationTests(TestCase):
         result = get_saju_pillars_and_analysis('검증', 'male', 1978, 3, 13, 'solar', 5)
         daily = result['daily_fortune']
         self.assertIn('style_palettes', daily)
+        self.assertEqual(daily['weather_outfit']['available'], False)
         self.assertEqual(set(daily['fashion_v2']), {'casual', 'business_casual', 'business_formal'})
         self.assertTrue(all(context['status'] == 'ui_connected_stage3'
                             for context in daily['fashion_v2'].values()))
+
+    def test_colored_contexts_can_use_weather_selected_complete_looks(self):
+        from datetime import datetime
+
+        profile = classify_weather([
+            {'time': datetime(2026, 9, 13, hour), 'apparent_temperature': temp}
+            for hour, temp in ((8, 20), (13, 29), (20, 20))
+        ])
+        duo = next(iter(WADA_DUOS.values()))
+        contexts = build_colored_catalog_contexts(
+            'male', 'autumn',
+            color(duo['a']['hex'], duo['a']['name']),
+            color(duo['b']['hex'], duo['b']['name']),
+            profile,
+        )
+        casual = contexts['casual']['looks']
+        self.assertTrue(all(x['season'] == 'weather_transition' for x in casual))
+        self.assertTrue(all(any(i['wear_mode'] == 'carry' for i in x['items']) for x in casual))
+        self.assertTrue(all(x['weather_fit']['guidance'].startswith('낮에는 반팔이 알맞아요.')
+                            for x in casual))
+
+    def test_profile_response_can_expose_fixed_gyeongju_guidance_without_switching_boards(self):
+        from main import get_saju_pillars_and_analysis
+
+        weather = {
+            'location': '경주', 'location_mode': 'fixed_gyeongju',
+            'guidance': '낮에는 반팔이 알맞아요. 저녁에는 얇은 바람막이나 긴팔 셔츠를 챙기세요.',
+        }
+        result = get_saju_pillars_and_analysis(
+            '검증', 'male', 1978, 3, 13, 'solar', 5, weather_profile=weather,
+        )
+        baseline = get_saju_pillars_and_analysis('검증', 'male', 1978, 3, 13, 'solar', 5)
+        daily = result['daily_fortune']
+        self.assertTrue(daily['weather_outfit']['available'])
+        self.assertEqual(daily['weather_outfit']['location'], '경주')
+        self.assertEqual(daily['weather_outfit']['guidance'], weather['guidance'])
+        self.assertEqual(
+            [[look['id'] for look in context['looks']] for context in daily['fashion_v2'].values()],
+            [[look['id'] for look in context['looks']]
+             for context in baseline['daily_fortune']['fashion_v2'].values()],
+        )

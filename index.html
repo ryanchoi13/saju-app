@@ -693,6 +693,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                         <p id="paletteMoodStoryBox" style="font-size: 12.5px; color: #475569; line-height: 1.6; margin: 0; background: #F8FAFC; border-radius: 10px; padding: 10px 12px; border-left: 3px solid #2D6A4F;">
                             "깊은 미드나잇 인디고와 안개빛 스카이블루가 만나 사주의 금전운과 전문성을 견고히 세웁니다."
                         </p>
+                        <p id="weatherOutfitGuidance" hidden style="font-size: 12.5px; color: #334155; line-height: 1.65; margin: 8px 0 0; background: #F8FAFC; border-radius: 10px; padding: 10px 12px;"></p>
                     </div>
 
                     <!-- 오늘 추천 룩 매칭 -->
@@ -1662,7 +1663,9 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             'female-autumn-casual-daily|베이지|아이보리|데님 블루|그레이':'/assets/fashion-v2-boards/female-autumn-casual-daily-v1.webp',
             'female-autumn-casual-trend|더스티 핑크|아이보리|네이비|블랙':'/assets/fashion-v2-boards/female-autumn-casual-trend-v1.webp',
             'male-autumn-casual-daily|네이비|라이트 카멜|그레이|다크 브라운':'/assets/fashion-v2-boards/male-autumn-casual-daily-v1.webp',
-            'male-autumn-casual-trend|차콜|라이트 카멜|그레이|블랙':'/assets/fashion-v2-boards/male-autumn-casual-trend-v1.webp'
+            'male-autumn-casual-trend|차콜|라이트 카멜|그레이|블랙':'/assets/fashion-v2-boards/male-autumn-casual-trend-v1.webp',
+            'male-warm-transition-casual-daily|라이트 카멜|그레이|다크 브라운|네이비':'/assets/fashion-v2-boards/male-warm-transition-casual-daily-v1.webp',
+            'male-warm-transition-casual-trend|라이트 카멜|그레이|블랙|차콜':'/assets/fashion-v2-boards/male-warm-transition-casual-trend-v1.webp'
         };
         function fashionV2Context() {
             return currentFortuneData?.daily_fortune?.fashion_v2?.[getStyleTpo()] || null;
@@ -1688,7 +1691,10 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
         }
         function fashionV2Summary(look) {
             const items = Array.isArray(look?.items) ? look.items : [];
-            return items.map(item => `${item.color_name || ''} ${item.label || ''}`.trim()).join(' · ');
+            return items.map(item => {
+                const label = `${item.color_name || ''} ${item.label || ''}`.trim();
+                return item.wear_mode === 'carry' ? `${label} (챙길 옷)` : label;
+            }).join(' · ');
         }
         function renderFashionV2Garment(look, item, lookIndex, itemIndex, placement) {
             const cell = fashionV2Sprite(look,item);
@@ -1783,6 +1789,15 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             const styleEl = document.getElementById('resStyle');
             if (styleEl) styleEl.textContent = fashionV2Summary(looks[0]);
             return true;
+        }
+        function renderWeatherOutfitGuidance() {
+            const box = document.getElementById('weatherOutfitGuidance');
+            if (!box) return;
+            const weather = currentFortuneData?.daily_fortune?.weather_outfit;
+            const guidance = weather?.available && typeof weather.guidance === 'string'
+                ? weather.guidance.trim() : '';
+            box.textContent = guidance;
+            box.hidden = !guidance;
         }
         function renderOutfitCards(palette) {
             const box = document.getElementById('outfitCards');
@@ -2452,6 +2467,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             if (!styleEl || !pickEl || !paletteBox) return;
 
             const fortune = currentFortuneData?.daily_fortune || {};
+            renderWeatherOutfitGuidance();
             const selectedTpo = getStyleTpo();
             const tpoSelect = document.getElementById('styleTpoSelect');
             if (tpoSelect) tpoSelect.value = selectedTpo;
