@@ -33,6 +33,33 @@ class StyleContextTests(TestCase):
         contexts=result['daily_fortune']['style_palettes']
         self.assertEqual({contexts['casual'][k]['hex'] for k in ('top','bottom')}, {result['daily_fortune']['wada_palette'][k]['hex'] for k in ('top','bottom')})
         self.assertEqual(contexts['business_formal']['tpo'],'business_formal')
+        self.assertEqual(contexts['casual']['age_band'],'40s')
+
+    def test_age_is_a_soft_template_weight_and_changes_preferred_casual_shape(self):
+        expected = {
+            17: ('10s', '캐주얼 코치 재킷', '후드 티셔츠', '여유 있는 청바지'),
+            25: ('20s', '워크 재킷', '후드 티셔츠', '여유 있는 청바지'),
+            35: ('30s', '봄버 재킷', '맨투맨', '스트레이트 청바지'),
+            45: ('40s', '캐주얼 필드 점퍼', '맨투맨', '단정한 스트레이트 청바지'),
+        }
+        for age, (band, outer, top, bottom) in expected.items():
+            palette = build_style_contexts(6, 'male', {}, '木', age=age, season='autumn')['casual']
+            look = palette['looks'][0]
+            labels = [item['label'] for item in look['items']]
+            self.assertEqual(palette['age_band'], band)
+            self.assertEqual(look['age_weighting'], 'preferred_not_required')
+            self.assertIn(outer, labels)
+            self.assertIn(top, labels)
+            self.assertIn(bottom, labels)
+            self.assertEqual({entry['look_role'] for entry in palette['looks']}, {'daily', 'trend'})
+
+    def test_age_never_removes_tpo_or_color_candidates(self):
+        for age in (17, 25, 35, 45, 55, 65):
+            contexts = build_style_contexts(6, 'female', {}, '水', age=age, season='summer')
+            self.assertEqual(set(contexts), {'casual', 'business_casual', 'business_formal'})
+            for palette in contexts.values():
+                self.assertEqual(len(palette['looks']), 2)
+                self.assertEqual(palette['age_weighting'], 'preferred_not_required')
 
     def test_daily_element_selects_supporting_neutral(self):
         from style_context import BASES
@@ -58,7 +85,7 @@ class StyleContextTests(TestCase):
                             keys = allowed - ({'denim','olive'} if tpo == 'business_casual' else set())
                             self.assertIn(bottom['hex'], {PANTS_COLORS[k][1] for k in keys})
                             self.assertIn(color['hex'], [item['hex'] for item in look['items']])
-                            if tpo == 'business_casual': self.assertEqual(bottom['label'],'슬랙스')
+                            if tpo == 'business_casual': self.assertTrue(bottom['label'].endswith('슬랙스'))
                         self.assertEqual(len(set(bottom_hexes)),2)
 
     def test_name_suffix_and_blank_fallback(self):
