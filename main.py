@@ -28,6 +28,8 @@ from wada_color_rules import evaluate_duo
 from wada_color_ko import get_wada_color_ko
 from wada_wuxing_selector import select_wada_duo_for_targets
 from fashion_v2.color_application import build_colored_catalog_contexts
+from fashion_v2.weather_catalog import reviewed_weather_board_available
+from fashion_v2.weather_service import gyeongju_weather_cache, weather_api_payload
 from lunar_python import Solar
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -281,7 +283,7 @@ def calculate_biorhythm(birth_year: int, birth_month: int, birth_day: int, targe
 def with_wa_gwa(word: str):
     return josa(word, "과/와")
 
-def get_saju_pillars_and_analysis(name: str, gender: str, y: int, m: int, d: int, cal_type: str, sijin: int, menu_account_id: str | None = None):
+def get_saju_pillars_and_analysis(name: str, gender: str, y: int, m: int, d: int, cal_type: str, sijin: int, menu_account_id: str | None = None, weather_profile: dict | None = None):
     backend_calendar_type = "lunar" if cal_type in ["lunar", "leap"] else "solar"
     backend_is_leap = (cal_type == "leap")
     birth_clock = _sijin_midpoint(sijin)
@@ -401,6 +403,7 @@ def get_saju_pillars_and_analysis(name: str, gender: str, y: int, m: int, d: int
         },
         "daily_fortune": {
             **today_fortune,
+            "weather_outfit": weather_api_payload(weather_profile),
             "wada_palette": {
                 "theme": f"Wada Duo #{wada_duo_no}",
                 "mood_desc": f"{with_wa_gwa(wada_top_color['name_ko'])} {josa(wada_bottom_color['name_ko'], '으로/로')} 오늘의 의상 컬러를 조합해 보세요.",
@@ -431,19 +434,33 @@ def get_saju_pillars_and_analysis(name: str, gender: str, y: int, m: int, d: int
     result["daily_fortune"]["style_palettes"] = build_style_contexts(
         wada_duo_no, gender, result["daily_fortune"]["wada_palette"], lucky_element,
         user_name=name, age=style_age, season=outfit_season)
+    color_a = {
+        "name": wada_top_color["original_name"],
+        "name_ko": wada_top_color["name_ko"],
+        "hex": wada_top_hex,
+    }
+    color_b = {
+        "name": wada_bottom_color["original_name"],
+        "name_ko": wada_bottom_color["name_ko"],
+        "hex": wada_bottom_hex,
+    }
+    complete_weather = weather_profile and all(key in weather_profile for key in (
+        "thermal_band", "thermal_label", "daytime_apparent_high",
+        "evening_apparent_low", "carry_light_outer", "rainy", "guidance",
+        "base_layer", "catalog_season_hint", "avoid_suede",
+    ))
+    reviewed_weather = (
+        weather_profile
+        if complete_weather and reviewed_weather_board_available(gender, color_a, color_b)
+        else None
+    )
+    result["daily_fortune"]["weather_outfit"]["template_applied"] = bool(reviewed_weather)
     result["daily_fortune"]["fashion_v2"] = build_colored_catalog_contexts(
         gender,
         outfit_season,
-        {
-            "name": wada_top_color["original_name"],
-            "name_ko": wada_top_color["name_ko"],
-            "hex": wada_top_hex,
-        },
-        {
-            "name": wada_bottom_color["original_name"],
-            "name_ko": wada_bottom_color["name_ko"],
-            "hex": wada_bottom_hex,
-        },
+        color_a,
+        color_b,
+        weather_profile=reviewed_weather,
     )
     ranking = _build_menu_ranking(core, today_date)
     fortune = result["daily_fortune"]
@@ -767,6 +784,7 @@ def auth_kakao(req: KakaoAuthRequest):
             user["name"], user["gender"], user["birth_year"],
             user["birth_month"], user["birth_day"], user["calendar_type"],
             user["sijin_index"], menu_account_id=user_id,
+            weather_profile=gyeongju_weather_cache.get(),
         )
         return {
             "status": "existing_user",
@@ -808,7 +826,8 @@ def register_saju(req: RegisterSajuRequest):
     try:
         saju_res = get_saju_pillars_and_analysis(
             req.name, req.gender, req.birth_year, req.birth_month, req.birth_day,
-            req.calendar_type, req.sijin_index, menu_account_id=req.user_id)
+            req.calendar_type, req.sijin_index, menu_account_id=req.user_id,
+            weather_profile=gyeongju_weather_cache.get())
     except (ValueError, TypeError):
         raise HTTPException(status_code=422, detail='생년월일과 달력 구분을 확인해 주세요.')
     try:
@@ -844,6 +863,12 @@ def _wardrobe_response(user_id):
     except wardrobe_store.StorageUnavailable:
         # An unavailable database is not an empty wardrobe.
         return {"wardrobe_items": None, "wardrobe_error": "옷장을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요."}
+
+
+@app.get("/api/fashion/weather")
+def fashion_weather():
+    """Korea-only rollout: fixed Gyeongju forecast, never browser GPS."""
+    return weather_api_payload(gyeongju_weather_cache.get())
 
 
 @app.get("/api/health/storage")

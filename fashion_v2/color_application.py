@@ -233,14 +233,19 @@ def apply_daily_colors(template, color_a, color_b):
     return result
 
 
-def build_colored_catalog_contexts(gender, season, color_a, color_b):
+def build_colored_catalog_contexts(gender, season, color_a, color_b, weather_profile=None):
     from fashion_v2.template_catalog import templates_for
+    from fashion_v2.weather_catalog import weather_templates_for
 
     result = {}
     for tpo in ('casual', 'business_casual', 'business_formal'):
+        templates = (
+            weather_templates_for(gender, tpo, weather_profile)
+            if weather_profile else templates_for(gender, season, tpo)
+        )
         result[tpo] = {
             'status': 'ui_connected_stage3',
             'looks': [apply_daily_colors(t, color_a, color_b)
-                      for t in templates_for(gender, season, tpo)],
+                      for t in templates],
         }
     return result
