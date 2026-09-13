@@ -47,6 +47,62 @@ CASUAL_SHOE_PAIRS = {
     'olive': ('brown', 'beige'),
 }
 
+# Age changes template priority and silhouette wording, never eligibility.
+# A user may still wear any template outside the preferred decade.
+AGE_STYLE = {
+    '10s': {
+        'male': ('캐주얼 코치 재킷', '후드 티셔츠', '여유 있는 청바지', '코트 스니커즈'),
+        'female': ('캐주얼 코치 재킷', '맨투맨', '여유 있는 캐주얼 팬츠', '코트 스니커즈'),
+        'business_bottom': '단정한 스트레이트 슬랙스', 'formal_bottom': '기본 정장 바지'},
+    '20s': {
+        'male': ('워크 재킷', '후드 티셔츠', '여유 있는 청바지', '레트로 스니커즈'),
+        'female': ('크롭 캐주얼 재킷', '후드 티셔츠', '와이드 캐주얼 팬츠', '레트로 스니커즈'),
+        'business_bottom': '세미와이드 슬랙스', 'formal_bottom': '모던 스트레이트 정장 바지'},
+    '30s': {
+        'male': ('봄버 재킷', '맨투맨', '스트레이트 청바지', '미니멀 스니커즈'),
+        'female': ('봄버 재킷', '맨투맨', '스트레이트 캐주얼 팬츠', '미니멀 스니커즈'),
+        'business_bottom': '스트레이트 슬랙스', 'formal_bottom': '스트레이트 정장 바지'},
+    '40s': {
+        'male': ('캐주얼 필드 점퍼', '맨투맨', '진청 스트레이트 청바지', '스웨이드 스니커즈'),
+        'female': ('캐주얼 점퍼', '니트 맨투맨', '스트레이트 캐주얼 팬츠', '스웨이드 스니커즈'),
+        'business_bottom': '단정한 스트레이트 슬랙스', 'formal_bottom': '클래식 정장 바지'},
+    '50s': {
+        'male': ('캐주얼 블루종', '부드러운 맨투맨', '편안한 스트레이트 청바지', '쿠션 스니커즈'),
+        'female': ('캐주얼 블루종', '부드러운 니트', '편안한 스트레이트 팬츠', '쿠션 스니커즈'),
+        'business_bottom': '편안한 스트레이트 슬랙스', 'formal_bottom': '클래식 정장 바지'},
+    '60plus': {
+        'male': ('가벼운 캐주얼 점퍼', '부드러운 니트', '편안한 스트레이트 팬츠', '쿠션 스니커즈'),
+        'female': ('가벼운 캐주얼 점퍼', '부드러운 니트', '편안한 스트레이트 팬츠', '쿠션 스니커즈'),
+        'business_bottom': '편안한 정장 팬츠', 'formal_bottom': '편안한 클래식 정장 바지'},
+}
+
+
+def age_band(age):
+    """Return a preferred editorial band; it is not an exclusion rule."""
+    if age is None:
+        return '30s'
+    age = max(0, int(age))
+    if age < 20:
+        return '10s'
+    if age < 30:
+        return '20s'
+    if age < 40:
+        return '30s'
+    if age < 50:
+        return '40s'
+    if age < 60:
+        return '50s'
+    return '60plus'
+
+
+def _casual_bottom_label(band, pants_key):
+    fit = {'10s': '여유 있는', '20s': '여유 있는', '30s': '스트레이트', '40s': '단정한 스트레이트',
+           '50s': '편안한 스트레이트', '60plus': '편안한 스트레이트'}[band]
+    kind = ('청바지' if pants_key in {'denim', 'navy'} else
+            '면바지' if pants_key in {'beige', 'brown', 'olive', 'ivory', 'off_white'} else
+            '캐주얼 팬츠')
+    return f'{fit} {kind}'
+
 
 def _shoe_color(pieces, tpo, pants):
     if tpo == 'business_formal':
@@ -77,7 +133,7 @@ def _piece(label, color, sprite, slot):
             'sprite': sprite, 'item_type': slot}
 
 
-def _look(color, other, gender, tpo, base, pants):
+def _look(color, other, gender, tpo, base, pants, profile, band, season, variant):
     female = gender == 'female'
     white = ('화이트', '#F5F4EF')
     accent = (color['name_ko'], color['hex'])
@@ -89,7 +145,7 @@ def _look(color, other, gender, tpo, base, pants):
     pieces = []
     if tpo == 'business_formal':
         pieces = [_piece('정장 재킷', base, 8 if female else 0, 'suit_jacket' if female else 'suit'),
-                  _piece('정장 바지', base, 9 if female else 1, bottom_slot),
+                  _piece(profile['formal_bottom'], base, 9 if female else 1, bottom_slot),
                   _piece('블라우스' if female else '셔츠', white, 10 if female else 2, top_slot)]
         slot = 'scarf' if female else 'tie'
         if scores.get(slot, 0) >= 60:
@@ -109,11 +165,16 @@ def _look(color, other, gender, tpo, base, pants):
     else:
         slot = top_slot if scores.get(top_slot, 0) >= 60 else None
         pants_key, pants_color = pants
-        pants_label = '슬랙스' if tpo == 'business_casual' else (
-            '청바지' if pants_key == 'denim' else ('면바지' if pants_key in {'beige', 'brown', 'olive'} else '캐주얼 팬츠'))
-        pieces = [_piece('블라우스' if female and tpo != 'casual' else ('셔츠' if tpo != 'casual' else '티셔츠'),
+        casual_outer, casual_top, casual_bottom, casual_shoes = profile[gender]
+        pants_label = (profile['business_bottom'] if tpo == 'business_casual'
+                       else _casual_bottom_label(band, pants_key))
+        top_label = ('블라우스' if female else '셔츠') if tpo == 'business_casual' else casual_top
+        pieces = [_piece(top_label,
                          accent if slot else white, (11 if female else 3) if tpo == 'casual' else (10 if female else 2), top_slot),
                   _piece(pants_label, pants_color, 9 if female else 4, bottom_slot)]
+        if tpo == 'casual' and season in {'spring', 'autumn', 'winter'}:
+            outer_label = casual_outer if variant == 0 else ('텍스처 ' + casual_outer)
+            pieces.insert(0, _piece(outer_label, base, 8 if female else 0, 'outer'))
         if tpo == 'business_casual':
             pieces.insert(0, _piece('재킷', base, 8 if female else 0, 'jacket'))
             # A tie is optional in business casual; a pale shirt can carry A
@@ -121,15 +182,27 @@ def _look(color, other, gender, tpo, base, pants):
             meta = WADA_COLORS[color['hex'].lower()]
             if not female and meta['lightness'] >= 72 and meta['saturation'] <= 55 and score_color_for_item(other['hex'], 'male', 'business_formal', 'tie') >= 60:
                 pieces.append(_piece('넥타이 (선택)', (other['name_ko'], other['hex']), 5, 'tie'))
-    pieces.append(_piece('로퍼' if tpo != 'casual' or female else '스니커즈',
+    if tpo == 'casual':
+        shoe_label = profile[gender][3]
+    elif tpo == 'business_formal':
+        shoe_label = '닫힌 정장화' if female else '정장 구두'
+    else:
+        shoe_label = '로퍼'
+    pieces.append(_piece(shoe_label,
                          _shoe_color(pieces, tpo, pants),
                          15 if female else (7 if tpo == 'casual' else 6), 'shoes'))
-    return {'title': f"{accent[0]} 포인트", 'items': pieces,
+    role = 'Daily' if variant == 0 else 'Trend'
+    return {'title': f"{role} · {accent[0]} 포인트", 'look_role': role.lower(),
+            'age_band': band, 'age_weighting': 'preferred_not_required', 'items': pieces,
             'accent_slot': slot, 'description': ' · '.join(f"{x['color_name']} {x['label']}" for x in pieces)}
 
 
-def build_style_contexts(duo_no, gender, casual_palette, daily_element=None, user_name=None):
+def build_style_contexts(duo_no, gender, casual_palette, daily_element=None, user_name=None,
+                         age=None, season='autumn'):
     gender = 'female' if gender == 'female' else 'male'
+    season = season if season in {'spring', 'summer', 'autumn', 'winter'} else 'autumn'
+    band = age_band(age)
+    profile = AGE_STYLE[band]
     result = {}
     element = {'木':'wood','火':'fire','土':'earth','金':'metal','水':'water'}.get(daily_element, daily_element)
     base = BASES.get(element, BASES['water'])
@@ -138,7 +211,7 @@ def build_style_contexts(duo_no, gender, casual_palette, daily_element=None, use
         colors = [{**entry, **get_wada_color_ko(entry['hex'], entry['name'])}
                   for entry in (evaluation['color_a'], evaluation['color_b'])]
         looks = [_look(colors[i], colors[1-i], gender, tpo, base,
-                       _pants_base(gender, tpo, element, i)) for i in (0, 1)]
+                       _pants_base(gender, tpo, element, i), profile, band, season, i) for i in (0, 1)]
         for color, look in zip(colors, looks):
             slot = look['accent_slot']
             color.update(item_type=slot, role=(ITEM_LABELS[slot] + ' 포인트') if slot else '오늘의 추천 색상')
@@ -146,6 +219,7 @@ def build_style_contexts(duo_no, gender, casual_palette, daily_element=None, use
         palette = {**(casual_palette if tpo == 'casual' else {}),
                    'top': colors[0], 'bottom': colors[1], 'point': None, 'mode': 'harmony',
                    'tpo': tpo, 'gender': gender, 'style_mood': tpo, 'mood_tag': label,
+                   'age_band': band, 'age_weighting': 'preferred_not_required', 'season': season,
                    'looks': looks, 'outfit_guidance': looks[0]['description'],
                    'mood_desc': (
                        f"{str(user_name).strip().removesuffix('님')}님을 위해 두 가지 코디를 제안드립니다. 오늘의 코디에 참고해 보세요."

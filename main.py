@@ -336,6 +336,10 @@ def get_saju_pillars_and_analysis(name: str, gender: str, y: int, m: int, d: int
         outfit_season = "winter"
 
     age = today_date.year - y + 1
+    solar_birth = datetime.date.fromisoformat(core.natal_facts.calendar["solar_date"])
+    style_age = today_date.year - solar_birth.year - (
+        (today_date.month, today_date.day) < (solar_birth.month, solar_birth.day)
+    )
 
     if age < 40:
         outfit_age_group = "20s_30s"
@@ -423,7 +427,9 @@ def get_saju_pillars_and_analysis(name: str, gender: str, y: int, m: int, d: int
         }
     }
 
-    result["daily_fortune"]["style_palettes"] = build_style_contexts(wada_duo_no, gender, result["daily_fortune"]["wada_palette"], lucky_element, user_name=name)
+    result["daily_fortune"]["style_palettes"] = build_style_contexts(
+        wada_duo_no, gender, result["daily_fortune"]["wada_palette"], lucky_element,
+        user_name=name, age=style_age, season=outfit_season)
     ranking = _build_menu_ranking(core, today_date)
     fortune = result["daily_fortune"]
     preview = ranking['rankings']['general'][:2]
