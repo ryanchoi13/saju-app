@@ -107,6 +107,29 @@ class FashionV2ColorApplicationTests(TestCase):
         self.assertTrue(all(x['weather_fit']['guidance'].startswith('낮에는 반팔이 알맞아요.')
                             for x in casual))
 
+    def test_female_colored_contexts_cover_all_tpos_for_reviewed_weather_pair(self):
+        from datetime import datetime
+
+        profile = classify_weather([
+            {'time': datetime(2026, 9, 13, hour), 'apparent_temperature': temp}
+            for hour, temp in ((8, 20), (13, 29), (20, 20))
+        ])
+        contexts = build_colored_catalog_contexts(
+            'female', 'autumn',
+            color('#ebd3a2', 'Light Camel'),
+            color('#a2b0ad', 'Gray'),
+            profile,
+        )
+        self.assertEqual(set(contexts), {'casual', 'business_casual', 'business_formal'})
+        for tpo, context in contexts.items():
+            self.assertEqual(len(context['looks']), 2)
+            expected_season = 'summer' if tpo == 'business_formal' else 'weather_transition'
+            self.assertTrue(all(look['gender'] == 'female' for look in context['looks']))
+            self.assertTrue(all(look['season'] == expected_season for look in context['looks']))
+        for tpo in ('casual', 'business_casual'):
+            self.assertTrue(all(any(item['wear_mode'] == 'carry' for item in look['items'])
+                                for look in contexts[tpo]['looks']))
+
     def test_profile_response_can_expose_fixed_gyeongju_guidance_without_switching_boards(self):
         from main import get_saju_pillars_and_analysis
 
