@@ -8,73 +8,82 @@
   <style>
     :root{--ink:#17283a;--muted:#687784;--line:#dde5e5;--paper:#fffdf9;--moon:#23676b;--soft:#f1f6f4}
     *{box-sizing:border-box}body{margin:0;background:#edf2f1;color:var(--ink);font-family:Pretendard,"Noto Sans KR",system-ui,sans-serif;line-height:1.55}
-    main{width:min(100%,720px);margin:auto;background:var(--paper);min-height:100vh;padding:28px 18px 64px}
-    h1{font-size:1.55rem;margin:0 0 6px}h2{font-size:1.15rem;margin:34px 0 12px}p{margin:6px 0;color:var(--muted)}
-    .notice{padding:14px 16px;border-radius:14px;background:#fff5dc;color:#65512b;font-weight:700}.cards{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-    article{border:1px solid var(--line);border-radius:18px;padding:10px;background:white}article img{display:block;width:100%;height:auto;border-radius:12px;background:#f8f4eb}
-    h3{font-size:.95rem;margin:10px 2px 2px}.tag{display:inline-block;margin-top:4px;padding:3px 8px;border-radius:999px;background:var(--soft);color:var(--moon);font-size:.72rem;font-weight:800}
-    .before{opacity:.72}.check{padding:0;list-style:none}.check li{padding:11px 0;border-bottom:1px solid var(--line)}
-    table{width:100%;border-collapse:collapse;font-size:.83rem}th,td{padding:9px 7px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{color:var(--moon)}
+    main{width:min(100%,760px);margin:auto;background:var(--paper);min-height:100vh;padding:28px 18px 64px}
+    h1{font-size:1.55rem;margin:0 0 6px}h2{font-size:1.15rem;margin:30px 0 12px}p{margin:6px 0;color:var(--muted)}
+    .notice{padding:14px 16px;border-radius:14px;background:#fff5dc;color:#65512b;font-weight:700}
+    .tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:22px 0 8px;padding:5px;background:#edf2f1;border-radius:15px;position:sticky;top:8px;z-index:2;box-shadow:0 4px 18px #21333a14}
+    .tabs button{border:0;border-radius:11px;background:transparent;color:#53636f;padding:11px 4px;font:inherit;font-size:.82rem;font-weight:800;cursor:pointer}
+    .tabs button[aria-selected="true"]{background:white;color:var(--moon);box-shadow:0 2px 10px #20333b18}
+    .age-note{padding:11px 13px;background:var(--soft);border-radius:12px;color:var(--ink);font-size:.88rem}
+    .group{margin-top:25px}.group h2{margin-bottom:4px}.group>p{font-size:.84rem;margin-bottom:12px}
+    .cards{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    article{border:1px solid var(--line);border-radius:18px;padding:8px;background:white;overflow:hidden}
+    article img{display:block;width:100%;height:auto;aspect-ratio:4/5;object-fit:contain;border-radius:12px;background:#f4f2ed}
+    h3{font-size:.88rem;margin:9px 2px 1px}.tag{display:inline-block;margin:3px 2px 2px;padding:3px 8px;border-radius:999px;background:var(--soft);color:var(--moon);font-size:.7rem;font-weight:800}
+    .check{padding:0;list-style:none}.check li{padding:11px 0;border-bottom:1px solid var(--line)}
     .decision{border-left:4px solid var(--moon);padding:10px 14px;background:var(--soft);color:var(--ink)}
-    @media(max-width:430px){main{padding-inline:14px}.cards{gap:8px}article{padding:7px}h3{font-size:.84rem}}
+    @media(max-width:430px){main{padding-inline:14px}.cards{gap:8px}article{padding:6px}h3{font-size:.8rem}.tabs button{font-size:.76rem}}
   </style>
 </head>
 <body><main>
   <h1>달하 패션 화보 검토</h1>
-  <p>35~49세 · 더운 낮/선선한 저녁 · 캐주얼 대표안</p>
+  <p>더운 낮·선선한 저녁 · 남녀 전 TPO · Daily/Trend</p>
   <p class="notice">검토용 화면입니다. 아직 운영 추천 화보에는 적용하지 않았습니다.</p>
 
-  <h2>여성 Daily</h2>
-  <section class="cards">
-    <article class="before"><img src="/assets/fashion-v2-boards/female-warm-transition-casual-daily-v1.webp" alt="기존 여성 Daily"><h3>기존안</h3><span class="tag">개별 아이템 열 있음</span></article>
-    <article><img src="/assets/fashion-v2-boards/review-female-adult-warm-casual-daily-v2.webp" alt="수정 여성 Daily"><h3>수정안</h3><span class="tag">그레이 데님 · 여성 셔츠 재킷</span></article>
-  </section>
-  <h2>여성 Trend</h2>
-  <section class="cards">
-    <article class="before"><img src="/assets/fashion-v2-boards/female-warm-transition-casual-trend-v1.webp" alt="기존 여성 Trend"><h3>기존안</h3><span class="tag">젊은 인상</span></article>
-    <article><img src="/assets/fashion-v2-boards/review-female-adult-warm-casual-trend-v2.webp" alt="수정 여성 Trend"><h3>수정안</h3><span class="tag">A라인 미디 · 슬링백</span></article>
-  </section>
-  <h2>남성 Daily · Trend 수정안</h2>
-  <section class="cards">
-    <article><img src="/assets/fashion-v2-boards/review-male-adult-warm-casual-daily-v2.webp" alt="수정 남성 Daily"><h3>Daily</h3><span class="tag">니트 폴로 · 스트레이트 팬츠</span></article>
-    <article><img src="/assets/fashion-v2-boards/review-male-adult-warm-casual-trend-v2.webp" alt="수정 남성 Trend"><h3>Trend</h3><span class="tag">그레이 데님 · 오버셔츠</span></article>
-  </section>
-
-  <h2>여성 비즈니스 캐주얼</h2>
-  <section class="cards">
-    <article><img src="/assets/fashion-v2-boards/review-female-adult-warm-business-casual-daily-v2.webp" alt="여성 비즈니스 캐주얼 Daily"><h3>Daily</h3><span class="tag">스트레이트 슬랙스 · 로퍼</span></article>
-    <article><img src="/assets/fashion-v2-boards/review-female-adult-warm-business-casual-trend-v2.webp" alt="여성 비즈니스 캐주얼 Trend"><h3>Trend</h3><span class="tag">A라인 미디 · 셔츠 재킷</span></article>
-  </section>
-  <h2>남성 비즈니스 캐주얼</h2>
-  <section class="cards">
-    <article><img src="/assets/fashion-v2-boards/review-male-adult-warm-business-casual-daily-v2.webp" alt="남성 비즈니스 캐주얼 Daily"><h3>Daily</h3><span class="tag">클래식 셔츠 · 로퍼</span></article>
-    <article><img src="/assets/fashion-v2-boards/review-male-adult-warm-business-casual-trend-v2.webp" alt="남성 비즈니스 캐주얼 Trend"><h3>Trend</h3><span class="tag">니트 폴로 · 가죽 스니커즈</span></article>
-  </section>
-  <h2>여성 비즈니스 포멀</h2>
-  <section class="cards">
-    <article><img src="/assets/fashion-v2-boards/review-female-adult-warm-business-formal-daily-v2.webp" alt="여성 비즈니스 포멀 Daily"><h3>Daily</h3><span class="tag">그레이 팬츠 수트</span></article>
-    <article><img src="/assets/fashion-v2-boards/review-female-adult-warm-business-formal-trend-v2.webp" alt="여성 비즈니스 포멀 Trend"><h3>Trend</h3><span class="tag">머스터드 재킷 · 정장 원피스</span></article>
-  </section>
-  <h2>남성 비즈니스 포멀</h2>
-  <section class="cards">
-    <article><img src="/assets/fashion-v2-boards/review-male-adult-warm-business-formal-daily-v2.webp" alt="남성 비즈니스 포멀 Daily"><h3>Daily</h3><span class="tag">화이트 셔츠 · 솔리드 타이</span></article>
-    <article><img src="/assets/fashion-v2-boards/review-male-adult-warm-business-formal-trend-v2.webp" alt="남성 비즈니스 포멀 Trend"><h3>Trend</h3><span class="tag">라이트 블루 · 레지멘탈 타이</span></article>
-  </section>
+  <nav class="tabs" aria-label="연령대 선택">
+    <button type="button" data-age="young" aria-selected="false">19~34세</button>
+    <button type="button" data-age="adult" aria-selected="true">35~49세</button>
+    <button type="button" data-age="mature" aria-selected="false">50세 이상</button>
+  </nav>
+  <p class="age-note" id="age-note"></p>
+  <div id="gallery"></div>
 
   <h2>이번에 확인할 기준</h2>
   <ul class="check">
-    <li>① 오른쪽의 반복 아이템 없이 완성 착장 하나만 크게 보이는가</li>
-    <li>② 여성 Daily 바지가 면바지가 아니라 그레이 데님으로 읽히는가</li>
-    <li>③ 남녀 35~49세가 실제로 입을 만한 실루엣인가</li>
-    <li>④ Daily와 Trend가 재킷만 바꾼 같은 옷이 아니라 다른 코디인가</li>
-    <li>⑤ 저녁 겉옷이 전체 조합 안에서 자연스럽게 이해되는가</li>
+    <li>① 바닥에 자연스럽게 펼친 플랫레이로 보이는가</li>
+    <li>② 아우터·상의·하의가 착장 순서대로 자연스럽게 겹치는가</li>
+    <li>③ 신발이 모바일에서 충분히 크게 읽히는가</li>
+    <li>④ 연령대 차이가 금지 규칙이 아닌 실루엣의 우선순위로 느껴지는가</li>
+    <li>⑤ Daily와 Trend, 캐주얼과 업무용의 차이가 명확한가</li>
+    <li>⑥ 옷의 명도에 맞춘 배경이 착장보다 먼저 눈에 띄지 않는가</li>
   </ul>
+  <p class="decision">모든 화보는 승인 전까지 검토 전용입니다. 승인된 정적 화보만 운영 추천에 연결합니다.</p>
 
-  <h2>향후 한 달 준비 일정</h2>
-  <table><thead><tr><th>검토 시점</th><th>날씨 묶음</th><th>준비 내용</th></tr></thead><tbody>
-    <tr><td>지금</td><td>더운 낮·선선한 저녁</td><td>반팔 + 챙길 겉옷</td></tr>
-    <tr><td>1주 뒤</td><td>얇은 긴팔</td><td>셔츠·긴팔 + 경량 아우터</td></tr>
-    <tr><td>2~3주 뒤</td><td>얇은 재킷·니트</td><td>가을 재킷·가디건·니트</td></tr>
-  </tbody></table>
-  <p class="decision">연령은 옷을 금지하지 않고 19~34세, 35~49세, 50세 이상 화보의 우선순위만 다르게 적용합니다.</p>
-</main></body></html>
+  <script>
+    const ages={
+      young:{label:'19~34세',note:'세미와이드와 현대적인 색 배치를 우선하되 과한 오버핏은 피했습니다.'},
+      adult:{label:'35~49세',note:'단정한 스트레이트 실루엣과 현재성을 함께 맞춘 기준안입니다.'},
+      mature:{label:'50세 이상',note:'편안한 스트레이트 실루엣과 안정적인 소재를 우선하되 옷을 제한하지 않았습니다.'}
+    };
+    const genders=[['female','여성'],['male','남성']];
+    const tpos=[['casual','캐주얼'],['business-casual','비즈니스 캐주얼'],['business-formal','비즈니스 포멀']];
+    const roles=[['daily','Daily'],['trend','Trend']];
+    const gallery=document.querySelector('#gallery');
+    const note=document.querySelector('#age-note');
+    function render(age){
+      note.textContent=ages[age].note;
+      gallery.replaceChildren();
+      for(const [gender,genderLabel] of genders){
+        for(const [tpo,tpoLabel] of tpos){
+          const section=document.createElement('section');
+          section.className='group';
+          section.innerHTML=`<h2>${genderLabel} ${tpoLabel}</h2><p>${ages[age].label} · 더운 낮/선선한 저녁</p><div class="cards"></div>`;
+          const cards=section.querySelector('.cards');
+          for(const [role,roleLabel] of roles){
+            const article=document.createElement('article');
+            const filename=`review-${gender}-${age}-warm-${tpo}-${role}-v3.webp`;
+            article.innerHTML=`<img loading="lazy" src="/assets/fashion-v2-boards/${filename}" alt="${ages[age].label} ${genderLabel} ${tpoLabel} ${roleLabel}"><h3>${roleLabel}</h3><span class="tag">편집형 플랫레이</span>`;
+            cards.append(article);
+          }
+          gallery.append(section);
+        }
+      }
+    }
+    document.querySelectorAll('[data-age]').forEach(button=>button.addEventListener('click',()=>{
+      document.querySelectorAll('[data-age]').forEach(item=>item.setAttribute('aria-selected',String(item===button)));
+      render(button.dataset.age);
+    }));
+    render('adult');
+  </script>
+</main></body>
+</html>

@@ -2,8 +2,9 @@
 
 ## Status
 
-This is an owner-review layer, not a live board replacement. Twelve new 35–49
-warm-transition boards across all three TPOs establish the proposed single-look composition.
+This is an owner-review layer, not a live board replacement. Thirty-six warm-transition
+boards cover three age preferences, both genders, all three TPOs, and Daily/Trend.
+They establish the approved editorial floor-flat-lay composition.
 The existing reviewed production boards remain unchanged until visual approval.
 
 ## One-month coverage model
@@ -48,3 +49,12 @@ Image generation itself is intentionally not performed inside a user request or
 inside the production server. Only pre-generated, reviewed static assets may be
 published. Automatic update means selecting a pre-approved board from forecast,
 age preference and TPO; it does not mean publishing unreviewed AI imagery.
+
+## Editorial layout rules
+
+- Use an overhead editorial floor flat-lay, never an invisible mannequin or body-shaped hollow silhouette.
+- Place the outer first, then naturally overlap the top or dress and bottom. Keep shoes readable below the clothing.
+- Shoes may be 15–30% larger than literal scale for mobile readability.
+- Use zero or one optional accessory only when it improves the complete look; it must never dominate the outfit.
+- Select a low-saturation, high-value background for contrast from warm ivory, light blue-gray, soft warm gray, or clean off-white.
+- Background color follows garment readability rather than a single fixed color or a strong copy of the outfit's main color.
