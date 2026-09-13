@@ -50,7 +50,7 @@ assert.ok(pick.hidden); assert.equal(pick.textContent,'');
 assert.equal(w.document.getElementById('todayStyleMoodBadge'),null);
 assert.equal(w.document.querySelectorAll('#styleTpoControls select').length,1);
 vm.runInContext('userWardrobeItems='+JSON.stringify([rubber])+';updateTodayWardrobeMatchPick();',dom.getInternalVMContext());
-assert.ok(!pick.hidden); assert.match(pick.textContent,/스포츠 시계/);
+assert.ok(pick.hidden); assert.equal(pick.textContent,'');
 w.setStyleTpo('business_formal');
 assert.equal(w.localStorage.getItem('dalha_style_tpo:style-account'),'business_formal');
 assert.ok(pick.hidden);assert.equal(pick.textContent,'');

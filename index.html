@@ -717,7 +717,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                     </div>
 
                     <!-- 내 옷장 아코디언 -->
-                    <div id="drawerWardrobe" class="drawer-card" style="border: 1px solid #E2E8F0; background: #F8FAFC; border-radius: 14px;">
+                    <div id="drawerWardrobe" class="drawer-card" hidden aria-hidden="true" style="border: 1px solid #E2E8F0; background: #F8FAFC; border-radius: 14px;">
                         <div class="drawer-header" onclick="toggleDrawer('drawerWardrobe')" style="background: transparent; padding: 12px 14px;">
                             <div class="drawer-title-box" style="gap: 8px;">
                                 <span style="font-size: 16px;">👗</span>
@@ -1479,6 +1479,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
         let baseFashionStyle = "네이비 쿨 티셔츠 & 플랙 연청 데님";
         let fashionV2ActiveSlide = 0;
         let fashionV2LastFocus = null;
+        const FASHION_WARDROBE_UI_ENABLED = false;
         let fashionV2MoodText = '';
         let fashionV2AccessoryRecommendation = {item:null,text:''};
 
@@ -1723,7 +1724,8 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
         function renderFashionV2Details(look, lookIndex) {
             const proposal = fashionV2MoodText
                 ? `<p class="fashion-v2-proposal">${escapeStyleText(fashionV2MoodText)}</p>` : '';
-            const recommendation = fashionV2AccessoryRecommendation;
+            const recommendation = FASHION_WARDROBE_UI_ENABLED
+                ? fashionV2AccessoryRecommendation : {item:null,text:''};
             const item = recommendation?.item;
             const accessory = item ? `<div class="fashion-v2-accessory">
                 <div class="fashion-v2-accessory-visual" aria-hidden="true">${fashionV2AccessoryVisual(look,item,lookIndex)}</div>
@@ -2543,7 +2545,9 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             let finalTopText = matchedTops.length > 0 ? `내 옷장의 <strong>[${escapeStyleText(matchedTops[0].nickname)}]</strong>` : defaultTop;
             let finalBottomText = matchedBottoms.length > 0 ? `내 옷장의 <strong>[${escapeStyleText(matchedBottoms[0].nickname)}]</strong>` : defaultBottom;
 
-            const recommendation = selectDailyAccessory(userWardrobeItems, fortune, wada);
+            const recommendation = FASHION_WARDROBE_UI_ENABLED
+                ? selectDailyAccessory(userWardrobeItems, fortune, wada)
+                : {item:null,text:''};
             const matchText = recommendation.text;
             fashionV2MoodText = wada.mood_desc || '';
             fashionV2AccessoryRecommendation = recommendation;
@@ -2574,8 +2578,8 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 ? `<span style="font-size:11px; background:#FEF3C7; color:#78350F; font-weight:800; padding:2px 7px; border-radius:4px; margin-right:6px;">✦ 반전 포인트</span>` 
                 : `<span style="font-size:11px; background:#F1F5F9; color:#475569; font-weight:700; padding:2px 7px; border-radius:4px; margin-right:6px;">소품 매칭</span>`;
 
-            pickEl.hidden = fashionV2Connected || !recommendation.item;
-            pickEl.innerHTML = !fashionV2Connected && recommendation.item ? `
+            pickEl.hidden = !FASHION_WARDROBE_UI_ENABLED || fashionV2Connected || !recommendation.item;
+            pickEl.innerHTML = FASHION_WARDROBE_UI_ENABLED && !fashionV2Connected && recommendation.item ? `
                 <div style="font-size: 13px; color: #334155; line-height: 1.6;">
                     ${headerTag} ${matchText}
                 </div>

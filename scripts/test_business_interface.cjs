@@ -40,6 +40,9 @@ const tick = () => new Promise(resolve => setTimeout(resolve,30));
         oldDoc.getElementById('userProfileBarBirth').textContent = '';
         newHome.getElementById('styleTpoControls').remove();
         for (const id of ['drawerTarot','drawerTalisman']) newHome.getElementById(id).replaceWith(oldDoc.getElementById(id).cloneNode(true));
+        // The wardrobe markup remains intact while its home entry point is intentionally hidden.
+        newHome.getElementById('drawerWardrobe').removeAttribute('hidden');
+        newHome.getElementById('drawerWardrobe').removeAttribute('aria-hidden');
         // Only the newly requested outfit/menu surfaces and loading copy differ.
         for (const id of ['outfitCards','openOutfitModalButton','weatherOutfitGuidance','menuPhotoCards','wardrobeStorageNotice','menuRecommendationComment','menuExplorerControls','menuError']) newHome.getElementById(id).remove();
         oldDoc.getElementById('todayStyleMoodBadge').remove();

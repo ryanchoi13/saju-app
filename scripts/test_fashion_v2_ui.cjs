@@ -24,7 +24,8 @@ const open=w.document.getElementById('openOutfitModalButton');
 assert.equal(open.hidden,false);
 assert.equal(w.document.getElementById('outfitCards').childElementCount,0,'large looks must not render inline');
 assert.equal(w.document.getElementById('resStyle').textContent,'블루종 · 긴팔 티셔츠 · 스트레이트 청바지 · 레트로 운동화');
-assert.equal(w.document.getElementById('wardrobeDailyMatchPick').hidden,true,'v2 accessory guidance moves into the modal');
+assert.equal(w.document.getElementById('drawerWardrobe').hidden,true,'home wardrobe UI stays preserved but hidden');
+assert.equal(w.document.getElementById('wardrobeDailyMatchPick').hidden,true,'wardrobe matching guidance is hidden');
 assert.equal(w.document.getElementById('paletteMoodStoryBox').hidden,true,'v2 proposal copy moves into the modal');
 assert.equal(w.document.querySelectorAll('#dynamicColorPaletteBox .palette-chip').length,2,'palette appears once on main card');
 
@@ -35,9 +36,8 @@ assert.equal(w.document.querySelectorAll('#fashionV2Slides .fashion-v2-slide').l
 assert.equal(w.document.querySelectorAll('#fashionV2Modal .palette-chip').length,0,'modal must not repeat palette');
 assert.equal(w.document.querySelectorAll('#fashionV2Modal .fashion-v2-board-photo').length,2,'each look renders as one reviewed complete-board image');
 assert.equal(w.document.querySelectorAll('#fashionV2Modal .fashion-v2-proposal').length,2,'proposal copy appears below each swipeable board');
-assert.equal(w.document.querySelectorAll('#fashionV2Modal .fashion-v2-accessory').length,2,'owned accessory appears below each swipeable board');
-assert.match(w.document.querySelector('#fashionV2Modal .fashion-v2-accessory').textContent,/호카 운동화/);
-assert.ok(w.document.querySelector('#fashionV2Modal .fashion-v2-accessory-visual .garment'),'matched shoes use a garment illustration');
+assert.equal(w.document.querySelectorAll('#fashionV2Modal .fashion-v2-accessory').length,0,'wardrobe accessories do not override the complete look');
+assert.ok(!w.document.getElementById('fashionV2Modal').textContent.includes('호카 운동화'));
 assert.equal(w.getComputedStyle(w.document.querySelector('#fashionV2Modal .fashion-v2-board-photo')).width,'85%');
 assert.equal(w.document.querySelectorAll('#fashionV2Modal .fashion-v2-look-visual').length,0,'the old equal-tile garment grid is removed');
 assert.equal(w.document.querySelectorAll('#fashionV2Modal .fashion-v2-hero').length,0,'the retired CSS-composited outfit is not rendered');
