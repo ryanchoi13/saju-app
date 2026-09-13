@@ -432,10 +432,11 @@
         .fashion-v2-hero-item .garment { width:100%; height:100%; }
         .fashion-v2-hero-item.is-top { z-index:1; top:2%; left:10%; width:80%; }
         .fashion-v2-hero-item.is-outer,.fashion-v2-hero-item.is-mid,.fashion-v2-hero-item.is-coat { z-index:2; top:1%; left:3%; width:94%; }
-        .fashion-v2-hero-item.is-bottom,.fashion-v2-hero-item.is-leg_layer { z-index:3; top:34%; left:20%; width:62%; }
+        .fashion-v2-hero-item.is-bottom,.fashion-v2-hero-item.is-leg_layer { z-index:3; top:32%; left:-4%; width:108%; }
+        .fashion-v2-look-board.form-skirt .fashion-v2-hero-item.is-bottom { top:31%; left:2%; width:96%; }
         .fashion-v2-hero-item.is-dress { z-index:3; top:18%; left:7%; width:88%; }
         .fashion-v2-hero-item.is-tie { z-index:4; top:13%; left:37%; width:27%; }
-        .fashion-v2-hero-item.is-shoes { z-index:4; bottom:0; left:28%; width:48%; }
+        .fashion-v2-hero-item.is-shoes { z-index:4; bottom:-1%; left:20%; width:62%; }
         .fashion-v2-detail-rail { position:absolute; z-index:5; top:7%; right:3%; width:25%; display:grid; gap:2px; }
         .fashion-v2-detail { margin:0; text-align:center; }
         .fashion-v2-detail .garment { width:100%; height:auto; }
@@ -1694,7 +1695,8 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             const items = Array.isArray(look?.items) ? look.items : [];
             const detailItems = items.filter(item => !['shoes','tie','leg_layer'].includes(item.category)).slice(0,3);
             const role = (look?.look_role || (lookIndex ? 'trend' : 'daily')).toUpperCase();
-            return `<div class="fashion-v2-look-board" aria-label="${escapeStyleText(fashionV2Summary(look))}">
+            const form = ['pants','skirt','dress'].includes(look?.form) ? look.form : 'pants';
+            return `<div class="fashion-v2-look-board form-${form}" aria-label="${escapeStyleText(fashionV2Summary(look))}">
                 <span class="fashion-v2-board-brand">DALHA</span>
                 <p class="fashion-v2-board-title">${fashionV2BoardTitle(look)}</p>
                 <p class="fashion-v2-board-subtitle">한 벌로 완성한<br>${escapeStyleText(FASHION_V2_TPO_LABELS[look?.tpo] || '오늘의 옷차림')}</p>
