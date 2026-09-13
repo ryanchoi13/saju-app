@@ -18,14 +18,15 @@
     .grid{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-top:12px}.card{border:1px solid var(--line);border-radius:16px;background:white;padding:14px}.card ul{margin:8px 0 0;padding-left:19px}.card li{margin:5px 0;font-size:.87rem}.role{display:inline-block;border-radius:999px;padding:3px 8px;background:var(--soft);color:var(--accent);font-size:.72rem;font-weight:850}
     .tpo{overflow-x:auto;border:1px solid var(--line);border-radius:15px;background:white}.tpo table{width:100%;border-collapse:collapse;min-width:680px}.tpo th,.tpo td{text-align:left;vertical-align:top;padding:12px;border-bottom:1px solid var(--line);font-size:.83rem}.tpo th{background:var(--soft)}.tpo tr:last-child td{border-bottom:0}
     .rules{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.rule{padding:13px 14px;border:1px solid var(--line);border-radius:14px;background:white}.rule strong{display:block;margin-bottom:4px}.rule p{font-size:.84rem}
+    .coverage{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}.coverage-card{padding:12px 10px;border:1px solid var(--line);border-radius:14px;background:white}.coverage-card strong{display:block;margin-bottom:6px}.pill{display:inline-block;margin:2px 1px;padding:3px 7px;border-radius:999px;background:#e8f2ef;color:var(--accent);font-size:.7rem;font-weight:800}.pill.optional{background:#fff3d9;color:var(--warn)}.coverage-card small{display:block;margin-top:7px;color:var(--muted);line-height:1.45}
     .sources{padding-left:21px}.sources li{margin:11px 0;color:var(--muted);font-size:.84rem}.sources span{display:block;color:#819099;font-size:.75rem}
-    @media(max-width:600px){main{padding-inline:14px}.facts{grid-template-columns:1fr}.grid,.rules{grid-template-columns:1fr}.row.age button{font-size:.68rem;padding-inline:1px}.profile-head{display:block}.confidence{display:inline-block;margin-top:6px}}
+    @media(max-width:600px){main{padding-inline:14px}.facts{grid-template-columns:1fr}.grid,.rules,.coverage{grid-template-columns:1fr}.row.age button{font-size:.68rem;padding-inline:1px}.profile-head{display:block}.confidence{display:inline-block;margin-top:6px}}
   </style>
 </head>
 <body><main>
   <h1>달하 연령별 패션 기준 연구</h1>
   <p>대한민국 기준 · 남녀 10대~50대+ · Daily/Trend · TPO</p>
-  <p class="notice">연구·검토용 화면입니다. 아직 추천 로직이나 운영 화보에는 적용하지 않았습니다.</p>
+  <p class="notice">연구·검토용 화면입니다. 아래 TPO 범위는 다음 화보 제작 정책에 반영했으며, 아직 운영 추천 화보에는 적용하지 않았습니다.</p>
 
   <section class="summary">
     <strong>결론</strong>
@@ -72,9 +73,18 @@
     </tbody>
   </table></div>
 
+  <h2>연령별 기본 노출·제작 범위</h2>
+  <div class="coverage">
+    <div class="coverage-card"><strong>10대</strong><span class="pill">캐주얼</span><small>비즈니스 캐주얼·포멀은 만들지 않습니다. 학생 면접·행사는 추후 별도 상황으로 설계합니다.</small></div>
+    <div class="coverage-card"><strong>20대</strong><span class="pill">캐주얼</span><span class="pill">비즈니스 캐주얼</span><span class="pill optional">포멀 · 필요할 때</span><small>포멀은 면접·보수적 직군·공식 행사에만 노출합니다. 남성은 노타이 수트를 기본으로 합니다.</small></div>
+    <div class="coverage-card"><strong>30대</strong><span class="pill">3개 TPO</span><small>캐주얼·비즈니스 캐주얼·비즈니스 포멀을 모두 기본 제작합니다.</small></div>
+    <div class="coverage-card"><strong>40대</strong><span class="pill">3개 TPO</span><small>세 TPO를 모두 제작하되, 캐주얼의 편안함과 운동화 비중을 충분히 둡니다.</small></div>
+    <div class="coverage-card"><strong>50대+</strong><span class="pill">3개 TPO</span><small>세 TPO를 모두 제작하고 Daily와 Trend의 강도 차이를 크게 둡니다.</small></div>
+  </div>
+
   <h2>화보 생성 규칙</h2>
   <div class="rules">
-    <div class="rule"><strong>연령은 확률</strong><p>특정 치마·데님·색을 나이 때문에 금지하지 않습니다. 연령별 우선순위를 다르게 하고 개인 취향이 있으면 취향을 먼저 반영합니다.</p></div>
+    <div class="rule"><strong>연령은 확률, TPO는 관련성</strong><p>특정 치마·데님·색을 나이 때문에 금지하지 않습니다. 다만 연령상 거의 쓰지 않는 업무 TPO는 기본 화면과 제작 범위에서 제외합니다.</p></div>
     <div class="rule"><strong>종류부터 다르게</strong><p>같은 스커트나 팬츠를 길이만 바꾸지 않습니다. 아이템 종류, 허리선, 볼륨, 소재, 신발과 아우터까지 한 세트로 구분합니다.</p></div>
     <div class="rule"><strong>Trend는 검증</strong><p>최근 90일 국내 판매·검색 신호와 최신 편집 신호가 함께 있을 때만 채택합니다. 유행 이름만 붙인 기본 코디는 Trend로 인정하지 않습니다.</p></div>
     <div class="rule"><strong>Daily/Trend 간격</strong><p>50대+는 편안한 Daily와 행사·모임에도 어울리는 힘 있는 Trend의 차이를 크게, 10·20대는 같은 일상 안의 실루엣·포인트 차이로 설계합니다.</p></div>
