@@ -27,6 +27,7 @@ from wada_context_placement import WADA_CONTEXT_PLACEMENT
 from wada_color_rules import evaluate_duo
 from wada_color_ko import get_wada_color_ko
 from wada_wuxing_selector import select_wada_duo_for_targets
+from fashion_v2.color_application import build_colored_catalog_contexts
 from lunar_python import Solar
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -430,6 +431,20 @@ def get_saju_pillars_and_analysis(name: str, gender: str, y: int, m: int, d: int
     result["daily_fortune"]["style_palettes"] = build_style_contexts(
         wada_duo_no, gender, result["daily_fortune"]["wada_palette"], lucky_element,
         user_name=name, age=style_age, season=outfit_season)
+    result["daily_fortune"]["fashion_v2"] = build_colored_catalog_contexts(
+        gender,
+        outfit_season,
+        {
+            "name": wada_top_color["original_name"],
+            "name_ko": wada_top_color["name_ko"],
+            "hex": wada_top_hex,
+        },
+        {
+            "name": wada_bottom_color["original_name"],
+            "name_ko": wada_bottom_color["name_ko"],
+            "hex": wada_bottom_hex,
+        },
+    )
     ranking = _build_menu_ranking(core, today_date)
     fortune = result["daily_fortune"]
     preview = ranking['rankings']['general'][:2]
