@@ -1986,7 +1986,9 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
 
                 Kakao.Auth.login({
                     persistAccessToken: true,
-                    throughTalk: false,
+                    // 모바일에서는 로그인된 카카오톡 앱을 우선 사용하고,
+                    // 앱을 사용할 수 없는 환경에서는 카카오계정 로그인으로 전환한다.
+                    throughTalk: true,
                     success: function(authObj) {
                         Kakao.API.request({
                             url: '/v2/user/me',
