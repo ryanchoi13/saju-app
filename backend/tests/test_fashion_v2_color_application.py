@@ -82,5 +82,5 @@ class FashionV2ColorApplicationTests(TestCase):
         daily = result['daily_fortune']
         self.assertIn('style_palettes', daily)
         self.assertEqual(set(daily['fashion_v2']), {'casual', 'business_casual', 'business_formal'})
-        self.assertTrue(all(context['status'] == 'engine_ready_ui_pending'
+        self.assertTrue(all(context['status'] == 'ui_connected_stage3'
                             for context in daily['fashion_v2'].values()))
