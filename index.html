@@ -1845,8 +1845,14 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             restoreStyle(document.body.style,'left',saved.body.left);
             restoreStyle(document.body.style,'right',saved.body.right);
             restoreStyle(document.body.style,'width',saved.body.width);
-            restoreStyle(document.body.style,'overflow',saved.body.overflow);
-            restoreStyle(document.documentElement.style,'overflow',saved.rootOverflow);
+            const anotherModalOpen = [...document.querySelectorAll('.modal-bg:not(.hidden)')].length > 0;
+            if (anotherModalOpen) {
+                restoreStyle(document.body.style,'overflow',saved.body.overflow);
+                restoreStyle(document.documentElement.style,'overflow',saved.rootOverflow);
+            } else {
+                document.body.style.removeProperty('overflow');
+                document.documentElement.style.removeProperty('overflow');
+            }
             window.scrollTo(0,saved.scrollY);
         }
         function openFashionV2Modal() {
