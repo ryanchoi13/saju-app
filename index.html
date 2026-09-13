@@ -423,6 +423,7 @@
         .fashion-v2-slide { flex:0 0 100%; width:100%; min-width:0; max-height:calc(94dvh - 214px); overflow-y:auto; scroll-snap-align:start; scroll-snap-stop:always; padding:18px 20px 22px; }
         .fashion-v2-slide h4 { margin:0; color:var(--ui-ink); font-size:1.0625rem; line-height:1.5; }
         .fashion-v2-look-summary { margin:5px 0 14px; color:var(--ui-muted); font-size:.8125rem; line-height:1.6; }
+        .fashion-v2-board-photo { display:block; width:100%; height:auto; border:1px solid #E8E0D4; border-radius:20px; background:#F7F2E9; box-shadow:0 14px 32px #5A46341A; }
         .fashion-v2-look-board { position:relative; width:100%; aspect-ratio:4/5; overflow:hidden; border:1px solid #E8E0D4; border-radius:20px; background:radial-gradient(circle at 50% 38%,#FFF 0,#FAF7F0 48%,#F2ECE1 100%); box-shadow:0 14px 32px #5A46341A; }
         .fashion-v2-board-brand { position:absolute; top:4.5%; left:5%; z-index:5; color:#4B352B; font-size:.625rem; font-weight:900; letter-spacing:.24em; }
         .fashion-v2-board-title { position:absolute; top:8%; left:5%; z-index:5; width:32%; margin:0; color:#35251E; font-family:Georgia,'Times New Roman',serif; font-size:clamp(1rem,5vw,1.55rem); font-weight:700; line-height:1.03; }
@@ -1657,8 +1658,16 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             female: {outer:8,coat:8,top:11,mid:11,bottom:9,tie:14,shoes:15,dress:12,leg_layer:13}
         };
         const FASHION_V2_TPO_LABELS = {casual:'캐주얼',business_casual:'비즈니스 캐주얼',business_formal:'비즈니스 포멀'};
+        const FASHION_V2_BOARD_IMAGES = {
+            'female-autumn-casual-daily|베이지|아이보리|데님 블루|그레이':'/assets/fashion-v2-boards/female-autumn-casual-daily-v1.webp',
+            'female-autumn-casual-trend|더스티 핑크|아이보리|네이비|블랙':'/assets/fashion-v2-boards/female-autumn-casual-trend-v1.webp'
+        };
         function fashionV2Context() {
             return currentFortuneData?.daily_fortune?.fashion_v2?.[getStyleTpo()] || null;
+        }
+        function fashionV2BoardImage(look) {
+            const colors = Array.isArray(look?.items) ? look.items.map(item => item.color_name || '').join('|') : '';
+            return FASHION_V2_BOARD_IMAGES[`${look?.id || ''}|${colors}`] || '';
         }
         function fashionV2Sprite(look, item) {
             const gender = look?.gender === 'female' ? 'female' : 'male';
@@ -1693,6 +1702,11 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             return `${season}<br>${tpo}`;
         }
         function renderFashionV2Board(look, lookIndex) {
+            const image = fashionV2BoardImage(look);
+            if (image) return `<img class="fashion-v2-board-photo" src="${image}" alt="${escapeStyleText(fashionV2Summary(look))}" width="800" height="1000">`;
+            return '';
+            /* The CSS-composited atlas board is intentionally retired. Each new scope
+               becomes visible only after its reviewed complete-look image is ready. */
             const items = Array.isArray(look?.items) ? look.items : [];
             const detailItems = items.filter(item => !['shoes','tie','leg_layer'].includes(item.category)).slice(0,3);
             const role = (look?.look_role || (lookIndex ? 'trend' : 'daily')).toUpperCase();
@@ -1763,7 +1777,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 return false;
             }
             if (box) box.replaceChildren();
-            if (button) button.hidden = false;
+            if (button) button.hidden = !looks.every(fashionV2BoardImage);
             const styleEl = document.getElementById('resStyle');
             if (styleEl) styleEl.textContent = fashionV2Summary(looks[0]);
             return true;
