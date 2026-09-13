@@ -27,6 +27,25 @@ These are complete candidates, not item pools. Age changes editorial priority
 and silhouette, never eligibility. Business formal never substitutes shorts,
 sandals, denim, or a carried jacket for the complete formal outfit.
 
+## Next-generation age and TPO coverage
+
+The existing 108-candidate catalog and its 36 warm-transition boards remain
+preserved for regression review. The next image batch uses five age bands and
+does not spend equal board volume on age-inappropriate business contexts:
+
+- Teens: Casual only. A future interview or ceremony mode will be a separate
+  occasion, not mislabeled as Business Casual or Business Formal.
+- Twenties: Casual and Business Casual by default. Business Formal is a small,
+  conditional set for interviews, conservative workplaces, client-facing work,
+  or formal events. Men's default is a modern no-tie suit; a tie requires a
+  strict context. Women's default is a modern tailored set or dress.
+- Thirties, forties, and fifty-plus: all three TPOs are prepared by default.
+
+Across both genders, three weather families, and Daily/Trend, this produces 144
+standard board scopes. The optional twenties Business Formal set adds 12 more.
+Age continues to be a soft preference for garment selection; TPO visibility is
+treated separately as a relevance decision.
+
 ## Visual approval gate
 
 No candidate can enter the live exact-image map until its image has been made,

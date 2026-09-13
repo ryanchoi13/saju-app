@@ -6,6 +6,9 @@ from fashion_v2.rolling_catalog import (
     validate_review_catalog, weather_family,
 )
 from fashion_v2.editorial_layout import LAYOUT_SPEC, select_background, validate_layout_spec
+from fashion_v2.age_tpo_policy import (
+    TWENTIES_FORMAL_DIRECTION, age_band, next_generation_scopes, tpos_for,
+)
 
 
 def test_review_catalog_covers_gender_age_weather_tpo_and_role():
@@ -85,7 +88,9 @@ def test_age_research_page_covers_both_genders_and_five_age_bands():
     assert all(label in html for label in ("여성", "남성", "10대", "20대", "30대", "40대", "50대+"))
     assert all(tpo in html for tpo in ("캐주얼", "비즈니스 캐주얼", "비즈니스 포멀"))
     assert "항상 올블랙" in html
-    assert "아직 추천 로직이나 운영 화보에는 적용하지 않았습니다" in html
+    assert "아래 TPO 범위는 다음 화보 제작 정책에 반영했으며" in html
+    assert "비즈니스 캐주얼·포멀은 만들지 않습니다" in html
+    assert "포멀 · 필요할 때" in html
 
 
 def test_editorial_layout_is_floor_flat_lay_not_invisible_mannequin():
@@ -101,3 +106,36 @@ def test_background_is_selected_for_contrast_not_fixed_to_one_color():
     assert select_background("brown_beige")["hex"] == "#F2EEE6"
     assert select_background("light_neutral")["hex"] == "#E9EEF0"
     assert select_background("mixed_color")["hex"] == "#F7F7F4"
+
+
+def test_next_generation_tpo_coverage_follows_age_relevance():
+    assert tpos_for("teen") == ("casual",)
+    assert tpos_for("twenties") == ("casual", "business_casual")
+    assert tpos_for("twenties", include_conditional=True) == (
+        "casual", "business_casual", "business_formal",
+    )
+    for age_key in ("thirties", "forties", "fifty_plus"):
+        assert tpos_for(age_key) == (
+            "casual", "business_casual", "business_formal",
+        )
+
+
+def test_next_generation_has_five_age_bands_and_separates_optional_formal():
+    assert [age_band(age) for age in (17, 24, 35, 47, 61, None)] == [
+        "teen", "twenties", "thirties", "forties", "fifty_plus", "thirties",
+    ]
+    standard = next_generation_scopes()
+    with_conditional = next_generation_scopes(include_conditional=True)
+    assert len(standard) == 144
+    assert len(with_conditional) == 156
+    added = [scope for scope in with_conditional if scope not in standard]
+    assert len(added) == 12
+    assert all(scope["age_band"] == "twenties" for scope in added)
+    assert all(scope["tpo"] == "business_formal" for scope in added)
+    assert all(scope["coverage"] == "conditional" for scope in added)
+
+
+def test_twenty_something_formal_is_modern_and_not_tie_first():
+    assert TWENTIES_FORMAL_DIRECTION["male"]["default"] == "modern_suit_no_tie"
+    assert TWENTIES_FORMAL_DIRECTION["male"]["strict_context"] == "tie_allowed"
+    assert TWENTIES_FORMAL_DIRECTION["female"]["default"] == "modern_tailored_set_or_dress"
