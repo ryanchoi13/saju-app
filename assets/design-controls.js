@@ -38,7 +38,7 @@
       if (next && next!==activeDialog) {
         if (!activeDialog) { returnFocus=document.activeElement; previousOverflow=document.body.style.overflow; }
         activeDialog=next; document.body.style.overflow='hidden';
-        next.querySelector('.ui-close')?.focus();
+        (next.querySelector('[data-dialog-close]') || next.querySelector('.ui-close'))?.focus();
       } else if (!next && activeDialog) {
         activeDialog=null; document.body.style.overflow=previousOverflow;
         if (returnFocus?.isConnected) returnFocus.focus();
@@ -48,7 +48,7 @@
     document.querySelectorAll('.modal-bg').forEach(modal=>observer.observe(modal,{attributes:true,attributeFilter:['class']}));
     document.addEventListener('keydown',event=>{
       if (!activeDialog || activeDialog.classList.contains('hidden')) return;
-      if (event.key==='Escape') { event.preventDefault(); activeDialog.querySelector('.ui-close')?.click(); return; }
+      if (event.key==='Escape') { event.preventDefault(); (activeDialog.querySelector('[data-dialog-close]') || activeDialog.querySelector('.ui-close'))?.click(); return; }
       if (event.key!=='Tab') return;
       const controls=[...activeDialog.querySelectorAll('button:not(:disabled),input:not(:disabled),select:not(:disabled),a[href],[tabindex="0"]')].filter(el=>!el.closest('.hidden') && el.getClientRects().length);
       const first=controls[0],last=controls.at(-1);

@@ -1,0 +1,11 @@
+.detail-sheet.modal-content{width:min(100%,520px);max-width:520px;max-height:92dvh;display:flex;flex-direction:column;padding:20px;gap:14px;text-align:left;overflow:hidden}
+.detail-sheet-body{overflow-y:auto;min-height:0;overscroll-behavior:contain}
+.detail-close{width:100%;min-height:50px;flex-shrink:0;border:1px solid #CBD5E1;border-radius:13px;background:#F1F5F9;color:#1E293B;font-size:15px;font-weight:700;cursor:pointer}
+#tarotLargeArt{text-align:center}
+#tarotLargeArt img{display:block;max-height:42dvh;max-width:100%;width:auto;height:auto;object-fit:contain;margin:0 auto 16px}
+#tarotReadingModal .tarot-reading{margin:0}
+.tarot-wrapper.is-selected{transform:none}
+.card-front img{width:100%;height:100%;object-fit:contain!important}
+.tarot-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+@media(max-width:600px){#tarotReadingModal{align-items:flex-end;padding:0!important}.detail-sheet.modal-content{border-radius:24px 24px 0 0;max-height:94dvh;padding:20px 18px max(18px,env(safe-area-inset-bottom))}}
+@media(prefers-reduced-motion:reduce){.flipper{transition:none}}

@@ -7,7 +7,7 @@ w.scrollTo=()=>{};w.HTMLElement.prototype.scrollIntoView=()=>{};
 const alerts=[];w.alert=m=>alerts.push(m);
 for(const script of doc.querySelectorAll('script:not([src])'))run(script.textContent);
 const card={name:'0. THE FOOL (바보)',keyword:'새로운 시작',description:'작은 보따리를 메고 여행을 떠나는 인물의 카드입니다.',symbolism:'가능성',reading_male:'한 걸음을 시작해 보세요.',reading_female:'새로운 경험을 즐겨 보세요.',action_guide:'차분하게 시작하세요.'};
-const response=(balance=30,cost=0)=>({ok:true,json:async()=>({card,new_balance:balance,cost,day:w.tarotTodayKey()})});
+const response=(balance=30,cost=0)=>({ok:true,json:async()=>({card:{...card,name:balance===30?card.name:balance===20?'I. THE MAGICIAN (마법사)':'II. THE HIGH PRIESTESS (여사제)'},new_balance:balance,cost,day:w.tarotTodayKey()})});
 let calls=[];
 function fetcher(fn){w.fetch=async(url,options)=>{calls.push({url,...JSON.parse(options.body)});return fn(url,options);};}
 (async()=>{
@@ -35,10 +35,18 @@ function fetcher(fn){w.fetch=async(url,options)=>{calls.push({url,...JSON.parse(
  assert.equal(run('currentCoin'),20);assert.ok(doc.getElementById('tarotCancelDraw').hidden);
  fetcher(()=>response(10,10));await w.confirmTarotDraw();assert.equal(calls.at(-1).request_id,uncertainId);
  assert.equal(run('currentCoin'),10);
- // All three can be reread; shuffling itself never charges.
+ // All three remain visible. There is no reshuffle or fourth paid draw.
  const beforeShuffle=calls.length;w.chooseAnotherTarotCard();assert.equal(calls.length,beforeShuffle);
- assert.equal(doc.querySelectorAll('.flipped').length,0);
+ assert.equal(doc.querySelectorAll('.flipped').length,3);
+ assert.ok(doc.getElementById('tarotDrawAgain').hidden);
  await w.handleTarotDraw(1);assert.equal(calls.length,beforeShuffle);
+ w.closeTarotReading();
+ run('tarotSessionIdentity=null;ensureTarotSession();');
+ assert.equal(doc.querySelectorAll('.flipped').length,3);
+ assert.ok(doc.getElementById('tarotReadingModal').classList.contains('hidden'));
+ // A different account has its own free draw and insufficient-funds flow.
+ run('currentUserId="low-funds";ensureTarotSession();currentCoin=30;');
+ fetcher(()=>response());await w.handleTarotDraw(1);await w.handleTarotDraw(2);
  // Server funds errors keep the old result and use authoritative balance.
  fetcher(()=>({ok:false,status:402,json:async()=>({detail:{code:'insufficient_coins',new_balance:5,message:'복채가 부족합니다.'}})}));
  await w.confirmTarotDraw();assert.equal(run('currentCoin'),5);

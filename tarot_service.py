@@ -2,6 +2,7 @@
 from copy import deepcopy
 from datetime import datetime, timezone, timedelta
 from threading import RLock
+import tarot_store
 
 PRICE = 10
 LOCK = RLock()
@@ -15,7 +16,7 @@ DESCRIPTIONS = {
 }
 
 
-class DrawError(Exception):
+class DrawError(ValueError):
     def __init__(self, status, code, message, balance=None):
         self.status = status
         self.detail = {"code": code, "message": message, "cost": PRICE}
@@ -27,37 +28,53 @@ def day_key():
     return datetime.now(timezone(timedelta(hours=9))).date().isoformat()
 
 
-def draw(users, deck, choose, *, user_id, slot, request_id, is_paid, day=None):
-    """Serialize a draw and return the server balance; retries reuse the receipt.
+def get_state(user_id, day=None):
+    today = day or day_key()
+    try:
+        receipts = tarot_store.read(user_id,today)
+    except tarot_store.StorageUnavailable:
+        return {'day':today,'available':False,'message':'오늘 뽑은 카드를 불러오지 못했습니다. 다시 시도해 주세요.'}
+    cards = sorted((deepcopy(r['result']) for r in receipts.values()),key=lambda r:r['slot'])
+    return {'day':today,'available':True,'cards':cards,'count':len(cards),'limit':3}
 
-    Like the existing wallet, receipts are scoped to the running app process.
-    This does not implement a payment gateway or persistent wallet migration.
+
+def draw(users, deck, choose, *, user_id, slot, request_id, is_paid, day=None, expected_day=None):
+    """One free card and up to two existing-price paid cards, all distinct.
+
+    Receipts are durable; the app's existing coin wallet contract is preserved.
     """
     today = day or day_key()
+    if expected_day and expected_day != today:
+        raise DrawError(409,'day_changed','날짜가 바뀌었습니다. 오늘의 카드를 다시 골라 주세요.')
     with LOCK:
         user = users.get(user_id)
         if user is None:
             raise DrawError(401, "login_required", "로그인 상태를 확인해 주세요.")
-        state = SESSIONS.get(user_id)
-        if not state or state["day"] != today:
-            state = SESSIONS[user_id] = {"day": today, "receipts": {}, "last_name": None}
-        if request_id in state["receipts"]:
-            saved = state["receipts"][request_id]
-            if saved["slot"] != slot or saved["is_paid"] != is_paid:
-                raise DrawError(409, "request_conflict", "선택한 카드의 요청을 다시 확인해 주세요.")
-            return {**deepcopy(saved["result"]), "new_balance": user["coin"]}
-        if state["receipts"] and not is_paid:
-            raise DrawError(409, "payment_required", "오늘의 무료 카드는 이미 확인하셨어요. 한 장 더 뽑으려면 10 복채가 필요해요.", user["coin"])
-        cost = PRICE if is_paid else 0
-        if user["coin"] < cost:
-            raise DrawError(402, "insufficient_coins", "한 장 더 뽑으려면 10 복채가 필요해요.", user["coin"])
-        candidates = [c for c in deck if c["name"] != state["last_name"]] or deck
-        card = deepcopy(choose(candidates))
-        card["description"] = DESCRIPTIONS.get(card["name"], "")
-        # Card creation must succeed before spending coins.
-        result = {"card": card, "cost": cost, "new_balance": user["coin"] - cost,
-                  "request_id": request_id, "day": today, "slot": slot}
-        state["receipts"][request_id] = {"slot": slot, "is_paid": is_paid, "result": deepcopy(result)}
-        state["last_name"] = card["name"]
+        with tarot_store.locked(user_id,today) as receipts:
+            if request_id in receipts:
+                saved = receipts[request_id]
+                if saved['slot'] != slot or saved['is_paid'] != is_paid:
+                    raise DrawError(409,'request_conflict','선택한 카드의 요청을 다시 확인해 주세요.')
+                return {**deepcopy(saved['result']),'new_balance':user['coin']}
+            same_slot = next((r for r in receipts.values() if r['slot']==slot),None)
+            if same_slot:
+                return {**deepcopy(same_slot['result']),'new_balance':user['coin'],'reused':True}
+            if len(receipts) >= 3:
+                raise DrawError(409,'daily_limit','오늘의 세 장을 모두 뽑았습니다.',user['coin'])
+            if receipts and not is_paid:
+                raise DrawError(409,'payment_required','오늘의 무료 카드는 이미 확인하셨어요. 한 장 더 뽑으려면 10 복채가 필요해요.',user['coin'])
+            cost = PRICE if receipts else 0
+            if user['coin'] < cost:
+                raise DrawError(402,'insufficient_coins','한 장 더 뽑으려면 10 복채가 필요해요.',user['coin'])
+            seen = {r['result']['card']['name'] for r in receipts.values()}
+            candidates = [c for c in deck if c['name'] not in seen]
+            if not candidates:
+                raise DrawError(503,'deck_unavailable','새 카드를 준비하지 못했습니다. 잠시 후 다시 시도해 주세요.')
+            card = deepcopy(choose(candidates))
+            card['description'] = card.get('description') or DESCRIPTIONS.get(card['name'],'')
+            result = {'card':card,'cost':cost,'new_balance':user['coin']-cost,
+                      'request_id':request_id,'day':today,'slot':slot,'count':len(receipts)+1,'limit':3}
+            receipts[request_id] = {'slot':slot,'is_paid':is_paid,'result':deepcopy(result)}
+        # Commit the receipt before acknowledging success or mutating session coins.
         user["coin"] = result["new_balance"]
         return result

@@ -6,7 +6,7 @@ from datetime import date
 from wardrobe_store import StorageUnavailable, _connection, _execute, _owner
 
 
-def _owner_key(user_id):
+def owner_key(user_id):
     return hashlib.sha256(_owner(user_id).encode()).hexdigest()
 
 
@@ -45,7 +45,7 @@ def load(user_id):
     with _connection() as (conn, pg):
         row = _execute(conn, pg,
                        "SELECT payload, confirmed FROM account_profiles WHERE owner_key=%s",
-                       (_owner_key(user_id),)).fetchone()
+                       (owner_key(user_id),)).fetchone()
         if row:
             return {"profile": json.loads(row[0]), "confirmed": bool(row[1]),
                     "source": "database"}
@@ -59,7 +59,7 @@ def save(user_id, profile, *, confirmed):
         _execute(conn, pg, """INSERT INTO account_profiles(owner_key, payload, confirmed)
             VALUES(%s,%s,%s) ON CONFLICT(owner_key) DO UPDATE SET
             payload=excluded.payload, confirmed=excluded.confirmed""",
-            (_owner_key(user_id), payload, int(confirmed)))
+            (owner_key(user_id), payload, int(confirmed)))
         if pg and confirmed:
             # Update legacy rows when they exist; account_profiles is authoritative.
             _execute(conn, pg, """UPDATE users SET name=%s, gender=%s, birth_year=%s,
