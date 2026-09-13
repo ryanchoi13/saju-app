@@ -1836,8 +1836,17 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             if (!fashionV2ScrollLock) return;
             const saved = fashionV2ScrollLock;
             fashionV2ScrollLock = null;
-            Object.assign(document.body.style,saved.body);
-            document.documentElement.style.overflow = saved.rootOverflow;
+            const restoreStyle = (style,property,value) => {
+                if (value) style.setProperty(property,value);
+                else style.removeProperty(property);
+            };
+            restoreStyle(document.body.style,'position',saved.body.position);
+            restoreStyle(document.body.style,'top',saved.body.top);
+            restoreStyle(document.body.style,'left',saved.body.left);
+            restoreStyle(document.body.style,'right',saved.body.right);
+            restoreStyle(document.body.style,'width',saved.body.width);
+            restoreStyle(document.body.style,'overflow',saved.body.overflow);
+            restoreStyle(document.documentElement.style,'overflow',saved.rootOverflow);
             window.scrollTo(0,saved.scrollY);
         }
         function openFashionV2Modal() {
