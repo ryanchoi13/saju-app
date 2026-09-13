@@ -50,6 +50,8 @@ async function boot(url) {
       w.openFashionV2Modal();
       assert.equal(doc.querySelectorAll('#fashionV2Slides .fashion-v2-slide').length,2,`${design} ${tpo} must keep both modal looks`);
       assert.equal(doc.querySelectorAll('#fashionV2Modal .palette-chip').length,0);
+      assert.equal(doc.querySelectorAll('#fashionV2Modal .fashion-v2-tab.ui-action-primary').length,0);
+      assert.equal(doc.getElementById('fashionV2CloseButton').classList.contains('ui-action-secondary'),false);
       w.closeFashionV2Modal();
       assert.ok(!doc.getElementById('resStyle').textContent.includes('불러온'));
     }
