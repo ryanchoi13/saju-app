@@ -33,6 +33,7 @@ assert.equal(w.document.querySelectorAll('#fashionV2Modal .palette-chip').length
 assert.equal(w.document.querySelectorAll('#fashionV2Modal .fashion-v2-look-board').length,2,'each look renders as one editorial board');
 assert.equal(w.document.querySelectorAll('#fashionV2Modal .fashion-v2-look-visual').length,0,'the old equal-tile garment grid is removed');
 assert.equal(w.document.querySelectorAll('#fashionV2Modal .fashion-v2-hero').length,2,'each board has one connected hero outfit');
+assert.equal(vm.runInContext('fashionV2Sprite({gender:"female"},{category:"bottom",label:"플리츠 스커트"})',dom.getInternalVMContext()),12,'skirt labels use the skirt silhouette even when legacy sample data omits form');
 assert.equal(w.document.querySelectorAll('#fashionV2Modal button[aria-label*="닫기"]').length,0,'no top-right X close control');
 assert.equal(w.document.getElementById('fashionV2CloseButton').textContent,'닫기');
 assert.match(w.document.getElementById('fashionV2ModalMeta').textContent,/좌우로 넘겨/);
