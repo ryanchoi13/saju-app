@@ -1,0 +1,52 @@
+.reading-summary {
+    background: #f3f7f4;
+    border: 1px solid #dce5df;
+    border-radius: 16px;
+    color: #233d34;
+    padding: 18px;
+}
+
+.reading-summary h3 {
+    color: #17243a;
+    font-size: 18px;
+    margin-top: 5px;
+}
+
+.reading-summary p {
+    color: #52645d;
+    font-size: 14px;
+    line-height: 1.7;
+    margin-top: 8px;
+}
+
+.reading-current {
+    border-top: 1px solid #dce5df;
+    margin-top: 18px;
+    padding-top: 16px;
+}
+
+.reading-current p {
+    color: #52645d;
+    font-size: 13px;
+    line-height: 1.65;
+    margin: 7px 0 10px;
+}
+
+#view-saju > #sajuEvidence {
+    margin: 0;
+}
+
+.concern-choice-title,
+.concern-result-title,
+.concern-compatibility-title {
+    margin-bottom: -6px;
+}
+
+.concern-result-title,
+.concern-compatibility-title {
+    margin-top: 6px;
+}
+
+@media (max-width: 380px) {
+    .reading-summary { padding: 16px; }
+}

@@ -61,6 +61,26 @@ const tick = () => new Promise(resolve => setTimeout(resolve,30));
         assert.ok(visible('saju-life'));
         assert.equal(doc.activeElement.id, 'saju-tab-life');
     });
+    await test('reading tabs follow the agreed information order', () => {
+        const before = (a,b) => Boolean(a.compareDocumentPosition(b) & w.Node.DOCUMENT_POSITION_FOLLOWING);
+        const summary = doc.getElementById('sajuSummaryTitle').closest('section');
+        const basic = doc.getElementById('saju-basic');
+        const life = doc.getElementById('saju-life');
+        const year = doc.getElementById('saju-year');
+        const evidence = doc.getElementById('sajuEvidence');
+        assert.ok(before(summary,basic) && before(basic,life) && before(life,year) && before(year,evidence));
+        assert.equal(evidence.parentElement.id,'view-saju');
+
+        const choiceTitle = doc.getElementById('concernChoiceTitle');
+        const choices = doc.querySelector('.concern-choices');
+        const reportTitle = doc.querySelector('.concern-result-title');
+        const compatibility = doc.querySelector('.concern-compatibility-title');
+        const recent = doc.getElementById('recentReportSection');
+        const allTopics = doc.getElementById('allConcernTopicsLink');
+        assert.ok(before(choiceTitle,choices) && before(choices,reportTitle));
+        assert.ok(before(reportTitle,compatibility) && before(compatibility,recent) && before(recent,allTopics));
+        assert.equal(doc.querySelectorAll('[data-concern-choice]').length,5);
+    });
     await test('concern routes use existing products and preserve situation forms', () => {
         w.openConcern('love');
         assert.ok(visible('concern-love')); assert.ok(!visible('concern-business'));
