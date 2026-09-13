@@ -28,6 +28,7 @@ assert.equal(w.document.getElementById('drawerWardrobe').hidden,true,'home wardr
 assert.equal(w.document.getElementById('wardrobeDailyMatchPick').hidden,true,'wardrobe matching guidance is hidden');
 assert.equal(w.document.getElementById('paletteMoodStoryBox').hidden,true,'v2 proposal copy moves into the modal');
 assert.equal(w.document.querySelectorAll('#dynamicColorPaletteBox .palette-chip').length,2,'palette appears once on main card');
+assert.equal(w.document.getElementById('weatherOutfitGuidance').parentElement,w.document.getElementById('resStyle').parentElement,'weather clothing advice belongs to the recommended-look section');
 
 w.openFashionV2Modal();
 const modal=w.document.getElementById('fashionV2Modal');
@@ -35,6 +36,7 @@ assert.equal(modal.classList.contains('hidden'),false);
 assert.equal(w.document.querySelectorAll('#fashionV2Slides .fashion-v2-slide').length,2);
 assert.equal(w.document.querySelectorAll('#fashionV2Modal .palette-chip').length,0,'modal must not repeat palette');
 assert.equal(w.document.querySelectorAll('#fashionV2Modal .fashion-v2-board-photo').length,2,'each look renders as one reviewed complete-board image');
+assert.equal(w.document.querySelector('#fashionV2DailySlide .fashion-v2-look-summary').textContent,'베이지 색상의 블루종과 아이보리 색상의 긴팔 티셔츠, 데님 블루 색상의 스트레이트 청바지, 그레이 색상의 레트로 운동화를 매치해 보세요.');
 assert.equal(w.document.querySelectorAll('#fashionV2Modal .fashion-v2-proposal').length,2,'proposal copy appears below each swipeable board');
 assert.equal(w.document.querySelectorAll('#fashionV2Modal .fashion-v2-accessory').length,0,'wardrobe accessories do not override the complete look');
 assert.ok(!w.document.getElementById('fashionV2Modal').textContent.includes('호카 운동화'));
@@ -87,5 +89,6 @@ const warmTrend={id:'male-warm-transition-casual-trend',gender:'male',season:'we
 assert.equal(vm.runInContext('fashionV2BoardImage('+JSON.stringify(warmDaily)+')',dom.getInternalVMContext()),'/assets/fashion-v2-boards/male-warm-transition-casual-daily-v1.webp');
 assert.equal(vm.runInContext('fashionV2BoardImage('+JSON.stringify(warmTrend)+')',dom.getInternalVMContext()),'/assets/fashion-v2-boards/male-warm-transition-casual-trend-v1.webp');
 assert.match(vm.runInContext('fashionV2Summary('+JSON.stringify(warmDaily)+')',dom.getInternalVMContext()),/얇은 바람막이 \(챙길 옷\)/);
+assert.equal(vm.runInContext('fashionV2Narrative('+JSON.stringify(warmDaily)+')',dom.getInternalVMContext()),'라이트 카멜 색상의 반팔 폴로와 그레이 색상의 경량 스트레이트 팬츠, 다크 브라운 색상의 가죽 운동화를 매치해 보세요. 저녁에는 쌀쌀할 수 있으니 네이비 색상의 얇은 바람막이를 챙기면 좋습니다.');
 console.log('PASS fashion v2 stage 3 summary, bottom sheet, swipe tabs, single palette and legacy fallback');
 dom.window.close();
