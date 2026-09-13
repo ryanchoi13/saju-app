@@ -48,11 +48,15 @@ async function boot(url) {
       select.dispatchEvent(new w.Event('change',{bubbles:true}));
       assert.equal(doc.querySelectorAll('.look-card').length,0,`${design} ${tpo} must defer large looks`);
       w.openFashionV2Modal();
+      await new Promise(r=>setTimeout(r,0));
+      assert.equal(doc.body.style.overflow,'hidden',`${design} modal controller locks the page once`);
       assert.equal(doc.querySelectorAll('#fashionV2Slides .fashion-v2-slide').length,2,`${design} ${tpo} must keep both modal looks`);
       assert.equal(doc.querySelectorAll('#fashionV2Modal .palette-chip').length,0);
       assert.equal(doc.querySelectorAll('#fashionV2Modal .fashion-v2-tab.ui-action-primary').length,0);
       assert.equal(doc.getElementById('fashionV2CloseButton').classList.contains('ui-action-secondary'),false);
       w.closeFashionV2Modal();
+      await new Promise(r=>setTimeout(r,0));
+      assert.equal(doc.body.style.overflow,'',`${design} modal controller releases the page after close`);
       assert.ok(!doc.getElementById('resStyle').textContent.includes('불러온'));
     }
     for(let i=0;i<9;i++) await w.DalhaMenu.next();

@@ -2,9 +2,7 @@ const {JSDOM}=require('jsdom');
 const fs=require('node:fs'), assert=require('node:assert/strict'), vm=require('node:vm');
 const dom=new JSDOM(fs.readFileSync('index.html','utf8'),{url:'https://dalha.example',runScripts:'outside-only'});
 const w=dom.window;
-let restoredScroll=null;
-w.scrollTo=(x,y)=>{restoredScroll={x,y};};
-Object.defineProperty(w,'scrollY',{configurable:true,value:640});
+w.scrollTo=()=>{};
 for(const s of w.document.querySelectorAll('script:not([src])')) vm.runInContext(s.textContent,dom.getInternalVMContext());
 
 const item=(category,label,color_name,hex,applied_daily_color)=>({category,label,color_name,hex,applied_daily_color});
@@ -35,9 +33,6 @@ assert.equal(w.document.getElementById('weatherOutfitGuidance').parentElement,w.
 w.openFashionV2Modal();
 const modal=w.document.getElementById('fashionV2Modal');
 assert.equal(modal.classList.contains('hidden'),false);
-assert.equal(w.document.body.style.position,'fixed');
-assert.equal(w.document.body.style.top,'-640px');
-assert.equal(w.document.documentElement.style.overflow,'hidden');
 assert.equal(w.document.querySelectorAll('#fashionV2Slides .fashion-v2-slide').length,2);
 assert.equal(w.document.querySelectorAll('#fashionV2Modal .palette-chip').length,0,'modal must not repeat palette');
 assert.equal(w.document.querySelectorAll('#fashionV2Modal .fashion-v2-board-photo').length,2,'each look renders as one reviewed complete-board image');
@@ -63,10 +58,6 @@ assert.equal(w.document.getElementById('fashionV2TrendTab').getAttribute('aria-s
 assert.equal(w.document.getElementById('fashionV2DailyTab').getAttribute('aria-selected'),'false');
 w.closeFashionV2Modal();
 assert.equal(modal.classList.contains('hidden'),true);
-assert.equal(w.document.body.style.position,'');
-assert.equal(w.document.body.style.overflow,'');
-assert.equal(w.document.documentElement.style.overflow,'');
-assert.deepEqual(restoredScroll,{x:0,y:640},'closing restores the home scroll position and releases the page lock');
 
 vm.runInContext('currentFortuneData={daily_fortune:{wada_palette:'+JSON.stringify(palette)+',style_palettes:{casual:'+JSON.stringify(palette)+'}}};updateTodayWardrobeMatchPick();',dom.getInternalVMContext());
 assert.equal(open.hidden,true,'legacy responses hide the modal entry point');
