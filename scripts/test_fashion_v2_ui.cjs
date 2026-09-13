@@ -90,5 +90,42 @@ assert.equal(vm.runInContext('fashionV2BoardImage('+JSON.stringify(warmDaily)+')
 assert.equal(vm.runInContext('fashionV2BoardImage('+JSON.stringify(warmTrend)+')',dom.getInternalVMContext()),'/assets/fashion-v2-boards/male-warm-transition-casual-trend-v1.webp');
 assert.match(vm.runInContext('fashionV2Summary('+JSON.stringify(warmDaily)+')',dom.getInternalVMContext()),/얇은 바람막이 \(챙길 옷\)/);
 assert.equal(vm.runInContext('fashionV2Narrative('+JSON.stringify(warmDaily)+')',dom.getInternalVMContext()),'라이트 카멜 색상의 반팔 폴로와 그레이 색상의 경량 스트레이트 팬츠, 다크 브라운 색상의 가죽 운동화를 매치해 보세요. 저녁에는 쌀쌀할 수 있으니 네이비 색상의 얇은 바람막이를 챙기면 좋습니다.');
-console.log('PASS fashion v2 stage 3 summary, bottom sheet, swipe tabs, single palette and legacy fallback');
+
+const businessCasualDaily={id:'male-warm-transition-business_casual-daily',items:[
+  item('top','반팔 클래식 셔츠','라이트 카멜','#ebd3a2'),item('bottom','서머 슬랙스','그레이','#a2b0ad'),
+  item('shoes','로퍼','다크 브라운','#4B352B'),{category:'carry_outer',label:'경량 해링턴 재킷',color_name:'베이지',hex:'#C4B294',wear_mode:'carry'}]};
+const businessCasualTrend={id:'male-warm-transition-business_casual-trend',items:[
+  item('top','니트 폴로','라이트 카멜','#ebd3a2'),item('bottom','원턱 서머 슬랙스','그레이','#a2b0ad'),
+  item('shoes','미니멀 가죽 운동화','블랙','#252629'),{category:'carry_outer',label:'얇은 언스트럭처드 재킷',color_name:'네이비',hex:'#26354A',wear_mode:'carry'}]};
+const businessFormalDaily={id:'male-summer-business_formal-daily',items:[
+  item('outer','수트 재킷','그레이','#85888D'),item('top','드레스 셔츠','화이트','#F5F4EF'),
+  item('bottom','수트 바지','그레이','#85888D'),item('tie','솔리드 타이','라이트 카멜','#ebd3a2'),item('shoes','옥스퍼드 구두','블랙','#252629')]};
+const businessFormalTrend={id:'male-summer-business_formal-trend',items:[
+  item('outer','수트 재킷','그레이','#85888D'),item('top','드레스 셔츠','라이트 블루','#A9C5D8'),
+  item('bottom','수트 바지','그레이','#85888D'),item('tie','레지멘탈 타이','라이트 카멜','#ebd3a2'),item('shoes','더비 구두','블랙','#252629')]};
+assert.equal(vm.runInContext('fashionV2BoardImage('+JSON.stringify(businessCasualDaily)+')',dom.getInternalVMContext()),'/assets/fashion-v2-boards/male-warm-transition-business-casual-daily-v1.webp');
+assert.equal(vm.runInContext('fashionV2BoardImage('+JSON.stringify(businessCasualTrend)+')',dom.getInternalVMContext()),'/assets/fashion-v2-boards/male-warm-transition-business-casual-trend-v1.webp');
+assert.equal(vm.runInContext('fashionV2BoardImage('+JSON.stringify(businessFormalDaily)+')',dom.getInternalVMContext()),'/assets/fashion-v2-boards/male-summer-business-formal-daily-v1.webp');
+assert.equal(vm.runInContext('fashionV2BoardImage('+JSON.stringify(businessFormalTrend)+')',dom.getInternalVMContext()),'/assets/fashion-v2-boards/male-summer-business-formal-trend-v1.webp');
+for(const board of [businessCasualDaily,businessCasualTrend,businessFormalDaily,businessFormalTrend]) {
+  const src=vm.runInContext('fashionV2BoardImage('+JSON.stringify(board)+')',dom.getInternalVMContext());
+  assert.ok(fs.existsSync('.'+src),`reviewed board asset must exist: ${src}`);
+  assert.ok(fs.statSync('.'+src).size>20000,`reviewed board asset must not be an empty placeholder: ${src}`);
+}
+
+const businessCasualPalette={...palette,tpo:'business_casual'};
+const businessFormalPalette={...palette,tpo:'business_formal'};
+vm.runInContext('currentFortuneData='+JSON.stringify({daily_fortune:{wada_palette:palette,style_palettes:{casual:palette,business_casual:businessCasualPalette,business_formal:businessFormalPalette},fashion_v2:{business_casual:{looks:[businessCasualDaily,businessCasualTrend]},business_formal:{looks:[businessFormalDaily,businessFormalTrend]}}}})+';',dom.getInternalVMContext());
+w.setStyleTpo('business_casual');
+assert.equal(open.hidden,false,'business casual shows the outfit button when both reviewed boards exist');
+w.openFashionV2Modal();
+assert.equal(w.document.querySelectorAll('#fashionV2Modal .fashion-v2-board-photo').length,2);
+w.closeFashionV2Modal();
+w.setStyleTpo('business_formal');
+assert.equal(open.hidden,false,'business formal shows the outfit button when both reviewed boards exist');
+w.openFashionV2Modal();
+assert.equal(w.document.querySelectorAll('#fashionV2Modal .fashion-v2-board-photo').length,2);
+w.closeFashionV2Modal();
+
+console.log('PASS fashion v2 stage 3 summary, all male TPO buttons, bottom sheet, swipe tabs, single palette and legacy fallback');
 dom.window.close();
