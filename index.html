@@ -422,16 +422,30 @@
         .fashion-v2-slides::-webkit-scrollbar { display:none; }
         .fashion-v2-slide { flex:0 0 100%; width:100%; min-width:0; max-height:calc(94dvh - 214px); overflow-y:auto; scroll-snap-align:start; scroll-snap-stop:always; padding:18px 20px 22px; }
         .fashion-v2-slide h4 { margin:0; color:var(--ui-ink); font-size:1.0625rem; line-height:1.5; }
-        .fashion-v2-look-summary { margin:5px 0 16px; color:var(--ui-muted); font-size:.8125rem; line-height:1.6; }
-        .fashion-v2-look-visual { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px 7px; align-items:start; width:100%; }
-        .fashion-v2-piece { min-width:0; margin:0; text-align:center; }
-        .fashion-v2-piece .garment { width:100%; height:auto; object-fit:contain; }
-        .fashion-v2-piece figcaption { margin-top:4px; color:var(--ui-muted); font-size:.75rem!important; line-height:1.45; overflow-wrap:anywhere; }
-        .fashion-v2-piece figcaption strong { display:block; color:var(--ui-ink); font-size:.8125rem!important; }
-        .fashion-v2-color-role { display:inline-block; margin-top:4px; padding:2px 6px; border-radius:999px; background:var(--ui-tint); color:var(--ui-accent); font-size:.6875rem; font-weight:800; }
+        .fashion-v2-look-summary { margin:5px 0 14px; color:var(--ui-muted); font-size:.8125rem; line-height:1.6; }
+        .fashion-v2-look-board { position:relative; width:100%; aspect-ratio:4/5; overflow:hidden; border:1px solid #E8E0D4; border-radius:20px; background:radial-gradient(circle at 50% 38%,#FFF 0,#FAF7F0 48%,#F2ECE1 100%); box-shadow:0 14px 32px #5A46341A; }
+        .fashion-v2-board-brand { position:absolute; top:4.5%; left:5%; z-index:5; color:#4B352B; font-size:.625rem; font-weight:900; letter-spacing:.24em; }
+        .fashion-v2-board-title { position:absolute; top:8%; left:5%; z-index:5; width:32%; margin:0; color:#35251E; font-family:Georgia,'Times New Roman',serif; font-size:clamp(1rem,5vw,1.55rem); font-weight:700; line-height:1.03; }
+        .fashion-v2-board-subtitle { position:absolute; top:24%; left:5%; z-index:5; width:28%; margin:0; color:#806F61; font-size:.625rem; line-height:1.55; }
+        .fashion-v2-hero { position:absolute; inset:3% 22% 2% 19%; }
+        .fashion-v2-hero-item { position:absolute; margin:0; }
+        .fashion-v2-hero-item .garment { width:100%; height:100%; }
+        .fashion-v2-hero-item.is-top { z-index:1; top:2%; left:10%; width:80%; }
+        .fashion-v2-hero-item.is-outer,.fashion-v2-hero-item.is-mid,.fashion-v2-hero-item.is-coat { z-index:2; top:1%; left:3%; width:94%; }
+        .fashion-v2-hero-item.is-bottom,.fashion-v2-hero-item.is-leg_layer { z-index:3; top:34%; left:20%; width:62%; }
+        .fashion-v2-hero-item.is-dress { z-index:3; top:18%; left:7%; width:88%; }
+        .fashion-v2-hero-item.is-tie { z-index:4; top:13%; left:37%; width:27%; }
+        .fashion-v2-hero-item.is-shoes { z-index:4; bottom:0; left:28%; width:48%; }
+        .fashion-v2-detail-rail { position:absolute; z-index:5; top:7%; right:3%; width:25%; display:grid; gap:2px; }
+        .fashion-v2-detail { margin:0; text-align:center; }
+        .fashion-v2-detail .garment { width:100%; height:auto; }
+        .fashion-v2-detail figcaption { margin-top:-5px; color:#75665A; font-size:.5625rem!important; line-height:1.25; }
+        .fashion-v2-detail figcaption strong { display:block; color:#49372E; font-size:.625rem!important; }
+        .fashion-v2-color-role { display:block; margin-top:1px; color:#8A673F; font-size:.5rem; font-weight:800; }
+        .fashion-v2-board-note { position:absolute; left:5%; bottom:4%; z-index:5; margin:0; color:#8B796A; font-size:.5rem; letter-spacing:.12em; }
         .fashion-v2-footer { flex:0 0 auto; padding:12px 20px calc(12px + env(safe-area-inset-bottom)); border-top:1px solid var(--ui-line); background:#fff; }
         .fashion-v2-close { width:100%; min-height:50px; border:0; border-radius:14px; background:#17243A; color:#fff; font-size:1rem; font-weight:800; cursor:pointer; }
-        @media(max-width:380px) { .fashion-v2-header,.fashion-v2-slide { padding-left:16px; padding-right:16px; } .fashion-v2-tabs { margin-left:16px; margin-right:16px; } .fashion-v2-look-visual { gap:10px 4px; } }
+        @media(max-width:380px) { .fashion-v2-header,.fashion-v2-slide { padding-left:16px; padding-right:16px; } .fashion-v2-tabs { margin-left:16px; margin-right:16px; } }
         .menu-photos { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; margin-top:12px; }
         .menu-photo-card { margin:0; background:#FFF; border:1px solid #E5E9F0; border-radius:16px; overflow:hidden; }
         .food-photo { display:block; width:100%; aspect-ratio:1; overflow:hidden; background-color:#FAF9F6; }
@@ -1663,17 +1677,37 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             const items = Array.isArray(look?.items) ? look.items : [];
             return items.map(item => `${item.color_name || ''} ${item.label || ''}`.trim()).join(' · ');
         }
-        function renderFashionV2Piece(look, item, lookIndex, itemIndex) {
+        function renderFashionV2Garment(look, item, lookIndex, itemIndex, placement) {
             const cell = fashionV2Sprite(look,item);
             const hex = /^#[0-9a-f]{6}$/i.test(item.hex || '') ? item.hex : '#CBD5E1';
             const role = item.applied_daily_color ? `<span class="fashion-v2-color-role">추천색 ${escapeStyleText(item.applied_daily_color)} 적용</span>` : '';
-            return `<figure class="fashion-v2-piece">${renderGarmentSprite(cell,hex,`fashion-v2-mask-${lookIndex}-${itemIndex}`)}<figcaption>${escapeStyleText(item.color_name || '')}<strong>${escapeStyleText(item.label || '')}</strong>${role}</figcaption></figure>`;
+            const category = escapeStyleText(item.category || 'top');
+            if (placement === 'hero') return `<figure class="fashion-v2-hero-item is-${category}">${renderGarmentSprite(cell,hex,`fashion-v2-hero-mask-${lookIndex}-${itemIndex}`)}</figure>`;
+            return `<figure class="fashion-v2-detail">${renderGarmentSprite(cell,hex,`fashion-v2-detail-mask-${lookIndex}-${itemIndex}`)}<figcaption>${escapeStyleText(item.color_name || '')}<strong>${escapeStyleText(item.label || '')}</strong>${role}</figcaption></figure>`;
+        }
+        function fashionV2BoardTitle(look) {
+            const season = {spring:'Spring',summer:'Summer',autumn:'Autumn',winter:'Winter'}[look?.season] || 'Today';
+            const tpo = {casual:'Casual',business_casual:'Business Casual',business_formal:'Business Formal'}[look?.tpo] || 'Daily Look';
+            return `${season}<br>${tpo}`;
+        }
+        function renderFashionV2Board(look, lookIndex) {
+            const items = Array.isArray(look?.items) ? look.items : [];
+            const detailItems = items.filter(item => !['shoes','tie','leg_layer'].includes(item.category)).slice(0,3);
+            const role = (look?.look_role || (lookIndex ? 'trend' : 'daily')).toUpperCase();
+            return `<div class="fashion-v2-look-board" aria-label="${escapeStyleText(fashionV2Summary(look))}">
+                <span class="fashion-v2-board-brand">DALHA</span>
+                <p class="fashion-v2-board-title">${fashionV2BoardTitle(look)}</p>
+                <p class="fashion-v2-board-subtitle">한 벌로 완성한<br>${escapeStyleText(FASHION_V2_TPO_LABELS[look?.tpo] || '오늘의 옷차림')}</p>
+                <div class="fashion-v2-hero">${items.map((item,itemIndex)=>renderFashionV2Garment(look,item,lookIndex,itemIndex,'hero')).join('')}</div>
+                <aside class="fashion-v2-detail-rail" aria-label="코디 구성">${detailItems.map((item,itemIndex)=>renderFashionV2Garment(look,item,lookIndex,itemIndex,'detail')).join('')}</aside>
+                <p class="fashion-v2-board-note">DALHA ${role} LOOK</p>
+            </div>`;
         }
         function renderFashionV2Modal(context) {
             const slides = document.getElementById('fashionV2Slides');
             if (!slides) return;
             const looks = Array.isArray(context?.looks) ? context.looks : [];
-            slides.innerHTML = looks.map((look,index) => `<section id="fashionV2${index ? 'Trend' : 'Daily'}Slide" class="fashion-v2-slide" role="tabpanel" aria-labelledby="fashionV2${index ? 'Trend' : 'Daily'}Tab"><h4>${fashionV2LookTitle(look,index)}</h4><p class="fashion-v2-look-summary">${escapeStyleText(fashionV2Summary(look))}</p><div class="fashion-v2-look-visual">${(look.items || []).map((item,itemIndex)=>renderFashionV2Piece(look,item,index,itemIndex)).join('')}</div></section>`).join('');
+            slides.innerHTML = looks.map((look,index) => `<section id="fashionV2${index ? 'Trend' : 'Daily'}Slide" class="fashion-v2-slide" role="tabpanel" aria-labelledby="fashionV2${index ? 'Trend' : 'Daily'}Tab"><h4>${fashionV2LookTitle(look,index)}</h4><p class="fashion-v2-look-summary">${escapeStyleText(fashionV2Summary(look))}</p>${renderFashionV2Board(look,index)}</section>`).join('');
             showFashionV2Slide(0,false);
         }
         function showFashionV2Slide(index, smooth = true) {
