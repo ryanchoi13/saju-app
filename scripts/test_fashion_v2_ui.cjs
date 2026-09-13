@@ -76,6 +76,22 @@ const maleTrend={id:'male-autumn-casual-trend',items:[
 assert.equal(vm.runInContext('fashionV2BoardImage('+JSON.stringify(maleDaily)+')',dom.getInternalVMContext()),'/assets/fashion-v2-boards/male-autumn-casual-daily-v1.webp');
 assert.equal(vm.runInContext('fashionV2BoardImage('+JSON.stringify(maleTrend)+')',dom.getInternalVMContext()),'/assets/fashion-v2-boards/male-autumn-casual-trend-v1.webp');
 
+const todayRecoloredDaily={...maleDaily,items:[
+  item('outer','필드 점퍼','레드','#A33A32'),item('top','맨투맨','오프화이트','#F2EEE6'),
+  item('bottom','스트레이트 청바지','진청','#26354A'),item('shoes','스웨이드 운동화','다크 브라운','#4B352B')
+]};
+const todayRecoloredTrend={...maleTrend,items:[
+  item('outer','워크 재킷','레드','#A33A32'),item('top','후드 티셔츠','오프화이트','#F2EEE6'),
+  item('bottom','블랙 청바지','블랙','#252629'),item('shoes','가죽 운동화','블랙','#252629')
+]};
+assert.equal(vm.runInContext('fashionV2BoardIsExact('+JSON.stringify(todayRecoloredDaily)+')',dom.getInternalVMContext()),false);
+assert.equal(vm.runInContext('fashionV2BoardImage('+JSON.stringify(todayRecoloredDaily)+')',dom.getInternalVMContext()),'/assets/fashion-v2-boards/male-autumn-casual-daily-v1.webp');
+vm.runInContext('currentFortuneData='+JSON.stringify({daily_fortune:{wada_palette:palette,style_palettes:{casual:palette},fashion_v2:{casual:{looks:[todayRecoloredDaily,todayRecoloredTrend]}}}})+';updateTodayWardrobeMatchPick();',dom.getInternalVMContext());
+assert.equal(open.hidden,false,'today button stays visible when the reviewed composition exists but lucky colors change');
+w.openFashionV2Modal();
+assert.match(w.document.getElementById('fashionV2ModalMeta').textContent,/추천 색상은 홈 팔레트 기준/);
+w.closeFashionV2Modal();
+
 const warmDaily={id:'male-warm-transition-casual-daily',gender:'male',season:'weather_transition',tpo:'casual',look_role:'daily',items:[
   {label:'반팔 폴로',color_name:'라이트 카멜',wear_mode:'worn'},
   {label:'경량 스트레이트 팬츠',color_name:'그레이',wear_mode:'worn'},
