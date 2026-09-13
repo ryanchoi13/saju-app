@@ -466,6 +466,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
 </script>
     <link rel="stylesheet" href="/assets/design-system.css?v=5">
     <link rel="stylesheet" href="/assets/tarot-v2.css?v=1">
+    <link rel="stylesheet" href="/assets/reading-tabs-v2.css?v=1">
     <script src="/assets/design-controls.js?v=2" defer></script>
     <script src="/assets/menu-explorer.js?v=1" defer></script>
     <script src="/assets/design-sample.js?v=3" defer></script>
@@ -872,6 +873,11 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                     <div><strong id="sajuOwnerName">내 정보</strong><p id="sajuOwnerMeta">입력한 생년정보를 확인해 주세요.</p></div>
                     <button class="reading-text-button" onclick="reopenSajuEditForm()">정보 확인</button>
                 </div>
+                <section class="reading-summary" aria-labelledby="sajuSummaryTitle">
+                    <span class="reading-eyebrow">한눈에 보는 나</span>
+                    <h3 id="sajuSummaryTitle">나에 대한 요약</h3>
+                    <p id="sajuSummaryText">입력한 사주 정보를 바탕으로 나의 기본을 살펴봅니다.</p>
+                </section>
                 <div class="reading-tabs" role="tablist" aria-label="나의 사주 살펴보기">
                     <button id="saju-tab-basic" role="tab" aria-selected="true" aria-controls="saju-basic" onclick="selectSajuSection('basic')">나의 기본</button>
                     <button id="saju-tab-life" role="tab" aria-selected="false" tabindex="-1" aria-controls="saju-life" onclick="selectSajuSection('life')">인생 흐름</button>
@@ -886,6 +892,11 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                         <p id="daewoonTeaserBox" class="reading-caption">포함 내용 · 타고난 기질과 균형 · 생활의 여러 분야 · 10년 대운</p>
                         <div id="daewoonBox" class="hidden"></div>
                         <button id="btnDaewoon" class="reading-primary" onclick="handleUnlockReportOnServer('daewoon', 450)">450 복채로 평생운세 읽기</button>
+                        <div class="reading-current">
+                            <span class="reading-eyebrow">지금 나는 어디쯤</span>
+                            <p id="sajuCurrentPosition">현재 대운의 위치와 역할을 인생 흐름에서 확인할 수 있습니다.</p>
+                            <button type="button" class="reading-text-button" onclick="selectSajuSection('life')">현재 대운과 인생 흐름 살펴보기 →</button>
+                        </div>
                     </div>
                     <div class="reading-section-title"><h3>궁금한 부분부터</h3><span>주제별 풀이</span></div>
                     <div class="reading-links">
@@ -1005,15 +1016,15 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                     <h2>궁합·고민</h2>
                     <p>나의 고민은 주제별 풀이로,<br>두 사람의 관계는 궁합으로 살펴보세요.</p>
                 </header>
+                <div class="reading-section-title concern-choice-title"><h3 id="concernChoiceTitle">요즘 가장 궁금한 고민</h3><span>하나를 선택해 보세요</span></div>
                 <div class="concern-choices" role="group" aria-label="궁금한 주제 선택">
                     <button data-concern-choice="wealth" aria-pressed="false" onclick="selectConcern('wealth')"><span>돈·생활</span>돈 관리의 방향</button>
                     <button data-concern-choice="love" aria-pressed="false" onclick="selectConcern('love')"><span>나의 애정운</span>반복되는 연애 패턴</button>
                     <button data-concern-choice="business" aria-pressed="false" onclick="selectConcern('business')"><span>일·사업</span>직업과 진로 고민</button>
                     <button data-concern-choice="study" aria-pressed="false" onclick="selectConcern('study')"><span>학업·시험</span>나에게 맞는 공부</button>
                     <button data-concern-choice="health" aria-pressed="false" onclick="selectConcern('health')"><span>건강·생활</span>활동과 회복의 균형</button>
-                    <button data-concern-choice="gunghap" aria-pressed="false" onclick="selectConcern('gunghap')"><span>두 사람 궁합</span>서로를 이해하는 법</button>
                 </div>
-                <div class="reading-section-title"><h3 id="concernSelectionTitle">어떤 부분이 궁금한가요?</h3><button class="reading-text-button" onclick="selectConcern('all')">전체 주제</button></div>
+                <div class="reading-section-title concern-result-title"><h3 id="concernSelectionTitle">관련 풀이 안내</h3></div>
                 <p id="concernSelectionHint" class="reading-caption">위에서 하나를 고르면 관련 풀이를 안내해 드립니다.</p>
                 <div id="concern-wealth" class="card report-entry hidden" data-concern="wealth" style="text-align: left;">
                     <p style="font-size: 16.5px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif;">💰 평생 재물운</p><p style="font-size: 13.5px; color: #64748B; margin-top: 3px;">수입·지출을 대하는 성향과 긴 흐름을 살펴봅니다. 투자 수익을 예측하지 않습니다.</p>
@@ -1044,6 +1055,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                     <div id="themeReport_study" class="hidden" style="margin-top: 14px; padding-top: 12px; border-top: 1px solid #F1F5F9;"></div>
                     <button id="btnTheme_study" onclick="handleUnlockReportOnServer('study', 220)" style="width: 100%; background: #0D1527; color: white; border: none; font-size: 14.5px; font-weight: 700; padding: 14px; border-radius: 14px; cursor: pointer; margin-top: 14px; display: flex; align-items: center; justify-content: center; gap: 6px;"><span class="btn-coin-icon-white"></span> 220 복채로 상세 리포트 열람하기</button>
                 </div>
+                <div class="reading-section-title concern-compatibility-title"><h3>두 사람 궁합</h3><span>관계의 흐름 살펴보기</span></div>
                 <div id="concern-gunghap" class="card report-entry">
                     <span class="reading-eyebrow">두 사람의 관계</span><h3>함께여서 다른 우리</h3>
                     <p>서로에게 끌리는 지점과 소통의 차이, 사랑과 함께하는 생활을 살펴봅니다.</p>
@@ -1053,6 +1065,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                     <button id="btnOpenGunghapModal" class="reading-primary" onclick="openGunghapInputModal()">상대방 정보 입력하고 궁합 보기</button>
                 </div>
                 <section id="recentReportSection" class="hidden"><div class="reading-section-title"><h3>최근 읽은 풀이</h3></div><div id="recentReportList" class="reading-recent-list"></div></section>
+                <button id="allConcernTopicsLink" class="reading-archive-link" onclick="selectConcern('all')">전체 주제 살펴보기 →</button>
                 <button class="reading-archive-link" onclick="openReportArchive()">구매한 감명서 보관함 →</button>
             </div>
 
@@ -2071,6 +2084,10 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             document.getElementById('sajuElementsNote').innerText = data.saju_data.elements_note || '';
 
             updateDaewoonPhaseTimeline(data.saju_data.daeyun_phase, currentUserAge);
+            const phaseText = document.getElementById('daewoonCurrentPhaseText').textContent.replace('📍 ', '');
+            document.getElementById('sajuCurrentPosition').textContent = phaseText;
+            document.getElementById('sajuSummaryText').textContent =
+                `${currentUserName}님의 일간은 ${dtl.day.cg}(${dtl.day.cg_elem})입니다. ${data.saju_data.singang_label || ''} 나의 기본과 지금의 흐름을 이어서 살펴보세요.`;
             document.getElementById('mypageProfileDesc').innerText = `${currentUserName} (${data.birth_summary})`;
             
             updateTodayWardrobeMatchPick();
@@ -3472,6 +3489,9 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
 
         window.addEventListener('DOMContentLoaded', () => {
             initReadingInterface();
+            const evidence = document.getElementById('sajuEvidence');
+            const archiveLink = document.querySelector('#view-saju > .reading-archive-link');
+            if (evidence && archiveLink) archiveLink.before(evidence);
             if (!window.DALHA_DESIGN_SAMPLE) initKakaoSDK();
             initDateDropdowns();
             document.getElementById('headerCoinSvg').innerHTML = getGoldCoinSvg(16, "#F59E0B");
