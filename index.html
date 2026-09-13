@@ -700,7 +700,6 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                         <p id="paletteMoodStoryBox" style="font-size: 12.5px; color: #475569; line-height: 1.6; margin: 0; background: #F8FAFC; border-radius: 10px; padding: 10px 12px; border-left: 3px solid #2D6A4F;">
                             "깊은 미드나잇 인디고와 안개빛 스카이블루가 만나 사주의 금전운과 전문성을 견고히 세웁니다."
                         </p>
-                        <p id="weatherOutfitGuidance" hidden style="font-size: 12.5px; color: #334155; line-height: 1.65; margin: 8px 0 0; background: #F8FAFC; border-radius: 10px; padding: 10px 12px;"></p>
                     </div>
 
                     <!-- 오늘 추천 룩 매칭 -->
@@ -708,6 +707,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                         <span style="font-size: 12px; font-weight: 700; color: #64748B; display: flex; align-items: center; gap: 4px; margin-bottom: 6px;">
                             <span>✨</span> 2. 오늘 추천 룩
                         </span>
+                        <p id="weatherOutfitGuidance" hidden style="font-size: 12.5px; color: #334155; line-height: 1.65; margin: 0 0 8px; background: #F8FAFC; border-radius: 10px; padding: 10px 12px;"></p>
                         <p id="resStyle" style="font-weight: 800; font-size: 15.5px; color: #0F172A; margin: 0 0 8px 0; line-height: 1.5;">
                             네이비 쿨 티셔츠 &nbsp;&amp;&nbsp; 스카이블루 데님 팬츠
                         </p>
@@ -1706,6 +1706,23 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 return item.wear_mode === 'carry' ? `${label} (챙길 옷)` : label;
             }).join(' · ');
         }
+        function fashionV2Narrative(look) {
+            const items = Array.isArray(look?.items) ? look.items : [];
+            const describe = item => `${item.color_name ? `${item.color_name} 색상의 ` : ''}${item.label || ''}`.trim();
+            const worn = items.filter(item => item.wear_mode !== 'carry').map(describe).filter(Boolean);
+            const carry = items.filter(item => item.wear_mode === 'carry').map(describe).filter(Boolean);
+            let outfit = '';
+            if (worn.length === 1) outfit = `${DalhaHangul.josa(worn[0],'을/를')} 입어보세요.`;
+            else if (worn.length > 1) {
+                const first = DalhaHangul.josa(worn[0],'과/와');
+                const rest = worn.slice(1,-1);
+                const last = DalhaHangul.josa(worn.at(-1),'을/를');
+                outfit = `${first} ${rest.length ? `${rest.join(', ')}, ` : ''}${last} 매치해 보세요.`;
+            }
+            const evening = carry.length
+                ? `저녁에는 쌀쌀할 수 있으니 ${DalhaHangul.josa(carry.join(', '),'을/를')} 챙기면 좋습니다.` : '';
+            return [outfit,evening].filter(Boolean).join(' ');
+        }
         function fashionV2MainSummary(look) {
             const items = Array.isArray(look?.items) ? look.items : [];
             return items.filter(item => item.wear_mode !== 'carry')
@@ -1770,7 +1787,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             const slides = document.getElementById('fashionV2Slides');
             if (!slides) return;
             const looks = Array.isArray(context?.looks) ? context.looks : [];
-            slides.innerHTML = looks.map((look,index) => `<section id="fashionV2${index ? 'Trend' : 'Daily'}Slide" class="fashion-v2-slide" role="tabpanel" aria-labelledby="fashionV2${index ? 'Trend' : 'Daily'}Tab"><h4>${fashionV2LookTitle(look,index)}</h4><p class="fashion-v2-look-summary">${escapeStyleText(fashionV2Summary(look))}</p>${renderFashionV2Board(look,index)}${renderFashionV2Details(look,index)}</section>`).join('');
+            slides.innerHTML = looks.map((look,index) => `<section id="fashionV2${index ? 'Trend' : 'Daily'}Slide" class="fashion-v2-slide" role="tabpanel" aria-labelledby="fashionV2${index ? 'Trend' : 'Daily'}Tab"><h4>${fashionV2LookTitle(look,index)}</h4><p class="fashion-v2-look-summary">${escapeStyleText(fashionV2Narrative(look))}</p>${renderFashionV2Board(look,index)}${renderFashionV2Details(look,index)}</section>`).join('');
             showFashionV2Slide(0,false);
         }
         function showFashionV2Slide(index, smooth = true) {
