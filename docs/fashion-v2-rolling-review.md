@@ -2,8 +2,8 @@
 
 ## Status
 
-This is an owner-review layer, not a live board replacement. Four new 35–49
-warm-transition casual boards establish the proposed single-look composition.
+This is an owner-review layer, not a live board replacement. Twelve new 35–49
+warm-transition boards across all three TPOs establish the proposed single-look composition.
 The existing reviewed production boards remain unchanged until visual approval.
 
 ## One-month coverage model
