@@ -17,6 +17,7 @@
         if (action.startsWith('openPgModal')) {
           button.classList.add('ui-package'); button.lastElementChild?.classList.add('ui-price'); return;
         }
+        if (button.matches('.fashion-v2-tab,.fashion-v2-close')) return;
         if (button.classList.contains('reading-text-button')) return;
         button.classList.add('ui-action');
         if (action.startsWith('shareZodiacFortune')) return; // Kakao's identifiable share color.
