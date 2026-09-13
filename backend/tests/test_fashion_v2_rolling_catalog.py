@@ -75,6 +75,19 @@ def test_owner_review_page_is_noindex_and_uses_thirty_six_flat_lay_boards():
     assert "아직 운영 추천 화보에는 적용하지 않았습니다" in html
 
 
+def test_age_research_page_covers_both_genders_and_five_age_bands():
+    from main import serve_design_comparison
+
+    response = serve_design_comparison("fashion-age-research")
+    assert response.path.endswith("assets/fashion-age-research.html")
+    assert response.headers["x-robots-tag"] == "noindex, nofollow"
+    html = open(response.path, encoding="utf-8").read()
+    assert all(label in html for label in ("여성", "남성", "10대", "20대", "30대", "40대", "50대+"))
+    assert all(tpo in html for tpo in ("캐주얼", "비즈니스 캐주얼", "비즈니스 포멀"))
+    assert "항상 올블랙" in html
+    assert "아직 추천 로직이나 운영 화보에는 적용하지 않았습니다" in html
+
+
 def test_editorial_layout_is_floor_flat_lay_not_invisible_mannequin():
     assert validate_layout_spec() is True
     assert LAYOUT_SPEC["style"] == "editorial_floor_flat_lay"
