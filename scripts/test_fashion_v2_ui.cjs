@@ -16,13 +16,16 @@ const trend={id:'female-autumn-casual-trend',gender:'female',season:'autumn',tpo
   item('mid','가디건','더스티 핑크','#B67C87','A'),item('top','긴팔 티셔츠','아이보리','#E8E0CF'),
   item('bottom','플리츠 스커트','네이비','#26354A','B'),item('shoes','앵클부츠','블랙','#252629')
 ]};
-const palette={tpo:'casual',gender:'male',style_mood:'casual',top:{name_ko:'페일 레드',hex:'#f48067',standard_color:'레드'},bottom:{name_ko:'딥 네이비',hex:'#051230',standard_color:'네이비'}};
-vm.runInContext('currentUserId="fashion-stage3";currentFortuneData='+JSON.stringify({daily_fortune:{wada_palette:palette,style_palettes:{casual:palette},fashion_v2:{casual:{status:'ui_connected_stage3',looks:[daily,trend]}}}})+';userWardrobeItems=[];updateTodayWardrobeMatchPick();',dom.getInternalVMContext());
+const palette={tpo:'casual',gender:'male',style_mood:'casual',mood_desc:'두 가지 코디를 제안드리니 오늘의 옷차림에 참고해 보세요.',top:{name_ko:'페일 레드',hex:'#f48067',standard_color:'레드'},bottom:{name_ko:'딥 네이비',hex:'#051230',standard_color:'네이비'}};
+const ownedShoes={id:'shoe-1',category:'신발',nickname:'호카 운동화',materials:['면/린넨/패브릭'],colors:['네이비']};
+vm.runInContext('currentUserId="fashion-stage3";currentFortuneData='+JSON.stringify({daily_fortune:{wada_palette:palette,style_palettes:{casual:palette},fashion_v2:{casual:{status:'ui_connected_stage3',looks:[daily,trend]}}}})+';userWardrobeItems='+JSON.stringify([ownedShoes])+';updateTodayWardrobeMatchPick();',dom.getInternalVMContext());
 
 const open=w.document.getElementById('openOutfitModalButton');
 assert.equal(open.hidden,false);
 assert.equal(w.document.getElementById('outfitCards').childElementCount,0,'large looks must not render inline');
-assert.match(w.document.getElementById('resStyle').textContent,/블루종/);
+assert.equal(w.document.getElementById('resStyle').textContent,'블루종 · 긴팔 티셔츠 · 스트레이트 청바지 · 레트로 운동화');
+assert.equal(w.document.getElementById('wardrobeDailyMatchPick').hidden,true,'v2 accessory guidance moves into the modal');
+assert.equal(w.document.getElementById('paletteMoodStoryBox').hidden,true,'v2 proposal copy moves into the modal');
 assert.equal(w.document.querySelectorAll('#dynamicColorPaletteBox .palette-chip').length,2,'palette appears once on main card');
 
 w.openFashionV2Modal();
@@ -31,6 +34,11 @@ assert.equal(modal.classList.contains('hidden'),false);
 assert.equal(w.document.querySelectorAll('#fashionV2Slides .fashion-v2-slide').length,2);
 assert.equal(w.document.querySelectorAll('#fashionV2Modal .palette-chip').length,0,'modal must not repeat palette');
 assert.equal(w.document.querySelectorAll('#fashionV2Modal .fashion-v2-board-photo').length,2,'each look renders as one reviewed complete-board image');
+assert.equal(w.document.querySelectorAll('#fashionV2Modal .fashion-v2-proposal').length,2,'proposal copy appears below each swipeable board');
+assert.equal(w.document.querySelectorAll('#fashionV2Modal .fashion-v2-accessory').length,2,'owned accessory appears below each swipeable board');
+assert.match(w.document.querySelector('#fashionV2Modal .fashion-v2-accessory').textContent,/호카 운동화/);
+assert.ok(w.document.querySelector('#fashionV2Modal .fashion-v2-accessory-visual .garment'),'matched shoes use a garment illustration');
+assert.equal(w.getComputedStyle(w.document.querySelector('#fashionV2Modal .fashion-v2-board-photo')).width,'85%');
 assert.equal(w.document.querySelectorAll('#fashionV2Modal .fashion-v2-look-visual').length,0,'the old equal-tile garment grid is removed');
 assert.equal(w.document.querySelectorAll('#fashionV2Modal .fashion-v2-hero').length,0,'the retired CSS-composited outfit is not rendered');
 assert.equal(vm.runInContext('fashionV2Sprite({gender:"female"},{category:"bottom",label:"플리츠 스커트"})',dom.getInternalVMContext()),12,'skirt labels use the skirt silhouette even when legacy sample data omits form');

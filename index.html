@@ -265,7 +265,7 @@
         #view-today > .card > div:first-child > div { min-width:0; }
         #paletteMoodStoryBox, #wardrobeDailyMatchPick { background:var(--ui-tint)!important; color:var(--ui-ink)!important; border:0!important; border-radius:14px!important; padding:14px!important; line-height:1.8!important; }
         #wardrobeDailyMatchPick > div { color:var(--ui-ink)!important; font-size:1rem!important; }
-        #resStyle { font-size:1.125rem!important; line-height:1.7!important; }
+        #resStyle { color:var(--ui-ink)!important; font-size:.9375rem!important; font-weight:600!important; line-height:1.6!important; }
         #drawerWardrobe { border:1px solid #CBDADD!important; background:transparent!important; border-radius:14px!important; }
         #drawerWardrobe h5 { font-size:.875rem!important; line-height:1.65; }
         .drawer-title-box { min-width:0; }
@@ -422,8 +422,15 @@
         .fashion-v2-slides::-webkit-scrollbar { display:none; }
         .fashion-v2-slide { flex:0 0 100%; width:100%; min-width:0; max-height:calc(94dvh - 214px); overflow-y:auto; scroll-snap-align:start; scroll-snap-stop:always; padding:18px 20px 22px; }
         .fashion-v2-slide h4 { margin:0; color:var(--ui-ink); font-size:1.0625rem; line-height:1.5; }
-        .fashion-v2-look-summary { margin:5px 0 14px; color:var(--ui-muted); font-size:.8125rem; line-height:1.6; }
-        .fashion-v2-board-photo { display:block; width:100%; height:auto; border:1px solid #E8E0D4; border-radius:20px; background:#F7F2E9; box-shadow:0 14px 32px #5A46341A; }
+        .fashion-v2-look-summary { margin:5px 0 12px; color:var(--ui-muted); font-size:.75rem; line-height:1.55; font-weight:500; }
+        .fashion-v2-board-photo { display:block; width:85%; height:auto; margin-inline:auto; border:1px solid #E8E0D4; border-radius:18px; background:#F7F2E9; box-shadow:0 12px 26px #5A463417; }
+        .fashion-v2-detail-copy { width:85%; margin:14px auto 0; display:grid; gap:10px; }
+        .fashion-v2-proposal { margin:0; padding:11px 12px; border-radius:12px; background:var(--ui-tint); color:var(--ui-muted); font-size:.75rem; line-height:1.65; font-weight:500; }
+        .fashion-v2-accessory { display:grid; grid-template-columns:64px minmax(0,1fr); gap:11px; align-items:center; padding:10px 12px; border:1px solid var(--ui-line); border-radius:14px; background:#fff; }
+        .fashion-v2-accessory-visual { width:64px; height:64px; display:grid; place-items:center; overflow:hidden; border-radius:12px; background:var(--ui-tint); color:var(--ui-accent); font-size:1.75rem; }
+        .fashion-v2-accessory-visual .garment { width:58px; height:58px; }
+        .fashion-v2-accessory-copy { min-width:0; color:var(--ui-muted); font-size:.75rem; line-height:1.6; }
+        .fashion-v2-accessory-copy strong { display:block; margin-bottom:2px; color:var(--ui-ink); font-size:.8125rem; }
         .fashion-v2-look-board { position:relative; width:100%; aspect-ratio:4/5; overflow:hidden; border:1px solid #E8E0D4; border-radius:20px; background:radial-gradient(circle at 50% 38%,#FFF 0,#FAF7F0 48%,#F2ECE1 100%); box-shadow:0 14px 32px #5A46341A; }
         .fashion-v2-board-brand { position:absolute; top:4.5%; left:5%; z-index:5; color:#4B352B; font-size:.625rem; font-weight:900; letter-spacing:.24em; }
         .fashion-v2-board-title { position:absolute; top:8%; left:5%; z-index:5; width:32%; margin:0; color:#35251E; font-family:Georgia,'Times New Roman',serif; font-size:clamp(1rem,5vw,1.55rem); font-weight:700; line-height:1.03; }
@@ -1472,6 +1479,8 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
         let baseFashionStyle = "네이비 쿨 티셔츠 & 플랙 연청 데님";
         let fashionV2ActiveSlide = 0;
         let fashionV2LastFocus = null;
+        let fashionV2MoodText = '';
+        let fashionV2AccessoryRecommendation = {item:null,text:''};
 
         let wizardCategory = "상의";
         let wizardColors = [];
@@ -1696,6 +1705,32 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 return item.wear_mode === 'carry' ? `${label} (챙길 옷)` : label;
             }).join(' · ');
         }
+        function fashionV2MainSummary(look) {
+            const items = Array.isArray(look?.items) ? look.items : [];
+            return items.filter(item => item.wear_mode !== 'carry')
+                .map(item => item.label || '').filter(Boolean).join(' · ');
+        }
+        function fashionV2AccessoryVisual(look, item, lookIndex) {
+            const itemCategory = {상의:'top',하의:'bottom',아우터:'outer',신발:'shoes'}[item?.category];
+            if (itemCategory) {
+                const color = Array.isArray(item.colors) ? item.colors[0] : '';
+                const pseudoItem = {category:itemCategory,label:item.nickname || item.category};
+                const cell = fashionV2Sprite(look,pseudoItem);
+                return renderGarmentSprite(cell,getHexColor(color,'#64748B'),`fashion-v2-accessory-${lookIndex}`);
+            }
+            return {시계:'⌚',가방:'👜',액세서리:'✦'}[item?.category] || '✦';
+        }
+        function renderFashionV2Details(look, lookIndex) {
+            const proposal = fashionV2MoodText
+                ? `<p class="fashion-v2-proposal">${escapeStyleText(fashionV2MoodText)}</p>` : '';
+            const recommendation = fashionV2AccessoryRecommendation;
+            const item = recommendation?.item;
+            const accessory = item ? `<div class="fashion-v2-accessory">
+                <div class="fashion-v2-accessory-visual" aria-hidden="true">${fashionV2AccessoryVisual(look,item,lookIndex)}</div>
+                <div class="fashion-v2-accessory-copy"><strong>소품 매칭 · ${escapeStyleText(item.nickname || item.category || '내 옷장 아이템')}</strong>${recommendation.text}</div>
+            </div>` : '';
+            return proposal || accessory ? `<div class="fashion-v2-detail-copy">${proposal}${accessory}</div>` : '';
+        }
         function renderFashionV2Garment(look, item, lookIndex, itemIndex, placement) {
             const cell = fashionV2Sprite(look,item);
             const hex = /^#[0-9a-f]{6}$/i.test(item.hex || '') ? item.hex : '#CBD5E1';
@@ -1733,7 +1768,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             const slides = document.getElementById('fashionV2Slides');
             if (!slides) return;
             const looks = Array.isArray(context?.looks) ? context.looks : [];
-            slides.innerHTML = looks.map((look,index) => `<section id="fashionV2${index ? 'Trend' : 'Daily'}Slide" class="fashion-v2-slide" role="tabpanel" aria-labelledby="fashionV2${index ? 'Trend' : 'Daily'}Tab"><h4>${fashionV2LookTitle(look,index)}</h4><p class="fashion-v2-look-summary">${escapeStyleText(fashionV2Summary(look))}</p>${renderFashionV2Board(look,index)}</section>`).join('');
+            slides.innerHTML = looks.map((look,index) => `<section id="fashionV2${index ? 'Trend' : 'Daily'}Slide" class="fashion-v2-slide" role="tabpanel" aria-labelledby="fashionV2${index ? 'Trend' : 'Daily'}Tab"><h4>${fashionV2LookTitle(look,index)}</h4><p class="fashion-v2-look-summary">${escapeStyleText(fashionV2Summary(look))}</p>${renderFashionV2Board(look,index)}${renderFashionV2Details(look,index)}</section>`).join('');
             showFashionV2Slide(0,false);
         }
         function showFashionV2Slide(index, smooth = true) {
@@ -1787,7 +1822,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             if (box) box.replaceChildren();
             if (button) button.hidden = !looks.every(fashionV2BoardImage);
             const styleEl = document.getElementById('resStyle');
-            if (styleEl) styleEl.textContent = fashionV2Summary(looks[0]);
+            if (styleEl) styleEl.textContent = fashionV2MainSummary(looks[0]);
             return true;
         }
         function renderWeatherOutfitGuidance() {
@@ -2475,6 +2510,8 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 || (selectedTpo === 'casual' ? fortune.wada_palette : null);
             if (!wada?.top || !wada?.bottom) {
                 styleEl.textContent = '오늘의 추천 색상을 불러온 뒤 옷차림을 안내합니다.';
+                fashionV2MoodText = '';
+                fashionV2AccessoryRecommendation = {item:null,text:''};
                 pickEl.hidden = true;
                 pickEl.replaceChildren();
                 paletteBox.replaceChildren();
@@ -2489,10 +2526,6 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             const topColorStd = wada.top.standard_color;
             const bottomColorStd = wada.bottom.standard_color;
             const todayMood = wada.style_mood || "casual";
-
-            if (moodStoryEl) {
-                moodStoryEl.innerText = wada.mood_desc || "";
-            }
 
             const matchedTops = userWardrobeItems.filter(item => item.category === "상의" && (item.colors || []).some(c => c.includes(topColorStd) || topColorStd.includes(c)));
             const matchedBottoms = userWardrobeItems.filter(item => item.category === "하의" && (item.colors || []).some(c => c.includes(bottomColorStd) || bottomColorStd.includes(c)));
@@ -2510,15 +2543,21 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             let finalTopText = matchedTops.length > 0 ? `내 옷장의 <strong>[${escapeStyleText(matchedTops[0].nickname)}]</strong>` : defaultTop;
             let finalBottomText = matchedBottoms.length > 0 ? `내 옷장의 <strong>[${escapeStyleText(matchedBottoms[0].nickname)}]</strong>` : defaultBottom;
 
+            const recommendation = selectDailyAccessory(userWardrobeItems, fortune, wada);
+            const matchText = recommendation.text;
+            fashionV2MoodText = wada.mood_desc || '';
+            fashionV2AccessoryRecommendation = recommendation;
+
             const fashionV2Connected = connectFashionV2Summary();
+            if (moodStoryEl) {
+                moodStoryEl.innerText = fashionV2Connected ? '' : fashionV2MoodText;
+                moodStoryEl.hidden = fashionV2Connected || !fashionV2MoodText;
+            }
             if (!fashionV2Connected) renderOutfitCards(wada);
             if (fashionV2Connected) { /* The v2 Daily summary is already rendered above. */ }
             else if (wada.looks?.length) styleEl.textContent = `${wada.mood_tag} 코디 제안`;
             else if (selectedTpo === 'casual') styleEl.innerHTML = `${finalTopText} &nbsp;&amp;&nbsp; ${finalBottomText}`;
             else styleEl.textContent = wada.outfit_guidance || '이 옷차림에 적용할 위치를 아직 확인하지 못했습니다.';
-
-            const recommendation = selectDailyAccessory(userWardrobeItems, fortune, wada);
-            const matchText = recommendation.text;
 
             const colorChip = (color, role, point = false) => {
                 const name = color.name_ko || color.standard_color || color.name || '추천 색상';
@@ -2535,8 +2574,8 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 ? `<span style="font-size:11px; background:#FEF3C7; color:#78350F; font-weight:800; padding:2px 7px; border-radius:4px; margin-right:6px;">✦ 반전 포인트</span>` 
                 : `<span style="font-size:11px; background:#F1F5F9; color:#475569; font-weight:700; padding:2px 7px; border-radius:4px; margin-right:6px;">소품 매칭</span>`;
 
-            pickEl.hidden = !recommendation.item;
-            pickEl.innerHTML = recommendation.item ? `
+            pickEl.hidden = fashionV2Connected || !recommendation.item;
+            pickEl.innerHTML = !fashionV2Connected && recommendation.item ? `
                 <div style="font-size: 13px; color: #334155; line-height: 1.6;">
                     ${headerTag} ${matchText}
                 </div>
