@@ -32,6 +32,17 @@ const tick = () => new Promise(resolve => setTimeout(resolve,30));
 
 (async () => {
     await tick(); // Let the original DOMContentLoaded boot sequence run without saved credentials.
+    await test('mobile Kakao login prefers the installed KakaoTalk app', () => {
+        let loginOptions = null;
+        w.DALHA_DESIGN_SAMPLE = true;
+        w.Kakao = {
+            isInitialized: () => true,
+            Auth: {login: options => { loginOptions = options; }},
+        };
+        w.loginWithKakaoReal();
+        assert.equal(loginOptions?.throughTalk, true);
+        assert.equal(loginOptions?.persistAccessToken, true);
+    });
     await test('home and every pre-existing DOM target remain available', () => {
         const oldDoc = new JSDOM(oldHtml).window.document;
         const newHome = new JSDOM(homeBeforeBoot).window.document;
