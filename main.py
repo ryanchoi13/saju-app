@@ -1306,6 +1306,8 @@ if os.path.exists("index.html"):
 
     @app.get("/design/{variant}", include_in_schema=False)
     def serve_design_comparison(variant: str):
+        if variant == "fashion-review":
+            return FileResponse("assets/fashion-review.html", headers={"X-Robots-Tag": "noindex, nofollow"})
         if variant == "compare":
             return FileResponse("assets/design-compare.html", headers={"X-Robots-Tag": "noindex, nofollow"})
         if variant not in {"clear", "moonlight"}:
