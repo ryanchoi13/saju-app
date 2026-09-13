@@ -1,9 +1,11 @@
 from datetime import date
+from pathlib import Path
 
 from fashion_v2.rolling_catalog import (
     REVIEW_CATALOG, age_profile, candidate, rolling_review_batches,
     validate_review_catalog, weather_family,
 )
+from fashion_v2.editorial_layout import LAYOUT_SPEC, select_background, validate_layout_spec
 
 
 def test_review_catalog_covers_gender_age_weather_tpo_and_role():
@@ -57,12 +59,32 @@ def test_rolling_review_batches_prepare_before_35_day_window_changes():
     assert all(batch["review_on"] <= batch["coverage_start"] for batch in batches)
 
 
-def test_owner_review_page_is_noindex_and_uses_twelve_new_single_look_boards():
+def test_owner_review_page_is_noindex_and_uses_thirty_six_flat_lay_boards():
     from main import serve_design_comparison
 
     response = serve_design_comparison("fashion-review")
     assert response.path.endswith("assets/fashion-review.html")
     assert response.headers["x-robots-tag"] == "noindex, nofollow"
     html = open(response.path, encoding="utf-8").read()
-    assert html.count("review-") == 12
+    boards = list(Path("assets/fashion-v2-boards").glob("review-*-warm-*-v3.webp"))
+    assert len(boards) == 36
+    assert all("layout-sample" not in path.name for path in boards)
+    assert "editorial floor" not in html
+    assert "편집형 플랫레이" in html
+    assert all(age in html for age in ("19~34세", "35~49세", "50세 이상"))
     assert "아직 운영 추천 화보에는 적용하지 않았습니다" in html
+
+
+def test_editorial_layout_is_floor_flat_lay_not_invisible_mannequin():
+    assert validate_layout_spec() is True
+    assert LAYOUT_SPEC["style"] == "editorial_floor_flat_lay"
+    assert LAYOUT_SPEC["garment_rule"] == "natural_overlap_without_body_silhouette"
+    assert "invisible_mannequin" in LAYOUT_SPEC["forbidden"]
+    assert LAYOUT_SPEC["shoe_scale"] == {"min": 1.15, "max": 1.30}
+    assert LAYOUT_SPEC["optional_accessory_count"] == {"min": 0, "max": 1}
+
+
+def test_background_is_selected_for_contrast_not_fixed_to_one_color():
+    assert select_background("brown_beige")["hex"] == "#F2EEE6"
+    assert select_background("light_neutral")["hex"] == "#E9EEF0"
+    assert select_background("mixed_color")["hex"] == "#F7F7F4"
