@@ -1,6 +1,6 @@
 .detail-sheet.modal-content{width:min(100%,520px);max-width:520px;max-height:92dvh;display:flex;flex-direction:column;padding:20px;gap:14px;text-align:left;overflow:hidden}
-.detail-sheet-body{overflow-y:auto;min-height:0;overscroll-behavior:contain}
-.detail-close{width:100%;min-height:50px;flex-shrink:0;border:1px solid #CBD5E1;border-radius:13px;background:#F1F5F9;color:#1E293B;font-size:15px;font-weight:700;cursor:pointer}
+#tarotReadingModal .detail-sheet-body{flex:1 1 auto;overflow-y:auto;min-height:0;overscroll-behavior:contain}
+#tarotReadingModal .detail-close{position:sticky;bottom:0;z-index:2;width:100%;min-height:50px;flex:0 0 auto;border:1px solid #CBD5E1;border-radius:13px;background:#F1F5F9;color:#1E293B;font-size:15px;font-weight:700;cursor:pointer}
 #tarotLargeArt{text-align:center}
 #tarotLargeArt img{display:block;max-height:42dvh;max-width:100%;width:auto;height:auto;object-fit:contain;margin:0 auto 16px}
 #tarotReadingModal .tarot-reading{margin:0}
