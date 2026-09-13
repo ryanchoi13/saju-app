@@ -755,6 +755,7 @@ def auth_kakao(req: KakaoAuthRequest):
             **wardrobe,
             "saju_analysis": saju_res,
             "profile": _public_profile(user),
+            "tarot_state": tarot_service.get_state(user_id),
         }
     return {
         "status": "new_user",
@@ -1110,16 +1111,15 @@ def get_zodiac_fortune(type: str, key: str):
             "lucky_match": zd["lucky_match"]
         }
 
-TAROT_DECK = [
-    {"name": "0. THE FOOL (바보)", "keyword": "새로운 시작 · 무한한 잠재력", "symbolism": "순수한 열정과 모험심", "reading_male": "새로운 프로젝트를 과감하게 시작하기에 최적입니다.", "reading_female": "마음이 이끄는 대로 새로운 도전을 시작해 보세요.", "action_guide": "과거의 걱정을 내려놓고 첫 발을 내딛으세요."},
-    {"name": "I. THE MAGICIAN (마법사)", "keyword": "창조적 재능 · 탁월한 실행력", "symbolism": "모든 도구를 갖춘 완벽한 준비", "reading_male": "자신감을 가지고 주도권을 행사할 때 결과가 따릅니다.", "reading_female": "당신의 다재다능한 매력과 역량이 빛을 발합니다.", "action_guide": "준비된 실력을 주저 없이 세상에 드러내세요."}
-]
+from tarot_catalog import DECK as TAROT_DECK
+
 
 class TarotDrawRequest(BaseModel):
     user_id: str = Field(min_length=1, max_length=100)
     slot: int = Field(ge=1, le=3)
     request_id: str = Field(min_length=16, max_length=80, pattern=r"^[a-zA-Z0-9_-]+$")
     is_paid: bool = False
+    expected_day: Optional[str] = Field(default=None, pattern=r'^\d{4}-\d{2}-\d{2}$')
 
 
 @app.post("/api/daily-tarot/draw")
@@ -1128,6 +1128,15 @@ def draw_daily_tarot(req: TarotDrawRequest):
         return tarot_service.draw(users_db, TAROT_DECK, random.choice, **req.model_dump())
     except tarot_service.DrawError as exc:
         raise HTTPException(status_code=exc.status, detail=exc.detail)
+    except wardrobe_store.StorageUnavailable:
+        raise HTTPException(status_code=503, detail={'code':'storage_unavailable','message':'카드를 저장하지 못했습니다. 같은 요청으로 다시 확인해 주세요.'})
+
+
+def daily_tarot_state(user_id: str):
+    if user_id not in users_db:
+        raise HTTPException(status_code=401, detail='로그인 상태를 확인해 주세요.')
+    return tarot_service.get_state(user_id)
+
 
 
 @app.get("/api/daily-tarot")

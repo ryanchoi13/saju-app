@@ -465,7 +465,8 @@
 var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDescriptor;var N=Object.getOwnPropertyNames;var p=Object.prototype.hasOwnProperty;var S=(u,C)=>{for(var o in C)g(u,o,{get:C[o],enumerable:!0})},j=(u,C,o,n)=>{if(C&&typeof C=="object"||typeof C=="function")for(let t of N(C))!p.call(u,t)&&t!==o&&g(u,t,{get:()=>C[t],enumerable:!(n=d(C,t))||n.enumerable});return u};var O=u=>j(g({},"__esModule",{value:!0}),u);var R={};S(R,{josa:()=>D});var B=[..."\uAC01\uD7A3".normalize("NFD")].map(u=>u.charCodeAt(0)),c=44032,f=55203,i=28,E=21,_={"":"",\u3131:"\u3131",\u3132:"\u3132",\u3133:"\u3131\u3145",\u3134:"\u3134",\u3135:"\u3134\u3148",\u3136:"\u3134\u314E",\u3137:"\u3137",\u3138:"\u3138",\u3139:"\u3139",\u313A:"\u3139\u3131",\u313B:"\u3139\u3141",\u313C:"\u3139\u3142",\u313D:"\u3139\u3145",\u313E:"\u3139\u314C",\u313F:"\u3139\u314D",\u3140:"\u3139\u314E",\u3141:"\u3141",\u3142:"\u3142",\u3143:"\u3143",\u3144:"\u3142\u3145",\u3145:"\u3145",\u3146:"\u3146",\u3147:"\u3147",\u3148:"\u3148",\u3149:"\u3149",\u314A:"\u314A",\u314B:"\u314B",\u314C:"\u314C",\u314D:"\u314D",\u314E:"\u314E"},h={\u314F:"\u314F",\u3150:"\u3150",\u3151:"\u3151",\u3152:"\u3152",\u3153:"\u3153",\u3154:"\u3154",\u3155:"\u3155",\u3156:"\u3156",\u3157:"\u3157",\u3158:"\u3157\u314F",\u3159:"\u3157\u3150",\u315A:"\u3157\u3163",\u315B:"\u315B",\u315C:"\u315C",\u315D:"\u315C\u3153",\u315E:"\u315C\u3154",\u315F:"\u315C\u3163",\u3160:"\u3160",\u3161:"\u3161",\u3162:"\u3161\u3163",\u3163:"\u3163"},v=["\u3131","\u3132","\u3134","\u3137","\u3138","\u3139","\u3141","\u3142","\u3143","\u3145","\u3146","\u3147","\u3148","\u3149","\u314A","\u314B","\u314C","\u314D","\u314E"],m=Object.values(h),l=["","\u3131","\u3132","\u3133","\u3134","\u3135","\u3136","\u3137","\u3139","\u313A","\u313B","\u313C","\u313D","\u313E","\u313F","\u3140","\u3141","\u3142","\u3144","\u3145","\u3146","\u3147","\u3148","\u314A","\u314B","\u314C","\u314D","\u314E"].map(u=>_[u]),G=["","\uB9CC","\uC5B5","\uC870","\uACBD","\uD574","\uC790","\uC591","\uAD6C","\uAC04","\uC815","\uC7AC","\uADF9","\uD56D\uD558\uC0AC","\uC544\uC2B9\uAE30","\uB098\uC720\uD0C0","\uBD88\uAC00\uC0AC\uC758","\uBB34\uB7C9\uB300\uC218","\uAC81","\uC5C5"],P=G.length*4;var b={A:"\uC5D0\uC774",B:"\uBE44",C:"\uC528",D:"\uB514",E:"\uC774",F:"\uC5D0\uD504",G:"\uC9C0",H:"\uC5D0\uC774\uCE58",I:"\uC544\uC774",J:"\uC81C\uC774",K:"\uCF00\uC774",L:"\uC5D8",M:"\uC5E0",N:"\uC5D4",O:"\uC624",P:"\uD53C",Q:"\uD050",R:"\uC54C",S:"\uC5D0\uC2A4",T:"\uD2F0",U:"\uC720",V:"\uBE0C\uC774",W:"\uB354\uBE14\uC720",X:"\uC5D1\uC2A4",Y:"\uC640\uC774",Z:"\uC9C0"};function F(u){let C=u.charCodeAt(0);if(!(c<=C&&C<=f))return;let n=C-c,t=n%i,r=(n-t)/i%E,s=Math.floor((n-t)/i/E);return{choseong:v[s],jungseong:m[r],jongseong:l[t]}}function $(u,C){let o=u[u.length-1];if(o==null)return!1;let n=o.charCodeAt(0);if(n<c||n>f)return!1;let r=(n-c)%i,s=l[r].length;switch(C?.only){case"single":return s===1;case"double":return s===2;default:return r>0}}var e={START_CHOSEONG:B[0],START_JUNGSEONG:B[1],START_JONGSEONG:B[2],END_CHOSEONG:B[3],END_JUNGSEONG:B[4],END_JONGSEONG:B[5]};var x=new RegExp(`[^\\u${e.START_CHOSEONG.toString(16)}-\\u${e.END_CHOSEONG.toString(16)}\u3131-\u314E\\s]+`,"ug"),y=new RegExp(`[\\u${e.START_CHOSEONG.toString(16)}-\\u${e.END_CHOSEONG.toString(16)}]`,"g"),L=new RegExp(`[\\u${e.START_JUNGSEONG.toString(16)}-\\u${e.END_JUNGSEONG.toString(16)}\\u${e.START_JONGSEONG.toString(16)}-\\u${e.END_JONGSEONG.toString(16)}]+`,"ug");var U=new RegExp(`[^\\u${e.START_JUNGSEONG.toString(16)}-\\u${e.END_JUNGSEONG.toString(16)}\u314F-\u3163\\s]+`,"ug"),w=new RegExp(`[\\u${e.START_JUNGSEONG.toString(16)}-\\u${e.END_JUNGSEONG.toString(16)}]`,"g"),M=Object.keys(h);var k=new RegExp(`[^\\u${e.START_JONGSEONG.toString(16)}-\\u${e.END_JONGSEONG.toString(16)}\\s]+`,"ug"),W=new RegExp(`[\\u${e.START_JONGSEONG.toString(16)}-\\u${e.END_JONGSEONG.toString(16)}]`,"g"),V=l.slice(1).map(u=>Object.fromEntries(Object.entries(_).map(([C,o])=>[o,C]))[u]),T=["\uC73C\uB85C/\uB85C","\uC73C\uB85C\uC11C/\uB85C\uC11C","\uC73C\uB85C\uC368/\uB85C\uC368","\uC73C\uB85C\uBD80\uD130/\uB85C\uBD80\uD130"];function D(u,C){if(u.length===0)return u;if(/^[A-Z]+$/.test(u)){let o=u[u.length-1],n=b[o];return u+a(n,C)}return u+a(u,C)}D.pick=a;function a(u,C){var o;if(u.length===0)return C.split("/")[0];let n=$(u),t=n?0:1,r=n&&((o=F(u[u.length-1]))==null?void 0:o.jongseong)==="\u3139",s=n&&r&&T.includes(C);return(C==="\uC640/\uACFC"||s)&&(t=t===0?1:0),C.split("/")[t]}var J={\uBCA0\uAC2F\uC787:"\uBCA0\uAC20\uB2CF",\uAE7B\uC78E:"\uAE6C\uB2D9",\uB098\uBB47\uC78E:"\uB098\uBB38\uB2D9",\uB3C4\uB9AC\uAE7B\uC5F4:"\uB3C4\uB9AC\uAE6C\uB148",\uB4B7\uC737:"\uB4A8\uB27B"},H={\uC804\uC5ED:"\uC800\uB141"};var A=u=>C=>u[C],X=[A(J),A(H)];return O(R);})();
 </script>
     <link rel="stylesheet" href="/assets/design-system.css?v=5">
-    <script src="/assets/design-controls.js?v=1" defer></script>
+    <link rel="stylesheet" href="/assets/tarot-v2.css?v=1">
+    <script src="/assets/design-controls.js?v=2" defer></script>
     <script src="/assets/menu-explorer.js?v=1" defer></script>
     <script src="/assets/design-sample.js?v=3" defer></script>
 </head>
@@ -786,7 +787,6 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                                 <div class="tarot-checkout-actions"><button type="button" id="tarotConfirmDraw" onclick="confirmTarotDraw()"></button>
                                 <button type="button" id="tarotCancelDraw" onclick="cancelTarotDraw()">지금은 여기까지</button></div>
                             </section>
-                            <div id="tarotResultBox" class="hidden"></div>
                             <button type="button" id="tarotDrawAgain" class="tarot-again" onclick="chooseAnotherTarotCard()" hidden>한 장 더 고르기 · 10 복채</button>
                         </div>
                     </div>
@@ -1296,6 +1296,13 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
         </div>
     </div>
 
+    <div id="tarotReadingModal" class="modal-bg hidden" role="dialog" aria-modal="true" aria-labelledby="tarotReadingTitle">
+        <div class="modal-content detail-sheet">
+            <div><h3 id="tarotReadingTitle">오늘 뽑은 카드</h3></div>
+            <div class="detail-sheet-body"><div id="tarotLargeArt"></div><div id="tarotResultBox" class="hidden"></div></div>
+            <button type="button" class="detail-close" data-dialog-close onclick="closeTarotReading()">닫기</button>
+        </div>
+    </div>
     <!-- 전통 부적 모달 -->
     <div id="talismanModal" class="modal-bg hidden">
         <div class="modal-content" style="max-width: 340px; padding: 18px; border-radius: 24px;">
@@ -1730,6 +1737,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
 
                                     const sData = await sRes.json();
                                     currentUserId = sData.user_id;
+                                    acceptTarotState(sData.tarot_state);
                                     currentCoin = sData.coin_balance;
                                     updateCoinDisplay();
 
@@ -1790,6 +1798,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 const sData = await sRes.json();
                 if (sData.status === "existing_user") {
                     currentUserId = sData.user_id;
+                    acceptTarotState(sData.tarot_state);
                     currentCoin = sData.coin_balance;
                     updateCoinDisplay();
                     serverUnlockedReports = sData.unlocked_reports || [];
@@ -1814,6 +1823,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                     restoreUnlockedUIFromReports();
                 } else {
                     currentUserId = sData.user_id;
+                    acceptTarotState(sData.tarot_state);
                     currentCoin = sData.coin_balance;
                     updateCoinDisplay();
                     acceptWardrobeResponse(sData);
@@ -1850,6 +1860,11 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             "0. THE FOOL (바보)": { main: "https://upload.wikimedia.org/wikipedia/commons/9/90/RWS_Tarot_00_Fool.jpg", backup: "https://raw.githubusercontent.com/effata/tarot-json/master/cards/fool.jpg" },
             "I. THE MAGICIAN (마법사)": { main: "https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg", backup: "https://raw.githubusercontent.com/effata/tarot-json/master/cards/magician.jpg" }
         };
+
+        function tarotArt(card) {
+            if (/^https:\/\/upload\.wikimedia\.org\/wikipedia\/commons\/[a-f0-9]\/[a-f0-9]{2}\/RWS_Tarot_[^/]+\.jpg$/.test(card.image_url || '')) return {main:card.image_url};
+            return TAROT_IMG_MAP[card.name] || null;
+        }
 
         function getTarotCardBackSvg(slot = 0) {
             const id = `tarot-back-${slot}`;
@@ -3181,6 +3196,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
         function tarotStorageKey() { return `dalha_tarot_v2:${currentUserId}`; }
         function saveTarotSession() {
             if (!currentUserId) return;
+            if (tarotSessionIdentity !== `${currentUserId}|${tarotTodayKey()}`) return;
             try { localStorage.setItem(tarotStorageKey(), JSON.stringify({owner:currentUserId,day:tarotTodayKey(),
                 drawn:tarotDrawnToday,cards:tarotCards,active:tarotActiveSlot,pending:tarotPendingDraw})); } catch (_) {}
         }
@@ -3194,19 +3210,51 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 const saved = JSON.parse(localStorage.getItem(tarotStorageKey()) || 'null');
                 if (saved?.owner === currentUserId && saved.day === tarotTodayKey()) {
                     tarotDrawnToday = !!saved.drawn;
-                    for (const slot of [1,2,3]) if (saved.cards?.[slot]?.card?.name) tarotCards[slot] = saved.cards[slot];
+                    const names = new Set();
+                    for (const slot of [1,2,3]) {
+                        const card = saved.cards?.[slot]?.card;
+                        if (card?.name && !names.has(card.name)) { tarotCards[slot] = saved.cards[slot]; names.add(card.name); }
+                    }
+                    tarotDrawnToday = Object.keys(tarotCards).length > 0;
                     tarotActiveSlot = tarotCards[saved.active] ? saved.active : null;
-                    if ([1,2,3].includes(saved.pending?.slot) && typeof saved.pending.requestId === 'string') tarotPendingDraw = saved.pending;
+                    if ([1,2,3].includes(saved.pending?.slot) && typeof saved.pending.requestId === 'string') tarotPendingDraw = {...saved.pending,day:saved.day};
                 }
             } catch (_) {}
             document.getElementById('tarotResultBox').classList.add('hidden');
-            if (tarotActiveSlot) renderTarotReading(tarotCards[tarotActiveSlot]);
+            closeTarotReading();
             renderTarotChoices();
+        }
+        function acceptTarotState(state) {
+            ensureTarotSession();
+            if (!state?.available || state.day !== tarotTodayKey() || !Array.isArray(state.cards)) return;
+            tarotCards = Object.fromEntries(state.cards.filter(r=>[1,2,3].includes(r.slot) && r.card?.name).map(r=>[r.slot,r]));
+            tarotDrawnToday = Object.keys(tarotCards).length > 0;
+            if (!tarotCards[tarotActiveSlot]) tarotActiveSlot = null;
+            if (tarotCards[tarotPendingDraw?.slot]) tarotPendingDraw = null;
+            saveTarotSession(); renderTarotChoices();
+        }
+        let tarotSync = null;
+        async function syncTarotState() {
+            ensureTarotSession();
+            if (!currentUserId || tarotBusy || window.DALHA_DESIGN_SAMPLE) return;
+            const owner = currentUserId, identity = tarotSessionIdentity;
+            if (tarotSync?.identity === identity) return tarotSync.promise;
+            const promise = (async () => {
+                try {
+                    const response = await fetch(`/api/daily-tarot/state?user_id=${encodeURIComponent(owner)}`);
+                    if (!response.ok) return;
+                    const state = await response.json();
+                    if (owner === currentUserId && identity === `${owner}|${tarotTodayKey()}` && !tarotBusy) acceptTarotState(state);
+                } catch (_) { /* Keep the current cards when the connection is unavailable. */ }
+            })();
+            tarotSync = {identity,promise};
+            try { await promise; } finally { if (tarotSync?.promise === promise) tarotSync = null; }
         }
         function tarotMessage(text) { document.getElementById('tarotDrawStatus').textContent = text; }
         function renderTarotChoices() {
             const hint = document.getElementById('tarotDrawHint');
-            hint.textContent = tarotDrawnToday ? '뒷면 카드를 골라 한 장 더 확인해 보세요. 이미 뽑은 카드는 다시 읽을 수 있어요.' : '마음에 닿는 카드 한 장을 골라 보세요. 오늘 첫 카드는 무료입니다.';
+            const count = Object.keys(tarotCards).length;
+            hint.textContent = count === 3 ? '오늘의 세 장을 모두 펼쳤습니다. 카드를 누르면 해설을 크게 볼 수 있어요.' : tarotDrawnToday ? `오늘 ${count}/3장 · 뒷면을 골라 한 장 더 펼치거나, 뽑은 카드를 눌러 다시 읽어 보세요.` : '하루 세 장, 한 장씩 골라 보세요. 오늘 첫 카드는 무료입니다.';
             for (const slot of [1,2,3]) {
                 const choice = document.getElementById(`tarotChoice${slot}`), saved = tarotCards[slot];
                 choice.disabled = tarotBusy;
@@ -3216,20 +3264,20 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 const front = document.getElementById(`front${slot}`);
                 front.innerHTML = '';
                 if (saved) {
-                    const art = TAROT_IMG_MAP[saved.card.name];
+                    const art = tarotArt(saved.card);
                     if (art) {
                         const img = document.createElement('img');
                         img.src = art.main; img.alt = saved.card.name; img.referrerPolicy = 'no-referrer';
-                        img.onerror = () => { img.onerror = null; img.src = art.backup; };
+                        img.onerror = () => { img.onerror = null; if (art.backup) img.src = art.backup; else { img.remove(); front.textContent = saved.card.name; } };
                         front.appendChild(img);
                     } else front.textContent = saved.card.name;
                 }
                 document.getElementById(`flipper${slot}`).classList.toggle('flipped', !!saved);
             }
             const again = document.getElementById('tarotDrawAgain');
-            again.hidden = !tarotDrawnToday;
+            again.hidden = !tarotDrawnToday || count >= 3;
             again.disabled = tarotBusy || !!tarotPendingDraw?.submitted;
-            again.textContent = Object.keys(tarotCards).length === 3 ? '다시 섞고 한 장 더 고르기 · 10 복채' : '한 장 더 고르기 · 10 복채';
+            again.textContent = '카드 한 장 더 뽑기 · 10 복채';
             renderTarotCheckout();
         }
         function renderTarotCheckout() {
@@ -3258,12 +3306,21 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 <div><dt>오늘의 실전 운세</dt><dd>${esc(reading)}</dd></div>
                 <div class="tarot-action"><dt>실천 행동 수칙</dt><dd>${esc(card.action_guide)}</dd></div></dl></article>`;
             box.classList.remove('hidden');
+            const art = tarotArt(card), artBox = document.getElementById('tarotLargeArt');
+            artBox.replaceChildren();
+            if (art) {
+                const img = document.createElement('img'); img.src = art.main; img.alt = card.name;
+                img.referrerPolicy = 'no-referrer'; img.onerror = () => { img.remove(); };
+                artBox.appendChild(img);
+            }
+            document.getElementById('tarotReadingModal').classList.remove('hidden');
         }
+        function closeTarotReading() { document.getElementById('tarotReadingModal').classList.add('hidden'); }
         function chooseAnotherTarotCard() {
             ensureTarotSession();
             if (tarotBusy || tarotPendingDraw?.submitted) return;
             tarotPendingDraw = null;
-            if (Object.keys(tarotCards).length === 3) tarotCards = {};
+            if (Object.keys(tarotCards).length >= 3) return;
             tarotActiveSlot = null;
             saveTarotSession(); renderTarotChoices();
             tarotMessage('마음에 드는 뒷면 카드를 골라 주세요. 선택한 뒤 복채 사용을 확인합니다.');
@@ -3288,7 +3345,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 renderTarotReading(tarotCards[slot]); saveTarotSession(); renderTarotChoices();
                 tarotMessage('이미 뽑은 카드입니다. 복채를 사용하지 않고 다시 읽을 수 있어요.'); return;
             }
-            tarotPendingDraw = {slot,requestId:crypto.randomUUID(),isPaid:tarotDrawnToday,submitted:false};
+            tarotPendingDraw = {slot,requestId:crypto.randomUUID(),isPaid:tarotDrawnToday,submitted:false,day:tarotTodayKey()};
             saveTarotSession(); renderTarotChoices(); tarotMessage('');
             if (!tarotDrawnToday) return submitTarotDraw();
             document.getElementById('tarotConfirmDraw').focus({preventScroll:true});
@@ -3308,9 +3365,10 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             tarotBusy = true; pending.submitted = true; saveTarotSession(); renderTarotChoices(); tarotMessage('선택한 카드를 펼치고 있어요.');
             try {
                 const response = await fetch('/api/daily-tarot/draw', {method:'POST',headers:{'Content-Type':'application/json'},
-                    body:JSON.stringify({user_id:owner,slot:pending.slot,request_id:pending.requestId,is_paid:pending.isPaid})});
+                    body:JSON.stringify({user_id:owner,slot:pending.slot,request_id:pending.requestId,is_paid:pending.isPaid,expected_day:pending.day})});
                 const result = await response.json();
                 if (currentUserId !== owner) return;
+                if (pending.day !== tarotTodayKey()) { ensureTarotSession(); tarotMessage('새로운 하루가 시작됐어요. 오늘의 카드를 골라 주세요.'); return; }
                 if (!response.ok) {
                     const detail = result.detail || {};
                     if (response.status < 500) pending.submitted = false;
@@ -3435,6 +3493,12 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             if (window.DALHA_DESIGN_SAMPLE) window.startDalhaDesignSample();
             else checkAutoLoginSession();
         });
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible' && currentUserId) syncTarotState();
+        });
+        setInterval(() => {
+            if (currentUserId && tarotSessionIdentity !== `${currentUserId}|${tarotTodayKey()}`) syncTarotState();
+        },30000);
     </script>
 </body>
 </html>
