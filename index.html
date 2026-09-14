@@ -1695,6 +1695,8 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             return FASHION_V2_BOARD_IMAGES[`${look?.id || ''}|${colors}`] || '';
         }
         function fashionV2BoardImage(look) {
+            const published = typeof look?.board_image === 'string' ? look.board_image : '';
+            if (published.startsWith('/assets/fashion-v2-boards/') && published.endsWith('.webp')) return published;
             return fashionV2ExactBoardImage(look);
         }
         function fashionV2Sprite(look, item) {
