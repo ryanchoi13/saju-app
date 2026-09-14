@@ -44,6 +44,13 @@ class FashionV2LivePolicyTests(unittest.TestCase):
         self.assertIn("재킷 아래로 연결된", next(
             item["label"] for item in pair[0]["items"] if item["category"] == "bottom"))
 
+    def test_forties_casual_uses_the_approved_adult_single_outfit_pair(self):
+        pair = published_looks_for(
+            "male", 48, "casual", {"daytime_apparent_high": 24}, "autumn")
+        self.assertEqual(len(pair), 2)
+        self.assertTrue(all("sample-v" in look["board_image"] for look in pair))
+        self.assertTrue(all("thirties-warm-casual" in look["board_image"] for look in pair))
+
     def test_every_published_scope_is_a_complete_pair_with_real_assets(self):
         root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
         for scope, pair in PUBLISHED_PAIRS.items():

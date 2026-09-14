@@ -1697,7 +1697,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
         function fashionV2BoardImage(look) {
             const published = typeof look?.board_image === 'string' ? look.board_image : '';
             if (published.startsWith('/assets/fashion-v2-boards/') && published.endsWith('.webp')) return published;
-            return fashionV2ExactBoardImage(look);
+            return '';
         }
         function fashionV2Sprite(look, item) {
             const gender = look?.gender === 'female' ? 'female' : 'male';
