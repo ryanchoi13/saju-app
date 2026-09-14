@@ -1259,7 +1259,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             </header>
             <div class="fashion-v2-tabs" role="tablist" aria-label="코디 유형">
                 <button id="fashionV2DailyTab" class="fashion-v2-tab" type="button" role="tab" aria-selected="true" aria-controls="fashionV2DailySlide" onclick="showFashionV2Slide(0)">Daily</button>
-                <button id="fashionV2TrendTab" class="fashion-v2-tab" type="button" role="tab" aria-selected="false" aria-controls="fashionV2TrendSlide" onclick="showFashionV2Slide(1)">Trend</button>
+                <button id="fashionV2TrendTab" class="fashion-v2-tab" type="button" role="tab" aria-selected="false" aria-controls="fashionV2TrendSlide" onclick="showFashionV2Slide(1)">Trendy</button>
             </div>
             <div id="fashionV2Slides" class="fashion-v2-slides"></div>
             <footer class="fashion-v2-footer">
@@ -1710,7 +1710,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             return FASHION_V2_SPRITES[gender][item.category] ?? (gender === 'female' ? 11 : 3);
         }
         function fashionV2LookTitle(look, index) {
-            return (look?.look_role || (index ? 'trend' : 'daily')) === 'trend' ? 'Trend 코디' : 'Daily 코디';
+            return (look?.look_role || (index ? 'trend' : 'daily')) === 'trend' ? 'Trendy 코디' : 'Daily 코디';
         }
         function fashionV2Summary(look) {
             const items = Array.isArray(look?.items) ? look.items : [];
