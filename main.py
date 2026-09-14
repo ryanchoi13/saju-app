@@ -461,6 +461,8 @@ def get_saju_pillars_and_analysis(name: str, gender: str, y: int, m: int, d: int
         color_a,
         color_b,
         weather_profile=reviewed_weather,
+        age=style_age,
+        board_weather_profile=weather_profile if complete_weather else None,
     )
     ranking = _build_menu_ranking(core, today_date)
     fortune = result["daily_fortune"]
