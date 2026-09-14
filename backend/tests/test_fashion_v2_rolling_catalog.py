@@ -73,15 +73,16 @@ def test_owner_review_page_is_noindex_and_uses_sixteen_calibration_boards():
     assert response.path.endswith("assets/fashion-review.html")
     assert response.headers["x-robots-tag"] == "noindex, nofollow"
     html = open(response.path, encoding="utf-8").read()
-    boards = re.findall(r"file:'(sample-v[45678]-[^']+\.webp)'", html)
+    boards = re.findall(r"file:'(sample-v[456789]-[^']+\.webp)'", html)
     assert len(boards) == 16
     assert len(set(boards)) == 16
     assert all((Path("assets/fashion-v2-boards") / name).exists() for name in boards)
     assert sum(name.startswith("sample-v4-") for name in boards) == 2
     assert sum(name.startswith("sample-v5-") for name in boards) == 3
-    assert sum(name.startswith("sample-v6-") for name in boards) == 4
+    assert sum(name.startswith("sample-v6-") for name in boards) == 2
     assert sum(name.startswith("sample-v7-") for name in boards) == 2
-    assert sum(name.startswith("sample-v8-") for name in boards) == 5
+    assert sum(name.startswith("sample-v8-") for name in boards) == 1
+    assert sum(name.startswith("sample-v9-") for name in boards) == 6
     assert "editorial floor" not in html
     assert "편집형 플랫레이" in html
     assert all(age in html for age in ("10대", "30대", "50대+"))
@@ -91,6 +92,20 @@ def test_owner_review_page_is_noindex_and_uses_sixteen_calibration_boards():
     assert "role:'Trend'" not in html
     assert "30대 ↔ 50대+" in html
     assert "아직 운영 추천에는 연결하지 않았습니다" in html
+
+
+def test_fifty_plus_female_tpo_comparison_is_noindex_and_complete():
+    from main import serve_design_comparison
+
+    response = serve_design_comparison("fashion-review-fifty-female")
+    assert response.path.endswith("assets/fashion-review-fifty-female.html")
+    assert response.headers["x-robots-tag"] == "noindex, nofollow"
+    html = open(response.path, encoding="utf-8").read()
+    assert all(label in html for label in (
+        "Casual · Trendy", "Business Casual · Trendy", "Business Formal · Trendy",
+    ))
+    assert html.count("<img ") == 3
+    assert "기존안 재분류" in html
 
 
 def test_age_research_page_covers_both_genders_and_five_age_bands():
@@ -115,6 +130,8 @@ def test_editorial_layout_is_floor_flat_lay_not_invisible_mannequin():
     assert "invisible_mannequin" in LAYOUT_SPEC["forbidden"]
     assert LAYOUT_SPEC["shoe_scale"] == {"min": 1.15, "max": 1.30}
     assert LAYOUT_SPEC["optional_accessory_count"] == {"min": 0, "max": 1}
+    assert LAYOUT_SPEC["accessory_rule"] == "only_when_context_or_outfit_balance_requires"
+    assert LAYOUT_SPEC["formal_trouser_pose"] == "stack_both_legs_then_fold_lower_section_sideways"
 
 
 def test_background_is_selected_for_contrast_not_fixed_to_one_color():
@@ -173,6 +190,7 @@ def test_trend_requires_repeated_editorial_adoption_visual_difference_and_review
         {"vogue_korea": ("refined_utility", "fuller_trouser"), "gq_korea": ("refined_utility",)},
         ("musinsa",),
         ("silhouette", "shoe_styling"),
+        combination_supported=True,
     )
     assert evidence["evidence_ready"] is True
     assert evidence["publishable"] is False
@@ -186,6 +204,7 @@ def test_trend_requires_repeated_editorial_adoption_visual_difference_and_review
         ("musinsa",),
         ("silhouette", "shoe_styling"),
         owner_approved=True,
+        combination_supported=True,
     )
     assert approved["publishable"] is True
 
@@ -199,6 +218,17 @@ def test_unrelated_new_editorials_do_not_make_a_trend():
     )
     assert evidence["evidence_ready"] is False
     assert evidence["status"] == "insufficient_evidence"
+
+
+def test_individually_trending_items_do_not_validate_an_unobserved_combination():
+    evidence = evaluate_trend_candidate(
+        "female",
+        {"vogue_korea": ("statement_skirt",), "w_korea": ("statement_skirt",)},
+        ("29cm",),
+        ("silhouette", "shoe_styling"),
+    )
+    assert evidence["combination_supported"] is False
+    assert evidence["evidence_ready"] is False
 
 
 def test_male_workwear_age_and_shoe_directions_match_review_feedback():

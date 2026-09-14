@@ -11,6 +11,8 @@ LAYOUT_SPEC = {
     "garment_rule": "natural_overlap_without_body_silhouette",
     "shoe_scale": {"min": 1.15, "max": 1.30},
     "optional_accessory_count": {"min": 0, "max": 1},
+    "accessory_rule": "only_when_context_or_outfit_balance_requires",
+    "formal_trouser_pose": "stack_both_legs_then_fold_lower_section_sideways",
     "forbidden": (
         "invisible_mannequin",
         "detached_item_rail",
