@@ -8,7 +8,8 @@ from fashion_v2.rolling_catalog import (
 )
 from fashion_v2.editorial_layout import LAYOUT_SPEC, select_background, validate_layout_spec
 from fashion_v2.age_tpo_policy import (
-    FEMALE_CASUAL_FORM_WEIGHTS, FIFTY_PLUS_MALE_CASUAL_POLICY,
+    FEMALE_BAG_POLICY, FEMALE_BAG_ROLE_DIRECTION, FEMALE_CASUAL_FORM_WEIGHTS,
+    FIFTY_PLUS_COMFORT_SHOE_POLICY, FIFTY_PLUS_MALE_CASUAL_POLICY,
     FORTIES_MALE_BUSINESS_CASUAL_SHOES, MALE_FORMAL_AGE_DIRECTION,
     TWENTIES_FORMAL_DIRECTION, age_band, next_generation_scopes, tpos_for,
 )
@@ -22,7 +23,9 @@ def test_review_catalog_covers_gender_age_weather_tpo_and_role():
 
 
 def test_age_is_a_soft_visual_preference_with_three_profiles():
-    assert [age_profile(age) for age in (24, 42, 57, None)] == ["young", "adult", "mature", "adult"]
+    assert [age_profile(age) for age in (24, 29, 30, 42, 57, None)] == [
+        "young", "young", "adult", "adult", "mature", "adult",
+    ]
     looks = [candidate("female", band, "warm_transition", "casual", "daily") for band in ("young", "adult", "mature")]
     assert all(look["age_policy"] == "soft_preference_no_exclusion" for look in looks)
     bottoms = {next(i["label"] for i in look["items"] if i["category"] == "bottom") for look in looks}
@@ -73,16 +76,17 @@ def test_owner_review_page_is_noindex_and_uses_sixteen_calibration_boards():
     assert response.path.endswith("assets/fashion-review.html")
     assert response.headers["x-robots-tag"] == "noindex, nofollow"
     html = open(response.path, encoding="utf-8").read()
-    boards = re.findall(r"file:'(sample-v[456789]-[^']+\.webp)'", html)
+    boards = re.findall(r"file:'(sample-v(?:[4-9]|10)-[^']+\.webp)'", html)
     assert len(boards) == 16
     assert len(set(boards)) == 16
     assert all((Path("assets/fashion-v2-boards") / name).exists() for name in boards)
     assert sum(name.startswith("sample-v4-") for name in boards) == 2
     assert sum(name.startswith("sample-v5-") for name in boards) == 3
-    assert sum(name.startswith("sample-v6-") for name in boards) == 2
+    assert sum(name.startswith("sample-v6-") for name in boards) == 1
     assert sum(name.startswith("sample-v7-") for name in boards) == 2
     assert sum(name.startswith("sample-v8-") for name in boards) == 1
-    assert sum(name.startswith("sample-v9-") for name in boards) == 6
+    assert sum(name.startswith("sample-v9-") for name in boards) == 2
+    assert sum(name.startswith("sample-v10-") for name in boards) == 5
     assert "editorial floor" not in html
     assert "편집형 플랫레이" in html
     assert all(age in html for age in ("10대", "30대", "50대+"))
@@ -105,7 +109,9 @@ def test_fifty_plus_female_tpo_comparison_is_noindex_and_complete():
         "Casual · Trendy", "Business Casual · Trendy", "Business Formal · Trendy",
     ))
     assert html.count("<img ") == 3
-    assert "기존안 재분류" in html
+    assert "편안한 세미 포멀" in html
+    assert "쿠션 로퍼" in html
+    assert html.count("핸드백") == 2
 
 
 def test_age_research_page_covers_both_genders_and_five_age_bands():
@@ -130,8 +136,9 @@ def test_editorial_layout_is_floor_flat_lay_not_invisible_mannequin():
     assert "invisible_mannequin" in LAYOUT_SPEC["forbidden"]
     assert LAYOUT_SPEC["shoe_scale"] == {"min": 1.15, "max": 1.30}
     assert LAYOUT_SPEC["optional_accessory_count"] == {"min": 0, "max": 1}
-    assert LAYOUT_SPEC["accessory_rule"] == "only_when_context_or_outfit_balance_requires"
-    assert LAYOUT_SPEC["formal_trouser_pose"] == "stack_both_legs_then_fold_lower_section_sideways"
+    assert LAYOUT_SPEC["accessory_rule"] == "one_bag_required_for_women_thirties_plus_except_explicit_sport_or_beach"
+    assert LAYOUT_SPEC["formal_trouser_pose"] == "stack_both_legs_evenly_then_fold_both_lower_sections_sideways_together"
+    assert "formal_trousers_with_only_one_leg_folded" in LAYOUT_SPEC["forbidden"]
 
 
 def test_background_is_selected_for_contrast_not_fixed_to_one_color():
@@ -182,6 +189,33 @@ def test_mature_casual_review_defaults_expand_daily_trend_gap():
     assert FIFTY_PLUS_MALE_CASUAL_POLICY["daily"]["bottom_priority"][0] == "cotton_chinos"
     assert FIFTY_PLUS_MALE_CASUAL_POLICY["daily"]["headwear"] == "omit_by_default"
     assert "low_profile" in FIFTY_PLUS_MALE_CASUAL_POLICY["daily"]["shoe"]
+
+
+def test_womens_bag_is_required_from_thirties_for_daily_and_trend():
+    assert FEMALE_BAG_POLICY["twenties"]["required"] is False
+    assert all(FEMALE_BAG_POLICY[band]["required"] for band in ("thirties", "forties", "fifty_plus"))
+    assert "practical" in FEMALE_BAG_ROLE_DIRECTION["daily"]
+    assert "current" in FEMALE_BAG_ROLE_DIRECTION["trend"]
+    for age_key in ("adult", "mature"):
+        for tpo in ("casual", "business_casual", "business_formal"):
+            for role in ("daily", "trend"):
+                look = candidate("female", age_key, "warm_transition", tpo, role)
+                assert len([item for item in look["items"] if item["category"] == "bag"]) == 1
+    assert not any(item["category"] == "bag" for item in candidate(
+        "female", "young", "warm_transition", "casual", "daily",
+    )["items"])
+
+
+def test_fifty_plus_shoes_pass_comfort_gate_before_style():
+    policy = FIFTY_PLUS_COMFORT_SHOE_POLICY
+    assert "roomy_soft_or_square_toe" in policy["required_features"]
+    assert "pointed_narrow_toe" in policy["forbidden"]
+    for gender in ("female", "male"):
+        for tpo in ("casual", "business_casual", "business_formal"):
+            for role in ("daily", "trend"):
+                look = candidate(gender, "mature", "warm_transition", tpo, role)
+                shoe = next(item["label"] for item in look["items"] if item["category"] == "shoes")
+                assert any(word in shoe for word in ("쿠션", "컴포트"))
 
 
 def test_trend_requires_repeated_editorial_adoption_visual_difference_and_review():

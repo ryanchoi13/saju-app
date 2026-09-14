@@ -9,8 +9,8 @@ from datetime import date, timedelta
 
 GENDERS = ("male", "female")
 AGE_PROFILES = {
-    "young": {"label": "19~34세", "min": 19, "max": 34},
-    "adult": {"label": "35~49세", "min": 35, "max": 49},
+    "young": {"label": "19~29세", "min": 19, "max": 29},
+    "adult": {"label": "30~49세", "min": 30, "max": 49},
     "mature": {"label": "50세 이상", "min": 50, "max": None},
 }
 WEATHER_FAMILIES = {
@@ -26,7 +26,7 @@ def age_profile(age):
     """Return a visual preference, never an eligibility restriction."""
     if age is None:
         return "adult"
-    if int(age) < 35:
+    if int(age) < 30:
         return "young"
     return "adult" if int(age) < 50 else "mature"
 
@@ -42,18 +42,41 @@ CASUAL = {
     "male": {
         "young": (("스트레이트 워시드 데님", "레트로 스니커즈"), ("세미와이드 블랙 데님", "가죽 스니커즈")),
         "adult": (("단정한 스트레이트 데님", "미니멀 가죽 스니커즈"), ("릴랙스드 그레이 데님", "레트로 가죽 스니커즈")),
-        "mature": (("편안한 진청 스트레이트 데님", "쿠션 스니커즈"), ("편안한 차콜 캐주얼 팬츠", "가죽 스니커즈")),
+        "mature": (("편안한 진청 스트레이트 데님", "쿠션 워킹 스니커즈"), ("편안한 차콜 캐주얼 팬츠", "쿠션 가죽 스니커즈")),
     },
     "female": {
         "young": (("와이드 스트레이트 데님", "레트로 스니커즈"), ("플레어 미디 스커트", "메리제인 플랫")),
         "adult": (("그레이 워시 스트레이트 데님", "레트로 스니커즈"), ("A라인 미디 스커트", "슬링백 플랫")),
-        "mature": (("편안한 스트레이트 데님", "쿠션 스니커즈"), ("차분한 플레어 미디 스커트", "소프트 로퍼")),
+        "mature": (("편안한 스트레이트 데님", "쿠션 워킹 스니커즈"), ("차분한 플레어 미디 스커트", "쿠션 소프트 로퍼")),
     },
 }
 
 
 def _item(category, label, material, wear_mode="worn"):
     return {"category": category, "label": label, "material": material, "wear_mode": wear_mode}
+
+
+def _female_bag(age_key, tpo, role):
+    if age_key == "young":
+        return None
+    labels = {
+        "adult": {
+            "casual": ("실용적인 숄더백", "모던 숄더백"),
+            "business_casual": ("단정한 숄더백", "구조적인 토트백"),
+            "business_formal": ("구조적인 업무용 가방", "세련된 사첼백"),
+        },
+        "mature": {
+            "casual": ("가벼운 중간 크기 숄더백", "가벼운 모던 숄더백"),
+            "business_casual": ("가벼운 구조적 숄더백", "가벼운 중간 크기 사첼백"),
+            "business_formal": ("가벼운 구조적 업무용 가방", "가벼운 세련된 사첼백"),
+        },
+    }
+    return _item("bag", labels[age_key][tpo][role == "trend"], "lightweight_leather", "accessory")
+
+
+def _with_required_female_bag(items, gender, age_key, tpo, role):
+    bag = _female_bag(age_key, tpo, role) if gender == "female" else None
+    return items + ([bag] if bag else [])
 
 
 def _casual(gender, age_key, weather_key, role):
@@ -75,10 +98,11 @@ def _casual(gender, age_key, weather_key, role):
             "wool_blend", "worn"),
     }
     tops, outers, outer_material, wear_mode = choices[weather_key]
-    return [_item("outer", outers[variant], outer_material, wear_mode),
+    items = [_item("outer", outers[variant], outer_material, wear_mode),
             _item("top", tops[variant], "cotton_knit"),
             _item("bottom", bottom, "denim" if "데님" in bottom else "woven"),
             _item("shoes", shoes, "leather_mesh")]
+    return _with_required_female_bag(items, gender, age_key, "casual", role)
 
 
 def _business_casual(gender, age_key, weather_key, role):
@@ -86,10 +110,10 @@ def _business_casual(gender, age_key, weather_key, role):
     fit = {"young": "세미와이드", "adult": "스트레이트", "mature": "편안한 스트레이트"}[age_key]
     if gender == "female" and trend:
         bottom = {"young": "모던 미디 스커트", "adult": "A라인 미디 스커트", "mature": "차분한 미디 스커트"}[age_key]
-        shoes = "슬링백 플랫" if age_key != "mature" else "소프트 로퍼"
+        shoes = "슬링백 플랫" if age_key != "mature" else "쿠션 소프트 로퍼"
     else:
         bottom = f"{fit} 서머 슬랙스" if weather_key == "warm_transition" else f"{fit} 슬랙스"
-        shoes = "미니멀 가죽 스니커즈" if trend and age_key != "mature" else "로퍼"
+        shoes = "미니멀 가죽 스니커즈" if trend and age_key != "mature" else ("쿠션 고무창 로퍼" if age_key == "mature" else "로퍼")
     if gender == "female":
         top = "반팔 블라우스" if weather_key == "warm_transition" else ("얇은 셔츠" if weather_key == "mild" else "파인 니트")
         outer = "칼라리스 재킷" if not trend else "셔츠 재킷"
@@ -97,26 +121,35 @@ def _business_casual(gender, age_key, weather_key, role):
         top = "반팔 클래식 셔츠" if weather_key == "warm_transition" else ("옥스퍼드 셔츠" if weather_key == "mild" else "파인 니트")
         outer = "경량 해링턴 재킷" if not trend else "언스트럭처드 재킷"
     wear_mode = "carry" if weather_key == "warm_transition" else "worn"
-    return [_item("outer", outer, "summer_wool" if weather_key == "warm_transition" else "wool_blend", wear_mode),
+    items = [_item("outer", outer, "summer_wool" if weather_key == "warm_transition" else "wool_blend", wear_mode),
             _item("top", top, "cotton"),
             _item("bottom", bottom, "summer_wool" if weather_key == "warm_transition" else "wool_blend"),
             _item("shoes", shoes, "leather")]
+    return _with_required_female_bag(items, gender, age_key, "business_casual", role)
 
 
 def _business_formal(gender, age_key, weather_key, role):
     material = "summer_wool" if weather_key == "warm_transition" else ("spring_wool" if weather_key == "mild" else "autumn_wool")
     if gender == "female" and role == "trend":
         dress = {"young": "모던 정장 원피스", "adult": "반팔 정장 원피스" if weather_key == "warm_transition" else "정장 원피스", "mature": "클래식 정장 원피스"}[age_key]
-        return [_item("outer", "경량 정장 재킷" if weather_key != "cool_chilly" else "정장 재킷", material),
-                _item("dress", dress, material), _item("shoes", "닫힌 플랫", "leather")]
+        shoes = "낮은 블록힐 컴포트 펌프스" if age_key == "mature" else "닫힌 플랫"
+        items = [_item("outer", "경량 정장 재킷" if weather_key != "cool_chilly" else "정장 재킷", material),
+                 _item("dress", dress, material), _item("shoes", shoes, "leather")]
+        return _with_required_female_bag(items, gender, age_key, "business_formal", role)
     bottom = {"young": "모던 스트레이트 수트 바지", "adult": "스트레이트 수트 바지", "mature": "편안한 클래식 수트 바지"}[age_key]
     items = [_item("outer", "수트 재킷", material),
              _item("top", "블라우스" if gender == "female" else "드레스 셔츠", "cotton_silk" if gender == "female" else "cotton"),
              _item("bottom", bottom, material)]
     if gender == "male":
         items.append(_item("tie", "레지멘탈 타이" if role == "trend" else "솔리드 타이", "silk"))
-    items.append(_item("shoes", "펌프스" if gender == "female" else ("더비 구두" if role == "trend" else "옥스퍼드 구두"), "leather"))
-    return items
+    if gender == "female":
+        shoes = "낮은 블록힐 컴포트 펌프스" if age_key == "mature" else "펌프스"
+    elif age_key == "mature":
+        shoes = "쿠션 고무창 더비 구두" if role == "trend" else "쿠션 고무창 옥스퍼드 구두"
+    else:
+        shoes = "더비 구두" if role == "trend" else "옥스퍼드 구두"
+    items.append(_item("shoes", shoes, "leather"))
+    return _with_required_female_bag(items, gender, age_key, "business_formal", role)
 
 
 def candidate(gender, age_key, weather_key, tpo, role):
@@ -158,6 +191,10 @@ def validate_review_catalog():
             raise ValueError(f"{look['id']}: unexpected carried item")
         if look["tpo"] == "business_formal" and any("데님" in item["label"] for item in items):
             raise ValueError(f"{look['id']}: denim is not formal")
+        bags = [item for item in items if item["category"] == "bag"]
+        needs_bag = look["gender"] == "female" and look["age_profile"] in {"adult", "mature"}
+        if len(bags) != int(needs_bag):
+            raise ValueError(f"{look['id']}: female bag policy mismatch")
     return True
 
 
