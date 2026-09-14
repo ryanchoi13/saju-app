@@ -69,6 +69,50 @@ FIFTY_PLUS_MALE_CASUAL_POLICY = {
     },
 }
 
+# A bag completes everyday dress for women from their thirties onward.  The
+# category is intentionally broader than a rigid top-handle "handbag": the TPO
+# chooses a shoulder, crossbody, tote, or satchel shape.  Sport and beach
+# boards may opt out when carrying a bag would be unnatural.
+FEMALE_BAG_POLICY = {
+    "teen": {"required": False, "direction": "optional_youth_bag"},
+    "twenties": {"required": False, "direction": "optional_function_or_trend_bag"},
+    "thirties": {"required": True, "direction": "practical_shoulder_crossbody_or_tote"},
+    "forties": {"required": True, "direction": "refined_shoulder_crossbody_or_tote"},
+    "fifty_plus": {"required": True, "direction": "lightweight_medium_shoulder_crossbody_or_satchel"},
+}
+
+FEMALE_BAG_ROLE_DIRECTION = {
+    "daily": "practical_lightweight_neutral_and_easy_to_carry",
+    "trend": "comfortable_carry_with_current_shape_material_or_color",
+}
+
+# Comfort is a gate, not an anti-fashion style.  Fifty-plus boards choose a
+# current-looking option only from shoes that remain stable and wearable.
+FIFTY_PLUS_COMFORT_SHOE_POLICY = {
+    "required_features": (
+        "roomy_soft_or_square_toe",
+        "cushioned_supportive_sole",
+        "low_broad_heel",
+        "stable_heel_hold",
+        "slip_resistant_not_heavy",
+    ),
+    "daily": {
+        "female": ("cushioned_walking_sneaker", "comfort_loafer", "supportive_slip_on"),
+        "male": ("cushioned_walking_sneaker", "rubber_sole_loafer", "supportive_slip_on"),
+    },
+    "trend": {
+        "female": ("refined_comfort_sneaker", "soft_square_toe_mary_jane", "cushioned_loafer"),
+        "male": ("retro_comfort_runner", "refined_leather_sneaker", "rubber_sole_derby"),
+    },
+    "forbidden": (
+        "pointed_narrow_toe",
+        "stiletto_or_high_heel",
+        "thin_unsupported_flat",
+        "loose_flip_flop_or_mule",
+        "heavy_exaggerated_platform",
+    ),
+}
+
 # Review directions for the next workwear comparison boards. Age changes the
 # priority of details; it never prohibits a color or garment.
 MALE_FORMAL_AGE_DIRECTION = {

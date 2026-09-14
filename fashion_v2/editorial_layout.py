@@ -11,14 +11,15 @@ LAYOUT_SPEC = {
     "garment_rule": "natural_overlap_without_body_silhouette",
     "shoe_scale": {"min": 1.15, "max": 1.30},
     "optional_accessory_count": {"min": 0, "max": 1},
-    "accessory_rule": "only_when_context_or_outfit_balance_requires",
-    "formal_trouser_pose": "stack_both_legs_then_fold_lower_section_sideways",
+    "accessory_rule": "one_bag_required_for_women_thirties_plus_except_explicit_sport_or_beach",
+    "formal_trouser_pose": "stack_both_legs_evenly_then_fold_both_lower_sections_sideways_together",
     "forbidden": (
         "invisible_mannequin",
         "detached_item_rail",
         "duplicate_garment",
         "brand_logo",
         "embedded_text",
+        "formal_trousers_with_only_one_leg_folded",
     ),
 }
 
@@ -52,7 +53,9 @@ def validate_layout_spec():
     if not (1 < scale["min"] <= scale["max"] <= 1.3):
         raise ValueError("shoe emphasis must remain editorial, not distorted")
     if accessories != {"min": 0, "max": 1}:
-        raise ValueError("supporting accessories must remain optional and sparse")
+        raise ValueError("supporting accessories must remain sparse")
+    if "both_lower_sections" not in LAYOUT_SPEC["formal_trouser_pose"]:
+        raise ValueError("formal trouser legs must be folded together")
     return True
 
 
