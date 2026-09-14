@@ -33,6 +33,7 @@ assert.equal(w.document.getElementById('weatherOutfitGuidance').parentElement,w.
 w.openFashionV2Modal();
 const modal=w.document.getElementById('fashionV2Modal');
 assert.equal(modal.classList.contains('hidden'),false);
+assert.equal(w.document.getElementById('fashionV2TrendTab').textContent,'Trendy');
 assert.equal(w.document.querySelectorAll('#fashionV2Slides .fashion-v2-slide').length,2);
 assert.equal(w.document.querySelectorAll('#fashionV2Modal .palette-chip').length,0,'modal must not repeat palette');
 assert.equal(w.document.querySelectorAll('#fashionV2Modal .fashion-v2-board-photo').length,2,'each look renders as one reviewed complete-board image');
@@ -55,6 +56,7 @@ assert.equal(w.document.getElementById('openOutfitModalButton').hidden,false,'we
 
 w.showFashionV2Slide(1,false);
 assert.equal(w.document.getElementById('fashionV2TrendTab').getAttribute('aria-selected'),'true');
+assert.equal(w.document.querySelector('#fashionV2TrendSlide h4').textContent,'Trendy 코디');
 assert.equal(w.document.getElementById('fashionV2DailyTab').getAttribute('aria-selected'),'false');
 w.closeFashionV2Modal();
 assert.equal(modal.classList.contains('hidden'),true);
