@@ -141,7 +141,7 @@ age preference and TPO; it does not mean publishing unreviewed AI imagery.
 - Use zero or one optional accessory only when it improves the complete look; it must never dominate the outfit.
 - For women in their thirties and older, one practical bag is part of the complete look by default. Daily uses a light, neutral shoulder/crossbody/tote; Trend keeps an easy carrying method and adds currency through shape, material, or color. Explicit sport and beach boards may omit it.
 - For fifty-plus users of both genders, comfort is a footwear gate before styling: roomy toe, cushioned supportive sole, low broad heel, stable heel hold, and non-slip light construction. Trendy means a current-looking shoe inside this gate, never a narrow pointed shoe, thin unsupported flat, high heel, or heavy platform.
-- Male formal trousers must show both legs stacked evenly and both lower sections folded sideways together. A one-leg fold is a failed board.
+- Male formal trousers must tuck the waistband under the jacket so the upper and lower pieces read as one full-length suit. Show both legs stacked evenly, preserve enough straight length, and fold both lower sections sideways together. Detached, compact, short-looking, or one-leg folds are failed boards.
 - Bags are omitted by default. Add one only when an explicit use context or the outfit's visual balance requires it.
 - Formal trousers are shown as one neatly stacked garment, not as two worn-looking
   legs. Keep the waistband under the jacket, align both legs, then fold the full

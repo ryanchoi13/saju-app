@@ -12,7 +12,7 @@ LAYOUT_SPEC = {
     "shoe_scale": {"min": 1.15, "max": 1.30},
     "optional_accessory_count": {"min": 0, "max": 1},
     "accessory_rule": "one_bag_required_for_women_thirties_plus_except_explicit_sport_or_beach",
-    "formal_trouser_pose": "stack_both_legs_evenly_then_fold_both_lower_sections_sideways_together",
+    "formal_trouser_pose": "tuck_waist_under_jacket_stack_both_legs_then_fold_both_lower_sections_sideways_together",
     "forbidden": (
         "invisible_mannequin",
         "detached_item_rail",
@@ -20,6 +20,7 @@ LAYOUT_SPEC = {
         "brand_logo",
         "embedded_text",
         "formal_trousers_with_only_one_leg_folded",
+        "formal_trousers_detached_from_jacket_or_short_looking",
     ),
 }
 
@@ -56,6 +57,8 @@ def validate_layout_spec():
         raise ValueError("supporting accessories must remain sparse")
     if "both_lower_sections" not in LAYOUT_SPEC["formal_trouser_pose"]:
         raise ValueError("formal trouser legs must be folded together")
+    if "tuck_waist_under_jacket" not in LAYOUT_SPEC["formal_trouser_pose"]:
+        raise ValueError("formal trousers must connect naturally under the jacket")
     return True
 
 
