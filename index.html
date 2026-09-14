@@ -1668,6 +1668,12 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             'female-autumn-casual-trend|더스티 핑크|아이보리|네이비|블랙':'/assets/fashion-v2-boards/female-autumn-casual-trend-v1.webp',
             'male-autumn-casual-daily|네이비|라이트 카멜|그레이|다크 브라운':'/assets/fashion-v2-boards/male-autumn-casual-daily-v1.webp',
             'male-autumn-casual-trend|차콜|라이트 카멜|그레이|블랙':'/assets/fashion-v2-boards/male-autumn-casual-trend-v1.webp',
+            'male-autumn-casual-daily|레드|오프화이트|진청|다크 브라운':'/assets/fashion-v2-boards/male-autumn-casual-daily-red-offwhite-v1.webp',
+            'male-autumn-casual-trend|레드|오프화이트|블랙|블랙':'/assets/fashion-v2-boards/male-autumn-casual-trend-red-offwhite-v1.webp',
+            'male-autumn-business_casual-daily|버건디|오프화이트|그레이|다크 브라운':'/assets/fashion-v2-boards/male-autumn-business-casual-daily-red-offwhite-v1.webp',
+            'male-autumn-business_casual-trend|버건디|오프화이트|네이비|블랙':'/assets/fashion-v2-boards/male-autumn-business-casual-trend-red-offwhite-v1.webp',
+            'male-autumn-business_formal-daily|네이비|오프화이트|네이비|레드|블랙':'/assets/fashion-v2-boards/male-autumn-business-formal-daily-red-offwhite-v1.webp',
+            'male-autumn-business_formal-trend|차콜|오프화이트|차콜|레드|다크 브라운':'/assets/fashion-v2-boards/male-autumn-business-formal-trend-red-offwhite-v1.webp',
             'male-warm-transition-casual-daily|라이트 카멜|그레이|다크 브라운|네이비':'/assets/fashion-v2-boards/male-warm-transition-casual-daily-v1.webp',
             'male-warm-transition-casual-trend|라이트 카멜|그레이|블랙|차콜':'/assets/fashion-v2-boards/male-warm-transition-casual-trend-v1.webp',
             'male-warm-transition-business_casual-daily|라이트 카멜|그레이|다크 브라운|베이지':'/assets/fashion-v2-boards/male-warm-transition-business-casual-daily-v1.webp',
@@ -1681,20 +1687,6 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             'female-summer-business_formal-daily|그레이|라이트 카멜|그레이|블랙':'/assets/fashion-v2-boards/female-summer-business-formal-daily-v1.webp',
             'female-summer-business_formal-trend|머스터드|그레이|블랙':'/assets/fashion-v2-boards/female-summer-business-formal-trend-v1.webp'
         };
-        const FASHION_V2_REFERENCE_BOARDS = {
-            'female|casual|daily':'/assets/fashion-v2-boards/female-autumn-casual-daily-v1.webp',
-            'female|casual|trend':'/assets/fashion-v2-boards/female-autumn-casual-trend-v1.webp',
-            'female|business_casual|daily':'/assets/fashion-v2-boards/female-warm-transition-business-casual-daily-v1.webp',
-            'female|business_casual|trend':'/assets/fashion-v2-boards/female-warm-transition-business-casual-trend-v1.webp',
-            'female|business_formal|daily':'/assets/fashion-v2-boards/female-summer-business-formal-daily-v1.webp',
-            'female|business_formal|trend':'/assets/fashion-v2-boards/female-summer-business-formal-trend-v1.webp',
-            'male|casual|daily':'/assets/fashion-v2-boards/male-autumn-casual-daily-v1.webp',
-            'male|casual|trend':'/assets/fashion-v2-boards/male-autumn-casual-trend-v1.webp',
-            'male|business_casual|daily':'/assets/fashion-v2-boards/male-warm-transition-business-casual-daily-v1.webp',
-            'male|business_casual|trend':'/assets/fashion-v2-boards/male-warm-transition-business-casual-trend-v1.webp',
-            'male|business_formal|daily':'/assets/fashion-v2-boards/male-summer-business-formal-daily-v1.webp',
-            'male|business_formal|trend':'/assets/fashion-v2-boards/male-summer-business-formal-trend-v1.webp'
-        };
         function fashionV2Context() {
             return currentFortuneData?.daily_fortune?.fashion_v2?.[getStyleTpo()] || null;
         }
@@ -1702,19 +1694,8 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             const colors = Array.isArray(look?.items) ? look.items.map(item => item.color_name || '').join('|') : '';
             return FASHION_V2_BOARD_IMAGES[`${look?.id || ''}|${colors}`] || '';
         }
-        function fashionV2ReferenceKey(look) {
-            const id = String(look?.id || '');
-            if (!/^(male|female)-(spring|summer|autumn|winter|warm-transition)-(casual|business_casual|business_formal)-(daily|trend)$/.test(id)) return '';
-            const gender = look?.gender || (/^female-/.test(id) ? 'female' : (/^male-/.test(id) ? 'male' : ''));
-            const tpo = look?.tpo || (id.includes('-business_formal-') ? 'business_formal' : (id.includes('-business_casual-') ? 'business_casual' : (id.includes('-casual-') ? 'casual' : '')));
-            const role = look?.look_role || (/-trend$/.test(id) ? 'trend' : (/-daily$/.test(id) ? 'daily' : ''));
-            return gender && tpo && role ? `${gender}|${tpo}|${role}` : '';
-        }
         function fashionV2BoardImage(look) {
-            return fashionV2ExactBoardImage(look) || FASHION_V2_REFERENCE_BOARDS[fashionV2ReferenceKey(look)] || '';
-        }
-        function fashionV2BoardIsExact(look) {
-            return !!fashionV2ExactBoardImage(look);
+            return fashionV2ExactBoardImage(look);
         }
         function fashionV2Sprite(look, item) {
             const gender = look?.gender === 'female' ? 'female' : 'male';
@@ -1849,10 +1830,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             fashionV2LastFocus = document.activeElement;
             renderFashionV2Modal(context);
             const modal = document.getElementById('fashionV2Modal');
-            const exactColors = context.looks.every(fashionV2BoardIsExact);
-            document.getElementById('fashionV2ModalMeta').textContent = exactColors
-                ? `${FASHION_V2_TPO_LABELS[getStyleTpo()] || '오늘의 옷차림'} · 좌우로 넘겨 비교해 보세요`
-                : `${FASHION_V2_TPO_LABELS[getStyleTpo()] || '오늘의 옷차림'} 구성 예시 · 추천 색상은 홈 팔레트 기준`;
+            document.getElementById('fashionV2ModalMeta').textContent = `${FASHION_V2_TPO_LABELS[getStyleTpo()] || '오늘의 옷차림'} · 좌우로 넘겨 비교해 보세요`;
             modal.classList.remove('hidden');
             document.getElementById('fashionV2CloseButton')?.focus();
         }
