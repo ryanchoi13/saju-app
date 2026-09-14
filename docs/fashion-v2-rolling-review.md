@@ -1,5 +1,23 @@
 # Fashion v2 rolling board review
 
+## 2026-09 final-calibration samples (v4)
+
+- Sixteen boards are prepared before production expansion to calibrate age,
+  weather, TPO, and Daily/Trend differences.
+- Twelve Casual boards compare Daily and Trend for teen, thirties, and
+  fifty-plus users of both genders.
+- Four boundary boards test Business Casual and Business Formal for users in
+  their thirties through fifties.
+- Business TPOs are not generated for teens because they are not useful as a
+  default recommendation.
+- Weather is split into warm early autumn, mild autumn (18–23 C), and cool
+  autumn (12–17 C), rather than using a calendar season alone.
+- Every board uses a dressed flat-lay, natural garment overlap, enlarged shoes
+  for mobile readability, and no duplicate item catalog.
+- Production of the next one-to-two-month bundle begins only after these
+  samples are approved; the samples themselves are not connected to live
+  recommendations.
+
 ## Status
 
 This is an owner-review layer, not a live board replacement. Thirty-six warm-transition

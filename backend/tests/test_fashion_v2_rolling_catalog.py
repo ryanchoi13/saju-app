@@ -62,20 +62,20 @@ def test_rolling_review_batches_prepare_before_35_day_window_changes():
     assert all(batch["review_on"] <= batch["coverage_start"] for batch in batches)
 
 
-def test_owner_review_page_is_noindex_and_uses_thirty_six_flat_lay_boards():
+def test_owner_review_page_is_noindex_and_uses_sixteen_v4_sample_boards():
     from main import serve_design_comparison
 
     response = serve_design_comparison("fashion-review")
     assert response.path.endswith("assets/fashion-review.html")
     assert response.headers["x-robots-tag"] == "noindex, nofollow"
     html = open(response.path, encoding="utf-8").read()
-    boards = list(Path("assets/fashion-v2-boards").glob("review-*-warm-*-v3.webp"))
-    assert len(boards) == 36
-    assert all("layout-sample" not in path.name for path in boards)
+    boards = list(Path("assets/fashion-v2-boards").glob("sample-v4-*.webp"))
+    assert len(boards) == 16
+    assert all(path.name in html for path in boards)
     assert "editorial floor" not in html
     assert "편집형 플랫레이" in html
-    assert all(age in html for age in ("19~34세", "35~49세", "50세 이상"))
-    assert "아직 운영 추천 화보에는 적용하지 않았습니다" in html
+    assert all(age in html for age in ("10대", "30대", "50대+"))
+    assert "아직 운영 추천에는 연결하지 않았습니다" in html
 
 
 def test_age_research_page_covers_both_genders_and_five_age_bands():
