@@ -233,19 +233,31 @@ def apply_daily_colors(template, color_a, color_b):
     return result
 
 
-def build_colored_catalog_contexts(gender, season, color_a, color_b, weather_profile=None):
+def build_colored_catalog_contexts(gender, season, color_a, color_b, weather_profile=None,
+                                   age=None, board_weather_profile=None):
     from fashion_v2.template_catalog import templates_for
     from fashion_v2.weather_catalog import weather_templates_for
+    from fashion_v2.live_policy import apply_live_age_policy
+    from fashion_v2.published_boards import published_looks_for
 
     result = {}
     for tpo in ('casual', 'business_casual', 'business_formal'):
+        published = published_looks_for(
+            gender, age, tpo, profile=board_weather_profile, season=season)
+        if published:
+            result[tpo] = {
+                'status': 'owner_approved_live',
+                'looks': list(published),
+            }
+            continue
         templates = (
             weather_templates_for(gender, tpo, weather_profile)
             if weather_profile else templates_for(gender, season, tpo)
         )
         result[tpo] = {
             'status': 'ui_connected_stage3',
-            'looks': [apply_daily_colors(t, color_a, color_b)
+            'age_policy': 'live_age_personalized',
+            'looks': [apply_daily_colors(apply_live_age_policy(t, age), color_a, color_b)
                       for t in templates],
         }
     return result

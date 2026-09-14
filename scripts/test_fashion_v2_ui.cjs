@@ -78,6 +78,10 @@ const maleTrend={id:'male-autumn-casual-trend',items:[
 assert.equal(vm.runInContext('fashionV2BoardImage('+JSON.stringify(maleDaily)+')',dom.getInternalVMContext()),'/assets/fashion-v2-boards/male-autumn-casual-daily-v1.webp');
 assert.equal(vm.runInContext('fashionV2BoardImage('+JSON.stringify(maleTrend)+')',dom.getInternalVMContext()),'/assets/fashion-v2-boards/male-autumn-casual-trend-v1.webp');
 
+const publishedBoard={...maleDaily,board_image:'/assets/fashion-v2-boards/sample-v11-male-fifty-cool-business-formal-daily.webp'};
+assert.equal(vm.runInContext('fashionV2BoardImage('+JSON.stringify(publishedBoard)+')',dom.getInternalVMContext()),publishedBoard.board_image,'backend-published reviewed boards take priority');
+assert.equal(vm.runInContext('fashionV2BoardImage({...'+JSON.stringify(maleDaily)+',board_image:"https://example.com/untrusted.webp"})',dom.getInternalVMContext()),'/assets/fashion-v2-boards/male-autumn-casual-daily-v1.webp','external board paths are rejected');
+
 const todayRecoloredDaily={...maleDaily,items:[
   item('outer','필드 점퍼','레드','#A33A32'),item('top','맨투맨','오프화이트','#F2EEE6'),
   item('bottom','스트레이트 청바지','진청','#26354A'),item('shoes','스웨이드 운동화','다크 브라운','#4B352B')
