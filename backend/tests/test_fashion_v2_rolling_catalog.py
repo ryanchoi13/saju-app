@@ -8,6 +8,7 @@ from fashion_v2.rolling_catalog import (
 )
 from fashion_v2.editorial_layout import LAYOUT_SPEC, select_background, validate_layout_spec
 from fashion_v2.age_tpo_policy import (
+    FEMALE_CASUAL_FORM_WEIGHTS, FIFTY_PLUS_MALE_CASUAL_POLICY,
     TWENTIES_FORMAL_DIRECTION, age_band, next_generation_scopes, tpos_for,
 )
 
@@ -70,11 +71,13 @@ def test_owner_review_page_is_noindex_and_uses_sixteen_calibration_boards():
     assert response.path.endswith("assets/fashion-review.html")
     assert response.headers["x-robots-tag"] == "noindex, nofollow"
     html = open(response.path, encoding="utf-8").read()
-    boards = re.findall(r"file:'(sample-v[45]-[^']+\.webp)'", html)
+    boards = re.findall(r"file:'(sample-v[456]-[^']+\.webp)'", html)
     assert len(boards) == 16
     assert len(set(boards)) == 16
     assert all((Path("assets/fashion-v2-boards") / name).exists() for name in boards)
-    assert sum(name.startswith("sample-v5-") for name in boards) == 10
+    assert sum(name.startswith("sample-v4-") for name in boards) == 6
+    assert sum(name.startswith("sample-v5-") for name in boards) == 6
+    assert sum(name.startswith("sample-v6-") for name in boards) == 4
     assert "editorial floor" not in html
     assert "편집형 플랫레이" in html
     assert all(age in html for age in ("10대", "30대", "50대+"))
@@ -143,3 +146,14 @@ def test_twenty_something_formal_is_modern_and_not_tie_first():
     assert TWENTIES_FORMAL_DIRECTION["male"]["default"] == "modern_suit_no_tie"
     assert TWENTIES_FORMAL_DIRECTION["male"]["strict_context"] == "tie_allowed"
     assert TWENTIES_FORMAL_DIRECTION["female"]["default"] == "modern_tailored_set_or_dress"
+
+
+def test_mature_casual_review_defaults_expand_daily_trend_gap():
+    weights = FEMALE_CASUAL_FORM_WEIGHTS
+    assert weights["thirties"]["daily"] == {"pants": 65, "skirt": 20, "dress": 15}
+    assert weights["fifty_plus"]["daily"] == {"pants": 75, "skirt": 15, "dress": 10}
+    assert weights["fifty_plus"]["trend"] == {"pants": 45, "skirt": 35, "dress": 20}
+    assert all(sum(role.values()) == 100 for age in weights.values() for role in age.values())
+    assert FIFTY_PLUS_MALE_CASUAL_POLICY["daily"]["bottom_priority"][0] == "cotton_chinos"
+    assert FIFTY_PLUS_MALE_CASUAL_POLICY["daily"]["headwear"] == "omit_by_default"
+    assert "low_profile" in FIFTY_PLUS_MALE_CASUAL_POLICY["daily"]["shoe"]
