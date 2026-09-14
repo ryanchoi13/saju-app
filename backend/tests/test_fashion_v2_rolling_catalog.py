@@ -9,8 +9,10 @@ from fashion_v2.rolling_catalog import (
 from fashion_v2.editorial_layout import LAYOUT_SPEC, select_background, validate_layout_spec
 from fashion_v2.age_tpo_policy import (
     FEMALE_CASUAL_FORM_WEIGHTS, FIFTY_PLUS_MALE_CASUAL_POLICY,
+    FORTIES_MALE_BUSINESS_CASUAL_SHOES, MALE_FORMAL_AGE_DIRECTION,
     TWENTIES_FORMAL_DIRECTION, age_band, next_generation_scopes, tpos_for,
 )
+from fashion_v2.trend_evidence import evaluate_trend_candidate
 
 
 def test_review_catalog_covers_gender_age_weather_tpo_and_role():
@@ -71,17 +73,21 @@ def test_owner_review_page_is_noindex_and_uses_sixteen_calibration_boards():
     assert response.path.endswith("assets/fashion-review.html")
     assert response.headers["x-robots-tag"] == "noindex, nofollow"
     html = open(response.path, encoding="utf-8").read()
-    boards = re.findall(r"file:'(sample-v[456]-[^']+\.webp)'", html)
+    boards = re.findall(r"file:'(sample-v[4567]-[^']+\.webp)'", html)
     assert len(boards) == 16
     assert len(set(boards)) == 16
     assert all((Path("assets/fashion-v2-boards") / name).exists() for name in boards)
-    assert sum(name.startswith("sample-v4-") for name in boards) == 6
+    assert sum(name.startswith("sample-v4-") for name in boards) == 2
     assert sum(name.startswith("sample-v5-") for name in boards) == 6
     assert sum(name.startswith("sample-v6-") for name in boards) == 4
+    assert sum(name.startswith("sample-v7-") for name in boards) == 4
     assert "editorial floor" not in html
     assert "편집형 플랫레이" in html
     assert all(age in html for age in ("10대", "30대", "50대+"))
     assert html.count("캐주얼 · 더운 초가을") == 12
+    assert "업무용 경계 샘플" not in html
+    assert "Daily ↔ Trend" in html
+    assert "30대 ↔ 50대+" in html
     assert "아직 운영 추천에는 연결하지 않았습니다" in html
 
 
@@ -157,3 +163,44 @@ def test_mature_casual_review_defaults_expand_daily_trend_gap():
     assert FIFTY_PLUS_MALE_CASUAL_POLICY["daily"]["bottom_priority"][0] == "cotton_chinos"
     assert FIFTY_PLUS_MALE_CASUAL_POLICY["daily"]["headwear"] == "omit_by_default"
     assert "low_profile" in FIFTY_PLUS_MALE_CASUAL_POLICY["daily"]["shoe"]
+
+
+def test_trend_requires_repeated_editorial_adoption_visual_difference_and_review():
+    evidence = evaluate_trend_candidate(
+        "male",
+        {"vogue_korea": ("refined_utility", "fuller_trouser"), "gq_korea": ("refined_utility",)},
+        ("musinsa",),
+        ("silhouette", "shoe_styling"),
+    )
+    assert evidence["evidence_ready"] is True
+    assert evidence["publishable"] is False
+    assert evidence["status"] == "owner_review_pending"
+    assert evidence["repeated_signals"] == ("refined_utility",)
+    assert evidence["new_product_alone_qualifies"] is False
+
+    approved = evaluate_trend_candidate(
+        "male",
+        {"vogue_korea": ("refined_utility",), "gq_korea": ("refined_utility",)},
+        ("musinsa",),
+        ("silhouette", "shoe_styling"),
+        owner_approved=True,
+    )
+    assert approved["publishable"] is True
+
+
+def test_unrelated_new_editorials_do_not_make_a_trend():
+    evidence = evaluate_trend_candidate(
+        "female",
+        {"vogue_korea": ("shift_dress",), "w_korea": ("color_blocking",)},
+        ("29cm",),
+        ("color_pattern", "material"),
+    )
+    assert evidence["evidence_ready"] is False
+    assert evidence["status"] == "insufficient_evidence"
+
+
+def test_male_workwear_age_and_shoe_directions_match_review_feedback():
+    assert MALE_FORMAL_AGE_DIRECTION["thirties"]["impression"] == "younger_modern"
+    assert MALE_FORMAL_AGE_DIRECTION["fifty_plus"]["tie_priority"][0] == "deep_burgundy"
+    assert FORTIES_MALE_BUSINESS_CASUAL_SHOES["daily"][0] == "dark_brown_suede_loafer"
+    assert "contrast_sneaker" in FORTIES_MALE_BUSINESS_CASUAL_SHOES["trend"][0]

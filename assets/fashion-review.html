@@ -28,14 +28,14 @@
   <h1>달하 패션 화보 검토</h1>
   <p>연령·날씨·TPO·Daily/Trend 기준 샘플 16장</p>
   <p class="notice">이번 화면은 기준 확정용 샘플입니다. 아직 운영 추천에는 연결하지 않았습니다.</p>
-  <div class="summary" aria-label="샘플 구성"><span>여성 8</span><span>남성 8</span><span>Daily 8</span><span>Trend 8</span></div>
+  <div class="summary" aria-label="샘플 구성"><span>여성 6</span><span>남성 10</span><span>Daily 9</span><span>Trend 7</span></div>
 
   <nav class="tabs" aria-label="샘플 묶음 선택">
     <button type="button" data-filter="all" aria-selected="true">전체</button>
     <button type="button" data-filter="teen" aria-selected="false">10대</button>
     <button type="button" data-filter="adult" aria-selected="false">30대</button>
     <button type="button" data-filter="mature" aria-selected="false">50대+</button>
-    <button type="button" data-filter="boundary" aria-selected="false">업무용</button>
+    <button type="button" data-filter="boundary" aria-selected="false">업무 비교</button>
   </nav>
   <div id="gallery"></div>
 
@@ -63,11 +63,15 @@
       {group:'50대+ 캐주얼 · 더운 초가을',filter:'mature',gender:'여성',role:'Trend',weather:'낮에는 반팔 · 저녁 겉옷은 옆에',items:'딥 틸 프린트 블라우스 · 플럼 A라인 스커트 · 로 플랫 · 얇은 재킷',file:'sample-v6-female-fifty-warm-casual-trend.webp'},
       {group:'50대+ 캐주얼 · 더운 초가을',filter:'mature',gender:'남성',role:'Daily',weather:'낮에는 반팔 · 저녁 겉옷은 옆에',items:'라이트 블루 반팔 폴로 · 카키 면 치노 · 무난한 워킹화 · 얇은 바람막이',file:'sample-v6-male-fifty-warm-casual-daily.webp'},
       {group:'50대+ 캐주얼 · 더운 초가을',filter:'mature',gender:'남성',role:'Trend',weather:'낮에는 반팔 · 저녁 겉옷은 옆에',items:'버건디 조직감 니트 폴로 · 아이보리 면 팬츠 · 스웨이드 스니커즈 · 네이비 오버셔츠',file:'sample-v6-male-fifty-warm-casual-trend.webp'},
-      {group:'업무용 경계 샘플',filter:'boundary',gender:'남성 40대',role:'Business Casual · Daily',weather:'18~23°C · 출근용',items:'언스트럭처드 재킷 · 니트 폴로 · 그레이 슬랙스 · 스니커즈',file:'sample-v4-male-forties-mild-business-casual-daily.webp'},
-      {group:'업무용 경계 샘플',filter:'boundary',gender:'여성 40대',role:'Business Casual · Trend',weather:'18~23°C · 출근용',items:'버건디 재킷 · 드레이프 블라우스 · H라인 스커트 · 슬링백',file:'sample-v4-female-forties-mild-business-casual-trend.webp'},
-      {group:'업무용 경계 샘플',filter:'boundary',gender:'남성 30대',role:'Business Formal · Daily',weather:'12~17°C · 포멀',items:'네이비 울 수트 · 셔츠 · 레지멘탈 타이 · 옥스퍼드',file:'sample-v4-male-thirties-cool-business-formal-daily.webp'},
-      {group:'업무용 경계 샘플',filter:'boundary',gender:'여성 50대+',role:'Business Formal · Trend',weather:'12~17°C · 행사 겸용',items:'플럼 스커트 수트 · 실크 블라우스 · 펌프스 · 브로치',file:'sample-v4-female-fifty-cool-business-formal-trend.webp'}
+      {group:'40대 남성 비즈니스 캐주얼 · Daily ↔ Trend',filter:'boundary',gender:'남성 40대',role:'Business Casual · Daily',weather:'18~23°C · 같은 연령·날씨',items:'네이비 재킷 · 아이보리 니트 폴로 · 그레이 슬랙스 · 다크 브라운 스웨이드 로퍼',file:'sample-v7-male-forties-mild-business-casual-daily.webp'},
+      {group:'40대 남성 비즈니스 캐주얼 · Daily ↔ Trend',filter:'boundary',gender:'남성 40대',role:'Business Casual · Trend',weather:'18~23°C · 같은 연령·날씨',items:'올리브 워크 재킷 · 블루 스트라이프 셔츠 · 볼륨 슬랙스 · 대비 가죽 스니커즈',file:'sample-v7-male-forties-mild-business-casual-trend.webp'},
+      {group:'남성 비즈니스 포멀 Daily · 30대 ↔ 50대+',filter:'boundary',gender:'남성 30대',role:'Business Formal · Daily',weather:'12~17°C · 같은 TPO·역할',items:'네이비 울 수트 · 화이트 셔츠 · 블루/버건디 레지멘탈 타이 · 블랙 옥스퍼드',file:'sample-v7-male-thirties-cool-business-formal-daily.webp'},
+      {group:'남성 비즈니스 포멀 Daily · 30대 ↔ 50대+',filter:'boundary',gender:'남성 50대+',role:'Business Formal · Daily',weather:'12~17°C · 같은 TPO·역할',items:'차콜 울 수트 · 라이트 블루 셔츠 · 딥 버건디 소패턴 타이 · 다크 브라운 옥스퍼드',file:'sample-v7-male-fifty-cool-business-formal-daily.webp'}
     ];
+    const groupNotes={
+      '40대 남성 비즈니스 캐주얼 · Daily ↔ Trend':'재킷·바지 실루엣·신발이 안정적인 출근복과 Trend로 분명히 나뉘는지 비교',
+      '남성 비즈니스 포멀 Daily · 30대 ↔ 50대+':'같은 포멀 Daily에서 수트 인상과 넥타이 색·패턴이 연령에 맞게 달라지는지 비교'
+    };
     const gallery=document.querySelector('#gallery');
     function render(filter='all'){
       gallery.replaceChildren();
@@ -76,7 +80,7 @@
         const group=visible.filter(sample=>sample.group===name);
         const section=document.createElement('section');
         section.className='group';
-        section.innerHTML=`<h2>${name}</h2><p>${group.length}장 · 서로 다른 아이템과 실루엣 비교</p><div class="cards"></div>`;
+        section.innerHTML=`<h2>${name}</h2><p>${groupNotes[name]||`${group.length}장 · 서로 다른 아이템과 실루엣 비교`}</p><div class="cards"></div>`;
         const cards=section.querySelector('.cards');
         for(const sample of group){
           const article=document.createElement('article');

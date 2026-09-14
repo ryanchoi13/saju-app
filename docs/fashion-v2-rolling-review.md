@@ -97,6 +97,23 @@ a different image. Static assets are prepared ahead of a thermal transition;
 the already deployed Gyeongju forecast continues to select the current day's
 thermal profile automatically.
 
+## Trend evidence gate
+
+Publication date or product newness never qualifies a board as Trend. The same
+seasonal signal must recur in at least two applicable core editorial sources:
+Vogue Runway and Vogue Korea provide the collection and Korean translation;
+W Korea is the fashion-forward women's styling source; GQ Korea is the men's
+styling source. At least one Korean adoption source (Musinsa, 29CM, or Queenit)
+and visible change on two of silhouette, material, color/pattern, and
+shoe/styling are also required. Even then the board remains owner-review pending
+until explicitly approved.
+
+The next workwear comparison moves the overly casual shoe out of forties men's
+Business Casual Daily and into Trend. Daily uses a dark suede loafer or minimal
+dark leather sneaker. Men's Business Formal also compares thirties and
+fifty-plus with age-weighted tie color and pattern: clearer blue/burgundy for a
+younger impression, deeper burgundy/navy small patterns for restrained maturity.
+
 ## Review cadence
 
 1. Current batch: warm daytime and cooler evening.
