@@ -1,7 +1,8 @@
 """Actionable production schedule for owner-reviewed fashion boards."""
 
 from dataclasses import dataclass
-from datetime import date
+from calendar import monthrange
+from datetime import date, timedelta
 
 from fashion_v2.age_tpo_policy import next_generation_scopes
 from fashion_v2.rolling_catalog import rolling_review_batches
@@ -36,6 +37,71 @@ def _scope_counts():
     standard = next_generation_scopes(False)
     all_scopes = next_generation_scopes(True)
     return len(standard), len(all_scopes) - len(standard)
+
+
+def _next_month(day):
+    return date(day.year + (day.month == 12), 1 if day.month == 12 else day.month + 1, 1)
+
+
+def _cycle_month(today, event):
+    # Research and first Trend selection happen during the preceding month.
+    return _next_month(today) if event in {"research", "trend_selection"} else today.replace(day=1)
+
+
+def _monthly_window_plan(event, today):
+    cycle = _cycle_month(today, event)
+    cycle_id = cycle.strftime("%Y-%m")
+    standard, conditional = _scope_counts()
+    windows = {
+        "research": ("자료 수집", "20~27일", "핵심 편집 출처와 국내 채택 자료를 모아 후보 8개의 반복 신호를 기록합니다."),
+        "trend_selection": ("Trend 1차 확정", "28일", "근거를 통과한 후보만 다음 달 화보 후보로 확정합니다."),
+        "correction": ("착장 보정", "1~7일", "연령·TPO·현실성·Daily/Trendy 차이를 보정합니다."),
+        "final_correction": ("최종 보정", "8일", "제작 직전 착장표와 화보 프롬프트를 동결합니다."),
+        "production": ("1~2개월 선행 화보 제작", "9~18일", "초기 4주를 우선하고 이후 1~2개월 온도 구간별 정적 화보를 제작합니다."),
+        "release": ("엔진·화보 연결 검사와 배포", "19~20일", "승인된 화보만 엔진과 함께 연결하고 운영 화면을 검사합니다."),
+    }
+    label, period, purpose = windows[event]
+    body = f"""<!-- fashion-board-schedule:{event}:{cycle_id} -->
+## {cycle_id} {label}
+
+작업 기간: **{period}**
+
+{purpose}
+
+### 작업 체크
+- [ ] 남녀·연령대·TPO별 Daily/Trendy 쌍 확인
+- [ ] 경주 기온 구간과 향후 4주 누락 범위 확인
+- [ ] Trend 근거와 국내 현실성 확인
+- [ ] 여성 30대 이상 가방, 50대 이상 편한 신발 확인
+- [ ] 남성 포멀 바지 연결, 30대/50대 넥타이 차이 확인
+- [ ] 40대 남성 Business Casual Daily 신발은 단정하게, 운동화는 Trend로 배치
+- [ ] 완성 착장 하나만 표시하고 오른쪽 개별 아이템 레일 없음
+- [ ] 정오님 승인 전 운영 공개 금지
+
+### 제작 범위
+- 표준 {standard}개, 20대 포멀 조건부 {conditional}개
+- 엔진 변경과 승인 화보는 함께 배포
+"""
+    return ProductionPlan(event, f"{event}:{cycle_id}", f"[패션 화보] {cycle_id} {label}", body, standard, conditional)
+
+
+def _weekly_audit(today):
+    standard, conditional = _scope_counts()
+    monday = today - timedelta(days=today.weekday())
+    sunday = monday + timedelta(days=6)
+    cycle = monday.isoformat()
+    body = f"""<!-- fashion-board-schedule:weekly_audit:{cycle} -->
+## {monday}~{sunday} 경주 날씨·화보 누락 점검
+
+- [ ] 향후 16일 경주 체감온도·비·강풍 확인
+- [ ] 현재 온도 구간의 남녀·연령·TPO별 Daily/Trendy 누락 확인
+- [ ] 이미지와 추천 아이템·색상·소재 일치 확인
+- [ ] 갑작스러운 날씨 변화가 있으면 중간 보정 이슈 생성
+- [ ] 정오님 승인 없는 화보는 공개하지 않음
+"""
+    return ProductionPlan("weekly_audit", f"weekly_audit:{cycle}",
+                          f"[패션 화보] {cycle} 주간 날씨·누락 점검", body,
+                          standard, conditional)
 
 
 def _monthly_plan(today):
@@ -114,9 +180,12 @@ def _seasonal_plan(today):
 
 def production_plan(event, today=None):
     today = today or date.today()
+    if event in {"research", "trend_selection", "correction", "final_correction", "production", "release"}:
+        return _monthly_window_plan(event, today)
+    if event == "weekly_audit":
+        return _weekly_audit(today)
     if event == "monthly":
         return _monthly_plan(today)
     if event == "seasonal":
         return _seasonal_plan(today)
-    raise ValueError("event must be monthly or seasonal")
-
+    raise ValueError("unknown production schedule event")

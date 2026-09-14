@@ -2,9 +2,14 @@ name: Fashion board production schedule
 
 on:
   schedule:
-    # GitHub cron uses UTC. These both run at 09:00 Korea time.
-    - cron: "0 0 1 * *"
-    - cron: "0 0 15 1,4,7,10 *"
+    # GitHub cron uses UTC. All jobs run at 09:00 Korea time.
+    - cron: "0 0 20 * *" # next-month research starts (20~27)
+    - cron: "0 0 28 * *" # Trend first selection
+    - cron: "0 0 1 * *"  # correction starts (1~7)
+    - cron: "0 0 8 * *"  # final correction
+    - cron: "0 0 9 * *"  # board production starts (9~18)
+    - cron: "0 0 19 * *" # engine/image connection and release (19~20)
+    - cron: "0 0 * * 6"  # Saturday weather/missing-board audit
   workflow_dispatch:
     inputs:
       event:
@@ -12,8 +17,13 @@ on:
         required: true
         type: choice
         options:
-          - monthly
-          - seasonal
+          - research
+          - trend_selection
+          - correction
+          - final_correction
+          - production
+          - release
+          - weekly_audit
 
 permissions:
   contents: read
@@ -35,10 +45,17 @@ jobs:
         run: |
           if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
             event="${{ inputs.event }}"
-          elif [[ "${{ github.event.schedule }}" == "0 0 1 * *" ]]; then
-            event="monthly"
           else
-            event="seasonal"
+            case "${{ github.event.schedule }}" in
+              "0 0 20 * *") event="research" ;;
+              "0 0 28 * *") event="trend_selection" ;;
+              "0 0 1 * *") event="correction" ;;
+              "0 0 8 * *") event="final_correction" ;;
+              "0 0 9 * *") event="production" ;;
+              "0 0 19 * *") event="release" ;;
+              "0 0 * * 6") event="weekly_audit" ;;
+              *) echo "Unknown schedule" >&2; exit 1 ;;
+            esac
           fi
           echo "event=$event" >> "$GITHUB_OUTPUT"
 
@@ -70,4 +87,3 @@ jobs:
               body: plan.body
             });
             core.notice(`Created ${created.data.html_url}`);
-
