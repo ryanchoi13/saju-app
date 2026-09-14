@@ -76,7 +76,7 @@ def test_owner_review_page_is_noindex_and_uses_sixteen_calibration_boards():
     assert response.path.endswith("assets/fashion-review.html")
     assert response.headers["x-robots-tag"] == "noindex, nofollow"
     html = open(response.path, encoding="utf-8").read()
-    boards = re.findall(r"file:'(sample-v(?:[4-9]|10)-[^']+\.webp)'", html)
+    boards = re.findall(r"file:'(sample-v(?:[4-9]|1[01])-[^']+\.webp)'", html)
     assert len(boards) == 16
     assert len(set(boards)) == 16
     assert all((Path("assets/fashion-v2-boards") / name).exists() for name in boards)
@@ -86,7 +86,8 @@ def test_owner_review_page_is_noindex_and_uses_sixteen_calibration_boards():
     assert sum(name.startswith("sample-v7-") for name in boards) == 2
     assert sum(name.startswith("sample-v8-") for name in boards) == 1
     assert sum(name.startswith("sample-v9-") for name in boards) == 2
-    assert sum(name.startswith("sample-v10-") for name in boards) == 5
+    assert sum(name.startswith("sample-v10-") for name in boards) == 4
+    assert sum(name.startswith("sample-v11-") for name in boards) == 1
     assert "editorial floor" not in html
     assert "편집형 플랫레이" in html
     assert all(age in html for age in ("10대", "30대", "50대+"))
@@ -137,8 +138,9 @@ def test_editorial_layout_is_floor_flat_lay_not_invisible_mannequin():
     assert LAYOUT_SPEC["shoe_scale"] == {"min": 1.15, "max": 1.30}
     assert LAYOUT_SPEC["optional_accessory_count"] == {"min": 0, "max": 1}
     assert LAYOUT_SPEC["accessory_rule"] == "one_bag_required_for_women_thirties_plus_except_explicit_sport_or_beach"
-    assert LAYOUT_SPEC["formal_trouser_pose"] == "stack_both_legs_evenly_then_fold_both_lower_sections_sideways_together"
+    assert LAYOUT_SPEC["formal_trouser_pose"] == "tuck_waist_under_jacket_stack_both_legs_then_fold_both_lower_sections_sideways_together"
     assert "formal_trousers_with_only_one_leg_folded" in LAYOUT_SPEC["forbidden"]
+    assert "formal_trousers_detached_from_jacket_or_short_looking" in LAYOUT_SPEC["forbidden"]
 
 
 def test_background_is_selected_for_contrast_not_fixed_to_one_color():
