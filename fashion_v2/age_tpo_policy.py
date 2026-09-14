@@ -69,6 +69,24 @@ FIFTY_PLUS_MALE_CASUAL_POLICY = {
     },
 }
 
+# Review directions for the next workwear comparison boards. Age changes the
+# priority of details; it never prohibits a color or garment.
+MALE_FORMAL_AGE_DIRECTION = {
+    "thirties": {
+        "tie_priority": ("blue_burgundy_regimental", "clear_navy", "small_geometric"),
+        "impression": "younger_modern",
+    },
+    "fifty_plus": {
+        "tie_priority": ("deep_burgundy", "dark_navy_foulard", "forest_micro_pattern"),
+        "impression": "restrained_mature",
+    },
+}
+
+FORTIES_MALE_BUSINESS_CASUAL_SHOES = {
+    "daily": ("dark_brown_suede_loafer", "minimal_dark_leather_sneaker"),
+    "trend": ("premium_low_profile_contrast_sneaker", "modern_derby"),
+}
+
 
 def age_band(age):
     """Return the editorial age band; age remains a soft garment preference."""
