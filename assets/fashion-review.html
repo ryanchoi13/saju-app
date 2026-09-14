@@ -6,84 +6,90 @@
   <meta name="robots" content="noindex,nofollow">
   <title>달하 패션 화보 검토</title>
   <style>
-    :root{--ink:#17283a;--muted:#687784;--line:#dde5e5;--paper:#fffdf9;--moon:#23676b;--soft:#f1f6f4}
+    :root{--ink:#17283a;--muted:#687784;--line:#dde5e5;--paper:#fffdf9;--moon:#23676b;--soft:#f1f6f4;--warm:#fff4dc}
     *{box-sizing:border-box}body{margin:0;background:#edf2f1;color:var(--ink);font-family:Pretendard,"Noto Sans KR",system-ui,sans-serif;line-height:1.55}
-    main{width:min(100%,760px);margin:auto;background:var(--paper);min-height:100vh;padding:28px 18px 64px}
-    h1{font-size:1.55rem;margin:0 0 6px}h2{font-size:1.15rem;margin:30px 0 12px}p{margin:6px 0;color:var(--muted)}
-    .notice{padding:14px 16px;border-radius:14px;background:#fff5dc;color:#65512b;font-weight:700}
-    .tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:22px 0 8px;padding:5px;background:#edf2f1;border-radius:15px;position:sticky;top:8px;z-index:2;box-shadow:0 4px 18px #21333a14}
-    .tabs button{border:0;border-radius:11px;background:transparent;color:#53636f;padding:11px 4px;font:inherit;font-size:.82rem;font-weight:800;cursor:pointer}
+    main{width:min(100%,780px);margin:auto;background:var(--paper);min-height:100vh;padding:28px 18px 64px}
+    h1{font-size:1.55rem;margin:0 0 6px}h2{font-size:1.13rem;margin:30px 0 6px}p{margin:6px 0;color:var(--muted)}
+    .notice{padding:14px 16px;border-radius:14px;background:var(--warm);color:#65512b;font-weight:700}
+    .summary{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin:16px 0}.summary span{padding:8px 4px;text-align:center;border-radius:10px;background:var(--soft);font-size:.73rem;font-weight:800;color:var(--moon)}
+    .tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:20px 0 8px;padding:5px;background:#edf2f1;border-radius:15px;position:sticky;top:8px;z-index:2;box-shadow:0 4px 18px #21333a14}
+    .tabs button{border:0;border-radius:11px;background:transparent;color:#53636f;padding:11px 2px;font:inherit;font-size:.76rem;font-weight:800;cursor:pointer}
     .tabs button[aria-selected="true"]{background:white;color:var(--moon);box-shadow:0 2px 10px #20333b18}
-    .age-note{padding:11px 13px;background:var(--soft);border-radius:12px;color:var(--ink);font-size:.88rem}
-    .group{margin-top:25px}.group h2{margin-bottom:4px}.group>p{font-size:.84rem;margin-bottom:12px}
-    .cards{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .group{margin-top:27px}.group>p{font-size:.84rem;margin-bottom:12px}.cards{display:grid;grid-template-columns:1fr 1fr;gap:12px}
     article{border:1px solid var(--line);border-radius:18px;padding:8px;background:white;overflow:hidden}
     article img{display:block;width:100%;height:auto;aspect-ratio:4/5;object-fit:contain;border-radius:12px;background:#f4f2ed}
-    h3{font-size:.88rem;margin:9px 2px 1px}.tag{display:inline-block;margin:3px 2px 2px;padding:3px 8px;border-radius:999px;background:var(--soft);color:var(--moon);font-size:.7rem;font-weight:800}
-    .check{padding:0;list-style:none}.check li{padding:11px 0;border-bottom:1px solid var(--line)}
-    .decision{border-left:4px solid var(--moon);padding:10px 14px;background:var(--soft);color:var(--ink)}
-    @media(max-width:430px){main{padding-inline:14px}.cards{gap:8px}article{padding:6px}h3{font-size:.8rem}.tabs button{font-size:.76rem}}
+    h3{font-size:.91rem;margin:10px 2px 1px}.meta{margin:2px;font-size:.73rem;color:var(--muted)}.items{margin:5px 2px 3px;font-size:.74rem;color:#3e4d58;line-height:1.45}
+    .tag{display:inline-block;margin:4px 2px 2px;padding:3px 8px;border-radius:999px;background:var(--soft);color:var(--moon);font-size:.69rem;font-weight:800}
+    .check{padding:0;list-style:none}.check li{padding:11px 0;border-bottom:1px solid var(--line)}.decision{border-left:4px solid var(--moon);padding:10px 14px;background:var(--soft);color:var(--ink)}
+    @media(max-width:480px){main{padding-inline:14px}.cards{gap:8px}article{padding:6px}h3{font-size:.82rem}.tabs button{font-size:.7rem}.summary span{font-size:.68rem}.items{font-size:.7rem}}
   </style>
 </head>
 <body><main>
   <h1>달하 패션 화보 검토</h1>
-  <p>더운 낮·선선한 저녁 · 남녀 전 TPO · Daily/Trend</p>
-  <p class="notice">검토용 화면입니다. 아직 운영 추천 화보에는 적용하지 않았습니다.</p>
+  <p>연령·날씨·TPO·Daily/Trend 기준 샘플 16장</p>
+  <p class="notice">이번 화면은 기준 확정용 샘플입니다. 아직 운영 추천에는 연결하지 않았습니다.</p>
+  <div class="summary" aria-label="샘플 구성"><span>여성 8</span><span>남성 8</span><span>Daily 8</span><span>Trend 8</span></div>
 
-  <nav class="tabs" aria-label="연령대 선택">
-    <button type="button" data-age="young" aria-selected="false">19~34세</button>
-    <button type="button" data-age="adult" aria-selected="true">35~49세</button>
-    <button type="button" data-age="mature" aria-selected="false">50세 이상</button>
+  <nav class="tabs" aria-label="샘플 묶음 선택">
+    <button type="button" data-filter="all" aria-selected="true">전체</button>
+    <button type="button" data-filter="teen" aria-selected="false">10대</button>
+    <button type="button" data-filter="adult" aria-selected="false">30대</button>
+    <button type="button" data-filter="mature" aria-selected="false">50대+</button>
   </nav>
-  <p class="age-note" id="age-note"></p>
   <div id="gallery"></div>
 
-  <h2>이번에 확인할 기준</h2>
+  <h2>검토할 다섯 가지</h2>
   <ul class="check">
-    <li>① 바닥에 자연스럽게 펼친 플랫레이로 보이는가</li>
-    <li>② 아우터·상의·하의가 착장 순서대로 자연스럽게 겹치는가</li>
-    <li>③ 신발이 모바일에서 충분히 크게 읽히는가</li>
-    <li>④ 연령대 차이가 금지 규칙이 아닌 실루엣의 우선순위로 느껴지는가</li>
-    <li>⑤ Daily와 Trend, 캐주얼과 업무용의 차이가 명확한가</li>
-    <li>⑥ 옷의 명도에 맞춘 배경이 착장보다 먼저 눈에 띄지 않는가</li>
+    <li>① 연령마다 아이템 종류와 실루엣이 실제로 달라 보이는가</li>
+    <li>② 캐주얼이 지나치게 점잖거나 출근복처럼 보이지 않는가</li>
+    <li>③ Trend에서 최신 요소와 Daily보다 큰 스타일 차이가 보이는가</li>
+    <li>④ 옷이 착장 순서대로 자연스럽게 겹치고 신발이 충분히 크게 보이는가</li>
+    <li>⑤ 배경색과 채도가 옷보다 먼저 눈에 띄지 않는가</li>
   </ul>
-  <p class="decision">모든 화보는 승인 전까지 검토 전용입니다. 승인된 정적 화보만 운영 추천에 연결합니다.</p>
+  <p class="decision">정오님 검토 후 기준을 확정하고, 같은 규칙으로 향후 1~2개월 운영 화보 묶음을 제작합니다.</p>
 
   <script>
-    const ages={
-      young:{label:'19~34세',note:'세미와이드와 현대적인 색 배치를 우선하되 과한 오버핏은 피했습니다.'},
-      adult:{label:'35~49세',note:'단정한 스트레이트 실루엣과 현재성을 함께 맞춘 기준안입니다.'},
-      mature:{label:'50세 이상',note:'편안한 스트레이트 실루엣과 안정적인 소재를 우선하되 옷을 제한하지 않았습니다.'}
-    };
-    const genders=[['female','여성'],['male','남성']];
-    const tpos=[['casual','캐주얼'],['business-casual','비즈니스 캐주얼'],['business-formal','비즈니스 포멀']];
-    const roles=[['daily','Daily'],['trend','Trend']];
+    const samples=[
+      {group:'10대 캐주얼 · 더운 초가을',filter:'teen',gender:'여성',role:'Daily',weather:'낮에는 반팔 · 저녁에는 얇은 겉옷',items:'그래픽 반팔 · 와이드 데님 · 집업 후디 · 스니커즈',file:'sample-v4-female-teen-warm-casual-daily.webp'},
+      {group:'10대 캐주얼 · 더운 초가을',filter:'teen',gender:'여성',role:'Trend',weather:'낮에는 반팔 · 저녁에는 얇은 겉옷',items:'체리 트랙 재킷 · 미니 스코트 · 레트로 스니커즈',file:'sample-v4-female-teen-warm-casual-trend.webp'},
+      {group:'10대 캐주얼 · 더운 초가을',filter:'teen',gender:'남성',role:'Daily',weather:'낮에는 반팔 · 저녁에는 얇은 겉옷',items:'워시드 블랙 반팔 · 와이드 블랙 데님 · 후디 · 스니커즈',file:'sample-v4-male-teen-warm-casual-daily.webp'},
+      {group:'10대 캐주얼 · 더운 초가을',filter:'teen',gender:'남성',role:'Trend',weather:'낮에는 반팔 · 저녁에는 얇은 겉옷',items:'블랙 블루종 · 그래픽 반팔 · 와이드 데님 · 러너',file:'sample-v4-male-teen-warm-casual-trend.webp'},
+      {group:'30대 캐주얼 · 온화한 가을',filter:'adult',gender:'여성',role:'Daily',weather:'18~23°C · 가벼운 아우터',items:'셔츠 재킷 · 아이보리 반팔 · 릴랙스 데님 · 스니커즈',file:'sample-v4-female-thirties-mild-casual-daily.webp'},
+      {group:'30대 캐주얼 · 온화한 가을',filter:'adult',gender:'여성',role:'Trend',weather:'18~23°C · 가벼운 아우터',items:'크롭 스웨이드 재킷 · 버건디 톱 · 배럴 데님 · 러너',file:'sample-v4-female-thirties-mild-casual-trend.webp'},
+      {group:'30대 캐주얼 · 온화한 가을',filter:'adult',gender:'남성',role:'Daily',weather:'18~23°C · 가벼운 아우터',items:'네이비 해링턴 · 아이보리 반팔 · 스트레이트 데님 · 스니커즈',file:'sample-v4-male-thirties-mild-casual-daily.webp'},
+      {group:'30대 캐주얼 · 온화한 가을',filter:'adult',gender:'남성',role:'Trend',weather:'18~23°C · 가벼운 아우터',items:'체리 블루종 · 아이보리 니트 · 차콜 데님 · 실버 러너',file:'sample-v4-male-thirties-mild-casual-trend.webp'},
+      {group:'50대+ 캐주얼 · 서늘한 가을',filter:'mature',gender:'여성',role:'Daily',weather:'12~17°C · 보온 아우터',items:'더스티 블루 카디건 · 저지 톱 · 편안한 팬츠 · 스니커즈',file:'sample-v4-female-fifty-cool-casual-daily.webp'},
+      {group:'50대+ 캐주얼 · 서늘한 가을',filter:'mature',gender:'여성',role:'Trend',weather:'12~17°C · 모임용 스타일',items:'포레스트 재킷 · 보 블라우스 · 플럼 미디 스커트 · 앵클부츠',file:'sample-v4-female-fifty-cool-casual-trend.webp'},
+      {group:'50대+ 캐주얼 · 서늘한 가을',filter:'mature',gender:'남성',role:'Daily',weather:'12~17°C · 보온 아우터',items:'퀼팅 재킷 · 폴로 니트 · 스트레이트 데님 · 스니커즈',file:'sample-v4-male-fifty-cool-casual-daily.webp'},
+      {group:'50대+ 캐주얼 · 서늘한 가을',filter:'mature',gender:'남성',role:'Trend',weather:'12~17°C · 모임용 스타일',items:'버건디 스웨이드 재킷 · 모크넥 · 플리츠 팬츠 · 스니커즈',file:'sample-v4-male-fifty-cool-casual-trend.webp'},
+      {group:'업무용 경계 샘플',filter:'boundary',gender:'남성 40대',role:'Business Casual · Daily',weather:'18~23°C · 출근용',items:'언스트럭처드 재킷 · 니트 폴로 · 그레이 슬랙스 · 스니커즈',file:'sample-v4-male-forties-mild-business-casual-daily.webp'},
+      {group:'업무용 경계 샘플',filter:'boundary',gender:'여성 40대',role:'Business Casual · Trend',weather:'18~23°C · 출근용',items:'버건디 재킷 · 드레이프 블라우스 · H라인 스커트 · 슬링백',file:'sample-v4-female-forties-mild-business-casual-trend.webp'},
+      {group:'업무용 경계 샘플',filter:'boundary',gender:'남성 30대',role:'Business Formal · Daily',weather:'12~17°C · 포멀',items:'네이비 울 수트 · 셔츠 · 레지멘탈 타이 · 옥스퍼드',file:'sample-v4-male-thirties-cool-business-formal-daily.webp'},
+      {group:'업무용 경계 샘플',filter:'boundary',gender:'여성 50대+',role:'Business Formal · Trend',weather:'12~17°C · 행사 겸용',items:'플럼 스커트 수트 · 실크 블라우스 · 펌프스 · 브로치',file:'sample-v4-female-fifty-cool-business-formal-trend.webp'}
+    ];
     const gallery=document.querySelector('#gallery');
-    const note=document.querySelector('#age-note');
-    function render(age){
-      note.textContent=ages[age].note;
+    function render(filter='all'){
       gallery.replaceChildren();
-      for(const [gender,genderLabel] of genders){
-        for(const [tpo,tpoLabel] of tpos){
-          const section=document.createElement('section');
-          section.className='group';
-          section.innerHTML=`<h2>${genderLabel} ${tpoLabel}</h2><p>${ages[age].label} · 더운 낮/선선한 저녁</p><div class="cards"></div>`;
-          const cards=section.querySelector('.cards');
-          for(const [role,roleLabel] of roles){
-            const article=document.createElement('article');
-            const filename=`review-${gender}-${age}-warm-${tpo}-${role}-v3.webp`;
-            article.innerHTML=`<img loading="lazy" src="/assets/fashion-v2-boards/${filename}" alt="${ages[age].label} ${genderLabel} ${tpoLabel} ${roleLabel}"><h3>${roleLabel}</h3><span class="tag">편집형 플랫레이</span>`;
-            cards.append(article);
-          }
-          gallery.append(section);
+      const visible=samples.filter(sample=>filter==='all'||sample.filter===filter||(filter==='adult'&&sample.filter==='boundary'));
+      for(const name of [...new Set(visible.map(sample=>sample.group))]){
+        const group=visible.filter(sample=>sample.group===name);
+        const section=document.createElement('section');
+        section.className='group';
+        section.innerHTML=`<h2>${name}</h2><p>${group.length}장 · 서로 다른 아이템과 실루엣 비교</p><div class="cards"></div>`;
+        const cards=section.querySelector('.cards');
+        for(const sample of group){
+          const article=document.createElement('article');
+          article.innerHTML=`<img loading="lazy" src="/assets/fashion-v2-boards/${sample.file}" alt="${sample.gender} ${sample.role} 코디"><h3>${sample.gender} · ${sample.role}</h3><p class="meta">${sample.weather}</p><p class="items">${sample.items}</p><span class="tag">편집형 플랫레이</span>`;
+          cards.append(article);
         }
+        gallery.append(section);
       }
     }
-    document.querySelectorAll('[data-age]').forEach(button=>button.addEventListener('click',()=>{
-      document.querySelectorAll('[data-age]').forEach(item=>item.setAttribute('aria-selected',String(item===button)));
-      render(button.dataset.age);
+    document.querySelectorAll('[data-filter]').forEach(button=>button.addEventListener('click',()=>{
+      document.querySelectorAll('[data-filter]').forEach(item=>item.setAttribute('aria-selected',String(item===button)));
+      render(button.dataset.filter);
     }));
-    render('adult');
+    render();
   </script>
 </main></body>
 </html>
