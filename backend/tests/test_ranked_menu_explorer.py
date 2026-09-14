@@ -115,6 +115,28 @@ class MenuStoreTests(TestCase):
         self.assertEqual(tomorrow['display_set'],1)
         self.assertNotEqual(tomorrow['token'],state['token'])
 
+    def test_tomorrows_first_pair_does_not_repeat_yesterdays(self):
+        tomorrow_payload=build_rankings(BIRTH,DAY+timedelta(days=1),{},'土','low')
+        for mode in ('general','diet'):
+            previous_names=[item['menu'] for item in self.payload['rankings'][mode][:2]]
+            remaining=[item for item in tomorrow_payload['rankings'][mode]
+                       if item['menu'] not in previous_names]
+            repeated=[item for item in tomorrow_payload['rankings'][mode]
+                      if item['menu'] in previous_names]
+            tomorrow_payload['rankings'][mode]=(repeated + remaining)[:len(tomorrow_payload['rankings'][mode])]
+            for index,item in enumerate(tomorrow_payload['rankings'][mode]):
+                item['rank']=index+1
+        tomorrow=menu_store.load('user_test',DAY+timedelta(days=1),lambda:tomorrow_payload)
+        previous_first={item['menu'] for item in self.payload['rankings']['general'][:2]}
+        self.assertTrue(previous_first.isdisjoint(item['menu'] for item in tomorrow['items']))
+        diet=menu_store.explore('user_test',DAY+timedelta(days=1),lambda:None,
+            token=tomorrow['token'],mode='diet',action='open',expected_day=tomorrow['date'],
+            expected_seen=0)
+        previous_diet={item['menu'] for item in self.payload['rankings']['diet'][:2]}
+        self.assertTrue(previous_diet.isdisjoint(item['menu'] for item in diet['items']))
+        self.assertEqual(len(tomorrow_payload['rankings']['general']),20)
+        self.assertEqual([item['rank'] for item in tomorrow_payload['rankings']['general']],list(range(1,21)))
+
     def test_account_isolation_invalid_token_and_unavailable_storage(self):
         other=menu_store.load('user_other',DAY,lambda:self.payload)
         self.assertNotEqual(other['token'],self.first['token'])
