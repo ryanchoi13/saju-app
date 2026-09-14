@@ -63,6 +63,24 @@ def _view(row, day, display_set=1):
                 basis=payload['basis'], basis_text=payload['basis_text'])
 
 
+def _defer_previous_first_pair(payload, previous_payload):
+    """Keep yesterday's first pair out of today's first pair for each mode."""
+    if not previous_payload:
+        return payload
+    for mode in LIMITS:
+        current = payload.get('rankings', {}).get(mode, [])
+        previous = previous_payload.get('rankings', {}).get(mode, [])
+        blocked = {item.get('menu') for item in previous[:2]}
+        if not current or not blocked:
+            continue
+        fresh = [item for item in current if item.get('menu') not in blocked]
+        repeated = [item for item in current if item.get('menu') in blocked]
+        reordered = fresh + repeated
+        payload['rankings'][mode] = [dict(item, rank=index + 1)
+                                    for index, item in enumerate(reordered)]
+    return payload
+
+
 def _create(conn, pg, owner, day, build):
     row = _row(conn, pg, owner, day, lock=True)
     if row:
@@ -71,6 +89,10 @@ def _create(conn, pg, owner, day, build):
         WHERE owner_key=%s AND day<%s ORDER BY day DESC LIMIT 1''', (owner, str(day))).fetchone()
     mode = previous[0] if previous else 'general'
     payload = build()
+    yesterday = _execute(conn, pg, '''SELECT payload FROM menu_recommendation_days
+        WHERE owner_key=%s AND day=%s''', (owner, str(day - timedelta(days=1)))).fetchone()
+    previous_payload = json.loads(yesterday[0]) if yesterday else None
+    payload = _defer_previous_first_pair(payload, previous_payload)
     counts = {m: int(m == mode and _limit(payload, m) > 0) for m in LIMITS}
     _execute(conn, pg, '''INSERT INTO menu_recommendation_days
         (owner_key,day,token,payload,general_seen,diet_seen,mode)
