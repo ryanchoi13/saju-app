@@ -42,6 +42,33 @@ TWENTIES_FORMAL_DIRECTION = {
     },
 }
 
+# Editorial starting weights for future female Casual board batches. These are
+# review defaults, not market statistics. Re-estimate them from Dalha selection
+# and feedback data once each age/role cell has a useful sample size.
+FEMALE_CASUAL_FORM_WEIGHTS = {
+    "thirties": {
+        "daily": {"pants": 65, "skirt": 20, "dress": 15},
+        "trend": {"pants": 50, "skirt": 30, "dress": 20},
+    },
+    "fifty_plus": {
+        "daily": {"pants": 75, "skirt": 15, "dress": 10},
+        "trend": {"pants": 45, "skirt": 35, "dress": 20},
+    },
+}
+
+FIFTY_PLUS_MALE_CASUAL_POLICY = {
+    "daily": {
+        "bottom_priority": ("cotton_chinos", "denim", "easy_pants"),
+        "headwear": "omit_by_default",
+        "shoe": "understated_low_profile_walking_sneaker",
+    },
+    "trend": {
+        "bottom_priority": ("ecru_cotton", "dark_denim", "relaxed_pleated"),
+        "headwear": "omit_by_default",
+        "shoe": "understated_low_profile_sneaker",
+    },
+}
+
 
 def age_band(age):
     """Return the editorial age band; age remains a soft garment preference."""

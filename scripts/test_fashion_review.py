@@ -11,7 +11,7 @@ BOARD_DIR = ROOT / "assets" / "fashion-v2-boards"
 
 def main():
     html = PAGE.read_text(encoding="utf-8")
-    files = re.findall(r"file:'(sample-v[45]-[^']+\.webp)'", html)
+    files = re.findall(r"file:'(sample-v[456]-[^']+\.webp)'", html)
 
     assert len(files) == 16, f"expected 16 samples, got {len(files)}"
     assert len(set(files)) == 16, "sample filenames must be unique"
@@ -27,7 +27,9 @@ def main():
         with Image.open(path) as image:
             assert image.size == (800, 1000), f"wrong dimensions: {filename} {image.size}"
 
-    assert sum(filename.startswith("sample-v5-") for filename in files) == 10
+    assert sum(filename.startswith("sample-v4-") for filename in files) == 6
+    assert sum(filename.startswith("sample-v5-") for filename in files) == 6
+    assert sum(filename.startswith("sample-v6-") for filename in files) == 4
     assert html.count("캐주얼 · 더운 초가을") == 12
     print("fashion review final calibration: 16 boards OK")
 

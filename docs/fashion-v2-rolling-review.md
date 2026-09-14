@@ -11,6 +11,21 @@
 - Ten revised boards strengthen teen Trend distinction, relax thirties Casual,
   and remove heavy fifty-plus clothing. The six already-approved boards remain.
 
+### Fifty-plus Daily/Trend correction (v6)
+
+- Female Daily is deliberately easy and ordinary: a cotton short-sleeve top,
+  pull-on pants, plain walking shoes, and a carried cardigan. Female Trend uses
+  a print blouse, below-knee A-line skirt, low flats, structured bag, and one
+  restrained brooch so that the styling change is immediately visible.
+- Male Daily removes headwear, prioritizes cotton chinos over denim, and uses a
+  quiet low-profile walking shoe. Male Trend remains age-appropriate and gains
+  distinction through texture, color, and ecru cotton rather than a loud
+  technical runner.
+- Initial female Casual form weights are editorial starting values, not
+  observed market shares: thirties Daily is pants/skirt/dress 65/20/15;
+  fifty-plus Daily is 75/15/10; fifty-plus Trend is 45/35/20. Re-estimate these
+  weights from Dalha selection and owner-feedback data when sample sizes permit.
+
 - Sixteen boards are prepared before production expansion to calibrate age,
   weather, TPO, and Daily/Trend differences.
 - Twelve Casual boards compare Daily and Trend for teen, thirties, and
