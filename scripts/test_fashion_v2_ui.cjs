@@ -6,13 +6,13 @@ w.scrollTo=()=>{};
 for(const s of w.document.querySelectorAll('script:not([src])')) vm.runInContext(s.textContent,dom.getInternalVMContext());
 
 const item=(category,label,color_name,hex,applied_daily_color)=>({category,label,color_name,hex,applied_daily_color});
-const daily={id:'female-autumn-casual-daily',gender:'female',season:'autumn',tpo:'casual',look_role:'daily',items:[
+const daily={id:'female-autumn-casual-daily',gender:'female',season:'autumn',tpo:'casual',look_role:'daily',board_image:'/assets/fashion-v2-boards/sample-v5-female-thirties-warm-casual-daily.webp',items:[
   item('outer','블루종','베이지','#C4B294'),
   item('top','긴팔 티셔츠','아이보리','#E8E0CF','A'),
   item('bottom','스트레이트 청바지','데님 블루','#466889','B'),
   item('shoes','레트로 운동화','그레이','#85888D')
 ]};
-const trend={id:'female-autumn-casual-trend',gender:'female',season:'autumn',tpo:'casual',look_role:'trend',items:[
+const trend={id:'female-autumn-casual-trend',gender:'female',season:'autumn',tpo:'casual',look_role:'trend',board_image:'/assets/fashion-v2-boards/sample-v10-female-thirties-warm-casual-trend.webp',items:[
   item('mid','가디건','더스티 핑크','#B67C87','A'),item('top','긴팔 티셔츠','아이보리','#E8E0CF'),
   item('bottom','플리츠 스커트','네이비','#26354A','B'),item('shoes','앵클부츠','블랙','#252629')
 ]};
@@ -64,7 +64,7 @@ assert.equal(modal.classList.contains('hidden'),true);
 vm.runInContext('currentFortuneData={daily_fortune:{wada_palette:'+JSON.stringify(palette)+',style_palettes:{casual:'+JSON.stringify(palette)+'}}};updateTodayWardrobeMatchPick();',dom.getInternalVMContext());
 assert.equal(open.hidden,true,'legacy responses hide the modal entry point');
 
-vm.runInContext('currentFortuneData='+JSON.stringify({daily_fortune:{wada_palette:palette,style_palettes:{casual:palette},fashion_v2:{casual:{looks:[{...daily,id:'unreviewed-daily'},trend]}}}})+';updateTodayWardrobeMatchPick();',dom.getInternalVMContext());
+vm.runInContext('currentFortuneData='+JSON.stringify({daily_fortune:{wada_palette:palette,style_palettes:{casual:palette},fashion_v2:{casual:{looks:[{...daily,id:'unreviewed-daily',board_image:''},trend]}}}})+';updateTodayWardrobeMatchPick();',dom.getInternalVMContext());
 assert.equal(open.hidden,true,'unreviewed scopes never reuse a mismatched board image');
 
 const maleDaily={id:'male-autumn-casual-daily',items:[
@@ -75,23 +75,23 @@ const maleTrend={id:'male-autumn-casual-trend',items:[
   item('outer','워크 재킷','차콜','#44474D'),item('top','후드 티셔츠','라이트 카멜','#ebd3a2','A'),
   item('bottom','블랙 청바지','그레이','#a2b0ad','B'),item('shoes','가죽 운동화','블랙','#252629')
 ]};
-assert.equal(vm.runInContext('fashionV2BoardImage('+JSON.stringify(maleDaily)+')',dom.getInternalVMContext()),'/assets/fashion-v2-boards/male-autumn-casual-daily-v1.webp');
-assert.equal(vm.runInContext('fashionV2BoardImage('+JSON.stringify(maleTrend)+')',dom.getInternalVMContext()),'/assets/fashion-v2-boards/male-autumn-casual-trend-v1.webp');
+assert.equal(vm.runInContext('fashionV2BoardImage('+JSON.stringify(maleDaily)+')',dom.getInternalVMContext()),'','legacy right-side item-rail boards are retired');
+assert.equal(vm.runInContext('fashionV2BoardImage('+JSON.stringify(maleTrend)+')',dom.getInternalVMContext()),'','legacy right-side item-rail boards are retired');
 
 const publishedBoard={...maleDaily,board_image:'/assets/fashion-v2-boards/sample-v11-male-fifty-cool-business-formal-daily.webp'};
 assert.equal(vm.runInContext('fashionV2BoardImage('+JSON.stringify(publishedBoard)+')',dom.getInternalVMContext()),publishedBoard.board_image,'backend-published reviewed boards take priority');
-assert.equal(vm.runInContext('fashionV2BoardImage({...'+JSON.stringify(maleDaily)+',board_image:"https://example.com/untrusted.webp"})',dom.getInternalVMContext()),'/assets/fashion-v2-boards/male-autumn-casual-daily-v1.webp','external board paths are rejected');
+assert.equal(vm.runInContext('fashionV2BoardImage({...'+JSON.stringify(maleDaily)+',board_image:"https://example.com/untrusted.webp"})',dom.getInternalVMContext()),'','external board paths are rejected');
 
-const todayRecoloredDaily={...maleDaily,items:[
+const todayRecoloredDaily={...maleDaily,board_image:'/assets/fashion-v2-boards/sample-v5-male-thirties-warm-casual-daily.webp',items:[
   item('outer','필드 점퍼','레드','#A33A32'),item('top','맨투맨','오프화이트','#F2EEE6'),
   item('bottom','스트레이트 청바지','진청','#26354A'),item('shoes','스웨이드 운동화','다크 브라운','#4B352B')
 ]};
-const todayRecoloredTrend={...maleTrend,items:[
+const todayRecoloredTrend={...maleTrend,board_image:'/assets/fashion-v2-boards/sample-v9-male-thirties-warm-casual-trend.webp',items:[
   item('outer','워크 재킷','레드','#A33A32'),item('top','후드 티셔츠','오프화이트','#F2EEE6'),
   item('bottom','블랙 청바지','블랙','#252629'),item('shoes','가죽 운동화','블랙','#252629')
 ]};
-assert.equal(vm.runInContext('fashionV2BoardImage('+JSON.stringify(todayRecoloredDaily)+')',dom.getInternalVMContext()),'/assets/fashion-v2-boards/male-autumn-casual-daily-red-offwhite-v1.webp');
-assert.equal(vm.runInContext('fashionV2BoardImage('+JSON.stringify(todayRecoloredTrend)+')',dom.getInternalVMContext()),'/assets/fashion-v2-boards/male-autumn-casual-trend-red-offwhite-v1.webp');
+assert.equal(vm.runInContext('fashionV2BoardImage('+JSON.stringify(todayRecoloredDaily)+')',dom.getInternalVMContext()),todayRecoloredDaily.board_image);
+assert.equal(vm.runInContext('fashionV2BoardImage('+JSON.stringify(todayRecoloredTrend)+')',dom.getInternalVMContext()),todayRecoloredTrend.board_image);
 vm.runInContext('currentFortuneData='+JSON.stringify({daily_fortune:{wada_palette:palette,style_palettes:{casual:palette},fashion_v2:{casual:{looks:[todayRecoloredDaily,todayRecoloredTrend]}}}})+';updateTodayWardrobeMatchPick();',dom.getInternalVMContext());
 assert.equal(open.hidden,false,'today button stays visible when exact-color reviewed boards exist');
 w.openFashionV2Modal();
@@ -99,59 +99,54 @@ assert.equal(w.document.querySelectorAll('#fashionV2Modal .fashion-v2-board-phot
 assert.match(w.document.getElementById('fashionV2ModalMeta').textContent,/좌우로 넘겨/);
 w.closeFashionV2Modal();
 
-const todayBusinessCasualDaily={id:'male-autumn-business_casual-daily',items:[
+const todayBusinessCasualDaily={id:'male-autumn-business_casual-daily',board_image:'/assets/fashion-v2-boards/sample-v7-male-forties-mild-business-casual-daily.webp',items:[
   item('outer','블레이저','버건디','#7F2638'),item('top','크루넥 니트','오프화이트','#ffffff'),
   item('bottom','슬랙스','그레이','#85888D'),item('shoes','로퍼','다크 브라운','#4B352B')]};
-const todayBusinessCasualTrend={id:'male-autumn-business_casual-trend',items:[
+const todayBusinessCasualTrend={id:'male-autumn-business_casual-trend',board_image:'/assets/fashion-v2-boards/sample-v7-male-forties-mild-business-casual-trend.webp',items:[
   item('outer','필드 재킷','버건디','#7F2638'),item('top','옥스퍼드 셔츠','오프화이트','#ffffff'),
   item('bottom','단정한 면바지','네이비','#26354A'),item('shoes','더비 구두','블랙','#252629')]};
-const todayBusinessFormalDaily={id:'male-autumn-business_formal-daily',items:[
+const todayBusinessFormalDaily={id:'male-autumn-business_formal-daily',board_image:'/assets/fashion-v2-boards/sample-v9-male-thirties-cool-business-formal-daily.webp',items:[
   item('outer','수트 재킷','네이비','#26354A'),item('top','드레스 셔츠','오프화이트','#ffffff'),
   item('bottom','수트 바지','네이비','#26354A'),item('tie','레지멘탈 타이','레드','#d46d7a'),item('shoes','옥스퍼드 구두','블랙','#252629')]};
-const todayBusinessFormalTrend={id:'male-autumn-business_formal-trend',items:[
+const todayBusinessFormalTrend={id:'male-autumn-business_formal-trend',board_image:'/assets/fashion-v2-boards/male-autumn-business-formal-trend-single-v2.webp',items:[
   item('outer','수트 재킷','차콜','#44474D'),item('top','드레스 셔츠','오프화이트','#ffffff'),
   item('bottom','수트 바지','차콜','#44474D'),item('tie','솔리드 타이','레드','#d46d7a'),item('shoes','더비 구두','다크 브라운','#4B352B')]};
-for (const [look,path] of [
-  [todayBusinessCasualDaily,'male-autumn-business-casual-daily-red-offwhite-v1.webp'],
-  [todayBusinessCasualTrend,'male-autumn-business-casual-trend-red-offwhite-v1.webp'],
-  [todayBusinessFormalDaily,'male-autumn-business-formal-daily-red-offwhite-v1.webp'],
-  [todayBusinessFormalTrend,'male-autumn-business-formal-trend-red-offwhite-v1.webp']
-]) {
-  assert.equal(vm.runInContext('fashionV2BoardImage('+JSON.stringify(look)+')',dom.getInternalVMContext()),'/assets/fashion-v2-boards/'+path);
-  assert.ok(fs.statSync('assets/fashion-v2-boards/'+path).size>20000,path+' must be a real reviewed board image');
+for (const look of [todayBusinessCasualDaily,todayBusinessCasualTrend,todayBusinessFormalDaily,todayBusinessFormalTrend]) {
+  assert.equal(vm.runInContext('fashionV2BoardImage('+JSON.stringify(look)+')',dom.getInternalVMContext()),look.board_image);
+  assert.ok(fs.statSync('.'+look.board_image).size>20000,look.board_image+' must be a real reviewed board image');
 }
 
-const warmDaily={id:'male-warm-transition-casual-daily',gender:'male',season:'weather_transition',tpo:'casual',look_role:'daily',items:[
+const warmDaily={id:'male-warm-transition-casual-daily',gender:'male',season:'weather_transition',tpo:'casual',look_role:'daily',board_image:'/assets/fashion-v2-boards/sample-v5-male-thirties-warm-casual-daily.webp',items:[
   {label:'반팔 폴로',color_name:'라이트 카멜',wear_mode:'worn'},
   {label:'경량 스트레이트 팬츠',color_name:'그레이',wear_mode:'worn'},
   {label:'가죽 운동화',color_name:'다크 브라운',wear_mode:'worn'},
   {label:'얇은 바람막이',color_name:'네이비',wear_mode:'carry'}]};
-const warmTrend={id:'male-warm-transition-casual-trend',gender:'male',season:'weather_transition',tpo:'casual',look_role:'trend',items:[
+const warmTrend={id:'male-warm-transition-casual-trend',gender:'male',season:'weather_transition',tpo:'casual',look_role:'trend',board_image:'/assets/fashion-v2-boards/sample-v9-male-thirties-warm-casual-trend.webp',items:[
   {label:'반팔 니트',color_name:'라이트 카멜',wear_mode:'worn'},
   {label:'세미와이드 경량 팬츠',color_name:'그레이',wear_mode:'worn'},
   {label:'레트로 가죽 운동화',color_name:'블랙',wear_mode:'worn'},
   {label:'얇은 오버셔츠',color_name:'차콜',wear_mode:'carry'}]};
-assert.equal(vm.runInContext('fashionV2BoardImage('+JSON.stringify(warmDaily)+')',dom.getInternalVMContext()),'/assets/fashion-v2-boards/male-warm-transition-casual-daily-v1.webp');
-assert.equal(vm.runInContext('fashionV2BoardImage('+JSON.stringify(warmTrend)+')',dom.getInternalVMContext()),'/assets/fashion-v2-boards/male-warm-transition-casual-trend-v1.webp');
+assert.equal(vm.runInContext('fashionV2BoardImage('+JSON.stringify(warmDaily)+')',dom.getInternalVMContext()),warmDaily.board_image);
+assert.equal(vm.runInContext('fashionV2BoardImage('+JSON.stringify(warmTrend)+')',dom.getInternalVMContext()),warmTrend.board_image);
 assert.match(vm.runInContext('fashionV2Summary('+JSON.stringify(warmDaily)+')',dom.getInternalVMContext()),/얇은 바람막이 \(챙길 옷\)/);
 assert.equal(vm.runInContext('fashionV2Narrative('+JSON.stringify(warmDaily)+')',dom.getInternalVMContext()),'라이트 카멜 색상의 반팔 폴로와 그레이 색상의 경량 스트레이트 팬츠, 다크 브라운 색상의 가죽 운동화를 매치해 보세요. 저녁에는 쌀쌀할 수 있으니 네이비 색상의 얇은 바람막이를 챙기면 좋습니다.');
 
-const businessCasualDaily={id:'male-warm-transition-business_casual-daily',items:[
+const businessCasualDaily={id:'male-warm-transition-business_casual-daily',board_image:'/assets/fashion-v2-boards/sample-v7-male-forties-mild-business-casual-daily.webp',items:[
   item('top','반팔 클래식 셔츠','라이트 카멜','#ebd3a2'),item('bottom','서머 슬랙스','그레이','#a2b0ad'),
   item('shoes','로퍼','다크 브라운','#4B352B'),{category:'carry_outer',label:'경량 해링턴 재킷',color_name:'베이지',hex:'#C4B294',wear_mode:'carry'}]};
-const businessCasualTrend={id:'male-warm-transition-business_casual-trend',items:[
+const businessCasualTrend={id:'male-warm-transition-business_casual-trend',board_image:'/assets/fashion-v2-boards/sample-v7-male-forties-mild-business-casual-trend.webp',items:[
   item('top','니트 폴로','라이트 카멜','#ebd3a2'),item('bottom','원턱 서머 슬랙스','그레이','#a2b0ad'),
   item('shoes','미니멀 가죽 운동화','블랙','#252629'),{category:'carry_outer',label:'얇은 언스트럭처드 재킷',color_name:'네이비',hex:'#26354A',wear_mode:'carry'}]};
-const businessFormalDaily={id:'male-summer-business_formal-daily',items:[
+const businessFormalDaily={id:'male-summer-business_formal-daily',board_image:'/assets/fashion-v2-boards/sample-v9-male-thirties-cool-business-formal-daily.webp',items:[
   item('outer','수트 재킷','그레이','#85888D'),item('top','드레스 셔츠','화이트','#F5F4EF'),
   item('bottom','수트 바지','그레이','#85888D'),item('tie','솔리드 타이','라이트 카멜','#ebd3a2'),item('shoes','옥스퍼드 구두','블랙','#252629')]};
-const businessFormalTrend={id:'male-summer-business_formal-trend',items:[
+const businessFormalTrend={id:'male-summer-business_formal-trend',board_image:'/assets/fashion-v2-boards/male-autumn-business-formal-trend-single-v2.webp',items:[
   item('outer','수트 재킷','그레이','#85888D'),item('top','드레스 셔츠','라이트 블루','#A9C5D8'),
   item('bottom','수트 바지','그레이','#85888D'),item('tie','레지멘탈 타이','라이트 카멜','#ebd3a2'),item('shoes','더비 구두','블랙','#252629')]};
-assert.equal(vm.runInContext('fashionV2BoardImage('+JSON.stringify(businessCasualDaily)+')',dom.getInternalVMContext()),'/assets/fashion-v2-boards/male-warm-transition-business-casual-daily-v1.webp');
-assert.equal(vm.runInContext('fashionV2BoardImage('+JSON.stringify(businessCasualTrend)+')',dom.getInternalVMContext()),'/assets/fashion-v2-boards/male-warm-transition-business-casual-trend-v1.webp');
-assert.equal(vm.runInContext('fashionV2BoardImage('+JSON.stringify(businessFormalDaily)+')',dom.getInternalVMContext()),'/assets/fashion-v2-boards/male-summer-business-formal-daily-v1.webp');
-assert.equal(vm.runInContext('fashionV2BoardImage('+JSON.stringify(businessFormalTrend)+')',dom.getInternalVMContext()),'/assets/fashion-v2-boards/male-summer-business-formal-trend-v1.webp');
+assert.equal(vm.runInContext('fashionV2BoardImage('+JSON.stringify(businessCasualDaily)+')',dom.getInternalVMContext()),businessCasualDaily.board_image);
+assert.equal(vm.runInContext('fashionV2BoardImage('+JSON.stringify(businessCasualTrend)+')',dom.getInternalVMContext()),businessCasualTrend.board_image);
+assert.equal(vm.runInContext('fashionV2BoardImage('+JSON.stringify(businessFormalDaily)+')',dom.getInternalVMContext()),businessFormalDaily.board_image);
+assert.equal(vm.runInContext('fashionV2BoardImage('+JSON.stringify(businessFormalTrend)+')',dom.getInternalVMContext()),businessFormalTrend.board_image);
 for(const board of [businessCasualDaily,businessCasualTrend,businessFormalDaily,businessFormalTrend]) {
   const src=vm.runInContext('fashionV2BoardImage('+JSON.stringify(board)+')',dom.getInternalVMContext());
   assert.ok(fs.existsSync('.'+src),`reviewed board asset must exist: ${src}`);
@@ -172,22 +167,22 @@ w.openFashionV2Modal();
 assert.equal(w.document.querySelectorAll('#fashionV2Modal .fashion-v2-board-photo').length,2);
 w.closeFashionV2Modal();
 
-const femaleCasualDaily={id:'female-warm-transition-casual-daily',gender:'female',items:[
+const femaleCasualDaily={id:'female-warm-transition-casual-daily',gender:'female',board_image:'/assets/fashion-v2-boards/sample-v10-female-fifty-warm-casual-daily.webp',items:[
   item('top','반팔 티셔츠','라이트 카멜','#ebd3a2'),item('bottom','경량 스트레이트 팬츠','그레이','#a2b0ad'),
   item('shoes','가죽 운동화','그레이','#a2b0ad'),{category:'carry_outer',label:'얇은 바람막이',color_name:'베이지',wear_mode:'carry'}]};
-const femaleCasualTrend={id:'female-warm-transition-casual-trend',gender:'female',items:[
+const femaleCasualTrend={id:'female-warm-transition-casual-trend',gender:'female',board_image:'/assets/fashion-v2-boards/sample-v10-female-fifty-warm-casual-trend.webp',items:[
   item('top','반팔 파인 니트','라이트 카멜','#ebd3a2'),item('bottom','라이트 플리츠 스커트','그레이','#a2b0ad'),
   item('shoes','메리제인 플랫','블랙','#252629'),{category:'carry_outer',label:'얇은 크롭 셔츠',color_name:'아이보리',wear_mode:'carry'}]};
-const femaleBusinessCasualDaily={id:'female-warm-transition-business_casual-daily',gender:'female',items:[
+const femaleBusinessCasualDaily={id:'female-warm-transition-business_casual-daily',gender:'female',board_image:'/assets/fashion-v2-boards/sample-v7-male-forties-mild-business-casual-daily.webp',items:[
   item('top','반팔 니트','라이트 카멜','#ebd3a2'),item('bottom','서머 슬랙스','그레이','#a2b0ad'),
   item('shoes','로퍼','다크 브라운','#4B352B'),{category:'carry_outer',label:'얇은 칼라리스 재킷',color_name:'베이지',wear_mode:'carry'}]};
-const femaleBusinessCasualTrend={id:'female-warm-transition-business_casual-trend',gender:'female',items:[
+const femaleBusinessCasualTrend={id:'female-warm-transition-business_casual-trend',gender:'female',board_image:'/assets/fashion-v2-boards/sample-v10-female-fifty-warm-business-casual-trend.webp',items:[
   item('top','반팔 블라우스','라이트 카멜','#ebd3a2'),item('bottom','라이트 미디 스커트','그레이','#a2b0ad'),
   item('shoes','슬링백 플랫','블랙','#252629'),{category:'carry_outer',label:'얇은 셔츠 재킷',color_name:'더스티 블루',wear_mode:'carry'}]};
-const femaleFormalDaily={id:'female-summer-business_formal-daily',gender:'female',items:[
+const femaleFormalDaily={id:'female-summer-business_formal-daily',gender:'female',board_image:'/assets/fashion-v2-boards/sample-v10-female-fifty-cool-business-formal-trend.webp',items:[
   item('outer','수트 재킷','그레이','#a2b0ad'),item('top','블라우스','라이트 카멜','#ebd3a2'),
   item('bottom','수트 바지','그레이','#a2b0ad'),item('shoes','펌프스','블랙','#252629')]};
-const femaleFormalTrend={id:'female-summer-business_formal-trend',gender:'female',items:[
+const femaleFormalTrend={id:'female-summer-business_formal-trend',gender:'female',board_image:'/assets/fashion-v2-boards/sample-v10-female-fifty-cool-business-formal-trend.webp',items:[
   item('outer','경량 재킷','머스터드','#C89B3C'),item('dress','반팔 정장 원피스','그레이','#a2b0ad'),item('shoes','플랫','블랙','#252629')]};
 
 const femaleContexts={
@@ -197,7 +192,7 @@ const femaleContexts={
 };
 for(const context of Object.values(femaleContexts)) for(const board of context.looks) {
   const src=vm.runInContext('fashionV2BoardImage('+JSON.stringify(board)+')',dom.getInternalVMContext());
-  assert.ok(src.startsWith('/assets/fashion-v2-boards/female-'),`female reviewed board mapping is required: ${board.id}`);
+  assert.ok(src.startsWith('/assets/fashion-v2-boards/'),`reviewed board path is required: ${board.id}`);
   assert.ok(fs.existsSync('.'+src),`female reviewed board asset must exist: ${src}`);
   assert.ok(fs.statSync('.'+src).size>20000,`female reviewed board asset must not be an empty placeholder: ${src}`);
 }
@@ -210,5 +205,5 @@ for(const tpo of ['casual','business_casual','business_formal']) {
   w.closeFashionV2Modal();
 }
 
-console.log('PASS fashion v2 stage 3 summary, all male and female TPO buttons, bottom sheet, swipe tabs, single palette and legacy fallback');
+console.log('PASS fashion v2 stage 3 summary, published single-outfit boards, bottom sheet, swipe tabs and single palette');
 dom.window.close();

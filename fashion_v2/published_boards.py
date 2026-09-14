@@ -76,13 +76,13 @@ PUBLISHED_PAIRS = {
     ("male", "thirties", "business_formal", "cool"): (
         _look("male-thirties-cool-business-formal", "male", "business_formal", "daily", "sample-v9-male-thirties-cool-business-formal-daily.webp", [
             _item("outer", "울 수트 재킷", "네이비"), _item("top", "드레스 셔츠", "화이트"), _item("bottom", "울 수트 바지", "네이비"), _item("tie", "레지멘탈 타이", "블루·버건디"), _item("shoes", "옥스퍼드 구두", "블랙")]),
-        _look("male-thirties-cool-business-formal", "male", "business_formal", "trend", "male-autumn-business-formal-trend-red-offwhite-v1.webp", [
+        _look("male-thirties-cool-business-formal", "male", "business_formal", "trend", "male-autumn-business-formal-trend-single-v2.webp", [
             _item("outer", "울 수트 재킷", "차콜"), _item("top", "드레스 셔츠", "오프화이트"), _item("bottom", "울 수트 바지", "차콜"), _item("tie", "솔리드 타이", "버건디"), _item("shoes", "더비 구두", "다크 브라운")]),
     ),
     ("male", "fifty_plus", "business_formal", "cool"): (
         _look("male-fifty-cool-business-formal", "male", "business_formal", "daily", "sample-v11-male-fifty-cool-business-formal-daily.webp", [
             _item("outer", "울 수트 재킷", "차콜"), _item("top", "드레스 셔츠", "라이트 블루"), _item("bottom", "재킷 아래로 연결된 울 수트 바지", "차콜"), _item("tie", "소패턴 타이", "딥 버건디"), _item("shoes", "쿠션 고무창 옥스퍼드", "다크 브라운")]),
-        _look("male-fifty-cool-business-formal", "male", "business_formal", "trend", "male-autumn-business-formal-trend-red-offwhite-v1.webp", [
+        _look("male-fifty-cool-business-formal", "male", "business_formal", "trend", "male-autumn-business-formal-trend-single-v2.webp", [
             _item("outer", "울 수트 재킷", "차콜"), _item("top", "드레스 셔츠", "오프화이트"), _item("bottom", "재킷 아래로 연결된 울 수트 바지", "차콜"), _item("tie", "솔리드 타이", "버건디"), _item("shoes", "고무창 더비 구두", "다크 브라운")]),
     ),
 }
@@ -110,5 +110,10 @@ def _weather_family(tpo, profile, season):
 def published_looks_for(gender, age, tpo, profile=None, season=None):
     if age is None or not profile:
         return ()
-    pair = PUBLISHED_PAIRS.get((gender, age_band(age), tpo, _weather_family(tpo, profile, season)))
+    band = age_band(age)
+    # The approved adult casual calibration represents the shared 30–49
+    # silhouette. Forties workwear keeps its separately reviewed pair.
+    if band == "forties" and tpo == "casual":
+        band = "thirties"
+    pair = PUBLISHED_PAIRS.get((gender, band, tpo, _weather_family(tpo, profile, season)))
     return tuple(deepcopy(pair)) if pair else ()
