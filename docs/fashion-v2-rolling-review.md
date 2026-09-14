@@ -108,6 +108,11 @@ and visible change on two of silhouette, material, color/pattern, and
 shoe/styling are also required. Even then the board remains owner-review pending
 until explicitly approved.
 
+Individual items being current is not enough: the exact outfit combination, or
+a clearly equivalent styling relationship, must also be observed in the source
+set. This prevents separately current items from being assembled into an
+unsupported Trendy board.
+
 The next workwear comparison moves the overly casual shoe out of forties men's
 Business Casual Daily and into Trend. Daily uses a dark suede loafer or minimal
 dark leather sneaker. Men's Business Formal also compares thirties and
@@ -134,5 +139,9 @@ age preference and TPO; it does not mean publishing unreviewed AI imagery.
 - Place the outer first, then naturally overlap the top or dress and bottom. Keep shoes readable below the clothing.
 - Shoes may be 15–30% larger than literal scale for mobile readability.
 - Use zero or one optional accessory only when it improves the complete look; it must never dominate the outfit.
+- Bags are omitted by default. Add one only when an explicit use context or the outfit's visual balance requires it.
+- Formal trousers are shown as one neatly stacked garment, not as two worn-looking
+  legs. Keep the waistband under the jacket, align both legs, then fold the full
+  lower section sideways once while preserving the pressed crease and visible hems.
 - Select a low-saturation, high-value background for contrast from warm ivory, light blue-gray, soft warm gray, or clean off-white.
 - Background color follows garment readability rather than a single fixed color or a strong copy of the outfit's main color.
