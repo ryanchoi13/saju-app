@@ -2,6 +2,15 @@
 
 ## 2026-09 final-calibration samples (v4)
 
+### Warm-weather correction (v5)
+
+- Age comparison no longer binds each age to a different temperature band.
+- All twelve Casual calibration boards use the same warm early-autumn weather.
+- The short-sleeve daytime outfit is centered; a thin evening layer is shown
+  separately at the side instead of appearing as mandatory worn layering.
+- Ten revised boards strengthen teen Trend distinction, relax thirties Casual,
+  and remove heavy fifty-plus clothing. The six already-approved boards remain.
+
 - Sixteen boards are prepared before production expansion to calibrate age,
   weather, TPO, and Daily/Trend differences.
 - Twelve Casual boards compare Daily and Trend for teen, thirties, and
