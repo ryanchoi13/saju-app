@@ -1,0 +1,73 @@
+name: Fashion board production schedule
+
+on:
+  schedule:
+    # GitHub cron uses UTC. These both run at 09:00 Korea time.
+    - cron: "0 0 1 * *"
+    - cron: "0 0 15 1,4,7,10 *"
+  workflow_dispatch:
+    inputs:
+      event:
+        description: Schedule event to create
+        required: true
+        type: choice
+        options:
+          - monthly
+          - seasonal
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: fashion-board-production-schedule
+  cancel-in-progress: false
+
+jobs:
+  create-production-task:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select schedule event
+        id: event
+        shell: bash
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            event="${{ inputs.event }}"
+          elif [[ "${{ github.event.schedule }}" == "0 0 1 * *" ]]; then
+            event="monthly"
+          else
+            event="seasonal"
+          fi
+          echo "event=$event" >> "$GITHUB_OUTPUT"
+
+      - name: Build production plan
+        run: python scripts/fashion_board_schedule.py --event "${{ steps.event.outputs.event }}" --output fashion-board-plan.json
+
+      - name: Create one idempotent production issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const plan = JSON.parse(fs.readFileSync('fashion-board-plan.json', 'utf8'));
+            const marker = `<!-- fashion-board-schedule:${plan.cycle_id} -->`;
+            const issues = await github.paginate(github.rest.issues.listForRepo, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'all',
+              per_page: 100
+            });
+            const exists = issues.some(issue => !issue.pull_request && (issue.body || '').includes(marker));
+            if (exists) {
+              core.notice(`Production task already exists: ${plan.cycle_id}`);
+              return;
+            }
+            const created = await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: plan.title,
+              body: plan.body
+            });
+            core.notice(`Created ${created.data.html_url}`);
+

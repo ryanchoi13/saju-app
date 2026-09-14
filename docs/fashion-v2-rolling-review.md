@@ -128,6 +128,22 @@ younger impression, deeper burgundy/navy small patterns for restrained maturity.
    of the 35-day window.
 4. Weekly owner reminders summarize approved, pending, and next-due batches.
 
+## Executable production schedule
+
+`.github/workflows/fashion-board-schedule.yml` turns the cadence into an
+actionable queue. At 09:00 Korea time on the first day of every month it opens
+one monthly candidate-observation issue. At 09:00 Korea time on January, April,
+July, and October 15 it opens the next seasonal production-and-review issue.
+Each issue is idempotent by cycle marker, so a manual retry cannot create a
+duplicate.
+
+The workflow runs the repository-owned schedule builder and creates a GitHub
+issue with the 35-day weather batches, eight observation slots, the 144 standard
+and 12 conditional board scopes, visual QA, owner approval, and deployment
+checks. It never generates or publishes imagery by itself. This keeps the
+existing owner approval gate enforceable while ensuring the work is actually
+created on schedule.
+
 Image generation itself is intentionally not performed inside a user request or
 inside the production server. Only pre-generated, reviewed static assets may be
 published. Automatic update means selecting a pre-approved board from forecast,
