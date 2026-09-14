@@ -16,7 +16,10 @@ from fashion_v2.production_schedule import production_plan
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--event", required=True, choices=("monthly", "seasonal"))
+    parser.add_argument("--event", required=True, choices=(
+        "research", "trend_selection", "correction", "final_correction",
+        "production", "release", "weekly_audit", "monthly", "seasonal",
+    ))
     parser.add_argument("--today", type=date.fromisoformat)
     parser.add_argument("--output")
     args = parser.parse_args()
