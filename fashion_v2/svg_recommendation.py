@@ -234,6 +234,14 @@ def candidates(look, color, role):
 
 def apply_colors(look, a, b, previous=None):
     raw={'A':describe_color(a),'B':describe_color(b)}
+    # Candidate comparisons reuse the same small palette. Keep this cache
+    # local to one outfit so profiles and policy changes cannot leak/stale.
+    color_facts={}
+    def describe_candidate_color(value):
+        key=value['hex'].upper()
+        if key not in color_facts:
+            color_facts[key]=describe_color({'hex':key})
+        return color_facts[key]
     best=None
     for ca,cb in itertools.product(candidates(look,raw['A'],'A'),candidates(look,raw['B'],'B')):
         if ca and cb and set(ca['indexes']) & set(cb['indexes']): continue
@@ -256,7 +264,7 @@ def apply_colors(look, a, b, previous=None):
         suit=next((i for i in items if i.get('suit_group')),None)
         colour_parts(items,PALETTE)
         # Inspect the actual rendered pattern before rejecting a tonal tie.
-        separation=tie_separation(items,describe_color)
+        separation=tie_separation(items,describe_candidate_color)
         if not separation['ok'] and suit and not suit.get('applied_daily_color'):
             for key in ('navy','charcoal','gray'):
                 alt=tone(key)
@@ -264,7 +272,7 @@ def apply_colors(look, a, b, previous=None):
                     if i.get('suit_group'):
                         i.update(hex=alt['hex'],color_name=alt['name_ko'],base_adjustment='도안에서 넥타이가 구분되도록 수트 기본색 조정')
                 colour_parts(items,PALETTE)
-                separation=tie_separation(items,describe_color)
+                separation=tie_separation(items,describe_candidate_color)
                 if separation['ok']: break
         if not separation['ok']: continue
         count=len(visible_colors(items))
@@ -272,13 +280,13 @@ def apply_colors(look, a, b, previous=None):
         # 4-color output is retained for explicit review, never called approved.
         if count>(5 if owner_component else 4): continue
         score-=max(0,count-3)*18
-        score+=evaluate_coordination(items,look['tpo'],describe_color)['score_adjustment']
+        score+=evaluate_coordination(items,look['tpo'],describe_candidate_color)['score_adjustment']
         if best is None or score>best[0]: best=(score,items,placements,count)
     if best is None: raise ValueError('안전한 배색 후보가 없습니다')
     result=deepcopy(look)
     result['items'],placements=best[1],best[2]
-    result['coordination']=evaluate_coordination(result['items'],look['tpo'],describe_color)
-    result['coordination']['tie_separation']=tie_separation(result['items'],describe_color)
+    result['coordination']=evaluate_coordination(result['items'],look['tpo'],describe_candidate_color)
+    result['coordination']['tie_separation']=tie_separation(result['items'],describe_candidate_color)
     result['outfit_policy_version']=POLICY_VERSION
     for role,placement in placements.items():
         placement['parts']=[dict(index=i,part=name,hex=part['hex'])
