@@ -78,8 +78,10 @@ def select_overall_domains(core, scope, *, timing=None, cycle=None):
     conditions, condition_evidence = assess_temporal_conditions(natal, scoped_timing, core.synthesis) if overlays else ({"records": []}, [])
     checked = {r["relationship_id"]: r for r in conditions["records"]}
     natal_results = {r.id: r.model_dump(mode="json") for r in core.relationships}
-    evidence = {e.id: e.model_dump(mode="json") for e in core.evidence}
-    evidence.update({e.id: e.model_dump(mode="json") for e in condition_evidence})
+    # Most evidence is not selected for this surface. Keep the lookup in model
+    # form and serialize only selected records, without changing provenance.
+    evidence = {e.id: e for e in core.evidence}
+    evidence.update({e.id: e for e in condition_evidence})
     candidates = {}
 
     def add(domain, origin, sources, *, level=1, specificity=0, urgency=0,
@@ -217,7 +219,8 @@ def select_overall_domains(core, scope, *, timing=None, cycle=None):
                   for d, label in DOMAINS.items()]
     return dict(version=OVERALL_VERSION, scope=scope, primary_domains=[c["domain"] for c in primary],
         selected=selected, candidates=ranked, considered_domains=considered,
-        evidence_records=[evidence[e] for e in sorted({s for c in ranked for s in c["source_ids"]}) if e in evidence],
+        evidence_records=[evidence[e] if isinstance(evidence[e], dict) else evidence[e].model_dump(mode="json")
+                          for e in sorted({s for c in ranked for s in c["source_ids"]}) if e in evidence],
         policy=dict(priority_order=["support_level", "assessed_core_urgency", "subject_specificity",
                     "focal_period_context", "longer_context"],
                     ranking_is_editorial=True, event_importance_estimated=False,

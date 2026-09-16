@@ -21,19 +21,23 @@ def _diet_order(candidates, key, limit):
     whole list; when counts tie avoid repeating the preceding family, then
     balance cuisine and use the existing everyday/daily tie breakers.
     """
-    remaining = list(candidates)
+    # Fixed ranking keys do not change as families/cuisines are selected.
+    # Compute them once per candidate, including the daily hash tie breaker.
+    remaining = [(item, key(item), diet_family(item.name)) for item in candidates]
     chosen, families, cuisines = [], Counter(), Counter()
+    previous = None
     while remaining and len(chosen) < limit:
-        previous = diet_family(chosen[-1].name) if chosen else None
-        def diverse_key(item):
-            family = diet_family(item.name)
-            return (key(item)[0], families[family], int(family == previous),
-                    cuisines[item.cuisine], *key(item)[1:])
-        item = min(remaining, key=diverse_key)
-        remaining.remove(item)
+        def diverse_key(entry):
+            item, priority, family = entry
+            return (priority[0], families[family], int(family == previous),
+                    cuisines[item.cuisine], *priority[1:])
+        entry = min(remaining, key=diverse_key)
+        remaining.remove(entry)
+        item, _, family = entry
         chosen.append(item)
-        families[diet_family(item.name)] += 1
+        families[family] += 1
         cuisines[item.cuisine] += 1
+        previous = family
     return chosen
 
 

@@ -435,27 +435,6 @@
         .fashion-v2-accessory-visual .garment { width:58px; height:58px; }
         .fashion-v2-accessory-copy { min-width:0; color:var(--ui-muted); font-size:.75rem; line-height:1.6; }
         .fashion-v2-accessory-copy strong { display:block; margin-bottom:2px; color:var(--ui-ink); font-size:.8125rem; }
-        .fashion-v2-look-board { position:relative; width:100%; aspect-ratio:4/5; overflow:hidden; border:1px solid #E8E0D4; border-radius:20px; background:radial-gradient(circle at 50% 38%,#FFF 0,#FAF7F0 48%,#F2ECE1 100%); box-shadow:0 14px 32px #5A46341A; }
-        .fashion-v2-board-brand { position:absolute; top:4.5%; left:5%; z-index:5; color:#4B352B; font-size:.625rem; font-weight:900; letter-spacing:.24em; }
-        .fashion-v2-board-title { position:absolute; top:8%; left:5%; z-index:5; width:32%; margin:0; color:#35251E; font-family:Georgia,'Times New Roman',serif; font-size:clamp(1rem,5vw,1.55rem); font-weight:700; line-height:1.03; }
-        .fashion-v2-board-subtitle { position:absolute; top:24%; left:5%; z-index:5; width:28%; margin:0; color:#806F61; font-size:.625rem; line-height:1.55; }
-        .fashion-v2-hero { position:absolute; inset:3% 22% 2% 19%; }
-        .fashion-v2-hero-item { position:absolute; margin:0; }
-        .fashion-v2-hero-item .garment { width:100%; height:100%; }
-        .fashion-v2-hero-item.is-top { z-index:1; top:2%; left:10%; width:80%; }
-        .fashion-v2-hero-item.is-outer,.fashion-v2-hero-item.is-mid,.fashion-v2-hero-item.is-coat { z-index:2; top:1%; left:3%; width:94%; }
-        .fashion-v2-hero-item.is-bottom,.fashion-v2-hero-item.is-leg_layer { z-index:3; top:32%; left:-4%; width:108%; }
-        .fashion-v2-look-board.form-skirt .fashion-v2-hero-item.is-bottom { top:31%; left:2%; width:96%; }
-        .fashion-v2-hero-item.is-dress { z-index:3; top:18%; left:7%; width:88%; }
-        .fashion-v2-hero-item.is-tie { z-index:4; top:13%; left:37%; width:27%; }
-        .fashion-v2-hero-item.is-shoes { z-index:4; bottom:-1%; left:20%; width:62%; }
-        .fashion-v2-detail-rail { position:absolute; z-index:5; top:7%; right:3%; width:25%; display:grid; gap:2px; }
-        .fashion-v2-detail { margin:0; text-align:center; }
-        .fashion-v2-detail .garment { width:100%; height:auto; }
-        .fashion-v2-detail figcaption { margin-top:-5px; color:#75665A; font-size:.5625rem!important; line-height:1.25; }
-        .fashion-v2-detail figcaption strong { display:block; color:#49372E; font-size:.625rem!important; }
-        .fashion-v2-color-role { display:block; margin-top:1px; color:#8A673F; font-size:.5rem; font-weight:800; }
-        .fashion-v2-board-note { position:absolute; left:5%; bottom:4%; z-index:5; margin:0; color:#8B796A; font-size:.5rem; letter-spacing:.12em; }
         .fashion-v2-footer { flex:0 0 auto; padding:12px 20px calc(12px + env(safe-area-inset-bottom)); border-top:1px solid var(--ui-line); background:#fff; }
         .fashion-v2-close { width:100%; min-height:50px; border:0; border-radius:14px; background:#17243A; color:#fff; font-size:1rem; font-weight:800; cursor:pointer; }
         @media(max-width:380px) { .fashion-v2-header,.fashion-v2-slide { padding-left:16px; padding-right:16px; } .fashion-v2-tabs { margin-left:16px; margin-right:16px; } }
@@ -1667,36 +1646,8 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             female: {outer:8,coat:8,top:11,mid:11,bottom:9,tie:14,shoes:15,dress:12,leg_layer:13}
         };
         const FASHION_V2_TPO_LABELS = {casual:'캐주얼',business_casual:'비즈니스 캐주얼',business_formal:'비즈니스 포멀'};
-        const FASHION_V2_BOARD_IMAGES = {
-            'female-autumn-casual-daily|베이지|아이보리|데님 블루|그레이':'/assets/fashion-v2-boards/female-autumn-casual-daily-v1.webp',
-            'female-autumn-casual-trend|더스티 핑크|아이보리|네이비|블랙':'/assets/fashion-v2-boards/female-autumn-casual-trend-v1.webp',
-            'male-autumn-casual-daily|네이비|라이트 카멜|그레이|다크 브라운':'/assets/fashion-v2-boards/male-autumn-casual-daily-v1.webp',
-            'male-autumn-casual-trend|차콜|라이트 카멜|그레이|블랙':'/assets/fashion-v2-boards/male-autumn-casual-trend-v1.webp',
-            'male-autumn-casual-daily|레드|오프화이트|진청|다크 브라운':'/assets/fashion-v2-boards/male-autumn-casual-daily-red-offwhite-v1.webp',
-            'male-autumn-casual-trend|레드|오프화이트|블랙|블랙':'/assets/fashion-v2-boards/male-autumn-casual-trend-red-offwhite-v1.webp',
-            'male-autumn-business_casual-daily|버건디|오프화이트|그레이|다크 브라운':'/assets/fashion-v2-boards/male-autumn-business-casual-daily-red-offwhite-v1.webp',
-            'male-autumn-business_casual-trend|버건디|오프화이트|네이비|블랙':'/assets/fashion-v2-boards/male-autumn-business-casual-trend-red-offwhite-v1.webp',
-            'male-autumn-business_formal-daily|네이비|오프화이트|네이비|레드|블랙':'/assets/fashion-v2-boards/male-autumn-business-formal-daily-red-offwhite-v1.webp',
-            'male-autumn-business_formal-trend|차콜|오프화이트|차콜|레드|다크 브라운':'/assets/fashion-v2-boards/male-autumn-business-formal-trend-red-offwhite-v1.webp',
-            'male-warm-transition-casual-daily|라이트 카멜|그레이|다크 브라운|네이비':'/assets/fashion-v2-boards/male-warm-transition-casual-daily-v1.webp',
-            'male-warm-transition-casual-trend|라이트 카멜|그레이|블랙|차콜':'/assets/fashion-v2-boards/male-warm-transition-casual-trend-v1.webp',
-            'male-warm-transition-business_casual-daily|라이트 카멜|그레이|다크 브라운|베이지':'/assets/fashion-v2-boards/male-warm-transition-business-casual-daily-v1.webp',
-            'male-warm-transition-business_casual-trend|라이트 카멜|그레이|블랙|네이비':'/assets/fashion-v2-boards/male-warm-transition-business-casual-trend-v1.webp',
-            'male-summer-business_formal-daily|그레이|화이트|그레이|라이트 카멜|블랙':'/assets/fashion-v2-boards/male-summer-business-formal-daily-v1.webp',
-            'male-summer-business_formal-trend|그레이|라이트 블루|그레이|라이트 카멜|블랙':'/assets/fashion-v2-boards/male-summer-business-formal-trend-v1.webp',
-            'female-warm-transition-casual-daily|라이트 카멜|그레이|그레이|베이지':'/assets/fashion-v2-boards/female-warm-transition-casual-daily-v1.webp',
-            'female-warm-transition-casual-trend|라이트 카멜|그레이|블랙|아이보리':'/assets/fashion-v2-boards/female-warm-transition-casual-trend-v1.webp',
-            'female-warm-transition-business_casual-daily|라이트 카멜|그레이|다크 브라운|베이지':'/assets/fashion-v2-boards/female-warm-transition-business-casual-daily-v1.webp',
-            'female-warm-transition-business_casual-trend|라이트 카멜|그레이|블랙|더스티 블루':'/assets/fashion-v2-boards/female-warm-transition-business-casual-trend-v1.webp',
-            'female-summer-business_formal-daily|그레이|라이트 카멜|그레이|블랙':'/assets/fashion-v2-boards/female-summer-business-formal-daily-v1.webp',
-            'female-summer-business_formal-trend|머스터드|그레이|블랙':'/assets/fashion-v2-boards/female-summer-business-formal-trend-v1.webp'
-        };
         function fashionV2Context() {
             return currentFortuneData?.daily_fortune?.fashion_v2?.[getStyleTpo()] || null;
-        }
-        function fashionV2ExactBoardImage(look) {
-            const colors = Array.isArray(look?.items) ? look.items.map(item => item.color_name || '').join('|') : '';
-            return FASHION_V2_BOARD_IMAGES[`${look?.id || ''}|${colors}`] || '';
         }
         function fashionV2BoardImage(look) {
             const published = typeof look?.board_image === 'string' ? look.board_image : '';
@@ -1769,19 +1720,6 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             </div>` : '';
             return proposal || accessory ? `<div class="fashion-v2-detail-copy">${proposal}${accessory}</div>` : '';
         }
-        function renderFashionV2Garment(look, item, lookIndex, itemIndex, placement) {
-            const cell = fashionV2Sprite(look,item);
-            const hex = /^#[0-9a-f]{6}$/i.test(item.hex || '') ? item.hex : '#CBD5E1';
-            const role = item.applied_daily_color ? `<span class="fashion-v2-color-role">추천색 ${escapeStyleText(item.applied_daily_color)} 적용</span>` : '';
-            const category = escapeStyleText(item.category || 'top');
-            if (placement === 'hero') return `<figure class="fashion-v2-hero-item is-${category}">${renderGarmentSprite(cell,hex,`fashion-v2-hero-mask-${lookIndex}-${itemIndex}`)}</figure>`;
-            return `<figure class="fashion-v2-detail">${renderGarmentSprite(cell,hex,`fashion-v2-detail-mask-${lookIndex}-${itemIndex}`)}<figcaption>${escapeStyleText(item.color_name || '')}<strong>${escapeStyleText(item.label || '')}</strong>${role}</figcaption></figure>`;
-        }
-        function fashionV2BoardTitle(look) {
-            const season = {spring:'Spring',summer:'Summer',autumn:'Autumn',winter:'Winter'}[look?.season] || 'Today';
-            const tpo = {casual:'Casual',business_casual:'Business Casual',business_formal:'Business Formal'}[look?.tpo] || 'Daily Look';
-            return `${season}<br>${tpo}`;
-        }
         function renderFashionV2Board(look, lookIndex) {
             if (look?.garment_spec) {
                 if (!window.DalhaGarments) return '<p>도안을 불러오는 중입니다. 잠시 후 다시 열어주세요.</p>';
@@ -1791,21 +1729,6 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             const image = fashionV2BoardImage(look);
             if (image) return `<img class="fashion-v2-board-photo" src="${image}" alt="${escapeStyleText(fashionV2Summary(look))}" width="800" height="1000">`;
             return '';
-            /* The CSS-composited atlas board is intentionally retired. Each new scope
-               becomes visible only after its reviewed complete-look image is ready. */
-            const items = Array.isArray(look?.items) ? look.items : [];
-            const detailItems = items.filter(item => !['shoes','tie','leg_layer'].includes(item.category)).slice(0,3);
-            const role = (look?.look_role || (lookIndex ? 'trend' : 'daily')).toUpperCase();
-            const inferredForm = items.some(item => item.category === 'dress') ? 'dress' : items.some(item => /스커트/.test(item.label || '')) ? 'skirt' : look?.form;
-            const form = ['pants','skirt','dress'].includes(inferredForm) ? inferredForm : 'pants';
-            return `<div class="fashion-v2-look-board form-${form}" aria-label="${escapeStyleText(fashionV2Summary(look))}">
-                <span class="fashion-v2-board-brand">DALHA</span>
-                <p class="fashion-v2-board-title">${fashionV2BoardTitle(look)}</p>
-                <p class="fashion-v2-board-subtitle">한 벌로 완성한<br>${escapeStyleText(FASHION_V2_TPO_LABELS[look?.tpo] || '오늘의 옷차림')}</p>
-                <div class="fashion-v2-hero">${items.map((item,itemIndex)=>renderFashionV2Garment(look,item,lookIndex,itemIndex,'hero')).join('')}</div>
-                <aside class="fashion-v2-detail-rail" aria-label="코디 구성">${detailItems.map((item,itemIndex)=>renderFashionV2Garment(look,item,lookIndex,itemIndex,'detail')).join('')}</aside>
-                <p class="fashion-v2-board-note">DALHA ${role} LOOK</p>
-            </div>`;
         }
         function renderFashionV2Modal(context) {
             const slides = document.getElementById('fashionV2Slides');
