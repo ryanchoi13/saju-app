@@ -90,7 +90,7 @@ def classify_weather(points: list[dict]) -> dict:
     humid_hot = day_peak >= 25 and daytime_humidity >= 70
     carry_light_outer = (
         band["key"] in {"very_hot", "hot", "warm"}
-        and (evening_low < 22 or swing >= 5)
+        and comfort_low < 22
     )
 
     outerwear = band["outerwear"]
@@ -105,9 +105,11 @@ def classify_weather(points: list[dict]) -> dict:
     elif windy:
         messages.append("바람을 막을 수 있는 가벼운 겉옷이 좋아요.")
     if rainy:
-        messages.append("비를 고려해 스웨이드 신발은 피하고 생활방수 소재를 우선하세요.")
+        messages.append("비가 오는 날에는 스웨이드를 피하고, 신발·겉옷의 생활방수·발수 표기를 확인하세요.")
     elif humid_hot:
         messages.append("습도가 높아 통기성 좋은 소재가 편해요.")
+    if band['key'] in {'cold','freezing'}:
+        messages.append("코디 그림은 안쪽 옷을 보여주기 위한 구성이며, 추운 실외에서는 겉옷을 여며 입으세요.")
 
     return {
         "location": GYEONGJU["name"],

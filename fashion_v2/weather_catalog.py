@@ -126,11 +126,15 @@ def _weather_fit(profile, source):
 
 def _rain_safe(look):
     for item in look["items"]:
+        if item['category']!='shoes':
+            continue
+        item['rain_protection']='unverified'
+        item['rain_note']='비가 오는 날에는 신발의 방수·발수 표기를 확인해 주세요.'
         if "suede" not in item["material"]:
             continue
         item.update(
-            label="생활방수 가죽 운동화",
-            material="water_resistant_leather",
+            label="가죽 운동화",
+            material="leather",
             rain_adjusted=True,
         )
 

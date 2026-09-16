@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
+    <script type="module" src="/assets/dalha-garments/integration.js?v=4"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -423,6 +424,9 @@
         .fashion-v2-slide { flex:0 0 100%; width:100%; min-width:0; max-height:calc(94dvh - 214px); overflow-y:auto; scroll-snap-align:start; scroll-snap-stop:always; padding:18px 20px 22px; }
         .fashion-v2-slide h4 { margin:0; color:var(--ui-ink); font-size:1.0625rem; line-height:1.5; }
         .fashion-v2-look-summary { margin:5px 0 12px; color:var(--ui-muted); font-size:.75rem; line-height:1.55; font-weight:500; }
+        .fashion-v2-sheet,.fashion-v2-sheet button { font-family:Pretendard,sans-serif; }
+        .fashion-v2-svg-board { width:100%; max-width:390px; margin:auto; }
+        .fashion-v2-svg-board svg { display:block; width:100%; height:auto; }
         .fashion-v2-board-photo { display:block; width:85%; height:auto; margin-inline:auto; border:1px solid #E8E0D4; border-radius:18px; background:#F7F2E9; box-shadow:0 12px 26px #5A463417; }
         .fashion-v2-detail-copy { width:85%; margin:14px auto 0; display:grid; gap:10px; }
         .fashion-v2-proposal { margin:0; padding:11px 12px; border-radius:12px; background:var(--ui-tint); color:var(--ui-muted); font-size:.75rem; line-height:1.65; font-weight:500; }
@@ -1258,8 +1262,8 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 <p id="fashionV2ModalMeta"></p>
             </header>
             <div class="fashion-v2-tabs" role="tablist" aria-label="코디 유형">
-                <button id="fashionV2DailyTab" class="fashion-v2-tab" type="button" role="tab" aria-selected="true" aria-controls="fashionV2DailySlide" onclick="showFashionV2Slide(0)">Daily</button>
-                <button id="fashionV2TrendTab" class="fashion-v2-tab" type="button" role="tab" aria-selected="false" aria-controls="fashionV2TrendSlide" onclick="showFashionV2Slide(1)">Trendy</button>
+                <button id="fashionV2DailyTab" class="fashion-v2-tab" type="button" role="tab" aria-selected="true" aria-controls="fashionV2DailySlide" onclick="showFashionV2Slide(0)">추천 1</button>
+                <button id="fashionV2TrendTab" class="fashion-v2-tab" type="button" role="tab" aria-selected="false" aria-controls="fashionV2TrendSlide" onclick="showFashionV2Slide(1)">추천 2</button>
             </div>
             <div id="fashionV2Slides" class="fashion-v2-slides"></div>
             <footer class="fashion-v2-footer">
@@ -1712,18 +1716,18 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             return FASHION_V2_SPRITES[gender][item.category] ?? (gender === 'female' ? 11 : 3);
         }
         function fashionV2LookTitle(look, index) {
-            return (look?.look_role || (index ? 'trend' : 'daily')) === 'trend' ? 'Trendy 코디' : 'Daily 코디';
+            return '추천 ' + (index + 1);
         }
         function fashionV2Summary(look) {
             const items = Array.isArray(look?.items) ? look.items : [];
             return items.map(item => {
-                const label = `${item.color_name || ''} ${item.label || ''}`.trim();
+                const label = `${item.color_description || item.color_name || ''} ${item.display_label || item.label || ''}`.trim();
                 return item.wear_mode === 'carry' ? `${label} (챙길 옷)` : label;
             }).join(' · ');
         }
         function fashionV2Narrative(look) {
             const items = Array.isArray(look?.items) ? look.items : [];
-            const describe = item => `${item.color_name ? `${item.color_name} 색상의 ` : ''}${item.label || ''}`.trim();
+            const describe = item => `${item.color_description || item.color_name ? `${item.color_description || item.color_name} ` : ''}${item.display_label || item.label || ''}`.trim();
             const worn = items.filter(item => item.wear_mode !== 'carry').map(describe).filter(Boolean);
             const carry = items.filter(item => item.wear_mode === 'carry').map(describe).filter(Boolean);
             let outfit = '';
@@ -1735,13 +1739,13 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 outfit = `${first} ${rest.length ? `${rest.join(', ')}, ` : ''}${last} 매치해 보세요.`;
             }
             const evening = carry.length
-                ? `저녁에는 쌀쌀할 수 있으니 ${DalhaHangul.josa(carry.join(', '),'을/를')} 챙기면 좋습니다.` : '';
+                ? `아침저녁에는 쌀쌀할 수 있으니 ${DalhaHangul.josa(carry.join(', '),'을/를')} 챙기면 좋습니다.` : '';
             return [outfit,evening].filter(Boolean).join(' ');
         }
         function fashionV2MainSummary(look) {
             const items = Array.isArray(look?.items) ? look.items : [];
             return items.filter(item => item.wear_mode !== 'carry')
-                .map(item => item.label || '').filter(Boolean).join(' · ');
+                .map(item => item.display_label || item.label || '').filter(Boolean).join(' · ');
         }
         function fashionV2AccessoryVisual(look, item, lookIndex) {
             const itemCategory = {상의:'top',하의:'bottom',아우터:'outer',신발:'shoes'}[item?.category];
@@ -1779,6 +1783,11 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             return `${season}<br>${tpo}`;
         }
         function renderFashionV2Board(look, lookIndex) {
+            if (look?.garment_spec) {
+                if (!window.DalhaGarments) return '<p>도안을 불러오는 중입니다. 잠시 후 다시 열어주세요.</p>';
+                try { return '<div class="fashion-v2-svg-board">' + window.DalhaGarments.renderLook(look,'dalha-look-'+lookIndex) + '</div>'; }
+                catch (error) { console.error('DALHA garment render:',error); return '<p>도안을 표시하지 못했습니다.</p>'; }
+            }
             const image = fashionV2BoardImage(look);
             if (image) return `<img class="fashion-v2-board-photo" src="${image}" alt="${escapeStyleText(fashionV2Summary(look))}" width="800" height="1000">`;
             return '';
@@ -1852,7 +1861,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 return false;
             }
             if (box) box.replaceChildren();
-            if (button) button.hidden = !looks.every(fashionV2BoardImage);
+            if (button) button.hidden = !looks.every(look => Boolean(look.garment_spec) || fashionV2BoardImage(look));
             const styleEl = document.getElementById('resStyle');
             if (styleEl) styleEl.textContent = fashionV2MainSummary(looks[0]);
             return true;

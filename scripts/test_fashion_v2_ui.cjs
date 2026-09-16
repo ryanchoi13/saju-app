@@ -33,7 +33,7 @@ assert.equal(w.document.getElementById('weatherOutfitGuidance').parentElement,w.
 w.openFashionV2Modal();
 const modal=w.document.getElementById('fashionV2Modal');
 assert.equal(modal.classList.contains('hidden'),false);
-assert.equal(w.document.getElementById('fashionV2TrendTab').textContent,'Trendy');
+assert.equal(w.document.getElementById('fashionV2TrendTab').textContent,'추천 2');
 assert.equal(w.document.querySelectorAll('#fashionV2Slides .fashion-v2-slide').length,2);
 assert.equal(w.document.querySelectorAll('#fashionV2Modal .palette-chip').length,0,'modal must not repeat palette');
 assert.equal(w.document.querySelectorAll('#fashionV2Modal .fashion-v2-board-photo').length,2,'each look renders as one reviewed complete-board image');
@@ -56,7 +56,7 @@ assert.equal(w.document.getElementById('openOutfitModalButton').hidden,false,'we
 
 w.showFashionV2Slide(1,false);
 assert.equal(w.document.getElementById('fashionV2TrendTab').getAttribute('aria-selected'),'true');
-assert.equal(w.document.querySelector('#fashionV2TrendSlide h4').textContent,'Trendy 코디');
+assert.equal(w.document.querySelector('#fashionV2TrendSlide h4').textContent,'추천 2');
 assert.equal(w.document.getElementById('fashionV2DailyTab').getAttribute('aria-selected'),'false');
 w.closeFashionV2Modal();
 assert.equal(modal.classList.contains('hidden'),true);
@@ -129,7 +129,7 @@ const warmTrend={id:'male-warm-transition-casual-trend',gender:'male',season:'we
 assert.equal(vm.runInContext('fashionV2BoardImage('+JSON.stringify(warmDaily)+')',dom.getInternalVMContext()),warmDaily.board_image);
 assert.equal(vm.runInContext('fashionV2BoardImage('+JSON.stringify(warmTrend)+')',dom.getInternalVMContext()),warmTrend.board_image);
 assert.match(vm.runInContext('fashionV2Summary('+JSON.stringify(warmDaily)+')',dom.getInternalVMContext()),/얇은 바람막이 \(챙길 옷\)/);
-assert.equal(vm.runInContext('fashionV2Narrative('+JSON.stringify(warmDaily)+')',dom.getInternalVMContext()),'라이트 카멜 색상의 반팔 폴로와 그레이 색상의 경량 스트레이트 팬츠, 다크 브라운 색상의 가죽 운동화를 매치해 보세요. 저녁에는 쌀쌀할 수 있으니 네이비 색상의 얇은 바람막이를 챙기면 좋습니다.');
+assert.equal(vm.runInContext('fashionV2Narrative('+JSON.stringify(warmDaily)+')',dom.getInternalVMContext()),'라이트 카멜 색상의 반팔 폴로와 그레이 색상의 경량 스트레이트 팬츠, 다크 브라운 색상의 가죽 운동화를 매치해 보세요. 아침저녁에는 쌀쌀할 수 있으니 네이비 색상의 얇은 바람막이를 챙기면 좋습니다.');
 
 const businessCasualDaily={id:'male-warm-transition-business_casual-daily',board_image:'/assets/fashion-v2-boards/sample-v7-male-forties-mild-business-casual-daily.webp',items:[
   item('top','반팔 클래식 셔츠','라이트 카멜','#ebd3a2'),item('bottom','서머 슬랙스','그레이','#a2b0ad'),
