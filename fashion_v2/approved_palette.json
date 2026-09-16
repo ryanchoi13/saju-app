@@ -1,0 +1,194 @@
+{
+  "white": {
+    "id": "white",
+    "name": "화이트",
+    "hex": "#F5F4EF",
+    "family": "neutral",
+    "element": "금",
+    "kind": "calm"
+  },
+  "ivory": {
+    "id": "ivory",
+    "name": "아이보리",
+    "hex": "#EAE3D2",
+    "family": "neutral",
+    "element": null,
+    "kind": "calm"
+  },
+  "gray": {
+    "id": "gray",
+    "name": "그레이",
+    "hex": "#A3A6AA",
+    "family": "neutral",
+    "element": "금",
+    "kind": "calm"
+  },
+  "charcoal": {
+    "id": "charcoal",
+    "name": "차콜",
+    "hex": "#444951",
+    "family": "neutral",
+    "element": "금",
+    "kind": "calm"
+  },
+  "black": {
+    "id": "black",
+    "name": "블랙",
+    "hex": "#22252B",
+    "family": "neutral",
+    "element": "수",
+    "kind": "calm"
+  },
+  "navy": {
+    "id": "navy",
+    "name": "네이비",
+    "hex": "#243B59",
+    "family": "blue",
+    "element": "수",
+    "kind": "calm"
+  },
+  "sky": {
+    "id": "sky",
+    "name": "하늘색",
+    "hex": "#A7CEDF",
+    "family": "blue",
+    "element": "수",
+    "kind": "calm"
+  },
+  "denim": {
+    "id": "denim",
+    "name": "데님 블루",
+    "hex": "#527C9B",
+    "family": "blue",
+    "element": "수",
+    "kind": "calm"
+  },
+  "cobalt": {
+    "id": "cobalt",
+    "name": "선명한 파랑",
+    "hex": "#265AC6",
+    "family": "blue",
+    "element": "수",
+    "kind": "vivid"
+  },
+  "teal": {
+    "id": "teal",
+    "name": "청록",
+    "hex": "#367F7A",
+    "family": "teal",
+    "element": "목",
+    "kind": "calm"
+  },
+  "sage": {
+    "id": "sage",
+    "name": "세이지",
+    "hex": "#A1B6A3",
+    "family": "green",
+    "element": "목",
+    "kind": "calm"
+  },
+  "forest": {
+    "id": "forest",
+    "name": "딥 그린",
+    "hex": "#355B48",
+    "family": "green",
+    "element": "목",
+    "kind": "calm"
+  },
+  "olive": {
+    "id": "olive",
+    "name": "올리브",
+    "hex": "#747B54",
+    "family": "green",
+    "element": "목",
+    "kind": "calm"
+  },
+  "burgundy": {
+    "id": "burgundy",
+    "name": "버건디",
+    "hex": "#7C3E4B",
+    "family": "red",
+    "element": "화",
+    "kind": "calm"
+  },
+  "pink": {
+    "id": "pink",
+    "name": "연핑크",
+    "hex": "#DDB6BC",
+    "family": "red",
+    "element": "화",
+    "kind": "calm"
+  },
+  "coral": {
+    "id": "coral",
+    "name": "코랄",
+    "hex": "#D98275",
+    "family": "red",
+    "element": "화",
+    "kind": "calm"
+  },
+  "red": {
+    "id": "red",
+    "name": "레드",
+    "hex": "#BC3F43",
+    "family": "red",
+    "element": "화",
+    "kind": "vivid"
+  },
+  "beige": {
+    "id": "beige",
+    "name": "베이지",
+    "hex": "#CBBCA0",
+    "family": "earth",
+    "element": "토",
+    "kind": "calm"
+  },
+  "camel": {
+    "id": "camel",
+    "name": "카멜",
+    "hex": "#B38D5D",
+    "family": "earth",
+    "element": "토",
+    "kind": "calm"
+  },
+  "brown": {
+    "id": "brown",
+    "name": "브라운",
+    "hex": "#705343",
+    "family": "earth",
+    "element": "토",
+    "kind": "calm"
+  },
+  "butter": {
+    "id": "butter",
+    "name": "연노랑",
+    "hex": "#E5D594",
+    "family": "yellow",
+    "element": "토",
+    "kind": "calm"
+  },
+  "yellow": {
+    "id": "yellow",
+    "name": "옐로",
+    "hex": "#EAC744",
+    "family": "yellow",
+    "element": "토",
+    "kind": "vivid"
+  },
+  "lavender": {
+    "id": "lavender",
+    "name": "연보라",
+    "hex": "#B6A5C7",
+    "family": "purple",
+    "element": null,
+    "kind": "calm"
+  },
+  "purple": {
+    "id": "purple",
+    "name": "보라",
+    "hex": "#70468A",
+    "family": "purple",
+    "element": null,
+    "kind": "vivid"
+  }
+}

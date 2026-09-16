@@ -1,0 +1,10 @@
+{
+  "source": "DALHA approved kit 7.3.1",
+  "files": {
+    "engine.js": "d55a939971a929c392d66b80265a01638fffb4937782719b9050a13090c49479",
+    "catalog.js": "0fede176d949b3c32f16d168a46ff60783dcc338ad6d3957dcac548c3bc26e7b",
+    "garments.js": "d2ca23abb4f139cad741aebd7615651050b0310f3490e80d57d177de76ba02b5",
+    "shoes.js": "c90014ffbe11b0645bbff3819c5cd744140cc69f442323a86e60e909d654c35c"
+  },
+  "changesToApprovedGeometry": false
+}

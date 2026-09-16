@@ -1,5 +1,9 @@
 # Shoes and accessory matching — 2026-09-11
 
+Historical implementation note. The current approved SVG outfit pipeline follows
+[DALHA outfit policy 1.0](dalha-outfit-policy-v1.md), including whole-outfit
+footwear selection and independent accessory component colours.
+
 Male casual looks previously appended white sneakers unconditionally. Casual
 shoes now follow the actual trouser color and the rendered top's brightness,
 using white, gray, black, navy, beige or brown. Both genders use this restrained

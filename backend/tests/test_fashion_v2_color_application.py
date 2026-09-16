@@ -84,7 +84,7 @@ class FashionV2ColorApplicationTests(TestCase):
         self.assertIn('style_palettes', daily)
         self.assertEqual(daily['weather_outfit']['available'], False)
         self.assertEqual(set(daily['fashion_v2']), {'casual', 'business_casual', 'business_formal'})
-        self.assertTrue(all(context['status'] == 'ui_connected_stage3'
+        self.assertTrue(all(context['status'] == 'svg_integration_review'
                             for context in daily['fashion_v2'].values()))
 
     def test_colored_contexts_can_use_weather_selected_complete_looks(self):

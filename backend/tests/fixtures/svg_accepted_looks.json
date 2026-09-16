@@ -1,0 +1,933 @@
+[
+  {
+    "id": "female-warm-transition-business_casual-daily",
+    "gender": "female",
+    "season": "weather_transition",
+    "tpo": "business_casual",
+    "look_role": "recommendation_1",
+    "form": "pants",
+    "formal_variant": null,
+    "status": "owner_review_pending",
+    "selection_mode": "weather_template_then_approved_garments",
+    "age_policy": "soft_preference_no_exclusion",
+    "items": [
+      {
+        "category": "top",
+        "label": "반팔 티셔츠",
+        "color": "ivory",
+        "material": "cotton_knit",
+        "wear_mode": "worn",
+        "source_label": "반팔 니트",
+        "base_color": "white",
+        "key": "item-0",
+        "color_name": "연보라",
+        "hex": "#B6A5C7",
+        "color_relation": "exact",
+        "applied_daily_color": "A",
+        "source_hex": "#B6A5C7",
+        "source_color_name": "연보라",
+        "tone_reason": ""
+      },
+      {
+        "category": "bottom",
+        "label": "슬랙스",
+        "color": "navy",
+        "material": "summer_wool",
+        "wear_mode": "worn",
+        "source_label": "서머 슬랙스",
+        "base_color": "beige",
+        "key": "item-1",
+        "color_name": "베이지",
+        "hex": "#CBBCA0",
+        "color_relation": "base"
+      },
+      {
+        "category": "shoes",
+        "label": "로퍼",
+        "color": "dark_brown",
+        "material": "leather",
+        "wear_mode": "worn",
+        "source_label": "로퍼",
+        "base_color": "black",
+        "key": "item-2",
+        "color_name": "버건디",
+        "hex": "#7C3E4B",
+        "color_relation": "similar",
+        "applied_daily_color": "B",
+        "source_hex": "#BC3F43",
+        "source_color_name": "레드",
+        "tone_reason": "원색이 해당 부위의 착장 조건에 맞지 않아 같은 계열의 착장용 톤 적용"
+      },
+      {
+        "category": "carry_outer",
+        "label": "블레이저",
+        "color": "beige",
+        "material": "summer_wool",
+        "wear_mode": "carry",
+        "source_label": "얇은 칼라리스 재킷",
+        "base_color": "navy",
+        "key": "item-3",
+        "color_name": "네이비",
+        "hex": "#243B59",
+        "color_relation": "base"
+      }
+    ],
+    "weather_fit": {
+      "thermal_band": "hot",
+      "thermal_label": "더운 날",
+      "daytime_apparent_high": 25,
+      "evening_apparent_low": 16,
+      "carry_light_outer": true,
+      "rainy": false,
+      "guidance": "낮에는 반팔이 알맞아요. 저녁에는 얇은 바람막이나 긴팔 셔츠를 챙기세요.",
+      "template_source": "warm_day_cool_evening"
+    },
+    "recommendation_number": 1,
+    "age": 30,
+    "renderer": "approved-svg-1",
+    "selection_changes": [
+      {
+        "from": "반팔 니트",
+        "to": "반팔 티셔츠",
+        "reason": "49종 확정 도안으로 구성 선택"
+      },
+      {
+        "from": "서머 슬랙스",
+        "to": "슬랙스",
+        "reason": "49종 확정 도안으로 구성 선택"
+      },
+      {
+        "from": "얇은 칼라리스 재킷",
+        "to": "블레이저",
+        "reason": "49종 확정 도안으로 구성 선택"
+      }
+    ],
+    "color_strategy": {
+      "priority": "A_first_unless_B_fits_larger_area",
+      "original": {
+        "A": {
+          "id": "lavender",
+          "name": "연보라",
+          "hex": "#B6A5C7",
+          "family": "purple",
+          "element": null,
+          "kind": "calm",
+          "lightness": 0.7137254901960784,
+          "saturation": 0.23287671232876703,
+          "name_ko": "연보라"
+        },
+        "B": {
+          "id": "red",
+          "name": "레드",
+          "hex": "#BC3F43",
+          "family": "red",
+          "element": "화",
+          "kind": "vivid",
+          "lightness": 0.49215686274509807,
+          "saturation": 0.49800796812749004,
+          "name_ko": "레드"
+        }
+      },
+      "placements": {
+        "A": {
+          "slot": "top",
+          "indexes": [
+            0
+          ],
+          "name": "연보라",
+          "hex": "#B6A5C7",
+          "relation": "exact",
+          "reason": "",
+          "area": "large"
+        },
+        "B": {
+          "slot": "shoes",
+          "indexes": [
+            2
+          ],
+          "name": "버건디",
+          "hex": "#7C3E4B",
+          "relation": "similar",
+          "reason": "원색이 해당 부위의 착장 조건에 맞지 않아 같은 계열의 착장용 톤 적용",
+          "area": "small"
+        }
+      },
+      "unresolved": [],
+      "color_count": 4,
+      "review_required": true,
+      "additional_element_C": null
+    },
+    "garment_spec": {
+      "gender": "female",
+      "top": "반팔 티셔츠",
+      "bottom": "슬랙스",
+      "dress": "",
+      "outer": "블레이저",
+      "shoe": "로퍼",
+      "bag": "",
+      "accessories": [],
+      "suitLinked": true,
+      "outerOpen": true,
+      "outerMode": "carry",
+      "tuck": "in",
+      "topColor": "#B6A5C7",
+      "bottomColor": "#CBBCA0",
+      "shoeColor": "#7C3E4B",
+      "outerColor": "#243B59"
+    },
+    "review_id": "14-1",
+    "approvedSvgSha256": "bac1d80c5e117aa25ef4368e8ceca3dfbbe09cc19648d4f285d72c445636facc"
+  },
+  {
+    "id": "female-warm-transition-business_casual-trend",
+    "gender": "female",
+    "season": "weather_transition",
+    "tpo": "business_casual",
+    "look_role": "recommendation_2",
+    "form": "skirt",
+    "formal_variant": null,
+    "status": "owner_review_pending",
+    "selection_mode": "weather_template_then_approved_garments",
+    "age_policy": "soft_preference_no_exclusion",
+    "items": [
+      {
+        "category": "top",
+        "label": "반팔 캐주얼 셔츠",
+        "color": "light_blue",
+        "material": "cotton",
+        "wear_mode": "worn",
+        "source_label": "반팔 블라우스",
+        "base_color": "white",
+        "key": "item-0",
+        "color_name": "연보라",
+        "hex": "#B6A5C7",
+        "color_relation": "exact",
+        "applied_daily_color": "A",
+        "source_hex": "#B6A5C7",
+        "source_color_name": "연보라",
+        "tone_reason": ""
+      },
+      {
+        "category": "bottom",
+        "label": "미디 스커트",
+        "color": "charcoal",
+        "material": "light_woven",
+        "wear_mode": "worn",
+        "source_label": "라이트 미디 스커트",
+        "base_color": "charcoal",
+        "key": "item-1",
+        "color_name": "차콜",
+        "hex": "#444951",
+        "color_relation": "base"
+      },
+      {
+        "category": "shoes",
+        "label": "플랫슈즈",
+        "color": "black",
+        "material": "leather",
+        "wear_mode": "worn",
+        "source_label": "슬링백 플랫",
+        "base_color": "black",
+        "key": "item-2",
+        "color_name": "버건디",
+        "hex": "#7C3E4B",
+        "color_relation": "similar",
+        "applied_daily_color": "B",
+        "source_hex": "#BC3F43",
+        "source_color_name": "레드",
+        "tone_reason": "원색이 해당 부위의 착장 조건에 맞지 않아 같은 계열의 착장용 톤 적용"
+      },
+      {
+        "category": "carry_outer",
+        "label": "블루종",
+        "color": "dusty_blue",
+        "material": "light_cotton",
+        "wear_mode": "carry",
+        "source_label": "얇은 셔츠 재킷",
+        "base_color": "navy",
+        "key": "item-3",
+        "color_name": "네이비",
+        "hex": "#243B59",
+        "color_relation": "base"
+      }
+    ],
+    "weather_fit": {
+      "thermal_band": "hot",
+      "thermal_label": "더운 날",
+      "daytime_apparent_high": 25,
+      "evening_apparent_low": 16,
+      "carry_light_outer": true,
+      "rainy": false,
+      "guidance": "낮에는 반팔이 알맞아요. 저녁에는 얇은 바람막이나 긴팔 셔츠를 챙기세요.",
+      "template_source": "warm_day_cool_evening"
+    },
+    "recommendation_number": 2,
+    "age": 30,
+    "renderer": "approved-svg-1",
+    "selection_changes": [
+      {
+        "from": "반팔 블라우스",
+        "to": "반팔 캐주얼 셔츠",
+        "reason": "49종 확정 도안으로 구성 선택"
+      },
+      {
+        "from": "라이트 미디 스커트",
+        "to": "미디 스커트",
+        "reason": "49종 확정 도안으로 구성 선택"
+      },
+      {
+        "from": "슬링백 플랫",
+        "to": "플랫슈즈",
+        "reason": "49종 확정 도안으로 구성 선택"
+      },
+      {
+        "from": "얇은 셔츠 재킷",
+        "to": "블루종",
+        "reason": "49종 확정 도안으로 구성 선택"
+      }
+    ],
+    "color_strategy": {
+      "priority": "A_first_unless_B_fits_larger_area",
+      "original": {
+        "A": {
+          "id": "lavender",
+          "name": "연보라",
+          "hex": "#B6A5C7",
+          "family": "purple",
+          "element": null,
+          "kind": "calm",
+          "lightness": 0.7137254901960784,
+          "saturation": 0.23287671232876703,
+          "name_ko": "연보라"
+        },
+        "B": {
+          "id": "red",
+          "name": "레드",
+          "hex": "#BC3F43",
+          "family": "red",
+          "element": "화",
+          "kind": "vivid",
+          "lightness": 0.49215686274509807,
+          "saturation": 0.49800796812749004,
+          "name_ko": "레드"
+        }
+      },
+      "placements": {
+        "A": {
+          "slot": "top",
+          "indexes": [
+            0
+          ],
+          "name": "연보라",
+          "hex": "#B6A5C7",
+          "relation": "exact",
+          "reason": "",
+          "area": "large"
+        },
+        "B": {
+          "slot": "shoes",
+          "indexes": [
+            2
+          ],
+          "name": "버건디",
+          "hex": "#7C3E4B",
+          "relation": "similar",
+          "reason": "원색이 해당 부위의 착장 조건에 맞지 않아 같은 계열의 착장용 톤 적용",
+          "area": "small"
+        }
+      },
+      "unresolved": [],
+      "color_count": 4,
+      "review_required": true,
+      "additional_element_C": null
+    },
+    "garment_spec": {
+      "gender": "female",
+      "top": "반팔 캐주얼 셔츠",
+      "bottom": "미디 스커트",
+      "dress": "",
+      "outer": "블루종",
+      "shoe": "플랫슈즈",
+      "bag": "",
+      "accessories": [],
+      "suitLinked": true,
+      "outerOpen": true,
+      "outerMode": "carry",
+      "tuck": "in",
+      "topColor": "#B6A5C7",
+      "bottomColor": "#444951",
+      "shoeColor": "#7C3E4B",
+      "outerColor": "#243B59"
+    },
+    "review_id": "14-2",
+    "approvedSvgSha256": "17e724d73ed151b5248b422ff3b5adbe0af73f439c5d802283292eb2a82eb179"
+  },
+  {
+    "id": "male-autumn-business_formal-daily",
+    "gender": "male",
+    "season": "autumn",
+    "tpo": "business_formal",
+    "look_role": "recommendation_1",
+    "status": "owner_review_pending",
+    "selection_mode": "weather_template_then_approved_garments",
+    "age_policy": "soft_preference_no_exclusion",
+    "form": "pants",
+    "formal_variant": "strict",
+    "items": [
+      {
+        "category": "outer",
+        "label": "수트 재킷",
+        "color": "navy",
+        "material": "autumn_wool",
+        "suit_group": "navy_autumn",
+        "wear_mode": "worn",
+        "source_label": "수트 재킷",
+        "base_color": "navy",
+        "key": "item-0",
+        "color_name": "차콜",
+        "hex": "#444951",
+        "color_relation": "exact",
+        "applied_daily_color": "B",
+        "source_hex": "#444951",
+        "source_color_name": "차콜",
+        "tone_reason": ""
+      },
+      {
+        "category": "top",
+        "label": "긴팔 정장 셔츠",
+        "color": "white",
+        "material": "cotton",
+        "wear_mode": "worn",
+        "source_label": "드레스 셔츠",
+        "base_color": "white",
+        "key": "item-1",
+        "color_name": "화이트",
+        "hex": "#F5F4EF",
+        "color_relation": "base"
+      },
+      {
+        "category": "bottom",
+        "label": "수트 바지",
+        "color": "navy",
+        "material": "autumn_wool",
+        "suit_group": "navy_autumn",
+        "wear_mode": "worn",
+        "source_label": "수트 바지",
+        "base_color": "navy",
+        "key": "item-2",
+        "color_name": "차콜",
+        "hex": "#444951",
+        "color_relation": "exact",
+        "applied_daily_color": "B",
+        "source_hex": "#444951",
+        "source_color_name": "차콜",
+        "tone_reason": ""
+      },
+      {
+        "category": "tie",
+        "label": "넥타이",
+        "color": "burgundy_navy",
+        "material": "silk",
+        "wear_mode": "worn",
+        "source_label": "레지멘탈 타이",
+        "base_color": "burgundy",
+        "key": "item-3",
+        "color_name": "연핑크",
+        "hex": "#DDB6BC",
+        "color_relation": "exact",
+        "applied_daily_color": "A",
+        "source_hex": "#DDB6BC",
+        "source_color_name": "연핑크",
+        "tone_reason": ""
+      },
+      {
+        "category": "shoes",
+        "label": "옥스퍼드",
+        "color": "black",
+        "material": "leather",
+        "wear_mode": "worn",
+        "source_label": "옥스퍼드 구두",
+        "base_color": "black",
+        "key": "item-4",
+        "color_name": "블랙",
+        "hex": "#22252B",
+        "color_relation": "base"
+      }
+    ],
+    "weather_fit": {
+      "thermal_band": "cool",
+      "thermal_label": "서늘한 날",
+      "daytime_apparent_high": 18,
+      "evening_apparent_low": 13,
+      "carry_light_outer": false,
+      "rainy": false,
+      "guidance": "긴팔에 얇은 재킷을 더하기 좋아요.",
+      "template_source": "thermal_autumn"
+    },
+    "recommendation_number": 1,
+    "age": 40,
+    "renderer": "approved-svg-1",
+    "selection_changes": [
+      {
+        "from": "드레스 셔츠",
+        "to": "긴팔 정장 셔츠",
+        "reason": "49종 확정 도안으로 구성 선택"
+      },
+      {
+        "from": "레지멘탈 타이",
+        "to": "넥타이",
+        "reason": "49종 확정 도안으로 구성 선택"
+      },
+      {
+        "from": "옥스퍼드 구두",
+        "to": "옥스퍼드",
+        "reason": "49종 확정 도안으로 구성 선택"
+      }
+    ],
+    "color_strategy": {
+      "priority": "A_first_unless_B_fits_larger_area",
+      "original": {
+        "A": {
+          "id": "pink",
+          "name": "연핑크",
+          "hex": "#DDB6BC",
+          "family": "red",
+          "element": "화",
+          "kind": "calm",
+          "lightness": 0.7901960784313726,
+          "saturation": 0.3644859813084113,
+          "name_ko": "연핑크"
+        },
+        "B": {
+          "id": "charcoal",
+          "name": "차콜",
+          "hex": "#444951",
+          "family": "gray",
+          "element": "금",
+          "kind": "calm",
+          "lightness": 0.292156862745098,
+          "saturation": 0.08724832214765099,
+          "name_ko": "차콜"
+        }
+      },
+      "placements": {
+        "A": {
+          "slot": "tie",
+          "indexes": [
+            3
+          ],
+          "name": "연핑크",
+          "hex": "#DDB6BC",
+          "relation": "exact",
+          "reason": "",
+          "area": "small"
+        },
+        "B": {
+          "slot": "suit",
+          "indexes": [
+            0,
+            2
+          ],
+          "name": "차콜",
+          "hex": "#444951",
+          "relation": "exact",
+          "reason": "",
+          "area": "large"
+        }
+      },
+      "unresolved": [],
+      "color_count": 4,
+      "review_required": true,
+      "additional_element_C": null
+    },
+    "garment_spec": {
+      "gender": "male",
+      "top": "긴팔 정장 셔츠",
+      "bottom": "수트 바지",
+      "dress": "",
+      "outer": "수트 재킷",
+      "shoe": "옥스퍼드",
+      "bag": "",
+      "accessories": [
+        "넥타이"
+      ],
+      "suitLinked": true,
+      "outerOpen": true,
+      "outerMode": "wear",
+      "tuck": "in",
+      "topColor": "#F5F4EF",
+      "bottomColor": "#444951",
+      "accessoryColor": "#DDB6BC",
+      "shoeColor": "#22252B",
+      "outerColor": "#444951"
+    },
+    "review_id": "15-1",
+    "approvedSvgSha256": "31e22246a6b2d6e9ea2c5779bdc66b7c4c36753ba6ac07df4b9064a13b463bbb"
+  },
+  {
+    "id": "male-winter-casual-daily",
+    "gender": "male",
+    "season": "winter",
+    "tpo": "casual",
+    "look_role": "recommendation_1",
+    "status": "owner_review_pending",
+    "selection_mode": "weather_template_then_approved_garments",
+    "age_policy": "soft_preference_no_exclusion",
+    "form": "pants",
+    "formal_variant": null,
+    "items": [
+      {
+        "category": "outer",
+        "label": "패딩",
+        "color": "navy",
+        "material": "down",
+        "wear_mode": "worn",
+        "source_label": "숏 패딩",
+        "base_color": "ivory",
+        "key": "item-0",
+        "color_name": "버건디",
+        "hex": "#7C3E4B",
+        "color_relation": "similar",
+        "applied_daily_color": "A",
+        "source_hex": "#BC3F43",
+        "source_color_name": "레드",
+        "tone_reason": "원색이 해당 부위의 착장 조건에 맞지 않아 같은 계열의 착장용 톤 적용"
+      },
+      {
+        "category": "top",
+        "label": "후드티",
+        "color": "gray",
+        "material": "fleece_cotton",
+        "wear_mode": "worn",
+        "source_label": "후드 티셔츠",
+        "base_color": "white",
+        "key": "item-1",
+        "color_name": "화이트",
+        "hex": "#F5F4EF",
+        "color_relation": "base"
+      },
+      {
+        "category": "bottom",
+        "label": "면바지",
+        "color": "black",
+        "material": "fleece_cotton",
+        "wear_mode": "worn",
+        "source_label": "기모 캐주얼 팬츠",
+        "base_color": "charcoal",
+        "key": "item-2",
+        "color_name": "네이비",
+        "hex": "#243B59",
+        "color_relation": "similar",
+        "applied_daily_color": "B",
+        "source_hex": "#A7CEDF",
+        "source_color_name": "하늘색",
+        "tone_reason": "원색이 해당 부위의 착장 조건에 맞지 않아 같은 계열의 착장용 톤 적용"
+      },
+      {
+        "category": "shoes",
+        "label": "운동화",
+        "color": "black",
+        "material": "leather",
+        "wear_mode": "worn",
+        "source_label": "가죽 운동화",
+        "base_color": "white",
+        "key": "item-3",
+        "color_name": "화이트",
+        "hex": "#F5F4EF",
+        "color_relation": "base"
+      }
+    ],
+    "weather_fit": {
+      "thermal_band": "cold",
+      "thermal_label": "추운 날",
+      "daytime_apparent_high": 8,
+      "evening_apparent_low": 2,
+      "carry_light_outer": false,
+      "rainy": false,
+      "guidance": "도톰한 니트와 코트가 필요해요.",
+      "template_source": "thermal_winter"
+    },
+    "recommendation_number": 1,
+    "age": 50,
+    "renderer": "approved-svg-1",
+    "selection_changes": [
+      {
+        "from": "숏 패딩",
+        "to": "패딩",
+        "reason": "49종 확정 도안으로 구성 선택"
+      },
+      {
+        "from": "후드 티셔츠",
+        "to": "후드티",
+        "reason": "49종 확정 도안으로 구성 선택"
+      },
+      {
+        "from": "기모 캐주얼 팬츠",
+        "to": "면바지",
+        "reason": "49종 확정 도안으로 구성 선택"
+      },
+      {
+        "from": "가죽 운동화",
+        "to": "운동화",
+        "reason": "49종 확정 도안으로 구성 선택"
+      }
+    ],
+    "color_strategy": {
+      "priority": "A_first_unless_B_fits_larger_area",
+      "original": {
+        "A": {
+          "id": "red",
+          "name": "레드",
+          "hex": "#BC3F43",
+          "family": "red",
+          "element": "화",
+          "kind": "vivid",
+          "lightness": 0.49215686274509807,
+          "saturation": 0.49800796812749004,
+          "name_ko": "레드"
+        },
+        "B": {
+          "id": "sky",
+          "name": "하늘색",
+          "hex": "#A7CEDF",
+          "family": "blue",
+          "element": "수",
+          "kind": "calm",
+          "lightness": 0.7647058823529411,
+          "saturation": 0.4666666666666667,
+          "name_ko": "하늘색"
+        }
+      },
+      "placements": {
+        "A": {
+          "slot": "outer",
+          "indexes": [
+            0
+          ],
+          "name": "버건디",
+          "hex": "#7C3E4B",
+          "relation": "similar",
+          "reason": "원색이 해당 부위의 착장 조건에 맞지 않아 같은 계열의 착장용 톤 적용",
+          "area": "large"
+        },
+        "B": {
+          "slot": "bottom",
+          "indexes": [
+            2
+          ],
+          "name": "네이비",
+          "hex": "#243B59",
+          "relation": "similar",
+          "reason": "원색이 해당 부위의 착장 조건에 맞지 않아 같은 계열의 착장용 톤 적용",
+          "area": "large"
+        }
+      },
+      "unresolved": [],
+      "color_count": 3,
+      "review_required": false,
+      "additional_element_C": null
+    },
+    "garment_spec": {
+      "gender": "male",
+      "top": "후드티",
+      "bottom": "면바지",
+      "dress": "",
+      "outer": "패딩",
+      "shoe": "운동화",
+      "bag": "",
+      "accessories": [],
+      "suitLinked": true,
+      "outerOpen": true,
+      "outerMode": "wear",
+      "tuck": "out",
+      "topColor": "#F5F4EF",
+      "bottomColor": "#243B59",
+      "shoeColor": "#F5F4EF",
+      "outerColor": "#7C3E4B",
+      "trouserExtraLength": 24
+    },
+    "review_id": "17-1",
+    "approvedSvgSha256": "5fd9c82ee0dcdac2829c332ff45ca8d025f0924ba6b253d4520bd4567de04110"
+  },
+  {
+    "id": "female-autumn-business_formal-daily",
+    "gender": "female",
+    "season": "autumn",
+    "tpo": "business_formal",
+    "look_role": "recommendation_1",
+    "status": "owner_review_pending",
+    "selection_mode": "weather_template_then_approved_garments",
+    "age_policy": "soft_preference_no_exclusion",
+    "form": "pants",
+    "formal_variant": "strict",
+    "items": [
+      {
+        "category": "outer",
+        "label": "수트 재킷",
+        "color": "navy",
+        "material": "autumn_wool",
+        "suit_group": "navy_autumn",
+        "wear_mode": "worn",
+        "source_label": "수트 재킷",
+        "base_color": "navy",
+        "key": "item-0",
+        "color_name": "네이비",
+        "hex": "#243B59",
+        "color_relation": "base"
+      },
+      {
+        "category": "top",
+        "label": "긴팔 정장 셔츠",
+        "color": "white",
+        "material": "silk_blend",
+        "wear_mode": "worn",
+        "source_label": "블라우스",
+        "base_color": "white",
+        "key": "item-1",
+        "color_name": "화이트",
+        "hex": "#F5F4EF",
+        "color_relation": "base"
+      },
+      {
+        "category": "bottom",
+        "label": "수트 바지",
+        "color": "navy",
+        "material": "autumn_wool",
+        "suit_group": "navy_autumn",
+        "wear_mode": "worn",
+        "source_label": "수트 바지",
+        "base_color": "navy",
+        "key": "item-2",
+        "color_name": "네이비",
+        "hex": "#243B59",
+        "color_relation": "base"
+      },
+      {
+        "category": "shoes",
+        "label": "낮은 굽 펌프스",
+        "color": "black",
+        "material": "leather",
+        "wear_mode": "worn",
+        "source_label": "펌프스",
+        "base_color": "black",
+        "key": "item-3",
+        "color_name": "블랙",
+        "hex": "#22252B",
+        "color_relation": "base"
+      },
+      {
+        "category": "bag",
+        "label": "핸드백",
+        "base_color": "black",
+        "material": "leather",
+        "wear_mode": "worn",
+        "key": "item-4",
+        "color_name": "딥 그린",
+        "hex": "#355B48",
+        "color_relation": "exact",
+        "applied_daily_color": "A",
+        "source_hex": "#355B48",
+        "source_color_name": "딥 그린",
+        "tone_reason": ""
+      }
+    ],
+    "weather_fit": {
+      "thermal_band": "chilly",
+      "thermal_label": "쌀쌀한 날",
+      "daytime_apparent_high": 13,
+      "evening_apparent_low": 8,
+      "carry_light_outer": false,
+      "rainy": false,
+      "guidance": "니트와 중간 두께 재킷이 알맞아요.",
+      "template_source": "thermal_autumn"
+    },
+    "recommendation_number": 1,
+    "age": 50,
+    "renderer": "approved-svg-1",
+    "selection_changes": [
+      {
+        "from": "블라우스",
+        "to": "긴팔 정장 셔츠",
+        "reason": "49종 확정 도안으로 구성 선택"
+      },
+      {
+        "from": "펌프스",
+        "to": "낮은 굽 펌프스",
+        "reason": "49종 확정 도안으로 구성 선택"
+      }
+    ],
+    "color_strategy": {
+      "priority": "A_first_unless_B_fits_larger_area",
+      "original": {
+        "A": {
+          "id": "forest",
+          "name": "딥 그린",
+          "hex": "#355B48",
+          "family": "green",
+          "element": "목",
+          "kind": "calm",
+          "lightness": 0.2823529411764706,
+          "saturation": 0.2638888888888889,
+          "name_ko": "딥 그린"
+        },
+        "B": {
+          "id": "purple",
+          "name": "보라",
+          "hex": "#70468A",
+          "family": "purple",
+          "element": null,
+          "kind": "vivid",
+          "lightness": 0.40784313725490196,
+          "saturation": 0.32692307692307687,
+          "name_ko": "보라"
+        }
+      },
+      "placements": {
+        "A": {
+          "slot": "bag",
+          "indexes": [
+            4
+          ],
+          "name": "딥 그린",
+          "hex": "#355B48",
+          "relation": "exact",
+          "reason": "",
+          "area": "small"
+        }
+      },
+      "unresolved": [
+        {
+          "role": "B",
+          "name": "보라",
+          "hex": "#70468A",
+          "next_step": "palette",
+          "reason": "자연스럽게 적용할 부위가 없어 추천 팔레트로 안내"
+        }
+      ],
+      "color_count": 4,
+      "review_required": true,
+      "additional_element_C": null
+    },
+    "garment_spec": {
+      "gender": "female",
+      "top": "긴팔 정장 셔츠",
+      "bottom": "수트 바지",
+      "dress": "",
+      "outer": "수트 재킷",
+      "shoe": "낮은 굽 펌프스",
+      "bag": "핸드백",
+      "accessories": [],
+      "suitLinked": true,
+      "outerOpen": true,
+      "outerMode": "wear",
+      "tuck": "in",
+      "topColor": "#F5F4EF",
+      "bottomColor": "#243B59",
+      "shoeColor": "#22252B",
+      "bagColor": "#355B48",
+      "outerColor": "#243B59"
+    },
+    "review_id": "18-1",
+    "approvedSvgSha256": "2a61cb9719c628fc4dc0c060bb85921b0b4931fe0b986725c2a8c286be740b77"
+  }
+]

@@ -27,8 +27,7 @@ from wada_context_placement import WADA_CONTEXT_PLACEMENT
 from wada_color_rules import evaluate_duo
 from wada_color_ko import get_wada_color_ko
 from wada_wuxing_selector import select_wada_duo_for_targets
-from fashion_v2.color_application import build_colored_catalog_contexts
-from fashion_v2.weather_catalog import reviewed_weather_board_available
+from fashion_v2.svg_recommendation import build_svg_catalog_contexts
 from fashion_v2.weather_service import gyeongju_weather_cache, weather_api_payload
 from lunar_python import Solar
 from fastapi import FastAPI, HTTPException
@@ -449,18 +448,18 @@ def get_saju_pillars_and_analysis(name: str, gender: str, y: int, m: int, d: int
         "evening_apparent_low", "carry_light_outer", "rainy", "guidance",
         "base_layer", "catalog_season_hint", "avoid_suede",
     ))
-    reviewed_weather = (
+    selected_weather = (
         weather_profile
-        if complete_weather and reviewed_weather_board_available(gender, color_a, color_b)
+        if complete_weather
         else None
     )
-    result["daily_fortune"]["weather_outfit"]["template_applied"] = bool(reviewed_weather)
-    result["daily_fortune"]["fashion_v2"] = build_colored_catalog_contexts(
+    result["daily_fortune"]["weather_outfit"]["template_applied"] = bool(selected_weather)
+    result["daily_fortune"]["fashion_v2"] = build_svg_catalog_contexts(
         gender,
         outfit_season,
         color_a,
         color_b,
-        weather_profile=reviewed_weather,
+        weather_profile=selected_weather,
         age=style_age,
         board_weather_profile=weather_profile if complete_weather else None,
     )
