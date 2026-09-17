@@ -56,14 +56,14 @@ def _best_urgency(values: Iterable[str | None]) -> str:
 
 
 def _confirmed_directions(core: MyeongriCoreResult) -> list[dict]:
-    results = []
-    for item in core.synthesis.favorable_operations:
-        results.append({
+    return [
+        {
             **item,
             "status": "confirmed",
             "confidence": core.synthesis.confidence.value,
-        })
-    return results
+        }
+        for item in core.synthesis.favorable_operations
+    ]
 
 
 def _conditional_directions(core: MyeongriCoreResult) -> list[dict]:
@@ -181,8 +181,7 @@ def _timing_relations(core: MyeongriCoreResult, allowed_axes: set[str]) -> list[
                 else "supports" if "matches_requested_direction" in relations
                 else "opposes"
             )
-            key = (relationship_id, f"{operation}:{element}")
-            grouped[key] = {
+            grouped[(relationship_id, f"{operation}:{element}")] = {
                 "relationship_id": relationship_id,
                 "operation": operation,
                 "element": element,
@@ -230,20 +229,18 @@ def _axis_summary(directions: list[dict]) -> dict[str, dict]:
             })
             for status in ("confirmed", "conditional", "caution")
         }
-        present = [status for status, values in by_status.items() if values]
+        active_operations = set().union(*(set(values) for values in by_status.values()))
+        opposing_pair = len(operations) == 2 and set(operations).issubset(active_operations)
         result[axis] = {
             **by_status,
             "status": (
-                "confirmed" if by_status["confirmed"]
+                "conflicted" if opposing_pair
+                else "confirmed" if by_status["confirmed"]
                 else "conditional" if by_status["conditional"]
                 else "caution" if by_status["caution"]
                 else "neutral"
             ),
-            "has_competing_directions": any(
-                set(by_status[status]) >= set(operations[:2])
-                for status in present
-                if len(operations) >= 2
-            ),
+            "has_competing_directions": opposing_pair,
         }
     return result
 
@@ -280,12 +277,13 @@ def build_applied_state(core: MyeongriCoreResult, scope: str) -> dict:
     overall_status = (
         "confirmed" if confirmed
         else "conditional" if conditional
+        else "caution" if cautions
         else "unresolved" if unresolved_conflict
         else "neutral"
     )
     confidence = (
         core.synthesis.confidence.value if confirmed
-        else ConfidenceLevel.LOW.value if conditional or unresolved_conflict
+        else ConfidenceLevel.LOW.value if conditional or cautions or unresolved_conflict
         else ConfidenceLevel.UNDETERMINED.value
     )
 
