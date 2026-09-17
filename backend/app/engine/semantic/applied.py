@@ -228,7 +228,7 @@ def _direction_timing_assessment(direction: dict, timing_relations: list[dict]) 
 
     return {
         "relation": relation,
-        "has_unresolved_context": "unresolved" in relation_set,
+        "has_unresolved_context": relation == "unresolved" or "unresolved" in relation_set,
         "supporting_elements": sorted({
             item.get("element") for item in relevant
             if item.get("relation") == "supports" and item.get("element")
