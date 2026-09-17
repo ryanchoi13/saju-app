@@ -1,3 +1,4 @@
+import json
 import os
 import sys
 from datetime import date, time, timedelta
@@ -24,18 +25,7 @@ def _birth(y: int, m: int, d: int, gender: str, hour: int, minute: int) -> Birth
     )
 
 
-@app.get("/week")
-def week(
-    start: date = Query(date(2026, 9, 11)),
-    days: int = Query(7, ge=1, le=31),
-    y: int = 1978,
-    m: int = 3,
-    d: int = 13,
-    gender: str = "male",
-    hour: int = 10,
-    minute: int = 30,
-):
-    birth = _birth(y, m, d, gender, hour, minute)
+def _week_payload(start: date, days: int, birth: BirthInput) -> dict:
     rows = []
     for offset in range(days):
         target = start + timedelta(days=offset)
@@ -53,4 +43,30 @@ def week(
             "diagnostic_conflicts": core.synthesis.diagnostic_conflicts,
             "applied_state": state,
         })
-    return {"profile": {"y": y, "m": m, "d": d, "gender": gender, "hour": hour, "minute": minute}, "rows": rows}
+    return {"rows": rows}
+
+
+@app.on_event("startup")
+def log_default_preview():
+    birth = _birth(1978, 3, 13, "male", 10, 30)
+    payload = _week_payload(date(2026, 9, 11), 7, birth)
+    print("APPLIED_WEEK_PREVIEW=" + json.dumps(payload, ensure_ascii=False, separators=(",", ":")), flush=True)
+
+
+@app.get("/week")
+def week(
+    start: date = Query(date(2026, 9, 11)),
+    days: int = Query(7, ge=1, le=31),
+    y: int = 1978,
+    m: int = 3,
+    d: int = 13,
+    gender: str = "male",
+    hour: int = 10,
+    minute: int = 30,
+):
+    birth = _birth(y, m, d, gender, hour, minute)
+    payload = _week_payload(start, days, birth)
+    return {
+        "profile": {"y": y, "m": m, "d": d, "gender": gender, "hour": hour, "minute": minute},
+        **payload,
+    }
