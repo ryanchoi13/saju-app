@@ -103,6 +103,73 @@ def test_confirmed_direction_remains_confirmed_while_timing_is_separate():
     assert state["timing"]["observations"][0]["stem_element"] == "水"
 
 
+def test_direction_timing_summary_preserves_mixed_without_majority_vote():
+    synthesis = SynthesisResult(pending_operations=[
+        {
+            "operation": "mediate",
+            "element": "火",
+            "urgency": "unspecified",
+            "source_module": "mediation",
+            "evidence_origin": "mediation",
+            "reason": "operation_judgment_unconfirmed",
+            "evidence_ids": ["evidence:mediate"],
+        },
+        {
+            "operation": "drain",
+            "element": None,
+            "urgency": "low",
+            "source_module": "strength",
+            "evidence_origin": "strength",
+            "reason": "source_judgment_unconfirmed",
+            "evidence_ids": ["evidence:drain"],
+        },
+    ])
+    conditions = {
+        "records": [
+            {"relationship_id": "r1", "members": [{"pillar": "timing:daily"}]},
+            {"relationship_id": "r2", "members": [{"pillar": "timing:daily"}]},
+        ],
+    }
+    direction = {
+        "records": [
+            {
+                "relationship_id": "r1",
+                "comparisons": [
+                    {"operation": "mediate", "element": "火", "status": "conditional",
+                     "relation": "matches_requested_direction", "evidence_ids": ["evidence:r1:m"]},
+                    {"operation": "drain", "element": "土", "status": "conditional",
+                     "relation": "matches_requested_direction", "evidence_ids": ["evidence:r1:d"]},
+                ],
+                "evidence_ids": ["evidence:r1"],
+            },
+            {
+                "relationship_id": "r2",
+                "comparisons": [
+                    {"operation": "mediate", "element": "火", "status": "conditional",
+                     "relation": "opposes_requested_direction", "evidence_ids": ["evidence:r2:m"]},
+                ],
+                "evidence_ids": ["evidence:r2"],
+            },
+        ],
+    }
+    core = _core(
+        synthesis=synthesis,
+        activated=ActivatedState(
+            temporal_conditions=conditions,
+            temporal_direction=direction,
+        ),
+    )
+
+    state = build_applied_state(core, "natal+luck_cycle+annual+monthly+daily")
+    by_operation = {item["operation"]: item for item in state["directions"]}
+
+    assert by_operation["mediate"]["timing_assessment"]["relation"] == "mixed"
+    assert by_operation["drain"]["timing_assessment"]["relation"] == "supports"
+    assert by_operation["drain"]["elements"] == []
+    assert by_operation["drain"]["timing_assessment"]["supporting_elements"] == ["土"]
+    assert state["policy"]["timing_relation_is_not_vote_count"] is True
+
+
 def test_service_query_exposes_common_applied_state():
     core = _core(synthesis=SynthesisResult(
         pending_operations=[{
