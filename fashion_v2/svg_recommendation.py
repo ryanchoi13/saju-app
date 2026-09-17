@@ -18,12 +18,14 @@ from fashion_v2.review_preferences import apply_review_preferences
 from fashion_v2.realwear_rules import styling_for, colour_parts, visible_colors, accessory_spec
 from fashion_v2.coordination import POLICY_VERSION, tie_separation, evaluate_coordination
 from wada_color_rules import WADA_COLORS
+from fashion_v2.wearable_options import (wardrobe_tones, tone_explanation,
+    muted_green_bottom, garment_options, outfit_balance)
 
 PALETTE = json.loads(Path(__file__).with_name('approved_palette.json').read_text())
 PALETTE['light_gray'] = dict(id='light_gray', name='라이트 그레이', hex='#CDD0D3', family='neutral', element='금', kind='calm')
 # A wearable tone requested in review, separate from the original research pool.
 PALETTE['pale_pink'] = {**PALETTE['pink'], 'id':'pale_pink', 'name':'연한 분홍', 'hex':'#E8DADB'}
-VERSION = 'approved-svg-4'
+VERSION = 'approved-svg-5'
 TPOS = ('casual', 'business_casual', 'business_formal')
 ALIASES = {'cream':'ivory', 'dark_brown':'brown', 'dark_denim':'navy',
            'denim_blue':'denim', 'dusty_blue':'sky', 'light_blue':'sky',
@@ -162,7 +164,9 @@ def stable(c, suit=False, denim=False):
 def permitted(c, group, look):
     cat=group['category']; formal=look['tpo']=='business_formal'
     if cat=='suit': return stable(c, suit=True)
-    if cat=='bottom': return stable(c, denim=group['label']=='데님 바지')
+    if cat=='bottom':
+        denim = group['label']=='데님 바지'
+        return stable(c, denim=denim) or (not denim and not formal and muted_green_bottom(c))
     if cat=='shoes':
         if look['gender']=='male' and formal: return c['family'] in {'black','brown'} and c['lightness'] < .46
         return stable(c) or (look['gender']=='female' and c['family']=='red' and c['lightness']<.45)
@@ -183,16 +187,11 @@ def permitted(c, group, look):
 
 def variants(c):
     yield c, 'exact', ''
-    family=c['family']
-    choices={'blue':['navy','denim','sky'], 'red':['pink','burgundy','pale_pink'],
-             'green':['sage','forest'], 'purple':['lavender','purple'],
-             'brown':['beige','brown'], 'gray':['light_gray','gray','charcoal'],
-             'white':['white','ivory'], 'black':['black'], 'yellow':['butter'],
-             'teal':['teal']}.get(family,[])
-    for key in choices:
+    for key in wardrobe_tones(c):
         v=describe_color(tone(key))
         if v['hex']!=c['hex']:
-            yield v,'similar','원색이 해당 부위의 착장 조건에 맞지 않아 같은 계열의 착장용 톤 적용'
+            yield v,'similar',tone_explanation(c)
+
 
 
 def groups(look):
@@ -216,7 +215,7 @@ def candidates(look, color, role):
         exact_allowed=permitted(color,group,look)
         for actual,relation,reason in variants(color):
             if target.get('tone') and actual['hex']!=tone(target['tone'])['hex']: continue
-            if relation=='similar' and exact_allowed and not target.get('tone') and group['category'] not in {'tie','bag','accessory'}: continue
+            if relation=='similar' and exact_allowed and not target.get('tone') and group['category'] not in {'tie','bag','accessory'} and look['tpo']!='casual': continue
             if permitted(actual,group,look):
                 area={'tie':1,'shoes':1,'bag':1,'accessory':1,'top':2 if look['tpo']=='business_formal' else 3,'suit':4}.get(group['category'],3)
                 worn_outer=any(i['category'] in {'outer','coat'} and i['wear_mode']!='carry' for i in look['items'])
@@ -225,7 +224,7 @@ def candidates(look, color, role):
                 if relation=='similar' and target.get('tone'):
                     reason='검토 의견에 맞춰 같은 계열의 착장용 톤 적용'
                 elif relation=='similar' and exact_allowed:
-                    reason='소품에 원추천색과 같은 계열의 착장용 톤을 함께 비교해 적용'
+                    reason=tone_explanation(color)
                 if relation=='similar' and group['category']=='top' and look['tpo']=='business_formal' and actual.get('id')=='pale_pink':
                     reason='포멀 셔츠의 분홍 채도를 낮춘 착장용 톤 적용'
                 result.append(dict(**group,color=actual,relation=relation,reason=reason,area=area))
@@ -243,56 +242,64 @@ def apply_colors(look, a, b, previous=None):
             color_facts[key]=describe_color({'hex':key})
         return color_facts[key]
     best=None
-    for ca,cb in itertools.product(candidates(look,raw['A'],'A'),candidates(look,raw['B'],'B')):
-        if ca and cb and set(ca['indexes']) & set(cb['indexes']): continue
-        items=deepcopy(look['items']); placements={}; score=0
-        for role,choice in [('A',ca),('B',cb)]:
-            if choice is None: continue
-            c=choice['color']
-            score+=(90 if role=='A' else 65)+choice['area']*9-(5 if choice['relation']=='similar' else 0)
-            if choice['relation']=='similar':
-                score-=abs(c['lightness']-raw[role]['lightness'])*6
-            if previous and previous.get(role)==(choice['category'],c['hex']): score-=35
-            if role=='A' and choice['category']=='tie' and look['recommendation_number']==1: score+=12
-            if choice['category']=='suit' and c['family']=='brown': score-=9
-            if choice['category'] in {'tie','bag','accessory'} and look['tpo']!='casual' and not look.get('color_targets'):
-                # Soft preference, not a gender/age colour ban or new TPO.
-                if c['saturation']>.65 and .25<c['lightness']<.72: score-=12
-            for i in choice['indexes']:
-                items[i].update(hex=c['hex'],color_name=c['name_ko'],applied_daily_color=role,color_relation=choice['relation'],source_hex=raw[role]['hex'],source_color_name=raw[role]['name_ko'],tone_reason=choice['reason'])
-            placements[role]=dict(slot=choice['category'],indexes=choice['indexes'],name=c['name_ko'],hex=c['hex'],relation=choice['relation'],reason=choice['reason'],area='small' if choice['area']==1 else 'medium' if choice['area']==2 else 'large')
-        suit=next((i for i in items if i.get('suit_group')),None)
-        colour_parts(items,PALETTE)
-        # Inspect the actual rendered pattern before rejecting a tonal tie.
-        separation=tie_separation(items,describe_candidate_color)
-        if not separation['ok'] and suit and not suit.get('applied_daily_color'):
-            for key in ('navy','charcoal','gray'):
-                alt=tone(key)
-                for i in items:
-                    if i.get('suit_group'):
-                        i.update(hex=alt['hex'],color_name=alt['name_ko'],base_adjustment='도안에서 넥타이가 구분되도록 수트 기본색 조정')
-                colour_parts(items,PALETTE)
-                separation=tie_separation(items,describe_candidate_color)
-                if separation['ok']: break
-        if not separation['ok']: continue
-        count=len(visible_colors(items))
-        owner_component=any(i.get('watch_case_hex') for i in items)
-        # 4-color output is retained for explicit review, never called approved.
-        if count>(5 if owner_component else 4): continue
-        score-=max(0,count-3)*18
-        score+=evaluate_coordination(items,look['tpo'],describe_candidate_color)['score_adjustment']
-        if best is None or score>best[0]: best=(score,items,placements,count)
+    for selected in garment_options(look,PALETTE):
+        for ca,cb in itertools.product(candidates(selected,raw['A'],'A'),candidates(selected,raw['B'],'B')):
+            if ca and cb and set(ca['indexes']) & set(cb['indexes']): continue
+            items=deepcopy(selected['items']); placements={}; score=0
+            for role,choice in [('A',ca),('B',cb)]:
+                if choice is None: continue
+                c=choice['color']
+                score+=(90 if role=='A' else 65)+choice['area']*9-(5 if choice['relation']=='similar' else 0)
+                if choice['relation']=='similar':
+                    score-=abs(c['lightness']-raw[role]['lightness'])*6
+                    if look['tpo']=='casual':
+                        if role=='A': score-=3
+                        if choice['category']=='bottom' and c.get('id')=='olive': score+=2
+                if previous and previous.get(role)==(choice['category'],c['hex']): score-=35
+                if role=='A' and choice['category']=='tie' and look['recommendation_number']==1: score+=12
+                if choice['category']=='suit' and c['family']=='brown': score-=9
+                if choice['category'] in {'tie','bag','accessory'} and look['tpo']!='casual' and not look.get('color_targets'):
+                    # Soft preference, not a gender/age colour ban or new TPO.
+                    if c['saturation']>.65 and .25<c['lightness']<.72: score-=12
+                for i in choice['indexes']:
+                    items[i].update(hex=c['hex'],color_name=c['name_ko'],applied_daily_color=role,color_relation=choice['relation'],source_hex=raw[role]['hex'],source_color_name=raw[role]['name_ko'],tone_reason=choice['reason'])
+                placements[role]=dict(slot=choice['category'],indexes=choice['indexes'],name=c['name_ko'],hex=c['hex'],relation=choice['relation'],reason=choice['reason'],area='small' if choice['area']==1 else 'medium' if choice['area']==2 else 'large')
+            suit=next((i for i in items if i.get('suit_group')),None)
+            colour_parts(items,PALETTE)
+            # Inspect the actual rendered pattern before rejecting a tonal tie.
+            separation=tie_separation(items,describe_candidate_color)
+            if not separation['ok'] and suit and not suit.get('applied_daily_color'):
+                for key in ('navy','charcoal','gray'):
+                    alt=tone(key)
+                    for i in items:
+                        if i.get('suit_group'):
+                            i.update(hex=alt['hex'],color_name=alt['name_ko'],base_adjustment='도안에서 넥타이가 구분되도록 수트 기본색 조정')
+                    colour_parts(items,PALETTE)
+                    separation=tie_separation(items,describe_candidate_color)
+                    if separation['ok']: break
+            if not separation['ok']: continue
+            count=len(visible_colors(items))
+            owner_component=any(i.get('watch_case_hex') for i in items)
+            # 4-color output is retained for explicit review, never called approved.
+            if count>(5 if owner_component else 4): continue
+            score-=max(0,count-3)*18
+            score+=evaluate_coordination(items,look['tpo'],describe_candidate_color)['score_adjustment']
+            balance=outfit_balance(items,describe_candidate_color,
+                enabled=look['tpo']=='casual' and not look.get('review_preference') and not look.get('color_targets'))
+            priority=(-balance['risk'],score)
+            if best is None or priority>best[0]: best=(priority,items,placements,count,selected,balance)
     if best is None: raise ValueError('안전한 배색 후보가 없습니다')
-    result=deepcopy(look)
+    result=deepcopy(best[4])
     result['items'],placements=best[1],best[2]
     result['coordination']=evaluate_coordination(result['items'],look['tpo'],describe_candidate_color)
+    result['coordination']['wearability']=best[5]
     result['coordination']['tie_separation']=tie_separation(result['items'],describe_candidate_color)
     result['outfit_policy_version']=POLICY_VERSION
     for role,placement in placements.items():
         placement['parts']=[dict(index=i,part=name,hex=part['hex'])
             for i in placement['indexes'] for name,part in result['items'][i].get('color_parts',{}).items()
             if part.get('role')==role]
-    result['color_strategy']={'priority':'reviewed_outfit_preference' if look.get('review_preference') else 'A_first_unless_B_fits_larger_area','original':raw,'placements':placements,
+    result['color_strategy']={'priority':'reviewed_outfit_preference' if look.get('review_preference') else 'outfit_quality_then_A_then_B','original':raw,'placements':placements,
         'unresolved':[dict(role=r,name=raw[r]['name_ko'],hex=raw[r]['hex'],next_step='palette',reason='검토에서 지정한 실착 조합을 우선하고 추천 팔레트로 안내' if r in look.get('color_targets',{}) and look['color_targets'][r] is None else '자연스럽게 적용할 부위가 없어 추천 팔레트로 안내') for r in raw if r not in placements],
         'color_count':best[3],'review_required':best[3]>3,'additional_element_C':None}
     result['garment_spec']=to_spec(result)

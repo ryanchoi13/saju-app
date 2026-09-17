@@ -5,8 +5,9 @@ import json
 from pathlib import Path
 from unittest import TestCase
 
-from fashion_v2.svg_recommendation import build_svg_catalog_contexts, PALETTE, describe_color, stable
+from fashion_v2.svg_recommendation import build_svg_catalog_contexts, PALETTE, describe_color, stable, permitted, tone
 from fashion_v2.weather_outfit import classify_weather
+from fashion_v2.wearable_options import wardrobe_tones
 from fashion_v2.coordination import tie_separation, POLICY_VERSION
 from wada_color_rules import WADA_DUOS
 
@@ -25,14 +26,14 @@ class SvgIntegrationTests(TestCase):
         self.assertEqual(sum(x['category']=='shoes' for x in items),1)
         for item in items:
             if item['category']=='bottom':
-                self.assertTrue(stable(describe_color({'hex':item['hex']}),denim=item['label']=='데님 바지'),item)
+                self.assertTrue(permitted(describe_color({'hex':item['hex']}), {'category':'bottom','label':item['label']}, look),item)
             if item.get('applied_daily_color'):
                 raw=strategy['original'][item['applied_daily_color']]
                 self.assertEqual(item['source_hex'],raw['hex'])
                 if item['color_relation']=='exact':self.assertEqual(item['hex'],raw['hex'])
                 else:
                     self.assertTrue(item['tone_reason'])
-                    self.assertEqual(describe_color({'hex':item['hex']})['family'],raw['family'])
+                    self.assertIn(item['hex'], {tone(key)['hex'].upper() for key in wardrobe_tones(raw)}, 'Only explicit wardrobe-tone mappings are permitted')
         suit=[i for i in items if i.get('suit_group')]
         if suit:self.assertEqual(len({i['hex'] for i in suit}),1)
         if s['dress']:self.assertFalse(s['top'] or s['bottom'])
