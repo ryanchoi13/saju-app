@@ -5,9 +5,10 @@ from __future__ import annotations
 from typing import Literal
 
 from app.engine.core.models import MyeongriCoreResult
+from app.engine.semantic.applied import build_applied_state
 
 
-QUERY_PROFILE_VERSION = "service-query-profile-v1"
+QUERY_PROFILE_VERSION = "service-query-profile-v2-applied-state"
 ServiceQuery = Literal[
     "lifetime_overall",
     "annual_overall",
@@ -122,6 +123,7 @@ def build_service_query(core: MyeongriCoreResult, query: ServiceQuery) -> dict:
         for item in core.natal_facts.ten_gods.visible + core.natal_facts.ten_gods.hidden
         if not target_gods or item.ten_god.value in target_gods
     ]
+    applied_state = build_applied_state(core, profile["scope"])
     return {
         "profile_version": QUERY_PROFILE_VERSION,
         "query": query,
@@ -140,12 +142,16 @@ def build_service_query(core: MyeongriCoreResult, query: ServiceQuery) -> dict:
         ),
         "shensha_support": [item.model_dump(mode="json") for item in core.shensha],
         "semantic_state": core.semantic_state.model_dump(mode="json"),
+        "applied_state": applied_state,
         "constraints": {
             "shensha_standalone_verdict": False,
             "fixed_score_verdict": False,
             "medical_claim_allowed": profile.get("medical_claim_allowed"),
+            "timing_observation_standalone_verdict": False,
         },
         "evidence_ids": list(dict.fromkeys(
-            core.synthesis.evidence_ids + core.semantic_state.evidence_ids
+            core.synthesis.evidence_ids
+            + core.semantic_state.evidence_ids
+            + applied_state.get("evidence_ids", [])
         )),
     }
