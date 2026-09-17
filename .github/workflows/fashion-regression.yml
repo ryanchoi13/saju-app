@@ -1,0 +1,56 @@
+name: Fashion regression
+
+on:
+  push:
+    branches: [codex/fix-fashion-tone-and-garments]
+  pull_request:
+    paths:
+      - 'fashion_v2/**'
+      - 'assets/dalha-garments/**'
+      - 'scripts/*fashion*'
+      - '.github/workflows/fashion-regression.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: fashion-regression-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Syntax checks
+        run: |
+          python -m compileall -q fashion_v2
+          node --check assets/dalha-garments/engine.js
+          node --check assets/dalha-garments/integration.js
+      - name: Fashion regression tests
+        run: |
+          if [ -f scripts/test_fashion_tone_regression.py ]; then
+            python scripts/test_fashion_tone_regression.py
+          fi
+          if [ -f scripts/test_fashion_garment_regression.mjs ]; then
+            node scripts/test_fashion_garment_regression.mjs
+          fi
+      - name: Collect reproducible review source
+        if: always()
+        run: |
+          mkdir -p fashion-review-artifacts
+          git archive HEAD -o fashion-review-artifacts/source.tar.gz
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: fashion-regression-review
+          path: fashion-review-artifacts/
+          retention-days: 7
