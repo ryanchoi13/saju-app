@@ -4,6 +4,7 @@ on:
     paths:
       - 'fashion_v2/**'
       - 'assets/dalha-garments/**'
+      - 'backend/tests/test_fashion*'
       - 'scripts/*fashion*'
       - 'scripts/*svg*'
       - '.github/workflows/fashion-regression.yml'
@@ -23,17 +24,16 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Check Python syntax
-        run: python -m compileall -q fashion_v2
-      - name: Check renderer import
-        run: node --input-type=module -e "import('./assets/dalha-garments/integration.js').then(m=>{if(typeof m.renderLook!=='function')process.exit(1)})"
-      - name: Capture scoped source for regression reproduction
+      - name: Install application and test dependencies
+        run: pip install -r requirements.txt pytest
+      - name: Fashion regression and API integration
+        run: PYTHONPATH=. python -m pytest -q backend/tests/test_fashion*.py
+      - name: Render garment matrix and preserve archived art
         run: |
-          mkdir -p /tmp/fashion-debug
-          git archive --format=tar.gz --output=/tmp/fashion-debug/source.tar.gz HEAD
-          git rev-parse HEAD > /tmp/fashion-debug/commit.txt
+          python scripts/build_fashion_regression.py
+          node scripts/test_fashion_garments.mjs
       - uses: actions/upload-artifact@v4
         with:
-          name: fashion-regression-source
-          path: /tmp/fashion-debug/
-          retention-days: 1
+          name: fashion-regression-results
+          path: review-output/wearable-fix/
+          retention-days: 3
