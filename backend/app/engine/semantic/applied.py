@@ -28,7 +28,6 @@ _AXES = {
 
 
 def _timing_axes_for_scope(scope: str) -> set[str]:
-    # Lifetime surfaces keep the natal direction separate from transient timing.
     if "all_luck_cycles" in scope:
         return set()
     axes = set()
@@ -197,12 +196,7 @@ def _timing_relations(core: MyeongriCoreResult, allowed_axes: set[str]) -> list[
 
 
 def _direction_timing_assessment(direction: dict, timing_relations: list[dict]) -> dict:
-    """Summarize timing effects for one natal direction without vote/count rules.
-
-    Any genuine support/opposition disagreement stays mixed regardless of how
-    many records appear on either side. Unresolved records are retained as
-    context but never outvote a directional relation.
-    """
+    """Summarize timing effects for one natal direction without vote/count rules."""
 
     if direction.get("status") not in {"confirmed", "conditional"}:
         return {
@@ -210,6 +204,7 @@ def _direction_timing_assessment(direction: dict, timing_relations: list[dict]) 
             "has_unresolved_context": False,
             "supporting_elements": [],
             "opposing_elements": [],
+            "mixed_elements": [],
             "evidence_ids": [],
         }
 
@@ -241,6 +236,10 @@ def _direction_timing_assessment(direction: dict, timing_relations: list[dict]) 
         "opposing_elements": sorted({
             item.get("element") for item in relevant
             if item.get("relation") == "opposes" and item.get("element")
+        }),
+        "mixed_elements": sorted({
+            item.get("element") for item in relevant
+            if item.get("relation") == "mixed" and item.get("element")
         }),
         "evidence_ids": sorted({
             evidence_id
@@ -310,12 +309,7 @@ def _axis_summary(directions: list[dict]) -> dict[str, dict]:
 
 
 def build_applied_state(core: MyeongriCoreResult, scope: str) -> dict:
-    """Return one common applied-state contract for every DALHA service.
-
-    The layer deliberately distinguishes confirmed, conditional and observed
-    information. A daily/annual element is never promoted merely because it is
-    present in the timing pillar.
-    """
+    """Return one common applied-state contract for every DALHA service."""
 
     confirmed = _confirmed_directions(core)
     conditional = _conditional_directions(core)
