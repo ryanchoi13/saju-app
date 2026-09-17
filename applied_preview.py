@@ -46,11 +46,34 @@ def _week_payload(start: date, days: int, birth: BirthInput) -> dict:
     return {"rows": rows}
 
 
+def _summary(payload: dict) -> list[dict]:
+    result = []
+    for row in payload["rows"]:
+        state = row["applied_state"]
+        result.append({
+            "date": row["date"],
+            "day_ganji": row["day_ganji"],
+            "day_element": row["day_element"],
+            "overall_status": state["overall_status"],
+            "confirmed_elements": state["confirmed_elements"],
+            "conditional_elements": state["conditional_elements"],
+            "strength_balance": state["axes"]["strength_balance"],
+            "temperature": state["axes"]["temperature"],
+            "moisture": state["axes"]["moisture"],
+            "strength_shift": state["timing"]["strength_shift"],
+            "timing_relation_counts": {
+                key: sum(1 for item in state["timing"]["relations"] if item["relation"] == key)
+                for key in ("supports", "opposes", "mixed", "unresolved")
+            },
+        })
+    return result
+
+
 @app.on_event("startup")
 def log_default_preview():
     birth = _birth(1978, 3, 13, "male", 10, 30)
     payload = _week_payload(date(2026, 9, 11), 7, birth)
-    print("APPLIED_WEEK_PREVIEW=" + json.dumps(payload, ensure_ascii=False, separators=(",", ":")), flush=True)
+    print("APPLIED_WEEK_SUMMARY=" + json.dumps(_summary(payload), ensure_ascii=False, separators=(",", ":")), flush=True)
 
 
 @app.get("/week")
@@ -68,5 +91,6 @@ def week(
     payload = _week_payload(start, days, birth)
     return {
         "profile": {"y": y, "m": m, "d": d, "gender": gender, "hour": hour, "minute": minute},
+        "summary": _summary(payload),
         **payload,
     }
