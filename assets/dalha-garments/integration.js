@@ -1,5 +1,6 @@
 // Approved sources stay immutable. Explicit review variants are opt-in below.
 import {renderOutfit, garmentInner, outerGeometry, escapeXml} from './engine.js';
+import {applyGarmentIdentity} from './identity.js';
 import {byName} from './catalog.js';
 import {accessoryDrawing,legacyAccessoryDrawing,validateAccessory} from './components.js';
 
@@ -70,6 +71,7 @@ export function renderLook(look, prefix='dalha-look') {
   const base={...s,...(s.dress?{bottom:'슬랙스'}:{}),...(s.accessoryItems?{tieTwoTone:false}:{})};
   let svg=renderOutfit(base,prefix);
   svg=reviewVariants(svg,s,prefix);
+  if(look.renderer==='approved-svg-5') svg=applyGarmentIdentity(svg,s);
   for(const [i,item] of (s.accessoryItems||[]).entries()){
     svg=replaceDrawing(svg,legacyAccessoryDrawing(item.name,s),accessoryDrawing(item,s.gender,`${prefix}-accessory-${i}`));
   }
@@ -94,4 +96,11 @@ export function renderLook(look, prefix='dalha-look') {
   return svg.replace('aria-label="코디 도안"',`aria-label="${escapeXml(look.items.map(i=>(i.color_description||i.color_name)+' '+(i.display_label||i.label)).join(', '))}"`);
 }
 
-if (typeof window!=='undefined') window.DalhaGarments={renderLook};
+if (typeof window!=='undefined') {
+  window.DalhaGarments={renderLook};
+  if(!document.querySelector('link[data-fashion-layout]')) {
+    const style=document.createElement('link');
+    style.rel='stylesheet'; style.href=new URL('./identity.css',import.meta.url).href;
+    style.dataset.fashionLayout='5'; document.head.append(style);
+  }
+}

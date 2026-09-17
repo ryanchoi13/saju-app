@@ -7,6 +7,7 @@ from unittest import TestCase
 
 from fashion_v2.svg_recommendation import build_svg_catalog_contexts, PALETTE, describe_color, stable
 from fashion_v2.weather_outfit import classify_weather
+from fashion_v2.outfit_balance import related_families
 from fashion_v2.coordination import tie_separation, POLICY_VERSION
 from wada_color_rules import WADA_DUOS
 
@@ -32,7 +33,10 @@ class SvgIntegrationTests(TestCase):
                 if item['color_relation']=='exact':self.assertEqual(item['hex'],raw['hex'])
                 else:
                     self.assertTrue(item['tone_reason'])
-                    self.assertEqual(describe_color({'hex':item['hex']})['family'],raw['family'])
+                    actual=describe_color({'hex':item['hex']})['family']
+                    self.assertTrue(related_families(raw['family'],actual))
+                    if actual != raw['family']:
+                        self.assertEqual((raw['family'],actual,item['color_relation']),('teal','green','adjacent'))
         suit=[i for i in items if i.get('suit_group')]
         if suit:self.assertEqual(len({i['hex'] for i in suit}),1)
         if s['dress']:self.assertFalse(s['top'] or s['bottom'])

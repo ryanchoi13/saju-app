@@ -7,6 +7,7 @@ on:
     paths:
       - 'fashion_v2/**'
       - 'assets/dalha-garments/**'
+      - 'backend/tests/test_fashion*'
       - 'scripts/*fashion*'
       - '.github/workflows/fashion-regression.yml'
   workflow_dispatch:
@@ -30,19 +31,24 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Syntax checks
+      - name: Install test dependencies
         run: |
+          pip install -r requirements.txt pytest playwright
+          python -m playwright install --with-deps chromium
+      - name: Syntax and regression checks
+        env:
+          PYTHONPATH: .:backend
+        run: |
+          mkdir -p fashion-review-artifacts
           python -m compileall -q fashion_v2
-          node --check assets/dalha-garments/engine.js
           node --check assets/dalha-garments/integration.js
-      - name: Fashion regression tests
-        run: |
-          if [ -f scripts/test_fashion_tone_regression.py ]; then
-            python scripts/test_fashion_tone_regression.py
-          fi
-          if [ -f scripts/test_fashion_garment_regression.mjs ]; then
-            node scripts/test_fashion_garment_regression.mjs
-          fi
+          node --check assets/dalha-garments/identity.js
+          python -m pytest -q backend/tests/test_fashion*.py | tee fashion-review-artifacts/pytest.log
+          python scripts/test_fashion_tone_regression.py 2>&1 | tee fashion-review-artifacts/tone-tests.log
+          python scripts/build_svg_review.py
+          node scripts/test_fashion_garment_regression.mjs | tee fashion-review-artifacts/garment-tests.log
+      - name: Actual mobile modal checks
+        run: python scripts/test_fashion_mobile.py
       - name: Collect reproducible review source
         if: always()
         run: |

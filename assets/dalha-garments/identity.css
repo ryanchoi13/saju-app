@@ -1,0 +1,24 @@
+/* Override the generic dialog's !important padding/height ONLY for fashion. */
+#fashionV2Modal .fashion-v2-sheet {
+  display:flex; flex-direction:column; gap:0; padding:0!important;
+  max-height:92dvh!important; max-width:520px!important;
+  overflow:hidden!important; scrollbar-gutter:auto;
+}
+#fashionV2Modal .fashion-v2-slides {
+  flex:1 1 auto; min-height:0; overflow-x:auto; overflow-y:hidden;
+}
+#fashionV2Modal .fashion-v2-slide {
+  max-height:calc(92dvh - 185px); min-height:0; overflow-y:auto;
+  overscroll-behavior:contain; padding:10px 14px 18px;
+}
+#fashionV2Modal .fashion-v2-svg-board { display:flex; justify-content:center; padding:0; }
+#fashionV2Modal .outfit-svg {
+  display:block; width:100%; height:auto; max-width:320px;
+  max-height:min(51dvh,470px); aspect-ratio:320 / 470; flex-shrink:0;
+}
+#fashionV2Modal .fashion-v2-slide p { margin:8px 0; font-size:.875rem!important; line-height:1.65!important; }
+#fashionV2Modal .fashion-v2-footer { flex:0 0 auto; }
+@media (max-height:620px) {
+  #fashionV2Modal .outfit-svg { max-height:44dvh; }
+  #fashionV2Modal .fashion-v2-slide { max-height:calc(92dvh - 170px); }
+}
