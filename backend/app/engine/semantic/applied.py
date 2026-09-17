@@ -196,6 +196,70 @@ def _timing_relations(core: MyeongriCoreResult, allowed_axes: set[str]) -> list[
     return list(grouped.values())
 
 
+def _direction_timing_assessment(direction: dict, timing_relations: list[dict]) -> dict:
+    """Summarize timing effects for one natal direction without vote/count rules.
+
+    Any genuine support/opposition disagreement stays mixed regardless of how
+    many records appear on either side. Unresolved records are retained as
+    context but never outvote a directional relation.
+    """
+
+    if direction.get("status") not in {"confirmed", "conditional"}:
+        return {
+            "relation": "not_applicable",
+            "has_unresolved_context": False,
+            "supporting_elements": [],
+            "opposing_elements": [],
+            "evidence_ids": [],
+        }
+
+    operation = direction.get("operation")
+    elements = set(direction.get("elements", []))
+    relevant = [
+        item for item in timing_relations
+        if item.get("operation") == operation
+        and (not elements or item.get("element") in elements)
+    ]
+    relation_set = {item.get("relation") for item in relevant}
+    directional = relation_set & {"supports", "opposes", "mixed"}
+    if "mixed" in directional or {"supports", "opposes"}.issubset(directional):
+        relation = "mixed"
+    elif "supports" in directional:
+        relation = "supports"
+    elif "opposes" in directional:
+        relation = "opposes"
+    else:
+        relation = "unresolved"
+
+    return {
+        "relation": relation,
+        "has_unresolved_context": "unresolved" in relation_set,
+        "supporting_elements": sorted({
+            item.get("element") for item in relevant
+            if item.get("relation") == "supports" and item.get("element")
+        }),
+        "opposing_elements": sorted({
+            item.get("element") for item in relevant
+            if item.get("relation") == "opposes" and item.get("element")
+        }),
+        "evidence_ids": sorted({
+            evidence_id
+            for item in relevant
+            for evidence_id in item.get("evidence_ids", [])
+        }),
+    }
+
+
+def _attach_direction_timing(directions: list[dict], timing_relations: list[dict]) -> list[dict]:
+    return [
+        {
+            **item,
+            "timing_assessment": _direction_timing_assessment(item, timing_relations),
+        }
+        for item in directions
+    ]
+
+
 def _timing_observations(core: MyeongriCoreResult, allowed_axes: set[str]) -> list[dict]:
     observations = []
     for axis in ("luck_cycle", "annual", "monthly", "daily"):
@@ -256,9 +320,10 @@ def build_applied_state(core: MyeongriCoreResult, scope: str) -> dict:
     confirmed = _confirmed_directions(core)
     conditional = _conditional_directions(core)
     cautions = _caution_directions(core)
-    directions = confirmed + conditional + cautions
+    base_directions = confirmed + conditional + cautions
     allowed_axes = _timing_axes_for_scope(scope)
     timing_relations = _timing_relations(core, allowed_axes)
+    directions = _attach_direction_timing(base_directions, timing_relations)
 
     confirmed_elements = list(dict.fromkeys(
         element for item in confirmed for element in item.get("elements", [])
@@ -310,6 +375,7 @@ def build_applied_state(core: MyeongriCoreResult, scope: str) -> dict:
             "conditional_is_not_confirmed": True,
             "timing_observation_is_not_recommendation": True,
             "timing_does_not_invent_favorable_element": True,
+            "timing_relation_is_not_vote_count": True,
             "fixed_score_used": False,
         },
         "evidence_ids": list(dict.fromkeys(
