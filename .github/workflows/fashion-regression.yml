@@ -1,0 +1,39 @@
+name: Fashion regression
+on:
+  pull_request:
+    paths:
+      - 'fashion_v2/**'
+      - 'assets/dalha-garments/**'
+      - 'scripts/*fashion*'
+      - 'scripts/*svg*'
+      - '.github/workflows/fashion-regression.yml'
+permissions:
+  contents: read
+jobs:
+  fashion:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check Python syntax
+        run: python -m compileall -q fashion_v2
+      - name: Check renderer import
+        run: node --input-type=module -e "import('./assets/dalha-garments/integration.js').then(m=>{if(typeof m.renderLook!=='function')process.exit(1)})"
+      - name: Capture scoped source for regression reproduction
+        run: |
+          mkdir -p /tmp/fashion-debug
+          git archive --format=tar.gz --output=/tmp/fashion-debug/source.tar.gz HEAD
+          git rev-parse HEAD > /tmp/fashion-debug/commit.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: fashion-regression-source
+          path: /tmp/fashion-debug/
+          retention-days: 1
