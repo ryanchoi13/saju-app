@@ -50,6 +50,18 @@ def _summary(payload: dict) -> list[dict]:
     result = []
     for row in payload["rows"]:
         state = row["applied_state"]
+        direction_timings = {
+            item["operation"]: {
+                "status": item.get("status"),
+                "elements": item.get("elements", []),
+                "timing_relation": item.get("timing_assessment", {}).get("relation"),
+                "has_unresolved_context": item.get("timing_assessment", {}).get("has_unresolved_context"),
+                "supporting_elements": item.get("timing_assessment", {}).get("supporting_elements", []),
+                "opposing_elements": item.get("timing_assessment", {}).get("opposing_elements", []),
+            }
+            for item in state["directions"]
+            if item.get("status") in {"confirmed", "conditional"}
+        }
         result.append({
             "date": row["date"],
             "day_ganji": row["day_ganji"],
@@ -57,14 +69,8 @@ def _summary(payload: dict) -> list[dict]:
             "overall_status": state["overall_status"],
             "confirmed_elements": state["confirmed_elements"],
             "conditional_elements": state["conditional_elements"],
-            "strength_balance": state["axes"]["strength_balance"],
-            "temperature": state["axes"]["temperature"],
-            "moisture": state["axes"]["moisture"],
+            "directions": direction_timings,
             "strength_shift": state["timing"]["strength_shift"],
-            "timing_relation_counts": {
-                key: sum(1 for item in state["timing"]["relations"] if item["relation"] == key)
-                for key in ("supports", "opposes", "mixed", "unresolved")
-            },
         })
     return result
 
@@ -73,7 +79,7 @@ def _summary(payload: dict) -> list[dict]:
 def log_default_preview():
     birth = _birth(1978, 3, 13, "male", 10, 30)
     payload = _week_payload(date(2026, 9, 11), 7, birth)
-    print("APPLIED_WEEK_SUMMARY=" + json.dumps(_summary(payload), ensure_ascii=False, separators=(",", ":")), flush=True)
+    print("APPLIED_WEEK_DIRECTION_SUMMARY=" + json.dumps(_summary(payload), ensure_ascii=False, separators=(",", ":")), flush=True)
 
 
 @app.get("/week")
