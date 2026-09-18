@@ -480,13 +480,9 @@ def get_saju_pillars_and_analysis(name: str, gender: str, y: int, m: int, d: int
 
 def _build_menu_ranking(core, day):
     from app.engine.semantic.queries import build_service_query
-    from app.engine.services.daily import _menu_timing_element_weights
     from app.engine.services.ranked_menu import build_rankings
     query = build_service_query(core, 'daily_overall')
-    daily = query['timing']['daily']['pillar']
-    return build_rankings(core.input, day,
-                          _menu_timing_element_weights(query['timing'], query['semantic_state']),
-                          daily['stem_element'], query['semantic_state'].get('confidence'))
+    return build_rankings(core.input, day, query['applied_state'])
 
 # --- Detailed Report Generator Engine ---
 def generate_detailed_report(
