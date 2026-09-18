@@ -1,18 +1,14 @@
 """Compare explicit IF-effects with natal prescriptions, never realized fortune.
 
-No inferred opposite element, favorable element count, or majority vote. Both
-confirmed and pending natal directions may be compared with temporal effects,
-but a pending natal direction never becomes confirmed merely because timing
-appears to support it.
+No inferred opposite element, favorable element count, or majority vote. All
+hypotheses remain conditional until their force/function premises are resolved.
 """
-from collections import defaultdict
-
 from app.engine.core.models import Evidence, EvidenceLayer, ConfidenceLevel
 from app.engine.timing.conditions import COMBINATIONS
 from app.engine.relationships.functions import compare_balance_function
 from app.engine.synthesis.operation_scope import operation_block_reason
 
-VERSION = 'temporal-direction-comparison-v4-pending-aware'
+VERSION = 'temporal-direction-comparison-v3-function-scope'
 SUPPLY_OPERATIONS = {'warm', 'cool', 'moisten', 'dry', 'support'}
 
 
@@ -65,61 +61,8 @@ def _hypotheses(record):
     return result
 
 
-def _normalize_operations(synthesis):
-    """Put confirmed grouped operations and raw pending operations on one contract."""
-    grouped=defaultdict(list)
-    for natal_status, items in (
-        ('confirmed', synthesis.favorable_operations),
-        ('conditional', synthesis.pending_operations),
-    ):
-        for raw in items:
-            name=raw.get('operation')
-            if not name:
-                continue
-            elements=list(raw.get('elements') or ([] if not raw.get('element') else [raw.get('element')]))
-            source_operations=list(raw.get('source_operations') or
-                ([] if not raw.get('source_operation') else [raw.get('source_operation')]))
-            key=(natal_status,name,tuple(sorted(set(elements))))
-            grouped[key].append((raw,source_operations))
-    result=[]
-    for (natal_status,name,elements), rows in grouped.items():
-        raw_items=[raw for raw,_ in rows]
-        result.append(dict(
-            operation=name,
-            elements=list(elements),
-            source_operations=sorted({op for _,ops in rows for op in ops if op}),
-            source_modules=sorted({
-                module for raw in raw_items
-                for module in (raw.get('source_modules') or ([raw.get('source_module')] if raw.get('source_module') else []))
-            }),
-            side_effects=sorted({effect for raw in raw_items for effect in raw.get('side_effects',[])}),
-            evidence_ids=sorted({eid for raw in raw_items for eid in raw.get('evidence_ids',[])}),
-            unresolved_requirements=sorted({
-                requirement for raw in raw_items for requirement in raw.get('unresolved_requirements',[])
-            }),
-            conflict_ids=sorted({raw.get('conflict_id') for raw in raw_items if raw.get('conflict_id')}),
-            natal_status=natal_status,
-        ))
-    return result
-
-
-def _conditional_block_reason(operation, synthesis_data):
-    """Pending directions may be compared, but unresolved scoped conflicts still block."""
-    name=operation.get('operation')
-    for conflict in synthesis_data.get('diagnostic_conflicts',[]):
-        if conflict.get('resolution') not in {'preserve_as_unresolved','preserve_partial_result'}:
-            continue
-        affected=conflict.get('operations')
-        if affected:
-            if name in affected:
-                return 'operation_has_unresolved_conflict'
-            continue
-        return 'unscoped_unresolved_conflict'
-    return None
-
-
 def compare_temporal_directions(conditions, synthesis):
-    operations=_normalize_operations(synthesis)
+    operations=synthesis.favorable_operations
     synthesis_data=synthesis.model_dump(mode='json')
     blocked={o.get('operation') for o in synthesis.caution_operations}
     conflicts=any(c.get('resolution') in {'preserve_as_unresolved','preserve_partial_result'} and not c.get('operations')
@@ -145,12 +88,9 @@ def compare_temporal_directions(conditions, synthesis):
         unmodeled=[];comparisons=[];seen=set()
         for op in operations:
             name=op.get('operation');elements=op.get('elements',[]);ids=op.get('evidence_ids',[])
-            natal_status=op.get('natal_status','confirmed')
-            reason=(operation_block_reason(op, synthesis_data) if natal_status=='confirmed'
-                    else _conditional_block_reason(op, synthesis_data))
+            reason=operation_block_reason(op, synthesis_data)
             if reason:
-                unmodeled.append(dict(operation=name,natal_status=natal_status,
-                    reason=reason,evidence_ids=ids));continue
+                unmodeled.append(dict(operation=name,reason=reason,evidence_ids=ids));continue
             balance_direction = {'support':'strength_support_direction','drain':'strength_drain_direction'}.get(name) in op.get('source_operations', [])
             if balance_direction and ids and not op.get('side_effects'):
                 for target in r.get('checks', {}).get('function_targets', []):
@@ -159,39 +99,35 @@ def compare_temporal_directions(conditions, synthesis):
                         if not relation:
                             continue
                         hypothesis = f"function:{target['target_id']}:{change}"
-                        key = (hypothesis, name, target['element'], natal_status)
+                        key = (hypothesis, name, target['element'])
                         provenance = sorted(set(ids + r['evidence_ids']))
                         if key in seen:
                             existing = next(c for c in comparisons if
-                                (c['hypothesis'], c['operation'], c['element'], c['natal_status']) == key)
+                                (c['hypothesis'], c['operation'], c['element']) == key)
                             existing['evidence_ids'] = sorted(set(existing['evidence_ids'] + provenance))
                             continue
                         seen.add(key)
                         comparisons.append(dict(hypothesis=hypothesis, operation=name, element=target['element'],
                             relation=relation, status='blocked' if global_blocks else 'conditional',
-                            natal_status=natal_status,
                             target_id=target['target_id'], role_to_day_master=target['role_to_day_master'],
                             assumed_change=change, comparison_scope='day_master_balance_direction',
                             specific_remedy_confirmed=False,
                             required_premises=['target_function_change_established', 'force_and_root_usability_assessed',
                                                'other_relations_resolved', 'natal_balance_direction_still_applicable'],
                             evidence_ids=provenance))
-                # An element-free strength direction is compared to named
+                # An element-free strength direction is now compared to named
                 # functions; it is never converted into an invented element.
                 if not elements:
                     if not r.get('checks', {}).get('function_targets'):
-                        unmodeled.append(dict(operation=name,natal_status=natal_status,
-                            reason='function_targets_unavailable', evidence_ids=ids))
+                        unmodeled.append(dict(operation=name, reason='function_targets_unavailable', evidence_ids=ids))
                     continue
-            reason=None
             if name not in SUPPLY_OPERATIONS | {'mediate'}: reason='operation_needs_function_level_model'
             elif not elements: reason='operation_has_no_explicit_element'
             elif not ids: reason='operation_has_no_provenance'
-            elif natal_status=='confirmed' and name in blocked: reason='operation_is_cautioned'
+            elif name in blocked: reason='operation_is_cautioned'
             elif op.get('side_effects'): reason='operation_has_unresolved_side_effects'
             if reason:
-                unmodeled.append(dict(operation=name,natal_status=natal_status,
-                    reason=reason,evidence_ids=ids));continue
+                unmodeled.append(dict(operation=name,reason=reason,evidence_ids=ids));continue
             for h in hypotheses:
                 if h['status']!='hypothetical':
                     continue
@@ -201,16 +137,15 @@ def compare_temporal_directions(conditions, synthesis):
                         continue
                     if name!='mediate' and effect=='mediate':
                         continue
-                    key=(h['name'],name,element,natal_status)
+                    key=(h['name'],name,element)
                     if key in seen:
-                        existing=next(c for c in comparisons if
-                            (c['hypothesis'],c['operation'],c['element'],c['natal_status'])==key)
+                        existing=next(c for c in comparisons if (c['hypothesis'],c['operation'],c['element'])==key)
                         existing['evidence_ids']=sorted(set(existing['evidence_ids']+ids+r['evidence_ids']))
                         continue
                     seen.add(key)
                     comparisons.append(dict(hypothesis=h['name'],operation=name,element=element,
                         relation='opposes_requested_direction' if effect=='decrease' else 'matches_requested_direction',
-                        status='blocked' if global_blocks else 'conditional', natal_status=natal_status,
+                        status='blocked' if global_blocks else 'conditional',
                         required_premises=h['premises']+['usable_for_requested_natal_function']+
                             (['same_conflict_function_as_natal_prescription'] if name=='mediate' else []),
                         evidence_ids=sorted(set(ids+r['evidence_ids']))))
@@ -228,10 +163,7 @@ def compare_temporal_directions(conditions, synthesis):
             evidence_ids=[eid],condition_evidence_ids=r['evidence_ids'])
         records.append(record)
         evidence.append(Evidence(id=eid,layer=EvidenceLayer.JUDGMENT,source_module=VERSION,
-            rule_code='explicit-effect-vs-confirmed-or-pending-direction',
-            description='가정한 시간운 작용과 원국의 확정·조건부 방향을 구분해 비교',
+            rule_code='explicit-effect-vs-prescribed-function',description='가정한 작용과 원국 보완 방향의 조건부 비교',
             source_values=record,supports=[r['relationship_id']],reliability=ConfidenceLevel.LOW))
     return dict(version=VERSION,records=records,realized_valence='undetermined',
-        pending_direction_can_be_compared=True,
-        pending_direction_can_be_promoted_by_timing=False,
         comparison_is_not_event_prediction=True),evidence
