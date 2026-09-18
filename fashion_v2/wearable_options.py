@@ -108,6 +108,8 @@ def sneaker_color_keys(look, item):
 def shoe_color_options(look, palette):
     """Yield the existing shoe plus TPO/season/material-appropriate colours."""
     yield look
+    if look.get('review_preference') or look.get('color_targets'):
+        return
     shoe_index = next((n for n, i in enumerate(look['items'])
                        if i['category'] == 'shoes' and i['label'] == '운동화'), None)
     if shoe_index is None:
