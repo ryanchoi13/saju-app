@@ -112,11 +112,28 @@ def _food_element_matrix() -> dict:
 def log_default_preview():
     birth = _birth(1978, 3, 13, "male", 10, 30)
     payload = _week_payload(date(2026, 9, 11), 7, birth)
+    print("FOOD_ELEMENT_MATRIX=" + json.dumps(_food_element_matrix(), ensure_ascii=False, separators=(",", ":")), flush=True)
     print(
         "APPLIED_FOOD_WEEK_SUMMARY="
         + json.dumps(_summary(payload), ensure_ascii=False, separators=(",", ":")),
         flush=True,
     )
+
+
+@app.get("/food-matrix")
+def food_matrix():
+    matrix = _food_element_matrix()
+    return {
+        "matrix": matrix,
+        "counts": {
+            element: {
+                "foundation": len(data["foundation_matches"]),
+                "flavor": len(data["flavor_matches"]),
+                "total_unique": len(set(data["foundation_matches"]) | set(data["flavor_matches"])),
+            }
+            for element, data in matrix.items()
+        },
+    }
 
 
 @app.get("/week")
