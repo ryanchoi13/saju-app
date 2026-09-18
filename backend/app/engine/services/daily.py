@@ -9,6 +9,7 @@ from app.engine.constants import GAN_KO, ZHI_KO
 from app.engine.core.models import MyeongriCoreResult
 from app.engine.semantic.queries import build_service_query
 from app.engine.services.simple_menu import daily_choices
+from app.engine.services.menu_applied import project_menu_direction
 from app.engine.services.daily_guidance import build_daily_guidance
 from app.engine.services.daily_scenarios import select_daily_scenario
 from app.engine.services.daily_topics import select_daily_topics
@@ -304,32 +305,6 @@ def _lucky_element(query: dict, daily_element: str) -> str:
     return favorable[0] if favorable else daily_element
 
 
-def _menu_timing_element_weights(timing: dict, semantic: dict | None = None) -> dict[str, int]:
-    """Conservative service translation, not a classical food prescription.
-
-    Presence does not imply dietary need. Timing only modulates directions already
-    assessed by the core; uncertain relationships never become transformations here.
-    """
-    semantic = semantic or {}
-    favorable = set(semantic.get("favorable_elements", []))
-    caution = set(semantic.get("caution_elements", []))
-    exposure: dict[str, int] = {}
-    for axis, weight in (("luck_cycle", 1), ("annual", 1), ("monthly", 2), ("daily", 3)):
-        pillar = (timing.get(axis) or {}).get("pillar") or {}
-        for key in ("stem_element", "branch_element"):
-            element = pillar.get(key)
-            if element:
-                exposure[element] = exposure.get(element, 0) + weight
-    cap = 4 if semantic.get("confidence") in {"low", "undetermined", None} else 6
-    result = {}
-    for element in favorable | caution:
-        if element in favorable and element in caution:
-            result[element] = 0  # Conflicting core directions: no invented resolution.
-        else:
-            value = min(cap, 3 + exposure.get(element, 0) // 3)
-            result[element] = -value if element in caution else value
-    return result
-
 
 def _menu_climate_tags(query: dict) -> frozenset[str]:
     climate = query.get("diagnostics", {}).get("climate", {})
@@ -420,7 +395,7 @@ def build_daily_fortune(
     positive_shensha = sum(name in {"literary_star", "heavenly_noble"} for name in shensha)
     caution_shensha = sum(name in {"solitary_star", "widow_star"} for name in shensha)
     lucky_element = _lucky_element(query, daily_element)
-    timing_element_weights = _menu_timing_element_weights(timing, query["semantic_state"])
+    timing_element_weights = project_menu_direction(query["applied_state"])["element_weights"]
     aligned = daily_element in set(query["semantic_state"].get("favorable_elements", []))
     confidence = str(query["semantic_state"].get("confidence", "undetermined"))
     score = _score(
