@@ -19,7 +19,7 @@ from fashion_v2.realwear_rules import styling_for, colour_parts, visible_colors,
 from fashion_v2.coordination import POLICY_VERSION, tie_separation, evaluate_coordination
 from wada_color_rules import WADA_COLORS
 from fashion_v2.wearable_options import (wardrobe_tones, tone_explanation,
-    muted_green_bottom, garment_options, outfit_balance)
+    muted_green_bottom, garment_options, outfit_balance, footwear_color_score)
 
 PALETTE = json.loads(Path(__file__).with_name('approved_palette.json').read_text())
 PALETTE['light_gray'] = dict(id='light_gray', name='라이트 그레이', hex='#CDD0D3', family='neutral', element='금', kind='calm')
@@ -168,8 +168,19 @@ def permitted(c, group, look):
         denim = group['label']=='데님 바지'
         return stable(c, denim=denim) or (not denim and not formal and muted_green_bottom(c))
     if cat=='shoes':
-        if look['gender']=='male' and formal: return c['family'] in {'black','brown'} and c['lightness'] < .46
-        return stable(c) or (look['gender']=='female' and c['family']=='red' and c['lightness']<.45)
+        if look['gender']=='male' and formal:
+            return c['family'] in {'black','brown'} and c['lightness'] < .46
+        if formal:
+            return stable(c) or (look['gender']=='female' and c['family']=='red' and c['lightness'] < .45)
+        if look['tpo']=='business_casual':
+            restrained = (c['family'] in {'red','green','teal'} and c['saturation'] <= .38
+                          and .18 <= c['lightness'] <= .72)
+            return stable(c) or restrained
+        # Casual shoes can carry a calm A/B-adjacent tone, but vivid exact
+        # fortune colours still need to move to a wearable related shade.
+        casual_color = (c['family'] in {'red','green','teal','purple','blue','brown'}
+                        and c['saturation'] <= .60 and .18 <= c['lightness'] <= .80)
+        return stable(c) or casual_color
     if cat in {'tie','bag','accessory'}: return True
     # Bright coats were rejected in review; retain reviewed colored puffers.
     if group['label']=='코트':
@@ -286,13 +297,19 @@ def apply_colors(look, a, b, previous=None):
             score+=evaluate_coordination(items,look['tpo'],describe_candidate_color)['score_adjustment']
             balance=outfit_balance(items,describe_candidate_color,
                 enabled=look['tpo']=='casual' and not look.get('review_preference') and not look.get('color_targets'))
+            shoe_eval=footwear_color_score(
+                items, look, describe_candidate_color, count,
+                previous.get('shoe_hex') if previous else None)
+            score+=shoe_eval['score']
             priority=(-balance['risk'],score)
-            if best is None or priority>best[0]: best=(priority,items,placements,count,selected,balance)
+            if best is None or priority>best[0]:
+                best=(priority,items,placements,count,selected,balance,shoe_eval)
     if best is None: raise ValueError('안전한 배색 후보가 없습니다')
     result=deepcopy(best[4])
     result['items'],placements=best[1],best[2]
     result['coordination']=evaluate_coordination(result['items'],look['tpo'],describe_candidate_color)
     result['coordination']['wearability']=best[5]
+    result['coordination']['footwear']=best[6]
     result['coordination']['tie_separation']=tie_separation(result['items'],describe_candidate_color)
     result['outfit_policy_version']=POLICY_VERSION
     for role,placement in placements.items():
@@ -355,6 +372,9 @@ def build_svg_catalog_contexts(gender,season,color_a,color_b,weather_profile=Non
             selected['form']='dress' if any(i['category']=='dress' for i in selected['items']) else 'skirt' if any('스커트' in i['label'] for i in selected['items']) else 'pants'
             look=apply_colors(selected,color_a,color_b,previous)
             previous={r:(p['slot'],p['hex']) for r,p in look['color_strategy']['placements'].items()}
+            shoe=next((i for i in look['items'] if i['category']=='shoes'),None)
+            if shoe:
+                previous['shoe_hex']=shoe['hex']
             looks.append(look)
         result[tpo]={'status':'svg_integration_review','renderer':VERSION,'looks':looks,'weather_applied':bool(weather_profile)}
     return result
