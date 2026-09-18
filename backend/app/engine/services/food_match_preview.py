@@ -32,8 +32,6 @@ def _direction_usability(direction: dict) -> str:
             return "usable"
         return "supported"
 
-    # Conditional directions are positive food evidence only when timing
-    # explicitly supports them. Other states stay visible but neutral.
     if relation == "supports":
         return "supported"
     if relation == "opposes":
@@ -76,8 +74,6 @@ def match_food(profile, applied_state: dict) -> dict:
         )
         classification = "foundation_match" if foundation_match else "flavor_match"
     else:
-        # Held directions never make a food unfavorable. They simply cannot be
-        # used as a positive recommendation reason on this date.
         classification = "neutral"
 
     return {
@@ -90,7 +86,9 @@ def match_food(profile, applied_state: dict) -> dict:
             "foundations": list(profile.foundations),
             "identity_ingredients": list(profile.identity_ingredients),
             "secondary_ingredients": list(profile.secondary_ingredients),
-            "five_flavors": sorted(profile.five_flavors),
+            "identity_flavors": sorted(profile.identity_flavors),
+            "taste_notes": list(profile.taste_notes),
+            "composition_tags": sorted(profile.composition_tags),
             "cooking_modifiers": list(profile.cooking_modifiers),
             "serving_temperature": profile.serving_temperature,
             "thermal_nature": profile.thermal_nature,
