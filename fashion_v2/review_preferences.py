@@ -38,6 +38,11 @@ def apply_review_preferences(look, a, b):
             'A': {'category': 'bottom', 'tone': 'navy' if number == 1 else 'denim'},
             'B': {'category': 'outer' if number == 1 else 'top'}})
     if (gender == 'male' and tpo == 'casual' and age is not None and 50 <= age < 60
+            and cold and number == 1 and pair == ('#BC3F43', '#A7CEDF')):
+        # Review fixture 17-1 was explicitly accepted with white sneakers.
+        # Preserve that approved footwear while later recommendations may vary.
+        look['footwear_color_locked'] = 'owner_approved_svg_17-1'
+    if (gender == 'male' and tpo == 'casual' and age is not None and 50 <= age < 60
             and cold and number == 2 and pair == ('#BC3F43', '#A7CEDF')):
         change('top', label='니트', display_label='목폴라 니트', neck='turtleneck')
         change('bottom', label='면바지', base_color='beige', material='winter_cotton')

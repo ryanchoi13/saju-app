@@ -11,7 +11,8 @@ from fashion_v2.svg_recommendation import (
 from fashion_v2.template_catalog import templates_for
 from fashion_v2.weather_outfit import classify_weather
 from fashion_v2.wearable_options import (
-    garment_options, muted_green_bottom, outfit_balance, wardrobe_tones,
+    footwear_color_score, garment_options, muted_green_bottom, outfit_balance,
+    shoe_color_options, sneaker_color_keys, wardrobe_tones,
 )
 
 TEAL = {'hex': '#099197', 'name_ko': '딥 청록', 'element': '목'}
@@ -118,8 +119,16 @@ def test_original_denim_is_retained_for_compatible_outfits():
     assert len(options) == 2
     assert original == before
     assert options[0] is original
-    for key in ['top', 'outer', 'shoes']:
-        assert [i for i in options[0]['items'] if i['category']==key] == [i for i in options[1]['items'] if i['category']==key]
+    assert {'데님 바지', '면바지'} == {
+        next(i['label'] for i in option['items'] if i['category']=='bottom')
+        for option in options
+    }
+    shoe_colors = {
+        next(i['hex'] for i in option['items'] if i['category']=='shoes')
+        for option in shoe_color_options(original, PALETTE)
+    }
+    assert PALETTE['white']['hex'] in shoe_colors
+    assert PALETTE['brown']['hex'] in shoe_colors
     original['review_preference'] = 'approved'
     assert len(list(garment_options(original, PALETTE))) == 1
     assert len(list(garment_options(autumn(tpo='business_formal'), PALETTE))) == 1
@@ -134,3 +143,48 @@ def test_two_coloured_upper_layers_are_not_a_blanket_violation():
     assert risk(PALETTE['teal']['hex'], PALETTE['beige']['hex']) == 0
     assert risk(PALETTE['navy']['hex'], PALETTE['sky']['hex']) == 0
     assert risk(PALETTE['black']['hex'], PALETTE['white']['hex']) == 0
+
+
+def test_sneaker_range_uses_tpo_season_material_instead_of_white_constant():
+    casual = autumn()
+    shoe = next(i for i in casual['items'] if i['category'] == 'shoes')
+    keys = sneaker_color_keys(casual, shoe)
+    assert 'brown' in keys  # source suede colour remains a candidate
+    assert {'gray', 'beige', 'navy', 'olive'} <= set(keys)
+
+    spring_bc = select_template(
+        templates_for('male', 'spring', 'business_casual')[1], 48, 2)
+    bc_shoe = next(i for i in spring_bc['items'] if i['category'] == 'shoes')
+    bc_keys = set(sneaker_color_keys(spring_bc, bc_shoe))
+    assert {'white', 'ivory', 'gray', 'navy', 'brown'} <= bc_keys
+    assert 'burgundy' not in bc_keys and 'olive' not in bc_keys
+
+
+def test_shoe_color_is_scored_inside_three_four_color_outfit_logic():
+    look = autumn()
+    options = list(shoe_color_options(look, PALETTE))
+    brown = next(option for option in options
+                 if next(i for i in option['items'] if i['category']=='shoes')['hex']
+                 == PALETTE['brown']['hex'])
+    shoe = next(i for i in brown['items'] if i['category']=='shoes')
+    score = footwear_color_score(
+        brown['items'], brown, describe_color, visible_color_count=4,
+        previous_hex=PALETTE['white']['hex'])
+    assert shoe['shoe_color_origin'] == 'template_source'
+    assert score['basis'] == 'tpo_season_material_whole_outfit_soft_ranking'
+    assert any('원래 착장 템플릿' in reason for reason in score['reasons'])
+
+
+def test_reported_pair_no_longer_has_to_repeat_white_sneakers():
+    looks = build_svg_catalog_contexts(
+        'male', 'autumn', TEAL, CAMEL, age=48)['casual']['looks']
+    shoe_hexes = [
+        next(i['hex'] for i in look['items'] if i['category']=='shoes')
+        for look in looks
+    ]
+    assert len(set(shoe_hexes)) == 2
+    assert not all(hex_value == PALETTE['white']['hex'] for hex_value in shoe_hexes)
+    for look in looks:
+        assert look['coordination']['footwear']['basis'] == (
+            'tpo_season_material_whole_outfit_soft_ranking')
+        assert look['color_strategy']['color_count'] <= 4
