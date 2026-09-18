@@ -79,7 +79,7 @@ def _summary(payload: dict) -> list[dict]:
             "food": {
                 "foundation_matches": food["foundation_matches"],
                 "flavor_matches": food["flavor_matches"],
-                "held_direction": food["held_direction"],
+                "held_signal": food["held_signal"],
                 "neutral": food["neutral"],
             },
         })
