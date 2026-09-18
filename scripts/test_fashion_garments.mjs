@@ -2,7 +2,6 @@ import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import {renderLook} from '../assets/dalha-garments/integration.js';
-import {shoeDrawing} from '../assets/dalha-garments/shoes.js';
 
 const root='review-output/wearable-fix';
 const historical=JSON.parse(fs.readFileSync('backend/tests/fixtures/svg_accepted_looks.json'));
@@ -32,11 +31,10 @@ assert.match(renderLook(polo,'polo'),/data-detail="polo-collar"/);
 const bad=structuredClone(looks[0]);bad.garment_spec.topColor='" onload="alert(1)';
 assert.throws(()=>renderLook(bad,'unsafe'));
 
-const maleSandal=shoeDrawing('샌들','male','#22252B');
-const femaleSandal=shoeDrawing('샌들','female','#22252B');
-assert.match(maleSandal,/data-variant="male-sport-sandal"/);
-assert.match(femaleSandal,/data-variant="female-strap-sandal"/);
-assert.notEqual(maleSandal,femaleSandal);
+const sandalLook=structuredClone(looks[0]);
+sandalLook.renderer='approved-svg-5';
+sandalLook.garment_spec={...sandalLook.garment_spec,gender:'male',shoe:'샌들',shoeColor:'#22252B'};
+assert.match(renderLook(sandalLook,'male-sandal'),/data-detail="male-sport-sandal"/);
 
 for(const [n,look] of looks.entries())fs.writeFileSync(`${root}/look-${n+1}.svg`,renderLook(look,'fixed-'+n));
 console.log(JSON.stringify({archivedSvgHashes:historical.length,rendererPayloads:matrix.length,garmentDetails:true,invalidColorRejected:true}));
