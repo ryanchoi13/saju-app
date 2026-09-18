@@ -19,7 +19,8 @@ from fashion_v2.realwear_rules import styling_for, colour_parts, visible_colors,
 from fashion_v2.coordination import POLICY_VERSION, tie_separation, evaluate_coordination
 from wada_color_rules import WADA_COLORS
 from fashion_v2.wearable_options import (wardrobe_tones, tone_explanation,
-    muted_green_bottom, garment_options, outfit_balance, footwear_color_score)
+    muted_green_bottom, garment_options, outfit_balance, footwear_color_score,
+    shoe_color_options)
 
 PALETTE = json.loads(Path(__file__).with_name('approved_palette.json').read_text())
 PALETTE['light_gray'] = dict(id='light_gray', name='라이트 그레이', hex='#CDD0D3', family='neutral', element='금', kind='calm')
@@ -252,78 +253,155 @@ def apply_colors(look, a, b, previous=None):
         if key not in color_facts:
             color_facts[key]=describe_color({'hex':key})
         return color_facts[key]
+
+    # Stage 1: choose garments and A/B placement without letting a sneaker
+    # base colour drive a large clothing colour decision.
     best=None
     for selected in garment_options(look,PALETTE):
         for ca,cb in itertools.product(candidates(selected,raw['A'],'A'),candidates(selected,raw['B'],'B')):
-            if ca and cb and set(ca['indexes']) & set(cb['indexes']): continue
+            if ca and cb and set(ca['indexes']) & set(cb['indexes']):
+                continue
             items=deepcopy(selected['items']); placements={}; score=0
             for role,choice in [('A',ca),('B',cb)]:
-                if choice is None: continue
+                if choice is None:
+                    continue
                 c=choice['color']
                 score+=(90 if role=='A' else 65)+choice['area']*9-(5 if choice['relation']=='similar' else 0)
                 if choice['relation']=='similar':
                     score-=abs(c['lightness']-raw[role]['lightness'])*6
                     if look['tpo']=='casual':
-                        if role=='A': score-=3
-                        if choice['category']=='bottom' and c.get('id')=='olive': score+=2
-                if previous and previous.get(role)==(choice['category'],c['hex']): score-=35
-                if role=='A' and choice['category']=='tie' and look['recommendation_number']==1: score+=12
-                if choice['category']=='suit' and c['family']=='brown': score-=9
+                        if role=='A':
+                            score-=3
+                        if choice['category']=='bottom' and c.get('id')=='olive':
+                            score+=2
+                if previous and previous.get(role)==(choice['category'],c['hex']):
+                    score-=35
+                if role=='A' and choice['category']=='tie' and look['recommendation_number']==1:
+                    score+=12
+                if choice['category']=='suit' and c['family']=='brown':
+                    score-=9
                 if choice['category'] in {'tie','bag','accessory'} and look['tpo']!='casual' and not look.get('color_targets'):
-                    # Soft preference, not a gender/age colour ban or new TPO.
-                    if c['saturation']>.65 and .25<c['lightness']<.72: score-=12
+                    if c['saturation']>.65 and .25<c['lightness']<.72:
+                        score-=12
                 for i in choice['indexes']:
-                    items[i].update(hex=c['hex'],color_name=c['name_ko'],applied_daily_color=role,color_relation=choice['relation'],source_hex=raw[role]['hex'],source_color_name=raw[role]['name_ko'],tone_reason=choice['reason'])
-                placements[role]=dict(slot=choice['category'],indexes=choice['indexes'],name=c['name_ko'],hex=c['hex'],relation=choice['relation'],reason=choice['reason'],area='small' if choice['area']==1 else 'medium' if choice['area']==2 else 'large')
+                    items[i].update(
+                        hex=c['hex'],color_name=c['name_ko'],
+                        applied_daily_color=role,color_relation=choice['relation'],
+                        source_hex=raw[role]['hex'],source_color_name=raw[role]['name_ko'],
+                        tone_reason=choice['reason'])
+                placements[role]=dict(
+                    slot=choice['category'],indexes=choice['indexes'],
+                    name=c['name_ko'],hex=c['hex'],relation=choice['relation'],
+                    reason=choice['reason'],
+                    area='small' if choice['area']==1 else 'medium' if choice['area']==2 else 'large')
+
             suit=next((i for i in items if i.get('suit_group')),None)
             colour_parts(items,PALETTE)
-            # Inspect the actual rendered pattern before rejecting a tonal tie.
             separation=tie_separation(items,describe_candidate_color)
             if not separation['ok'] and suit and not suit.get('applied_daily_color'):
                 for key in ('navy','charcoal','gray'):
                     alt=tone(key)
                     for i in items:
                         if i.get('suit_group'):
-                            i.update(hex=alt['hex'],color_name=alt['name_ko'],base_adjustment='도안에서 넥타이가 구분되도록 수트 기본색 조정')
+                            i.update(hex=alt['hex'],color_name=alt['name_ko'],
+                                     base_adjustment='도안에서 넥타이가 구분되도록 수트 기본색 조정')
                     colour_parts(items,PALETTE)
                     separation=tie_separation(items,describe_candidate_color)
-                    if separation['ok']: break
-            if not separation['ok']: continue
-            count=len(visible_colors(items))
+                    if separation['ok']:
+                        break
+            if not separation['ok']:
+                continue
+
+            # Primary colour-count pressure is based on clothing/accessories.
+            # Sneakers are resolved in stage 2 and may become a restrained
+            # fourth colour, so a default white shoe must not decide the pants.
+            non_shoe_items=[i for i in items if i['category']!='shoes']
+            primary_count=len(visible_colors(non_shoe_items))
             owner_component=any(i.get('watch_case_hex') for i in items)
-            # 4-color output is retained for explicit review, never called approved.
-            if count>(5 if owner_component else 4): continue
-            score-=max(0,count-3)*18
+            if primary_count>(5 if owner_component else 4):
+                continue
+            score-=max(0,primary_count-3)*18
             score+=evaluate_coordination(items,look['tpo'],describe_candidate_color)['score_adjustment']
-            balance=outfit_balance(items,describe_candidate_color,
-                enabled=look['tpo']=='casual' and not look.get('review_preference') and not look.get('color_targets'))
-            shoe_eval=footwear_color_score(
-                items, look, describe_candidate_color, count,
-                previous.get('shoe_hex') if previous else None)
-            score+=shoe_eval['score']
+            balance=outfit_balance(
+                items,describe_candidate_color,
+                enabled=look['tpo']=='casual' and not look.get('review_preference')
+                and not look.get('color_targets'))
             priority=(-balance['risk'],score)
             if best is None or priority>best[0]:
-                best=(priority,items,placements,count,selected,balance,shoe_eval)
-    if best is None: raise ValueError('안전한 배색 후보가 없습니다')
+                best=(priority,items,placements,primary_count,selected,balance)
+
+    if best is None:
+        raise ValueError('안전한 배색 후보가 없습니다')
+
     result=deepcopy(best[4])
     result['items'],placements=best[1],best[2]
-    result['coordination']=evaluate_coordination(result['items'],look['tpo'],describe_candidate_color)
+
+    # Stage 2: sneakers are a real outfit colour, larger than an accessory but
+    # subordinate to the clothing decision. A/B-applied shoes stay fixed.
+    shoe_item=next((i for i in result['items'] if i['category']=='shoes'),None)
+    shoe_locked=bool(shoe_item and shoe_item.get('applied_daily_color'))
+    shoe_best=None
+    options=(result,) if shoe_locked else shoe_color_options(result,PALETTE)
+    for option in options:
+        candidate=deepcopy(option)
+        colour_parts(candidate['items'],PALETTE)
+        separation=tie_separation(candidate['items'],describe_candidate_color)
+        if not separation['ok']:
+            continue
+        total_count=len(visible_colors(candidate['items']))
+        owner_component=any(i.get('watch_case_hex') for i in candidate['items'])
+        if total_count>(5 if owner_component else 4):
+            continue
+        shoe_eval=footwear_color_score(
+            candidate['items'],candidate,describe_candidate_color,total_count,
+            previous.get('shoe_hex') if previous else None)
+        shoe_score=shoe_eval['score']-max(0,total_count-3)*6
+        shoe_priority=(shoe_score,-total_count)
+        if shoe_best is None or shoe_priority>shoe_best[0]:
+            shoe_best=(shoe_priority,candidate,total_count,shoe_eval)
+
+    if shoe_best is None:
+        raise ValueError('안전한 신발 배색 후보가 없습니다')
+
+    result=shoe_best[1]
+    total_count=shoe_best[2]
+    shoe_eval=shoe_best[3]
+    result['coordination']=evaluate_coordination(
+        result['items'],look['tpo'],describe_candidate_color)
     result['coordination']['wearability']=best[5]
-    result['coordination']['footwear']=best[6]
-    result['coordination']['tie_separation']=tie_separation(result['items'],describe_candidate_color)
+    result['coordination']['footwear']=shoe_eval
+    result['coordination']['tie_separation']=tie_separation(
+        result['items'],describe_candidate_color)
     result['outfit_policy_version']=POLICY_VERSION
+
     for role,placement in placements.items():
         placement['parts']=[dict(index=i,part=name,hex=part['hex'])
-            for i in placement['indexes'] for name,part in result['items'][i].get('color_parts',{}).items()
+            for i in placement['indexes']
+            for name,part in result['items'][i].get('color_parts',{}).items()
             if part.get('role')==role]
-    result['color_strategy']={'priority':'reviewed_outfit_preference' if look.get('review_preference') else 'outfit_quality_then_A_then_B','original':raw,'placements':placements,
-        'unresolved':[dict(role=r,name=raw[r]['name_ko'],hex=raw[r]['hex'],next_step='palette',reason='검토에서 지정한 실착 조합을 우선하고 추천 팔레트로 안내' if r in look.get('color_targets',{}) and look['color_targets'][r] is None else '자연스럽게 적용할 부위가 없어 추천 팔레트로 안내') for r in raw if r not in placements],
-        'color_count':best[3],'review_required':best[3]>3,'additional_element_C':None}
+
+    result['color_strategy']={
+        'priority':'reviewed_outfit_preference' if look.get('review_preference')
+                   else 'outfit_quality_then_A_then_B_then_footwear',
+        'original':raw,
+        'placements':placements,
+        'unresolved':[dict(
+            role=r,name=raw[r]['name_ko'],hex=raw[r]['hex'],next_step='palette',
+            reason='검토에서 지정한 실착 조합을 우선하고 추천 팔레트로 안내'
+                   if r in look.get('color_targets',{}) and look['color_targets'][r] is None
+                   else '자연스럽게 적용할 부위가 없어 추천 팔레트로 안내')
+            for r in raw if r not in placements],
+        'color_count':total_count,
+        'review_required':total_count>3,
+        'additional_element_C':None,
+    }
     result['garment_spec']=to_spec(result)
     component_colors={i['watch_case_hex'] for i in result['items'] if i.get('watch_case_hex')}
     if component_colors:
-        result['color_strategy'].update(color_count=len(visible_colors(result['items'])),
-            review_required=True, color_count_exception='사용자가 지정한 시계 부위별 배색',
+        result['color_strategy'].update(
+            color_count=len(visible_colors(result['items'])),
+            review_required=True,
+            color_count_exception='사용자가 지정한 시계 부위별 배색',
             component_color_source='user_requested_not_element_C')
     return result
 
@@ -365,6 +443,7 @@ def build_svg_catalog_contexts(gender,season,color_a,color_b,weather_profile=Non
         looks=[]; previous=None
         for number,original in enumerate(source,1):
             selected=apply_review_preferences(select_template(original,age,number,weather_profile),color_a,color_b)
+            selected['calendar_season']=season
             selected['styling']=styling_for(selected)
             for i,item in enumerate(selected['items']):
                 c=tone(item['base_color'])
