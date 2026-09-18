@@ -254,9 +254,9 @@ def apply_colors(look, a, b, previous=None):
             color_facts[key]=describe_color({'hex':key})
         return color_facts[key]
 
-    # Stage 1: choose garments and A/B placement without letting a sneaker
-    # base colour drive a large clothing colour decision.
-    best=None
+    # Stage 1: rank garments and A/B placement without allowing the default
+    # sneaker colour to decide a large clothing colour.
+    primary_candidates=[]
     for selected in garment_options(look,PALETTE):
         for ca,cb in itertools.product(candidates(selected,raw['A'],'A'),candidates(selected,raw['B'],'B')):
             if ca and cb and set(ca['indexes']) & set(cb['indexes']):
@@ -312,9 +312,6 @@ def apply_colors(look, a, b, previous=None):
             if not separation['ok']:
                 continue
 
-            # Primary colour-count pressure is based on clothing/accessories.
-            # Sneakers are resolved in stage 2 and may become a restrained
-            # fourth colour, so a default white shoe must not decide the pants.
             non_shoe_items=[i for i in items if i['category']!='shoes']
             primary_count=len(visible_colors(non_shoe_items))
             owner_component=any(i.get('watch_case_hex') for i in items)
@@ -327,42 +324,50 @@ def apply_colors(look, a, b, previous=None):
                 enabled=look['tpo']=='casual' and not look.get('review_preference')
                 and not look.get('color_targets'))
             priority=(-balance['risk'],score)
-            if best is None or priority>best[0]:
-                best=(priority,items,placements,primary_count,selected,balance)
+            primary_candidates.append(
+                (priority,items,placements,primary_count,selected,balance))
 
-    if best is None:
+    if not primary_candidates:
         raise ValueError('안전한 배색 후보가 없습니다')
 
-    result=deepcopy(best[4])
-    result['items'],placements=best[1],best[2]
+    # Stage 2: resolve shoes only after clothing order is known. If the best
+    # clothing candidate cannot stay within the total colour cap with any
+    # permitted shoe, try the next clothing candidate rather than failing.
+    primary_candidates.sort(key=lambda entry: entry[0], reverse=True)
+    resolved=None
+    for best in primary_candidates:
+        base_result=deepcopy(best[4])
+        base_result['items']=best[1]
+        shoe_item=next((i for i in base_result['items'] if i['category']=='shoes'),None)
+        shoe_locked=bool(shoe_item and shoe_item.get('applied_daily_color'))
+        shoe_best=None
+        options=(base_result,) if shoe_locked else shoe_color_options(base_result,PALETTE)
+        for option in options:
+            candidate=deepcopy(option)
+            colour_parts(candidate['items'],PALETTE)
+            separation=tie_separation(candidate['items'],describe_candidate_color)
+            if not separation['ok']:
+                continue
+            total_count=len(visible_colors(candidate['items']))
+            owner_component=any(i.get('watch_case_hex') for i in candidate['items'])
+            if total_count>(5 if owner_component else 4):
+                continue
+            shoe_eval=footwear_color_score(
+                candidate['items'],candidate,describe_candidate_color,total_count,
+                previous.get('shoe_hex') if previous else None)
+            shoe_score=shoe_eval['score']-max(0,total_count-3)*6
+            shoe_priority=(shoe_score,-total_count)
+            if shoe_best is None or shoe_priority>shoe_best[0]:
+                shoe_best=(shoe_priority,candidate,total_count,shoe_eval)
+        if shoe_best is not None:
+            resolved=(best,shoe_best)
+            break
 
-    # Stage 2: sneakers are a real outfit colour, larger than an accessory but
-    # subordinate to the clothing decision. A/B-applied shoes stay fixed.
-    shoe_item=next((i for i in result['items'] if i['category']=='shoes'),None)
-    shoe_locked=bool(shoe_item and shoe_item.get('applied_daily_color'))
-    shoe_best=None
-    options=(result,) if shoe_locked else shoe_color_options(result,PALETTE)
-    for option in options:
-        candidate=deepcopy(option)
-        colour_parts(candidate['items'],PALETTE)
-        separation=tie_separation(candidate['items'],describe_candidate_color)
-        if not separation['ok']:
-            continue
-        total_count=len(visible_colors(candidate['items']))
-        owner_component=any(i.get('watch_case_hex') for i in candidate['items'])
-        if total_count>(5 if owner_component else 4):
-            continue
-        shoe_eval=footwear_color_score(
-            candidate['items'],candidate,describe_candidate_color,total_count,
-            previous.get('shoe_hex') if previous else None)
-        shoe_score=shoe_eval['score']-max(0,total_count-3)*6
-        shoe_priority=(shoe_score,-total_count)
-        if shoe_best is None or shoe_priority>shoe_best[0]:
-            shoe_best=(shoe_priority,candidate,total_count,shoe_eval)
-
-    if shoe_best is None:
+    if resolved is None:
         raise ValueError('안전한 신발 배색 후보가 없습니다')
 
+    best,shoe_best=resolved
+    placements=best[2]
     result=shoe_best[1]
     total_count=shoe_best[2]
     shoe_eval=shoe_best[3]
