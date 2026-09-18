@@ -116,16 +116,16 @@ def test_original_denim_is_retained_for_compatible_outfits():
     original = autumn()
     before = deepcopy(original)
     options = list(garment_options(original, PALETTE))
-    assert len(options) > 2
+    assert len(options) == 2
     assert original == before
     assert options[0] is original
-    assert {'데님 바지', '면바지'} <= {
+    assert {'데님 바지', '면바지'} == {
         next(i['label'] for i in option['items'] if i['category']=='bottom')
         for option in options
     }
     shoe_colors = {
         next(i['hex'] for i in option['items'] if i['category']=='shoes')
-        for option in options
+        for option in shoe_color_options(original, PALETTE)
     }
     assert PALETTE['white']['hex'] in shoe_colors
     assert PALETTE['brown']['hex'] in shoe_colors
