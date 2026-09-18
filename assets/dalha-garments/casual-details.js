@@ -44,6 +44,12 @@ function blouson(s) {
   if(!s.outerOpen)art+=path(a.aperture)+line('M100 48 L100 198',1.2);
   return `<g data-detail="blouson">${art}</g>`;
 }
+function maleSportSandal(fill) {
+  const {path,line}=pen(fill);
+  const sole=shade(fill,.18);
+  return `<g data-detail="male-sport-sandal">${path('M18 176 Q67 186 116 175 L178 163 L183 180 Q129 199 31 193 Q15 191 18 176 Z',sole)}${path('M22 171 Q48 160 78 160 Q108 162 132 151 Q157 140 176 151 L178 164 Q145 177 110 182 Q62 190 27 182 Q18 180 22 171 Z')}${path('M43 165 Q57 145 78 145 Q92 147 108 159 L99 171 Q83 157 72 157 Q61 158 54 172 Z')}${path('M104 153 Q120 137 144 136 Q159 137 171 147 L164 158 Q151 149 139 149 Q125 150 115 162 Z')}${path('M145 139 Q154 121 170 124 L176 134 L171 153 L160 154 L163 135 Q157 135 153 145 Z')}${line('M51 166 L99 166 M112 156 L164 153 M25 183 Q90 195 180 172')}</g>`;
+}
+
 function replace(svg, before, after) {
   if(!svg.includes(before)) throw new Error('캐주얼 도안 상세 위치 확인 필요');
   return svg.replace(before,after);
@@ -62,6 +68,10 @@ export function refineCasualLook(svg, s) {
     // The old neck aperture removed the hood at y<28. Expose only the hood;
     // do not unclip the entire shirt or let its sleeves cross the outer layer.
     svg=svg.replace('</svg>',`<g data-role="hood-over-collar" transform="translate(60 8)">${hood(s.topColor)}</g></svg>`);
+  }
+  if(s.gender==='male' && s.shoe==='샌들') {
+    const original=garmentInner('샌들',{gender:'male',fill:s.shoeColor});
+    svg=replace(svg,original,maleSportSandal(s.shoeColor));
   }
   return svg;
 }

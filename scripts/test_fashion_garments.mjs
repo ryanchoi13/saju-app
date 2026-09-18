@@ -30,5 +30,11 @@ const polo=structuredClone(looks[0]);polo.garment_spec.top='반팔 폴로 티셔
 assert.match(renderLook(polo,'polo'),/data-detail="polo-collar"/);
 const bad=structuredClone(looks[0]);bad.garment_spec.topColor='" onload="alert(1)';
 assert.throws(()=>renderLook(bad,'unsafe'));
+
+const sandalLook=structuredClone(looks[0]);
+sandalLook.renderer='approved-svg-5';
+sandalLook.garment_spec={...sandalLook.garment_spec,gender:'male',shoe:'샌들',shoeColor:'#22252B'};
+assert.match(renderLook(sandalLook,'male-sandal'),/data-detail="male-sport-sandal"/);
+
 for(const [n,look] of looks.entries())fs.writeFileSync(`${root}/look-${n+1}.svg`,renderLook(look,'fixed-'+n));
 console.log(JSON.stringify({archivedSvgHashes:historical.length,rendererPayloads:matrix.length,garmentDetails:true,invalidColorRejected:true}));

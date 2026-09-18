@@ -444,7 +444,7 @@ def build_svg_catalog_contexts(gender,season,color_a,color_b,weather_profile=Non
     if season not in {'spring','summer','autumn','winter'}: raise ValueError('계절 확인 필요')
     result={}
     for tpo in TPOS:
-        source=weather_templates_for(gender,tpo,weather_profile) if weather_profile else templates_for(gender,season,tpo)
+        source=weather_templates_for(gender,tpo,weather_profile,calendar_season=season) if weather_profile else templates_for(gender,season,tpo)
         looks=[]; previous=None
         for number,original in enumerate(source,1):
             selected=apply_review_preferences(select_template(original,age,number,weather_profile),color_a,color_b)

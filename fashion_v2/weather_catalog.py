@@ -124,22 +124,44 @@ def _weather_fit(profile, source):
     }
 
 
-def _rain_safe(look):
+def _rain_safe(look, calendar_season=None):
+    """Adjust weather-sensitive pieces without inventing waterproof claims.
+
+    Rain removes suede and open sandals. During spring/autumn rain, short
+    bottoms are also promoted to lightweight long pants unless the source
+    outfit already uses a long bottom. This keeps thermal comfort important
+    while avoiding a summer-beach look on a rainy transition-season day.
+    """
     for item in look["items"]:
-        if item['category']!='shoes':
-            continue
-        item['rain_protection']='unverified'
-        item['rain_note']='비가 오는 날에는 신발의 방수·발수 표기를 확인해 주세요.'
-        if "suede" not in item["material"]:
-            continue
-        item.update(
-            label="가죽 운동화",
-            material="leather",
-            rain_adjusted=True,
-        )
+        if item['category'] == 'shoes':
+            item['rain_protection'] = 'unverified'
+            item['rain_note'] = '비가 오는 날에는 신발의 방수·발수 표기를 확인해 주세요.'
+            if '샌들' in item['label']:
+                item.update(
+                    label='가죽 운동화',
+                    material='leather',
+                    rain_adjusted=True,
+                    rain_adjustment_reason='비 오는 날 오픈 샌들 대신 닫힌 신발 우선',
+                )
+            elif "suede" in item["material"]:
+                item.update(
+                    label="가죽 운동화",
+                    material="leather",
+                    rain_adjusted=True,
+                    rain_adjustment_reason='비 오는 날 스웨이드 대신 관리가 쉬운 닫힌 신발 우선',
+                )
+        if (item['category'] == 'bottom' and '반바지' in item['label']
+                and calendar_season in {'spring', 'autumn'}):
+            item.update(
+                label='경량 스트레이트 팬츠',
+                color='navy' if look['gender'] == 'male' else 'charcoal',
+                material='light_cotton',
+                rain_adjusted=True,
+                rain_adjustment_reason='환절기 비 오는 날 반바지 대신 가벼운 긴바지 우선',
+            )
 
 
-def weather_templates_for(gender, tpo, profile):
+def weather_templates_for(gender, tpo, profile, calendar_season=None):
     """Return one Daily and one Trend whole outfit for the weather profile."""
     if gender not in {"male", "female"} or tpo not in TPOS:
         return ()
@@ -165,7 +187,7 @@ def weather_templates_for(gender, tpo, profile):
         for item in look["items"]:
             item.setdefault("wear_mode", "worn")
         if profile["avoid_suede"]:
-            _rain_safe(look)
+            _rain_safe(look, calendar_season)
         look["weather_fit"] = _weather_fit(profile, source)
         result.append(look)
     return tuple(result)

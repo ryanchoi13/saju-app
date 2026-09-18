@@ -81,3 +81,38 @@ def test_weather_board_gate_is_exact_to_reviewed_gender_and_colors():
     assert reviewed_weather_board_available("female", a, b) is True
     assert reviewed_weather_board_available("male", b, a) is False
     assert reviewed_weather_board_available("female", b, a) is False
+
+
+def rainy_hot_no_carry_profile():
+    return classify_weather([
+        point(8, 24, 70, 1.0),
+        point(13, 27, 70, 1.2),
+        point(20, 23, 60, 0.5),
+    ])
+
+
+def test_rainy_autumn_does_not_use_summer_shorts_and_open_sandals():
+    profile = rainy_hot_no_carry_profile()
+    assert profile["catalog_season_hint"] == "summer"
+    assert profile["rainy"] is True
+    assert profile["carry_light_outer"] is False
+
+    looks = weather_templates_for(
+        "male", "casual", profile, calendar_season="autumn")
+    for look in looks:
+        labels = {item["label"] for item in look["items"]}
+        assert not any("반바지" in label for label in labels)
+        assert not any("샌들" in label for label in labels)
+        shoe = next(item for item in look["items"] if item["category"] == "shoes")
+        assert shoe["label"] != "스트랩 샌들"
+
+    # In actual summer, the same hot/rainy profile may keep a short bottom,
+    # but rain still removes open leather sandals.
+    summer = weather_templates_for(
+        "male", "casual", profile, calendar_season="summer")
+    assert any(
+        "반바지" in item["label"]
+        for look in summer for item in look["items"] if item["category"] == "bottom")
+    assert not any(
+        "샌들" in item["label"]
+        for look in summer for item in look["items"] if item["category"] == "shoes")
