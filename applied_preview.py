@@ -86,6 +86,28 @@ def _summary(payload: dict) -> list[dict]:
     return result
 
 
+def _synthetic_supported_state(element: str) -> dict:
+    return {
+        "directions": [{
+            "operation": "element_preview",
+            "elements": [element],
+            "status": "conditional",
+            "timing_assessment": {"relation": "supports"},
+        }]
+    }
+
+
+def _food_element_matrix() -> dict:
+    result = {}
+    for element in "木火土金水":
+        matched = match_testset(_synthetic_supported_state(element))
+        result[element] = {
+            "foundation_matches": matched["foundation_matches"],
+            "flavor_matches": matched["flavor_matches"],
+        }
+    return result
+
+
 @app.on_event("startup")
 def log_default_preview():
     birth = _birth(1978, 3, 13, "male", 10, 30)
