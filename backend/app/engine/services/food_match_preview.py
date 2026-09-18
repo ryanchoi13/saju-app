@@ -1,8 +1,8 @@
 """Preview-only food matching against Applied Myeongri State.
 
 No numeric score, no majority vote, and no production ranking behavior.
-The matcher only decides whether a currently usable applied direction gives a
-food an explainable elemental match.
+A held/conflicted direction is never a reason to penalize a food. It only means
+that direction cannot currently be used as positive recommendation evidence.
 """
 
 from __future__ import annotations
@@ -11,13 +11,12 @@ from .food_profile_testset import FOOD_TESTSET, element_signals
 
 
 def _direction_for_element(applied_state: dict, element: str) -> list[dict]:
-    result = []
-    for direction in applied_state.get("directions", []):
-        if direction.get("status") not in {"confirmed", "conditional"}:
-            continue
-        if element in direction.get("elements", []):
-            result.append(direction)
-    return result
+    return [
+        direction
+        for direction in applied_state.get("directions", [])
+        if direction.get("status") in {"confirmed", "conditional"}
+        and element in direction.get("elements", [])
+    ]
 
 
 def _direction_usability(direction: dict) -> str:
@@ -33,9 +32,8 @@ def _direction_usability(direction: dict) -> str:
             return "usable"
         return "supported"
 
-    # Conditional directions are only used as a positive food signal when the
-    # timing layer explicitly supports them. Otherwise they remain visible but
-    # do not filter foods.
+    # Conditional directions are positive food evidence only when timing
+    # explicitly supports them. Other states stay visible but neutral.
     if relation == "supports":
         return "supported"
     if relation == "opposes":
@@ -77,9 +75,9 @@ def match_food(profile, applied_state: dict) -> dict:
             for match in matches
         )
         classification = "foundation_match" if foundation_match else "flavor_match"
-    elif held:
-        classification = "held_direction"
     else:
+        # Held directions never make a food unfavorable. They simply cannot be
+        # used as a positive recommendation reason on this date.
         classification = "neutral"
 
     return {
@@ -104,9 +102,17 @@ def match_food(profile, applied_state: dict) -> dict:
 def match_testset(applied_state: dict) -> dict:
     rows = [match_food(profile, applied_state) for profile in FOOD_TESTSET]
     return {
-        "foundation_matches": [row["menu"] for row in rows if row["classification"] == "foundation_match"],
-        "flavor_matches": [row["menu"] for row in rows if row["classification"] == "flavor_match"],
-        "held_direction": [row["menu"] for row in rows if row["classification"] == "held_direction"],
-        "neutral": [row["menu"] for row in rows if row["classification"] == "neutral"],
+        "foundation_matches": [
+            row["menu"] for row in rows if row["classification"] == "foundation_match"
+        ],
+        "flavor_matches": [
+            row["menu"] for row in rows if row["classification"] == "flavor_match"
+        ],
+        "held_signal": [
+            row["menu"] for row in rows if row["held_directions"]
+        ],
+        "neutral": [
+            row["menu"] for row in rows if row["classification"] == "neutral"
+        ],
         "rows": rows,
     }
