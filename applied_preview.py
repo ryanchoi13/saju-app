@@ -9,6 +9,7 @@ from fastapi import FastAPI, Query
 from app.engine.core.models import BirthInput
 from app.engine.orchestrator import calculate_myeongri_core
 from app.engine.semantic.applied import build_applied_state
+from app.engine.services.food_match_preview import match_testset
 
 app = FastAPI(title="DALHA Applied State Preview")
 
@@ -31,6 +32,7 @@ def _week_payload(start: date, days: int, birth: BirthInput) -> dict:
         target = start + timedelta(days=offset)
         core = calculate_myeongri_core(birth, target_date=target)
         state = build_applied_state(core, "natal+luck_cycle+annual+monthly+daily")
+        food = match_testset(state)
         rows.append({
             "date": target.isoformat(),
             "day_ganji": core.timing.daily.get("pillar", {}).get("ganji"),
@@ -42,6 +44,7 @@ def _week_payload(start: date, days: int, birth: BirthInput) -> dict:
             "pending_operations": core.synthesis.pending_operations,
             "diagnostic_conflicts": core.synthesis.diagnostic_conflicts,
             "applied_state": state,
+            "food_match": food,
         })
     return {"rows": rows}
 
@@ -58,10 +61,12 @@ def _summary(payload: dict) -> list[dict]:
                 "has_unresolved_context": item.get("timing_assessment", {}).get("has_unresolved_context"),
                 "supporting_elements": item.get("timing_assessment", {}).get("supporting_elements", []),
                 "opposing_elements": item.get("timing_assessment", {}).get("opposing_elements", []),
+                "mixed_elements": item.get("timing_assessment", {}).get("mixed_elements", []),
             }
             for item in state["directions"]
             if item.get("status") in {"confirmed", "conditional"}
         }
+        food = row["food_match"]
         result.append({
             "date": row["date"],
             "day_ganji": row["day_ganji"],
@@ -71,6 +76,12 @@ def _summary(payload: dict) -> list[dict]:
             "conditional_elements": state["conditional_elements"],
             "directions": direction_timings,
             "strength_shift": state["timing"]["strength_shift"],
+            "food": {
+                "foundation_matches": food["foundation_matches"],
+                "flavor_matches": food["flavor_matches"],
+                "held_direction": food["held_direction"],
+                "neutral": food["neutral"],
+            },
         })
     return result
 
@@ -79,7 +90,11 @@ def _summary(payload: dict) -> list[dict]:
 def log_default_preview():
     birth = _birth(1978, 3, 13, "male", 10, 30)
     payload = _week_payload(date(2026, 9, 11), 7, birth)
-    print("APPLIED_WEEK_DIRECTION_SUMMARY=" + json.dumps(_summary(payload), ensure_ascii=False, separators=(",", ":")), flush=True)
+    print(
+        "APPLIED_FOOD_WEEK_SUMMARY="
+        + json.dumps(_summary(payload), ensure_ascii=False, separators=(",", ":")),
+        flush=True,
+    )
 
 
 @app.get("/week")
