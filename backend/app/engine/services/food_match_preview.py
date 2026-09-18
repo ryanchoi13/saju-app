@@ -1,0 +1,112 @@
+"""Preview-only food matching against Applied Myeongri State.
+
+No numeric score, no majority vote, and no production ranking behavior.
+The matcher only decides whether a currently usable applied direction gives a
+food an explainable elemental match.
+"""
+
+from __future__ import annotations
+
+from .food_profile_testset import FOOD_TESTSET, element_signals
+
+
+def _direction_for_element(applied_state: dict, element: str) -> list[dict]:
+    result = []
+    for direction in applied_state.get("directions", []):
+        if direction.get("status") not in {"confirmed", "conditional"}:
+            continue
+        if element in direction.get("elements", []):
+            result.append(direction)
+    return result
+
+
+def _direction_usability(direction: dict) -> str:
+    relation = (direction.get("timing_assessment") or {}).get("relation", "unresolved")
+    status = direction.get("status")
+
+    if status == "confirmed":
+        if relation == "opposes":
+            return "conflicted"
+        if relation == "mixed":
+            return "mixed"
+        if relation == "unresolved":
+            return "usable"
+        return "supported"
+
+    # Conditional directions are only used as a positive food signal when the
+    # timing layer explicitly supports them. Otherwise they remain visible but
+    # do not filter foods.
+    if relation == "supports":
+        return "supported"
+    if relation == "opposes":
+        return "conflicted"
+    if relation == "mixed":
+        return "mixed"
+    return "unresolved"
+
+
+def match_food(profile, applied_state: dict) -> dict:
+    signals = element_signals(profile)
+    signal_elements = {
+        item["element"]
+        for group in ("foundation", "flavor")
+        for item in signals[group]
+    }
+
+    matches = []
+    held = []
+    for element in sorted(signal_elements):
+        for direction in _direction_for_element(applied_state, element):
+            usability = _direction_usability(direction)
+            record = {
+                "element": element,
+                "operation": direction.get("operation"),
+                "direction_status": direction.get("status"),
+                "timing_relation": (direction.get("timing_assessment") or {}).get("relation"),
+                "usability": usability,
+            }
+            if usability == "supported":
+                matches.append(record)
+            else:
+                held.append(record)
+
+    if matches:
+        foundation_match = any(
+            item["element"] == match["element"]
+            for item in signals["foundation"]
+            for match in matches
+        )
+        classification = "foundation_match" if foundation_match else "flavor_match"
+    elif held:
+        classification = "held_direction"
+    else:
+        classification = "neutral"
+
+    return {
+        "menu": profile.name,
+        "classification": classification,
+        "signals": signals,
+        "matched_directions": matches,
+        "held_directions": held,
+        "food_profile": {
+            "foundations": list(profile.foundations),
+            "identity_ingredients": list(profile.identity_ingredients),
+            "secondary_ingredients": list(profile.secondary_ingredients),
+            "five_flavors": sorted(profile.five_flavors),
+            "cooking_modifiers": list(profile.cooking_modifiers),
+            "serving_temperature": profile.serving_temperature,
+            "thermal_nature": profile.thermal_nature,
+            "thermal_confidence": profile.thermal_confidence,
+        },
+    }
+
+
+def match_testset(applied_state: dict) -> dict:
+    rows = [match_food(profile, applied_state) for profile in FOOD_TESTSET]
+    return {
+        "foundation_matches": [row["menu"] for row in rows if row["classification"] == "foundation_match"],
+        "flavor_matches": [row["menu"] for row in rows if row["classification"] == "flavor_match"],
+        "held_direction": [row["menu"] for row in rows if row["classification"] == "held_direction"],
+        "neutral": [row["menu"] for row in rows if row["classification"] == "neutral"],
+        "rows": rows,
+    }
