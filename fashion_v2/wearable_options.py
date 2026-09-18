@@ -62,6 +62,16 @@ def muted_green_bottom(color):
             and .20 <= color['lightness'] <= .75)
 
 
+def _effective_season(look):
+    season = look.get('calendar_season') or look.get('season')
+    if season in {'spring', 'summer', 'autumn', 'winter'}:
+        return season
+    # Weather-transition templates are used around season boundaries. The
+    # caller supplies calendar_season in live generation; autumn is only a
+    # backwards-compatible fallback for standalone fixture calls.
+    return 'autumn'
+
+
 def _shoe_source_key(item):
     key = SHOE_COLOR_ALIASES.get(item.get('color'), item.get('color'))
     return key if key else item.get('base_color')
@@ -79,7 +89,7 @@ def sneaker_color_keys(look, item):
     ranges = SNEAKER_COLOR_RANGES.get(look['tpo'])
     if not ranges:
         return ()
-    keys = list(ranges[look['season']])
+    keys = list(ranges[_effective_season(look)])
     source = _shoe_source_key(item)
     material = item.get('material', '')
     if source:
@@ -161,8 +171,7 @@ def garment_options(look, palette):
     if look.get('review_preference') or look.get('color_targets'):
         yield look
         return
-    for base in _bottom_options(look, palette):
-        yield from shoe_color_options(base, palette)
+    yield from _bottom_options(look, palette)
 
 
 def footwear_color_score(items, look, describe, visible_color_count=None, previous_hex=None):
@@ -218,16 +227,17 @@ def footwear_color_score(items, look, describe, visible_color_count=None, previo
         reasons.append('하의와 신발의 완전 동일색 반복은 약하게 감점')
 
     if look['tpo'] == 'casual':
+        season = _effective_season(look)
         seasonal = {
             'spring': {'white', 'gray', 'brown', 'blue'},
             'summer': {'white', 'gray', 'brown', 'blue'},
             'autumn': {'gray', 'brown', 'blue', 'green'},
             'winter': {'black', 'gray', 'brown', 'blue'},
-        }[look['season']]
+        }[season]
         if sf in seasonal:
             score += 3
             reasons.append('계절에 자주 쓰는 운동화 색 계열')
-        if look['season'] == 'winter' and sf == 'white':
+        if season == 'winter' and sf == 'white':
             score -= 1
     elif look['tpo'] == 'business_casual':
         if sf in {'white', 'gray', 'black', 'brown', 'blue'} and sc['saturation'] <= .62:
