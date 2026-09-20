@@ -29,7 +29,7 @@
       const advice=$('resGaewoon')?.closest('.action-card');if(advice)luck.append(advice);
     }
     document.querySelectorAll('#view-today h4').forEach(h=>{if(h.textContent.trim()==='오늘 뭐 입을까?')h.textContent='오늘 뭐 입지?';});
-    if(label)label.textContent='🍲 오늘 뭐 먹을까?';
+    if(label)label.textContent='🍲 오늘 뭐 먹지?';
   }
   arrangeCards();
   const mealCalories=plan=>Math.round(plan.meals.reduce((sum,m)=>sum+Number(m.kcal||0),0));
@@ -43,7 +43,7 @@
   function render(){
     if(!state)return;
     currentMenuMode=state.mode;
-    $('resMenuLabel').textContent='🍲 오늘 뭐 먹을까?';
+    $('resMenuLabel').textContent='🍲 오늘 뭐 먹지?';
     const tabs=$('menuMode-general').parentElement;
     if(tabs.classList.contains('menu-mode-controls')){tabs.id='menuModeTabs';$('resMenuLabel').after(tabs);tabs.hidden=false;}
     $('resMenu').hidden=state.items.length>0;
@@ -55,7 +55,7 @@
     $('menuStatus').textContent=`하루 합계 ${mealCalories(p)} kcal`;
     for(const mode of ['general','diet']){const b=$('menuMode-'+mode);b.setAttribute('aria-pressed',String(mode===state.mode));b.disabled=busy;}
     const viewingHistory=state.exhausted&&state.date===today();
-    $('menuNext').textContent=viewingHistory?'오늘 추천 식단 전체 보기':busy?'새 세트를 준비하고 있어요…':'다른 하루 식단 보기';
+    $('menuNext').textContent=viewingHistory?'오늘 추천 식단 전체 보기':busy?'새 세트를 준비하고 있어요…':'다른 추천 식단 보기';
     $('menuNext').disabled=!viewingHistory&&(busy||!state.items.length);
     $('menuNext').setAttribute('aria-busy',String(busy&&!viewingHistory));
     $('menuAllSets')?.remove();
