@@ -7,24 +7,32 @@
   const style=document.createElement('style');style.textContent=`
   #menuNext:disabled{cursor:default}
   #menuNext[aria-busy="true"]{cursor:wait}
-  #menuAllSets{display:block;width:100%;min-height:46px;margin-top:10px;border:1px solid #315940;border-radius:11px;background:#fff;color:#315940;font:inherit;font-size:14px;font-weight:700;cursor:pointer}
+  #view-today #mealDailyCard{padding:20px 18px;text-align:left}
+  #view-today #mealDailyCard #resMenuLabel{font-size:1.2rem!important;font-weight:800!important;color:var(--ui-ink,#172B3A)!important}
+  #view-today #dailyLuckCard .grid-cell:last-child{grid-column:auto;border-top:0;border-left:1px solid var(--ui-line,#E2E8F0);margin-top:0;padding:12px 9px}
   #menuModeTabs{margin:12px 0}#menuModeTabs[hidden]{display:none!important}
   #mealSetsDialog{margin:auto;overflow:auto;background:#fff;color:#233b32}
   #mealSetsDialog::backdrop{background:#10251c80}
   .meal-dialog-heading{position:sticky;top:-24px;background:white;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;z-index:1}
   .meal-dialog-heading h2{font-size:18px;word-break:keep-all}.meal-dialog-heading button{flex-shrink:0;white-space:nowrap;padding:10px 16px;border:1px solid #b8c7b0;border-radius:10px;background:white;cursor:pointer}
   .meal-title-kcal{display:block;margin-top:3px;font-size:14px;color:#64748b;font-weight:500}
-  .snack-card{border:1px solid #e4e9e2;border-radius:16px;overflow:hidden;margin:14px 0;background:white}
-  .snack-card h3{margin:0;background:#edf3e9;padding:10px 14px;font-size:15px}
-  .snack-pictures{display:flex;gap:20px;justify-content:center;padding:18px 12px 8px}
-  .snack-component{margin:0;text-align:center;flex:0 1 120px}.snack-component [role=img]{font-size:44px;display:block;line-height:1.4}
-  .snack-component figcaption{padding:4px;font-size:13px!important;font-weight:500}
-  .snack-total{text-align:center;padding:0 12px 14px;color:#64748b;font-size:14px}
   #mealSetsDialog section{padding-bottom:22px;margin-bottom:22px;border-bottom:1px solid #e4e9e2}
   #mealSetsDialog .menu-photos{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:12px 0}
   .food-photo{display:block;width:100%;height:145px;background:#fafbf8}
   @media(max-width:540px){#mealSetsDialog .menu-photos{grid-template-columns:1fr}.food-photo{height:130px}}
   `;document.head.append(style);
+  function arrangeCards(){
+    const label=$('resMenuLabel'),cell=label?.parentElement;
+    const luck=cell?.closest('.card');
+    if(cell?.classList.contains('grid-cell')&&luck){
+      luck.id='dailyLuckCard';cell.className='card';cell.id='mealDailyCard';luck.before(cell);
+      const advice=$('resGaewoon')?.closest('.action-card');if(advice)luck.append(advice);
+    }
+    document.querySelectorAll('#view-today h4').forEach(h=>{if(h.textContent.trim()==='오늘 뭐 입을까?')h.textContent='오늘 뭐 입지?';});
+    if(label)label.textContent='🍲 오늘 뭐 먹을까?';
+  }
+  arrangeCards();
+  const mealCalories=plan=>Math.round(plan.meals.reduce((sum,m)=>sum+Number(m.kcal||0),0));
   function drawMeals(plan,target){
     renderMenuPhotos(plan.meals.map(x=>x.menu),plan.meals.map(x=>labels[x.period]+' 식사'),target);
     plan.meals.forEach((x,i)=>{const card=target.children[i];if(!card)return;
@@ -32,35 +40,25 @@
       if(x.additions?.length){const extra=document.createElement('small');extra.style.cssText='display:block;padding:0 10px 12px;color:#64748b';extra.textContent=x.additions.map(a=>'+ '+a.menu).join(' · ');card.append(extra);}
     });
   }
-  function drawSnack(snack,target){
-    target.replaceChildren();if(!snack||!snack.kcal){target.hidden=true;return;}target.hidden=false;
-    const card=document.createElement('div');card.className='snack-card';const h=document.createElement('h3');h.textContent='간식';card.append(h);
-    const pictures=document.createElement('div');pictures.className='snack-pictures';
-    const icons={'바나나':'🍌','우유':'🥛','호두':'🥣','사과':'🍎','요거트':'🥣'};
-    (snack.components||[]).forEach(([name,g])=>{const f=document.createElement('figure');f.className='snack-component';const icon=document.createElement('span');icon.setAttribute('role','img');icon.setAttribute('aria-label',name);icon.textContent=icons[name]||'🍽️';const c=document.createElement('figcaption');c.textContent=`${name} ${g}g`;f.append(icon,c);pictures.append(f);});
-    card.append(pictures);const total=document.createElement('div');total.className='snack-total';total.textContent=`(${Math.round(snack.kcal)} kcal)`;card.append(total);target.append(card);
-  }
   function render(){
     if(!state)return;
     currentMenuMode=state.mode;
-    $('resMenuLabel').textContent='🍲 오늘 뭐먹지?';
+    $('resMenuLabel').textContent='🍲 오늘 뭐 먹을까?';
     const tabs=$('menuMode-general').parentElement;
     if(tabs.classList.contains('menu-mode-controls')){tabs.id='menuModeTabs';$('resMenuLabel').after(tabs);tabs.hidden=false;}
     $('resMenu').hidden=state.items.length>0;
     $('resMenu').textContent=state.items.length?'':'오늘의 식단을 준비하고 있어요.';
     drawMeals(state.plan,$('menuPhotoCards'));
-    let snacks=$('menuSnackCard');if(!snacks){snacks=document.createElement('div');snacks.id='menuSnackCard';$('menuPhotoCards').after(snacks);}
-    drawSnack(state.plan.snack,snacks);
+    $('menuSnackCard')?.remove();
     $('menuRecommendationComment').hidden=true;$('menuExplorerControls').hidden=false;
     const p=state.plan;
-    $('menuStatus').textContent=`하루 합계 ${Math.round(p.total_kcal)} kcal`;
+    $('menuStatus').textContent=`하루 합계 ${mealCalories(p)} kcal`;
     for(const mode of ['general','diet']){const b=$('menuMode-'+mode);b.setAttribute('aria-pressed',String(mode===state.mode));b.disabled=busy;}
-    $('menuNext').textContent=busy?'새 세트를 준비하고 있어요…':'다른 하루 식단 보기';$('menuNext').disabled=busy||!state.items.length||state.exhausted;
-    $('menuNext').setAttribute('aria-busy',String(busy));
-    let all=$('menuAllSets');if(!all){all=document.createElement('button');all.id='menuAllSets';all.type='button';all.onclick=showAll;$('menuNext').after(all);}
-    // History is already in memory and must remain accessible during a refresh.
-    all.textContent='오늘 추천 식단 전체 보기';all.disabled=false;
-    if(state.exhausted&&!busy)$('menuNext').textContent='오늘의 5세트를 모두 확인했어요';
+    const viewingHistory=state.exhausted&&state.date===today();
+    $('menuNext').textContent=viewingHistory?'오늘 추천 식단 전체 보기':busy?'새 세트를 준비하고 있어요…':'다른 하루 식단 보기';
+    $('menuNext').disabled=!viewingHistory&&(busy||!state.items.length);
+    $('menuNext').setAttribute('aria-busy',String(busy&&!viewingHistory));
+    $('menuAllSets')?.remove();
     $('menuPlanLike').hidden=true;$('menuModeToggle').hidden=true;$('menuLikeStatus').textContent='';
   }
   function showAll(){
@@ -72,8 +70,7 @@
     const done=document.createElement('button');done.type='button';done.textContent='닫기';done.onclick=()=>dialog.close();heading.append(title,done);dialog.append(heading);dialog.setAttribute('aria-labelledby',title.id);
     (state.history||[]).forEach((p,i)=>{const section=document.createElement('section'),h=document.createElement('h3');h.textContent=`${i+1}번째 세트`;section.append(h);
       const meals=document.createElement('div');meals.className='menu-photos';section.append(meals);drawMeals(p,meals);
-      const snacks=document.createElement('div');section.append(snacks);drawSnack(p.snack,snacks);
-      const total=document.createElement('strong');total.textContent=`하루 합계 ${Math.round(p.total_kcal)} kcal`;section.append(total);dialog.append(section);
+      const total=document.createElement('strong');total.textContent=`하루 합계 ${mealCalories(p)} kcal`;section.append(total);dialog.append(section);
     });
     if(!dialog.open)dialog.showModal();dialog.scrollTop=0;
   }
@@ -92,7 +89,7 @@
     finally{if(stamp===generation){busy=false;render();}}
   }
   function changeMode(mode){if(state&&['general','diet'].includes(mode)&&(mode!==state.mode||state.date!==today()))return request(mode,'open');}
-  function next(){if(valid()&&!state.exhausted)return request(state.mode,state.date===today()?'next':'open');}
+  function next(){if(!valid())return;if(state.date!==today())return request(state.mode,'open');if(state.exhausted)return showAll();return request(state.mode,'next');}
   function resume(){if(document.visibilityState==='visible'&&valid()&&!busy)return request(state.mode,'open');}
   document.addEventListener('visibilitychange',resume);window.addEventListener('pageshow',e=>{if(e.persisted)resume();});
   setInterval(()=>{if(valid()&&state.date!==today())resume();},60000);
