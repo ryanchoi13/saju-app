@@ -5,6 +5,14 @@
   const today=()=>new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Seoul',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
   function close(){document.getElementById('mealSetsDialog')?.close();$('menuHistoryModal')?.classList.add('hidden');}
   const style=document.createElement('style');style.textContent=`
+  #menuNext:disabled{cursor:default}
+  #menuNext[aria-busy="true"]{cursor:wait}
+  #menuAllSets{display:block;width:100%;min-height:46px;margin-top:10px;border:1px solid #315940;border-radius:11px;background:#fff;color:#315940;font:inherit;font-size:14px;font-weight:700;cursor:pointer}
+  #menuModeTabs{margin:12px 0}#menuModeTabs[hidden]{display:none!important}
+  #mealSetsDialog{margin:auto;overflow:auto;background:#fff;color:#233b32}
+  #mealSetsDialog::backdrop{background:#10251c80}
+  .meal-dialog-heading{position:sticky;top:-24px;background:white;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;z-index:1}
+  .meal-dialog-heading h2{font-size:18px;word-break:keep-all}.meal-dialog-heading button{flex-shrink:0;white-space:nowrap;padding:10px 16px;border:1px solid #b8c7b0;border-radius:10px;background:white;cursor:pointer}
   .meal-title-kcal{display:block;margin-top:3px;font-size:14px;color:#64748b;font-weight:500}
   .snack-card{border:1px solid #e4e9e2;border-radius:16px;overflow:hidden;margin:14px 0;background:white}
   .snack-card h3{margin:0;background:#edf3e9;padding:10px 14px;font-size:15px}
@@ -35,7 +43,9 @@
   function render(){
     if(!state)return;
     currentMenuMode=state.mode;
-    $('resMenuLabel').textContent=state.mode==='diet'?'🥗 오늘의 다이어트 식단':'🍲 오늘의 일반 식단';
+    $('resMenuLabel').textContent='🍲 오늘 뭐먹지?';
+    const tabs=$('menuMode-general').parentElement;
+    if(tabs.classList.contains('menu-mode-controls')){tabs.id='menuModeTabs';$('resMenuLabel').after(tabs);tabs.hidden=false;}
     $('resMenu').hidden=state.items.length>0;
     $('resMenu').textContent=state.items.length?'':'오늘의 식단을 준비하고 있어요.';
     drawMeals(state.plan,$('menuPhotoCards'));
@@ -46,25 +56,29 @@
     $('menuStatus').textContent=`하루 합계 ${Math.round(p.total_kcal)} kcal`;
     for(const mode of ['general','diet']){const b=$('menuMode-'+mode);b.setAttribute('aria-pressed',String(mode===state.mode));b.disabled=busy;}
     $('menuNext').textContent=busy?'새 세트를 준비하고 있어요…':'다른 하루 식단 보기';$('menuNext').disabled=busy||!state.items.length||state.exhausted;
+    $('menuNext').setAttribute('aria-busy',String(busy));
     let all=$('menuAllSets');if(!all){all=document.createElement('button');all.id='menuAllSets';all.type='button';all.onclick=showAll;$('menuNext').after(all);}
-    all.textContent='오늘 추천 식단 전체 보기';all.disabled=busy;
-    $('menuNext').textContent=state.exhausted?'오늘의 5세트를 모두 확인했어요':$('menuNext').textContent;
+    // History is already in memory and must remain accessible during a refresh.
+    all.textContent='오늘 추천 식단 전체 보기';all.disabled=false;
+    if(state.exhausted&&!busy)$('menuNext').textContent='오늘의 5세트를 모두 확인했어요';
     $('menuPlanLike').hidden=true;$('menuModeToggle').hidden=true;$('menuLikeStatus').textContent='';
   }
   function showAll(){
     if(!valid())return;
     let dialog=$('mealSetsDialog');if(!dialog){dialog=document.createElement('dialog');dialog.id='mealSetsDialog';dialog.style.cssText='max-width:800px;width:85%;max-height:85vh;border:1px solid #cbd5c5;border-radius:20px;padding:24px';document.body.append(dialog);}
     dialog.replaceChildren();
-    const title=document.createElement('h2');title.textContent=(state.mode==='diet'?'다이어트식':'일반식')+' · 오늘 추천 식단';dialog.append(title);
+    const heading=document.createElement('div');heading.className='meal-dialog-heading';
+    const title=document.createElement('h2');title.id='mealSetsTitle';title.textContent=(state.mode==='diet'?'다이어트식':'일반식')+' · 오늘 추천 식단';
+    const done=document.createElement('button');done.type='button';done.textContent='닫기';done.onclick=()=>dialog.close();heading.append(title,done);dialog.append(heading);dialog.setAttribute('aria-labelledby',title.id);
     (state.history||[]).forEach((p,i)=>{const section=document.createElement('section'),h=document.createElement('h3');h.textContent=`${i+1}번째 세트`;section.append(h);
       const meals=document.createElement('div');meals.className='menu-photos';section.append(meals);drawMeals(p,meals);
       const snacks=document.createElement('div');section.append(snacks);drawSnack(p.snack,snacks);
       const total=document.createElement('strong');total.textContent=`하루 합계 ${Math.round(p.total_kcal)} kcal`;section.append(total);dialog.append(section);
     });
-    const done=document.createElement('button');done.textContent='닫기';done.onclick=()=>dialog.close();dialog.append(done);dialog.showModal();
+    if(!dialog.open)dialog.showModal();dialog.scrollTop=0;
   }
   function mount(value){generation++;busy=false;owner=currentUserId;state=value;close();$('menuError').textContent='';render();}
-  function reset(){generation++;state=null;owner=null;busy=false;close();$('menuExplorerControls').hidden=true;}
+  function reset(){generation++;state=null;owner=null;busy=false;close();$('menuExplorerControls').hidden=true;if($('menuModeTabs'))$('menuModeTabs').hidden=true;}
   function valid(){return state&&owner&&owner===currentUserId;}
   async function request(mode,action){
     if(busy||!valid())return;
@@ -85,3 +99,4 @@
   function startSample(){reset();$('resMenu').hidden=false;$('resMenu').textContent='하루 식단 검토 화면에서 확인해 주세요.';}
   window.DalhaMenu={mount,reset,changeMode,next,close,startSample};
 })();
+
