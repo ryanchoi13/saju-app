@@ -5,9 +5,12 @@ from __future__ import annotations
 from typing import Literal
 
 from app.engine.core.models import MyeongriCoreResult
+from app.engine.semantic.applied import build_applied_state
+from app.engine.semantic.engine import build_semantic_state
+from app.engine.timing.scope import core_for_timing_scope
 
 
-QUERY_PROFILE_VERSION = "service-query-profile-v1"
+QUERY_PROFILE_VERSION = "service-query-profile-v2-applied-state"
 ServiceQuery = Literal[
     "lifetime_overall",
     "annual_overall",
@@ -122,6 +125,15 @@ def build_service_query(core: MyeongriCoreResult, query: ServiceQuery) -> dict:
         for item in core.natal_facts.ten_gods.visible + core.natal_facts.ten_gods.hidden
         if not target_gods or item.ten_god.value in target_gods
     ]
+    applied_state = build_applied_state(core, profile["scope"])
+    scoped_core = core_for_timing_scope(core, profile["scope"])
+    semantic, semantic_evidence = build_semantic_state(
+        core.synthesis, scoped_core.activated_state, core.relationships, scoped_core.shensha
+    )
+    evidence_ids = list(dict.fromkeys(
+        core.synthesis.evidence_ids + semantic.evidence_ids + applied_state["evidence_ids"]
+    ))
+    evidence_lookup = {e.id: e for e in scoped_core.evidence + semantic_evidence}
     return {
         "profile_version": QUERY_PROFILE_VERSION,
         "query": query,
@@ -135,17 +147,19 @@ def build_service_query(core: MyeongriCoreResult, query: ServiceQuery) -> dict:
         "synthesis": core.synthesis.model_dump(mode="json"),
         "timing": _timing_for_scope(core, profile["scope"]),
         "activated_state": (
-            core.activated_state.model_dump(mode="json")
+            scoped_core.activated_state.model_dump(mode="json")
             if profile["scope"] != "natal" else None
         ),
-        "shensha_support": [item.model_dump(mode="json") for item in core.shensha],
-        "semantic_state": core.semantic_state.model_dump(mode="json"),
+        "shensha_support": [item.model_dump(mode="json") for item in scoped_core.shensha],
+        "semantic_state": semantic.model_dump(mode="json"),
+        "applied_state": applied_state,
+        "evidence_records": [evidence_lookup[e].model_dump(mode="json")
+                             for e in evidence_ids if e in evidence_lookup],
         "constraints": {
             "shensha_standalone_verdict": False,
             "fixed_score_verdict": False,
             "medical_claim_allowed": profile.get("medical_claim_allowed"),
+            "timing_observation_standalone_verdict": False,
         },
-        "evidence_ids": list(dict.fromkeys(
-            core.synthesis.evidence_ids + core.semantic_state.evidence_ids
-        )),
+        "evidence_ids": evidence_ids,
     }
