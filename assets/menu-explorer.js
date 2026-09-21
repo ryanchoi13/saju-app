@@ -11,37 +11,57 @@
   #view-today #mealDailyCard #resMenuLabel{font-size:1.2rem!important;font-weight:800!important;color:var(--ui-ink,#172B3A)!important}
   #view-today #dailyLuckCard .grid-cell:last-child{grid-column:auto;border-top:0;border-left:1px solid var(--ui-line,#E2E8F0);margin-top:0;padding:12px 9px}
   #menuModeTabs{margin:12px 0}#menuModeTabs[hidden]{display:none!important}
-  #mealSetsDialog{margin:auto;overflow:auto;background:#fff;color:#233b32}
+  html.meal-history-open{overflow:hidden}
+  #mealDailyCard #menuNext{background:#2D6A4F;color:#fff;border:1px solid transparent}
+  #mealDailyCard #menuNext[data-action="history"]{background:#233B4D;color:#fff}
+  #mealDailyCard #menuNext:enabled{opacity:1;cursor:pointer}
+  #mealDailyCard #menuNext:enabled:hover{filter:brightness(.92)}
+  #mealDailyCard #menuNext:focus-visible,.meal-dialog-heading button:focus-visible{outline:3px solid #C18624;outline-offset:3px}
+  #mealSetsDialog{box-sizing:border-box;width:calc(100% - 48px);max-width:800px;max-height:90vh;max-height:90dvh;margin:auto;padding:0;border:1px solid #D5DFE3;border-radius:20px;overflow:hidden;background:#fff;color:#233B4D}
+  #mealSetsDialog[open]{display:flex;flex-direction:column}
   #mealSetsDialog::backdrop{background:#10251c80}
-  .meal-dialog-heading{position:sticky;top:-24px;background:white;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;z-index:1}
-  .meal-dialog-heading h2{font-size:18px;word-break:keep-all}.meal-dialog-heading button{flex-shrink:0;white-space:nowrap;padding:10px 16px;border:1px solid #b8c7b0;border-radius:10px;background:white;cursor:pointer}
+  .meal-dialog-heading{flex-shrink:0;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 24px;border-bottom:1px solid #E4E9EB;background:#fff}
+  .meal-dialog-heading h2{margin:0;font-size:18px;word-break:keep-all}
+  .meal-dialog-heading button{flex-shrink:0;min-height:44px;white-space:nowrap;padding:10px 16px;border:1px solid #b8c7b0;border-radius:10px;background:white;color:#233B4D;font:inherit;font-size:14px;cursor:pointer}
+  .meal-dialog-list{min-height:0;overflow:auto;overscroll-behavior:contain;padding:20px 24px}
+  .meal-set-heading{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+  .meal-set-heading h3{margin:0;font-size:16px;color:#233B4D}
+  .meal-set-heading span{font-size:12px;color:#526473;white-space:nowrap}
   .meal-title-kcal{display:block;margin-top:3px;font-size:14px;color:#64748b;font-weight:500}
   .meal-title-name{display:block;overflow-wrap:anywhere}
   .meal-additions{display:block;padding:0 10px 12px;color:#64748b;overflow-wrap:anywhere}
-  #mealSetsDialog section{padding-bottom:22px;margin-bottom:22px;border-bottom:1px solid #e4e9e2}
+  #mealSetsDialog section{padding-bottom:18px;margin-bottom:18px;border-bottom:1px solid #e4e9e2}
+  #mealSetsDialog section:last-child{padding-bottom:0;margin-bottom:0;border-bottom:0}
   #mealSetsDialog .menu-photos{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:12px 0}
   .food-photo{display:block;width:100%;height:145px;background:#fafbf8}
-  @media(max-width:540px){#mealSetsDialog .menu-photos{grid-template-columns:1fr}.food-photo{height:130px}}
+  @media(max-width:540px){
+    #mealSetsDialog{width:100%;max-width:none;height:100vh;height:100dvh;max-height:none;margin:0;border:0;border-radius:0}
+    .meal-dialog-heading{padding:calc(12px + env(safe-area-inset-top)) max(14px,env(safe-area-inset-right)) 12px max(14px,env(safe-area-inset-left))}
+    .meal-dialog-heading h2{font-size:16px}
+    .meal-dialog-list{padding:16px max(14px,env(safe-area-inset-right)) calc(20px + env(safe-area-inset-bottom)) max(14px,env(safe-area-inset-left))}
+    #mealSetsDialog .menu-photos{gap:7px;margin:10px 0 0}
+    .food-photo{height:130px}
+  }
   @media(max-width:540px){
     #view-today #mealDailyCard{padding:16px 14px;border-radius:16px}
     #mealDailyCard #menuModeTabs{width:fit-content;max-width:100%;padding:0;gap:6px;background:transparent;border:0;margin:12px 0}
     #mealDailyCard #menuModeTabs button{flex:0 1 auto;padding:8px 13px;min-height:44px;font-size:12px;font-weight:600;border:1px solid var(--ui-line,#E4E9EB);background:var(--ui-surface,#FFF);box-shadow:none}
     #mealDailyCard #menuModeTabs button[aria-pressed="true"]{color:var(--ui-accent,#2D6A4F);border-color:var(--ui-accent,#2D6A4F);background:var(--ui-tint,#EFF5F1)}
     #mealDailyCard #menuPhotoCards{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-top:0}
-    #mealDailyCard .menu-photo-card{min-width:0;border-radius:11px}
-    #mealDailyCard .menu-meal-label{padding:7px 8px 0;font-size:11px;font-weight:600}
-    #mealDailyCard .food-photo,#mealDailyCard .menu-photo-placeholder{height:auto;max-height:none;aspect-ratio:1.1;margin-top:4px}
-    #mealDailyCard .menu-photo-card figcaption{padding:8px 7px 9px;font-size:13px!important;font-weight:600;line-height:1.4;letter-spacing:-.3px}
-    #mealDailyCard .meal-title-name{min-height:2.8em;word-break:keep-all;overflow-wrap:anywhere}
-    #mealDailyCard .meal-title-kcal{font-size:11px;letter-spacing:0;white-space:nowrap}
-    #mealDailyCard .meal-additions{padding:0 7px 9px;font-size:11px;line-height:1.5;word-break:keep-all}
+    :is(#mealDailyCard,#mealSetsDialog) .menu-photo-card{min-width:0;border-radius:11px}
+    :is(#mealDailyCard,#mealSetsDialog) .menu-meal-label{padding:7px 8px 0;font-size:11px;font-weight:600}
+    :is(#mealDailyCard,#mealSetsDialog) .food-photo,:is(#mealDailyCard,#mealSetsDialog) .menu-photo-placeholder{height:auto;max-height:none;aspect-ratio:1.1;margin-top:4px}
+    :is(#mealDailyCard,#mealSetsDialog) .menu-photo-card figcaption{padding:8px 7px 9px;font-size:13px!important;font-weight:600;line-height:1.4;letter-spacing:-.3px}
+    :is(#mealDailyCard,#mealSetsDialog) .meal-title-name{min-height:2.8em;word-break:keep-all;overflow-wrap:anywhere}
+    :is(#mealDailyCard,#mealSetsDialog) .meal-title-kcal{font-size:11px;letter-spacing:0;white-space:nowrap}
+    :is(#mealDailyCard,#mealSetsDialog) .meal-additions{padding:0 7px 9px;font-size:11px;line-height:1.5;word-break:keep-all}
     #mealDailyCard #menuStatus{margin:11px 1px 10px;font-size:12px}
-    #mealDailyCard #menuNext{min-height:44px;padding:11px 8px;font-size:13px;font-weight:600;border-radius:9px;border:1px solid var(--ui-line,#E4E9EB);background:var(--ui-tint,#EFF5F1);color:var(--ui-accent,#2D6A4F)}
+    #mealDailyCard #menuNext{min-height:44px;padding:11px 8px;font-size:13px;font-weight:600;border-radius:9px;border:1px solid transparent}
   }
   @media(max-width:350px){
     #view-today #mealDailyCard{padding:14px 11px}
     #mealDailyCard #menuPhotoCards{gap:5px}
-    #mealDailyCard .menu-photo-card figcaption{font-size:12px!important}
+    :is(#mealDailyCard,#mealSetsDialog) .menu-photo-card figcaption{font-size:12px!important}
   }
   `;document.head.append(style);
   function arrangeCards(){
@@ -57,10 +77,9 @@
   arrangeCards();
   const mealCalories=plan=>Math.round(plan.meals.reduce((sum,m)=>sum+Number(m.kcal||0),0));
   function drawMeals(plan,target){
-    const isHome=target.id==='menuPhotoCards';
-    renderMenuPhotos(plan.meals.map(x=>x.menu),plan.meals.map(x=>labels[x.period]+(isHome?'':' 식사')),target);
+    renderMenuPhotos(plan.meals.map(x=>x.menu),plan.meals.map(x=>labels[x.period]),target);
     plan.meals.forEach((x,i)=>{const card=target.children[i];if(!card)return;
-      const caption=card.querySelector('figcaption'),cal=document.createElement('span');cal.className='meal-title-kcal';cal.textContent=isHome?`${Math.round(x.kcal)} kcal`:`(${Math.round(x.kcal)} kcal)`;
+      const caption=card.querySelector('figcaption'),cal=document.createElement('span');cal.className='meal-title-kcal';cal.textContent=`${Math.round(x.kcal)} kcal`;
       const name=document.createElement('span');name.className='meal-title-name';name.textContent=x.menu;caption.replaceChildren(name,cal);
       if(x.additions?.length){const extra=document.createElement('small');extra.className='meal-additions';extra.textContent=x.additions.map(a=>'+ '+a.menu).join(' · ');card.append(extra);}
     });
@@ -80,7 +99,8 @@
     $('menuStatus').textContent=`하루 합계 ${mealCalories(p)} kcal`;
     for(const mode of ['general','diet']){const b=$('menuMode-'+mode);b.setAttribute('aria-pressed',String(mode===state.mode));b.disabled=busy;}
     const viewingHistory=state.exhausted&&state.date===today();
-    $('menuNext').textContent=viewingHistory?'오늘 추천 식단 전체 보기':busy?'새 세트를 준비하고 있어요…':'다른 추천 식단 보기';
+    $('menuNext').textContent=viewingHistory?'전체 추천 식단 다시보기':busy?'새 세트를 준비하고 있어요…':'다른 추천 식단 보기';
+    $('menuNext').dataset.action=viewingHistory?'history':'next';
     $('menuNext').disabled=!viewingHistory&&(busy||!state.items.length);
     $('menuNext').setAttribute('aria-busy',String(busy&&!viewingHistory));
     $('menuAllSets')?.remove();
@@ -88,16 +108,25 @@
   }
   function showAll(){
     if(!valid())return;
-    let dialog=$('mealSetsDialog');if(!dialog){dialog=document.createElement('dialog');dialog.id='mealSetsDialog';dialog.style.cssText='max-width:800px;width:85%;max-height:85vh;border:1px solid #cbd5c5;border-radius:20px;padding:24px';document.body.append(dialog);}
+    let dialog=$('mealSetsDialog');
+    if(!dialog){
+      dialog=document.createElement('dialog');dialog.id='mealSetsDialog';
+      dialog.addEventListener('close',()=>{if(!dialog.open)document.documentElement.classList.remove('meal-history-open');});
+      document.body.append(dialog);
+    }
     dialog.replaceChildren();
     const heading=document.createElement('div');heading.className='meal-dialog-heading';
     const title=document.createElement('h2');title.id='mealSetsTitle';title.textContent=(state.mode==='diet'?'다이어트식':'일반식')+' · 오늘 추천 식단';
-    const done=document.createElement('button');done.type='button';done.textContent='닫기';done.onclick=()=>dialog.close();heading.append(title,done);dialog.append(heading);dialog.setAttribute('aria-labelledby',title.id);
-    (state.history||[]).forEach((p,i)=>{const section=document.createElement('section'),h=document.createElement('h3');h.textContent=`${i+1}번째 세트`;section.append(h);
-      const meals=document.createElement('div');meals.className='menu-photos';section.append(meals);drawMeals(p,meals);
-      const total=document.createElement('strong');total.textContent=`하루 합계 ${mealCalories(p)} kcal`;section.append(total);dialog.append(section);
+    const done=document.createElement('button');done.type='button';done.textContent='닫기';done.autofocus=true;done.onclick=()=>dialog.close();heading.append(title,done);dialog.append(heading);dialog.setAttribute('aria-labelledby',title.id);
+    const list=document.createElement('div');list.className='meal-dialog-list';dialog.append(list);
+    (state.history||[]).forEach((p,i)=>{
+      const section=document.createElement('section'),row=document.createElement('div'),h=document.createElement('h3');
+      row.className='meal-set-heading';h.textContent=`추천 ${i+1}`;
+      const total=document.createElement('span');total.textContent=`하루 합계 ${mealCalories(p)} kcal`;row.append(h,total);section.append(row);
+      const meals=document.createElement('div');meals.className='menu-photos';section.append(meals);drawMeals(p,meals);list.append(section);
     });
-    if(!dialog.open)dialog.showModal();dialog.scrollTop=0;
+    if(!dialog.open)dialog.showModal();
+    document.documentElement.classList.add('meal-history-open');list.scrollTop=0;
   }
   function mount(value){generation++;busy=false;owner=currentUserId;state=value;close();$('menuError').textContent='';render();}
   function reset(){generation++;state=null;owner=null;busy=false;close();$('menuExplorerControls').hidden=true;if($('menuModeTabs'))$('menuModeTabs').hidden=true;}
