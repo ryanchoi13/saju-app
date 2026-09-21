@@ -11,6 +11,7 @@
   #view-today #mealDailyCard #resMenuLabel{font-size:1.2rem!important;font-weight:800!important;color:var(--ui-ink,#172B3A)!important}
   #view-today #dailyLuckCard .grid-cell:last-child{grid-column:auto;border-top:0;border-left:1px solid var(--ui-line,#E2E8F0);margin-top:0;padding:12px 9px}
   #menuModeTabs{margin:12px 0}#menuModeTabs[hidden]{display:none!important}
+  #mealDailyCard #menuSetNumber{margin:0 0 10px;font-size:14px;font-weight:700;line-height:1.5;color:var(--ui-ink,#172B3A);text-align:left}
   html.meal-history-open{overflow:hidden}
   #mealDailyCard #menuNext{background:#2D6A4F;color:#fff;border:1px solid transparent}
   #mealDailyCard #menuNext[data-action="history"]{background:#233B4D;color:#fff}
@@ -92,6 +93,10 @@
     if(tabs.classList.contains('menu-mode-controls')){tabs.id='menuModeTabs';$('resMenuLabel').after(tabs);tabs.hidden=false;}
     $('resMenu').hidden=state.items.length>0;
     $('resMenu').textContent=state.items.length?'':'오늘의 식단을 준비하고 있어요.';
+    let number=$('menuSetNumber');
+    if(!number){number=document.createElement('p');number.id='menuSetNumber';number.setAttribute('aria-live','polite');$('menuPhotoCards').before(number);}
+    number.textContent=`추천 ${state.plan.recommendation_number??state.seen_sets??1}`;
+    number.hidden=!state.items.length;
     drawMeals(state.plan,$('menuPhotoCards'));
     $('menuSnackCard')?.remove();
     $('menuRecommendationComment').hidden=true;$('menuExplorerControls').hidden=false;
@@ -131,7 +136,7 @@
     document.documentElement.classList.add('meal-history-open');list.scrollTop=0;
   }
   function mount(value){generation++;busy=false;owner=currentUserId;state=value;close();$('menuError').textContent='';render();}
-  function reset(){generation++;state=null;owner=null;busy=false;close();$('menuExplorerControls').hidden=true;if($('menuModeTabs'))$('menuModeTabs').hidden=true;}
+  function reset(){$('menuSetNumber')?.remove();generation++;state=null;owner=null;busy=false;close();$('menuExplorerControls').hidden=true;if($('menuModeTabs'))$('menuModeTabs').hidden=true;}
   function valid(){return state&&owner&&owner===currentUserId;}
   async function request(mode,action){
     if(busy||!valid())return;
