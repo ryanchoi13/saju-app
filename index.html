@@ -849,7 +849,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                         <div class="drawer-header" onclick="toggleDrawer('drawerZodiac')">
                             <div class="drawer-title-box">
                                 <div class="drawer-icon-circle">✨</div>
-                                <div style="text-align: left;"><h4 class="drawer-title">띠별 운세 & 별자리 운세</h4><p class="drawer-sub">간지 띠별 & 천체 별자리 실시간 감명</p></div>
+                                <div style="text-align: left;"><h4 class="drawer-title">띠별 운세 & 별자리 운세</h4><p class="drawer-sub">매일 새롭게 보는 띠별·별자리 가이드</p></div>
                             </div>
                             <span class="drawer-arrow">▼</span>
                         </div>
@@ -1339,7 +1339,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                     <div id="zodiacModalIconBox" style="width: 44px; height: 44px; border-radius: 12px; background: #0D1527; display: flex; align-items: center; justify-content: center; border: 1px solid #E2C068;"></div>
                     <div>
                         <h3 id="zodiacModalName" style="font-size: 17px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif;">운세</h3>
-                        <p id="zodiacModalSub" style="font-size: 12px; color: #64748B;">오늘의 실시간 일진 분석</p>
+                        <p id="zodiacModalSub" style="font-size: 12px; color: #64748B;"></p>
                     </div>
                 </div>
                 <button onclick="closeZodiacModal()" style="background: none; border: none; font-size: 22px; color: #94A3B8; cursor: pointer;">&times;</button>
@@ -1352,6 +1352,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 <div><h4 id="zodiacModalTitle" style="font-size: 15px; font-weight: 600; color: #0F172A; margin-bottom: 4px;">총평</h4><p id="zodiacModalOverview" style="font-size: 14px; color: #475569; line-height: 1.7;"></p></div>
                 <div style="border-top: 1px solid #F1F5F9; padding-top: 10px;"><div id="zodiacYearTipsBox"></div></div>
                 <div id="zodiacExtraInfo" style="font-size: 13px; color: #2D6A4F; font-weight: 600; border-top: 1px dashed #E2E8F0; padding-top: 8px;"></div>
+                <p id="zodiacGuideNote" style="font-size:12px; color:#64748B; line-height:1.6;"></p>
             </div>
             
             <div style="display: flex; gap: 8px; margin-top: 4px;">
@@ -3367,10 +3368,14 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             }
         }
 
+        let zodiacRequestId = 0;
         async function openZodiacModal(type, key) {
+            const requestId = ++zodiacRequestId;
             try {
-                const res = await fetch(`/api/zodiac-fortune?type=${type}&key=${encodeURIComponent(key)}`);
+                const res = await fetch(`/api/zodiac-fortune?type=${type}&key=${encodeURIComponent(key)}`, {cache:'no-store'});
+                if (!res.ok) throw new Error('운세 응답 오류');
                 const data = await res.json();
+                if (requestId !== zodiacRequestId) return;
                 
                 document.getElementById('zodiacModalName').innerText = `${data.name} 오늘의 운세`;
                 document.getElementById('zodiacModalScore').innerText = `${data.score}점`;
@@ -3380,9 +3385,10 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 const iconBox = document.getElementById('zodiacModalIconBox');
                 const tipsBox = document.getElementById('zodiacYearTipsBox');
                 const subLabel = document.getElementById('zodiacModalSub');
+                if (subLabel) subLabel.innerText = `${data.date} · 한국 날짜 기준`;
+                document.getElementById('zodiacGuideNote').textContent = `${data.guide_note || ''} ${data.score_note || ''}`;
 
                 if (type === 'star') {
-                    if (subLabel) subLabel.innerText = '천체 성도 & 4대 원소 에너지 분석';
                     
                     if (ZODIAC_GLYPHS[key]) {
                         iconBox.innerHTML = ZODIAC_GLYPHS[key];
@@ -3402,13 +3408,12 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                             </div>
                         </div>
                         <div style="background: #FAF9F6; border: 1px solid #FCD34D; border-radius: 14px; padding: 14px; text-align: left;">
-                            <span style="font-size: 12px; font-weight: 800; color: #78350F; display: block; margin-bottom: 6px;">🔮 천체 에너지 데일리 가이드</span>
+                            <span style="font-size: 12px; font-weight: 800; color: #78350F; display: block; margin-bottom: 6px;">🔮 오늘의 실천 가이드</span>
                             <p style="color: #334155; font-size: 13.5px; line-height: 1.7; margin: 0;">${data.focus_content || ''}</p>
                         </div>
                     `;
                     document.getElementById('zodiacExtraInfo').innerHTML = `🎨 행운 컬러: <strong>${data.lucky_color || '골드'}</strong> &nbsp;|&nbsp; ⏱️ 행운 시간: <strong>${data.lucky_time || '오전 10시'}</strong>`;
                 } else {
-                    if (subLabel) subLabel.innerText = '오늘의 실시간 일진 분석';
                     const zIcons = { '쥐':'🐭', '소':'🐮', '호랑이':'🐯', '토끼':'🐰', '용':'🐲', '뱀':'🐍', '말':'🐴', '양':'🐑', '원숭이':'🐵', '닭':'🐔', '개':'🐶', '돼지':'🐷' };
                     iconBox.innerHTML = `<span style="font-size: 24px;">${zIcons[key] || '✨'}</span>`;
 
@@ -3428,11 +3433,11 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 
                 document.getElementById('zodiacModal').classList.remove('hidden');
             } catch(e) { 
-                alert('운세를 불러오지 못했습니다.'); 
+                if (requestId === zodiacRequestId) alert('운세를 불러오지 못했습니다. 잠시 후 다시 눌러 주세요.');
             }
         }
 
-        function closeZodiacModal() { document.getElementById('zodiacModal').classList.add('hidden'); }
+        function closeZodiacModal() { zodiacRequestId++; document.getElementById('zodiacModal').classList.add('hidden'); }
         function shareZodiacFortune() { alert('📋 오늘의 운세 링크가 복사되었습니다!'); }
 
         // 명식표 천간/지지 본체 리버스 배지
