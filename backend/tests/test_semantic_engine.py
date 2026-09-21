@@ -11,6 +11,7 @@ from app.engine.core.models import (
     SynthesisResult,
     TimingResult,
 )
+from app.engine.orchestrator import calculate_myeongri_core
 from app.engine.semantic.engine import build_semantic_state
 from app.engine.semantic.queries import build_service_query
 
@@ -69,6 +70,10 @@ class SemanticEngineTests(TestCase):
     def _core():
         synthesis = _synthesis()
         semantic = SemanticState(evidence_ids=["e:semantic"])
+        calculated = calculate_myeongri_core(
+            BirthInput(name="fixture", gender="male", birth_date=date(1990, 5, 15), time_unknown=True),
+            target_date=date(2026, 9, 10),
+        )
         return MyeongriCoreResult(
             input=BirthInput(
                 name="테스트", gender="male", birth_date=date(1990, 5, 15),
@@ -84,11 +89,7 @@ class SemanticEngineTests(TestCase):
                 for name in ("strength", "climate", "pathology", "mediation")
             },
             semantic_state=semantic,
-            timing=TimingResult(
-                luck_cycle={"current": {"pillar": {"ganji": "壬午"}}},
-                annual={"pillar": {"ganji": "丙午"}},
-                monthly={"pillar": {"ganji": "丙申"}},
-                daily={"pillar": {"ganji": "甲申"}},
-            ),
+            natal_facts=calculated.natal_facts,
+            timing=calculated.timing,
             activated_state=ActivatedState(activated_ten_gods=["direct_wealth"]),
         )

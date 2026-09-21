@@ -34,6 +34,16 @@ _DRAINING_GODS = {
 }
 
 
+def summarize_strength_shift(gods) -> str | None:
+    """Describe observed stem roles, not realized strength or good/bad fortune."""
+    god_set = set(gods)
+    if god_set and god_set <= _SUPPORTING_GODS:
+        return "supportive"
+    if god_set and god_set <= _DRAINING_GODS:
+        return "draining_or_pressuring"
+    return "mixed" if god_set else None
+
+
 def _pillar(ganji: str) -> PillarFact:
     stem, branch = ganji[0], ganji[1]
     return PillarFact(
@@ -151,15 +161,7 @@ def calculate_timing(
     }
     relationship_changes = _relationship_changes(natal_pillars, overlay_pillars)
     activated_gods = list(dict.fromkeys(item["ten_god"] for item in overlay_items))
-    god_set = set(activated_gods)
-    if god_set and god_set <= _SUPPORTING_GODS:
-        strength_shift = "supportive"
-    elif god_set and god_set <= _DRAINING_GODS:
-        strength_shift = "draining_or_pressuring"
-    elif god_set:
-        strength_shift = "mixed"
-    else:
-        strength_shift = None
+    strength_shift = summarize_strength_shift(activated_gods)
 
     evidence_id = "evidence:timing:ordered-overlays"
     evidence = Evidence(

@@ -1,0 +1,33 @@
+name: Common state regression
+on:
+  pull_request:
+    paths:
+      - 'backend/app/engine/**'
+      - 'backend/tests/**'
+      - 'requirements.txt'
+      - '.github/workflows/state-regression.yml'
+permissions:
+  contents: read
+jobs:
+  state:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install -r requirements.txt pytest
+      - name: Period isolation and existing interpretation contracts
+        run: >-
+          python -m pytest -q
+          backend/tests/test_applied_myeongri_state.py
+          backend/tests/test_applied_period_scope.py
+          backend/tests/test_semantic_engine.py
+          backend/tests/test_timing_engine.py
+          backend/tests/test_temporal_conditions.py
+          backend/tests/test_temporal_direction.py
+          backend/tests/test_overall_interpretation.py
+          backend/tests/test_daily_temporal_scenarios.py

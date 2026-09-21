@@ -107,6 +107,31 @@ class ProfilePersistenceTests(TestCase):
         self.assertEqual(result["profile"]["name"], "최정오")
         self.assertEqual(result["profile"]["birth_month"], 3)
 
+    def test_new_kakao_login_prefills_after_additional_consent(self):
+        from unittest.mock import MagicMock
+        import json
+        response = MagicMock()
+        response.__enter__.return_value.read.return_value = json.dumps({
+            'id': 'test-empty', 'kakao_account': {
+                'name': '테스트', 'gender': 'female', 'birthyear': '1992',
+                'birthday': '0921', 'birthday_type': 'SOLAR',
+                'name_needs_agreement': False, 'birthday_needs_agreement': False,
+            },
+        }).encode()
+        auth_kakao(KakaoAuthRequest(kakao_id='test-empty'))
+        with patch('urllib.request.urlopen', return_value=response):
+            result = auth_kakao(KakaoAuthRequest(kakao_id='test-empty',
+                profile_source='kakao', access_token='test-token'))
+        self.assertEqual(result['status'], 'new_user')
+        self.assertEqual(result['kakao_prefill']['name'], '테스트')
+        self.assertEqual(result['kakao_prefill']['birth_year'], 1992)
+        self.assertEqual(result['kakao_prefill']['birth_month'], 9)
+        self.assertEqual(result['kakao_prefill']['birth_day'], 21)
+        self.assertFalse(result['kakao_prefill']['profile_complete'])
+        users_db.pop('user_test-empty')
+        restored = auth_kakao(KakaoAuthRequest(kakao_id='test-empty'))
+        self.assertEqual(restored['kakao_prefill']['birth_year'], 1992)
+
     def test_edit_form_prefills_saved_values_and_timeline_uses_new_ranges(self):
         html = (Path(__file__).parents[2] / "index.html").read_text(encoding="utf-8")
         self.assertIn("populateSajuForm(currentSajuProfile || getSavedUserSaju());", html)

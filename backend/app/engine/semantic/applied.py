@@ -12,6 +12,7 @@ from collections import defaultdict
 from typing import Iterable
 
 from app.engine.core.models import ConfidenceLevel, MyeongriCoreResult
+from app.engine.timing.scope import core_for_timing_scope, timing_axes_for_scope
 
 
 APPLIED_STATE_VERSION = "applied-myeongri-state-v1"
@@ -26,20 +27,6 @@ _AXES = {
     ),
 }
 
-
-def _timing_axes_for_scope(scope: str) -> set[str]:
-    if "all_luck_cycles" in scope:
-        return set()
-    axes = set()
-    if "luck_cycle" in scope:
-        axes.add("luck_cycle")
-    if "annual" in scope:
-        axes.add("annual")
-    if "monthly" in scope:
-        axes.add("monthly")
-    if "daily" in scope:
-        axes.add("daily")
-    return axes
 
 
 def _elements(item: dict) -> list[str]:
@@ -311,11 +298,12 @@ def _axis_summary(directions: list[dict]) -> dict[str, dict]:
 def build_applied_state(core: MyeongriCoreResult, scope: str) -> dict:
     """Return one common applied-state contract for every DALHA service."""
 
+    core = core_for_timing_scope(core, scope)
     confirmed = _confirmed_directions(core)
     conditional = _conditional_directions(core)
     cautions = _caution_directions(core)
     base_directions = confirmed + conditional + cautions
-    allowed_axes = _timing_axes_for_scope(scope)
+    allowed_axes = timing_axes_for_scope(scope)
     timing_relations = _timing_relations(core, allowed_axes)
     directions = _attach_direction_timing(base_directions, timing_relations)
 
@@ -346,6 +334,11 @@ def build_applied_state(core: MyeongriCoreResult, scope: str) -> dict:
         else ConfidenceLevel.UNDETERMINED.value
     )
 
+    evidence_ids = list(dict.fromkeys(
+        core.synthesis.evidence_ids
+        + [e for item in directions for e in item.get("evidence_ids", [])]
+        + [e for item in timing_relations for e in item.get("evidence_ids", [])]
+    ))
     return {
         "version": APPLIED_STATE_VERSION,
         "scope": scope,
@@ -371,10 +364,8 @@ def build_applied_state(core: MyeongriCoreResult, scope: str) -> dict:
             "timing_does_not_invent_favorable_element": True,
             "timing_relation_is_not_vote_count": True,
             "fixed_score_used": False,
+            "timing_scope_isolated": True,
         },
-        "evidence_ids": list(dict.fromkeys(
-            core.synthesis.evidence_ids
-            + [evidence_id for item in directions for evidence_id in item.get("evidence_ids", [])]
-            + [evidence_id for item in timing_relations for evidence_id in item.get("evidence_ids", [])]
-        )),
+        "evidence_ids": evidence_ids,
+        "evidence_records": [e.model_dump(mode="json") for e in core.evidence if e.id in set(evidence_ids)],
     }

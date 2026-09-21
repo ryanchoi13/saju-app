@@ -1,0 +1,39 @@
+name: Fashion regression
+on:
+  pull_request:
+    paths:
+      - 'fashion_v2/**'
+      - 'assets/dalha-garments/**'
+      - 'backend/tests/test_fashion*'
+      - 'scripts/*fashion*'
+      - 'scripts/*svg*'
+      - '.github/workflows/fashion-regression.yml'
+permissions:
+  contents: read
+jobs:
+  fashion:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install application and test dependencies
+        run: pip install -r requirements.txt pytest
+      - name: Fashion regression and API integration
+        run: PYTHONPATH=. python -m pytest -q backend/tests/test_fashion*.py
+      - name: Render garment matrix and preserve archived art
+        run: |
+          python scripts/build_fashion_regression.py
+          node scripts/test_fashion_garments.mjs
+      - uses: actions/upload-artifact@v4
+        with:
+          name: fashion-regression-results
+          path: review-output/wearable-fix/
+          retention-days: 3

@@ -1,6 +1,7 @@
 // Approved sources stay immutable. Explicit review variants are opt-in below.
 import {renderOutfit, garmentInner, outerGeometry, escapeXml} from './engine.js';
 import {byName} from './catalog.js';
+import {refineCasualLook} from './casual-details.js';
 import {accessoryDrawing,legacyAccessoryDrawing,validateAccessory} from './components.js';
 
 function replaceDrawing(svg, before, after) {
@@ -90,6 +91,11 @@ export function renderLook(look, prefix='dalha-look') {
     const clips=`<defs><clipPath id="${id}">${open?`<path d="${a.aperture}"/>`:''}<rect x="0" y="${a.hem-2}" width="200" height="400"/></clipPath></defs>`;
     const inside=svg.slice(p+start.length,q);
     svg=svg.slice(0,p)+start+clips+`<g data-role="inner-outer-clipped" clip-path="url(#${id})">${inside}</g><g data-role="over-outer">${garmentInner(name,{gender:s.gender,fill:color,open})}</g>`+svg.slice(q);
+  }
+  if (look.renderer==='approved-svg-5') {
+    svg=refineCasualLook(svg,s);
+    // Keep the entire outfit (including shoes) inside a short mobile modal.
+    svg=svg.replace('class="outfit-svg"','class="outfit-svg" style="max-height:max(220px,calc(94dvh - 370px));"');
   }
   return svg.replace('aria-label="코디 도안"',`aria-label="${escapeXml(look.items.map(i=>(i.color_description||i.color_name)+' '+(i.display_label||i.label)).join(', '))}"`);
 }

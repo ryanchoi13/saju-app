@@ -19,7 +19,7 @@ from app.engine.services import (
     build_lifetime_wealth_report,
 )
 import wardrobe_store
-import menu_store
+import meal_set_store as menu_store
 import tarot_service
 import account_store
 from style_context import build_style_contexts
@@ -30,7 +30,7 @@ from wada_wuxing_selector import select_wada_duo_for_targets
 from fashion_v2.svg_recommendation import build_svg_catalog_contexts
 from fashion_v2.weather_service import gyeongju_weather_cache, weather_api_payload
 from lunar_python import Solar
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
@@ -463,30 +463,18 @@ def get_saju_pillars_and_analysis(name: str, gender: str, y: int, m: int, d: int
         age=style_age,
         board_weather_profile=weather_profile if complete_weather else None,
     )
-    ranking = _build_menu_ranking(core, today_date)
     fortune = result["daily_fortune"]
-    preview = ranking['rankings']['general'][:2]
-    fortune.update(recommended_menus=[item['menu'] for item in preview],
-                   recommended_menu=preview[0]['menu'] if preview else '',
-                   recommended_meals=[], recommended_menu_reason=ranking['basis_text'],
-                   menu_pool_size=ranking['pool_sizes']['general'], menu_pool_version=ranking['version'])
+    from meal_sets import build_set
+    def build(mode, history, excluded):
+        return build_set(core.input, today_date, mode, history, excluded)
+    fortune.update(recommended_menus=[], recommended_menu='', recommended_meals=[])
     if menu_account_id:
         try:
-            fortune['menu_recommendations'] = menu_store.load(menu_account_id, today_date, lambda: ranking)
-        except menu_store.StorageUnavailable:
-            fortune['menu_error'] = '추천 기록을 불러오지 못했습니다. 잠시 후 다시 접속해 주세요.'
+            fortune['menu_recommendations'] = menu_store.load(menu_account_id, today_date, build)
+        except (menu_store.StorageUnavailable, ValueError):
+            fortune['menu_error'] = '식단을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.'
     return result
 
-
-def _build_menu_ranking(core, day):
-    from app.engine.semantic.queries import build_service_query
-    from app.engine.services.daily import _menu_timing_element_weights
-    from app.engine.services.ranked_menu import build_rankings
-    query = build_service_query(core, 'daily_overall')
-    daily = query['timing']['daily']['pillar']
-    return build_rankings(core.input, day,
-                          _menu_timing_element_weights(query['timing'], query['semantic_state']),
-                          daily['stem_element'], query['semantic_state'].get('confidence'))
 
 # --- Detailed Report Generator Engine ---
 def generate_detailed_report(
@@ -700,7 +688,7 @@ class MenuExploreRequest(BaseModel):
     mode: str
     action: str
     expected_day: str = Field(pattern=r'^\d{4}-\d{2}-\d{2}$')
-    expected_seen: int = Field(ge=0, le=10)
+    expected_seen: int = Field(ge=0, le=1000000)
 
 
 @app.post('/api/menu/explore')
@@ -709,9 +697,9 @@ def explore_menus(req: MenuExploreRequest):
     if not user or not user.get('profile_complete'):
         raise HTTPException(status_code=401, detail='다시 접속해 추천 메뉴를 불러와 주세요.')
     day = menu_store.today()
-    def build():
-        core = calculate_myeongri_core(_birth_input_from_user(user, user.get('name', '')), target_date=day)
-        return _build_menu_ranking(core, day)
+    def build(mode, history, excluded):
+        from meal_sets import build_set
+        return build_set(_birth_input_from_user(user, user.get('name', '')), day, mode, history, excluded)
     try:
         return menu_store.explore(req.user_id, day, build, token=req.token,
                                   mode=req.mode, action=req.action,
@@ -980,183 +968,18 @@ def unlock_report(req: UnlockReportRequest):
         "unlocked_reports": reports_db[req.user_id]
     }
 
-# --- 띠별 & 별자리 12개 전체 풀버전 데이터 (주의·경계 가이드 포함) ---
-ZODIAC_FULL_DATA = {
-    "쥐": {
-        "score": 92, "title": "작은 노력으로 큰 결실을 맺는 날",
-        "overview": "직관력과 기지가 빛을 발하여 복잡한 문제가 순조롭게 해결됩니다. 새로운 아이디어를 적극 제시하세요.",
-        "year_tips": [
-            {"year_label": "1960년생 (경자)", "tip": "재물운이 상승하나 문서 검토는 꼼꼼히 하세요. ⚠️ 무리한 투자는 금물"},
-            {"year_label": "1972년생 (임자)", "tip": "직장에서 능력을 인정받습니다. ⚠️ 동료와의 언행에 배려가 필요합니다."},
-            {"year_label": "1984년생 (갑자)", "tip": "새로운 기회가 찾아오는 날입니다. ⚠️ 조급함을 버리고 차분히 진행하세요."},
-            {"year_label": "1996년생 (병자)", "tip": "대인관계가 원만하고 인기가 상승합니다. ⚠️ 지출 관리에 신경 쓰세요."}
-        ],
-        "lucky_time": "오후 1시 ~ 3시", "lucky_match": "소띠·용띠와 최고의 조화"
-    },
-    "소": {
-        "score": 89, "title": "우직한 성실함이 빛을 발하는 하루",
-        "overview": "원칙을 지키며 묵묵히 나아갈 때 주변의 신뢰와 지원을 얻습니다. 기초를 튼튼히 다지세요.",
-        "year_tips": [
-            {"year_label": "1961년생 (신축)", "tip": "가정에 평안이 깃듭니다. ⚠️ 건강을 위해 무리한 야외활동은 자제하세요."},
-            {"year_label": "1973년생 (계축)", "tip": "사업상 실마리가 풀립니다. ⚠️ 계약 체결 시 세부 조항을 재확인하세요."},
-            {"year_label": "1985년생 (을축)", "tip": "노력에 대한 정당한 보상이 따릅니다. ⚠️ 고집을 조금 내려놓으세요."},
-            {"year_label": "1997년생 (정축)", "tip": "학업 및 자격증 준비에 길합니다. ⚠️ 체력 관리에 신경 쓰세요."}
-        ],
-        "lucky_time": "오전 9시 ~ 11시", "lucky_match": "쥐띠·뱀띠와 찰떡궁합"
-    },
-    "호랑이": {
-        "score": 95, "title": "용맹한 리더십으로 판을 주도하는 날",
-        "overview": "자신감이 충만하고 추진력이 배가되는 시기입니다. 망설였던 일에 과감하게 도전하세요.",
-        "year_tips": [
-            {"year_label": "1962년생 (임인)", "tip": "명예운이 상승합니다. ⚠️ 감정적인 언행은 피하고 품위를 유지하세요."},
-            {"year_label": "1974년생 (갑인)", "tip": "새로운 프로젝트를 맡게 됩니다. ⚠️ 독단적인 결정보다 팀워크를 챙기세요."},
-            {"year_label": "1986년생 (병인)", "tip": "재물운과 승진운이 따릅니다. ⚠️ 경쟁자와의 불필요한 마찰은 피하세요."},
-            {"year_label": "1998년생 (무인)", "tip": "활동 반경이 넓어집니다. ⚠️ 안전운전에 각별히 유의하세요."}
-        ],
-        "lucky_time": "오후 3시 ~ 5시", "lucky_match": "말띠·개띠와 환상의 파트너"
-    },
-    "토끼": {
-        "score": 90, "title": "지혜와 예술적 감각이 돋보이는 하루",
-        "overview": "섬세한 배려와 유연한 대처가 주변 사람들의 마음을 움직입니다. 협상과 미팅에 유리합니다.",
-        "year_tips": [
-            {"year_label": "1963년생 (계묘)", "tip": "마음의 여유를 가지세요. ⚠️ 남의 일에 지나치게 참견하지 않는 것이 상책입니다."},
-            {"year_label": "1975년생 (을묘)", "tip": "재테크 정보가 들어옵니다. ⚠️ 검증되지 않은 소문은 경계하세요."},
-            {"year_label": "1987년생 (정묘)", "tip": "아이디어가 인정받습니다. ⚠️ 마무리를 꼼꼼하게 매듭지으세요."},
-            {"year_label": "1999년생 (기묘)", "tip": "연애운과 대인관계가 길합니다. ⚠️ 충동구매를 주의하세요."}
-        ],
-        "lucky_time": "오전 7시 ~ 9시", "lucky_match": "양띠·돼지띠와 대길"
-    },
-    "용": {
-        "score": 94, "title": "큰 뜻을 펼치고 기운이 상승하는 날",
-        "overview": "스케일이 큰 계획을 추진하기에 최적의 날입니다. 시야를 넓히고 미래를 준비하세요.",
-        "year_tips": [
-            {"year_label": "1964년생 (갑진)", "tip": "자손에게 경사가 있습니다. ⚠️ 건강 검진을 미루지 마세요."},
-            {"year_label": "1976년생 (병진)", "tip": "사업 확장의 기회가 옵니다. ⚠️ 자금 유동성을 먼저 확보하세요."},
-            {"year_label": "1988년생 (무진)", "tip": "주변의 신망을 얻습니다. ⚠️ 겸손한 태도를 잃지 마세요."},
-            {"year_label": "2000년생 (경진)", "tip": "취업 및 시험운이 길합니다. ⚠️ 집중력을 유지하세요."}
-        ],
-        "lucky_time": "오후 5시 ~ 7시", "lucky_match": "쥐띠·원숭이띠와 최고의 합"
-    },
-    "뱀": {
-        "score": 91, "title": "냉철한 통찰력으로 실속을 챙기는 하루",
-        "overview": "상황을 예리하게 분석하여 최선의 결과를 도출합니다. 계약 및 협상에서 큰 이득을 봅니다.",
-        "year_tips": [
-            {"year_label": "1965년생 (을사)", "tip": "부동산 및 문서운이 좋습니다. ⚠️ 지인과의 금전거래는 피하세요."},
-            {"year_label": "1977년생 (정사)", "tip": "전문성을 인정받습니다. ⚠️ 지나친 완벽주의는 스트레스를 부릅니다."},
-            {"year_label": "1989년생 (기사)", "tip": "재물운이 상승곡선을 탑니다. ⚠️ 비밀 유지가 필요한 하루입니다."},
-            {"year_label": "2001년생 (신사)", "tip": "새로운 분야를 배우기에 길합니다. ⚠️ 휴식을 잊지 마세요."}
-        ],
-        "lucky_time": "오전 11시 ~ 오후 1시", "lucky_match": "소띠·닭띠와 찰떡궁합"
-    },
-    "말": {
-        "score": 93, "title": "역동적인 에너지로 목표를 향해 질주하는 날",
-        "overview": "막힘없이 일이 풀리고 활력이 넘칩니다. 장거리 이동이나 출장에 좋은 소식이 있습니다.",
-        "year_tips": [
-            {"year_label": "1966년생 (병오)", "tip": "명예와 지위가 확고해집니다. ⚠️ 혈압 관리에 유의하세요."},
-            {"year_label": "1978년생 (무오)", "tip": "성과가 배가되는 날입니다. ⚠️ 서두르지 말고 한 템포 쉬어가세요."},
-            {"year_label": "1990년생 (경오)", "tip": "이직이나 독립운이 따릅니다. ⚠️ 주변 조언을 경청하세요."},
-            {"year_label": "2002년생 (임오)", "tip": "친구들과의 화합이 좋습니다. ⚠️ 과음을 경계하세요."}
-        ],
-        "lucky_time": "오전 11시 ~ 오후 1시", "lucky_match": "호랑이띠·양띠와 찰떡"
-    },
-    "양": {
-        "score": 88, "title": "온화한 배려로 평안을 이루는 하루",
-        "overview": "주변과의 불화를 치유하고 평화로운 분위기를 조성합니다. 예술 및 힐링에 좋은 날입니다.",
-        "year_tips": [
-            {"year_label": "1967년생 (정미)", "tip": "가정의 평안이 최우선입니다. ⚠️ 근심을 내려놓고 편안히 쉬세요."},
-            {"year_label": "1979년생 (기미)", "tip": "협력 관계가 탄탄해집니다. ⚠️ 공과 사를 명확히 구분하세요."},
-            {"year_label": "1991년생 (신미)", "tip": "재능이 발휘되는 날입니다. ⚠️ 우유부단한 태도는 피하세요."},
-            {"year_label": "2003년생 (계미)", "tip": "좋은 친구를 만납니다. ⚠️ 계획적인 소비를 하세요."}
-        ],
-        "lucky_time": "오후 1시 ~ 3시", "lucky_match": "토끼띠·돼지띠와 대길"
-    },
-    "원숭이": {
-        "score": 94, "title": "다재다능한 재치로 위기를 기회로 바꾸는 날",
-        "overview": "순발력과 문제 해결력이 최고조에 달합니다. 난관에 부딪힌 일을 깔끔하게 해결합니다.",
-        "year_tips": [
-            {"year_label": "1968년생 (무신)", "tip": "투자 이익이 발생합니다. ⚠️ 자만하지 말고 내실을 다지세요."},
-            {"year_label": "1980년생 (경신)", "tip": "승진 및 영전운이 따릅니다. ⚠️ 지나친 경쟁심은 경계하세요."},
-            {"year_label": "1992년생 (임신)", "tip": "새로운 인연이 찾아옵니다. ⚠️ 언행을 신중히 하세요."},
-            {"year_label": "2004년생 (갑신)", "tip": "도전하는 일마다 성과가 있습니다. ⚠️ 체력을 비축하세요."}
-        ],
-        "lucky_time": "오후 3시 ~ 5시", "lucky_match": "용띠·쥐띠와 최상의 궁합"
-    },
-    "닭": {
-        "score": 90, "title": "정확한 판단력으로 결실을 맺는 하루",
-        "overview": "정리정돈과 회계, 계약 검토에 최적의 날입니다. 사소한 틈새를 보완하여 완벽을 기하세요.",
-        "year_tips": [
-            {"year_label": "1969년생 (기유)", "tip": "문서운이 길합니다. ⚠️ 건강을 위해 가벼운 스트레칭을 하세요."},
-            {"year_label": "1981년생 (신유)", "tip": "실력을 인정받습니다. ⚠️ 비판적인 말투는 부드럽게 바꾸세요."},
-            {"year_label": "1993년생 (계유)", "tip": "재물 흐름이 순조롭습니다. ⚠️ 유행에 휩쓸리지 마세요."},
-            {"year_label": "2005년생 (을유)", "tip": "학업 성취도가 높습니다. ⚠️ 주변과의 조화를 신경 쓰세요."}
-        ],
-        "lucky_time": "오후 5시 ~ 7시", "lucky_match": "소띠·뱀띠와 최고의 합"
-    },
-    "개": {
-        "score": 92, "title": "변함없는 신의로 인정과 존경을 받는 날",
-        "overview": "신뢰를 바탕으로 한 대인관계에서 큰 행운이 따릅니다. 오랜 친구나 은인과의 만남이 길합니다.",
-        "year_tips": [
-            {"year_label": "1970년생 (경술)", "tip": "명예가 드높아집니다. ⚠️ 건강 검진을 체크하세요."},
-            {"year_label": "1982년생 (임술)", "tip": "믿을 수 있는 동반자를 얻습니다. ⚠️ 과욕은 금물입니다."},
-            {"year_label": "1994년생 (갑술)", "tip": "직장에서 능력을 발휘합니다. ⚠️ 고집을 조금 꺾으세요."},
-            {"year_label": "2006년생 (병술)", "tip": "새로운 시작에 길합니다. ⚠️ 긍정적인 마음을 가지세요."}
-        ],
-        "lucky_time": "저녁 7시 ~ 9시", "lucky_match": "호랑이띠·말띠와 대길"
-    },
-    "돼지": {
-        "score": 93, "title": "넉넉한 복록과 행운이 가득한 하루",
-        "overview": "재물운과 식복(食福)이 풍성하며 즐거운 소식이 들려옵니다. 여유를 가지고 하루를 즐기세요.",
-        "year_tips": [
-            {"year_label": "1971년생 (신해)", "tip": "재물이 모여듭니다. ⚠️ 과식과 과음은 피하세요."},
-            {"year_label": "1983년생 (계해)", "tip": "사업상 번창이 따릅니다. ⚠️ 주변 사람들에게 베풀면 복이 됩니다."},
-            {"year_label": "1995년생 (을해)", "tip": "애정운이 매우 길합니다. ⚠️ 중요한 결정을 내리기에 좋습니다."},
-            {"year_label": "2007년생 (정해)", "tip": "학업운이 상승합니다. ⚠️ 기초를 탄탄히 하세요."}
-        ],
-        "lucky_time": "밤 9시 ~ 11시", "lucky_match": "토끼띠·양띠와 찰떡궁합"
-    }
-}
+# Date-specific Korean daily zodiac/star guides.
+from zodiac_daily import build_daily_zodiac
 
-STAR_FULL_DATA = {
-    "양자리": {"elem": "불 (Fire)", "planet": "화성 (Mars)", "score": 93, "title": "타오르는 열정으로 새로운 문을 여는 날", "overview": "추진력과 개척 정신이 최고조에 달합니다. 망설이지 말고 행동에 옮기세요.", "focus": "오늘 시작하는 프로젝트가 향후 1년간의 성장 발판이 됩니다. ⚠️ 주의: 성급한 판단보다 팩트를 재확인하세요.", "color": "루비 레드", "time": "오전 9시 ~ 11시"},
-    "황소자리": {"elem": "흙 (Earth)", "planet": "금성 (Venus)", "score": 90, "title": "안정적인 기반 위에 실속을 쌓는 하루", "overview": "꾸준함과 끈기가 결실을 맺습니다. 금융 자산 관리 및 계약에 길합니다.", "focus": "장기적인 안목으로 자산을 배분하세요. ⚠️ 주의: 고집을 내려놓고 유연하게 수용하세요.", "color": "에메랄드 그린", "time": "오후 1시 ~ 3시"},
-    "쌍둥이자리": {"elem": "공기 (Air)", "planet": "수성 (Mercury)", "score": 94, "title": "재치 있는 화술과 정보력이 빛나는 날", "overview": "새로운 소식과 유용한 정보를 선점합니다. 커뮤니케이션과 미팅에 최적입니다.", "focus": "사람들과의 교류 속에서 귀인을 만나게 됩니다. ⚠️ 주의: 뜬소문에 현혹되지 마세요.", "color": "브라이트 옐로우", "time": "오전 10시 ~ 12시"},
-    "게자리": {"elem": "물 (Water)", "planet": "달 (Moon)", "score": 89, "title": "따뜻한 공감으로 사람들의 마음을 얻는 날", "overview": "가정과 가까운 이들과의 화합이 두터워집니다. 내면의 힐링에 집중하세요.", "focus": "주변에 온기를 나누어주면 더 큰 복으로 돌아옵니다. ⚠️ 주의: 감정 기복을 잘 다스리세요.", "color": "실버 화이트", "time": "저녁 6시 ~ 8시"},
-    "사자자리": {"elem": "불 (Fire)", "planet": "태양 (Sun)", "score": 96, "title": "눈부신 카리스마로 무대의 주인공이 되는 하루", "overview": "자신의 재능과 리더십이 만천하에 드러납니다. 주도권을 쥐고 이끄세요.", "focus": "당당한 태도가 성공을 부릅니다. ⚠️ 주의: 오만함을 경계하고 파트너를 칭찬해 주세요.", "color": "임페리얼 골드", "time": "오후 2시 ~ 4시"},
-    "처녀자리": {"elem": "흙 (Earth)", "planet": "수성 (Mercury)", "score": 91, "title": "정교한 분석과 완벽한 정리의 날", "overview": "복잡하게 얽힌 문제의 해답을 명쾌하게 찾아냅니다. 디테일의 승리입니다.", "focus": "작은 오점을 수정할 때 완벽한 결실이 맺어집니다. ⚠️ 주의: 지나친 비판은 삼가세요.", "color": "네이비 블루", "time": "오전 8시 ~ 10시"},
-    "천칭자리": {"elem": "공기 (Air)", "planet": "금성 (Venus)", "score": 92, "title": "균형과 조화로 평화로운 결실을 맺는 날", "overview": "갈등을 중재하고 최선의 합의를 이끌어냅니다. 미적 감각이 돋보입니다.", "focus": "합리적인 선택이 이득을 가져옵니다. ⚠️ 주의: 결정을 너무 오래 미루지 마세요.", "color": "파스텔 핑크", "time": "오후 4시 ~ 6시"},
-    "전갈자리": {"elem": "물 (Water)", "planet": "명왕성 (Pluto)", "score": 95, "title": "예리한 통찰력과 강력한 집중력의 하루", "overview": "사물의 본질을 꿰뚫어 보며 핵심을 장악합니다. 비밀 프로젝트에 길합니다.", "focus": "끝까지 밀어붙이는 집념이 기적을 만듭니다. ⚠️ 주의: 집착을 버리고 한 걸음 물러서세요.", "color": "딥 버건디", "time": "밤 8시 ~ 10시"},
-    "사수자리": {"elem": "불 (Fire)", "planet": "목성 (Jupiter)", "score": 93, "title": "자유로운 탐험과 원대한 꿈을 펼치는 날", "overview": "활동 영역이 넓어지고 해외 및 장거리 이동에 길한 소식이 들려옵니다.", "focus": "넓은 시야로 미래를 기획하세요. ⚠️ 주의: 사소한 디테일을 놓치지 않도록 점검하세요.", "color": "로열 퍼플", "time": "오전 11시 ~ 오후 1시"},
-    "염소자리": {"elem": "흙 (Earth)", "planet": "토성 (Saturn)", "score": 90, "title": "인내와 노력이 결실을 맺는 견고한 하루", "overview": "차근차근 쌓아온 신뢰가 명예와 보상으로 돌아옵니다. 책임감이 빛납니다.", "focus": "원칙을 고수할 때 흔들리지 않는 승리를 거둡니다. ⚠️ 주의: 스스로에게 너무 엄격하지 마세요.", "color": "차콜 그레이", "time": "오후 1시 ~ 3시"},
-    "물병자리": {"elem": "공기 (Air)", "planet": "천왕성 (Uranus)", "score": 94, "title": "독창적인 영감과 혁신이 돋보이는 날", "overview": "남들이 생각지 못한 번뜩이는 아이디어로 판을 바꿉니다. 개성을 드러내세요.", "focus": "새로운 기술이나 지식을 적극 수용하세요. ⚠️ 주의: 현실적인 실현 가능성을 함께 고려하세요.", "color": "스카이 블루", "time": "오후 3시 ~ 5시"},
-    "물고기자리": {"elem": "물 (Water)", "planet": "해왕성 (Neptune)", "score": 91, "title": "풍부한 감수성과 예술적 영감이 넘치는 하루", "overview": "마음이 편안해지고 직관이 적중합니다. 마음의 소리에 귀 기울이세요.", "focus": "영적인 안정과 예술적 활동에 대길합니다. ⚠️ 주의: 현실을 도피하지 말고 당당히 마주하세요.", "color": "아쿠아 마린", "time": "저녁 7시 ~ 9시"}
-}
 
 @app.get("/api/zodiac-fortune")
-def get_zodiac_fortune(type: str, key: str):
-    if type == "star":
-        st = STAR_FULL_DATA.get(key, STAR_FULL_DATA["사자자리"])
-        return {
-            "name": key,
-            "score": st["score"],
-            "title": st["title"],
-            "overview": st["overview"],
-            "star_element": st["elem"],
-            "star_planet": st["planet"],
-            "focus_content": st["focus"],
-            "lucky_color": st["color"],
-            "lucky_time": st["time"]
-        }
-    else:
-        zd = ZODIAC_FULL_DATA.get(key, ZODIAC_FULL_DATA["호랑이"])
-        return {
-            "name": f"{key}띠",
-            "score": zd["score"],
-            "title": zd["title"],
-            "overview": zd["overview"],
-            "year_tips": zd["year_tips"],
-            "lucky_time": zd["lucky_time"],
-            "lucky_match": zd["lucky_match"]
-        }
+def get_zodiac_fortune(type: str, key: str, response: Response):
+    response.headers["Cache-Control"] = "no-store"
+    try:
+        return build_daily_zodiac(type, key)
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+
 
 from tarot_catalog import DECK as TAROT_DECK
 
