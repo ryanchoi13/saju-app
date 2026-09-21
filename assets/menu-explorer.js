@@ -16,10 +16,33 @@
   .meal-dialog-heading{position:sticky;top:-24px;background:white;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;z-index:1}
   .meal-dialog-heading h2{font-size:18px;word-break:keep-all}.meal-dialog-heading button{flex-shrink:0;white-space:nowrap;padding:10px 16px;border:1px solid #b8c7b0;border-radius:10px;background:white;cursor:pointer}
   .meal-title-kcal{display:block;margin-top:3px;font-size:14px;color:#64748b;font-weight:500}
+  .meal-title-name{display:block;overflow-wrap:anywhere}
+  .meal-additions{display:block;padding:0 10px 12px;color:#64748b;overflow-wrap:anywhere}
   #mealSetsDialog section{padding-bottom:22px;margin-bottom:22px;border-bottom:1px solid #e4e9e2}
   #mealSetsDialog .menu-photos{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:12px 0}
   .food-photo{display:block;width:100%;height:145px;background:#fafbf8}
   @media(max-width:540px){#mealSetsDialog .menu-photos{grid-template-columns:1fr}.food-photo{height:130px}}
+  @media(max-width:540px){
+    #view-today #mealDailyCard{padding:16px 14px;border-radius:16px}
+    #mealDailyCard #menuModeTabs{width:fit-content;max-width:100%;padding:0;gap:6px;background:transparent;border:0;margin:12px 0}
+    #mealDailyCard #menuModeTabs button{flex:0 1 auto;padding:8px 13px;min-height:44px;font-size:12px;font-weight:600;border:1px solid var(--ui-line,#E4E9EB);background:var(--ui-surface,#FFF);box-shadow:none}
+    #mealDailyCard #menuModeTabs button[aria-pressed="true"]{color:var(--ui-accent,#2D6A4F);border-color:var(--ui-accent,#2D6A4F);background:var(--ui-tint,#EFF5F1)}
+    #mealDailyCard #menuPhotoCards{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-top:0}
+    #mealDailyCard .menu-photo-card{min-width:0;border-radius:11px}
+    #mealDailyCard .menu-meal-label{padding:7px 8px 0;font-size:11px;font-weight:600}
+    #mealDailyCard .food-photo,#mealDailyCard .menu-photo-placeholder{height:auto;max-height:none;aspect-ratio:1.1;margin-top:4px}
+    #mealDailyCard .menu-photo-card figcaption{padding:8px 7px 9px;font-size:13px!important;font-weight:600;line-height:1.4;letter-spacing:-.3px}
+    #mealDailyCard .meal-title-name{min-height:2.8em;word-break:keep-all;overflow-wrap:anywhere}
+    #mealDailyCard .meal-title-kcal{font-size:11px;letter-spacing:0;white-space:nowrap}
+    #mealDailyCard .meal-additions{padding:0 7px 9px;font-size:11px;line-height:1.5;word-break:keep-all}
+    #mealDailyCard #menuStatus{margin:11px 1px 10px;font-size:12px}
+    #mealDailyCard #menuNext{min-height:44px;padding:11px 8px;font-size:13px;font-weight:600;border-radius:9px;border:1px solid var(--ui-line,#E4E9EB);background:var(--ui-tint,#EFF5F1);color:var(--ui-accent,#2D6A4F)}
+  }
+  @media(max-width:350px){
+    #view-today #mealDailyCard{padding:14px 11px}
+    #mealDailyCard #menuPhotoCards{gap:5px}
+    #mealDailyCard .menu-photo-card figcaption{font-size:12px!important}
+  }
   `;document.head.append(style);
   function arrangeCards(){
     const label=$('resMenuLabel'),cell=label?.parentElement;
@@ -34,10 +57,12 @@
   arrangeCards();
   const mealCalories=plan=>Math.round(plan.meals.reduce((sum,m)=>sum+Number(m.kcal||0),0));
   function drawMeals(plan,target){
-    renderMenuPhotos(plan.meals.map(x=>x.menu),plan.meals.map(x=>labels[x.period]+' 식사'),target);
+    const isHome=target.id==='menuPhotoCards';
+    renderMenuPhotos(plan.meals.map(x=>x.menu),plan.meals.map(x=>labels[x.period]+(isHome?'':' 식사')),target);
     plan.meals.forEach((x,i)=>{const card=target.children[i];if(!card)return;
-      const caption=card.querySelector('figcaption'),cal=document.createElement('span');cal.className='meal-title-kcal';cal.textContent=`(${Math.round(x.kcal)} kcal)`;caption.append(cal);
-      if(x.additions?.length){const extra=document.createElement('small');extra.style.cssText='display:block;padding:0 10px 12px;color:#64748b';extra.textContent=x.additions.map(a=>'+ '+a.menu).join(' · ');card.append(extra);}
+      const caption=card.querySelector('figcaption'),cal=document.createElement('span');cal.className='meal-title-kcal';cal.textContent=isHome?`${Math.round(x.kcal)} kcal`:`(${Math.round(x.kcal)} kcal)`;
+      const name=document.createElement('span');name.className='meal-title-name';name.textContent=x.menu;caption.replaceChildren(name,cal);
+      if(x.additions?.length){const extra=document.createElement('small');extra.className='meal-additions';extra.textContent=x.additions.map(a=>'+ '+a.menu).join(' · ');card.append(extra);}
     });
   }
   function render(){
@@ -96,4 +121,3 @@
   function startSample(){reset();$('resMenu').hidden=false;$('resMenu').textContent='하루 식단 검토 화면에서 확인해 주세요.';}
   window.DalhaMenu={mount,reset,changeMode,next,close,startSample};
 })();
-
