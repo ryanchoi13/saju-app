@@ -119,9 +119,11 @@
     const title=document.createElement('h2');title.id='mealSetsTitle';title.textContent=(state.mode==='diet'?'다이어트식':'일반식')+' · 오늘 추천 식단';
     const done=document.createElement('button');done.type='button';done.textContent='닫기';done.autofocus=true;done.onclick=()=>dialog.close();heading.append(title,done);dialog.append(heading);dialog.setAttribute('aria-labelledby',title.id);
     const list=document.createElement('div');list.className='meal-dialog-list';dialog.append(list);
-    (state.history||[]).forEach((p,i)=>{
+    const history=(state.history||[]).map((p,i)=>({...p,recommendation_number:p.recommendation_number??i+1}))
+      .sort((a,b)=>a.recommendation_number-b.recommendation_number).slice(0,state.set_limit||3);
+    history.forEach(p=>{
       const section=document.createElement('section'),row=document.createElement('div'),h=document.createElement('h3');
-      row.className='meal-set-heading';h.textContent=`추천 ${i+1}`;
+      row.className='meal-set-heading';h.textContent=`추천 ${p.recommendation_number}`;
       const total=document.createElement('span');total.textContent=`하루 합계 ${mealCalories(p)} kcal`;row.append(h,total);section.append(row);
       const meals=document.createElement('div');meals.className='menu-photos';section.append(meals);drawMeals(p,meals);list.append(section);
     });
