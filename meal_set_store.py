@@ -10,6 +10,8 @@ from menu_store import today, _key
 from wardrobe_store import _connection, _execute, StorageUnavailable
 
 
+SET_LIMIT = 3
+
 def initialize():
     with _connection() as (conn, pg):
         if pg:
@@ -66,10 +68,15 @@ def _save(conn, pg, owner, day, token, payload):
 
 
 def _view(token, payload, day):
-    mode=payload['mode'];plan=payload['sets'][mode]
-    return dict(date=str(day),token=token,mode=mode,seen_sets=payload['counts'][mode],
+    mode=payload['mode']
+    # Archives are appended when a set is first shown, oldest first. Explicit
+    # sequence numbers make display order independent of client array order.
+    history=[dict(plan, recommendation_number=i+1)
+             for i, plan in enumerate(payload.get('archives',{}).get(mode,[])[:SET_LIMIT])]
+    plan=history[-1] if history else payload['sets'][mode]
+    return dict(date=str(day),token=token,mode=mode,seen_sets=min(payload['counts'][mode],SET_LIMIT),
                 mode_counts=payload['counts'],items=plan['meals'],plan=plan,
-                set_limit=5,exhausted=payload['counts'][mode]>=5,history=payload.get('archives',{}).get(mode,[]),
+                set_limit=SET_LIMIT,exhausted=payload['counts'][mode]>=SET_LIMIT,history=history,
                 basis_text='아침·점심·저녁을 한 세트로 준비했어요.',version='meal-set-v1')
 
 
@@ -103,7 +110,7 @@ def explore(user_id, day, build, *, token, mode, action, expected_day, expected_
         if not rollover and token!=current_token:raise KeyError('stale token')
         count=payload['counts'][mode]
         if expected_seen>count and not rollover:raise ValueError('식단을 다시 불러와 주세요.')
-        if mode not in payload['sets'] or (action=='next' and not rollover and count==expected_seen and count<5):
+        if mode not in payload['sets'] or (action=='next' and not rollover and count==expected_seen and count<SET_LIMIT):
             current=payload['sets'].get(mode)
             excluded=payload.get('shown',{}).get(mode,[x['id'] for x in current['meals']] if current else [])
             payload['sets'][mode]=build(mode,_history(conn,pg,owner,day,mode),excluded)
