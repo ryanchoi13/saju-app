@@ -5,6 +5,8 @@ from __future__ import annotations
 from html import escape
 
 from app.engine.core.models import MyeongriCoreResult
+from app.engine.semantic.applied import recommended_directions
+from app.engine.services.applied_guidance import state_basis
 from app.engine.semantic import build_service_query
 
 
@@ -77,7 +79,7 @@ def _strength_guide(state: str | None) -> str:
 
 
 def _operation_guide(query: dict) -> str:
-    operations = query["synthesis"].get("favorable_operations", [])
+    operations = recommended_directions(query["applied_state"])
     labels = list(dict.fromkeys(
         _OPERATION[item["operation"]]
         for item in operations
@@ -177,4 +179,4 @@ def build_lifetime_health_report(
       <p style="font-size:11.5px;color:#94A3B8;margin:12px 0 0;">이 리포트는 원국의 강약·조후·구조적 병목과 전체 대운을 생활관리 언어로 해석한 참고 자료입니다. 증상·질병·사고·수명을 예측하거나 의료 진단을 대신하지 않습니다. 불편한 증상이 있으면 의료진의 진료를 받으세요.</p>
     </div>
     """
-    return {"title": title, "content": content}
+    return {"analysis_basis": state_basis(query["applied_state"]), "title": title, "content": content}

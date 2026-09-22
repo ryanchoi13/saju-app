@@ -25,10 +25,10 @@ def timing_axes_for_scope(scope: str) -> set[str]:
     return parts & set(AXES)
 
 
-def core_for_timing_scope(core, scope: str):
+def core_for_timing_scope(core, scope: str, *, force_reassessment: bool = False):
     """Return a non-mutating view with newly assessed, period-local evidence."""
     allowed = timing_axes_for_scope(scope)
-    if allowed == set(AXES):
+    if allowed == set(AXES) and not force_reassessment:
         return core
     if not allowed:
         shensha, shensha_evidence = calculate_shensha(core.natal_facts.pillars)

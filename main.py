@@ -28,6 +28,7 @@ from wada_color_rules import evaluate_duo
 from wada_color_ko import get_wada_color_ko
 from wada_wuxing_selector import select_wada_duo_for_targets
 from fashion_v2.svg_recommendation import build_svg_catalog_contexts
+from app.engine.services.fashion_colors import build_fashion_color_basis
 from fashion_v2.weather_service import gyeongju_weather_cache, weather_api_payload
 from lunar_python import Solar
 from fastapi import FastAPI, HTTPException, Response
@@ -325,6 +326,8 @@ def get_saju_pillars_and_analysis(name: str, gender: str, y: int, m: int, d: int
     )
     today_element = core.timing.daily["pillar"]["stem_element"]
     lucky_element = today_fortune["lucky_element"]
+    fashion_color_basis = build_fashion_color_basis(core)
+    fashion_element = fashion_color_basis["primary_element"]
 
     current_month = today_date.month
 
@@ -351,7 +354,7 @@ def get_saju_pillars_and_analysis(name: str, gender: str, y: int, m: int, d: int
         outfit_age_group = "60plus"
 
     wada_selection = select_wada_duo_for_targets(
-        lucky_element,
+        fashion_element,
         today_element,
         int(today_date.strftime("%Y%m%d"))
     )
@@ -431,7 +434,7 @@ def get_saju_pillars_and_analysis(name: str, gender: str, y: int, m: int, d: int
     }
 
     result["daily_fortune"]["style_palettes"] = build_style_contexts(
-        wada_duo_no, gender, result["daily_fortune"]["wada_palette"], lucky_element,
+        wada_duo_no, gender, result["daily_fortune"]["wada_palette"], fashion_element,
         user_name=name, age=style_age, season=outfit_season)
     color_a = {
         "name": wada_top_color["original_name"],
@@ -463,6 +466,7 @@ def get_saju_pillars_and_analysis(name: str, gender: str, y: int, m: int, d: int
         age=style_age,
         board_weather_profile=weather_profile if complete_weather else None,
     )
+    result["daily_fortune"]["fashion_color_basis"] = fashion_color_basis
     fortune = result["daily_fortune"]
     from meal_sets import build_set
     def build(mode, history, excluded):
@@ -1099,6 +1103,7 @@ def test_saju_engine(
             "cal_type": cal_type,
             "gender": gender
         },
+        "fashion_color_basis": root_result["daily_fortune"]["fashion_color_basis"],
         "comparison": {
             "year_pillar": {
                 "root_main": root_year,

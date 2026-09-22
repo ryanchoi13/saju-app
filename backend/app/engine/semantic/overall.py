@@ -11,7 +11,7 @@ from app.engine.core.models import PillarFact, TimingResult
 from app.engine.facts.hidden_stems import get_hidden_stems
 from app.engine.facts.relationship_candidates import calculate_relationship_candidates
 from app.engine.facts.ten_gods import get_ten_god
-from app.engine.synthesis.operation_scope import usable_operations
+from app.engine.semantic.applied import build_applied_state, recommended_directions
 from app.engine.timing.conditions import assess_temporal_conditions
 
 OVERALL_VERSION = "overall-life-domains-v1"
@@ -170,7 +170,9 @@ def select_overall_domains(core, scope, *, timing=None, cycle=None):
     # Wellbeing is a lifestyle reading. Only usable personal operations may
     # raise its priority; raw seasonal imbalance cannot become a health alert.
     recovery_context = focal_god in RECOVERY_GODS or branch_god in RECOVERY_GODS
-    operations = usable_operations(synthesis)
+    state_scope = "natal" if scope == "natal" else "natal+" + "+".join(AXES[:AXES.index(scope) + 1])
+    applied = build_applied_state(core, state_scope, timing=source_timing, cycle=cycle)
+    operations = recommended_directions(applied)
     for operation in operations:
         op = operation.get("operation")
         if not operation.get("evidence_ids"):
@@ -217,7 +219,7 @@ def select_overall_domains(core, scope, *, timing=None, cycle=None):
             covered.update(item["source_ids"])
     considered = [dict(domain=d, label=label, status="supported" if d in candidates else "no_specific_support")
                   for d, label in DOMAINS.items()]
-    return dict(version=OVERALL_VERSION, scope=scope, primary_domains=[c["domain"] for c in primary],
+    return dict(version=OVERALL_VERSION, applied_state_version=applied["version"], scope=scope, primary_domains=[c["domain"] for c in primary],
         selected=selected, candidates=ranked, considered_domains=considered,
         evidence_records=[evidence[e] if isinstance(evidence[e], dict) else evidence[e].model_dump(mode="json")
                           for e in sorted({s for c in ranked for s in c["source_ids"]}) if e in evidence],

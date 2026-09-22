@@ -6,6 +6,7 @@ from html import escape
 from itertools import product
 
 from app.engine.constants import GAN_WUXING
+from app.engine.semantic.applied import build_applied_state, recommended_directions
 from app.engine.core.models import MyeongriCoreResult
 from app.engine.facts.ten_gods import get_ten_god
 from app.engine.relationships.compatibility_shensha import calculate_relationship_shensha
@@ -197,7 +198,8 @@ def _love_path(supportive: list[dict], tense: list[dict]) -> tuple[str, str]:
 
 
 def _favorable_overlap(core: MyeongriCoreResult, other: MyeongriCoreResult) -> str:
-    wanted = set(core.semantic_state.favorable_elements)
+    state = build_applied_state(core, "natal")
+    wanted = {e for d in recommended_directions(state) for e in d.get("elements", [])}
     present = {item.element for item in other.natal_facts.element_inventory.occurrences}
     overlap = wanted & present
     if not wanted:

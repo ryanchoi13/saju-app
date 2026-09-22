@@ -29,5 +29,14 @@ A broad local run found an unrelated pre-existing failure in test_ranked_menu_ex
 - Birth city, longitude, true-solar-time and day-boundary conventions require an explicit comparison policy before changing natal calculations.
 - Month reports currently use the 15th as a representative date; changing this UX requires separate validation.
 - Do not invent rules to turn unresolved temporal effects into confirmed luck.
-- This PR establishes the common query contract; it does not switch every fortune, food or fashion adapter to Applied State or claim all tab 2/3 narratives now read it.
+- The initial PR established the common query contract. Service integration is recorded below.
 - Before expanding narrative adapters, compare date/term/decade boundaries and unknown birth times, then obtain like-for-like live API outputs if needed.
+
+## Service integration (follow-up)
+
+- Overall natal, decade, annual and monthly subject selection reads eligible confirmed operations from Applied State. Annual/monthly representative dates and selected decades are passed explicitly into the scoped core assessment.
+- Lifetime and health operation wording reads the same eligibility. Wealth, career, study and love translate eligible directions into their own advice, preserving existing factual analysis and fallback guidance. Love retains the selected relationship-status guidance.
+- Compatibility reads natal Applied State directions for element overlap, without claiming that mere element presence establishes compatibility.
+- Fashion palettes receive eligible confirmed elements from daily Applied State. If none exist, the daily element remains an explicitly symbolic palette reference, never a newly inferred favorable element. TPO/weather/age/garment rules remain in the fashion engine.
+- Food's dedicated state is unchanged. Tarot, zodiac and other independent features are not claimed to use the Myeongri State.
+- Existing raw natal facts and topic-specific interpretation remain necessary; integrating shared judgment does not replace every calculation with a single state label.

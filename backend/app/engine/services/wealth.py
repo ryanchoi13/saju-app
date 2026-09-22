@@ -6,6 +6,7 @@ from collections import Counter
 from html import escape
 
 from app.engine.core.models import MyeongriCoreResult
+from app.engine.services.applied_guidance import direction_advice, state_basis
 from app.engine.semantic import build_service_query
 
 
@@ -143,7 +144,7 @@ def build_lifetime_wealth_report(core: MyeongriCoreResult, user_name: str) -> di
       </div>
       <div style="display:grid;gap:10px;margin-bottom:14px;">
         <div style="background:#F8FAFC;border:1px solid #E2E8F0;padding:14px;border-radius:13px;"><h5 style="font-size:14px;font-weight:800;margin:0 0 5px;">돈을 만드는 방식</h5><p style="font-size:13px;color:#475569;margin:0;">{style} {output_text}</p></div>
-        <div style="background:#F8FAFC;border:1px solid #E2E8F0;padding:14px;border-radius:13px;"><h5 style="font-size:14px;font-weight:800;margin:0 0 5px;">돈을 지키는 기준</h5><p style="font-size:13px;color:#475569;margin:0;">{_balance_advice(strength)} 재물운은 수익 가능성만이 아니라 지출·부채·회수 기간·공동 책임을 함께 볼 때 현실적으로 활용할 수 있습니다.</p></div>
+        <div style="background:#F8FAFC;border:1px solid #E2E8F0;padding:14px;border-radius:13px;"><h5 style="font-size:14px;font-weight:800;margin:0 0 5px;">돈을 지키는 기준</h5><p style="font-size:13px;color:#475569;margin:0;">{direction_advice(query["applied_state"], "wealth", _balance_advice(strength))} 재물운은 수익 가능성만이 아니라 지출·부채·회수 기간·공동 책임을 함께 볼 때 현실적으로 활용할 수 있습니다.</p></div>
         <div style="background:#ECFDF5;border:1px solid #A7F3D0;padding:14px;border-radius:13px;"><h5 style="font-size:14px;font-weight:800;color:#065F46;margin:0 0 5px;">현재 재물 흐름</h5><p style="font-size:13px;color:#047857;margin:0;">{current_text}</p></div>
       </div>
       <h5 style="font-size:14.5px;font-weight:800;color:#0F172A;margin:0 0 4px;">생애 4단계 재물 흐름</h5>
@@ -153,4 +154,4 @@ def build_lifetime_wealth_report(core: MyeongriCoreResult, user_name: str) -> di
       <p style="font-size:11.5px;color:#94A3B8;margin:12px 0 0;">이 리포트는 원국·강약·구조·전체 대운의 재성·식상 흐름을 설명하며, 특정 투자·부동산의 수익이나 손실을 보장하지 않습니다.</p>
     </div>
     """
-    return {"title": title, "content": content}
+    return {"analysis_basis": state_basis(query["applied_state"]), "title": title, "content": content}

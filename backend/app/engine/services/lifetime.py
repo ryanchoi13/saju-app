@@ -5,6 +5,8 @@ from __future__ import annotations
 from html import escape
 
 from app.engine.core.models import MyeongriCoreResult
+from app.engine.semantic.applied import recommended_directions
+from app.engine.services.applied_guidance import state_basis
 from app.engine.semantic import build_service_query
 from app.engine.semantic.overall import select_overall_domains, OVERALL_VERSION
 from app.engine.services.overall_narrative import render_overall, subjects_html, _object_particle
@@ -125,7 +127,7 @@ _PHASES = (
 
 
 def _operation_text(query: dict) -> str:
-    items = query["synthesis"]["favorable_operations"]
+    items = recommended_directions(query["applied_state"])
     labels = [_OPERATION.get(item["operation"], item["operation"]) for item in items[:4]]
     return " · ".join(labels) if labels else "확정된 우선 작용 없음"
 
@@ -270,5 +272,5 @@ def build_lifetime_overall_report(
       </p>
     </div>
     """
-    return {"title": title, "content": content, "engine_version": OVERALL_VERSION,
+    return {"analysis_basis": state_basis(query["applied_state"]), "title": title, "content": content, "engine_version": OVERALL_VERSION,
             "evidence_summary": {"natal": selection, "cycles": cycle_summaries}}

@@ -6,6 +6,7 @@ from collections import Counter
 from html import escape
 
 from app.engine.core.models import MyeongriCoreResult
+from app.engine.services.applied_guidance import direction_advice, state_basis
 from app.engine.semantic import build_service_query
 
 
@@ -177,7 +178,7 @@ def build_lifetime_career_report(core: MyeongriCoreResult, user_name: str, statu
         <p style="font-size:13.5px;color:#1E40AF;margin:0;">{_work_style(counts, mode)} 원국에서 이 주제와 관련해 조회한 십성이 드러난 위치는 {_count_summary(counts, mode)}입니다. 이 개수는 능력이나 성공의 점수가 아닙니다.</p>
       </div>
       <div style="display:grid;gap:10px;margin-bottom:14px;">
-        <div style="background:#F8FAFC;border:1px solid #E2E8F0;padding:14px;border-radius:13px;"><h5 style="font-size:14px;font-weight:800;margin:0 0 5px;">일할 때의 균형</h5><p style="font-size:13px;color:#475569;margin:0;">{_balance_advice(strength)}</p></div>
+        <div style="background:#F8FAFC;border:1px solid #E2E8F0;padding:14px;border-radius:13px;"><h5 style="font-size:14px;font-weight:800;margin:0 0 5px;">일할 때의 균형</h5><p style="font-size:13px;color:#475569;margin:0;">{direction_advice(query["applied_state"], "career", _balance_advice(strength))}</p></div>
         <div style="background:#F8FAFC;border:1px solid #E2E8F0;padding:14px;border-radius:13px;"><h5 style="font-size:14px;font-weight:800;margin:0 0 5px;">{guide_title}</h5><p style="font-size:13px;color:#475569;margin:0;">{guide_text}</p></div>
         <div style="background:#ECFDF5;border:1px solid #A7F3D0;padding:14px;border-radius:13px;"><h5 style="font-size:14px;font-weight:800;color:#065F46;margin:0 0 5px;">현재 직업·사업 흐름</h5><p style="font-size:13px;color:#047857;margin:0;">{current_text}</p></div>
       </div>
@@ -188,4 +189,4 @@ def build_lifetime_career_report(core: MyeongriCoreResult, user_name: str, statu
       <p style="font-size:11.5px;color:#94A3B8;margin:12px 0 0;">이 리포트는 원국·강약·구조·전체 대운을 직업과 사업의 언어로 해석한 참고 자료이며, 취업·승진·시험 합격·창업 성공을 보장하지 않습니다.</p>
     </div>
     """
-    return {"title": title, "content": content}
+    return {"analysis_basis": state_basis(query["applied_state"]), "title": title, "content": content}

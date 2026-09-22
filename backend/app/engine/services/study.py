@@ -6,6 +6,7 @@ from collections import Counter
 from html import escape
 
 from app.engine.core.models import MyeongriCoreResult
+from app.engine.services.applied_guidance import direction_advice, state_basis
 from app.engine.semantic import build_service_query
 
 
@@ -122,7 +123,7 @@ def build_lifetime_study_report(
         <p style="font-size:13.5px;color:#1E40AF;margin:0;">{_learning_style(counts)} 정인·편인의 이해와 흡수, 식신·상관의 표현과 문제풀이, 정관·편관의 규율과 시험 압박을 함께 살폈습니다. 십성의 개수는 지능이나 합격 점수가 아닙니다.</p>
       </div>
       <div style="display:grid;gap:10px;margin-bottom:14px;">
-        <div style="background:#F8FAFC;border:1px solid #E2E8F0;padding:14px;border-radius:13px;"><h5 style="font-size:14px;font-weight:800;margin:0 0 5px;">집중력을 유지하는 방법</h5><p style="font-size:13px;color:#475569;margin:0;">{_STRENGTH_GUIDE.get(strength, '학습량과 회복 시간을 함께 기록해 집중이 반복해서 무너지는 지점을 먼저 확인하세요.')}</p></div>
+        <div style="background:#F8FAFC;border:1px solid #E2E8F0;padding:14px;border-radius:13px;"><h5 style="font-size:14px;font-weight:800;margin:0 0 5px;">집중력을 유지하는 방법</h5><p style="font-size:13px;color:#475569;margin:0;">{direction_advice(query['applied_state'], 'study', _STRENGTH_GUIDE.get(strength, '학습량과 회복 시간을 함께 기록해 집중이 반복해서 무너지는 지점을 먼저 확인하세요.'))}</p></div>
         <div style="background:#F8FAFC;border:1px solid #E2E8F0;padding:14px;border-radius:13px;"><h5 style="font-size:14px;font-weight:800;margin:0 0 5px;">시험 준비의 세 축</h5><p style="font-size:13px;color:#475569;margin:0;">인성은 이해·자료·복습, 식상은 설명·답안·실전 출력, 관성은 일정·기준·시간 압박을 뜻합니다. 세 축 중 하나만 늘리기보다 약한 과정을 실제 공부 계획에 보완하는 편이 좋습니다.</p></div>
         <div style="background:#EEF2FF;border:1px solid #C7D2FE;padding:14px;border-radius:13px;"><h5 style="font-size:14px;font-weight:800;color:#4338CA;margin:0 0 5px;">현재 학업·시험 흐름</h5><p style="font-size:13px;color:#3730A3;margin:0;">{current_text}</p></div>
       </div>
@@ -133,4 +134,4 @@ def build_lifetime_study_report(
       <p style="font-size:11.5px;color:#94A3B8;margin:12px 0 0;">이 리포트는 원국의 학습 관련 십성·강약·구조와 전체 대운을 공부와 시험의 언어로 해석한 참고 자료입니다. 지능, 성적, 진학, 자격 취득이나 시험 합격·불합격을 확정하지 않습니다.</p>
     </div>
     """
-    return {"title": title, "content": content}
+    return {"analysis_basis": state_basis(query["applied_state"]), "title": title, "content": content}
