@@ -1,0 +1,21 @@
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const vm = require('node:vm');
+const calls = [];
+const context = {URL, Headers, Request, location: new URL('https://dalha.kr/'),
+  window: {fetch: (...args) => { calls.push(args); return Promise.resolve({ok:true}); }}};
+vm.runInNewContext(fs.readFileSync('assets/session-client.js', 'utf8'), context);
+context.window.fetch('/api/auth/session');
+assert.equal(calls.at(-1)[1].credentials, 'same-origin');
+assert.equal(calls.at(-1)[1].cache, 'no-store');
+assert.equal(calls.at(-1)[1].headers.has('X-Dalha-Request'), false);
+context.window.fetch('/api/auth/logout', {method:'POST', headers:{'Content-Type':'application/json'}});
+assert.equal(calls.at(-1)[1].headers.get('X-Dalha-Request'), '1');
+assert.equal(calls.at(-1)[1].headers.get('Content-Type'), 'application/json');
+context.window.fetch(new Request('https://dalha.kr/api/user/profile', {method:'PATCH', headers:{'X-Test':'kept'}}));
+assert.equal(calls.at(-1)[1].headers.get('X-Test'), 'kept');
+assert.equal(calls.at(-1)[1].headers.get('X-Dalha-Request'), '1');
+const external = {method:'POST'};
+context.window.fetch('https://example.org/api/test', external);
+assert.equal(calls.at(-1)[1], external);
+console.log('PASS: cookie credentials, no-store, CSRF header, Request headers, external isolation');

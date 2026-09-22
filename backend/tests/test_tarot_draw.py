@@ -33,7 +33,8 @@ class TarotDrawTests(TestCase):
         retry=self.draw('paid-request-00001',True,2)
         self.assertEqual(retry,second)
         self.users['user_reader']['coin']=25
-        self.assertEqual(self.draw('paid-request-00001',True,2)['new_balance'],25)
+        self.assertEqual(self.draw('paid-request-00001',True,2)['new_balance'],20,
+                         'a stale in-memory balance cannot overwrite the database wallet')
 
     def test_parallel_requests_spend_once(self):
         self.draw()

@@ -135,7 +135,8 @@ class ProfilePersistenceTests(TestCase):
     def test_edit_form_prefills_saved_values_and_timeline_uses_new_ranges(self):
         html = (Path(__file__).parents[2] / "index.html").read_text(encoding="utf-8")
         self.assertIn("populateSajuForm(currentSajuProfile || getSavedUserSaju());", html)
-        self.assertIn("buildKakaoAuthPayload(savedKakaoId)", html)
+        self.assertIn("fetch('/api/auth/session'", html)
+        self.assertNotIn("buildKakaoAuthPayload(savedKakaoId)", html)
         self.assertIn("대운 5~6", html)
         self.assertIn("대운 7~9", html)
         self.assertNotIn("대운 8 이후", html)
