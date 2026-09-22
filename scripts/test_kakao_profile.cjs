@@ -74,7 +74,7 @@ function setup(account, profile, status = 'new_user') {
     await unavailable.login();
     assert.equal(unavailable.nodes.get('btnKakaoProfile').classList.contains('hidden'), true);
     assert.equal(unavailable.requests[0].name, null, 'do not substitute nickname for real name');
-    assert.match(unavailable.nodes.get('kakaoProfileNotice').textContent, /제공되지 않은/);
+    assert.match(unavailable.nodes.get('kakaoProfileNotice').textContent, /처음 한 번만/);
 
     const some = setup(flags, {...full, birth_year:null});
     await some.login(); some.ctx.requestKakaoProfileConsent();
@@ -90,8 +90,9 @@ function setup(account, profile, status = 'new_user') {
     resume.ctx.localStorage.setItem('dalha_kakao_id', '321');
     await resume.ctx.checkAutoLoginSession();
     assert.equal(resume.nodes.get('kakaoProfileHelp').hidden, false);
-    resume.ctx.requestKakaoProfileConsent();
-    assert.equal(resume.logins.length, 1, 'incomplete returning accounts can reconnect');
-    assert.equal(resume.logins[0].scope, undefined, 'do not guess unsupported scopes');
+    assert.equal(resume.nodes.get('btnKakaoProfile').classList.contains('hidden'), true,
+        'saved-ID resume must not offer consent without supported scopes');
+    assert.match(resume.nodes.get('kakaoProfileNotice').textContent, /처음 한 번만/);
+    assert.equal(resume.logins.length, 0, 'manual entry does not open another login');
     console.log('PASS: consent recovery, cancellation, verified prefill, unavailable fields, partial consent, existing profile, incomplete resume');
 })().catch(error => {console.error(error); process.exitCode = 1;});
