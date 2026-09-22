@@ -58,7 +58,7 @@ class DailyFortuneServiceTests(TestCase):
         )
 
         self.assertEqual(result["lucky_element"], "火")
-        self.assertEqual(result["lucky_item"], "붉은색 포인트 파우치")
+        self.assertEqual(result["lucky_item"], "붉은색 포인트 카드 케이스")
         self.assertIn("중요한 것을 지키고 정리", result["lucky_item_reason"])
         self.assertIn("보조 근거", result["lucky_item_reason"])
         self.assertEqual(result["lucky_number"], "2, 7")
@@ -88,6 +88,50 @@ class DailyFortuneServiceTests(TestCase):
         self.assertNotIn('우선입니다', result['lucky_item_reason'])
         self.assertNotIn('보완 방향', result['talisman']['desc'])
         self.assertIn('참고 아이템', result['lucky_item_reason'])
+
+    def test_gender_changes_item_choice_without_changing_fortune_or_element(self):
+        target = date(2026, 9, 8)
+        cases = (
+            ('direct_wealth', '火', '붉은색 포인트 카드 케이스', '붉은색 포인트 파우치'),
+            ('direct_wealth', '土', '베이지 카드지갑', '베이지 지퍼 파우치'),
+            ('indirect_wealth', '土', '베이지 키 케이스', '베이지 크로스백'),
+            ('indirect_wealth', '水', '남색 슬림 카드지갑', '남색 휴대용 파우치'),
+            ('direct_wealth', '金', '메탈 손목시계', '메탈 손목시계'),
+        )
+        for daily_god, element, male_item, female_item in cases:
+            with self.subTest(daily_god=daily_god, element=element):
+                core = self._core(target)
+                # Renderer fixtures keep all fortune evidence identical so only
+                # the product's gender-specific item presentation may change.
+                core.timing.daily['ten_god'] = daily_god
+                core.synthesis.favorable_operations = [{
+                    'operation': 'protect', 'elements': [element],
+                    'evidence_ids': ['fixture:confirmed-protection'],
+                }]
+                core.semantic_state.favorable_elements = [element]
+                male = build_daily_fortune(core, '테스트', target, include_menu=False)
+                core.input.gender = 'female'
+                female = build_daily_fortune(core, '테스트', target, include_menu=False)
+                self.assertEqual(male['lucky_item'], male_item)
+                self.assertEqual(female['lucky_item'], female_item)
+                self.assertIn(male_item, male['lucky_item_reason'])
+                self.assertIn(female_item, female['lucky_item_reason'])
+                self.assertEqual(
+                    {k: v for k, v in male.items() if k not in {'lucky_item', 'lucky_item_reason'}},
+                    {k: v for k, v in female.items() if k not in {'lucky_item', 'lucky_item_reason'}},
+                )
+
+    def test_male_daily_symbolic_fallback_uses_card_wallet_instead_of_pouch(self):
+        target = date(2026, 9, 22)
+        core = self._core(target)
+        core.synthesis.favorable_operations = []
+        core.semantic_state.favorable_elements = []
+        core.timing.daily['ten_god'] = 'direct_wealth'
+        core.timing.daily['pillar']['stem_element'] = '土'
+        result = build_daily_fortune(core, '테스트', target, include_menu=False)
+        self.assertEqual(result['lucky_item'], '베이지 카드지갑')
+        self.assertIn('베이지 카드지갑', result['lucky_item_reason'])
+        self.assertFalse(result['evidence_summary']['lucky_recommendation_basis']['recommendation_confirmed'])
 
     def test_fortune_changes_with_the_actual_daily_pillar(self):
         first_date = date(2026, 9, 7)

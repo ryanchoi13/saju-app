@@ -26,6 +26,7 @@ jobs:
           backend/tests/test_applied_myeongri_state.py
           backend/tests/test_applied_period_scope.py
           backend/tests/test_applied_service_adapters.py
+          backend/tests/test_daily_fortune_service.py
           backend/tests/test_semantic_engine.py
           backend/tests/test_timing_engine.py
           backend/tests/test_temporal_conditions.py

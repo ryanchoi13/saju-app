@@ -215,6 +215,12 @@ _ITEMS = {
     },
 }
 
+# Product defaults for male profiles; preserve the element and practical purpose.
+_MALE_ITEM_OVERRIDES = {
+    "organize": {"火": "붉은색 포인트 카드 케이스", "土": "베이지 카드지갑"},
+    "move": {"土": "베이지 키 케이스", "水": "남색 슬림 카드지갑"},
+}
+
 _GOD_ITEM_GROUP = {
     "peer": "record",
     "rob_wealth": "organize",
@@ -440,6 +446,8 @@ def build_daily_fortune(
     operation_text = _OPERATION_KO.get(operation_name, "하루의 우선순위를 지키는 일")
     item_group = _item_group(operation_name, daily_god)
     item = _ITEMS[item_group][lucky_element]
+    if core.input.gender == "male":
+        item = _MALE_ITEM_OVERRIDES.get(item_group, {}).get(lucky_element, item)
     element = _ELEMENT_GUIDE[lucky_element]
     talisman_title, talisman_power, talisman_type = _TALISMAN[lucky_element]
     core_operation_confirmed = bool(query["synthesis"].get("favorable_operations"))
