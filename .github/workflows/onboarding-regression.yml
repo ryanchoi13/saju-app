@@ -1,0 +1,35 @@
+name: Onboarding and meal API regression
+on:
+  pull_request:
+    paths:
+      - 'index.html'
+      - 'assets/landing.css'
+      - 'scripts/test_landing.cjs'
+      - 'scripts/test_kakao_profile.cjs'
+      - 'main.py'
+      - '*store.py'
+      - 'meal_sets.py'
+      - 'backend/tests/test_profile_persistence.py'
+      - 'backend/tests/test_ranked_menu_explorer.py'
+      - 'backend/tests/test_meal_set_limits.py'
+      - '.github/workflows/onboarding-regression.yml'
+permissions:
+  contents: read
+jobs:
+  regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: pip install -r requirements.txt pytest
+      - run: npm install --ignore-scripts --package-lock=false
+      - run: node scripts/test_landing.cjs && node scripts/test_kakao_profile.cjs
+      - run: python -m pytest -q backend/tests/test_profile_persistence.py backend/tests/test_ranked_menu_explorer.py backend/tests/test_meal_set_limits.py

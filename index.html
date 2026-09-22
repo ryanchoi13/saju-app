@@ -499,6 +499,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
     <link rel="stylesheet" href="/assets/design-system.css?v=5">
     <link rel="stylesheet" href="/assets/tarot-v2.css?v=1">
     <link rel="stylesheet" href="/assets/reading-tabs-v2.css?v=1">
+    <link rel="stylesheet" href="/assets/landing.css?v=1">
     <script src="/assets/design-controls.js?v=2" defer></script>
     <script src="/assets/menu-explorer.js?v=meal-reveal-navigation-1" defer></script>
     <script src="/assets/design-sample.js?v=3" defer></script>
@@ -536,38 +537,64 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
 
         <main>
             <!-- 로그인 게이트 -->
-            <div id="view-login-gate" class="login-gate-card">
-                <div style="width: 60px; height: 60px; margin: 0 auto 4px; display: flex; align-items: center; justify-content: center; border-radius: 16px; background: radial-gradient(circle, rgba(212,175,55,0.2) 0%, rgba(212,175,55,0.05) 100%); border: 1px solid rgba(212,175,55,0.3);">
-                    <svg width="38" height="38" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="20" cy="20" r="18" stroke="#D4AF37" stroke-width="1.2" stroke-opacity="0.5"/>
-                        <circle cx="20" cy="20" r="15.5" stroke="#D4AF37" stroke-width="1.8"/>
-                        <path d="M20 7L22.5 17.5L33 20L22.5 22.5L20 33L17.5 22.5L7 20L17.5 17.5Z" fill="#D4AF37" fill-opacity="0.2" stroke="#D4AF37" stroke-width="1.4" stroke-linejoin="round"/>
-                        <path d="M20 6C15.5 8 15.5 14 20 16C17.5 14 17.5 9 20 6Z" fill="#FFEAA7" stroke="#D4AF37" stroke-width="0.8"/>
-                        <circle cx="20" cy="20" r="2" fill="#D4AF37"/>
-                    </svg>
-                </div>
-
-                <h2 style="font-size: 22px; font-weight: 800; color: #FFFFFF; font-family: 'Noto Serif KR', serif; margin-bottom: 2px;">달하 (DALHA)</h2>
-                <p style="font-size: 13px; color: #94A3B8; margin-bottom: 4px;">사주와 색채로 여는 나만의 스타일 운명학<br>카카오로 3초 만에 시작하세요</p>
-                
-                <div class="gift-badge">
-                    🎁 신규 가입 축하 1,000 복채 즉시 지급
-                </div>
-
-                <button id="btnKakaoLogin" onclick="loginWithKakaoReal()" class="kakao-login-btn">
-                    <svg viewBox="0 0 24 24" width="20" height="20" fill="#191919"><path d="M12 3C6.5 3 2 6.6 2 11c0 2.8 1.9 5.3 4.8 6.7L6 21.5c-.1.3.2.6.5.4l4.4-2.9c.4 0 .7.1 1.1.1 5.5 0 10-3.6 10-8s-4.5-8-10-8z"/></svg>
-                    <span>카카오로 3초 만에 시작하기</span>
-                </button>
+            <div id="view-login-gate" class="dalha-landing">
+                <section class="landing-hero" aria-labelledby="landing-title">
+                    <div class="landing-intro">
+                        <p class="landing-eyebrow">내 생활의 작은 지침서, 달하</p>
+                        <h1 id="landing-title">운을 알고, 나를 알면<br>살아가는 일이<br><em>조금 더 수월해집니다.</em></h1>
+                        <p class="landing-description">운세를 읽는 데서 끝나지 않도록.<br>나의 사주에서 찾은 힌트를 오늘의 옷차림과<br class="landing-desktop-break"> 한 끼의 선택으로 이어보세요.</p>
+                        <div class="landing-actions">
+                            <button id="btnKakaoLogin" type="button" onclick="loginWithKakaoReal()" class="kakao-login-btn">
+                                <svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 3C6.5 3 2 6.6 2 11c0 2.8 1.9 5.3 4.8 6.7L6 21.5c-.1.3.2.6.5.4l4.4-2.9c.4 0 .7.1 1.1.1 5.5 0 10-3.6 10-8s-4.5-8-10-8z"/></svg>
+                                카카오로 나의 하루 시작하기
+                            </button>
+                            <a class="landing-text-link" href="#landing-preview">어떤 하루를 만나게 될까요? <span aria-hidden="true">↓</span></a>
+                        </div>
+                        <p class="landing-signup-note">처음 한 번, 이름과 생년월일 등 기본 정보를 입력해 주세요.<br>이미 가입했다면 같은 카카오 계정으로 이어서 이용할 수 있어요.</p>
+                    </div>
+                    <div class="landing-scene" aria-label="달하 서비스 소개 예시">
+                        <div class="landing-orbit" aria-hidden="true"><span class="landing-moon"></span><span class="landing-star">✦</span></div>
+                        <div class="landing-day-card">
+                            <div class="landing-card-top"><span>DALHA · DAILY NOTE</span><span class="landing-example-label">소개용 예시</span></div>
+                            <p class="landing-card-caption">오늘, 나에게 건네는 한마디</p>
+                            <p class="landing-card-quote">조금 천천히,<br>나의 리듬을 찾아가는 날.</p>
+                            <div class="landing-card-rule"></div>
+                            <div class="landing-palette"><span>오늘의 색 힌트</span><div><i style="background:#E6DDCB"></i><i style="background:#6C8072"></i><i style="background:#283F4B"></i></div></div>
+                            <p class="landing-card-foot">운세의 한 줄이 일상의 작은 선택으로.</p>
+                        </div>
+                        <div class="landing-floating-note"><span aria-hidden="true">☾</span> 내 하루에 어울리는 작은 힌트</div>
+                    </div>
+                </section>
+                <section id="landing-preview" class="landing-features" aria-labelledby="landing-features-title">
+                    <div class="landing-section-heading"><p class="landing-eyebrow">달하와 함께하는 하루</p><h2 id="landing-features-title">오늘, 뭐 입을까? 뭐 먹을까?<br>어떤 하루를 보낼까?</h2><p>막연한 운세를 넘어, 일상의 작은 선택까지.<br>오늘의 나에게 맞는 방향을 달하에서 찾아보세요.</p></div>
+                    <div class="landing-feature-grid">
+                        <article class="landing-feature">
+                            <div class="landing-feature-art landing-style-art" aria-hidden="true"><svg viewBox="0 0 220 150" fill="none"><path d="M77 27L95 19H125L143 27L175 59L151 80L140 66V131H80V66L69 80L45 59Z" fill="#E6DDCB" stroke="#A79F8D" stroke-width="1.5"/><path d="M95 19L110 38L125 19M110 38V131M80 66L77 27M140 66L143 27" stroke="#A79F8D" stroke-width="1.5"/><circle cx="115" cy="54" r="1.5" fill="#8C8779"/><circle cx="115" cy="75" r="1.5" fill="#8C8779"/><circle cx="115" cy="96" r="1.5" fill="#8C8779"/></svg><div class="landing-fabric-swatches"><i></i><i></i><i></i></div></div>
+                            <p class="landing-feature-number">01 / WEAR</p><h3>오늘 나에게 어울리는 코디</h3><p>나에게 어울리는 추천색부터 옷차림, 행운의 아이템까지.<br>오늘의 스타일을 완성해 보세요.</p>
+                        </article>
+                        <article class="landing-feature">
+                            <div class="landing-feature-art landing-food-art" aria-hidden="true"><div class="landing-plate"><span>아침</span><strong>점심</strong><span>저녁</span></div><span class="landing-food-note">오늘은 무엇을 먹을까?</span></div>
+                            <p class="landing-feature-number">02 / TASTE</p><h3>오늘 나에게 맞는 식단</h3><p>나의 기운을 고려한 아침·점심·저녁 추천 조합.<br>일반식부터 다이어트 식단까지, 음양오행 관점의 음식 조합과 끼니별 칼로리를 살펴보며 하루 식단을 골라보세요.</p>
+                        </article>
+                        <article class="landing-feature">
+                            <div class="landing-feature-art landing-fortune-art" aria-hidden="true"><span>오늘의 방향</span><strong>서두르기보다<br>하나씩, 차분하게.</strong><div class="landing-line"></div><small>나를 돌아보는 잠깐의 여유</small></div>
+                            <p class="landing-feature-number">03 / READ</p><h3>오늘의 흐름을 읽어요</h3><p>사주를 바탕으로 오늘의 운세와<br>일상에서 참고할 조언을 확인해요.</p>
+                        </article>
+                    </div>
+                    <p class="landing-example-disclaimer">위 문구·색상·그림은 서비스 이해를 위한 예시이며, 실제 개인별 추천과 다릅니다.</p>
+                </section>
+                <section class="landing-start" aria-labelledby="landing-start-title"><p class="landing-eyebrow">YOUR DAY, YOUR WAY</p><h2 id="landing-start-title">정해진 운명보다,<br>내가 만들어갈 오늘.</h2><p>달하의 힌트를 참고해 나에게 맞는 선택을 해보세요.</p><a class="landing-start-link" href="#btnKakaoLogin">나의 하루 시작하기 <span aria-hidden="true">↗</span></a><p class="landing-first-time">카카오 로그인 → 기본 정보 입력 → 나의 달하</p></section>
+                <footer class="landing-footer"><span>달하 · DALHA</span><div class="landing-brand-story"><h2>당신의 일상을 비추는 달빛, 달하</h2><p>고대가요 「정읍사」에서 달을 부르는 말처럼,<br>달하는 삶의 갈림길에서 방향을 살피는 길잡이가 되고자 합니다.</p><p>생년월일과 태어난 시간을 바탕으로 사주를 구성하고,<br>음양오행과 전통 명리학의 해석 체계를 일상의 언어로 풀어냅니다.</p></div></footer>
             </div>
 
             <!-- 온보딩 명식 입력 폼 -->
             <div id="onboardingInputView" class="card hidden" style="text-align: center;">
                 <div class="gift-badge" style="margin-bottom: 12px;">🎁 카카오 연동 완료 (+1,000 복채 지급)</div>
                 <h2 style="font-size: 21px; font-weight: 800; margin-bottom: 2px; font-family: 'Noto Serif KR', serif;">사주 명식 입력</h2>
-                <p style="font-size: 13px; color: #64748B; margin-bottom: 16px;">정밀 감명을 위해 <strong>이름, 생년월일, 태어난 시간</strong>을 확인해 주세요</p>
+                <p style="font-size: 13px; color: #64748B; margin-bottom: 16px;">처음 한 번만 정보를 입력해 주세요.<br>다음 로그인부터 저장된 정보로 이어서 이용할 수 있어요.</p>
                 <div id="kakaoProfileHelp" hidden style="margin-bottom:16px; text-align:left;">
                     <p id="kakaoProfileNotice" role="status" style="font-size:13px; color:#64748B; margin-bottom:8px;"></p>
-                    <button id="btnKakaoProfile" type="button" class="kakao-login-btn" onclick="requestKakaoProfileConsent()">카카오 정보 불러오기</button>
+                    <button id="btnKakaoProfile" type="button" class="kakao-login-btn hidden" onclick="requestKakaoProfileConsent()">카카오 정보 불러오기</button>
                 </div>
 
                 <div class="form-group">
@@ -752,6 +779,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                                 </div>
                                 <p id="menuStatus" class="menu-status" role="status"></p>
                                 <button id="menuNext" class="menu-next" type="button" onclick="DalhaMenu.next()">하루 세트 다시 추천</button>
+                                <details class="meal-info-note"><summary>식단 추천 이용 안내</summary><p>식단 추천은 일상의 참고를 위한 정보이며, 건강·영양에 관한 전문적인 판단을 대신하지 않습니다.</p></details>
                             </div>
                             <p id="menuError" class="menu-error" role="alert"></p>
                             <button id="menuPlanLike" type="button" onclick="togglePlanLike()" aria-label="오늘 식단 좋아요" aria-pressed="false" hidden style="border:0;background:transparent;color:#64748B;font-size:25px;cursor:pointer;padding:4px 10px;min-width:44px;min-height:44px;">♡</button>
@@ -1928,12 +1956,10 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             );
             const incomplete = Object.values(missing).some(Boolean);
             document.getElementById('kakaoProfileHelp').hidden = !incomplete || !!profile?.profile_complete;
-            document.getElementById('btnKakaoProfile').classList.toggle('hidden', account !== null && !pendingKakaoProfileScopes.length);
+            document.getElementById('btnKakaoProfile').classList.toggle('hidden', !pendingKakaoProfileScopes.length);
             document.getElementById('kakaoProfileNotice').textContent = pendingKakaoProfileScopes.length
                 ? '카카오 정보 제공에 동의하면 이름·생년월일 등 빈 항목을 자동으로 채울 수 있어요. 태어난 시간은 직접 확인해 주세요.'
-                : account === null
-                    ? '카카오 정보를 다시 불러오거나, 빈 항목만 직접 입력해 주세요.'
-                    : '카카오에서 제공되지 않은 항목은 직접 입력해 주세요. 이미 채워진 정보와 태어난 시간도 확인해 주세요.';
+                : '처음 한 번만 이름·성별·생년월일과 태어난 시간을 직접 확인해 주세요. 입력한 정보는 다음 로그인에도 사용할 수 있어요.';
         }
 
         function requestKakaoProfileConsent() {

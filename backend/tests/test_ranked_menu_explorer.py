@@ -12,6 +12,7 @@ from unittest.mock import patch
 
 import main
 import menu_store
+import meal_set_store
 from fastapi import HTTPException
 from app.engine.core.models import BirthInput
 from app.engine.services.ranked_menu import build_rankings
@@ -149,19 +150,30 @@ class MenuStoreTests(TestCase):
         self.assertEqual(menu_store.load('user_test',DAY,lambda:None)['seen_sets'],1)
 
     def test_api_profile_binding_and_service_integration(self):
-        main.users_db['user_test']=dict(name='테스트',gender='male',birth_year=1978,birth_month=3,
+        # The public endpoint migrated to meal_set_store. Legacy ranking/storage
+        # tests above deliberately retain menu_store; its tokens are not valid here.
+        profile=dict(name='테스트',gender='male',birth_year=1978,birth_month=3,
             birth_day=13,calendar_type='solar',sijin_index=5,profile_complete=True)
-        try:
-            req=main.MenuExploreRequest(user_id='user_test',token=self.first['token'],mode='general',
-                action='next',expected_day=str(DAY),expected_seen=1)
-            with patch.object(menu_store,'today',return_value=DAY):
-                self.assertEqual(main.explore_menus(req)['seen_sets'],2)
-                with self.assertRaises(HTTPException) as err:
-                    main.explore_menus(req.model_copy(update={'user_id':'user_unknown'}))
-                self.assertEqual(err.exception.status_code,401)
+        with patch.dict(main.users_db, {'user_test':profile}, clear=True), \
+                patch.object(meal_set_store,'today') as meal_clock:
             result=main.get_saju_pillars_and_analysis('테스트','male',1978,3,13,'solar',5,menu_account_id='user_test')
             fortune=result['daily_fortune']
             self.assertIn('menu_recommendations',fortune)
             self.assertEqual(fortune['recommended_meals'],[])
-            self.assertNotIn('점심',fortune['menu_recommendations']['basis_text'])
-        finally: main.users_db.pop('user_test',None)
+            first=fortune['menu_recommendations']
+            meal_clock.return_value=date.fromisoformat(first['date'])
+            self.assertEqual(first['version'],'meal-set-v1')
+            self.assertEqual(first['set_limit'],3)
+            self.assertEqual(len(first['items']),3)
+            req=main.MenuExploreRequest(user_id='user_test',token=first['token'],mode='general',
+                action='next',expected_day=first['date'],expected_seen=first['seen_sets'])
+            advanced=main.explore_menus(req)
+            self.assertEqual(advanced['seen_sets'],2)
+            self.assertEqual(len(advanced['history']),2)
+            self.assertEqual({m['period'] for m in advanced['items']},{'breakfast','lunch','dinner'})
+            with self.assertRaises(HTTPException) as err:
+                main.explore_menus(req.model_copy(update={'user_id':'user_unknown'}))
+            self.assertEqual(err.exception.status_code,401)
+            with self.assertRaises(HTTPException) as err:
+                main.explore_menus(req.model_copy(update={'token':self.first['token']}))
+            self.assertEqual(err.exception.status_code,403, 'legacy tokens remain rejected')
