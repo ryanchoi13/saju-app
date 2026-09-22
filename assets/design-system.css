@@ -166,8 +166,3 @@ html[data-design="moonlight"] .login-gate-card { background:var(--ui-surface); b
 .menu-error:empty { display:none; }
 .menu-photo-placeholder { width:100%; aspect-ratio:1; display:grid; place-items:center; color:var(--ui-muted,#68786E); background:var(--ui-soft,#F1F5F9); border-radius:10px; }
 .menu-photo-placeholder svg { width:65%; max-width:120px; }
-.menu-history-content { width:100%; max-width:520px; }
-.menu-history-content h3 { font-size:18px; line-height:1.5; }
-.menu-history-cards { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
-.menu-history-cards .menu-photo-card { min-width:0; }
-.menu-history-cards figcaption { overflow-wrap:anywhere; }
