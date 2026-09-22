@@ -13,9 +13,10 @@ from typing import Iterable
 
 from app.engine.core.models import ConfidenceLevel, MyeongriCoreResult
 from app.engine.timing.scope import core_for_timing_scope, timing_axes_for_scope
+from app.engine.synthesis.operation_scope import operation_block_reason
 
 
-APPLIED_STATE_VERSION = "applied-myeongri-state-v1"
+APPLIED_STATE_VERSION = "applied-myeongri-state-v2-service-eligibility"
 _URGENCY_ORDER = {"high": 0, "medium": 1, "low": 2, "unspecified": 3, None: 4}
 _AXES = {
     "temperature": ("warm", "cool"),
@@ -47,9 +48,16 @@ def _confirmed_directions(core: MyeongriCoreResult) -> list[dict]:
             **item,
             "status": "confirmed",
             "confidence": core.synthesis.confidence.value,
+            "recommendation_eligible": operation_block_reason(item, core.synthesis.model_dump(mode="json")) is None,
         }
         for item in core.synthesis.favorable_operations
     ]
+
+
+def recommended_directions(state: dict) -> list[dict]:
+    """Read the projection's eligibility; no fallback to raw element observations."""
+    return [d for d in state.get("directions", [])
+            if d.get("status") == "confirmed" and d.get("recommendation_eligible") is True]
 
 
 def _conditional_directions(core: MyeongriCoreResult) -> list[dict]:
@@ -295,10 +303,15 @@ def _axis_summary(directions: list[dict]) -> dict[str, dict]:
     return result
 
 
-def build_applied_state(core: MyeongriCoreResult, scope: str) -> dict:
+def build_applied_state(core: MyeongriCoreResult, scope: str, *, timing=None, cycle=None) -> dict:
     """Return one common applied-state contract for every DALHA service."""
 
-    core = core_for_timing_scope(core, scope)
+    if timing is not None or cycle is not None:
+        source = timing if timing is not None else core.timing
+        if cycle is not None:
+            source = source.model_copy(update={"luck_cycle": {"current": cycle}})
+        core = core.model_copy(update={"timing": source})
+    core = core_for_timing_scope(core, scope, force_reassessment=timing is not None or cycle is not None)
     confirmed = _confirmed_directions(core)
     conditional = _conditional_directions(core)
     cautions = _caution_directions(core)

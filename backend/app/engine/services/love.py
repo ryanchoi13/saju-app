@@ -6,6 +6,7 @@ from collections import Counter
 from html import escape
 
 from app.engine.core.models import MyeongriCoreResult
+from app.engine.services.applied_guidance import direction_advice, state_basis
 from app.engine.semantic import build_service_query
 
 
@@ -174,7 +175,7 @@ def build_lifetime_love_report(
       </div>
       <div style="display:grid;gap:10px;margin-bottom:14px;">
         <div style="background:#F8FAFC;border:1px solid #E2E8F0;padding:14px;border-radius:13px;"><h5 style="font-size:14px;font-weight:800;margin:0 0 5px;">원국의 관계 작용</h5><p style="font-size:13px;color:#475569;margin:0;">{_natal_relationship_summary(relationships)}</p></div>
-        <div style="background:#F8FAFC;border:1px solid #E2E8F0;padding:14px;border-radius:13px;"><h5 style="font-size:14px;font-weight:800;margin:0 0 5px;">{guide_title}</h5><p style="font-size:13px;color:#475569;margin:0;">{guide_text}</p></div>
+        <div style="background:#F8FAFC;border:1px solid #E2E8F0;padding:14px;border-radius:13px;"><h5 style="font-size:14px;font-weight:800;margin:0 0 5px;">{guide_title}</h5><p style="font-size:13px;color:#475569;margin:0;">{guide_text} {direction_advice(query['applied_state'], 'love', '')}</p></div>
         <div style="background:#FFF7ED;border:1px solid #FED7AA;padding:14px;border-radius:13px;"><h5 style="font-size:14px;font-weight:800;color:#9A3412;margin:0 0 5px;">현재 애정·관계 흐름</h5><p style="font-size:13px;color:#C2410C;margin:0;">{current_text}</p></div>
       </div>
       <h5 style="font-size:14.5px;font-weight:800;color:#0F172A;margin:0 0 4px;">생애 4단계 애정·관계 흐름</h5>
@@ -184,4 +185,4 @@ def build_lifetime_love_report(
       <p style="font-size:11.5px;color:#94A3B8;margin:12px 0 0;">이 리포트는 원국·십성·관계 작용·전체 대운을 애정과 관계의 언어로 해석한 참고 자료입니다. 특정 인연, 결혼, 재회, 이별을 확정하거나 상대방의 마음을 대신 판단하지 않습니다.</p>
     </div>
     """
-    return {"title": title, "content": content}
+    return {"analysis_basis": state_basis(query["applied_state"]), "title": title, "content": content}
