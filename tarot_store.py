@@ -21,17 +21,27 @@ def read(user_id, day):
 
 
 @contextmanager
-def locked(user_id, day):
+def locked(user_id, day, connection=None):
+    if connection is not None:
+        with _receipts(*connection, user_id, day) as receipts:
+            yield receipts
+        return
     initialize()
     with _connection() as (conn, pg):
         if not pg:
             conn.execute('BEGIN IMMEDIATE')
-        key = owner_key(user_id)
-        _execute(conn, pg, '''INSERT INTO tarot_days(owner_key,day) VALUES(%s,%s)
-            ON CONFLICT(owner_key,day) DO NOTHING''', (key,day))
-        row = _execute(conn, pg, 'SELECT receipts FROM tarot_days WHERE owner_key=%s AND day=%s'+
-                       (' FOR UPDATE' if pg else ''), (key,day)).fetchone()
-        receipts = json.loads(row[0])
-        yield receipts
-        _execute(conn, pg, 'UPDATE tarot_days SET receipts=%s WHERE owner_key=%s AND day=%s',
-                 (json.dumps(receipts,ensure_ascii=False),key,day))
+        with _receipts(conn, pg, user_id, day) as receipts:
+            yield receipts
+
+
+@contextmanager
+def _receipts(conn, pg, user_id, day):
+    key = owner_key(user_id)
+    _execute(conn, pg, '''INSERT INTO tarot_days(owner_key,day) VALUES(%s,%s)
+        ON CONFLICT(owner_key,day) DO NOTHING''', (key,day))
+    row = _execute(conn, pg, 'SELECT receipts FROM tarot_days WHERE owner_key=%s AND day=%s'+
+                   (' FOR UPDATE' if pg else ''), (key,day)).fetchone()
+    receipts = json.loads(row[0])
+    yield receipts
+    _execute(conn, pg, 'UPDATE tarot_days SET receipts=%s WHERE owner_key=%s AND day=%s',
+             (json.dumps(receipts,ensure_ascii=False),key,day))

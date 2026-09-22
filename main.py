@@ -22,6 +22,9 @@ import wardrobe_store
 import meal_set_store as menu_store
 import tarot_service
 import account_store
+import session_store
+import wallet_store
+import account_security
 from style_context import build_style_contexts
 from wada_context_placement import WADA_CONTEXT_PLACEMENT
 from wada_color_rules import evaluate_duo
@@ -31,7 +34,7 @@ from fashion_v2.svg_recommendation import build_svg_catalog_contexts
 from app.engine.services.fashion_colors import build_fashion_color_basis
 from fashion_v2.weather_service import gyeongju_weather_cache, weather_api_payload
 from lunar_python import Solar
-from fastapi import FastAPI, HTTPException, Response
+from fastapi import FastAPI, HTTPException, Response, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
@@ -46,7 +49,7 @@ app.mount("/assets", StaticFiles(directory=os.path.join(os.path.dirname(__file__
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["https://dalha.kr", "https://www.dalha.kr"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -55,6 +58,23 @@ app.add_middleware(
 # --- In-Memory DB Models ---
 users_db: Dict[str, Dict[str, Any]] = {}
 reports_db: Dict[str, List[Dict[str, Any]]] = {}
+
+
+def hydrate_account(user_id):
+    """Caches are for rendering only; database state always wins."""
+    saved = account_store.load(user_id)
+    previous = users_db.get(user_id, {})
+    assets = wallet_store.load(user_id, initial_balance=previous.get('coin', 1000),
+                               initial_reports=reports_db.get(user_id, []))
+    user = dict(previous, user_id=user_id, kakao_id=user_id[5:], coin=assets['balance'])
+    if saved:
+        user.update(saved['profile'], profile_complete=saved['confirmed'])
+    users_db[user_id] = user
+    reports_db[user_id] = assets['reports']
+    return user
+
+
+account_security.install(app, hydrate_account)
 
 # --- Request/Response Models ---
 class KakaoAuthRequest(BaseModel):
@@ -102,7 +122,7 @@ class UnlockReportRequest(BaseModel):
 
 class ChargeCoinRequest(BaseModel):
     user_id: str
-    amount: int
+    amount: int = Field(gt=0, le=100000, strict=True)
 
 # --- Saju Calculation Constants & Engine ---
 CHEONGAN = ["갑", "을", "병", "정", "무", "기", "경", "신", "임", "계"]
@@ -638,8 +658,7 @@ def _profile_from_kakao_request(req: KakaoAuthRequest) -> Optional[Dict[str, Any
 
 
 def _verified_kakao_request(req):
-    # New SDK logins are checked with Kakao. Keep the existing ID-only resume
-    # contract for old clients; a broader session-auth migration is separate.
+    # Saved-profile resumes are internal or session-authorized by the HTTP boundary.
     if req.profile_source != 'kakao':
         return req
     if not req.access_token:
@@ -731,7 +750,7 @@ def menu_feedback(req: MealFeedbackRequest):
 
 
 @app.post("/api/auth/kakao")
-def auth_kakao(req: KakaoAuthRequest):
+def auth_kakao(req: KakaoAuthRequest, response: Response = None, request: Request = None):
     req = _verified_kakao_request(req)
     user_id = f"user_{req.kakao_id}"
     incoming_profile = _profile_from_kakao_request(req)
@@ -771,6 +790,24 @@ def auth_kakao(req: KakaoAuthRequest):
     elif saved:
         user.update(saved['profile'], profile_complete=saved['confirmed'])
 
+    try:
+        if not saved:
+            account_store.save(user_id, _public_profile(user), confirmed=user['profile_complete'])
+        assets = wallet_store.load(user_id, initial_balance=user['coin'],
+                                   initial_reports=reports_db.get(user_id, []))
+        user['coin'] = assets['balance']
+        reports_db[user_id] = assets['reports']
+        if response is not None and req.profile_source == 'kakao':
+            token = session_store.issue(user_id)
+            if request is not None:
+                session_store.revoke(request.cookies.get(session_store.COOKIE))
+            secure = bool(os.getenv('RENDER') or os.getenv('RENDER_SERVICE_ID') or
+                          (request is not None and request.url.scheme == 'https'))
+            response.set_cookie(session_store.COOKIE, token, max_age=session_store.TTL,
+                                httponly=True, secure=secure, samesite='lax', path='/')
+    except account_store.StorageUnavailable:
+        raise HTTPException(status_code=503, detail='회원 정보를 저장하지 못했습니다. 다시 시도해 주세요.')
+
     has_profile = bool(user.get("profile_complete"))
     if has_profile:
         saju_res = get_saju_pillars_and_analysis(
@@ -796,6 +833,18 @@ def auth_kakao(req: KakaoAuthRequest):
         "kakao_prefill": _public_profile(user),
         **wardrobe,
     }
+
+@app.get('/api/auth/session')
+def resume_account(request: Request):
+    return auth_kakao(KakaoAuthRequest(kakao_id=request.state.account_id[5:]))
+
+
+@app.post('/api/auth/logout')
+def logout_account(request: Request, response: Response):
+    session_store.revoke(request.cookies.get(session_store.COOKIE))
+    response.delete_cookie(session_store.COOKIE, path='/')
+    return {'status':'success'}
+
 
 @app.post("/api/user/register-saju")
 def register_saju(req: RegisterSajuRequest):
@@ -911,8 +960,15 @@ def unlock_report(req: UnlockReportRequest):
     if req.user_id not in users_db:
         raise HTTPException(status_code=404, detail="User not found")
     
-    user = users_db[req.user_id]
-    if user["coin"] < req.cost:
+    prices = {'daewoon':450, 'sinnian':300, 'gunghap':350,
+              'wealth':220, 'business':220, 'love':220, 'health':220, 'study':220}
+    if req.report_key not in prices:
+        raise HTTPException(status_code=422, detail='지원하지 않는 리포트입니다.')
+    cost = prices[req.report_key]
+    user = hydrate_account(req.user_id)
+    if any(r['report_key'] == req.report_key for r in reports_db[req.user_id]):
+        return {'status':'success', 'new_balance':user['coin'], 'unlocked_reports':reports_db[req.user_id]}
+    if user["coin"] < cost:
         raise HTTPException(status_code=400, detail="Insufficient coins")
     if req.report_key == "gunghap":
         required = (
@@ -949,11 +1005,6 @@ def unlock_report(req: UnlockReportRequest):
             "sijin_index": req.partner_sijin_index,
         } if req.report_key == "gunghap" else None,
     )
-    with tarot_service.LOCK:
-        if user["coin"] < req.cost:
-            raise HTTPException(status_code=400, detail="Insufficient coins")
-        user["coin"] -= req.cost
-
     new_report = {
         "report_key": req.report_key,
         "report_title": rep_data["title"],
@@ -961,10 +1012,14 @@ def unlock_report(req: UnlockReportRequest):
         "created_at": datetime.date.today().strftime("%Y.%m.%d")
     }
 
-    if req.user_id not in reports_db:
-        reports_db[req.user_id] = []
-    
-    reports_db[req.user_id].append(new_report)
+    try:
+        assets = wallet_store.buy_report(req.user_id, req.report_key, cost, new_report)
+    except ValueError:
+        raise HTTPException(status_code=400, detail='Insufficient coins')
+    except wallet_store.StorageUnavailable:
+        raise HTTPException(status_code=503, detail='열람 정보를 저장하지 못했습니다. 다시 시도해 주세요.')
+    user['coin'] = assets['balance']
+    reports_db[req.user_id] = assets['reports']
 
     return {
         "status": "success",
@@ -1006,6 +1061,7 @@ def draw_daily_tarot(req: TarotDrawRequest):
         raise HTTPException(status_code=503, detail={'code':'storage_unavailable','message':'카드를 저장하지 못했습니다. 같은 요청으로 다시 확인해 주세요.'})
 
 
+@app.get('/api/daily-tarot/state')
 def daily_tarot_state(user_id: str):
     if user_id not in users_db:
         raise HTTPException(status_code=401, detail='로그인 상태를 확인해 주세요.')
@@ -1023,11 +1079,19 @@ def get_daily_tarot(slot: int, user_id: Optional[str] = None, is_paid: Optional[
 
 @app.post("/api/user/charge-coin")
 def charge_coin(req: ChargeCoinRequest):
-    with tarot_service.LOCK:
-        if req.user_id not in users_db:
-            users_db[req.user_id] = {"coin": 0}
-        users_db[req.user_id]["coin"] += req.amount
-        return {"status": "success", "new_balance": users_db[req.user_id]["coin"]}
+    # Explicit server-side allowlist only; never infer tester status from client data.
+    testers = {v.strip() for v in os.getenv('DALHA_TEST_USER_IDS', '').split(',') if v.strip()}
+    if req.user_id not in testers:
+        raise HTTPException(status_code=403, detail='가상 충전은 등록된 테스트 계정에서만 가능합니다. 실제 결제는 진행되지 않습니다.')
+    try:
+        with wallet_store.locked(req.user_id) as (_, _, assets):
+            if assets['balance'] + req.amount > 1000000:
+                raise ValueError('test_balance_limit')
+            assets['balance'] += req.amount
+    except ValueError:
+        raise HTTPException(status_code=400, detail='테스트 복채 보유 한도를 초과했습니다.')
+    users_db[req.user_id]['coin'] = assets['balance']
+    return {'status':'success', 'new_balance':assets['balance'], 'test_only':True}
 
 @app.get("/api/today-ganji")
 def get_today_ganji():

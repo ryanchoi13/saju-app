@@ -4,6 +4,12 @@ on:
     paths:
       - 'index.html'
       - 'assets/landing.css'
+      - 'assets/session-client.js'
+      - 'account_security.py'
+      - 'tarot_service.py'
+      - 'scripts/test_session_client.cjs'
+      - 'backend/tests/test_account_security_wallet.py'
+      - 'backend/tests/test_tarot_draw.py'
       - 'scripts/test_landing.cjs'
       - 'scripts/test_kakao_profile.cjs'
       - 'main.py'
@@ -29,7 +35,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - run: pip install -r requirements.txt pytest
+      - run: pip install -r requirements.txt pytest httpx
       - run: npm install --ignore-scripts --package-lock=false
       - run: node scripts/test_landing.cjs && node scripts/test_kakao_profile.cjs
+      - run: node scripts/test_session_client.cjs
+      - run: python -m pytest -q backend/tests/test_account_security_wallet.py backend/tests/test_tarot_draw.py
       - run: python -m pytest -q backend/tests/test_profile_persistence.py backend/tests/test_ranked_menu_explorer.py backend/tests/test_meal_set_limits.py

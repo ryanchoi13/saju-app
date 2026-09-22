@@ -5,7 +5,7 @@ const vm = require('node:vm');
 const path = require('node:path');
 const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
 for (const script of html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g)) new vm.Script(script[1]);
-const source = html.slice(html.indexOf('        function buildKakaoAuthPayload('), html.indexOf('        function logoutKakaoUser('));
+const source = html.slice(html.indexOf('        function buildKakaoAuthPayload('), html.indexOf('        async function logoutKakaoUser('));
 function setup(account, profile, status = 'new_user') {
     const nodes = new Map(), storage = new Map(), requests = [], logins = [], alerts = [];
     let sdkAccount = account;
@@ -33,7 +33,7 @@ function setup(account, profile, status = 'new_user') {
         Kakao: {isInitialized: () => true, Auth: {login: options => logins.push(options)},
             API: {request: options => options.success({id: '321', kakao_account: sdkAccount})}},
         fetch: async (url, options) => {
-            requests.push(JSON.parse(options.body));
+            requests.push(options?.body ? JSON.parse(options.body) : {sessionUrl:url});
             return {ok: true, json: async () => ({status, user_id:'user_321', coin_balance:1000,
                 kakao_prefill: profile, profile})};
         },

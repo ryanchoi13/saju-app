@@ -21,6 +21,7 @@
 
     <meta name="theme-color" content="#F7F8F8">
     <script src="/assets/design-init.js?v=1"></script>
+    <script src="/assets/session-client.js?v=1"></script>
     <script src="https://developers.kakao.com/sdk/js/kakao.min.js"></script>
     <script src="/assets/food-thumbnails-v1/catalog.js?v=3" defer></script>
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
@@ -2056,18 +2057,15 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
         }
 
         async function checkAutoLoginSession() {
-            const savedKakaoId = localStorage.getItem('dalha_kakao_id');
-            if (!savedKakaoId) return;
+            if (window.DALHA_DESIGN_SAMPLE) return;
 
             try {
-                const localSaju = getSavedUserSaju(savedKakaoId);
-                const sRes = await fetch('/api/auth/kakao', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify(buildKakaoAuthPayload(savedKakaoId))
-                });
+                const sRes = await fetch('/api/auth/session', {cache:'no-store'});
                 if (!sRes.ok) return;
                 const sData = await sRes.json();
+                const savedKakaoId = sData.user_id.slice(5);
+                localStorage.setItem('dalha_kakao_id', savedKakaoId);
+                const localSaju = null; // Server profile only; cached data never proves identity.
                 if (sData.status === "existing_user") {
                     currentUserId = sData.user_id;
                     acceptTarotState(sData.tarot_state);
@@ -2108,7 +2106,14 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             } catch(e) {}
         }
 
-        function logoutKakaoUser() {
+        async function logoutKakaoUser() {
+            try {
+                const result = await fetch('/api/auth/logout', {method:'POST'});
+                if (!result.ok) throw Error('logout failed');
+            } catch (_) {
+                alert('로그아웃을 완료하지 못했습니다. 연결을 확인하고 다시 시도해 주세요.');
+                return;
+            }
             window.DalhaMenu?.reset();
             localStorage.removeItem('dalha_kakao_id');
             location.reload();
@@ -2978,7 +2983,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 const res = await fetch('/api/user/charge-coin', {method:'POST',headers:{'Content-Type':'application/json'},
                     body:JSON.stringify({user_id:owner,amount})});
                 const data = await res.json();
-                if (!res.ok || !Number.isFinite(data.new_balance)) throw Error('Charge failed');
+                if (!res.ok || !Number.isFinite(data.new_balance)) throw Error(typeof data.detail === 'string' ? data.detail : '충전 결과를 확인하지 못했습니다.');
                 if (currentUserId !== owner) return;
                 currentCoin = data.new_balance; updateCoinDisplay();
                 const returnToTarot = tarotReturnAfterCharge;
@@ -2987,8 +2992,8 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 if (returnToTarot && tarotPendingDraw) {
                     tarotMessage('충전이 완료됐습니다. 선택한 카드를 펼치고 있어요.');
                     await submitTarotDraw();
-                } else alert(`충전이 완료되었습니다. (+${amount.toLocaleString()} 복채)`);
-            } catch (_) { status.textContent = '충전 결과를 확인하지 못했습니다. 잔액을 확인한 뒤 다시 시도해 주세요.'; }
+                } else alert(`테스트용 가상 충전이 완료되었습니다. (+${amount.toLocaleString()} 복채)\n실제 결제는 발생하지 않습니다.`);
+            } catch (error) { status.textContent = error.message || '충전 결과를 확인하지 못했습니다. 잔액을 확인한 뒤 다시 시도해 주세요.'; }
             finally { pgPaymentBusy = false; button.disabled = false; }
         }
 
