@@ -52,6 +52,8 @@ const current={report_key:'sinnian',report_title:generated.title,report_content:
     finish(); await pending;
     assert.equal(evaluate('currentCoin'),700);
     assert.ok(doc.getElementById('annualRefreshButton').classList.contains('hidden'));
+    assert.equal(doc.querySelector('#sinnianBox .reading-primary').textContent,'전체 올해 총운 읽기');
+    assert.ok(doc.getElementById('sinnianBox').compareDocumentPosition(doc.getElementById('annualMonthExplorer')) & w.Node.DOCUMENT_POSITION_FOLLOWING);
     assert.equal(doc.querySelectorAll('#annualMonthChoices button').length,12);
     assert.equal(doc.querySelectorAll('#archiveModalBody [data-report-domain]').length,6);
     assert.equal(doc.querySelectorAll('#archiveModalBody [data-report-month]').length,12);
