@@ -61,13 +61,15 @@ const current={report_key:'sinnian',report_title:generated.title,report_content:
         assert.equal(doc.querySelectorAll('#annualMonthReading [data-month-domain]').length,6);
         assert.match(doc.getElementById('annualMonthReading').textContent,/이 풀이의 근거/);
     }
-    assert.match(doc.getElementById('readingReportMeta').textContent,/현재 저장한 사주 정보로 업데이트/);
+    assert.match(doc.getElementById('readingReportMeta').textContent,/새 풀이 반영일/);
     w.openReadingReport(0,'0');
     assert.match(doc.getElementById('archiveModalBody').textContent,/보존할 원문/);
-    assert.match(doc.getElementById('readingReportMeta').textContent,/업데이트 전 원문/);
+    assert.match(doc.getElementById('readingReportMeta').textContent,/이전 원문 기록/);
     w.openReadingReport(0);
     assert.equal(doc.getElementById('readingVersionSelect').value,'current');
     assert.match(doc.getElementById('archiveModalBody').textContent,/가상검증님/);
+    assert.equal(doc.querySelectorAll('.annual-kind').length,0);
+    assert.equal(doc.querySelectorAll('.reading-modal-actions button').length,2);
     evaluate(`serverUnlockedReports=${JSON.stringify([legacy])};`);
     w.fetch=async()=>({ok:false,json:async()=>({detail:'검증용 저장 실패'})});
     await w.refreshOwnedAnnualReport();

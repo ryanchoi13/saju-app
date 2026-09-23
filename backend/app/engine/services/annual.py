@@ -119,14 +119,13 @@ def _evidence_html(selection, timing, representative):
 def _render_domains(rows, *, monthly=False):
     parts = []
     for row in rows:
-        badge = "풀이" if row["kind"] == "scoped_interpretation" else "생활 조언"
         key = "data-month-domain" if monthly else "data-report-domain"
         heading = "h5" if monthly else "h3"
         title = row["label"] if monthly else row["label"] + " · " + row["title"]
         parts.append(
             f'<section {key}="{row["domain"]}" data-reading-kind="{row["kind"]}" class="annual-domain">'
             f'<{heading} data-toc-label="{escape(row["label"], quote=True)}">{escape(title)}</{heading}>'
-            f'<span class="annual-kind">{badge}</span>{_paragraphs(row["paragraphs"])}</section>')
+            f'{_paragraphs(row["paragraphs"])}</section>')
     return "".join(parts)
 
 

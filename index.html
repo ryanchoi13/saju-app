@@ -22,7 +22,7 @@
     <meta name="theme-color" content="#F7F8F8">
     <script src="/assets/design-init.js?v=1"></script>
     <script src="/assets/session-client.js?v=1"></script>
-    <link rel="stylesheet" href="/assets/annual-reading.css?v=20260923-1">
+    <link rel="stylesheet" href="/assets/annual-reading.css?v=20260923-2">
     <script src="https://developers.kakao.com/sdk/js/kakao.min.js"></script>
     <script src="/assets/food-thumbnails-v1/catalog.js?v=3" defer></script>
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
@@ -1456,8 +1456,10 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             </label>
             <nav id="readingReportContents" aria-label="리포트 목차"></nav>
             <div id="archiveModalBody" style="flex: 1; overflow-y: auto; padding-right: 4px; margin-bottom: 12px;"></div>
-            <button onclick="closeArchiveDetailModal()" style="width: 100%; background: #2D6A4F; color: white; border: none; font-size: 14px; font-weight: 800; padding: 13px; border-radius: 12px; cursor: pointer;">이전 화면으로 돌아가기</button>
-            <button class="reading-text-button" onclick="printReadingReport()">감명서 인쇄 / PDF 소장</button>
+            <div class="reading-modal-actions">
+                <button class="reading-pdf-button" onclick="printReadingReport()">PDF로 저장하기</button>
+                <button class="reading-back-button" onclick="closeArchiveDetailModal()">이전 화면으로</button>
+            </div>
         </div>
     </div>
 
@@ -3328,8 +3330,8 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             readingReportIndex = index;
             document.getElementById('archiveModalTitle').textContent = item.report_title;
             document.getElementById('readingReportMeta').textContent = item.refreshed_at
-                ? `현재 저장한 사주 정보로 업데이트 · ${item.refreshed_at.slice(0,10)}`
-                : `${version === 'current' ? '구매 당시의 분석 결과' : '업데이트 전 원문'}${item.created_at ? ` · ${item.created_at}` : ''}`;
+                ? `새 풀이 반영일 · ${item.refreshed_at.slice(0,10)}`
+                : `${version === 'current' ? '첫 풀이 기록' : '이전 원문 기록'}${item.created_at ? ` · ${item.created_at}` : ''}`;
             document.getElementById('annualRefreshButton').classList.toggle('hidden', !annualNeedsRefresh(owned));
             const versionControl = document.getElementById('readingVersionControl');
             const versionSelect = document.getElementById('readingVersionSelect');
