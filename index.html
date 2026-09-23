@@ -1060,11 +1060,11 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                         <p>올해의 중심 흐름과 애정·관계·재물·일·학습·생활 리듬을 함께 살펴봅니다.</p>
                         <div class="report-facts"><span>올해 총운 + 12개월</span><span>300 복채</span></div>
                         <p id="sinnianTeaserBox" class="reading-caption">포함 내용 · 올해의 중요한 흐름 · 월별 풀이 · 참고할 행동</p>
+                        <div id="sinnianBox" class="hidden"></div>
                         <div id="annualMonthExplorer" class="hidden">
                             <div id="annualMonthChoices" class="period-choices" role="group" aria-label="월별 풀이 선택"></div>
                             <div id="annualMonthReading" class="period-reading" aria-live="polite"></div>
                         </div>
-                        <div id="sinnianBox" class="hidden"></div>
                         <button id="btnSinnian" class="reading-primary" onclick="handleUnlockReportOnServer('sinnian', 300)">300 복채로 올해운세 읽기</button>
                     </div>
                 </section>
@@ -3286,7 +3286,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 note.textContent = `구매한 결과 · ${item.report_title}${item.created_at ? ` · ${item.created_at}` : ''}`;
                 const open = document.createElement('button');
                 open.className = 'reading-primary';
-                open.textContent = '구매한 풀이 다시 읽기';
+                open.textContent = key === 'sinnian' ? '전체 올해 총운 읽기' : '구매한 풀이 다시 읽기';
                 open.onclick = () => openReadingReport(index);
                 slot.append(note, open);
                 if (key === 'sinnian') {
