@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 from html import escape
+from app.engine.services.reading_editorial import VERSION, DETAIL, traits, section, paragraphs, cycle_paragraphs
+from app.engine.services.annual_editorial import GROUPS, GENERAL_TITLES, scene
 
 from app.engine.core.models import MyeongriCoreResult
 from app.engine.semantic.applied import recommended_directions
@@ -133,10 +135,12 @@ def _operation_text(query: dict) -> str:
 
 
 def _cycle_narrative(interpretation: dict) -> str:
-    narrative = render_overall(interpretation)
-    labels = " · ".join(p["label"] for p in narrative["subjects"] if p["primary"])
-    intro = f"이 시기에는 <strong>{escape(labels)}</strong>{_object_particle(labels)} 중심 주제로 살펴봅니다. " if labels else ""
-    return intro + escape(narrative["advice"])
+    selected = interpretation["selected"]
+    primary = next((c for c in selected if c["domain"] in interpretation["primary_domains"]), None)
+    values = cycle_paragraphs(interpretation.get("focal_god"), primary["domain"] if primary else "self")
+    if primary:
+        values.append(scene(primary))
+    return escape(" ".join(values))
 
 
 def _cycle_card(cycle: dict, current_index: int | None, interpretation: dict) -> str:
@@ -235,42 +239,26 @@ def build_lifetime_overall_report(
     narrative = render_overall(selection)
     cycle_summaries = []
     cycles_html = _cycle_html(query, core, cycle_summaries)
-    content = f"""
-    <div data-overall-version="{OVERALL_VERSION}" style="text-align:left;line-height:1.75;color:#1E293B;">
-      <div style="background:#ECFDF5;border-left:4px solid #10B981;padding:16px;border-radius:14px;margin-bottom:14px;">
-        <h4 style="font-size:16px;color:#065F46;margin:0 0 7px;">{escape(narrative['title'])}</h4>
-        <p style="font-size:13.5px;color:#047857;margin:0;">{escape(narrative['unified_advice'])}</p>
-      </div>
-      <div style="display:grid;gap:10px;margin-bottom:16px;">{subjects_html(narrative)}</div>
-      <div style="background:#FFFBEB;border-left:4px solid #F59E0B;padding:16px;border-radius:14px;margin-bottom:14px;">
-        <h4 style="font-size:16px;font-weight:800;color:#78350F;margin:0 0 6px;">원국 종합 판단</h4>
-        <p style="font-size:13.5px;color:#92400E;margin:0;">
-          일간은 {day.stem}({day.element})이며, 월령을 중심으로 본 기본 구조는 <strong>{structure}</strong>입니다.
-          강약은 <strong>{strength}</strong>, 계절 환경은 <strong>{climate}</strong>으로 판정했습니다.
-          이 결론의 종합 확신도는 <strong>{confidence}</strong>이며, 조건이 있는 항목은 확정 표현에서 제외했습니다.
-        </p>
-      </div>
-      <div style="background:#F8FAFC;border:1px solid #E2E8F0;padding:14px;border-radius:14px;margin-bottom:14px;">
-        <h5 style="font-size:14px;font-weight:800;color:#0F172A;margin:0 0 5px;">평생 기질과 선택의 기준</h5>
-        <p style="font-size:13px;color:#475569;margin:0;">
-          강약과 계절 환경까지 함께 보면 평생의 핵심은 ‘강한 점을 더 키우는 것’보다
-          상황에 맞게 힘을 보강하거나 풀어내는 데 있습니다. 우선 방향은
-          <strong>{_operation_text(query)}</strong>입니다.
-        </p>
-      </div>
-      <div style="margin-bottom:12px;">
-        <h5 style="font-size:14px;font-weight:800;color:#0F172A;margin:0 0 4px;">생애 4단계 대운 흐름 · {direction}</h5>
-        <p style="font-size:12px;color:#64748B;margin:0 0 9px;line-height:1.6;">
-          계산은 10년 대운을 그대로 보존하되, 읽기 쉽도록 초년·청년·중장년·말년 네 구간으로 묶었습니다.
-          현재 구간은 펼쳐 두고 나머지는 눌러서 확인할 수 있습니다.
-        </p>
-        <div style="display:grid;gap:8px;">{cycles_html}</div>
-      </div>
-      {_uncertainty_html(core)}
-      <p style="font-size:11.5px;color:#94A3B8;margin:12px 0 0;">
-        대운은 좋고 나쁨을 단정하는 점수가 아니라, 시기마다 어떤 역할과 선택이 부각되는지를 보여줍니다.
-      </p>
-    </div>
-    """
-    return {"analysis_basis": state_basis(query["applied_state"]), "title": title, "content": content, "engine_version": OVERALL_VERSION,
+    ordinary = query["synthesis"]["overall_structure"].get("ordinary")
+    chapters = section("나를 이해하는 첫 장", [f"{user_name or '회원'}님, " + traits(ordinary)[0],
+                                                   traits(ordinary)[1]])
+    chapters += section("강점을 오래 살리려면", [traits(ordinary)[2]])
+    for domain, label in GROUPS:
+        candidate = next((c for c in selection["candidates"] if c["domain"] == domain), None)
+        values = ([scene(candidate)] if candidate else []) + list(DETAIL[domain])
+        chapters += section(label + " · " + GENERAL_TITLES[domain], values)
+    content = (
+        f'<div class="long-reading" data-overall-version="{OVERALL_VERSION}" data-narrative-version="{VERSION}">'
+        + chapters +
+        '<h3>생애 4단계 대운 흐름</h3>'
+        '<p>삶의 시기마다 관심을 둘 일과 조심할 부분을 살펴봅니다. 현재 나이에 해당하는 구간부터 확인해 보세요.</p>'
+        + cycles_html +
+        '<details class="reading-evidence"><summary>이 풀이의 근거 · 명리 용어 포함</summary>'
+        f'<p>일간 {day.stem}({day.element}) · {structure} · {strength} · {climate}. 대운은 {direction}입니다.</p>'
+        f'<p>원국에서 {escape(" · ".join(c["label"] for c in selection["selected"]))}을 중심 주제로 살폈습니다. '
+        '분야별 설명에서는 계산으로 확인한 주제와 일상에서 활용할 조언을 함께 다룹니다.</p>'
+        f'<p>종합 판단의 보완 방향: {_operation_text(query)}</p></details>'
+        + _uncertainty_html(core) +
+        '<p class="reading-caption">원국과 10년 대운을 바탕으로 한 해석입니다. 실제 건강과 중요한 결정은 현실의 정보도 함께 확인해 주세요.</p></div>')
+    return {"analysis_basis": state_basis(query["applied_state"]), "title": title, "content": content, "engine_version": OVERALL_VERSION, "narrative_version": VERSION,
             "evidence_summary": {"natal": selection, "cycles": cycle_summaries}}

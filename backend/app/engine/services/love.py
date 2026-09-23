@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from collections import Counter
 from html import escape
+from app.engine.services.reading_editorial import theme_content, VERSION
 
 from app.engine.core.models import MyeongriCoreResult
 from app.engine.services.applied_guidance import direction_advice, state_basis
@@ -167,22 +168,9 @@ def build_lifetime_love_report(
         "현재 대운 구간을 확정하지 못해 원국과 전체 대운의 공통 흐름만 제시합니다."
     )
     title = f"{name}님 정통 명리 평생 애정·관계운"
-    content = f"""
-    <div style="text-align:left;line-height:1.78;color:#1E293B;">
-      <div style="background:#FFF1F2;border-left:4px solid #E11D48;padding:16px;border-radius:14px;margin-bottom:14px;">
-        <h4 style="font-size:16px;font-weight:800;color:#9F1239;margin:0 0 6px;">평생 관계의 구조 · {safe_status}</h4>
-        <p style="font-size:13.5px;color:#BE123C;margin:0;">{_relationship_style(counts)} 원국의 정재·편재, 정관·편관, 비견·겁재가 드러난 위치와 관계 작용을 함께 살폈습니다. 십성의 개수는 인연의 수나 애정의 점수가 아닙니다.</p>
-      </div>
-      <div style="display:grid;gap:10px;margin-bottom:14px;">
-        <div style="background:#F8FAFC;border:1px solid #E2E8F0;padding:14px;border-radius:13px;"><h5 style="font-size:14px;font-weight:800;margin:0 0 5px;">원국의 관계 작용</h5><p style="font-size:13px;color:#475569;margin:0;">{_natal_relationship_summary(relationships)}</p></div>
-        <div style="background:#F8FAFC;border:1px solid #E2E8F0;padding:14px;border-radius:13px;"><h5 style="font-size:14px;font-weight:800;margin:0 0 5px;">{guide_title}</h5><p style="font-size:13px;color:#475569;margin:0;">{guide_text} {direction_advice(query['applied_state'], 'love', '')}</p></div>
-        <div style="background:#FFF7ED;border:1px solid #FED7AA;padding:14px;border-radius:13px;"><h5 style="font-size:14px;font-weight:800;color:#9A3412;margin:0 0 5px;">현재 애정·관계 흐름</h5><p style="font-size:13px;color:#C2410C;margin:0;">{current_text}</p></div>
-      </div>
-      <h5 style="font-size:14.5px;font-weight:800;color:#0F172A;margin:0 0 4px;">생애 4단계 애정·관계 흐름</h5>
-      <p style="font-size:12px;color:#64748B;margin:0 0 9px;">10년 대운 계산은 유지하면서 초년·청년·중장년·말년으로 묶었고, 현재 구간을 펼쳐 표시합니다.</p>
-      <div style="display:grid;gap:8px;">{_phases_html(cycles, current_index)}</div>
-      {_uncertainty(core)}
-      <p style="font-size:11.5px;color:#94A3B8;margin:12px 0 0;">이 리포트는 원국·십성·관계 작용·전체 대운을 애정과 관계의 언어로 해석한 참고 자료입니다. 특정 인연, 결혼, 재회, 이별을 확정하거나 상대방의 마음을 대신 판단하지 않습니다.</p>
-    </div>
-    """
-    return {"analysis_basis": state_basis(query["applied_state"]), "title": title, "content": content}
+    evidence = (
+        f'<h4>평생 관계의 구조 · {safe_status}</h4><h5>원국의 관계 작용</h5>'
+        f'<p>{escape(_natal_relationship_summary(relationships))}</p>'
+        f'<p>{escape(direction_advice(query["applied_state"], "love", ""))}</p>')
+    content = theme_content(query, user_name or "회원", "love", evidence, _uncertainty(core), safe_status)
+    return {"analysis_basis": state_basis(query["applied_state"]), "title": title, "content": content, "narrative_version": VERSION}

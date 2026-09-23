@@ -106,6 +106,38 @@ const current={report_key:'sinnian',report_title:generated.title,report_content:
     w.confirm=()=>false;
     w.fetch=async()=>{throw Error('cancel must not send request');};
     await w.refreshOwnedAnnualReport();
+    const oldWealth={...legacy,report_key:'wealth',report_title:'재물운'};
+    const newWealth={...oldWealth,narrative_version:generated.narrative_version,
+        report_content:'<p>새로운 재물운 풀이</p>',previous_versions:[oldWealth]};
+    evaluate(`serverUnlockedReports=${JSON.stringify([oldWealth])};`);
+    w.openReadingReport(0); w.confirm=()=>true;
+    assert.ok(!doc.getElementById('annualRefreshButton').classList.contains('hidden'));
+    let genericRequests=0,completeGeneric;
+    w.fetch=(url,opts)=>{
+        genericRequests++; assert.equal(url,'/api/reports/refresh');
+        assert.equal(JSON.parse(opts.body).report_key,'wealth');
+        return new Promise(resolve=>{completeGeneric=()=>resolve({ok:true,json:async()=>({new_balance:700,unlocked_reports:[newWealth]})});});
+    };
+    const genericPending=w.refreshOwnedReading();
+    await w.refreshOwnedReading(); assert.equal(genericRequests,1);
+    completeGeneric(); await genericPending;
+    assert.equal(evaluate('currentCoin'),700);
+    assert.equal(doc.getElementById('readingReportMeta').textContent,'결제일 · 2026.02.01');
+    w.openReadingReport(0,'0');
+    assert.match(doc.getElementById('archiveModalBody').textContent,/보존할 원문/);
+    evaluate(`serverUnlockedReports=${JSON.stringify([{...legacy,report_key:'business'}])};`);
+    w.openReadingReport(0); w.prompt=()=>null;
+    w.fetch=async()=>{throw Error('cancel must not send request');};
+    await w.refreshOwnedReading();
+    w.prompt=()=>'잘못된 상황'; await w.refreshOwnedReading();
+    assert.match(alerts.at(-1),/상황 중 하나/);
+    evaluate(`serverUnlockedReports=${JSON.stringify([{...legacy,report_key:'gunghap'}])};`);
+    w.openReadingReport(0); await w.refreshOwnedReading();
+    assert.equal(evaluate('gunghapRefreshMode'),true);
+    assert.match(doc.getElementById('gunghapSubmitButton').textContent,/무료 업데이트/);
+    w.closeGunghapModal();
+    assert.equal(evaluate('gunghapRefreshMode'),false);
+    assert.ok(!doc.getElementById('archiveDetailModal').classList.contains('hidden'));
     const ids=[...doc.querySelectorAll('[id]')].map(el=>el.id);
     assert.equal(ids.length,new Set(ids).size);
     assert.match(source,/annual-reading\.css\?v=/);

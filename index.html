@@ -22,7 +22,7 @@
     <meta name="theme-color" content="#F7F8F8">
     <script src="/assets/design-init.js?v=1"></script>
     <script src="/assets/session-client.js?v=1"></script>
-    <link rel="stylesheet" href="/assets/annual-reading.css?v=20260923-6">
+    <link rel="stylesheet" href="/assets/annual-reading.css?v=20260923-7">
     <script src="/assets/annual-reader.js?v=20260923-4" defer></script>
     <script src="https://developers.kakao.com/sdk/js/kakao.min.js"></script>
     <script src="/assets/food-thumbnails-v1/catalog.js?v=3" defer></script>
@@ -1332,7 +1332,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                     <option value="친구 / 지인">친구 / 지인</option>
                 </select>
             </div>
-            <button onclick="confirmUnlockGunghapOnServer()" style="width: 100%; background: #BE123C; color: white; border: none; font-size: 14.5px; font-weight: 800; padding: 13px; border-radius: 12px; cursor: pointer;">
+            <button id="gunghapSubmitButton" onclick="confirmUnlockGunghapOnServer()" style="width: 100%; background: #BE123C; color: white; border: none; font-size: 14.5px; font-weight: 800; padding: 13px; border-radius: 12px; cursor: pointer;">
                 <span class="btn-coin-icon-white"></span> 350 복채로 두 사람의 인연 풀이 확인하기
             </button>
         </div>
@@ -1451,7 +1451,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 <h3 id="archiveModalTitle" style="font-size: 14px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif;">운세 리포트</h3>
             </div>
             <p id="readingReportMeta" class="reading-caption"></p>
-            <button id="annualRefreshButton" class="reading-text-button hidden" onclick="refreshOwnedAnnualReport()">새 풀이로 업데이트 · 추가 복채 없음</button>
+            <button id="annualRefreshButton" class="reading-text-button hidden" onclick="refreshOwnedReading()">새 풀이로 업데이트 · 추가 복채 없음</button>
             <label id="readingVersionControl" class="hidden">풀이 버전
                 <select id="readingVersionSelect" onchange="openReadingReport(readingReportIndex, this.value)"></select>
             </label>
@@ -2953,7 +2953,49 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             refreshReportEntrypoints();
         }
 
-        const ANNUAL_NARRATIVE_VERSION = 'annual-conversation-v2';
+        const ANNUAL_NARRATIVE_VERSION = 'reading-conversation-v3';
+        function readingNeedsRefresh(item) {
+            return ['sinnian','daewoon','wealth','business','love','health','study','gunghap'].includes(item?.report_key)
+                && item.narrative_version !== ANNUAL_NARRATIVE_VERSION;
+        }
+        async function refreshOwnedReading(partnerInput = null) {
+            const item = serverUnlockedReports[readingReportIndex];
+            if (!currentUserId || !item || reportRequestPending || !readingNeedsRefresh(item)) return;
+            if (item.report_key === 'sinnian') { await refreshOwnedAnnualReport(); return; }
+            if (item.report_key === 'gunghap' && !partnerInput) {
+                openGunghapInputModal(true); return;
+            }
+            let subOption = item.reading_context?.sub_option || '기본';
+            const options = item.report_key === 'business' ? ['직장인','취업/이직','사업가','창업']
+                : item.report_key === 'love' ? ['솔로','썸/짝사랑','연애중','기혼'] : null;
+            if (options) {
+                subOption = prompt('현재 상황을 입력해 주세요: ' + options.join(' / '),
+                    options.includes(subOption) ? subOption : options[0]);
+                if (subOption === null) return;
+                subOption = subOption.trim();
+                if (!options.includes(subOption)) { alert('안내된 상황 중 하나를 정확히 입력해 주세요.'); return; }
+            }
+            if (!confirm('현재 저장한 사주 정보와 선택한 상황으로 새 풀이를 작성합니다. 추가 복채는 없으며 결제일과 이전 원문은 유지됩니다. 진행할까요?')) return;
+            const owner = currentUserId;
+            const key = item.report_key;
+            reportRequestPending = true; setReportRequestState(true);
+            try {
+                const response = await fetch('/api/reports/refresh', {
+                    method:'POST', headers:{'Content-Type':'application/json'},
+                    body:JSON.stringify({user_id:owner,report_key:key,sub_option:subOption,...(partnerInput || {})})
+                });
+                const data = await response.json();
+                if (!response.ok) throw Error(typeof data.detail === 'string' ? data.detail : '풀이를 업데이트하지 못했습니다.');
+                if (currentUserId !== owner) return;
+                serverUnlockedReports = data.unlocked_reports; currentCoin = data.new_balance;
+                updateCoinDisplay(); renderServerArchive(); restoreUnlockedUIFromReports();
+                openReadingReport(latestOwnedReportIndex(key));
+            } catch (error) {
+                if (currentUserId === owner) alert(error.message || '새로고침 후 보관함을 확인해 주세요.');
+            } finally {
+                reportRequestPending = false; setReportRequestState(false);
+            }
+        }
         function annualNeedsRefresh(item) {
             return item?.report_key === 'sinnian' && item.narrative_version !== ANNUAL_NARRATIVE_VERSION;
         }
@@ -3038,9 +3080,14 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             finally { pgPaymentBusy = false; button.disabled = false; }
         }
 
-        function openGunghapInputModal() {
+        let gunghapRefreshMode = false;
+        function openGunghapInputModal(forRefresh = false) {
             const ownedIndex = latestOwnedReportIndex('gunghap');
-            if (ownedIndex >= 0) { openReadingReport(ownedIndex); return; }
+            if (ownedIndex >= 0 && !forRefresh) { openReadingReport(ownedIndex); return; }
+            gunghapRefreshMode = forRefresh;
+            if (forRefresh) document.getElementById('archiveDetailModal').classList.add('hidden');
+            document.getElementById('gunghapSubmitButton').textContent = forRefresh
+                ? '상대방 정보 확인 후 무료 업데이트' : '350 복채로 두 사람의 인연 풀이 확인하기';
             const nameInput = document.getElementById('partnerNameInput');
             const relSelect = document.getElementById('partnerRelationSelect');
 
@@ -3057,7 +3104,11 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             setTimeout(() => { nameInput.focus(); }, 150);
         }
 
-        function closeGunghapModal() { document.getElementById('gunghapModal').classList.add('hidden'); }
+        function closeGunghapModal() {
+            document.getElementById('gunghapModal').classList.add('hidden');
+            if (gunghapRefreshMode) document.getElementById('archiveDetailModal').classList.remove('hidden');
+            gunghapRefreshMode = false;
+        }
 
         function confirmUnlockGunghapOnServer() {
             const pName = document.getElementById('partnerNameInput').value.trim();
@@ -3088,15 +3139,18 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 return;
             }
 
+            const refreshing = gunghapRefreshMode;
             closeGunghapModal();
-            handleUnlockReportOnServer('gunghap', 350, "기본", pName, rel, {
+            const partnerInput = {
                 partner_gender: gender,
                 partner_birth_year: y,
                 partner_birth_month: m,
                 partner_birth_day: d,
                 partner_calendar_type: calendarType,
                 partner_sijin_index: sijin
-            });
+            };
+            if (refreshing) refreshOwnedReading({partner_name:pName,relation:rel,...partnerInput});
+            else handleUnlockReportOnServer('gunghap', 350, "기본", pName, rel, partnerInput);
         }
 
         function openThemeSelectModal(key) {
@@ -3326,7 +3380,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             document.getElementById('archiveModalTitle').textContent = item.report_title;
             document.getElementById('readingReportMeta').textContent =
                 owned.created_at ? `결제일 · ${owned.created_at.slice(0,10).replace(/-/g,'.')}` : '';
-            document.getElementById('annualRefreshButton').classList.toggle('hidden', !annualNeedsRefresh(owned));
+            document.getElementById('annualRefreshButton').classList.toggle('hidden', !readingNeedsRefresh(owned));
             const versionControl = document.getElementById('readingVersionControl');
             const versionSelect = document.getElementById('readingVersionSelect');
             versionSelect.replaceChildren();
