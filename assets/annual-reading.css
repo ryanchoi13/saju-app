@@ -1,4 +1,6 @@
 /* Full report and cloned monthly cards share a mobile-first reading rhythm. */
+#archiveModalBody .annual-month h4 > .annual-month-label { display:block; color:var(--ui-accent,#205D62)!important; font-size:18px!important; font-weight:800; margin-bottom:12px; line-height:1.5; }
+#archiveModalBody .annual-month h4 > .annual-month-message { display:block; color:var(--ui-ink)!important; font-size:18px!important; font-weight:800; line-height:1.65; }
 #archiveModalBody .annual-domain h3 > .annual-domain-label { display:block; width:fit-content; color:var(--ui-accent,#205D62)!important; font-size:14px!important; font-weight:800; padding-left:9px; border-left:3px solid var(--ui-accent,#205D62); line-height:1.5; margin-bottom:10px; }
 #archiveModalBody .annual-domain h3 > .annual-domain-message { display:block; color:var(--ui-ink)!important; font-size:18px!important; line-height:1.65; }
 #archiveModalBody .annual-domain > h5 { color:var(--ui-accent,#205D62)!important; }

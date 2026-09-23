@@ -1,5 +1,23 @@
 // View-only partition of the purchased document. PDF always uses its saved source.
 window.formatAnnualReading = function(body) {
+    body.querySelectorAll('[data-report-month]').forEach(card => {
+        const heading = card.querySelector(':scope > h4');
+        if (heading && !heading.querySelector('.annual-month-label')) {
+            const title = heading.textContent;
+            const boundary = title.indexOf(' · ');
+            if (boundary >= 0) {
+                const label = document.createElement('span');
+                label.className = 'annual-month-label'; label.textContent = title.slice(0,boundary);
+                const message = document.createElement('span');
+                message.className = 'annual-month-message'; message.textContent = title.slice(boundary+3);
+                heading.replaceChildren(label,message);
+            }
+        }
+        const opening = card.querySelector(':scope > p');
+        if (opening?.childNodes.length === 1 && opening.firstChild.nodeType === 3) {
+            opening.firstChild.textContent = opening.textContent.replace(/^\d{1,2}월 [\s\S]*?님의 풀이입니다\.\s*/, '');
+        }
+    });
     body.querySelectorAll('.annual-kind').forEach(el => el.remove());
     body.querySelectorAll('.annual-note').forEach(el => {
         if (el.textContent.startsWith('분야별로 계산에서 드러나는 주제와 생활 조언을 구분해')) el.remove();
@@ -102,6 +120,8 @@ window.ANNUAL_PRINT_STYLE = `
     .annual-kind { display:none; }
     .annual-domain-label { display:block; color:#205D62; font-size:11pt; margin-bottom:6pt; }
     .annual-domain-message { display:block; font-size:14pt; }
+    .annual-month-label { display:block; color:#205D62; font-size:14pt; margin-bottom:9pt; }
+    .annual-month-message { display:block; font-size:14pt; }
     .annual-note,.annual-evidence { font-size:9pt; color:#526378; }
     button { display:none; }
 `;
