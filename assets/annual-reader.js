@@ -1,5 +1,13 @@
 // View-only partition of the purchased document. PDF always uses its saved source.
 window.formatAnnualReading = function(body) {
+    // Apply this copy edit to saved originals in the reader and full PDF too.
+    body.querySelectorAll('.annual-evidence p').forEach(paragraph => {
+        const walker = document.createTreeWalker(paragraph, NodeFilter.SHOW_TEXT);
+        while (walker.nextNode()) {
+            walker.currentNode.textContent = walker.currentNode.textContent.replace(
+                '생활 조언으로 표시한 분야에는 특정한 사건이나 길흉 판단을 덧붙이지 않았습니다.', '');
+        }
+    });
     body.querySelectorAll('[data-report-month]').forEach(card => {
         const heading = card.querySelector(':scope > h4');
         if (heading && !heading.querySelector('.annual-month-label')) {
@@ -116,7 +124,9 @@ window.ANNUAL_PRINT_STYLE = `
     h4 { font-size:13pt; }
     h5 { font-size:11pt; }
     p { orphans:3; widows:3; margin:0 0 10pt; }
-    .annual-month { break-before:page; page-break-before:always; border:0!important; }
+    .annual-month { break-before:auto; page-break-before:auto; border:0!important; }
+    .annual-month + .annual-month { margin-top:60pt; }
+    .annual-overview > h3:first-child { color:#205D62; }
     .annual-kind { display:none; }
     .annual-domain-label { display:block; color:#205D62; font-size:11pt; margin-bottom:6pt; }
     .annual-domain-message { display:block; font-size:14pt; }
