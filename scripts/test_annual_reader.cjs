@@ -26,6 +26,7 @@ for(const script of doc.querySelectorAll('script:not([src])')) {
     new vm.Script(script.textContent); evaluate(script.textContent);
 }
 const tick=()=>new Promise(resolve=>setTimeout(resolve,20));
+evaluate(fs.readFileSync(path.join(root,'assets/annual-reader.js'),'utf8'));
 const legacy={report_key:'sinnian',report_title:'2026 기존 풀이',report_content:'<h3>보존할 원문</h3><p>예전 본문</p>',created_at:'2026.02.01'};
 const current={report_key:'sinnian',report_title:generated.title,report_content:generated.content,
     narrative_version:generated.narrative_version,report_year:2026,created_at:'2026.02.01',
@@ -35,7 +36,7 @@ const current={report_key:'sinnian',report_title:generated.title,report_content:
     await tick();
     evaluate(`currentUserId='user_qa';currentCoin=700;serverUnlockedReports=${JSON.stringify([legacy])};`);
     w.restoreUnlockedUIFromReports();
-    assert.equal(doc.querySelectorAll('#sinnianBox .annual-upgrade').length,1);
+    assert.equal(doc.querySelectorAll('#sinnianBox button').length,1);
     w.openReadingReport(0);
     assert.ok(!doc.getElementById('annualRefreshButton').classList.contains('hidden'));
     assert.ok(doc.getElementById('readingVersionControl').classList.contains('hidden'));
@@ -52,21 +53,40 @@ const current={report_key:'sinnian',report_title:generated.title,report_content:
     finish(); await pending;
     assert.equal(evaluate('currentCoin'),700);
     assert.ok(doc.getElementById('annualRefreshButton').classList.contains('hidden'));
-    assert.equal(doc.querySelector('#sinnianBox .reading-primary').textContent,'전체 올해 총운 읽기');
-    assert.ok(doc.getElementById('sinnianBox').compareDocumentPosition(doc.getElementById('annualMonthExplorer')) & w.Node.DOCUMENT_POSITION_FOLLOWING);
-    assert.equal(doc.querySelectorAll('#annualMonthChoices button').length,12);
+    assert.equal(doc.querySelector('#sinnianBox .reading-primary').textContent,'2026년 올해운세 확인하기');
+    assert.ok(doc.getElementById('annualMonthExplorer').classList.contains('hidden'));
+    assert.equal(doc.querySelectorAll('#annualMonthReading > *').length,0);
     assert.equal(doc.querySelectorAll('#archiveModalBody [data-report-domain]').length,6);
-    assert.equal(doc.querySelectorAll('#archiveModalBody [data-report-month]').length,12);
-    assert.equal(doc.querySelectorAll('#readingReportContents button').length,8);
-    for(const button of doc.querySelectorAll('#annualMonthChoices button')) {
+    assert.equal(doc.querySelectorAll('#readingReportContents button').length,2);
+    assert.equal(doc.getElementById('annualYearPanel').hidden,false);
+    assert.equal(doc.getElementById('annualMonthPanel').hidden,true);
+    assert.match(doc.getElementById('annualYearPanel').textContent,/올해 총운/);
+    doc.getElementById('annualReaderTab1').click();
+    assert.equal(doc.getElementById('annualYearPanel').hidden,true);
+    assert.equal(doc.getElementById('annualMonthPanel').hidden,false);
+    assert.equal(doc.querySelectorAll('.annual-reader-months button').length,12);
+    for(const button of doc.querySelectorAll('.annual-reader-months button')) {
         button.click();
-        assert.equal(doc.querySelectorAll('#annualMonthReading [data-month-domain]').length,6);
-        assert.match(doc.getElementById('annualMonthReading').textContent,/이 풀이의 근거/);
+        assert.equal(doc.querySelectorAll('.annual-selected-month [data-month-domain]').length,6);
+        assert.match(doc.querySelector('.annual-selected-month').textContent,/이 풀이의 근거/);
+        assert.equal(doc.querySelectorAll('#archiveModalBody [data-report-month]').length,1);
     }
+    const printed = new JSDOM('',{url:'https://dalha.test/'});
+    let printCalls=0;
+    printed.window.print=()=>printCalls++;
+    w.open=()=>printed.window;
+    w.printReadingReport(); await tick();
+    assert.equal(printCalls,1);
+    assert.equal(printed.window.document.querySelectorAll('[data-report-month]').length,12);
+    assert.equal(printed.window.document.querySelectorAll('[data-report-domain]').length,6);
+    assert.match(printed.window.document.body.textContent,/올해 총운/);
+    assert.match(printed.window.document.head.textContent,/break-before:page/);
+    printed.window.close();
     assert.match(doc.getElementById('readingReportMeta').textContent,/새 풀이 반영일/);
     w.openReadingReport(0,'0');
     assert.match(doc.getElementById('archiveModalBody').textContent,/보존할 원문/);
     assert.match(doc.getElementById('readingReportMeta').textContent,/이전 원문 기록/);
+    assert.equal(doc.getElementById('archiveDetailModal').dataset.annualPartitioned,'false');
     w.openReadingReport(0);
     assert.equal(doc.getElementById('readingVersionSelect').value,'current');
     assert.match(doc.getElementById('archiveModalBody').textContent,/가상검증님/);
