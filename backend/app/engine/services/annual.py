@@ -112,8 +112,7 @@ def _evidence_html(selection, timing, representative):
         f'<p>{escape(representative.isoformat())} 대표값 · {escape(ganji)} · {escape(role)}. '
         f'계산에서 살핀 주제: {escape(labels)}.</p>'
         '<p>원국과 해당 기간까지의 대운·세운·월운을 범위에 맞춰 살폈습니다. '
-        '합·충은 관계와 조건을 살필 단서이며, 좋은 일이나 나쁜 사건을 보장하는 뜻은 아닙니다. '
-        '생활 조언으로 표시한 분야에는 특정한 사건이나 길흉 판단을 덧붙이지 않았습니다.</p></details>')
+        '합·충은 관계와 조건을 살필 단서이며, 좋은 일이나 나쁜 사건을 보장하는 뜻은 아닙니다.</p></details>')
 
 
 def _render_domains(rows, *, monthly=False):

@@ -22,8 +22,8 @@
     <meta name="theme-color" content="#F7F8F8">
     <script src="/assets/design-init.js?v=1"></script>
     <script src="/assets/session-client.js?v=1"></script>
-    <link rel="stylesheet" href="/assets/annual-reading.css?v=20260923-5">
-    <script src="/assets/annual-reader.js?v=20260923-3" defer></script>
+    <link rel="stylesheet" href="/assets/annual-reading.css?v=20260923-6">
+    <script src="/assets/annual-reader.js?v=20260923-4" defer></script>
     <script src="https://developers.kakao.com/sdk/js/kakao.min.js"></script>
     <script src="/assets/food-thumbnails-v1/catalog.js?v=3" defer></script>
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
@@ -1446,7 +1446,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
     <!-- 보관함 다시보기 모달 -->
     <div id="archiveDetailModal" class="modal-bg hidden" role="dialog" aria-modal="true" aria-labelledby="archiveModalTitle">
         <div class="modal-content" style="max-width: 380px; max-height: 85vh; display: flex; flex-direction: column; text-align: left; padding: 20px; border-radius: 24px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 10px; margin-bottom: 12px;">
+            <div class="reading-report-heading" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 10px; margin-bottom: 12px;">
                 <button id="readingCloseButton" class="reading-text-button" aria-label="풀이 닫고 돌아가기" onclick="closeArchiveDetailModal()">‹</button>
                 <h3 id="archiveModalTitle" style="font-size: 14px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif;">운세 리포트</h3>
             </div>
@@ -3324,9 +3324,8 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             }
             readingReportIndex = index;
             document.getElementById('archiveModalTitle').textContent = item.report_title;
-            document.getElementById('readingReportMeta').textContent = item.refreshed_at
-                ? `새 풀이 반영일 · ${item.refreshed_at.slice(0,10)}`
-                : `${version === 'current' ? '첫 풀이 기록' : '이전 원문 기록'}${item.created_at ? ` · ${item.created_at}` : ''}`;
+            document.getElementById('readingReportMeta').textContent =
+                owned.created_at ? `결제일 · ${owned.created_at.slice(0,10).replace(/-/g,'.')}` : '';
             document.getElementById('annualRefreshButton').classList.toggle('hidden', !annualNeedsRefresh(owned));
             const versionControl = document.getElementById('readingVersionControl');
             const versionSelect = document.getElementById('readingVersionSelect');
@@ -3338,6 +3337,18 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             versionSelect.value = String(version);
             const body = document.getElementById('archiveModalBody');
             body.innerHTML = item.report_content;
+            if (owned.report_key === 'sinnian') {
+                const title = document.getElementById('archiveModalTitle');
+                title.textContent = '올해·월별 운세';
+                const year = item.report_year || body.querySelector('[data-report-year]')?.dataset.reportYear
+                    || item.report_title?.match(/\b(\d{4})년?/)?.[1];
+                if (year) {
+                    const subtitle = document.createElement('span');
+                    subtitle.className = 'reading-report-year';
+                    subtitle.textContent = `${year}년`;
+                    title.append(subtitle);
+                }
+            }
             body.scrollTop = 0;
             const contents = document.getElementById('readingReportContents');
             contents.replaceChildren();
