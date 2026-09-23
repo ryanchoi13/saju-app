@@ -28,3 +28,32 @@
     #archiveDetailModal .ui-modal-heading { padding-bottom:8px!important; }
     #archiveModalBody { min-height:100px; }
 }
+
+/* The annual report is one full-height reading destination from every entry. */
+#archiveDetailModal[data-annual-reader="true"] { padding:0!important; background:var(--ui-page,#F5F7F8); backdrop-filter:none; }
+#archiveDetailModal[data-annual-reader="true"] > .modal-content {
+    height:100dvh!important; max-height:100dvh!important; max-width:640px!important;
+    border:0!important; border-radius:0!important; box-shadow:none!important;
+    padding:16px 20px max(12px,env(safe-area-inset-bottom))!important; gap:10px; overflow:hidden; scrollbar-gutter:auto;
+}
+#archiveDetailModal #readingCloseButton { min-width:40px; width:40px; height:40px; padding:0; font-size:28px; border:1px solid var(--ui-line); border-radius:50%; }
+#archiveDetailModal[data-annual-reader="true"] .ui-modal-heading { padding-bottom:10px!important; }
+#archiveDetailModal[data-annual-reader="true"] #archiveModalTitle { font-size:18px!important; padding:0; }
+#archiveDetailModal[data-annual-reader="true"] #readingReportMeta { font-size:12px!important; }
+#archiveDetailModal[data-annual-reader="true"] #archiveModalBody { min-height:0; flex:1 1 0; padding:4px 2px 16px!important; }
+#archiveDetailModal[data-annual-partitioned="true"] #readingReportContents { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:4px; padding:4px; background:var(--ui-soft); border-radius:12px; overflow:visible; }
+#archiveDetailModal[data-annual-partitioned="true"] #readingReportContents button { min-height:44px; border:0; border-radius:9px; background:transparent; font-size:14px; text-align:center; color:var(--ui-muted); }
+#archiveDetailModal[data-annual-partitioned="true"] #readingReportContents button[aria-selected="true"] { color:var(--ui-ink); background:var(--ui-surface); box-shadow:0 1px 5px #14294212; font-weight:800; }
+#archiveModalBody .annual-reader-months { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:6px; margin:12px 0 20px; }
+.annual-reader-months button { min-height:44px; min-width:0; padding:6px 0; border:1px solid var(--ui-line); border-radius:10px; background:#fff; color:var(--ui-muted); font-size:12px; font-weight:700; cursor:pointer; }
+.annual-reader-months button[aria-pressed="true"] { background:var(--ui-accent); color:white; border-color:var(--ui-accent); }
+#archiveModalBody .annual-selected-month .annual-month { border:1px solid var(--ui-line)!important; border-radius:16px; margin:0; padding:18px 16px; }
+#archiveModalBody .annual-domain[data-reading-kind="scoped_interpretation"] .annual-kind { display:none; }
+#archiveModalBody .annual-overview > h3:first-child { margin-top:12px; }
+#archiveDetailModal .reading-modal-actions { border-top:1px solid var(--ui-line); padding-top:10px; }
+#archiveDetailModal .reading-modal-actions button { font-size:13px!important; padding:10px 4px!important; width:auto; flex:1; min-width:0; }
+#archiveDetailModal .reading-modal-actions .reading-back-button { background:var(--ui-accent); color:#fff; border:1px solid var(--ui-accent); }
+#archiveDetailModal .reading-modal-actions .reading-pdf-button { background:var(--ui-surface); color:var(--ui-accent); border:1px solid var(--ui-line); }
+@media(max-width:380px) {
+    #archiveDetailModal[data-annual-reader="true"] > .modal-content { padding-left:14px!important; padding-right:14px!important; }
+}

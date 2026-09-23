@@ -22,7 +22,8 @@
     <meta name="theme-color" content="#F7F8F8">
     <script src="/assets/design-init.js?v=1"></script>
     <script src="/assets/session-client.js?v=1"></script>
-    <link rel="stylesheet" href="/assets/annual-reading.css?v=20260923-2">
+    <link rel="stylesheet" href="/assets/annual-reading.css?v=20260923-3">
+    <script src="/assets/annual-reader.js?v=20260923-1" defer></script>
     <script src="https://developers.kakao.com/sdk/js/kakao.min.js"></script>
     <script src="/assets/food-thumbnails-v1/catalog.js?v=3" defer></script>
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
@@ -1446,8 +1447,8 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
     <div id="archiveDetailModal" class="modal-bg hidden" role="dialog" aria-modal="true" aria-labelledby="archiveModalTitle">
         <div class="modal-content" style="max-width: 380px; max-height: 85vh; display: flex; flex-direction: column; text-align: left; padding: 20px; border-radius: 24px;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 10px; margin-bottom: 12px;">
+                <button id="readingCloseButton" class="reading-text-button" aria-label="풀이 닫고 돌아가기" onclick="closeArchiveDetailModal()">‹</button>
                 <h3 id="archiveModalTitle" style="font-size: 14px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif;">운세 리포트</h3>
-                <button id="readingCloseButton" aria-label="풀이 닫고 돌아가기" onclick="closeArchiveDetailModal()" style="background: none; border: none; font-size: 20px; color: #94A3B8; cursor: pointer;">&times;</button>
             </div>
             <p id="readingReportMeta" class="reading-caption"></p>
             <button id="annualRefreshButton" class="reading-text-button hidden" onclick="refreshOwnedAnnualReport()">새 풀이로 업데이트 · 추가 복채 없음</button>
@@ -1457,8 +1458,8 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             <nav id="readingReportContents" aria-label="리포트 목차"></nav>
             <div id="archiveModalBody" style="flex: 1; overflow-y: auto; padding-right: 4px; margin-bottom: 12px;"></div>
             <div class="reading-modal-actions">
-                <button class="reading-pdf-button" onclick="printReadingReport()">PDF로 저장하기</button>
-                <button class="reading-back-button" onclick="closeArchiveDetailModal()">이전 화면으로</button>
+                <button class="reading-pdf-button reading-text-button" onclick="printReadingReport()">전체 운세 PDF 저장</button>
+                <button class="reading-back-button reading-text-button" onclick="closeArchiveDetailModal()">이전 화면으로</button>
             </div>
         </div>
     </div>
@@ -3286,21 +3287,15 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 note.textContent = `구매한 결과 · ${item.report_title}${item.created_at ? ` · ${item.created_at}` : ''}`;
                 const open = document.createElement('button');
                 open.className = 'reading-primary';
-                open.textContent = key === 'sinnian' ? '전체 올해 총운 읽기' : '구매한 풀이 다시 읽기';
+                open.textContent = key === 'sinnian' ? `${item.report_year || item.report_title?.match(/^(\d{4})/)?.[1] || ''}년 올해운세 확인하기`.replace(/^년 /, '') : '구매한 풀이 다시 읽기';
                 open.onclick = () => openReadingReport(index);
                 slot.append(note, open);
                 if (key === 'sinnian') {
-                    if (annualNeedsRefresh(item)) {
-                        const upgrade = document.createElement('button');
-                        upgrade.className = 'reading-text-button annual-upgrade';
-                        upgrade.textContent = '새 풀이로 업데이트 · 추가 복채 없음';
-                        upgrade.onclick = refreshOwnedAnnualReport;
-                        slot.append(upgrade);
-                    }
                     const doc = reportDocument(item);
                     const year = doc.querySelector('[data-report-year]')?.dataset.reportYear || item.report_title?.match(/^(\d{4})\b/)?.[1];
                     document.getElementById('annualYearLabel').textContent = year ? `${year}년 · 구매한 올해운세` : '구매한 올해운세';
-                    renderPeriodChoices(item, 'month');
+                    document.getElementById('annualMonthChoices').replaceChildren();
+                    document.getElementById('annualMonthReading').replaceChildren();
                 }
                 if (key === 'daewoon') renderPeriodChoices(item, 'cycle');
             });
@@ -3346,7 +3341,10 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             body.scrollTop = 0;
             const contents = document.getElementById('readingReportContents');
             contents.replaceChildren();
-            Array.from(body.querySelectorAll('h3')).forEach(heading => {
+            contents.removeAttribute('role');
+            const partitioned = owned.report_key === 'sinnian' && window.setupAnnualReader?.(body, contents);
+            modal.dataset.annualPartitioned = String(Boolean(partitioned));
+            if (!partitioned) Array.from(body.querySelectorAll('h3')).forEach(heading => {
                 const button = document.createElement('button');
                 button.textContent = heading.dataset.tocLabel || heading.textContent;
                 button.onclick = () => heading.scrollIntoView({block:'start',behavior:'smooth'});
@@ -3393,7 +3391,10 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             if (!item) return;
             const printWindow = window.open('', '_blank');
             if (!printWindow) { alert('인쇄를 위해 팝업을 허용해 주세요.'); return; }
-            printWindow.document.write('<!doctype html><html lang="ko"><head><meta charset="UTF-8"><title>달하 감명서</title><style>*{font-family:sans-serif!important}body{font-family:sans-serif;padding:24px;line-height:1.85;color:#1E293B}details{display:block}button{display:none}</style></head><body></body></html>');
+            printWindow.document.write('<!doctype html><html lang="ko"><head><meta charset="UTF-8"><title>달하 운세</title></head><body></body></html>');
+            const printStyle = printWindow.document.createElement('style');
+            printStyle.textContent = window.ANNUAL_PRINT_STYLE || 'body{font-family:sans-serif;line-height:1.8}';
+            printWindow.document.head.append(printStyle);
             const title = printWindow.document.createElement('h2');
             title.textContent = item.report_title;
             const report = printWindow.document.createElement('div');
@@ -3401,7 +3402,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             report.querySelectorAll('details').forEach(el => el.open = true);
             printWindow.document.body.append(title, report);
             printWindow.document.close();
-            printWindow.print();
+            Promise.resolve(printWindow.document.fonts?.ready).then(() => { if (!printWindow.closed) printWindow.print(); });
         }
 
         function initReadingInterface() {
@@ -3424,7 +3425,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             document.getElementById('archiveDetailModal').addEventListener('keydown', event => {
                 if (event.key === 'Escape') { event.preventDefault(); closeArchiveDetailModal(); return; }
                 if (event.key !== 'Tab') return;
-                const focusable = Array.from(event.currentTarget.querySelectorAll('button,a[href],summary,select,[tabindex="0"]')).filter(el => !el.disabled && !el.closest('.hidden'));
+                const focusable = Array.from(event.currentTarget.querySelectorAll('button,a[href],summary,select,[tabindex="0"]')).filter(el => !el.disabled && !el.closest('.hidden,[hidden]') && el.tabIndex !== -1);
                 const first = focusable[0], last = focusable[focusable.length - 1];
                 if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
                 else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }

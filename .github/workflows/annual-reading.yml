@@ -9,6 +9,7 @@ on:
       - 'wallet_store.py'
       - 'index.html'
       - 'assets/annual-reading.css'
+      - 'assets/annual-reader.js'
       - 'scripts/test_annual_reader.cjs'
       - '.github/workflows/annual-reading.yml'
 permissions:
