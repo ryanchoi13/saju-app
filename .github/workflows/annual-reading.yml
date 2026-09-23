@@ -1,0 +1,33 @@
+name: Annual reading regression
+on:
+  pull_request:
+    paths:
+      - 'backend/app/engine/**'
+      - 'backend/tests/test_annual_reader.py'
+      - 'backend/tests/test_second_tab_reports.py'
+      - 'main.py'
+      - 'wallet_store.py'
+      - 'index.html'
+      - 'assets/annual-reading.css'
+      - 'scripts/test_annual_reader.cjs'
+      - '.github/workflows/annual-reading.yml'
+permissions:
+  contents: read
+jobs:
+  annual-reader:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: pip install -r requirements.txt pytest httpx
+      - run: npm install --ignore-scripts --package-lock=false
+      - run: python -m pytest -q backend/tests/test_annual_reader.py backend/tests/test_second_tab_reports.py backend/tests/test_overall_interpretation.py backend/tests/test_account_security_wallet.py
+      - run: node scripts/test_annual_reader.cjs && node scripts/test_session_client.cjs

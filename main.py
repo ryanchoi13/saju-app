@@ -32,6 +32,7 @@ from wada_color_ko import get_wada_color_ko
 from wada_wuxing_selector import select_wada_duo_for_targets
 from fashion_v2.svg_recommendation import build_svg_catalog_contexts
 from app.engine.services.fashion_colors import build_fashion_color_basis
+from app.engine.services.annual_editorial import NARRATIVE_VERSION as ANNUAL_NARRATIVE_VERSION
 from fashion_v2.weather_service import gyeongju_weather_cache, weather_api_payload
 from lunar_python import Solar
 from fastapi import FastAPI, HTTPException, Response, Request
@@ -509,6 +510,7 @@ def generate_detailed_report(
     user_name: str,
     user: Optional[Dict[str, Any]] = None,
     partner: Optional[Dict[str, Any]] = None,
+    report_year: Optional[int] = None,
 ) -> Dict[str, str]:
     if report_key == "sinnian":
         if not user:
@@ -520,7 +522,7 @@ def generate_detailed_report(
             _birth_input_from_user(user, user_name),
             target_date=kst_today,
         )
-        return build_annual_overall_report(core, user_name, kst_today.year)
+        return build_annual_overall_report(core, user_name, report_year or kst_today.year)
     elif report_key == "gunghap":
         if not user or not partner:
             raise ValueError("궁합 생성에 두 사람의 사주 정보가 필요합니다.")
@@ -1011,6 +1013,9 @@ def unlock_report(req: UnlockReportRequest):
         "report_content": rep_data["content"],
         "created_at": datetime.date.today().strftime("%Y.%m.%d")
     }
+    if req.report_key == 'sinnian':
+        new_report.update(narrative_version=rep_data.get('narrative_version'),
+                          report_year=rep_data.get('report_year'))
 
     try:
         assets = wallet_store.buy_report(req.user_id, req.report_key, cost, new_report)
@@ -1026,6 +1031,50 @@ def unlock_report(req: UnlockReportRequest):
         "new_balance": user["coin"],
         "unlocked_reports": reports_db[req.user_id]
     }
+
+
+class RefreshAnnualRequest(BaseModel):
+    user_id: str
+
+
+@app.post('/api/reports/refresh-annual')
+def refresh_annual_report(req: RefreshAnnualRequest):
+    """Explicit free upgrade of an owned annual report, not a new purchase."""
+    import re
+    user = hydrate_account(req.user_id)
+    original = next((r for r in reports_db[req.user_id] if r['report_key'] == 'sinnian'), None)
+    if original is None:
+        raise HTTPException(status_code=403, detail='먼저 올해운세를 열람해 주세요.')
+    if original.get('narrative_version') == ANNUAL_NARRATIVE_VERSION:
+        return dict(status='success', new_balance=user['coin'], unlocked_reports=reports_db[req.user_id])
+    if not user.get('profile_complete'):
+        raise HTTPException(status_code=422, detail='사주 정보를 먼저 확인해 주세요.')
+    # Keep the purchased year. Never silently turn an older purchase into this year.
+    year = original.get('report_year')
+    if not isinstance(year, int) or isinstance(year, bool):
+        matched = (re.search(r'data-report-year=[\"\x27](\d{4})[\"\x27]', original.get('report_content', ''))
+                   or re.match(r'^(\d{4})\b', original.get('report_title', '')))
+        year = int(matched.group(1)) if matched else None
+    if year is None or not 1900 <= year <= 9999:
+        raise HTTPException(status_code=422, detail='기존 풀이의 연도를 확인하지 못했습니다. 원문은 그대로 보관되어 있습니다.')
+    try:
+        generated = generate_detailed_report('sinnian', '기본', '', '', user.get('name', '회원'),
+                                             user=user, report_year=year)
+    except ValueError:
+        raise HTTPException(status_code=422, detail='현재 저장한 사주 정보와 기존 풀이 연도를 확인해 주세요.')
+    replacement = dict(report_title=generated['title'], report_content=generated['content'],
+                       narrative_version=ANNUAL_NARRATIVE_VERSION, report_year=year,
+                       refreshed_at=datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=9))).isoformat(),
+                       profile_basis='current_saved_profile')
+    try:
+        assets = wallet_store.refresh_owned_annual(req.user_id, original, replacement)
+    except ValueError:
+        raise HTTPException(status_code=409, detail='보관함이 변경되었습니다. 새로고침한 뒤 다시 확인해 주세요.')
+    except wallet_store.StorageUnavailable:
+        raise HTTPException(status_code=503, detail='새 풀이를 저장하지 못했습니다. 기존 풀이와 복채는 유지됩니다.')
+    user['coin'] = assets['balance']
+    reports_db[req.user_id] = assets['reports']
+    return dict(status='success', new_balance=user['coin'], unlocked_reports=assets['reports'])
 
 # Date-specific Korean daily zodiac/star guides.
 from zodiac_daily import build_daily_zodiac

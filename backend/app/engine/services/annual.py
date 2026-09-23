@@ -1,8 +1,6 @@
-"""User-facing annual and monthly report backed by ordered Myeongri timing layers."""
-
+"""Evidence-backed annual reader with a separate, reviewed conversational voice."""
 from __future__ import annotations
 
-from app.engine.korean import josa
 from datetime import date
 from html import escape
 
@@ -10,148 +8,180 @@ from app.engine.core.models import MyeongriCoreResult
 from app.engine.timing import calculate_timing
 from app.engine.calendar import to_solar
 from app.engine.semantic.overall import select_overall_domains, OVERALL_VERSION
-from app.engine.services.overall_narrative import render_overall, subjects_html
+from app.engine.services.annual_editorial import (
+    NARRATIVE_VERSION, GROUPS, ROLE_NAMES, ROLES, FALLBACK_ROLE,
+    DETAIL, GENERAL_TITLES, MONTH_ADVICE, MONTH_MODE, OVERVIEW, role_family, scene,
+)
 
 
-_TEN_GOD = {
-    "peer": "비견",
-    "rob_wealth": "겁재",
-    "eating_god": "식신",
-    "hurting_officer": "상관",
-    "direct_wealth": "정재",
-    "indirect_wealth": "편재",
-    "direct_officer": "정관",
-    "seven_killings": "편관",
-    "direct_resource": "정인",
-    "indirect_resource": "편인",
-}
-_ELEMENT = {"木": "목", "火": "화", "土": "토", "金": "금", "水": "수"}
-_THEME = {
-    "peer": ("자기 기준과 주도권", "혼자 밀어붙이기보다 역할을 분명히 나누는 편이 좋습니다."),
-    "rob_wealth": ("경쟁·협업과 몫의 배분", "성과와 비용의 기준을 시작 전에 합의하는 편이 안전합니다."),
-    "eating_god": ("꾸준한 생산과 결과물", "속도보다 완성도와 반복 가능한 방식을 만드는 데 힘을 쓰세요."),
-    "hurting_officer": ("표현·개선과 기존 방식의 변화", "좋은 제안도 표현이 날카로우면 마찰이 생길 수 있어 전달 방식을 다듬는 것이 중요합니다."),
-    "direct_wealth": ("예산·계약과 눈에 보이는 성과", "수입뿐 아니라 지출과 회수 일정까지 함께 관리하면 실속을 지키기 좋습니다."),
-    "indirect_wealth": ("시장 기회와 활동 범위의 확장", "기회가 넓어질수록 선택 기준과 감당할 범위를 먼저 정하세요."),
-    "direct_officer": ("책임·원칙과 공식적인 역할", "기준을 지키되 책임을 혼자 떠안지 않도록 범위를 분명히 하세요."),
-    "seven_killings": ("압박 속 결단과 실행", "급할수록 우선순위를 줄이고 확인 절차를 남기는 편이 좋습니다."),
-    "direct_resource": ("학습·문서와 안정적인 보강", "배운 것을 실제 일과 생활에 적용하는 단계까지 연결해 보세요."),
-    "indirect_resource": ("새 관점·탐색과 재정비", "아이디어를 넓히되 검증되지 않은 판단은 작은 시험부터 시작하세요."),
-}
-_MONTH_ACTION = {
-    "peer": "협업할 일과 혼자 결정할 일을 구분해 보세요.",
-    "rob_wealth": "공동 비용과 역할 분담을 문서로 남기면 좋습니다.",
-    "eating_god": "작은 결과물을 꾸준히 쌓는 일정이 잘 맞습니다.",
-    "hurting_officer": "개선안을 말하기 전에 상대가 받아들일 순서를 정해 보세요.",
-    "direct_wealth": "예산과 계약 조건을 숫자로 다시 확인해 보세요.",
-    "indirect_wealth": "새 제안은 범위를 작게 시험한 뒤 넓히는 편이 좋습니다.",
-    "direct_officer": "마감과 책임 범위를 먼저 정리해 두세요.",
-    "seven_killings": "급한 일일수록 확인 목록을 짧게라도 남겨 두세요.",
-    "direct_resource": "자료를 정리하고 배운 것을 실제 업무에 적용해 보세요.",
-    "indirect_resource": "새 아이디어는 한 가지 가설부터 검증해 보세요.",
-}
+def _paragraphs(values):
+    return "".join(f"<p>{escape(value)}</p>" for value in values)
 
 
-def _topic(god: str) -> tuple[str, str]:
-    return _THEME.get(god, ("현재의 선택과 조정", "결과를 단정하기보다 실제 상황을 확인하며 움직이세요."))
+def _candidate(selection, domain):
+    return next((c for c in selection["candidates"] if c["domain"] == domain), None)
 
 
-def _annual_sections(annual_god: str, cycle_god: str | None) -> dict[str, str]:
-    annual_topic, annual_advice = _topic(annual_god)
-    cycle_topic, _ = _topic(cycle_god) if cycle_god else ("장기 흐름", "")
-    money = {
-        "direct_wealth": "수입·지출·회수 계획을 구체화하기 좋은 주제가 전면에 옵니다.",
-        "indirect_wealth": "새 거래나 활동 반경을 넓힐 기회가 보이지만, 변동성 관리가 함께 필요합니다.",
-        "eating_god": "당장의 큰 결론보다 꾸준히 만든 결과물이 재물 흐름의 기반이 됩니다.",
-        "hurting_officer": "새 방식과 제안이 수입 경로를 넓힐 수 있으나 조건 검토가 먼저입니다.",
-    }.get(annual_god, "큰 승부보다 현재 자원과 고정 지출을 점검하며 선택의 여지를 남기는 편이 좋습니다.")
-    career = {
-        "direct_officer": "공식 역할과 책임이 부각됩니다. 기준과 보고 체계를 잘 세우면 안정적인 성과로 이어지기 쉽습니다.",
-        "seven_killings": "빠른 판단을 요구받는 상황이 늘 수 있습니다. 결정권과 책임 범위를 함께 확인하세요.",
-        "peer": "내 기준과 전문성을 드러낼 일이 많아집니다. 동료와의 역할 경계를 분명히 할수록 효율적입니다.",
-        "rob_wealth": "경쟁과 협업이 동시에 커질 수 있습니다. 성과 배분 원칙을 미리 정하는 것이 중요합니다.",
-        "eating_god": "꾸준한 생산과 서비스 품질이 평판을 만드는 해입니다. 반복 가능한 운영 방식을 남겨 보세요.",
-        "hurting_officer": "낡은 방식을 개선하고 의견을 드러내는 힘이 커집니다. 표현의 순서를 다듬으면 제안이 더 잘 전달됩니다.",
-    }.get(annual_god, "배우고 정리한 것을 실제 역할과 결과물로 연결할 때 흐름을 활용하기 좋습니다.")
-    relation = (
-        f"올해는 {josa(annual_topic, '이/가')} 관계에서도 드러납니다. 상대의 반응을 예측하기보다 역할·기대·기한을 말로 확인하면 불필요한 오해를 줄일 수 있습니다."
-    )
-    rhythm = (
-        f"연간의 {josa(annual_topic, '과/와')} 대운의 {josa(cycle_topic, '이/가')} 함께 작동합니다. "
-        f"{annual_advice} 활동량이 늘 때일수록 휴식과 재검토 시간을 일정 안에 먼저 넣어 두세요."
-    )
-    return {"money": money, "career": career, "relation": relation, "rhythm": rhythm}
+def _basis(candidate):
+    return {
+        "kind": "scoped_interpretation" if candidate else "general_guidance",
+        "source_ids": list(candidate["source_ids"]) if candidate else [],
+        "mode": candidate.get("mode", "base") if candidate else None,
+    }
 
 
-def _monthly_html(core: MyeongriCoreResult, year: int, summaries: list | None = None) -> str:
-    cards = []
-    birth_date = to_solar(core.input.birth_date, core.input.calendar_type, core.input.is_leap_month)
-    for month in range(1, 13):
-        representative = date(year, month, 15)
-        if representative < birth_date:
-            if (year, month) < (birth_date.year, birth_date.month):
-                cards.append(f'<div data-report-month="{month}" style="border-left:4px solid #2D6A4F;padding:13px;">{month}월 · 출생 전 기간</div>')
-                continue
-            representative = birth_date
-        timing, _, _ = calculate_timing(
-            core.input,
-            core.natal_facts.pillars,
-            target_date=representative,
-        )
-        monthly = timing.monthly
-        pillar = monthly["pillar"]
-        selection = select_overall_domains(core, "monthly", timing=timing)
-        narrative = render_overall(selection)
-        if summaries is not None:
-            summaries.append(dict(month=month, representative_date=representative.isoformat(), interpretation=selection))
-        cards.append(f"""
-        <div data-report-month="{month}" style="background:#F8FAFC;border:1px solid #E2E8F0;padding:13px 14px;border-radius:12px;border-left:4px solid #2D6A4F;">
-          <div style="font-size:13.5px;font-weight:800;color:#0F172A;">{month}월 · {escape(narrative['title'])}</div>
-          <p style="font-size:13px;color:#475569;margin:5px 0 0;line-height:1.72;">
-            {escape(narrative['advice'])}
-          </p>
-          <div style="font-size:12px;color:#64748B;margin-top:7px;">{escape(narrative['unified_advice'])}</div>
-        </div>""")
-    return "".join(cards)
+def _domain_readings(selection, *, monthly=False):
+    result = []
+    family = role_family(selection.get("focal_god"))
+    for domain, label in GROUPS:
+        candidate = _candidate(selection, domain)
+        if monthly:
+            mode = candidate.get('mode') if candidate else None
+            paragraphs = [MONTH_MODE.get((domain, mode), MONTH_ADVICE[family][domain])]
+        else:
+            paragraphs = [scene(candidate)] if candidate else []
+            paragraphs.extend(DETAIL[domain])
+        result.append(dict(domain=domain, label=label, title=GENERAL_TITLES[domain],
+                           paragraphs=paragraphs, **_basis(candidate)))
+    return result
 
 
-def build_annual_overall_report(
-    core: MyeongriCoreResult,
-    user_name: str,
-    year: int,
-) -> dict[str, str]:
-    """Render natal + current daeyun + annual + monthly layers without fake scores."""
+def _annual_reading(selection, natal, name):
+    role = ROLES.get(selection.get("focal_god"), FALLBACK_ROLE)
+    selected = selection["selected"]
+    primary = [c for c in selected if c['domain'] in selection['primary_domains']]
+    lead = OVERVIEW[primary[0]['domain']] if primary else (role[0], role[1])
+    opening = f"올해는 {name}님이 " + lead[1] if primary else f"{name}님, " + lead[1]
+    paragraphs = [opening]
+    # Natal context is explicitly an interpretation, never invented biography.
+    shared = sorted(set(natal["primary_domains"]) & set(selection["primary_domains"]))
+    if shared:
+        shared_labels = " · ".join(c["label"] for c in selected if c["domain"] in shared)
+        paragraphs.append(
+            f"이렇게 읽는 이유는 기본 사주에서 살피는 {shared_labels}의 주제가 올해 흐름에도 이어지기 때문입니다. "
+            "완전히 새로운 답을 찾기보다 그동안 어떤 방식이 자신에게 잘 맞았는지 돌아보세요. "
+            "계속 살릴 부분과 조금 바꿔볼 부분을 나누면 올해의 선택도 구체적으로 정하기 좋습니다.")
+    else:
+        paragraphs.append(
+            "기본 사주에서 중심이 되는 주제와 올해 먼저 살필 주제는 같지 않을 수 있습니다. "
+            "익숙한 방식만 고집하기보다 지금 상황에 필요한 방법을 골라보세요. "
+            "평소와 다른 선택을 하더라도 감당할 시간과 여유가 있는지 함께 확인하면 좋겠습니다.")
+    # Use different elaboration in domain chapters; do not copy their paragraphs
+    # into the overview. Preserve other tied/independent subjects explicitly.
+    paragraphs.append(role[1])
+    for candidate in selected:
+        if primary and candidate is primary[0]:
+            continue
+        paragraphs.append(OVERVIEW[candidate['domain']][1])
+    if primary and primary[0].get('mode') in {'join', 'change', 'mixed', 'recovery'}:
+        paragraphs.append(scene(primary[0]))
+    paragraphs.append(role[3])
+    paragraphs.append(
+        "한 해의 모든 일을 한꺼번에 정할 필요는 없어요. 지금 가장 신경 쓰이는 분야부터 읽어보세요. "
+        "바로 해볼 일 하나와 미뤄도 되는 일 하나를 구분하면 계획을 세우기가 쉬워집니다. "
+        "월별 풀이에서는 같은 주제가 그달에 어떻게 이어지는지도 함께 살펴보면 좋겠습니다.")
+    return dict(title=lead[0], paragraphs=paragraphs,
+                source_ids=sorted({s for c in selected for s in c["source_ids"]}),
+                domains=_domain_readings(selection))
 
-    name = escape(user_name or "회원")
+
+def _monthly_reading(selection, annual_selection, month, name):
+    role = ROLES.get(selection.get("focal_god"), FALLBACK_ROLE)
+    primary = [c for c in selection["selected"] if c["domain"] in selection["primary_domains"]]
+    paragraphs = [f"{month}월 {name}님의 풀이입니다. " + role[2]]
+    annual_primary = set(annual_selection["primary_domains"])
+    if primary:
+        labels = " · ".join(c["label"] for c in primary)
+        linkage = (f"올해 살피는 주제 가운데 이번 달에는 {labels}에 조금 더 집중해 보세요."
+                   if annual_primary & {c["domain"] for c in primary}
+                   else f"올해 전체 흐름과 함께 이번 달에는 {labels}도 살펴볼 주제로 드러납니다.")
+        paragraphs.append(linkage + " " + " ".join(scene(c) for c in primary))
+    paragraphs.append(role[3])
+    return dict(title=role[0], paragraphs=paragraphs,
+                source_ids=sorted({s for c in primary for s in c["source_ids"]}),
+                domains=_domain_readings(selection, monthly=True))
+
+
+def _evidence_html(selection, timing, representative):
+    labels = " · ".join(c["label"] for c in selection["selected"]) or "특정 분야로 좁히지 않은 생활 조언"
+    role = ROLE_NAMES.get(selection.get("focal_god"), "미정")
+    pillar = timing.annual if selection["scope"] == "annual" else timing.monthly
+    ganji = pillar.get("pillar", {}).get("ganji", "")
+    return (
+        '<details class="annual-evidence"><summary>이 풀이의 근거</summary>'
+        f'<p>{escape(representative.isoformat())} 대표값 · {escape(ganji)} · {escape(role)}. '
+        f'계산에서 살핀 주제: {escape(labels)}.</p>'
+        '<p>원국과 해당 기간까지의 대운·세운·월운을 범위에 맞춰 살폈습니다. '
+        '합·충은 관계와 조건을 살필 단서이며, 좋은 일이나 나쁜 사건을 보장하는 뜻은 아닙니다. '
+        '생활 조언으로 표시한 분야에는 특정한 사건이나 길흉 판단을 덧붙이지 않았습니다.</p></details>')
+
+
+def _render_domains(rows, *, monthly=False):
+    parts = []
+    for row in rows:
+        badge = "풀이" if row["kind"] == "scoped_interpretation" else "생활 조언"
+        key = "data-month-domain" if monthly else "data-report-domain"
+        heading = "h5" if monthly else "h3"
+        title = row["label"] if monthly else row["label"] + " · " + row["title"]
+        parts.append(
+            f'<section {key}="{row["domain"]}" data-reading-kind="{row["kind"]}" class="annual-domain">'
+            f'<{heading} data-toc-label="{escape(row["label"], quote=True)}">{escape(title)}</{heading}>'
+            f'<span class="annual-kind">{badge}</span>{_paragraphs(row["paragraphs"])}</section>')
+    return "".join(parts)
+
+
+def build_annual_overall_report(core: MyeongriCoreResult, user_name: str, year: int) -> dict:
+    """Keep calculation/evidence unchanged; render the approved annual structure."""
+    name = user_name or "회원"
     birth_date = to_solar(core.input.birth_date, core.input.calendar_type, core.input.is_leap_month)
     representative = max(date(year, 7, 1), birth_date)
     if representative.year != year:
         raise ValueError("출생 전 연도의 운세는 생성할 수 없습니다.")
-    annual_timing, _, _ = calculate_timing(core.input, core.natal_facts.pillars, target_date=representative)
-    annual = annual_timing.annual
-    selection = select_overall_domains(core, "annual", timing=annual_timing)
-    narrative = render_overall(selection)
-    monthly_summaries = []
-    monthly_html = _monthly_html(core, year, monthly_summaries)
-    annual_pillar = annual["pillar"]
-    title = f"{year} {annual_pillar['ganji']}년 {name}님 총운 & 12개월 명리 흐름"
-    content = f"""
-    <div data-overall-version="{OVERALL_VERSION}" data-report-year="{year}" style="text-align:left;line-height:1.8;color:#1E293B;">
-      <div style="background:#ECFDF5;border-left:4px solid #10B981;padding:16px;border-radius:14px;margin-bottom:16px;">
-        <div style="font-size:11.5px;font-weight:700;color:#059669;margin-bottom:4px;">올해 총운</div>
-        <h4 style="font-size:17px;font-weight:800;color:#065F46;margin:0 0 7px;">{escape(narrative['title'])}</h4>
-        <p style="font-size:13.5px;color:#047857;margin:0;line-height:1.75;">
-          {escape(narrative['unified_advice'])}
-        </p>
-      </div>
-      <div style="display:grid;gap:10px;margin-bottom:18px;">
-        {subjects_html(narrative)}
-      </div>
-      <h4 style="font-size:15.5px;font-weight:800;color:#0F172A;margin:20px 0 5px;">12개월 흐름</h4>
-      <p style="font-size:12px;color:#64748B;margin:0 0 10px;">각 달 15일의 절기 월주를 대표값으로 사용해 월별 중심 기운을 읽었습니다.</p>
-      <div style="display:grid;gap:9px;">{monthly_html}</div>
-      <p style="font-size:11.5px;color:#94A3B8;margin:12px 0 0;">정통 명리의 원국·대운·세운·월운을 근거로 한 해석이며, 별도의 토정비결 괘 계산과는 구분됩니다.</p>
-    </div>
-    """
-    return {"title": title, "content": content, "engine_version": OVERALL_VERSION,
-            "evidence_summary": {"annual": selection, "months": monthly_summaries}}
+    timing, _, _ = calculate_timing(core.input, core.natal_facts.pillars, target_date=representative)
+    selection = select_overall_domains(core, "annual", timing=timing)
+    natal = select_overall_domains(core, "natal")
+    reading = _annual_reading(selection, natal, name)
+    months = []
+    cards = []
+    for month in range(1, 13):
+        target = date(year, month, 15)
+        if target < birth_date:
+            if (year, month) < (birth_date.year, birth_date.month):
+                cards.append(f'<article data-report-month="{month}" class="annual-month" style="border-left:4px solid #2D6A4F"><h4>{month}월 · 출생 전 기간</h4></article>')
+                continue
+            target = birth_date
+        month_timing, _, _ = calculate_timing(core.input, core.natal_facts.pillars, target_date=target)
+        month_selection = select_overall_domains(core, "monthly", timing=month_timing)
+        month_reading = _monthly_reading(month_selection, selection, month, name)
+        months.append(dict(month=month, representative_date=target.isoformat(),
+                           interpretation=month_selection, reading=month_reading))
+        cards.append(
+            f'<article data-report-month="{month}" class="annual-month" style="border-left:4px solid #2D6A4F">'
+            f'<h4>{month}월 · {escape(month_reading["title"])}</h4>'
+            f'{_paragraphs(month_reading["paragraphs"])}'
+            f'{_render_domains(month_reading["domains"], monthly=True)}'
+            f'{_evidence_html(month_selection, month_timing, target)}</article>')
+    ganji = timing.annual["pillar"]["ganji"]
+    content = (
+        f'<div class="annual-reading" data-overall-version="{OVERALL_VERSION}" '
+        f'data-narrative-version="{NARRATIVE_VERSION}" data-report-year="{year}">'
+        '<section class="annual-overview"><h3>올해 총운</h3>'
+        f'<h4>{escape(reading["title"])}</h4>{_paragraphs(reading["paragraphs"])}'
+        f'{_evidence_html(selection, timing, representative)}</section>'
+        '<p class="annual-note">분야별로 계산에서 드러나는 주제와 생활 조언을 구분해 읽어보세요. '
+        '직업이나 관계의 예시는 현재 상황에 맞는 부분을 참고하면 됩니다.</p>'
+        f'{_render_domains(reading["domains"])}'
+        '<h3>12개월 흐름</h3>'
+        '<p class="annual-note">각 달 15일의 절기 월주를 대표값으로 사용했습니다. '
+        '달력의 1일을 운의 전환일로 보거나 특정 사건의 날짜를 정한 것은 아닙니다.</p>'
+        + "".join(cards) +
+        '<p class="annual-note">정통 명리의 원국·대운·세운·월운을 근거로 한 해석이며, '
+        '별도의 토정비결 괘 계산과는 구분됩니다. 실제 건강 상태와 중요한 결정은 '
+        '현실의 정보와 전문가의 판단을 함께 확인해 주세요.</p></div>')
+    return dict(
+        title=f"{year}년 {escape(name)}님의 올해·월별 운세",
+        content=content, engine_version=OVERALL_VERSION,
+        narrative_version=NARRATIVE_VERSION, report_year=year,
+        evidence_summary=dict(annual=selection, natal=natal, months=months),
+        reading=reading,
+    )
