@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from collections import Counter
 from html import escape
+from app.engine.services.reading_editorial import theme_content, VERSION
 
 from app.engine.core.models import MyeongriCoreResult
 from app.engine.services.applied_guidance import direction_advice, state_basis
@@ -136,22 +137,11 @@ def build_lifetime_wealth_report(core: MyeongriCoreResult, user_name: str) -> di
         "현재 대운 구간을 확정하지 못해 원국과 전체 대운의 공통 흐름만 제시합니다."
     )
     title = f"{name}님 정통 명리 평생 재물운"
-    content = f"""
-    <div style="text-align:left;line-height:1.78;color:#1E293B;">
-      <div style="background:#FFFBEB;border-left:4px solid #F59E0B;padding:16px;border-radius:14px;margin-bottom:14px;">
-        <h4 style="font-size:16px;font-weight:800;color:#78350F;margin:0 0 6px;">평생 재물 구조</h4>
-        <p style="font-size:13.5px;color:#92400E;margin:0;">{name}님의 일간은 {day['stem']}({_ELEMENT[day['element']]})이며, 일간이 다루는 재성은 {_ELEMENT[wealth_element]} 기운입니다. 원국에서 정재 {counts['direct_wealth']}곳, 편재 {counts['indirect_wealth']}곳, 식신·상관 {counts['eating_god'] + counts['hurting_officer']}곳을 확인했습니다. 이 개수는 재산의 크기가 아니라 재물 주제가 드러나는 위치의 수입니다.</p>
-      </div>
-      <div style="display:grid;gap:10px;margin-bottom:14px;">
-        <div style="background:#F8FAFC;border:1px solid #E2E8F0;padding:14px;border-radius:13px;"><h5 style="font-size:14px;font-weight:800;margin:0 0 5px;">돈을 만드는 방식</h5><p style="font-size:13px;color:#475569;margin:0;">{style} {output_text}</p></div>
-        <div style="background:#F8FAFC;border:1px solid #E2E8F0;padding:14px;border-radius:13px;"><h5 style="font-size:14px;font-weight:800;margin:0 0 5px;">돈을 지키는 기준</h5><p style="font-size:13px;color:#475569;margin:0;">{direction_advice(query["applied_state"], "wealth", _balance_advice(strength))} 재물운은 수익 가능성만이 아니라 지출·부채·회수 기간·공동 책임을 함께 볼 때 현실적으로 활용할 수 있습니다.</p></div>
-        <div style="background:#ECFDF5;border:1px solid #A7F3D0;padding:14px;border-radius:13px;"><h5 style="font-size:14px;font-weight:800;color:#065F46;margin:0 0 5px;">현재 재물 흐름</h5><p style="font-size:13px;color:#047857;margin:0;">{current_text}</p></div>
-      </div>
-      <h5 style="font-size:14.5px;font-weight:800;color:#0F172A;margin:0 0 4px;">생애 4단계 재물 흐름</h5>
-      <p style="font-size:12px;color:#64748B;margin:0 0 9px;">10년 대운 계산을 유지하면서 초년·청년·중장년·말년으로 묶었습니다. 현재 구간은 펼쳐 표시합니다.</p>
-      <div style="display:grid;gap:8px;">{_phases_html(cycles, current_index)}</div>
-      {_uncertainty(core)}
-      <p style="font-size:11.5px;color:#94A3B8;margin:12px 0 0;">이 리포트는 원국·강약·구조·전체 대운의 재성·식상 흐름을 설명하며, 특정 투자·부동산의 수익이나 손실을 보장하지 않습니다.</p>
-    </div>
-    """
-    return {"analysis_basis": state_basis(query["applied_state"]), "title": title, "content": content}
+    evidence = (
+        '<h4>평생 재물 구조</h4>'
+        f'<p>일간 {day["stem"]}({_ELEMENT[day["element"]]}) · 재성 {_ELEMENT[wealth_element]}. '
+        f'정재 {counts["direct_wealth"]}곳, 편재 {counts["indirect_wealth"]}곳을 확인했습니다. '
+        '이 개수는 재산의 크기가 아니라 재물 주제가 드러난 위치의 수입니다.</p>'
+        f'<p>{escape(direction_advice(query["applied_state"], "wealth", _balance_advice(strength)))}</p>')
+    content = theme_content(query, user_name or "회원", "wealth", evidence, _uncertainty(core))
+    return {"analysis_basis": state_basis(query["applied_state"]), "title": title, "content": content, "narrative_version": VERSION}

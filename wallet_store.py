@@ -45,6 +45,10 @@ def buy_report(user_id, key, cost, report):
 
 
 def refresh_owned_annual(user_id, expected, replacement):
+    return refresh_owned_report(user_id, 'sinnian', expected, replacement)
+
+
+def refresh_owned_report(user_id, report_key, expected, replacement):
     """Replace an owned reading without debit; retain every previous original.
 
     Generation happens outside the wallet lock. Compare-and-swap prevents two
@@ -52,7 +56,7 @@ def refresh_owned_annual(user_id, expected, replacement):
     """
     from copy import deepcopy
     with locked(user_id) as (_, _, state):
-        report = next((r for r in state['reports'] if r['report_key'] == 'sinnian'), None)
+        report = next((r for r in state['reports'] if r['report_key'] == report_key), None)
         if report is None:
             raise ValueError('not_owned')
         if report.get('narrative_version') == replacement['narrative_version']:
@@ -62,7 +66,8 @@ def refresh_owned_annual(user_id, expected, replacement):
         history = report.setdefault('previous_versions', [])
         history.append(deepcopy({k:v for k,v in expected.items() if k != 'previous_versions'}))
         for field in ('report_title', 'report_content', 'narrative_version', 'report_year',
-                      'refreshed_at', 'profile_basis'):
-            report[field] = replacement[field]
+                      'refreshed_at', 'profile_basis', 'reading_context'):
+            if field in replacement:
+                report[field] = replacement[field]
         # Original purchase date, other reports, balance and receipts are intact.
         return state

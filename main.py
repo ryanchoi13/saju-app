@@ -1013,9 +1013,10 @@ def unlock_report(req: UnlockReportRequest):
         "report_content": rep_data["content"],
         "created_at": datetime.date.today().strftime("%Y.%m.%d")
     }
+    new_report.update(narrative_version=rep_data.get('narrative_version'),
+                      reading_context=dict(sub_option=req.sub_option, relation=req.relation))
     if req.report_key == 'sinnian':
-        new_report.update(narrative_version=rep_data.get('narrative_version'),
-                          report_year=rep_data.get('report_year'))
+        new_report['report_year'] = rep_data.get('report_year')
 
     try:
         assets = wallet_store.buy_report(req.user_id, req.report_key, cost, new_report)
@@ -1031,6 +1032,66 @@ def unlock_report(req: UnlockReportRequest):
         "new_balance": user["coin"],
         "unlocked_reports": reports_db[req.user_id]
     }
+
+
+class RefreshReportRequest(UnlockReportRequest):
+    cost: int = 0
+
+
+@app.post('/api/reports/refresh')
+def refresh_owned_report(req: RefreshReportRequest):
+    """Explicit no-charge upgrade. Do not infer a missing partner or situation."""
+    from app.engine.services.reading_editorial import VERSION
+    from app.engine.services.career import _STATUS_GUIDE as CAREER_OPTIONS
+    from app.engine.services.love import _STATUS_GUIDE as LOVE_OPTIONS
+    if req.report_key not in {'daewoon', 'wealth', 'business', 'love', 'health', 'study', 'gunghap'}:
+        raise HTTPException(status_code=422, detail='이 리포트는 해당 업데이트를 지원하지 않습니다.')
+    user = hydrate_account(req.user_id)
+    original = next((r for r in reports_db[req.user_id] if r['report_key'] == req.report_key), None)
+    if original is None:
+        raise HTTPException(status_code=403, detail='먼저 해당 풀이를 열람해 주세요.')
+    if original.get('narrative_version') == VERSION:
+        return dict(status='success', new_balance=user['coin'], unlocked_reports=reports_db[req.user_id])
+    if not user.get('profile_complete'):
+        raise HTTPException(status_code=422, detail='사주 정보를 먼저 확인해 주세요.')
+    context = original.get('reading_context') or {}
+    option = req.sub_option if req.sub_option != '기본' else context.get('sub_option', '기본')
+    allowed = CAREER_OPTIONS if req.report_key == 'business' else LOVE_OPTIONS if req.report_key == 'love' else None
+    if allowed and option not in allowed:
+        raise HTTPException(status_code=422, detail='현재 상황을 선택한 뒤 업데이트해 주세요.')
+    partner = None
+    if req.report_key == 'gunghap':
+        if (not req.partner_name or req.partner_gender not in {'male','female'}
+                or req.partner_calendar_type not in {'solar','lunar','leap'}
+                or req.partner_sijin_index is None or not -1 <= req.partner_sijin_index <= 11
+                or req.relation not in {'연인 / 결혼','동업 / 비즈니스','친구 / 지인'}):
+            raise HTTPException(status_code=422, detail='상대방 정보와 관계를 다시 확인해 주세요.')
+        try:
+            date(req.partner_birth_year, req.partner_birth_month, req.partner_birth_day)
+        except (ValueError, TypeError):
+            raise HTTPException(status_code=422, detail='상대방 생년월일을 확인해 주세요.')
+        partner = dict(name=req.partner_name, gender=req.partner_gender,
+                       birth_year=req.partner_birth_year, birth_month=req.partner_birth_month,
+                       birth_day=req.partner_birth_day, calendar_type=req.partner_calendar_type,
+                       sijin_index=req.partner_sijin_index)
+    try:
+        generated = generate_detailed_report(req.report_key, option, req.partner_name, req.relation,
+                                             user.get('name','회원'), user=user, partner=partner)
+    except ValueError:
+        raise HTTPException(status_code=422, detail='입력한 사주 정보를 확인해 주세요. 기존 풀이와 복채는 유지됩니다.')
+    replacement = dict(report_title=generated['title'], report_content=generated['content'],
+                       narrative_version=VERSION, profile_basis='current_saved_profile',
+                       reading_context=dict(sub_option=option, relation=req.relation),
+                       refreshed_at=datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=9))).isoformat())
+    try:
+        assets = wallet_store.refresh_owned_report(req.user_id, req.report_key, original, replacement)
+    except ValueError:
+        raise HTTPException(status_code=409, detail='보관함이 변경되었습니다. 새로고침한 뒤 다시 확인해 주세요.')
+    except wallet_store.StorageUnavailable:
+        raise HTTPException(status_code=503, detail='새 풀이를 저장하지 못했습니다. 기존 풀이와 복채는 유지됩니다.')
+    user['coin'] = assets['balance']
+    reports_db[req.user_id] = assets['reports']
+    return dict(status='success', new_balance=user['coin'], unlocked_reports=assets['reports'])
 
 
 class RefreshAnnualRequest(BaseModel):

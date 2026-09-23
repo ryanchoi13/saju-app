@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from collections import Counter
 from html import escape
+from app.engine.services.reading_editorial import theme_content, VERSION
 
 from app.engine.core.models import MyeongriCoreResult
 from app.engine.services.applied_guidance import direction_advice, state_basis
@@ -171,22 +172,8 @@ def build_lifetime_career_report(core: MyeongriCoreResult, user_name: str, statu
         "현재 대운 구간을 확정하지 못해 원국과 전체 대운의 공통 흐름만 제시합니다."
     )
     title = f"{name}님 정통 명리 평생 직업·사업운"
-    content = f"""
-    <div style="text-align:left;line-height:1.78;color:#1E293B;">
-      <div style="background:#EFF6FF;border-left:4px solid #3B82F6;padding:16px;border-radius:14px;margin-bottom:14px;">
-        <h4 style="font-size:16px;font-weight:800;color:#1E3A8A;margin:0 0 6px;">평생 일의 구조 · {safe_status}</h4>
-        <p style="font-size:13.5px;color:#1E40AF;margin:0;">{_work_style(counts, mode)} 원국에서 이 주제와 관련해 조회한 십성이 드러난 위치는 {_count_summary(counts, mode)}입니다. 이 개수는 능력이나 성공의 점수가 아닙니다.</p>
-      </div>
-      <div style="display:grid;gap:10px;margin-bottom:14px;">
-        <div style="background:#F8FAFC;border:1px solid #E2E8F0;padding:14px;border-radius:13px;"><h5 style="font-size:14px;font-weight:800;margin:0 0 5px;">일할 때의 균형</h5><p style="font-size:13px;color:#475569;margin:0;">{direction_advice(query["applied_state"], "career", _balance_advice(strength))}</p></div>
-        <div style="background:#F8FAFC;border:1px solid #E2E8F0;padding:14px;border-radius:13px;"><h5 style="font-size:14px;font-weight:800;margin:0 0 5px;">{guide_title}</h5><p style="font-size:13px;color:#475569;margin:0;">{guide_text}</p></div>
-        <div style="background:#ECFDF5;border:1px solid #A7F3D0;padding:14px;border-radius:13px;"><h5 style="font-size:14px;font-weight:800;color:#065F46;margin:0 0 5px;">현재 직업·사업 흐름</h5><p style="font-size:13px;color:#047857;margin:0;">{current_text}</p></div>
-      </div>
-      <h5 style="font-size:14.5px;font-weight:800;color:#0F172A;margin:0 0 4px;">생애 4단계 직업·사업 흐름</h5>
-      <p style="font-size:12px;color:#64748B;margin:0 0 9px;">10년 대운 계산은 유지하면서 초년·청년·중장년·말년으로 묶었고, 현재 구간을 펼쳐 표시합니다.</p>
-      <div style="display:grid;gap:8px;">{_phases_html(cycles, current_index, mode)}</div>
-      {_uncertainty(core)}
-      <p style="font-size:11.5px;color:#94A3B8;margin:12px 0 0;">이 리포트는 원국·강약·구조·전체 대운을 직업과 사업의 언어로 해석한 참고 자료이며, 취업·승진·시험 합격·창업 성공을 보장하지 않습니다.</p>
-    </div>
-    """
-    return {"analysis_basis": state_basis(query["applied_state"]), "title": title, "content": content}
+    evidence = (
+        f'<h4>평생 일의 구조 · {safe_status}</h4><p>{_count_summary(counts, mode)}</p>'
+        f'<p>{escape(direction_advice(query["applied_state"], "career", _balance_advice(strength)))}</p>')
+    content = theme_content(query, user_name or "회원", mode, evidence, _uncertainty(core), safe_status)
+    return {"analysis_basis": state_basis(query["applied_state"]), "title": title, "content": content, "narrative_version": VERSION}

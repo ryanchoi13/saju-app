@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from html import escape
+from app.engine.services.reading_editorial import theme_content, VERSION
 
 from app.engine.core.models import MyeongriCoreResult
 from app.engine.semantic.applied import recommended_directions
@@ -160,23 +161,11 @@ def build_lifetime_health_report(
         "현재 대운 구간을 확정하지 못해 원국과 전체 대운의 공통 생활 흐름만 제시합니다."
     )
     title = f"{name}님 정통 명리 평생 건강 생활흐름"
-    content = f"""
-    <div style="text-align:left;line-height:1.78;color:#1E293B;">
-      <div style="background:#F0FDF4;border-left:4px solid #22C55E;padding:16px;border-radius:14px;margin-bottom:14px;">
-        <h4 style="font-size:16px;font-weight:800;color:#166534;margin:0 0 6px;">평생 생활 리듬의 구조</h4>
-        <p style="font-size:13.5px;color:#15803D;margin:0;">원국은 강약상 <strong>{_STRENGTH.get(strength, '판정 보류')}</strong>, 조후상 <strong>{climate_text}</strong>으로 읽힙니다. 이는 체질이나 질병명이 아니라 활동·소모·회복 환경을 살피기 위한 명리 판단입니다.</p>
-      </div>
-      <div style="display:grid;gap:10px;margin-bottom:14px;">
-        <div style="background:#F8FAFC;border:1px solid #E2E8F0;padding:14px;border-radius:13px;"><h5 style="font-size:14px;font-weight:800;margin:0 0 5px;">활동과 회복의 균형</h5><p style="font-size:13px;color:#475569;margin:0;">{_strength_guide(strength)}</p></div>
-        <div style="background:#F8FAFC;border:1px solid #E2E8F0;padding:14px;border-radius:13px;"><h5 style="font-size:14px;font-weight:800;margin:0 0 5px;">먼저 관리할 생활 병목</h5><p style="font-size:13px;color:#475569;margin:0;">{bottleneck_text}입니다. 여기서 병목은 질병이 아니라 생활 에너지의 흐름을 막는 구조를 뜻합니다.</p></div>
-        <div style="background:#ECFDF5;border:1px solid #A7F3D0;padding:14px;border-radius:13px;"><h5 style="font-size:14px;font-weight:800;color:#065F46;margin:0 0 5px;">생활관리 방향</h5><p style="font-size:13px;color:#047857;margin:0;">{_operation_guide(query)}</p></div>
-        <div style="background:#EFF6FF;border:1px solid #BFDBFE;padding:14px;border-radius:13px;"><h5 style="font-size:14px;font-weight:800;color:#1D4ED8;margin:0 0 5px;">현재 건강 생활흐름</h5><p style="font-size:13px;color:#1E40AF;margin:0;">{current_text}</p></div>
-      </div>
-      <h5 style="font-size:14.5px;font-weight:800;color:#0F172A;margin:0 0 4px;">생애 4단계 건강 생활흐름</h5>
-      <p style="font-size:12px;color:#64748B;margin:0 0 9px;">10년 대운 계산은 유지하면서 초년·청년·중장년·말년으로 묶었고, 현재 구간을 펼쳐 표시합니다.</p>
-      <div style="display:grid;gap:8px;">{_phases_html(cycles, current_index)}</div>
-      {_uncertainty(core)}
-      <p style="font-size:11.5px;color:#94A3B8;margin:12px 0 0;">이 리포트는 원국의 강약·조후·구조적 병목과 전체 대운을 생활관리 언어로 해석한 참고 자료입니다. 증상·질병·사고·수명을 예측하거나 의료 진단을 대신하지 않습니다. 불편한 증상이 있으면 의료진의 진료를 받으세요.</p>
-    </div>
-    """
-    return {"analysis_basis": state_basis(query["applied_state"]), "title": title, "content": content}
+    evidence = (
+        '<h4>평생 생활 리듬의 구조</h4>'
+        f'<p>{_STRENGTH.get(strength, "판정 보류")} · {climate_text}</p>'
+        f'<h5>먼저 관리할 생활 병목</h5><p>{bottleneck_text}. '
+        '여기서 병목은 질병이 아니라 명리에서 기운의 흐름을 살피는 개념입니다.</p>'
+        f'<p>{_operation_guide(query)}</p>')
+    content = theme_content(query, user_name or "회원", "health", evidence, _uncertainty(core))
+    return {"analysis_basis": state_basis(query["applied_state"]), "title": title, "content": content, "narrative_version": VERSION}

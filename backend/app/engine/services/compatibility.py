@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from html import escape
+from app.engine.services.reading_editorial import VERSION, section, paragraphs
 from itertools import product
 
 from app.engine.constants import GAN_WUXING
@@ -250,28 +251,85 @@ def build_compatibility_report(left: MyeongriCoreResult, right: MyeongriCoreResu
         if unknown else ""
     )
     title = f"{ln}님 & {rn}님 정통 사주 궁합 감명서"
+    opening = section("두 사람의 궁합, 먼저 답하면", [relationship_summary,
+        "두 사람이 편하게 느끼는 부분과 조율이 필요한 부분을 함께 살펴보세요. "
+        "잘 맞는 점은 더 자주 활용하고, 반복해서 어긋나는 일은 구체적인 약속으로 바꾸는 겁니다. "
+        "상대를 자신과 같은 방식으로 바꾸려 하기보다 함께 편해질 방법을 찾는 데 의미가 있습니다."])
+    opening += section("서로를 어떻게 느끼는가", [
+        f"{left_name or '회원'}님에게 {right_name or '상대방'}님은 {left_view}으로 읽힙니다. "
+        f"반대로 {right_name or '상대방'}님에게 {left_name or '회원'}님은 {right_view}으로 읽힙니다.",
+        "같은 일을 겪어도 두 사람이 받아들이는 느낌은 다를 수 있어요. "
+        "한 사람은 도움을 준다고 생각하지만 다른 사람은 간섭으로 느끼기도 합니다. "
+        "상대가 무엇을 원하는지 물어보고, 고마웠던 점과 불편했던 점을 함께 이야기해 보세요. "
+        "좋은 의도만큼 상대가 실제로 어떻게 받아들였는지도 중요합니다."])
+    opening += section("함께할 때 살릴 장점", [
+        ("두 사람 사이에는 서로를 연결하는 접점이 보입니다. " if supportive else
+         "두 사람은 함께 경험하면서 잘 맞는 부분을 찾아가는 데 의미가 있습니다. ") +
+        "각자가 잘하는 일을 나누고 상대에게 배울 점도 찾아보세요. "
+        "작은 약속을 함께 지켜보면 어떤 방식으로 협력할 때 편한지 알기 쉽습니다.",
+        "취향이나 의견이 모두 같을 필요는 없어요. 다른 생각을 들었을 때 곧바로 반박하기보다 "
+        "그렇게 생각한 이유부터 물어보세요. 자신에게 익숙하지 않은 방법이 오히려 막혀 있던 일을 푸는 데 도움이 되기도 합니다."])
+    opening += section("부딪힐 때 먼저 살필 것", [
+        ("의견이나 결정 속도가 달라질 때 조율이 특히 중요합니다. " if tense else
+         "편한 사이일수록 설명을 생략하지 않는 것이 좋습니다. ") +
+        "같은 문제로 다시 다투게 된다면 누구 말이 옳은지보다 무엇을 서로 다르게 기대했는지 살펴보세요. "
+        "약속 시간, 연락 방식, 함께 쓰는 비용처럼 구체적인 내용부터 맞추는 편이 낫습니다.",
+        "감정이 커졌을 때는 이번에 있었던 일부터 이야기하세요. 과거의 서운함을 한꺼번에 꺼내면 "
+        "해결할 문제가 너무 많아집니다. 잠시 쉬었다 이야기할 필요가 있다면 언제 다시 대화할지도 정해두세요. "
+        "문제를 미루는 것과 차분해질 시간을 갖는 것은 다릅니다."])
+    if safe_relation == "연인 / 결혼":
+        opening += section("사랑이 깊어지는 방식", [deepening,
+            "상대가 좋아했던 말이나 작은 약속을 기억해 보세요. 특별한 날에만 크게 표현하기보다 "
+            "평소에 관심을 보여주는 편이 서로에게 오래 남습니다. 함께 해보고 싶은 일을 제안하고 "
+            "상대가 기대하는 일도 들어주세요. 서로의 일상을 알아갈 시간이 필요합니다."])
+        opening += section("사랑이 식을 수 있는 지점", [cooling,
+            "마음에 걸리는 일이 있다면 상대가 알아채기를 기다리기보다 직접 얘기해 주세요. "
+            "항상 그렇다는 말 대신 어떤 상황이 서운했는지 설명하는 겁니다. "
+            "상대에게 바라는 변화도 구체적일수록 함께 실천하기 쉽습니다."])
+        opening += section("결혼하면 어떤가", [
+            "함께 살아갈 계획이 있다면 애정만큼 생활을 맞추는 대화가 필요합니다. "
+            "돈을 쓰고 모으는 방식, 집안일, 각자 쉴 시간, 양가 가족과의 거리를 차례로 이야기해 보세요. "
+            "한 번에 모든 답을 정할 필요는 없지만 중요한 차이를 모른 채 넘기지는 마세요.",
+            "한 사람의 방식에 다른 사람이 계속 맞춰야 한다면 오래 유지하기 어렵습니다. "
+            "의견이 다를 때 서로 양보할 수 있는지, 약속한 것을 실제로 지키는지 살펴보세요. "
+            "결혼 여부는 이런 생활의 경험과 두 사람의 뜻을 바탕으로 정해야 합니다."])
+        opening += section("자녀와 부모 역할", [
+            "부모가 될 계획이 있다면 돌봄을 누가 어떻게 맡을지 먼저 의논해 보세요. "
+            "일하는 시간과 휴식, 비용을 함께 생각해야 한 사람에게 부담이 몰리지 않습니다. "
+            "교육관이 다르다면 아이 앞에서 바로 결론을 내리기보다 둘이 따로 이야기할 시간을 가지세요.",
+            "아이가 생기면 관계가 저절로 좋아질 것이라고 기대하지는 마세요. "
+            "지금 두 사람이 도움을 구하고 갈등을 풀어가는 방식부터 살펴보는 것이 좋습니다. "
+            "임신 가능성이나 실제 자녀와의 궁합은 두 사람의 명식만으로 판단하지 않습니다."])
+    else:
+        opening += section("지금 두 사람에게 필요한 것", [
+            ("함께 일을 한다면 결정권과 맡을 업무를 처음부터 나누세요. "
+             "의견이 갈렸을 때 누가 최종 판단을 할지도 정해두는 편이 좋습니다. "
+             "친분이 좋아 시작한 일이라도 업무의 책임까지 같다고 생각해서는 안 됩니다."
+             if safe_relation == "동업 / 비즈니스" else
+             "친구나 지인 사이에서는 편하게 느끼는 연락 빈도와 부탁의 범위가 다를 수 있어요. "
+             "자주 연락하지 않는다고 마음이 멀어졌다고 단정하지 마세요. "
+             "함께하고 싶은 일이 있다면 먼저 제안하고 상대의 사정도 들어보세요."),
+            "도움을 주었다고 같은 방식으로 돌아오기를 기대하면 서운해질 수 있습니다. "
+            "꼭 필요한 것이 있다면 부탁으로 분명히 말하고, 상대가 어렵다고 하면 가능한 다른 방법을 찾아보세요. "
+            "거절할 수 있는 여유가 있어야 도움도 편하게 주고받을 수 있습니다."])
+    opening += section("함께 돈을 만들고 지키는 힘", [
+        "함께 돈을 쓰는 일은 금액과 정산 방법을 먼저 정하세요. 좋은 마음으로 시작했어도 "
+        "생각한 부담이 다르면 불편해질 수 있습니다. 공동 비용과 개인적으로 쓰는 돈을 나누고 "
+        "큰 지출은 결정하기 전에 서로 확인하는 편이 좋습니다.",
+        "동업이나 거래를 한다면 수입뿐 아니라 비용과 책임도 함께 나눠야 합니다. "
+        "수정 요청, 취소, 일정 변경이 생겼을 때 어떻게 처리할지 약속해 두세요. "
+        "상대를 믿는 마음과 조건을 문서로 남기는 일은 서로 반대되는 것이 아닙니다."])
+    if safe_relation == "연인 / 결혼":
+        opening += section("지금 두 사람에게 필요한 것", [
+            "오늘 함께 정할 수 있는 작은 약속부터 시작해 보세요. "
+            "불편했던 일 하나를 이야기하고 다음에는 어떻게 할지 의논하는 것으로도 충분합니다. "
+            "상대를 잘 안다고 생각하는 순간에도 물어보고 들어주는 태도가 필요합니다."])
     content = f"""
-    <div style="text-align:left;line-height:1.78;color:#1E293B;">
-      <div style="background:#FFF1F2;border-left:4px solid #E11D48;padding:16px;border-radius:14px;margin-bottom:14px;">
-        <h4 style="font-size:16px;font-weight:800;color:#9F1239;margin:0 0 6px;">두 사람의 궁합, 먼저 답하면</h4>
-        <p style="font-size:13.5px;color:#BE123C;margin:0;">{relationship_summary}</p>
-      </div>
-      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-bottom:14px;">
-        <div style="background:#F8FAFC;border:1px solid #E2E8F0;padding:11px;border-radius:12px;"><span style="font-size:11.5px;color:#64748B;">친밀감의 접점</span><p style="font-size:14px;font-weight:800;margin:2px 0 0;">{closeness_level}</p></div>
-        <div style="background:#F8FAFC;border:1px solid #E2E8F0;padding:11px;border-radius:12px;"><span style="font-size:11.5px;color:#64748B;">갈등 조율 필요</span><p style="font-size:14px;font-weight:800;margin:2px 0 0;">{conflict_level}</p></div>
-      </div>
-      <div style="display:grid;gap:10px;margin-bottom:14px;">
-        <div style="background:#FFFFFF;border:1px solid #E2E8F0;padding:14px;border-radius:13px;"><h5 style="font-size:14px;font-weight:800;margin:0 0 5px;">서로를 어떻게 느끼는가</h5><p style="font-size:13px;color:#475569;margin:0;">{ln}님은 {rn}님을 <strong>{left_view}</strong>으로 느끼기 쉽습니다. 반대로 {rn}님은 {ln}님을 <strong>{right_view}</strong>으로 받아들이기 쉽습니다. 두 사람의 애정량을 수치로 재는 뜻이 아니라, 상대 앞에서 어떤 감정과 역할이 먼저 활성화되는지를 보여줍니다.</p></div>
-        <div style="background:#FFFFFF;border:1px solid #FBCFE8;padding:14px;border-radius:13px;"><h5 style="font-size:14px;font-weight:800;color:#9D174D;margin:0 0 5px;">관계에서 눈여겨볼 신살</h5><p style="font-size:13px;color:#475569;margin:0;">{shensha_text}</p></div>
-        <div style="background:#FFFFFF;border:1px solid #E2E8F0;padding:14px;border-radius:13px;"><h5 style="font-size:14px;font-weight:800;margin:0 0 5px;">사랑이 깊어지는 방식</h5><p style="font-size:13px;color:#475569;margin:0;">{deepening}</p></div>
-        <div style="background:#FFFFFF;border:1px solid #E2E8F0;padding:14px;border-radius:13px;"><h5 style="font-size:14px;font-weight:800;margin:0 0 5px;">사랑이 식을 수 있는 지점</h5><p style="font-size:13px;color:#475569;margin:0;">{cooling}</p></div>
-        <div style="background:#FFFFFF;border:1px solid #E2E8F0;padding:14px;border-radius:13px;"><h5 style="font-size:14px;font-weight:800;margin:0 0 5px;">결혼하면 어떤가</h5><p style="font-size:13px;color:#475569;margin:0;">{marriage_text}</p></div>
-        <div style="background:#FFFFFF;border:1px solid #E2E8F0;padding:14px;border-radius:13px;"><h5 style="font-size:14px;font-weight:800;margin:0 0 5px;">함께 돈을 만들고 지키는 힘</h5><p style="font-size:13px;color:#475569;margin:0;">{money_text}</p></div>
-        <div style="background:#FFFFFF;border:1px solid #E2E8F0;padding:14px;border-radius:13px;"><h5 style="font-size:14px;font-weight:800;margin:0 0 5px;">자녀와 부모 역할</h5><p style="font-size:13px;color:#475569;margin:0;">{child_text}</p></div>
-        <div style="background:#FFF7ED;border:1px solid #FED7AA;padding:14px;border-radius:13px;"><h5 style="font-size:14px;font-weight:800;color:#9A3412;margin:0 0 5px;">지금 두 사람에게 필요한 것</h5><p style="font-size:13px;color:#C2410C;margin:0;">{_RELATION_GUIDE[safe_relation]}</p></div>
-      </div>
+    <div class="long-reading" data-narrative-version="{VERSION}">
+      {opening}
       <details style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:13px;padding:12px 14px;">
         <summary style="font-size:13px;font-weight:800;color:#334155;cursor:pointer;">판단 근거 보기 · 명리 용어 포함</summary>
+        <h5>관계에서 눈여겨볼 신살</h5><p>{shensha_text}</p>
         <p style="font-size:12.5px;color:#64748B;margin:10px 0;">두 사람의 원국을 각각 계산한 뒤 일간 관계, 상대 일간이 만드는 십성 역할, 서로 다른 명식 사이의 천간합·천간극과 지지의 합·충·형·파·해, 원진·도화·고신·과숙을 함께 비교했습니다.</p>
         <p style="font-size:12.5px;color:#475569;margin:0 0 8px;"><strong>{ln} → {rn}</strong>: {_TEN_GOD.get(left_to_right, left_to_right)} · <strong>{rn} → {ln}</strong>: {_TEN_GOD.get(right_to_left, right_to_left)}</p>
         <p style="font-size:12.5px;color:#64748B;margin:0 0 10px;">일간 관계: {_day_master_relation(left_dm.stem, right_dm.stem)}</p>
@@ -282,4 +340,4 @@ def build_compatibility_report(left: MyeongriCoreResult, right: MyeongriCoreResu
       <p style="font-size:11.5px;color:#94A3B8;margin:12px 0 0;">이 리포트는 두 사람의 명식에서 확인되는 상호작용을 현실의 관계 언어로 번역한 참고 자료입니다. 사랑의 크기, 결혼·이별, 임신·출산, 재산의 규모를 확정하지 않으며 실제 관계와 선택이 명리 판단보다 우선합니다.</p>
     </div>
     """
-    return {"title": title, "content": content}
+    return {"title": title, "content": content, "narrative_version": VERSION}
