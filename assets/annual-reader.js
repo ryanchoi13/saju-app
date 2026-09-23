@@ -1,5 +1,23 @@
 // View-only partition of the purchased document. PDF always uses its saved source.
+window.formatAnnualReading = function(body) {
+    body.querySelectorAll('.annual-kind').forEach(el => el.remove());
+    body.querySelectorAll('.annual-note').forEach(el => {
+        if (el.textContent.startsWith('분야별로 계산에서 드러나는 주제와 생활 조언을 구분해')) el.remove();
+    });
+    body.querySelectorAll('.annual-domain > h3').forEach(heading => {
+        if (heading.querySelector('.annual-domain-label')) return;
+        const title = heading.textContent;
+        const boundary = title.indexOf(' · ');
+        if (boundary < 0) return;
+        const label = document.createElement('span');
+        label.className = 'annual-domain-label'; label.textContent = title.slice(0,boundary);
+        const message = document.createElement('span');
+        message.className = 'annual-domain-message'; message.textContent = title.slice(boundary+3);
+        heading.replaceChildren(label,message);
+    });
+};
 window.setupAnnualReader = function(body, navigation) {
+    window.formatAnnualReading(body);
     const source = body.querySelector('.annual-reading');
     const cards = source ? [...source.querySelectorAll('[data-report-month]')] : [];
     if (!cards.length) return false; // Older documents remain readable in full.
@@ -82,6 +100,8 @@ window.ANNUAL_PRINT_STYLE = `
     p { orphans:3; widows:3; margin:0 0 10pt; }
     .annual-month { break-before:page; page-break-before:always; border:0!important; }
     .annual-kind { display:none; }
+    .annual-domain-label { display:block; color:#205D62; font-size:11pt; margin-bottom:6pt; }
+    .annual-domain-message { display:block; font-size:14pt; }
     .annual-note,.annual-evidence { font-size:9pt; color:#526378; }
     button { display:none; }
 `;
