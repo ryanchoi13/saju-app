@@ -22,6 +22,7 @@
     <meta name="theme-color" content="#F7F8F8">
     <script src="/assets/design-init.js?v=1"></script>
     <script src="/assets/session-client.js?v=1"></script>
+    <link rel="stylesheet" href="/assets/annual-reading.css?v=20260923-1">
     <script src="https://developers.kakao.com/sdk/js/kakao.min.js"></script>
     <script src="/assets/food-thumbnails-v1/catalog.js?v=3" defer></script>
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
@@ -1449,6 +1450,10 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 <button id="readingCloseButton" aria-label="풀이 닫고 돌아가기" onclick="closeArchiveDetailModal()" style="background: none; border: none; font-size: 20px; color: #94A3B8; cursor: pointer;">&times;</button>
             </div>
             <p id="readingReportMeta" class="reading-caption"></p>
+            <button id="annualRefreshButton" class="reading-text-button hidden" onclick="refreshOwnedAnnualReport()">새 풀이로 업데이트 · 추가 복채 없음</button>
+            <label id="readingVersionControl" class="hidden">풀이 버전
+                <select id="readingVersionSelect" onchange="openReadingReport(readingReportIndex, this.value)"></select>
+            </label>
             <nav id="readingReportContents" aria-label="리포트 목차"></nav>
             <div id="archiveModalBody" style="flex: 1; overflow-y: auto; padding-right: 4px; margin-bottom: 12px;"></div>
             <button onclick="closeArchiveDetailModal()" style="width: 100%; background: #2D6A4F; color: white; border: none; font-size: 14px; font-weight: 800; padding: 13px; border-radius: 12px; cursor: pointer;">이전 화면으로 돌아가기</button>
@@ -2945,6 +2950,39 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             refreshReportEntrypoints();
         }
 
+        const ANNUAL_NARRATIVE_VERSION = 'annual-conversation-v2';
+        function annualNeedsRefresh(item) {
+            return item?.report_key === 'sinnian' && item.narrative_version !== ANNUAL_NARRATIVE_VERSION;
+        }
+
+        async function refreshOwnedAnnualReport() {
+            const index = latestOwnedReportIndex('sinnian');
+            if (!currentUserId || index < 0 || reportRequestPending) return;
+            if (!annualNeedsRefresh(serverUnlockedReports[index])) { openReadingReport(index); return; }
+            if (!confirm('현재 저장한 사주 정보로 구매한 연도의 풀이를 새로 작성합니다. 추가 복채는 들지 않으며 업데이트 전 원문도 보관됩니다. 진행할까요?')) return;
+            const owner = currentUserId;
+            reportRequestPending = true;
+            setReportRequestState(true);
+            try {
+                const response = await fetch('/api/reports/refresh-annual', {
+                    method:'POST', headers:{'Content-Type':'application/json'},
+                    body:JSON.stringify({user_id:owner})
+                });
+                const data = await response.json();
+                if (!response.ok) throw Error(typeof data.detail === 'string' ? data.detail : '업데이트하지 못했습니다. 다시 시도해 주세요.');
+                if (currentUserId !== owner) return;
+                serverUnlockedReports = data.unlocked_reports;
+                currentCoin = data.new_balance;
+                updateCoinDisplay(); renderServerArchive(); restoreUnlockedUIFromReports();
+                openReadingReport(latestOwnedReportIndex('sinnian'));
+            } catch (error) {
+                if (currentUserId === owner) alert(error.message || '응답을 확인하지 못했습니다. 새로고침 후 보관함을 확인해 주세요.');
+            } finally {
+                reportRequestPending = false;
+                setReportRequestState(false);
+            }
+        }
+
         function renderServerArchive() {
             const container = document.getElementById('unlockedArchiveList');
             const countBadge = document.getElementById('archiveCountBadge');
@@ -3250,6 +3288,13 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 open.onclick = () => openReadingReport(index);
                 slot.append(note, open);
                 if (key === 'sinnian') {
+                    if (annualNeedsRefresh(item)) {
+                        const upgrade = document.createElement('button');
+                        upgrade.className = 'reading-text-button annual-upgrade';
+                        upgrade.textContent = '새 풀이로 업데이트 · 추가 복채 없음';
+                        upgrade.onclick = refreshOwnedAnnualReport;
+                        slot.append(upgrade);
+                    }
                     const doc = reportDocument(item);
                     const year = doc.querySelector('[data-report-year]')?.dataset.reportYear || item.report_title?.match(/^(\d{4})\b/)?.[1];
                     document.getElementById('annualYearLabel').textContent = year ? `${year}년 · 구매한 올해운세` : '구매한 올해운세';
@@ -3262,23 +3307,38 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
         }
 
         function setReportRequestState(pending) {
-            document.querySelectorAll('#btnDaewoon,#btnSinnian,#daewoonFlowOpen,#btnOpenGunghapModal,[id^="btnTheme_"]').forEach(button => {
+            document.querySelectorAll('#btnDaewoon,#btnSinnian,#daewoonFlowOpen,#btnOpenGunghapModal,[id^="btnTheme_"],#annualRefreshButton,.annual-upgrade').forEach(button => {
                 button.disabled = pending;
                 button.setAttribute('aria-busy', String(pending));
             });
         }
 
-        function openReadingReport(index) {
-            const item = serverUnlockedReports[index];
+        function openReadingReport(index, version = 'current') {
+            const owned = serverUnlockedReports[index];
+            if (!owned) return;
+            const previous = owned.previous_versions || [];
+            const item = version === 'current' ? owned : previous[Number(version)];
             if (!item) return;
             const modal = document.getElementById('archiveDetailModal');
+            modal.dataset.annualReader = String(owned.report_key === 'sinnian');
             if (modal.classList.contains('hidden')) {
                 readingReturnState = {scrollY:window.scrollY, focus:document.activeElement, overflow:document.body.style.overflow, url:location.href};
                 history.pushState({dalhaReader:true}, '', '#report');
             }
             readingReportIndex = index;
             document.getElementById('archiveModalTitle').textContent = item.report_title;
-            document.getElementById('readingReportMeta').textContent = `구매 당시의 분석 결과${item.created_at ? ` · ${item.created_at}` : ''}`;
+            document.getElementById('readingReportMeta').textContent = item.refreshed_at
+                ? `현재 저장한 사주 정보로 업데이트 · ${item.refreshed_at.slice(0,10)}`
+                : `${version === 'current' ? '구매 당시의 분석 결과' : '업데이트 전 원문'}${item.created_at ? ` · ${item.created_at}` : ''}`;
+            document.getElementById('annualRefreshButton').classList.toggle('hidden', !annualNeedsRefresh(owned));
+            const versionControl = document.getElementById('readingVersionControl');
+            const versionSelect = document.getElementById('readingVersionSelect');
+            versionSelect.replaceChildren();
+            versionControl.classList.toggle('hidden', previous.length === 0);
+            [{value:'current',label:'현재 풀이'}, ...previous.map((r,i) => ({value:String(i),label:`업데이트 전 원문 ${i+1}`}))].forEach(option => {
+                const el = document.createElement('option'); el.value = option.value; el.textContent = option.label; versionSelect.append(el);
+            });
+            versionSelect.value = String(version);
             const body = document.getElementById('archiveModalBody');
             body.innerHTML = item.report_content;
             body.scrollTop = 0;
@@ -3286,7 +3346,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             contents.replaceChildren();
             Array.from(body.querySelectorAll('h3')).forEach(heading => {
                 const button = document.createElement('button');
-                button.textContent = heading.textContent;
+                button.textContent = heading.dataset.tocLabel || heading.textContent;
                 button.onclick = () => heading.scrollIntoView({block:'start',behavior:'smooth'});
                 contents.append(button);
             });
@@ -3325,7 +3385,9 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
         }
 
         function printReadingReport() {
-            const item = serverUnlockedReports[readingReportIndex];
+            const owned = serverUnlockedReports[readingReportIndex];
+            const version = document.getElementById('readingVersionSelect').value;
+            const item = version === 'current' ? owned : owned?.previous_versions?.[Number(version)];
             if (!item) return;
             const printWindow = window.open('', '_blank');
             if (!printWindow) { alert('인쇄를 위해 팝업을 허용해 주세요.'); return; }
@@ -3360,7 +3422,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             document.getElementById('archiveDetailModal').addEventListener('keydown', event => {
                 if (event.key === 'Escape') { event.preventDefault(); closeArchiveDetailModal(); return; }
                 if (event.key !== 'Tab') return;
-                const focusable = Array.from(event.currentTarget.querySelectorAll('button,a[href],summary,[tabindex="0"]')).filter(el => !el.closest('.hidden'));
+                const focusable = Array.from(event.currentTarget.querySelectorAll('button,a[href],summary,select,[tabindex="0"]')).filter(el => !el.disabled && !el.closest('.hidden'));
                 const first = focusable[0], last = focusable[focusable.length - 1];
                 if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
                 else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }

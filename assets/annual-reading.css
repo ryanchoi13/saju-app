@@ -1,0 +1,24 @@
+/* Full report and cloned monthly cards share a mobile-first reading rhythm. */
+:is(#archiveModalBody,.period-reading) :is(.annual-reading,.annual-month) { min-width:0; overflow-wrap:anywhere; word-break:keep-all; }
+:is(#archiveModalBody,.period-reading) :is(.annual-reading,.annual-month) p { margin:0 0 1.15em; line-height:1.9!important; }
+:is(#archiveModalBody,.period-reading) .annual-reading h3 { margin:28px 0 12px; font-weight:800; }
+:is(#archiveModalBody,.period-reading) :is(.annual-reading,.annual-month) h4 { margin:0 0 16px; }
+:is(#archiveModalBody,.period-reading) .annual-domain h5 { margin:20px 0 6px; }
+:is(#archiveModalBody,.period-reading) .annual-kind { display:inline-block; font-size:.75rem!important; color:var(--ui-muted,#425563)!important; border:1px solid var(--ui-line,#D5DFE3); padding:0 7px; border-radius:6px; margin-bottom:8px; }
+:is(#archiveModalBody,.period-reading) .annual-month { padding:16px 0 8px 14px; margin:24px 0; }
+:is(#archiveModalBody,.period-reading) .annual-evidence { margin:16px 0 24px; border-top:1px solid var(--ui-line,#D5DFE3); }
+:is(#archiveModalBody,.period-reading) .annual-evidence :is(p,summary),
+:is(#archiveModalBody,.period-reading) .annual-note { font-size:.875rem!important; color:var(--ui-muted,#425563)!important; }
+.annual-evidence summary { cursor:pointer; min-height:44px; }
+#readingVersionControl { display:flex; gap:8px; align-items:center; font-size:.875rem; }
+#readingVersionSelect { flex:1; min-width:0; min-height:44px; border:1px solid #AABBC3; border-radius:8px; background:#fff; font-size:.875rem; padding:5px 8px; }
+#annualRefreshButton { min-height:44px; flex-shrink:0; }
+.annual-upgrade { display:block; width:100%; margin-top:8px; }
+#archiveDetailModal[data-annual-reader="true"] #readingReportContents { flex-wrap:nowrap; overflow-x:auto; overflow-y:hidden; max-height:none; padding-bottom:4px; }
+#archiveDetailModal[data-annual-reader="true"] #readingReportContents button { flex:0 0 auto; white-space:nowrap; }
+@media (max-width:480px) {
+    #archiveDetailModal { padding:8px; }
+    #archiveDetailModal .modal-content { padding:16px!important; max-height:calc(100dvh - 16px)!important; gap:8px; }
+    #archiveDetailModal .ui-modal-heading { padding-bottom:8px!important; }
+    #archiveModalBody { min-height:100px; }
+}
