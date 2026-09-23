@@ -3,9 +3,10 @@
 :is(#archiveModalBody,.period-reading) :is(.annual-reading,.annual-month) p { margin:0 0 1.15em; line-height:1.9!important; }
 :is(#archiveModalBody,.period-reading) .annual-reading h3 { margin:28px 0 12px; font-weight:800; }
 :is(#archiveModalBody,.period-reading) :is(.annual-reading,.annual-month) h4 { margin:0 0 16px; }
-:is(#archiveModalBody,.period-reading) .annual-domain h5 { margin:20px 0 6px; }
-:is(#archiveModalBody,.period-reading) .annual-kind { display:inline-block; font-size:.75rem!important; color:var(--ui-muted,#425563)!important; border:1px solid var(--ui-line,#D5DFE3); padding:0 7px; border-radius:6px; margin-bottom:8px; }
+:is(#archiveModalBody,.period-reading) .annual-domain h5 { margin:20px 0 6px; font-size:1rem!important; font-weight:800; line-height:1.9; color:var(--ui-ink,#142942); }
 :is(#archiveModalBody,.period-reading) .annual-month { padding:16px 0 8px 14px; margin:24px 0; }
+:is(#archiveModalBody,.period-reading) .annual-overview > p:first-of-type,
+:is(#archiveModalBody,.period-reading) .annual-month > p:first-of-type { color:var(--ui-ink,#142942); font-size:1.04rem!important; font-weight:700; line-height:1.85!important; }
 :is(#archiveModalBody,.period-reading) .annual-evidence { margin:16px 0 24px; border-top:1px solid var(--ui-line,#D5DFE3); }
 :is(#archiveModalBody,.period-reading) .annual-evidence :is(p,summary),
 :is(#archiveModalBody,.period-reading) .annual-note { font-size:.875rem!important; color:var(--ui-muted,#425563)!important; }
@@ -14,6 +15,11 @@
 #readingVersionSelect { flex:1; min-width:0; min-height:44px; border:1px solid #AABBC3; border-radius:8px; background:#fff; font-size:.875rem; padding:5px 8px; }
 #annualRefreshButton { min-height:44px; flex-shrink:0; }
 .annual-upgrade { display:block; width:100%; margin-top:8px; }
+.reading-modal-actions { display:flex; gap:8px; flex-shrink:0; }
+.reading-modal-actions button { width:50%; min-height:48px; border-radius:12px; padding:10px 8px; font-size:13px; font-weight:800; cursor:pointer; }
+.reading-pdf-button { background:#fff; color:var(--ui-accent,#246B70); border:1px solid var(--ui-line,#D5DFE3); }
+.reading-back-button { background:var(--ui-accent,#246B70); color:#fff; border:1px solid var(--ui-accent,#246B70); }
+#readingReportMeta { width:100%; text-align:right; margin:0 0 4px!important; }
 #archiveDetailModal[data-annual-reader="true"] #readingReportContents { flex-wrap:nowrap; overflow-x:auto; overflow-y:hidden; max-height:none; padding-bottom:4px; }
 #archiveDetailModal[data-annual-reader="true"] #readingReportContents button { flex:0 0 auto; white-space:nowrap; }
 @media (max-width:480px) {
