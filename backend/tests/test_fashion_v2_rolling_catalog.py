@@ -76,18 +76,19 @@ def test_owner_review_page_is_noindex_and_uses_sixteen_calibration_boards():
     assert response.path.endswith("assets/fashion-review.html")
     assert response.headers["x-robots-tag"] == "noindex, nofollow"
     html = open(response.path, encoding="utf-8").read()
-    boards = re.findall(r"file:'(sample-v(?:[4-9]|1[01])-[^']+\.webp)'", html)
+    boards = re.findall(r"file:'(sample-v(?:[4-9]|1[015])-[^']+\.webp)'", html)
     assert len(boards) == 16
     assert len(set(boards)) == 16
     assert all((Path("assets/fashion-v2-boards") / name).exists() for name in boards)
     assert sum(name.startswith("sample-v4-") for name in boards) == 2
     assert sum(name.startswith("sample-v5-") for name in boards) == 3
-    assert sum(name.startswith("sample-v6-") for name in boards) == 1
+    assert sum(name.startswith("sample-v6-") for name in boards) == 0
     assert sum(name.startswith("sample-v7-") for name in boards) == 2
     assert sum(name.startswith("sample-v8-") for name in boards) == 1
     assert sum(name.startswith("sample-v9-") for name in boards) == 2
     assert sum(name.startswith("sample-v10-") for name in boards) == 4
     assert sum(name.startswith("sample-v11-") for name in boards) == 1
+    assert sum(name.startswith("sample-v15-") for name in boards) == 1
     assert "editorial floor" not in html
     assert "편집형 플랫레이" in html
     assert all(age in html for age in ("10대", "30대", "50대+"))
@@ -96,7 +97,7 @@ def test_owner_review_page_is_noindex_and_uses_sixteen_calibration_boards():
     assert "Daily ↔ Trendy" in html
     assert "role:'Trend'" not in html
     assert "30대 ↔ 50대+" in html
-    assert "아직 운영 추천에는 연결하지 않았습니다" in html
+    assert "일부 승인 화보는 운영 추천에도 사용됩니다" in html
 
 
 def test_fifty_plus_female_tpo_comparison_is_noindex_and_complete():

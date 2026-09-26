@@ -11,7 +11,7 @@ BOARD_DIR = ROOT / "assets" / "fashion-v2-boards"
 
 def main():
     html = PAGE.read_text(encoding="utf-8")
-    files = re.findall(r"file:'(sample-v(?:[4-9]|1[01])-[^']+\.webp)'", html)
+    files = re.findall(r"file:'(sample-v(?:[4-9]|1[015])-[^']+\.webp)'", html)
 
     assert len(files) == 16, f"expected 16 samples, got {len(files)}"
     assert len(set(files)) == 16, "sample filenames must be unique"
@@ -29,12 +29,13 @@ def main():
 
     assert sum(filename.startswith("sample-v4-") for filename in files) == 2
     assert sum(filename.startswith("sample-v5-") for filename in files) == 3
-    assert sum(filename.startswith("sample-v6-") for filename in files) == 1
+    assert sum(filename.startswith("sample-v6-") for filename in files) == 0
     assert sum(filename.startswith("sample-v7-") for filename in files) == 2
     assert sum(filename.startswith("sample-v8-") for filename in files) == 1
     assert sum(filename.startswith("sample-v9-") for filename in files) == 2
     assert sum(filename.startswith("sample-v10-") for filename in files) == 4
     assert sum(filename.startswith("sample-v11-") for filename in files) == 1
+    assert sum(filename.startswith("sample-v15-") for filename in files) == 1
     assert "업무용 경계 샘플" not in html
     assert "같은 포멀 Daily에서 수트 인상과 넥타이 색·패턴" in html
     assert html.count("캐주얼 · 더운 초가을") == 12

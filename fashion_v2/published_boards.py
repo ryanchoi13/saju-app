@@ -62,8 +62,8 @@ PUBLISHED_PAIRS = {
             _item("top", "니트 폴로", "딥 틸"), _item("bottom", "릴랙스 데님", "다크 인디고"), _item("shoes", "쿠션 레트로 러너", "오프화이트"), _item("carry_outer", "얇은 카디건", "베이지"), _item("bag", "모던 숄더백", "브라운")]),
     ),
     ("male", "fifty_plus", "casual", "warm"): (
-        _look("male-fifty-warm-casual", "male", "casual", "daily", "sample-v6-male-fifty-warm-casual-daily.webp", [
-            _item("top", "반팔 폴로", "라이트 블루"), _item("bottom", "면 치노", "카키"), _item("shoes", "쿠션 워킹화", "브라운"), _item("carry_outer", "얇은 바람막이", "네이비")]),
+        _look("male-fifty-warm-casual", "male", "casual", "daily", "sample-v15-male-fifty-warm-casual-daily.webp", [
+            _item("top", "반팔 폴로", "라이트 블루"), _item("bottom", "면 치노", "베이지"), _item("shoes", "쿠션 워킹화", "네이비"), _item("carry_outer", "얇은 나일론 바람막이", "네이비")]),
         _look("male-fifty-warm-casual", "male", "casual", "trend", "sample-v10-male-fifty-warm-casual-trend.webp", [
             _item("top", "조직감 니트 폴로", "버건디"), _item("bottom", "면 팬츠", "아이보리"), _item("shoes", "쿠션 스웨이드 스니커즈", "브라운"), _item("carry_outer", "오버셔츠", "네이비")]),
     ),
