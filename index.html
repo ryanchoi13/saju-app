@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <script type="module" src="/assets/dalha-garments/integration.js?v=4"></script>
+    <script type="module" src="/assets/dalha-garments/integration.js?v=5"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -1755,7 +1755,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
         function renderFashionV2Board(look, lookIndex) {
             if (look?.garment_spec) {
                 if (!window.DalhaGarments) return '<p>도안을 불러오는 중입니다. 잠시 후 다시 열어주세요.</p>';
-                try { return '<div class="fashion-v2-svg-board">' + window.DalhaGarments.renderLook(look,'dalha-look-'+lookIndex) + '</div>'; }
+                try { const prefix='dalha-look-'+lookIndex; const svg=window.DalhaGarments.renderLook(look,prefix); return '<div class="fashion-v2-svg-board">' + window.DalhaGarments.decorateLook(look,prefix,svg) + '</div>'; }
                 catch (error) { console.error('DALHA garment render:',error); return '<p>도안을 표시하지 못했습니다.</p>'; }
             }
             const image = fashionV2BoardImage(look);
@@ -1767,6 +1767,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             if (!slides) return;
             const looks = Array.isArray(context?.looks) ? context.looks : [];
             slides.innerHTML = looks.map((look,index) => `<section id="fashionV2${index ? 'Trend' : 'Daily'}Slide" class="fashion-v2-slide" role="tabpanel" aria-labelledby="fashionV2${index ? 'Trend' : 'Daily'}Tab"><h4>${fashionV2LookTitle(look,index)}</h4><p class="fashion-v2-look-summary">${escapeStyleText(fashionV2Narrative(look))}</p>${renderFashionV2Board(look,index)}${renderFashionV2Details(look,index)}</section>`).join('');
+            void window.DalhaGarments?.hydrateIllustrations(slides);
             showFashionV2Slide(0,false);
         }
         function showFashionV2Slide(index, smooth = true) {

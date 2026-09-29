@@ -1,3 +1,4 @@
+import {decorateLook,hydrateIllustrations} from '../dalha-illustrations/adapter.js';
 // Approved sources stay immutable. Explicit review variants are opt-in below.
 import {renderOutfit, garmentInner, outerGeometry, escapeXml} from './engine.js';
 import {byName} from './catalog.js';
@@ -100,4 +101,4 @@ export function renderLook(look, prefix='dalha-look') {
   return svg.replace('aria-label="코디 도안"',`aria-label="${escapeXml(look.items.map(i=>(i.color_description||i.color_name)+' '+(i.display_label||i.label)).join(', '))}"`);
 }
 
-if (typeof window!=='undefined') window.DalhaGarments={renderLook};
+if (typeof window!=='undefined') window.DalhaGarments={renderLook,decorateLook,hydrateIllustrations};
