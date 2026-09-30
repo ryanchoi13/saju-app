@@ -34,22 +34,40 @@ globalThis.Image=class{naturalWidth=1;naturalHeight=1;set src(value){this.mask=v
 dom.window.HTMLCanvasElement.prototype.getContext=function(){let im;return {drawImage(x){im=x;},getImageData(){return {width:1,height:1,data:new Uint8ClampedArray(im.mask?[1,0,0,255]:[0,0,0,255])};},putImageData(x){assert.equal(x.data[3],255);}};};
 const root=document.querySelector('main'),fallback='<svg aria-label="추천 옷과 색상"></svg>';
 root.innerHTML=decorateLook(base,'test',fallback);
-assert.equal(root.querySelector('[data-illustration-fallback]').hidden,false);
+assert.equal(root.querySelector('[data-illustration-fallback]').hidden,true);
 await hydrateIllustrations(root);
 assert.equal(root.querySelector('[data-illustration-fallback]').hidden,true);
 assert.equal(root.querySelector('canvas').getAttribute('aria-label'),'추천 옷과 색상');
 assert.equal(root.firstChild.dataset.illustrationAsset,'f-casual-a');
 fail=true;root.innerHTML=decorateLook(looks[1],'failure',fallback);
 await hydrateIllustrations(root);
-assert.equal(root.querySelector('[data-illustration-fallback]').hidden,false);
+assert.equal(root.querySelector('[data-illustration-fallback]').hidden,true);
 assert.equal(root.querySelector('canvas').hidden,true);
-assert.equal(decorateLook({...base,garment_spec:{...base.garment_spec,top:'unknown'}},'unsupported',fallback),fallback);
+assert.ok(!decorateLook({...base,garment_spec:{...base.garment_spec,top:'unknown'}},'unsupported',fallback).includes('<svg'));
+assert.ok(root.querySelector('[data-illustration-status] button'));
+fail=false;await hydrateIllustrations(root);
+assert.equal(root.querySelector('canvas').hidden,false);
+assert.equal(root.querySelector('[data-illustration-status]').hidden,true);
 fail=false;root.innerHTML=decorateLook(looks[2],'stale',fallback);
 const pending=hydrateIllustrations(root);root.replaceChildren();await pending;
 assert.equal(root.children.length,0);
 console.log('PASS: 60 live recommendations; 60 exact matches; colour/outline, DOM loading/failure/stale-node checks');
 
 const inventory=JSON.parse(execFileSync('python',['scripts/illustration_inventory.py'],{encoding:'utf8',maxBuffer:4*1024*1024}));
-assert.equal(inventory.cases,78000);
+assert.equal(inventory.cases,86085);
+assert.equal(inventory.shapes.length,63);
 for(const shape of inventory.shapes)assert.ok(illustrations.some(e=>geometryMatches(shape,e.shape)),JSON.stringify(shape));
 console.log('PASS:',inventory.cases,'structural scenarios;',inventory.shapes.length,'distinct structures covered');
+
+// Actual post-colour recommendations must cover garment changes, too.
+const changedLooks=JSON.parse(execFileSync('python',['-c',`import json
+from fashion_v2.svg_recommendation import build_svg_catalog_contexts,tone
+out=[]
+for gender in ('male','female'):
+ for season in ('spring','summer','autumn','winter'):
+  for a,b in [('teal','brown'),('forest','beige'),('yellow','purple')]:
+   for c in build_svg_catalog_contexts(gender,season,tone(a),tone(b),age=48).values(): out.extend(c['looks'])
+print(json.dumps(out))`],{encoding:'utf8',maxBuffer:4*1024*1024}));
+for(const look of changedLooks) assert.ok(selectIllustration(look),JSON.stringify(look.garment_spec));
+assert.ok(changedLooks.some(l=>l.garment_spec.top==='맨투맨'&&l.garment_spec.bottom==='면바지'));
+console.log('PASS:',changedLooks.length,'post-colour live recommendations including cotton alternatives');

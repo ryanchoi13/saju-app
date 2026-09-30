@@ -1422,5 +1422,74 @@ export const illustrations=[
       "watch.dial"
     ],
     "linkedSuit": false
+  },
+  {
+    "id": "all-061",
+    "shape": {
+      "gender": "male",
+      "top": "맨투맨",
+      "bottom": "면바지",
+      "dress": "",
+      "outer": "블루종",
+      "shoe": "운동화",
+      "bag": "",
+      "accessories": [],
+      "outerOpen": true,
+      "outerMode": "wear",
+      "tuck": "out"
+    },
+    "slots": [
+      "outerColor",
+      "topColor",
+      "bottomColor",
+      "shoeColor"
+    ],
+    "linkedSuit": false
+  },
+  {
+    "id": "all-062",
+    "shape": {
+      "gender": "male",
+      "top": "후드티",
+      "bottom": "면바지",
+      "dress": "",
+      "outer": "블루종",
+      "shoe": "운동화",
+      "bag": "",
+      "accessories": [],
+      "outerOpen": true,
+      "outerMode": "wear",
+      "tuck": "out"
+    },
+    "slots": [
+      "outerColor",
+      "topColor",
+      "bottomColor",
+      "shoeColor"
+    ],
+    "linkedSuit": false
+  },
+  {
+    "id": "all-063",
+    "shape": {
+      "gender": "male",
+      "top": "니트",
+      "bottom": "면바지",
+      "dress": "",
+      "outer": "코트",
+      "shoe": "부츠",
+      "bag": "",
+      "accessories": [],
+      "outerOpen": true,
+      "outerMode": "wear",
+      "tuck": "out"
+    },
+    "slots": [
+      "outerColor",
+      "topColor",
+      "bottomColor",
+      "shoeColor"
+    ],
+    "linkedSuit": false
   }
 ];

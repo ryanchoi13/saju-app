@@ -1,12 +1,14 @@
 """Exhaustive structural inventory, with equivalent weather inputs deduplicated.
-Colour scoring is unnecessary here: only review preferences can alter geometry.
+Enumerate every garment option used by colour scoring, including denim-to-cotton
+alternatives. Colour ranking chooses among these structures without adding new ones.
 """
 import sys,json,itertools
 from pathlib import Path
 from copy import deepcopy
 from datetime import datetime
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
-from fashion_v2.svg_recommendation import select_template,to_spec,tone,TPOS
+from fashion_v2.svg_recommendation import select_template,to_spec,tone,TPOS,PALETTE
+from fashion_v2.wearable_options import garment_options
 from fashion_v2.template_catalog import templates_for
 from fashion_v2.weather_catalog import weather_templates_for
 from fashion_v2.weather_outfit import classify_weather
@@ -28,10 +30,11 @@ def inventory():
                     look=apply_review_preferences(deepcopy(selected),tone(a),tone(b))
                     for item in look['items']:
                         c=tone(item['base_color']);item.update(hex=c['hex'],color_name=c['name'])
-                    spec=to_spec(look)
-                    shape={k:v for k,v in spec.items() if not k.endswith('Color') and k not in ['accessoryItems','suitLinked','trouserExtraLength','formalHem']}
-                    if shape.get('overOuter'):shape['overOuter']={k:v for k,v in shape['overOuter'].items() if k!='color'}
-                    key=json.dumps(shape,sort_keys=True,ensure_ascii=False)
-                    found[key]=shape;count+=1
+                    for option in garment_options(look,PALETTE):
+                        spec=to_spec(option)
+                        shape={k:v for k,v in spec.items() if not k.endswith('Color') and k not in ['accessoryItems','suitLinked','trouserExtraLength','formalHem']}
+                        if shape.get('overOuter'):shape['overOuter']={k:v for k,v in shape['overOuter'].items() if k!='color'}
+                        key=json.dumps(shape,sort_keys=True,ensure_ascii=False)
+                        found[key]=shape;count+=1
     return {'cases':count,'shapes':list(found.values())}
 if __name__=='__main__':print(json.dumps(inventory(),ensure_ascii=False))
