@@ -9,3 +9,5 @@ The canvas replaces the visible SVG only after both assets and pixel rendering s
 Sources: Higgsfield-generated production artwork, September 2026. `06` and `10` are the previously approved adult male formal sources; the other ten assets match the live autumn templates. See `provenance.json` for generation IDs.
 
 Validation: `node scripts/test_fashion_illustrations.mjs` exercises the actual backend's 60 autumn recommendations across both genders and five ages (55 matches, five Derby fallbacks), unsupported shapes, deterministic colour/line rendering, asset failure and stale DOM handling. Run `python -m unittest backend.tests.test_fashion_svg_integration -q` for recommendation regressions. DOM tests use jsdom; they do not substitute for a physical mobile-device check.
+
+Mask preparation: `python scripts/build_illustration_masks.py --sources /path/to/original-pngs` (Pillow, numpy, scipy). Neutral cast shadows and ivory sneaker soles are excluded from recolouring. Run `python scripts/test_illustration_masks.py` to check asset integrity and the red-jacket shadow/sole regression.

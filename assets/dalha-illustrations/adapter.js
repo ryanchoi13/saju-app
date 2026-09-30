@@ -15,7 +15,7 @@ export async function hydrateIllustrations(root){
  return Promise.allSettled(nodes.map(async node=>{
   const key=node.dataset.dalhaIllustration,entry=pending.get(key);if(!entry)return;
   try{
-   const [source,mask]=await Promise.all([image(BASE+entry.id+'.webp?v=1'),image(BASE+entry.id+'-layers.png?v=1')]);
+   const [source,mask]=await Promise.all([image(BASE+entry.id+'.webp?v=1'),image(BASE+entry.id+'-layers.png?v=2')]);
    if(!node.isConnected||node.dataset.dalhaIllustration!==key)return;
    const original=pixels(source),layers=pixels(mask);
    if(original.width!==layers.width||original.height!==layers.height)throw new Error('Illustration layer size mismatch');
