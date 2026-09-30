@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {execFileSync} from 'node:child_process';
 import {JSDOM} from 'jsdom';
-import {selectIllustration} from '../assets/dalha-illustrations/catalog.js';
+import {selectIllustration,illustrations,geometryMatches} from '../assets/dalha-illustrations/catalog.js';
 import {recolor} from '../assets/dalha-illustrations/renderer.js';
 import {decorateLook,hydrateIllustrations} from '../assets/dalha-illustrations/adapter.js';
 
@@ -13,12 +13,12 @@ for gender in ('female','male'):
   for c in build_svg_catalog_contexts(gender,'autumn',tone('navy'),tone('pink'),age=age).values(): out.extend(c['looks'])
 print(json.dumps(out))`],{encoding:'utf8'}));
 assert.equal(looks.length,60);
-assert.equal(looks.filter(selectIllustration).length,55);
+assert.equal(looks.filter(selectIllustration).length,60);
 const base=looks[0];
 for(const change of [{shoe:'로퍼'},{overOuter:'코트'},{outerMode:'carry'},{tuck:'in'},{accessories:['목걸이']},{topColor:'invalid'}]){
  assert.equal(selectIllustration({...base,garment_spec:{...base.garment_spec,...change}}),null);
 }
-assert.equal(selectIllustration({...base,season:'winter'}),null);
+assert.ok(selectIllustration({...base,season:'winter'}));
 const original=new Uint8ClampedArray([17,24,31,255,1,2,3,255,4,5,6,128]);
 const layer=new Uint8ClampedArray([0,0,0,255,1,0,0,255,1,255,128,255]);
 const painted=recolor(original,layer,['#e3ddcf']);
@@ -43,8 +43,13 @@ fail=true;root.innerHTML=decorateLook(looks[1],'failure',fallback);
 await hydrateIllustrations(root);
 assert.equal(root.querySelector('[data-illustration-fallback]').hidden,false);
 assert.equal(root.querySelector('canvas').hidden,true);
-assert.equal(decorateLook({...base,season:'winter'},'unsupported',fallback),fallback);
+assert.equal(decorateLook({...base,garment_spec:{...base.garment_spec,top:'unknown'}},'unsupported',fallback),fallback);
 fail=false;root.innerHTML=decorateLook(looks[2],'stale',fallback);
 const pending=hydrateIllustrations(root);root.replaceChildren();await pending;
 assert.equal(root.children.length,0);
-console.log('PASS: 60 live recommendations; 55 exact matches, 5 safe fallbacks; colour/outline, DOM loading/failure/stale-node checks');
+console.log('PASS: 60 live recommendations; 60 exact matches; colour/outline, DOM loading/failure/stale-node checks');
+
+const inventory=JSON.parse(execFileSync('python',['scripts/illustration_inventory.py'],{encoding:'utf8',maxBuffer:4*1024*1024}));
+assert.equal(inventory.cases,78000);
+for(const shape of inventory.shapes)assert.ok(illustrations.some(e=>geometryMatches(shape,e.shape)),JSON.stringify(shape));
+console.log('PASS:',inventory.cases,'structural scenarios;',inventory.shapes.length,'distinct structures covered');

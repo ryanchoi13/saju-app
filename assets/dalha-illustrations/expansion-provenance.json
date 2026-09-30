@@ -1,0 +1,1923 @@
+[
+  {
+    "index": 2,
+    "id": "all-002",
+    "shape": {
+      "gender": "male",
+      "top": "니트",
+      "bottom": "면바지",
+      "dress": "",
+      "outer": "블루종",
+      "shoe": "운동화",
+      "bag": "",
+      "accessories": [],
+      "outerOpen": true,
+      "outerMode": "wear",
+      "tuck": "out"
+    },
+    "slots": [
+      {
+        "field": "outerColor",
+        "source": "green"
+      },
+      {
+        "field": "topColor",
+        "source": "rose"
+      },
+      {
+        "field": "bottomColor",
+        "source": "blue"
+      },
+      {
+        "field": "shoeColor",
+        "source": "brown"
+      }
+    ],
+    "prompt": "Create one finished DALHA clothing-only outfit illustration. Reference is ONLY the approved elegant, simple adult 2D editorial illustration style. No person, mannequin, limbs, text, logo or decorations. Calm asymmetrical fashion flat-lay with slightly stylized adult proportions, attractive spacing. Long trousers MUST be full sized in proportion to the top; never tiny. Thin colour-coordinated outlines, ONE flat base + ONE hard-edged shadow tone per garment. NO gradients, fabric texture, grain, glossy highlights, photorealism or 3D. Solid uniform IVORY background, absolutely NO cast shadows on the background, no ground shadows. Each garment has a distinct source colour to enable later automatic recolouring; adhere to colours exactly even if unconventional. Colours on hidden lining match the garment. Keep all items comfortably inside frame. Preserve garment types exactly. Adult male outfit consists of EXACTLY: flat grass GREEN (#79AF79) zip blouson jacket with a collar and rib cuffs, not a cardigan; flat dusty ROSE (#D782A0) long-sleeve crewneck knit sweater; flat BLUE (#5A82C8) full-length straight cotton chinos; warm BROWN (#915A37) pair of low-top sneakers with plain IVORY rubber soles and brown uppers. Top/outerwear at upper left, bottom diagonally down the right side, shoes lower left. Layer the inner top under the outer jacket: inner sleeves fully hidden inside outer sleeves, collar/neck and front clearly visible. Top worn untucked; hem ends naturally at hips, never skirt-like. NO bag. NO accessories or jewelry. ",
+    "job_id": "514d991f-7dc6-413b-92c3-5577691f2eed",
+    "source_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3JA8zURyEfnFTV7wDtL1dscTGxg/hf_20260930_004444_514d991f-7dc6-413b-92c3-5577691f2eed.png"
+  },
+  {
+    "index": 3,
+    "id": "all-003",
+    "shape": {
+      "gender": "male",
+      "top": "긴팔 캐주얼 셔츠",
+      "bottom": "슬랙스",
+      "dress": "",
+      "outer": "블루종",
+      "shoe": "로퍼",
+      "bag": "",
+      "accessories": [],
+      "outerOpen": true,
+      "outerMode": "wear",
+      "tuck": "in"
+    },
+    "slots": [
+      {
+        "field": "outerColor",
+        "source": "green"
+      },
+      {
+        "field": "topColor",
+        "source": "rose"
+      },
+      {
+        "field": "bottomColor",
+        "source": "blue"
+      },
+      {
+        "field": "shoeColor",
+        "source": "brown"
+      }
+    ],
+    "prompt": "Create one finished DALHA clothing-only outfit illustration. Reference is ONLY the approved elegant, simple adult 2D editorial illustration style. No person, mannequin, limbs, text, logo or decorations. Calm asymmetrical fashion flat-lay with slightly stylized adult proportions, attractive spacing. Long trousers MUST be full sized in proportion to the top; never tiny. Thin colour-coordinated outlines, ONE flat base + ONE hard-edged shadow tone per garment. NO gradients, fabric texture, grain, glossy highlights, photorealism or 3D. Solid uniform IVORY background, absolutely NO cast shadows on the background, no ground shadows. Each garment has a distinct source colour to enable later automatic recolouring; adhere to colours exactly even if unconventional. Colours on hidden lining match the garment. Keep all items comfortably inside frame. Preserve garment types exactly. Adult male outfit consists of EXACTLY: flat grass GREEN (#79AF79) zip blouson jacket with a collar and rib cuffs, not a cardigan; flat dusty ROSE (#D782A0) long-sleeve collared casual shirt; flat BLUE (#5A82C8) full-length tailored slacks; warm BROWN (#915A37) pair of penny loafers. Top/outerwear at upper left, bottom diagonally down the right side, shoes lower left. Layer the inner top under the outer jacket: inner sleeves fully hidden inside outer sleeves, collar/neck and front clearly visible. Shirt/top tucked neatly into the waistband, no hem sticking out. NO bag. NO accessories or jewelry. ",
+    "job_id": "583edae1-b037-45a4-8586-98dfcb5de4d7",
+    "source_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3JA8zURyEfnFTV7wDtL1dscTGxg/hf_20260930_004444_583edae1-b037-45a4-8586-98dfcb5de4d7.png"
+  },
+  {
+    "index": 4,
+    "id": "all-004",
+    "shape": {
+      "gender": "male",
+      "top": "니트",
+      "bottom": "면바지",
+      "dress": "",
+      "outer": "블레이저",
+      "shoe": "운동화",
+      "bag": "",
+      "accessories": [],
+      "outerOpen": true,
+      "outerMode": "wear",
+      "tuck": "out"
+    },
+    "slots": [
+      {
+        "field": "outerColor",
+        "source": "green"
+      },
+      {
+        "field": "topColor",
+        "source": "rose"
+      },
+      {
+        "field": "bottomColor",
+        "source": "blue"
+      },
+      {
+        "field": "shoeColor",
+        "source": "brown"
+      }
+    ],
+    "prompt": "Create one finished DALHA clothing-only outfit illustration. Reference is ONLY the approved elegant, simple adult 2D editorial illustration style. No person, mannequin, limbs, text, logo or decorations. Calm asymmetrical fashion flat-lay with slightly stylized adult proportions, attractive spacing. Long trousers MUST be full sized in proportion to the top; never tiny. Thin colour-coordinated outlines, ONE flat base + ONE hard-edged shadow tone per garment. NO gradients, fabric texture, grain, glossy highlights, photorealism or 3D. Solid uniform IVORY background, absolutely NO cast shadows on the background, no ground shadows. Each garment has a distinct source colour to enable later automatic recolouring; adhere to colours exactly even if unconventional. Colours on hidden lining match the garment. Keep all items comfortably inside frame. Preserve garment types exactly. Adult male outfit consists of EXACTLY: flat grass GREEN (#79AF79) tailored blazer with lapels; flat dusty ROSE (#D782A0) long-sleeve crewneck knit sweater; flat BLUE (#5A82C8) full-length straight cotton chinos; warm BROWN (#915A37) pair of low-top sneakers with plain IVORY rubber soles and brown uppers. Top/outerwear at upper left, bottom diagonally down the right side, shoes lower left. Layer the inner top under the outer jacket: inner sleeves fully hidden inside outer sleeves, collar/neck and front clearly visible. Top worn untucked; hem ends naturally at hips, never skirt-like. NO bag. NO accessories or jewelry. ",
+    "job_id": "24d51560-d721-4ac0-9de3-cb6cb08f8c41",
+    "source_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3JA8zURyEfnFTV7wDtL1dscTGxg/hf_20260930_004444_24d51560-d721-4ac0-9de3-cb6cb08f8c41.png"
+  },
+  {
+    "index": 6,
+    "id": "all-006",
+    "shape": {
+      "gender": "male",
+      "top": "긴팔 정장 셔츠",
+      "bottom": "수트 바지",
+      "dress": "",
+      "outer": "수트 재킷",
+      "shoe": "더비 구두",
+      "bag": "",
+      "accessories": [
+        "넥타이"
+      ],
+      "outerOpen": true,
+      "outerMode": "wear",
+      "tuck": "in"
+    },
+    "slots": [
+      {
+        "field": "outerColor",
+        "source": "green"
+      },
+      {
+        "field": "topColor",
+        "source": "rose"
+      },
+      {
+        "field": "bottomColor",
+        "source": "blue"
+      },
+      {
+        "field": "shoeColor",
+        "source": "brown"
+      },
+      {
+        "field": "tie.body",
+        "source": "cyan"
+      }
+    ],
+    "prompt": "Create one finished DALHA clothing-only outfit illustration. Reference is ONLY the approved elegant, simple adult 2D editorial illustration style. No person, mannequin, limbs, text, logo or decorations. Calm asymmetrical fashion flat-lay with slightly stylized adult proportions, attractive spacing. Long trousers MUST be full sized in proportion to the top; never tiny. Thin colour-coordinated outlines, ONE flat base + ONE hard-edged shadow tone per garment. NO gradients, fabric texture, grain, glossy highlights, photorealism or 3D. Solid uniform IVORY background, absolutely NO cast shadows on the background, no ground shadows. Each garment has a distinct source colour to enable later automatic recolouring; adhere to colours exactly even if unconventional. Colours on hidden lining match the garment. Keep all items comfortably inside frame. Preserve garment types exactly. Adult male outfit consists of EXACTLY: flat grass GREEN (#79AF79) tailored suit jacket with lapels; flat dusty ROSE (#D782A0) long-sleeve collared dress shirt; flat BLUE (#5A82C8) full-length tailored suit trousers; warm BROWN (#915A37) pair of open-lacing Derby dress shoes; solid CYAN (#3CA0AA) necktie with NO pattern under suit jacket, distinct from blue trousers. Top/outerwear at upper left, bottom diagonally down the right side, shoes lower left. Layer the inner top under the outer jacket: inner sleeves fully hidden inside outer sleeves, collar/neck and front clearly visible. Shirt/top tucked neatly into the waistband, no hem sticking out. NO bag. ",
+    "job_id": "341f1c32-f2aa-49be-a275-759d74a46f3f",
+    "source_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3JA8zURyEfnFTV7wDtL1dscTGxg/hf_20260930_004444_341f1c32-f2aa-49be-a275-759d74a46f3f.png"
+  },
+  {
+    "index": 7,
+    "id": "all-007",
+    "shape": {
+      "gender": "male",
+      "top": "반팔 폴로 티셔츠",
+      "bottom": "면바지",
+      "dress": "",
+      "outer": "",
+      "shoe": "운동화",
+      "bag": "",
+      "accessories": [],
+      "outerOpen": true,
+      "outerMode": "wear",
+      "tuck": "out"
+    },
+    "slots": [
+      {
+        "field": "topColor",
+        "source": "rose"
+      },
+      {
+        "field": "bottomColor",
+        "source": "blue"
+      },
+      {
+        "field": "shoeColor",
+        "source": "brown"
+      }
+    ],
+    "prompt": "Create one finished DALHA clothing-only outfit illustration. Reference is ONLY the approved elegant, simple adult 2D editorial illustration style. No person, mannequin, limbs, text, logo or decorations. Calm asymmetrical fashion flat-lay with slightly stylized adult proportions, attractive spacing. Long trousers MUST be full sized in proportion to the top; never tiny. Thin colour-coordinated outlines, ONE flat base + ONE hard-edged shadow tone per garment. NO gradients, fabric texture, grain, glossy highlights, photorealism or 3D. Solid uniform IVORY background, absolutely NO cast shadows on the background, no ground shadows. Each garment has a distinct source colour to enable later automatic recolouring; adhere to colours exactly even if unconventional. Colours on hidden lining match the garment. Keep all items comfortably inside frame. Preserve garment types exactly. Adult male outfit consists of EXACTLY: flat dusty ROSE (#D782A0) short-sleeve collared polo; flat BLUE (#5A82C8) full-length straight cotton chinos; warm BROWN (#915A37) pair of low-top sneakers with plain IVORY rubber soles and brown uppers. Top/outerwear at upper left, bottom diagonally down the right side, shoes lower left. Top worn untucked; hem ends naturally at hips, never skirt-like. NO bag. NO accessories or jewelry. ",
+    "job_id": "848dc369-d968-4d84-b665-a6ae2b34efa3",
+    "source_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3JA8zURyEfnFTV7wDtL1dscTGxg/hf_20260930_004444_848dc369-d968-4d84-b665-a6ae2b34efa3.png"
+  },
+  {
+    "index": 8,
+    "id": "all-008",
+    "shape": {
+      "gender": "male",
+      "top": "반팔 폴로 티셔츠",
+      "bottom": "반바지",
+      "dress": "",
+      "outer": "",
+      "shoe": "샌들",
+      "bag": "",
+      "accessories": [],
+      "outerOpen": true,
+      "outerMode": "wear",
+      "tuck": "out"
+    },
+    "slots": [
+      {
+        "field": "topColor",
+        "source": "rose"
+      },
+      {
+        "field": "bottomColor",
+        "source": "blue"
+      },
+      {
+        "field": "shoeColor",
+        "source": "brown"
+      }
+    ],
+    "prompt": "Create one finished DALHA clothing-only outfit illustration. Reference is ONLY the approved elegant, simple adult 2D editorial illustration style. No person, mannequin, limbs, text, logo or decorations. Calm asymmetrical fashion flat-lay with slightly stylized adult proportions, attractive spacing. Long trousers MUST be full sized in proportion to the top; never tiny. Thin colour-coordinated outlines, ONE flat base + ONE hard-edged shadow tone per garment. NO gradients, fabric texture, grain, glossy highlights, photorealism or 3D. Solid uniform IVORY background, absolutely NO cast shadows on the background, no ground shadows. Each garment has a distinct source colour to enable later automatic recolouring; adhere to colours exactly even if unconventional. Colours on hidden lining match the garment. Keep all items comfortably inside frame. Preserve garment types exactly. Adult male outfit consists of EXACTLY: flat dusty ROSE (#D782A0) short-sleeve collared polo; flat BLUE (#5A82C8) knee-length shorts; warm BROWN (#915A37) pair of simple leather sandals, no feet. Top/outerwear at upper left, bottom diagonally down the right side, shoes lower left. Top worn untucked; hem ends naturally at hips, never skirt-like. NO bag. NO accessories or jewelry. ",
+    "job_id": "e930c319-261f-40f9-ba70-f0f0006ff5ef",
+    "source_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3JA8zURyEfnFTV7wDtL1dscTGxg/hf_20260930_004514_e930c319-261f-40f9-ba70-f0f0006ff5ef.png"
+  },
+  {
+    "index": 9,
+    "id": "all-009",
+    "shape": {
+      "gender": "male",
+      "top": "반팔 캐주얼 셔츠",
+      "bottom": "슬랙스",
+      "dress": "",
+      "outer": "",
+      "shoe": "로퍼",
+      "bag": "",
+      "accessories": [],
+      "outerOpen": true,
+      "outerMode": "wear",
+      "tuck": "in"
+    },
+    "slots": [
+      {
+        "field": "topColor",
+        "source": "rose"
+      },
+      {
+        "field": "bottomColor",
+        "source": "blue"
+      },
+      {
+        "field": "shoeColor",
+        "source": "brown"
+      }
+    ],
+    "prompt": "Create one finished DALHA clothing-only outfit illustration. Reference is ONLY the approved elegant, simple adult 2D editorial illustration style. No person, mannequin, limbs, text, logo or decorations. Calm asymmetrical fashion flat-lay with slightly stylized adult proportions, attractive spacing. Long trousers MUST be full sized in proportion to the top; never tiny. Thin colour-coordinated outlines, ONE flat base + ONE hard-edged shadow tone per garment. NO gradients, fabric texture, grain, glossy highlights, photorealism or 3D. Solid uniform IVORY background, absolutely NO cast shadows on the background, no ground shadows. Each garment has a distinct source colour to enable later automatic recolouring; adhere to colours exactly even if unconventional. Colours on hidden lining match the garment. Keep all items comfortably inside frame. Preserve garment types exactly. Adult male outfit consists of EXACTLY: flat dusty ROSE (#D782A0) short-sleeve collared button-up shirt; flat BLUE (#5A82C8) full-length tailored slacks; warm BROWN (#915A37) pair of penny loafers. Top/outerwear at upper left, bottom diagonally down the right side, shoes lower left. Shirt/top tucked neatly into the waistband, no hem sticking out. NO bag. NO accessories or jewelry. ",
+    "job_id": "ce869351-7a38-4994-80ba-0f89c26e5ba3",
+    "source_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3JA8zURyEfnFTV7wDtL1dscTGxg/hf_20260930_004514_ce869351-7a38-4994-80ba-0f89c26e5ba3.png"
+  },
+  {
+    "index": 10,
+    "id": "all-010",
+    "shape": {
+      "gender": "male",
+      "top": "반팔 폴로 티셔츠",
+      "bottom": "슬랙스",
+      "dress": "",
+      "outer": "",
+      "shoe": "운동화",
+      "bag": "",
+      "accessories": [],
+      "outerOpen": true,
+      "outerMode": "wear",
+      "tuck": "out"
+    },
+    "slots": [
+      {
+        "field": "topColor",
+        "source": "rose"
+      },
+      {
+        "field": "bottomColor",
+        "source": "blue"
+      },
+      {
+        "field": "shoeColor",
+        "source": "brown"
+      }
+    ],
+    "prompt": "Create one finished DALHA clothing-only outfit illustration. Reference is ONLY the approved elegant, simple adult 2D editorial illustration style. No person, mannequin, limbs, text, logo or decorations. Calm asymmetrical fashion flat-lay with slightly stylized adult proportions, attractive spacing. Long trousers MUST be full sized in proportion to the top; never tiny. Thin colour-coordinated outlines, ONE flat base + ONE hard-edged shadow tone per garment. NO gradients, fabric texture, grain, glossy highlights, photorealism or 3D. Solid uniform IVORY background, absolutely NO cast shadows on the background, no ground shadows. Each garment has a distinct source colour to enable later automatic recolouring; adhere to colours exactly even if unconventional. Colours on hidden lining match the garment. Keep all items comfortably inside frame. Preserve garment types exactly. Adult male outfit consists of EXACTLY: flat dusty ROSE (#D782A0) short-sleeve collared polo; flat BLUE (#5A82C8) full-length tailored slacks; warm BROWN (#915A37) pair of low-top sneakers with plain IVORY rubber soles and brown uppers. Top/outerwear at upper left, bottom diagonally down the right side, shoes lower left. Top worn untucked; hem ends naturally at hips, never skirt-like. NO bag. NO accessories or jewelry. ",
+    "job_id": "affce6c5-b464-4452-bc0c-f9a722f73976",
+    "source_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3JA8zURyEfnFTV7wDtL1dscTGxg/hf_20260930_004514_affce6c5-b464-4452-bc0c-f9a722f73976.png"
+  },
+  {
+    "index": 11,
+    "id": "all-011",
+    "shape": {
+      "gender": "male",
+      "top": "반팔 폴로 티셔츠",
+      "bottom": "면바지",
+      "dress": "",
+      "outer": "바람막이",
+      "shoe": "운동화",
+      "bag": "",
+      "accessories": [],
+      "outerOpen": true,
+      "outerMode": "carry",
+      "tuck": "out"
+    },
+    "slots": [
+      {
+        "field": "outerColor",
+        "source": "green"
+      },
+      {
+        "field": "topColor",
+        "source": "rose"
+      },
+      {
+        "field": "bottomColor",
+        "source": "blue"
+      },
+      {
+        "field": "shoeColor",
+        "source": "brown"
+      }
+    ],
+    "prompt": "Create one finished DALHA clothing-only outfit illustration. Reference is ONLY the approved elegant, simple adult 2D editorial illustration style. No person, mannequin, limbs, text, logo or decorations. Calm asymmetrical fashion flat-lay with slightly stylized adult proportions, attractive spacing. Long trousers MUST be full sized in proportion to the top; never tiny. Thin colour-coordinated outlines, ONE flat base + ONE hard-edged shadow tone per garment. NO gradients, fabric texture, grain, glossy highlights, photorealism or 3D. Solid uniform IVORY background, absolutely NO cast shadows on the background, no ground shadows. Each garment has a distinct source colour to enable later automatic recolouring; adhere to colours exactly even if unconventional. Colours on hidden lining match the garment. Keep all items comfortably inside frame. Preserve garment types exactly. Adult male outfit consists of EXACTLY: flat grass GREEN (#79AF79) lightweight zip windbreaker; flat dusty ROSE (#D782A0) short-sleeve collared polo; flat BLUE (#5A82C8) full-length straight cotton chinos; warm BROWN (#915A37) pair of low-top sneakers with plain IVORY rubber soles and brown uppers. Main short-sleeve top is completely visible with BOTH sleeves. Lay the separate carry jacket naturally at upper right beside the main outfit, at FULL adult scale relative to the top, NOT worn over it. Bottoms down left/centre, shoes below. Do not hide the carry jacket or replace it with a cardigan. Top worn untucked; hem ends naturally at hips, never skirt-like. NO bag. NO accessories or jewelry. ",
+    "job_id": "a5f5a477-5314-4cdc-9d40-5d26c91c2889",
+    "source_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3JA8zURyEfnFTV7wDtL1dscTGxg/hf_20260930_004514_a5f5a477-5314-4cdc-9d40-5d26c91c2889.png"
+  },
+  {
+    "index": 12,
+    "id": "all-012",
+    "shape": {
+      "gender": "male",
+      "top": "반팔 폴로 티셔츠",
+      "bottom": "면바지",
+      "dress": "",
+      "outer": "블루종",
+      "shoe": "운동화",
+      "bag": "",
+      "accessories": [],
+      "outerOpen": true,
+      "outerMode": "carry",
+      "tuck": "out"
+    },
+    "slots": [
+      {
+        "field": "outerColor",
+        "source": "green"
+      },
+      {
+        "field": "topColor",
+        "source": "rose"
+      },
+      {
+        "field": "bottomColor",
+        "source": "blue"
+      },
+      {
+        "field": "shoeColor",
+        "source": "brown"
+      }
+    ],
+    "prompt": "Create one finished DALHA clothing-only outfit illustration. Reference is ONLY the approved elegant, simple adult 2D editorial illustration style. No person, mannequin, limbs, text, logo or decorations. Calm asymmetrical fashion flat-lay with slightly stylized adult proportions, attractive spacing. Long trousers MUST be full sized in proportion to the top; never tiny. Thin colour-coordinated outlines, ONE flat base + ONE hard-edged shadow tone per garment. NO gradients, fabric texture, grain, glossy highlights, photorealism or 3D. Solid uniform IVORY background, absolutely NO cast shadows on the background, no ground shadows. Each garment has a distinct source colour to enable later automatic recolouring; adhere to colours exactly even if unconventional. Colours on hidden lining match the garment. Keep all items comfortably inside frame. Preserve garment types exactly. Adult male outfit consists of EXACTLY: flat grass GREEN (#79AF79) zip blouson jacket with a collar and rib cuffs, not a cardigan; flat dusty ROSE (#D782A0) short-sleeve collared polo; flat BLUE (#5A82C8) full-length straight cotton chinos; warm BROWN (#915A37) pair of low-top sneakers with plain IVORY rubber soles and brown uppers. Main short-sleeve top is completely visible with BOTH sleeves. Lay the separate carry jacket naturally at upper right beside the main outfit, at FULL adult scale relative to the top, NOT worn over it. Bottoms down left/centre, shoes below. Do not hide the carry jacket or replace it with a cardigan. Top worn untucked; hem ends naturally at hips, never skirt-like. NO bag. NO accessories or jewelry. ",
+    "job_id": "b19db84f-1a77-427c-b58d-67bba35b9e5a",
+    "source_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3JA8zURyEfnFTV7wDtL1dscTGxg/hf_20260930_004515_b19db84f-1a77-427c-b58d-67bba35b9e5a.png"
+  },
+  {
+    "index": 13,
+    "id": "all-013",
+    "shape": {
+      "gender": "male",
+      "top": "반팔 캐주얼 셔츠",
+      "bottom": "슬랙스",
+      "dress": "",
+      "outer": "블루종",
+      "shoe": "로퍼",
+      "bag": "",
+      "accessories": [],
+      "outerOpen": true,
+      "outerMode": "carry",
+      "tuck": "in"
+    },
+    "slots": [
+      {
+        "field": "outerColor",
+        "source": "green"
+      },
+      {
+        "field": "topColor",
+        "source": "rose"
+      },
+      {
+        "field": "bottomColor",
+        "source": "blue"
+      },
+      {
+        "field": "shoeColor",
+        "source": "brown"
+      }
+    ],
+    "prompt": "Create one finished DALHA clothing-only outfit illustration. Reference is ONLY the approved elegant, simple adult 2D editorial illustration style. No person, mannequin, limbs, text, logo or decorations. Calm asymmetrical fashion flat-lay with slightly stylized adult proportions, attractive spacing. Long trousers MUST be full sized in proportion to the top; never tiny. Thin colour-coordinated outlines, ONE flat base + ONE hard-edged shadow tone per garment. NO gradients, fabric texture, grain, glossy highlights, photorealism or 3D. Solid uniform IVORY background, absolutely NO cast shadows on the background, no ground shadows. Each garment has a distinct source colour to enable later automatic recolouring; adhere to colours exactly even if unconventional. Colours on hidden lining match the garment. Keep all items comfortably inside frame. Preserve garment types exactly. Adult male outfit consists of EXACTLY: flat grass GREEN (#79AF79) zip blouson jacket with a collar and rib cuffs, not a cardigan; flat dusty ROSE (#D782A0) short-sleeve collared button-up shirt; flat BLUE (#5A82C8) full-length tailored slacks; warm BROWN (#915A37) pair of penny loafers. Main short-sleeve top is completely visible with BOTH sleeves. Lay the separate carry jacket naturally at upper right beside the main outfit, at FULL adult scale relative to the top, NOT worn over it. Bottoms down left/centre, shoes below. Do not hide the carry jacket or replace it with a cardigan. Shirt/top tucked neatly into the waistband, no hem sticking out. NO bag. NO accessories or jewelry. ",
+    "job_id": "35388f59-ab73-4241-8d63-cd73b598ac1d",
+    "source_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3JA8zURyEfnFTV7wDtL1dscTGxg/hf_20260930_004647_35388f59-ab73-4241-8d63-cd73b598ac1d.png"
+  },
+  {
+    "index": 14,
+    "id": "all-014",
+    "shape": {
+      "gender": "male",
+      "top": "반팔 폴로 티셔츠",
+      "bottom": "슬랙스",
+      "dress": "",
+      "outer": "블레이저",
+      "shoe": "운동화",
+      "bag": "",
+      "accessories": [],
+      "outerOpen": true,
+      "outerMode": "carry",
+      "tuck": "out"
+    },
+    "slots": [
+      {
+        "field": "outerColor",
+        "source": "green"
+      },
+      {
+        "field": "topColor",
+        "source": "rose"
+      },
+      {
+        "field": "bottomColor",
+        "source": "blue"
+      },
+      {
+        "field": "shoeColor",
+        "source": "brown"
+      }
+    ],
+    "prompt": "Create one finished DALHA clothing-only outfit illustration. Reference is ONLY the approved elegant, simple adult 2D editorial illustration style. No person, mannequin, limbs, text, logo or decorations. Calm asymmetrical fashion flat-lay with slightly stylized adult proportions, attractive spacing. Long trousers MUST be full sized in proportion to the top; never tiny. Thin colour-coordinated outlines, ONE flat base + ONE hard-edged shadow tone per garment. NO gradients, fabric texture, grain, glossy highlights, photorealism or 3D. Solid uniform IVORY background, absolutely NO cast shadows on the background, no ground shadows. Each garment has a distinct source colour to enable later automatic recolouring; adhere to colours exactly even if unconventional. Colours on hidden lining match the garment. Keep all items comfortably inside frame. Preserve garment types exactly. Adult male outfit consists of EXACTLY: flat grass GREEN (#79AF79) tailored blazer with lapels; flat dusty ROSE (#D782A0) short-sleeve collared polo; flat BLUE (#5A82C8) full-length tailored slacks; warm BROWN (#915A37) pair of low-top sneakers with plain IVORY rubber soles and brown uppers. Main short-sleeve top is completely visible with BOTH sleeves. Lay the separate carry jacket naturally at upper right beside the main outfit, at FULL adult scale relative to the top, NOT worn over it. Bottoms down left/centre, shoes below. Do not hide the carry jacket or replace it with a cardigan. Top worn untucked; hem ends naturally at hips, never skirt-like. NO bag. NO accessories or jewelry. ",
+    "job_id": "a7422c76-6d1e-4a2d-b14e-b0fa8c61b7a3",
+    "source_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3JA8zURyEfnFTV7wDtL1dscTGxg/hf_20260930_004549_a7422c76-6d1e-4a2d-b14e-b0fa8c61b7a3.png"
+  },
+  {
+    "index": 18,
+    "id": "all-018",
+    "shape": {
+      "gender": "male",
+      "top": "후드티",
+      "bottom": "면바지",
+      "dress": "",
+      "outer": "패딩",
+      "shoe": "운동화",
+      "bag": "",
+      "accessories": [],
+      "outerOpen": true,
+      "outerMode": "wear",
+      "tuck": "out"
+    },
+    "slots": [
+      {
+        "field": "outerColor",
+        "source": "green"
+      },
+      {
+        "field": "topColor",
+        "source": "rose"
+      },
+      {
+        "field": "bottomColor",
+        "source": "blue"
+      },
+      {
+        "field": "shoeColor",
+        "source": "brown"
+      }
+    ],
+    "prompt": "Create one finished DALHA clothing-only outfit illustration. Reference is ONLY the approved elegant, simple adult 2D editorial illustration style. No person, mannequin, limbs, text, logo or decorations. Calm asymmetrical fashion flat-lay with slightly stylized adult proportions, attractive spacing. Long trousers MUST be full sized in proportion to the top; never tiny. Thin colour-coordinated outlines, ONE flat base + ONE hard-edged shadow tone per garment. NO gradients, fabric texture, grain, glossy highlights, photorealism or 3D. Solid uniform IVORY background, absolutely NO cast shadows on the background, no ground shadows. Each garment has a distinct source colour to enable later automatic recolouring; adhere to colours exactly even if unconventional. Colours on hidden lining match the garment. Keep all items comfortably inside frame. Preserve garment types exactly. Adult male outfit consists of EXACTLY: flat grass GREEN (#79AF79) hip-length quilted puffer jacket; flat dusty ROSE (#D782A0) pullover hoodie with visible hood; flat BLUE (#5A82C8) full-length straight cotton chinos; warm BROWN (#915A37) pair of low-top sneakers with plain IVORY rubber soles and brown uppers. Top/outerwear at upper left, bottom diagonally down the right side, shoes lower left. Layer the inner top under the outer jacket: inner sleeves fully hidden inside outer sleeves, collar/neck and front clearly visible. Top worn untucked; hem ends naturally at hips, never skirt-like. NO bag. NO accessories or jewelry. ",
+    "job_id": "ec67e65b-8218-4648-a503-fc4e79a756e7",
+    "source_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3JA8zURyEfnFTV7wDtL1dscTGxg/hf_20260930_004549_ec67e65b-8218-4648-a503-fc4e79a756e7.png"
+  },
+  {
+    "index": 19,
+    "id": "all-019",
+    "shape": {
+      "gender": "male",
+      "top": "니트",
+      "bottom": "데님 바지",
+      "dress": "",
+      "outer": "코트",
+      "shoe": "부츠",
+      "bag": "",
+      "accessories": [],
+      "outerOpen": true,
+      "outerMode": "wear",
+      "tuck": "out"
+    },
+    "slots": [
+      {
+        "field": "outerColor",
+        "source": "green"
+      },
+      {
+        "field": "topColor",
+        "source": "rose"
+      },
+      {
+        "field": "bottomColor",
+        "source": "blue"
+      },
+      {
+        "field": "shoeColor",
+        "source": "brown"
+      }
+    ],
+    "prompt": "Create one finished DALHA clothing-only outfit illustration. Reference is ONLY the approved elegant, simple adult 2D editorial illustration style. No person, mannequin, limbs, text, logo or decorations. Calm asymmetrical fashion flat-lay with slightly stylized adult proportions, attractive spacing. Long trousers MUST be full sized in proportion to the top; never tiny. Thin colour-coordinated outlines, ONE flat base + ONE hard-edged shadow tone per garment. NO gradients, fabric texture, grain, glossy highlights, photorealism or 3D. Solid uniform IVORY background, absolutely NO cast shadows on the background, no ground shadows. Each garment has a distinct source colour to enable later automatic recolouring; adhere to colours exactly even if unconventional. Colours on hidden lining match the garment. Keep all items comfortably inside frame. Preserve garment types exactly. Adult male outfit consists of EXACTLY: flat grass GREEN (#79AF79) knee-length wool overcoat; flat dusty ROSE (#D782A0) long-sleeve crewneck knit sweater; flat BLUE (#5A82C8) full-length straight jeans; warm BROWN (#915A37) pair of leather boots. Top/outerwear at upper left, bottom diagonally down the right side, shoes lower left. Layer the inner top under the outer jacket: inner sleeves fully hidden inside outer sleeves, collar/neck and front clearly visible. Top worn untucked; hem ends naturally at hips, never skirt-like. NO bag. NO accessories or jewelry. ",
+    "job_id": "9a204c3a-d1dc-40a2-a14e-4addae8e3931",
+    "source_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3JA8zURyEfnFTV7wDtL1dscTGxg/hf_20260930_004549_9a204c3a-d1dc-40a2-a14e-4addae8e3931.png"
+  },
+  {
+    "index": 20,
+    "id": "all-020",
+    "shape": {
+      "gender": "male",
+      "top": "니트",
+      "bottom": "슬랙스",
+      "dress": "",
+      "outer": "코트",
+      "shoe": "더비 구두",
+      "bag": "",
+      "accessories": [],
+      "outerOpen": true,
+      "outerMode": "wear",
+      "tuck": "out"
+    },
+    "slots": [
+      {
+        "field": "outerColor",
+        "source": "green"
+      },
+      {
+        "field": "topColor",
+        "source": "rose"
+      },
+      {
+        "field": "bottomColor",
+        "source": "blue"
+      },
+      {
+        "field": "shoeColor",
+        "source": "brown"
+      }
+    ],
+    "prompt": "Create one finished DALHA clothing-only outfit illustration. Reference is ONLY the approved elegant, simple adult 2D editorial illustration style. No person, mannequin, limbs, text, logo or decorations. Calm asymmetrical fashion flat-lay with slightly stylized adult proportions, attractive spacing. Long trousers MUST be full sized in proportion to the top; never tiny. Thin colour-coordinated outlines, ONE flat base + ONE hard-edged shadow tone per garment. NO gradients, fabric texture, grain, glossy highlights, photorealism or 3D. Solid uniform IVORY background, absolutely NO cast shadows on the background, no ground shadows. Each garment has a distinct source colour to enable later automatic recolouring; adhere to colours exactly even if unconventional. Colours on hidden lining match the garment. Keep all items comfortably inside frame. Preserve garment types exactly. Adult male outfit consists of EXACTLY: flat grass GREEN (#79AF79) knee-length wool overcoat; flat dusty ROSE (#D782A0) long-sleeve crewneck knit sweater; flat BLUE (#5A82C8) full-length tailored slacks; warm BROWN (#915A37) pair of open-lacing Derby dress shoes. Top/outerwear at upper left, bottom diagonally down the right side, shoes lower left. Layer the inner top under the outer jacket: inner sleeves fully hidden inside outer sleeves, collar/neck and front clearly visible. Top worn untucked; hem ends naturally at hips, never skirt-like. NO bag. NO accessories or jewelry. ",
+    "job_id": "a4175299-9208-42b4-b445-de1508047ece",
+    "source_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3JA8zURyEfnFTV7wDtL1dscTGxg/hf_20260930_004549_a4175299-9208-42b4-b445-de1508047ece.png"
+  },
+  {
+    "index": 21,
+    "id": "all-021",
+    "shape": {
+      "gender": "male",
+      "top": "긴팔 캐주얼 셔츠",
+      "bottom": "슬랙스",
+      "dress": "",
+      "outer": "가디건",
+      "shoe": "로퍼",
+      "bag": "",
+      "accessories": [],
+      "outerOpen": true,
+      "outerMode": "wear",
+      "tuck": "in",
+      "overOuter": {
+        "name": "패딩",
+        "open": true
+      }
+    },
+    "slots": [
+      {
+        "field": "outerColor",
+        "source": "green"
+      },
+      {
+        "field": "topColor",
+        "source": "rose"
+      },
+      {
+        "field": "bottomColor",
+        "source": "blue"
+      },
+      {
+        "field": "shoeColor",
+        "source": "brown"
+      },
+      {
+        "field": "overOuter.color",
+        "source": "violet"
+      }
+    ],
+    "prompt": "Create one finished DALHA clothing-only outfit illustration. Reference is ONLY the approved elegant, simple adult 2D editorial illustration style. No person, mannequin, limbs, text, logo or decorations. Calm asymmetrical fashion flat-lay with slightly stylized adult proportions, attractive spacing. Long trousers MUST be full sized in proportion to the top; never tiny. Thin colour-coordinated outlines, ONE flat base + ONE hard-edged shadow tone per garment. NO gradients, fabric texture, grain, glossy highlights, photorealism or 3D. Solid uniform IVORY background, absolutely NO cast shadows on the background, no ground shadows. Each garment has a distinct source colour to enable later automatic recolouring; adhere to colours exactly even if unconventional. Colours on hidden lining match the garment. Keep all items comfortably inside frame. Preserve garment types exactly. Adult male outfit consists of EXACTLY: flat grass GREEN (#79AF79) open button cardigan; flat dusty ROSE (#D782A0) long-sleeve collared casual shirt; flat BLUE (#5A82C8) full-length tailored slacks; warm BROWN (#915A37) pair of penny loafers; flat VIOLET (#9664C3) hip-length quilted puffer jacket as an additional outer layer over the inner jacket. Top/outerwear at upper left, bottom diagonally down the right side, shoes lower left. Layer the inner top under the outer jacket: inner sleeves fully hidden inside outer sleeves, collar/neck and front clearly visible. Extra outer coat/puffer is OPEN over the inner jacket/cardigan, which remains identifiable through the front. Hide inner sleeves. Keep all layers full sized. Shirt/top tucked neatly into the waistband, no hem sticking out. NO bag. NO accessories or jewelry. ",
+    "job_id": "70bfd952-bda1-4e4e-b5c2-8de5934d61c9",
+    "source_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3JA8zURyEfnFTV7wDtL1dscTGxg/hf_20260930_004647_70bfd952-bda1-4e4e-b5c2-8de5934d61c9.png"
+  },
+  {
+    "index": 22,
+    "id": "all-022",
+    "shape": {
+      "gender": "male",
+      "top": "긴팔 정장 셔츠",
+      "bottom": "수트 바지",
+      "dress": "",
+      "outer": "수트 재킷",
+      "shoe": "옥스퍼드",
+      "bag": "",
+      "accessories": [
+        "넥타이"
+      ],
+      "outerOpen": true,
+      "outerMode": "wear",
+      "tuck": "in",
+      "overOuter": {
+        "name": "코트",
+        "open": true
+      }
+    },
+    "slots": [
+      {
+        "field": "outerColor",
+        "source": "green"
+      },
+      {
+        "field": "topColor",
+        "source": "rose"
+      },
+      {
+        "field": "bottomColor",
+        "source": "blue"
+      },
+      {
+        "field": "shoeColor",
+        "source": "brown"
+      },
+      {
+        "field": "overOuter.color",
+        "source": "violet"
+      },
+      {
+        "field": "tie.body",
+        "source": "cyan"
+      }
+    ],
+    "prompt": "Create one finished DALHA clothing-only outfit illustration. Reference is ONLY the approved elegant, simple adult 2D editorial illustration style. No person, mannequin, limbs, text, logo or decorations. Calm asymmetrical fashion flat-lay with slightly stylized adult proportions, attractive spacing. Long trousers MUST be full sized in proportion to the top; never tiny. Thin colour-coordinated outlines, ONE flat base + ONE hard-edged shadow tone per garment. NO gradients, fabric texture, grain, glossy highlights, photorealism or 3D. Solid uniform IVORY background, absolutely NO cast shadows on the background, no ground shadows. Each garment has a distinct source colour to enable later automatic recolouring; adhere to colours exactly even if unconventional. Colours on hidden lining match the garment. Keep all items comfortably inside frame. Preserve garment types exactly. Adult male outfit consists of EXACTLY: flat grass GREEN (#79AF79) tailored suit jacket with lapels; flat dusty ROSE (#D782A0) long-sleeve collared dress shirt; flat BLUE (#5A82C8) full-length tailored suit trousers; warm BROWN (#915A37) pair of closed-lacing Oxford dress shoes; flat VIOLET (#9664C3) knee-length wool overcoat as an additional outer layer over the inner jacket; solid CYAN (#3CA0AA) necktie with NO pattern under suit jacket, distinct from blue trousers. Top/outerwear at upper left, bottom diagonally down the right side, shoes lower left. Layer the inner top under the outer jacket: inner sleeves fully hidden inside outer sleeves, collar/neck and front clearly visible. Extra outer coat/puffer is OPEN over the inner jacket/cardigan, which remains identifiable through the front. Hide inner sleeves. Keep all layers full sized. Shirt/top tucked neatly into the waistband, no hem sticking out. NO bag. ",
+    "job_id": "9482e5d2-bade-499a-bc4b-8c68b531e335",
+    "source_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3JA8zURyEfnFTV7wDtL1dscTGxg/hf_20260930_004647_9482e5d2-bade-499a-bc4b-8c68b531e335.png"
+  },
+  {
+    "index": 23,
+    "id": "all-023",
+    "shape": {
+      "gender": "male",
+      "top": "긴팔 정장 셔츠",
+      "bottom": "수트 바지",
+      "dress": "",
+      "outer": "수트 재킷",
+      "shoe": "더비 구두",
+      "bag": "",
+      "accessories": [
+        "넥타이"
+      ],
+      "outerOpen": true,
+      "outerMode": "wear",
+      "tuck": "in",
+      "overOuter": {
+        "name": "패딩",
+        "open": true
+      }
+    },
+    "slots": [
+      {
+        "field": "outerColor",
+        "source": "green"
+      },
+      {
+        "field": "topColor",
+        "source": "rose"
+      },
+      {
+        "field": "bottomColor",
+        "source": "blue"
+      },
+      {
+        "field": "shoeColor",
+        "source": "brown"
+      },
+      {
+        "field": "overOuter.color",
+        "source": "violet"
+      },
+      {
+        "field": "tie.body",
+        "source": "cyan"
+      }
+    ],
+    "prompt": "Create one finished DALHA clothing-only outfit illustration. Reference is ONLY the approved elegant, simple adult 2D editorial illustration style. No person, mannequin, limbs, text, logo or decorations. Calm asymmetrical fashion flat-lay with slightly stylized adult proportions, attractive spacing. Long trousers MUST be full sized in proportion to the top; never tiny. Thin colour-coordinated outlines, ONE flat base + ONE hard-edged shadow tone per garment. NO gradients, fabric texture, grain, glossy highlights, photorealism or 3D. Solid uniform IVORY background, absolutely NO cast shadows on the background, no ground shadows. Each garment has a distinct source colour to enable later automatic recolouring; adhere to colours exactly even if unconventional. Colours on hidden lining match the garment. Keep all items comfortably inside frame. Preserve garment types exactly. Adult male outfit consists of EXACTLY: flat grass GREEN (#79AF79) tailored suit jacket with lapels; flat dusty ROSE (#D782A0) long-sleeve collared dress shirt; flat BLUE (#5A82C8) full-length tailored suit trousers; warm BROWN (#915A37) pair of open-lacing Derby dress shoes; flat VIOLET (#9664C3) hip-length quilted puffer jacket as an additional outer layer over the inner jacket; solid CYAN (#3CA0AA) necktie with NO pattern under suit jacket, distinct from blue trousers. Top/outerwear at upper left, bottom diagonally down the right side, shoes lower left. Layer the inner top under the outer jacket: inner sleeves fully hidden inside outer sleeves, collar/neck and front clearly visible. Extra outer coat/puffer is OPEN over the inner jacket/cardigan, which remains identifiable through the front. Hide inner sleeves. Keep all layers full sized. Shirt/top tucked neatly into the waistband, no hem sticking out. NO bag. ",
+    "job_id": "b2ee18e2-c782-4911-8c69-4d51bd1d4e73",
+    "source_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3JA8zURyEfnFTV7wDtL1dscTGxg/hf_20260930_004646_b2ee18e2-c782-4911-8c69-4d51bd1d4e73.png"
+  },
+  {
+    "index": 24,
+    "id": "all-024",
+    "shape": {
+      "gender": "male",
+      "top": "반팔 폴로 티셔츠",
+      "bottom": "반바지",
+      "dress": "",
+      "outer": "",
+      "shoe": "운동화",
+      "bag": "",
+      "accessories": [],
+      "outerOpen": true,
+      "outerMode": "wear",
+      "tuck": "out"
+    },
+    "slots": [
+      {
+        "field": "topColor",
+        "source": "rose"
+      },
+      {
+        "field": "bottomColor",
+        "source": "blue"
+      },
+      {
+        "field": "shoeColor",
+        "source": "brown"
+      }
+    ],
+    "prompt": "Create one finished DALHA clothing-only outfit illustration. Reference is ONLY the approved elegant, simple adult 2D editorial illustration style. No person, mannequin, limbs, text, logo or decorations. Calm asymmetrical fashion flat-lay with slightly stylized adult proportions, attractive spacing. Long trousers MUST be full sized in proportion to the top; never tiny. Thin colour-coordinated outlines, ONE flat base + ONE hard-edged shadow tone per garment. NO gradients, fabric texture, grain, glossy highlights, photorealism or 3D. Solid uniform IVORY background, absolutely NO cast shadows on the background, no ground shadows. Each garment has a distinct source colour to enable later automatic recolouring; adhere to colours exactly even if unconventional. Colours on hidden lining match the garment. Keep all items comfortably inside frame. Preserve garment types exactly. Adult male outfit consists of EXACTLY: flat dusty ROSE (#D782A0) short-sleeve collared polo; flat BLUE (#5A82C8) knee-length shorts; warm BROWN (#915A37) pair of low-top sneakers with plain IVORY rubber soles and brown uppers. Top/outerwear at upper left, bottom diagonally down the right side, shoes lower left. Top worn untucked; hem ends naturally at hips, never skirt-like. NO bag. NO accessories or jewelry. ",
+    "job_id": "3576cf98-5d01-49f8-a9fc-5ef67b63fbae",
+    "source_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3JA8zURyEfnFTV7wDtL1dscTGxg/hf_20260930_004646_3576cf98-5d01-49f8-a9fc-5ef67b63fbae.png"
+  },
+  {
+    "index": 25,
+    "id": "all-025",
+    "shape": {
+      "gender": "female",
+      "top": "긴팔 티셔츠",
+      "bottom": "데님 바지",
+      "dress": "",
+      "outer": "블루종",
+      "shoe": "운동화",
+      "bag": "",
+      "accessories": [],
+      "outerOpen": true,
+      "outerMode": "wear",
+      "tuck": "out"
+    },
+    "slots": [
+      {
+        "field": "outerColor",
+        "source": "green"
+      },
+      {
+        "field": "topColor",
+        "source": "rose"
+      },
+      {
+        "field": "bottomColor",
+        "source": "blue"
+      },
+      {
+        "field": "shoeColor",
+        "source": "brown"
+      }
+    ],
+    "prompt": "Create one finished DALHA clothing-only outfit illustration. Reference is ONLY the approved elegant, simple adult 2D editorial illustration style. No person, mannequin, limbs, text, logo or decorations. Calm asymmetrical fashion flat-lay with slightly stylized adult proportions, attractive spacing. Long trousers MUST be full sized in proportion to the top; never tiny. Thin colour-coordinated outlines, ONE flat base + ONE hard-edged shadow tone per garment. NO gradients, fabric texture, grain, glossy highlights, photorealism or 3D. Solid uniform IVORY background, absolutely NO cast shadows on the background, no ground shadows. Each garment has a distinct source colour to enable later automatic recolouring; adhere to colours exactly even if unconventional. Colours on hidden lining match the garment. Keep all items comfortably inside frame. Preserve garment types exactly. Adult female outfit consists of EXACTLY: flat grass GREEN (#79AF79) zip blouson jacket with a collar and rib cuffs, not a cardigan; flat dusty ROSE (#D782A0) long-sleeve crewneck T-shirt; flat BLUE (#5A82C8) full-length straight jeans; warm BROWN (#915A37) pair of low-top sneakers with plain IVORY rubber soles and brown uppers. Top/outerwear at upper left, bottom diagonally down the right side, shoes lower left. Layer the inner top under the outer jacket: inner sleeves fully hidden inside outer sleeves, collar/neck and front clearly visible. Top worn untucked; hem ends naturally at hips, never skirt-like. NO bag. NO accessories or jewelry. ",
+    "job_id": "51f2f8c0-62c4-401c-87d0-6851fa46ae0b",
+    "source_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3JA8zURyEfnFTV7wDtL1dscTGxg/hf_20260930_004805_51f2f8c0-62c4-401c-87d0-6851fa46ae0b.png"
+  },
+  {
+    "index": 26,
+    "id": "all-026",
+    "shape": {
+      "gender": "female",
+      "top": "니트",
+      "bottom": "미디 스커트",
+      "dress": "",
+      "outer": "가디건",
+      "shoe": "플랫슈즈",
+      "bag": "",
+      "accessories": [],
+      "outerOpen": true,
+      "outerMode": "wear",
+      "tuck": "in"
+    },
+    "slots": [
+      {
+        "field": "outerColor",
+        "source": "green"
+      },
+      {
+        "field": "topColor",
+        "source": "rose"
+      },
+      {
+        "field": "bottomColor",
+        "source": "blue"
+      },
+      {
+        "field": "shoeColor",
+        "source": "brown"
+      }
+    ],
+    "prompt": "Create one finished DALHA clothing-only outfit illustration. Reference is ONLY the approved elegant, simple adult 2D editorial illustration style. No person, mannequin, limbs, text, logo or decorations. Calm asymmetrical fashion flat-lay with slightly stylized adult proportions, attractive spacing. Long trousers MUST be full sized in proportion to the top; never tiny. Thin colour-coordinated outlines, ONE flat base + ONE hard-edged shadow tone per garment. NO gradients, fabric texture, grain, glossy highlights, photorealism or 3D. Solid uniform IVORY background, absolutely NO cast shadows on the background, no ground shadows. Each garment has a distinct source colour to enable later automatic recolouring; adhere to colours exactly even if unconventional. Colours on hidden lining match the garment. Keep all items comfortably inside frame. Preserve garment types exactly. Adult female outfit consists of EXACTLY: flat grass GREEN (#79AF79) open button cardigan; flat dusty ROSE (#D782A0) long-sleeve crewneck knit sweater; flat BLUE (#5A82C8) midi A-line skirt; warm BROWN (#915A37) pair of ballet flats. Top/outerwear at upper left, bottom diagonally down the right side, shoes lower left. Layer the inner top under the outer jacket: inner sleeves fully hidden inside outer sleeves, collar/neck and front clearly visible. Shirt/top tucked neatly into the waistband, no hem sticking out. NO bag. NO accessories or jewelry. ",
+    "job_id": "7dd52fc9-7921-40bd-984d-54599f2d3e79",
+    "source_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3JA8zURyEfnFTV7wDtL1dscTGxg/hf_20260930_004804_7dd52fc9-7921-40bd-984d-54599f2d3e79.png"
+  },
+  {
+    "index": 30,
+    "id": "all-030",
+    "shape": {
+      "gender": "female",
+      "top": "긴팔 정장 셔츠",
+      "bottom": "수트 스커트",
+      "dress": "",
+      "outer": "수트 재킷",
+      "shoe": "로퍼",
+      "bag": "핸드백",
+      "accessories": [],
+      "outerOpen": true,
+      "outerMode": "wear",
+      "tuck": "in"
+    },
+    "slots": [
+      {
+        "field": "outerColor",
+        "source": "green"
+      },
+      {
+        "field": "topColor",
+        "source": "rose"
+      },
+      {
+        "field": "bottomColor",
+        "source": "blue"
+      },
+      {
+        "field": "shoeColor",
+        "source": "brown"
+      },
+      {
+        "field": "bagColor",
+        "source": "yellow"
+      }
+    ],
+    "prompt": "Create one finished DALHA clothing-only outfit illustration. Reference is ONLY the approved elegant, simple adult 2D editorial illustration style. No person, mannequin, limbs, text, logo or decorations. Calm asymmetrical fashion flat-lay with slightly stylized adult proportions, attractive spacing. Long trousers MUST be full sized in proportion to the top; never tiny. Thin colour-coordinated outlines, ONE flat base + ONE hard-edged shadow tone per garment. NO gradients, fabric texture, grain, glossy highlights, photorealism or 3D. Solid uniform IVORY background, absolutely NO cast shadows on the background, no ground shadows. Each garment has a distinct source colour to enable later automatic recolouring; adhere to colours exactly even if unconventional. Colours on hidden lining match the garment. Keep all items comfortably inside frame. Preserve garment types exactly. Adult female outfit consists of EXACTLY: flat grass GREEN (#79AF79) tailored suit jacket with lapels; flat dusty ROSE (#D782A0) long-sleeve collared dress shirt; flat BLUE (#5A82C8) knee-length tailored pencil suit skirt; warm BROWN (#915A37) pair of penny loafers; mustard YELLOW (#D2B43C) compact structured handbag. Top/outerwear at upper left, bottom diagonally down the right side, shoes lower left. Layer the inner top under the outer jacket: inner sleeves fully hidden inside outer sleeves, collar/neck and front clearly visible. Shirt/top tucked neatly into the waistband, no hem sticking out. NO accessories or jewelry. ",
+    "job_id": "19444df4-81d0-4883-963c-369fc1d9e6e7",
+    "source_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3JA8zURyEfnFTV7wDtL1dscTGxg/hf_20260930_004805_19444df4-81d0-4883-963c-369fc1d9e6e7.png"
+  },
+  {
+    "index": 31,
+    "id": "all-031",
+    "shape": {
+      "gender": "female",
+      "top": "반팔 티셔츠",
+      "bottom": "반바지",
+      "dress": "",
+      "outer": "",
+      "shoe": "운동화",
+      "bag": "",
+      "accessories": [],
+      "outerOpen": true,
+      "outerMode": "wear",
+      "tuck": "out"
+    },
+    "slots": [
+      {
+        "field": "topColor",
+        "source": "rose"
+      },
+      {
+        "field": "bottomColor",
+        "source": "blue"
+      },
+      {
+        "field": "shoeColor",
+        "source": "brown"
+      }
+    ],
+    "prompt": "Create one finished DALHA clothing-only outfit illustration. Reference is ONLY the approved elegant, simple adult 2D editorial illustration style. No person, mannequin, limbs, text, logo or decorations. Calm asymmetrical fashion flat-lay with slightly stylized adult proportions, attractive spacing. Long trousers MUST be full sized in proportion to the top; never tiny. Thin colour-coordinated outlines, ONE flat base + ONE hard-edged shadow tone per garment. NO gradients, fabric texture, grain, glossy highlights, photorealism or 3D. Solid uniform IVORY background, absolutely NO cast shadows on the background, no ground shadows. Each garment has a distinct source colour to enable later automatic recolouring; adhere to colours exactly even if unconventional. Colours on hidden lining match the garment. Keep all items comfortably inside frame. Preserve garment types exactly. Adult female outfit consists of EXACTLY: flat dusty ROSE (#D782A0) short-sleeve crewneck T-shirt; flat BLUE (#5A82C8) knee-length shorts; warm BROWN (#915A37) pair of low-top sneakers with plain IVORY rubber soles and brown uppers. Top/outerwear at upper left, bottom diagonally down the right side, shoes lower left. Top worn untucked; hem ends naturally at hips, never skirt-like. NO bag. NO accessories or jewelry. ",
+    "job_id": "9d54edd9-136e-4f0f-8443-751d46694a1f",
+    "source_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3JA8zURyEfnFTV7wDtL1dscTGxg/hf_20260930_004805_9d54edd9-136e-4f0f-8443-751d46694a1f.png"
+  },
+  {
+    "index": 32,
+    "id": "all-032",
+    "shape": {
+      "gender": "female",
+      "top": "",
+      "bottom": "",
+      "dress": "반팔 원피스",
+      "outer": "",
+      "shoe": "샌들",
+      "bag": "크로스백",
+      "accessories": [],
+      "outerOpen": true,
+      "outerMode": "wear",
+      "tuck": "out"
+    },
+    "slots": [
+      {
+        "field": "topColor",
+        "source": "blue"
+      },
+      {
+        "field": "shoeColor",
+        "source": "brown"
+      },
+      {
+        "field": "bagColor",
+        "source": "yellow"
+      }
+    ],
+    "prompt": "Create one finished DALHA clothing-only outfit illustration. Reference is ONLY the approved elegant, simple adult 2D editorial illustration style. No person, mannequin, limbs, text, logo or decorations. Calm asymmetrical fashion flat-lay with slightly stylized adult proportions, attractive spacing. Long trousers MUST be full sized in proportion to the top; never tiny. Thin colour-coordinated outlines, ONE flat base + ONE hard-edged shadow tone per garment. NO gradients, fabric texture, grain, glossy highlights, photorealism or 3D. Solid uniform IVORY background, absolutely NO cast shadows on the background, no ground shadows. Each garment has a distinct source colour to enable later automatic recolouring; adhere to colours exactly even if unconventional. Colours on hidden lining match the garment. Keep all items comfortably inside frame. Preserve garment types exactly. Adult female outfit consists of EXACTLY: flat BLUE (#5A82C8) short-sleeve knee-length dress; warm BROWN (#915A37) pair of simple leather sandals, no feet; mustard YELLOW (#D2B43C) small crossbody bag with tidy visible strap. Dress prominently at left, NO blazer or outerwear of any kind, shoes lower right and handbag to mid-right. Top worn untucked; hem ends naturally at hips, never skirt-like. NO accessories or jewelry.  ONLY the short-sleeve dress, bag and shoes. Exactly three item categories. No jacket, no coat, no cardigan.",
+    "job_id": "56cc4b35-0836-4e7a-9122-c5bb219536da",
+    "source_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3JA8zURyEfnFTV7wDtL1dscTGxg/hf_20260930_005213_56cc4b35-0836-4e7a-9122-c5bb219536da.png"
+  },
+  {
+    "index": 33,
+    "id": "all-033",
+    "shape": {
+      "gender": "female",
+      "top": "반팔 티셔츠",
+      "bottom": "슬랙스",
+      "dress": "",
+      "outer": "",
+      "shoe": "로퍼",
+      "bag": "",
+      "accessories": [],
+      "outerOpen": true,
+      "outerMode": "wear",
+      "tuck": "out"
+    },
+    "slots": [
+      {
+        "field": "topColor",
+        "source": "rose"
+      },
+      {
+        "field": "bottomColor",
+        "source": "blue"
+      },
+      {
+        "field": "shoeColor",
+        "source": "brown"
+      }
+    ],
+    "prompt": "Create one finished DALHA clothing-only outfit illustration. Reference is ONLY the approved elegant, simple adult 2D editorial illustration style. No person, mannequin, limbs, text, logo or decorations. Calm asymmetrical fashion flat-lay with slightly stylized adult proportions, attractive spacing. Long trousers MUST be full sized in proportion to the top; never tiny. Thin colour-coordinated outlines, ONE flat base + ONE hard-edged shadow tone per garment. NO gradients, fabric texture, grain, glossy highlights, photorealism or 3D. Solid uniform IVORY background, absolutely NO cast shadows on the background, no ground shadows. Each garment has a distinct source colour to enable later automatic recolouring; adhere to colours exactly even if unconventional. Colours on hidden lining match the garment. Keep all items comfortably inside frame. Preserve garment types exactly. Adult female outfit consists of EXACTLY: flat dusty ROSE (#D782A0) short-sleeve crewneck T-shirt; flat BLUE (#5A82C8) full-length tailored slacks; warm BROWN (#915A37) pair of penny loafers. Top/outerwear at upper left, bottom diagonally down the right side, shoes lower left. Top worn untucked; hem ends naturally at hips, never skirt-like. NO bag. NO accessories or jewelry. ",
+    "job_id": "38ab8363-ecbb-47a6-ab56-2f5ba2b9b6e8",
+    "source_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3JA8zURyEfnFTV7wDtL1dscTGxg/hf_20260930_004844_38ab8363-ecbb-47a6-ab56-2f5ba2b9b6e8.png"
+  },
+  {
+    "index": 34,
+    "id": "all-034",
+    "shape": {
+      "gender": "female",
+      "top": "반팔 캐주얼 셔츠",
+      "bottom": "미디 스커트",
+      "dress": "",
+      "outer": "",
+      "shoe": "플랫슈즈",
+      "bag": "",
+      "accessories": [],
+      "outerOpen": true,
+      "outerMode": "wear",
+      "tuck": "in"
+    },
+    "slots": [
+      {
+        "field": "topColor",
+        "source": "rose"
+      },
+      {
+        "field": "bottomColor",
+        "source": "blue"
+      },
+      {
+        "field": "shoeColor",
+        "source": "brown"
+      }
+    ],
+    "prompt": "Create one finished DALHA clothing-only outfit illustration. Reference is ONLY the approved elegant, simple adult 2D editorial illustration style. No person, mannequin, limbs, text, logo or decorations. Calm asymmetrical fashion flat-lay with slightly stylized adult proportions, attractive spacing. Long trousers MUST be full sized in proportion to the top; never tiny. Thin colour-coordinated outlines, ONE flat base + ONE hard-edged shadow tone per garment. NO gradients, fabric texture, grain, glossy highlights, photorealism or 3D. Solid uniform IVORY background, absolutely NO cast shadows on the background, no ground shadows. Each garment has a distinct source colour to enable later automatic recolouring; adhere to colours exactly even if unconventional. Colours on hidden lining match the garment. Keep all items comfortably inside frame. Preserve garment types exactly. Adult female outfit consists of EXACTLY: flat dusty ROSE (#D782A0) short-sleeve collared button-up shirt; flat BLUE (#5A82C8) midi A-line skirt; warm BROWN (#915A37) pair of ballet flats. Top/outerwear at upper left, bottom diagonally down the right side, shoes lower left. Shirt/top tucked neatly into the waistband, no hem sticking out. NO bag. NO accessories or jewelry. ",
+    "job_id": "6f1aad58-2855-4682-9fd3-e0619e726f4b",
+    "source_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3JA8zURyEfnFTV7wDtL1dscTGxg/hf_20260930_004844_6f1aad58-2855-4682-9fd3-e0619e726f4b.png"
+  },
+  {
+    "index": 35,
+    "id": "all-035",
+    "shape": {
+      "gender": "female",
+      "top": "",
+      "bottom": "",
+      "dress": "반팔 원피스",
+      "outer": "블레이저",
+      "shoe": "플랫슈즈",
+      "bag": "핸드백",
+      "accessories": [],
+      "outerOpen": true,
+      "outerMode": "wear",
+      "tuck": "out"
+    },
+    "slots": [
+      {
+        "field": "outerColor",
+        "source": "green"
+      },
+      {
+        "field": "topColor",
+        "source": "blue"
+      },
+      {
+        "field": "shoeColor",
+        "source": "brown"
+      },
+      {
+        "field": "bagColor",
+        "source": "yellow"
+      }
+    ],
+    "prompt": "Create one finished DALHA clothing-only outfit illustration. Reference is ONLY the approved elegant, simple adult 2D editorial illustration style. No person, mannequin, limbs, text, logo or decorations. Calm asymmetrical fashion flat-lay with slightly stylized adult proportions, attractive spacing. Long trousers MUST be full sized in proportion to the top; never tiny. Thin colour-coordinated outlines, ONE flat base + ONE hard-edged shadow tone per garment. NO gradients, fabric texture, grain, glossy highlights, photorealism or 3D. Solid uniform IVORY background, absolutely NO cast shadows on the background, no ground shadows. Each garment has a distinct source colour to enable later automatic recolouring; adhere to colours exactly even if unconventional. Colours on hidden lining match the garment. Keep all items comfortably inside frame. Preserve garment types exactly. Adult female outfit consists of EXACTLY: flat grass GREEN (#79AF79) tailored blazer with lapels; flat BLUE (#5A82C8) short-sleeve knee-length dress; warm BROWN (#915A37) pair of ballet flats; mustard YELLOW (#D2B43C) compact structured handbag. Dress prominently at left, blazer offset upper right with slight overlap, shoes lower right and handbag to mid-right. Layer the inner top under the outer jacket: inner sleeves fully hidden inside outer sleeves, collar/neck and front clearly visible. Top worn untucked; hem ends naturally at hips, never skirt-like. NO accessories or jewelry. ",
+    "job_id": "c10fb06f-49d2-42b0-a5a0-2a7e4e85e8b0",
+    "source_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3JA8zURyEfnFTV7wDtL1dscTGxg/hf_20260930_004844_c10fb06f-49d2-42b0-a5a0-2a7e4e85e8b0.png"
+  },
+  {
+    "index": 36,
+    "id": "all-036",
+    "shape": {
+      "gender": "female",
+      "top": "반팔 티셔츠",
+      "bottom": "면바지",
+      "dress": "",
+      "outer": "",
+      "shoe": "운동화",
+      "bag": "",
+      "accessories": [],
+      "outerOpen": true,
+      "outerMode": "wear",
+      "tuck": "out"
+    },
+    "slots": [
+      {
+        "field": "topColor",
+        "source": "rose"
+      },
+      {
+        "field": "bottomColor",
+        "source": "blue"
+      },
+      {
+        "field": "shoeColor",
+        "source": "brown"
+      }
+    ],
+    "prompt": "Create one finished DALHA clothing-only outfit illustration. Reference is ONLY the approved elegant, simple adult 2D editorial illustration style. No person, mannequin, limbs, text, logo or decorations. Calm asymmetrical fashion flat-lay with slightly stylized adult proportions, attractive spacing. Long trousers MUST be full sized in proportion to the top; never tiny. Thin colour-coordinated outlines, ONE flat base + ONE hard-edged shadow tone per garment. NO gradients, fabric texture, grain, glossy highlights, photorealism or 3D. Solid uniform IVORY background, absolutely NO cast shadows on the background, no ground shadows. Each garment has a distinct source colour to enable later automatic recolouring; adhere to colours exactly even if unconventional. Colours on hidden lining match the garment. Keep all items comfortably inside frame. Preserve garment types exactly. Adult female outfit consists of EXACTLY: flat dusty ROSE (#D782A0) short-sleeve crewneck T-shirt; flat BLUE (#5A82C8) full-length straight cotton chinos; warm BROWN (#915A37) pair of low-top sneakers with plain IVORY rubber soles and brown uppers. Top/outerwear at upper left, bottom diagonally down the right side, shoes lower left. Top worn untucked; hem ends naturally at hips, never skirt-like. NO bag. NO accessories or jewelry. ",
+    "job_id": "4e5ce9c0-70db-4ad3-8fcf-3cb5720d2638",
+    "source_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3JA8zURyEfnFTV7wDtL1dscTGxg/hf_20260930_004843_4e5ce9c0-70db-4ad3-8fcf-3cb5720d2638.png"
+  },
+  {
+    "index": 37,
+    "id": "all-037",
+    "shape": {
+      "gender": "female",
+      "top": "",
+      "bottom": "",
+      "dress": "반팔 원피스",
+      "outer": "",
+      "shoe": "운동화",
+      "bag": "크로스백",
+      "accessories": [],
+      "outerOpen": true,
+      "outerMode": "wear",
+      "tuck": "out"
+    },
+    "slots": [
+      {
+        "field": "topColor",
+        "source": "blue"
+      },
+      {
+        "field": "shoeColor",
+        "source": "brown"
+      },
+      {
+        "field": "bagColor",
+        "source": "yellow"
+      }
+    ],
+    "prompt": "Create one finished DALHA clothing-only outfit illustration. Reference is ONLY the approved elegant, simple adult 2D editorial illustration style. No person, mannequin, limbs, text, logo or decorations. Calm asymmetrical fashion flat-lay with slightly stylized adult proportions, attractive spacing. Long trousers MUST be full sized in proportion to the top; never tiny. Thin colour-coordinated outlines, ONE flat base + ONE hard-edged shadow tone per garment. NO gradients, fabric texture, grain, glossy highlights, photorealism or 3D. Solid uniform IVORY background, absolutely NO cast shadows on the background, no ground shadows. Each garment has a distinct source colour to enable later automatic recolouring; adhere to colours exactly even if unconventional. Colours on hidden lining match the garment. Keep all items comfortably inside frame. Preserve garment types exactly. Adult female outfit consists of EXACTLY: flat BLUE (#5A82C8) short-sleeve knee-length dress; warm BROWN (#915A37) pair of low-top sneakers with plain IVORY rubber soles and brown uppers; mustard YELLOW (#D2B43C) small crossbody bag with tidy visible strap. Dress prominently at left, NO blazer or outerwear of any kind, shoes lower right and handbag to mid-right. Top worn untucked; hem ends naturally at hips, never skirt-like. NO accessories or jewelry.  ONLY the short-sleeve dress, bag and shoes. Exactly three item categories. No jacket, no coat, no cardigan.",
+    "job_id": "5f3dcf76-109d-4175-89d7-bb45ed2ec1d9",
+    "source_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3JA8zURyEfnFTV7wDtL1dscTGxg/hf_20260930_005213_5f3dcf76-109d-4175-89d7-bb45ed2ec1d9.png"
+  },
+  {
+    "index": 38,
+    "id": "all-038",
+    "shape": {
+      "gender": "female",
+      "top": "반팔 티셔츠",
+      "bottom": "면바지",
+      "dress": "",
+      "outer": "바람막이",
+      "shoe": "운동화",
+      "bag": "",
+      "accessories": [],
+      "outerOpen": true,
+      "outerMode": "carry",
+      "tuck": "out"
+    },
+    "slots": [
+      {
+        "field": "outerColor",
+        "source": "green"
+      },
+      {
+        "field": "topColor",
+        "source": "rose"
+      },
+      {
+        "field": "bottomColor",
+        "source": "blue"
+      },
+      {
+        "field": "shoeColor",
+        "source": "brown"
+      }
+    ],
+    "prompt": "Create one finished DALHA clothing-only outfit illustration. Reference is ONLY the approved elegant, simple adult 2D editorial illustration style. No person, mannequin, limbs, text, logo or decorations. Calm asymmetrical fashion flat-lay with slightly stylized adult proportions, attractive spacing. Long trousers MUST be full sized in proportion to the top; never tiny. Thin colour-coordinated outlines, ONE flat base + ONE hard-edged shadow tone per garment. NO gradients, fabric texture, grain, glossy highlights, photorealism or 3D. Solid uniform IVORY background, absolutely NO cast shadows on the background, no ground shadows. Each garment has a distinct source colour to enable later automatic recolouring; adhere to colours exactly even if unconventional. Colours on hidden lining match the garment. Keep all items comfortably inside frame. Preserve garment types exactly. Adult female outfit consists of EXACTLY: flat grass GREEN (#79AF79) lightweight zip windbreaker; flat dusty ROSE (#D782A0) short-sleeve crewneck T-shirt; flat BLUE (#5A82C8) full-length straight cotton chinos; warm BROWN (#915A37) pair of low-top sneakers with plain IVORY rubber soles and brown uppers. Main short-sleeve top is completely visible with BOTH sleeves. Lay the separate carry jacket naturally at upper right beside the main outfit, at FULL adult scale relative to the top, NOT worn over it. Bottoms down left/centre, shoes below. Do not hide the carry jacket or replace it with a cardigan. Top worn untucked; hem ends naturally at hips, never skirt-like. NO bag. NO accessories or jewelry. ",
+    "job_id": "92d013d9-6b1a-4071-ba31-3d6b7cc83dc9",
+    "source_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3JA8zURyEfnFTV7wDtL1dscTGxg/hf_20260930_004926_92d013d9-6b1a-4071-ba31-3d6b7cc83dc9.png"
+  },
+  {
+    "index": 39,
+    "id": "all-039",
+    "shape": {
+      "gender": "female",
+      "top": "반팔 티셔츠",
+      "bottom": "미디 스커트",
+      "dress": "",
+      "outer": "블루종",
+      "shoe": "플랫슈즈",
+      "bag": "",
+      "accessories": [],
+      "outerOpen": true,
+      "outerMode": "carry",
+      "tuck": "in"
+    },
+    "slots": [
+      {
+        "field": "outerColor",
+        "source": "green"
+      },
+      {
+        "field": "topColor",
+        "source": "rose"
+      },
+      {
+        "field": "bottomColor",
+        "source": "blue"
+      },
+      {
+        "field": "shoeColor",
+        "source": "brown"
+      }
+    ],
+    "prompt": "Create one finished DALHA clothing-only outfit illustration. Reference is ONLY the approved elegant, simple adult 2D editorial illustration style. No person, mannequin, limbs, text, logo or decorations. Calm asymmetrical fashion flat-lay with slightly stylized adult proportions, attractive spacing. Long trousers MUST be full sized in proportion to the top; never tiny. Thin colour-coordinated outlines, ONE flat base + ONE hard-edged shadow tone per garment. NO gradients, fabric texture, grain, glossy highlights, photorealism or 3D. Solid uniform IVORY background, absolutely NO cast shadows on the background, no ground shadows. Each garment has a distinct source colour to enable later automatic recolouring; adhere to colours exactly even if unconventional. Colours on hidden lining match the garment. Keep all items comfortably inside frame. Preserve garment types exactly. Adult female outfit consists of EXACTLY: flat grass GREEN (#79AF79) zip blouson jacket with a collar and rib cuffs, not a cardigan; flat dusty ROSE (#D782A0) short-sleeve crewneck T-shirt; flat BLUE (#5A82C8) midi A-line skirt; warm BROWN (#915A37) pair of ballet flats. Main short-sleeve top is completely visible with BOTH sleeves. Lay the separate carry jacket naturally at upper right beside the main outfit, at FULL adult scale relative to the top, NOT worn over it. Bottoms down left/centre, shoes below. Do not hide the carry jacket or replace it with a cardigan. Shirt/top tucked neatly into the waistband, no hem sticking out. NO bag. NO accessories or jewelry. ",
+    "job_id": "61368f06-0778-44b4-b98f-3714575cf68a",
+    "source_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3JA8zURyEfnFTV7wDtL1dscTGxg/hf_20260930_004926_61368f06-0778-44b4-b98f-3714575cf68a.png"
+  },
+  {
+    "index": 40,
+    "id": "all-040",
+    "shape": {
+      "gender": "female",
+      "top": "반팔 티셔츠",
+      "bottom": "슬랙스",
+      "dress": "",
+      "outer": "블레이저",
+      "shoe": "로퍼",
+      "bag": "",
+      "accessories": [],
+      "outerOpen": true,
+      "outerMode": "carry",
+      "tuck": "in"
+    },
+    "slots": [
+      {
+        "field": "outerColor",
+        "source": "green"
+      },
+      {
+        "field": "topColor",
+        "source": "rose"
+      },
+      {
+        "field": "bottomColor",
+        "source": "blue"
+      },
+      {
+        "field": "shoeColor",
+        "source": "brown"
+      }
+    ],
+    "prompt": "Create one finished DALHA clothing-only outfit illustration. Reference is ONLY the approved elegant, simple adult 2D editorial illustration style. No person, mannequin, limbs, text, logo or decorations. Calm asymmetrical fashion flat-lay with slightly stylized adult proportions, attractive spacing. Long trousers MUST be full sized in proportion to the top; never tiny. Thin colour-coordinated outlines, ONE flat base + ONE hard-edged shadow tone per garment. NO gradients, fabric texture, grain, glossy highlights, photorealism or 3D. Solid uniform IVORY background, absolutely NO cast shadows on the background, no ground shadows. Each garment has a distinct source colour to enable later automatic recolouring; adhere to colours exactly even if unconventional. Colours on hidden lining match the garment. Keep all items comfortably inside frame. Preserve garment types exactly. Adult female outfit consists of EXACTLY: flat grass GREEN (#79AF79) tailored blazer with lapels; flat dusty ROSE (#D782A0) short-sleeve crewneck T-shirt; flat BLUE (#5A82C8) full-length tailored slacks; warm BROWN (#915A37) pair of penny loafers. Main short-sleeve top is completely visible with BOTH sleeves. Lay the separate carry jacket naturally at upper right beside the main outfit, at FULL adult scale relative to the top, NOT worn over it. Bottoms down left/centre, shoes below. Do not hide the carry jacket or replace it with a cardigan. Shirt/top tucked neatly into the waistband, no hem sticking out. NO bag. NO accessories or jewelry. ",
+    "job_id": "9842d5cb-9f0d-4e2c-a32f-665d80b1f275",
+    "source_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3JA8zURyEfnFTV7wDtL1dscTGxg/hf_20260930_004926_9842d5cb-9f0d-4e2c-a32f-665d80b1f275.png"
+  },
+  {
+    "index": 41,
+    "id": "all-041",
+    "shape": {
+      "gender": "female",
+      "top": "반팔 캐주얼 셔츠",
+      "bottom": "미디 스커트",
+      "dress": "",
+      "outer": "블루종",
+      "shoe": "플랫슈즈",
+      "bag": "",
+      "accessories": [],
+      "outerOpen": true,
+      "outerMode": "carry",
+      "tuck": "in"
+    },
+    "slots": [
+      {
+        "field": "outerColor",
+        "source": "green"
+      },
+      {
+        "field": "topColor",
+        "source": "rose"
+      },
+      {
+        "field": "bottomColor",
+        "source": "blue"
+      },
+      {
+        "field": "shoeColor",
+        "source": "brown"
+      }
+    ],
+    "prompt": "Create one finished DALHA clothing-only outfit illustration. Reference is ONLY the approved elegant, simple adult 2D editorial illustration style. No person, mannequin, limbs, text, logo or decorations. Calm asymmetrical fashion flat-lay with slightly stylized adult proportions, attractive spacing. Long trousers MUST be full sized in proportion to the top; never tiny. Thin colour-coordinated outlines, ONE flat base + ONE hard-edged shadow tone per garment. NO gradients, fabric texture, grain, glossy highlights, photorealism or 3D. Solid uniform IVORY background, absolutely NO cast shadows on the background, no ground shadows. Each garment has a distinct source colour to enable later automatic recolouring; adhere to colours exactly even if unconventional. Colours on hidden lining match the garment. Keep all items comfortably inside frame. Preserve garment types exactly. Adult female outfit consists of EXACTLY: flat grass GREEN (#79AF79) zip blouson jacket with a collar and rib cuffs, not a cardigan; flat dusty ROSE (#D782A0) short-sleeve collared button-up shirt; flat BLUE (#5A82C8) midi A-line skirt; warm BROWN (#915A37) pair of ballet flats. Main short-sleeve top is completely visible with BOTH sleeves. Lay the separate carry jacket naturally at upper right beside the main outfit, at FULL adult scale relative to the top, NOT worn over it. Bottoms down left/centre, shoes below. Do not hide the carry jacket or replace it with a cardigan. Shirt/top tucked neatly into the waistband, no hem sticking out. NO bag. NO accessories or jewelry. ",
+    "job_id": "cd09c783-0269-4f1d-a4cf-6bf5521c9359",
+    "source_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3JA8zURyEfnFTV7wDtL1dscTGxg/hf_20260930_004926_cd09c783-0269-4f1d-a4cf-6bf5521c9359.png"
+  },
+  {
+    "index": 45,
+    "id": "all-045",
+    "shape": {
+      "gender": "female",
+      "top": "니트",
+      "bottom": "면바지",
+      "dress": "",
+      "outer": "패딩",
+      "shoe": "운동화",
+      "bag": "",
+      "accessories": [],
+      "outerOpen": true,
+      "outerMode": "wear",
+      "tuck": "out"
+    },
+    "slots": [
+      {
+        "field": "outerColor",
+        "source": "green"
+      },
+      {
+        "field": "topColor",
+        "source": "rose"
+      },
+      {
+        "field": "bottomColor",
+        "source": "blue"
+      },
+      {
+        "field": "shoeColor",
+        "source": "brown"
+      }
+    ],
+    "prompt": "Create one finished DALHA clothing-only outfit illustration. Reference is ONLY the approved elegant, simple adult 2D editorial illustration style. No person, mannequin, limbs, text, logo or decorations. Calm asymmetrical fashion flat-lay with slightly stylized adult proportions, attractive spacing. Long trousers MUST be full sized in proportion to the top; never tiny. Thin colour-coordinated outlines, ONE flat base + ONE hard-edged shadow tone per garment. NO gradients, fabric texture, grain, glossy highlights, photorealism or 3D. Solid uniform IVORY background, absolutely NO cast shadows on the background, no ground shadows. Each garment has a distinct source colour to enable later automatic recolouring; adhere to colours exactly even if unconventional. Colours on hidden lining match the garment. Keep all items comfortably inside frame. Preserve garment types exactly. Adult female outfit consists of EXACTLY: flat grass GREEN (#79AF79) hip-length quilted puffer jacket; flat dusty ROSE (#D782A0) long-sleeve crewneck knit sweater; flat BLUE (#5A82C8) full-length straight cotton chinos; warm BROWN (#915A37) pair of low-top sneakers with plain IVORY rubber soles and brown uppers. Top/outerwear at upper left, bottom diagonally down the right side, shoes lower left. Layer the inner top under the outer jacket: inner sleeves fully hidden inside outer sleeves, collar/neck and front clearly visible. Top worn untucked; hem ends naturally at hips, never skirt-like. NO bag. NO accessories or jewelry. ",
+    "job_id": "03a2a1fa-0997-45bc-a5c4-7f5ffde25505",
+    "source_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3JA8zURyEfnFTV7wDtL1dscTGxg/hf_20260930_005032_03a2a1fa-0997-45bc-a5c4-7f5ffde25505.png"
+  },
+  {
+    "index": 46,
+    "id": "all-046",
+    "shape": {
+      "gender": "female",
+      "top": "니트",
+      "bottom": "면바지",
+      "dress": "",
+      "outer": "코트",
+      "shoe": "앵클부츠",
+      "bag": "",
+      "accessories": [],
+      "outerOpen": true,
+      "outerMode": "wear",
+      "tuck": "out"
+    },
+    "slots": [
+      {
+        "field": "outerColor",
+        "source": "green"
+      },
+      {
+        "field": "topColor",
+        "source": "rose"
+      },
+      {
+        "field": "bottomColor",
+        "source": "blue"
+      },
+      {
+        "field": "shoeColor",
+        "source": "brown"
+      }
+    ],
+    "prompt": "Create one finished DALHA clothing-only outfit illustration. Reference is ONLY the approved elegant, simple adult 2D editorial illustration style. No person, mannequin, limbs, text, logo or decorations. Calm asymmetrical fashion flat-lay with slightly stylized adult proportions, attractive spacing. Long trousers MUST be full sized in proportion to the top; never tiny. Thin colour-coordinated outlines, ONE flat base + ONE hard-edged shadow tone per garment. NO gradients, fabric texture, grain, glossy highlights, photorealism or 3D. Solid uniform IVORY background, absolutely NO cast shadows on the background, no ground shadows. Each garment has a distinct source colour to enable later automatic recolouring; adhere to colours exactly even if unconventional. Colours on hidden lining match the garment. Keep all items comfortably inside frame. Preserve garment types exactly. Adult female outfit consists of EXACTLY: flat grass GREEN (#79AF79) knee-length wool overcoat; flat dusty ROSE (#D782A0) long-sleeve crewneck knit sweater; flat BLUE (#5A82C8) full-length straight cotton chinos; warm BROWN (#915A37) pair of ankle boots. Top/outerwear at upper left, bottom diagonally down the right side, shoes lower left. Layer the inner top under the outer jacket: inner sleeves fully hidden inside outer sleeves, collar/neck and front clearly visible. Top worn untucked; hem ends naturally at hips, never skirt-like. NO bag. NO accessories or jewelry. ",
+    "job_id": "db22dd1e-347c-48ea-8ad3-6dd9e99143e2",
+    "source_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3JA8zURyEfnFTV7wDtL1dscTGxg/hf_20260930_005032_db22dd1e-347c-48ea-8ad3-6dd9e99143e2.png"
+  },
+  {
+    "index": 47,
+    "id": "all-047",
+    "shape": {
+      "gender": "female",
+      "top": "니트",
+      "bottom": "슬랙스",
+      "dress": "",
+      "outer": "코트",
+      "shoe": "로퍼",
+      "bag": "",
+      "accessories": [],
+      "outerOpen": true,
+      "outerMode": "wear",
+      "tuck": "out"
+    },
+    "slots": [
+      {
+        "field": "outerColor",
+        "source": "green"
+      },
+      {
+        "field": "topColor",
+        "source": "rose"
+      },
+      {
+        "field": "bottomColor",
+        "source": "blue"
+      },
+      {
+        "field": "shoeColor",
+        "source": "brown"
+      }
+    ],
+    "prompt": "Create one finished DALHA clothing-only outfit illustration. Reference is ONLY the approved elegant, simple adult 2D editorial illustration style. No person, mannequin, limbs, text, logo or decorations. Calm asymmetrical fashion flat-lay with slightly stylized adult proportions, attractive spacing. Long trousers MUST be full sized in proportion to the top; never tiny. Thin colour-coordinated outlines, ONE flat base + ONE hard-edged shadow tone per garment. NO gradients, fabric texture, grain, glossy highlights, photorealism or 3D. Solid uniform IVORY background, absolutely NO cast shadows on the background, no ground shadows. Each garment has a distinct source colour to enable later automatic recolouring; adhere to colours exactly even if unconventional. Colours on hidden lining match the garment. Keep all items comfortably inside frame. Preserve garment types exactly. Adult female outfit consists of EXACTLY: flat grass GREEN (#79AF79) knee-length wool overcoat; flat dusty ROSE (#D782A0) long-sleeve crewneck knit sweater; flat BLUE (#5A82C8) full-length tailored slacks; warm BROWN (#915A37) pair of penny loafers. Top/outerwear at upper left, bottom diagonally down the right side, shoes lower left. Layer the inner top under the outer jacket: inner sleeves fully hidden inside outer sleeves, collar/neck and front clearly visible. Top worn untucked; hem ends naturally at hips, never skirt-like. NO bag. NO accessories or jewelry. ",
+    "job_id": "5779ba64-ccb5-4cc5-8f0f-b4455cf9587e",
+    "source_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3JA8zURyEfnFTV7wDtL1dscTGxg/hf_20260930_005032_5779ba64-ccb5-4cc5-8f0f-b4455cf9587e.png"
+  },
+  {
+    "index": 48,
+    "id": "all-048",
+    "shape": {
+      "gender": "female",
+      "top": "니트",
+      "bottom": "면바지",
+      "dress": "",
+      "outer": "가디건",
+      "shoe": "앵클부츠",
+      "bag": "",
+      "accessories": [],
+      "outerOpen": true,
+      "outerMode": "wear",
+      "tuck": "out",
+      "overOuter": {
+        "name": "패딩",
+        "open": true
+      }
+    },
+    "slots": [
+      {
+        "field": "outerColor",
+        "source": "green"
+      },
+      {
+        "field": "topColor",
+        "source": "rose"
+      },
+      {
+        "field": "bottomColor",
+        "source": "blue"
+      },
+      {
+        "field": "shoeColor",
+        "source": "brown"
+      },
+      {
+        "field": "overOuter.color",
+        "source": "violet"
+      }
+    ],
+    "prompt": "Create one finished DALHA clothing-only outfit illustration. Reference is ONLY the approved elegant, simple adult 2D editorial illustration style. No person, mannequin, limbs, text, logo or decorations. Calm asymmetrical fashion flat-lay with slightly stylized adult proportions, attractive spacing. Long trousers MUST be full sized in proportion to the top; never tiny. Thin colour-coordinated outlines, ONE flat base + ONE hard-edged shadow tone per garment. NO gradients, fabric texture, grain, glossy highlights, photorealism or 3D. Solid uniform IVORY background, absolutely NO cast shadows on the background, no ground shadows. Each garment has a distinct source colour to enable later automatic recolouring; adhere to colours exactly even if unconventional. Colours on hidden lining match the garment. Keep all items comfortably inside frame. Preserve garment types exactly. Adult female outfit consists of EXACTLY: flat grass GREEN (#79AF79) open button cardigan; flat dusty ROSE (#D782A0) long-sleeve crewneck knit sweater; flat BLUE (#5A82C8) full-length straight cotton chinos; warm BROWN (#915A37) pair of ankle boots; flat VIOLET (#9664C3) hip-length quilted puffer jacket as an additional outer layer over the inner jacket. Top/outerwear at upper left, bottom diagonally down the right side, shoes lower left. Layer the inner top under the outer jacket: inner sleeves fully hidden inside outer sleeves, collar/neck and front clearly visible. Extra outer coat/puffer is OPEN over the inner jacket/cardigan, which remains identifiable through the front. Hide inner sleeves. Keep all layers full sized. Top worn untucked; hem ends naturally at hips, never skirt-like. NO bag. NO accessories or jewelry. ",
+    "job_id": "4f6ca72c-a8b4-46af-9aa6-7fe93892a83a",
+    "source_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3JA8zURyEfnFTV7wDtL1dscTGxg/hf_20260930_005032_4f6ca72c-a8b4-46af-9aa6-7fe93892a83a.png"
+  },
+  {
+    "index": 49,
+    "id": "all-049",
+    "shape": {
+      "gender": "female",
+      "top": "긴팔 정장 셔츠",
+      "bottom": "수트 바지",
+      "dress": "",
+      "outer": "수트 재킷",
+      "shoe": "낮은 굽 펌프스",
+      "bag": "핸드백",
+      "accessories": [],
+      "outerOpen": true,
+      "outerMode": "wear",
+      "tuck": "in",
+      "overOuter": {
+        "name": "코트",
+        "open": true
+      }
+    },
+    "slots": [
+      {
+        "field": "outerColor",
+        "source": "green"
+      },
+      {
+        "field": "topColor",
+        "source": "rose"
+      },
+      {
+        "field": "bottomColor",
+        "source": "blue"
+      },
+      {
+        "field": "shoeColor",
+        "source": "brown"
+      },
+      {
+        "field": "bagColor",
+        "source": "yellow"
+      },
+      {
+        "field": "overOuter.color",
+        "source": "violet"
+      }
+    ],
+    "prompt": "Create one finished DALHA clothing-only outfit illustration. Reference is ONLY the approved elegant, simple adult 2D editorial illustration style. No person, mannequin, limbs, text, logo or decorations. Calm asymmetrical fashion flat-lay with slightly stylized adult proportions, attractive spacing. Long trousers MUST be full sized in proportion to the top; never tiny. Thin colour-coordinated outlines, ONE flat base + ONE hard-edged shadow tone per garment. NO gradients, fabric texture, grain, glossy highlights, photorealism or 3D. Solid uniform IVORY background, absolutely NO cast shadows on the background, no ground shadows. Each garment has a distinct source colour to enable later automatic recolouring; adhere to colours exactly even if unconventional. Colours on hidden lining match the garment. Keep all items comfortably inside frame. Preserve garment types exactly. Adult female outfit consists of EXACTLY: flat grass GREEN (#79AF79) tailored suit jacket with lapels; flat dusty ROSE (#D782A0) long-sleeve collared dress shirt; flat BLUE (#5A82C8) full-length tailored suit trousers; warm BROWN (#915A37) pair of low block-heel pumps; mustard YELLOW (#D2B43C) compact structured handbag; flat VIOLET (#9664C3) knee-length wool overcoat as an additional outer layer over the inner jacket. Top/outerwear at upper left, bottom diagonally down the right side, shoes lower left. Layer the inner top under the outer jacket: inner sleeves fully hidden inside outer sleeves, collar/neck and front clearly visible. Extra outer coat/puffer is OPEN over the inner jacket/cardigan, which remains identifiable through the front. Hide inner sleeves. Keep all layers full sized. Shirt/top tucked neatly into the waistband, no hem sticking out. NO accessories or jewelry. ",
+    "job_id": "959857e8-7b97-4ea0-b9e2-cb4374f09f1c",
+    "source_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3JA8zURyEfnFTV7wDtL1dscTGxg/hf_20260930_005032_959857e8-7b97-4ea0-b9e2-cb4374f09f1c.png"
+  },
+  {
+    "index": 50,
+    "id": "all-050",
+    "shape": {
+      "gender": "female",
+      "top": "긴팔 정장 셔츠",
+      "bottom": "수트 바지",
+      "dress": "",
+      "outer": "수트 재킷",
+      "shoe": "로퍼",
+      "bag": "핸드백",
+      "accessories": [],
+      "outerOpen": true,
+      "outerMode": "wear",
+      "tuck": "in",
+      "overOuter": {
+        "name": "코트",
+        "open": true
+      }
+    },
+    "slots": [
+      {
+        "field": "outerColor",
+        "source": "green"
+      },
+      {
+        "field": "topColor",
+        "source": "rose"
+      },
+      {
+        "field": "bottomColor",
+        "source": "blue"
+      },
+      {
+        "field": "shoeColor",
+        "source": "brown"
+      },
+      {
+        "field": "bagColor",
+        "source": "yellow"
+      },
+      {
+        "field": "overOuter.color",
+        "source": "violet"
+      }
+    ],
+    "prompt": "Create one finished DALHA clothing-only outfit illustration. Reference is ONLY the approved elegant, simple adult 2D editorial illustration style. No person, mannequin, limbs, text, logo or decorations. Calm asymmetrical fashion flat-lay with slightly stylized adult proportions, attractive spacing. Long trousers MUST be full sized in proportion to the top; never tiny. Thin colour-coordinated outlines, ONE flat base + ONE hard-edged shadow tone per garment. NO gradients, fabric texture, grain, glossy highlights, photorealism or 3D. Solid uniform IVORY background, absolutely NO cast shadows on the background, no ground shadows. Each garment has a distinct source colour to enable later automatic recolouring; adhere to colours exactly even if unconventional. Colours on hidden lining match the garment. Keep all items comfortably inside frame. Preserve garment types exactly. Adult female outfit consists of EXACTLY: flat grass GREEN (#79AF79) tailored suit jacket with lapels; flat dusty ROSE (#D782A0) long-sleeve collared dress shirt; flat BLUE (#5A82C8) full-length tailored suit trousers; warm BROWN (#915A37) pair of penny loafers; mustard YELLOW (#D2B43C) compact structured handbag; flat VIOLET (#9664C3) knee-length wool overcoat as an additional outer layer over the inner jacket. Top/outerwear at upper left, bottom diagonally down the right side, shoes lower left. Layer the inner top under the outer jacket: inner sleeves fully hidden inside outer sleeves, collar/neck and front clearly visible. Extra outer coat/puffer is OPEN over the inner jacket/cardigan, which remains identifiable through the front. Hide inner sleeves. Keep all layers full sized. Shirt/top tucked neatly into the waistband, no hem sticking out. NO accessories or jewelry. ",
+    "job_id": "79c55566-29ac-4e35-b33d-7950f5e0e82b",
+    "source_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3JA8zURyEfnFTV7wDtL1dscTGxg/hf_20260930_005111_79c55566-29ac-4e35-b33d-7950f5e0e82b.png"
+  },
+  {
+    "index": 51,
+    "id": "all-051",
+    "shape": {
+      "gender": "male",
+      "top": "반팔 티셔츠",
+      "bottom": "면바지",
+      "dress": "",
+      "outer": "",
+      "shoe": "운동화",
+      "bag": "",
+      "accessories": [],
+      "outerOpen": true,
+      "outerMode": "wear",
+      "tuck": "out"
+    },
+    "slots": [
+      {
+        "field": "topColor",
+        "source": "rose"
+      },
+      {
+        "field": "bottomColor",
+        "source": "blue"
+      },
+      {
+        "field": "shoeColor",
+        "source": "brown"
+      }
+    ],
+    "prompt": "Create one finished DALHA clothing-only outfit illustration. Reference is ONLY the approved elegant, simple adult 2D editorial illustration style. No person, mannequin, limbs, text, logo or decorations. Calm asymmetrical fashion flat-lay with slightly stylized adult proportions, attractive spacing. Long trousers MUST be full sized in proportion to the top; never tiny. Thin colour-coordinated outlines, ONE flat base + ONE hard-edged shadow tone per garment. NO gradients, fabric texture, grain, glossy highlights, photorealism or 3D. Solid uniform IVORY background, absolutely NO cast shadows on the background, no ground shadows. Each garment has a distinct source colour to enable later automatic recolouring; adhere to colours exactly even if unconventional. Colours on hidden lining match the garment. Keep all items comfortably inside frame. Preserve garment types exactly. Adult male outfit consists of EXACTLY: flat dusty ROSE (#D782A0) short-sleeve crewneck T-shirt; flat BLUE (#5A82C8) full-length straight cotton chinos; warm BROWN (#915A37) pair of low-top sneakers with plain IVORY rubber soles and brown uppers. Top/outerwear at upper left, bottom diagonally down the right side, shoes lower left. Top worn untucked; hem ends naturally at hips, never skirt-like. NO bag. NO accessories or jewelry. ",
+    "job_id": "18182b92-d1fb-4c2e-aff9-7ede7263decc",
+    "source_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3JA8zURyEfnFTV7wDtL1dscTGxg/hf_20260930_005111_18182b92-d1fb-4c2e-aff9-7ede7263decc.png"
+  },
+  {
+    "index": 52,
+    "id": "all-052",
+    "shape": {
+      "gender": "male",
+      "top": "반팔 티셔츠",
+      "bottom": "면바지",
+      "dress": "",
+      "outer": "바람막이",
+      "shoe": "운동화",
+      "bag": "",
+      "accessories": [],
+      "outerOpen": true,
+      "outerMode": "carry",
+      "tuck": "out"
+    },
+    "slots": [
+      {
+        "field": "outerColor",
+        "source": "green"
+      },
+      {
+        "field": "topColor",
+        "source": "rose"
+      },
+      {
+        "field": "bottomColor",
+        "source": "blue"
+      },
+      {
+        "field": "shoeColor",
+        "source": "brown"
+      }
+    ],
+    "prompt": "Create one finished DALHA clothing-only outfit illustration. Reference is ONLY the approved elegant, simple adult 2D editorial illustration style. No person, mannequin, limbs, text, logo or decorations. Calm asymmetrical fashion flat-lay with slightly stylized adult proportions, attractive spacing. Long trousers MUST be full sized in proportion to the top; never tiny. Thin colour-coordinated outlines, ONE flat base + ONE hard-edged shadow tone per garment. NO gradients, fabric texture, grain, glossy highlights, photorealism or 3D. Solid uniform IVORY background, absolutely NO cast shadows on the background, no ground shadows. Each garment has a distinct source colour to enable later automatic recolouring; adhere to colours exactly even if unconventional. Colours on hidden lining match the garment. Keep all items comfortably inside frame. Preserve garment types exactly. Adult male outfit consists of EXACTLY: flat grass GREEN (#79AF79) lightweight zip windbreaker; flat dusty ROSE (#D782A0) short-sleeve crewneck T-shirt; flat BLUE (#5A82C8) full-length straight cotton chinos; warm BROWN (#915A37) pair of low-top sneakers with plain IVORY rubber soles and brown uppers. Main short-sleeve top is completely visible with BOTH sleeves. Lay the separate carry jacket naturally at upper right beside the main outfit, at FULL adult scale relative to the top, NOT worn over it. Bottoms down left/centre, shoes below. Do not hide the carry jacket or replace it with a cardigan. Top worn untucked; hem ends naturally at hips, never skirt-like. NO bag. NO accessories or jewelry. ",
+    "job_id": "8424cfa1-cd11-429f-9994-8f70d83f8741",
+    "source_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3JA8zURyEfnFTV7wDtL1dscTGxg/hf_20260930_005111_8424cfa1-cd11-429f-9994-8f70d83f8741.png"
+  },
+  {
+    "index": 53,
+    "id": "all-053",
+    "shape": {
+      "gender": "male",
+      "top": "반팔 티셔츠",
+      "bottom": "면바지",
+      "dress": "",
+      "outer": "블루종",
+      "shoe": "운동화",
+      "bag": "",
+      "accessories": [],
+      "outerOpen": true,
+      "outerMode": "carry",
+      "tuck": "out"
+    },
+    "slots": [
+      {
+        "field": "outerColor",
+        "source": "green"
+      },
+      {
+        "field": "topColor",
+        "source": "rose"
+      },
+      {
+        "field": "bottomColor",
+        "source": "blue"
+      },
+      {
+        "field": "shoeColor",
+        "source": "brown"
+      }
+    ],
+    "prompt": "Create one finished DALHA clothing-only outfit illustration. Reference is ONLY the approved elegant, simple adult 2D editorial illustration style. No person, mannequin, limbs, text, logo or decorations. Calm asymmetrical fashion flat-lay with slightly stylized adult proportions, attractive spacing. Long trousers MUST be full sized in proportion to the top; never tiny. Thin colour-coordinated outlines, ONE flat base + ONE hard-edged shadow tone per garment. NO gradients, fabric texture, grain, glossy highlights, photorealism or 3D. Solid uniform IVORY background, absolutely NO cast shadows on the background, no ground shadows. Each garment has a distinct source colour to enable later automatic recolouring; adhere to colours exactly even if unconventional. Colours on hidden lining match the garment. Keep all items comfortably inside frame. Preserve garment types exactly. Adult male outfit consists of EXACTLY: flat grass GREEN (#79AF79) zip blouson jacket with a collar and rib cuffs, not a cardigan; flat dusty ROSE (#D782A0) short-sleeve crewneck T-shirt; flat BLUE (#5A82C8) full-length straight cotton chinos; warm BROWN (#915A37) pair of low-top sneakers with plain IVORY rubber soles and brown uppers. Main short-sleeve top is completely visible with BOTH sleeves. Lay the separate carry jacket naturally at upper right beside the main outfit, at FULL adult scale relative to the top, NOT worn over it. Bottoms down left/centre, shoes below. Do not hide the carry jacket or replace it with a cardigan. Top worn untucked; hem ends naturally at hips, never skirt-like. NO bag. NO accessories or jewelry. ",
+    "job_id": "8a834136-8890-4a9f-b6c2-7b696ed6b298",
+    "source_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3JA8zURyEfnFTV7wDtL1dscTGxg/hf_20260930_005112_8a834136-8890-4a9f-b6c2-7b696ed6b298.png"
+  },
+  {
+    "index": 54,
+    "id": "all-054",
+    "shape": {
+      "gender": "female",
+      "top": "니트",
+      "bottom": "데님 바지",
+      "dress": "",
+      "outer": "패딩",
+      "shoe": "운동화",
+      "bag": "",
+      "accessories": [],
+      "outerOpen": true,
+      "outerMode": "wear",
+      "tuck": "out"
+    },
+    "slots": [
+      {
+        "field": "outerColor",
+        "source": "green"
+      },
+      {
+        "field": "topColor",
+        "source": "rose"
+      },
+      {
+        "field": "bottomColor",
+        "source": "blue"
+      },
+      {
+        "field": "shoeColor",
+        "source": "brown"
+      }
+    ],
+    "prompt": "Create one finished DALHA clothing-only outfit illustration. Reference is ONLY the approved elegant, simple adult 2D editorial illustration style. No person, mannequin, limbs, text, logo or decorations. Calm asymmetrical fashion flat-lay with slightly stylized adult proportions, attractive spacing. Long trousers MUST be full sized in proportion to the top; never tiny. Thin colour-coordinated outlines, ONE flat base + ONE hard-edged shadow tone per garment. NO gradients, fabric texture, grain, glossy highlights, photorealism or 3D. Solid uniform IVORY background, absolutely NO cast shadows on the background, no ground shadows. Each garment has a distinct source colour to enable later automatic recolouring; adhere to colours exactly even if unconventional. Colours on hidden lining match the garment. Keep all items comfortably inside frame. Preserve garment types exactly. Adult female outfit consists of EXACTLY: flat grass GREEN (#79AF79) hip-length quilted puffer jacket; flat dusty ROSE (#D782A0) long-sleeve crewneck knit sweater; flat BLUE (#5A82C8) full-length straight jeans; warm BROWN (#915A37) pair of low-top sneakers with plain IVORY rubber soles and brown uppers. Top/outerwear at upper left, bottom diagonally down the right side, shoes lower left. Layer the inner top under the outer jacket: inner sleeves fully hidden inside outer sleeves, collar/neck and front clearly visible. Top worn untucked; hem ends naturally at hips, never skirt-like. NO bag. NO accessories or jewelry. ",
+    "job_id": "55cd9afe-7a28-45d9-bfc1-c3ccc25748e4",
+    "source_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3JA8zURyEfnFTV7wDtL1dscTGxg/hf_20260930_005111_55cd9afe-7a28-45d9-bfc1-c3ccc25748e4.png"
+  },
+  {
+    "index": 55,
+    "id": "all-055",
+    "shape": {
+      "gender": "female",
+      "top": "니트",
+      "bottom": "데님 바지",
+      "dress": "",
+      "outer": "패딩",
+      "shoe": "앵클부츠",
+      "bag": "",
+      "accessories": [],
+      "outerOpen": true,
+      "outerMode": "wear",
+      "tuck": "out"
+    },
+    "slots": [
+      {
+        "field": "outerColor",
+        "source": "green"
+      },
+      {
+        "field": "topColor",
+        "source": "rose"
+      },
+      {
+        "field": "bottomColor",
+        "source": "blue"
+      },
+      {
+        "field": "shoeColor",
+        "source": "brown"
+      }
+    ],
+    "prompt": "Create one finished DALHA clothing-only outfit illustration. Reference is ONLY the approved elegant, simple adult 2D editorial illustration style. No person, mannequin, limbs, text, logo or decorations. Calm asymmetrical fashion flat-lay with slightly stylized adult proportions, attractive spacing. Long trousers MUST be full sized in proportion to the top; never tiny. Thin colour-coordinated outlines, ONE flat base + ONE hard-edged shadow tone per garment. NO gradients, fabric texture, grain, glossy highlights, photorealism or 3D. Solid uniform IVORY background, absolutely NO cast shadows on the background, no ground shadows. Each garment has a distinct source colour to enable later automatic recolouring; adhere to colours exactly even if unconventional. Colours on hidden lining match the garment. Keep all items comfortably inside frame. Preserve garment types exactly. Adult female outfit consists of EXACTLY: flat grass GREEN (#79AF79) hip-length quilted puffer jacket; flat dusty ROSE (#D782A0) long-sleeve crewneck knit sweater; flat BLUE (#5A82C8) full-length straight jeans; warm BROWN (#915A37) pair of ankle boots. Top/outerwear at upper left, bottom diagonally down the right side, shoes lower left. Layer the inner top under the outer jacket: inner sleeves fully hidden inside outer sleeves, collar/neck and front clearly visible. Top worn untucked; hem ends naturally at hips, never skirt-like. NO bag. NO accessories or jewelry. ",
+    "job_id": "714604aa-9738-4517-a9e2-ee0e8570ba6a",
+    "source_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3JA8zURyEfnFTV7wDtL1dscTGxg/hf_20260930_005142_714604aa-9738-4517-a9e2-ee0e8570ba6a.png"
+  },
+  {
+    "index": 56,
+    "id": "all-056",
+    "shape": {
+      "gender": "male",
+      "top": "니트",
+      "bottom": "면바지",
+      "dress": "",
+      "outer": "코트",
+      "shoe": "부츠",
+      "bag": "",
+      "accessories": [],
+      "outerOpen": true,
+      "outerMode": "wear",
+      "tuck": "out",
+      "knitNeck": "turtleneck"
+    },
+    "slots": [
+      {
+        "field": "outerColor",
+        "source": "green"
+      },
+      {
+        "field": "topColor",
+        "source": "rose"
+      },
+      {
+        "field": "bottomColor",
+        "source": "blue"
+      },
+      {
+        "field": "shoeColor",
+        "source": "brown"
+      }
+    ],
+    "prompt": "Create one finished DALHA clothing-only outfit illustration. Reference is ONLY the approved elegant, simple adult 2D editorial illustration style. No person, mannequin, limbs, text, logo or decorations. Calm asymmetrical fashion flat-lay with slightly stylized adult proportions, attractive spacing. Long trousers MUST be full sized in proportion to the top; never tiny. Thin colour-coordinated outlines, ONE flat base + ONE hard-edged shadow tone per garment. NO gradients, fabric texture, grain, glossy highlights, photorealism or 3D. Solid uniform IVORY background, absolutely NO cast shadows on the background, no ground shadows. Each garment has a distinct source colour to enable later automatic recolouring; adhere to colours exactly even if unconventional. Colours on hidden lining match the garment. Keep all items comfortably inside frame. Preserve garment types exactly. Adult male outfit consists of EXACTLY: flat grass GREEN (#79AF79) knee-length wool overcoat; flat dusty ROSE (#D782A0) long-sleeve crewneck knit sweater; flat BLUE (#5A82C8) full-length straight cotton chinos; warm BROWN (#915A37) pair of leather boots. Top/outerwear at upper left, bottom diagonally down the right side, shoes lower left. Layer the inner top under the outer jacket: inner sleeves fully hidden inside outer sleeves, collar/neck and front clearly visible. The sweater is a TURTLENECK with a visible high neck, not crewneck. Top worn untucked; hem ends naturally at hips, never skirt-like. NO bag. NO accessories or jewelry. ",
+    "job_id": "e1e5f11c-8c90-4153-a1f8-e8277eebe7d5",
+    "source_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3JA8zURyEfnFTV7wDtL1dscTGxg/hf_20260930_005142_e1e5f11c-8c90-4153-a1f8-e8277eebe7d5.png"
+  },
+  {
+    "index": 57,
+    "id": "all-057",
+    "shape": {
+      "gender": "female",
+      "top": "",
+      "bottom": "",
+      "dress": "반팔 원피스",
+      "outer": "블레이저",
+      "shoe": "플랫슈즈",
+      "bag": "핸드백",
+      "accessories": [
+        "시계"
+      ],
+      "outerOpen": true,
+      "outerMode": "wear",
+      "tuck": "out"
+    },
+    "slots": [
+      {
+        "field": "outerColor",
+        "source": "green"
+      },
+      {
+        "field": "topColor",
+        "source": "blue"
+      },
+      {
+        "field": "shoeColor",
+        "source": "brown"
+      },
+      {
+        "field": "bagColor",
+        "source": "yellow"
+      },
+      {
+        "field": "watch.strap",
+        "source": "magenta"
+      },
+      {
+        "field": "watch.case",
+        "source": "cyan"
+      },
+      {
+        "field": "watch.dial",
+        "source": "scarlet"
+      }
+    ],
+    "prompt": "Create one finished DALHA clothing-only outfit illustration. Reference is ONLY the approved elegant, simple adult 2D editorial illustration style. No person, mannequin, limbs, text, logo or decorations. Calm asymmetrical fashion flat-lay with slightly stylized adult proportions, attractive spacing. Long trousers MUST be full sized in proportion to the top; never tiny. Thin colour-coordinated outlines, ONE flat base + ONE hard-edged shadow tone per garment. NO gradients, fabric texture, grain, glossy highlights, photorealism or 3D. Solid uniform IVORY background, absolutely NO cast shadows on the background, no ground shadows. Each garment has a distinct source colour to enable later automatic recolouring; adhere to colours exactly even if unconventional. Colours on hidden lining match the garment. Keep all items comfortably inside frame. Preserve garment types exactly. Adult female outfit consists of EXACTLY: flat grass GREEN (#79AF79) tailored blazer with lapels; flat BLUE (#5A82C8) short-sleeve knee-length dress; warm BROWN (#915A37) pair of ballet flats; mustard YELLOW (#D2B43C) compact structured handbag; one wristwatch laid separately in an empty corner with MAGENTA (#B450AA) strap, CYAN (#3CA0AA) case and flat SCARLET RED (#E84A3A) dial; no jewelry otherwise. Dress prominently at left, blazer offset upper right with slight overlap, shoes lower right and handbag to mid-right. Layer the inner top under the outer jacket: inner sleeves fully hidden inside outer sleeves, collar/neck and front clearly visible. Top worn untucked; hem ends naturally at hips, never skirt-like. ",
+    "job_id": "f5876374-789f-4599-b811-1803c04d48da",
+    "source_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3JA8zURyEfnFTV7wDtL1dscTGxg/hf_20260930_005142_f5876374-789f-4599-b811-1803c04d48da.png"
+  },
+  {
+    "index": 58,
+    "id": "all-058",
+    "shape": {
+      "gender": "female",
+      "top": "긴팔 티셔츠",
+      "bottom": "면바지",
+      "dress": "",
+      "outer": "블루종",
+      "shoe": "운동화",
+      "bag": "",
+      "accessories": [],
+      "outerOpen": true,
+      "outerMode": "wear",
+      "tuck": "out"
+    },
+    "slots": [
+      {
+        "field": "outerColor",
+        "source": "green"
+      },
+      {
+        "field": "topColor",
+        "source": "rose"
+      },
+      {
+        "field": "bottomColor",
+        "source": "blue"
+      },
+      {
+        "field": "shoeColor",
+        "source": "brown"
+      }
+    ],
+    "prompt": "Create one finished DALHA clothing-only outfit illustration. Reference is ONLY the approved elegant, simple adult 2D editorial illustration style. No person, mannequin, limbs, text, logo or decorations. Calm asymmetrical fashion flat-lay with slightly stylized adult proportions, attractive spacing. Long trousers MUST be full sized in proportion to the top; never tiny. Thin colour-coordinated outlines, ONE flat base + ONE hard-edged shadow tone per garment. NO gradients, fabric texture, grain, glossy highlights, photorealism or 3D. Solid uniform IVORY background, absolutely NO cast shadows on the background, no ground shadows. Each garment has a distinct source colour to enable later automatic recolouring; adhere to colours exactly even if unconventional. Colours on hidden lining match the garment. Keep all items comfortably inside frame. Preserve garment types exactly. Adult female outfit consists of EXACTLY: flat grass GREEN (#79AF79) zip blouson jacket with a collar and rib cuffs, not a cardigan; flat dusty ROSE (#D782A0) long-sleeve crewneck T-shirt; flat BLUE (#5A82C8) full-length straight cotton chinos; warm BROWN (#915A37) pair of low-top sneakers with plain IVORY rubber soles and brown uppers. Top/outerwear at upper left, bottom diagonally down the right side, shoes lower left. Layer the inner top under the outer jacket: inner sleeves fully hidden inside outer sleeves, collar/neck and front clearly visible. Top worn untucked; hem ends naturally at hips, never skirt-like. NO bag. NO accessories or jewelry. ",
+    "job_id": "0926a378-53d7-4ebc-bb6d-0543d8a99f03",
+    "source_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3JA8zURyEfnFTV7wDtL1dscTGxg/hf_20260930_005142_0926a378-53d7-4ebc-bb6d-0543d8a99f03.png"
+  },
+  {
+    "index": 59,
+    "id": "all-059",
+    "shape": {
+      "gender": "female",
+      "top": "니트",
+      "bottom": "면바지",
+      "dress": "",
+      "outer": "블루종",
+      "shoe": "운동화",
+      "bag": "",
+      "accessories": [],
+      "outerOpen": true,
+      "outerMode": "wear",
+      "tuck": "out"
+    },
+    "slots": [
+      {
+        "field": "outerColor",
+        "source": "green"
+      },
+      {
+        "field": "topColor",
+        "source": "rose"
+      },
+      {
+        "field": "bottomColor",
+        "source": "blue"
+      },
+      {
+        "field": "shoeColor",
+        "source": "brown"
+      }
+    ],
+    "prompt": "Create one finished DALHA clothing-only outfit illustration. Reference is ONLY the approved elegant, simple adult 2D editorial illustration style. No person, mannequin, limbs, text, logo or decorations. Calm asymmetrical fashion flat-lay with slightly stylized adult proportions, attractive spacing. Long trousers MUST be full sized in proportion to the top; never tiny. Thin colour-coordinated outlines, ONE flat base + ONE hard-edged shadow tone per garment. NO gradients, fabric texture, grain, glossy highlights, photorealism or 3D. Solid uniform IVORY background, absolutely NO cast shadows on the background, no ground shadows. Each garment has a distinct source colour to enable later automatic recolouring; adhere to colours exactly even if unconventional. Colours on hidden lining match the garment. Keep all items comfortably inside frame. Preserve garment types exactly. Adult female outfit consists of EXACTLY: flat grass GREEN (#79AF79) zip blouson jacket with a collar and rib cuffs, not a cardigan; flat dusty ROSE (#D782A0) long-sleeve crewneck knit sweater; flat BLUE (#5A82C8) full-length straight cotton chinos; warm BROWN (#915A37) pair of low-top sneakers with plain IVORY rubber soles and brown uppers. Top/outerwear at upper left, bottom diagonally down the right side, shoes lower left. Layer the inner top under the outer jacket: inner sleeves fully hidden inside outer sleeves, collar/neck and front clearly visible. Top worn untucked; hem ends naturally at hips, never skirt-like. NO bag. NO accessories or jewelry. ",
+    "job_id": "799a6586-85b6-4c11-bde4-fe2baac77059",
+    "source_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3JA8zURyEfnFTV7wDtL1dscTGxg/hf_20260930_005142_799a6586-85b6-4c11-bde4-fe2baac77059.png"
+  },
+  {
+    "index": 60,
+    "id": "all-060",
+    "shape": {
+      "gender": "female",
+      "top": "",
+      "bottom": "",
+      "dress": "긴팔 원피스",
+      "outer": "블레이저",
+      "shoe": "플랫슈즈",
+      "bag": "핸드백",
+      "accessories": [
+        "시계"
+      ],
+      "outerOpen": true,
+      "outerMode": "wear",
+      "tuck": "out"
+    },
+    "slots": [
+      {
+        "field": "outerColor",
+        "source": "green"
+      },
+      {
+        "field": "topColor",
+        "source": "blue"
+      },
+      {
+        "field": "shoeColor",
+        "source": "brown"
+      },
+      {
+        "field": "bagColor",
+        "source": "yellow"
+      },
+      {
+        "field": "watch.strap",
+        "source": "magenta"
+      },
+      {
+        "field": "watch.case",
+        "source": "cyan"
+      },
+      {
+        "field": "watch.dial",
+        "source": "scarlet"
+      }
+    ],
+    "prompt": "Create one finished DALHA clothing-only outfit illustration. Reference is ONLY the approved elegant, simple adult 2D editorial illustration style. No person, mannequin, limbs, text, logo or decorations. Calm asymmetrical fashion flat-lay with slightly stylized adult proportions, attractive spacing. Long trousers MUST be full sized in proportion to the top; never tiny. Thin colour-coordinated outlines, ONE flat base + ONE hard-edged shadow tone per garment. NO gradients, fabric texture, grain, glossy highlights, photorealism or 3D. Solid uniform IVORY background, absolutely NO cast shadows on the background, no ground shadows. Each garment has a distinct source colour to enable later automatic recolouring; adhere to colours exactly even if unconventional. Colours on hidden lining match the garment. Keep all items comfortably inside frame. Preserve garment types exactly. Adult female outfit consists of EXACTLY: flat grass GREEN (#79AF79) tailored blazer with lapels; flat BLUE (#5A82C8) long-sleeve knee-length dress; warm BROWN (#915A37) pair of ballet flats; mustard YELLOW (#D2B43C) compact structured handbag; one wristwatch laid separately in an empty corner with MAGENTA (#B450AA) strap, CYAN (#3CA0AA) case and flat SCARLET RED (#E84A3A) dial; no jewelry otherwise. Dress prominently at left, blazer offset upper right with slight overlap, shoes lower right and handbag to mid-right. Layer the inner top under the outer jacket: inner sleeves fully hidden inside outer sleeves, collar/neck and front clearly visible. Top worn untucked; hem ends naturally at hips, never skirt-like. ",
+    "job_id": "3a5758c0-5e4f-47cd-b2b9-49cea84d096e",
+    "source_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3JA8zURyEfnFTV7wDtL1dscTGxg/hf_20260930_005213_3a5758c0-5e4f-47cd-b2b9-49cea84d096e.png"
+  }
+]

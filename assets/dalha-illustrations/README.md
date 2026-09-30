@@ -1,6 +1,6 @@
 # DALHA illustration renderer
 
-The existing recommendation engine and SVG renderer remain authoritative. The catalog selects an illustration only for an exact garment/accessory/tuck match. Unsupported items, cold-weather layers, carried outerwear, unlinked suit colours and unsupported patterns retain SVG. Male formal Derby variants currently retain SVG.
+The existing recommendation engine and SVG renderer remain authoritative. The catalog selects an illustration only for an exact garment/accessory/tuck match. Unknown items or patterns retain SVG. The expanded catalog covers 60 current configurations across seasons, temperature bands, rain, carry layers, winter layers and special age/palette rules. Unknown future configurations still retain SVG.
 
 The client loads a 768px WebP and an opaque RGB PNG mask. Mask R is the 1-based colour slot (0 preserves the source), G is line coverage, B's high bit marks exterior contours and its low 7 bits encode shadow coverage. The pure renderer derives lighter coordinated outlines for pale palettes. No generation or external image API is called at runtime.
 
@@ -8,6 +8,8 @@ The canvas replaces the visible SVG only after both assets and pixel rendering s
 
 Sources: Higgsfield-generated production artwork, September 2026. `06` and `10` are the previously approved adult male formal sources; the other ten assets match the live autumn templates. See `provenance.json` for generation IDs.
 
-Validation: `node scripts/test_fashion_illustrations.mjs` exercises the actual backend's 60 autumn recommendations across both genders and five ages (55 matches, five Derby fallbacks), unsupported shapes, deterministic colour/line rendering, asset failure and stale DOM handling. Run `python -m unittest backend.tests.test_fashion_svg_integration -q` for recommendation regressions. DOM tests use jsdom; they do not substitute for a physical mobile-device check.
+Validation: `node scripts/test_fashion_illustrations.mjs` exercises the actual backend's 60 autumn recommendations across both genders and five ages, plus 78,000 structural scenarios (60 matches), unsupported shapes, deterministic colour/line rendering, asset failure and stale DOM handling. Run `python -m unittest backend.tests.test_fashion_svg_integration -q` for recommendation regressions. DOM tests use jsdom; they do not substitute for a physical mobile-device check.
 
 Mask preparation: `python scripts/build_illustration_masks.py --sources /path/to/original-pngs` (Pillow, numpy, scipy). Neutral cast shadows and ivory sneaker soles are excluded from recolouring. Run `python scripts/test_illustration_masks.py` to check asset integrity and the red-jacket shadow/sole regression.
+
+Expansion: `expansion-provenance.json` records 49 additional assets, prompts, source URLs and packed colour slots. Use `python scripts/build_expanded_illustration_masks.py --workdir /path/to/workdir` with original PNGs inside `originals/`. There are 60 geometry configurations and 61 source/mask pairs including two approved male formal age variants. All pants are full length, formal skirts/dresses knee length. Carry/worn mode, extra outer layers, turtlenecks, tie stripes, and separate watch dial/strap/case colours are supported. Bag handles are assigned to bag colour.

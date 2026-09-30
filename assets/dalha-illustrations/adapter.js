@@ -1,4 +1,4 @@
-import {selectIllustration} from './catalog.js';
+import {selectIllustration} from './catalog.js?v=3';
 import {recolor} from './renderer.js';
 const BASE='/assets/dalha-illustrations/';
 const pending=new Map(),images=new Map();let sequence=0;
@@ -15,7 +15,7 @@ export async function hydrateIllustrations(root){
  return Promise.allSettled(nodes.map(async node=>{
   const key=node.dataset.dalhaIllustration,entry=pending.get(key);if(!entry)return;
   try{
-   const [source,mask]=await Promise.all([image(BASE+entry.id+'.webp?v=1'),image(BASE+entry.id+'-layers.png?v=2')]);
+   const [source,mask]=await Promise.all([image(BASE+entry.id+'.webp?v=1'),image(BASE+entry.id+'-layers.png?v=3')]);
    if(!node.isConnected||node.dataset.dalhaIllustration!==key)return;
    const original=pixels(source),layers=pixels(mask);
    if(original.width!==layers.width||original.height!==layers.height)throw new Error('Illustration layer size mismatch');

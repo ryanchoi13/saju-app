@@ -1,4 +1,4 @@
-import {decorateLook,hydrateIllustrations} from '../dalha-illustrations/adapter.js?v=2';
+import {decorateLook,hydrateIllustrations} from '../dalha-illustrations/adapter.js?v=3';
 // Approved sources stay immutable. Explicit review variants are opt-in below.
 import {renderOutfit, garmentInner, outerGeometry, escapeXml} from './engine.js';
 import {byName} from './catalog.js';
