@@ -1,4 +1,4 @@
-import {illustrations} from './catalog-data.js?v=2';
+import {illustrations} from './catalog-data.js?v=20261001-2';
 export {illustrations};
 const hex=v=>typeof v==='string'&&/^#[a-f0-9]{6}$/i.test(v);
 const basic=['gender','top','bottom','dress','outer','shoe','bag','outerMode','tuck','knitNeck'];

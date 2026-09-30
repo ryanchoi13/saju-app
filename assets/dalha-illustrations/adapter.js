@@ -1,4 +1,4 @@
-import {selectIllustration} from './catalog.js?v=4';
+import {selectIllustration} from './catalog.js?v=20261001-2';
 import {recolor} from './renderer.js';
 const BASE='/assets/dalha-illustrations/';
 const pending=new Map(),images=new Map(),entries=new WeakMap();let sequence=0;

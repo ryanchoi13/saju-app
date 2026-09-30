@@ -48,6 +48,17 @@ import random
 app = FastAPI(title="DALHA - Style Destiny Backend Engine")
 app.mount("/assets", StaticFiles(directory=os.path.join(os.path.dirname(__file__), "assets")), name="assets")
 
+# HTML and executable assets change between deploys. Meta tags do not control
+# HTTP caches, and stale HTML can keep importing an old illustration module.
+@app.middleware("http")
+async def revalidate_client_code(request: Request, call_next):
+    response = await call_next(request)
+    path = request.url.path
+    if path == "/" or path.startswith("/design/") or (path.startswith("/assets/") and path.endswith((".html", ".js", ".css"))):
+        response.headers["Cache-Control"] = "no-store, max-age=0"
+    return response
+
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["https://dalha.kr", "https://www.dalha.kr"],
