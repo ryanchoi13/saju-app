@@ -501,11 +501,11 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
 </script>
     <link rel="stylesheet" href="/assets/design-system.css?v=5">
     <link rel="stylesheet" href="/assets/tarot-v2.css?v=1">
-    <link rel="stylesheet" href="/assets/reading-tabs-v2.css?v=1">
+    <link rel="stylesheet" href="/assets/reading-tabs-v2.css?v=20261001-3">
     <link rel="stylesheet" href="/assets/landing.css?v=1">
     <script src="/assets/design-controls.js?v=2" defer></script>
     <script src="/assets/menu-explorer.js?v=meal-reveal-navigation-1" defer></script>
-    <script src="/assets/design-sample.js?v=3" defer></script>
+    <script src="/assets/design-sample.js?v=20261001-3" defer></script>
 </head>
 <body>
 
@@ -930,29 +930,32 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 <header class="reading-heading">
                     <span class="reading-eyebrow">나를 이해하는 시간</span>
                     <h2>나의 사주</h2>
-                    <p>타고난 모습부터 인생과 올해의 흐름까지.<br>정통 명리를 바탕으로 차근차근 살펴보세요.</p>
+                    <p>나다운 선택을 위한 사주 이야기.<br>나의 성향과 삶의 흐름을 함께 살펴봐요.</p>
                 </header>
                 <div class="reading-profile">
                     <div><strong id="sajuOwnerName">내 정보</strong><p id="sajuOwnerMeta">입력한 생년정보를 확인해 주세요.</p></div>
                     <button class="reading-text-button" onclick="reopenSajuEditForm()">정보 확인</button>
                 </div>
-                <section class="reading-summary" aria-labelledby="sajuSummaryTitle">
-                    <span class="reading-eyebrow">한눈에 보는 나</span>
-                    <h3 id="sajuSummaryTitle">나에 대한 요약</h3>
-                    <p id="sajuSummaryText">입력한 사주 정보를 바탕으로 나의 기본을 살펴봅니다.</p>
-                </section>
                 <div class="reading-tabs" role="tablist" aria-label="나의 사주 살펴보기">
                     <button id="saju-tab-basic" role="tab" aria-selected="true" aria-controls="saju-basic" onclick="selectSajuSection('basic')">나의 기본</button>
                     <button id="saju-tab-life" role="tab" aria-selected="false" tabindex="-1" aria-controls="saju-life" onclick="selectSajuSection('life')">인생 흐름</button>
                     <button id="saju-tab-year" role="tab" aria-selected="false" tabindex="-1" aria-controls="saju-year" onclick="selectSajuSection('year')">올해·월별</button>
                 </div>
                 <section id="saju-basic" class="saju-section" role="tabpanel" aria-labelledby="saju-tab-basic">
+                    <section class="reading-summary" aria-labelledby="sajuSummaryTitle">
+                        <span class="reading-eyebrow">처음이라면 여기부터</span>
+                        <h3 id="sajuSummaryTitle">나를 읽는 순서</h3>
+                        <p id="sajuSummaryText">내가 편한 방식과 자주 고민하는 지점을 먼저 읽어보세요. 인생 흐름과 올해의 이야기가 그다음으로 이어집니다.</p>
+                    </section>
                     <div class="card reading-lead">
-                        <span class="reading-eyebrow">나의 기본</span>
-                        <h3>내가 가진 모습과<br>삶에서 반복되는 선택</h3>
-                        <p>성향과 관계, 일과 배움, 돈과 생활을 함께 읽습니다. 평생운세에서 나를 이해할 실마리를 찾아보세요.</p>
-                        <div class="report-facts"><span>한 사람의 종합 풀이</span><span>450 복채</span></div>
-                        <p id="daewoonTeaserBox" class="reading-caption">포함 내용 · 타고난 기질과 균형 · 생활의 여러 분야 · 10년 대운</p>
+                        <span class="reading-eyebrow">정통 명리 · 평생운세</span>
+                        <h3>나는 어떤 사람이고,<br>무엇을 잘해낼 수 있을까요?</h3>
+                        <p>자연스럽게 힘이 나는 일, 관계에서 되풀이하는 선택, 삶의 시기별 흐름을 한 편의 풀이로 읽어보세요.</p>
+                        <div class="report-facts"><span>나의 성향 + 10년 대운</span><strong data-report-price="daewoon">450 복채</strong></div>
+                        <div id="daewoonTeaserBox" class="report-preview">
+                            <span class="preview-label">이런 이야기를 읽어요</span>
+                            <ol><li><strong>나의 성향</strong><span>강점을 쓰는 방식과 균형 잡을 부분</span></li><li><strong>생활 속 선택</strong><span>일과 배움, 관계와 돈을 대하는 태도</span></li><li><strong>인생의 흐름</strong><span>10년 단위로 달라지는 삶의 주제</span></li></ol>
+                        </div>
                         <div id="daewoonBox" class="hidden"></div>
                         <button id="btnDaewoon" class="reading-primary" onclick="handleUnlockReportOnServer('daewoon', 450)">450 복채로 평생운세 읽기</button>
                         <div class="reading-current">
@@ -961,7 +964,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                             <button type="button" class="reading-text-button" onclick="selectSajuSection('life')">현재 대운과 인생 흐름 살펴보기 →</button>
                         </div>
                     </div>
-                    <div class="reading-section-title"><h3>궁금한 부분부터</h3><span>주제별 풀이</span></div>
+                    <div class="reading-section-title"><h3>한 가지를 더 깊이 읽고 싶다면</h3><span>주제별 풀이 · 각 220 복채</span></div>
                     <div class="reading-links">
                         <button onclick="openConcern('business')"><strong>일·진로</strong><span>나에게 맞는 방향</span></button>
                         <button onclick="openConcern('love')"><strong>애정·관계</strong><span>나의 관계 패턴</span></button>
@@ -1031,11 +1034,11 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 </section>
                 <section id="saju-life" class="saju-section hidden" role="tabpanel" aria-labelledby="saju-tab-life">
                     <div class="card">
-                        <span class="reading-eyebrow">인생 흐름</span><h3>긴 흐름 속 지금의 나</h3>
-                        <p>현재 구간을 먼저 살펴보고, 앞뒤의 흐름으로 시선을 넓혀보세요.</p>
+                        <span class="reading-eyebrow">10년 단위로 살펴보는 대운</span><h3>지금, 어떤 시기를 지나고 있을까요?</h3>
+                        <p>지금의 위치를 먼저 확인해 보세요. 지나온 시기와 앞으로의 흐름을 함께 읽으면 내 선택을 돌아보기 좋아요.</p>
                     <div style="background: #F8FAFC; border-radius: 18px; border: 1px solid #E2E8F0; padding: 18px 12px 14px; margin-bottom: 14px; text-align: left;">
                         <div style="font-size:13.5px;font-weight:800;color:#334155;margin-bottom:6px;">생애 4단계 대운 흐름</div>
-                        <p style="font-size:11.5px;color:#64748B;line-height:1.55;margin:0 0 11px;">실제 계산은 10년 대운을 유지하고, 화면에서는 읽기 쉽게 네 시기로 묶습니다.</p>
+                        <p style="font-size:11.5px;color:#64748B;line-height:1.55;margin:0 0 11px;">10년마다 바뀌는 흐름을 네 시기로 묶었어요. 지금 속한 구간을 먼저 확인해 보세요.</p>
                         <div id="daewoonPhaseTimeline" style="display:grid;grid-template-columns:repeat(4,1fr);gap:5px;">
                             <div data-phase="초년기" style="border:1px solid #E2E8F0;border-radius:10px;padding:10px 4px;text-align:center;background:#FFFFFF;"><div style="font-size:12px;font-weight:800;">초년기</div><div style="font-size:10px;color:#94A3B8;margin-top:3px;">대운 1~2</div></div>
                             <div data-phase="청년기" style="border:1px solid #E2E8F0;border-radius:10px;padding:10px 4px;text-align:center;background:#FFFFFF;"><div style="font-size:12px;font-weight:800;">청년기</div><div style="font-size:10px;color:#94A3B8;margin-top:3px;">대운 3~4</div></div>
@@ -1051,16 +1054,19 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                             <div id="lifeCycleReading" class="period-reading" aria-live="polite"></div>
                         </div>
                         <button id="daewoonFlowOpen" class="reading-primary" onclick="handleUnlockReportOnServer('daewoon', 450)">450 복채로 평생운세 읽기</button>
-                        <p class="reading-caption">‘나의 기본’과 같은 평생운세입니다. 구매한 결과는 다시 읽을 수 있습니다.</p>
+                        <p class="reading-caption">‘나의 기본’에서 보는 평생운세와 같은 풀이예요. 한 번 구매하면 두 곳에서 다시 읽을 수 있어요.</p>
                     </div>
                 </section>
                 <section id="saju-year" class="saju-section hidden" role="tabpanel" aria-labelledby="saju-tab-year">
                     <div class="card reading-lead">
                         <span id="annualYearLabel" class="reading-eyebrow">올해·월별</span>
-                        <h3>올해의 방향을 잡고<br>한 달씩 살펴보기</h3>
-                        <p>올해의 중심 흐름과 애정·관계·재물·일·학습·생활 리듬을 함께 살펴봅니다.</p>
-                        <div class="report-facts"><span>올해 총운 + 12개월</span><span>300 복채</span></div>
-                        <p id="sinnianTeaserBox" class="reading-caption">포함 내용 · 올해의 중요한 흐름 · 월별 풀이 · 참고할 행동</p>
+                        <h3>올해의 큰 그림,<br>한 달씩 나의 속도로</h3>
+                        <p>한 해의 중심 이야기를 먼저 읽고, 궁금한 달을 골라보세요. 일과 돈, 관계부터 생활 리듬까지 함께 짚어드려요.</p>
+                        <div class="report-facts"><span>올해 총운 + 6개 분야 + 12개월</span><strong data-report-price="sinnian">300 복채</strong></div>
+                        <div id="sinnianTeaserBox" class="report-preview">
+                            <span class="preview-label">한 해를 이렇게 읽어요</span>
+                            <ol><li><strong>올해 총운</strong><span>한 해의 중심 흐름과 살펴볼 점</span></li><li><strong>분야별 이야기</strong><span>직업·재물·애정·관계·건강·학업</span></li><li><strong>12개월 풀이</strong><span>달마다 눈여겨볼 점과 생활 속 실천</span></li></ol>
+                        </div>
                         <div id="sinnianBox" class="hidden"></div>
                         <div id="annualMonthExplorer" class="hidden">
                             <div id="annualMonthChoices" class="period-choices" role="group" aria-label="월별 풀이 선택"></div>
@@ -1075,61 +1081,82 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             <!-- 탭 3: 궁합·고민 — 질문에서 기존 리포트로 -->
             <div id="view-theme" class="tab-view hidden reading-view">
                 <header class="reading-heading">
-                    <span class="reading-eyebrow">지금 마음에 있는 질문</span>
+                    <span class="reading-eyebrow">마음에 걸리는 일, 하나씩</span>
                     <h2>궁합·고민</h2>
-                    <p>나의 고민은 주제별 풀이로,<br>두 사람의 관계는 궁합으로 살펴보세요.</p>
+                    <p>어디서부터 풀어볼까요?<br>지금 내 마음과 가까운 질문을 골라보세요.</p>
                 </header>
-                <div class="reading-section-title concern-choice-title"><h3 id="concernChoiceTitle">요즘 가장 궁금한 고민</h3><span>하나를 선택해 보세요</span></div>
+                <button class="compatibility-shortcut" onclick="showCompatibility()"><span>두 사람의 관계가 궁금하다면</span><strong>궁합 보러 가기 <span aria-hidden="true">↗</span></strong></button>
+                <div class="reading-section-title concern-choice-title"><h3 id="concernChoiceTitle">지금 나의 고민은</h3><span>목차부터 살펴보세요</span></div>
                 <div class="concern-choices" role="group" aria-label="궁금한 주제 선택">
-                    <button data-concern-choice="wealth" aria-pressed="false" onclick="selectConcern('wealth')"><span>돈·생활</span>돈 관리의 방향</button>
-                    <button data-concern-choice="love" aria-pressed="false" onclick="selectConcern('love')"><span>나의 애정운</span>반복되는 연애 패턴</button>
-                    <button data-concern-choice="business" aria-pressed="false" onclick="selectConcern('business')"><span>일·사업</span>직업과 진로 고민</button>
-                    <button data-concern-choice="study" aria-pressed="false" onclick="selectConcern('study')"><span>학업·시험</span>나에게 맞는 공부</button>
-                    <button data-concern-choice="health" aria-pressed="false" onclick="selectConcern('health')"><span>건강·생활</span>활동과 회복의 균형</button>
+                    <button data-concern-choice="business" aria-pressed="false" aria-controls="concern-business" onclick="selectConcern('business', true)"><span class="concern-category">일·진로</span><strong>내 강점을 어떤 일에 써볼까요?</strong><span class="concern-open">풀이 살펴보기 <span aria-hidden="true">→</span></span></button>
+                    <button data-concern-choice="love" aria-pressed="false" aria-controls="concern-love" onclick="selectConcern('love', true)"><span class="concern-category">애정·관계</span><strong>나는 어떤 사랑이 편할까요?</strong><span class="concern-open">풀이 살펴보기 <span aria-hidden="true">→</span></span></button>
+                    <button data-concern-choice="wealth" aria-pressed="false" aria-controls="concern-wealth" onclick="selectConcern('wealth', true)"><span class="concern-category">돈·생활</span><strong>돈을 모으고 쓰는 기준이 궁금해요</strong><span class="concern-open">풀이 살펴보기 <span aria-hidden="true">→</span></span></button>
+                    <button data-concern-choice="study" aria-pressed="false" aria-controls="concern-study" onclick="selectConcern('study', true)"><span class="concern-category">학업·시험</span><strong>나에게 맞는 공부법을 찾고 싶어요</strong><span class="concern-open">풀이 살펴보기 <span aria-hidden="true">→</span></span></button>
+                    <button data-concern-choice="health" aria-pressed="false" aria-controls="concern-health" onclick="selectConcern('health', true)"><span class="concern-category">생활 리듬</span><strong>잘 쉬고, 꾸준히 해내고 싶어요</strong><span class="concern-open">풀이 살펴보기 <span aria-hidden="true">→</span></span></button>
                 </div>
-                <div class="reading-section-title concern-result-title"><h3 id="concernSelectionTitle">관련 풀이 안내</h3></div>
-                <p id="concernSelectionHint" class="reading-caption">위에서 하나를 고르면 관련 풀이를 안내해 드립니다.</p>
-                <div id="concern-wealth" class="card report-entry hidden" data-concern="wealth" style="text-align: left;">
-                    <p style="font-size: 16.5px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif;">💰 평생 재물운</p><p style="font-size: 13.5px; color: #64748B; margin-top: 3px;">수입·지출을 대하는 성향과 긴 흐름을 살펴봅니다. 투자 수익을 예측하지 않습니다.</p>
-                    <div id="themeReport_wealth" class="hidden" style="margin-top: 14px; padding-top: 12px; border-top: 1px solid #F1F5F9;"></div>
-                    <button id="btnTheme_wealth" onclick="handleUnlockReportOnServer('wealth', 220)" style="width: 100%; background: #0D1527; color: white; border: none; font-size: 14.5px; font-weight: 700; padding: 14px; border-radius: 14px; cursor: pointer; margin-top: 14px; display: flex; align-items: center; justify-content: center; gap: 6px;"><span class="btn-coin-icon-white"></span> 220 복채로 상세 리포트 열람하기</button>
-                </div>
-
-                <div id="concern-love" class="card report-entry hidden" data-concern="love" style="text-align: left;">
-                    <p style="font-size: 16.5px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif;">💖 평생 애정운</p><p style="font-size: 13.5px; color: #64748B; margin-top: 3px;">한 사람의 연애 성향과 관계에서 반복되는 선택을 살펴봅니다.</p>
-                    <div id="themeReport_love" class="hidden" style="margin-top: 14px; padding-top: 12px; border-top: 1px solid #F1F5F9;"></div>
-                    <button id="btnTheme_love" onclick="openThemeSelectModal('love')" style="width: 100%; background: #0D1527; color: white; border: none; font-size: 14.5px; font-weight: 700; padding: 14px; border-radius: 14px; cursor: pointer; margin-top: 14px; display: flex; align-items: center; justify-content: center; gap: 6px;"><span class="btn-coin-icon-white"></span> 220 복채로 상황별 리포트 열람하기</button>
-                </div>
-
-                <div id="concern-business" class="card report-entry hidden" data-concern="business" style="text-align: left;">
-                    <p style="font-size: 16.5px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif;">🏢 직업·사업운</p><p style="font-size: 13.5px; color: #64748B; margin-top: 3px;">일하는 성향과 직업·사업의 방향을 살펴봅니다. 특정 날짜의 이직 판단은 포함하지 않습니다.</p>
-                    <div id="themeReport_business" class="hidden" style="margin-top: 14px; padding-top: 12px; border-top: 1px solid #F1F5F9;"></div>
-                    <button id="btnTheme_business" onclick="openThemeSelectModal('business')" style="width: 100%; background: #0D1527; color: white; border: none; font-size: 14.5px; font-weight: 700; padding: 14px; border-radius: 14px; cursor: pointer; margin-top: 14px; display: flex; align-items: center; justify-content: center; gap: 6px;"><span class="btn-coin-icon-white"></span> 220 복채로 상황별 리포트 열람하기</button>
-                </div>
-
-                <div id="concern-health" class="card report-entry hidden" data-concern="health" style="text-align: left;">
-                    <p style="font-size: 16.5px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif;">🌿 건강·생활 리듬</p><p style="font-size: 13.5px; color: #64748B; margin-top: 3px;">활동과 회복의 균형을 돌아봅니다. 질병을 진단하는 풀이가 아닙니다.</p>
-                    <div id="themeReport_health" class="hidden" style="margin-top: 14px; padding-top: 12px; border-top: 1px solid #F1F5F9;"></div>
-                    <button id="btnTheme_health" onclick="handleUnlockReportOnServer('health', 220)" style="width: 100%; background: #0D1527; color: white; border: none; font-size: 14.5px; font-weight: 700; padding: 14px; border-radius: 14px; cursor: pointer; margin-top: 14px; display: flex; align-items: center; justify-content: center; gap: 6px;"><span class="btn-coin-icon-white"></span> 220 복채로 상세 리포트 열람하기</button>
-                </div>
-
-                <div id="concern-study" class="card report-entry hidden" data-concern="study" style="text-align: left;">
-                    <p style="font-size: 16.5px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif;">📚 평생 학업·시험운</p><p style="font-size: 13.5px; color: #64748B; margin-top: 3px;">나에게 맞는 공부 방식과 준비의 흐름을 살펴봅니다. 합격 여부를 단정하지 않습니다.</p>
-                    <div id="themeReport_study" class="hidden" style="margin-top: 14px; padding-top: 12px; border-top: 1px solid #F1F5F9;"></div>
-                    <button id="btnTheme_study" onclick="handleUnlockReportOnServer('study', 220)" style="width: 100%; background: #0D1527; color: white; border: none; font-size: 14.5px; font-weight: 700; padding: 14px; border-radius: 14px; cursor: pointer; margin-top: 14px; display: flex; align-items: center; justify-content: center; gap: 6px;"><span class="btn-coin-icon-white"></span> 220 복채로 상세 리포트 열람하기</button>
-                </div>
-                <div class="reading-section-title concern-compatibility-title"><h3>두 사람 궁합</h3><span>관계의 흐름 살펴보기</span></div>
-                <div id="concern-gunghap" class="card report-entry">
-                    <span class="reading-eyebrow">두 사람의 관계</span><h3>함께여서 다른 우리</h3>
-                    <p>서로에게 끌리는 지점과 소통의 차이, 사랑과 함께하는 생활을 살펴봅니다.</p>
-                    <div class="report-facts"><span>연인·부부를 위한 궁합</span><span>350 복채</span></div>
-                    <p class="reading-caption">두 사람의 생년월일과 출생시간을 바탕으로 풀이합니다.</p>
+                <div class="reading-section-title concern-result-title hidden"><h3 id="concernSelectionTitle" tabindex="-1">관련 풀이 안내</h3></div>
+                <p id="concernSelectionHint" class="reading-caption">질문을 고르면 포함된 내용과 필요한 복채를 먼저 보여드려요.</p>
+                <section id="concern-business" class="card report-entry hidden" data-concern="business" aria-labelledby="concern-heading-business">
+                    <span class="reading-eyebrow">일·진로 · 한 사람의 사주 풀이</span>
+                    <h3 id="concern-heading-business" tabindex="-1">직업·사업운</h3><p>잘하는 일을 오래 이어가고 싶을 때, 나의 일하는 방식과 다음 역할을 준비하는 기준을 살펴봐요.</p>
+                    <div class="report-preview"><span class="preview-label">이런 이야기를 읽어요</span><ol><li><strong>일하는 나의 강점</strong><span>경험을 성과로 이어가는 방식</span></li><li><strong>지금 상황에 맞춰</strong><span>직장·취업·이직·사업·창업 중 선택</span></li><li><strong>앞으로의 준비</strong><span>역할 변화와 시기별 흐름</span></li></ol></div>
+                    <div class="report-facts"><span>성향과 긴 흐름을 살펴봐요</span><strong data-report-price="business">220 복채</strong></div>
+                    <div id="themeReport_business" class="hidden"></div>
+                    <button id="btnTheme_business" class="reading-primary" onclick="openThemeSelectModal('business')">상황 고르고 풀이 읽기 · 220 복채</button>
+                    <p class="reading-caption report-scope">특정 날짜의 이직·창업 여부를 정해주는 풀이는 아니에요.</p>
+                </section>
+                <section id="concern-love" class="card report-entry hidden" data-concern="love" aria-labelledby="concern-heading-love">
+                    <span class="reading-eyebrow">애정·관계 · 한 사람의 사주 풀이</span>
+                    <h3 id="concern-heading-love" tabindex="-1">나의 애정운</h3><p>마음이 가는 방식과 관계에서 반복하는 선택을 돌아봐요. 지금의 연애 상황에 맞춰 읽을 수 있어요.</p>
+                    <div class="report-preview"><span class="preview-label">이런 이야기를 읽어요</span><ol><li><strong>나의 관계 성향</strong><span>편안함을 느끼는 방식과 표현</span></li><li><strong>지금의 사랑</strong><span>솔로·썸·연애·부부 중 선택</span></li><li><strong>더 나은 대화</strong><span>갈등을 풀고 서로를 이해하는 방법</span></li></ol></div>
+                    <div class="report-facts"><span>성향과 긴 흐름을 살펴봐요</span><strong data-report-price="love">220 복채</strong></div>
+                    <div id="themeReport_love" class="hidden"></div>
+                    <button id="btnTheme_love" class="reading-primary" onclick="openThemeSelectModal('love')">상황 고르고 풀이 읽기 · 220 복채</button>
+                    <p class="reading-caption report-scope">나의 애정운은 한 사람을 풀이해요. 서로의 차이는 아래 두 사람 궁합에서 살펴보세요.</p>
+                </section>
+                <section id="concern-wealth" class="card report-entry hidden" data-concern="wealth" aria-labelledby="concern-heading-wealth">
+                    <span class="reading-eyebrow">돈·생활 · 한 사람의 사주 풀이</span>
+                    <h3 id="concern-heading-wealth" tabindex="-1">평생 재물운</h3><p>돈을 벌고 관리하는 나의 성향을 읽어봐요. 큰 지출이나 새로운 계획 앞에서 돌아볼 기준을 함께 정리해요.</p>
+                    <div class="report-preview"><span class="preview-label">이런 이야기를 읽어요</span><ol><li><strong>돈을 대하는 나</strong><span>수입과 지출을 바라보는 성향</span></li><li><strong>지켜갈 기준</strong><span>소비·거래·금전 관계에서 살필 점</span></li><li><strong>긴 흐름 속 재물</strong><span>대운별 주제와 현실적인 참고 행동</span></li></ol></div>
+                    <div class="report-facts"><span>성향과 긴 흐름을 살펴봐요</span><strong data-report-price="wealth">220 복채</strong></div>
+                    <div id="themeReport_wealth" class="hidden"></div>
+                    <button id="btnTheme_wealth" class="reading-primary" onclick="handleUnlockReportOnServer('wealth', 220)">재물운 읽기 · 220 복채</button>
+                    <p class="reading-caption report-scope">투자 수익이나 금액을 예측하는 풀이가 아니에요.</p>
+                </section>
+                <section id="concern-study" class="card report-entry hidden" data-concern="study" aria-labelledby="concern-heading-study">
+                    <span class="reading-eyebrow">학업·시험 · 한 사람의 사주 풀이</span>
+                    <h3 id="concern-heading-study" tabindex="-1">학업·시험운</h3><p>열심히 하는 만큼 내 실력으로 남기고 싶을 때, 배우는 방식과 준비의 흐름을 돌아봐요.</p>
+                    <div class="report-preview"><span class="preview-label">이런 이야기를 읽어요</span><ol><li><strong>배우는 나의 방식</strong><span>이해·반복·실전 연습의 균형</span></li><li><strong>준비하는 습관</strong><span>계획과 복습에서 살펴볼 부분</span></li><li><strong>학습의 흐름</strong><span>시기별 주제와 이어갈 실천</span></li></ol></div>
+                    <div class="report-facts"><span>성향과 긴 흐름을 살펴봐요</span><strong data-report-price="study">220 복채</strong></div>
+                    <div id="themeReport_study" class="hidden"></div>
+                    <button id="btnTheme_study" class="reading-primary" onclick="handleUnlockReportOnServer('study', 220)">학업운 읽기 · 220 복채</button>
+                    <p class="reading-caption report-scope">합격 여부보다 준비하는 방식에 초점을 두어요.</p>
+                </section>
+                <section id="concern-health" class="card report-entry hidden" data-concern="health" aria-labelledby="concern-heading-health">
+                    <span class="reading-eyebrow">생활 리듬 · 한 사람의 사주 풀이</span>
+                    <h3 id="concern-heading-health" tabindex="-1">활동과 회복</h3><p>바쁘게 채우는 일만큼 쉬는 방식도 중요해요. 활동과 회복의 균형을 생활 속에서 돌아봐요.</p>
+                    <div class="report-preview"><span class="preview-label">이런 이야기를 읽어요</span><ol><li><strong>생활의 균형</strong><span>활동과 휴식을 나누는 관점</span></li><li><strong>회복의 습관</strong><span>일정을 덜고 여유를 만드는 방법</span></li><li><strong>오래 이어갈 리듬</strong><span>시기별 주제와 생활 속 실천</span></li></ol></div>
+                    <div class="report-facts"><span>성향과 긴 흐름을 살펴봐요</span><strong data-report-price="health">220 복채</strong></div>
+                    <div id="themeReport_health" class="hidden"></div>
+                    <button id="btnTheme_health" class="reading-primary" onclick="handleUnlockReportOnServer('health', 220)">생활 리듬 읽기 · 220 복채</button>
+                    <p class="reading-caption report-scope">질병을 진단하지 않아요. 몸의 불편함은 의료진과 확인해 주세요.</p>
+                </section>
+                <div class="reading-section-title concern-compatibility-title"><h3>두 사람의 이야기</h3><span>연인·부부 궁합</span></div>
+                <section id="concern-gunghap" class="card report-entry compatibility-card" aria-labelledby="compatibilityTitle">
+                    <span class="reading-eyebrow">서로를 더 잘 이해하는 시간</span>
+                    <h3 id="compatibilityTitle" tabindex="-1">우리는 어디서 잘 맞고,<br>어떤 점이 다를까요?</h3>
+                    <p>끌리는 이유부터 대화의 차이, 함께하는 생활까지. 두 사람의 사주를 나란히 놓고 관계를 살펴봐요.</p>
+                    <div class="compatibility-topics"><span>끌림과 차이</span><span>대화와 갈등</span><span>함께하는 생활</span></div>
+                    <div class="report-facts"><span>두 사람의 생년정보로 풀이</span><strong data-report-price="gunghap">350 복채</strong></div>
                     <div id="gunghapReportBox" class="hidden"></div>
-                    <button id="btnOpenGunghapModal" class="reading-primary" onclick="openGunghapInputModal()">상대방 정보 입력하고 궁합 보기</button>
-                </div>
-                <section id="recentReportSection" class="hidden"><div class="reading-section-title"><h3>최근 읽은 풀이</h3></div><div id="recentReportList" class="reading-recent-list"></div></section>
-                <button id="allConcernTopicsLink" class="reading-archive-link" onclick="selectConcern('all')">전체 주제 살펴보기 →</button>
-                <button class="reading-archive-link" onclick="openReportArchive()">구매한 감명서 보관함 →</button>
+                    <button id="btnOpenGunghapModal" class="reading-primary" onclick="openGunghapInputModal()">상대방 정보 입력하기</button>
+                    <p id="gunghapPurchaseNote" class="reading-caption">정보를 입력한 다음 350 복채로 열람해요.</p>
+                </section>
+                <section id="recentReportSection" class="hidden"><div class="reading-section-title"><h3>이어서 읽어볼까요?</h3></div><div id="recentReportList" class="reading-recent-list"></div></section>
+                <button id="allConcernTopicsLink" class="reading-archive-link" onclick="selectConcern('all', true)">전체 주제의 목차 살펴보기 →</button>
+                <details class="reading-help"><summary>어떤 풀이부터 보면 좋을까요?</summary><p>나를 전반적으로 이해하고 싶다면 ‘나의 사주’의 평생운세를, 한 가지 고민을 깊이 읽고 싶다면 주제별 풀이를 골라보세요. 한 해와 월별 흐름은 ‘올해·월별’에서 읽을 수 있어요.</p></details>
+                <details class="reading-help"><summary>구매한 풀이는 어디에 있나요?</summary><p>마이페이지의 ‘구매한 감명서 보관함’에 모아두었어요. 같은 풀이를 다시 읽을 때는 복채가 추가로 들지 않아요.</p></details>
+                <button class="reading-archive-link" onclick="openReportArchive()">내가 구매한 풀이 모아보기 →</button>
             </div>
 
             <!-- 탭 4: 마이페이지 -->
@@ -2360,8 +2387,8 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             updateDaewoonPhaseTimeline(data.saju_data.daeyun_phase, currentUserAge);
             const phaseText = document.getElementById('daewoonCurrentPhaseText').textContent.replace('📍 ', '');
             document.getElementById('sajuCurrentPosition').textContent = phaseText;
-            document.getElementById('sajuSummaryText').textContent =
-                `${currentUserName}님의 일간은 ${dtl.day.cg}(${dtl.day.cg_elem})입니다. ${data.saju_data.singang_label || ''} 나의 기본과 지금의 흐름을 이어서 살펴보세요.`;
+            document.getElementById('sajuSummaryTitle').textContent = `${currentUserName}님을 알아가는 시간`;
+            document.getElementById('sajuSummaryText').textContent = '내가 편한 방식과 자주 고민하는 지점을 먼저 읽어보세요. 인생 흐름과 올해의 이야기가 그다음으로 이어집니다.';
             document.getElementById('mypageProfileDesc').innerText = `${currentUserName} (${data.birth_summary})`;
             
             updateTodayWardrobeMatchPick();
@@ -3162,7 +3189,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             const titleEl = document.getElementById('modalThemeTitle');
 
             if (key === 'love') {
-                titleEl.innerText = "💖 현재 애정 상태를 선택해 주세요";
+                titleEl.innerText = "지금의 관계에 맞춰 읽어볼까요?";
                 modalBox.innerHTML = `
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
                         <label style="padding:10px; border:1px solid #E2E8F0; border-radius:8px; background:white; cursor:pointer;"><input type="radio" name="optM" value="솔로" checked> 솔로 (미혼)</label>
@@ -3171,7 +3198,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                         <label style="padding:10px; border:1px solid #E2E8F0; border-radius:8px; background:white; cursor:pointer;"><input type="radio" name="optM" value="기혼"> 기혼 (부부)</label>
                     </div>`;
             } else if (key === 'business') {
-                titleEl.innerText = "🏢 현재 직업/사업 상태를 선택해 주세요";
+                titleEl.innerText = "지금 어떤 일을 준비하고 있나요?";
                 modalBox.innerHTML = `
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
                         <label style="padding:10px; border:1px solid #E2E8F0; border-radius:8px; background:white; cursor:pointer;"><input type="radio" name="optM" value="직장인" checked> 직장인</label>
@@ -3251,19 +3278,37 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             });
         }
 
-        function selectConcern(key) {
+        function selectConcern(key, reveal = false) {
             const labels = {wealth:'돈과 생활을 살펴보는 풀이', love:'나의 연애 패턴을 살펴보는 풀이', business:'일과 사업의 방향을 살펴보는 풀이', study:'공부 방식을 살펴보는 풀이', health:'활동과 회복을 살펴보는 풀이', gunghap:'두 사람의 관계를 살펴보는 풀이', all:'전체 주제별 풀이'};
             if (!labels[key]) return;
             document.querySelectorAll('[data-concern]').forEach(el => el.classList.toggle('hidden', key !== 'all' && el.dataset.concern !== key));
             document.querySelectorAll('[data-concern-choice]').forEach(el => el.setAttribute('aria-pressed', String(el.dataset.concernChoice === key)));
             document.getElementById('concernSelectionTitle').textContent = labels[key];
             document.getElementById('concernSelectionHint').classList.add('hidden');
+            document.querySelector('.concern-result-title').classList.remove('hidden');
+            if (key === 'gunghap') { showCompatibility(); return; }
+            if (reveal) {
+                const heading = key === 'all' ? document.getElementById('concernSelectionTitle') : document.getElementById(`concern-heading-${key}`);
+                heading.focus({preventScroll:true});
+                heading.scrollIntoView({block:'start', behavior:'smooth'});
+            }
         }
 
         function openConcern(key) {
             switchTab('theme');
-            selectConcern(key);
-            document.getElementById('view-theme').scrollIntoView({block:'start'});
+            selectConcern(key, true);
+        }
+
+        function showCompatibility() {
+            const heading = document.getElementById('compatibilityTitle');
+            heading.focus({preventScroll:true});
+            heading.scrollIntoView({block:'start',behavior:'smooth'});
+        }
+
+        function openAnnualMonths(index) {
+            openReadingReport(index);
+            const monthTab = document.getElementById('annualReaderTab1');
+            if (monthTab) { monthTab.click(); monthTab.focus(); }
         }
 
         function openReportArchive() {
@@ -3326,9 +3371,17 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             };
             document.getElementById('annualMonthExplorer').classList.add('hidden');
             document.getElementById('lifeCycleExplorer').classList.add('hidden');
+            ['lifeCycleChoices','lifeCycleReading','annualMonthChoices','annualMonthReading'].forEach(id => document.getElementById(id).replaceChildren());
             document.getElementById('annualYearLabel').textContent = `${koreaYearMonth().year}년 · 올해와 월별`;
             Object.entries(configs).forEach(([key, [slotId, buttonId, teaserId]]) => {
                 const index = latestOwnedReportIndex(key);
+                const price = document.querySelector(`[data-report-price="${key}"]`);
+                if (price) {
+                    if (!price.dataset.price) price.dataset.price = price.textContent;
+                    price.textContent = index >= 0 ? '구매한 풀이' : price.dataset.price;
+                    price.classList.toggle('report-owned', index >= 0);
+                }
+                if (key === 'gunghap') document.getElementById('gunghapPurchaseNote').classList.toggle('hidden', index >= 0);
                 const slot = document.getElementById(slotId);
                 const button = document.getElementById(buttonId);
                 slot.replaceChildren();
@@ -3347,10 +3400,17 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 slot.append(note, open);
                 if (key === 'sinnian') {
                     const doc = reportDocument(item);
-                    const year = doc.querySelector('[data-report-year]')?.dataset.reportYear || item.report_title?.match(/^(\d{4})\b/)?.[1];
+                    const year = item.report_year || doc.querySelector('[data-report-year]')?.dataset.reportYear || item.report_title?.match(/\b(\d{4})년?/)?.[1];
                     document.getElementById('annualYearLabel').textContent = year ? `${year}년 · 구매한 올해운세` : '구매한 올해운세';
                     document.getElementById('annualMonthChoices').replaceChildren();
                     document.getElementById('annualMonthReading').replaceChildren();
+                    if (doc.querySelector('.annual-reading [data-report-month]')) {
+                        const months = document.createElement('button');
+                        months.className = 'reading-secondary';
+                        months.textContent = Number(year) === koreaYearMonth().year ? '이번 달 풀이 바로 읽기' : `${year ? year + '년 ' : ''}월별 풀이 읽기`;
+                        months.onclick = () => openAnnualMonths(index);
+                        slot.append(months);
+                    }
                 }
                 if (key === 'daewoon') renderPeriodChoices(item, 'cycle');
             });

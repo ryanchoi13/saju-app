@@ -61,7 +61,11 @@ const current={report_key:'sinnian',report_title:generated.title,report_content:
     assert.equal(doc.getElementById('annualYearPanel').hidden,false);
     assert.equal(doc.getElementById('annualMonthPanel').hidden,true);
     assert.match(doc.getElementById('annualYearPanel').textContent,/올해 총운/);
-    doc.getElementById('annualReaderTab1').click();
+    assert.equal(doc.querySelector('[data-report-price="sinnian"]').textContent,'구매한 풀이');
+    const quickMonth=doc.querySelector('#sinnianBox .reading-secondary');
+    assert.ok(quickMonth);
+    quickMonth.click();
+    assert.equal(doc.activeElement.id,'annualReaderTab1');
     assert.equal(doc.getElementById('annualYearPanel').hidden,true);
     assert.equal(doc.getElementById('annualMonthPanel').hidden,false);
     assert.equal(doc.querySelectorAll('.annual-reader-months button').length,12);

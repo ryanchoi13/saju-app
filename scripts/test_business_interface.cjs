@@ -9,7 +9,7 @@ const vm = require('node:vm');
 
 const root = path.join(__dirname, '..');
 const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
-const oldHtml = execFileSync('git', ['show', '8dface079c966a67e240bb2013ace414a5055858:index.html'], {cwd:root,encoding:'utf8',maxBuffer:2000000});
+const oldHtml = execFileSync('git', ['show', '06934714247eb709d54d04201e6132f08573cef0:index.html'], {cwd:root,encoding:'utf8',maxBuffer:2000000});
 const dom = new JSDOM(html, {url:'https://dalha.example/',runScripts:'outside-only',pretendToBeVisual:true});
 const w = dom.window, doc = w.document;
 const evalApp = code => vm.runInContext(code, dom.getInternalVMContext());
@@ -46,20 +46,7 @@ const tick = () => new Promise(resolve => setTimeout(resolve,30));
     await test('home and every pre-existing DOM target remain available', () => {
         const oldDoc = new JSDOM(oldHtml).window.document;
         const newHome = new JSDOM(homeBeforeBoot).window.document;
-        // Login/profile fields intentionally have no fictional account defaults.
-        oldDoc.getElementById('userProfileBarName').textContent = '';
-        oldDoc.getElementById('userProfileBarBirth').textContent = '';
-        newHome.getElementById('styleTpoControls').remove();
-        for (const id of ['drawerTarot','drawerTalisman']) newHome.getElementById(id).replaceWith(oldDoc.getElementById(id).cloneNode(true));
-        // The wardrobe markup remains intact while its home entry point is intentionally hidden.
-        newHome.getElementById('drawerWardrobe').removeAttribute('hidden');
-        newHome.getElementById('drawerWardrobe').removeAttribute('aria-hidden');
-        // Only the newly requested outfit/menu surfaces and loading copy differ.
-        for (const id of ['outfitCards','openOutfitModalButton','weatherOutfitGuidance','menuPhotoCards','wardrobeStorageNotice','menuRecommendationComment','menuExplorerControls','menuError']) newHome.getElementById(id).remove();
-        oldDoc.getElementById('todayStyleMoodBadge').remove();
-        newHome.getElementById('wardrobeDailyMatchPick').replaceWith(oldDoc.getElementById('wardrobeDailyMatchPick').cloneNode(true));
-        newHome.getElementById('bioOverallText').textContent = oldDoc.getElementById('bioOverallText').textContent;
-        assert.equal(newHome.getElementById('view-today').outerHTML.replace(/>\s+</g,'><'), oldDoc.getElementById('view-today').outerHTML.replace(/>\s+</g,'><'));
+        assert.equal(newHome.getElementById('view-today').outerHTML, oldDoc.getElementById('view-today').outerHTML);
         const ids = [...doc.querySelectorAll('[id]')].map(el => el.id);
         assert.equal(ids.length, new Set(ids).size);
         for (const el of oldDoc.querySelectorAll('[id]')) assert.ok(doc.getElementById(el.id), el.id);
@@ -82,7 +69,8 @@ const tick = () => new Promise(resolve => setTimeout(resolve,30));
         const life = doc.getElementById('saju-life');
         const year = doc.getElementById('saju-year');
         const evidence = doc.getElementById('sajuEvidence');
-        assert.ok(before(summary,basic) && before(basic,life) && before(life,year) && before(year,evidence));
+        assert.equal(summary.parentElement,basic);
+        assert.ok(before(summary,basic.querySelector('.reading-lead')) && before(basic,life) && before(life,year) && before(year,evidence));
         assert.equal(evidence.parentElement.id,'view-saju');
 
         const choiceTitle = doc.getElementById('concernChoiceTitle');
@@ -105,6 +93,20 @@ const tick = () => new Promise(resolve => setTimeout(resolve,30));
         w.selectConcern('all');
         for (const key of ['wealth','love','business','health','study','gunghap']) assert.ok(visible(`concern-${key}`));
     });
+    await test('question choices reveal a matching outline, preserve focus and never purchase', () => {
+        let requests=0; w.fetch=async()=>{requests++;throw Error('unexpected purchase');};
+        for (const key of ['business','love','wealth','study','health']) {
+            doc.querySelector(`[data-concern-choice="${key}"]`).click();
+            assert.ok(visible(`concern-${key}`));
+            assert.equal(doc.querySelectorAll('[data-concern]:not(.hidden)').length,1);
+            assert.equal(doc.activeElement.id,`concern-heading-${key}`);
+            assert.equal(doc.querySelectorAll(`#concern-${key} .report-preview li`).length,3);
+            assert.match(doc.querySelector(`[data-report-price="${key}"]`).textContent,/220/);
+        }
+        w.showCompatibility();
+        assert.equal(doc.activeElement.id,'compatibilityTitle');
+        assert.equal(requests,0);
+    });
     await test('unowned reports expose no paid month or cycle content', () => {
         assert.equal(doc.querySelectorAll('#annualMonthChoices button').length,0);
         assert.ok(doc.getElementById('annualMonthExplorer').classList.contains('hidden'));
@@ -117,9 +119,9 @@ const tick = () => new Promise(resolve => setTimeout(resolve,30));
         evalApp(`serverUnlockedReports = ${JSON.stringify([annual,life])}`);
         w.refreshReportEntrypoints();
         assert.match(doc.getElementById('annualYearLabel').textContent,/2025/);
-        assert.equal(doc.querySelectorAll('#annualMonthChoices button').length,12);
-        doc.querySelectorAll('#annualMonthChoices button')[8].click();
-        assert.match(doc.getElementById('annualMonthReading').textContent,/월별 결과 9/);
+        // Annual content stays in its dedicated reader; legacy results remain readable.
+        assert.equal(doc.querySelectorAll('#annualMonthChoices button').length,0);
+        assert.ok(doc.getElementById('annualMonthExplorer').classList.contains('hidden'));
         assert.equal(doc.querySelector('#lifeCycleChoices [aria-pressed="true"]').textContent,'18~27세');
         assert.match(doc.getElementById('lifeCycleReading').textContent,/현재 구간/);
     });
@@ -168,6 +170,9 @@ const tick = () => new Promise(resolve => setTimeout(resolve,30));
             assert.ok(doc.getElementById(id).classList.contains('hidden'));
         }
         assert.equal(doc.getElementById('recentReportList').childElementCount,0);
+        assert.equal(doc.getElementById('lifeCycleReading').childElementCount,0);
+        assert.equal(doc.getElementById('lifeCycleChoices').childElementCount,0);
+        assert.equal(doc.querySelector('[data-report-price="daewoon"]').textContent,'450 복채');
     });
     console.log(`${passed} interface scenarios passed.`);
     dom.window.close();
