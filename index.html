@@ -521,6 +521,8 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;600;700&display=swap" rel="stylesheet">
     <link id="dalhaBrandStyles" rel="stylesheet" href="/assets/brand-2026/brand.css?v=20261001-7">
+    <link rel="stylesheet" href="/assets/reading-polish.css?v=20261001-1">
+    <script src="/assets/reading-polish.js?v=20261001-1" defer></script>
     <script src="/assets/brand-2026/brand-ui.js?v=20261001-4" defer></script>
 </head>
 <body>
@@ -788,7 +790,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                                 </div>
                                 <p id="menuStatus" class="menu-status" role="status"></p>
                                 <button id="menuNext" class="menu-next" type="button" onclick="DalhaMenu.next()">하루 세트 다시 추천</button>
-                                <details class="meal-info-note"><summary>식단 추천 이용 안내</summary><p>식단 추천은 일상의 참고를 위한 정보이며, 건강·영양에 관한 전문적인 판단을 대신하지 않습니다.</p></details>
+                                <details class="meal-info-note"><summary>식단 추천 이용 안내</summary><p><span id="mealGuideName">회원</span>님의 사주 원국과 오늘의 기운을 음양오행의 관점에서 참고해, 오늘의 한 끼에 어울리는 식단을 골라봤어요.</p><p>표시 열량은 음식 자료에 등록된 분량과 열량을 바탕으로 각 끼니를 합산한 추정치예요. 실제 섭취량과 조리법에 따라 달라질 수 있어요.</p><p>일상의 참고를 위한 정보이며, 건강·영양에 대한 전문적인 판단을 대신하지 않습니다.</p></details>
                             </div>
                             <p id="menuError" class="menu-error" role="alert"></p>
                             <button id="menuPlanLike" type="button" onclick="togglePlanLike()" aria-label="오늘 식단 좋아요" aria-pressed="false" hidden style="border:0;background:transparent;color:#64748B;font-size:25px;cursor:pointer;padding:4px 10px;min-width:44px;min-height:44px;">♡</button>
@@ -1464,19 +1466,19 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
     <div id="archiveDetailModal" class="modal-bg hidden" role="dialog" aria-modal="true" aria-labelledby="archiveModalTitle">
         <div class="modal-content" style="max-width: 380px; max-height: 85vh; display: flex; flex-direction: column; text-align: left; padding: 20px; border-radius: 24px;">
             <div class="reading-report-heading" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 10px; margin-bottom: 12px;">
-                <button id="readingCloseButton" class="reading-text-button" aria-label="풀이 닫고 돌아가기" onclick="closeArchiveDetailModal()">‹</button>
+                <button id="readingCloseButton" class="reading-text-button" aria-label="풀이 닫기" onclick="closeArchiveDetailModal()">×</button>
                 <h3 id="archiveModalTitle" style="font-size: 14px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif;">운세 리포트</h3>
             </div>
             <p id="readingReportMeta" class="reading-caption" hidden></p>
-            <button id="annualRefreshButton" class="reading-text-button hidden" onclick="refreshOwnedReading()">새 구성으로 무료 업데이트</button>
-            <label id="readingVersionControl" class="hidden">풀이 버전
+            <button id="annualRefreshButton" class="reading-text-button hidden" onclick="refreshOwnedReading()">구매한 풀이 새로 받기 · 무료</button>
+            <label id="readingVersionControl" class="hidden">이전 풀이 보기
                 <select id="readingVersionSelect" onchange="openReadingReport(readingReportIndex, this.value)"></select>
             </label>
             <nav id="readingReportContents" aria-label="리포트 목차"></nav>
             <div id="archiveModalBody" style="flex: 1; overflow-y: auto; padding-right: 4px; margin-bottom: 12px;"></div>
             <div class="reading-modal-actions">
                 <button class="reading-pdf-button reading-text-button" onclick="printReadingReport()">전체 운세 PDF 저장</button>
-                <button class="reading-back-button reading-text-button" onclick="closeArchiveDetailModal()">이전 화면으로</button>
+                <button class="reading-back-button reading-text-button" onclick="closeArchiveDetailModal()">닫기</button>
             </div>
         </div>
     </div>
@@ -2341,6 +2343,8 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             }
 
             document.getElementById('resItem').innerText = data.daily_fortune.lucky_item;
+            window.renderLuckyItemArt?.(data.daily_fortune.lucky_item);
+            document.getElementById('mealGuideName').textContent = data.user_name || '회원';
             document.getElementById('resNumber').innerText = data.daily_fortune.lucky_number;
             document.getElementById('resDirection').innerText = data.daily_fortune.lucky_direction;
             currentMenuMode = getSavedMenuMode();
@@ -3062,19 +3066,16 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             }
 
             serverUnlockedReports.forEach((report, index) => {
+                const row = document.createElement('div'); row.className = 'archive-row';
                 const button = document.createElement('button');
-                button.type = 'button'; button.className = 'archive-entry';
+                button.type = 'button'; button.className = 'archive-reopen';
+                button.textContent = '다시보기';
+                button.setAttribute('aria-label', `${report.report_title} 다시보기`);
                 button.onclick = () => openServerArchiveDetail(index);
                 const copy = document.createElement('span'); copy.className = 'archive-entry-copy';
-                const title = document.createElement('span'); title.className = 'archive-entry-title';
+                const title = document.createElement('span'); title.className = 'archive-title';
                 title.textContent = report.report_title; copy.append(title);
-                if (report.created_at) {
-                    const date = document.createElement('span'); date.className = 'archive-entry-date';
-                    date.textContent = `구매일 · ${report.created_at}`; copy.append(date);
-                }
-                const arrow = document.createElement('span'); arrow.className = 'archive-entry-arrow';
-                arrow.textContent = '›'; arrow.setAttribute('aria-hidden', 'true');
-                button.append(copy, arrow); container.append(button);
+                row.append(copy, button); container.append(row);
             });
         }
 
@@ -3466,7 +3467,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 if (['wealth','love','business','study','health','gunghap'].includes(key) && readingNeedsRefresh(item)) {
                     const update = document.createElement('button');
                     update.className = 'reading-secondary theme-refresh';
-                    update.textContent = '새 구성으로 무료 업데이트';
+                    update.textContent = '구매한 풀이 새로 받기 · 무료';
                     update.onclick = () => { readingReportIndex = index; refreshOwnedReading(); };
                     slot.append(update);
                 }
@@ -3529,6 +3530,20 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             contents.replaceChildren();
             contents.removeAttribute('role');
             const partitioned = owned.report_key === 'sinnian' && window.setupAnnualReader?.(body, contents);
+            window.polishReading?.(body);
+            if (owned.report_key === 'daewoon' && !partitioned) {
+                const headings = [...body.querySelectorAll('.reading-section-heading')];
+                if (headings.length) {
+                    const toc = document.createElement('section'); toc.className = 'reading-plain-contents';
+                    const label = document.createElement('h3'); label.textContent = '목차';
+                    const list = document.createElement('ol');
+                    headings.forEach(heading => {
+                        const entry = document.createElement('li');
+                        entry.textContent = heading.dataset.tocLabel.replace(/^\d+\s+/, ''); list.append(entry);
+                    });
+                    toc.append(label, list); body.prepend(toc);
+                }
+            }
             modal.dataset.annualPartitioned = String(Boolean(partitioned));
             // Keep the annual year/month switch; chapter headings stay in the body without a duplicate menu.
             contents.classList.toggle('hidden', !contents.childElementCount);

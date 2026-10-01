@@ -27,6 +27,7 @@ for(const script of doc.querySelectorAll('script:not([src])')) {
 }
 const tick=()=>new Promise(resolve=>setTimeout(resolve,20));
 evaluate(fs.readFileSync(path.join(root,'assets/annual-reader.js'),'utf8'));
+evaluate(fs.readFileSync(path.join(root,'assets/reading-polish.js'),'utf8'));
 const legacy={report_key:'sinnian',report_title:'2026 기존 풀이',report_content:'<h3>보존할 원문</h3><p>예전 본문</p>',created_at:'2026.02.01'};
 const current={report_key:'sinnian',report_title:generated.title,report_content:generated.content,
     narrative_version:generated.narrative_version,report_year:2026,created_at:'2026.02.01',

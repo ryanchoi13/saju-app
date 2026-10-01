@@ -1,0 +1,35 @@
+/* Readable hierarchy for both saved reports and newly generated readings. */
+#mealDailyCard #menuStatus { color:#205d4b!important; font-size:15px!important; font-weight:700!important; background:transparent; border:0; padding:0; line-height:1.6; }
+@media(max-width:540px) { #mealDailyCard #menuStatus { font-size:13px!important; font-weight:600!important; } }
+@media(max-width:350px) { #mealDailyCard #menuStatus { font-size:12px!important; } }
+.meal-info-note p { margin:10px 0; line-height:1.8; }
+#mealDailyCard { scroll-margin-top:100px; }
+.lucky-item-art { width:55px; height:49px; display:block; margin:6px auto; }
+#archiveModalBody .reading-section-heading { border-top:1px solid #dbe5df; padding-top:24px; margin:28px 0 16px!important; display:flex; gap:12px; align-items:flex-start; }
+#archiveModalBody .reading-section-number { color:#34725b!important; background:#eef5ef; border-radius:9px; padding:5px 8px; font-size:13px!important; font-weight:800; flex-shrink:0; }
+#archiveModalBody .reading-heading-copy { display:block; font-size:19px!important; font-weight:800; line-height:1.65!important; }
+#archiveModalBody .reading-heading-topic { display:block; color:#34725b!important; font-size:13px!important; margin-bottom:7px; }
+#archiveModalBody p { margin-bottom:18px!important; }
+#archiveModalBody details { padding:12px 14px!important; margin:16px 0!important; border:1px solid #dbe5df; border-radius:12px; }
+#archiveModalBody details summary { padding:0!important; min-height:44px; }
+#readingVersionControl.hidden { display:none!important; }
+#readingVersionControl { color:#60716a; margin:0; }
+#readingVersionSelect { font:inherit; }
+#unlockedArchiveList button { flex-shrink:0; min-height:44px; min-width:88px; border-radius:10px; }
+#unlockedArchiveList .archive-reopen { font-size:12px!important; font-weight:600!important; min-width:76px; }
+#unlockedArchiveList .archive-row { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:14px 0; background:transparent; border:0; border-radius:0; }
+#unlockedArchiveList .archive-row + .archive-row { border-top:1px solid #e6ebe8; }
+#unlockedArchiveList .archive-title { flex:1; min-width:0; margin:0; font:400 14px/1.7 'Pretendard',sans-serif!important; color:#34453e; overflow-wrap:anywhere; }
+#unlockedArchiveList .archive-row { flex-wrap:nowrap; }
+#archiveModalBody .reading-plain-contents { padding:4px 0 18px; }
+#archiveModalBody .reading-plain-contents h3 { font-size:15px!important; font-weight:600; margin:0 0 10px; }
+#archiveModalBody .reading-plain-contents ol { margin:0; padding-left:24px; }
+#archiveModalBody .reading-plain-contents li { font-size:14px!important; font-weight:400; line-height:1.8!important; margin:3px 0; }
+.archive-disclosure > summary { cursor:pointer; display:flex; justify-content:space-between; align-items:center; gap:10px; min-height:44px; }
+.archive-disclosure > summary::after { content:'펼치기 ＋'; font-size:12px; color:#587166; white-space:nowrap; }
+.archive-disclosure[open] > summary::after { content:'접기 −'; }
+.archive-disclosure > summary::-webkit-details-marker { display:none; }
+.archive-disclosure #unlockedArchiveList { margin-top:16px; }
+#archiveModalTitle { line-height:1.6!important; padding:0 10px; }
+html[data-brand] .reading-view .reading-lead { background-image:linear-gradient(rgba(255,255,255,.78),rgba(255,255,255,.78)),url('/assets/brand-2026/moon-landscape.webp'); }
+#unlockedArchiveList .archive-reopen { border:1px solid #dbe5df; background:#fff; color:#34453e; padding:8px 12px; cursor:pointer; }
