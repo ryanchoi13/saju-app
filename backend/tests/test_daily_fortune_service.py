@@ -143,6 +143,24 @@ class DailyFortuneServiceTests(TestCase):
         self.assertNotEqual(first["day_ten_god"], second["day_ten_god"])
         self.assertNotEqual(first["title"], second["title"])
 
+    def test_adjacent_wealth_days_preserve_their_distinct_daily_meanings(self):
+        # Regression: 2026-10-01/02 have different roles but the same money/join
+        # family. Both used to display the same headline and practical action.
+        first_day, second_day = date(2026, 10, 1), date(2026, 10, 2)
+        first = build_daily_fortune(self._core(first_day), '테스트', first_day, include_menu=False)
+        second_core = self._core(second_day)
+        second = build_daily_fortune(second_core, '테스트', second_day, include_menu=False)
+        self.assertEqual(first['day_ten_god'], '편재')
+        self.assertEqual(second['day_ten_god'], '정재')
+        for result in (first, second):
+            self.assertEqual(result['evidence_summary']['overall']['primary_domains'], ['money'])
+        self.assertNotEqual(first['title'], second['title'])
+        self.assertNotEqual(first['advice'].split('. ')[0], second['advice'].split('. ')[0])
+        self.assertNotEqual(first['unified_advice'], second['unified_advice'])
+        self.assertIn('새 제안', first['unified_advice'])
+        self.assertIn('이미 약속한', second['unified_advice'])
+        self.assertEqual(second, build_daily_fortune(second_core, '테스트', second_day, include_menu=False))
+
     def test_same_members_are_not_double_counted_as_independent_evidence(self):
         members = [
             {"pillar": "day", "position": "visible_stem", "symbol": "甲"},

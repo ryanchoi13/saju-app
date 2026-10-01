@@ -3,6 +3,26 @@
 These are conditional editorial examples, not evidence of real-life events.
 No alternate word lists; every entry changes the decision or activity proposed.
 """
+# Keep the exact daily role when a family-level scene would erase its meaning.
+# These refine an already selected subject/mode; they never select a domain,
+# rotate by date, or claim that a financial event will actually happen.
+DAILY_ROLE_CONTEXT = {
+('money', 'join', 'direct_wealth'): (
+    '약속한 금액과 정산을 차분히 챙기세요',
+    '오늘은 새 지출을 늘리기보다 이미 약속한 돈의 흐름을 살펴보세요. 함께 부담할 비용이 있다면 금액과 정산 날짜를 맞추고, 빠진 내역이 없는지 확인하는 데 초점을 두세요.',
+    '예정된 결제와 정산 날짜를 확인하세요.',
+    '함께 부담할 금액을 내역과 대조해 보세요.',
+    '마친 정산과 아직 남은 내역을 구분하세요.',
+    '이미 약속한 결제나 정산 하나의 금액과 날짜를 확인하세요.'),
+('money', 'join', 'indirect_wealth'): (
+    '새 제안은 함께 부담할 조건부터 살피세요',
+    '오늘은 새로운 구매나 함께할 제안이 있다면 참여하기 전에 조건을 살펴보세요. 눈에 띄는 이점뿐 아니라 각자 부담할 비용과 바꾸거나 취소할 수 있는 범위를 확인하는 데 초점을 두세요.',
+    '검토 중인 제안에서 필요한 비용을 가늠하세요.',
+    '함께 참여하기 전에 각자의 부담 범위를 물어보세요.',
+    '바로 결정할 것과 더 알아볼 것을 나누세요.',
+    '새 제안 하나의 전체 비용과 변경·취소 조건을 확인하세요.'),
+}
+
 JOIN_CONTEXT = {
 ('money', 'pace'): ('정기적으로 나가는 돈부터 챙기세요', '약속이나 계약에 돈이 묶여 있다면 한 번의 결제보다 계속 부담할 비용을 보세요. 감당할 수 있는 범위를 정해야 약속도 오래 지킬 수 있습니다.', '다가오는 정기결제를 확인하세요.', '새 계약은 유지 기간과 해지 조건을 함께 읽으세요.', '계속 쓸 서비스와 정리할 서비스를 나누세요.', '쓰지 않는 정기결제 하나가 있는지 확인하세요.'),
 ('money', 'learning'): ('배움에 쓰는 돈에도 기준이 필요합니다', '강의나 책을 고른다면 지금 풀고 싶은 질문에 도움이 되는지 먼저 보세요. 많이 사두는 것보다 실제로 읽고 활용할 수 있는 선택이 중요합니다.', '지금 배우고 싶은 내용을 좁히세요.', '구매 전 목차나 체험 자료를 확인하세요.', '이미 가진 자료부터 활용할 수 있는지 살펴보세요.', '관심 있는 강의나 책 하나가 필요한 이유를 적어보세요.'),

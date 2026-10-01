@@ -1502,6 +1502,8 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
         let pgPaymentBusy = false;
 
         let currentFortuneData = null;
+        let dailyRefreshPending = false;
+        let dailyRefreshRetryAt = 0;
         let currentMenuMode = 'general';
         let currentLuckyColors = ["네이비", "스카이블루"];
         let baseFashionStyle = "네이비 쿨 티셔츠 & 플랙 연청 데님";
@@ -2134,6 +2136,37 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             } catch(e) {}
         }
 
+        async function refreshDailyAnalysisIfNeeded() {
+            const owner = currentUserId;
+            const previous = currentFortuneData;
+            if (window.DALHA_DESIGN_SAMPLE || !owner || !previous?.daily_fortune?.date ||
+                previous.daily_fortune.date === tarotTodayKey() || dailyRefreshPending ||
+                Date.now() < dailyRefreshRetryAt ||
+                !document.getElementById('onboardingInputView').classList.contains('hidden')) return;
+            dailyRefreshPending = true;
+            dailyRefreshRetryAt = Date.now() + 30000;
+            const controller = new AbortController();
+            const timeout = setTimeout(() => controller.abort(), 15000);
+            try {
+                const response = await fetch('/api/auth/session', {cache:'no-store', signal:controller.signal});
+                if (!response.ok) return;
+                const payload = await response.json();
+                // A logout, account/profile change or another result must win
+                // over an older background response. Never relabel stale data.
+                if (currentUserId !== owner || currentFortuneData !== previous ||
+                    payload.user_id !== owner || payload.status !== 'existing_user' ||
+                    payload.saju_analysis?.daily_fortune?.date !== tarotTodayKey()) return;
+                applySajuAnalysisToUI(payload.saju_analysis);
+                acceptTarotState(payload.tarot_state);
+                dailyRefreshRetryAt = 0;
+            } catch (_) {
+                // Keep the last result and its actual date; retry on return.
+            } finally {
+                clearTimeout(timeout);
+                dailyRefreshPending = false;
+            }
+        }
+
         async function logoutKakaoUser() {
             try {
                 const result = await fetch('/api/auth/logout', {method:'POST'});
@@ -2304,6 +2337,12 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
 
         function applySajuAnalysisToUI(data) {
             currentFortuneData = data;
+            const resultDate = data.daily_fortune?.date;
+            if (/^\d{4}-\d{2}-\d{2}$/.test(resultDate || '')) {
+                document.getElementById('journalDate').textContent = new Intl.DateTimeFormat('ko-KR', {
+                    timeZone:'Asia/Seoul', month:'long', day:'numeric', weekday:'short'
+                }).format(new Date(`${resultDate}T12:00:00+09:00`));
+            }
             currentUserName = data.user_name || "회원";
             currentTalisman = data.daily_fortune.talisman;
             currentUserAge = data.current_age;
@@ -3273,6 +3312,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
         function goToHomeAndScrollTop() { if (document.getElementById('view-login-gate').classList.contains('hidden')) switchTab('today'); window.scrollTo({ top: 0, behavior: 'smooth' }); }
 
         function switchTab(tabId) {
+            if (tabId === 'today') refreshDailyAnalysisIfNeeded();
             if (tabId !== 'mypage') document.getElementById('reportArchive').open = false;
             ['today', 'saju', 'theme', 'mypage'].forEach(t => {
                 document.getElementById(`view-${t}`)?.classList.add('hidden');
@@ -4026,9 +4066,14 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             else checkAutoLoginSession();
         });
         document.addEventListener('visibilitychange', () => {
-            if (document.visibilityState === 'visible' && currentUserId) syncTarotState();
+            if (document.visibilityState === 'visible' && currentUserId) {
+                refreshDailyAnalysisIfNeeded();
+                syncTarotState();
+            }
         });
+        window.addEventListener('pageshow', () => refreshDailyAnalysisIfNeeded());
         setInterval(() => {
+            if (document.visibilityState === 'visible') refreshDailyAnalysisIfNeeded();
             if (currentUserId && tarotSessionIdentity !== `${currentUserId}|${tarotTodayKey()}`) syncTarotState();
         },30000);
     </script>

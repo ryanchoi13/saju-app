@@ -16,7 +16,7 @@ from app.engine.semantic.overall import select_overall_domains
 from app.engine.services.overall_narrative import render_overall
 
 
-DAILY_FORTUNE_VERSION = "daily-fortune-v5-overall-life-domains"
+DAILY_FORTUNE_VERSION = "daily-fortune-v6-exact-daily-role"
 
 _TEN_GOD_KO = {
     "peer": "비견",
