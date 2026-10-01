@@ -201,8 +201,6 @@
         .period-choices button { border:1px solid #E4E6E9; border-radius:9px; padding:10px 3px; font-size:12px; color:#64748B; background:#fff; cursor:pointer; }
         .period-choices button[aria-pressed="true"] { background:#17243A; border-color:#17243A; color:white; }
         .period-reading { margin-bottom:16px; }
-        .reading-recent-list { display:grid; gap:7px; margin-bottom:16px; }
-        .reading-recent-list button { text-align:left; border:1px solid #E6E4DE; background:#fff; color:#44566B; border-radius:10px; padding:12px; font-size:12px; line-height:1.6; cursor:pointer; }
         #archiveDetailModal .modal-content { width:100%; max-width:620px!important; max-height:92dvh!important; gap:8px; }
         #archiveModalTitle { line-height:1.6; overflow-wrap:anywhere; padding-right:12px; }
         #archiveModalBody { overscroll-behavior:contain; overflow-wrap:anywhere; min-height:0; }
@@ -336,7 +334,6 @@
         .period-choices { gap:8px; }
         .period-choices button { font-size:.9375rem; min-height:46px; border-color:var(--ui-line); color:var(--ui-muted); }
         .period-choices button[aria-pressed="true"] { background:var(--ui-accent); border-color:var(--ui-accent); }
-        .reading-recent-list button { font-size:1rem; color:var(--ui-ink); line-height:1.8; padding:16px; }
         #archiveModalBody { color:var(--ui-ink); font-size:1rem!important; line-height:1.9!important; }
         #archiveModalBody :is(p,li), .period-reading :is(p,li) { font-size:1rem!important; line-height:1.9!important; }
         #readingReportContents { gap:8px; max-height:120px; }
@@ -345,7 +342,20 @@
         #view-mypage > .card:nth-child(2) > div:last-child { flex-wrap:wrap; }
         #view-mypage button { min-height:44px; font-size:1rem!important; }
         #coinMypage { font-size:1.75rem; color:var(--ui-ink); }
-        #unlockedArchiveList > div { flex-wrap:wrap; gap:12px; }
+        .report-archive { border-block:1px solid var(--ui-line); text-align:left; }
+        .report-archive > summary { display:flex; align-items:center; gap:10px; min-height:60px; padding:12px 4px; list-style:none; cursor:pointer; color:var(--ui-ink); font-size:15px; font-weight:500; }
+        .report-archive > summary::-webkit-details-marker { display:none; }
+        .report-archive > summary::after { content:''; width:7px; height:7px; border-right:1.5px solid var(--ui-muted); border-bottom:1.5px solid var(--ui-muted); transform:rotate(45deg); margin:0 6px 4px 4px; }
+        .report-archive[open] > summary::after { transform:rotate(225deg); margin-bottom:0; }
+        #archiveCountBadge { margin-left:auto; font-size:12px; color:var(--ui-muted); font-weight:400; }
+        #unlockedArchiveList { padding:0 4px 8px; }
+        #view-mypage .archive-entry { display:flex; align-items:center; gap:12px; width:100%; border:0; border-top:1px solid var(--ui-line); border-radius:0; background:transparent; padding:14px 0; text-align:left; cursor:pointer; color:var(--ui-ink); }
+        .archive-entry-copy { flex:1; min-width:0; }
+        .archive-entry-title { display:block; font-size:14px; line-height:1.65; font-weight:500; overflow-wrap:anywhere; }
+        .archive-entry-date { display:block; margin-top:3px; color:var(--ui-muted); font-size:12px; line-height:1.5; }
+        .archive-entry-arrow { color:var(--ui-muted); padding:0 6px; }
+        .archive-empty { margin:0; padding:10px 0 18px; color:var(--ui-muted); font-size:14px; line-height:1.7; }
+        .report-archive :is(summary,button):focus-visible { outline:3px solid var(--ui-accent); outline-offset:3px; }
         nav#bottomNavBar { max-width:520px; background:rgba(255,255,255,.98); border-top:1px solid var(--ui-line); padding:12px 10px calc(12px + env(safe-area-inset-bottom)); gap:4px; }
         .tab-btn { flex:1; min-width:0; min-height:50px; color:var(--ui-muted); font-size:.875rem; gap:5px; line-height:1.5; }
         .tab-btn.active { color:var(--ui-accent); }
@@ -510,7 +520,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;600;700&display=swap" rel="stylesheet">
-    <link id="dalhaBrandStyles" rel="stylesheet" href="/assets/brand-2026/brand.css?v=20261001-6">
+    <link id="dalhaBrandStyles" rel="stylesheet" href="/assets/brand-2026/brand.css?v=20261001-7">
     <script src="/assets/brand-2026/brand-ui.js?v=20261001-4" defer></script>
 </head>
 <body>
@@ -1062,7 +1072,6 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                         <button id="btnSinnian" class="reading-primary" onclick="handleUnlockReportOnServer('sinnian', 300)">300 복채로 올해운세 읽기</button>
                     </div>
                 </section>
-                <button class="reading-archive-link" onclick="openReportArchive()">구매한 감명서 보관함 →</button>
             </div>
 
             <!-- 탭 3: 테마운 — 질문에서 기존 리포트로 -->
@@ -1138,16 +1147,13 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                     <button id="btnOpenGunghapModal" class="reading-primary" onclick="openGunghapInputModal()">상대방 정보 입력하기</button>
                     <p id="gunghapPurchaseNote" class="reading-caption">정보를 입력한 다음 350 복채로 열람해요.</p>
                 </section>
-                <section id="recentReportSection" class="hidden"><div class="reading-section-title"><h3>이어서 읽어볼까요?</h3></div><div id="recentReportList" class="reading-recent-list"></div></section>
                 <button id="allConcernTopicsLink" class="reading-archive-link" onclick="selectConcern('all', true)">전체 주제의 목차 살펴보기 →</button>
                 <details class="reading-help"><summary>어떤 풀이부터 보면 좋을까요?</summary><p>나를 전반적으로 이해하고 싶다면 ‘나의 사주’의 평생운세를, 한 가지 고민을 깊이 읽고 싶다면 주제별 풀이를 골라보세요. 한 해와 월별 흐름은 ‘올해·월별’에서 읽을 수 있어요.</p></details>
-                <details class="reading-help"><summary>구매한 풀이는 어디에 있나요?</summary><p>마이페이지의 ‘구매한 감명서 보관함’에 모아두었어요. 같은 풀이를 다시 읽을 때는 복채가 추가로 들지 않아요.</p></details>
-                <button class="reading-archive-link" onclick="openReportArchive()">내가 구매한 풀이 모아보기 →</button>
             </div>
 
             <!-- 탭 4: 마이페이지 -->
             <div id="view-mypage" class="tab-view hidden">
-                <header class="page-intro"><div><span class="journal-kicker">MY DALHA</span><h2>나의 달하</h2><p>내 정보와 차곡차곡 모아둔 이야기.</p></div><span data-brand-icon="user" class="brand-service-icon"></span></header>
+                <header class="page-intro"><div><span class="journal-kicker">MY DALHA</span><h2>나의 달하</h2><p>내 정보와 복채를 관리해요.</p></div><span data-brand-icon="user" class="brand-service-icon"></span></header>
                 <div class="card" style="text-align: left;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                         <span style="font-size: 14px; color: #64748B;">현재 보유 복채</span>
@@ -1164,13 +1170,10 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                     </div>
                 </div>
 
-                <div class="card" style="text-align: left;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                        <h3 style="font-size: 15px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif;">구매한 감명서 보관함</h3>
-                        <span id="archiveCountBadge" style="font-size: 12px; background: #2D6A4F; color: #FFFFFF; padding: 3px 10px; border-radius: 9999px; font-weight: 700;">0건</span>
-                    </div>
-                    <div id="unlockedArchiveList" style="display: flex; flex-direction: column; gap: 10px;"></div>
-                </div>
+                <details id="reportArchive" class="report-archive">
+                    <summary id="reportArchiveToggle"><span>감명서 보관함</span><span id="archiveCountBadge">0건</span></summary>
+                    <div id="unlockedArchiveList"></div>
+                </details>
             </div>
         </main>
 
@@ -3046,23 +3049,33 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
         function renderServerArchive() {
             const container = document.getElementById('unlockedArchiveList');
             const countBadge = document.getElementById('archiveCountBadge');
-            if (countBadge) countBadge.innerText = `${serverUnlockedReports.length}건`;
+            if (countBadge) countBadge.textContent = `${serverUnlockedReports.length}건`;
 
             if (!container) return;
+            container.replaceChildren();
             if (serverUnlockedReports.length === 0) {
-                container.innerHTML = `<div style="text-align: center; padding: 20px 0; color: #94A3B8; font-size: 13px;"><p style="font-size: 28px; margin-bottom: 4px;">📂</p><p style="font-weight: 700; color: #64748B;">구매한 감명서가 없습니다.</p></div>`;
+                const empty = document.createElement('p');
+                empty.className = 'archive-empty';
+                empty.textContent = '아직 보관된 감명서가 없어요.';
+                container.append(empty);
                 return;
             }
 
-            container.innerHTML = serverUnlockedReports.map((r, idx) => `
-                <div style="background: #F8FAFC; border: 1.5px solid #2D6A4F; border-radius: 16px; padding: 12px 14px; text-align: left; display: flex; justify-content: space-between; align-items: center; gap: 10px;">
-                    <div style="flex: 1; overflow: hidden;">
-                        <span style="font-size: 11px; background: #2D6A4F; color: #FFFFFF; font-weight: 700; padding: 2px 6px; border-radius: 4px;">열람완료 (${r.created_at || ''})</span>
-                        <h4 style="font-weight: 800; color: #0F172A; font-size: 14px; margin-top: 4px; font-family: 'Noto Serif KR', serif;">${r.report_title}</h4>
-                    </div>
-                    <button onclick="openServerArchiveDetail(${idx})" style="background: #2D6A4F; color: #FFFFFF; border: none; font-size: 13px; font-weight: 700; padding: 8px 12px; border-radius: 10px; cursor: pointer;">📄 다시보기</button>
-                </div>
-            `).join('');
+            serverUnlockedReports.forEach((report, index) => {
+                const button = document.createElement('button');
+                button.type = 'button'; button.className = 'archive-entry';
+                button.onclick = () => openServerArchiveDetail(index);
+                const copy = document.createElement('span'); copy.className = 'archive-entry-copy';
+                const title = document.createElement('span'); title.className = 'archive-entry-title';
+                title.textContent = report.report_title; copy.append(title);
+                if (report.created_at) {
+                    const date = document.createElement('span'); date.className = 'archive-entry-date';
+                    date.textContent = `구매일 · ${report.created_at}`; copy.append(date);
+                }
+                const arrow = document.createElement('span'); arrow.className = 'archive-entry-arrow';
+                arrow.textContent = '›'; arrow.setAttribute('aria-hidden', 'true');
+                button.append(copy, arrow); container.append(button);
+            });
         }
 
         function openServerArchiveDetail(idx) { openReadingReport(idx); }
@@ -3259,6 +3272,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
         function goToHomeAndScrollTop() { if (document.getElementById('view-login-gate').classList.contains('hidden')) switchTab('today'); window.scrollTo({ top: 0, behavior: 'smooth' }); }
 
         function switchTab(tabId) {
+            if (tabId !== 'mypage') document.getElementById('reportArchive').open = false;
             ['today', 'saju', 'theme', 'mypage'].forEach(t => {
                 document.getElementById(`view-${t}`)?.classList.add('hidden');
                 document.getElementById(`tab-${t}`)?.classList.remove('active');
@@ -3275,7 +3289,6 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
         let reportRequestPending = false;
         let readingReturnState = null;
         let readingReportIndex = -1;
-        let recentReportIndexes = [];
         let currentSajuSection = 'basic';
 
         function selectSajuSection(section) {
@@ -3319,11 +3332,6 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             openReadingReport(index);
             const monthTab = document.getElementById('annualReaderTab1');
             if (monthTab) { monthTab.click(); monthTab.focus(); }
-        }
-
-        function openReportArchive() {
-            switchTab('mypage');
-            document.getElementById('unlockedArchiveList').parentElement.scrollIntoView({block:'start'});
         }
 
         function latestOwnedReportIndex(key) {
@@ -3468,7 +3476,6 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 }
             });
             document.getElementById('daewoonFlowOpen').textContent = latestOwnedReportIndex('daewoon') >= 0 ? '구매한 평생운세 전체 읽기' : '같은 평생운세에 포함된 풀이';
-            renderRecentReadings();
         }
 
         function setReportRequestState(pending) {
@@ -3525,8 +3532,6 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             modal.dataset.annualPartitioned = String(Boolean(partitioned));
             // Keep the annual year/month switch; chapter headings stay in the body without a duplicate menu.
             contents.classList.toggle('hidden', !contents.childElementCount);
-            recentReportIndexes = [index, ...recentReportIndexes.filter(i => i !== index)].slice(0,3);
-            renderRecentReadings();
             modal.classList.remove('hidden');
             document.body.style.overflow = 'hidden';
             document.getElementById('readingCloseButton').focus();
@@ -3544,18 +3549,6 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             }
             readingReturnState = null;
             readingReportIndex = -1;
-        }
-
-        function renderRecentReadings() {
-            const list = document.getElementById('recentReportList');
-            list.replaceChildren();
-            recentReportIndexes.filter(i => serverUnlockedReports[i]).forEach(index => {
-                const button = document.createElement('button');
-                button.textContent = serverUnlockedReports[index].report_title + ' →';
-                button.onclick = () => openReadingReport(index);
-                list.append(button);
-            });
-            document.getElementById('recentReportSection').classList.toggle('hidden', !list.childElementCount);
         }
 
         function printReadingReport() {
@@ -3995,8 +3988,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 if (event.key === 'ArrowRight') { event.preventDefault(); showFashionV2Slide(1); }
             });
             const evidence = document.getElementById('sajuEvidence');
-            const archiveLink = document.querySelector('#view-saju > .reading-archive-link');
-            if (evidence && archiveLink) archiveLink.before(evidence);
+            if (evidence) document.getElementById('view-saju').append(evidence);
             if (!window.DALHA_DESIGN_SAMPLE) initKakaoSDK();
             initDateDropdowns();
             document.getElementById('headerCoinSvg').innerHTML = getGoldCoinSvg(16, "#F59E0B");

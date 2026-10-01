@@ -155,11 +155,6 @@ html[data-brand] #coinMypage { font-family:var(--brand-serif); font-size:32px; c
 html[data-brand] #view-mypage button { min-height:44px; font-size:14px!important; }
 html[data-brand] #view-mypage button[onclick="openChargeStore()"] { border-radius:9px!important; font-size:15px!important; }
 html[data-brand] #mypageProfileDesc { font-size:13px!important; color:var(--ui-muted)!important; line-height:1.8; }
-html[data-brand] #unlockedArchiveList > div { background:transparent!important; border-color:var(--ui-line)!important; border-radius:8px!important; }
-html[data-brand] #unlockedArchiveList h4 { font-size:16px!important; }
-html[data-brand] #unlockedArchiveList button { background:var(--ui-ink)!important; white-space:nowrap; }
-html[data-brand] #unlockedArchiveList span { background:var(--ui-soft)!important; color:var(--ui-muted)!important; }
-html[data-brand] #archiveCountBadge { background:var(--ui-accent)!important; }
 html[data-brand] #onboardingInputView { background:var(--ui-surface); border:1px solid var(--ui-line); border-radius:16px; }
 html[data-brand] :is(.form-input,.form-select-box) { border-color:#BDBAB1!important; border-radius:9px!important; background:var(--ui-surface)!important; color:var(--ui-ink)!important; min-height:48px; font-size:16px; }
 html[data-brand] .cal-btn { color:var(--ui-ink); background:transparent; border-color:var(--ui-line); min-height:44px; }

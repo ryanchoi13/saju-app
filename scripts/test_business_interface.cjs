@@ -51,7 +51,8 @@ const tick = () => new Promise(resolve => setTimeout(resolve,30));
         assert.deepEqual(actions(newHome.getElementById('view-today')),actions(oldDoc.getElementById('view-today')));
         const ids = [...doc.querySelectorAll('[id]')].map(el => el.id);
         assert.equal(ids.length, new Set(ids).size);
-        for (const el of oldDoc.querySelectorAll('[id]')) assert.ok(doc.getElementById(el.id), el.id);
+        const removedArchivePromotions = new Set(['recentReportSection','recentReportList']);
+        for (const el of oldDoc.querySelectorAll('[id]')) if (!removedArchivePromotions.has(el.id)) assert.ok(doc.getElementById(el.id), el.id);
         for (const id of ['today','saju','theme','mypage']) assert.equal(doc.getElementById(`view-${id}`).parentElement.tagName, 'MAIN');
         assert.equal(doc.getElementById('cg_h_badge').closest('details').id,'sajuEvidence');
     });
@@ -88,10 +89,9 @@ const tick = () => new Promise(resolve => setTimeout(resolve,30));
         assert.ok(compatibility.classList.contains('hidden'));
         assert.equal(life.parentElement,basic);
         assert.equal(doc.querySelectorAll('#view-saju [onclick^=openConcern]').length,0);
-        const recent = doc.getElementById('recentReportSection');
         const allTopics = doc.getElementById('allConcernTopicsLink');
         assert.ok(before(choiceTitle,choices) && before(choices,reportTitle));
-        assert.ok(before(reportTitle,compatibility) && before(compatibility,recent) && before(recent,allTopics));
+        assert.ok(before(reportTitle,compatibility) && before(compatibility,allTopics));
         assert.equal(doc.querySelectorAll('[data-concern-choice]').length,6);
     });
     await test('concern routes use existing products and preserve situation forms', () => {
@@ -256,13 +256,13 @@ const tick = () => new Promise(resolve => setTimeout(resolve,30));
         assert.ok(!doc.getElementById('btnTheme_wealth').disabled);
         assert.equal(alerts.at(-1),'생성 실패');
     });
-    await test('empty ownership clears prior result surfaces and account-only recent links', () => {
+    await test('empty ownership clears prior result surfaces', () => {
         evalApp('serverUnlockedReports=[];'); w.refreshReportEntrypoints();
         for(const id of ['daewoonBox','sinnianBox','gunghapReportBox','themeReport_wealth']) {
             assert.equal(doc.getElementById(id).childElementCount,0);
             assert.ok(doc.getElementById(id).classList.contains('hidden'));
         }
-        assert.equal(doc.getElementById('recentReportList').childElementCount,0);
+        assert.equal(doc.getElementById('recentReportList'),null);
         assert.equal(doc.getElementById('lifeCycleReading').childElementCount,0);
         assert.equal(doc.getElementById('lifeCycleChoices').childElementCount,0);
         assert.equal(doc.querySelector('[data-report-price="daewoon"]').textContent,'450 복채');

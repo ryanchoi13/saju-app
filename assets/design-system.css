@@ -19,7 +19,7 @@ body { color:var(--ui-ink); }
 .concern-choices button { color:var(--ui-muted); }
 .concern-choices button[aria-pressed="true"] { background:var(--ui-surface); border-color:var(--ui-accent); }
 .concern-choices button[aria-pressed="true"] span { color:var(--ui-accent); }
-.reading-links button, .reading-recent-list button, .period-choices button { background:var(--ui-surface); border-color:var(--ui-line); }
+.reading-links button, .period-choices button { background:var(--ui-surface); border-color:var(--ui-line); }
 .reading-view button:focus-visible, .reading-view summary:focus-visible, #archiveDetailModal button:focus-visible { outline-color:var(--ui-accent); }
 .reading-view .badge-main-wood { background:#047857; }
 .reading-view .badge-main-earth { background:#9A5708; }
