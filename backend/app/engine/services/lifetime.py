@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from html import escape
 from app.engine.services.reading_editorial import DETAIL, traits, section, paragraphs, cycle_paragraphs
-from app.engine.services.annual_editorial import GROUPS, GENERAL_TITLES, scene
+from app.engine.services.annual_editorial import GROUPS, GENERAL_TITLES, MONTH_ADVICE, role_family, scene
 
 from app.engine.core.models import MyeongriCoreResult
 from app.engine.semantic.applied import recommended_directions
@@ -241,8 +241,8 @@ def _current_chapters(query, core, ordinary):
     for domain, _ in GROUPS:
         label, question = _PRESENT_QUESTIONS[domain]
         candidate = next((c for c in selection["selected"] if c["domain"] == domain), None)
-        opening = scene(candidate) if candidate else "이 분야는 현재의 구체적인 사건을 예측하기보다, 생활에서 확인할 선택 기준을 중심으로 살펴봅니다."
-        role = cycle_paragraphs(god, domain)[0] if domain != "relationships" else traits(god)[1]
+        opening = scene(candidate) if candidate else ""
+        role = cycle_paragraphs(god, domain)[0] if domain != "relationships" else MONTH_ADVICE[role_family(god)][domain]
         result += f'<section class="reading-chapter" data-current-domain="{domain}"><h3>{label}</h3>' + paragraphs([opening, role, question, *DETAIL[domain][:2]]) + '</section>'
     result += section("선택을 행동으로 옮기려면", [
         "지금 가장 마음에 걸리는 분야 하나만 골라보세요. 바꾸려는 것, 유지하려는 것, 결정 전에 확인할 것을 각각 한 가지씩 적으면 어디서 시작할지 분명해집니다. 모든 분야를 동시에 고치려고 할 필요는 없습니다.",
@@ -284,7 +284,7 @@ def build_lifetime_overall_report(
     chapters += section("강점을 오래 살리려면", [traits(ordinary)[2]])
     for domain, label in GROUPS:
         candidate = next((c for c in selection["candidates"] if c["domain"] == domain), None)
-        values = ([scene(candidate)] if candidate else []) + [DETAIL[domain][2]]
+        values = ([scene(candidate)] if candidate else []) + [DETAIL[domain][2].removeprefix("하지만 ")]
         chapters += section(label + " · " + GENERAL_TITLES[domain], values)
     current_html, current_selection = _current_chapters(query, core, ordinary)
     content = (
