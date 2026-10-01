@@ -3,7 +3,7 @@ from html import escape
 
 from app.engine.semantic.overall import DOMAINS
 from app.engine.services.daily_scenarios import COPY, FAMILIES
-from app.engine.services.daily_scene_context import JOIN_CONTEXT, CHANGE_CONTEXT
+from app.engine.services.daily_scene_context import JOIN_CONTEXT, CHANGE_CONTEXT, DAILY_ROLE_CONTEXT
 
 FAMILY = {"relationships": "social", "money": "money", "work": "pace",
           "learning": "learning", "enjoyment": "expression", "self": "self"}
@@ -48,6 +48,10 @@ def _object_particle(word):
 
 def _copy(candidate, selection):
     domain, mode = candidate["domain"], candidate.get("mode", "base")
+    if selection["scope"] == "daily":
+        role_key = (domain, mode, selection.get("focal_god"))
+        if role_key in DAILY_ROLE_CONTEXT:
+            return DAILY_ROLE_CONTEXT[role_key]
     if (domain, mode) in SPECIAL:
         return SPECIAL[domain, mode]
     family = FAMILY.get(domain)
