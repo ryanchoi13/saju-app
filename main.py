@@ -1061,7 +1061,9 @@ def refresh_owned_report(req: RefreshReportRequest):
     original = next((r for r in reports_db[req.user_id] if r['report_key'] == req.report_key), None)
     if original is None:
         raise HTTPException(status_code=403, detail='먼저 해당 풀이를 열람해 주세요.')
-    if original.get('narrative_version') == VERSION:
+    from app.engine.services.lifetime import LIFETIME_NARRATIVE_VERSION
+    target_version = LIFETIME_NARRATIVE_VERSION if req.report_key == 'daewoon' else VERSION
+    if original.get('narrative_version') == target_version:
         return dict(status='success', new_balance=user['coin'], unlocked_reports=reports_db[req.user_id])
     if not user.get('profile_complete'):
         raise HTTPException(status_code=422, detail='사주 정보를 먼저 확인해 주세요.')
@@ -1091,7 +1093,7 @@ def refresh_owned_report(req: RefreshReportRequest):
     except ValueError:
         raise HTTPException(status_code=422, detail='입력한 사주 정보를 확인해 주세요. 기존 풀이와 복채는 유지됩니다.')
     replacement = dict(report_title=generated['title'], report_content=generated['content'],
-                       narrative_version=VERSION, profile_basis='current_saved_profile',
+                       narrative_version=generated.get('narrative_version', target_version), profile_basis='current_saved_profile',
                        reading_context=dict(sub_option=option, relation=req.relation),
                        refreshed_at=datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=9))).isoformat())
     try:

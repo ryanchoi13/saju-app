@@ -266,3 +266,18 @@ html[data-brand] .design-comparison a { border:0; padding:0; min-height:28px; fo
   html[data-brand] .landing-scene { padding:36px 16px; }
 }
 @media(prefers-reduced-motion:reduce) { html[data-brand] *,html[data-brand] *::before,html[data-brand] *::after { animation:none!important; transition:none!important; scroll-behavior:auto!important; } }
+
+/* The lifetime report is one product; age ranges are a closed reference. */
+html[data-brand] .reading-tabs { grid-template-columns:repeat(2,minmax(0,1fr)); }
+html[data-brand] #saju-tab-life[hidden] { display:none!important; }
+html[data-brand] .lifetime-reference { padding:0!important; }
+html[data-brand] .lifetime-reference > summary { padding:18px 16px; cursor:pointer; font-size:14px; font-weight:600; }
+html[data-brand] .lifetime-reference > summary span { float:right; color:var(--ui-muted); font-size:12px; font-weight:400; }
+html[data-brand] .lifetime-reference-body { padding:0 16px 18px; }
+html[data-brand] .lifetime-current-preview { border-top:1px solid var(--ui-line); margin-top:18px; padding-top:4px; }
+html[data-brand] .lifetime-current-preview p { font-size:14px; line-height:1.9; }
+html[data-brand] .lifetime-current-preview h3 { font-size:19px!important; }
+html[data-brand] #archiveModalBody [data-lifetime-section] > h2 { font-family:var(--brand-serif); font-size:23px; line-height:1.65; margin:30px 0 12px; }
+html[data-brand] #archiveModalBody [data-lifetime-section]:first-child > h2 { margin-top:0; }
+html[data-brand] #archiveModalBody .lifetime-cycle-reference { border-top:1px solid var(--ui-line); padding-top:20px; margin-top:28px; }
+html[data-brand] #archiveModalBody .lifetime-cycle-reference > summary { cursor:pointer; font-size:16px; font-weight:600; padding:8px 0; }

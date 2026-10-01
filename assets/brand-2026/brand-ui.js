@@ -1,6 +1,8 @@
 /* Presentation only. Never changes report ownership, recommendation data or account state. */
 (() => {
   const paths={
+    topics:'<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>',
+    people:'<circle cx="8" cy="7" r="3"/><circle cx="18" cy="8" r="2.5"/><path d="M2 21v-3a6 6 0 0 1 12 0v3M16 14a5 5 0 0 1 6 5v2"/>',
     home:'<path d="m3 10 9-7 9 7v10H3Z"/><path d="M9 20v-7h6v7"/>',
     book:'<path d="M12 5c-3-2-7-2-10-1v15c3-1 7-1 10 1 3-2 7-2 10-1V4c-3-1-7-1-10 1Z"/><path d="M12 5v15"/>',
     heart:'<path d="M20.7 4.8a5.3 5.3 0 0 0-7.5 0L12 6l-1.2-1.2a5.3 5.3 0 0 0-7.5 7.5L12 21l8.7-8.7a5.3 5.3 0 0 0 0-7.5Z"/>',
@@ -17,7 +19,7 @@
   const icon=key=>`<svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">${paths[key]||paths.spark}</svg>`;
   function initialize(){
     document.querySelectorAll('[data-brand-icon]').forEach(el=>{el.innerHTML=icon(el.dataset.brandIcon);el.setAttribute('aria-hidden','true');});
-    for(const [id,key] of [['today','home'],['saju','book'],['theme','heart'],['mypage','user']]){
+    for(const [id,key] of [['today','home'],['saju','book'],['theme','topics'],['mypage','user']]){
       const button=document.getElementById('tab-'+id);button.querySelector('svg')?.remove();button.insertAdjacentHTML('afterbegin',icon(key));
     }
     for(const [id,key] of [['drawerTarot','cards'],['drawerTalisman','spark'],['drawerZodiac','orbit']]){

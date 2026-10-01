@@ -63,7 +63,7 @@ async function boot(url) {
     }
     assert.equal(doc.querySelectorAll('#bottomNavBar .brand-icon').length,4);
     assert.equal(doc.querySelector('.brand-mark').getAttribute('src'),'/assets/brand-2026/moon-mark.webp');
-    assert.equal(doc.querySelectorAll('[data-concern-choice] .brand-icon').length,5);
+    assert.equal(doc.querySelectorAll('[data-concern-choice] .brand-icon').length,6);
     doc.getElementById('tab-saju').click(); doc.getElementById('saju-tab-year').click();
     assert.equal(doc.getElementById('tab-saju').getAttribute('aria-current'),'page');
     doc.querySelector('#sinnianBox .reading-secondary').focus();

@@ -167,7 +167,7 @@
         .reading-profile p { font-size:11px; color:#657080; line-height:1.65; margin:3px 0 0; overflow-wrap:anywhere; }
         .reading-profile > div { min-width:0; }
         .reading-text-button { border:0; background:transparent; color:#44566B; padding:8px 3px; font-size:12px; font-weight:700; cursor:pointer; flex-shrink:0; }
-        .reading-tabs { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:3px; background:#EBEDF0; border-radius:12px; padding:4px; margin-bottom:20px; }
+        .reading-tabs { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:3px; background:#EBEDF0; border-radius:12px; padding:4px; margin-bottom:20px; }
         .reading-tabs button { border:0; background:transparent; color:#64748B; border-radius:9px; padding:12px 2px; font-size:13px; font-weight:700; cursor:pointer; }
         .reading-tabs button[aria-selected="true"] { background:#fff; color:#17243A; box-shadow:0 2px 5px #17243A0D; }
         .reading-view .card { text-align:left; border:1px solid #E6E4DE; padding:22px 20px; box-shadow:0 4px 15px #17243A04; border-radius:18px; }
@@ -506,12 +506,12 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
     <link rel="stylesheet" href="/assets/landing.css?v=1">
     <script src="/assets/design-controls.js?v=20261001-4" defer></script>
     <script src="/assets/menu-explorer.js?v=20261001-4" defer></script>
-    <script src="/assets/design-sample.js?v=20261001-4" defer></script>
+    <script src="/assets/design-sample.js?v=20261001-5" defer></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;600;700&display=swap" rel="stylesheet">
-    <link id="dalhaBrandStyles" rel="stylesheet" href="/assets/brand-2026/brand.css?v=20261001-3">
-    <script src="/assets/brand-2026/brand-ui.js?v=20261001-2" defer></script>
+    <link id="dalhaBrandStyles" rel="stylesheet" href="/assets/brand-2026/brand.css?v=20261001-4">
+    <script src="/assets/brand-2026/brand-ui.js?v=20261001-4" defer></script>
 </head>
 <body>
 
@@ -921,7 +921,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 <div class="ad-slot-box" style="margin-top: 6px;"><span>📢 광고 영역 (Google AdSense / Kakao AdFit 슬롯 3)</span></div>
             </div>
 
-            <!-- 탭 2: 나의 사주 — 기존 결과를 세 가지 관점으로 탐색 -->
+            <!-- 탭 2: 나의 사주 — 성향과 현재는 한 편으로, 올해는 별도 상품으로 -->
             <div id="view-saju" class="tab-view hidden reading-view">
                 <header class="reading-heading">
                     <span class="reading-eyebrow">나를 이해하는 시간</span>
@@ -933,39 +933,28 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                     <button class="reading-text-button" onclick="reopenSajuEditForm()">정보 확인</button>
                 </div>
                 <div class="reading-tabs" role="tablist" aria-label="나의 사주 살펴보기">
-                    <button id="saju-tab-basic" role="tab" aria-selected="true" aria-controls="saju-basic" onclick="selectSajuSection('basic')">나의 기본</button>
-                    <button id="saju-tab-life" role="tab" aria-selected="false" tabindex="-1" aria-controls="saju-life" onclick="selectSajuSection('life')">인생 흐름</button>
+                    <button id="saju-tab-basic" role="tab" aria-selected="true" aria-controls="saju-basic" onclick="selectSajuSection('basic')">나의 사주</button>
+                    <button id="saju-tab-life" class="hidden" hidden aria-hidden="true" role="tab" aria-selected="false" tabindex="-1" aria-controls="saju-life" onclick="selectSajuSection('life')">인생 흐름</button>
                     <button id="saju-tab-year" role="tab" aria-selected="false" tabindex="-1" aria-controls="saju-year" onclick="selectSajuSection('year')">올해·월별</button>
                 </div>
                 <section id="saju-basic" class="saju-section" role="tabpanel" aria-labelledby="saju-tab-basic">
-                    <section class="reading-summary" aria-labelledby="sajuSummaryTitle">
-                        <span class="reading-eyebrow">처음이라면 여기부터</span>
-                        <h3 id="sajuSummaryTitle">나를 읽는 순서</h3>
-                        <p id="sajuSummaryText">내가 편한 방식과 자주 고민하는 지점을 먼저 읽어보세요. 인생 흐름과 올해의 이야기가 그다음으로 이어집니다.</p>
+                    <section class="reading-summary hidden" aria-labelledby="sajuSummaryTitle">
+                        <span class="reading-eyebrow">성향과 현재를 한 편으로</span>
+                        <h3 id="sajuSummaryTitle">지금의 나부터 읽어보세요</h3>
+                        <p id="sajuSummaryText">현재의 과제와 선택, 타고난 성향, 인생 흐름이 하나의 풀이에 담겨요. 올해·월별 운세는 별도 상품입니다.</p>
                     </section>
                     <div class="card reading-lead">
                         <span class="reading-eyebrow">정통 명리 · 평생운세</span>
-                        <h3>나는 어떤 사람이고,<br>무엇을 잘해낼 수 있을까요?</h3>
-                        <p>자연스럽게 힘이 나는 일, 관계에서 되풀이하는 선택, 삶의 시기별 흐름을 한 편의 풀이로 읽어보세요.</p>
-                        <div class="report-facts"><span>나의 성향 + 10년 대운</span><strong data-report-price="daewoon">450 복채</strong></div>
+                        <h3 id="lifetimeLeadTitle">지금의 나에게,<br>어떤 선택이 필요할까요?</h3>
+                        <p id="lifetimeLeadDescription">현재의 일과 관계, 돈과 생활을 먼저 짚어봐요. 나의 성향을 바탕으로 지금 살펴볼 점과 다음 선택을 구체적으로 읽어보세요.</p>
+                        <div class="report-facts"><span>현재 + 성향 + 인생 흐름 · 한 번 구매</span><strong data-report-price="daewoon">450 복채</strong></div>
                         <div id="daewoonTeaserBox" class="report-preview">
                             <span class="preview-label">이런 이야기를 읽어요</span>
-                            <ol><li><strong>나의 성향</strong><span>강점을 쓰는 방식과 균형 잡을 부분</span></li><li><strong>생활 속 선택</strong><span>일과 배움, 관계와 돈을 대하는 태도</span></li><li><strong>인생의 흐름</strong><span>10년 단위로 달라지는 삶의 주제</span></li></ol>
+                            <ol><li><strong>지금의 나</strong><span>일·돈·애정·관계·회복·배움의 6가지 이야기</span></li><li><strong>타고난 성향</strong><span>나의 강점과 반복되는 선택의 이유</span></li><li><strong>인생 흐름</strong><span>필요할 때 펼쳐보는 10년 단위 참고 풀이</span></li></ol>
                         </div>
                         <div id="daewoonBox" class="hidden"></div>
                         <button id="btnDaewoon" class="reading-primary" onclick="handleUnlockReportOnServer('daewoon', 450)">450 복채로 평생운세 읽기</button>
-                        <div class="reading-current">
-                            <span class="reading-eyebrow">지금 나는 어디쯤</span>
-                            <p id="sajuCurrentPosition">현재 대운의 위치와 역할을 인생 흐름에서 확인할 수 있습니다.</p>
-                            <button type="button" class="reading-text-button" onclick="selectSajuSection('life')">현재 대운과 인생 흐름 살펴보기 →</button>
-                        </div>
-                    </div>
-                    <div class="reading-section-title"><h3>한 가지를 더 깊이 읽고 싶다면</h3><span>주제별 풀이 · 각 220 복채</span></div>
-                    <div class="reading-links">
-                        <button onclick="openConcern('business')"><strong>일·진로</strong><span>나에게 맞는 방향</span></button>
-                        <button onclick="openConcern('love')"><strong>애정·관계</strong><span>나의 관계 패턴</span></button>
-                        <button onclick="openConcern('wealth')"><strong>돈·생활</strong><span>돈을 대하는 성향</span></button>
-                        <button onclick="openConcern('health')"><strong>활동·회복</strong><span>생활의 균형</span></button>
+                        <p id="lifetimePurchaseCaption" class="reading-caption">450 복채로 세 내용을 함께 읽어요. 다시 읽을 때는 추가 결제가 없어요.</p>
                     </div>
                     <details id="sajuEvidence" class="card reading-evidence">
                         <summary>내 사주명식과 해석 근거 <span>펼쳐 보기</span></summary>
@@ -1027,20 +1016,21 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                         <p id="sajuElementsNote" style="font-size:11.5px;color:#64748B;line-height:1.55;margin:8px 2px 0;">천간·지지의 표면 구성을 보여줍니다.</p>
                     </div>
                     </details>
-                </section>
-                <section id="saju-life" class="saju-section hidden" role="tabpanel" aria-labelledby="saju-tab-life">
-                    <div class="card">
-                        <span class="reading-eyebrow">10년 단위로 살펴보는 대운</span><h3>지금, 어떤 시기를 지나고 있을까요?</h3>
-                        <p>지금의 위치를 먼저 확인해 보세요. 지나온 시기와 앞으로의 흐름을 함께 읽으면 내 선택을 돌아보기 좋아요.</p>
+                <details id="saju-life" class="card lifetime-reference">
+                    <summary>참고: 10년 단위 인생 흐름 <span>펼쳐 보기</span></summary>
+                    <div class="lifetime-reference-body">
+                        <h3>길게 보면, 이런 흐름이에요</h3>
+                        <p>현재 풀이를 읽은 뒤, 지나온 시기와 앞으로의 큰 흐름이 궁금할 때 참고해 보세요.</p>
                     <div style="background: #F8FAFC; border-radius: 18px; border: 1px solid #E2E8F0; padding: 18px 12px 14px; margin-bottom: 14px; text-align: left;">
                         <div style="font-size:13.5px;font-weight:800;color:#334155;margin-bottom:6px;">생애 4단계 대운 흐름</div>
-                        <p style="font-size:11.5px;color:#64748B;line-height:1.55;margin:0 0 11px;">10년마다 바뀌는 흐름을 네 시기로 묶었어요. 지금 속한 구간을 먼저 확인해 보세요.</p>
+                        <p style="font-size:11.5px;color:#64748B;line-height:1.55;margin:0 0 11px;">10년마다 바뀌는 흐름을 네 시기로 묶었어요. 구간별 이야기는 보조 자료로 읽어주세요.</p>
                         <div id="daewoonPhaseTimeline" style="display:grid;grid-template-columns:repeat(4,1fr);gap:5px;">
                             <div data-phase="초년기" style="border:1px solid #E2E8F0;border-radius:10px;padding:10px 4px;text-align:center;background:#FFFFFF;"><div style="font-size:12px;font-weight:800;">초년기</div><div style="font-size:10px;color:#94A3B8;margin-top:3px;">대운 1~2</div></div>
                             <div data-phase="청년기" style="border:1px solid #E2E8F0;border-radius:10px;padding:10px 4px;text-align:center;background:#FFFFFF;"><div style="font-size:12px;font-weight:800;">청년기</div><div style="font-size:10px;color:#94A3B8;margin-top:3px;">대운 3~4</div></div>
                             <div data-phase="중장년기" style="border:1px solid #E2E8F0;border-radius:10px;padding:10px 4px;text-align:center;background:#FFFFFF;"><div style="font-size:12px;font-weight:800;">중장년기</div><div style="font-size:10px;color:#94A3B8;margin-top:3px;">대운 5~6</div></div>
                             <div data-phase="말년기" style="border:1px solid #E2E8F0;border-radius:10px;padding:10px 4px;text-align:center;background:#FFFFFF;"><div style="font-size:12px;font-weight:800;">말년기</div><div style="font-size:10px;color:#94A3B8;margin-top:3px;">대운 7~9</div></div>
                         </div>
+                        <p id="sajuCurrentPosition" class="reading-caption"></p>
                         <div id="daewoonCurrentPhaseText" style="font-size:12.5px;font-weight:800;color:#047857;margin-top:10px;">현재 대운 구간을 계산 중입니다.</div>
                     </div>
 
@@ -1049,9 +1039,10 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                             <div id="lifeCycleChoices" class="period-choices" role="group" aria-label="대운 구간 선택"></div>
                             <div id="lifeCycleReading" class="period-reading" aria-live="polite"></div>
                         </div>
-                        <button id="daewoonFlowOpen" class="reading-primary" onclick="handleUnlockReportOnServer('daewoon', 450)">450 복채로 평생운세 읽기</button>
-                        <p class="reading-caption">‘나의 기본’에서 보는 평생운세와 같은 풀이예요. 한 번 구매하면 두 곳에서 다시 읽을 수 있어요.</p>
+                        <button id="daewoonFlowOpen" class="reading-text-button" onclick="handleUnlockReportOnServer('daewoon', 450)">같은 평생운세에 포함된 풀이</button>
+                        <p class="reading-caption">위의 평생운세에 포함되어 있어요. 대운만 따로 구매하지 않아도 됩니다.</p>
                     </div>
+                </details>
                 </section>
                 <section id="saju-year" class="saju-section hidden" role="tabpanel" aria-labelledby="saju-tab-year">
                     <div class="card reading-lead">
@@ -1074,14 +1065,13 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 <button class="reading-archive-link" onclick="openReportArchive()">구매한 감명서 보관함 →</button>
             </div>
 
-            <!-- 탭 3: 궁합·고민 — 질문에서 기존 리포트로 -->
+            <!-- 탭 3: 테마운 — 질문에서 기존 리포트로 -->
             <div id="view-theme" class="tab-view hidden reading-view">
                 <header class="reading-heading">
                     <span class="reading-eyebrow">마음에 걸리는 일, 하나씩</span>
-                    <h2>궁합·고민</h2>
+                    <h2>테마운</h2>
                     <p>어디서부터 풀어볼까요?<br>지금 내 마음과 가까운 질문을 골라보세요.</p>
                 </header>
-                <button class="compatibility-shortcut" onclick="showCompatibility()"><span>두 사람의 관계가 궁금하다면</span><strong>궁합 보러 가기 <span aria-hidden="true">↗</span></strong></button>
                 <div class="reading-section-title concern-choice-title"><h3 id="concernChoiceTitle">지금 나의 고민은</h3><span>목차부터 살펴보세요</span></div>
                 <div class="concern-choices" role="group" aria-label="궁금한 주제 선택">
                     <button data-concern-choice="business" aria-pressed="false" aria-controls="concern-business" onclick="selectConcern('business', true)"><i data-brand-icon="briefcase" class="concern-symbol" aria-hidden="true"></i><span class="concern-category">일·진로</span><strong>내 강점을 어떤 일에 써볼까요?</strong><span class="concern-open">풀이 살펴보기 <span aria-hidden="true">→</span></span></button>
@@ -1089,6 +1079,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                     <button data-concern-choice="wealth" aria-pressed="false" aria-controls="concern-wealth" onclick="selectConcern('wealth', true)"><i data-brand-icon="coins" class="concern-symbol" aria-hidden="true"></i><span class="concern-category">돈·생활</span><strong>돈을 모으고 쓰는 기준이 궁금해요</strong><span class="concern-open">풀이 살펴보기 <span aria-hidden="true">→</span></span></button>
                     <button data-concern-choice="study" aria-pressed="false" aria-controls="concern-study" onclick="selectConcern('study', true)"><i data-brand-icon="book" class="concern-symbol" aria-hidden="true"></i><span class="concern-category">학업·시험</span><strong>나에게 맞는 공부법을 찾고 싶어요</strong><span class="concern-open">풀이 살펴보기 <span aria-hidden="true">→</span></span></button>
                     <button data-concern-choice="health" aria-pressed="false" aria-controls="concern-health" onclick="selectConcern('health', true)"><i data-brand-icon="moon" class="concern-symbol" aria-hidden="true"></i><span class="concern-category">생활 리듬</span><strong>잘 쉬고, 꾸준히 해내고 싶어요</strong><span class="concern-open">풀이 살펴보기 <span aria-hidden="true">→</span></span></button>
+                    <button data-concern-choice="gunghap" aria-pressed="false" aria-controls="concern-gunghap" onclick="selectConcern('gunghap', true)"><i data-brand-icon="people" class="concern-symbol" aria-hidden="true"></i><span class="concern-category">궁합</span><strong>두 사람은 어떻게 잘 지낼 수 있을까요?</strong><span class="concern-open">풀이 살펴보기 <span aria-hidden="true">→</span></span></button>
                 </div>
                 <div class="reading-section-title concern-result-title hidden"><h3 id="concernSelectionTitle" tabindex="-1">관련 풀이 안내</h3></div>
                 <p id="concernSelectionHint" class="reading-caption">질문을 고르면 포함된 내용과 필요한 복채를 먼저 보여드려요.</p>
@@ -1137,11 +1128,10 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                     <button id="btnTheme_health" class="reading-primary" onclick="handleUnlockReportOnServer('health', 220)">생활 리듬 읽기 · 220 복채</button>
                     <p class="reading-caption report-scope">질병을 진단하지 않아요. 몸의 불편함은 의료진과 확인해 주세요.</p>
                 </section>
-                <div class="reading-section-title concern-compatibility-title"><h3>두 사람의 이야기</h3><span>연인·부부 궁합</span></div>
-                <section id="concern-gunghap" class="card report-entry compatibility-card" aria-labelledby="compatibilityTitle">
+                <section id="concern-gunghap" class="card report-entry compatibility-card hidden" data-concern="gunghap" aria-labelledby="compatibilityTitle">
                     <span class="reading-eyebrow">서로를 더 잘 이해하는 시간</span>
                     <h3 id="compatibilityTitle" tabindex="-1">우리는 어디서 잘 맞고,<br>어떤 점이 다를까요?</h3>
-                    <p>끌리는 이유부터 대화의 차이, 함께하는 생활까지. 두 사람의 사주를 나란히 놓고 관계를 살펴봐요.</p>
+                    <p>연인, 동료, 친구 사이의 대화와 역할을 살펴봐요. 관계를 선택하고 두 사람의 사주를 함께 읽어보세요.</p>
                     <div class="compatibility-topics"><span>끌림과 차이</span><span>대화와 갈등</span><span>함께하는 생활</span></div>
                     <div class="report-facts"><span>두 사람의 생년정보로 풀이</span><strong data-report-price="gunghap">350 복채</strong></div>
                     <div id="gunghapReportBox" class="hidden"></div>
@@ -1191,7 +1181,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
         <nav id="bottomNavBar" class="hidden">
             <button onclick="switchTab('today')" id="tab-today" class="tab-btn active"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>오늘운세</span></button>
             <button onclick="switchTab('saju')" id="tab-saju" class="tab-btn"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>나의 사주</span></button>
-            <button onclick="switchTab('theme')" id="tab-theme" class="tab-btn"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg><span>궁합·고민</span></button>
+            <button onclick="switchTab('theme')" id="tab-theme" class="tab-btn"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg><span>테마운</span></button>
             <button onclick="switchTab('mypage')" id="tab-mypage" class="tab-btn"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>마이페이지</span></button>
         </nav>
 
@@ -2385,7 +2375,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             const phaseText = document.getElementById('daewoonCurrentPhaseText').textContent.replace('📍 ', '');
             document.getElementById('sajuCurrentPosition').textContent = phaseText;
             document.getElementById('sajuSummaryTitle').textContent = `${currentUserName}님을 알아가는 시간`;
-            document.getElementById('sajuSummaryText').textContent = '내가 편한 방식과 자주 고민하는 지점을 먼저 읽어보세요. 인생 흐름과 올해의 이야기가 그다음으로 이어집니다.';
+            document.getElementById('sajuSummaryText').textContent = '현재의 과제와 선택, 타고난 성향, 인생 흐름이 하나의 풀이에 담겨요. 올해·월별 운세는 별도 상품입니다.';
             document.getElementById('mypageProfileDesc').innerText = `${currentUserName} (${data.birth_summary})`;
             
             updateTodayWardrobeMatchPick();
@@ -2979,9 +2969,10 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
         }
 
         const ANNUAL_NARRATIVE_VERSION = 'reading-conversation-v3';
+        const LIFETIME_NARRATIVE_VERSION = 'lifetime-present-v1';
         function readingNeedsRefresh(item) {
             return ['sinnian','daewoon','wealth','business','love','health','study','gunghap'].includes(item?.report_key)
-                && item.narrative_version !== ANNUAL_NARRATIVE_VERSION;
+                && item.narrative_version !== (item.report_key === 'daewoon' ? LIFETIME_NARRATIVE_VERSION : ANNUAL_NARRATIVE_VERSION);
         }
         async function refreshOwnedReading(partnerInput = null) {
             const item = serverUnlockedReports[readingReportIndex];
@@ -3267,8 +3258,9 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
 
         function selectSajuSection(section) {
             if (!['basic','life','year'].includes(section)) return;
+            if (section === 'life') { section = 'basic'; document.getElementById('saju-life').open = true; }
             currentSajuSection = section;
-            ['basic','life','year'].forEach(key => {
+            ['basic','year'].forEach(key => {
                 const active = key === section;
                 document.getElementById(`saju-${key}`).classList.toggle('hidden', !active);
                 const tab = document.getElementById(`saju-tab-${key}`);
@@ -3285,9 +3277,8 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             document.getElementById('concernSelectionTitle').textContent = labels[key];
             document.getElementById('concernSelectionHint').classList.add('hidden');
             document.querySelector('.concern-result-title').classList.remove('hidden');
-            if (key === 'gunghap') { showCompatibility(); return; }
             if (reveal) {
-                const heading = key === 'all' ? document.getElementById('concernSelectionTitle') : document.getElementById(`concern-heading-${key}`);
+                const heading = key === 'all' ? document.getElementById('concernSelectionTitle') : document.getElementById(key === 'gunghap' ? 'compatibilityTitle' : `concern-heading-${key}`);
                 heading.focus({preventScroll:true});
                 heading.scrollIntoView({block:'start', behavior:'smooth'});
             }
@@ -3299,9 +3290,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
         }
 
         function showCompatibility() {
-            const heading = document.getElementById('compatibilityTitle');
-            heading.focus({preventScroll:true});
-            heading.scrollIntoView({block:'start',behavior:'smooth'});
+            selectConcern('gunghap', true);
         }
 
         function openAnnualMonths(index) {
@@ -3361,6 +3350,35 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             buttons[Math.max(0, defaultIndex)].click();
         }
 
+        function renderLifetimePreview(item, slot, index) {
+            const doc = reportDocument(item);
+            const current = doc.querySelector('[data-lifetime-section="current"] .reading-chapter');
+            const legacy = doc.querySelector('[data-current-cycle="true"]');
+            const preview = document.createElement('div');
+            preview.id = 'lifetimeCurrentReading';
+            preview.className = 'lifetime-current-preview';
+            if (current) {
+                preview.append(current.cloneNode(true));
+            } else if (legacy) {
+                const label = document.createElement('p');
+                label.className = 'reading-caption';
+                label.textContent = '구매한 풀이에 담긴 현재 구간';
+                preview.append(label, legacy.cloneNode(true));
+            }
+            if (preview.childNodes.length) slot.prepend(preview);
+            if (readingNeedsRefresh(item)) {
+                const update = document.createElement('button');
+                update.id = 'lifetimeRefreshButton';
+                update.className = 'reading-secondary';
+                update.textContent = '현재 중심 풀이로 업데이트 · 무료';
+                update.onclick = () => { readingReportIndex = index; refreshOwnedReading(); };
+                const note = document.createElement('p');
+                note.className = 'reading-caption';
+                note.textContent = '선택하면 지금의 흐름을 보강해 드려요. 이전 원문도 보관됩니다.';
+                slot.append(update, note);
+            }
+        }
+
         function refreshReportEntrypoints() {
             const configs = {
                 daewoon:['daewoonBox','btnDaewoon','daewoonTeaserBox'],
@@ -3374,6 +3392,10 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             document.getElementById('annualYearLabel').textContent = `${koreaYearMonth().year}년 · 올해와 월별`;
             Object.entries(configs).forEach(([key, [slotId, buttonId, teaserId]]) => {
                 const index = latestOwnedReportIndex(key);
+                if (key === 'daewoon') {
+                    document.getElementById('lifetimeLeadTitle').innerHTML = index >= 0 ? '지금의 나' : '지금의 나에게,<br>어떤 선택이 필요할까요?';
+                    ['lifetimeLeadDescription','lifetimePurchaseCaption'].forEach(id => document.getElementById(id).classList.toggle('hidden', index >= 0));
+                }
                 const price = document.querySelector(`[data-report-price="${key}"]`);
                 if (price) {
                     if (!price.dataset.price) price.dataset.price = price.textContent;
@@ -3411,14 +3433,17 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                         slot.append(months);
                     }
                 }
-                if (key === 'daewoon') renderPeriodChoices(item, 'cycle');
+                if (key === 'daewoon') {
+                    renderLifetimePreview(item, slot, index);
+                    renderPeriodChoices(item, 'cycle');
+                }
             });
-            document.getElementById('daewoonFlowOpen').textContent = latestOwnedReportIndex('daewoon') >= 0 ? '구매한 평생운세 전체 읽기' : '450 복채로 평생운세 읽기';
+            document.getElementById('daewoonFlowOpen').textContent = latestOwnedReportIndex('daewoon') >= 0 ? '구매한 평생운세 전체 읽기' : '같은 평생운세에 포함된 풀이';
             renderRecentReadings();
         }
 
         function setReportRequestState(pending) {
-            document.querySelectorAll('#btnDaewoon,#btnSinnian,#daewoonFlowOpen,#btnOpenGunghapModal,[id^="btnTheme_"],#annualRefreshButton,.annual-upgrade').forEach(button => {
+            document.querySelectorAll('#btnDaewoon,#btnSinnian,#daewoonFlowOpen,#btnOpenGunghapModal,[id^="btnTheme_"],#annualRefreshButton,#lifetimeRefreshButton,.annual-upgrade').forEach(button => {
                 button.disabled = pending;
                 button.setAttribute('aria-busy', String(pending));
             });
@@ -3531,11 +3556,11 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             if (location.hash === '#report') history.replaceState(null, '', location.pathname + location.search);
             refreshReportEntrypoints();
             document.querySelector('.reading-tabs').addEventListener('keydown', event => {
-                const keys = ['basic','life','year'];
+                const keys = ['basic','year'];
                 if (!['ArrowLeft','ArrowRight','Home','End'].includes(event.key)) return;
                 event.preventDefault();
                 const current = keys.indexOf(currentSajuSection);
-                const index = event.key === 'Home' ? 0 : event.key === 'End' ? 2 : (current + (event.key === 'ArrowRight' ? 1 : 2)) % 3;
+                const index = event.key === 'Home' ? 0 : event.key === 'End' ? keys.length - 1 : (current + (event.key === 'ArrowRight' ? 1 : -1) + keys.length) % keys.length;
                 selectSajuSection(keys[index]);
                 document.getElementById(`saju-tab-${keys[index]}`).focus();
             });

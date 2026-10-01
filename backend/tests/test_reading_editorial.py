@@ -16,6 +16,7 @@ from app.engine.services import (
 )
 from app.engine.services.annual import build_annual_overall_report
 from app.engine.services.reading_editorial import VERSION
+from app.engine.services.lifetime import LIFETIME_NARRATIVE_VERSION
 
 
 def plain(content):
@@ -40,7 +41,7 @@ class EditorialCoverageTests(TestCase):
         ] + [build_lifetime_love_report(self.core,'검증',s) for s in ['솔로','썸/짝사랑','연애중','기혼']]
         for report in reports:
             with self.subTest(title=report['title']):
-                self.assertEqual(report['narrative_version'], VERSION)
+                self.assertEqual(report['narrative_version'], LIFETIME_NARRATIVE_VERSION if report is reports[0] else VERSION)
                 self.assertGreater(len(plain(report['content'])), 2000)
                 self.assertEqual(report['content'].count('data-report-cycle='),9)
                 self.assertIn('이 풀이의 근거', report['content'])
@@ -88,6 +89,21 @@ class ReadingRefreshTests(TestCase):
         self.assertEqual(report['narrative_version'],VERSION)
         with patch('main.generate_detailed_report',side_effect=AssertionError('already updated')):
             self.assertEqual(self.update().json(),data)
+
+    def test_lifetime_v3_upgrade_is_free_keeps_original_and_does_not_repeat(self):
+        original=dict(report_key='daewoon',report_title='기존 평생운세',report_content='<p>구매한 당시의 풀이</p>',
+                      narrative_version=VERSION,created_at='2026.02.01')
+        wallet_store.buy_report(self.owner,'daewoon',450,original)
+        response=self.update('daewoon')
+        self.assertEqual(response.status_code,200,response.text)
+        data=response.json(); report=data['unlocked_reports'][0]
+        self.assertEqual(data['new_balance'],550)
+        self.assertEqual(report['narrative_version'],LIFETIME_NARRATIVE_VERSION)
+        self.assertEqual(report['previous_versions'],[original])
+        self.assertEqual(report['created_at'],original['created_at'])
+        self.assertIn('data-lifetime-section="current"',report['report_content'])
+        with patch('main.generate_detailed_report',side_effect=AssertionError('must reuse saved report')):
+            self.assertEqual(self.update('daewoon').json(),data)
 
     def test_status_must_be_selected_not_guessed(self):
         self.seed_theme('business')

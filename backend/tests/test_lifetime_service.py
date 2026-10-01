@@ -1,3 +1,4 @@
+import re
 from datetime import date
 from unittest import TestCase
 
@@ -54,3 +55,16 @@ class LifetimeServiceTests(TestCase):
         self.assertIn("정통 명리 평생운세", report["title"])
         self.assertIn("庚(金)", report["content"])
         self.assertNotIn("자수성가형 귀격", report["content"])
+
+    def test_current_life_has_more_depth_than_nature_with_cycles_kept_as_reference(self):
+        core=calculate_myeongri_core(BirthInput(name='검증',gender='female',birth_date=date(1992,5,16),time_unknown=True),target_date=date(2026,10,1))
+        report=build_lifetime_overall_report(core,'검증')
+        current, rest=report['content'].split('<section data-lifetime-section="nature">')
+        nature, cycles=rest.split('<details data-lifetime-section="cycles"')
+        plain=lambda value: re.sub(r'<[^>]*>','',value)
+        self.assertGreater(len(plain(current)),len(plain(nature))*1.5)
+        self.assertEqual(current.count('data-current-domain='),6)
+        self.assertEqual(cycles.count('data-report-cycle='),9)
+        self.assertNotRegex(cycles,r'<details[^>]*\bopen\b')
+        self.assertTrue(report['evidence_summary']['current']['selected'])
+        self.assertNotIn('~',plain(current))
