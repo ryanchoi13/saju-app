@@ -63,7 +63,7 @@
       const advice=$('resGaewoon')?.closest('.action-card');if(advice)luck.append(advice);
     }
     document.querySelectorAll('#view-today h4').forEach(h=>{if(h.textContent.trim()==='오늘 뭐 입을까?')h.textContent='오늘 뭐 입지?';});
-    if(label)label.textContent='🍲 오늘 뭐 먹지?';
+    if(label)label.textContent='오늘 뭐 먹지?';
   }
   arrangeCards();
   const mealCalories=plan=>Math.round(plan.meals.reduce((sum,m)=>sum+Number(m.kcal||0),0));
@@ -86,7 +86,7 @@
     const plans=history();
     if(!plans.some(p=>p.recommendation_number===selected[state.mode]))selected[state.mode]=plans.at(-1).recommendation_number;
     const plan=plans.find(p=>p.recommendation_number===selected[state.mode]);
-    $('resMenuLabel').textContent='🍲 오늘 뭐 먹지?';
+    $('resMenuLabel').textContent='오늘 뭐 먹지?';
     const tabs=$('menuMode-general').parentElement;
     if(tabs.classList.contains('menu-mode-controls')){tabs.id='menuModeTabs';$('resMenuLabel').after(tabs);tabs.hidden=false;}
     $('resMenu').hidden=state.items.length>0;
@@ -132,6 +132,11 @@
   function resume(){if(document.visibilityState==='visible'&&valid()&&!busy)return request(state.mode,'open');}
   document.addEventListener('visibilitychange',resume);window.addEventListener('pageshow',e=>{if(e.persisted)resume();});
   setInterval(()=>{if(valid()&&state.date!==today())resume();},60000);
-  function startSample(){reset();$('resMenu').hidden=false;$('resMenu').textContent='하루 식단 검토 화면에서 확인해 주세요.';}
+  function startSample(){
+    if(!window.DALHA_DESIGN_SAMPLE)return;
+    reset();$('resMenuLabel').textContent='오늘 뭐 먹지?';
+    $('resMenu').hidden=false;$('resMenu').textContent='하루의 식단 · 소개용 예시';
+    renderMenuPhotos(['계란후라이와 통밀토스트','김치찌개','소고기불고기'],['아침','점심','저녁'],$('menuPhotoCards'));
+  }
   window.DalhaMenu={mount,reset,changeMode,next,startSample};
 })();

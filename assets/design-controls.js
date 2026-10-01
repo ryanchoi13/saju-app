@@ -64,7 +64,7 @@
     const bar = document.createElement('aside');
     bar.className = 'design-comparison'; bar.setAttribute('aria-label','디자인 비교');
     const suffix = sample ? '?sample=1' : '';
-    bar.innerHTML = `<p>${sample ? '디자인 비교 · 같은 예시 내용으로 살펴보세요.' : '디자인 비교 · 같은 계정과 기능으로 살펴보세요.'}</p><div class="design-comparison-links"><a href="/design/clear${suffix}" ${!moonlight?'aria-current="page"':''}>A · 클리어</a><a href="/design/moonlight${suffix}" ${moonlight?'aria-current="page"':''}>B · 달빛 한지</a><a class="design-sample-link" href="/design/${moonlight?'moonlight':'clear'}${sample?'':'?sample=1'}">${sample?'내 정보로 보기':'예시로 둘러보기'}</a></div>`;
+    bar.innerHTML = `<p>${sample ? '디자인 미리보기 · 가상 인물과 예시 내용입니다.' : '달하 · 실제 계정으로 보고 있습니다.'}</p><a class="design-sample-link" href="${sample ? '/' : '/design/clear?sample=1'}">${sample ? '내 달하로 가기' : '예시 화면 보기'} →</a>`;
     document.querySelector('.app-container > header').after(bar);
     // Preserve the current page when switching A/B, without changing stored preferences.
     bar.querySelectorAll('a:not(.design-sample-link)').forEach(link => link.addEventListener('click', () => {

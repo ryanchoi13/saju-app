@@ -1,7 +1,7 @@
 // URL-scoped alternatives; never persist a theme across comparison addresses.
 (() => {
   const match = location.pathname.match(/^\/design\/(clear|moonlight)\/?$/);
-  document.documentElement.dataset.design = match?.[1] || 'clear';
+  document.documentElement.dataset.design = 'journal';
   window.DALHA_DESIGN_SAMPLE = Boolean(match && new URLSearchParams(location.search).get('sample') === '1');
   if (match) {
     const robots = document.createElement('meta');

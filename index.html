@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" data-brand="journal">
 <head>
     <script type="module" src="/assets/dalha-garments/integration.js?v=20261001-2"></script>
     <meta charset="UTF-8">
@@ -10,7 +10,8 @@
     <meta name="keywords" content="달하, 사주, 무료운세, 오늘의운세, 사주팔자, 무료사주, 신년운세, 궁합, 재물운, 연애운, 대운분석, 정통사주, 개운코디" />
     <link rel="canonical" href="https://dalha.kr/" />
 
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%230D1527'/><path d='M50 20 C40 25 40 40 50 45 C45 40 45 28 50 20 Z' fill='%23FFEAA7'/><circle cx='50' cy='50' r='5' fill='%23D4AF37'/></svg>">
+    <link rel="icon" type="image/png" href="/assets/brand-2026/favicon.png">
+    <link rel="apple-touch-icon" href="/assets/brand-2026/apple-touch-icon.png">
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://dalha.kr/" />
     <meta property="og:title" content="달하 — 나를 바꾸는 스타일 운명학" />
@@ -19,8 +20,8 @@
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
 
-    <meta name="theme-color" content="#F7F8F8">
-    <script src="/assets/design-init.js?v=1"></script>
+    <meta name="theme-color" content="#F8F6F1">
+    <script src="/assets/design-init.js?v=20261001-4"></script>
     <script src="/assets/session-client.js?v=1"></script>
     <link rel="stylesheet" href="/assets/annual-reading.css?v=20260923-7">
     <script src="/assets/annual-reader.js?v=20260923-4" defer></script>
@@ -503,36 +504,30 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
     <link rel="stylesheet" href="/assets/tarot-v2.css?v=1">
     <link rel="stylesheet" href="/assets/reading-tabs-v2.css?v=20261001-3">
     <link rel="stylesheet" href="/assets/landing.css?v=1">
-    <script src="/assets/design-controls.js?v=2" defer></script>
-    <script src="/assets/menu-explorer.js?v=meal-reveal-navigation-1" defer></script>
-    <script src="/assets/design-sample.js?v=20261001-3" defer></script>
+    <script src="/assets/design-controls.js?v=20261001-4" defer></script>
+    <script src="/assets/menu-explorer.js?v=20261001-4" defer></script>
+    <script src="/assets/design-sample.js?v=20261001-4" defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;600;700&display=swap" rel="stylesheet">
+    <link id="dalhaBrandStyles" rel="stylesheet" href="/assets/brand-2026/brand.css?v=20261001-1">
+    <script src="/assets/brand-2026/brand-ui.js?v=20261001-1" defer></script>
 </head>
 <body>
 
     <div class="app-container">
 
         <header>
-            <div class="logo-box" onclick="goToHomeAndScrollTop()">
-                <svg width="34" height="34" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink: 0;">
-                    <circle cx="20" cy="20" r="18" stroke="#D4AF37" stroke-width="1.2" stroke-opacity="0.5"/>
-                    <circle cx="20" cy="20" r="15.5" stroke="#D4AF37" stroke-width="1.8"/>
-                    <path d="M20 7L22.5 17.5L33 20L22.5 22.5L20 33L17.5 22.5L7 20L17.5 17.5Z" fill="#D4AF37" fill-opacity="0.2" stroke="#D4AF37" stroke-width="1.4" stroke-linejoin="round"/>
-                    <path d="M20 6C15.5 8 15.5 14 20 16C17.5 14 17.5 9 20 6Z" fill="#FFEAA7" stroke="#D4AF37" stroke-width="0.8"/>
-                    <circle cx="20" cy="20" r="2" fill="#D4AF37"/>
-                </svg>
-                <div style="display: flex; flex-direction: column; justify-content: center; text-align: left; line-height: 1.15;">
-                    <div style="display: flex; align-items: baseline; gap: 6px;">
-                        <span style="font-size: 19px; font-weight: 800; color: #FFFFFF; font-family: 'Noto Serif KR', serif; letter-spacing: 0.5px;">달하</span>
-                        <span style="font-size: 9.5px; font-weight: 700; color: #D4AF37; letter-spacing: 1.8px;">DALHA</span>
-                    </div>
-                    <span style="font-size: 9.5px; color: #94A3B8; font-weight: 500; letter-spacing: -0.2px; margin-top: 3px;">나를 바꾸는 스타일 운명학</span>
-                </div>
-            </div>
+            <button class="logo-box" type="button" onclick="goToHomeAndScrollTop()" aria-label="달하 홈으로">
+                <img class="brand-mark" src="/assets/brand-2026/moon-mark.webp" alt="" width="49" height="40">
+                <span class="brand-wordmark"><strong>달하</strong><span>DALHA</span></span>
+                <span class="brand-tagline">나를 알아가는 하루</span>
+            </button>
 
             <div id="headerAuthArea">
                 <button onclick="openChargeStore()" class="coin-btn">
                     <span id="headerCoinSvg"></span>
-                    <span id="coinHeader">1000</span>
+                    <span id="coinHeader">—</span>
                     <span class="charge-tag">충전</span>
                 </button>
             </div>
@@ -653,16 +648,17 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
 
             <!-- 탭 1: 오늘운세 -->
             <div id="view-today" class="tab-view hidden">
+                <header class="page-intro today-intro"><div><span class="journal-kicker">YOUR DAILY NOTE</span><h2>오늘의 나</h2></div><span id="journalDate" class="journal-date"></span></header>
                 <div class="user-profile-bar">
                     <div class="user-profile-name" id="userProfileBarName"></div>
                     <div class="user-profile-birth" id="userProfileBarBirth"></div>
                 </div>
 
-                <div class="daily-banner">
+                <div class="daily-banner journal-fortune">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                         <div style="display: flex; align-items: center; gap: 6px;">
-                            <span style="color: #E2C068; font-size: 14px;">✦</span>
-                            <span style="font-size: 13.5px; color: #F6E2A1; font-weight: 700;">오늘의 일진</span>
+                            <span data-brand-icon="spark" class="brand-symbol"></span>
+                            <span style="font-size: 13.5px; color: #F6E2A1; font-weight: 700;">오늘의 이야기</span>
                         </div>
                         <span id="resScoreBadge" style="background: #FEF3C7; color: #78350F; border: 1px solid #FDE68A; font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 9999px;">운세 88점</span>
                     </div>
@@ -671,27 +667,27 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                     
                     <div id="resAdvice" style="font-size: 13.5px; color: #E2E8F0; font-weight: 400; line-height: 1.7; text-align: left; white-space: pre-line;"></div>
 
-                    <div style="border-top: 1px solid rgba(255,255,255,0.12); margin-top: 4px; padding-top: 12px; display: flex; flex-direction: column; gap: 8px;">
+                    <div class="journal-times" style="border-top: 1px solid rgba(255,255,255,0.12); margin-top: 4px; padding-top: 12px; display: flex; flex-direction: column; gap: 8px;">
                         <div style="display: flex; align-items: flex-start; gap: 8px; font-size: 12.5px; line-height: 1.55; text-align: left;">
-                            <span style="background: rgba(254,243,199,0.15); color: #FDE68A; font-weight: 700; padding: 2px 7px; border-radius: 6px; flex-shrink: 0;">🌅 오전</span>
+                            <span style="background: rgba(254,243,199,0.15); color: #FDE68A; font-weight: 700; padding: 2px 7px; border-radius: 6px; flex-shrink: 0;">오전</span>
                             <span id="timeMorningText" style="color: #CBD5E1;">-</span>
                         </div>
                         <div style="display: flex; align-items: flex-start; gap: 8px; font-size: 12.5px; line-height: 1.55; text-align: left;">
-                            <span style="background: rgba(254,243,199,0.15); color: #FDE68A; font-weight: 700; padding: 2px 7px; border-radius: 6px; flex-shrink: 0;">☀️ 오후</span>
+                            <span style="background: rgba(254,243,199,0.15); color: #FDE68A; font-weight: 700; padding: 2px 7px; border-radius: 6px; flex-shrink: 0;">오후</span>
                             <span id="timeAfternoonText" style="color: #CBD5E1;">-</span>
                         </div>
                         <div style="display: flex; align-items: flex-start; gap: 8px; font-size: 12.5px; line-height: 1.55; text-align: left;">
-                            <span style="background: rgba(254,243,199,0.15); color: #FDE68A; font-weight: 700; padding: 2px 7px; border-radius: 6px; flex-shrink: 0;">🌙 저녁·밤</span>
+                            <span style="background: rgba(254,243,199,0.15); color: #FDE68A; font-weight: 700; padding: 2px 7px; border-radius: 6px; flex-shrink: 0;">저녁</span>
                             <span id="timeEveningText" style="color: #CBD5E1;">-</span>
                         </div>
                     </div>
                 </div>
 
                 <!-- 1. 오늘 뭐 입을까? (Daily Style Nav) -->
-                <div class="card" style="padding: 20px 18px; text-align: left; display: flex; flex-direction: column; gap: 16px; border: 1.5px solid #E2E8F0;">
+                <div id="dailyStyleCard" class="card journal-style" style="padding: 20px 18px; text-align: left; display: flex; flex-direction: column; gap: 16px; border: 1.5px solid #E2E8F0;">
                     <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 12px;">
                         <div style="display: flex; align-items: center; gap: 8px;">
-                            <span style="font-size: 20px;">👔</span>
+                            <span data-brand-icon="hanger" class="brand-service-icon"></span>
                             <div>
                                 <h4 style="font-size: 16.5px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif; letter-spacing: -0.3px;">오늘 뭐 입을까?</h4>
                                 <p style="font-size: 11.5px; color: #64748B; margin-top: 1px;">나의 사주 오행 맞춤 데일리 스타일링</p>
@@ -711,7 +707,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                     <!-- 개운 컬러 팔레트 (20px 확대 적용) -->
                     <div>
                         <span style="font-size: 12px; font-weight: 700; color: #64748B; display: flex; align-items: center; gap: 4px; margin-bottom: 8px;">
-                            <span>🎨</span> 1. 오늘의 추천 색상 (개운 팔레트)
+                            <span data-brand-icon="palette" class="brand-symbol"></span> 오늘의 색 힌트
                         </span>
                         <div id="dynamicColorPaletteBox" style="display: flex; align-items: center; justify-content: flex-start; gap: 10px; flex-wrap: wrap; margin-bottom: 8px;">
                         </div>
@@ -759,7 +755,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 <!-- 2. 오늘 나에게 행운을 주는 것들 (폰트 크기 16.5px 통일) -->
                 <div class="card" style="padding: 20px 18px; text-align: left; display: flex; flex-direction: column; gap: 14px; border: 1.5px solid #E2E8F0;">
                     <div style="display: flex; align-items: center; gap: 8px; border-bottom: 1px solid #F1F5F9; padding-bottom: 10px;">
-                        <span style="font-size: 20px;">🍀</span>
+                        <span data-brand-icon="spark" class="brand-service-icon"></span>
                         <div>
                             <h4 style="font-size: 16.5px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif; letter-spacing: -0.3px;">오늘 나에게 행운을 주는 것들</h4>
                             <p style="font-size: 11.5px; color: #64748B; margin-top: 1px;">풍수와 수리 역학으로 보는 일상 개운 가이드</p>
@@ -767,9 +763,9 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                     </div>
 
                     <div class="grid-2">
-                        <div class="grid-cell"><span style="font-size: 12px; color: #64748B; font-weight: 600; display: block;">🍀 행운의 아이템</span><p id="resItem" style="font-weight: 800; margin-top: 3px; font-size: 14px; color: #0F172A;">실버 메탈 시계</p></div>
-                        <div class="grid-cell"><span style="font-size: 12px; color: #64748B; font-weight: 600; display: block;">🔢 행운의 숫자</span><p id="resNumber" style="font-weight: 800; margin-top: 3px; font-size: 14.5px; color: #0F172A;">4, 9</p></div>
-                        <div class="grid-cell"><span style="font-size: 12px; color: #64748B; font-weight: 600; display: block;">🧭 행운의 방위</span><p id="resDirection" style="font-weight: 800; margin-top: 3px; font-size: 14px; color: #0F172A;">정서쪽 (백호 방위)</p></div>
+                        <div class="grid-cell"><span style="font-size: 12px; color: #64748B; font-weight: 600; display: block;">아이템</span><p id="resItem" style="font-weight: 800; margin-top: 3px; font-size: 14px; color: #0F172A;">실버 메탈 시계</p></div>
+                        <div class="grid-cell"><span style="font-size: 12px; color: #64748B; font-weight: 600; display: block;">숫자</span><p id="resNumber" style="font-weight: 800; margin-top: 3px; font-size: 14.5px; color: #0F172A;">4, 9</p></div>
+                        <div class="grid-cell"><span style="font-size: 12px; color: #64748B; font-weight: 600; display: block;">방위</span><p id="resDirection" style="font-weight: 800; margin-top: 3px; font-size: 14px; color: #0F172A;">정서쪽 (백호 방위)</p></div>
                         <div class="grid-cell">
                             <span id="resMenuLabel" style="font-size: 12px; color: #64748B; font-weight: 600; display: block;">🍲 추천 메뉴</span>
                             <p id="resMenu" style="font-weight: 800; margin: 3px 0 8px; font-size: 14px; line-height: 1.65; white-space: pre-line; color: #0F172A;">속이 편안한 영양 솥밥</p>
@@ -794,14 +790,14 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 </div>
 
                 <div class="action-card">
-                    <span style="font-weight: 800; color: #78350F; display: block; margin-bottom: 3px; font-size: 14px;">✨ 오늘의 조언</span>
+                    <span style="font-weight: 800; color: #78350F; display: block; margin-bottom: 3px; font-size: 14px;">오늘, 기억할 한 가지</span>
                     <p id="resGaewoon" style="color: #92400E; font-weight: 500; font-size: 14px; line-height: 1.6;">오늘 완료해야 할 우선순위 3가지 메모하기</p>
                 </div>
 
                 <!-- 바이오리듬 (주기 텍스트 정리 완료) -->
                 <div class="biorhythm-card">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <h4 style="font-size: 15px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif;">🧬 오늘의 바이오리듬</h4>
+                        <h4 style="font-size: 15px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif;">오늘의 바이오리듬</h4>
                         <span id="bioDaysLived" style="font-size: 11px; background: #F1F5F9; color: #475569; padding: 3px 8px; border-radius: 9999px; font-weight: 700;">생애 계산중</span>
                     </div>
 
@@ -821,13 +817,13 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                     </div>
 
                     <div class="bio-pill-grid">
-                        <div class="bio-pill-cell"><span style="font-size: 11px; color: #64748B; display: block;">💪 신체</span><span id="bioPhysicalStatus" style="font-size: 12.5px; font-weight: 800; color: #DC2626;">-</span></div>
-                        <div class="bio-pill-cell"><span style="font-size: 11px; color: #64748B; display: block;">💖 감성</span><span id="bioEmotionalStatus" style="font-size: 12.5px; font-weight: 800; color: #16A34A;">-</span></div>
-                        <div class="bio-pill-cell"><span style="font-size: 11px; color: #64748B; display: block;">🧠 지성</span><span id="bioIntellectualStatus" style="font-size: 12.5px; font-weight: 800; color: #2563EB;">-</span></div>
+                        <div class="bio-pill-cell"><span style="font-size: 11px; color: #64748B; display: block;">신체</span><span id="bioPhysicalStatus" style="font-size: 12.5px; font-weight: 800; color: #DC2626;">-</span></div>
+                        <div class="bio-pill-cell"><span style="font-size: 11px; color: #64748B; display: block;">감성</span><span id="bioEmotionalStatus" style="font-size: 12.5px; font-weight: 800; color: #16A34A;">-</span></div>
+                        <div class="bio-pill-cell"><span style="font-size: 11px; color: #64748B; display: block;">지성</span><span id="bioIntellectualStatus" style="font-size: 12.5px; font-weight: 800; color: #2563EB;">-</span></div>
                     </div>
 
                     <div style="background: #F8FAFC; border-radius: 10px; padding: 10px 12px; font-size: 13px; color: #334155; line-height: 1.6; border-left: 3.5px solid #2D6A4F;">
-                        <span style="font-weight: 800; color: #2D6A4F;">💡 바이오리듬 해석:</span><br>
+                        <span style="font-weight: 800; color: #2D6A4F;">리듬 읽기</span><br>
                         <span id="bioOverallText">생일을 기준으로 주기 곡선을 계산하고 있어요.</span>
                     </div>
                 </div>
@@ -1088,11 +1084,11 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 <button class="compatibility-shortcut" onclick="showCompatibility()"><span>두 사람의 관계가 궁금하다면</span><strong>궁합 보러 가기 <span aria-hidden="true">↗</span></strong></button>
                 <div class="reading-section-title concern-choice-title"><h3 id="concernChoiceTitle">지금 나의 고민은</h3><span>목차부터 살펴보세요</span></div>
                 <div class="concern-choices" role="group" aria-label="궁금한 주제 선택">
-                    <button data-concern-choice="business" aria-pressed="false" aria-controls="concern-business" onclick="selectConcern('business', true)"><span class="concern-category">일·진로</span><strong>내 강점을 어떤 일에 써볼까요?</strong><span class="concern-open">풀이 살펴보기 <span aria-hidden="true">→</span></span></button>
-                    <button data-concern-choice="love" aria-pressed="false" aria-controls="concern-love" onclick="selectConcern('love', true)"><span class="concern-category">애정·관계</span><strong>나는 어떤 사랑이 편할까요?</strong><span class="concern-open">풀이 살펴보기 <span aria-hidden="true">→</span></span></button>
-                    <button data-concern-choice="wealth" aria-pressed="false" aria-controls="concern-wealth" onclick="selectConcern('wealth', true)"><span class="concern-category">돈·생활</span><strong>돈을 모으고 쓰는 기준이 궁금해요</strong><span class="concern-open">풀이 살펴보기 <span aria-hidden="true">→</span></span></button>
-                    <button data-concern-choice="study" aria-pressed="false" aria-controls="concern-study" onclick="selectConcern('study', true)"><span class="concern-category">학업·시험</span><strong>나에게 맞는 공부법을 찾고 싶어요</strong><span class="concern-open">풀이 살펴보기 <span aria-hidden="true">→</span></span></button>
-                    <button data-concern-choice="health" aria-pressed="false" aria-controls="concern-health" onclick="selectConcern('health', true)"><span class="concern-category">생활 리듬</span><strong>잘 쉬고, 꾸준히 해내고 싶어요</strong><span class="concern-open">풀이 살펴보기 <span aria-hidden="true">→</span></span></button>
+                    <button data-concern-choice="business" aria-pressed="false" aria-controls="concern-business" onclick="selectConcern('business', true)"><i data-brand-icon="briefcase" class="concern-symbol" aria-hidden="true"></i><span class="concern-category">일·진로</span><strong>내 강점을 어떤 일에 써볼까요?</strong><span class="concern-open">풀이 살펴보기 <span aria-hidden="true">→</span></span></button>
+                    <button data-concern-choice="love" aria-pressed="false" aria-controls="concern-love" onclick="selectConcern('love', true)"><i data-brand-icon="heart" class="concern-symbol" aria-hidden="true"></i><span class="concern-category">애정·관계</span><strong>나는 어떤 사랑이 편할까요?</strong><span class="concern-open">풀이 살펴보기 <span aria-hidden="true">→</span></span></button>
+                    <button data-concern-choice="wealth" aria-pressed="false" aria-controls="concern-wealth" onclick="selectConcern('wealth', true)"><i data-brand-icon="coins" class="concern-symbol" aria-hidden="true"></i><span class="concern-category">돈·생활</span><strong>돈을 모으고 쓰는 기준이 궁금해요</strong><span class="concern-open">풀이 살펴보기 <span aria-hidden="true">→</span></span></button>
+                    <button data-concern-choice="study" aria-pressed="false" aria-controls="concern-study" onclick="selectConcern('study', true)"><i data-brand-icon="book" class="concern-symbol" aria-hidden="true"></i><span class="concern-category">학업·시험</span><strong>나에게 맞는 공부법을 찾고 싶어요</strong><span class="concern-open">풀이 살펴보기 <span aria-hidden="true">→</span></span></button>
+                    <button data-concern-choice="health" aria-pressed="false" aria-controls="concern-health" onclick="selectConcern('health', true)"><i data-brand-icon="moon" class="concern-symbol" aria-hidden="true"></i><span class="concern-category">생활 리듬</span><strong>잘 쉬고, 꾸준히 해내고 싶어요</strong><span class="concern-open">풀이 살펴보기 <span aria-hidden="true">→</span></span></button>
                 </div>
                 <div class="reading-section-title concern-result-title hidden"><h3 id="concernSelectionTitle" tabindex="-1">관련 풀이 안내</h3></div>
                 <p id="concernSelectionHint" class="reading-caption">질문을 고르면 포함된 내용과 필요한 복채를 먼저 보여드려요.</p>
@@ -1161,6 +1157,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
 
             <!-- 탭 4: 마이페이지 -->
             <div id="view-mypage" class="tab-view hidden">
+                <header class="page-intro"><div><span class="journal-kicker">MY DALHA</span><h2>나의 달하</h2><p>내 정보와 차곡차곡 모아둔 이야기.</p></div><span data-brand-icon="user" class="brand-service-icon"></span></header>
                 <div class="card" style="text-align: left;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                         <span style="font-size: 14px; color: #64748B;">현재 보유 복채</span>
@@ -1179,7 +1176,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
 
                 <div class="card" style="text-align: left;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                        <h3 style="font-size: 15px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif;">📂 구매한 감명서 보관함</h3>
+                        <h3 style="font-size: 15px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif;">구매한 감명서 보관함</h3>
                         <span id="archiveCountBadge" style="font-size: 12px; background: #2D6A4F; color: #FFFFFF; padding: 3px 10px; border-radius: 9999px; font-weight: 700;">0건</span>
                     </div>
                     <div id="unlockedArchiveList" style="display: flex; flex-direction: column; gap: 10px;"></div>
@@ -3246,15 +3243,17 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             return `<svg viewBox="0 0 20 20" width="${size}" height="${size}" style="display:inline-block; vertical-align:middle;"><circle cx="10" cy="10" r="9" fill="${color}" stroke="#D97706" stroke-width="1.2"/><text x="10" y="14" font-size="11" font-weight="800" fill="#FFFFFF" text-anchor="middle">C</text></svg>`;
         }
 
-        function goToHomeAndScrollTop() { switchTab('today'); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+        function goToHomeAndScrollTop() { if (document.getElementById('view-login-gate').classList.contains('hidden')) switchTab('today'); window.scrollTo({ top: 0, behavior: 'smooth' }); }
 
         function switchTab(tabId) {
             ['today', 'saju', 'theme', 'mypage'].forEach(t => {
                 document.getElementById(`view-${t}`)?.classList.add('hidden');
                 document.getElementById(`tab-${t}`)?.classList.remove('active');
+                document.getElementById(`tab-${t}`)?.removeAttribute('aria-current');
             });
             document.getElementById(`view-${tabId}`)?.classList.remove('hidden');
             document.getElementById(`tab-${tabId}`)?.classList.add('active');
+            document.getElementById(`tab-${tabId}`)?.setAttribute('aria-current','page');
             if (tabId === 'mypage') renderServerArchive();
             if (tabId === 'saju' || tabId === 'theme') refreshReportEntrypoints();
         }

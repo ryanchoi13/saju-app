@@ -9,7 +9,7 @@ const vm = require('node:vm');
 
 const root = path.join(__dirname, '..');
 const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
-const oldHtml = execFileSync('git', ['show', '06934714247eb709d54d04201e6132f08573cef0:index.html'], {cwd:root,encoding:'utf8',maxBuffer:2000000});
+const oldHtml = execFileSync('git', ['show', '006d8274ca758a4febe65c10953e2dfc55eb2a7c:index.html'], {cwd:root,encoding:'utf8',maxBuffer:2000000});
 const dom = new JSDOM(html, {url:'https://dalha.example/',runScripts:'outside-only',pretendToBeVisual:true});
 const w = dom.window, doc = w.document;
 const evalApp = code => vm.runInContext(code, dom.getInternalVMContext());
@@ -46,7 +46,9 @@ const tick = () => new Promise(resolve => setTimeout(resolve,30));
     await test('home and every pre-existing DOM target remain available', () => {
         const oldDoc = new JSDOM(oldHtml).window.document;
         const newHome = new JSDOM(homeBeforeBoot).window.document;
-        assert.equal(newHome.getElementById('view-today').outerHTML, oldDoc.getElementById('view-today').outerHTML);
+        // The full brand refresh intentionally changes presentation. All home actions remain connected.
+        const actions = node => [...node.querySelectorAll('[onclick],[onchange]')].map(el=>el.getAttribute('onclick') || el.getAttribute('onchange'));
+        assert.deepEqual(actions(newHome.getElementById('view-today')),actions(oldDoc.getElementById('view-today')));
         const ids = [...doc.querySelectorAll('[id]')].map(el => el.id);
         assert.equal(ids.length, new Set(ids).size);
         for (const el of oldDoc.querySelectorAll('[id]')) assert.ok(doc.getElementById(el.id), el.id);

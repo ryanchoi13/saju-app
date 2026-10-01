@@ -1,0 +1,14 @@
+{
+  "brand": "DALHA / Moon journal",
+  "created_kst": "2026-10-01",
+  "generator": "Higgsfield gpt_image_2_5",
+  "estimated_credits_total": 0.75,
+  "sources": [
+    {"file":"direction.webp", "purpose":"UI art direction", "job_id":"389354d6-da4c-4f39-810b-8d3d47cd135d"},
+    {"file":"moon-mark.webp", "purpose":"Brand symbol; cropped and resized for header, favicon and touch icon", "job_id":"89fd9ee4-242a-478f-b3c1-e17562d7273d"},
+    {"file":"moon-landscape.webp", "purpose":"Editorial cover / landing illustration", "job_id":"64b2d2ea-d9f6-4518-981a-0268c9e3d666"}
+  ],
+  "interface_icons":"Original 24px SVG paths in brand-ui.js; decorative symbols have aria-hidden and visible text labels remain native HTML.",
+  "fonts":"Pretendard body, Noto Serif KR display (Google Fonts with swap; local serif fallback).",
+  "notes":"Generated UI board is a reference only. Fictional scores, names and copy in the raster board are not used as user data. Production UI remains accessible native HTML. Clothes, food and elemental data colors are not recolored by the brand layer."
+}

@@ -1,0 +1,257 @@
+/* DALHA / Moon journal. Canonical 2026 brand layer. All visual tokens live here. */
+html[data-brand="journal"] {
+  --ui-page:#F8F6F1; --ui-surface:#FFFEFA; --ui-ink:#25364A; --ui-muted:#59636D;
+  --ui-line:#DEDCD4; --ui-accent:#25364A; --ui-tint:#EEECE4; --ui-soft:#F3F0E8;
+  --ui-on-accent:#FFFDF6; --ui-radius:16px; --brand-copper:#995737; --brand-apricot:#E4B28F;
+  --brand-sage:#DFE5D9; --brand-serif:'Noto Serif KR','Batang',serif;
+  scroll-padding-top:92px;
+}
+html[data-brand] body { background:#EAE7E0; color:var(--ui-ink); }
+html[data-brand] button,html[data-brand] select,html[data-brand] input { font-family:'Pretendard',sans-serif; }
+html[data-brand] button { touch-action:manipulation; }
+html[data-brand] button:focus-visible,html[data-brand] a:focus-visible,html[data-brand] summary:focus-visible { outline:3px solid #995737; outline-offset:4px; }
+html[data-brand] .app-container { background:var(--ui-page); width:100%; max-width:600px; box-shadow:none; padding-bottom:110px; }
+html[data-brand] .app-container > header { background:var(--ui-page); border-bottom:1px solid var(--ui-line); padding:17px 24px; min-height:80px; gap:15px; }
+html[data-brand] .logo-box { display:flex; align-items:center; gap:8px; padding:0; border:0; color:var(--ui-ink); background:transparent; cursor:pointer; }
+html[data-brand] .brand-mark { width:49px; height:40px; object-fit:contain; mix-blend-mode:multiply; flex-shrink:0; }
+html[data-brand] .brand-wordmark { display:flex; flex-direction:column; align-items:center; gap:1px; }
+html[data-brand] .brand-wordmark strong { font-family:var(--brand-serif); font-size:25px; font-weight:700; line-height:1.3; letter-spacing:-1px; }
+html[data-brand] .brand-wordmark > span { font-size:8px; letter-spacing:3px; padding-left:3px; font-weight:600; }
+html[data-brand] .brand-tagline { font-size:11px; line-height:1.5; color:var(--ui-muted); margin-left:9px; }
+html[data-brand] .coin-btn { border:1px solid #D4D0C6; color:var(--ui-ink); background:transparent; min-height:40px; padding:7px 10px; gap:5px; font-size:13px; border-radius:30px; }
+html[data-brand] .charge-tag { background:#ECE7DC; color:#594939; font-size:10px; margin-left:2px; }
+html[data-brand] main { padding:25px 22px 0; gap:24px; }
+html[data-brand] .tab-view { gap:22px; }
+html[data-brand] .page-intro { position:static; display:flex; justify-content:space-between; align-items:center; z-index:auto; background:transparent; padding:0; border:0; text-align:left; }
+html[data-brand] .page-intro h2,html[data-brand] .reading-heading h2 { font-family:var(--brand-serif); font-size:30px; font-weight:700; letter-spacing:-1.2px; line-height:1.55; color:var(--ui-ink); margin:4px 0 0; }
+html[data-brand] .journal-kicker { font-size:10px; letter-spacing:1.7px; color:var(--brand-copper); font-weight:700; }
+html[data-brand] .journal-date { font-size:12px; color:var(--ui-muted); }
+html[data-brand] .page-intro p { font-size:14px; color:var(--ui-muted); margin-top:9px; line-height:1.7; }
+html[data-brand] .user-profile-bar { padding:0 0 16px; background:transparent; border:0; border-bottom:1px solid var(--ui-line); border-radius:0; gap:4px; }
+html[data-brand] .user-profile-name { font-size:15px; font-weight:650; color:var(--ui-ink); }
+html[data-brand] .user-profile-birth { font-size:12px; line-height:1.7; color:var(--ui-muted); }
+html[data-brand] .card,html[data-brand] .reading-view .card,html[data-brand] .biorhythm-card { background:var(--ui-surface); border:1px solid var(--ui-line)!important; border-radius:16px; padding:24px!important; box-shadow:none; }
+html[data-brand] .card h4,html[data-brand] .drawer-header h4 { font-family:'Pretendard',sans-serif!important; font-size:19px!important; letter-spacing:-.5px!important; font-weight:700!important; color:var(--ui-ink)!important; line-height:1.55; }
+html[data-brand] .brand-icon { width:24px; height:24px; flex-shrink:0; vertical-align:middle; }
+html[data-brand] .brand-service-icon { display:inline-flex; align-items:center; justify-content:center; min-width:42px; height:42px; color:var(--ui-ink); background:var(--ui-tint); border-radius:12px; flex-shrink:0; }
+html[data-brand] .brand-symbol { display:inline-flex; align-items:center; color:inherit; }
+html[data-brand] .brand-symbol .brand-icon { width:17px; height:17px; }
+/* The daily reading is the focal point; time-specific advice remains real text below it. */
+html[data-brand] #view-today .journal-fortune { position:relative; background:#25364A!important; color:#FFFCF4; border:0!important; border-radius:18px; padding:25px 23px!important; gap:17px; overflow:hidden; }
+html[data-brand] .journal-fortune::after { content:''; position:absolute; width:38px; height:38px; border-radius:50%; box-shadow:8px 5px 0 #E8D9B9; right:35px; top:77px; pointer-events:none; transform:rotate(-18deg); }
+html[data-brand] #view-today .journal-fortune > div:first-child > div > span { color:#E6D9BF!important; font-size:12px!important; font-weight:500!important; letter-spacing:1px; }
+html[data-brand] #view-today .journal-fortune #resScoreBadge { color:#F7EDDC!important; background:#3C4C5D!important; border:1px solid #677382!important; font-size:11px!important; font-weight:500!important; border-radius:30px; }
+html[data-brand] #view-today .journal-fortune #resTitle { color:#FFFDF5!important; font-family:var(--brand-serif)!important; font-size:26px!important; line-height:1.65!important; font-weight:600; padding-right:45px; margin:2px 0!important; }
+html[data-brand] #view-today .journal-fortune #resAdvice { color:#F1EDE4!important; font-size:15px!important; line-height:1.85!important; padding-right:8px; }
+html[data-brand] #view-today .journal-fortune .journal-times { border-top:1px solid #566371!important; padding-top:16px!important; display:grid!important; grid-template-columns:repeat(3,minmax(0,1fr)); gap:15px!important; }
+html[data-brand] #view-today .journal-times > div { flex-direction:column!important; gap:9px!important; align-items:flex-start!important; }
+html[data-brand] #view-today .journal-times > div > span:first-child { min-width:0!important; background:transparent!important; color:#E4B28F!important; font-size:12px!important; padding:0!important; font-weight:600!important; }
+html[data-brand] #view-today .journal-times > div > span:last-child { color:#E8E8E3!important; font-size:13px!important; line-height:1.75!important; word-break:keep-all; overflow-wrap:anywhere; }
+/* Daily service entries. No global filters touch color recommendations, garment canvases or food photos. */
+html[data-brand] #dailyStyleCard > div:first-child { border-bottom:0!important; padding-bottom:0!important; }
+html[data-brand] #dailyStyleCard > div:first-child p { color:var(--ui-muted)!important; font-size:12px!important; }
+html[data-brand] #styleTpoControls { display:flex; align-items:center; justify-content:space-between; gap:12px; margin:0; }
+html[data-brand] #styleTpoControls label { font-size:12px; margin:0; color:var(--ui-muted); }
+html[data-brand] #styleTpoSelect { width:auto; max-width:65%; min-height:44px; font-size:13px; background:var(--ui-page); border:1px solid var(--ui-line); border-radius:8px; padding:8px 28px 8px 12px; }
+html[data-brand] #dailyStyleCard > div > span { color:var(--ui-muted)!important; font-size:12px!important; }
+html[data-brand] #dynamicColorPaletteBox { margin:12px 0 4px!important; gap:18px!important; }
+html[data-brand] .palette-chip { background:transparent!important; border:0!important; padding:0!important; }
+html[data-brand] .palette-chip :is(strong,small,span):not([style*="background"]) { font-size:12px!important; color:var(--ui-muted); }
+html[data-brand] #resStyle { color:var(--ui-ink)!important; font-size:16px!important; line-height:1.8!important; font-weight:550!important; }
+html[data-brand] .outfit-modal-open,html[data-brand] #view-today #mealDailyCard #menuNext { background:var(--ui-accent)!important; color:var(--ui-on-accent)!important; min-height:48px; padding:12px 16px; border:0; border-radius:10px; font-size:15px!important; font-weight:650; }
+html[data-brand] #weatherOutfitGuidance { border:0; background:var(--ui-soft); color:var(--ui-muted); border-radius:10px; font-size:13px; line-height:1.8; }
+html[data-brand] #view-today #mealDailyCard { padding:24px!important; }
+html[data-brand] #view-today #mealDailyCard #resMenuLabel { display:block; font-size:20px!important; font-weight:700!important; color:var(--ui-ink)!important; letter-spacing:-.6px; }
+html[data-brand] #mealDailyCard #resMenu { font-size:13px!important; font-weight:500!important; margin-top:10px!important; color:var(--ui-muted)!important; }
+html[data-brand] #mealDailyCard #menuPhotoCards { grid-template-columns:repeat(3,minmax(0,1fr)); gap:9px; }
+html[data-brand] .menu-photo-card { border:0; background:var(--ui-page); border-radius:10px; box-shadow:none; }
+html[data-brand] .food-photo { border-radius:10px; width:100%; height:auto; aspect-ratio:1; object-fit:cover; }
+html[data-brand] .menu-photo-card figcaption { color:var(--ui-ink)!important; font-size:14px!important; line-height:1.6!important; font-weight:600; }
+html[data-brand] #menuModeTabs { padding:4px!important; border:0!important; background:var(--ui-tint)!important; border-radius:9px; width:100%!important; }
+html[data-brand] #menuModeTabs button { flex:1!important; background:transparent!important; border:0!important; min-height:42px; font-size:13px!important; color:var(--ui-muted)!important; }
+html[data-brand] #menuModeTabs button[aria-pressed="true"] { background:var(--ui-surface)!important; color:var(--ui-ink)!important; border-radius:6px; }
+html[data-brand] #dailyLuckCard { background:transparent; border:0!important; padding:5px 0!important; }
+html[data-brand] #dailyLuckCard > div:first-child { margin-bottom:16px!important; }
+html[data-brand] #dailyLuckCard > div:first-child p { font-size:12px!important; color:var(--ui-muted)!important; }
+html[data-brand] #dailyLuckCard .grid-2 { border:1px solid var(--ui-line); border-radius:12px; overflow:hidden; background:var(--ui-surface); }
+html[data-brand] #dailyLuckCard .grid-cell { background:transparent; border-color:var(--ui-line); padding:15px 8px!important; }
+html[data-brand] #dailyLuckCard .grid-cell span { color:var(--ui-muted)!important; font-size:12px!important; }
+html[data-brand] #dailyLuckCard .grid-cell p { color:var(--ui-ink)!important; font-size:15px!important; line-height:1.65; }
+html[data-brand] .action-card { background:#EEE9DD; border:0; border-left:3px solid #B9744E; padding:18px!important; border-radius:0 10px 10px 0; margin-top:20px; }
+html[data-brand] .action-card > span { color:#795237!important; font-size:12px!important; }
+html[data-brand] .action-card p { color:var(--ui-ink)!important; font-size:15px!important; line-height:1.85!important; }
+html[data-brand] .biorhythm-card { background:transparent; border:0!important; border-top:1px solid var(--ui-line)!important; padding:22px 0!important; border-radius:0; }
+html[data-brand] .biorhythm-card :is(h4) { font-size:18px!important; color:var(--ui-ink)!important; }
+html[data-brand] .biorhythm-card > div[style*="background"] { background:var(--ui-soft)!important; border-color:var(--ui-line)!important; border-left-color:#8C9B84!important; }
+html[data-brand] .biorhythm-card #bioOverallText { font-size:14px!important; line-height:1.85!important; }
+html[data-brand] .drawer-card { background:transparent!important; border:0!important; border-top:1px solid var(--ui-line)!important; border-radius:0!important; box-shadow:none!important; }
+html[data-brand] .drawer-header { padding:19px 0!important; gap:12px; }
+html[data-brand] .drawer-header > div { gap:13px!important; }
+html[data-brand] .drawer-header p { color:var(--ui-muted)!important; font-size:12px!important; }
+html[data-brand] .drawer-body { background:var(--ui-surface); border-radius:12px; }
+html[data-brand] .ad-slot-box[hidden] { display:none!important; }
+/* Reading and discovery: editorial titles, outlines, single-column questions. */
+html[data-brand] .reading-view { gap:0; }
+html[data-brand] .reading-heading { position:static; background:transparent; padding:0 0 23px; border:0; margin:0; }
+html[data-brand] .reading-heading .reading-eyebrow { font-size:11px; letter-spacing:1px; color:var(--brand-copper); margin-bottom:4px; }
+html[data-brand] .reading-heading p { font-size:15px; line-height:1.85; color:var(--ui-muted); margin:10px 0 0; }
+html[data-brand] .reading-profile { padding:12px 0!important; background:transparent!important; border:0!important; border-bottom:1px solid var(--ui-line)!important; border-radius:0!important; margin-bottom:9px; }
+html[data-brand] .reading-profile p { font-size:12px!important; line-height:1.7; }
+html[data-brand] .reading-text-button { color:var(--ui-ink); font-size:13px; }
+html[data-brand] .reading-tabs { background:transparent!important; border:0!important; border-bottom:1px solid #D7D3C9!important; border-radius:0!important; padding:0; margin-bottom:21px; }
+html[data-brand] .reading-tabs button { border:0; border-bottom:2px solid transparent; border-radius:0!important; background:transparent!important; color:var(--ui-muted); font-size:14px; min-height:50px; }
+html[data-brand] .reading-tabs button[aria-selected="true"] { color:var(--brand-copper)!important; border-bottom-color:var(--brand-copper); box-shadow:none; }
+html[data-brand] .reading-view .reading-summary { background:transparent; border:0; border-left:2px solid #C99270; border-radius:0; padding:2px 0 2px 15px; margin-bottom:23px; }
+html[data-brand] .reading-summary h3 { font-size:17px; color:var(--ui-ink); }
+html[data-brand] .reading-summary p { font-size:13px; line-height:1.9; color:var(--ui-muted); }
+html[data-brand] .reading-summary .reading-eyebrow { color:var(--brand-copper); font-size:10px; letter-spacing:.6px; }
+html[data-brand] .reading-view .card h3 { color:var(--ui-ink); font-family:var(--brand-serif); font-size:24px; line-height:1.7; font-weight:600; letter-spacing:-.7px; }
+html[data-brand] .reading-view .reading-lead { background-color:var(--ui-surface); background-image:url('/assets/brand-2026/moon-landscape.webp'); background-repeat:no-repeat; background-size:100% auto; background-position:top right; padding-top:28px!important; }
+html[data-brand] .reading-view .reading-lead > .reading-eyebrow { color:#755239; font-size:11px; }
+html[data-brand] .reading-view .reading-lead > h3 { max-width:85%; }
+html[data-brand] .reading-view .card > p { font-size:15px!important; line-height:1.9!important; color:#3F4C57; }
+html[data-brand] .reading-view .report-facts { margin:22px 0 10px; border-color:#D7D2C4; font-size:12px; }
+html[data-brand] .reading-view .report-facts strong { color:var(--brand-copper); font-weight:650; }
+html[data-brand] .reading-view .report-preview li { padding-left:34px; padding-bottom:13px; border-bottom:1px solid #E5E0D6; }
+html[data-brand] .reading-view .report-preview li::before { color:var(--brand-copper); top:2px; font-size:11px; }
+html[data-brand] .reading-view .report-preview li strong { font-weight:600; color:var(--ui-ink); }
+html[data-brand] .reading-view .report-preview li span { color:var(--ui-muted); }
+html[data-brand] .reading-primary,html[data-brand] .reading-view .report-entry > button { background:#25364A!important; border-radius:9px!important; min-height:50px; font-size:15px!important; font-weight:600; }
+html[data-brand] .reading-view .reading-secondary { border-color:#CFC9BD; border-radius:9px; color:var(--ui-ink); background:transparent; font-size:14px; }
+html[data-brand] .reading-caption,html[data-brand] .reading-view .card > .reading-caption { font-size:12px!important; line-height:1.9!important; color:var(--ui-muted); }
+html[data-brand] .reading-current { border-color:var(--ui-line); }
+html[data-brand] .reading-current p { font-size:13px; color:var(--ui-muted); }
+html[data-brand] .reading-section-title { margin:25px 0 14px; }
+html[data-brand] .reading-section-title h3 { font-size:17px; color:var(--ui-ink); }
+html[data-brand] .reading-section-title > span { font-size:12px; }
+html[data-brand] .reading-links { border:0; border-radius:0; background:transparent; }
+html[data-brand] .reading-links button { background:transparent; border:0!important; border-bottom:1px solid var(--ui-line)!important; border-radius:0; padding:17px 8px; }
+html[data-brand] .reading-links strong { font-size:15px; font-weight:650; }
+html[data-brand] .reading-links span { font-size:12px; color:var(--ui-muted); }
+html[data-brand] .reading-evidence { background:transparent; border:0!important; border-top:1px solid var(--ui-line)!important; padding:20px 0!important; border-radius:0; }
+html[data-brand] .reading-evidence summary { font-size:14px; }
+html[data-brand] .reading-archive-link { border-color:var(--ui-line); color:var(--ui-ink); font-size:13px; }
+html[data-brand] .reading-view .compatibility-shortcut { background:#EDE8DC; color:#5F4D3D; border:0; border-radius:12px; padding:16px; }
+html[data-brand] .reading-view .concern-choices { display:grid; grid-template-columns:1fr; gap:10px; }
+html[data-brand] .reading-view .concern-choices > button { display:grid; grid-template-columns:38px minmax(0,1fr) 20px; gap:3px 13px; min-height:88px; padding:17px 15px; border:1px solid #DBD6CB; background:var(--ui-surface); border-radius:11px; }
+html[data-brand] .reading-view .concern-choices > button:last-child { grid-column:auto; min-height:88px; }
+html[data-brand] .concern-symbol { grid-row:1 / 3; align-self:center; width:34px; height:34px; display:grid; place-items:center; color:var(--ui-ink); font-style:normal; }
+html[data-brand] .concern-category { grid-column:2; font-size:13px!important; color:var(--ui-ink)!important; font-weight:700; }
+html[data-brand] .concern-choices strong { grid-column:2; font-size:14px!important; font-weight:400!important; color:var(--ui-muted); line-height:1.7!important; }
+html[data-brand] .reading-view .concern-choices .concern-open { grid-column:3; grid-row:1 / 3; align-self:center; margin:0; padding:0; font-size:0; color:var(--ui-ink); }
+html[data-brand] .reading-view .concern-choices .concern-open > span { font-size:19px; }
+html[data-brand] .reading-view .concern-choices button[aria-pressed="true"] { background:#F0E7DA!important; border:1px solid #9F694A!important; padding:17px 15px; color:var(--ui-ink); }
+html[data-brand] .reading-view .concern-choices button[aria-pressed="true"] .concern-open::before { display:none; }
+html[data-brand] .reading-view .compatibility-card { background:#F0EBDD; border-color:#DDD2BE!important; position:relative; }
+html[data-brand] .compatibility-card::after { content:''; width:50px; height:50px; position:absolute; right:28px; top:23px; border-radius:50%; background:#CDA07B; box-shadow:-30px 0 0 #AEBDAA; opacity:.35; pointer-events:none; }
+html[data-brand] .compatibility-card > .reading-eyebrow { color:#72583E; max-width:70%; }
+html[data-brand] .compatibility-topics span { background:transparent; color:var(--ui-muted); border-color:#CFC5B5; }
+html[data-brand] .reading-help summary { color:var(--ui-ink); }
+html[data-brand] .reading-help p { color:var(--ui-muted); }
+/* Forms, account and the shared report reader. */
+html[data-brand] #view-mypage .card { border-radius:12px; }
+html[data-brand] #view-mypage .card:first-of-type { background:#EDE8DC; }
+html[data-brand] #coinMypage { font-family:var(--brand-serif); font-size:32px; color:var(--ui-ink); }
+html[data-brand] #view-mypage button { min-height:44px; font-size:14px!important; }
+html[data-brand] #view-mypage button[onclick="openChargeStore()"] { border-radius:9px!important; font-size:15px!important; }
+html[data-brand] #mypageProfileDesc { font-size:13px!important; color:var(--ui-muted)!important; line-height:1.8; }
+html[data-brand] #unlockedArchiveList > div { background:transparent!important; border-color:var(--ui-line)!important; border-radius:8px!important; }
+html[data-brand] #unlockedArchiveList h4 { font-size:16px!important; }
+html[data-brand] #unlockedArchiveList button { background:var(--ui-ink)!important; white-space:nowrap; }
+html[data-brand] #unlockedArchiveList span { background:var(--ui-soft)!important; color:var(--ui-muted)!important; }
+html[data-brand] #archiveCountBadge { background:var(--ui-accent)!important; }
+html[data-brand] #onboardingInputView { background:var(--ui-surface); border:1px solid var(--ui-line); border-radius:16px; }
+html[data-brand] :is(.form-input,.form-select-box) { border-color:#BDBAB1!important; border-radius:9px!important; background:var(--ui-surface)!important; color:var(--ui-ink)!important; min-height:48px; font-size:16px; }
+html[data-brand] .cal-btn { color:var(--ui-ink); background:transparent; border-color:var(--ui-line); min-height:44px; }
+html[data-brand] .cal-btn.active { color:#FFF; background:var(--ui-accent); border-color:var(--ui-accent); }
+html[data-brand] .modal-bg { background:rgba(26,34,44,.6); padding:18px; }
+html[data-brand] .modal-bg .modal-content { background:var(--ui-surface)!important; border-radius:18px!important; padding:23px!important; max-height:calc(100dvh - 36px)!important; gap:17px; border-color:#D5D0C5; scrollbar-gutter:auto; }
+html[data-brand] .modal-content .ui-modal-heading h3 { font-family:var(--brand-serif)!important; font-weight:600!important; font-size:21px!important; }
+html[data-brand] .modal-content .ui-action { border-radius:9px!important; }
+html[data-brand] .modal-content .ui-action-primary { background:var(--ui-accent)!important; color:#FFF!important; }
+html[data-brand] .modal-content .ui-option { border-color:var(--ui-line)!important; border-radius:9px!important; }
+html[data-brand] .modal-content .ui-option:has(input:checked) { background:#F1E9DC!important; border-color:#995737!important; }
+html[data-brand] #fashionV2Modal .modal-content { padding-bottom:18px!important; }
+html[data-brand] .fashion-v2-tabs { background:var(--ui-soft)!important; border:0; border-radius:10px!important; }
+html[data-brand] .fashion-v2-tab { color:var(--ui-muted); min-height:45px; font-size:14px; }
+html[data-brand] .fashion-v2-tab[aria-selected="true"] { background:var(--ui-surface)!important; color:var(--ui-ink)!important; border-radius:7px; }
+html[data-brand] .fashion-v2-proposal { background:var(--ui-soft)!important; color:var(--ui-muted)!important; font-size:13px!important; }
+html[data-brand] .fashion-v2-close { background:var(--ui-accent)!important; border-radius:10px!important; min-height:48px; }
+html[data-brand] #archiveDetailModal .modal-content { overflow:hidden; }
+html[data-brand] #archiveModalBody { background:var(--ui-surface); padding:8px 3px 20px!important; }
+html[data-brand] #archiveModalBody :is(p,li) { font-size:16px!important; line-height:2!important; }
+html[data-brand] #archiveModalBody :is(h3,h4) { font-family:var(--brand-serif)!important; font-size:21px!important; line-height:1.75!important; }
+html[data-brand] #archiveModalBody [style*="background"] { background:var(--ui-soft)!important; border-color:var(--ui-line)!important; }
+html[data-brand] #archiveModalBody .annual-reader-months button { background:var(--ui-page); border-color:var(--ui-line); color:var(--ui-ink); border-radius:7px; }
+html[data-brand] #archiveModalBody .annual-reader-months button[aria-pressed="true"] { color:#FFF; background:var(--ui-accent); }
+html[data-brand] #archiveDetailModal[data-annual-partitioned="true"] #readingReportContents { background:var(--ui-soft); border-radius:10px; }
+html[data-brand] #archiveDetailModal[data-annual-reader="true"] > .modal-content { height:100dvh!important; max-height:100dvh!important; border-radius:0!important; }
+html[data-brand] #archiveDetailModal[data-annual-reader="true"] { padding:0!important; background:var(--ui-page); }
+/* Landing page shares the same mark, paper, typography and generated brand artwork. */
+html[data-brand] body:has(#view-login-gate:not(.hidden)),html[data-brand] .app-container:has(#view-login-gate:not(.hidden)) { background:var(--ui-page); }
+html[data-brand] .app-container:has(#view-login-gate:not(.hidden)) { max-width:none; }
+html[data-brand] .app-container:has(#view-login-gate:not(.hidden)) > header { background:var(--ui-page); padding:22px max(24px,calc((100% - 1100px)/2)); }
+html[data-brand] .dalha-landing { color:var(--ui-ink); }
+html[data-brand] .landing-eyebrow { color:var(--brand-copper); }
+html[data-brand] .landing-intro h1 { font-family:var(--brand-serif); font-size:clamp(31px,4vw,50px); line-height:1.6; letter-spacing:-1.6px; color:var(--ui-ink); }
+html[data-brand] .landing-intro h1 em { color:#995737; font-family:inherit; }
+html[data-brand] .landing-description,html[data-brand] .landing-signup-note { color:var(--ui-muted); }
+html[data-brand] .landing-scene { background:url('/assets/brand-2026/moon-landscape.webp') center/cover; padding:65px 28px; border-radius:18px; }
+html[data-brand] .landing-orbit { display:none; }
+html[data-brand] .landing-day-card { background:#FFFEF9F2; border:1px solid #E3DACE; transform:rotate(-3deg); box-shadow:0 14px 30px #25364A12; }
+html[data-brand] .landing-card-quote { color:var(--ui-ink); font-family:var(--brand-serif); font-size:27px; line-height:1.7; }
+html[data-brand] .landing-floating-note { background:var(--ui-ink); color:#FFFDF6; border-radius:7px; box-shadow:none; }
+html[data-brand] .landing-text-link { color:var(--ui-ink); }
+html[data-brand] .landing-features { background:#EFEBE1; border-color:var(--ui-line); }
+html[data-brand] .landing-section-heading h2,html[data-brand] .landing-start h2 { font-family:var(--brand-serif); color:var(--ui-ink); font-size:29px; }
+html[data-brand] .landing-fortune-art { background:#DDE4D8; color:var(--ui-ink); }
+html[data-brand] .landing-start,html[data-brand] .landing-about { background:var(--ui-page); color:var(--ui-ink); }
+html[data-brand] .landing-start-link { background:var(--ui-accent); color:#fff; }
+/* Navigation stays in one predictable position across all four destinations. */
+html[data-brand] #bottomNavBar { position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:100%; max-width:600px; padding:8px 14px max(9px,env(safe-area-inset-bottom)); min-height:76px; border-top:1px solid #D5D1C7; background:#FBF9F4FA; box-shadow:none; gap:5px; }
+html[data-brand] .tab-btn { min-height:55px; border:0; border-radius:9px; color:#67717A; gap:5px; padding:6px 2px; background:transparent; }
+html[data-brand] .tab-btn .brand-icon { width:22px; height:22px; stroke-width:1.5; }
+html[data-brand] .tab-btn span { font-size:11px; font-weight:500; }
+html[data-brand] .tab-btn.active { background:#EDE8DC; color:var(--ui-ink); }
+html[data-brand] .tab-btn.active span { font-weight:750; }
+html[data-brand] .app-container > footer { color:var(--ui-muted)!important; border-color:var(--ui-line)!important; font-size:11px!important; line-height:1.85!important; padding:26px 18px!important; }
+html[data-brand] .design-comparison { background:#F0E8D9; padding:10px 22px; display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:5px; border:0; }
+html[data-brand] .design-comparison p { margin:0; font-size:11px; color:#685542; }
+html[data-brand] .design-comparison a { border:0; padding:0; min-height:28px; font-size:11px; color:#685542; }
+@media(min-width:940px) {
+  html[data-brand] .app-container:not(:has(#view-login-gate:not(.hidden))) { max-width:1080px; }
+  html[data-brand] .app-container > header { padding-left:40px; padding-right:40px; }
+  html[data-brand] main { padding:32px 40px 0; }
+  html[data-brand] #view-today:not(.hidden) { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:26px; align-items:start; }
+  html[data-brand] #view-today > :is(.page-intro,.user-profile-bar,.journal-fortune,.ad-slot-box) { grid-column:1 / -1; }
+  html[data-brand] #view-today .journal-fortune { padding:32px!important; }
+  html[data-brand] #view-today .journal-fortune #resTitle { font-size:32px!important; }
+  html[data-brand] #view-today .journal-fortune .journal-times { gap:30px!important; }
+  html[data-brand] #view-today .journal-times > div > span:last-child { font-size:14px!important; }
+  html[data-brand] .reading-view,#view-mypage { max-width:720px; width:100%; margin:0 auto; }
+  html[data-brand] #bottomNavBar { max-width:580px; bottom:16px; border:1px solid var(--ui-line); border-radius:17px; padding:7px 14px; box-shadow:0 8px 30px #25364A12; }
+}
+@media(max-width:420px) {
+  html[data-brand] .app-container > header { padding:15px 18px!important; min-height:74px; }
+  html[data-brand] .brand-tagline { display:none; }
+  html[data-brand] main { padding:22px 17px 0; }
+  html[data-brand] .card,html[data-brand] .reading-view .card,html[data-brand] #view-today #mealDailyCard { padding:20px 17px!important; border-radius:13px; }
+  html[data-brand] .page-intro h2,html[data-brand] .reading-heading h2 { font-size:27px; }
+  html[data-brand] #view-today .journal-fortune { padding:22px 19px!important; }
+  html[data-brand] #view-today .journal-fortune #resTitle { font-size:23px!important; }
+  html[data-brand] #view-today .journal-fortune .journal-times { grid-template-columns:1fr; gap:12px!important; }
+  html[data-brand] #view-today .journal-times > div { flex-direction:row!important; gap:15px!important; }
+  html[data-brand] #view-today .journal-times > div > span:first-child { min-width:27px!important; padding-top:2px!important; }
+  html[data-brand] .reading-view .card h3 { font-size:22px; }
+  html[data-brand] .reading-view .concern-choices > button { grid-template-columns:28px minmax(0,1fr) 16px; padding:16px 12px; gap:4px 10px; }
+  html[data-brand] .reading-view .concern-choices button[aria-pressed="true"] { padding:16px 12px; }
+  html[data-brand] .concern-symbol { width:28px; }
+  html[data-brand] #view-mypage .card:has(#mypageProfileDesc) { flex-wrap:wrap; gap:15px; }
+  html[data-brand] .modal-bg { padding:10px; }
+  html[data-brand] .modal-bg .modal-content { padding:20px 16px!important; max-height:calc(100dvh - 20px)!important; }
+  html[data-brand] #archiveDetailModal:not([data-annual-reader="true"]) .modal-content { height:calc(100dvh - 20px); }
+  html[data-brand] .landing-hero { padding-top:35px; }
+  html[data-brand] .landing-intro h1 { font-size:29px; }
+  html[data-brand] .landing-scene { padding:36px 16px; }
+}
+@media(prefers-reduced-motion:reduce) { html[data-brand] *,html[data-brand] *::before,html[data-brand] *::after { animation:none!important; transition:none!important; scroll-behavior:auto!important; } }

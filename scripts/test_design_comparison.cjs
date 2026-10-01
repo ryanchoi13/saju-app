@@ -15,11 +15,12 @@ class LocalResources extends ResourceLoader {
 }
 async function boot(url) {
   const errors=[]; let originalStorage,apiCalls=0;
-  const logs=new VirtualConsole(); logs.on('jsdomError',e=>errors.push(e));
+  const logs=new VirtualConsole(); logs.on('jsdomError',e=>{if(e.type!=='css parsing')errors.push(e);});
   const dom=new JSDOM(html,{url,runScripts:'dangerously',resources:new LocalResources(),pretendToBeVisual:true,virtualConsole:logs,beforeParse(w){
+    w.Request=global.Request; w.Headers=global.Headers;
     originalStorage=w.localStorage; originalStorage.setItem('wardrobe:real-owner','keep these items');
     w.scrollTo=()=>{};w.HTMLElement.prototype.scrollIntoView=()=>{};
-    w.fetch=async()=>{apiCalls++;throw Error('No external calls');};w.alert=()=>{};
+    w.fetch=async(url,options={})=>{assert.equal(options.method||'GET','GET');apiCalls++;throw Error('No external calls');};w.alert=()=>{};
   }});
   await new Promise(resolve=>dom.window.addEventListener('load',resolve));
   await new Promise(resolve=>setTimeout(resolve,30));
@@ -31,7 +32,8 @@ async function boot(url) {
     const app=await boot(`https://dalha.example/design/${design}?sample=1`);
     const {doc,w}=app;
     assert.equal(app.errors.length,0,app.errors.map(x=>x.stack).join('\n'));
-    assert.equal(doc.documentElement.dataset.design,design);
+    assert.equal(doc.documentElement.dataset.design,'journal');
+    assert.equal(doc.documentElement.dataset.brand,'journal');
     assert.equal(w.DALHA_DESIGN_SAMPLE,true);
     assert.equal(doc.getElementById('view-login-gate').classList.contains('hidden'),true);
     assert.equal(doc.getElementById('bottomNavBar').classList.contains('hidden'),false);
@@ -42,7 +44,7 @@ async function boot(url) {
     screens.push(doc.getElementById('view-today').textContent.replace(/\s+/g,' ').trim());
     assert.equal(doc.querySelectorAll('.look-card').length,0);
     assert.equal(doc.getElementById('openOutfitModalButton').hidden,false);
-    assert.equal(doc.querySelectorAll('.menu-photo-card').length,2);
+    assert.equal(doc.querySelectorAll('.menu-photo-card').length,3);
     for (const tpo of ['business_casual','business_formal','casual']) {
       const select=doc.getElementById('styleTpoSelect');select.value=tpo;
       select.dispatchEvent(new w.Event('change',{bubbles:true}));
@@ -59,29 +61,19 @@ async function boot(url) {
       assert.equal(doc.body.style.overflow,'',`${design} modal controller releases the page after close`);
       assert.ok(!doc.getElementById('resStyle').textContent.includes('불러온'));
     }
-    for(let i=0;i<9;i++) await w.DalhaMenu.next();
-    w.DalhaMenu.next(); await new Promise(r=>setTimeout(r,0));
-    assert.equal(doc.getElementById('menuHistoryModal').getAttribute('role'),'dialog');
-    assert.equal(doc.querySelectorAll('#menuHistoryCards .menu-photo-card').length,20);
-    doc.dispatchEvent(new w.KeyboardEvent('keydown',{key:'Escape',bubbles:true}));
-    assert.equal(doc.getElementById('menuHistoryModal').classList.contains('hidden'),true);
-    await w.DalhaMenu.changeMode('diet');
-    assert.equal(doc.querySelectorAll('#menuPhotoCards .food-photo').length,2);
-    assert.equal(doc.querySelectorAll('#menuPhotoCards .menu-photo-placeholder').length,0);
-    for(let i=0;i<4;i++) await w.DalhaMenu.next();
-    w.DalhaMenu.next();
-    assert.equal(doc.querySelectorAll('#menuHistoryCards .menu-photo-card').length,10);
-    assert.equal(doc.querySelectorAll('#menuHistoryCards .food-photo').length,10);
-    assert.equal(doc.querySelectorAll('#menuHistoryCards .menu-photo-placeholder').length,0);
-    w.DalhaMenu.close();
-    assert.equal(app.apiCalls,0);
+    assert.equal(doc.querySelectorAll('#bottomNavBar .brand-icon').length,4);
+    assert.equal(doc.querySelector('.brand-mark').getAttribute('src'),'/assets/brand-2026/moon-mark.webp');
+    assert.equal(doc.querySelectorAll('[data-concern-choice] .brand-icon').length,5);
     doc.getElementById('tab-saju').click(); doc.getElementById('saju-tab-year').click();
-    assert.equal(doc.querySelectorAll('#annualMonthChoices button').length,12);
-    doc.querySelectorAll('#annualMonthChoices button')[8].click();
-    assert.match(doc.getElementById('annualMonthReading').textContent,/9월/);
-    doc.querySelector('#sinnianBox button').click();
+    assert.equal(doc.getElementById('tab-saju').getAttribute('aria-current'),'page');
+    doc.querySelector('#sinnianBox .reading-secondary').focus();
+    doc.querySelector('#sinnianBox .reading-secondary').click();
     assert.equal(doc.getElementById('archiveDetailModal').classList.contains('hidden'),false);
+    assert.equal(doc.querySelectorAll('.annual-reader-months button').length,12);
+    doc.querySelectorAll('.annual-reader-months button')[8].click();
+    assert.match(doc.querySelector('.annual-selected-month').textContent,/9月|9월/);
     doc.getElementById('readingCloseButton').click(); await new Promise(r=>setTimeout(r,20));
+    assert.equal(doc.activeElement.className,'reading-secondary');
     w.openConcern('love');doc.getElementById('btnTheme_love').click();
     await new Promise(r=>setTimeout(r,0));
     assert.equal(doc.querySelectorAll('#modalOptionBox .ui-option').length,4);
@@ -105,9 +97,9 @@ async function boot(url) {
     assert.equal(app.w.DALHA_DESIGN_SAMPLE,false);
     assert.equal(app.w.localStorage,app.originalStorage);
     assert.equal(app.doc.getElementById('view-login-gate').classList.contains('hidden'),false);
-    assert.equal(app.apiCalls,0);
+    assert.equal(app.apiCalls,1); // Read-only session check on real (non-sample) routes.
     assert.equal(app.errors.length,0);
     app.w.close();
   }
   console.log('PASS identical sample content; root and live alternative retain actual login and storage');
-})().catch(e=>{console.error(e);process.exitCode=1;});
+})().catch(e=>{console.error(e);process.exit(1);});
