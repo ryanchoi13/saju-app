@@ -144,7 +144,9 @@ const tick = () => new Promise(resolve => setTimeout(resolve,30));
         w.switchTab('saju'); w.selectSajuSection('year');
         const button = doc.querySelector('#sinnianBox button'); button.focus(); button.click();
         assert.equal(doc.activeElement.id,'readingCloseButton');
-        assert.equal(doc.querySelectorAll('#readingReportContents button').length,12);
+        assert.equal(doc.querySelectorAll('#readingReportContents button').length,0);
+        assert.ok(!visible('readingReportContents'));
+        assert.equal(doc.querySelectorAll('#archiveModalBody h3').length,12);
         w.history.back(); await tick();
         assert.ok(visible('saju-year')); assert.equal(doc.activeElement,button);
         evalApp(`serverUnlockedReports = ${JSON.stringify([report('sinnian','<h3>기존 풀이</h3><p>보존한 본문</p>','2024 예전 리포트')])}`);
@@ -152,6 +154,30 @@ const tick = () => new Promise(resolve => setTimeout(resolve,30));
         assert.ok(doc.getElementById('annualMonthExplorer').classList.contains('hidden'));
         w.openServerArchiveDetail(0); assert.match(doc.getElementById('archiveModalBody').textContent,/보존한 본문/);
         w.closeArchiveDetailModal(); await tick();
+    });
+    await test('all saved readings open directly without a duplicate menu or purchase date and retain their source', async () => {
+        let requests=0;
+        w.fetch=async()=>{requests++; throw Error('reopening must not request a new report');};
+        for(const key of ['daewoon','wealth','business','love','health','study','gunghap']) {
+            const saved={...report(key,'<div class="long-reading"><section class="reading-chapter"><h3>첫 번째 이야기</h3><p>구매 당시의 원문</p></section><section class="reading-chapter"><h3>두 번째 이야기</h3><p>그대로 보관할 내용</p></section></div>','가상검증님 정통 명리 평생 직업·사업운'),narrative_version:'reading-conversation-v3'};
+            evalApp(`serverUnlockedReports=${JSON.stringify([saved])};`);
+            w.renderServerArchive(); w.refreshReportEntrypoints();
+            assert.match(doc.getElementById('unlockedArchiveList').textContent,/2025.09.03/);
+            const slot=doc.getElementById(key==='daewoon'?'daewoonBox':key==='gunghap'?'gunghapReportBox':`themeReport_${key}`);
+            assert.doesNotMatch(slot.textContent,/2025.09.03/);
+            w.openServerArchiveDetail(0);
+            assert.equal(doc.getElementById('readingReportMeta').hidden,true);
+            assert.equal(doc.getElementById('readingReportMeta').textContent,'');
+            assert.ok(!visible('readingReportContents'));
+            assert.equal(doc.querySelectorAll('#readingReportContents button').length,0);
+            assert.equal(doc.getElementById('archiveModalBody').innerHTML,saved.report_content);
+            w.closeArchiveDetailModal(); await tick();
+            await w.handleUnlockReportOnServer(key,220);
+            assert.equal(doc.getElementById('archiveModalBody').innerHTML,saved.report_content);
+            assert.equal(evalApp('JSON.stringify(serverUnlockedReports[0])'),JSON.stringify(saved));
+            w.closeArchiveDetailModal(); await tick();
+        }
+        assert.equal(requests,0);
     });
     await test('double purchase clicks send one request and failure unlocks the button', async () => {
         evalApp('serverUnlockedReports=[]; currentCoin=1000;'); w.refreshReportEntrypoints();

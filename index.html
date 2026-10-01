@@ -510,7 +510,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;600;700&display=swap" rel="stylesheet">
-    <link id="dalhaBrandStyles" rel="stylesheet" href="/assets/brand-2026/brand.css?v=20261001-2">
+    <link id="dalhaBrandStyles" rel="stylesheet" href="/assets/brand-2026/brand.css?v=20261001-3">
     <script src="/assets/brand-2026/brand-ui.js?v=20261001-2" defer></script>
 </head>
 <body>
@@ -1474,7 +1474,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 <button id="readingCloseButton" class="reading-text-button" aria-label="풀이 닫고 돌아가기" onclick="closeArchiveDetailModal()">‹</button>
                 <h3 id="archiveModalTitle" style="font-size: 14px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif;">운세 리포트</h3>
             </div>
-            <p id="readingReportMeta" class="reading-caption"></p>
+            <p id="readingReportMeta" class="reading-caption" hidden></p>
             <button id="annualRefreshButton" class="reading-text-button hidden" onclick="refreshOwnedReading()">새 풀이로 업데이트 · 추가 복채 없음</button>
             <label id="readingVersionControl" class="hidden">풀이 버전
                 <select id="readingVersionSelect" onchange="openReadingReport(readingReportIndex, this.value)"></select>
@@ -3391,7 +3391,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 const item = serverUnlockedReports[index];
                 const note = document.createElement('p');
                 note.className = 'reading-caption';
-                note.textContent = `구매한 결과 · ${item.report_title}${item.created_at ? ` · ${item.created_at}` : ''}`;
+                note.textContent = `구매한 결과 · ${item.report_title}`;
                 const open = document.createElement('button');
                 open.className = 'reading-primary';
                 open.textContent = key === 'sinnian' ? `${item.report_year || item.report_title?.match(/^(\d{4})/)?.[1] || ''}년 올해운세 확인하기`.replace(/^년 /, '') : '구매한 풀이 다시 읽기';
@@ -3438,8 +3438,8 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             }
             readingReportIndex = index;
             document.getElementById('archiveModalTitle').textContent = item.report_title;
-            document.getElementById('readingReportMeta').textContent =
-                owned.created_at ? `결제일 · ${owned.created_at.slice(0,10).replace(/-/g,'.')}` : '';
+            // Purchase dates belong to My DALHA. Reopening reads the saved document unchanged.
+            document.getElementById('readingReportMeta').textContent = '';
             document.getElementById('annualRefreshButton').classList.toggle('hidden', !readingNeedsRefresh(owned));
             const versionControl = document.getElementById('readingVersionControl');
             const versionSelect = document.getElementById('readingVersionSelect');
@@ -3469,12 +3469,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             contents.removeAttribute('role');
             const partitioned = owned.report_key === 'sinnian' && window.setupAnnualReader?.(body, contents);
             modal.dataset.annualPartitioned = String(Boolean(partitioned));
-            if (!partitioned) Array.from(body.querySelectorAll('h3')).forEach(heading => {
-                const button = document.createElement('button');
-                button.textContent = heading.dataset.tocLabel || heading.textContent;
-                button.onclick = () => heading.scrollIntoView({block:'start',behavior:'smooth'});
-                contents.append(button);
-            });
+            // Keep the annual year/month switch; chapter headings stay in the body without a duplicate menu.
             contents.classList.toggle('hidden', !contents.childElementCount);
             recentReportIndexes = [index, ...recentReportIndexes.filter(i => i !== index)].slice(0,3);
             renderRecentReadings();

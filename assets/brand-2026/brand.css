@@ -183,7 +183,12 @@ html[data-brand] .fashion-v2-tab { color:var(--ui-muted); min-height:45px; font-
 html[data-brand] .fashion-v2-tab[aria-selected="true"] { background:var(--ui-surface)!important; color:var(--ui-ink)!important; border-radius:7px; }
 html[data-brand] .fashion-v2-proposal { background:var(--ui-soft)!important; color:var(--ui-muted)!important; font-size:13px!important; }
 html[data-brand] .fashion-v2-close { background:var(--ui-accent)!important; border-radius:10px!important; min-height:48px; }
-html[data-brand] #archiveDetailModal .modal-content { overflow:hidden; }
+html[data-brand] #archiveDetailModal .modal-content { overflow:hidden; gap:10px; padding:16px!important; }
+html[data-brand] #archiveDetailModal .reading-report-heading { display:grid!important; grid-template-columns:40px minmax(0,1fr); gap:10px; margin:0!important; padding-bottom:10px!important; flex-shrink:0; }
+html[data-brand] #archiveDetailModal .reading-report-heading #archiveModalTitle { font-size:18px!important; line-height:1.5!important; margin:0; padding:0; }
+html[data-brand] #archiveDetailModal[data-annual-reader="true"] .reading-report-heading { grid-template-columns:40px minmax(0,1fr) 40px; }
+html[data-brand] #readingReportMeta[hidden] { display:none!important; }
+html[data-brand] #archiveModalBody .long-reading > .reading-chapter:first-child > h3:first-child { margin-top:0; }
 html[data-brand] #archiveModalBody { background:var(--ui-surface); padding:8px 3px 20px!important; }
 html[data-brand] #archiveModalBody :is(p,li) { font-size:16px!important; line-height:2!important; }
 html[data-brand] #archiveModalBody :is(h3,h4) { font-family:var(--brand-serif)!important; font-size:21px!important; line-height:1.75!important; }
