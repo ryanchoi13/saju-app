@@ -171,7 +171,13 @@ html[data-brand] .modal-content .ui-action { border-radius:9px!important; }
 html[data-brand] .modal-content .ui-action-primary { background:var(--ui-accent)!important; color:#FFF!important; }
 html[data-brand] .modal-content .ui-option { border-color:var(--ui-line)!important; border-radius:9px!important; }
 html[data-brand] .modal-content .ui-option:has(input:checked) { background:#F1E9DC!important; border-color:#995737!important; }
-html[data-brand] #fashionV2Modal .modal-content { padding-bottom:18px!important; }
+html[data-brand] #fashionV2Modal { align-items:center; padding:12px!important; }
+html[data-brand] #fashionV2Modal .fashion-v2-sheet { padding:0!important; gap:0; height:min(800px,calc(100dvh - 24px)); max-height:calc(100dvh - 24px)!important; overflow:hidden; }
+html[data-brand] .fashion-v2-header,html[data-brand] .fashion-v2-tabs { flex:0 0 auto; }
+html[data-brand] .fashion-v2-header,html[data-brand] .fashion-v2-footer { background:var(--ui-surface); }
+html[data-brand] .fashion-v2-slides { flex:1 1 auto; min-height:0; }
+html[data-brand] .fashion-v2-slide { max-height:none; min-height:0; }
+html[data-brand] .fashion-v2-header h3 { font-family:var(--brand-serif); font-size:21px; }
 html[data-brand] .fashion-v2-tabs { background:var(--ui-soft)!important; border:0; border-radius:10px!important; }
 html[data-brand] .fashion-v2-tab { color:var(--ui-muted); min-height:45px; font-size:14px; }
 html[data-brand] .fashion-v2-tab[aria-selected="true"] { background:var(--ui-surface)!important; color:var(--ui-ink)!important; border-radius:7px; }

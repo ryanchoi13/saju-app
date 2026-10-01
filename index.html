@@ -383,8 +383,8 @@
         @media(prefers-reduced-motion:reduce) { *, *::before, *::after { scroll-behavior:auto!important; transition:none!important; animation:none!important; } }
 
 
-        /* One font family and explicit information hierarchy. */
-        body, body * { font-family:'Pretendard',-apple-system,BlinkMacSystemFont,'Noto Sans KR',sans-serif!important; }
+        /* The brand layer defines display and body typography. */
+        body { font-family:'Pretendard',-apple-system,BlinkMacSystemFont,'Noto Sans KR',sans-serif; }
         #resTitle { font-size:1.625rem!important; line-height:1.5!important; font-weight:800!important; }
         #resAdvice { font-size:1.125rem!important; line-height:1.85!important; color:var(--ui-ink)!important; }
         #timeMorningText, #timeAfternoonText, #timeEveningText { font-size:.9375rem!important; color:var(--ui-muted)!important; line-height:1.75!important; }
@@ -510,8 +510,8 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;600;700&display=swap" rel="stylesheet">
-    <link id="dalhaBrandStyles" rel="stylesheet" href="/assets/brand-2026/brand.css?v=20261001-1">
-    <script src="/assets/brand-2026/brand-ui.js?v=20261001-1" defer></script>
+    <link id="dalhaBrandStyles" rel="stylesheet" href="/assets/brand-2026/brand.css?v=20261001-2">
+    <script src="/assets/brand-2026/brand-ui.js?v=20261001-2" defer></script>
 </head>
 <body>
 
@@ -719,7 +719,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                     <!-- 오늘 추천 룩 매칭 -->
                     <div>
                         <span style="font-size: 12px; font-weight: 700; color: #64748B; display: flex; align-items: center; gap: 4px; margin-bottom: 6px;">
-                            <span>✨</span> 2. 오늘 추천 룩
+                            오늘의 코디
                         </span>
                         <p id="weatherOutfitGuidance" hidden style="font-size: 12.5px; color: #334155; line-height: 1.65; margin: 0 0 8px; background: #F8FAFC; border-radius: 10px; padding: 10px 12px;"></p>
                         <p id="resStyle" style="font-weight: 800; font-size: 15.5px; color: #0F172A; margin: 0 0 8px 0; line-height: 1.5;">

@@ -22,7 +22,7 @@
     }
     for(const [id,key] of [['drawerTarot','cards'],['drawerTalisman','spark'],['drawerZodiac','orbit']]){
       const header=document.querySelector('#'+id+' .drawer-header');
-      const symbol=header?.querySelector('span');
+      const symbol=header?.querySelector('.drawer-icon-circle');
       if(symbol&&!symbol.querySelector('input')){symbol.innerHTML=icon(key);symbol.classList.add('brand-service-icon');symbol.setAttribute('aria-hidden','true');}
     }
     const date=document.getElementById('journalDate');
