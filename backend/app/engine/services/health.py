@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from html import escape
-from app.engine.services.reading_editorial import theme_content, VERSION
+from app.engine.services.reading_editorial import theme_content, THEME_VERSION as VERSION
 
 from app.engine.core.models import MyeongriCoreResult
 from app.engine.semantic.applied import recommended_directions

@@ -78,6 +78,15 @@ async function boot(url) {
     await new Promise(r=>setTimeout(r,0));
     assert.equal(doc.querySelectorAll('#modalOptionBox .ui-option').length,4);
     assert.equal(doc.getElementById('themeSelectModal').getAttribute('role'),'dialog');
+    doc.querySelector('input[name="optM"][value="기혼"]').checked=true;
+    doc.getElementById('themeSelectConfirm').click();
+    for(let i=0;i<20 && doc.getElementById('archiveDetailModal').classList.contains('hidden');i++) await new Promise(r=>setTimeout(r,10));
+    assert.ok(doc.querySelector('#archiveModalBody .theme-reading[data-reading-status="기혼"]'));
+    assert.match(doc.getElementById('archiveModalBody').textContent,/생활의 부담과 마음의 거리/);
+    assert.equal(doc.querySelectorAll('#archiveModalBody details[open]').length,0);
+    assert.equal(doc.querySelectorAll('#archiveModalBody [data-report-cycle]').length,9);
+    doc.getElementById('readingCloseButton').click();await new Promise(r=>setTimeout(r,20));
+    assert.equal(app.apiCalls,0);
     w.closeThemeSelectModal();w.openTalismanModal();
     assert.ok(doc.querySelector('#talismanModal .ui-panel'));
     assert.ok(doc.querySelector('#talismanModal .ui-action-primary'));

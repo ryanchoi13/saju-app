@@ -11,11 +11,34 @@
     document.querySelectorAll('.modal-bg:not(#archiveDetailModal)').forEach(el => el.classList.add('hidden'));
     openReadingReport(serverUnlockedReports.length-1);
   }
+  let themeExamplesPromise, themeExamplePending = false;
+  async function showThemeExample(key, option = '기본') {
+    if (themeExamplePending) return;
+    themeExamplePending = true;
+    try {
+      if (!window.DALHA_THEME_EXAMPLES) {
+        if (!themeExamplesPromise) themeExamplesPromise = new Promise((resolve,reject) => {
+          const script = document.createElement('script');
+          script.src = '/assets/theme-examples.js?v=20261001-1';
+          script.onload = resolve;
+          script.onerror = () => { themeExamplesPromise = null; script.remove(); reject(Error('preview unavailable')); };
+          document.head.append(script);
+        });
+        await themeExamplesPromise;
+      }
+      const example = window.DALHA_THEME_EXAMPLES?.[key + ':' + option];
+      if (!example) throw Error('missing preview');
+      serverUnlockedReports.push({...example,report_key:'design-example'});
+      document.querySelectorAll('.modal-bg:not(#archiveDetailModal)').forEach(el => el.classList.add('hidden'));
+      openReadingReport(serverUnlockedReports.length-1);
+    } catch (_) { notice('예시 풀이를 불러오지 못했습니다. 잠시 뒤 다시 눌러주세요.'); }
+    finally { themeExamplePending = false; }
+  }
   let noticeTimer;
-  function notice() {
+  function notice(message = '예시 화면입니다. 실제 저장과 결제는 ‘내 정보로 보기’에서 이용해 주세요.') {
     let box = $('designSampleNotice');
     if (!box) { box=document.createElement('div'); box.id='designSampleNotice'; box.className='design-notice'; box.setAttribute('role','status'); document.body.append(box); }
-    box.textContent='예시 화면입니다. 실제 저장과 결제는 ‘내 정보로 보기’에서 이용해 주세요.';
+    box.textContent=message;
     box.hidden=false; clearTimeout(noticeTimer); noticeTimer=setTimeout(()=>box.hidden=true,4000);
   }
   // Stop only state-changing actions; navigation, forms, tabs and dialog opening use the real UI.
@@ -25,12 +48,14 @@
     const action=target.getAttribute('onclick');
     if (/^(confirmUnlockThemeOnServer|confirmUnlockGunghapOnServer)/.test(action)) {
       event.preventDefault(); event.stopImmediatePropagation();
-      showExample(action.includes('Gunghap')?'두 사람의 궁합':$('modalThemeTitle').textContent); return;
+      if (action.includes('Gunghap')) showThemeExample('gunghap',$('partnerRelationSelect').value || '연인 / 결혼');
+      else showThemeExample(currentThemeKey,document.querySelector('input[name=optM]:checked')?.value || '기본');
+      return;
     }
     if (/^handleUnlockReportOnServer/.test(action)) {
       const key=action.match(/'([^']+)'/)?.[1];
       if (latestOwnedReportIndex(key)>=0) return;
-      event.preventDefault(); event.stopImmediatePropagation(); showExample('주제별 풀이'); return;
+      event.preventDefault(); event.stopImmediatePropagation(); showThemeExample(key); return;
     }
     if (/^openZodiacModal/.test(action)) {
       event.preventDefault(); event.stopImmediatePropagation();

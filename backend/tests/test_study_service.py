@@ -31,7 +31,7 @@ class LifetimeStudyReportTests(unittest.TestCase):
     def test_report_uses_actual_core_and_all_cycles(self):
         report = build_lifetime_study_report(self.core, "최정오")
         for marker in [
-            "평생 학업·시험운", "평생 학습 구조", "시험 준비의 세 축",
+            "평생 학업·시험운", "평생 학습 구조", "시험과 실전에서 달라지는 부분",
             "현재 학업·시험 흐름", "48~57세", "庚申",
             "초년기", "청년기", "중장년기", "말년기",
         ]:

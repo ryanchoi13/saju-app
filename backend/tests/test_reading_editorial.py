@@ -15,7 +15,7 @@ from app.engine.services import (
     build_lifetime_health_report, build_lifetime_study_report, build_compatibility_report,
 )
 from app.engine.services.annual import build_annual_overall_report
-from app.engine.services.reading_editorial import VERSION
+from app.engine.services.reading_editorial import VERSION, THEME_VERSION
 from app.engine.services.lifetime import LIFETIME_NARRATIVE_VERSION
 
 
@@ -41,7 +41,7 @@ class EditorialCoverageTests(TestCase):
         ] + [build_lifetime_love_report(self.core,'검증',s) for s in ['솔로','썸/짝사랑','연애중','기혼']]
         for report in reports:
             with self.subTest(title=report['title']):
-                self.assertEqual(report['narrative_version'], LIFETIME_NARRATIVE_VERSION if report is reports[0] else VERSION)
+                self.assertEqual(report['narrative_version'], LIFETIME_NARRATIVE_VERSION if report is reports[0] else THEME_VERSION)
                 self.assertGreater(len(plain(report['content'])), 2000)
                 self.assertEqual(report['content'].count('data-report-cycle='),9)
                 self.assertIn('이 풀이의 근거', report['content'])
@@ -56,7 +56,7 @@ class EditorialCoverageTests(TestCase):
             self.assertGreater(len(plain(report['content'])),2000)
             self.assertNotIn('<script>',report['content'])
             self.assertEqual('결혼하면 어떤가' in report['content'],relation=='연인 / 결혼')
-            self.assertEqual(report['narrative_version'],VERSION)
+            self.assertEqual(report['narrative_version'],THEME_VERSION)
 
     def test_all_theme_names_are_escaped_and_personalized(self):
         for builder in [build_lifetime_overall_report, build_lifetime_wealth_report,
@@ -72,7 +72,7 @@ class ReadingRefreshTests(TestCase):
 
     def seed_theme(self, key='wealth'):
         self.original=dict(report_key=key,report_title='이전 풀이',report_content='<p>보존할 원문</p>',
-                           created_at='2026.02.01')
+                           created_at='2026.02.01',narrative_version=VERSION)
         wallet_store.buy_report(self.owner,key,220,self.original)
 
     def update(self, key='wealth', **extra):
@@ -86,7 +86,7 @@ class ReadingRefreshTests(TestCase):
         self.assertEqual(data['new_balance'],780)
         self.assertEqual(report['previous_versions'],[self.original])
         self.assertEqual(report['created_at'],'2026.02.01')
-        self.assertEqual(report['narrative_version'],VERSION)
+        self.assertEqual(report['narrative_version'],THEME_VERSION)
         with patch('main.generate_detailed_report',side_effect=AssertionError('already updated')):
             self.assertEqual(self.update().json(),data)
 
@@ -141,7 +141,7 @@ class ReadingRefreshTests(TestCase):
         with patch('main.generate_detailed_report',side_effect=ValueError('invalid')):
             self.assertEqual(self.update().status_code,422)
         self.assertEqual(wallet_store.load(self.owner),before)
-        replacement=dict(report_title='새 풀이',report_content='<p>새 원고</p>',narrative_version=VERSION)
+        replacement=dict(report_title='새 풀이',report_content='<p>새 원고</p>',narrative_version=THEME_VERSION)
         with ThreadPoolExecutor(max_workers=4) as pool:
             list(pool.map(lambda _:wallet_store.refresh_owned_report(
                 self.owner,'wealth',self.original,replacement),range(8)))

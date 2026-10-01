@@ -1052,7 +1052,7 @@ class RefreshReportRequest(UnlockReportRequest):
 @app.post('/api/reports/refresh')
 def refresh_owned_report(req: RefreshReportRequest):
     """Explicit no-charge upgrade. Do not infer a missing partner or situation."""
-    from app.engine.services.reading_editorial import VERSION
+    from app.engine.services.reading_editorial import THEME_VERSION
     from app.engine.services.career import _STATUS_GUIDE as CAREER_OPTIONS
     from app.engine.services.love import _STATUS_GUIDE as LOVE_OPTIONS
     if req.report_key not in {'daewoon', 'wealth', 'business', 'love', 'health', 'study', 'gunghap'}:
@@ -1062,7 +1062,7 @@ def refresh_owned_report(req: RefreshReportRequest):
     if original is None:
         raise HTTPException(status_code=403, detail='먼저 해당 풀이를 열람해 주세요.')
     from app.engine.services.lifetime import LIFETIME_NARRATIVE_VERSION
-    target_version = LIFETIME_NARRATIVE_VERSION if req.report_key == 'daewoon' else VERSION
+    target_version = LIFETIME_NARRATIVE_VERSION if req.report_key == 'daewoon' else THEME_VERSION
     if original.get('narrative_version') == target_version:
         return dict(status='success', new_balance=user['coin'], unlocked_reports=reports_db[req.user_id])
     if not user.get('profile_complete'):

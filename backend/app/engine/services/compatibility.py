@@ -3,7 +3,8 @@
 from __future__ import annotations
 
 from html import escape
-from app.engine.services.reading_editorial import VERSION, section, paragraphs
+from app.engine.services.reading_editorial import THEME_VERSION as VERSION, section, paragraphs
+from app.engine.services.theme_editorial import pair_practice
 from itertools import product
 
 from app.engine.constants import GAN_WUXING
@@ -245,16 +246,21 @@ def build_compatibility_report(left: MyeongriCoreResult, right: MyeongriCoreResu
            "두 사람은 협력의 접점을 살릴 수 있으므로 돌봄 역할을 공평하게 가시화하면 관계의 결속을 높이는 쪽으로 작용할 수 있습니다.")
         + " 임신 가능성이나 실제 자녀와의 궁합은 이 두 사람의 명식만으로 판단하지 않습니다."
     )
+    if safe_relation != "연인 / 결혼":
+        relationship_summary = relationship_summary.replace("끌림", "관심")
+        left_view = left_view.replace("끌림", "관심")
+        right_view = right_view.replace("끌림", "관심")
     unknown = left.uncertainty.time_unknown or right.uncertainty.time_unknown
     uncertainty = (
         '<div style="background:#FFF7ED;border:1px solid #FED7AA;padding:12px 14px;border-radius:12px;margin-top:12px;"><strong style="font-size:13px;color:#9A3412;">생시 미상 안내</strong><p style="font-size:12.5px;color:#7C2D12;margin:5px 0 0;">한 사람 이상 출생시간을 몰라 시주 사이의 관계는 조건부입니다. 확인 가능한 년·월·일주와 여러 시주에서 공통인 결론을 중심으로 설명했습니다.</p></div>'
         if unknown else ""
     )
     title = f"{ln}님 & {rn}님 정통 사주 궁합 감명서"
-    opening = section("두 사람의 궁합, 먼저 답하면", [relationship_summary,
+    opening = '<section data-theme-section="current"><h2>두 사람의 관계</h2>' + section("두 사람의 궁합, 먼저 답하면", [relationship_summary,
         "두 사람이 편하게 느끼는 부분과 조율이 필요한 부분을 함께 살펴보세요. "
         "잘 맞는 점은 더 자주 활용하고, 반복해서 어긋나는 일은 구체적인 약속으로 바꾸는 겁니다. "
         "상대를 자신과 같은 방식으로 바꾸려 하기보다 함께 편해질 방법을 찾는 데 의미가 있습니다."])
+    opening += '</section><section data-theme-section="nature"><h2>서로 다른 방식 이해하기</h2>'
     opening += section("서로를 어떻게 느끼는가", [
         f"{left_name or '회원'}님에게 {right_name or '상대방'}님은 {left_view}으로 읽힙니다. "
         f"반대로 {right_name or '상대방'}님에게 {left_name or '회원'}님은 {right_view}으로 읽힙니다.",
@@ -277,6 +283,7 @@ def build_compatibility_report(left: MyeongriCoreResult, right: MyeongriCoreResu
         "감정이 커졌을 때는 이번에 있었던 일부터 이야기하세요. 과거의 서운함을 한꺼번에 꺼내면 "
         "해결할 문제가 너무 많아집니다. 잠시 쉬었다 이야기할 필요가 있다면 언제 다시 대화할지도 정해두세요. "
         "문제를 미루는 것과 차분해질 시간을 갖는 것은 다릅니다."])
+    opening += '</section><section data-theme-section="practice"><h2>함께 정할 약속</h2>'
     if safe_relation == "연인 / 결혼":
         opening += section("사랑이 깊어지는 방식", [deepening,
             "상대가 좋아했던 말이나 작은 약속을 기억해 보세요. 특별한 날에만 크게 표현하기보다 "
@@ -301,7 +308,7 @@ def build_compatibility_report(left: MyeongriCoreResult, right: MyeongriCoreResu
             "지금 두 사람이 도움을 구하고 갈등을 풀어가는 방식부터 살펴보는 것이 좋습니다. "
             "임신 가능성이나 실제 자녀와의 궁합은 두 사람의 명식만으로 판단하지 않습니다."])
     else:
-        opening += section("지금 두 사람에게 필요한 것", [
+        opening += section("지금 관계에서 맞춰볼 기준", [
             ("함께 일을 한다면 결정권과 맡을 업무를 처음부터 나누세요. "
              "의견이 갈렸을 때 누가 최종 판단을 할지도 정해두는 편이 좋습니다. "
              "친분이 좋아 시작한 일이라도 업무의 책임까지 같다고 생각해서는 안 됩니다."
@@ -319,15 +326,11 @@ def build_compatibility_report(left: MyeongriCoreResult, right: MyeongriCoreResu
         "동업이나 거래를 한다면 수입뿐 아니라 비용과 책임도 함께 나눠야 합니다. "
         "수정 요청, 취소, 일정 변경이 생겼을 때 어떻게 처리할지 약속해 두세요. "
         "상대를 믿는 마음과 조건을 문서로 남기는 일은 서로 반대되는 것이 아닙니다."])
-    if safe_relation == "연인 / 결혼":
-        opening += section("지금 두 사람에게 필요한 것", [
-            "오늘 함께 정할 수 있는 작은 약속부터 시작해 보세요. "
-            "불편했던 일 하나를 이야기하고 다음에는 어떻게 할지 의논하는 것으로도 충분합니다. "
-            "상대를 잘 안다고 생각하는 순간에도 물어보고 들어주는 태도가 필요합니다."])
+    opening += pair_practice(safe_relation) + '</section>'
     content = f"""
-    <div class="long-reading" data-narrative-version="{VERSION}">
+    <div class="long-reading theme-reading" data-theme="gunghap" data-reading-status="{escape(safe_relation, quote=True)}" data-narrative-version="{VERSION}">
       {opening}
-      <details style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:13px;padding:12px 14px;">
+      <details data-theme-section="evidence" class="reading-evidence" style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:13px;padding:12px 14px;">
         <summary style="font-size:13px;font-weight:800;color:#334155;cursor:pointer;">판단 근거 보기 · 명리 용어 포함</summary>
         <h5>관계에서 눈여겨볼 신살</h5><p>{shensha_text}</p>
         <p style="font-size:12.5px;color:#64748B;margin:10px 0;">두 사람의 원국을 각각 계산한 뒤 일간 관계, 상대 일간이 만드는 십성 역할, 서로 다른 명식 사이의 천간합·천간극과 지지의 합·충·형·파·해, 원진·도화·고신·과숙을 함께 비교했습니다.</p>
@@ -335,9 +338,9 @@ def build_compatibility_report(left: MyeongriCoreResult, right: MyeongriCoreResu
         <p style="font-size:12.5px;color:#64748B;margin:0 0 10px;">일간 관계: {_day_master_relation(left_dm.stem, right_dm.stem)}</p>
         {_interaction_html(interactions)}
         <p style="font-size:12.5px;color:#64748B;margin:10px 0 0;"><strong>{ln}님 보완 관점</strong>: {_favorable_overlap(left, right)}<br><strong>{rn}님 보완 관점</strong>: {_favorable_overlap(right, left)}</p>
+        {uncertainty}
       </details>
-      {uncertainty}
-      <p style="font-size:11.5px;color:#94A3B8;margin:12px 0 0;">이 리포트는 두 사람의 명식에서 확인되는 상호작용을 현실의 관계 언어로 번역한 참고 자료입니다. 사랑의 크기, 결혼·이별, 임신·출산, 재산의 규모를 확정하지 않으며 실제 관계와 선택이 명리 판단보다 우선합니다.</p>
+      <p style="font-size:11.5px;color:#94A3B8;margin:12px 0 0;">이 풀이는 구매하거나 업데이트한 시점의 두 사람 정보를 바탕으로 작성했습니다. 다시 열어도 저장된 내용은 유지됩니다. 사랑의 크기, 결혼·이별, 임신·출산, 재산의 규모를 확정하지 않으며 실제 관계와 선택이 명리 판단보다 우선합니다.</p>
     </div>
     """
     return {"title": title, "content": content, "narrative_version": VERSION}

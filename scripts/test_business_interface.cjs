@@ -206,6 +206,44 @@ const tick = () => new Promise(resolve => setTimeout(resolve,30));
         }
         assert.equal(requests,0);
     });
+    await test('theme upgrade uses explicit situation choices, preserves cancellation and never purchases again', async () => {
+        const old={...report('love','<p>기존 구매 원문</p>','애정운'),narrative_version:'reading-conversation-v3'};
+        evalApp(`currentUserId='offline-test'; currentCoin=780; serverUnlockedReports=${JSON.stringify([old])}; readingReportIndex=0;`);
+        w.refreshReportEntrypoints();
+        let requests=[];
+        w.fetch=async(url,opts)=>{
+            requests.push({url,body:JSON.parse(opts.body)});
+            const updated={...old,narrative_version:'theme-present-v1',report_content:'<section data-theme-section="current"><h2>지금 살펴볼 이야기</h2><p>기혼 상황에 맞춘 새 풀이</p></section>',previous_versions:[old],reading_context:{sub_option:'기혼'}};
+            return {ok:true,json:async()=>({new_balance:780,unlocked_reports:[updated]})};
+        };
+        await w.refreshOwnedReading();
+        assert.ok(visible('themeSelectModal'));
+        assert.equal(doc.querySelector('input[name="optM"]:checked'),null);
+        assert.equal(doc.getElementById('themeSelectConfirm').disabled,true);
+        w.closeThemeSelectModal();
+        assert.ok(!visible('archiveDetailModal'));
+        assert.equal(requests.length,0);
+        w.openReadingReport(0);
+        await w.refreshOwnedReading();
+        assert.ok(!visible('archiveDetailModal'));
+        w.closeThemeSelectModal();
+        assert.ok(visible('archiveDetailModal'));
+        assert.equal(doc.getElementById('archiveModalBody').innerHTML,old.report_content);
+        await w.refreshOwnedReading();
+        const option=doc.querySelector('input[name="optM"][value="기혼"]');option.checked=true;
+        option.dispatchEvent(new w.Event('change',{bubbles:true}));
+        assert.equal(doc.getElementById('themeSelectConfirm').disabled,false);
+        w.confirm=()=>true; doc.getElementById('themeSelectConfirm').click();await tick();
+        assert.deepEqual(requests.map(x=>x.url),['/api/reports/refresh']);
+        assert.equal(requests[0].body.sub_option,'기혼');
+        assert.equal(evalApp('currentCoin'),780);
+        assert.equal(evalApp('JSON.stringify(serverUnlockedReports[0].previous_versions[0])'),JSON.stringify(old));
+        assert.equal(w.readingNeedsRefresh(evalApp('serverUnlockedReports[0]')),false);
+        assert.match(doc.getElementById('archiveModalBody').textContent,/기혼 상황/);
+        assert.ok(doc.getElementById('annualRefreshButton').classList.contains('hidden'));
+        assert.equal(doc.querySelectorAll('.theme-refresh').length,0);
+        w.closeArchiveDetailModal();await tick();
+    });
     await test('double purchase clicks send one request and failure unlocks the button', async () => {
         evalApp('serverUnlockedReports=[]; currentCoin=1000;'); w.refreshReportEntrypoints();
         let requests = 0, resolve;

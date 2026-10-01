@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from collections import Counter
 from html import escape
-from app.engine.services.reading_editorial import theme_content, VERSION
+from app.engine.services.reading_editorial import theme_content, THEME_VERSION as VERSION
 
 from app.engine.core.models import MyeongriCoreResult
 from app.engine.services.applied_guidance import direction_advice, state_basis

@@ -7,6 +7,7 @@ roles or an explicitly selected situation, never by names or random rotation.
 from html import escape
 
 VERSION = 'reading-conversation-v3'
+THEME_VERSION = 'theme-present-v1'
 
 # Each role has an interpretation, a practical continuation and a caution.
 TRAITS = {
@@ -180,7 +181,7 @@ def theme_lens(query, kind):
         if kind == 'love' else '이런 방식을 실제로 활용했던 경험을 돌아보세요. 잘 맞았던 방법을 다시 써보고, 어려웠던 부분은 작은 연습으로 보완하면 좋겠습니다.')
 
 
-def cycle_groups(query, domain):
+def cycle_groups(query, domain, expand_current=True):
     luck = query['timing']['luck_cycles']
     current = (luck.get('current') or {}).get('index')
     groups = []
@@ -195,62 +196,11 @@ def cycle_groups(query, domain):
             cards.append(f'<article data-report-cycle="{c["index"]}" class="reading-cycle">'
                          f'<h4>{escape(heading)}</h4>{paragraphs(cycle_paragraphs(c["ten_god"], domain))}</article>')
         ages = f"{cycles[0]['start_age']}~{cycles[-1]['end_age']}세"
-        opened = ' open' if current is not None and first <= current <= last else ''
+        opened = ' open' if expand_current and current is not None and first <= current <= last else ''
         groups.append(f'<details class="reading-phase"{opened}><summary>{label} · {ages}</summary>{"".join(cards)}</details>')
     return ''.join(groups)
 
 
 def theme_content(query, name, kind, evidence, uncertainty='', status=None):
-    """Compose existing calculation output into a readable, longer theme report."""
-    from app.engine.services.annual_editorial import GENERAL_TITLES
-    domain = {'wealth':'money','career':'work','business':'work','love':'love','health':'wellbeing','study':'learning'}[kind]
-    headings = {'wealth':'돈을 대하는 나의 기준','career':'내 경험을 일의 강점으로 바꾸기',
-                'business':'고객의 반응을 꾸준한 성과로 이어가기','love':'나에게 편안한 관계를 알아가기',
-                'health':'활동과 회복의 균형','study':'배운 내용을 내 실력으로 만들기'}
-    god = query['synthesis']['overall_structure'].get('ordinary')
-    intro = (f'{name}님, ' + theme_lens(query, kind)) if kind != 'health' else (
-        f'{name}님, 건강운에서는 질병이 아니라 생활 속에서 활동과 휴식을 어떻게 나눌지 살펴봅니다. '
-        '해야 할 일을 잘해내려면 하루를 얼마나 많이 채우는지만큼 편안하게 쉴 수 있는지도 중요합니다. '
-        '최근 유난히 버거웠던 일정과 쉬고 난 뒤 편안했던 시간을 먼저 돌아보세요.')
-    blocks = [section(headings[kind], [intro, traits(god)[1]] if kind != 'health' else [intro])]
-    blocks.append(section(GENERAL_TITLES[domain], DETAIL[domain]))
-    if status in STATUS:
-        label, copy = STATUS[status]
-        blocks.append(section(label, copy))
-    extra = {
-        'wealth': ('돈을 쓰기 전에 정해둘 것', (
-            '큰 지출을 고민한다면 가격뿐 아니라 사용하고 유지하는 데 드는 비용도 적어보세요. 지금 꼭 필요한지, 기다려도 되는지 구분하면 순간의 기대에 휩쓸리는 일을 줄일 수 있습니다. 다른 사람의 좋은 결과를 자신의 상황에 그대로 대입하지 않는 것도 중요합니다.',
-            '가족이나 지인과 돈이 얽힐 때는 좋은 관계와 금전 책임을 따로 생각하세요. 함께 내는 비용은 각자의 부담과 정산 날짜를 정해두는 편이 좋습니다. 이야기하기 불편하다는 이유로 미루면 나중에는 더 어려워집니다. 잘 모르는 조건은 설명을 요청하고 이해한 뒤 결정하세요.')),
-        'career': ('다음 역할을 준비하는 방법', (
-            '지금 잘하는 일 가운데 다른 환경에서도 활용할 수 있는 경험을 골라보세요. 특정 도구를 다루는 기술뿐 아니라 사람들과 일정을 맞추거나 문제를 정리한 경험도 해당합니다. 어떤 상황에서 그 경험을 썼는지 설명하면 자신의 강점이 더 분명해집니다.',
-            '평가가 기대에 못 미쳤다면 막연히 더 열심히 하겠다고 마음먹기보다 어떤 부분을 보완해야 하는지 물어보세요. 기준을 알아야 노력할 방향도 정할 수 있습니다. 자신의 성장을 위해 필요한 경험과 그저 반복해서 떠맡는 일을 구분하는 것이 좋습니다.')),
-        'business': ('혼자 잘하는 일에서 함께 운영하는 일로', (
-            '주문이 늘어날 때 가장 먼저 막히는 과정이 무엇인지 살펴보세요. 준비, 제작, 응대, 정산 가운데 특정 일이 한 사람에게 몰려 있다면 규모를 키울수록 부담도 함께 커집니다. 반복되는 순서를 정리하고 다른 사람에게 맡길 수 있는 부분부터 나눠보세요.',
-            '새로운 기회를 놓치기 싫어 모든 요청을 받지는 마세요. 지금 고객에게 약속한 품질과 일정을 지킬 수 있어야 다음 거래도 이어집니다. 해줄 수 없는 조건은 미리 설명하고 가능한 대안을 제안하세요. 오래 유지할 수 있는 운영이 한 번의 큰 주문보다 중요할 때도 있습니다.')),
-        'love': ('갈등 뒤에 다시 가까워지는 방법', (
-            '서운함을 말할 때는 상대가 어떤 사람인지 평가하기보다 어떤 상황에서 마음이 상했는지 설명해 보세요. 연락이 늦어 불안했다면 그 사실과 바라는 방식을 이야기하는 겁니다. 상대도 자신의 사정을 말할 수 있어야 서로 고칠 부분을 찾을 수 있습니다.',
-            '사과를 받았다고 바로 괜찮아져야 하는 것은 아니에요. 감정이 가라앉을 시간을 가지되 같은 일이 반복될 때 어떻게 할지 함께 정해보세요. 한 사람만 계속 참아야 유지되는 관계라면 그 방식부터 돌아볼 필요가 있습니다. 친밀함과 자신의 경계는 함께 지킬 수 있습니다.')),
-        'health': ('무리하는 습관을 알아차리는 방법', (
-            '바쁜 날마다 무엇을 가장 먼저 미루는지 돌아보세요. 식사인지, 잠인지, 혼자 쉬는 시간인지 알면 일정에서 조정할 부분도 찾기 쉽습니다. 한꺼번에 생활을 바꾸려 하기보다 반복해서 놓치는 한 가지부터 챙겨보세요.',
-            '다른 사람이 괜찮다고 느끼는 일정이 자신에게도 맞는 것은 아닙니다. 약속 뒤에 피곤함이 오래 남는다면 다음 일정에는 여유를 두세요. 스스로 느끼는 불편함을 사주 탓으로 넘기지 말고, 필요한 경우 실제 건강 상태를 확인하는 것이 우선입니다.')),
-        'study': ('시험 준비의 세 축', (
-            '공부 계획에는 이해하는 시간, 직접 풀어보는 시간, 틀린 이유를 확인하는 시간이 모두 필요합니다. 강의를 많이 들었는데 문제를 풀기 어렵다면 새로운 강의보다 혼자 풀어보는 연습을 늘려보세요. 반대로 같은 개념에서 자꾸 틀린다면 기본 설명으로 돌아가는 편이 낫습니다.',
-            '시험이 가까워지면 실제 시간에 맞춰 연습하고, 시간이 부족했던 문제를 따로 살펴보세요. 모르는 것과 급해서 놓친 것을 구분해야 보완할 방법도 달라집니다. 하루 계획을 지키지 못했더라도 밀린 양을 모두 다음 날에 더하지는 마세요. 다시 이어갈 수 있는 분량을 정하는 것이 중요합니다.')),
-    }
-    blocks.append(section(*extra[kind]))
-    current = query['timing']['luck_cycles'].get('current')
-    labels = {'wealth':'재물','career':'직업·사업','business':'직업·사업','love':'애정·관계','health':'건강 생활','study':'학업·시험'}
-    if current:
-        current_title = '현재 건강 생활흐름' if kind == 'health' else f'현재 {labels[kind]} 흐름'
-        blocks.append(section(current_title, [
-            f"현재는 {current['start_age']}~{current['end_age']}세 구간입니다. " +
-            cycle_paragraphs(current['ten_god'], domain)[0]]))
-    blocks.append('<h3>생애 4단계 흐름</h3>' + cycle_groups(query, domain))
-    blocks.append(f'<details class="reading-evidence"><summary>이 풀이의 근거 · 명리 용어 포함</summary>{evidence}</details>')
-    blocks.append(uncertainty)
-    boundaries = {'wealth':'특정 투자·부동산의 수익이나 손실을 보장하지 않습니다.',
-                  'career':'취업·승진·창업 성공을 보장하지 않습니다.', 'business':'취업·승진·창업 성공을 보장하지 않습니다.',
-                  'love':'특정 인연, 결혼, 재회, 이별을 확정하거나 상대의 마음을 대신 판단하지 않습니다.',
-                  'health':'의료 진단을 대신하지 않습니다. 불편한 증상이 있으면 의료진에게 상담하세요.',
-                  'study':'지능, 성적이나 시험 합격·불합격을 확정하지 않습니다.'}
-    return f'<div class="long-reading" data-narrative-version="{VERSION}">' + ''.join(blocks) + paragraphs([boundaries[kind]]) + '</div>'
+    from app.engine.services.theme_editorial import build_theme_content
+    return build_theme_content(query, name, kind, evidence, uncertainty, status)

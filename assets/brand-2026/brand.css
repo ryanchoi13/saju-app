@@ -281,3 +281,14 @@ html[data-brand] #archiveModalBody [data-lifetime-section] > h2 { font-family:va
 html[data-brand] #archiveModalBody [data-lifetime-section]:first-child > h2 { margin-top:0; }
 html[data-brand] #archiveModalBody .lifetime-cycle-reference { border-top:1px solid var(--ui-line); padding-top:20px; margin-top:28px; }
 html[data-brand] #archiveModalBody .lifetime-cycle-reference > summary { cursor:pointer; font-size:16px; font-weight:600; padding:8px 0; }
+
+/* Theme readers use the same quiet, text-first hierarchy as the lifetime report. */
+html[data-brand] #archiveModalBody [data-theme-section] > h2 { font-family:var(--brand-serif); font-size:23px; line-height:1.65; margin:30px 0 12px; }
+html[data-brand] #archiveModalBody [data-theme-section]:first-child > h2 { margin-top:0; }
+html[data-brand] #archiveModalBody .theme-reading > section + section { border-top:1px solid var(--ui-line); margin-top:28px; }
+html[data-brand] #archiveModalBody .theme-reading > details { border-top:1px solid var(--ui-line); padding:16px 0; margin-top:18px; }
+html[data-brand] #archiveModalBody .theme-reading > details > summary { cursor:pointer; font-size:15px; font-weight:600; line-height:1.7; }
+html[data-brand] #archiveModalBody .theme-reading .reading-phase { margin-top:14px; }
+html[data-brand] #archiveModalBody .theme-reading .reading-phase summary { cursor:pointer; font-size:14px; padding:8px 0; }
+html[data-brand] #archiveModalBody .theme-reading .reading-cycle { padding:4px 0 16px; }
+html[data-brand] #themeSelectConfirm:disabled { opacity:.45; cursor:default; }

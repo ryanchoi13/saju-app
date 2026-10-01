@@ -37,10 +37,10 @@ class LifetimeLoveReportTests(unittest.TestCase):
 
     def test_status_selects_matching_guidance(self):
         cases = {
-            "솔로": "새 인연을 볼 때의 기준",
-            "썸/짝사랑": "관계를 확인하는 방법",
-            "연애중": "현재 관계에서의 활용",
-            "기혼": "부부 관계에서의 활용",
+            "솔로": "나에게 맞는 만남의 속도",
+            "썸/짝사랑": "애매한 관계에서 나의 마음 지키기",
+            "연애중": "익숙해진 사이에서 다시 묻기",
+            "기혼": "생활의 부담과 마음의 거리 구분하기",
         }
         for status, marker in cases.items():
             with self.subTest(status=status):
@@ -59,7 +59,7 @@ class LifetimeLoveReportTests(unittest.TestCase):
             "love", "연애중", "상대방", "선택안함", "최정오", user=user
         )
         self.assertIn("정통 명리 평생 애정·관계운", report["title"])
-        self.assertIn("현재 관계에서의 활용", report["content"])
+        self.assertIn("익숙해진 사이에서 다시 묻기", report["content"])
 
 
 if __name__ == "__main__":

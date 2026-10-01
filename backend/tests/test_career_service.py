@@ -22,7 +22,7 @@ class LifetimeCareerReportTests(unittest.TestCase):
         report = build_lifetime_career_report(self.core, "최정오", "사업가")
         self.assertIn("평생 직업·사업운", report["title"])
         for marker in [
-            "평생 일의 구조 · 사업가", "사업 운영에서의 활용",
+            "평생 일의 구조 · 사업가", "이어갈 고객과 운영의 기준",
             "현재 직업·사업 흐름", "48~57세", "庚申",
             "초년기", "청년기", "중장년기", "말년기",
         ]:
@@ -39,8 +39,8 @@ class LifetimeCareerReportTests(unittest.TestCase):
         employee = build_lifetime_career_report(self.core, "최정오", "직장인")
         changing = build_lifetime_career_report(self.core, "최정오", "취업/이직")
         startup = build_lifetime_career_report(self.core, "최정오", "창업")
-        self.assertIn("현재 역할에서의 활용", employee["content"])
-        self.assertIn("취업·이직에서의 활용", changing["content"])
+        self.assertIn("평가와 업무의 기준 맞추기", employee["content"])
+        self.assertIn("다음 환경과 나의 조건 비교하기", changing["content"])
         self.assertIn("창업 준비에서의 활용", startup["content"])
 
     def test_main_report_generator_is_connected(self):
@@ -55,7 +55,7 @@ class LifetimeCareerReportTests(unittest.TestCase):
             "business", "사업가", "상대방", "선택안함", "최정오", user=user
         )
         self.assertIn("정통 명리 평생 직업·사업운", report["title"])
-        self.assertIn("사업 운영에서의 활용", report["content"])
+        self.assertIn("이어갈 고객과 운영의 기준", report["content"])
 
 
 if __name__ == "__main__":

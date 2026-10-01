@@ -506,11 +506,11 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
     <link rel="stylesheet" href="/assets/landing.css?v=1">
     <script src="/assets/design-controls.js?v=20261001-4" defer></script>
     <script src="/assets/menu-explorer.js?v=20261001-4" defer></script>
-    <script src="/assets/design-sample.js?v=20261001-5" defer></script>
+    <script src="/assets/design-sample.js?v=20261001-6" defer></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;600;700&display=swap" rel="stylesheet">
-    <link id="dalhaBrandStyles" rel="stylesheet" href="/assets/brand-2026/brand.css?v=20261001-4">
+    <link id="dalhaBrandStyles" rel="stylesheet" href="/assets/brand-2026/brand.css?v=20261001-6">
     <script src="/assets/brand-2026/brand-ui.js?v=20261001-4" defer></script>
 </head>
 <body>
@@ -1360,7 +1360,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 <button onclick="closeThemeSelectModal()" style="background: none; border: none; font-size: 18px; color: #94A3B8; cursor: pointer;">&times;</button>
             </div>
             <div id="modalOptionBox" style="display: flex; flex-direction: column; gap: 8px;"></div>
-            <button onclick="confirmUnlockThemeOnServer()" style="width: 100%; background: #2D6A4F; color: white; border: none; font-size: 14.5px; font-weight: 800; padding: 13px; border-radius: 12px; cursor: pointer;"><span class="btn-coin-icon-white"></span> 220 복채로 즉시 열람하기</button>
+            <button id="themeSelectConfirm" onclick="confirmUnlockThemeOnServer()" style="width: 100%; background: #2D6A4F; color: white; border: none; font-size: 14.5px; font-weight: 800; padding: 13px; border-radius: 12px; cursor: pointer;"><span class="btn-coin-icon-white"></span> 220 복채로 즉시 열람하기</button>
         </div>
     </div>
 
@@ -1465,7 +1465,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 <h3 id="archiveModalTitle" style="font-size: 14px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif;">운세 리포트</h3>
             </div>
             <p id="readingReportMeta" class="reading-caption" hidden></p>
-            <button id="annualRefreshButton" class="reading-text-button hidden" onclick="refreshOwnedReading()">새 풀이로 업데이트 · 추가 복채 없음</button>
+            <button id="annualRefreshButton" class="reading-text-button hidden" onclick="refreshOwnedReading()">새 구성으로 무료 업데이트</button>
             <label id="readingVersionControl" class="hidden">풀이 버전
                 <select id="readingVersionSelect" onchange="openReadingReport(readingReportIndex, this.value)"></select>
             </label>
@@ -2970,11 +2970,12 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
 
         const ANNUAL_NARRATIVE_VERSION = 'reading-conversation-v3';
         const LIFETIME_NARRATIVE_VERSION = 'lifetime-present-v1';
+        const THEME_NARRATIVE_VERSION = 'theme-present-v1';
         function readingNeedsRefresh(item) {
             return ['sinnian','daewoon','wealth','business','love','health','study','gunghap'].includes(item?.report_key)
-                && item.narrative_version !== (item.report_key === 'daewoon' ? LIFETIME_NARRATIVE_VERSION : ANNUAL_NARRATIVE_VERSION);
+                && item.narrative_version !== (item.report_key === 'daewoon' ? LIFETIME_NARRATIVE_VERSION : item.report_key === 'sinnian' ? ANNUAL_NARRATIVE_VERSION : THEME_NARRATIVE_VERSION);
         }
-        async function refreshOwnedReading(partnerInput = null) {
+        async function refreshOwnedReading(partnerInput = null, selectedOption = null) {
             const item = serverUnlockedReports[readingReportIndex];
             if (!currentUserId || !item || reportRequestPending || !readingNeedsRefresh(item)) return;
             if (item.report_key === 'sinnian') { await refreshOwnedAnnualReport(); return; }
@@ -2985,11 +2986,9 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             const options = item.report_key === 'business' ? ['직장인','취업/이직','사업가','창업']
                 : item.report_key === 'love' ? ['솔로','썸/짝사랑','연애중','기혼'] : null;
             if (options) {
-                subOption = prompt('현재 상황을 입력해 주세요: ' + options.join(' / '),
-                    options.includes(subOption) ? subOption : options[0]);
-                if (subOption === null) return;
-                subOption = subOption.trim();
-                if (!options.includes(subOption)) { alert('안내된 상황 중 하나를 정확히 입력해 주세요.'); return; }
+                if (selectedOption === null) { openThemeSelectModal(item.report_key, true); return; }
+                if (!options.includes(selectedOption)) { alert('현재 상황을 선택해 주세요.'); return; }
+                subOption = selectedOption;
             }
             if (!confirm('현재 저장한 사주 정보와 선택한 상황으로 새 풀이를 작성합니다. 추가 복채는 없으며 결제일과 이전 원문은 유지됩니다. 진행할까요?')) return;
             const owner = currentUserId;
@@ -3097,11 +3096,13 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
         }
 
         let gunghapRefreshMode = false;
+        let gunghapRefreshReaderWasOpen = false;
         function openGunghapInputModal(forRefresh = false) {
             const ownedIndex = latestOwnedReportIndex('gunghap');
             if (ownedIndex >= 0 && !forRefresh) { openReadingReport(ownedIndex); return; }
             gunghapRefreshMode = forRefresh;
-            if (forRefresh) document.getElementById('archiveDetailModal').classList.add('hidden');
+            gunghapRefreshReaderWasOpen = forRefresh && !document.getElementById('archiveDetailModal').classList.contains('hidden');
+            if (gunghapRefreshReaderWasOpen) document.getElementById('archiveDetailModal').classList.add('hidden');
             document.getElementById('gunghapSubmitButton').textContent = forRefresh
                 ? '상대방 정보 확인 후 무료 업데이트' : '350 복채로 두 사람의 인연 풀이 확인하기';
             const nameInput = document.getElementById('partnerNameInput');
@@ -3122,7 +3123,8 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
 
         function closeGunghapModal() {
             document.getElementById('gunghapModal').classList.add('hidden');
-            if (gunghapRefreshMode) document.getElementById('archiveDetailModal').classList.remove('hidden');
+            if (gunghapRefreshReaderWasOpen) document.getElementById('archiveDetailModal').classList.remove('hidden');
+            gunghapRefreshReaderWasOpen = false;
             gunghapRefreshMode = false;
         }
 
@@ -3169,9 +3171,14 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             else handleUnlockReportOnServer('gunghap', 350, "기본", pName, rel, partnerInput);
         }
 
-        function openThemeSelectModal(key) {
+        let themeRefreshMode = false;
+        let themeRefreshReaderWasOpen = false;
+        function openThemeSelectModal(key, forRefresh = false) {
             const ownedIndex = latestOwnedReportIndex(key);
-            if (ownedIndex >= 0) { openReadingReport(ownedIndex); return; }
+            if (ownedIndex >= 0 && !forRefresh) { openReadingReport(ownedIndex); return; }
+            themeRefreshMode = forRefresh;
+            themeRefreshReaderWasOpen = forRefresh && !document.getElementById('archiveDetailModal').classList.contains('hidden');
+            if (themeRefreshReaderWasOpen) document.getElementById('archiveDetailModal').classList.add('hidden');
             currentThemeKey = key;
             const modalBox = document.getElementById('modalOptionBox');
             const titleEl = document.getElementById('modalThemeTitle');
@@ -3195,15 +3202,30 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                         <label style="padding:10px; border:1px solid #E2E8F0; border-radius:8px; background:white; cursor:pointer;"><input type="radio" name="optM" value="창업"> 창업 준비</label>
                     </div>`;
             }
+            const submit = document.getElementById('themeSelectConfirm');
+            submit.textContent = forRefresh ? '선택한 상황으로 무료 업데이트' : '220 복채로 즉시 열람하기';
+            if (forRefresh) {
+                const saved = serverUnlockedReports[ownedIndex]?.reading_context?.sub_option;
+                modalBox.querySelectorAll('input[name="optM"]').forEach(input => { input.checked = input.value === saved; });
+            }
+            const syncSelection = () => { submit.disabled = !modalBox.querySelector('input[name="optM"]:checked'); };
+            modalBox.onchange = syncSelection; syncSelection();
             document.getElementById('themeSelectModal').classList.remove('hidden');
         }
 
-        function closeThemeSelectModal() { document.getElementById('themeSelectModal').classList.add('hidden'); }
+        function closeThemeSelectModal() {
+            document.getElementById('themeSelectModal').classList.add('hidden');
+            if (themeRefreshReaderWasOpen) document.getElementById('archiveDetailModal').classList.remove('hidden');
+            themeRefreshReaderWasOpen = false; themeRefreshMode = false;
+        }
         function confirmUnlockThemeOnServer() {
             const selEl = document.querySelector('input[name="optM"]:checked');
-            const subOpt = selEl ? selEl.value : '기본';
+            if (!selEl) return;
+            const subOpt = selEl.value;
+            const refreshing = themeRefreshMode;
             closeThemeSelectModal();
-            handleUnlockReportOnServer(currentThemeKey, 220, subOpt);
+            if (refreshing) refreshOwnedReading(null, subOpt);
+            else handleUnlockReportOnServer(currentThemeKey, 220, subOpt);
         }
 
         function setGenderType(gender) {
@@ -3433,6 +3455,13 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                         slot.append(months);
                     }
                 }
+                if (['wealth','love','business','study','health','gunghap'].includes(key) && readingNeedsRefresh(item)) {
+                    const update = document.createElement('button');
+                    update.className = 'reading-secondary theme-refresh';
+                    update.textContent = '새 구성으로 무료 업데이트';
+                    update.onclick = () => { readingReportIndex = index; refreshOwnedReading(); };
+                    slot.append(update);
+                }
                 if (key === 'daewoon') {
                     renderLifetimePreview(item, slot, index);
                     renderPeriodChoices(item, 'cycle');
@@ -3443,7 +3472,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
         }
 
         function setReportRequestState(pending) {
-            document.querySelectorAll('#btnDaewoon,#btnSinnian,#daewoonFlowOpen,#btnOpenGunghapModal,[id^="btnTheme_"],#annualRefreshButton,#lifetimeRefreshButton,.annual-upgrade').forEach(button => {
+            document.querySelectorAll('#btnDaewoon,#btnSinnian,#daewoonFlowOpen,#btnOpenGunghapModal,[id^="btnTheme_"],#annualRefreshButton,#lifetimeRefreshButton,.theme-refresh,.annual-upgrade').forEach(button => {
                 button.disabled = pending;
                 button.setAttribute('aria-busy', String(pending));
             });
