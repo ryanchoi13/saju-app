@@ -1,0 +1,38 @@
+[
+  {
+    "id": "V01",
+    "case_id": "P022",
+    "type": "caption_correction",
+    "note": "검색 설명의 가디건·흰 셔츠·긴 치마를 이미지 관찰에 따라 연핑크 케이블 니트·검정 미니스커트로 정정."
+  },
+  {
+    "id": "V02",
+    "case_id": "P017",
+    "type": "split_collage",
+    "note": "사진 1장에 2착장이 있어 A/B로 분리. 독립 원출처 2개로 세지 않음."
+  },
+  {
+    "id": "V03",
+    "case_id": "P003",
+    "type": "not_worn",
+    "note": "팔에 걸친 밝은 옷은 착용 겉옷으로 세지 않음."
+  },
+  {
+    "id": "V04",
+    "case_id": "P013",
+    "type": "original_context_check",
+    "note": "검색 설명은 dark jeans이나 원문은 grey jeans. 사진 색과 원문을 함께 기록."
+  },
+  {
+    "id": "V05",
+    "case_id": "ALL",
+    "type": "dedup_check",
+    "note": "정확한 이미지 SHA-256 중복 0건. dHash 해밍거리 10 이하 후보 0건. 서로 다른 사진의 동일 착장·동일 원저자 여부는 원출처 추가 확인 필요."
+  },
+  {
+    "id": "V06",
+    "case_id": "ALL",
+    "type": "owner_review_pending",
+    "note": "분류는 DALHA 검토 초안이다. 사용자 승인이나 미적 적합 판정을 추정하지 않음."
+  }
+]
