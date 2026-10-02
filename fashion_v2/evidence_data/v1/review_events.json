@@ -1,0 +1,58 @@
+[
+  {
+    "id": "F01",
+    "at": "2026-10-02",
+    "actor": "owner",
+    "type": "reported_outfit_rejected",
+    "target": "B01",
+    "scope": {
+      "gender": "male",
+      "age_band": "forties",
+      "season": "autumn",
+      "tpo": "casual"
+    },
+    "reason": "노랑 겉옷·분홍 이너에 청바지를 더한 조합의 현실성과 조화에 대한 사용자 반려.",
+    "previous_score": null,
+    "new_score": null,
+    "score_note": "사용자는 숫자로 점수를 매기지 않았음"
+  },
+  {
+    "id": "F02",
+    "at": "2026-10-02",
+    "actor": "owner",
+    "type": "reported_outfit_rejected",
+    "target": "B02",
+    "scope": {
+      "gender": "male",
+      "age_band": "forties",
+      "season": "autumn",
+      "tpo": "casual"
+    },
+    "reason": "분홍 겉옷에 노랑 후드를 배치하고 색 위치를 바꾼 안 역시 사용자 반려.",
+    "previous_score": null,
+    "new_score": null,
+    "score_note": "벤치마크의 2점은 assistant가 제안한 초기 환산값"
+  },
+  {
+    "id": "F03",
+    "at": "2026-10-02",
+    "actor": "owner",
+    "type": "principle_and_hypothesis",
+    "target": "policy",
+    "scope": {},
+    "reason": "아이템별 현실성 → 전체 조화 → A/B 활용. 베이지 하의·핑크 이너·안정색 겉옷 제안, 연령별 기본 추천 차이 가설.",
+    "previous_score": null,
+    "new_score": null
+  },
+  {
+    "id": "E01",
+    "at": "2026-10-02",
+    "actor": "assistant",
+    "type": "draft_created",
+    "target": "fashion-evidence-0.1",
+    "scope": {},
+    "reason": "외부 관찰, 기존 정책, 사용자 피드백을 분리한 초기 검토 데이터. 숫자는 운영 승인 또는 착용률 통계가 아님.",
+    "previous_score": null,
+    "new_score": null
+  }
+]

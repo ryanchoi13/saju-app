@@ -1,0 +1,501 @@
+[
+  {
+    "id": "P01",
+    "title": "핑크 상의와 베이지 하의",
+    "parts": [
+      {
+        "garment_ids": [
+          "g01",
+          "g02",
+          "g07"
+        ],
+        "color_ids": [
+          "wardrobe-pink",
+          "wardrobe-pale_pink"
+        ]
+      },
+      {
+        "garment_ids": [
+          "g11",
+          "g12"
+        ],
+        "color_ids": [
+          "wardrobe-beige"
+        ]
+      }
+    ],
+    "scope": {
+      "gender": [
+        "male"
+      ],
+      "tpo": [
+        "casual"
+      ]
+    },
+    "evidence_ids": [
+      "O03"
+    ],
+    "style_tier": "basic",
+    "confidence": "case_supported_not_population_validated",
+    "whole_outfit_approved": false,
+    "minimum_review": "색 면적·핏·소재·날씨·신발까지 전체 도안으로 재검토"
+  },
+  {
+    "id": "P02",
+    "title": "핑크 이너와 네이비 겉옷",
+    "parts": [
+      {
+        "garment_ids": [
+          "g01",
+          "g02",
+          "g07"
+        ],
+        "color_ids": [
+          "wardrobe-pink",
+          "wardrobe-pale_pink"
+        ]
+      },
+      {
+        "garment_ids": [
+          "g22",
+          "g24",
+          "g20"
+        ],
+        "color_ids": [
+          "wardrobe-navy"
+        ]
+      }
+    ],
+    "scope": {
+      "gender": [
+        "male"
+      ],
+      "tpo": [
+        "casual"
+      ]
+    },
+    "evidence_ids": [
+      "O18"
+    ],
+    "style_tier": "basic",
+    "confidence": "case_supported_not_population_validated",
+    "whole_outfit_approved": false,
+    "minimum_review": "색 면적·핏·소재·날씨·신발까지 전체 도안으로 재검토"
+  },
+  {
+    "id": "P03",
+    "title": "핑크 셔츠·연청·브라운 로퍼",
+    "parts": [
+      {
+        "garment_ids": [
+          "g04"
+        ],
+        "color_ids": [
+          "wardrobe-pink"
+        ]
+      },
+      {
+        "garment_ids": [
+          "g10"
+        ],
+        "color_ids": [
+          "wardrobe-sky"
+        ]
+      },
+      {
+        "garment_ids": [
+          "g29"
+        ],
+        "color_ids": [
+          "wardrobe-brown"
+        ]
+      }
+    ],
+    "scope": {
+      "gender": [
+        "male"
+      ],
+      "tpo": [
+        "casual",
+        "business_casual"
+      ]
+    },
+    "evidence_ids": [
+      "O01"
+    ],
+    "style_tier": "basic",
+    "confidence": "case_supported_not_population_validated",
+    "whole_outfit_approved": false,
+    "minimum_review": "색 면적·핏·소재·날씨·신발까지 전체 도안으로 재검토"
+  },
+  {
+    "id": "P04",
+    "title": "밝은 블루 셔츠와 블랙 재킷",
+    "parts": [
+      {
+        "garment_ids": [
+          "g04",
+          "g06"
+        ],
+        "color_ids": [
+          "wardrobe-sky"
+        ]
+      },
+      {
+        "garment_ids": [
+          "g24"
+        ],
+        "color_ids": [
+          "wardrobe-black"
+        ]
+      }
+    ],
+    "scope": {
+      "gender": [
+        "male"
+      ],
+      "tpo": [
+        "casual",
+        "business_casual"
+      ]
+    },
+    "evidence_ids": [
+      "O05"
+    ],
+    "style_tier": "basic",
+    "confidence": "case_supported_not_population_validated",
+    "whole_outfit_approved": false,
+    "minimum_review": "색 면적·핏·소재·날씨·신발까지 전체 도안으로 재검토"
+  },
+  {
+    "id": "P05",
+    "title": "네이비 셔츠와 베이지 재킷",
+    "parts": [
+      {
+        "garment_ids": [
+          "g04"
+        ],
+        "color_ids": [
+          "wardrobe-navy"
+        ]
+      },
+      {
+        "garment_ids": [
+          "g24"
+        ],
+        "color_ids": [
+          "wardrobe-beige"
+        ]
+      }
+    ],
+    "scope": {
+      "gender": [
+        "male"
+      ],
+      "tpo": [
+        "casual",
+        "business_casual"
+      ]
+    },
+    "evidence_ids": [
+      "O06"
+    ],
+    "style_tier": "basic",
+    "confidence": "case_supported_not_population_validated",
+    "whole_outfit_approved": false,
+    "minimum_review": "색 면적·핏·소재·날씨·신발까지 전체 도안으로 재검토"
+  },
+  {
+    "id": "P06",
+    "title": "화이트 셔츠와 블랙 미디 스커트",
+    "parts": [
+      {
+        "garment_ids": [
+          "g04"
+        ],
+        "color_ids": [
+          "wardrobe-white"
+        ]
+      },
+      {
+        "garment_ids": [
+          "g15"
+        ],
+        "color_ids": [
+          "wardrobe-black"
+        ]
+      }
+    ],
+    "scope": {
+      "gender": [
+        "female"
+      ],
+      "tpo": [
+        "business_casual",
+        "casual"
+      ]
+    },
+    "evidence_ids": [
+      "O24"
+    ],
+    "style_tier": "basic",
+    "confidence": "case_supported_not_population_validated",
+    "whole_outfit_approved": false,
+    "minimum_review": "색 면적·핏·소재·날씨·신발까지 전체 도안으로 재검토"
+  },
+  {
+    "id": "P07",
+    "title": "크림 셔츠·데님·블랙 플랫",
+    "parts": [
+      {
+        "garment_ids": [
+          "g04"
+        ],
+        "color_ids": [
+          "wardrobe-ivory"
+        ]
+      },
+      {
+        "garment_ids": [
+          "g10"
+        ],
+        "color_ids": [
+          "wardrobe-denim",
+          "wardrobe-sky"
+        ]
+      },
+      {
+        "garment_ids": [
+          "g30"
+        ],
+        "color_ids": [
+          "wardrobe-black"
+        ]
+      }
+    ],
+    "scope": {
+      "gender": [
+        "female"
+      ],
+      "tpo": [
+        "casual"
+      ]
+    },
+    "evidence_ids": [
+      "O26"
+    ],
+    "style_tier": "basic",
+    "confidence": "case_supported_not_population_validated",
+    "whole_outfit_approved": false,
+    "minimum_review": "색 면적·핏·소재·날씨·신발까지 전체 도안으로 재검토"
+  },
+  {
+    "id": "P08",
+    "title": "흰 상하의·블랙 플랫",
+    "parts": [
+      {
+        "garment_ids": [
+          "g04"
+        ],
+        "color_ids": [
+          "wardrobe-white"
+        ]
+      },
+      {
+        "garment_ids": [
+          "g15"
+        ],
+        "color_ids": [
+          "wardrobe-white"
+        ]
+      },
+      {
+        "garment_ids": [
+          "g30"
+        ],
+        "color_ids": [
+          "wardrobe-black"
+        ]
+      }
+    ],
+    "scope": {
+      "gender": [
+        "female"
+      ],
+      "tpo": [
+        "casual"
+      ]
+    },
+    "evidence_ids": [
+      "O25"
+    ],
+    "style_tier": "experimental",
+    "confidence": "case_supported_not_population_validated",
+    "whole_outfit_approved": false,
+    "minimum_review": "색 면적·핏·소재·날씨·신발까지 전체 도안으로 재검토"
+  },
+  {
+    "id": "P09",
+    "title": "레드 니트와 검정 하의",
+    "parts": [
+      {
+        "garment_ids": [
+          "g07"
+        ],
+        "color_ids": [
+          "wardrobe-red"
+        ]
+      },
+      {
+        "garment_ids": [
+          "g11",
+          "g12"
+        ],
+        "color_ids": [
+          "wardrobe-black"
+        ]
+      }
+    ],
+    "scope": {
+      "gender": [
+        "male"
+      ],
+      "tpo": [
+        "casual"
+      ],
+      "season": [
+        "winter"
+      ]
+    },
+    "evidence_ids": [
+      "O15"
+    ],
+    "style_tier": "basic",
+    "confidence": "case_supported_not_population_validated",
+    "whole_outfit_approved": false,
+    "minimum_review": "색 면적·핏·소재·날씨·신발까지 전체 도안으로 재검토"
+  },
+  {
+    "id": "P10",
+    "title": "네이비 코트와 레드 머플러",
+    "parts": [
+      {
+        "garment_ids": [
+          "g26"
+        ],
+        "color_ids": [
+          "wardrobe-navy"
+        ]
+      },
+      {
+        "garment_ids": [
+          "g44"
+        ],
+        "color_ids": [
+          "wardrobe-red"
+        ]
+      }
+    ],
+    "scope": {
+      "gender": [
+        "male"
+      ],
+      "season": [
+        "winter"
+      ]
+    },
+    "evidence_ids": [
+      "O16"
+    ],
+    "style_tier": "basic",
+    "confidence": "case_supported_not_population_validated",
+    "whole_outfit_approved": false,
+    "minimum_review": "색 면적·핏·소재·날씨·신발까지 전체 도안으로 재검토"
+  },
+  {
+    "id": "P11",
+    "title": "네이비 수트와 핑크 셔츠",
+    "parts": [
+      {
+        "garment_ids": [
+          "g25"
+        ],
+        "color_ids": [
+          "wardrobe-navy"
+        ]
+      },
+      {
+        "garment_ids": [
+          "g14"
+        ],
+        "color_ids": [
+          "wardrobe-navy"
+        ]
+      },
+      {
+        "garment_ids": [
+          "g06"
+        ],
+        "color_ids": [
+          "wardrobe-pink",
+          "wardrobe-pale_pink"
+        ]
+      }
+    ],
+    "scope": {
+      "gender": [
+        "male"
+      ],
+      "tpo": [
+        "business_formal"
+      ]
+    },
+    "evidence_ids": [
+      "O19"
+    ],
+    "style_tier": "basic",
+    "confidence": "case_supported_not_population_validated",
+    "whole_outfit_approved": false,
+    "minimum_review": "색 면적·핏·소재·날씨·신발까지 전체 도안으로 재검토"
+  },
+  {
+    "id": "P12",
+    "title": "화이트 폴로·데님 쇼츠",
+    "parts": [
+      {
+        "garment_ids": [
+          "g05"
+        ],
+        "color_ids": [
+          "wardrobe-white"
+        ]
+      },
+      {
+        "garment_ids": [
+          "g13"
+        ],
+        "color_ids": [
+          "wardrobe-denim"
+        ]
+      }
+    ],
+    "scope": {
+      "gender": [
+        "female"
+      ],
+      "season": [
+        "summer"
+      ],
+      "tpo": [
+        "casual"
+      ]
+    },
+    "evidence_ids": [
+      "O14"
+    ],
+    "style_tier": "basic",
+    "confidence": "case_supported_not_population_validated",
+    "whole_outfit_approved": false,
+    "minimum_review": "색 면적·핏·소재·날씨·신발까지 전체 도안으로 재검토"
+  }
+]

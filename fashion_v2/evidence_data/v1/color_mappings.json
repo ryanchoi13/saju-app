@@ -1,0 +1,1759 @@
+[
+  {
+    "source_color_id": "wada-004F46",
+    "target_color_id": "wardrobe-teal",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-004F46",
+    "target_color_id": "wardrobe-forest",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-004F46",
+    "target_color_id": "wardrobe-sage",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-004F46",
+    "target_color_id": "wardrobe-olive",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-005B8D",
+    "target_color_id": "wardrobe-navy",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-005B8D",
+    "target_color_id": "wardrobe-denim",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-005B8D",
+    "target_color_id": "wardrobe-sky",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-006EB8",
+    "target_color_id": "wardrobe-navy",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-006EB8",
+    "target_color_id": "wardrobe-denim",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-006EB8",
+    "target_color_id": "wardrobe-sky",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-007190",
+    "target_color_id": "wardrobe-navy",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-007190",
+    "target_color_id": "wardrobe-denim",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-007190",
+    "target_color_id": "wardrobe-sky",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-00908A",
+    "target_color_id": "wardrobe-teal",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-00908A",
+    "target_color_id": "wardrobe-forest",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-00908A",
+    "target_color_id": "wardrobe-sage",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-00908A",
+    "target_color_id": "wardrobe-olive",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-0093A5",
+    "target_color_id": "wardrobe-teal",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-0093A5",
+    "target_color_id": "wardrobe-forest",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-0093A5",
+    "target_color_id": "wardrobe-sage",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-0093A5",
+    "target_color_id": "wardrobe-olive",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-00978D",
+    "target_color_id": "wardrobe-teal",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-00978D",
+    "target_color_id": "wardrobe-forest",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-00978D",
+    "target_color_id": "wardrobe-sage",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-00978D",
+    "target_color_id": "wardrobe-olive",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-00B49B",
+    "target_color_id": "wardrobe-teal",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-00B49B",
+    "target_color_id": "wardrobe-forest",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-00B49B",
+    "target_color_id": "wardrobe-sage",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-00B49B",
+    "target_color_id": "wardrobe-olive",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-051230",
+    "target_color_id": "wardrobe-navy",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-051230",
+    "target_color_id": "wardrobe-denim",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-051230",
+    "target_color_id": "wardrobe-sky",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-064F6E",
+    "target_color_id": "wardrobe-navy",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-064F6E",
+    "target_color_id": "wardrobe-denim",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-064F6E",
+    "target_color_id": "wardrobe-sky",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-099197",
+    "target_color_id": "wardrobe-teal",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-099197",
+    "target_color_id": "wardrobe-forest",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-099197",
+    "target_color_id": "wardrobe-sage",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-099197",
+    "target_color_id": "wardrobe-olive",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-111314",
+    "target_color_id": "wardrobe-black",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-112F2C",
+    "target_color_id": "wardrobe-teal",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-112F2C",
+    "target_color_id": "wardrobe-forest",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-112F2C",
+    "target_color_id": "wardrobe-sage",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-112F2C",
+    "target_color_id": "wardrobe-olive",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-12354E",
+    "target_color_id": "wardrobe-navy",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-12354E",
+    "target_color_id": "wardrobe-denim",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-12354E",
+    "target_color_id": "wardrobe-sky",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-1A7444",
+    "target_color_id": "wardrobe-sage",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-1A7444",
+    "target_color_id": "wardrobe-forest",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-1A7444",
+    "target_color_id": "wardrobe-olive",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-1C4286",
+    "target_color_id": "wardrobe-navy",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-1C4286",
+    "target_color_id": "wardrobe-denim",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-1C4286",
+    "target_color_id": "wardrobe-sky",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-1E0E3F",
+    "target_color_id": "wardrobe-lavender",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-1E0E3F",
+    "target_color_id": "wardrobe-purple",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-34454C",
+    "target_color_id": "wardrobe-navy",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-34454C",
+    "target_color_id": "wardrobe-denim",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-34454C",
+    "target_color_id": "wardrobe-sky",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-40456A",
+    "target_color_id": "wardrobe-navy",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-40456A",
+    "target_color_id": "wardrobe-denim",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-40456A",
+    "target_color_id": "wardrobe-sky",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-42533E",
+    "target_color_id": "wardrobe-sage",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-42533E",
+    "target_color_id": "wardrobe-forest",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-42533E",
+    "target_color_id": "wardrobe-olive",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-437742",
+    "target_color_id": "wardrobe-sage",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-437742",
+    "target_color_id": "wardrobe-forest",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-437742",
+    "target_color_id": "wardrobe-olive",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-4B3317",
+    "target_color_id": "wardrobe-beige",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-4B3317",
+    "target_color_id": "wardrobe-brown",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-4E1D4C",
+    "target_color_id": "wardrobe-lavender",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-4E1D4C",
+    "target_color_id": "wardrobe-purple",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-4F4086",
+    "target_color_id": "wardrobe-lavender",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-4F4086",
+    "target_color_id": "wardrobe-purple",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-501345",
+    "target_color_id": "wardrobe-lavender",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-501345",
+    "target_color_id": "wardrobe-purple",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-555832",
+    "target_color_id": "wardrobe-butter",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-59256A",
+    "target_color_id": "wardrobe-lavender",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-59256A",
+    "target_color_id": "wardrobe-purple",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-5A82B3",
+    "target_color_id": "wardrobe-navy",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-5A82B3",
+    "target_color_id": "wardrobe-denim",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-5A82B3",
+    "target_color_id": "wardrobe-sky",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-62C6BF",
+    "target_color_id": "wardrobe-teal",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-62C6BF",
+    "target_color_id": "wardrobe-forest",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-62C6BF",
+    "target_color_id": "wardrobe-sage",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-62C6BF",
+    "target_color_id": "wardrobe-olive",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-642D5E",
+    "target_color_id": "wardrobe-lavender",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-642D5E",
+    "target_color_id": "wardrobe-purple",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-644B1E",
+    "target_color_id": "wardrobe-beige",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-644B1E",
+    "target_color_id": "wardrobe-brown",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-6450A1",
+    "target_color_id": "wardrobe-lavender",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-6450A1",
+    "target_color_id": "wardrobe-purple",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-66629C",
+    "target_color_id": "wardrobe-navy",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-66629C",
+    "target_color_id": "wardrobe-denim",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-66629C",
+    "target_color_id": "wardrobe-sky",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-6B7140",
+    "target_color_id": "wardrobe-butter",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-6D4145",
+    "target_color_id": "wardrobe-pink",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-6D4145",
+    "target_color_id": "wardrobe-burgundy",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-6D4145",
+    "target_color_id": "wardrobe-pale_pink",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-71502F",
+    "target_color_id": "wardrobe-beige",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-71502F",
+    "target_color_id": "wardrobe-brown",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-719470",
+    "target_color_id": "wardrobe-sage",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-719470",
+    "target_color_id": "wardrobe-forest",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-719470",
+    "target_color_id": "wardrobe-olive",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-78CDD0",
+    "target_color_id": "wardrobe-teal",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-78CDD0",
+    "target_color_id": "wardrobe-forest",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-78CDD0",
+    "target_color_id": "wardrobe-sage",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-78CDD0",
+    "target_color_id": "wardrobe-olive",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-793327",
+    "target_color_id": "wardrobe-pink",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-793327",
+    "target_color_id": "wardrobe-burgundy",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-793327",
+    "target_color_id": "wardrobe-pale_pink",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-7A4456",
+    "target_color_id": "wardrobe-pink",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-7A4456",
+    "target_color_id": "wardrobe-burgundy",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-7A4456",
+    "target_color_id": "wardrobe-pale_pink",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-80719E",
+    "target_color_id": "wardrobe-lavender",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-80719E",
+    "target_color_id": "wardrobe-purple",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-82241F",
+    "target_color_id": "wardrobe-pink",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-82241F",
+    "target_color_id": "wardrobe-burgundy",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-82241F",
+    "target_color_id": "wardrobe-pale_pink",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-837E31",
+    "target_color_id": "wardrobe-butter",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-848061",
+    "target_color_id": "wardrobe-butter",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-84875E",
+    "target_color_id": "wardrobe-butter",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-8B835B",
+    "target_color_id": "wardrobe-butter",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-8C4C62",
+    "target_color_id": "wardrobe-pink",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-8C4C62",
+    "target_color_id": "wardrobe-burgundy",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-8C4C62",
+    "target_color_id": "wardrobe-pale_pink",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-96874D",
+    "target_color_id": "wardrobe-beige",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-96874D",
+    "target_color_id": "wardrobe-brown",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-97ACC8",
+    "target_color_id": "wardrobe-navy",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-97ACC8",
+    "target_color_id": "wardrobe-denim",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-97ACC8",
+    "target_color_id": "wardrobe-sky",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-9A72AA",
+    "target_color_id": "wardrobe-lavender",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-9A72AA",
+    "target_color_id": "wardrobe-purple",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-A1A39A",
+    "target_color_id": "wardrobe-light_gray",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-A1A39A",
+    "target_color_id": "wardrobe-gray",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-A1A39A",
+    "target_color_id": "wardrobe-charcoal",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-A2B0AD",
+    "target_color_id": "wardrobe-light_gray",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-A2B0AD",
+    "target_color_id": "wardrobe-gray",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-A2B0AD",
+    "target_color_id": "wardrobe-charcoal",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-A36AA5",
+    "target_color_id": "wardrobe-lavender",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-A36AA5",
+    "target_color_id": "wardrobe-purple",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-A5C8D1",
+    "target_color_id": "wardrobe-navy",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-A5C8D1",
+    "target_color_id": "wardrobe-denim",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-A5C8D1",
+    "target_color_id": "wardrobe-sky",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-A62C37",
+    "target_color_id": "wardrobe-pink",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-A62C37",
+    "target_color_id": "wardrobe-burgundy",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-A62C37",
+    "target_color_id": "wardrobe-pale_pink",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-A7D4E4",
+    "target_color_id": "wardrobe-navy",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-A7D4E4",
+    "target_color_id": "wardrobe-denim",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-A7D4E4",
+    "target_color_id": "wardrobe-sky",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-AB2439",
+    "target_color_id": "wardrobe-pink",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-AB2439",
+    "target_color_id": "wardrobe-burgundy",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-AB2439",
+    "target_color_id": "wardrobe-pale_pink",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-B09F36",
+    "target_color_id": "wardrobe-butter",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-B2B73E",
+    "target_color_id": "wardrobe-butter",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-B4CDC2",
+    "target_color_id": "wardrobe-sage",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-B4CDC2",
+    "target_color_id": "wardrobe-forest",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-B4CDC2",
+    "target_color_id": "wardrobe-olive",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-B59392",
+    "target_color_id": "wardrobe-pink",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-B59392",
+    "target_color_id": "wardrobe-burgundy",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-B59392",
+    "target_color_id": "wardrobe-pale_pink",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-B5B1D8",
+    "target_color_id": "wardrobe-navy",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-B5B1D8",
+    "target_color_id": "wardrobe-denim",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-B5B1D8",
+    "target_color_id": "wardrobe-sky",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-B5DECC",
+    "target_color_id": "wardrobe-sage",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-B5DECC",
+    "target_color_id": "wardrobe-forest",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-B5DECC",
+    "target_color_id": "wardrobe-olive",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-B6BFC1",
+    "target_color_id": "wardrobe-light_gray",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-B6BFC1",
+    "target_color_id": "wardrobe-gray",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-B6BFC1",
+    "target_color_id": "wardrobe-charcoal",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-B73F74",
+    "target_color_id": "wardrobe-pink",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-B73F74",
+    "target_color_id": "wardrobe-burgundy",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-B73F74",
+    "target_color_id": "wardrobe-pale_pink",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-BB7125",
+    "target_color_id": "wardrobe-beige",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-BB7125",
+    "target_color_id": "wardrobe-brown",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-BCE4E5",
+    "target_color_id": "wardrobe-teal",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-BCE4E5",
+    "target_color_id": "wardrobe-forest",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-BCE4E5",
+    "target_color_id": "wardrobe-sage",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-BCE4E5",
+    "target_color_id": "wardrobe-olive",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-C0A9B3",
+    "target_color_id": "wardrobe-pink",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-C0A9B3",
+    "target_color_id": "wardrobe-burgundy",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-C0A9B3",
+    "target_color_id": "wardrobe-pale_pink",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-C19F2C",
+    "target_color_id": "wardrobe-beige",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-C19F2C",
+    "target_color_id": "wardrobe-brown",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-C1C494",
+    "target_color_id": "wardrobe-butter",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-C55347",
+    "target_color_id": "wardrobe-pink",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-C55347",
+    "target_color_id": "wardrobe-burgundy",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-C55347",
+    "target_color_id": "wardrobe-pale_pink",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-C5A56E",
+    "target_color_id": "wardrobe-beige",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-C5A56E",
+    "target_color_id": "wardrobe-camel",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-C5A56E",
+    "target_color_id": "wardrobe-brown",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-C7D14F",
+    "target_color_id": "wardrobe-butter",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-CA92A8",
+    "target_color_id": "wardrobe-pink",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-CA92A8",
+    "target_color_id": "wardrobe-burgundy",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-CA92A8",
+    "target_color_id": "wardrobe-pale_pink",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-CC1236",
+    "target_color_id": "wardrobe-pink",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-CC1236",
+    "target_color_id": "wardrobe-burgundy",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-CC1236",
+    "target_color_id": "wardrobe-pale_pink",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-D46D7A",
+    "target_color_id": "wardrobe-pink",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-D46D7A",
+    "target_color_id": "wardrobe-burgundy",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-D46D7A",
+    "target_color_id": "wardrobe-pale_pink",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-D6B43E",
+    "target_color_id": "wardrobe-beige",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-D6B43E",
+    "target_color_id": "wardrobe-camel",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-D6B43E",
+    "target_color_id": "wardrobe-brown",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-DA525D",
+    "target_color_id": "wardrobe-pink",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-DA525D",
+    "target_color_id": "wardrobe-burgundy",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-DA525D",
+    "target_color_id": "wardrobe-pale_pink",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-DD4027",
+    "target_color_id": "wardrobe-pink",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-DD4027",
+    "target_color_id": "wardrobe-burgundy",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-DD4027",
+    "target_color_id": "wardrobe-pale_pink",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-E0B3B6",
+    "target_color_id": "wardrobe-pink",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-E0B3B6",
+    "target_color_id": "wardrobe-burgundy",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-E0B3B6",
+    "target_color_id": "wardrobe-pale_pink",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-E2B540",
+    "target_color_id": "wardrobe-beige",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-E2B540",
+    "target_color_id": "wardrobe-camel",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-E2B540",
+    "target_color_id": "wardrobe-brown",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-EBD3A2",
+    "target_color_id": "wardrobe-beige",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-EBD3A2",
+    "target_color_id": "wardrobe-camel",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-EBD3A2",
+    "target_color_id": "wardrobe-brown",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-EEB480",
+    "target_color_id": "wardrobe-beige",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-EEB480",
+    "target_color_id": "wardrobe-camel",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-EEB480",
+    "target_color_id": "wardrobe-brown",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-F27291",
+    "target_color_id": "wardrobe-pink",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-F27291",
+    "target_color_id": "wardrobe-burgundy",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-F27291",
+    "target_color_id": "wardrobe-pale_pink",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-F37F94",
+    "target_color_id": "wardrobe-pink",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-F37F94",
+    "target_color_id": "wardrobe-burgundy",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-F37F94",
+    "target_color_id": "wardrobe-pale_pink",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-F3A257",
+    "target_color_id": "wardrobe-beige",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-F3A257",
+    "target_color_id": "wardrobe-camel",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-F3A257",
+    "target_color_id": "wardrobe-brown",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-F48067",
+    "target_color_id": "wardrobe-pink",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-F48067",
+    "target_color_id": "wardrobe-burgundy",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-F48067",
+    "target_color_id": "wardrobe-pale_pink",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-F58E84",
+    "target_color_id": "wardrobe-pink",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-F58E84",
+    "target_color_id": "wardrobe-burgundy",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-F58E84",
+    "target_color_id": "wardrobe-pale_pink",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-F5ECC2",
+    "target_color_id": "wardrobe-butter",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-F8B6BA",
+    "target_color_id": "wardrobe-pink",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-F8B6BA",
+    "target_color_id": "wardrobe-burgundy",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-F8B6BA",
+    "target_color_id": "wardrobe-pale_pink",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-F8ED43",
+    "target_color_id": "wardrobe-butter",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-F99D1B",
+    "target_color_id": "wardrobe-butter",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-FBE6A0",
+    "target_color_id": "wardrobe-butter",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-FCB315",
+    "target_color_id": "wardrobe-butter",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-FDC57E",
+    "target_color_id": "wardrobe-butter",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-FFDD00",
+    "target_color_id": "wardrobe-butter",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-FFEFAE",
+    "target_color_id": "wardrobe-butter",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-FFF200",
+    "target_color_id": "wardrobe-butter",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-FFFFFF",
+    "target_color_id": "wardrobe-white",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-FFFFFF",
+    "target_color_id": "wardrobe-ivory",
+    "relation": "existing_tone_candidate",
+    "status": "candidate_not_auto_approved",
+    "reason": "기존 엔진이 허용한 톤 후보를 가져옴. 아이템·전체 코디 검토 필요."
+  },
+  {
+    "source_color_id": "wada-FBE6A0",
+    "target_color_id": "wardrobe-beige",
+    "relation": "warm_neighbor_proposal",
+    "status": "owner_proposed_pending_review",
+    "reason": "오늘 사용자 제안. 노랑을 그대로 입은 것으로 계산하지 않는 베이지 활용안."
+  }
+]
