@@ -1,0 +1,354 @@
+{
+  "schema_version": 1,
+  "id": "wardrobe-research-20261002-r2",
+  "checked_at": "2026-10-02",
+  "sources": [
+    {
+      "id": "R2-S01",
+      "publisher": "4XR",
+      "publisher_group": "4XR",
+      "url": "https://www.4xr.co.kr/bbs/read.php?boardid=style_list&index_no=21375",
+      "title": "편하게 입어도 스타일은 확실하게",
+      "published_at": "2026-03-16",
+      "author": "SCENE (스타일리스트)",
+      "source_type": "brand_styling",
+      "body_checked": true,
+      "image_checked": true,
+      "commercial_context": "retailer_styling",
+      "synthetic_status": "not_disclosed_authenticity_not_independently_verified",
+      "admission": "related_case_only",
+      "limitations": [
+        "브랜드 판매 목적",
+        "모델 연령 미기재",
+        "체크 셔츠와 카고 팬츠로 요청한 맨투맨·면바지와 다름"
+      ]
+    },
+    {
+      "id": "R2-S02",
+      "publisher": "4XR",
+      "publisher_group": "4XR",
+      "url": "https://www.4xr.co.kr/bbs/read.php?boardid=experience_review&index_no=19718",
+      "title": "헨릭207061 캠핑 드로잉 후디 제품 후기",
+      "published_at": "2024-12-06",
+      "author": "public_wearer_username_not_retained",
+      "source_type": "sponsored_wearer_review",
+      "body_checked": true,
+      "image_checked": true,
+      "commercial_context": "free_product_disclosed",
+      "synthetic_status": "not_disclosed_authenticity_not_independently_verified",
+      "admission": "historical_related_case_only",
+      "limitations": [
+        "제품 제공 체험단",
+        "이전 시즌 사례: 최신 유행 근거로 사용하지 않음",
+        "사진의 강한 채도와 조명으로 정확한 HEX를 추정하지 않음",
+        "모델 연령 미기재"
+      ]
+    },
+    {
+      "id": "R2-S03",
+      "publisher": "MUSINSA",
+      "publisher_group": "MUSINSA",
+      "url": "https://m.musinsa.com/content/1547057639358494785",
+      "title": "지금 입어야 할 2026 트렌드 컬러룩",
+      "published_at": "2026-09-09",
+      "author": "이민영 외 코디 에디터",
+      "source_type": "synthetic_editorial",
+      "body_checked": true,
+      "image_checked": true,
+      "commercial_context": "retailer_editorial",
+      "synthetic_status": "explicit_image_watermark",
+      "admission": "reference_only_not_realwear_evidence",
+      "checked_images": [
+        {
+          "id": "musinsa-purple-1",
+          "image_url": "https://image.msscdn.net/thumbnails/ocmp/contents/content/file_1788917904658_fe5681f3c053.jpg?w=1080",
+          "image_sha256": "4605aed1c85b20fbddead604c5c5cd2dc12cdec6bf6565072a8dcfd4ec274ce2",
+          "observed_label": "AI로 생성",
+          "realwear_eligible": false,
+          "reference_role": "synthetic_editorial_inspiration_only"
+        },
+        {
+          "id": "musinsa-purple-2",
+          "image_url": "https://image.msscdn.net/thumbnails/ocmp/contents/content/file_1788917904655_4b3fa07cb847.jpg?w=1080",
+          "image_sha256": "70ae814e5960a33fc3863350bc7f70754ac4f0dffe2c2a2c5bb1c01941f56386",
+          "observed_label": "AI로 생성",
+          "realwear_eligible": false,
+          "reference_role": "synthetic_editorial_inspiration_only"
+        },
+        {
+          "id": "musinsa-purple-3",
+          "image_url": "https://image.msscdn.net/thumbnails/ocmp/contents/content/file_1788917904669_3e906aa20db1.jpg?w=1080",
+          "image_sha256": "25ce238fa718e27a31dc9fb90bf6cd904a9fca5de8ddfe26adcde73c091e77d9",
+          "observed_label": "AI로 생성",
+          "realwear_eligible": false,
+          "reference_role": "synthetic_editorial_inspiration_only"
+        },
+        {
+          "id": "musinsa-purple-4",
+          "image_url": "https://image.msscdn.net/thumbnails/ocmp/contents/content/file_1788917904670_925d991f585c.jpg?w=1080",
+          "image_sha256": "1a78f50435b3f9da554a67a6519e2eed6124d7dacf26a4a82e330f69adb8dcac",
+          "observed_label": "AI로 생성",
+          "realwear_eligible": false,
+          "reference_role": "synthetic_editorial_inspiration_only"
+        },
+        {
+          "id": "musinsa-purple-5",
+          "image_url": "https://image.msscdn.net/thumbnails/ocmp/contents/content/file_1788917904661_38635f6b806c.jpg?w=1080",
+          "image_sha256": "992065121aa26a217e571bcc4a9e3f44489e873161c983e6b95741eadce6481b",
+          "observed_label": "AI로 생성",
+          "realwear_eligible": false,
+          "reference_role": "synthetic_editorial_inspiration_only"
+        },
+        {
+          "id": "musinsa-red-1",
+          "image_url": "https://image.msscdn.net/thumbnails/ocmp/contents/content/file_1788917954443_1eedf4f05c17.jpg?w=1080",
+          "image_sha256": "2e685ed23de2d44d93a774be92474757d2bb50d71798b93e4d38f15079d60fe8",
+          "observed_label": "AI로 생성",
+          "realwear_eligible": false,
+          "reference_role": "synthetic_editorial_inspiration_only"
+        },
+        {
+          "id": "musinsa-red-2",
+          "image_url": "https://image.msscdn.net/thumbnails/ocmp/contents/content/file_1788917954451_c48d11a459d0.jpg?w=1080",
+          "image_sha256": "85f8e38dab9ef16fd03f914ee882c8e5d34bbfb99073f51c47b75c4dcd45170b",
+          "observed_label": "AI로 생성",
+          "realwear_eligible": false,
+          "reference_role": "synthetic_editorial_inspiration_only"
+        },
+        {
+          "id": "musinsa-red-3",
+          "image_url": "https://image.msscdn.net/thumbnails/ocmp/contents/content/file_1788917954449_79166df248ff.jpg?w=1080",
+          "image_sha256": "0c17324aee6da5eec34da1b1d34ce0d127fe6bb41a97b84cb2040ddb17e9c077",
+          "observed_label": "AI로 생성",
+          "realwear_eligible": false,
+          "reference_role": "synthetic_editorial_inspiration_only"
+        }
+      ],
+      "limitations": [
+        "확인한 8장 모두 AI로 생성 표기",
+        "브랜드의 출처 명확성과 실제 착용 여부는 별개",
+        "기사의 다른 미확인 사진까지 AI라고 일반화하지 않음"
+      ]
+    },
+    {
+      "id": "R2-S04",
+      "publisher": "MUSINSA",
+      "publisher_group": "MUSINSA",
+      "url": "https://www.musinsa.com/snap/1356868747064047709",
+      "title": "스냅 1356868747064047709 검증",
+      "published_at": "2025-04-02",
+      "author": null,
+      "source_type": "brand_snap",
+      "body_checked": true,
+      "image_checked": false,
+      "commercial_context": "brand_snap",
+      "synthetic_status": "unknown",
+      "admission": "excluded_search_target_mismatch",
+      "target_id": "1356868747064047709",
+      "page_sha256": "7f4efe04effd721f9c9a62e5ed203a27ff47c8cc002bb3c3178e33c44c8f8d28",
+      "verification_method": "public_page_embedded_NEXT_DATA_exact_id",
+      "search_claim": "버건디 니트·베이지 치노",
+      "actual_target": "파스텔 블루 가디건·아이보리/네이비 줄무늬 이너·검정 치노",
+      "limitations": [
+        "검색 요약과 실제 게시물의 색·아이템 불일치",
+        "본문의 다른 추천 피드 문구를 해당 착장에 붙이지 않음"
+      ]
+    },
+    {
+      "id": "R2-S05",
+      "publisher": "Goodwearmall",
+      "publisher_group": "Goodwearmall",
+      "url": "https://www.goodwearmall.com/clothing-style-picks/men-burgundy-sweatshirt/",
+      "title": "남자 버건디 맨투맨 코디 가이드",
+      "published_at": null,
+      "author": null,
+      "source_type": "commercial_style_guide",
+      "body_checked": true,
+      "image_checked": false,
+      "commercial_context": "retailer_recommendations",
+      "synthetic_status": "not_assessed",
+      "admission": "research_lead_only",
+      "limitations": [
+        "작성자·게시일·실착 출처 확인 부족",
+        "정성적인 조합 설명을 실착 사례나 일반 법칙으로 집계하지 않음"
+      ]
+    },
+    {
+      "id": "R2-S06",
+      "publisher": "Harper's Bazaar Korea",
+      "publisher_group": "HLL",
+      "url": "https://prd.harpersbazaar.co.kr/article/1909250",
+      "title": "올가을 레드는 선택이 아니라 필수, 쉽게 입는 5가지 방법",
+      "published_at": "2026-09-07",
+      "author": "박경미",
+      "source_type": "affiliate_editorial",
+      "body_checked": true,
+      "image_checked": false,
+      "commercial_context": "affiliate_disclosed",
+      "synthetic_status": "not_assessed",
+      "admission": "excluded_access_notice_and_scope_gap",
+      "limitations": [
+        "로그인 안내 확인: 대량 수집 후보에서 제외",
+        "여성 중심 사례를 요청한 남성 맨투맨 착장으로 일반화하지 않음"
+      ]
+    }
+  ],
+  "observations": [
+    {
+      "id": "R2-O01",
+      "source_id": "R2-S01",
+      "title": "레드 체크 셔츠·검정 이너·베이지 카고·밝은 운동화",
+      "image_file": "fourxr-red.jpg",
+      "image_url": "https://cdn-tgreen.bizhost.kr/files/board_img_goods/10041099/1773645429_0.jpg",
+      "image_sha256": "e2aeb20e11df83111929a9306d9ff15d021fc6dba9d04ee83c05e2fbf62bd1e3",
+      "context": "brand_styled_photo",
+      "items": [
+        {
+          "slot": "outer",
+          "garment": "체크 셔츠",
+          "color": "레드·브라운·베이지 체크",
+          "basis": "product_name_and_image"
+        },
+        {
+          "slot": "top",
+          "garment": "티셔츠",
+          "color": "검정",
+          "basis": "image_only"
+        },
+        {
+          "slot": "bottom",
+          "garment": "카고 팬츠",
+          "color": "베이지",
+          "basis": "product_name_and_image"
+        },
+        {
+          "slot": "shoes",
+          "garment": "운동화",
+          "color": "밝은 회색 계열·검솔",
+          "basis": "image_only"
+        }
+      ],
+      "supports": "붉은 계열 상의와 베이지 하의의 관련 착장 사례",
+      "does_not_establish": [
+        "단색 빨강 맨투맨의 전체 착장 승인",
+        "남색과 검정 블루종의 상대 우열",
+        "40~50대 남성 착용률"
+      ],
+      "exact_requested_match": false,
+      "age_band": null,
+      "season": "spring",
+      "season_basis": "published_month_only",
+      "tpo": "casual",
+      "tpo_basis": "source_tags",
+      "style_tier": "basic_candidate",
+      "tier_basis": "editorial_label_not_approved",
+      "rating": null
+    },
+    {
+      "id": "R2-O02",
+      "source_id": "R2-S02",
+      "title": "버건디 후드·베이지 코튼팬츠·회색 계열 겉옷·흰 운동화",
+      "image_file": "fourxr-burgundy-review.jpg",
+      "image_url": "https://cdn-tgreen.bizhost.kr/files/board/19718/1733489989_0.jpg",
+      "image_sha256": "8bc2884fa3d75e6c368d54d3b11e5ddf3669b9eff55c93d0c792c263e9b3afef",
+      "context": "sponsored_wearer_review",
+      "items": [
+        {
+          "slot": "outer",
+          "garment": "재킷",
+          "color": "회색 계열",
+          "basis": "image_only_product_unidentified"
+        },
+        {
+          "slot": "top",
+          "garment": "후드티",
+          "color": "버건디",
+          "basis": "author_text_and_image"
+        },
+        {
+          "slot": "bottom",
+          "garment": "코튼 팬츠",
+          "color": "베이지",
+          "basis": "author_text_and_image"
+        },
+        {
+          "slot": "shoes",
+          "garment": "운동화",
+          "color": "흰색",
+          "basis": "image_only"
+        }
+      ],
+      "supports": "버건디 후드와 베이지 코튼팬츠를 직접 조합한 후기",
+      "does_not_establish": [
+        "단색 빨강 맨투맨과 동일한 아이템",
+        "남색 겉옷이라는 확정",
+        "현재 유행 또는 일반 인구 선호"
+      ],
+      "exact_requested_match": false,
+      "age_band": null,
+      "season": null,
+      "season_basis": "author_mentions_spring_autumn_early_winter_but_actual_weather_unknown",
+      "tpo": "casual",
+      "tpo_basis": "researcher_label",
+      "style_tier": "basic_candidate",
+      "tier_basis": "editorial_label_not_approved",
+      "rating": null
+    }
+  ],
+  "questions": [
+    {
+      "id": "Q1",
+      "question": "핑크 이너·베이지 하의에서 남색과 검정 블루종 중 어느 쪽이 더 어울리는가?",
+      "status": "unresolved",
+      "evidence_ids": [],
+      "missing": "이너·하의·신발·핏을 통제한 비교와 동일 맥락의 실착 사례"
+    },
+    {
+      "id": "Q2",
+      "question": "현재 밝은 데님을 진청으로 바꾸면 해당 코디가 나아지는가?",
+      "status": "owner_hypothesis_needs_comparison",
+      "evidence_ids": [],
+      "missing": "같은 상의·겉옷·신발에서 워싱과 명도가 다른 데님 비교"
+    },
+    {
+      "id": "Q3",
+      "question": "빨강 맨투맨·베이지 면바지를 기본 후보로 삼을 수 있는가?",
+      "status": "owner_requested_pair_with_related_evidence",
+      "evidence_ids": [
+        "R2-O01",
+        "R2-O02"
+      ],
+      "missing": "단색 맨투맨과 실제 전체 착장 사례. 현재 두 자료는 체크 셔츠·후드로 부분적 관련성"
+    },
+    {
+      "id": "Q4",
+      "question": "보라 대신 네이비를 분위기 대체색으로 활용할 수 있는가?",
+      "status": "unresolved_cross_family_hypothesis",
+      "evidence_ids": [],
+      "missing": "색상 정체성의 대체 정책 및 전체 코디 비교. 색 유사성만으로 추천색 사용 처리하지 않음"
+    }
+  ],
+  "coverage": {
+    "related_cases": 2,
+    "related_case_publisher_groups": 1,
+    "current_year_cases": 1,
+    "exact_requested_sweatshirt_outfits": 0,
+    "matched_navy_black_comparisons": 0,
+    "purple_to_navy_substitution_evidence": 0,
+    "synthetic_images_excluded_from_realwear": 8
+  },
+  "admission_policy": [
+    "source_identity_and_target_match",
+    "separate_photographic_case_from_synthetic_editorial",
+    "record_sponsorship_and_publication_date",
+    "annotate_full_outfit_colors_material_fit_and_wash",
+    "separate_observation_from_approval_and_population_frequency"
+  ],
+  "engine_score_changes_from_external_sources": false,
+  "collection_next": [
+    "한국 남성 캐주얼에서 단색 레드·버건디 맨투맨과 베이지 치노를 입은 전체 착장",
+    "핑크 이너·베이지 하의에 남색/검정 아우터를 비교할 수 있는 사례",
+    "중청·진청·생지의 색과 워싱을 구분할 수 있는 실제 코디",
+    "연령은 명시된 정보만 기록하고 표본 수가 부족하면 미평가 유지"
+  ]
+}

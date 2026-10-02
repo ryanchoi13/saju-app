@@ -1,0 +1,247 @@
+[
+  {
+    "id": "g01",
+    "name": "반팔 티셔츠",
+    "category": "상의"
+  },
+  {
+    "id": "g02",
+    "name": "긴팔 티셔츠",
+    "category": "상의"
+  },
+  {
+    "id": "g03",
+    "name": "반팔 캐주얼 셔츠",
+    "category": "상의"
+  },
+  {
+    "id": "g04",
+    "name": "긴팔 캐주얼 셔츠",
+    "category": "상의"
+  },
+  {
+    "id": "g05",
+    "name": "반팔 폴로 티셔츠",
+    "category": "상의"
+  },
+  {
+    "id": "g06",
+    "name": "긴팔 정장 셔츠",
+    "category": "상의"
+  },
+  {
+    "id": "g07",
+    "name": "니트",
+    "category": "상의"
+  },
+  {
+    "id": "g08",
+    "name": "맨투맨",
+    "category": "상의"
+  },
+  {
+    "id": "g09",
+    "name": "후드티",
+    "category": "상의"
+  },
+  {
+    "id": "g10",
+    "name": "데님 바지",
+    "category": "하의"
+  },
+  {
+    "id": "g11",
+    "name": "면바지",
+    "category": "하의"
+  },
+  {
+    "id": "g12",
+    "name": "슬랙스",
+    "category": "하의"
+  },
+  {
+    "id": "g13",
+    "name": "반바지",
+    "category": "하의"
+  },
+  {
+    "id": "g14",
+    "name": "수트 바지",
+    "category": "하의"
+  },
+  {
+    "id": "g15",
+    "name": "미디 스커트",
+    "category": "하의"
+  },
+  {
+    "id": "g16",
+    "name": "롱 스커트",
+    "category": "하의"
+  },
+  {
+    "id": "g17",
+    "name": "수트 스커트",
+    "category": "하의"
+  },
+  {
+    "id": "g18",
+    "name": "반팔 원피스",
+    "category": "원피스"
+  },
+  {
+    "id": "g19",
+    "name": "긴팔 원피스",
+    "category": "원피스"
+  },
+  {
+    "id": "g20",
+    "name": "집업 후드",
+    "category": "아우터"
+  },
+  {
+    "id": "g21",
+    "name": "바람막이",
+    "category": "아우터"
+  },
+  {
+    "id": "g22",
+    "name": "블루종",
+    "category": "아우터"
+  },
+  {
+    "id": "g23",
+    "name": "가디건",
+    "category": "아우터"
+  },
+  {
+    "id": "g24",
+    "name": "블레이저",
+    "category": "아우터"
+  },
+  {
+    "id": "g25",
+    "name": "수트 재킷",
+    "category": "아우터"
+  },
+  {
+    "id": "g26",
+    "name": "코트",
+    "category": "아우터"
+  },
+  {
+    "id": "g27",
+    "name": "패딩",
+    "category": "아우터"
+  },
+  {
+    "id": "g28",
+    "name": "운동화",
+    "category": "신발"
+  },
+  {
+    "id": "g29",
+    "name": "로퍼",
+    "category": "신발"
+  },
+  {
+    "id": "g30",
+    "name": "플랫슈즈",
+    "category": "신발"
+  },
+  {
+    "id": "g31",
+    "name": "낮은 굽 펌프스",
+    "category": "신발"
+  },
+  {
+    "id": "g32",
+    "name": "샌들",
+    "category": "신발"
+  },
+  {
+    "id": "g33",
+    "name": "부츠",
+    "category": "신발"
+  },
+  {
+    "id": "g34",
+    "name": "앵클부츠",
+    "category": "신발"
+  },
+  {
+    "id": "g35",
+    "name": "옥스퍼드",
+    "category": "신발"
+  },
+  {
+    "id": "g36",
+    "name": "더비 구두",
+    "category": "신발"
+  },
+  {
+    "id": "g37",
+    "name": "백팩",
+    "category": "가방"
+  },
+  {
+    "id": "g38",
+    "name": "크로스백",
+    "category": "가방"
+  },
+  {
+    "id": "g39",
+    "name": "숄더백",
+    "category": "가방"
+  },
+  {
+    "id": "g40",
+    "name": "토트백",
+    "category": "가방"
+  },
+  {
+    "id": "g41",
+    "name": "핸드백",
+    "category": "가방"
+  },
+  {
+    "id": "g42",
+    "name": "시계",
+    "category": "액세서리"
+  },
+  {
+    "id": "g43",
+    "name": "모자",
+    "category": "액세서리"
+  },
+  {
+    "id": "g44",
+    "name": "머플러",
+    "category": "액세서리"
+  },
+  {
+    "id": "g45",
+    "name": "장갑",
+    "category": "액세서리"
+  },
+  {
+    "id": "g46",
+    "name": "벨트",
+    "category": "액세서리"
+  },
+  {
+    "id": "g47",
+    "name": "귀걸이",
+    "category": "액세서리"
+  },
+  {
+    "id": "g48",
+    "name": "목걸이",
+    "category": "액세서리"
+  },
+  {
+    "id": "g49",
+    "name": "넥타이",
+    "category": "액세서리"
+  }
+]

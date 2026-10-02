@@ -1,0 +1,219 @@
+[
+  {
+    "id": "R01",
+    "title": "네이비 겉옷 + 밝은 이너 + 베이지 바지",
+    "level": "기본형 후보",
+    "status": "draft_visual_pattern",
+    "full_support": [
+      "P001",
+      "P004",
+      "P007"
+    ],
+    "partial_support": [],
+    "observed_unique_looks": 3,
+    "full_outfit_count": 3,
+    "traceable_source_groups": [
+      "Zara (Men’s Flair 원문 크레딧)"
+    ],
+    "traceable_source_group_count": 1,
+    "unresolved_source_looks": 2,
+    "observation": "블루종·가디건·셔츠 재킷에 반복되는 층 구성. 이너와 바지의 밝기가 다르고 신발도 밝은 중립색이다.",
+    "limitations": "겉옷 길이와 바지 폭을 함께 유지하며 변형한다. 핑크 블루종보다 우수하다는 직접 비교 근거는 아니다.",
+    "confidence": "시각적 반복 확인 · 출처 교차검증 부족",
+    "production_enabled": false,
+    "validation": {
+      "method": "manual_whole_outfit_review",
+      "approved": false,
+      "beauty_score": null
+    }
+  },
+  {
+    "id": "R02",
+    "title": "가디건 + 흰 이너 + 데님",
+    "level": "기본형 후보",
+    "status": "draft_visual_pattern",
+    "full_support": [
+      "P005",
+      "P006"
+    ],
+    "partial_support": [
+      "P013"
+    ],
+    "observed_unique_looks": 3,
+    "full_outfit_count": 2,
+    "traceable_source_groups": [
+      "Her Simple Sole"
+    ],
+    "traceable_source_group_count": 1,
+    "unresolved_source_looks": 2,
+    "observation": "핑크·살구·토프 가디건을 바꾸어도 흰 이너와 데님이라는 바탕이 반복된다.",
+    "limitations": "P013은 신발 미노출. 가디건 사례를 같은 색 블루종의 현실성 점수로 옮기지 않는다.",
+    "confidence": "시각적 반복 확인 · 출처 교차검증 부족",
+    "production_enabled": false,
+    "validation": {
+      "method": "manual_whole_outfit_review",
+      "approved": false,
+      "beauty_score": null
+    }
+  },
+  {
+    "id": "R03",
+    "title": "흰색·하늘색 셔츠 + 단색 와이드 바지",
+    "level": "기본형 후보",
+    "status": "draft_visual_pattern",
+    "full_support": [
+      "P008",
+      "P010"
+    ],
+    "partial_support": [
+      "P009"
+    ],
+    "observed_unique_looks": 3,
+    "full_outfit_count": 2,
+    "traceable_source_groups": [],
+    "traceable_source_group_count": 0,
+    "unresolved_source_looks": 3,
+    "observation": "상의는 넣거나 열어 입고 하의의 긴 선을 살린다. 화이트·베이지·블랙 하의 사례가 있다.",
+    "limitations": "셔츠 여밈·이너·바지 길이를 포함한 착장 후보. 격식 있는 출근복 적합성은 별도 판단.",
+    "confidence": "시각적 반복 확인 · 출처 교차검증 부족",
+    "production_enabled": false,
+    "validation": {
+      "method": "manual_whole_outfit_review",
+      "approved": false,
+      "beauty_score": null
+    }
+  },
+  {
+    "id": "R04",
+    "title": "중립색 롱코트 + 어두운 이너·바지",
+    "level": "기본형 후보",
+    "status": "draft_visual_pattern",
+    "full_support": [
+      "P016",
+      "P024",
+      "P025",
+      "P026"
+    ],
+    "partial_support": [],
+    "observed_unique_looks": 4,
+    "full_outfit_count": 4,
+    "traceable_source_groups": [],
+    "traceable_source_group_count": 0,
+    "unresolved_source_looks": 4,
+    "observation": "코트가 베이지·그레이·블랙으로 달라도 안쪽 상하의는 어두운 계열로 이어진다.",
+    "limitations": "흰 운동화와 검정 구두는 서로 다른 변형이다. 기온과 실제 소재를 확인하며 겨울이라는 태그만으로 보온성을 보장하지 않는다.",
+    "confidence": "시각적 반복 확인 · 출처 교차검증 부족",
+    "production_enabled": false,
+    "validation": {
+      "method": "manual_whole_outfit_review",
+      "approved": false,
+      "beauty_score": null
+    }
+  },
+  {
+    "id": "R05",
+    "title": "중립색 니트 겉옷 + 체크 스커트",
+    "level": "기본형 후보",
+    "status": "draft_visual_pattern",
+    "full_support": [
+      "P019"
+    ],
+    "partial_support": [
+      "P020",
+      "P021"
+    ],
+    "observed_unique_looks": 3,
+    "full_outfit_count": 1,
+    "traceable_source_groups": [],
+    "traceable_source_group_count": 0,
+    "unresolved_source_looks": 3,
+    "observation": "가디건은 무지로 두고 체크 무늬를 하의에 둔 형태가 반복된다.",
+    "limitations": "롱스커트와 미니스커트를 별도 변형으로 보관. 미니 두 사례의 신발이 보이지 않아 전신 매칭 근거는 1건.",
+    "confidence": "시각적 반복 확인 · 출처 교차검증 부족",
+    "production_enabled": false,
+    "validation": {
+      "method": "manual_whole_outfit_review",
+      "approved": false,
+      "beauty_score": null
+    }
+  },
+  {
+    "id": "R06",
+    "title": "올리브 유틸리티 재킷 + 흰 이너 + 데님",
+    "level": "기본형 후보",
+    "status": "draft_visual_pattern",
+    "full_support": [
+      "P033"
+    ],
+    "partial_support": [
+      "P034",
+      "P035"
+    ],
+    "observed_unique_looks": 3,
+    "full_outfit_count": 1,
+    "traceable_source_groups": [
+      "Merrick’s Art"
+    ],
+    "traceable_source_group_count": 1,
+    "unresolved_source_looks": 2,
+    "observation": "유틸리티 재킷의 디테일을 흰 이너와 데님으로 받치는 구성이 반복된다.",
+    "limitations": "두 사진은 하단이 잘려 있다. 세 사진을 완성 착장 3건으로 세지 않는다.",
+    "confidence": "시각적 반복 확인 · 출처 교차검증 부족",
+    "production_enabled": false,
+    "validation": {
+      "method": "manual_whole_outfit_review",
+      "approved": false,
+      "beauty_score": null
+    }
+  },
+  {
+    "id": "R07",
+    "title": "토프·그레이지 니트 + 밝은 바지 + 갈색 계열 신발",
+    "level": "기본형 후보",
+    "status": "draft_visual_pattern",
+    "full_support": [
+      "P011",
+      "P012"
+    ],
+    "partial_support": [],
+    "observed_unique_looks": 2,
+    "full_outfit_count": 2,
+    "traceable_source_groups": [],
+    "traceable_source_group_count": 0,
+    "unresolved_source_looks": 2,
+    "observation": "전체를 밝은 중립색으로 이어 가며 니트의 질감과 벨트·신발의 진한 색으로 구분한다.",
+    "limitations": "두 착장 모두 원저자 확인 전. 샌들이 가능한 TPO와 계절에서만 해당 변형을 검토한다.",
+    "confidence": "시각적 반복 확인 · 출처 교차검증 부족",
+    "production_enabled": false,
+    "validation": {
+      "method": "manual_whole_outfit_review",
+      "approved": false,
+      "beauty_score": null
+    }
+  },
+  {
+    "id": "R08",
+    "title": "그린·보라를 큰 면적으로 쓰는 조합",
+    "level": "실험형",
+    "status": "draft_visual_pattern",
+    "full_support": [
+      "P027",
+      "P028"
+    ],
+    "partial_support": [],
+    "observed_unique_looks": 2,
+    "full_outfit_count": 2,
+    "traceable_source_groups": [],
+    "traceable_source_group_count": 0,
+    "unresolved_source_looks": 2,
+    "observation": "두 사례 모두 색 면적이 크고 레오퍼드 힐을 사용하지만 보라의 명도와 상하의 역할이 다르다.",
+    "limitations": "기본 추천에 자동 적용하지 않는다. 선명한 두 색을 항상 금지한다는 결론도 내리지 않는다.",
+    "confidence": "시각적 반복 확인 · 출처 교차검증 부족",
+    "production_enabled": false,
+    "validation": {
+      "method": "manual_whole_outfit_review",
+      "approved": false,
+      "beauty_score": null
+    }
+  }
+]

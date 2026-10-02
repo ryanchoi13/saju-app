@@ -1,0 +1,1386 @@
+[
+  {
+    "id": "wardrobe-white",
+    "name": "화이트",
+    "hex": "#F5F4EF",
+    "origin": "wardrobe",
+    "family": "white",
+    "pool": "core_26",
+    "status": "existing_color_not_aesthetic_approval"
+  },
+  {
+    "id": "wardrobe-ivory",
+    "name": "아이보리",
+    "hex": "#EAE3D2",
+    "origin": "wardrobe",
+    "family": "white",
+    "pool": "core_26",
+    "status": "existing_color_not_aesthetic_approval"
+  },
+  {
+    "id": "wardrobe-gray",
+    "name": "그레이",
+    "hex": "#A3A6AA",
+    "origin": "wardrobe",
+    "family": "gray",
+    "pool": "core_26",
+    "status": "existing_color_not_aesthetic_approval"
+  },
+  {
+    "id": "wardrobe-charcoal",
+    "name": "차콜",
+    "hex": "#444951",
+    "origin": "wardrobe",
+    "family": "gray",
+    "pool": "core_26",
+    "status": "existing_color_not_aesthetic_approval"
+  },
+  {
+    "id": "wardrobe-black",
+    "name": "블랙",
+    "hex": "#22252B",
+    "origin": "wardrobe",
+    "family": "black",
+    "pool": "core_26",
+    "status": "existing_color_not_aesthetic_approval"
+  },
+  {
+    "id": "wardrobe-navy",
+    "name": "네이비",
+    "hex": "#243B59",
+    "origin": "wardrobe",
+    "family": "blue",
+    "pool": "core_26",
+    "status": "existing_color_not_aesthetic_approval"
+  },
+  {
+    "id": "wardrobe-sky",
+    "name": "하늘색",
+    "hex": "#A7CEDF",
+    "origin": "wardrobe",
+    "family": "blue",
+    "pool": "core_26",
+    "status": "existing_color_not_aesthetic_approval"
+  },
+  {
+    "id": "wardrobe-denim",
+    "name": "데님 블루",
+    "hex": "#527C9B",
+    "origin": "wardrobe",
+    "family": "blue",
+    "pool": "core_26",
+    "status": "existing_color_not_aesthetic_approval"
+  },
+  {
+    "id": "wardrobe-cobalt",
+    "name": "선명한 파랑",
+    "hex": "#265AC6",
+    "origin": "wardrobe",
+    "family": "blue",
+    "pool": "core_26",
+    "status": "existing_color_not_aesthetic_approval"
+  },
+  {
+    "id": "wardrobe-teal",
+    "name": "청록",
+    "hex": "#367F7A",
+    "origin": "wardrobe",
+    "family": "teal",
+    "pool": "core_26",
+    "status": "existing_color_not_aesthetic_approval"
+  },
+  {
+    "id": "wardrobe-sage",
+    "name": "세이지",
+    "hex": "#A1B6A3",
+    "origin": "wardrobe",
+    "family": "green",
+    "pool": "core_26",
+    "status": "existing_color_not_aesthetic_approval"
+  },
+  {
+    "id": "wardrobe-forest",
+    "name": "딥 그린",
+    "hex": "#355B48",
+    "origin": "wardrobe",
+    "family": "green",
+    "pool": "core_26",
+    "status": "existing_color_not_aesthetic_approval"
+  },
+  {
+    "id": "wardrobe-olive",
+    "name": "올리브",
+    "hex": "#747B54",
+    "origin": "wardrobe",
+    "family": "green",
+    "pool": "core_26",
+    "status": "existing_color_not_aesthetic_approval"
+  },
+  {
+    "id": "wardrobe-burgundy",
+    "name": "버건디",
+    "hex": "#7C3E4B",
+    "origin": "wardrobe",
+    "family": "red",
+    "pool": "core_26",
+    "status": "existing_color_not_aesthetic_approval"
+  },
+  {
+    "id": "wardrobe-pink",
+    "name": "연핑크",
+    "hex": "#DDB6BC",
+    "origin": "wardrobe",
+    "family": "red",
+    "pool": "core_26",
+    "status": "existing_color_not_aesthetic_approval"
+  },
+  {
+    "id": "wardrobe-coral",
+    "name": "코랄",
+    "hex": "#D98275",
+    "origin": "wardrobe",
+    "family": "red",
+    "pool": "core_26",
+    "status": "existing_color_not_aesthetic_approval"
+  },
+  {
+    "id": "wardrobe-red",
+    "name": "레드",
+    "hex": "#BC3F43",
+    "origin": "wardrobe",
+    "family": "red",
+    "pool": "core_26",
+    "status": "existing_color_not_aesthetic_approval"
+  },
+  {
+    "id": "wardrobe-beige",
+    "name": "베이지",
+    "hex": "#CBBCA0",
+    "origin": "wardrobe",
+    "family": "brown",
+    "pool": "core_26",
+    "status": "existing_color_not_aesthetic_approval"
+  },
+  {
+    "id": "wardrobe-camel",
+    "name": "카멜",
+    "hex": "#B38D5D",
+    "origin": "wardrobe",
+    "family": "brown",
+    "pool": "core_26",
+    "status": "existing_color_not_aesthetic_approval"
+  },
+  {
+    "id": "wardrobe-brown",
+    "name": "브라운",
+    "hex": "#705343",
+    "origin": "wardrobe",
+    "family": "brown",
+    "pool": "core_26",
+    "status": "existing_color_not_aesthetic_approval"
+  },
+  {
+    "id": "wardrobe-butter",
+    "name": "연노랑",
+    "hex": "#E5D594",
+    "origin": "wardrobe",
+    "family": "yellow",
+    "pool": "core_26",
+    "status": "existing_color_not_aesthetic_approval"
+  },
+  {
+    "id": "wardrobe-yellow",
+    "name": "옐로",
+    "hex": "#EAC744",
+    "origin": "wardrobe",
+    "family": "yellow",
+    "pool": "core_26",
+    "status": "existing_color_not_aesthetic_approval"
+  },
+  {
+    "id": "wardrobe-lavender",
+    "name": "연보라",
+    "hex": "#B6A5C7",
+    "origin": "wardrobe",
+    "family": "purple",
+    "pool": "core_26",
+    "status": "existing_color_not_aesthetic_approval"
+  },
+  {
+    "id": "wardrobe-purple",
+    "name": "보라",
+    "hex": "#70468A",
+    "origin": "wardrobe",
+    "family": "purple",
+    "pool": "core_26",
+    "status": "existing_color_not_aesthetic_approval"
+  },
+  {
+    "id": "wardrobe-light_gray",
+    "name": "라이트 그레이",
+    "hex": "#CDD0D3",
+    "origin": "wardrobe",
+    "family": "gray",
+    "pool": "core_26",
+    "status": "existing_color_not_aesthetic_approval"
+  },
+  {
+    "id": "wardrobe-pale_pink",
+    "name": "연한 분홍",
+    "hex": "#E8DADB",
+    "origin": "wardrobe",
+    "family": "red",
+    "pool": "core_26",
+    "status": "existing_color_not_aesthetic_approval"
+  },
+  {
+    "id": "wada-004F46",
+    "name": "딥 청록",
+    "original_name": "Dusky Green",
+    "hex": "#004F46",
+    "origin": "wada",
+    "family": "teal",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-005B8D",
+    "name": "딥 터쿼이즈 블루",
+    "original_name": "Helvetia Blue",
+    "hex": "#005B8D",
+    "origin": "wada",
+    "family": "blue",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-006EB8",
+    "name": "터쿼이즈 블루",
+    "original_name": "Blue",
+    "hex": "#006EB8",
+    "origin": "wada",
+    "family": "blue",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-007190",
+    "name": "딥 터쿼이즈 블루",
+    "original_name": "Antwarp Blue",
+    "hex": "#007190",
+    "origin": "wada",
+    "family": "blue",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-00908A",
+    "name": "딥 청록",
+    "original_name": "Light Porcelain Green",
+    "hex": "#00908A",
+    "origin": "wada",
+    "family": "teal",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-0093A5",
+    "name": "딥 청록",
+    "original_name": "Cerulian Blue",
+    "hex": "#0093A5",
+    "origin": "wada",
+    "family": "teal",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-00978D",
+    "name": "딥 청록",
+    "original_name": "Benzol Green",
+    "hex": "#00978D",
+    "origin": "wada",
+    "family": "teal",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-00B49B",
+    "name": "민트 청록",
+    "original_name": "Sea Green",
+    "hex": "#00B49B",
+    "origin": "wada",
+    "family": "teal",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-051230",
+    "name": "짙은 남색",
+    "original_name": "Deep Indigo",
+    "hex": "#051230",
+    "origin": "wada",
+    "family": "blue",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-064F6E",
+    "name": "딥 터쿼이즈 블루",
+    "original_name": "Vandar Poel's Blue",
+    "hex": "#064F6E",
+    "origin": "wada",
+    "family": "blue",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-099197",
+    "name": "딥 청록",
+    "original_name": "Green Blue",
+    "hex": "#099197",
+    "origin": "wada",
+    "family": "teal",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-111314",
+    "name": "블랙",
+    "original_name": "Black",
+    "hex": "#111314",
+    "origin": "wada",
+    "family": "black",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-112F2C",
+    "name": "딥 청록",
+    "original_name": "Deep Slate Green",
+    "hex": "#112F2C",
+    "origin": "wada",
+    "family": "teal",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-12354E",
+    "name": "딥 터쿼이즈 블루",
+    "original_name": "Dark Tyrian Blue",
+    "hex": "#12354E",
+    "origin": "wada",
+    "family": "blue",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-1A7444",
+    "name": "딥 그린",
+    "original_name": "Diamine Green",
+    "hex": "#1A7444",
+    "origin": "wada",
+    "family": "green",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-1C4286",
+    "name": "네이비",
+    "original_name": "Deep Lyons Blue",
+    "hex": "#1C4286",
+    "origin": "wada",
+    "family": "blue",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-1E0E3F",
+    "name": "인디고",
+    "original_name": "Dull Violet Black",
+    "hex": "#1E0E3F",
+    "origin": "wada",
+    "family": "purple",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-34454C",
+    "name": "딥 블루 그레이",
+    "original_name": "Slate Color",
+    "hex": "#34454C",
+    "origin": "wada",
+    "family": "blue",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-40456A",
+    "name": "딥 블루",
+    "original_name": "Violet Blue",
+    "hex": "#40456A",
+    "origin": "wada",
+    "family": "blue",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-42533E",
+    "name": "딥 그린",
+    "original_name": "Blackish Olive",
+    "hex": "#42533E",
+    "origin": "wada",
+    "family": "green",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-437742",
+    "name": "그린",
+    "original_name": "Cossack Green",
+    "hex": "#437742",
+    "origin": "wada",
+    "family": "green",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-4B3317",
+    "name": "딥 브라운",
+    "original_name": "Vandyke Brown",
+    "hex": "#4B3317",
+    "origin": "wada",
+    "family": "brown",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-4E1D4C",
+    "name": "딥 퍼플",
+    "original_name": "Dusky Madder Violet",
+    "hex": "#4E1D4C",
+    "origin": "wada",
+    "family": "purple",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-4F4086",
+    "name": "블루 바이올렛",
+    "original_name": "Violet",
+    "hex": "#4F4086",
+    "origin": "wada",
+    "family": "purple",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-501345",
+    "name": "딥 마젠타",
+    "original_name": "Cotinga Purple",
+    "hex": "#501345",
+    "origin": "wada",
+    "family": "purple",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-555832",
+    "name": "딥 머스터드",
+    "original_name": "Lincoln Green",
+    "hex": "#555832",
+    "origin": "wada",
+    "family": "yellow",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-59256A",
+    "name": "딥 퍼플",
+    "original_name": "Red Violet",
+    "hex": "#59256A",
+    "origin": "wada",
+    "family": "purple",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-5A82B3",
+    "name": "블루 그레이",
+    "original_name": "Olympic Blue",
+    "hex": "#5A82B3",
+    "origin": "wada",
+    "family": "blue",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-62C6BF",
+    "name": "청록",
+    "original_name": "Venice Green",
+    "hex": "#62C6BF",
+    "origin": "wada",
+    "family": "teal",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-642D5E",
+    "name": "딥 모브",
+    "original_name": "Violet Red",
+    "hex": "#642D5E",
+    "origin": "wada",
+    "family": "purple",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-644B1E",
+    "name": "딥 브라운",
+    "original_name": "Sepia",
+    "hex": "#644B1E",
+    "origin": "wada",
+    "family": "brown",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-6450A1",
+    "name": "블루 바이올렛",
+    "original_name": "Blue Violet",
+    "hex": "#6450A1",
+    "origin": "wada",
+    "family": "purple",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-653514",
+    "name": "붉은 갈색",
+    "original_name": "Mars Brown Tobacco",
+    "hex": "#653514",
+    "origin": "wada",
+    "family": "orange",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-66629C",
+    "name": "딥 바이올렛",
+    "original_name": "Dark Soft Violet",
+    "hex": "#66629C",
+    "origin": "wada",
+    "family": "blue",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-6B7140",
+    "name": "딥 머스터드",
+    "original_name": "Olive Green",
+    "hex": "#6B7140",
+    "origin": "wada",
+    "family": "yellow",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-6D4145",
+    "name": "딥 레드",
+    "original_name": "Vistoris Lake",
+    "hex": "#6D4145",
+    "origin": "wada",
+    "family": "red",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-71502F",
+    "name": "딥 브라운",
+    "original_name": "Pale Raw Umber",
+    "hex": "#71502F",
+    "origin": "wada",
+    "family": "brown",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-719470",
+    "name": "그린",
+    "original_name": "Chromium Green",
+    "hex": "#719470",
+    "origin": "wada",
+    "family": "green",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-762C19",
+    "name": "붉은 갈색",
+    "original_name": "Madder Brown",
+    "hex": "#762C19",
+    "origin": "wada",
+    "family": "orange",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-78CDD0",
+    "name": "청록",
+    "original_name": "Calamine Blue",
+    "hex": "#78CDD0",
+    "origin": "wada",
+    "family": "teal",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-793327",
+    "name": "딥 레드",
+    "original_name": "Hay's Russet",
+    "hex": "#793327",
+    "origin": "wada",
+    "family": "red",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-7A4456",
+    "name": "로즈",
+    "original_name": "Taupe Brown",
+    "hex": "#7A4456",
+    "origin": "wada",
+    "family": "red",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-7C4226",
+    "name": "붉은 갈색",
+    "original_name": "Brown",
+    "hex": "#7C4226",
+    "origin": "wada",
+    "family": "orange",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-80719E",
+    "name": "블루 바이올렛",
+    "original_name": "Dull Blue Violet",
+    "hex": "#80719E",
+    "origin": "wada",
+    "family": "purple",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-82241F",
+    "name": "딥 레드",
+    "original_name": "Vandyke Red",
+    "hex": "#82241F",
+    "origin": "wada",
+    "family": "red",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-837E31",
+    "name": "딥 머스터드",
+    "original_name": "Olive",
+    "hex": "#837E31",
+    "origin": "wada",
+    "family": "yellow",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-848061",
+    "name": "머스터드",
+    "original_name": "Light Grayish Olive",
+    "hex": "#848061",
+    "origin": "wada",
+    "family": "yellow",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-84875E",
+    "name": "머스터드",
+    "original_name": "Krongbergs Green",
+    "hex": "#84875E",
+    "origin": "wada",
+    "family": "yellow",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-87C540",
+    "name": "올리브",
+    "original_name": "Night Green",
+    "hex": "#87C540",
+    "origin": "wada",
+    "family": "olive",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-8B835B",
+    "name": "머스터드",
+    "original_name": "Dark Citrine",
+    "hex": "#8B835B",
+    "origin": "wada",
+    "family": "yellow",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-8C4C62",
+    "name": "로즈",
+    "original_name": "Veronia Purple",
+    "hex": "#8C4C62",
+    "origin": "wada",
+    "family": "red",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-8FA071",
+    "name": "올리브",
+    "original_name": "Rainette Green",
+    "hex": "#8FA071",
+    "origin": "wada",
+    "family": "olive",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-96874D",
+    "name": "브라운",
+    "original_name": "Buffy Citrine",
+    "hex": "#96874D",
+    "origin": "wada",
+    "family": "brown",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-97ACC8",
+    "name": "라이트 블루 그레이",
+    "original_name": "Salvia Blue",
+    "hex": "#97ACC8",
+    "origin": "wada",
+    "family": "blue",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-9A72AA",
+    "name": "라이트 모브",
+    "original_name": "Light Mauve",
+    "hex": "#9A72AA",
+    "origin": "wada",
+    "family": "purple",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-A1A39A",
+    "name": "그레이",
+    "original_name": "Warm Gray",
+    "hex": "#A1A39A",
+    "origin": "wada",
+    "family": "gray",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-A2B0AD",
+    "name": "그레이",
+    "original_name": "Mineral Gray",
+    "hex": "#A2B0AD",
+    "origin": "wada",
+    "family": "gray",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-A36AA5",
+    "name": "퍼플",
+    "original_name": "Aconite Violet",
+    "hex": "#A36AA5",
+    "origin": "wada",
+    "family": "purple",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-A5C8D1",
+    "name": "라이트 블루",
+    "original_name": "Light Glaucous Blue",
+    "hex": "#A5C8D1",
+    "origin": "wada",
+    "family": "blue",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-A62C37",
+    "name": "레드",
+    "original_name": "Carmine Red",
+    "hex": "#A62C37",
+    "origin": "wada",
+    "family": "red",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-A7D4E4",
+    "name": "라이트 터쿼이즈 블루",
+    "original_name": "Pale King's Blue",
+    "hex": "#A7D4E4",
+    "origin": "wada",
+    "family": "blue",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-A84222",
+    "name": "붉은 갈색",
+    "original_name": "Brick Red",
+    "hex": "#A84222",
+    "origin": "wada",
+    "family": "orange",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-AB2439",
+    "name": "레드",
+    "original_name": "Pompeian Red",
+    "hex": "#AB2439",
+    "origin": "wada",
+    "family": "red",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-AFD472",
+    "name": "올리브",
+    "original_name": "Yellow Green",
+    "hex": "#AFD472",
+    "origin": "wada",
+    "family": "olive",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-B09F36",
+    "name": "머스터드",
+    "original_name": "Citrine",
+    "hex": "#B09F36",
+    "origin": "wada",
+    "family": "yellow",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-B2B73E",
+    "name": "머스터드",
+    "original_name": "Citron Yellow",
+    "hex": "#B2B73E",
+    "origin": "wada",
+    "family": "yellow",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-B4CDC2",
+    "name": "라이트 그린",
+    "original_name": "Glaucous Green",
+    "hex": "#B4CDC2",
+    "origin": "wada",
+    "family": "green",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-B59392",
+    "name": "레드",
+    "original_name": "Light Brown Drab",
+    "hex": "#B59392",
+    "origin": "wada",
+    "family": "red",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-B5B1D8",
+    "name": "라이트 블루",
+    "original_name": "Grayish Lavender - A",
+    "hex": "#B5B1D8",
+    "origin": "wada",
+    "family": "blue",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-B5DECC",
+    "name": "라이트 그린",
+    "original_name": "Turquoise Green",
+    "hex": "#B5DECC",
+    "origin": "wada",
+    "family": "green",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-B6BFC1",
+    "name": "뉴트럴 그레이",
+    "original_name": "Neutral Gray",
+    "hex": "#B6BFC1",
+    "origin": "wada",
+    "family": "gray",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-B73F74",
+    "name": "로즈 퍼플",
+    "original_name": "Rosolanc Purple",
+    "hex": "#B73F74",
+    "origin": "wada",
+    "family": "red",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-BB7125",
+    "name": "밝은 갈색",
+    "original_name": "Raw Sienna",
+    "hex": "#BB7125",
+    "origin": "wada",
+    "family": "brown",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-BCE4E5",
+    "name": "라이트 청록",
+    "original_name": "Nile Blue",
+    "hex": "#BCE4E5",
+    "origin": "wada",
+    "family": "teal",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-C0A9B3",
+    "name": "라이트 모브",
+    "original_name": "Grayish Lavender - B",
+    "hex": "#C0A9B3",
+    "origin": "wada",
+    "family": "red",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-C16B27",
+    "name": "코랄",
+    "original_name": "Orange Rufous",
+    "hex": "#C16B27",
+    "origin": "wada",
+    "family": "orange",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-C19F2C",
+    "name": "브라운",
+    "original_name": "Sulphine Yellow",
+    "hex": "#C19F2C",
+    "origin": "wada",
+    "family": "brown",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-C1C494",
+    "name": "옐로",
+    "original_name": "Olive Buff",
+    "hex": "#C1C494",
+    "origin": "wada",
+    "family": "yellow",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-C27544",
+    "name": "코랄",
+    "original_name": "Cinnamon Rufous",
+    "hex": "#C27544",
+    "origin": "wada",
+    "family": "orange",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-C55347",
+    "name": "레드",
+    "original_name": "Etruscan Red",
+    "hex": "#C55347",
+    "origin": "wada",
+    "family": "red",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-C56127",
+    "name": "코랄",
+    "original_name": "Vinaceous Tawny",
+    "hex": "#C56127",
+    "origin": "wada",
+    "family": "orange",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-C5A56E",
+    "name": "카멜",
+    "original_name": "Isabella Color",
+    "hex": "#C5A56E",
+    "origin": "wada",
+    "family": "yellow",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-C7D14F",
+    "name": "머스터드",
+    "original_name": "Light Green Yellow",
+    "hex": "#C7D14F",
+    "origin": "wada",
+    "family": "yellow",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-CA92A8",
+    "name": "라이트 로즈",
+    "original_name": "Laelia Pink",
+    "hex": "#CA92A8",
+    "origin": "wada",
+    "family": "red",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-CC1236",
+    "name": "레드",
+    "original_name": "Carmine",
+    "hex": "#CC1236",
+    "origin": "wada",
+    "family": "red",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-D1B0A7",
+    "name": "라이트 코랄",
+    "original_name": "Fawn",
+    "hex": "#D1B0A7",
+    "origin": "wada",
+    "family": "orange",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-D46D7A",
+    "name": "레드",
+    "original_name": "Old Rose",
+    "hex": "#D46D7A",
+    "origin": "wada",
+    "family": "red",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-D6B43E",
+    "name": "카멜",
+    "original_name": "Olive Ocher",
+    "hex": "#D6B43E",
+    "origin": "wada",
+    "family": "yellow",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-D8A37B",
+    "name": "코랄",
+    "original_name": "Ochraceous Salmon",
+    "hex": "#D8A37B",
+    "origin": "wada",
+    "family": "orange",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-D96629",
+    "name": "코랄",
+    "original_name": "English Red",
+    "hex": "#D96629",
+    "origin": "wada",
+    "family": "orange",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-DA525D",
+    "name": "레드",
+    "original_name": "Eugenia Red B",
+    "hex": "#DA525D",
+    "origin": "wada",
+    "family": "red",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-DD4027",
+    "name": "레드",
+    "original_name": "Red Orange",
+    "hex": "#DD4027",
+    "origin": "wada",
+    "family": "red",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-E0B3B6",
+    "name": "라이트 레드",
+    "original_name": "Cameo Pink",
+    "hex": "#E0B3B6",
+    "origin": "wada",
+    "family": "red",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-E2B540",
+    "name": "카멜",
+    "original_name": "Yellow Ocher",
+    "hex": "#E2B540",
+    "origin": "wada",
+    "family": "yellow",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-EBD3A2",
+    "name": "라이트 카멜",
+    "original_name": "Ivory Buff",
+    "hex": "#EBD3A2",
+    "origin": "wada",
+    "family": "yellow",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-EEB480",
+    "name": "라이트 카멜",
+    "original_name": "Pinkish Cinnamon",
+    "hex": "#EEB480",
+    "origin": "wada",
+    "family": "yellow",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-F15A30",
+    "name": "코랄",
+    "original_name": "Peach Red",
+    "hex": "#F15A30",
+    "origin": "wada",
+    "family": "orange",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-F27291",
+    "name": "라이트 로즈",
+    "original_name": "Spinel Red",
+    "hex": "#F27291",
+    "origin": "wada",
+    "family": "red",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-F37420",
+    "name": "오렌지",
+    "original_name": "Orange",
+    "hex": "#F37420",
+    "origin": "wada",
+    "family": "orange",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-F37F94",
+    "name": "로즈 핑크",
+    "original_name": "Eosine Pink",
+    "hex": "#F37F94",
+    "origin": "wada",
+    "family": "red",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-F3A257",
+    "name": "카멜",
+    "original_name": "Golden Yellow",
+    "hex": "#F3A257",
+    "origin": "wada",
+    "family": "yellow",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-F48067",
+    "name": "라이트 레드",
+    "original_name": "Grenadine Pink",
+    "hex": "#F48067",
+    "origin": "wada",
+    "family": "red",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-F58E84",
+    "name": "라이트 레드",
+    "original_name": "Coral Red",
+    "hex": "#F58E84",
+    "origin": "wada",
+    "family": "red",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-F5ECC2",
+    "name": "페일 옐로",
+    "original_name": "Sulpher Yellow",
+    "hex": "#F5ECC2",
+    "origin": "wada",
+    "family": "yellow",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-F8B6BA",
+    "name": "페일 레드",
+    "original_name": "Corinthian Pink",
+    "hex": "#F8B6BA",
+    "origin": "wada",
+    "family": "red",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-F8ED43",
+    "name": "머스터드",
+    "original_name": "Lemon Yellow",
+    "hex": "#F8ED43",
+    "origin": "wada",
+    "family": "yellow",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-F99D1B",
+    "name": "카멜",
+    "original_name": "Yellow Orange",
+    "hex": "#F99D1B",
+    "origin": "wada",
+    "family": "yellow",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-FBE6A0",
+    "name": "라이트 카멜",
+    "original_name": "Naples Yellow",
+    "hex": "#FBE6A0",
+    "origin": "wada",
+    "family": "yellow",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-FCB315",
+    "name": "카멜",
+    "original_name": "Orange Yellow",
+    "hex": "#FCB315",
+    "origin": "wada",
+    "family": "yellow",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-FDC57E",
+    "name": "시나몬 베이지",
+    "original_name": "Cinnamon Buff",
+    "hex": "#FDC57E",
+    "origin": "wada",
+    "family": "yellow",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-FDD4BD",
+    "name": "페일 코랄",
+    "original_name": "Seashell Pink",
+    "hex": "#FDD4BD",
+    "origin": "wada",
+    "family": "orange",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-FFDD00",
+    "name": "머스터드",
+    "original_name": "Apricot Yellow",
+    "hex": "#FFDD00",
+    "origin": "wada",
+    "family": "yellow",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-FFEFAE",
+    "name": "페일 옐로",
+    "original_name": "Pale Lemon Yellow",
+    "hex": "#FFEFAE",
+    "origin": "wada",
+    "family": "yellow",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-FFF200",
+    "name": "머스터드",
+    "original_name": "Yellow",
+    "hex": "#FFF200",
+    "origin": "wada",
+    "family": "yellow",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  },
+  {
+    "id": "wada-FFFFFF",
+    "name": "오프화이트",
+    "original_name": "White",
+    "hex": "#FFFFFF",
+    "origin": "wada",
+    "family": "white",
+    "pool": "original_115",
+    "status": "registered_not_scored"
+  }
+]

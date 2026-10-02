@@ -116,7 +116,7 @@ def test_real_fashion_pipeline_passes_common_state_color_to_palette():
     basis = dict(primary_element='水', reference_element='木', source='confirmed_natal_direction',
                  state_version='test-state', scope='natal+luck_cycle+annual+monthly+daily')
     with patch.object(main,'build_fashion_color_basis',return_value=basis), \
-         patch.object(main,'select_wada_duo_for_targets',wraps=main.select_wada_duo_for_targets) as selector:
+         patch.object(main,'select_daily_palette',wraps=main.select_daily_palette) as selector:
         result = main.get_saju_pillars_and_analysis('검토', 'female', 1998,5,19,'solar',5)
     assert selector.call_args.args[0] == '水'
     assert result['daily_fortune']['fashion_color_basis'] == basis
