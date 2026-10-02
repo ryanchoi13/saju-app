@@ -1,0 +1,16 @@
+{
+  "version": "outfit-first-20261002",
+  "basis": "owner_review_and_editorial_starting_policy_not_wear_rate",
+  "supporting_colors": ["white", "ivory", "light_gray", "gray", "charcoal", "black", "navy", "denim", "beige", "brown", "camel", "olive", "forest"],
+  "soft_top_colors": ["pink", "pale_pink", "sky", "sage", "lavender", "burgundy"],
+  "mature_male_default_sneakers": ["white", "black"],
+  "soft_yellow_beige_sources": ["#FBE6A0", "#E5D594"],
+  "score_note": "초기 운영 후보를 정리하는 서열형 기준. 착용률이나 미적 확률이 아님.",
+  "feedback": {
+    "B01": "노랑 블루종·핑크 이너의 동시 큰 면적 사용을 기본안에서 후순위로 둔다.",
+    "B02": "핑크 블루종·노랑 후드·버건디 운동화 전체 조합은 반려됐다.",
+    "B03": "핑크 이너·베이지 바지는 조건부 후보. 검정 겉옷까지 전체 승인된 것은 아니다.",
+    "B04": "해당 남성 기본안은 네이비 운동화보다 흰색·검정 운동화를 우선한다.",
+    "B05": "네이비 겉옷·흰 이너·베이지 바지·흰 운동화를 무난한 출발점으로 평가했다. 네이비 톤은 검토 대상이다."
+  }
+}

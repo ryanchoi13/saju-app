@@ -25,11 +25,7 @@ import account_store
 import session_store
 import wallet_store
 import account_security
-from style_context import build_style_contexts
-from wada_context_placement import WADA_CONTEXT_PLACEMENT
-from wada_color_rules import evaluate_duo
-from wada_color_ko import get_wada_color_ko
-from wada_wuxing_selector import select_wada_duo_for_targets
+from fashion_v2.daily_palette import select_daily_palette, style_palette_contexts
 from fashion_v2.svg_recommendation import build_svg_catalog_contexts
 from app.engine.services.fashion_colors import build_fashion_color_basis
 from app.engine.services.annual_editorial import NARRATIVE_VERSION as ANNUAL_NARRATIVE_VERSION
@@ -372,47 +368,17 @@ def get_saju_pillars_and_analysis(name: str, gender: str, y: int, m: int, d: int
     else:
         outfit_season = "winter"
 
-    age = today_date.year - y + 1
     solar_birth = datetime.date.fromisoformat(core.natal_facts.calendar["solar_date"])
     style_age = today_date.year - solar_birth.year - (
         (today_date.month, today_date.day) < (solar_birth.month, solar_birth.day)
     )
 
-    if age < 40:
-        outfit_age_group = "20s_30s"
-    elif age < 60:
-        outfit_age_group = "40s_50s"
-    else:
-        outfit_age_group = "60plus"
-
-    wada_selection = select_wada_duo_for_targets(
-        fashion_element,
-        today_element,
-        int(today_date.strftime("%Y%m%d"))
+    daily_palette = select_daily_palette(
+        fashion_element, today_element, int(today_date.strftime("%Y%m%d"))
     )
+    color_a = daily_palette["top"]
+    color_b = daily_palette["bottom"]
 
-    wada_duo_no = wada_selection["duo_no"]
-    wada_duo = wada_selection["duo"]   
-
-    outfit_tpo = "casual"
-
-    wada_placement = WADA_CONTEXT_PLACEMENT[wada_duo_no][gender][outfit_tpo][outfit_season][outfit_age_group]
-
-    wada_top_name = wada_placement["top"]
-    wada_top_hex = wada_placement["top_hex"]
-    wada_bottom_name = wada_placement["bottom"]
-    wada_bottom_hex = wada_placement["bottom_hex"]
- 
-    wada_top_color = get_wada_color_ko(
-        wada_top_hex,
-        wada_top_name
-    )
-
-    wada_bottom_color = get_wada_color_ko(
-        wada_bottom_hex,
-        wada_bottom_name
-    )
- 
     result = {
         "user_name": name,
         "birth_summary": profile_detail,
@@ -438,46 +404,15 @@ def get_saju_pillars_and_analysis(name: str, gender: str, y: int, m: int, d: int
         "daily_fortune": {
             **today_fortune,
             "weather_outfit": weather_api_payload(weather_profile),
-            "wada_palette": {
-                "theme": f"Wada Duo #{wada_duo_no}",
-                "mood_desc": f"{with_wa_gwa(wada_top_color['name_ko'])} {josa(wada_bottom_color['name_ko'], '으로/로')} 오늘의 의상 컬러를 조합해 보세요.",
-                "mode": "harmony",
-                "style_mood": outfit_tpo,
-                "mood_tag": "캐주얼",
-                "top": {
-                    "name": wada_top_color["original_name"],
-                    "name_ko": wada_top_color["name_ko"],
-                    "hex": wada_top_hex,
-                    "standard_color": wada_top_color["standard_color"]
-                },
-                "bottom": {
-                    "name": wada_bottom_color["original_name"],
-                    "name_ko": wada_bottom_color["name_ko"],
-                    "hex": wada_bottom_hex,
-                    "standard_color": wada_bottom_color["standard_color"]
-                },
-                "point": None
-            },
-            "lucky_colors": [
-                wada_top_color["standard_color"],
-                wada_bottom_color["standard_color"],
-            ],
+            "daily_color_palette": daily_palette,
+            # Compatibility alias for older clients; this is no longer a Wada pair.
+            "wada_palette": daily_palette,
+            "lucky_colors": [color_a["standard_color"], color_b["standard_color"]],
         }
     }
 
-    result["daily_fortune"]["style_palettes"] = build_style_contexts(
-        wada_duo_no, gender, result["daily_fortune"]["wada_palette"], fashion_element,
-        user_name=name, age=style_age, season=outfit_season)
-    color_a = {
-        "name": wada_top_color["original_name"],
-        "name_ko": wada_top_color["name_ko"],
-        "hex": wada_top_hex,
-    }
-    color_b = {
-        "name": wada_bottom_color["original_name"],
-        "name_ko": wada_bottom_color["name_ko"],
-        "hex": wada_bottom_hex,
-    }
+    result["daily_fortune"]["style_palettes"] = style_palette_contexts(
+        daily_palette, gender, style_age)
     complete_weather = weather_profile and all(key in weather_profile for key in (
         "thermal_band", "thermal_label", "daytime_apparent_high",
         "evening_apparent_low", "carry_light_outer", "rainy", "guidance",

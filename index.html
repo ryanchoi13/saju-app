@@ -1764,6 +1764,9 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
         function renderFashionV2Details(look, lookIndex) {
             const proposal = fashionV2MoodText
                 ? `<p class="fashion-v2-proposal">${escapeStyleText(fashionV2MoodText)}</p>` : '';
+            const privateHint = look?.color_strategy?.private_color_suggestion;
+            const privateColor = privateHint?.optional && privateHint?.text
+                ? `<p class="fashion-v2-proposal fashion-v2-private-color"><strong>추천색을 즐기는 다른 방법</strong><br>${escapeStyleText(privateHint.text)}</p>` : '';
             const recommendation = FASHION_WARDROBE_UI_ENABLED
                 ? fashionV2AccessoryRecommendation : {item:null,text:''};
             const item = recommendation?.item;
@@ -1771,7 +1774,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 <div class="fashion-v2-accessory-visual" aria-hidden="true">${fashionV2AccessoryVisual(look,item,lookIndex)}</div>
                 <div class="fashion-v2-accessory-copy"><strong>소품 매칭 · ${escapeStyleText(item.nickname || item.category || '내 옷장 아이템')}</strong>${recommendation.text}</div>
             </div>` : '';
-            return proposal || accessory ? `<div class="fashion-v2-detail-copy">${proposal}${accessory}</div>` : '';
+            return proposal || accessory || privateColor ? `<div class="fashion-v2-detail-copy">${proposal}${privateColor}${accessory}</div>` : '';
         }
         function renderFashionV2Board(look, lookIndex) {
             if (look?.garment_spec) {
@@ -2597,6 +2600,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             const tpoSelect = document.getElementById('styleTpoSelect');
             if (tpoSelect) tpoSelect.value = selectedTpo;
             const wada = fortune.style_palettes?.[selectedTpo]
+                || fortune.daily_color_palette
                 || (selectedTpo === 'casual' ? fortune.wada_palette : null);
             if (!wada?.top || !wada?.bottom) {
                 styleEl.textContent = '오늘의 추천 색상을 불러온 뒤 옷차림을 안내합니다.';

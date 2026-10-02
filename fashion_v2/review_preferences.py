@@ -21,6 +21,14 @@ def apply_review_preferences(look, a, b):
         look['review_preference'] = name
         look['color_targets'] = targets
 
+    if gender == 'male' and tpo == 'business_formal' and pair == ('#DDB6BC', '#444951'):
+        # Previously approved formal comparison 15: retain its explicit order
+        # while the default candidate policy changes to outfit-first.
+        policy('approved-formal-pink-charcoal', {
+            'A': {'category': 'tie'} if number == 1 else {'category': 'top', 'tone': 'pale_pink'},
+            'B': {'category': 'suit' if number == 1 else 'tie'},
+        })
+
     if (gender == 'male' and tpo == 'casual' and age is not None and 20 <= age < 30
             and hot and pair == ('#EAC744', '#70468A')):
         change('top', label='반팔 티셔츠', base_color='white', material='cotton_jersey')
