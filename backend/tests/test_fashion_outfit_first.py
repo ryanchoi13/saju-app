@@ -86,3 +86,19 @@ def test_optional_reference_can_be_found_without_becoming_a_selection_gate():
     assert 14 in reference['matching_duos']
     assert reference['role']=='optional_reference'
     assert optional_wada_reference([PALETTE['beige'],PALETTE['pink']])['matching_duos']==[]
+
+
+def test_held_black_outer_does_not_receive_a_negative_evidence_score():
+    from fashion_v2.outfit_quality import whole_outfit_quality
+    from fashion_v2.svg_recommendation import describe_color
+    look = dict(gender='male', age=48, season='autumn', tpo='casual')
+    def quality(outer):
+        items = [dict(category=cat, label=label, hex=PALETTE[color]['hex'])
+                 for cat, label, color in [('outer','블루종',outer),
+                    ('top','맨투맨','pink'), ('bottom','면바지','beige'),
+                    ('shoes','운동화','white')]]
+        return whole_outfit_quality(items, look, describe_color, PALETTE,
+                                    {'score_adjustment': 0}, 4)
+    black, navy = quality('black'), quality('navy')
+    assert black['rank'] == navy['rank']
+    assert not black['aesthetic_approval'] and not navy['aesthetic_approval']

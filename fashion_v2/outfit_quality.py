@@ -57,15 +57,8 @@ def whole_outfit_quality(items, look, describe, palette, coordination, color_cou
     reasons = []
     if conflicts:
         reasons.append('서로 다른 포인트색의 큰 면적 사용을 줄여 비교')
-    # B03 was conditional approval of the inner/bottom pair, not of a black
-    # outer added on top. Preserve that exact scope in this starting policy.
-    if (look['gender'] == 'male' and 40 <= (look.get('age') or 0) < 60
-            and look.get('calendar_season', look['season']) == 'autumn' and look['tpo'] == 'casual'):
-        by_slot = {i['category']: i['hex'].upper() for i in items}
-        if (by_slot.get('outer') == palette['black']['hex'] and by_slot.get('bottom') == palette['beige']['hex']
-                and by_slot.get('top') in {palette['pink']['hex'], palette['pale_pink']['hex']}):
-            conflicts += 1
-            reasons.append('핑크·베이지에 검정 겉옷을 더한 전체 조합은 추가 검토 대상')
+    # A held or unreviewed combination is unknown, not a negative judgment.
+    # Owner review round 2 explicitly leaves navy-versus-black undecided.
     reviewed = bool(look.get('review_preference') or look.get('color_targets') or look.get('footwear_color_locked'))
     rank = (4 if reviewed else min(ratings), 0 if reviewed else -conflicts,
             coordination['score_adjustment'], -max(0, color_count-4))
