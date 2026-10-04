@@ -5,7 +5,7 @@ cycles remain available as closed references. Saved reports are never edited her
 """
 from html import escape
 from app.engine.services.reading_editorial import (
-    THEME_VERSION, section, paragraphs, theme_lens, cycle_paragraphs, cycle_groups,
+    THEME_VERSION, section, paragraphs, theme_lens, cycle_paragraphs, cycle_groups, cycle_focus,
 )
 
 # Each chapter develops a distinct decision with an example and a next step.
@@ -169,34 +169,73 @@ BOUNDARIES = {'wealth':'특정 투자·부동산의 수익이나 손실을 보�
               'health':'의료 진단을 대신하지 않습니다. 불편한 증상이 있으면 의료진에게 상담하세요.',
               'study':'지능, 성적이나 시험 합격·불합격을 확정하지 않습니다.'}
 
+CHECKS = {
+    'money': '수입의 기대와 실제로 남은 돈을 나눠 적고, 이 선택에 필요한 비용과 감당할 범위를 비교해 보세요.',
+    'work': '잘해온 업무 하나와 새로 요구받는 역할 하나를 적고, 필요한 권한·시간·도움을 비교해 보세요.',
+    'love': '내가 편하게 느끼는 표현과 상대가 실제로 원하는 표현을 나눠보세요. 상대의 마음은 이 해석으로 알 수 없으니 대화로 확인해야 합니다.',
+    'wellbeing': '활동한 시간과 실제로 쉬고 회복된 시간을 함께 기록해 보세요. 몸의 상태를 사주로 진단하지 않고 생활의 부담을 돌아보는 용도입니다.',
+    'learning': '익숙한 공부법으로 이해한 내용과 직접 풀거나 설명할 수 있는 내용을 비교해 보세요.',
+}
+
+
+def personal_comparison(query, god, current, domain, kind):
+    """Expose only existing role/direction evidence, never infer life events."""
+    from app.engine.services.applied_guidance import direction_advice
+    base = cycle_focus(god, domain)
+    period = cycle_focus(current['ten_god'], domain) if current else None
+    result = []
+    if base and period:
+        if god == current['ten_god']:
+            result.append(f'기본 구조와 현재 대운에서 모두 「{base}」이라는 주제를 읽었습니다. '
+                          '익숙한 방식을 활용할 여지가 있다는 해석이지만, 같은 방식을 더 많이 밀어붙이라는 뜻은 아닙니다. '
+                          '그 방식으로 도움이 된 일과 부담이 늘어난 일을 함께 살펴보세요.')
+        else:
+            result.append(f'기본 구조에서는 「{base}」, 현재 대운에서는 「{period}」에 초점을 두었습니다. '
+                          '두 주제가 다르다고 기존 성향을 버려야 하는 것은 아닙니다. '
+                          '익숙한 방법을 어디에 유지하고, 어떤 조건을 더 확인할지 나누어 읽어보세요.')
+        result.append(CHECKS[domain])
+    advice = direction_advice(query.get('applied_state', {}), 'career' if kind == 'business' else kind, '') if query.get('applied_state') else ''
+    if advice:
+        result.append('기본 구조와 적용 조건을 함께 검토했을 때의 실행 방향입니다. ' + advice)
+    return result
+
 
 def build_theme_content(query, name, kind, evidence, uncertainty='', status=None):
     domain = DOMAINS[kind]
     current = query['timing']['luck_cycles'].get('current')
     god = query['synthesis']['overall_structure'].get('ordinary')
-    title = '현재 건강 생활흐름' if kind == 'health' else f'현재 {LABELS[kind]} 흐름'
+    title = '현재 건강 생활흐름 · 장기 관점' if kind == 'health' else f'현재 {LABELS[kind]} 흐름 · 장기 관점'
     lens = theme_lens(query, kind) if kind != 'health' else (
         '건강운에서는 질병이 아니라 생활 속에서 활동과 휴식을 어떻게 나눌지 살펴봅니다. '
         '최근 무리했던 일정과 편안하게 쉬었던 시간을 비교하며 자신에게 맞는 리듬을 찾아보세요.')
     lens = lens.replace('관계에서는 눈여겨볼 부분은', '관계에서 눈여겨볼 부분은').replace('일에서는 눈여겨볼 부분은','일에서 눈여겨볼 부분은')
     lens = lens.replace('재성이 적다고 돈을 벌지 못한다는 뜻은 아닙니다.', '이 설명만으로 재산의 규모를 판단하지는 않습니다.')
     now = cycle_paragraphs(current['ten_god'], domain)[0] if current else '현재에 해당하는 흐름을 확인하기 어려워 특정 시기를 단정하지 않았습니다. 아래 이야기는 기본 성향과 현실에서 확인할 선택 기준을 중심으로 읽어주세요.'
-    body = section(title, [f'{name}님, ' + now,
-        '여기서 말하는 흐름은 실제로 어떤 일이 일어났는지 알고 내리는 결론은 아닙니다. 지금 마음에 걸리는 장면을 떠올리며 잘 맞는 설명과 더 확인할 부분을 구분해 보세요. 아래에서는 그 기준을 생활에서 어떻게 적용할지 구체적으로 이어갑니다.'])
+    period = (f"현재 대운은 {current['start_age']}~{current['end_age']}세에 해당하는 약 10년의 흐름입니다. "
+              '오늘이나 이번 달의 사건을 예측한 내용은 아닙니다.' if current else
+              '현재 대운 구간을 확인하지 못했습니다. 단기 운세로 읽지 말고 기본 성향을 참고해 주세요.')
+    body = section(title, [period, f'{name}님, ' + now])
     if status in SITUATION:
         body += section(*SITUATION[status])
     chapters = CHAPTERS[kind]
-    body += ''.join(section(*chapter) for chapter in chapters[:2])
     nature = section(NATURE[kind], [lens,
-        '비슷한 상황에서 편하게 해냈던 일과 유난히 힘들었던 일을 하나씩 떠올려보세요. 같은 강점도 쓰이는 환경에 따라 도움이 되거나 부담이 될 수 있습니다. 자신에게 이 설명을 맞추기보다 반복해 온 선택을 이해하는 자료로 활용해 보세요.'])
+        '출생정보에서 살핀 기본 성향에 대한 해석입니다. 실제 경험과 다른 부분은 자신에게 억지로 맞추지 않아도 됩니다.'])
     nature += section('성향을 현재에 적용할 때', [
         cycle_paragraphs(god, domain)[0].replace('이 시기에는 ', '기본 성향을 활용할 때는 ', 1),
-        '현재 흐름에서 강조되는 부분과 평소 익숙한 방식이 같다면 장점을 이어가되 과해지는 부분을 살펴보세요. 서로 다르게 느껴진다면 지금의 조건에 맞춰 방법을 조금 바꿔볼 수 있습니다. 무엇을 계속하고 무엇을 조정할지는 직접 겪은 결과와 함께 판단하는 것이 좋습니다.'])
-    practice = ''.join(section(*chapter) for chapter in chapters[2:])
+        *personal_comparison(query, god, current, domain, kind)])
+    # The same twelve generic paragraphs used to overwhelm the calculated
+    # reading. Keep one explicitly common exercise, separate from evidence.
+    practice = '<p class="reading-caption">아래는 개인의 미래를 계산한 결과가 아닌 공통 실천 안내입니다.</p>'
+    practice += section(chapters[-1][0], chapters[-1][1][:1])
+    common_reference = ''.join(section(title, values) for title, values in chapters[:-1])
+    common_reference += section('실천한 뒤 돌아볼 점', chapters[-1][1][1:])
     return (f'<div class="long-reading theme-reading" data-narrative-version="{THEME_VERSION}" data-theme="{kind}" data-reading-status="{escape(status or "기본", quote=True)}">'
             f'<section data-theme-section="current"><h2>지금 살펴볼 이야기</h2>{body}</section>'
             f'<section data-theme-section="nature"><h2>나에게 반복되는 방식</h2>{nature}</section>'
             f'<section data-theme-section="practice"><h2>선택을 행동으로 옮기기</h2>{practice}</section>'
+            '<details class="reading-reference"><summary>추가 실천 참고 · 공통 안내</summary>'
+            '<p>아래 내용은 출생정보와 무관한 생활 참고입니다. 필요한 주제만 골라 읽어보세요.</p>'
+            + common_reference + '</details>'
             '<details class="reading-reference" data-theme-section="cycles"><summary>참고: 10년 단위 인생 흐름</summary>'
             '<p>현재 이야기를 읽은 뒤 긴 흐름이 궁금할 때 펼쳐보세요. 특정 나이에 사건이 생긴다고 정해진 것은 아닙니다.</p>'
             + cycle_groups(query, domain, expand_current=False) + '</details>'

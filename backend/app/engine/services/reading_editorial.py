@@ -6,8 +6,8 @@ roles or an explicitly selected situation, never by names or random rotation.
 """
 from html import escape
 
-VERSION = 'reading-conversation-v3'
-THEME_VERSION = 'theme-present-v1'
+VERSION = 'reading-conversation-v4'
+THEME_VERSION = 'theme-present-v2'
 
 # Each role has an interpretation, a practical continuation and a caution.
 TRAITS = {
@@ -123,18 +123,23 @@ def traits(god):
     return TRAITS.get(god, FALLBACK)
 
 
-def cycle_paragraphs(god, domain):
-    # A decade gets its own period wording, not a daily sentence with dates swapped.
-    from app.engine.services.annual_editorial import MONTH_ADVICE, role_family
+def cycle_focus(god, domain):
+    """Share the same calculated-role translation across period and comparison."""
     from app.engine.services.wealth import _CYCLE_TOPIC as MONEY
     from app.engine.services.career import _CYCLE_TOPIC as WORK
     from app.engine.services.love import _CYCLE_TOPIC as LOVE
     from app.engine.services.health import _CYCLE_RHYTHM as HEALTH
     from app.engine.services.study import _CYCLE_TOPIC as STUDY
     topic = {'money': MONEY, 'work': WORK, 'love': LOVE, 'wellbeing': HEALTH, 'learning': STUDY}.get(domain)
-    if topic is None:
+    return topic.get(god) if topic else None
+
+
+def cycle_paragraphs(god, domain):
+    # A decade gets its own period wording, not a daily sentence with dates swapped.
+    from app.engine.services.annual_editorial import MONTH_ADVICE, role_family
+    focus = cycle_focus(god, domain)
+    if focus is None:
         return [traits(god)[0], traits(god)[1], traits(god)[2]]
-    focus = topic.get(god, '자신에게 맞는 방법을 찾는 일')
     action = MONTH_ADVICE[role_family(god)][domain]
     caution = {
         'money': '새로운 계획이 생겨도 지금 쓸 수 있는 돈과 앞으로 기대하는 수입은 구분해야 합니다. 조건을 이해하지 못한 채 다른 사람의 판단만 따라가지는 마세요.',

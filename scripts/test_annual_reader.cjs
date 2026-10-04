@@ -116,7 +116,7 @@ const current={report_key:'sinnian',report_title:generated.title,report_content:
     w.fetch=async()=>{throw Error('cancel must not send request');};
     await w.refreshOwnedAnnualReport();
     const oldWealth={...legacy,report_key:'wealth',report_title:'재물운'};
-    const newWealth={...oldWealth,narrative_version:'theme-present-v1',
+    const newWealth={...oldWealth,narrative_version:'theme-present-v2',
         report_content:'<p>새로운 재물운 풀이</p>',previous_versions:[oldWealth]};
     evaluate(`serverUnlockedReports=${JSON.stringify([oldWealth])};`);
     w.openReadingReport(0); w.confirm=()=>true;
