@@ -5,13 +5,19 @@ Live contract verification is required before enabling an account.
 """
 import json
 import hashlib
+import logging
 import os
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
 
 def provider_for(user_id):
-    allowed = {x.strip() for x in os.getenv('SAZU_FOOD_TRIAL_USERS', '').split(',') if x.strip()}
+    # Reuse the existing server-approved testers once the paid key is installed.
+    # An explicit empty override still disables the trial for rollback.
+    configured = os.getenv('SAZU_FOOD_TRIAL_USERS')
+    if configured is None:
+        configured = os.getenv('DALHA_TEST_USER_IDS', '') if os.getenv('SAZU_API_KEY', '').strip() else ''
+    allowed = {x.strip() for x in configured.split(',') if x.strip()}
     return 'sazu' if user_id and user_id in allowed else 'offline'
 
 
@@ -81,9 +87,12 @@ def build_set(profile, day):
             raise ValueError('provider error')
         balance = data['data']['modules']['foodBalance']
         _validate_balance(balance)
+        logging.getLogger(__name__).warning('SAZU food request succeeded; response validated')
         # Keep the food result intact. Do not return other private natal modules.
         return dict(provider='sazu', date=str(day), meals=[], food_balance=balance,
                     input_note='' if profile.birth_place else '출생지는 SAZU 기본값인 서울 기준입니다.')
-    except (HTTPError, URLError, TimeoutError, OSError, ValueError, KeyError, TypeError, AttributeError):
+    except (HTTPError, URLError, TimeoutError, OSError, ValueError, KeyError, TypeError, AttributeError) as exc:
+        logging.getLogger(__name__).warning('SAZU food request failed (%s, status=%s)',
+            type(exc).__name__, exc.code if isinstance(exc, HTTPError) else 'n/a')
         # Do not echo provider payloads, birth details, keys or error bodies.
         raise ValueError('SAZU 음식 추천을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.') from None

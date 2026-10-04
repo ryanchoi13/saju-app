@@ -71,6 +71,15 @@ class SazuFoodTests(unittest.TestCase):
         self.assertNotEqual(first, changed)
         self.assertNotEqual(store._provider_owner('user_123', 'sazu', first), store._provider_owner('user_123', 'sazu', changed))
 
+    def test_existing_testers_are_enabled_only_with_key_and_no_override(self):
+        with patch.dict(os.environ, {'SAZU_API_KEY': 'test', 'DALHA_TEST_USER_IDS': 'user_123'}, clear=True):
+            self.assertEqual(sazu_food.provider_for('user_123'), 'sazu')
+            self.assertEqual(sazu_food.provider_for('user_999'), 'offline')
+            with patch.dict(os.environ, {'SAZU_FOOD_TRIAL_USERS': ''}):
+                self.assertEqual(sazu_food.provider_for('user_123'), 'offline')
+            with patch.dict(os.environ, {'SAZU_API_KEY': ''}):
+                self.assertEqual(sazu_food.provider_for('user_123'), 'offline')
+
     def test_cache_isolation_reload_rollover_and_token_ownership(self):
         with tempfile.TemporaryDirectory() as tmp, patch.dict(os.environ, {'DALHA_WARDROBE_DB': tmp+'/test.sqlite', 'DATABASE_URL': '', 'RENDER': '', 'RENDER_SERVICE_ID': ''}):
             day = date(2026, 10, 5)
