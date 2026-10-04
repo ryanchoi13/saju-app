@@ -55,13 +55,18 @@ class ThemePresentReaderTests(TestCase):
                 view=VisibleText(report['content']); text=''.join(view.text)
                 self.assertEqual(report['narrative_version'],THEME_VERSION)
                 self.assertEqual(view.sections,['current','nature','practice'])
-                self.assertGreater(len(text),2500)
+                # Volume must not be achieved by repeating common advice.
+                self.assertTrue(all(view.paragraphs))
                 self.assertEqual(view.open_details,0)
                 self.assertEqual(len(view.paragraphs),len(set(view.paragraphs)))
                 self.assertEqual(len(view.headings),len(set(view.headings)))
-                self.assertNotRegex(text,r'관계 후보|십성|원국|천간합|천간극|\d+~\d+세|[甲乙丙丁戊己庚辛壬癸]')
+                self.assertNotRegex(text,r'관계 후보|십성|원국|천간합|천간극|[甲乙丙丁戊己庚辛壬癸]')
                 if not key.startswith('gunghap'):
                     self.assertEqual(report['content'].count('data-report-cycle='),9)
+                    self.assertIn('약 10년의 흐름', text)
+                    self.assertIn('오늘이나 이번 달의 사건을 예측한 내용은 아닙니다', text)
+                    self.assertIn('공통 실천 안내', text)
+                    self.assertLess(len(view.paragraphs), 13)
                 self.assertIn('다시 열어도 저장된 내용은 유지됩니다',text)
 
     def test_selected_situations_do_not_mix_dating_or_business_contexts(self):
@@ -81,5 +86,5 @@ class ThemePresentReaderTests(TestCase):
         self.assertEqual(a,build_lifetime_love_report(self.core,'<img src=x>','솔로'))
         self.assertNotIn('<img',a['content']); self.assertIn('&lt;img',a['content'])
         other=build_lifetime_love_report(self.partner,'<img src=x>','솔로')
-        first=lambda r: VisibleText(r['content']).paragraphs[0]
+        first=lambda r: VisibleText(r['content']).paragraphs[:2]
         self.assertNotEqual(first(a),first(other))

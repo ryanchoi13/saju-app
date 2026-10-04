@@ -14,7 +14,7 @@ from app.engine.semantic.overall import select_overall_domains, OVERALL_VERSION
 from app.engine.services.overall_narrative import render_overall, subjects_html, _object_particle
 
 
-LIFETIME_NARRATIVE_VERSION = "lifetime-present-v1"
+LIFETIME_NARRATIVE_VERSION = "lifetime-present-v2"
 
 
 _STRUCTURE = {
@@ -141,7 +141,9 @@ def _cycle_narrative(interpretation: dict) -> str:
     selected = interpretation["selected"]
     primary = next((c for c in selected if c["domain"] in interpretation["primary_domains"]), None)
     values = cycle_paragraphs(interpretation.get("focal_god"), primary["domain"] if primary else "self")
-    if primary:
+    # Base scenes often paraphrase the same role advice. Add a second passage
+    # only when a calculated relationship mode contributes another condition.
+    if primary and primary.get('mode') in {'join', 'change', 'mixed'}:
         values.append(scene(primary))
     return escape(" ".join(values))
 
@@ -241,7 +243,7 @@ def _current_chapters(query, core, ordinary):
     for domain, _ in GROUPS:
         label, question = _PRESENT_QUESTIONS[domain]
         candidate = next((c for c in selection["selected"] if c["domain"] == domain), None)
-        opening = scene(candidate) if candidate else ""
+        opening = scene(candidate) if candidate and candidate.get('mode') in {'join', 'change', 'mixed'} else ""
         role = cycle_paragraphs(god, domain)[0] if domain != "relationships" else MONTH_ADVICE[role_family(god)][domain]
         result += f'<section class="reading-chapter" data-current-domain="{domain}"><h3>{label}</h3>' + paragraphs([opening, role, question, *DETAIL[domain][:2]]) + '</section>'
     result += section("선택을 행동으로 옮기려면", [

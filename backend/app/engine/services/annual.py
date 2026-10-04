@@ -155,6 +155,8 @@ def build_annual_overall_report(core: MyeongriCoreResult, user_name: str, year: 
         cards.append(
             f'<article data-report-month="{month}" class="annual-month" style="border-left:4px solid #2D6A4F">'
             f'<h4>{month}월 · {escape(month_reading["title"])}</h4>'
+            f'<p class="annual-note" data-period-basis="monthly">{target.isoformat()}의 절기 월주를 기준으로 읽은 흐름입니다. '
+            '월 전체의 변화를 모두 계산하거나 사건의 날짜를 예측한 것은 아닙니다.</p>'
             f'{_paragraphs(month_reading["paragraphs"])}'
             f'{_render_domains(month_reading["domains"], monthly=True)}'
             f'{_evidence_html(month_selection, month_timing, target)}</article>')
@@ -163,6 +165,8 @@ def build_annual_overall_report(core: MyeongriCoreResult, user_name: str, year: 
         f'<div class="annual-reading" data-overall-version="{OVERALL_VERSION}" '
         f'data-narrative-version="{NARRATIVE_VERSION}" data-report-year="{year}">'
         '<section class="annual-overview"><h3>올해 총운</h3>'
+        f'<p class="annual-note" data-period-basis="annual">{representative.isoformat()}을 대표일로 삼은 연간 해석입니다. '
+        '연중 대운이 바뀌는 경우 전후 흐름을 각각 계산한 결과는 아닙니다.</p>'
         f'<h4>{escape(reading["title"])}</h4>{_paragraphs(reading["paragraphs"])}'
         f'{_evidence_html(selection, timing, representative)}</section>'
         '<p class="annual-note">분야별로 계산에서 드러나는 주제와 생활 조언을 구분해 읽어보세요. '
@@ -170,6 +174,7 @@ def build_annual_overall_report(core: MyeongriCoreResult, user_name: str, year: 
         f'{_render_domains(reading["domains"])}'
         '<h3>12개월 흐름</h3>'
         '<p class="annual-note">각 달 15일의 절기 월주를 대표값으로 사용했습니다. '
+        '출생한 달의 15일이 출생 전이면 출생일을 사용하며, 출생 전 달은 제외합니다. '
         '달력의 1일을 운의 전환일로 보거나 특정 사건의 날짜를 정한 것은 아닙니다.</p>'
         + "".join(cards) +
         '<p class="annual-note">정통 명리의 원국·대운·세운·월운을 근거로 한 해석이며, '

@@ -72,7 +72,8 @@ async function boot(url) {
     assert.equal(doc.querySelectorAll('.annual-reader-months button').length,12);
     doc.querySelectorAll('.annual-reader-months button')[8].click();
     assert.match(doc.querySelector('.annual-selected-month').textContent,/9月|9월/);
-    doc.getElementById('readingCloseButton').click(); await new Promise(r=>setTimeout(r,20));
+    doc.getElementById('readingCloseButton').click();
+    for(let i=0;i<30 && doc.activeElement.className!=='reading-secondary';i++) await new Promise(r=>setTimeout(r,10));
     assert.equal(doc.activeElement.className,'reading-secondary');
     w.openConcern('love');doc.getElementById('btnTheme_love').click();
     await new Promise(r=>setTimeout(r,0));

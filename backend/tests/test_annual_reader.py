@@ -41,6 +41,10 @@ class AnnualReaderTests(TestCase):
             self.assertEqual(month['representative_date'], f"2026-{month['month']:02}-15")
         for m in range(1,13):
             self.assertEqual(r['content'].count(f'data-report-month="{m}"'), 1)
+            self.assertIn(f'2026-{m:02}-15의 절기 월주를 기준', r['content'])
+        self.assertEqual(r['content'].count('data-period-basis="monthly"'), 12)
+        self.assertIn('2026-07-01을 대표일로 삼은 연간 해석', r['content'])
+        self.assertIn('대운이 바뀌는 경우 전후 흐름을 각각 계산한 결과는 아닙니다', r['content'])
         for domain, _ in GROUPS:
             self.assertEqual(r['content'].count(f'data-report-domain="{domain}"'), 1)
             self.assertEqual(r['content'].count(f'data-month-domain="{domain}"'), 12)
@@ -90,6 +94,9 @@ class AnnualReaderTests(TestCase):
             birth_date=date(2026,9,23), time_unknown=True), target_date=date(2026,9,23))
         report = build_annual_overall_report(core, '검증', 2026)
         self.assertEqual(report['content'].count('출생 전 기간'), 8)
+        self.assertIn('2026-09-23을 대표일로 삼은 연간 해석', report['content'])
+        self.assertIn('2026-09-23의 절기 월주를 기준', report['content'])
+        self.assertIn('출생한 달의 15일이 출생 전이면 출생일을 사용', report['content'])
         self.assertEqual(report['evidence_summary']['months'][0]['representative_date'], '2026-09-23')
         with self.assertRaises(ValueError): build_annual_overall_report(core, '검증', 2025)
 
