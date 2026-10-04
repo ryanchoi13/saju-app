@@ -30,6 +30,11 @@
   .meal-title-name{display:block;overflow-wrap:anywhere}
   .meal-additions{display:block;padding:0 10px 12px;color:#64748b;overflow-wrap:anywhere}
   .food-photo{display:block;width:100%;height:145px;background:#fafbf8}
+  .sazu-food-group{padding:12px 0;border-bottom:1px solid var(--ui-line,#E2E8F0)}
+  .sazu-food-group h4{margin:0 0 6px;font-size:14px}
+  .sazu-food-group p,.sazu-food-notes p{margin:5px 0;font-size:14px;line-height:1.65;overflow-wrap:anywhere}
+  .sazu-food-warning{padding:10px 12px;background:#fff7e7;border-radius:8px}
+  .sazu-food-disclaimer{font-size:12px!important;color:var(--ui-muted,#607482)}
   @media(max-width:540px){
     .food-photo{height:130px}
   }
@@ -79,8 +84,47 @@
     return (state.history?.length?state.history:[state.plan]).map((p,i)=>({...p,recommendation_number:p.recommendation_number??i+1}))
       .sort((a,b)=>a.recommendation_number-b.recommendation_number).slice(0,state.set_limit||3);
   }
+  function renderSazu(){
+    const food=state.food_balance,basket=food.basket;
+    currentMenuMode='general';
+    $('resMenuLabel').textContent='🍲 오늘의 음식 추천';
+    const tabs=$('menuMode-general').parentElement;tabs.id='menuModeTabs';tabs.hidden=true;
+    for(const id of ['resMenu','menuPhotoCards','menuExplorerControls','menuRecommendationComment','menuPlanLike','menuModeToggle'])$(id).hidden=true;
+    $('menuSetNumber')?.remove();$('menuSnackCard')?.remove();$('menuComplete')?.remove();
+    let panel=$('sazuFoodPanel');
+    if(!panel){panel=document.createElement('div');panel.id='sazuFoodPanel';$('menuPhotoCards').after(panel);}
+    panel.hidden=false;panel.replaceChildren();
+    const text=(value)=>typeof value==='string'?value:'';
+    const paragraph=(parent,value,cls)=>{if(!text(value))return;const p=document.createElement('p');p.textContent=value;if(cls)p.className=cls;parent.append(p);};
+    const list=(value)=>Array.isArray(value)?value:value?[value]:[];
+    const group=(label,items)=>{
+      if(!items.length)return;
+      const section=document.createElement('section');section.className='sazu-food-group';
+      const h=document.createElement('h4');h.textContent=label;section.append(h);
+      for(const item of items){
+        if(typeof item==='string'){paragraph(section,item);continue;}
+        paragraph(section,text(item?.name));paragraph(section,text(item?.reason));
+      }
+      panel.append(section);
+    };
+    const heading=document.createElement('p');heading.textContent=`${state.date} · SAZU 추천`;panel.append(heading);
+    for(const reason of list(food.why))paragraph(panel,reason);
+    group('밥 · 기본 곡류',list(basket.grains?.staple));
+    group('함께 섞을 곡류',list(basket.grains?.mix));
+    for(const [key,label] of [['soup','국'],['protein','단백질'],['sides','반찬'],['drinks','마실 것'],['snack','간식']])group(label,list(basket[key]));
+    group('덜 사용할 재료',list(food.avoid));
+    const notes=document.createElement('div');notes.className='sazu-food-notes';panel.append(notes);
+    paragraph(notes,food.cookingHint);paragraph(notes,food.rotation?.note);
+    paragraph(notes,food.seasonal?.jeolgi);group('절기 음식',list(food.seasonal?.foods));
+    for(const caution of list(food.cautions))paragraph(panel,caution,'sazu-food-warning');
+    paragraph(panel,food.disclaimer,'sazu-food-disclaimer');
+    paragraph(panel,state.input_note,'sazu-food-disclaimer');
+    $('menuLikeStatus').textContent='';
+  }
   function render(animate=false){
     if(!state)return;
+    if(state.version==='sazu-food-v1'){renderSazu();return;}
+    $('sazuFoodPanel')?.remove();
     if(selectionDay!==state.date){selected={};selectionDay=state.date;}
     currentMenuMode=state.mode;
     const plans=history();
@@ -114,7 +158,7 @@
     $('menuPlanLike').hidden=true;$('menuModeToggle').hidden=true;$('menuLikeStatus').textContent='';
   }
   function mount(value){generation++;busy=false;owner=currentUserId;state=value;selected={};selectionDay=null;$('menuError').textContent='';render();}
-  function reset(){$('menuSetNumber')?.remove();generation++;state=null;owner=null;busy=false;selected={};selectionDay=null;$('menuPhotoCards').hidden=false;$('menuExplorerControls').hidden=true;if($('menuModeTabs'))$('menuModeTabs').hidden=true;}
+  function reset(){$('sazuFoodPanel')?.remove();$('menuSetNumber')?.remove();generation++;state=null;owner=null;busy=false;selected={};selectionDay=null;$('menuPhotoCards').hidden=false;$('menuExplorerControls').hidden=true;if($('menuModeTabs'))$('menuModeTabs').hidden=true;}
   function valid(){return state&&owner&&owner===currentUserId;}
   async function request(mode,action){
     if(busy||!valid())return;
@@ -127,7 +171,7 @@
     }catch(e){if(stamp===generation&&account===currentUserId)$('menuError').textContent=e.name==='AbortError'?'연결이 지연되고 있습니다. 다시 시도해 주세요.':e.message;}
     finally{if(stamp===generation){busy=false;render(revealed);if(revealed){const focus=$('menuNext').hidden?$('menuSetNumber').querySelector('[aria-pressed="true"]'):$('menuNext');focus?.focus({preventScroll:true});}}}
   }
-  function changeMode(mode){if(!busy&&state&&['general','diet'].includes(mode)&&(mode!==state.mode||state.date!==today()))return request(mode,'open');}
+  function changeMode(mode){if(state?.version==='sazu-food-v1')return;if(!busy&&state&&['general','diet'].includes(mode)&&(mode!==state.mode||state.date!==today()))return request(mode,'open');}
   function next(){if(!valid())return;if(state.date!==today())return request(state.mode,'open');if(state.exhausted)return;return request(state.mode,'next');}
   function resume(){if(document.visibilityState==='visible'&&valid()&&!busy)return request(state.mode,'open');}
   document.addEventListener('visibilitychange',resume);window.addEventListener('pageshow',e=>{if(e.persisted)resume();});
