@@ -722,6 +722,23 @@ def initialize_menu_storage():
         pass  # Other sections stay usable; menu writes explicitly return 503.
 
 
+@app.on_event('startup')
+def initialize_sazu_food_collection():
+    # Disabled until explicitly enabled for a bounded, dated research run.
+    from sazu_food_archive import start
+    def profiles():
+        from sazu_food import build_request
+        ids = os.getenv('SAZU_FOOD_COLLECT_USERS', os.getenv('DALHA_TEST_USER_IDS', ''))
+        output = []
+        for user_id in sorted({s.strip() for s in ids.split(',') if s.strip()}):
+            saved = account_store.load(user_id)
+            if saved and saved.get('confirmed'):
+                birth = _birth_input_from_user(saved['profile'], '회원')
+                output.append(build_request(birth, ''))
+        return output
+    start(profiles)
+
+
 class MenuExploreRequest(BaseModel):
     user_id: str = Field(min_length=6, max_length=55)
     token: str = Field(min_length=64, max_length=64)
