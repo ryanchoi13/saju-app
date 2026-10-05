@@ -1,0 +1,1072 @@
+[
+  {
+    "id": "R001",
+    "garment_ids": [
+      "g01",
+      "g02",
+      "g03",
+      "g04",
+      "g05",
+      "g07",
+      "g08",
+      "g09"
+    ],
+    "color_ids": [
+      "wardrobe-white",
+      "wardrobe-ivory",
+      "wardrobe-gray",
+      "wardrobe-light_gray",
+      "wardrobe-charcoal",
+      "wardrobe-black",
+      "wardrobe-navy",
+      "wardrobe-beige",
+      "wardrobe-brown"
+    ],
+    "scope": {
+      "tpo": [
+        "casual",
+        "business_casual"
+      ]
+    },
+    "score": 4,
+    "priority": 10,
+    "reason": "기존 달하 기본색을 검토용 우선 후보로 이관. 실제 착용률을 뜻하지 않음.",
+    "evidence_ids": [
+      "POLICY-20260916"
+    ],
+    "basis": "legacy_policy_editorial_seed",
+    "confidence": "low",
+    "status": "draft",
+    "reviewed_at": "2026-10-02"
+  },
+  {
+    "id": "R002",
+    "garment_ids": [
+      "g20",
+      "g21",
+      "g22",
+      "g23",
+      "g24",
+      "g26",
+      "g27"
+    ],
+    "color_ids": [
+      "wardrobe-black",
+      "wardrobe-navy",
+      "wardrobe-charcoal",
+      "wardrobe-gray",
+      "wardrobe-beige",
+      "wardrobe-brown",
+      "wardrobe-ivory"
+    ],
+    "scope": {
+      "tpo": [
+        "casual",
+        "business_casual"
+      ],
+      "season": [
+        "spring",
+        "autumn",
+        "winter"
+      ]
+    },
+    "score": 4,
+    "priority": 10,
+    "reason": "기존 겉옷의 차분한 기본색 범위. 실제 온도·보온성과 전체 조화는 별도 검토.",
+    "evidence_ids": [
+      "POLICY-20260916"
+    ],
+    "basis": "legacy_policy_editorial_seed",
+    "confidence": "low",
+    "status": "draft",
+    "reviewed_at": "2026-10-02"
+  },
+  {
+    "id": "R003",
+    "garment_ids": [
+      "g11",
+      "g12"
+    ],
+    "color_ids": [
+      "wardrobe-white",
+      "wardrobe-ivory",
+      "wardrobe-gray",
+      "wardrobe-light_gray",
+      "wardrobe-charcoal",
+      "wardrobe-black",
+      "wardrobe-navy",
+      "wardrobe-beige",
+      "wardrobe-brown"
+    ],
+    "scope": {
+      "tpo": [
+        "casual",
+        "business_casual"
+      ]
+    },
+    "score": 4,
+    "priority": 10,
+    "reason": "기존 하의 안정색 우선 정책. 모든 성별·연령의 인구 통계를 가정하지 않음.",
+    "evidence_ids": [
+      "POLICY-20260916"
+    ],
+    "basis": "legacy_policy_editorial_seed",
+    "confidence": "low",
+    "status": "draft",
+    "reviewed_at": "2026-10-02"
+  },
+  {
+    "id": "R004",
+    "garment_ids": [
+      "g13"
+    ],
+    "color_ids": [
+      "wardrobe-white",
+      "wardrobe-ivory",
+      "wardrobe-gray",
+      "wardrobe-light_gray",
+      "wardrobe-charcoal",
+      "wardrobe-black",
+      "wardrobe-navy",
+      "wardrobe-beige",
+      "wardrobe-brown"
+    ],
+    "scope": {
+      "tpo": [
+        "casual"
+      ],
+      "season": [
+        "spring",
+        "summer"
+      ]
+    },
+    "score": 4,
+    "priority": 10,
+    "reason": "따뜻한 계절 캐주얼의 안정색 하의 초안. 실제 예보 확인 필요.",
+    "evidence_ids": [
+      "POLICY-20260916"
+    ],
+    "basis": "legacy_policy_editorial_seed",
+    "confidence": "low",
+    "status": "draft",
+    "reviewed_at": "2026-10-02"
+  },
+  {
+    "id": "R005",
+    "garment_ids": [
+      "g15",
+      "g16"
+    ],
+    "color_ids": [
+      "wardrobe-white",
+      "wardrobe-ivory",
+      "wardrobe-gray",
+      "wardrobe-light_gray",
+      "wardrobe-charcoal",
+      "wardrobe-black",
+      "wardrobe-navy",
+      "wardrobe-beige",
+      "wardrobe-brown"
+    ],
+    "scope": {
+      "gender": [
+        "female"
+      ],
+      "tpo": [
+        "casual",
+        "business_casual"
+      ],
+      "season": [
+        "spring",
+        "summer",
+        "autumn"
+      ]
+    },
+    "score": 4,
+    "priority": 10,
+    "reason": "기존 여성 하의 안정색 범위. 겨울 레이어 조건은 미평가.",
+    "evidence_ids": [
+      "POLICY-20260916"
+    ],
+    "basis": "legacy_policy_editorial_seed",
+    "confidence": "low",
+    "status": "draft",
+    "reviewed_at": "2026-10-02"
+  },
+  {
+    "id": "R006",
+    "garment_ids": [
+      "g10"
+    ],
+    "color_ids": [
+      "wardrobe-navy",
+      "wardrobe-denim",
+      "wardrobe-sky",
+      "wardrobe-black"
+    ],
+    "scope": {
+      "tpo": [
+        "casual",
+        "business_casual"
+      ]
+    },
+    "score": 4,
+    "priority": 10,
+    "reason": "기존 데님 후보 4색. 구체적 워싱과 핏은 별도 기록.",
+    "evidence_ids": [
+      "POLICY-20260916"
+    ],
+    "basis": "legacy_policy_editorial_seed",
+    "confidence": "low",
+    "status": "draft",
+    "reviewed_at": "2026-10-02"
+  },
+  {
+    "id": "R007",
+    "garment_ids": [
+      "g28",
+      "g29"
+    ],
+    "color_ids": [
+      "wardrobe-white",
+      "wardrobe-ivory",
+      "wardrobe-gray",
+      "wardrobe-black",
+      "wardrobe-navy",
+      "wardrobe-beige",
+      "wardrobe-brown"
+    ],
+    "scope": {
+      "tpo": [
+        "casual",
+        "business_casual"
+      ]
+    },
+    "score": 3,
+    "priority": 10,
+    "reason": "기존 후보색을 조건부로 이관. 신발 종류·날씨 적합성 확인 전 추천 확정 불가.",
+    "evidence_ids": [
+      "POLICY-20260916"
+    ],
+    "basis": "legacy_policy_editorial_seed",
+    "confidence": "low",
+    "status": "draft",
+    "reviewed_at": "2026-10-02"
+  },
+  {
+    "id": "R008",
+    "garment_ids": [
+      "g30",
+      "g31"
+    ],
+    "color_ids": [
+      "wardrobe-black",
+      "wardrobe-navy",
+      "wardrobe-beige",
+      "wardrobe-brown",
+      "wardrobe-ivory"
+    ],
+    "scope": {
+      "gender": [
+        "female"
+      ],
+      "tpo": [
+        "casual",
+        "business_casual"
+      ]
+    },
+    "score": 3,
+    "priority": 10,
+    "reason": "기존 여성 신발 범위의 조건부 색 후보. 남성 범위는 별도 근거가 없어 미평가.",
+    "evidence_ids": [
+      "POLICY-20260916"
+    ],
+    "basis": "legacy_policy_editorial_seed",
+    "confidence": "low",
+    "status": "draft",
+    "reviewed_at": "2026-10-02"
+  },
+  {
+    "id": "R009",
+    "garment_ids": [
+      "g32"
+    ],
+    "color_ids": [
+      "wardrobe-black",
+      "wardrobe-brown",
+      "wardrobe-beige"
+    ],
+    "scope": {
+      "tpo": [
+        "casual"
+      ],
+      "season": [
+        "summer"
+      ]
+    },
+    "score": 3,
+    "priority": 10,
+    "reason": "기존 여름 캐주얼 범위. 비·활동·개별 발 편의성은 확인 필요.",
+    "evidence_ids": [
+      "POLICY-20260916"
+    ],
+    "basis": "legacy_policy_editorial_seed",
+    "confidence": "low",
+    "status": "draft",
+    "reviewed_at": "2026-10-02"
+  },
+  {
+    "id": "R010",
+    "garment_ids": [
+      "g33",
+      "g34"
+    ],
+    "color_ids": [
+      "wardrobe-black",
+      "wardrobe-brown"
+    ],
+    "scope": {
+      "tpo": [
+        "casual",
+        "business_casual"
+      ],
+      "season": [
+        "autumn",
+        "winter"
+      ]
+    },
+    "score": 3,
+    "priority": 10,
+    "reason": "추운 계절의 기본 신발색 초안. 방수·착화감은 보장하지 않음.",
+    "evidence_ids": [
+      "POLICY-20260916"
+    ],
+    "basis": "legacy_policy_editorial_seed",
+    "confidence": "low",
+    "status": "draft",
+    "reviewed_at": "2026-10-02"
+  },
+  {
+    "id": "R011",
+    "garment_ids": [
+      "g28"
+    ],
+    "color_ids": [
+      "wardrobe-white",
+      "wardrobe-ivory",
+      "wardrobe-black",
+      "wardrobe-navy",
+      "wardrobe-gray"
+    ],
+    "scope": {
+      "tpo": [
+        "casual"
+      ]
+    },
+    "score": 4,
+    "priority": 20,
+    "reason": "캐주얼의 기본 운동화 후보색. 부위 색이 실제로 같아도 자동 가산하지 않음.",
+    "evidence_ids": [
+      "POLICY-20260916"
+    ],
+    "basis": "legacy_policy_editorial_seed",
+    "confidence": "low",
+    "status": "draft",
+    "reviewed_at": "2026-10-02"
+  },
+  {
+    "id": "R012",
+    "garment_ids": [
+      "g37",
+      "g38",
+      "g39",
+      "g40",
+      "g41"
+    ],
+    "color_ids": [
+      "wardrobe-black",
+      "wardrobe-navy",
+      "wardrobe-beige",
+      "wardrobe-brown",
+      "wardrobe-ivory"
+    ],
+    "scope": {
+      "tpo": [
+        "casual",
+        "business_casual"
+      ]
+    },
+    "score": 3,
+    "priority": 10,
+    "reason": "가방의 초기 기본색 후보. 연령별 수요·휴대 필요성은 미검증.",
+    "evidence_ids": [
+      "POLICY-20260916"
+    ],
+    "basis": "legacy_policy_editorial_seed",
+    "confidence": "low",
+    "status": "draft",
+    "reviewed_at": "2026-10-02"
+  },
+  {
+    "id": "R013",
+    "garment_ids": [
+      "g25",
+      "g14",
+      "g17"
+    ],
+    "color_ids": [
+      "wardrobe-navy",
+      "wardrobe-charcoal",
+      "wardrobe-gray",
+      "wardrobe-black"
+    ],
+    "scope": {
+      "tpo": [
+        "business_formal"
+      ]
+    },
+    "score": 4,
+    "priority": 10,
+    "reason": "기존 수트 기본색과 화보 사례의 교집합. 세트 색 동일 여부는 별도 조건.",
+    "evidence_ids": [
+      "POLICY-20260916",
+      "O19",
+      "O20"
+    ],
+    "basis": "legacy_policy_editorial_seed",
+    "confidence": "low",
+    "status": "draft",
+    "reviewed_at": "2026-10-02"
+  },
+  {
+    "id": "R014",
+    "garment_ids": [
+      "g06"
+    ],
+    "color_ids": [
+      "wardrobe-white",
+      "wardrobe-sky",
+      "wardrobe-pale_pink",
+      "wardrobe-light_gray"
+    ],
+    "scope": {
+      "tpo": [
+        "business_formal"
+      ]
+    },
+    "score": 4,
+    "priority": 10,
+    "reason": "기존 포멀 이너의 밝고 차분한 색 범위. 원단·직장 복장 규정은 별도 확인.",
+    "evidence_ids": [
+      "POLICY-20260916"
+    ],
+    "basis": "legacy_policy_editorial_seed",
+    "confidence": "low",
+    "status": "draft",
+    "reviewed_at": "2026-10-02"
+  },
+  {
+    "id": "R015",
+    "garment_ids": [
+      "g35",
+      "g36",
+      "g29",
+      "g46"
+    ],
+    "color_ids": [
+      "wardrobe-black",
+      "wardrobe-brown"
+    ],
+    "scope": {
+      "tpo": [
+        "business_formal"
+      ]
+    },
+    "score": 4,
+    "priority": 10,
+    "reason": "기존 포멀 가죽색 기준. 검정·브라운의 실제 재질과 조화는 별도 확인.",
+    "evidence_ids": [
+      "POLICY-20260916"
+    ],
+    "basis": "legacy_policy_editorial_seed",
+    "confidence": "low",
+    "status": "draft",
+    "reviewed_at": "2026-10-02"
+  },
+  {
+    "id": "R016",
+    "garment_ids": [
+      "g49"
+    ],
+    "color_ids": [
+      "wardrobe-navy",
+      "wardrobe-burgundy",
+      "wardrobe-forest",
+      "wardrobe-gray",
+      "wardrobe-charcoal"
+    ],
+    "scope": {
+      "tpo": [
+        "business_formal"
+      ]
+    },
+    "score": 3,
+    "priority": 10,
+    "reason": "기존 타이 후보색. 수트·셔츠와의 구분 및 무늬 확인 필요.",
+    "evidence_ids": [
+      "POLICY-20260916"
+    ],
+    "basis": "legacy_policy_editorial_seed",
+    "confidence": "low",
+    "status": "draft",
+    "reviewed_at": "2026-10-02"
+  },
+  {
+    "id": "R017",
+    "garment_ids": [
+      "g01",
+      "g02",
+      "g07"
+    ],
+    "color_ids": [
+      "wardrobe-pink",
+      "wardrobe-pale_pink"
+    ],
+    "scope": {
+      "gender": [
+        "male"
+      ],
+      "tpo": [
+        "casual"
+      ],
+      "season": [
+        "spring",
+        "autumn"
+      ]
+    },
+    "score": 4,
+    "priority": 100,
+    "reason": "핑크 상의·차분한 하의 사례를 근거로 만든 초안. 정확한 HEX와 모든 연령에 대한 검증은 아님.",
+    "evidence_ids": [
+      "O02",
+      "O03"
+    ],
+    "basis": "case_supported_editorial_proposal",
+    "confidence": "medium",
+    "status": "draft",
+    "reviewed_at": "2026-10-02"
+  },
+  {
+    "id": "R018",
+    "garment_ids": [
+      "g04"
+    ],
+    "color_ids": [
+      "wardrobe-pink",
+      "wardrobe-pale_pink"
+    ],
+    "scope": {
+      "gender": [
+        "male"
+      ],
+      "tpo": [
+        "casual",
+        "business_casual"
+      ],
+      "season": [
+        "spring",
+        "summer",
+        "autumn"
+      ]
+    },
+    "score": 4,
+    "priority": 100,
+    "reason": "핑크 셔츠·데님·브라운 로퍼 사례. 실크 광택과 핏의 차이는 재검토 필요.",
+    "evidence_ids": [
+      "O01"
+    ],
+    "basis": "case_supported_editorial_proposal",
+    "confidence": "medium",
+    "status": "draft",
+    "reviewed_at": "2026-10-02"
+  },
+  {
+    "id": "R019",
+    "garment_ids": [
+      "g04"
+    ],
+    "color_ids": [
+      "wardrobe-sky",
+      "wardrobe-navy"
+    ],
+    "scope": {
+      "gender": [
+        "male"
+      ],
+      "tpo": [
+        "casual",
+        "business_casual"
+      ],
+      "season": [
+        "spring",
+        "autumn"
+      ]
+    },
+    "score": 4,
+    "priority": 100,
+    "reason": "재킷·니트와 연결한 셔츠 사례에서 만든 검토안.",
+    "evidence_ids": [
+      "O05",
+      "O06",
+      "O07"
+    ],
+    "basis": "case_supported_editorial_proposal",
+    "confidence": "medium",
+    "status": "draft",
+    "reviewed_at": "2026-10-02"
+  },
+  {
+    "id": "R020",
+    "garment_ids": [
+      "g11"
+    ],
+    "color_ids": [
+      "wardrobe-beige",
+      "wardrobe-charcoal",
+      "wardrobe-black",
+      "wardrobe-navy"
+    ],
+    "scope": {
+      "gender": [
+        "male"
+      ],
+      "tpo": [
+        "casual",
+        "business_casual"
+      ]
+    },
+    "score": 4,
+    "priority": 100,
+    "reason": "국내 상품 색상 옵션은 실재성을 뒷받침. 착용 빈도는 알 수 없음.",
+    "evidence_ids": [
+      "O28"
+    ],
+    "basis": "product_existence_plus_editorial_prior",
+    "confidence": "medium",
+    "status": "draft",
+    "reviewed_at": "2026-10-02"
+  },
+  {
+    "id": "R021",
+    "garment_ids": [
+      "g04"
+    ],
+    "color_ids": [
+      "wardrobe-white",
+      "wardrobe-ivory"
+    ],
+    "scope": {
+      "gender": [
+        "female"
+      ],
+      "tpo": [
+        "casual",
+        "business_casual"
+      ],
+      "season": [
+        "autumn"
+      ]
+    },
+    "score": 4,
+    "priority": 100,
+    "reason": "화이트·크림 셔츠의 실제 구성 및 설명 사례.",
+    "evidence_ids": [
+      "O24",
+      "O26"
+    ],
+    "basis": "case_supported_editorial_proposal",
+    "confidence": "medium",
+    "status": "draft",
+    "reviewed_at": "2026-10-02"
+  },
+  {
+    "id": "R022",
+    "garment_ids": [
+      "g15"
+    ],
+    "color_ids": [
+      "wardrobe-black",
+      "wardrobe-white"
+    ],
+    "scope": {
+      "gender": [
+        "female"
+      ],
+      "tpo": [
+        "casual",
+        "business_casual"
+      ],
+      "season": [
+        "autumn"
+      ]
+    },
+    "score": 4,
+    "priority": 100,
+    "reason": "흰 셔츠와 연결한 스커트 사례. 같은 색이어도 볼륨에 따라 기본형·실험형이 달라짐.",
+    "evidence_ids": [
+      "O24",
+      "O25"
+    ],
+    "basis": "case_supported_editorial_proposal",
+    "confidence": "medium",
+    "status": "draft",
+    "reviewed_at": "2026-10-02"
+  },
+  {
+    "id": "R023",
+    "garment_ids": [
+      "g07"
+    ],
+    "color_ids": [
+      "wardrobe-pink"
+    ],
+    "scope": {
+      "gender": [
+        "female"
+      ],
+      "tpo": [
+        "casual"
+      ],
+      "season": [
+        "spring"
+      ]
+    },
+    "score": 3,
+    "priority": 100,
+    "reason": "핑크·브라운 조합의 기사 제안을 조건부 후보로 저장.",
+    "evidence_ids": [
+      "O10"
+    ],
+    "basis": "case_supported_editorial_proposal",
+    "confidence": "low",
+    "status": "draft",
+    "reviewed_at": "2026-10-02"
+  },
+  {
+    "id": "R024",
+    "garment_ids": [
+      "g05"
+    ],
+    "color_ids": [
+      "wardrobe-white"
+    ],
+    "scope": {
+      "gender": [
+        "female"
+      ],
+      "tpo": [
+        "casual"
+      ],
+      "season": [
+        "summer"
+      ]
+    },
+    "score": 4,
+    "priority": 100,
+    "reason": "흰 폴로·데님 쇼츠의 한국 셀럽 사례. 다른 연령의 선호까지 확인된 것은 아님.",
+    "evidence_ids": [
+      "O14"
+    ],
+    "basis": "case_supported_editorial_proposal",
+    "confidence": "medium",
+    "status": "draft",
+    "reviewed_at": "2026-10-02"
+  },
+  {
+    "id": "R025",
+    "garment_ids": [
+      "g07"
+    ],
+    "color_ids": [
+      "wardrobe-red"
+    ],
+    "scope": {
+      "gender": [
+        "male"
+      ],
+      "tpo": [
+        "casual"
+      ],
+      "season": [
+        "winter"
+      ]
+    },
+    "score": 3,
+    "priority": 100,
+    "reason": "겨울 행사 맥락에서 검정 하의와 제안된 컬러 니트.",
+    "evidence_ids": [
+      "O15"
+    ],
+    "basis": "case_supported_editorial_proposal",
+    "confidence": "low",
+    "status": "draft",
+    "reviewed_at": "2026-10-02"
+  },
+  {
+    "id": "R026",
+    "garment_ids": [
+      "g44"
+    ],
+    "color_ids": [
+      "wardrobe-red"
+    ],
+    "scope": {
+      "gender": [
+        "male"
+      ],
+      "tpo": [
+        "casual",
+        "business_casual"
+      ],
+      "season": [
+        "winter"
+      ]
+    },
+    "score": 4,
+    "priority": 100,
+    "reason": "네이비·베이지·회색 겉옷에 활용하는 겨울 포인트 설명.",
+    "evidence_ids": [
+      "O16"
+    ],
+    "basis": "case_supported_editorial_proposal",
+    "confidence": "low",
+    "status": "draft",
+    "reviewed_at": "2026-10-02"
+  },
+  {
+    "id": "R027",
+    "garment_ids": [
+      "g09"
+    ],
+    "color_ids": [
+      "wardrobe-pink"
+    ],
+    "scope": {
+      "gender": [
+        "male"
+      ],
+      "tpo": [
+        "casual"
+      ],
+      "season": [
+        "spring"
+      ]
+    },
+    "score": 3,
+    "priority": 100,
+    "reason": "과거 한국 셀럽 사례. 현재 기본 추천의 보편성을 입증하지 않음.",
+    "evidence_ids": [
+      "O17"
+    ],
+    "basis": "case_supported_editorial_proposal",
+    "confidence": "low",
+    "status": "draft",
+    "reviewed_at": "2026-10-02"
+  },
+  {
+    "id": "R028",
+    "garment_ids": [
+      "g06"
+    ],
+    "color_ids": [
+      "wardrobe-pink"
+    ],
+    "scope": {
+      "gender": [
+        "male"
+      ],
+      "tpo": [
+        "business_formal"
+      ],
+      "season": [
+        "autumn"
+      ]
+    },
+    "score": 3,
+    "priority": 100,
+    "reason": "네이비 수트와의 화보 사례. 실험성이 아니라 격식·톤 검토가 필요한 조건부 후보.",
+    "evidence_ids": [
+      "O19"
+    ],
+    "basis": "case_supported_editorial_proposal",
+    "confidence": "low",
+    "status": "draft",
+    "reviewed_at": "2026-10-02"
+  },
+  {
+    "id": "R029",
+    "garment_ids": [
+      "g22"
+    ],
+    "color_ids": [
+      "wardrobe-pink",
+      "wardrobe-pale_pink",
+      "wardrobe-yellow",
+      "wardrobe-butter",
+      "wada-FBE6A0"
+    ],
+    "scope": {
+      "gender": [
+        "male"
+      ],
+      "age_band": [
+        "forties",
+        "fifties"
+      ],
+      "season": [
+        "autumn"
+      ],
+      "tpo": [
+        "casual"
+      ]
+    },
+    "score": 2,
+    "priority": 200,
+    "reason": "오늘 피드백을 반영한 40·50대 남성 가을 캐주얼의 기본 추천 후순위 초안. 남성 전체의 색상 금지가 아님.",
+    "evidence_ids": [
+      "F01",
+      "F02"
+    ],
+    "basis": "owner_feedback_scoped_proposal",
+    "confidence": "low",
+    "status": "draft",
+    "reviewed_at": "2026-10-02"
+  },
+  {
+    "id": "R030",
+    "garment_ids": [
+      "g08"
+    ],
+    "color_ids": [
+      "wardrobe-pink"
+    ],
+    "scope": {
+      "gender": [
+        "male"
+      ],
+      "season": [
+        "autumn"
+      ],
+      "tpo": [
+        "casual"
+      ]
+    },
+    "score": 3,
+    "priority": 100,
+    "reason": "핑크 자체를 금지하지 않고 이너 후보로 유지. 전체 코디는 별도 검토.",
+    "evidence_ids": [
+      "F03",
+      "O02"
+    ],
+    "basis": "owner_feedback_scoped_proposal",
+    "confidence": "low",
+    "status": "draft",
+    "reviewed_at": "2026-10-02"
+  },
+  {
+    "id": "R031",
+    "garment_ids": [
+      "g09"
+    ],
+    "color_ids": [
+      "wada-FBE6A0"
+    ],
+    "scope": {
+      "gender": [
+        "male"
+      ],
+      "age_band": [
+        "forties",
+        "fifties"
+      ],
+      "season": [
+        "autumn"
+      ],
+      "tpo": [
+        "casual"
+      ]
+    },
+    "score": 3,
+    "priority": 100,
+    "reason": "오늘 노랑 후드는 단독 조건부 후보. 핑크 아우터와의 완성 조합은 사용자 반려.",
+    "evidence_ids": [
+      "F02"
+    ],
+    "basis": "owner_feedback_scoped_proposal",
+    "confidence": "low",
+    "status": "draft",
+    "reviewed_at": "2026-10-02"
+  },
+  {
+    "id": "R032",
+    "garment_ids": [
+      "g11",
+      "g12"
+    ],
+    "color_ids": [
+      "wardrobe-pink"
+    ],
+    "scope": {
+      "gender": [
+        "male"
+      ],
+      "age_band": [
+        "fifties"
+      ],
+      "tpo": [
+        "casual"
+      ]
+    },
+    "score": 2,
+    "priority": 200,
+    "reason": "50대 남성의 기본안에서 후순위라는 사용자 제안. 조사로 확인한 착용률이 아니며 취향에 따른 예외 가능.",
+    "evidence_ids": [
+      "F03"
+    ],
+    "basis": "owner_hypothesis_not_validated",
+    "confidence": "low",
+    "status": "draft",
+    "reviewed_at": "2026-10-02"
+  },
+  {
+    "id": "R033",
+    "garment_ids": [
+      "g11",
+      "g12"
+    ],
+    "color_ids": [
+      "wardrobe-pink"
+    ],
+    "scope": {
+      "gender": [
+        "female"
+      ],
+      "age_band": [
+        "teen"
+      ],
+      "tpo": [
+        "casual"
+      ]
+    },
+    "score": 3,
+    "priority": 200,
+    "reason": "10대 여성은 다른 우선순위가 가능하다는 사용자 가설. 직접 사례가 부족하여 미검증 조건부로 저장.",
+    "evidence_ids": [
+      "F03"
+    ],
+    "basis": "owner_hypothesis_not_validated",
+    "confidence": "low",
+    "status": "draft",
+    "reviewed_at": "2026-10-02"
+  }
+]

@@ -205,5 +205,16 @@ for(const tpo of ['casual','business_casual','business_formal']) {
   w.closeFashionV2Modal();
 }
 
-console.log('PASS fashion v2 stage 3 summary, published single-outfit boards, bottom sheet, swipe tabs and single palette');
+const optionalHint={optional:true,visible:false,text:'보라 계열이 부담스럽다면, 원하실 때 속옷에 활용해 보세요.'};
+const hinted={...daily,color_strategy:{private_color_suggestion:optionalHint}};
+const hintHtml=w.renderFashionV2Details(hinted,0);
+assert.ok(hintHtml.includes('fashion-v2-private-color'));
+assert.ok(hintHtml.includes('원하실 때 속옷'));
+assert.ok(!w.renderFashionV2Details(daily,0).includes('fashion-v2-private-color'));
+assert.equal(hinted.items.length,daily.items.length,'optional underwear advice never creates a visible item');
+assert.ok(!w.renderFashionV2Details({...daily,color_strategy:{private_color_suggestion:{optional:true,text:'<img src=x onerror=alert(1)>'}}},0).includes('<img src=x'));
+vm.runInContext('currentFortuneData='+JSON.stringify({daily_fortune:{daily_color_palette:palette,fashion_v2:{casual:{looks:[daily,trend]}}}})+';',dom.getInternalVMContext());
+w.setStyleTpo('casual');
+assert.equal(w.document.querySelectorAll('#dynamicColorPaletteBox .palette-chip').length,2,'current API works without a Wada payload');
+console.log('PASS fashion v2 summary, boards, tabs, independent palette and optional private-color advice');
 dom.window.close();

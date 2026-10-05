@@ -1,0 +1,1405 @@
+[
+  {
+    "id": "O01",
+    "source_id": "S01",
+    "title": "핑크 셔츠·연청·브라운 로퍼",
+    "gender": "male",
+    "age_band": null,
+    "age_basis": "not_reported",
+    "season": "summer",
+    "season_basis": "article_context",
+    "tpo": "casual",
+    "tpo_basis": "researcher_label",
+    "style_tier": "basic",
+    "tier_status": "provisional",
+    "items": [
+      {
+        "garment_id": "g04",
+        "garment_name": "긴팔 캐주얼 셔츠",
+        "color_id": "wardrobe-pink",
+        "observed_color": "파스텔 핑크",
+        "color_mapping": "approximate_editorial_mapping",
+        "slot": null
+      },
+      {
+        "garment_id": "g10",
+        "garment_name": "데님 바지",
+        "color_id": "wardrobe-sky",
+        "observed_color": "연청",
+        "color_mapping": "approximate_editorial_mapping",
+        "slot": null
+      },
+      {
+        "garment_id": "g29",
+        "garment_name": "로퍼",
+        "color_id": "wardrobe-brown",
+        "observed_color": "초콜릿 브라운",
+        "color_mapping": "approximate_editorial_mapping",
+        "slot": null
+      }
+    ],
+    "description": "단색 셔츠를 중심으로 데님과 로퍼를 연결한 방송 착장. 새틴 광택은 별도 조건.",
+    "source_locator": "본문의 드루 스타키 착장",
+    "original_case_key": "drew-starkey-tonight-202608",
+    "context": "foreign_celebrity",
+    "completeness": "core_garments_and_shoes",
+    "unknown_fields": [
+      "exact_product_hex",
+      "population_frequency",
+      "age"
+    ],
+    "verification": "article_and_image_checked",
+    "review_status": "awaiting_owner_review",
+    "image_url": "https://img.gqkorea.co.kr/gq/2026/08/style_6a7040c463670-933x1400.jpg",
+    "image_note": "출처 사진 확인. 팔레트 HEX는 근사 매핑이며 실물 측정값 아님."
+  },
+  {
+    "id": "O02",
+    "source_id": "S02",
+    "title": "핑크 니트·블랙 팬츠",
+    "gender": "male",
+    "age_band": null,
+    "age_basis": "not_reported",
+    "season": "spring",
+    "season_basis": "article_context",
+    "tpo": "casual",
+    "tpo_basis": "researcher_label",
+    "style_tier": "basic",
+    "tier_status": "provisional",
+    "items": [
+      {
+        "garment_id": "g07",
+        "garment_name": "니트",
+        "color_id": "wardrobe-pink",
+        "observed_color": "연핑크",
+        "color_mapping": "approximate_editorial_mapping",
+        "slot": null
+      },
+      {
+        "garment_id": null,
+        "garment_name": "바지",
+        "color_id": "wardrobe-black",
+        "observed_color": "블랙",
+        "color_mapping": "approximate_editorial_mapping",
+        "slot": null
+      }
+    ],
+    "description": "분홍 니트와 검정 하의의 대비. 하의 세부 종류는 본문에서 확정하지 않음.",
+    "source_locator": "변우석",
+    "original_case_key": "instagram:byeonwooseok:202603-pink",
+    "context": "korean_celebrity",
+    "completeness": "partial",
+    "unknown_fields": [
+      "exact_product_hex",
+      "population_frequency",
+      "age"
+    ],
+    "verification": "article_text_checked",
+    "review_status": "awaiting_owner_review"
+  },
+  {
+    "id": "O03",
+    "source_id": "S02",
+    "title": "핑크 티·베이지 하의",
+    "gender": "male",
+    "age_band": null,
+    "age_basis": "not_reported",
+    "season": "spring",
+    "season_basis": "article_context",
+    "tpo": "casual",
+    "tpo_basis": "researcher_label",
+    "style_tier": "basic",
+    "tier_status": "provisional",
+    "items": [
+      {
+        "garment_id": "g01",
+        "garment_name": "반팔 티셔츠",
+        "color_id": "wardrobe-pink",
+        "observed_color": "핑크",
+        "color_mapping": "approximate_editorial_mapping",
+        "slot": null
+      },
+      {
+        "garment_id": "g02",
+        "garment_name": "긴팔 티셔츠",
+        "color_id": null,
+        "observed_color": "본문 미기재",
+        "color_mapping": "unknown",
+        "slot": null
+      },
+      {
+        "garment_id": null,
+        "garment_name": "바지",
+        "color_id": "wardrobe-beige",
+        "observed_color": "베이지",
+        "color_mapping": "approximate_editorial_mapping",
+        "slot": null
+      }
+    ],
+    "description": "분홍 티 아래 긴팔을 겹치고 베이지 하의를 사용. 오늘 제안의 배색 참고이며 검정 아우터까지 검증된 사례는 아님.",
+    "source_locator": "마이큐",
+    "original_case_key": "instagram:iammyq:202603-pink",
+    "context": "korean_celebrity",
+    "completeness": "partial",
+    "unknown_fields": [
+      "exact_product_hex",
+      "population_frequency",
+      "age"
+    ],
+    "verification": "article_and_image_checked",
+    "review_status": "awaiting_owner_review",
+    "image_url": "https://img.gqkorea.co.kr/gq/2026/03/style_69b26e7fd357f-1052x1400.jpg",
+    "image_note": "분홍 티·밝은 긴팔·베이지 하의·밝은 운동화의 시각 확인. 사진의 분홍은 코어 연핑크와 동일하지 않음."
+  },
+  {
+    "id": "O04",
+    "source_id": "S02",
+    "title": "선명한 핑크 팬츠",
+    "gender": "male",
+    "age_band": null,
+    "age_basis": "not_reported",
+    "season": "spring",
+    "season_basis": "article_context",
+    "tpo": "casual",
+    "tpo_basis": "researcher_label",
+    "style_tier": "experimental",
+    "tier_status": "provisional",
+    "items": [
+      {
+        "garment_id": null,
+        "garment_name": "바지",
+        "color_id": null,
+        "observed_color": "선명한 핑크 — 팔레트 연핑크와 정확히 같지 않음",
+        "color_mapping": "tone_not_identified",
+        "slot": null
+      }
+    ],
+    "description": "대담한 팬츠 활용 사례. 파스텔 핑크로 잘못 확정하지 않도록 원문 색 표현 유지.",
+    "source_locator": "나현웅",
+    "original_case_key": "instagram:g4k4a:202603-pink",
+    "context": "korean_celebrity",
+    "completeness": "partial",
+    "unknown_fields": [
+      "exact_product_hex",
+      "population_frequency",
+      "age"
+    ],
+    "verification": "article_text_checked",
+    "review_status": "awaiting_owner_review"
+  },
+  {
+    "id": "O05",
+    "source_id": "S03",
+    "title": "파스텔 블루 셔츠·블랙 재킷",
+    "gender": "male",
+    "age_band": null,
+    "age_basis": "not_reported",
+    "season": "spring",
+    "season_basis": "article_context",
+    "tpo": "casual",
+    "tpo_basis": "researcher_label",
+    "style_tier": "basic",
+    "tier_status": "provisional",
+    "items": [
+      {
+        "garment_id": "g04",
+        "garment_name": "긴팔 캐주얼 셔츠",
+        "color_id": "wardrobe-sky",
+        "observed_color": "하늘색",
+        "color_mapping": "approximate_editorial_mapping",
+        "slot": null
+      },
+      {
+        "garment_id": "g24",
+        "garment_name": "블레이저",
+        "color_id": "wardrobe-black",
+        "observed_color": "블랙",
+        "color_mapping": "approximate_editorial_mapping",
+        "slot": null
+      }
+    ],
+    "description": "밝은 셔츠와 어두운 겉옷의 대비. 바지·신발이 없는 부분 조합.",
+    "source_locator": "블루 셔츠 + 재킷",
+    "original_case_key": "gq:20260514:black-sky",
+    "context": "mixed_or_unknown",
+    "completeness": "partial",
+    "unknown_fields": [
+      "exact_product_hex",
+      "population_frequency",
+      "age"
+    ],
+    "verification": "article_text_checked",
+    "review_status": "awaiting_owner_review"
+  },
+  {
+    "id": "O06",
+    "source_id": "S03",
+    "title": "네이비 셔츠·베이지 재킷",
+    "gender": "male",
+    "age_band": null,
+    "age_basis": "not_reported",
+    "season": "spring",
+    "season_basis": "article_context",
+    "tpo": "casual",
+    "tpo_basis": "researcher_label",
+    "style_tier": "basic",
+    "tier_status": "provisional",
+    "items": [
+      {
+        "garment_id": "g04",
+        "garment_name": "긴팔 캐주얼 셔츠",
+        "color_id": "wardrobe-navy",
+        "observed_color": "네이비",
+        "color_mapping": "approximate_editorial_mapping",
+        "slot": null
+      },
+      {
+        "garment_id": "g24",
+        "garment_name": "블레이저",
+        "color_id": "wardrobe-beige",
+        "observed_color": "베이지",
+        "color_mapping": "approximate_editorial_mapping",
+        "slot": null
+      }
+    ],
+    "description": "밝은 겉옷과 어두운 이너의 배색 참고.",
+    "source_locator": "블루 셔츠 + 재킷",
+    "original_case_key": "gq:20260514:beige-navy",
+    "context": "mixed_or_unknown",
+    "completeness": "partial",
+    "unknown_fields": [
+      "exact_product_hex",
+      "population_frequency",
+      "age"
+    ],
+    "verification": "article_text_checked",
+    "review_status": "awaiting_owner_review"
+  },
+  {
+    "id": "O07",
+    "source_id": "S03",
+    "title": "블루 셔츠·그레이 니트",
+    "gender": "male",
+    "age_band": null,
+    "age_basis": "not_reported",
+    "season": "spring",
+    "season_basis": "article_context",
+    "tpo": "casual",
+    "tpo_basis": "researcher_label",
+    "style_tier": "basic",
+    "tier_status": "provisional",
+    "items": [
+      {
+        "garment_id": "g04",
+        "garment_name": "긴팔 캐주얼 셔츠",
+        "color_id": "wardrobe-sky",
+        "observed_color": "하늘색",
+        "color_mapping": "approximate_editorial_mapping",
+        "slot": null
+      },
+      {
+        "garment_id": "g07",
+        "garment_name": "니트",
+        "color_id": "wardrobe-gray",
+        "observed_color": "그레이",
+        "color_mapping": "approximate_editorial_mapping",
+        "slot": null
+      }
+    ],
+    "description": "셔츠와 니트를 겹친 부분 조합. 여유 있는 핏을 별도 확인할 필요.",
+    "source_locator": "블루 셔츠 + 니트",
+    "original_case_key": "gq:20260514:gray-sky",
+    "context": "mixed_or_unknown",
+    "completeness": "partial",
+    "unknown_fields": [
+      "exact_product_hex",
+      "population_frequency",
+      "age"
+    ],
+    "verification": "article_text_checked",
+    "review_status": "awaiting_owner_review"
+  },
+  {
+    "id": "O08",
+    "source_id": "S04",
+    "title": "흰 티 위 컬러 셔츠",
+    "gender": "male",
+    "age_band": null,
+    "age_basis": "not_reported",
+    "season": "autumn",
+    "season_basis": "article_context",
+    "tpo": "casual",
+    "tpo_basis": "researcher_label",
+    "style_tier": "basic",
+    "tier_status": "provisional",
+    "items": [
+      {
+        "garment_id": "g01",
+        "garment_name": "반팔 티셔츠",
+        "color_id": "wardrobe-white",
+        "observed_color": "화이트",
+        "color_mapping": "approximate_editorial_mapping",
+        "slot": null
+      },
+      {
+        "garment_id": "g04",
+        "garment_name": "긴팔 캐주얼 셔츠",
+        "color_id": null,
+        "observed_color": "본문 미기재",
+        "color_mapping": "unknown",
+        "slot": null
+      }
+    ],
+    "description": "한쪽의 무늬·색을 강조하면 나머지 상체 레이어를 단순하게 두는 설명.",
+    "source_locator": "아우터로 활용하기",
+    "original_case_key": "gq:20250912:shirt-layer",
+    "context": "mixed_or_unknown",
+    "completeness": "partial",
+    "unknown_fields": [
+      "exact_product_hex",
+      "population_frequency",
+      "age"
+    ],
+    "verification": "article_text_checked",
+    "review_status": "awaiting_owner_review"
+  },
+  {
+    "id": "O09",
+    "source_id": "S05",
+    "title": "핑크 팬츠·레드·메시 네이비",
+    "gender": "female",
+    "age_band": null,
+    "age_basis": "not_reported",
+    "season": "spring",
+    "season_basis": "article_context",
+    "tpo": "casual",
+    "tpo_basis": "researcher_label",
+    "style_tier": "experimental",
+    "tier_status": "provisional",
+    "items": [
+      {
+        "garment_id": null,
+        "garment_name": "바지",
+        "color_id": "wardrobe-pink",
+        "observed_color": "연핑크",
+        "color_mapping": "approximate_editorial_mapping",
+        "slot": null
+      },
+      {
+        "garment_id": "g01",
+        "garment_name": "반팔 티셔츠",
+        "color_id": "wardrobe-red",
+        "observed_color": "레드",
+        "color_mapping": "approximate_editorial_mapping",
+        "slot": null
+      },
+      {
+        "garment_id": "g23",
+        "garment_name": "가디건",
+        "color_id": "wardrobe-navy",
+        "observed_color": "네이비",
+        "color_mapping": "approximate_editorial_mapping",
+        "slot": null
+      },
+      {
+        "garment_id": "g30",
+        "garment_name": "플랫슈즈",
+        "color_id": "wardrobe-red",
+        "observed_color": "레드",
+        "color_mapping": "approximate_editorial_mapping",
+        "slot": null
+      }
+    ],
+    "description": "메시 소재의 비침과 색 중첩이 핵심. 단색 평면도에 색만 복사하면 다른 인상이 될 수 있음.",
+    "source_locator": "하나(@hanadool)",
+    "original_case_key": "instagram:hanadool:202602-pink",
+    "context": "korean_influencer",
+    "completeness": "core_garments_and_shoes",
+    "unknown_fields": [
+      "exact_product_hex",
+      "population_frequency",
+      "age"
+    ],
+    "verification": "article_text_checked",
+    "review_status": "awaiting_owner_review"
+  },
+  {
+    "id": "O10",
+    "source_id": "S05",
+    "title": "핑크 스웨터·브라운 하의",
+    "gender": "female",
+    "age_band": null,
+    "age_basis": "not_reported",
+    "season": "spring",
+    "season_basis": "article_context",
+    "tpo": "casual",
+    "tpo_basis": "researcher_label",
+    "style_tier": "basic",
+    "tier_status": "provisional",
+    "items": [
+      {
+        "garment_id": "g07",
+        "garment_name": "니트",
+        "color_id": "wardrobe-pink",
+        "observed_color": "연핑크",
+        "color_mapping": "approximate_editorial_mapping",
+        "slot": null
+      },
+      {
+        "garment_id": null,
+        "garment_name": "바지",
+        "color_id": "wardrobe-brown",
+        "observed_color": "브라운",
+        "color_mapping": "approximate_editorial_mapping",
+        "slot": null
+      }
+    ],
+    "description": "본문이 제안한 편안한 하의 대안. 특정 사진의 완성 코디로 간주하지 않음.",
+    "source_locator": "기사 말미의 바지 대안",
+    "original_case_key": "allure:20260219:advice",
+    "context": "mixed_or_unknown",
+    "completeness": "partial",
+    "unknown_fields": [
+      "exact_product_hex",
+      "population_frequency",
+      "age"
+    ],
+    "verification": "article_text_checked",
+    "review_status": "awaiting_owner_review"
+  },
+  {
+    "id": "O11",
+    "source_id": "S06",
+    "title": "핑크 톱·블랙 팬츠·그레이 퍼",
+    "gender": "female",
+    "age_band": null,
+    "age_basis": "not_reported",
+    "season": "winter",
+    "season_basis": "article_context",
+    "tpo": "casual",
+    "tpo_basis": "researcher_label",
+    "style_tier": "experimental",
+    "tier_status": "provisional",
+    "items": [
+      {
+        "garment_id": null,
+        "garment_name": "러플 톱",
+        "color_id": "wardrobe-pink",
+        "observed_color": "연핑크",
+        "color_mapping": "approximate_editorial_mapping",
+        "slot": null
+      },
+      {
+        "garment_id": null,
+        "garment_name": "바지",
+        "color_id": "wardrobe-black",
+        "observed_color": "블랙",
+        "color_mapping": "approximate_editorial_mapping",
+        "slot": null
+      },
+      {
+        "garment_id": null,
+        "garment_name": "퍼 재킷",
+        "color_id": "wardrobe-gray",
+        "observed_color": "그레이",
+        "color_mapping": "approximate_editorial_mapping",
+        "slot": null
+      }
+    ],
+    "description": "해외 런웨이의 러플과 퍼 활용. 일반 겨울 보온 성능은 확인되지 않음.",
+    "source_locator": "OpéraSPORT Autumn/Winter 2026",
+    "original_case_key": "opera-sport-aw26",
+    "context": "foreign_runway",
+    "completeness": "partial",
+    "unknown_fields": [
+      "exact_product_hex",
+      "population_frequency",
+      "age"
+    ],
+    "verification": "article_text_checked",
+    "review_status": "awaiting_owner_review"
+  },
+  {
+    "id": "O12",
+    "source_id": "S06",
+    "title": "그레이 룩 속 핑크 칼라",
+    "gender": "female",
+    "age_band": null,
+    "age_basis": "not_reported",
+    "season": "winter",
+    "season_basis": "article_context",
+    "tpo": "casual",
+    "tpo_basis": "researcher_label",
+    "style_tier": "basic",
+    "tier_status": "provisional",
+    "items": [
+      {
+        "garment_id": "g07",
+        "garment_name": "니트",
+        "color_id": "wardrobe-gray",
+        "observed_color": "그레이",
+        "color_mapping": "approximate_editorial_mapping",
+        "slot": null
+      },
+      {
+        "garment_id": "g05",
+        "garment_name": "반팔 폴로 티셔츠",
+        "color_id": "wardrobe-pink",
+        "observed_color": "연핑크",
+        "color_mapping": "approximate_editorial_mapping",
+        "slot": null
+      }
+    ],
+    "description": "핑크를 드러나는 칼라 부분에 제한한 런웨이 사례. 기본형 분류는 달하 검토안.",
+    "source_locator": "Sson Autumn/Winter 2026",
+    "original_case_key": "sson-aw26",
+    "context": "foreign_runway",
+    "completeness": "partial",
+    "unknown_fields": [
+      "exact_product_hex",
+      "population_frequency",
+      "age"
+    ],
+    "verification": "article_text_checked",
+    "review_status": "awaiting_owner_review"
+  },
+  {
+    "id": "O13",
+    "source_id": "S07",
+    "title": "버건디·네이비 피케 조합",
+    "gender": "female",
+    "age_band": null,
+    "age_basis": "not_reported",
+    "season": "summer",
+    "season_basis": "article_context",
+    "tpo": "casual",
+    "tpo_basis": "researcher_label",
+    "style_tier": "experimental",
+    "tier_status": "provisional",
+    "items": [
+      {
+        "garment_id": "g05",
+        "garment_name": "반팔 폴로 티셔츠",
+        "color_id": "wardrobe-burgundy",
+        "observed_color": "버건디",
+        "color_mapping": "approximate_editorial_mapping",
+        "slot": null
+      },
+      {
+        "garment_id": null,
+        "garment_name": "스커트",
+        "color_id": "wardrobe-navy",
+        "observed_color": "네이비",
+        "color_mapping": "approximate_editorial_mapping",
+        "slot": null
+      }
+    ],
+    "description": "런웨이의 두 짙은 색 조합. 정확한 부위 배치는 사진 재확인 필요.",
+    "source_locator": "Miu Miu 2026 S/S",
+    "original_case_key": "miumiu-ss26:polo-navy",
+    "context": "mixed_or_unknown",
+    "completeness": "partial",
+    "unknown_fields": [
+      "exact_product_hex",
+      "population_frequency",
+      "age"
+    ],
+    "verification": "article_pair_checked_slot_assignment_pending",
+    "review_status": "awaiting_owner_review"
+  },
+  {
+    "id": "O14",
+    "source_id": "S07",
+    "title": "화이트 폴로·데님 쇼츠",
+    "gender": "female",
+    "age_band": null,
+    "age_basis": "not_reported",
+    "season": "summer",
+    "season_basis": "article_context",
+    "tpo": "casual",
+    "tpo_basis": "researcher_label",
+    "style_tier": "basic",
+    "tier_status": "provisional",
+    "items": [
+      {
+        "garment_id": "g05",
+        "garment_name": "반팔 폴로 티셔츠",
+        "color_id": "wardrobe-white",
+        "observed_color": "화이트",
+        "color_mapping": "approximate_editorial_mapping",
+        "slot": null
+      },
+      {
+        "garment_id": "g13",
+        "garment_name": "반바지",
+        "color_id": "wardrobe-denim",
+        "observed_color": "데님 블루",
+        "color_mapping": "approximate_editorial_mapping",
+        "slot": null
+      }
+    ],
+    "description": "한국 셀럽의 간단한 여름 조합. 쇼츠의 소재는 데님이라는 본문 설명을 유지.",
+    "source_locator": "김나영",
+    "original_case_key": "instagram:nayoungkeem:202605:polo",
+    "context": "korean_celebrity",
+    "completeness": "partial",
+    "unknown_fields": [
+      "exact_product_hex",
+      "population_frequency",
+      "age"
+    ],
+    "verification": "article_text_checked",
+    "review_status": "awaiting_owner_review"
+  },
+  {
+    "id": "O15",
+    "source_id": "S08",
+    "title": "레드 니트·차분한 하의",
+    "gender": "male",
+    "age_band": null,
+    "age_basis": "not_reported",
+    "season": "winter",
+    "season_basis": "article_context",
+    "tpo": "casual",
+    "tpo_basis": "researcher_label",
+    "style_tier": "basic",
+    "tier_status": "provisional",
+    "items": [
+      {
+        "garment_id": "g07",
+        "garment_name": "니트",
+        "color_id": "wardrobe-red",
+        "observed_color": "레드",
+        "color_mapping": "approximate_editorial_mapping",
+        "slot": null
+      },
+      {
+        "garment_id": null,
+        "garment_name": "바지",
+        "color_id": "wardrobe-black",
+        "observed_color": "블랙",
+        "color_mapping": "approximate_editorial_mapping",
+        "slot": null
+      }
+    ],
+    "description": "행사 맥락의 포인트 활용 예시. 본문 대안 중 검정 하의만 기록.",
+    "source_locator": "레드 상의로 확실한 포인트",
+    "original_case_key": "gq:20251223:red-knit",
+    "context": "mixed_or_unknown",
+    "completeness": "partial",
+    "unknown_fields": [
+      "exact_product_hex",
+      "population_frequency",
+      "age"
+    ],
+    "verification": "article_text_checked",
+    "review_status": "awaiting_owner_review"
+  },
+  {
+    "id": "O16",
+    "source_id": "S08",
+    "title": "네이비 겉옷·레드 머플러",
+    "gender": "male",
+    "age_band": null,
+    "age_basis": "not_reported",
+    "season": "winter",
+    "season_basis": "article_context",
+    "tpo": "casual",
+    "tpo_basis": "researcher_label",
+    "style_tier": "basic",
+    "tier_status": "provisional",
+    "items": [
+      {
+        "garment_id": "g26",
+        "garment_name": "코트",
+        "color_id": "wardrobe-navy",
+        "observed_color": "네이비",
+        "color_mapping": "approximate_editorial_mapping",
+        "slot": null
+      },
+      {
+        "garment_id": "g44",
+        "garment_name": "머플러",
+        "color_id": "wardrobe-red",
+        "observed_color": "레드",
+        "color_mapping": "approximate_editorial_mapping",
+        "slot": null
+      }
+    ],
+    "description": "큰 색 면적이 부담스러울 때 소품에 배치하는 설명의 한 조합.",
+    "source_locator": "머플러로 가볍게 분위기 전환",
+    "original_case_key": "gq:20251223:red-scarf",
+    "context": "mixed_or_unknown",
+    "completeness": "partial",
+    "unknown_fields": [
+      "exact_product_hex",
+      "population_frequency",
+      "age"
+    ],
+    "verification": "article_text_checked",
+    "review_status": "awaiting_owner_review"
+  },
+  {
+    "id": "O17",
+    "source_id": "S09",
+    "title": "핑크 후드·블랙 버뮤다",
+    "gender": "male",
+    "age_band": null,
+    "age_basis": "not_reported",
+    "season": "spring",
+    "season_basis": "article_context",
+    "tpo": "casual",
+    "tpo_basis": "researcher_label",
+    "style_tier": "basic",
+    "tier_status": "provisional",
+    "items": [
+      {
+        "garment_id": "g09",
+        "garment_name": "후드티",
+        "color_id": "wardrobe-pink",
+        "observed_color": "연핑크",
+        "color_mapping": "approximate_editorial_mapping",
+        "slot": null
+      },
+      {
+        "garment_id": "g13",
+        "garment_name": "반바지",
+        "color_id": "wardrobe-black",
+        "observed_color": "블랙",
+        "color_mapping": "approximate_editorial_mapping",
+        "slot": null
+      }
+    ],
+    "description": "2024년 한국 셀럽 착장. 당시 기장 유행을 현재 기준으로 확정하지 않음.",
+    "source_locator": "세븐틴 민규",
+    "original_case_key": "instagram:min9yu_k:202404:pink",
+    "context": "korean_celebrity",
+    "completeness": "partial",
+    "unknown_fields": [
+      "exact_product_hex",
+      "population_frequency",
+      "age"
+    ],
+    "verification": "article_text_checked",
+    "review_status": "awaiting_owner_review"
+  },
+  {
+    "id": "O18",
+    "source_id": "S09",
+    "title": "네이비 위에 드러나는 핑크 이너",
+    "gender": "male",
+    "age_band": null,
+    "age_basis": "not_reported",
+    "season": "spring",
+    "season_basis": "article_context",
+    "tpo": "casual",
+    "tpo_basis": "researcher_label",
+    "style_tier": "basic",
+    "tier_status": "provisional",
+    "items": [
+      {
+        "garment_id": null,
+        "garment_name": "하프 집업",
+        "color_id": "wardrobe-navy",
+        "observed_color": "네이비",
+        "color_mapping": "approximate_editorial_mapping",
+        "slot": null
+      },
+      {
+        "garment_id": null,
+        "garment_name": "하프 집업",
+        "color_id": "wardrobe-pink",
+        "observed_color": "연핑크",
+        "color_mapping": "approximate_editorial_mapping",
+        "slot": null
+      }
+    ],
+    "description": "같은 종류의 집업을 겹친 예. 색상 관계와 아이템 구조를 따로 기록.",
+    "source_locator": "안효섭",
+    "original_case_key": "instagram:imhyoseop:202404:pink",
+    "context": "korean_celebrity",
+    "completeness": "partial",
+    "unknown_fields": [
+      "exact_product_hex",
+      "population_frequency",
+      "age"
+    ],
+    "verification": "article_text_checked",
+    "review_status": "awaiting_owner_review"
+  },
+  {
+    "id": "O19",
+    "source_id": "S10",
+    "title": "네이비 수트·핑크 셔츠·네이비 타이",
+    "gender": "male",
+    "age_band": null,
+    "age_basis": "not_reported",
+    "season": "autumn",
+    "season_basis": "article_context",
+    "tpo": "business_formal",
+    "tpo_basis": "researcher_label",
+    "style_tier": "basic",
+    "tier_status": "provisional",
+    "items": [
+      {
+        "garment_id": "g25",
+        "garment_name": "수트 재킷",
+        "color_id": "wardrobe-navy",
+        "observed_color": "네이비",
+        "color_mapping": "approximate_editorial_mapping",
+        "slot": null
+      },
+      {
+        "garment_id": "g14",
+        "garment_name": "수트 바지",
+        "color_id": "wardrobe-navy",
+        "observed_color": "네이비",
+        "color_mapping": "approximate_editorial_mapping",
+        "slot": null
+      },
+      {
+        "garment_id": "g06",
+        "garment_name": "긴팔 정장 셔츠",
+        "color_id": "wardrobe-pink",
+        "observed_color": "연핑크",
+        "color_mapping": "approximate_editorial_mapping",
+        "slot": null
+      },
+      {
+        "garment_id": "g49",
+        "garment_name": "넥타이",
+        "color_id": "wardrobe-navy",
+        "observed_color": "네이비",
+        "color_mapping": "approximate_editorial_mapping",
+        "slot": null
+      },
+      {
+        "garment_id": "g29",
+        "garment_name": "로퍼",
+        "color_id": null,
+        "observed_color": "본문 미기재",
+        "color_mapping": "unknown",
+        "slot": null
+      }
+    ],
+    "description": "기획 화보의 배색. 패턴 타이와 구두 색 미확인 사항을 유지.",
+    "source_locator": "첫 화보 왼쪽 착장",
+    "original_case_key": "gq:20241011:office-1",
+    "context": "korean_editorial",
+    "completeness": "core_garments_and_shoes",
+    "unknown_fields": [
+      "exact_product_hex",
+      "population_frequency",
+      "age"
+    ],
+    "verification": "article_text_checked",
+    "review_status": "awaiting_owner_review"
+  },
+  {
+    "id": "O20",
+    "source_id": "S10",
+    "title": "그레이 수트·흰 셔츠·브라운 가죽",
+    "gender": "male",
+    "age_band": null,
+    "age_basis": "not_reported",
+    "season": "autumn",
+    "season_basis": "article_context",
+    "tpo": "business_formal",
+    "tpo_basis": "researcher_label",
+    "style_tier": "basic",
+    "tier_status": "provisional",
+    "items": [
+      {
+        "garment_id": "g25",
+        "garment_name": "수트 재킷",
+        "color_id": "wardrobe-gray",
+        "observed_color": "그레이",
+        "color_mapping": "approximate_editorial_mapping",
+        "slot": null
+      },
+      {
+        "garment_id": "g14",
+        "garment_name": "수트 바지",
+        "color_id": "wardrobe-gray",
+        "observed_color": "그레이",
+        "color_mapping": "approximate_editorial_mapping",
+        "slot": null
+      },
+      {
+        "garment_id": "g06",
+        "garment_name": "긴팔 정장 셔츠",
+        "color_id": "wardrobe-white",
+        "observed_color": "화이트",
+        "color_mapping": "approximate_editorial_mapping",
+        "slot": null
+      },
+      {
+        "garment_id": "g46",
+        "garment_name": "벨트",
+        "color_id": "wardrobe-brown",
+        "observed_color": "브라운",
+        "color_mapping": "approximate_editorial_mapping",
+        "slot": null
+      },
+      {
+        "garment_id": null,
+        "garment_name": "구두",
+        "color_id": "wardrobe-brown",
+        "observed_color": "브라운",
+        "color_mapping": "approximate_editorial_mapping",
+        "slot": null
+      }
+    ],
+    "description": "화보에서 확인한 수트·셔츠·가죽 색 연결. 타이 세부색은 미확인.",
+    "source_locator": "중간 화보 그레이 수트",
+    "original_case_key": "gq:20241011:office-gray",
+    "context": "korean_editorial",
+    "completeness": "core_garments_and_shoes",
+    "unknown_fields": [
+      "exact_product_hex",
+      "population_frequency",
+      "age"
+    ],
+    "verification": "article_text_checked",
+    "review_status": "awaiting_owner_review"
+  },
+  {
+    "id": "O21",
+    "source_id": "S11",
+    "title": "그레이 티·하늘색 쇼츠·블루 모자",
+    "gender": "female",
+    "age_band": null,
+    "age_basis": "not_reported",
+    "season": "summer",
+    "season_basis": "article_context",
+    "tpo": "casual",
+    "tpo_basis": "researcher_label",
+    "style_tier": "basic",
+    "tier_status": "provisional",
+    "items": [
+      {
+        "garment_id": "g01",
+        "garment_name": "반팔 티셔츠",
+        "color_id": "wardrobe-gray",
+        "observed_color": "그레이",
+        "color_mapping": "approximate_editorial_mapping",
+        "slot": null
+      },
+      {
+        "garment_id": "g13",
+        "garment_name": "반바지",
+        "color_id": "wardrobe-sky",
+        "observed_color": "하늘색",
+        "color_mapping": "approximate_editorial_mapping",
+        "slot": null
+      },
+      {
+        "garment_id": "g43",
+        "garment_name": "모자",
+        "color_id": "wardrobe-denim",
+        "observed_color": "블루",
+        "color_mapping": "approximate_editorial_mapping",
+        "slot": null
+      }
+    ],
+    "description": "해외 휴가 중 한국 셀럽 착장. 신발과 정확한 모자 톤은 미확인.",
+    "source_locator": "김나영",
+    "original_case_key": "instagram:nayoungkeem:202608:paris",
+    "context": "korean_celebrity",
+    "completeness": "partial",
+    "unknown_fields": [
+      "exact_product_hex",
+      "population_frequency",
+      "age"
+    ],
+    "verification": "article_text_checked",
+    "review_status": "awaiting_owner_review"
+  },
+  {
+    "id": "O22",
+    "source_id": "S11",
+    "title": "브라운 톱·그레이 팬츠·블랙 백",
+    "gender": "female",
+    "age_band": null,
+    "age_basis": "not_reported",
+    "season": "summer",
+    "season_basis": "article_context",
+    "tpo": "casual",
+    "tpo_basis": "researcher_label",
+    "style_tier": "basic",
+    "tier_status": "provisional",
+    "items": [
+      {
+        "garment_id": null,
+        "garment_name": "코듀로이 톱",
+        "color_id": "wardrobe-brown",
+        "observed_color": "브라운",
+        "color_mapping": "approximate_editorial_mapping",
+        "slot": null
+      },
+      {
+        "garment_id": null,
+        "garment_name": "트레이닝팬츠",
+        "color_id": "wardrobe-gray",
+        "observed_color": "그레이",
+        "color_mapping": "approximate_editorial_mapping",
+        "slot": null
+      },
+      {
+        "garment_id": null,
+        "garment_name": "가방",
+        "color_id": "wardrobe-black",
+        "observed_color": "블랙",
+        "color_mapping": "approximate_editorial_mapping",
+        "slot": null
+      }
+    ],
+    "description": "코듀로이 소재와 운동복 하의의 대비. 달하 49종에 없는 종류는 미매핑으로 남김.",
+    "source_locator": "유나",
+    "original_case_key": "instagram:igotyuandme:202608:brown",
+    "context": "korean_celebrity",
+    "completeness": "partial",
+    "unknown_fields": [
+      "exact_product_hex",
+      "population_frequency",
+      "age"
+    ],
+    "verification": "article_text_checked",
+    "review_status": "awaiting_owner_review"
+  },
+  {
+    "id": "O23",
+    "source_id": "S11",
+    "title": "화이트 셔츠·블랙 이너와 하의",
+    "gender": "female",
+    "age_band": null,
+    "age_basis": "not_reported",
+    "season": "summer",
+    "season_basis": "article_context",
+    "tpo": "casual",
+    "tpo_basis": "researcher_label",
+    "style_tier": "basic",
+    "tier_status": "provisional",
+    "items": [
+      {
+        "garment_id": "g04",
+        "garment_name": "긴팔 캐주얼 셔츠",
+        "color_id": "wardrobe-white",
+        "observed_color": "화이트",
+        "color_mapping": "approximate_editorial_mapping",
+        "slot": null
+      },
+      {
+        "garment_id": null,
+        "garment_name": "크롭 톱",
+        "color_id": "wardrobe-black",
+        "observed_color": "블랙",
+        "color_mapping": "approximate_editorial_mapping",
+        "slot": null
+      },
+      {
+        "garment_id": null,
+        "garment_name": "바지",
+        "color_id": "wardrobe-black",
+        "observed_color": "블랙",
+        "color_mapping": "approximate_editorial_mapping",
+        "slot": null
+      },
+      {
+        "garment_id": "g43",
+        "garment_name": "모자",
+        "color_id": "wardrobe-black",
+        "observed_color": "블랙",
+        "color_mapping": "approximate_editorial_mapping",
+        "slot": null
+      },
+      {
+        "garment_id": null,
+        "garment_name": "가방",
+        "color_id": "wardrobe-black",
+        "observed_color": "블랙",
+        "color_mapping": "approximate_editorial_mapping",
+        "slot": null
+      }
+    ],
+    "description": "리본 디테일이 있는 셔츠와 검정 기본색의 반복.",
+    "source_locator": "지수",
+    "original_case_key": "instagram:sooyaaa:202608:black-white",
+    "context": "korean_celebrity",
+    "completeness": "partial",
+    "unknown_fields": [
+      "exact_product_hex",
+      "population_frequency",
+      "age"
+    ],
+    "verification": "article_text_checked",
+    "review_status": "awaiting_owner_review"
+  },
+  {
+    "id": "O24",
+    "source_id": "S12",
+    "title": "화이트 셔츠·블랙 미디 스커트",
+    "gender": "female",
+    "age_band": null,
+    "age_basis": "not_reported",
+    "season": "autumn",
+    "season_basis": "article_context",
+    "tpo": "business_casual",
+    "tpo_basis": "researcher_label",
+    "style_tier": "basic",
+    "tier_status": "provisional",
+    "items": [
+      {
+        "garment_id": "g04",
+        "garment_name": "긴팔 캐주얼 셔츠",
+        "color_id": "wardrobe-white",
+        "observed_color": "화이트",
+        "color_mapping": "approximate_editorial_mapping",
+        "slot": null
+      },
+      {
+        "garment_id": "g15",
+        "garment_name": "미디 스커트",
+        "color_id": "wardrobe-black",
+        "observed_color": "블랙",
+        "color_mapping": "approximate_editorial_mapping",
+        "slot": null
+      }
+    ],
+    "description": "가죽 숄더백·시계를 제안하지만 색은 미기재. 출근용 참고이며 엄격한 복장 규정 보장은 아님.",
+    "source_locator": "미디 스커트 단락",
+    "original_case_key": "wkorea:20260825:white-black",
+    "context": "mixed_or_unknown",
+    "completeness": "partial",
+    "unknown_fields": [
+      "exact_product_hex",
+      "population_frequency",
+      "age"
+    ],
+    "verification": "article_text_checked",
+    "review_status": "awaiting_owner_review"
+  },
+  {
+    "id": "O25",
+    "source_id": "S12",
+    "title": "화이트 셔츠·화이트 스커트·블랙 플랫",
+    "gender": "female",
+    "age_band": null,
+    "age_basis": "not_reported",
+    "season": "autumn",
+    "season_basis": "article_context",
+    "tpo": "casual",
+    "tpo_basis": "researcher_label",
+    "style_tier": "experimental",
+    "tier_status": "provisional",
+    "items": [
+      {
+        "garment_id": "g04",
+        "garment_name": "긴팔 캐주얼 셔츠",
+        "color_id": "wardrobe-white",
+        "observed_color": "화이트",
+        "color_mapping": "approximate_editorial_mapping",
+        "slot": null
+      },
+      {
+        "garment_id": "g15",
+        "garment_name": "미디 스커트",
+        "color_id": "wardrobe-white",
+        "observed_color": "화이트",
+        "color_mapping": "approximate_editorial_mapping",
+        "slot": null
+      },
+      {
+        "garment_id": "g30",
+        "garment_name": "플랫슈즈",
+        "color_id": "wardrobe-black",
+        "observed_color": "블랙",
+        "color_mapping": "approximate_editorial_mapping",
+        "slot": null
+      }
+    ],
+    "description": "볼륨 있는 스커트가 인상을 결정. 배색이 단순해도 실루엣 검토가 필요.",
+    "source_locator": "마지막 주름 스커트 단락",
+    "original_case_key": "wkorea:20260825:white-volume",
+    "context": "mixed_or_unknown",
+    "completeness": "core_garments_and_shoes",
+    "unknown_fields": [
+      "exact_product_hex",
+      "population_frequency",
+      "age"
+    ],
+    "verification": "article_text_checked",
+    "review_status": "awaiting_owner_review"
+  },
+  {
+    "id": "O26",
+    "source_id": "S13",
+    "title": "크림 셔츠·데님·블랙 플랫",
+    "gender": "female",
+    "age_band": "forties",
+    "age_basis": "explicit_article",
+    "season": "autumn",
+    "season_basis": "article_context",
+    "tpo": "casual",
+    "tpo_basis": "researcher_label",
+    "style_tier": "basic",
+    "tier_status": "provisional",
+    "items": [
+      {
+        "garment_id": "g04",
+        "garment_name": "긴팔 캐주얼 셔츠",
+        "color_id": "wardrobe-ivory",
+        "observed_color": "크림",
+        "color_mapping": "approximate_editorial_mapping",
+        "slot": null
+      },
+      {
+        "garment_id": "g10",
+        "garment_name": "데님 바지",
+        "color_id": "wardrobe-denim",
+        "observed_color": "데님 블루",
+        "color_mapping": "approximate_editorial_mapping",
+        "slot": null
+      },
+      {
+        "garment_id": "g30",
+        "garment_name": "플랫슈즈",
+        "color_id": "wardrobe-black",
+        "observed_color": "블랙",
+        "color_mapping": "approximate_editorial_mapping",
+        "slot": null
+      }
+    ],
+    "description": "실크 셔츠와 크롭 플레어 데님. 기사에 44세로 명시된 해외 인물.",
+    "source_locator": "시에나 밀러",
+    "original_case_key": "sienna-miller:202608:cream-denim",
+    "context": "foreign_celebrity",
+    "completeness": "core_garments_and_shoes",
+    "unknown_fields": [
+      "exact_product_hex",
+      "population_frequency"
+    ],
+    "verification": "article_text_checked",
+    "review_status": "awaiting_owner_review"
+  },
+  {
+    "id": "O27",
+    "source_id": "S13",
+    "title": "셔츠·데님·블랙 슈즈·레드 백",
+    "gender": "female",
+    "age_band": null,
+    "age_basis": "not_reported",
+    "season": "autumn",
+    "season_basis": "article_context",
+    "tpo": "casual",
+    "tpo_basis": "researcher_label",
+    "style_tier": "basic",
+    "tier_status": "provisional",
+    "items": [
+      {
+        "garment_id": "g04",
+        "garment_name": "긴팔 캐주얼 셔츠",
+        "color_id": null,
+        "observed_color": "본문 미기재",
+        "color_mapping": "unknown",
+        "slot": null
+      },
+      {
+        "garment_id": "g10",
+        "garment_name": "데님 바지",
+        "color_id": "wardrobe-denim",
+        "observed_color": "데님 블루",
+        "color_mapping": "approximate_editorial_mapping",
+        "slot": null
+      },
+      {
+        "garment_id": null,
+        "garment_name": "슬링백 힐 (높이 미확인)",
+        "color_id": "wardrobe-black",
+        "observed_color": "블랙 슬링백 힐",
+        "color_mapping": "approximate_editorial_mapping",
+        "slot": null
+      },
+      {
+        "garment_id": "g40",
+        "garment_name": "토트백",
+        "color_id": "wardrobe-red",
+        "observed_color": "레드",
+        "color_mapping": "approximate_editorial_mapping",
+        "slot": null
+      }
+    ],
+    "description": "가방으로 색을 드러낸 해외 인물 사례. 힐 높이는 기사에서 확인되지 않아 도안 매핑은 가설.",
+    "source_locator": "샬럿 카시라기",
+    "original_case_key": "charlotte-casiraghi:202608:shirt-denim",
+    "context": "foreign_celebrity",
+    "completeness": "core_garments_and_shoes",
+    "unknown_fields": [
+      "exact_product_hex",
+      "population_frequency",
+      "age"
+    ],
+    "verification": "article_text_checked",
+    "review_status": "awaiting_owner_review"
+  },
+  {
+    "id": "O28",
+    "source_id": "S14",
+    "title": "남성 치노의 실제 상품색",
+    "gender": "male",
+    "age_band": null,
+    "age_basis": "not_reported",
+    "season": null,
+    "season_basis": "article_context",
+    "tpo": "casual",
+    "tpo_basis": "researcher_label",
+    "style_tier": "basic",
+    "tier_status": "provisional",
+    "items": [
+      {
+        "garment_id": "g11",
+        "garment_name": "면바지",
+        "color_id": "wardrobe-beige",
+        "observed_color": "베이지",
+        "color_mapping": "approximate_editorial_mapping",
+        "slot": null
+      },
+      {
+        "garment_id": "g11",
+        "garment_name": "면바지",
+        "color_id": "wardrobe-charcoal",
+        "observed_color": "다크그레이",
+        "color_mapping": "approximate_editorial_mapping",
+        "slot": null
+      },
+      {
+        "garment_id": "g11",
+        "garment_name": "면바지",
+        "color_id": "wardrobe-black",
+        "observed_color": "블랙",
+        "color_mapping": "approximate_editorial_mapping",
+        "slot": null
+      },
+      {
+        "garment_id": "g11",
+        "garment_name": "면바지",
+        "color_id": "wardrobe-navy",
+        "observed_color": "네이비",
+        "color_mapping": "approximate_editorial_mapping",
+        "slot": null
+      }
+    ],
+    "description": "네 아이템으로 구성한 코디가 아니라 한 상품의 색상 옵션이다.",
+    "source_locator": "상품 컬러 선택",
+    "original_case_key": "uniqlo:slim-chino:20261002",
+    "context": "korean_market",
+    "completeness": "product_options_not_outfit",
+    "unknown_fields": [
+      "exact_product_hex",
+      "population_frequency",
+      "age"
+    ],
+    "verification": "article_text_checked",
+    "review_status": "awaiting_owner_review"
+  }
+]

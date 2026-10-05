@@ -1,0 +1,1877 @@
+[
+  {
+    "id": "P001",
+    "image_id": "P001",
+    "outfit_cluster_id": "P001",
+    "source_group_id": "Zara (Men’s Flair 원문 크레딧)",
+    "title": "네이비 블루종과 밝은 플리츠 바지",
+    "style_catalog": "남성복",
+    "style_catalog_basis": "의복과 검색 맥락에 대한 편집 분류; 착용자 성별 신원 판단 아님",
+    "season_candidate": "봄·가을",
+    "tpo_candidate": "캐주얼",
+    "context_basis": "DALHA 편집 제안; 촬영 당시 계절·TPO를 증명하지 않음",
+    "level": "기본형 후보",
+    "items": [
+      {
+        "slot": "겉옷",
+        "garment": "블루종",
+        "color_label": "네이비"
+      },
+      {
+        "slot": "상의",
+        "garment": "티셔츠",
+        "color_label": "화이트"
+      },
+      {
+        "slot": "하의",
+        "garment": "플리츠 바지",
+        "color_label": "밝은 베이지"
+      },
+      {
+        "slot": "신발",
+        "garment": "하이톱 운동화",
+        "color_label": "아이보리"
+      }
+    ],
+    "fit_observation": "짧은 겉옷 / 여유 있는 긴 바지",
+    "note": "모자: 황토색. 색감·소재는 조명 영향을 받음.",
+    "wearer_age": null,
+    "wearer_country": null,
+    "source_date": "2023-09-12",
+    "visual_review": "reviewed",
+    "full_outfit_visible": true,
+    "authenticity": "not_verified",
+    "source_status": "publisher_page_checked",
+    "attribution": "Zara (Men’s Flair 원문 크레딧)",
+    "original_url": "https://mensflair.com/wide-leg-pants-outfits/",
+    "source_note": "편집 기사에 같은 조합과 Zara 크레딧 확인. 브랜드 원상품 페이지는 미확인.",
+    "aesthetic_score": null,
+    "realism_score": null,
+    "owner_verdict": null,
+    "palette_mapping": {
+      "pool": "v1/colors.json",
+      "status": "not_mapped",
+      "reason": "사진의 색상군 기록. 보유 141색과의 근사 매핑은 후속 검수; 신규 HEX 없음."
+    }
+  },
+  {
+    "id": "P002",
+    "image_id": "P002",
+    "outfit_cluster_id": "P002",
+    "source_group_id": null,
+    "title": "흰 티셔츠와 검정 크롭 바지",
+    "style_catalog": "여성복",
+    "style_catalog_basis": "의복과 검색 맥락에 대한 편집 분류; 착용자 성별 신원 판단 아님",
+    "season_candidate": "여름",
+    "tpo_candidate": "캐주얼",
+    "context_basis": "DALHA 편집 제안; 촬영 당시 계절·TPO를 증명하지 않음",
+    "level": "기본형 후보",
+    "items": [
+      {
+        "slot": "상의",
+        "garment": "티셔츠",
+        "color_label": "화이트"
+      },
+      {
+        "slot": "하의",
+        "garment": "와이드 크롭 바지",
+        "color_label": "블랙"
+      },
+      {
+        "slot": "신발",
+        "garment": "캔버스화",
+        "color_label": "블랙·화이트"
+      }
+    ],
+    "fit_observation": "여유 있는 상의 / 크롭 와이드",
+    "note": "줄무늬 가방. 셔츠가 아니라 티셔츠로 분류.",
+    "wearer_age": null,
+    "wearer_country": null,
+    "source_date": null,
+    "visual_review": "reviewed",
+    "full_outfit_visible": true,
+    "authenticity": "not_verified",
+    "source_status": "unresolved",
+    "attribution": null,
+    "original_url": null,
+    "source_note": "원 게시자·촬영자 미확인. 핀 저장자는 원저자로 간주하지 않음.",
+    "aesthetic_score": null,
+    "realism_score": null,
+    "owner_verdict": null,
+    "palette_mapping": {
+      "pool": "v1/colors.json",
+      "status": "not_mapped",
+      "reason": "사진의 색상군 기록. 보유 141색과의 근사 매핑은 후속 검수; 신규 HEX 없음."
+    }
+  },
+  {
+    "id": "P003",
+    "image_id": "P003",
+    "outfit_cluster_id": "P003",
+    "source_group_id": null,
+    "title": "그린 맨투맨과 롤업 데님",
+    "style_catalog": "여성복",
+    "style_catalog_basis": "의복과 검색 맥락에 대한 편집 분류; 착용자 성별 신원 판단 아님",
+    "season_candidate": "봄·가을",
+    "tpo_candidate": "캐주얼",
+    "context_basis": "DALHA 편집 제안; 촬영 당시 계절·TPO를 증명하지 않음",
+    "level": "기본형 후보",
+    "items": [
+      {
+        "slot": "상의",
+        "garment": "맨투맨",
+        "color_label": "그린"
+      },
+      {
+        "slot": "하의",
+        "garment": "데님 바지",
+        "color_label": "중청"
+      },
+      {
+        "slot": "신발",
+        "garment": "운동화",
+        "color_label": "화이트"
+      }
+    ],
+    "fit_observation": "여유 있는 상의 / 롤업 스트레이트",
+    "note": "갈색 가방. 팔에 든 밝은 옷은 착용 겉옷으로 세지 않음.",
+    "wearer_age": null,
+    "wearer_country": null,
+    "source_date": null,
+    "visual_review": "reviewed",
+    "full_outfit_visible": true,
+    "authenticity": "not_verified",
+    "source_status": "unresolved",
+    "attribution": null,
+    "original_url": null,
+    "source_note": "원 게시자·촬영자 미확인. 핀 저장자는 원저자로 간주하지 않음.",
+    "aesthetic_score": null,
+    "realism_score": null,
+    "owner_verdict": null,
+    "palette_mapping": {
+      "pool": "v1/colors.json",
+      "status": "not_mapped",
+      "reason": "사진의 색상군 기록. 보유 141색과의 근사 매핑은 후속 검수; 신규 HEX 없음."
+    }
+  },
+  {
+    "id": "P004",
+    "image_id": "P004",
+    "outfit_cluster_id": "P004",
+    "source_group_id": null,
+    "title": "네이비 가디건과 밝은 바지",
+    "style_catalog": "남성복",
+    "style_catalog_basis": "의복과 검색 맥락에 대한 편집 분류; 착용자 성별 신원 판단 아님",
+    "season_candidate": "봄·가을",
+    "tpo_candidate": "캐주얼",
+    "context_basis": "DALHA 편집 제안; 촬영 당시 계절·TPO를 증명하지 않음",
+    "level": "기본형 후보",
+    "items": [
+      {
+        "slot": "겉옷",
+        "garment": "가디건",
+        "color_label": "네이비"
+      },
+      {
+        "slot": "상의",
+        "garment": "티셔츠",
+        "color_label": "화이트"
+      },
+      {
+        "slot": "하의",
+        "garment": "와이드 바지",
+        "color_label": "밝은 베이지"
+      },
+      {
+        "slot": "신발",
+        "garment": "캔버스화",
+        "color_label": "화이트"
+      }
+    ],
+    "fit_observation": "긴 가디건 / 와이드 바지",
+    "note": "니트 조직 관찰. 핀 제목에 @185mg_ 출처 표기.",
+    "wearer_age": null,
+    "wearer_country": null,
+    "source_date": null,
+    "visual_review": "reviewed",
+    "full_outfit_visible": true,
+    "authenticity": "not_verified",
+    "source_status": "pin_attribution_only",
+    "attribution": "@185mg_",
+    "original_url": null,
+    "source_note": "핀 제목의 계정 표기. 원 Instagram 게시물 미검증.",
+    "aesthetic_score": null,
+    "realism_score": null,
+    "owner_verdict": null,
+    "palette_mapping": {
+      "pool": "v1/colors.json",
+      "status": "not_mapped",
+      "reason": "사진의 색상군 기록. 보유 141색과의 근사 매핑은 후속 검수; 신규 HEX 없음."
+    }
+  },
+  {
+    "id": "P005",
+    "image_id": "P005",
+    "outfit_cluster_id": "P005",
+    "source_group_id": null,
+    "title": "핑크 가디건과 흰 티·청바지",
+    "style_catalog": "여성복",
+    "style_catalog_basis": "의복과 검색 맥락에 대한 편집 분류; 착용자 성별 신원 판단 아님",
+    "season_candidate": "봄·가을",
+    "tpo_candidate": "캐주얼",
+    "context_basis": "DALHA 편집 제안; 촬영 당시 계절·TPO를 증명하지 않음",
+    "level": "기본형 후보",
+    "items": [
+      {
+        "slot": "겉옷",
+        "garment": "가디건",
+        "color_label": "핑크"
+      },
+      {
+        "slot": "상의",
+        "garment": "티셔츠",
+        "color_label": "화이트"
+      },
+      {
+        "slot": "하의",
+        "garment": "데님 바지",
+        "color_label": "중청"
+      },
+      {
+        "slot": "신발",
+        "garment": "슬립온",
+        "color_label": "블랙·화이트"
+      }
+    ],
+    "fit_observation": "긴 여유핏 가디건 / 발목 데님",
+    "note": "검정 가방. 검색 제목의 boyfriend 핏을 그대로 복사하지 않음.",
+    "wearer_age": null,
+    "wearer_country": null,
+    "source_date": null,
+    "visual_review": "reviewed",
+    "full_outfit_visible": true,
+    "authenticity": "not_verified",
+    "source_status": "unresolved",
+    "attribution": null,
+    "original_url": null,
+    "source_note": "원 게시자·촬영자 미확인. 핀 저장자는 원저자로 간주하지 않음.",
+    "aesthetic_score": null,
+    "realism_score": null,
+    "owner_verdict": null,
+    "palette_mapping": {
+      "pool": "v1/colors.json",
+      "status": "not_mapped",
+      "reason": "사진의 색상군 기록. 보유 141색과의 근사 매핑은 후속 검수; 신규 HEX 없음."
+    }
+  },
+  {
+    "id": "P006",
+    "image_id": "P006",
+    "outfit_cluster_id": "P006",
+    "source_group_id": null,
+    "title": "살구빛 가디건과 데님",
+    "style_catalog": "여성복",
+    "style_catalog_basis": "의복과 검색 맥락에 대한 편집 분류; 착용자 성별 신원 판단 아님",
+    "season_candidate": "봄·가을",
+    "tpo_candidate": "캐주얼",
+    "context_basis": "DALHA 편집 제안; 촬영 당시 계절·TPO를 증명하지 않음",
+    "level": "기본형 후보",
+    "items": [
+      {
+        "slot": "겉옷",
+        "garment": "가디건",
+        "color_label": "살구·테라코타"
+      },
+      {
+        "slot": "상의",
+        "garment": "티셔츠",
+        "color_label": "화이트"
+      },
+      {
+        "slot": "하의",
+        "garment": "데님 바지",
+        "color_label": "중청"
+      },
+      {
+        "slot": "신발",
+        "garment": "캔버스화",
+        "color_label": "베이지"
+      }
+    ],
+    "fit_observation": "여유핏 가디건 / 발목 스트레이트",
+    "note": "단추 여밈이 보이며 채도는 낮은 편. Cherrykoko 표기는 원문 재확인 필요.",
+    "wearer_age": null,
+    "wearer_country": null,
+    "source_date": null,
+    "visual_review": "reviewed",
+    "full_outfit_visible": true,
+    "authenticity": "not_verified",
+    "source_status": "pin_attribution_only",
+    "attribution": "Cherrykoko",
+    "original_url": null,
+    "source_note": "핀 제목의 브랜드 표기. 원 상품 페이지 미검증.",
+    "aesthetic_score": null,
+    "realism_score": null,
+    "owner_verdict": null,
+    "palette_mapping": {
+      "pool": "v1/colors.json",
+      "status": "not_mapped",
+      "reason": "사진의 색상군 기록. 보유 141색과의 근사 매핑은 후속 검수; 신규 HEX 없음."
+    }
+  },
+  {
+    "id": "P007",
+    "image_id": "P007",
+    "outfit_cluster_id": "P007",
+    "source_group_id": null,
+    "title": "네이비 셔츠 재킷과 베이지 바지",
+    "style_catalog": "남성복",
+    "style_catalog_basis": "의복과 검색 맥락에 대한 편집 분류; 착용자 성별 신원 판단 아님",
+    "season_candidate": "봄·가을",
+    "tpo_candidate": "캐주얼",
+    "context_basis": "DALHA 편집 제안; 촬영 당시 계절·TPO를 증명하지 않음",
+    "level": "기본형 후보",
+    "items": [
+      {
+        "slot": "겉옷",
+        "garment": "셔츠 재킷",
+        "color_label": "네이비"
+      },
+      {
+        "slot": "상의",
+        "garment": "니트",
+        "color_label": "그레이지"
+      },
+      {
+        "slot": "하의",
+        "garment": "치노형 바지",
+        "color_label": "베이지"
+      },
+      {
+        "slot": "신발",
+        "garment": "하이톱 운동화",
+        "color_label": "베이지"
+      }
+    ],
+    "fit_observation": "여유 있는 재킷 / 테이퍼드 바지",
+    "note": "목 스카프. 핀 설명은 Baltzar·Drake’s를 표기; 원 게시물 확인 전.",
+    "wearer_age": null,
+    "wearer_country": null,
+    "source_date": null,
+    "visual_review": "reviewed",
+    "full_outfit_visible": true,
+    "authenticity": "not_verified",
+    "source_status": "pin_attribution_only",
+    "attribution": "Baltzar",
+    "original_url": null,
+    "source_note": "핀 제목의 게시자 표기. 날짜·Drake’s 상품 소재는 미검증.",
+    "aesthetic_score": null,
+    "realism_score": null,
+    "owner_verdict": null,
+    "palette_mapping": {
+      "pool": "v1/colors.json",
+      "status": "not_mapped",
+      "reason": "사진의 색상군 기록. 보유 141색과의 근사 매핑은 후속 검수; 신규 HEX 없음."
+    }
+  },
+  {
+    "id": "P008",
+    "image_id": "P008",
+    "outfit_cluster_id": "P008",
+    "source_group_id": null,
+    "title": "하늘색 셔츠와 베이지 와이드 바지",
+    "style_catalog": "여성복",
+    "style_catalog_basis": "의복과 검색 맥락에 대한 편집 분류; 착용자 성별 신원 판단 아님",
+    "season_candidate": "봄·가을",
+    "tpo_candidate": "단정한 일상",
+    "context_basis": "DALHA 편집 제안; 촬영 당시 계절·TPO를 증명하지 않음",
+    "level": "기본형 후보",
+    "items": [
+      {
+        "slot": "상의",
+        "garment": "셔츠",
+        "color_label": "하늘색"
+      },
+      {
+        "slot": "하의",
+        "garment": "와이드 바지",
+        "color_label": "베이지"
+      },
+      {
+        "slot": "신발",
+        "garment": "운동화",
+        "color_label": "화이트"
+      }
+    ],
+    "fit_observation": "허리 넣어 입기 / 긴 와이드",
+    "note": "검정 작은 가방. 판매 페이지 제목만으로 원 촬영자를 확정하지 않음.",
+    "wearer_age": null,
+    "wearer_country": null,
+    "source_date": null,
+    "visual_review": "reviewed",
+    "full_outfit_visible": true,
+    "authenticity": "not_verified",
+    "source_status": "unresolved",
+    "attribution": null,
+    "original_url": null,
+    "source_note": "원 게시자·촬영자 미확인. 핀 저장자는 원저자로 간주하지 않음.",
+    "aesthetic_score": null,
+    "realism_score": null,
+    "owner_verdict": null,
+    "palette_mapping": {
+      "pool": "v1/colors.json",
+      "status": "not_mapped",
+      "reason": "사진의 색상군 기록. 보유 141색과의 근사 매핑은 후속 검수; 신규 HEX 없음."
+    }
+  },
+  {
+    "id": "P009",
+    "image_id": "P009",
+    "outfit_cluster_id": "P009",
+    "source_group_id": null,
+    "title": "하늘색 오픈 셔츠와 흰 바지",
+    "style_catalog": "여성복",
+    "style_catalog_basis": "의복과 검색 맥락에 대한 편집 분류; 착용자 성별 신원 판단 아님",
+    "season_candidate": "봄·여름",
+    "tpo_candidate": "단정한 일상",
+    "context_basis": "DALHA 편집 제안; 촬영 당시 계절·TPO를 증명하지 않음",
+    "level": "기본형 후보",
+    "items": [
+      {
+        "slot": "겉옷",
+        "garment": "셔츠",
+        "color_label": "하늘색"
+      },
+      {
+        "slot": "상의",
+        "garment": "민소매",
+        "color_label": "화이트"
+      },
+      {
+        "slot": "하의",
+        "garment": "와이드 바지",
+        "color_label": "아이보리"
+      }
+    ],
+    "fit_observation": "여유 있는 오픈 셔츠 / 와이드",
+    "note": "검정 벨트. 신발은 프레임 밖: 전체 착장 검증에서는 부분 사례.",
+    "wearer_age": null,
+    "wearer_country": null,
+    "source_date": null,
+    "visual_review": "reviewed",
+    "full_outfit_visible": false,
+    "authenticity": "not_verified",
+    "source_status": "unresolved",
+    "attribution": null,
+    "original_url": null,
+    "source_note": "원 게시자·촬영자 미확인. 핀 저장자는 원저자로 간주하지 않음.",
+    "aesthetic_score": null,
+    "realism_score": null,
+    "owner_verdict": null,
+    "palette_mapping": {
+      "pool": "v1/colors.json",
+      "status": "not_mapped",
+      "reason": "사진의 색상군 기록. 보유 141색과의 근사 매핑은 후속 검수; 신규 HEX 없음."
+    }
+  },
+  {
+    "id": "P010",
+    "image_id": "P010",
+    "outfit_cluster_id": "P010",
+    "source_group_id": null,
+    "title": "흰 셔츠와 검정 와이드 바지",
+    "style_catalog": "여성복",
+    "style_catalog_basis": "의복과 검색 맥락에 대한 편집 분류; 착용자 성별 신원 판단 아님",
+    "season_candidate": "봄·가을",
+    "tpo_candidate": "단정한 일상",
+    "context_basis": "DALHA 편집 제안; 촬영 당시 계절·TPO를 증명하지 않음",
+    "level": "기본형 후보",
+    "items": [
+      {
+        "slot": "상의",
+        "garment": "셔츠",
+        "color_label": "화이트"
+      },
+      {
+        "slot": "하의",
+        "garment": "와이드 바지",
+        "color_label": "블랙"
+      },
+      {
+        "slot": "신발",
+        "garment": "운동화",
+        "color_label": "화이트"
+      }
+    ],
+    "fit_observation": "허리 넣어 입기 / 긴 와이드",
+    "note": "격식 있는 출근 가능 여부는 직장 복장 기준에 따라 별도 판단.",
+    "wearer_age": null,
+    "wearer_country": null,
+    "source_date": null,
+    "visual_review": "reviewed",
+    "full_outfit_visible": true,
+    "authenticity": "not_verified",
+    "source_status": "unresolved",
+    "attribution": null,
+    "original_url": null,
+    "source_note": "원 게시자·촬영자 미확인. 핀 저장자는 원저자로 간주하지 않음.",
+    "aesthetic_score": null,
+    "realism_score": null,
+    "owner_verdict": null,
+    "palette_mapping": {
+      "pool": "v1/colors.json",
+      "status": "not_mapped",
+      "reason": "사진의 색상군 기록. 보유 141색과의 근사 매핑은 후속 검수; 신규 HEX 없음."
+    }
+  },
+  {
+    "id": "P011",
+    "image_id": "P011",
+    "outfit_cluster_id": "P011",
+    "source_group_id": null,
+    "title": "그레이지 가디건과 밝은 바지",
+    "style_catalog": "여성복",
+    "style_catalog_basis": "의복과 검색 맥락에 대한 편집 분류; 착용자 성별 신원 판단 아님",
+    "season_candidate": "봄·가을",
+    "tpo_candidate": "단정한 일상",
+    "context_basis": "DALHA 편집 제안; 촬영 당시 계절·TPO를 증명하지 않음",
+    "level": "기본형 후보",
+    "items": [
+      {
+        "slot": "겉옷",
+        "garment": "가디건",
+        "color_label": "그레이지"
+      },
+      {
+        "slot": "상의",
+        "garment": "티셔츠",
+        "color_label": "화이트"
+      },
+      {
+        "slot": "하의",
+        "garment": "바지",
+        "color_label": "아이보리"
+      },
+      {
+        "slot": "신발",
+        "garment": "플랫슈즈",
+        "color_label": "베이지·블랙"
+      }
+    ],
+    "fit_observation": "여유핏 가디건 / 발목 바지",
+    "note": "그레이지 가방. 개별 핀이 아닌 아이디어 페이지에서 찾은 이미지.",
+    "wearer_age": null,
+    "wearer_country": null,
+    "source_date": null,
+    "visual_review": "reviewed",
+    "full_outfit_visible": true,
+    "authenticity": "not_verified",
+    "source_status": "unresolved",
+    "attribution": null,
+    "original_url": null,
+    "source_note": "원 게시자·촬영자 미확인. 핀 저장자는 원저자로 간주하지 않음.",
+    "aesthetic_score": null,
+    "realism_score": null,
+    "owner_verdict": null,
+    "palette_mapping": {
+      "pool": "v1/colors.json",
+      "status": "not_mapped",
+      "reason": "사진의 색상군 기록. 보유 141색과의 근사 매핑은 후속 검수; 신규 HEX 없음."
+    }
+  },
+  {
+    "id": "P012",
+    "image_id": "P012",
+    "outfit_cluster_id": "P012",
+    "source_group_id": null,
+    "title": "토프 가디건과 크림 바지",
+    "style_catalog": "여성복",
+    "style_catalog_basis": "의복과 검색 맥락에 대한 편집 분류; 착용자 성별 신원 판단 아님",
+    "season_candidate": "봄·가을",
+    "tpo_candidate": "단정한 일상",
+    "context_basis": "DALHA 편집 제안; 촬영 당시 계절·TPO를 증명하지 않음",
+    "level": "기본형 후보",
+    "items": [
+      {
+        "slot": "상의",
+        "garment": "가디건",
+        "color_label": "토프"
+      },
+      {
+        "slot": "하의",
+        "garment": "플리츠 와이드 바지",
+        "color_label": "크림"
+      },
+      {
+        "slot": "신발",
+        "garment": "샌들",
+        "color_label": "브라운"
+      }
+    ],
+    "fit_observation": "허리 일부 넣어 입기 / 와이드",
+    "note": "갈색 벨트·가방 손잡이. 신발은 플랫슈즈가 아니라 오픈 샌들.",
+    "wearer_age": null,
+    "wearer_country": null,
+    "source_date": null,
+    "visual_review": "reviewed",
+    "full_outfit_visible": true,
+    "authenticity": "not_verified",
+    "source_status": "unresolved",
+    "attribution": null,
+    "original_url": null,
+    "source_note": "원 게시자·촬영자 미확인. 핀 저장자는 원저자로 간주하지 않음.",
+    "aesthetic_score": null,
+    "realism_score": null,
+    "owner_verdict": null,
+    "palette_mapping": {
+      "pool": "v1/colors.json",
+      "status": "not_mapped",
+      "reason": "사진의 색상군 기록. 보유 141색과의 근사 매핑은 후속 검수; 신규 HEX 없음."
+    }
+  },
+  {
+    "id": "P013",
+    "image_id": "P013",
+    "outfit_cluster_id": "P013",
+    "source_group_id": "Her Simple Sole",
+    "title": "토프 가디건과 흰 티·짙은 데님",
+    "style_catalog": "여성복",
+    "style_catalog_basis": "의복과 검색 맥락에 대한 편집 분류; 착용자 성별 신원 판단 아님",
+    "season_candidate": "가을",
+    "tpo_candidate": "캐주얼",
+    "context_basis": "DALHA 편집 제안; 촬영 당시 계절·TPO를 증명하지 않음",
+    "level": "기본형 후보",
+    "items": [
+      {
+        "slot": "겉옷",
+        "garment": "가디건",
+        "color_label": "토프"
+      },
+      {
+        "slot": "상의",
+        "garment": "티셔츠",
+        "color_label": "화이트"
+      },
+      {
+        "slot": "하의",
+        "garment": "데님 바지",
+        "color_label": "짙은 그레이"
+      }
+    ],
+    "fit_observation": "여유핏 가디건 / 스트레이트",
+    "note": "신발은 핀 사진에 보이지 않음. 원문은 그레이 데님으로 설명.",
+    "wearer_age": null,
+    "wearer_country": null,
+    "source_date": "2021-09-22",
+    "visual_review": "reviewed",
+    "full_outfit_visible": false,
+    "authenticity": "not_verified",
+    "source_status": "publisher_page_checked",
+    "attribution": "Her Simple Sole",
+    "original_url": "https://hersimplesole.com/fall-wardrobe-essentials-im-most-excited-to-wear-this-year/",
+    "source_note": "원문에 같은 가디건·흰 티·그레이 데님 구성과 제품 정보 확인. 제휴 링크 공개.",
+    "aesthetic_score": null,
+    "realism_score": null,
+    "owner_verdict": null,
+    "palette_mapping": {
+      "pool": "v1/colors.json",
+      "status": "not_mapped",
+      "reason": "사진의 색상군 기록. 보유 141색과의 근사 매핑은 후속 검수; 신규 HEX 없음."
+    }
+  },
+  {
+    "id": "P014",
+    "image_id": "P014",
+    "outfit_cluster_id": "P014",
+    "source_group_id": null,
+    "title": "하늘색 코트와 흰 하의",
+    "style_catalog": "여성복",
+    "style_catalog_basis": "의복과 검색 맥락에 대한 편집 분류; 착용자 성별 신원 판단 아님",
+    "season_candidate": "겨울",
+    "tpo_candidate": "캐주얼",
+    "context_basis": "DALHA 편집 제안; 촬영 당시 계절·TPO를 증명하지 않음",
+    "level": "기본형 후보",
+    "items": [
+      {
+        "slot": "겉옷",
+        "garment": "롱코트",
+        "color_label": "옅은 하늘색"
+      },
+      {
+        "slot": "하의",
+        "garment": "바지",
+        "color_label": "화이트"
+      },
+      {
+        "slot": "신발",
+        "garment": "운동화",
+        "color_label": "화이트"
+      }
+    ],
+    "fit_observation": "긴 코트 / 스트레이트",
+    "note": "아이보리 목도리. 이너는 가려져 있어 색을 채워 넣지 않음.",
+    "wearer_age": null,
+    "wearer_country": null,
+    "source_date": null,
+    "visual_review": "reviewed",
+    "full_outfit_visible": false,
+    "authenticity": "not_verified",
+    "source_status": "unresolved",
+    "attribution": null,
+    "original_url": null,
+    "source_note": "원 게시자·촬영자 미확인. 핀 저장자는 원저자로 간주하지 않음.",
+    "aesthetic_score": null,
+    "realism_score": null,
+    "owner_verdict": null,
+    "palette_mapping": {
+      "pool": "v1/colors.json",
+      "status": "not_mapped",
+      "reason": "사진의 색상군 기록. 보유 141색과의 근사 매핑은 후속 검수; 신규 HEX 없음."
+    }
+  },
+  {
+    "id": "P015",
+    "image_id": "P015",
+    "outfit_cluster_id": "P015",
+    "source_group_id": null,
+    "title": "크림 패딩과 밝은 하의",
+    "style_catalog": "여성복",
+    "style_catalog_basis": "의복과 검색 맥락에 대한 편집 분류; 착용자 성별 신원 판단 아님",
+    "season_candidate": "겨울",
+    "tpo_candidate": "캐주얼",
+    "context_basis": "DALHA 편집 제안; 촬영 당시 계절·TPO를 증명하지 않음",
+    "level": "기본형 후보",
+    "items": [
+      {
+        "slot": "겉옷",
+        "garment": "롱패딩",
+        "color_label": "크림"
+      },
+      {
+        "slot": "하의",
+        "garment": "바지",
+        "color_label": "화이트"
+      },
+      {
+        "slot": "신발",
+        "garment": "부츠",
+        "color_label": "베이지"
+      }
+    ],
+    "fit_observation": "긴 벨트 패딩 / 슬림 하의",
+    "note": "회색 가방. 이너는 보이지 않음.",
+    "wearer_age": null,
+    "wearer_country": null,
+    "source_date": null,
+    "visual_review": "reviewed",
+    "full_outfit_visible": false,
+    "authenticity": "not_verified",
+    "source_status": "unresolved",
+    "attribution": null,
+    "original_url": null,
+    "source_note": "원 게시자·촬영자 미확인. 핀 저장자는 원저자로 간주하지 않음.",
+    "aesthetic_score": null,
+    "realism_score": null,
+    "owner_verdict": null,
+    "palette_mapping": {
+      "pool": "v1/colors.json",
+      "status": "not_mapped",
+      "reason": "사진의 색상군 기록. 보유 141색과의 근사 매핑은 후속 검수; 신규 HEX 없음."
+    }
+  },
+  {
+    "id": "P016",
+    "image_id": "P016",
+    "outfit_cluster_id": "P016",
+    "source_group_id": null,
+    "title": "베이지 코트와 검정 이너·바지",
+    "style_catalog": "여성복",
+    "style_catalog_basis": "의복과 검색 맥락에 대한 편집 분류; 착용자 성별 신원 판단 아님",
+    "season_candidate": "겨울",
+    "tpo_candidate": "단정한 일상",
+    "context_basis": "DALHA 편집 제안; 촬영 당시 계절·TPO를 증명하지 않음",
+    "level": "기본형 후보",
+    "items": [
+      {
+        "slot": "겉옷",
+        "garment": "롱코트",
+        "color_label": "베이지"
+      },
+      {
+        "slot": "상의",
+        "garment": "터틀넥",
+        "color_label": "블랙"
+      },
+      {
+        "slot": "하의",
+        "garment": "와이드 바지",
+        "color_label": "블랙"
+      },
+      {
+        "slot": "신발",
+        "garment": "운동화",
+        "color_label": "화이트"
+      }
+    ],
+    "fit_observation": "긴 코트 / 긴 와이드",
+    "note": "검정 가방. 뒤의 다른 인물은 별도 사례로 세지 않음.",
+    "wearer_age": null,
+    "wearer_country": null,
+    "source_date": null,
+    "visual_review": "reviewed",
+    "full_outfit_visible": true,
+    "authenticity": "not_verified",
+    "source_status": "unresolved",
+    "attribution": null,
+    "original_url": null,
+    "source_note": "원 게시자·촬영자 미확인. 핀 저장자는 원저자로 간주하지 않음.",
+    "aesthetic_score": null,
+    "realism_score": null,
+    "owner_verdict": null,
+    "palette_mapping": {
+      "pool": "v1/colors.json",
+      "status": "not_mapped",
+      "reason": "사진의 색상군 기록. 보유 141색과의 근사 매핑은 후속 검수; 신규 HEX 없음."
+    }
+  },
+  {
+    "id": "P017-A",
+    "image_id": "P017",
+    "outfit_cluster_id": "P017-A",
+    "source_group_id": null,
+    "title": "베이지 코트와 흰 이너·검정 바지",
+    "style_catalog": "여성복",
+    "style_catalog_basis": "의복과 검색 맥락에 대한 편집 분류; 착용자 성별 신원 판단 아님",
+    "season_candidate": "겨울",
+    "tpo_candidate": "캐주얼",
+    "context_basis": "DALHA 편집 제안; 촬영 당시 계절·TPO를 증명하지 않음",
+    "level": "기본형 후보",
+    "items": [
+      {
+        "slot": "겉옷",
+        "garment": "롱코트",
+        "color_label": "베이지"
+      },
+      {
+        "slot": "상의",
+        "garment": "상의",
+        "color_label": "화이트"
+      },
+      {
+        "slot": "하의",
+        "garment": "바지",
+        "color_label": "블랙"
+      },
+      {
+        "slot": "신발",
+        "garment": "운동화",
+        "color_label": "화이트"
+      }
+    ],
+    "fit_observation": "긴 코트 / 슬림 바지",
+    "note": "한 이미지의 왼쪽 착장. 오른쪽과 독립 출처로 세지 않음.",
+    "wearer_age": null,
+    "wearer_country": null,
+    "source_date": null,
+    "visual_review": "reviewed",
+    "full_outfit_visible": true,
+    "authenticity": "not_verified",
+    "source_status": "unresolved",
+    "attribution": null,
+    "original_url": null,
+    "source_note": "원 게시자·촬영자 미확인. 핀 저장자는 원저자로 간주하지 않음.",
+    "aesthetic_score": null,
+    "realism_score": null,
+    "owner_verdict": null,
+    "palette_mapping": {
+      "pool": "v1/colors.json",
+      "status": "not_mapped",
+      "reason": "사진의 색상군 기록. 보유 141색과의 근사 매핑은 후속 검수; 신규 HEX 없음."
+    }
+  },
+  {
+    "id": "P017-B",
+    "image_id": "P017",
+    "outfit_cluster_id": "P017-B",
+    "source_group_id": null,
+    "title": "검정 코트와 흰 이너·검정 바지",
+    "style_catalog": "여성복",
+    "style_catalog_basis": "의복과 검색 맥락에 대한 편집 분류; 착용자 성별 신원 판단 아님",
+    "season_candidate": "겨울",
+    "tpo_candidate": "캐주얼",
+    "context_basis": "DALHA 편집 제안; 촬영 당시 계절·TPO를 증명하지 않음",
+    "level": "기본형 후보",
+    "items": [
+      {
+        "slot": "겉옷",
+        "garment": "롱코트",
+        "color_label": "블랙"
+      },
+      {
+        "slot": "상의",
+        "garment": "셔츠",
+        "color_label": "화이트"
+      },
+      {
+        "slot": "하의",
+        "garment": "바지",
+        "color_label": "블랙"
+      },
+      {
+        "slot": "신발",
+        "garment": "운동화",
+        "color_label": "화이트"
+      }
+    ],
+    "fit_observation": "긴 코트 / 슬림 바지",
+    "note": "한 이미지의 오른쪽 착장. 왼쪽과 같은 출처 묶음.",
+    "wearer_age": null,
+    "wearer_country": null,
+    "source_date": null,
+    "visual_review": "reviewed",
+    "full_outfit_visible": true,
+    "authenticity": "not_verified",
+    "source_status": "unresolved",
+    "attribution": null,
+    "original_url": null,
+    "source_note": "원 게시자·촬영자 미확인. 핀 저장자는 원저자로 간주하지 않음.",
+    "aesthetic_score": null,
+    "realism_score": null,
+    "owner_verdict": null,
+    "palette_mapping": {
+      "pool": "v1/colors.json",
+      "status": "not_mapped",
+      "reason": "사진의 색상군 기록. 보유 141색과의 근사 매핑은 후속 검수; 신규 HEX 없음."
+    }
+  },
+  {
+    "id": "P018",
+    "image_id": "P018",
+    "outfit_cluster_id": "P018",
+    "source_group_id": null,
+    "title": "핑크 셔츠와 밝은 데님",
+    "style_catalog": "남성복",
+    "style_catalog_basis": "의복과 검색 맥락에 대한 편집 분류; 착용자 성별 신원 판단 아님",
+    "season_candidate": "봄·가을",
+    "tpo_candidate": "캐주얼",
+    "context_basis": "DALHA 편집 제안; 촬영 당시 계절·TPO를 증명하지 않음",
+    "level": "기본형 후보",
+    "items": [
+      {
+        "slot": "상의",
+        "garment": "셔츠",
+        "color_label": "연핑크"
+      },
+      {
+        "slot": "하의",
+        "garment": "데님 바지",
+        "color_label": "연청"
+      },
+      {
+        "slot": "신발",
+        "garment": "운동화",
+        "color_label": "화이트"
+      }
+    ],
+    "fit_observation": "셔츠 넣어 입기 / 스트레이트",
+    "note": "행사·유명인 관련 핀 제목은 출처 단서일 뿐 일반 착용률의 근거가 아님.",
+    "wearer_age": null,
+    "wearer_country": null,
+    "source_date": null,
+    "visual_review": "reviewed",
+    "full_outfit_visible": true,
+    "authenticity": "not_verified",
+    "source_status": "unresolved",
+    "attribution": null,
+    "original_url": null,
+    "source_note": "원 게시자·촬영자 미확인. 핀 저장자는 원저자로 간주하지 않음.",
+    "aesthetic_score": null,
+    "realism_score": null,
+    "owner_verdict": null,
+    "palette_mapping": {
+      "pool": "v1/colors.json",
+      "status": "not_mapped",
+      "reason": "사진의 색상군 기록. 보유 141색과의 근사 매핑은 후속 검수; 신규 HEX 없음."
+    }
+  },
+  {
+    "id": "P019",
+    "image_id": "P019",
+    "outfit_cluster_id": "P019",
+    "source_group_id": null,
+    "title": "베이지 가디건과 체크 롱스커트",
+    "style_catalog": "여성복",
+    "style_catalog_basis": "의복과 검색 맥락에 대한 편집 분류; 착용자 성별 신원 판단 아님",
+    "season_candidate": "봄·가을",
+    "tpo_candidate": "캐주얼",
+    "context_basis": "DALHA 편집 제안; 촬영 당시 계절·TPO를 증명하지 않음",
+    "level": "기본형 후보",
+    "items": [
+      {
+        "slot": "겉옷",
+        "garment": "가디건",
+        "color_label": "베이지"
+      },
+      {
+        "slot": "상의",
+        "garment": "그래픽 티셔츠",
+        "color_label": "화이트"
+      },
+      {
+        "slot": "하의",
+        "garment": "체크 롱스커트",
+        "color_label": "브라운·베이지"
+      },
+      {
+        "slot": "신발",
+        "garment": "로퍼",
+        "color_label": "브라운"
+      }
+    ],
+    "fit_observation": "짧은 겉옷 / 긴 스커트",
+    "note": "베이지 작은 가방. 무늬는 색상 단색으로 치환하지 않음.",
+    "wearer_age": null,
+    "wearer_country": null,
+    "source_date": null,
+    "visual_review": "reviewed",
+    "full_outfit_visible": true,
+    "authenticity": "not_verified",
+    "source_status": "unresolved",
+    "attribution": null,
+    "original_url": null,
+    "source_note": "원 게시자·촬영자 미확인. 핀 저장자는 원저자로 간주하지 않음.",
+    "aesthetic_score": null,
+    "realism_score": null,
+    "owner_verdict": null,
+    "palette_mapping": {
+      "pool": "v1/colors.json",
+      "status": "not_mapped",
+      "reason": "사진의 색상군 기록. 보유 141색과의 근사 매핑은 후속 검수; 신규 HEX 없음."
+    }
+  },
+  {
+    "id": "P020",
+    "image_id": "P020",
+    "outfit_cluster_id": "P020",
+    "source_group_id": null,
+    "title": "크림 가디건과 체크 미니스커트",
+    "style_catalog": "여성복",
+    "style_catalog_basis": "의복과 검색 맥락에 대한 편집 분류; 착용자 성별 신원 판단 아님",
+    "season_candidate": "봄·가을",
+    "tpo_candidate": "캐주얼",
+    "context_basis": "DALHA 편집 제안; 촬영 당시 계절·TPO를 증명하지 않음",
+    "level": "기본형 후보",
+    "items": [
+      {
+        "slot": "겉옷",
+        "garment": "가디건",
+        "color_label": "크림"
+      },
+      {
+        "slot": "상의",
+        "garment": "터틀넥",
+        "color_label": "브라운·그레이"
+      },
+      {
+        "slot": "하의",
+        "garment": "체크 미니스커트",
+        "color_label": "올리브·브라운"
+      }
+    ],
+    "fit_observation": "여유 있는 니트 / 짧은 플리츠",
+    "note": "신발은 보이지 않음. 나이·국적은 추정하지 않음.",
+    "wearer_age": null,
+    "wearer_country": null,
+    "source_date": null,
+    "visual_review": "reviewed",
+    "full_outfit_visible": false,
+    "authenticity": "not_verified",
+    "source_status": "unresolved",
+    "attribution": null,
+    "original_url": null,
+    "source_note": "원 게시자·촬영자 미확인. 핀 저장자는 원저자로 간주하지 않음.",
+    "aesthetic_score": null,
+    "realism_score": null,
+    "owner_verdict": null,
+    "palette_mapping": {
+      "pool": "v1/colors.json",
+      "status": "not_mapped",
+      "reason": "사진의 색상군 기록. 보유 141색과의 근사 매핑은 후속 검수; 신규 HEX 없음."
+    }
+  },
+  {
+    "id": "P021",
+    "image_id": "P021",
+    "outfit_cluster_id": "P021",
+    "source_group_id": null,
+    "title": "브라운 가디건과 체크 미니스커트",
+    "style_catalog": "여성복",
+    "style_catalog_basis": "의복과 검색 맥락에 대한 편집 분류; 착용자 성별 신원 판단 아님",
+    "season_candidate": "봄·가을",
+    "tpo_candidate": "캐주얼",
+    "context_basis": "DALHA 편집 제안; 촬영 당시 계절·TPO를 증명하지 않음",
+    "level": "기본형 후보",
+    "items": [
+      {
+        "slot": "겉옷",
+        "garment": "가디건",
+        "color_label": "브라운"
+      },
+      {
+        "slot": "상의",
+        "garment": "블라우스",
+        "color_label": "화이트"
+      },
+      {
+        "slot": "하의",
+        "garment": "체크 미니스커트",
+        "color_label": "브라운·블랙"
+      }
+    ],
+    "fit_observation": "짧은 가디건 / 짧은 플리츠",
+    "note": "갈색 가방. 신발은 보이지 않음.",
+    "wearer_age": null,
+    "wearer_country": null,
+    "source_date": null,
+    "visual_review": "reviewed",
+    "full_outfit_visible": false,
+    "authenticity": "not_verified",
+    "source_status": "unresolved",
+    "attribution": null,
+    "original_url": null,
+    "source_note": "원 게시자·촬영자 미확인. 핀 저장자는 원저자로 간주하지 않음.",
+    "aesthetic_score": null,
+    "realism_score": null,
+    "owner_verdict": null,
+    "palette_mapping": {
+      "pool": "v1/colors.json",
+      "status": "not_mapped",
+      "reason": "사진의 색상군 기록. 보유 141색과의 근사 매핑은 후속 검수; 신규 HEX 없음."
+    }
+  },
+  {
+    "id": "P022",
+    "image_id": "P022",
+    "outfit_cluster_id": "P022",
+    "source_group_id": null,
+    "title": "연핑크 케이블 니트와 검정 스커트",
+    "style_catalog": "여성복",
+    "style_catalog_basis": "의복과 검색 맥락에 대한 편집 분류; 착용자 성별 신원 판단 아님",
+    "season_candidate": "봄·가을",
+    "tpo_candidate": "캐주얼",
+    "context_basis": "DALHA 편집 제안; 촬영 당시 계절·TPO를 증명하지 않음",
+    "level": "기본형 후보",
+    "items": [
+      {
+        "slot": "상의",
+        "garment": "케이블 니트",
+        "color_label": "연핑크"
+      },
+      {
+        "slot": "하의",
+        "garment": "플리츠 미니스커트",
+        "color_label": "블랙"
+      }
+    ],
+    "fit_observation": "짧은 니트 / 짧은 플리츠",
+    "note": "검색 설명의 크림 가디건·흰 셔츠와 실제 이미지가 달라 직접 정정. 신발 미노출.",
+    "wearer_age": null,
+    "wearer_country": null,
+    "source_date": null,
+    "visual_review": "reviewed",
+    "full_outfit_visible": false,
+    "authenticity": "not_verified",
+    "source_status": "unresolved",
+    "attribution": null,
+    "original_url": null,
+    "source_note": "원 게시자·촬영자 미확인. 핀 저장자는 원저자로 간주하지 않음.",
+    "aesthetic_score": null,
+    "realism_score": null,
+    "owner_verdict": null,
+    "palette_mapping": {
+      "pool": "v1/colors.json",
+      "status": "not_mapped",
+      "reason": "사진의 색상군 기록. 보유 141색과의 근사 매핑은 후속 검수; 신규 HEX 없음."
+    }
+  },
+  {
+    "id": "P023",
+    "image_id": "P023",
+    "outfit_cluster_id": "P023",
+    "source_group_id": null,
+    "title": "베이지 코트와 밝은 니트",
+    "style_catalog": "남성복",
+    "style_catalog_basis": "의복과 검색 맥락에 대한 편집 분류; 착용자 성별 신원 판단 아님",
+    "season_candidate": "겨울",
+    "tpo_candidate": "단정한 일상",
+    "context_basis": "DALHA 편집 제안; 촬영 당시 계절·TPO를 증명하지 않음",
+    "level": "기본형 후보",
+    "items": [
+      {
+        "slot": "겉옷",
+        "garment": "롱코트",
+        "color_label": "베이지"
+      },
+      {
+        "slot": "상의",
+        "garment": "니트",
+        "color_label": "아이보리"
+      },
+      {
+        "slot": "하의",
+        "garment": "바지",
+        "color_label": "블랙"
+      }
+    ],
+    "fit_observation": "긴 코트 / 바지 하단 미노출",
+    "note": "신발은 보이지 않음.",
+    "wearer_age": null,
+    "wearer_country": null,
+    "source_date": null,
+    "visual_review": "reviewed",
+    "full_outfit_visible": false,
+    "authenticity": "not_verified",
+    "source_status": "unresolved",
+    "attribution": null,
+    "original_url": null,
+    "source_note": "원 게시자·촬영자 미확인. 핀 저장자는 원저자로 간주하지 않음.",
+    "aesthetic_score": null,
+    "realism_score": null,
+    "owner_verdict": null,
+    "palette_mapping": {
+      "pool": "v1/colors.json",
+      "status": "not_mapped",
+      "reason": "사진의 색상군 기록. 보유 141색과의 근사 매핑은 후속 검수; 신규 HEX 없음."
+    }
+  },
+  {
+    "id": "P024",
+    "image_id": "P024",
+    "outfit_cluster_id": "P024",
+    "source_group_id": null,
+    "title": "그레이 코트와 검정 바지",
+    "style_catalog": "남성복",
+    "style_catalog_basis": "의복과 검색 맥락에 대한 편집 분류; 착용자 성별 신원 판단 아님",
+    "season_candidate": "겨울",
+    "tpo_candidate": "캐주얼",
+    "context_basis": "DALHA 편집 제안; 촬영 당시 계절·TPO를 증명하지 않음",
+    "level": "기본형 후보",
+    "items": [
+      {
+        "slot": "겉옷",
+        "garment": "롱코트",
+        "color_label": "그레이"
+      },
+      {
+        "slot": "상의",
+        "garment": "니트",
+        "color_label": "차콜"
+      },
+      {
+        "slot": "하의",
+        "garment": "바지",
+        "color_label": "블랙"
+      },
+      {
+        "slot": "신발",
+        "garment": "운동화",
+        "color_label": "화이트"
+      }
+    ],
+    "fit_observation": "긴 코트 / 여유 있는 바지",
+    "note": "검정 가방. 마스크나 배경으로 촬영 날짜를 추정하지 않음.",
+    "wearer_age": null,
+    "wearer_country": null,
+    "source_date": null,
+    "visual_review": "reviewed",
+    "full_outfit_visible": true,
+    "authenticity": "not_verified",
+    "source_status": "unresolved",
+    "attribution": null,
+    "original_url": null,
+    "source_note": "원 게시자·촬영자 미확인. 핀 저장자는 원저자로 간주하지 않음.",
+    "aesthetic_score": null,
+    "realism_score": null,
+    "owner_verdict": null,
+    "palette_mapping": {
+      "pool": "v1/colors.json",
+      "status": "not_mapped",
+      "reason": "사진의 색상군 기록. 보유 141색과의 근사 매핑은 후속 검수; 신규 HEX 없음."
+    }
+  },
+  {
+    "id": "P025",
+    "image_id": "P025",
+    "outfit_cluster_id": "P025",
+    "source_group_id": null,
+    "title": "베이지 코트와 검정 이너·바지",
+    "style_catalog": "남성복",
+    "style_catalog_basis": "의복과 검색 맥락에 대한 편집 분류; 착용자 성별 신원 판단 아님",
+    "season_candidate": "겨울",
+    "tpo_candidate": "캐주얼",
+    "context_basis": "DALHA 편집 제안; 촬영 당시 계절·TPO를 증명하지 않음",
+    "level": "기본형 후보",
+    "items": [
+      {
+        "slot": "겉옷",
+        "garment": "롱코트",
+        "color_label": "베이지"
+      },
+      {
+        "slot": "상의",
+        "garment": "터틀넥",
+        "color_label": "블랙"
+      },
+      {
+        "slot": "하의",
+        "garment": "바지",
+        "color_label": "블랙"
+      },
+      {
+        "slot": "신발",
+        "garment": "운동화",
+        "color_label": "화이트"
+      }
+    ],
+    "fit_observation": "긴 코트 / 좁은 밑단",
+    "note": "검정 목도리.",
+    "wearer_age": null,
+    "wearer_country": null,
+    "source_date": null,
+    "visual_review": "reviewed",
+    "full_outfit_visible": true,
+    "authenticity": "not_verified",
+    "source_status": "unresolved",
+    "attribution": null,
+    "original_url": null,
+    "source_note": "원 게시자·촬영자 미확인. 핀 저장자는 원저자로 간주하지 않음.",
+    "aesthetic_score": null,
+    "realism_score": null,
+    "owner_verdict": null,
+    "palette_mapping": {
+      "pool": "v1/colors.json",
+      "status": "not_mapped",
+      "reason": "사진의 색상군 기록. 보유 141색과의 근사 매핑은 후속 검수; 신규 HEX 없음."
+    }
+  },
+  {
+    "id": "P026",
+    "image_id": "P026",
+    "outfit_cluster_id": "P026",
+    "source_group_id": null,
+    "title": "검정 코트와 회색 터틀넥",
+    "style_catalog": "남성복",
+    "style_catalog_basis": "의복과 검색 맥락에 대한 편집 분류; 착용자 성별 신원 판단 아님",
+    "season_candidate": "겨울",
+    "tpo_candidate": "단정한 일상",
+    "context_basis": "DALHA 편집 제안; 촬영 당시 계절·TPO를 증명하지 않음",
+    "level": "기본형 후보",
+    "items": [
+      {
+        "slot": "겉옷",
+        "garment": "롱코트",
+        "color_label": "블랙"
+      },
+      {
+        "slot": "상의",
+        "garment": "터틀넥",
+        "color_label": "그레이"
+      },
+      {
+        "slot": "하의",
+        "garment": "와이드 바지",
+        "color_label": "블랙"
+      },
+      {
+        "slot": "신발",
+        "garment": "가죽 신발",
+        "color_label": "블랙"
+      }
+    ],
+    "fit_observation": "긴 코트 / 와이드",
+    "note": "검정 가방. 핀 제목에 성진 계정 표기; 원문 확인 전.",
+    "wearer_age": null,
+    "wearer_country": null,
+    "source_date": null,
+    "visual_review": "reviewed",
+    "full_outfit_visible": true,
+    "authenticity": "not_verified",
+    "source_status": "pin_attribution_only",
+    "attribution": "성진",
+    "original_url": null,
+    "source_note": "핀 제목에 이름 표기. 동명이인·원 계정 식별 미검증.",
+    "aesthetic_score": null,
+    "realism_score": null,
+    "owner_verdict": null,
+    "palette_mapping": {
+      "pool": "v1/colors.json",
+      "status": "not_mapped",
+      "reason": "사진의 색상군 기록. 보유 141색과의 근사 매핑은 후속 검수; 신규 HEX 없음."
+    }
+  },
+  {
+    "id": "P027",
+    "image_id": "P027",
+    "outfit_cluster_id": "P027",
+    "source_group_id": null,
+    "title": "선명한 그린 상의와 보라 바지",
+    "style_catalog": "여성복",
+    "style_catalog_basis": "의복과 검색 맥락에 대한 편집 분류; 착용자 성별 신원 판단 아님",
+    "season_candidate": "봄·여름",
+    "tpo_candidate": "스타일 강조",
+    "context_basis": "DALHA 편집 제안; 촬영 당시 계절·TPO를 증명하지 않음",
+    "level": "실험형",
+    "items": [
+      {
+        "slot": "상의",
+        "garment": "블라우스",
+        "color_label": "선명한 그린"
+      },
+      {
+        "slot": "하의",
+        "garment": "바지",
+        "color_label": "선명한 보라"
+      },
+      {
+        "slot": "신발",
+        "garment": "힐",
+        "color_label": "레오퍼드"
+      }
+    ],
+    "fit_observation": "상의 넣어 입기 / 발목 바지",
+    "note": "개별 핀이 아닌 아이디어 페이지 이미지. 다채로운 조합의 실험형 참고.",
+    "wearer_age": null,
+    "wearer_country": null,
+    "source_date": null,
+    "visual_review": "reviewed",
+    "full_outfit_visible": true,
+    "authenticity": "not_verified",
+    "source_status": "unresolved",
+    "attribution": null,
+    "original_url": null,
+    "source_note": "원 게시자·촬영자 미확인. 핀 저장자는 원저자로 간주하지 않음.",
+    "aesthetic_score": null,
+    "realism_score": null,
+    "owner_verdict": null,
+    "palette_mapping": {
+      "pool": "v1/colors.json",
+      "status": "not_mapped",
+      "reason": "사진의 색상군 기록. 보유 141색과의 근사 매핑은 후속 검수; 신규 HEX 없음."
+    }
+  },
+  {
+    "id": "P028",
+    "image_id": "P028",
+    "outfit_cluster_id": "P028",
+    "source_group_id": null,
+    "title": "라벤더 재킷과 그린 바지",
+    "style_catalog": "여성복",
+    "style_catalog_basis": "의복과 검색 맥락에 대한 편집 분류; 착용자 성별 신원 판단 아님",
+    "season_candidate": "봄·가을",
+    "tpo_candidate": "스타일 강조",
+    "context_basis": "DALHA 편집 제안; 촬영 당시 계절·TPO를 증명하지 않음",
+    "level": "실험형",
+    "items": [
+      {
+        "slot": "겉옷",
+        "garment": "테일러드 재킷",
+        "color_label": "라벤더"
+      },
+      {
+        "slot": "상의",
+        "garment": "셔츠",
+        "color_label": "라벤더"
+      },
+      {
+        "slot": "하의",
+        "garment": "크롭 바지",
+        "color_label": "그린"
+      },
+      {
+        "slot": "신발",
+        "garment": "힐",
+        "color_label": "레오퍼드"
+      }
+    ],
+    "fit_observation": "긴 재킷 / 크롭 슬림",
+    "note": "가방도 보라 계열. P027과 색 역할·명도·핏이 다름.",
+    "wearer_age": null,
+    "wearer_country": null,
+    "source_date": null,
+    "visual_review": "reviewed",
+    "full_outfit_visible": true,
+    "authenticity": "not_verified",
+    "source_status": "pin_attribution_only",
+    "attribution": "Fashionisers",
+    "original_url": null,
+    "source_note": "편집 사이트 표기만 확인. 원 착장 제작자 미확인.",
+    "aesthetic_score": null,
+    "realism_score": null,
+    "owner_verdict": null,
+    "palette_mapping": {
+      "pool": "v1/colors.json",
+      "status": "not_mapped",
+      "reason": "사진의 색상군 기록. 보유 141색과의 근사 매핑은 후속 검수; 신규 HEX 없음."
+    }
+  },
+  {
+    "id": "P029",
+    "image_id": "P029",
+    "outfit_cluster_id": "P029",
+    "source_group_id": null,
+    "title": "체크 반팔과 데님 반바지",
+    "style_catalog": "여성복",
+    "style_catalog_basis": "의복과 검색 맥락에 대한 편집 분류; 착용자 성별 신원 판단 아님",
+    "season_candidate": "여름",
+    "tpo_candidate": "캐주얼",
+    "context_basis": "DALHA 편집 제안; 촬영 당시 계절·TPO를 증명하지 않음",
+    "level": "기본형 후보",
+    "items": [
+      {
+        "slot": "상의",
+        "garment": "체크 반팔 셔츠",
+        "color_label": "블랙·화이트"
+      },
+      {
+        "slot": "하의",
+        "garment": "데님 반바지",
+        "color_label": "연청"
+      },
+      {
+        "slot": "신발",
+        "garment": "운동화",
+        "color_label": "화이트"
+      }
+    ],
+    "fit_observation": "여유핏 반팔 / 짧은 하의",
+    "note": "흰 양말. 쇼츠 허용 TPO인지 별도 확인.",
+    "wearer_age": null,
+    "wearer_country": null,
+    "source_date": null,
+    "visual_review": "reviewed",
+    "full_outfit_visible": true,
+    "authenticity": "not_verified",
+    "source_status": "unresolved",
+    "attribution": null,
+    "original_url": null,
+    "source_note": "원 게시자·촬영자 미확인. 핀 저장자는 원저자로 간주하지 않음.",
+    "aesthetic_score": null,
+    "realism_score": null,
+    "owner_verdict": null,
+    "palette_mapping": {
+      "pool": "v1/colors.json",
+      "status": "not_mapped",
+      "reason": "사진의 색상군 기록. 보유 141색과의 근사 매핑은 후속 검수; 신규 HEX 없음."
+    }
+  },
+  {
+    "id": "P030",
+    "image_id": "P030",
+    "outfit_cluster_id": "P030",
+    "source_group_id": null,
+    "title": "네이비 폴로와 베이지 치노",
+    "style_catalog": "남성복",
+    "style_catalog_basis": "의복과 검색 맥락에 대한 편집 분류; 착용자 성별 신원 판단 아님",
+    "season_candidate": "여름",
+    "tpo_candidate": "단정한 일상",
+    "context_basis": "DALHA 편집 제안; 촬영 당시 계절·TPO를 증명하지 않음",
+    "level": "기본형 후보",
+    "items": [
+      {
+        "slot": "상의",
+        "garment": "폴로 셔츠",
+        "color_label": "네이비"
+      },
+      {
+        "slot": "하의",
+        "garment": "치노형 바지",
+        "color_label": "베이지"
+      },
+      {
+        "slot": "신발",
+        "garment": "로퍼",
+        "color_label": "브라운"
+      }
+    ],
+    "fit_observation": "상의 넣어 입기 / 슬림 바지",
+    "note": "브라운 벨트. Ralph Lauren 표기는 원상품 사진 대조 전.",
+    "wearer_age": null,
+    "wearer_country": null,
+    "source_date": null,
+    "visual_review": "reviewed",
+    "full_outfit_visible": true,
+    "authenticity": "not_verified",
+    "source_status": "pin_attribution_only",
+    "attribution": "Ralph Lauren",
+    "original_url": null,
+    "source_note": "상품 브랜드 표기. 브랜드 원상품 페이지 대조 전.",
+    "aesthetic_score": null,
+    "realism_score": null,
+    "owner_verdict": null,
+    "palette_mapping": {
+      "pool": "v1/colors.json",
+      "status": "not_mapped",
+      "reason": "사진의 색상군 기록. 보유 141색과의 근사 매핑은 후속 검수; 신규 HEX 없음."
+    }
+  },
+  {
+    "id": "P031",
+    "image_id": "P031",
+    "outfit_cluster_id": "P031",
+    "source_group_id": null,
+    "title": "브라운 니트와 검정 바지",
+    "style_catalog": "남성복",
+    "style_catalog_basis": "의복과 검색 맥락에 대한 편집 분류; 착용자 성별 신원 판단 아님",
+    "season_candidate": "봄·가을",
+    "tpo_candidate": "캐주얼",
+    "context_basis": "DALHA 편집 제안; 촬영 당시 계절·TPO를 증명하지 않음",
+    "level": "기본형 후보",
+    "items": [
+      {
+        "slot": "상의",
+        "garment": "니트",
+        "color_label": "브라운"
+      },
+      {
+        "slot": "하의",
+        "garment": "바지",
+        "color_label": "블랙"
+      },
+      {
+        "slot": "신발",
+        "garment": "부츠",
+        "color_label": "브라운"
+      }
+    ],
+    "fit_observation": "기본 니트 / 슬림 바지",
+    "note": "원 촬영자와 생성 여부 미확인. 사진형 이미지라는 사실만 기록.",
+    "wearer_age": null,
+    "wearer_country": null,
+    "source_date": null,
+    "visual_review": "reviewed",
+    "full_outfit_visible": true,
+    "authenticity": "not_verified",
+    "source_status": "unresolved",
+    "attribution": null,
+    "original_url": null,
+    "source_note": "원 게시자·촬영자 미확인. 핀 저장자는 원저자로 간주하지 않음.",
+    "aesthetic_score": null,
+    "realism_score": null,
+    "owner_verdict": null,
+    "palette_mapping": {
+      "pool": "v1/colors.json",
+      "status": "not_mapped",
+      "reason": "사진의 색상군 기록. 보유 141색과의 근사 매핑은 후속 검수; 신규 HEX 없음."
+    }
+  },
+  {
+    "id": "P032",
+    "image_id": "P032",
+    "outfit_cluster_id": "P032",
+    "source_group_id": null,
+    "title": "브라운 니트와 베이지 바지",
+    "style_catalog": "남성복",
+    "style_catalog_basis": "의복과 검색 맥락에 대한 편집 분류; 착용자 성별 신원 판단 아님",
+    "season_candidate": "봄·가을",
+    "tpo_candidate": "단정한 일상",
+    "context_basis": "DALHA 편집 제안; 촬영 당시 계절·TPO를 증명하지 않음",
+    "level": "기본형 후보",
+    "items": [
+      {
+        "slot": "상의",
+        "garment": "니트",
+        "color_label": "브라운"
+      },
+      {
+        "slot": "이너",
+        "garment": "셔츠",
+        "color_label": "화이트"
+      },
+      {
+        "slot": "하의",
+        "garment": "치노형 바지",
+        "color_label": "베이지"
+      },
+      {
+        "slot": "신발",
+        "garment": "하이톱 운동화",
+        "color_label": "화이트"
+      }
+    ],
+    "fit_observation": "레이어드 니트 / 슬림 바지",
+    "note": "핀 제목에 Macho Moda 표기. 원 촬영자 미확인.",
+    "wearer_age": null,
+    "wearer_country": null,
+    "source_date": null,
+    "visual_review": "reviewed",
+    "full_outfit_visible": true,
+    "authenticity": "not_verified",
+    "source_status": "pin_attribution_only",
+    "attribution": "Macho Moda",
+    "original_url": null,
+    "source_note": "편집 매체 표기. 사진 원저자 미확인.",
+    "aesthetic_score": null,
+    "realism_score": null,
+    "owner_verdict": null,
+    "palette_mapping": {
+      "pool": "v1/colors.json",
+      "status": "not_mapped",
+      "reason": "사진의 색상군 기록. 보유 141색과의 근사 매핑은 후속 검수; 신규 HEX 없음."
+    }
+  },
+  {
+    "id": "P033",
+    "image_id": "P033",
+    "outfit_cluster_id": "P033",
+    "source_group_id": "Merrick’s Art",
+    "title": "올리브 재킷과 흰 티·연청",
+    "style_catalog": "여성복",
+    "style_catalog_basis": "의복과 검색 맥락에 대한 편집 분류; 착용자 성별 신원 판단 아님",
+    "season_candidate": "봄",
+    "tpo_candidate": "캐주얼",
+    "context_basis": "DALHA 편집 제안; 촬영 당시 계절·TPO를 증명하지 않음",
+    "level": "기본형 후보",
+    "items": [
+      {
+        "slot": "겉옷",
+        "garment": "유틸리티 재킷",
+        "color_label": "올리브"
+      },
+      {
+        "slot": "상의",
+        "garment": "티셔츠",
+        "color_label": "화이트"
+      },
+      {
+        "slot": "하의",
+        "garment": "찢어진 데님 바지",
+        "color_label": "연청"
+      },
+      {
+        "slot": "신발",
+        "garment": "운동화",
+        "color_label": "그레이"
+      }
+    ],
+    "fit_observation": "짧은 재킷 / 발목 데님",
+    "note": "원문에서 일상 캐주얼 착장 설명 확인. 신발에 별 무늬.",
+    "wearer_age": null,
+    "wearer_country": null,
+    "source_date": "2022-03-21",
+    "visual_review": "reviewed",
+    "full_outfit_visible": true,
+    "authenticity": "not_verified",
+    "source_status": "publisher_page_checked",
+    "attribution": "Merrick’s Art",
+    "original_url": "https://www.merricksart.com/olive-green-jacket-outfits-2/",
+    "source_note": "원문에 흰 티·연청·운동화 구성과 해당 사진 캡션 확인. 본인 스타일링 글.",
+    "aesthetic_score": null,
+    "realism_score": null,
+    "owner_verdict": null,
+    "palette_mapping": {
+      "pool": "v1/colors.json",
+      "status": "not_mapped",
+      "reason": "사진의 색상군 기록. 보유 141색과의 근사 매핑은 후속 검수; 신규 HEX 없음."
+    }
+  },
+  {
+    "id": "P034",
+    "image_id": "P034",
+    "outfit_cluster_id": "P034",
+    "source_group_id": null,
+    "title": "올리브 재킷과 흰 티·데님",
+    "style_catalog": "여성복",
+    "style_catalog_basis": "의복과 검색 맥락에 대한 편집 분류; 착용자 성별 신원 판단 아님",
+    "season_candidate": "봄·가을",
+    "tpo_candidate": "캐주얼",
+    "context_basis": "DALHA 편집 제안; 촬영 당시 계절·TPO를 증명하지 않음",
+    "level": "기본형 후보",
+    "items": [
+      {
+        "slot": "겉옷",
+        "garment": "유틸리티 재킷",
+        "color_label": "올리브"
+      },
+      {
+        "slot": "상의",
+        "garment": "티셔츠",
+        "color_label": "화이트"
+      },
+      {
+        "slot": "하의",
+        "garment": "데님 바지",
+        "color_label": "중청"
+      }
+    ],
+    "fit_observation": "기본 재킷 / 바지 하단 미노출",
+    "note": "신발·원 촬영자·생성 여부 미확인. 전신 착장 근거로 쓰지 않음.",
+    "wearer_age": null,
+    "wearer_country": null,
+    "source_date": null,
+    "visual_review": "reviewed",
+    "full_outfit_visible": false,
+    "authenticity": "not_verified",
+    "source_status": "unresolved",
+    "attribution": null,
+    "original_url": null,
+    "source_note": "원 게시자·촬영자 미확인. 핀 저장자는 원저자로 간주하지 않음.",
+    "aesthetic_score": null,
+    "realism_score": null,
+    "owner_verdict": null,
+    "palette_mapping": {
+      "pool": "v1/colors.json",
+      "status": "not_mapped",
+      "reason": "사진의 색상군 기록. 보유 141색과의 근사 매핑은 후속 검수; 신규 HEX 없음."
+    }
+  },
+  {
+    "id": "P035",
+    "image_id": "P035",
+    "outfit_cluster_id": "P035",
+    "source_group_id": null,
+    "title": "올리브 재킷과 흰 브이넥·데님",
+    "style_catalog": "여성복",
+    "style_catalog_basis": "의복과 검색 맥락에 대한 편집 분류; 착용자 성별 신원 판단 아님",
+    "season_candidate": "봄·가을",
+    "tpo_candidate": "캐주얼",
+    "context_basis": "DALHA 편집 제안; 촬영 당시 계절·TPO를 증명하지 않음",
+    "level": "기본형 후보",
+    "items": [
+      {
+        "slot": "겉옷",
+        "garment": "유틸리티 재킷",
+        "color_label": "올리브"
+      },
+      {
+        "slot": "상의",
+        "garment": "브이넥 티셔츠",
+        "color_label": "화이트"
+      },
+      {
+        "slot": "하의",
+        "garment": "데님 바지",
+        "color_label": "연청"
+      }
+    ],
+    "fit_observation": "기본 재킷 / 바지 하단 미노출",
+    "note": "신발은 보이지 않음. LTK 링크 관련 제목만으로 원저자 확정하지 않음.",
+    "wearer_age": null,
+    "wearer_country": null,
+    "source_date": null,
+    "visual_review": "reviewed",
+    "full_outfit_visible": false,
+    "authenticity": "not_verified",
+    "source_status": "unresolved",
+    "attribution": null,
+    "original_url": null,
+    "source_note": "원 게시자·촬영자 미확인. 핀 저장자는 원저자로 간주하지 않음.",
+    "aesthetic_score": null,
+    "realism_score": null,
+    "owner_verdict": null,
+    "palette_mapping": {
+      "pool": "v1/colors.json",
+      "status": "not_mapped",
+      "reason": "사진의 색상군 기록. 보유 141색과의 근사 매핑은 후속 검수; 신규 HEX 없음."
+    }
+  }
+]

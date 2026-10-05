@@ -1,0 +1,39 @@
+{
+  "version": "fashion-evidence-0.1",
+  "as_of": "2026-10-02",
+  "stage": "research_prototype",
+  "production_enabled": false,
+  "base_commit": "12846220eb503dfa36e3658ae3c866363a779460",
+  "palette_policy": "141 registered existing HEX values; 26 core tones and 115 Wada originals. No new colors invented.",
+  "score_policy": "1–5 editorial ordinal rubric, not empirical wear rate. Missing = unassessed, never zero.",
+  "priority": [
+    "weather_and_tpo",
+    "item_realism",
+    "whole_outfit_review",
+    "A_usage",
+    "B_usage",
+    "variety"
+  ],
+  "limitations": [
+    "한국 셀럽·매체 편중, 일반인 표본·50대·10대 직접 근거 부족",
+    "정확한 실물 HEX·핏·소재·보온 성능은 사진과 기사만으로 검증되지 않음",
+    "전체 착장 자동 미감 승인은 하지 않음",
+    "현재 사용 중인 추천 경로에 연결하지 않은 검토용 데이터"
+  ],
+  "rubric": {
+    "1": "조건에 맞지 않음",
+    "2": "기본 추천 후순위",
+    "3": "조건부 후보",
+    "4": "기본 추천 우선 후보",
+    "5": "반복 검수한 기준 사례",
+    "null": "미평가"
+  },
+  "monthly_process": [
+    "새 자료 수집과 중복 확인",
+    "기본형·실험형 및 출처 맥락 태깅",
+    "변경 점수와 근거 비교",
+    "고정 기준 사례 재검토",
+    "검토한 버전만 추천 경로에 반영"
+  ],
+  "no_new_schedule": true
+}

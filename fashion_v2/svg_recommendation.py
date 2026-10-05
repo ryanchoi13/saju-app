@@ -17,7 +17,8 @@ from fashion_v2.weather_catalog import weather_templates_for
 from fashion_v2.review_preferences import apply_review_preferences
 from fashion_v2.realwear_rules import styling_for, colour_parts, visible_colors, accessory_spec
 from fashion_v2.coordination import POLICY_VERSION, tie_separation, evaluate_coordination
-from wada_color_rules import WADA_COLORS
+from fashion_v2.daily_palette import optional_wada_reference, private_color_hint
+from fashion_v2.outfit_quality import base_outfit_options, whole_outfit_quality, VERSION as QUALITY_VERSION
 from fashion_v2.wearable_options import (wardrobe_tones, tone_explanation,
     muted_green_bottom, garment_options, outfit_balance, footwear_color_score,
     shoe_color_options)
@@ -48,8 +49,11 @@ def describe_color(value):
     rgb = [int(c['hex'][i:i+2], 16)/255 for i in (1, 3, 5)]
     h, l, s = colorsys.rgb_to_hls(*rgb)
     known = next((p for p in PALETTE.values() if p['hex'].upper() == c['hex']), None)
-    meta = WADA_COLORS.get(c['hex'].lower(), {})
-    fam = (known or {}).get('family') or meta.get('hue_family')
+    fam = (known or {}).get('family')
+    # Preserve the named ochre pigment family without requiring a Wada module.
+    from fashion_v2.wearable_options import WARM_EARTH_HEX
+    if not fam and c['hex'] in WARM_EARTH_HEX:
+        fam = 'yellow'
     if fam == 'neutral':
         fam = 'black' if known['id'] == 'black' else 'white' if known['id'] in {'white','ivory'} else 'gray'
     fam = {'earth':'brown', 'navy':'blue', 'charcoal':'gray', 'pink':'red', 'violet':'purple', 'gold':'yellow'}.get(fam, fam)
@@ -254,10 +258,10 @@ def apply_colors(look, a, b, previous=None):
             color_facts[key]=describe_color({'hex':key})
         return color_facts[key]
 
-    # Stage 1: rank garments and A/B placement without allowing the default
-    # sneaker colour to decide a large clothing colour.
+    # Stage 1: complete base outfits exist before any daily color is applied.
+    reviewed = bool(look.get('review_preference') or look.get('color_targets') or look.get('footwear_color_locked'))
     primary_candidates=[]
-    for selected in garment_options(look,PALETTE):
+    for selected in base_outfit_options(look,PALETTE,garment_options):
         for ca,cb in itertools.product(candidates(selected,raw['A'],'A'),candidates(selected,raw['B'],'B')):
             if ca and cb and set(ca['indexes']) & set(cb['indexes']):
                 continue
@@ -323,19 +327,25 @@ def apply_colors(look, a, b, previous=None):
                 items,describe_candidate_color,
                 enabled=look['tpo']=='casual' and not look.get('review_preference')
                 and not look.get('color_targets'))
-            priority=(-balance['risk'],score)
+            # This is an upper bound for the final whole-outfit quality: adding
+            # shoes cannot improve the minimum realism or reduce fabric clashes.
+            quality=whole_outfit_quality(non_shoe_items, selected, describe_candidate_color, PALETTE,
+                evaluate_coordination(non_shoe_items,look['tpo'],describe_candidate_color), primary_count)
+            priority=(-balance['risk'],score) if reviewed else (*quality['rank'],-balance['risk'],score)
             primary_candidates.append(
                 (priority,items,placements,primary_count,selected,balance))
 
     if not primary_candidates:
         raise ValueError('안전한 배색 후보가 없습니다')
 
-    # Stage 2: resolve shoes only after clothing order is known. If the best
-    # clothing candidate cannot stay within the total colour cap with any
-    # permitted shoe, try the next clothing candidate rather than failing.
+    # Stage 2: re-evaluate the complete outfit, including shoes, before A/B
+    # coverage. Low realism cannot be offset by using both recommended colors.
     primary_candidates.sort(key=lambda entry: entry[0], reverse=True)
     resolved=None
+    final_priority=None
     for best in primary_candidates:
+        if not reviewed and resolved is not None and best[0][:4] < final_priority[:4]:
+            break
         base_result=deepcopy(best[4])
         base_result['items']=best[1]
         shoe_item=next((i for i in base_result['items'] if i['category']=='shoes'),None)
@@ -356,12 +366,20 @@ def apply_colors(look, a, b, previous=None):
                 candidate['items'],candidate,describe_candidate_color,total_count,
                 previous.get('shoe_hex') if previous else None)
             shoe_score=shoe_eval['score']-max(0,total_count-3)*6
-            shoe_priority=(shoe_score,-total_count)
+            quality=whole_outfit_quality(candidate['items'],candidate,describe_candidate_color,PALETTE,
+                evaluate_coordination(candidate['items'],look['tpo'],describe_candidate_color),total_count)
+            changed_fabrics=sum(i['hex'] != original['hex'] for i,original in zip(candidate['items'],best[4]['items'])
+                                if i['category'] != 'shoes')
+            shoe_priority=(shoe_score,-total_count) if reviewed else (
+                *quality['rank'],-best[5]['risk'],int('A' in best[2]),int('B' in best[2]),
+                -changed_fabrics,best[0][-1],shoe_score,-total_count)
             if shoe_best is None or shoe_priority>shoe_best[0]:
-                shoe_best=(shoe_priority,candidate,total_count,shoe_eval)
-        if shoe_best is not None:
+                shoe_best=(shoe_priority,candidate,total_count,shoe_eval,quality)
+        if shoe_best is not None and (final_priority is None or shoe_best[0]>final_priority):
             resolved=(best,shoe_best)
-            break
+            final_priority=shoe_best[0]
+            if reviewed:
+                break
 
     if resolved is None:
         raise ValueError('안전한 신발 배색 후보가 없습니다')
@@ -375,6 +393,7 @@ def apply_colors(look, a, b, previous=None):
         result['items'],look['tpo'],describe_candidate_color)
     result['coordination']['wearability']=best[5]
     result['coordination']['footwear']=shoe_eval
+    result['coordination']['whole_outfit_quality']=shoe_best[4]
     result['coordination']['tie_separation']=tie_separation(
         result['items'],describe_candidate_color)
     result['outfit_policy_version']=POLICY_VERSION
@@ -387,7 +406,7 @@ def apply_colors(look, a, b, previous=None):
 
     result['color_strategy']={
         'priority':'reviewed_outfit_preference' if look.get('review_preference')
-                   else 'outfit_quality_then_A_then_B_then_footwear',
+                   else 'outfit_quality_then_A_then_B_then_optional_reference',
         'original':raw,
         'placements':placements,
         'unresolved':[dict(
@@ -399,7 +418,12 @@ def apply_colors(look, a, b, previous=None):
         'color_count':total_count,
         'review_required':total_count>3,
         'additional_element_C':None,
+        'selection_flow':['base_outfit','optional_daily_colors','whole_outfit_recheck'],
+        'quality_policy_version':QUALITY_VERSION,
+        'base_outfit':[dict(label=i['label'],category=i['category'],hex=i['hex']) for i in best[4]['items']],
     }
+    result['color_strategy']['private_color_suggestion']=private_color_hint(result['color_strategy']['unresolved'])
+    result['color_strategy']['wada_reference']=optional_wada_reference(raw.values())
     result['garment_spec']=to_spec(result)
     component_colors={i['watch_case_hex'] for i in result['items'] if i.get('watch_case_hex')}
     if component_colors:

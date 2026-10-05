@@ -1,0 +1,291 @@
+{
+  "schema_version": 1,
+  "review_version": "outfit-first-20261002",
+  "exported_at": "2026-10-02T09:35:02.552Z",
+  "source_filename": "01-dalha-outfit-first-review-notes.json",
+  "source_sha256": "70a4295d2b64681374a77c5a9b26b73217af444ddeb3d8c1b655214172b8bebc",
+  "source_commit": "b438b28e8b7f316f962d7099563d2a29220276a8",
+  "principle": "검증된 전체 착장 근거를 축적하고, 근거 부족과 부적합을 구분한다.",
+  "cases": [
+    {
+      "case_id": "after-1",
+      "feedback": {
+        "verdict": "prefer",
+        "updated_at": "2026-10-02T09:31:16.838Z",
+        "note": "훨씬 낫다. "
+      },
+      "interpretation": {
+        "status": "positive_preference",
+        "decision": "아이보리 겉옷·핑크 이너·베이지 바지·흰 운동화의 현재 시안을 긍정 사례로 보존.",
+        "scope": "이 시안의 조합에 한정. 모든 연령·계절의 일반 규칙이나 배포 승인은 아님."
+      },
+      "reviewed_snapshot": {
+        "context": {
+          "gender": "male",
+          "age": 48,
+          "season": "autumn",
+          "tpo": "casual",
+          "actual_weather": false
+        },
+        "garment_spec": {
+          "gender": "male",
+          "top": "맨투맨",
+          "bottom": "면바지",
+          "dress": "",
+          "outer": "블루종",
+          "shoe": "운동화",
+          "bag": "",
+          "accessories": [],
+          "accessoryItems": [],
+          "suitLinked": true,
+          "outerOpen": true,
+          "outerMode": "wear",
+          "tuck": "out",
+          "topColor": "#DDB6BC",
+          "bottomColor": "#CBBCA0",
+          "shoeColor": "#F5F4EF",
+          "outerColor": "#EAE3D2"
+        },
+        "items": [
+          {
+            "category": "outer",
+            "label": "블루종",
+            "hex": "#EAE3D2",
+            "color_name": "아이보리"
+          },
+          {
+            "category": "top",
+            "label": "맨투맨",
+            "hex": "#DDB6BC",
+            "color_name": "연핑크"
+          },
+          {
+            "category": "bottom",
+            "label": "면바지",
+            "hex": "#CBBCA0",
+            "color_name": "베이지"
+          },
+          {
+            "category": "shoes",
+            "label": "운동화",
+            "hex": "#F5F4EF",
+            "color_name": "화이트"
+          }
+        ],
+        "spec_sha256": "f8164666693dd927d2d4699542f1649aef1f7b9495f476c45fae1a3c60d84ccd"
+      },
+      "numeric_score": null,
+      "production_approval": false
+    },
+    {
+      "case_id": "after-2",
+      "feedback": {
+        "verdict": "hold",
+        "updated_at": "2026-10-02T09:32:02.734Z",
+        "note": "남색 블루종이 나을지 검정색 블루종이 나을지 모르겠네. 이런 경우는 그냥 추측하지 말고. 데이터를 좀 더 쌓아서 연구하고 그걸 기반으로 만들자. 그냥 대충 만들지 말고. "
+      },
+      "interpretation": {
+        "status": "hold_for_evidence",
+        "decision": "남색과 검정 블루종의 우열 판단 보류. 같은 이너·하의·신발·핏을 유지한 비교 근거 필요.",
+        "scope": "보류를 감점이나 자동 승인으로 바꾸지 않는다."
+      },
+      "reviewed_snapshot": {
+        "context": {
+          "gender": "male",
+          "age": 48,
+          "season": "autumn",
+          "tpo": "casual",
+          "actual_weather": false
+        },
+        "garment_spec": {
+          "gender": "male",
+          "top": "후드티",
+          "bottom": "면바지",
+          "dress": "",
+          "outer": "블루종",
+          "shoe": "운동화",
+          "bag": "",
+          "accessories": [],
+          "accessoryItems": [],
+          "suitLinked": true,
+          "outerOpen": true,
+          "outerMode": "wear",
+          "tuck": "out",
+          "topColor": "#E8DADB",
+          "bottomColor": "#CBBCA0",
+          "shoeColor": "#22252B",
+          "outerColor": "#243B59"
+        },
+        "items": [
+          {
+            "category": "outer",
+            "label": "블루종",
+            "hex": "#243B59",
+            "color_name": "네이비"
+          },
+          {
+            "category": "top",
+            "label": "후드티",
+            "hex": "#E8DADB",
+            "color_name": "연한 분홍"
+          },
+          {
+            "category": "bottom",
+            "label": "면바지",
+            "hex": "#CBBCA0",
+            "color_name": "베이지"
+          },
+          {
+            "category": "shoes",
+            "label": "운동화",
+            "hex": "#22252B",
+            "color_name": "블랙"
+          }
+        ],
+        "spec_sha256": "1be756d2f3d4e23c698d6f96c585ebd40e3dd4190dba5f7794127740c79201cd"
+      },
+      "numeric_score": null,
+      "production_approval": false
+    },
+    {
+      "case_id": "private-1",
+      "feedback": {
+        "verdict": "revise",
+        "updated_at": "2026-10-02T09:33:19.175Z",
+        "note": "다른 색이면 모르겠는데. 보라색 같은 경우 내가 생각했을 때 짙은 네이비하고 좀 비슷한 느낌이 있다고 보거든. 그래서 지금 청바지를 리지드 데님같은 진한 청색을 넣어주는게 좋을 듯. 그 다음에 보라색은 또 생각을 해볼 수도 있고.."
+      },
+      "interpretation": {
+        "status": "revision_requested",
+        "decision": "현재 데님보다 진한 데님을 먼저 비교한다. 보라→네이비의 분위기 대체 가능성은 별도 연구 가설로 보존.",
+        "scope": "진청은 생지와 동일한 소재·가공이라는 뜻이 아님. 네이비 사용을 보라 사용 실적으로 자동 계산하지 않음."
+      },
+      "reviewed_snapshot": {
+        "context": {
+          "gender": "male",
+          "age": 48,
+          "season": "autumn",
+          "tpo": "casual",
+          "actual_weather": false
+        },
+        "garment_spec": {
+          "gender": "male",
+          "top": "맨투맨",
+          "bottom": "데님 바지",
+          "dress": "",
+          "outer": "블루종",
+          "shoe": "운동화",
+          "bag": "",
+          "accessories": [],
+          "accessoryItems": [],
+          "suitLinked": true,
+          "outerOpen": true,
+          "outerMode": "wear",
+          "tuck": "out",
+          "topColor": "#7C3E4B",
+          "bottomColor": "#527C9B",
+          "shoeColor": "#F5F4EF",
+          "outerColor": "#EAE3D2"
+        },
+        "items": [
+          {
+            "category": "outer",
+            "label": "블루종",
+            "hex": "#EAE3D2",
+            "color_name": "아이보리"
+          },
+          {
+            "category": "top",
+            "label": "맨투맨",
+            "hex": "#7C3E4B",
+            "color_name": "버건디"
+          },
+          {
+            "category": "bottom",
+            "label": "데님 바지",
+            "hex": "#527C9B",
+            "color_name": "데님 블루"
+          },
+          {
+            "category": "shoes",
+            "label": "운동화",
+            "hex": "#F5F4EF",
+            "color_name": "화이트"
+          }
+        ],
+        "spec_sha256": "273903f4221f65b9179d7149983792f76f7cd79d4c4df7bf1fb142edd9db37b8"
+      },
+      "numeric_score": null,
+      "production_approval": false
+    },
+    {
+      "case_id": "private-2",
+      "feedback": {
+        "verdict": "revise",
+        "updated_at": "2026-10-02T09:34:57.175Z",
+        "note": "빨강색이 있으면 그걸 안에 맨투맨으로 입으면 내 생각엔 베이지색 면바지가 잘 어울릴 거 같아. 그걸로 가고. 보라색 못썼으면 네이비 블루종으로 가던지 아니면 속옷을 추천하던지 그러면 될거 같은데... 내가 봤을 땐 우리가 지금 코디 데이터가 너무 부족해... 그래서 자꾸 이런 좀 안어울리는 매칭(ex. 연한색 청바지에 자꾸 매칭하는...) 이 나오는 듯. "
+      },
+      "interpretation": {
+        "status": "revision_requested",
+        "decision": "빨강 계열 맨투맨·베이지 면바지 조합을 수정 방향으로 기록. 겉옷의 네이비 및 남는 보라의 속옷 안내는 비교 후보.",
+        "scope": "후드→맨투맨의 아이템 변경도 포함. 외부 근거가 아직 충분하지 않으므로 전체 착장 점수로 환산하지 않음."
+      },
+      "reviewed_snapshot": {
+        "context": {
+          "gender": "male",
+          "age": 48,
+          "season": "autumn",
+          "tpo": "casual",
+          "actual_weather": false
+        },
+        "garment_spec": {
+          "gender": "male",
+          "top": "후드티",
+          "bottom": "데님 바지",
+          "dress": "",
+          "outer": "블루종",
+          "shoe": "운동화",
+          "bag": "",
+          "accessories": [],
+          "accessoryItems": [],
+          "suitLinked": true,
+          "outerOpen": true,
+          "outerMode": "wear",
+          "tuck": "out",
+          "topColor": "#DDB6BC",
+          "bottomColor": "#527C9B",
+          "shoeColor": "#22252B",
+          "outerColor": "#243B59"
+        },
+        "items": [
+          {
+            "category": "outer",
+            "label": "블루종",
+            "hex": "#243B59",
+            "color_name": "네이비"
+          },
+          {
+            "category": "top",
+            "label": "후드티",
+            "hex": "#DDB6BC",
+            "color_name": "연핑크"
+          },
+          {
+            "category": "bottom",
+            "label": "데님 바지",
+            "hex": "#527C9B",
+            "color_name": "데님 블루"
+          },
+          {
+            "category": "shoes",
+            "label": "운동화",
+            "hex": "#22252B",
+            "color_name": "블랙"
+          }
+        ],
+        "spec_sha256": "aa973943feb8d2ba8d938958838d6e5fbaa67e899e4f4d8d3bcc50f9f9cd9b7f"
+      },
+      "numeric_score": null,
+      "production_approval": false
+    }
+  ]
+}

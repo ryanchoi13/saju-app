@@ -7,6 +7,7 @@ explicit wardrobe-tone mapping, not permission to turn every yellow brown.
 """
 from copy import deepcopy
 from itertools import combinations
+from fashion_v2.outfit_quality import POLICY
 
 WARM_EARTH_HEX = frozenset({
     '#C5A56E', '#D6B43E', '#E2B540', '#EBD3A2', '#EEB480', '#F3A257',
@@ -44,12 +45,16 @@ SNEAKER_COLOR_RANGES = {
 
 
 def wardrobe_tones(color):
+    if color['hex'].upper() in POLICY['soft_yellow_beige_sources']:
+        return ('butter', 'beige')
     if color['hex'].upper() in WARM_EARTH_HEX:
         return ('beige', 'camel', 'brown')
     return TONE_KEYS.get(color['family'], ())
 
 
 def tone_explanation(color):
+    if color['hex'].upper() in POLICY['soft_yellow_beige_sources']:
+        return '옅은 노랑의 따뜻한 느낌을 베이지 착장용 톤으로 조정'
     if color['hex'].upper() in WARM_EARTH_HEX:
         return '카멜·오커 계열을 베이지·브라운의 착장용 톤으로 조정'
     if color['family'] == 'teal':
@@ -90,6 +95,9 @@ def sneaker_color_keys(look, item):
     if not ranges:
         return ()
     keys = list(ranges[_effective_season(look)])
+    # Both basic options must remain available in every season. The complete
+    # outfit policy ranks them before repetition or seasonal variety.
+    keys = ['white', 'black'] + keys
     source = _shoe_source_key(item)
     material = item.get('material', '')
     if source:

@@ -1,0 +1,246 @@
+[
+  {
+    "id": "B01",
+    "title": "오늘 추천 1 · 비교 기준",
+    "context": {
+      "gender": "male",
+      "age_band": "forties",
+      "season": "autumn",
+      "tpo": "casual"
+    },
+    "items": [
+      {
+        "garment_id": "g22",
+        "color_id": "wada-FBE6A0"
+      },
+      {
+        "garment_id": "g08",
+        "color_id": "wardrobe-pink"
+      },
+      {
+        "garment_id": "g10",
+        "color_id": "wardrobe-denim"
+      },
+      {
+        "garment_id": "g28",
+        "color_id": "wardrobe-navy"
+      }
+    ],
+    "verdict": "owner_rejected",
+    "reason": "노랑 겉옷·분홍 이너에 청바지를 더한 조합의 현실성과 조화에 대한 사용자 반려.",
+    "evidence_ids": [
+      "F01"
+    ],
+    "aesthetic_score_proposal": 2,
+    "score_assessor": "assistant_editorial_proposal",
+    "original_colors": [
+      "wada-FBE6A0",
+      "wada-F27291"
+    ],
+    "weather": "사용자 캡처의 가을 착장 비교. 실제 예보를 새로 조회한 결과가 아님.",
+    "reviewed": false
+  },
+  {
+    "id": "B02",
+    "title": "오늘 추천 2 · 비교 기준",
+    "context": {
+      "gender": "male",
+      "age_band": "forties",
+      "season": "autumn",
+      "tpo": "casual"
+    },
+    "items": [
+      {
+        "garment_id": "g22",
+        "color_id": "wardrobe-pink"
+      },
+      {
+        "garment_id": "g09",
+        "color_id": "wada-FBE6A0"
+      },
+      {
+        "garment_id": "g10",
+        "color_id": "wardrobe-denim"
+      },
+      {
+        "garment_id": "g28",
+        "color_id": "wardrobe-burgundy"
+      }
+    ],
+    "verdict": "owner_rejected",
+    "reason": "분홍 겉옷에 노랑 후드를 배치하고 색 위치를 바꾼 안 역시 사용자 반려.",
+    "evidence_ids": [
+      "F02"
+    ],
+    "aesthetic_score_proposal": 2,
+    "score_assessor": "assistant_editorial_proposal",
+    "original_colors": [
+      "wada-FBE6A0",
+      "wada-F27291"
+    ],
+    "weather": "사용자 캡처의 가을 착장 비교. 실제 예보를 새로 조회한 결과가 아님.",
+    "reviewed": false
+  },
+  {
+    "id": "B03",
+    "title": "검정 겉옷·핑크 이너·베이지 면바지",
+    "context": {
+      "gender": "male",
+      "age_band": "forties",
+      "season": "autumn",
+      "tpo": "casual"
+    },
+    "items": [
+      {
+        "garment_id": "g22",
+        "color_id": "wardrobe-black"
+      },
+      {
+        "garment_id": "g02",
+        "color_id": "wardrobe-pink"
+      },
+      {
+        "garment_id": "g11",
+        "color_id": "wardrobe-beige"
+      },
+      {
+        "garment_id": "g28",
+        "color_id": "wardrobe-black"
+      }
+    ],
+    "verdict": "proposal",
+    "reason": "사용자 제안을 구체화한 비교안. 3색, 분홍을 이너에 배치. 베이지는 노랑 그대로가 아닌 활용색 조정. 검정 겉옷까지의 조합은 추가 시각 검토 필요.",
+    "evidence_ids": [
+      "F03",
+      "O03"
+    ],
+    "aesthetic_score_proposal": 4,
+    "score_assessor": "assistant_editorial_proposal",
+    "original_colors": [
+      "wada-FBE6A0",
+      "wada-F27291"
+    ],
+    "weather": "사용자 캡처의 가을 착장 비교. 실제 예보를 새로 조회한 결과가 아님.",
+    "reviewed": false
+  },
+  {
+    "id": "B04",
+    "title": "네이비 겉옷·핑크 이너·베이지 면바지",
+    "context": {
+      "gender": "male",
+      "age_band": "forties",
+      "season": "autumn",
+      "tpo": "casual"
+    },
+    "items": [
+      {
+        "garment_id": "g22",
+        "color_id": "wardrobe-navy"
+      },
+      {
+        "garment_id": "g02",
+        "color_id": "wardrobe-pink"
+      },
+      {
+        "garment_id": "g11",
+        "color_id": "wardrobe-beige"
+      },
+      {
+        "garment_id": "g28",
+        "color_id": "wardrobe-navy"
+      }
+    ],
+    "verdict": "proposal",
+    "reason": "핑크·베이지와 네이비·핑크의 부분 근거를 조합한 가설. 부분 점수의 합으로 전체가 검증됐다고 보지 않음.",
+    "evidence_ids": [
+      "O03",
+      "O18"
+    ],
+    "aesthetic_score_proposal": 4,
+    "score_assessor": "assistant_editorial_proposal",
+    "original_colors": [
+      "wada-FBE6A0",
+      "wada-F27291"
+    ],
+    "weather": "사용자 캡처의 가을 착장 비교. 실제 예보를 새로 조회한 결과가 아님.",
+    "reviewed": false
+  },
+  {
+    "id": "B05",
+    "title": "네이비 겉옷·화이트 이너·베이지 면바지",
+    "context": {
+      "gender": "male",
+      "age_band": "forties",
+      "season": "autumn",
+      "tpo": "casual"
+    },
+    "items": [
+      {
+        "garment_id": "g22",
+        "color_id": "wardrobe-navy"
+      },
+      {
+        "garment_id": "g02",
+        "color_id": "wardrobe-white"
+      },
+      {
+        "garment_id": "g11",
+        "color_id": "wardrobe-beige"
+      },
+      {
+        "garment_id": "g28",
+        "color_id": "wardrobe-white"
+      }
+    ],
+    "verdict": "proposal",
+    "reason": "핑크를 착장에서 빼고 팔레트에만 남긴 비교안. 두 추천색 사용을 의무로 두지 않는 선택지.",
+    "evidence_ids": [
+      "POLICY-20260916"
+    ],
+    "aesthetic_score_proposal": 4,
+    "score_assessor": "assistant_editorial_proposal",
+    "original_colors": [
+      "wada-FBE6A0",
+      "wada-F27291"
+    ],
+    "weather": "사용자 캡처의 가을 착장 비교. 실제 예보를 새로 조회한 결과가 아님.",
+    "reviewed": false
+  },
+  {
+    "id": "B06",
+    "title": "핑크 셔츠·연청·브라운 로퍼",
+    "context": {
+      "gender": "male",
+      "age_band": "forties",
+      "season": "autumn",
+      "tpo": "casual"
+    },
+    "items": [
+      {
+        "garment_id": "g04",
+        "color_id": "wardrobe-pink"
+      },
+      {
+        "garment_id": "g10",
+        "color_id": "wardrobe-sky"
+      },
+      {
+        "garment_id": "g29",
+        "color_id": "wardrobe-brown"
+      }
+    ],
+    "verdict": "proposal",
+    "reason": "실제 기사 조합을 달하 도안으로 옮긴 비교안. 40대 가을 적합성은 별도 가설이며 원문의 방송·여름 맥락과 구분.",
+    "evidence_ids": [
+      "O01"
+    ],
+    "aesthetic_score_proposal": null,
+    "score_assessor": "assistant_editorial_proposal",
+    "original_colors": [
+      "wada-FBE6A0",
+      "wada-F27291"
+    ],
+    "weather": "사용자 캡처의 가을 착장 비교. 실제 예보를 새로 조회한 결과가 아님.",
+    "reviewed": false
+  }
+]

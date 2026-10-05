@@ -1,0 +1,108 @@
+{
+  "version": "pinterest-archive-0.2",
+  "collected_at": "2026-10-02",
+  "status": "research_review_only",
+  "production_enabled": false,
+  "purpose": "핀터레스트에서 넓게 발견 → 사진 확인·중복 구분 → 전체 착장의 반복 구조 → 달하 규칙 후보",
+  "counts": {
+    "pinterest_urls": 79,
+    "individual_pins": 76,
+    "idea_pages": 3,
+    "reference_images": 35,
+    "annotated_outfits": 36,
+    "full_outfits": 26,
+    "partial_outfits": 10,
+    "patterns": 8,
+    "publisher_pages_checked": 3,
+    "rules_approved": 0
+  },
+  "sampling": {
+    "method": "검색어로 목적 표집; 무작위 표본 아님",
+    "queries": [
+      "한국 코디/남녀 일상",
+      "니트·가디건·셔츠·코트",
+      "여름·겨울",
+      "데님·치노·와이드 팬츠·스커트",
+      "단정한 중립색·컬러 포인트·실험형 배색"
+    ],
+    "biases": [
+      "여성복 및 봄·가을, 겨울 사례가 많음",
+      "국내 원출처 확인과 중장년 명시 사례가 부족함",
+      "검색어에 들어간 색·아이템은 빈도가 높아지므로 전체 유행·선호도 비율로 해석 불가",
+      "원저자 미확인 사진이 많아 서로 독립된 지지표로 볼 수 없음"
+    ]
+  },
+  "decisions": [
+    "완성 착장 품질·현실성 → 추천색을 가능한 범위에 적용 → 와다는 선택 참고",
+    "큰 면적에 추천색을 강제하지 않음. 숨은 색 활용은 선택 안내이며 코디 이미지에는 표시하지 않음.",
+    "보유 141색 풀 유지. 사진의 색상군과 등록 색상 ID의 매핑은 별도 검수하며 자동 HEX 추출로 확정하지 않음.",
+    "출처 신뢰·전신 관찰·반복 수·사용자 선호는 각각 별도 축. 핀 저장 수나 빈도를 미적 점수로 바꾸지 않음.",
+    "연령·국적은 원문에 명시된 경우에만 기록. 성별·연령 태그는 금지 규칙이 아니라 개인 선호를 반영할 조건."
+  ],
+  "promotion_gate": {
+    "status": "운영 전 제안 기준; 통계적 검증 수치가 아님",
+    "minimum_full_looks": 5,
+    "minimum_checked_creator_groups": 3,
+    "minimum_source_date_windows": 2,
+    "required": [
+      "핵심 슬롯과 신발 모두 관찰 가능",
+      "동일 사진·같은 캠페인·동일 저자 재게시 묶음 중복 제외",
+      "한국 생활 TPO 적합성 및 전체 착장 검토",
+      "반례·대안 비교와 사용자 검토 통과",
+      "고정 회귀 사례 확인"
+    ],
+    "no_auto_approval": true
+  },
+  "next_collection": {
+    "target_distinct_looks": 300,
+    "target_primary_korean_sources_share": 0.6,
+    "maximum_single_creator_share": 0.1,
+    "coverage": [
+      "남성복·여성복을 균형 있게",
+      "봄·여름·가을·겨울",
+      "캐주얼·비즈니스 캐주얼·격식",
+      "중장년을 포함하되 연령 확인 불가를 따로 유지",
+      "기본형 80%·실험형 20%를 수집 목표로 사용"
+    ],
+    "note": "다음 수집 목표이며 달성 수치·예약 작업이 아님. 현재는 기본 후보/실험형만 편집 분류."
+  },
+  "monthly_update": [
+    "공개 검색·허용된 API·사용자 제공 핀으로 새 후보 발견; 접근 차단 페이지는 건너뜀",
+    "이미지 해시·유사 이미지 후보·원저자·캠페인 단위 중복 검토",
+    "색·아이템·핏·질감·신발·보이는 면적과 출처 상태 기록",
+    "기존 규칙 지지·반례·새 변형을 나눠 변경 이력 작성",
+    "기본 규칙은 자주 바꾸지 않고 추세 변형을 별도 보관; 검토 후 버전 승인"
+  ],
+  "backlog": [
+    "와다 조합과의 사후 유사도 탐색",
+    "개인 보유 옷 목록을 활용한 현실성 보정",
+    "미적 평가자 간 일치도·선호 학습"
+  ],
+  "access_note": "핀 페이지의 일부는 조회 제한. 확인된 공개 검색 결과와 정적 이미지, 열람 가능한 원문만 사용. 로그인·차단 우회 및 Pinterest 재귀 수집 없음.",
+  "rights": "검토용 썸네일은 비공개 HTML에 포함. 저장소에는 URL·해시·자체 주석만 저장하며 원사진을 서비스 자산으로 배포하지 않음.",
+  "discovery_queries": {
+    "pin_page": "핀터레스트 공개 핀 상세 페이지 289989663525516947",
+    "pinImageTry": "Korean casual outfit Pinterest",
+    "pinImgMen": "site:pinterest.com/pin Korean men daily outfit",
+    "imageBatch0": "Korean men casual outfit navy beige",
+    "imageBatch1": "Korean women cardigan jeans casual outfit",
+    "imageBatch2": "Korean men grey sweatshirt outfit",
+    "pinImgWide0": "men navy beige outfit Pinterest",
+    "pinImgWide1": "men burgundy knit outfit Pinterest",
+    "pinImgWide2": "women shirt trousers Korean outfit Pinterest",
+    "pinImgWide3": "men olive jacket jeans Pinterest",
+    "pinImgWide4": "women neutral cardigan outfit Pinterest",
+    "pinImgWide5": "Korean winter coat outfit Pinterest",
+    "pinImgExtra0": "Korean men pink shirt outfit Pinterest",
+    "pinImgExtra1": "men red sweatshirt outfit Pinterest",
+    "pinImgExtra2": "women skirt cardigan Korean Pinterest",
+    "pinImgExtra3": "Korean men winter coat outfit Pinterest",
+    "pinImgExtra4": "women green purple outfit Pinterest",
+    "pinImgExtra5": "Korean summer casual shirt outfit Pinterest",
+    "pinImgBalance0": "navy polo beige trousers Pinterest outfit",
+    "pinImgBalance1": "brown sweater men Pinterest outfit",
+    "pinImgBalance2": "olive jacket white tshirt Pinterest outfit",
+    "pinImgBalance3": "men summer striped shirt shorts Pinterest",
+    "pinImgBalance4": "pink shirt beige trousers men Pinterest"
+  }
+}
