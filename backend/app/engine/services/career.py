@@ -1,15 +1,31 @@
-"""Lifetime career and business report backed by the shared Myeongri core."""
+"""일·커리어 테마운 (4단 구조 · 2,900원 페이월).
+
+1단 기질 진단 · 2단 결정적 경고 → 무료
+3단 타이밍 · 4단 실천 3원칙   → is_unlocked=True 일 때만 본문을 만든다.
+
+보안 원칙
+- 잠금 상태에서는 3·4단의 '본문'을 HTML, evidence_summary, 반환 dict 어디에도 싣지 않는다.
+  (블러는 화면 효과일 뿐이라 본문이 들어 있으면 개발자도구로 보인다.)
+- 잠금 상태에서는 3단 계산(월별 엔진 호출)도 하지 않는다. 그래서 티저에는 '몇 곳'이라는 숫자를 쓰지 않는다.
+- is_unlocked 는 반드시 서버가 결제 내역에서 계산해 넘겨야 한다. 요청 파라미터를 그대로 넘기지 말 것.
+"""
 
 from __future__ import annotations
 
 from collections import Counter
+from datetime import date
 from html import escape
-from app.engine.services.reading_editorial import theme_content, THEME_VERSION as VERSION
 
 from app.engine.core.models import MyeongriCoreResult
-from app.engine.services.applied_guidance import direction_advice, state_basis
+from app.engine.calendar import to_solar
+from app.engine.timing import calculate_timing
 from app.engine.semantic import build_service_query
+from app.engine.semantic.overall import select_overall_domains
+from app.engine.services.applied_guidance import direction_advice, state_basis
+from app.engine.services.annual_copy import sanitize_paragraph, seed_from
+from app.engine.services import career_copy as copy
 
+CAREER_NARRATIVE_VERSION = "career-4tier-v1"
 
 _TEN_GOD = {
     "peer": "비견", "rob_wealth": "겁재", "eating_god": "식신",
@@ -18,128 +34,23 @@ _TEN_GOD = {
     "seven_killings": "편관", "direct_resource": "정인",
     "indirect_resource": "편인",
 }
-_PHASES = (
-    ("초년기", 1, 2, "일하는 습관과 역할의 기준을 익히는 구간"),
-    ("청년기", 3, 4, "전문성과 진로 방향을 구체화하는 구간"),
-    ("중장년기", 5, 6, "성과·책임·운영 범위를 함께 조정하는 구간"),
-    ("말년기", 7, 9, "축적한 경험을 관리·전수·새 역할로 연결하는 구간"),
-)
-_CYCLE_TOPIC = {
-    "direct_officer": "공식 역할·책임·평가 기준을 안정적으로 관리하는 일",
-    "seven_killings": "압박과 변화 속에서 우선순위를 정하고 결정하는 일",
-    "direct_wealth": "예산·계약·일정처럼 측정 가능한 성과를 관리하는 일",
-    "indirect_wealth": "고객·시장·거래 기회를 살피고 활동 범위를 조절하는 일",
-    "eating_god": "상품·서비스·기술을 꾸준한 결과물로 만드는 일",
-    "hurting_officer": "기존 방식을 개선하고 제안을 설득력 있게 전달하는 일",
-    "peer": "독립적인 전문성과 협업 역할의 경계를 정하는 일",
-    "rob_wealth": "경쟁·협업 속 권한·비용·성과 배분을 분명히 하는 일",
-    "direct_resource": "학습·문서·자격을 실제 업무 기반으로 축적하는 일",
-    "indirect_resource": "새 관점과 정보를 작게 시험해 업무 방식으로 정착시키는 일",
-}
-_RELATION_CAUTION = {
-    "branch_clash", "branch_punishment", "branch_harm", "branch_break", "stem_control",
-}
-_STATUS_GUIDE = {
-    "직장인": (
-        "현재 역할에서의 활용",
-        "평가받을 결과와 맡을 책임을 먼저 구분하고, 협업 과정과 성과를 기록으로 남기는 편이 좋습니다. 승진 가능성은 명식 하나로 확정하지 않고 실제 조직 기준·실적·공석과 함께 판단해야 합니다.",
-    ),
-    "취업/이직": (
-        "취업·이직에서의 활용",
-        "직함보다 반복해서 잘할 수 있는 역할과 업무 환경을 먼저 좁히고, 경력·기술을 확인 가능한 결과물로 정리하세요. 이동 시점은 채용 조건과 생활 여건까지 확인한 뒤 정하는 편이 안전합니다.",
-    ),
-    "사업가": (
-        "사업 운영에서의 활용",
-        "매출 기회와 함께 원가·현금흐름·회수 기간을 확인하고, 동업이나 위임이 있다면 권한과 책임을 문서로 분명히 하세요. 확장은 반복 가능한 운영 방식이 확인된 뒤가 좋습니다.",
-    ),
-    "창업": (
-        "창업 준비에서의 활용",
-        "아이디어의 크기보다 실제 고객 반응을 작은 비용으로 검증하고, 고정비·손실 한도·철수 기준을 먼저 세우세요. 명리 흐름은 사업성 검증과 자금 계획을 대신하지 않습니다.",
-    ),
-}
+# 월별 흐름에서 '일' 신호로 읽을 도메인. 직장·이직은 일과 배움, 사업·창업은 일과 돈.
+# (도메인 → 테마 매핑과 같은 결의 가정이며, 엔진의 실제 의미와 다르면 여기를 고친다.)
+_TRACK_DOMAINS = {"career": ("work", "learning"), "business": ("work", "money")}
 
 
-def _mode(status: str) -> str:
-    return "business" if status in {"사업가", "창업"} else "career"
+def _clean(text: str, where: str) -> str:
+    return sanitize_paragraph(text, fallback="", where=where)
 
 
-def _work_style(counts: Counter, mode: str) -> str:
-    values = {
-        "officer": counts["direct_officer"] + counts["seven_killings"],
-        "output": counts["eating_god"] + counts["hurting_officer"],
-        "wealth": counts["direct_wealth"] + counts["indirect_wealth"],
-        "peers": counts["peer"] + counts["rob_wealth"],
-    }
-    leading = max(values, key=values.get)
-    if not values[leading]:
-        return "한 가지 십성만으로 직업을 정하기보다 강약·구조와 실제 경력에서 반복되는 강점을 함께 확인하는 편이 정확합니다."
-    descriptions = {
-        "officer": "책임 범위와 기준이 분명한 역할에서 안정적으로 성과를 쌓는 성향이 먼저 드러납니다.",
-        "output": "기술·표현·개선을 실제 결과물로 만드는 역할에서 강점을 쓰기 쉽습니다.",
-        "wealth": "고객·자원·일정·성과를 현실적으로 관리하는 역할이 중요한 축이 됩니다.",
-        "peers": "독립적인 판단과 동료·파트너 사이의 역할 조정이 일의 성패에 큰 영향을 줍니다.",
-    }
-    suffix = (
-        " 사업에서는 이 성향을 고객 가치와 반복 가능한 운영 구조로 바꾸는 과정이 필요합니다."
-        if mode == "business" else
-        " 직장에서는 이 성향을 조직이 확인할 수 있는 역할과 결과로 보여주는 과정이 필요합니다."
-    )
-    return descriptions[leading] + suffix
-
-
-def _balance_advice(strength: str | None) -> str:
-    if strength in {"weak", "extremely_weak"}:
-        return "신약한 편에서는 역할이나 사업 범위를 한꺼번에 넓히기보다 체력·시간·지원 자원을 먼저 확보하는 것이 중요합니다."
-    if strength in {"strong", "extremely_strong"}:
-        return "신강한 편에서는 주도력을 실제 결과로 내보내는 힘이 있으나, 혼자 결정하는 범위가 커지지 않도록 검토와 피드백 절차를 두는 편이 좋습니다."
-    return "균형을 유지하려면 성과 확대와 회복·재검토 시간을 함께 배치하고, 한 역할에 책임이 과도하게 몰리지 않도록 조정하세요."
-
-
-def _count_summary(counts: Counter, mode: str) -> str:
+def _count_summary(counts: Counter, track: str) -> str:
     output = counts["eating_god"] + counts["hurting_officer"]
     wealth = counts["direct_wealth"] + counts["indirect_wealth"]
-    if mode == "business":
+    if track == "business":
         peers = counts["peer"] + counts["rob_wealth"]
         return f"식신·상관 {output}곳, 정재·편재 {wealth}곳, 비견·겁재 {peers}곳"
     officer = counts["direct_officer"] + counts["seven_killings"]
     return f"정관·편관 {officer}곳, 식신·상관 {output}곳, 정재·편재 {wealth}곳"
-
-
-def _cycle_card(cycle: dict, current_index: int | None, mode: str) -> str:
-    active = cycle.get("index") == current_index
-    god = cycle["ten_god"]
-    topic = _CYCLE_TOPIC.get(god, "현재 자원과 역할을 다시 배치하는 일")
-    changes = cycle.get("relationship_changes", [])
-    has_caution = any(item.get("type") in _RELATION_CAUTION for item in changes)
-    caution = (
-        "원국과의 충돌·조정 신호도 있어 이동·확장·계약은 조건과 책임 범위를 한 번 더 확인하세요."
-        if has_caution else
-        "이 십성 하나로 성패를 정하지 말고 실제 역할·시장·조직 조건과 함께 판단하세요."
-    )
-    context = "사업 운영" if mode == "business" else "직업 선택과 역할 수행"
-    return f"""
-    <div style="border:1px solid {'#93C5FD' if active else '#E2E8F0'};background:{'#EFF6FF' if active else '#FFFFFF'};border-radius:10px;padding:10px;">
-      <div style="font-size:13px;font-weight:800;color:#0F172A;">{cycle['start_age']}~{cycle['end_age']}세 · {cycle['pillar']['ganji']} · {_TEN_GOD.get(god, god)}{' · 현재' if active else ''}</div>
-      <p style="font-size:12.5px;color:#475569;margin:5px 0 0;line-height:1.68;">이 시기에는 <strong>{topic}</strong>이 {context}의 중심 주제가 됩니다. {caution}</p>
-    </div>"""
-
-
-def _phases_html(cycles: list[dict], current_index: int | None, mode: str) -> str:
-    groups = []
-    for name, start, end, description in _PHASES:
-        phase_cycles = [cycle for cycle in cycles if start <= cycle.get("index", 0) <= end]
-        if not phase_cycles:
-            continue
-        active = current_index is not None and start <= current_index <= end
-        ages = f'{phase_cycles[0]["start_age"]}~{phase_cycles[-1]["end_age"]}세'
-        cards = "".join(_cycle_card(cycle, current_index, mode) for cycle in phase_cycles)
-        groups.append(f"""
-        <details {'open' if active else ''} style="border:1px solid {'#93C5FD' if active else '#E2E8F0'};border-radius:13px;background:{'#EFF6FF' if active else '#F8FAFC'};padding:11px 12px;">
-          <summary style="cursor:pointer;font-size:14px;font-weight:800;color:#0F172A;">{name} · {ages}{' · 현재 구간' if active else ''}</summary>
-          <p style="font-size:12.5px;color:#64748B;margin:7px 0 9px;">{description}입니다.</p>
-          <div style="display:grid;gap:7px;">{cards}</div>
-        </details>""")
-    return "".join(groups)
 
 
 def _uncertainty(core: MyeongriCoreResult) -> str:
@@ -148,32 +59,179 @@ def _uncertainty(core: MyeongriCoreResult) -> str:
     return """
     <div style="background:#FFF7ED;border:1px solid #FED7AA;padding:12px 14px;border-radius:12px;margin-top:12px;">
       <div style="font-size:13px;font-weight:800;color:#9A3412;">생시 미상 안내</div>
-      <p style="font-size:12.5px;color:#7C2D12;margin:5px 0 0;line-height:1.65;">시주에 따라 일부 십성과 관계 구조가 달라질 수 있어, 여러 시주에서 공통으로 유지되는 원국과 대운 흐름을 중심으로 설명했습니다.</p>
+      <p style="font-size:12.5px;color:#7C2D12;margin:5px 0 0;line-height:1.65;">시주에 따라 일부 십성과 관계 구조가 달라질 수 있어, 여러 시주에서 공통으로 유지되는 원국과 흐름을 중심으로 설명했습니다.</p>
     </div>"""
 
 
-def build_lifetime_career_report(core: MyeongriCoreResult, user_name: str, status: str) -> dict[str, str]:
-    """Render career/business guidance without deterministic success claims."""
+# ---------------------------------------------------------------------------
+# 3단 계산: 월별 흐름 점수 (유료 전용)
+#   점수는 '그 달 일 도메인의 mode'를 MODE_SCORE 로 옮긴 것이다.
+#   join(합·결속) +2 · recovery +1 · base 0 · mixed -1 · change(충·변동) -2.
+#   mode 이름만 보고 정한 해석이라, 실제 엔진 의미와 맞는지 확인이 필요하다.
+# ---------------------------------------------------------------------------
+def _month_candidate(selection: dict, track: str):
+    domains = _TRACK_DOMAINS[track]
+    primary = set(selection.get("primary_domains") or ())
+    pool = [c for c in selection.get("selected", ()) if c["domain"] in domains]
+    pool.sort(key=lambda c: (c["domain"] not in primary, domains.index(c["domain"])))
+    return pool[0] if pool else None
 
-    mode = _mode(status)
-    query = build_service_query(core, mode)
+
+def _month_scores(core: MyeongriCoreResult, year: int, track: str) -> tuple[dict[int, int], dict[int, dict]]:
+    birth = to_solar(core.input.birth_date, core.input.calendar_type, core.input.is_leap_month)
+    scores: dict[int, int] = {}
+    details: dict[int, dict] = {}
+    for month in range(1, 13):
+        target = date(year, month, 15)
+        if target < birth:
+            if (year, month) < (birth.year, birth.month):
+                continue
+            target = birth
+        timing, _, _ = calculate_timing(core.input, core.natal_facts.pillars, target_date=target)
+        selection = select_overall_domains(core, "monthly", timing=timing)
+        cand = _month_candidate(selection, track)
+        mode = cand.get("mode") if cand else None
+        scores[month] = copy.MODE_SCORE.get(mode, 0)
+        details[month] = dict(mode=mode, source_ids=list(cand["source_ids"]) if cand else [],
+                              domain=cand["domain"] if cand else None)
+    return scores, details
+
+
+# ---------------------------------------------------------------------------
+# HTML 조각
+# ---------------------------------------------------------------------------
+_BOX = "border:1px solid #E2E8F0;border-radius:12px;padding:12px 14px;background:#FFFFFF;"
+_SKELETON = (
+    '<div data-locked-body="true" aria-hidden="true" style="filter:blur(3px);margin-top:8px;opacity:.55;">'
+    '<span style="display:block;height:9px;margin:6px 0;border-radius:5px;background:#CBD5E1;"></span>'
+    '<span style="display:block;height:9px;margin:6px 0;border-radius:5px;background:#CBD5E1;width:92%;"></span>'
+    '<span style="display:block;height:9px;margin:6px 0;border-radius:5px;background:#CBD5E1;width:78%;"></span>'
+    '</div>'
+)
+
+
+def _tier1_html(t1: dict) -> str:
+    return (
+        '<section data-career-tier="1" data-paywall="free"><h2>기질 진단</h2>'
+        f'<h3>{escape(t1["headline"])}</h3><p>{escape(t1["body"])}</p></section>')
+
+
+def _tier2_html(boxes: list[dict]) -> str:
+    items = "".join(
+        f'<div data-career-trap="{i}" style="{_BOX}">'
+        f'<strong>{escape(b["title"])}</strong><p style="margin:4px 0 0;">{escape(b["text"])}</p></div>'
+        for i, b in enumerate(boxes, start=1))
+    return (
+        '<section data-career-tier="2" data-paywall="free"><h2>일할 때 자주 빠지는 함정 2가지</h2>'
+        f'<div style="display:grid;gap:8px;">{items}</div></section>')
+
+
+def _boundary_html() -> str:
+    return '<hr data-paywall-boundary="career" data-price="%d" style="border:0;border-top:1px dashed #94A3B8;margin:18px 0;">' % copy.PRICE_KRW
+
+
+def _locked_html(n_months: int) -> str:
+    def block(tier: int, title: str, teaser: str) -> str:
+        return (
+            f'<section data-career-tier="{tier}" data-paywall="locked" data-locked="true" '
+            'style="border:1px dashed #94A3B8;border-radius:12px;background:#F8FAFC;padding:14px;margin-bottom:8px;">'
+            f'<div style="font-size:12px;color:#64748B;font-weight:800;">🔒 {escape(copy.LOCK_LABEL)}</div>'
+            f'<h2 style="margin:4px 0 0;">{escape(title)}</h2>'
+            f'<p data-career-teaser="{tier}" style="margin:6px 0 0;">{escape(teaser)}</p>{_SKELETON}</section>')
+    return (
+        block(3, "올해 일의 타이밍", copy.teaser_tier3(n_months))
+        + block(4, "커리어를 지키는 실천 3원칙", copy.TEASER_TIER4)
+        + f'<a href="{copy.PAYWALL_HREF}" data-paywall-cta="theme-career" style="display:inline-block;margin-top:6px;'
+          'padding:10px 16px;border-radius:10px;background:#2D6A4F;color:#fff;font-weight:700;text-decoration:none;">'
+          f'{escape(copy.cta_label())}</a>')
+
+
+def _unlocked_html(months: list[dict], bullets: list[str], year: int) -> str:
+    if months:
+        rows = "".join(
+            f'<li data-career-month="{m["month"]}" data-month-kind="{m["kind"]}">'
+            f'<strong>{m["month"]}월 · {escape(m["label"])}</strong><br>{escape(m["text"])}</li>'
+            for m in months)
+        body = f'<ul style="padding-left:18px;">{rows}</ul>'
+    else:
+        body = f'<p data-career-month="none">{escape(copy.NO_INFLECTION)}</p>'
+    tier3 = (f'<section data-career-tier="3" data-paywall="unlocked"><h2>올해 일의 타이밍</h2>'
+             f'<p class="reading-caption">{year}년 각 달 15일의 절기 월주를 기준으로 짚었습니다. 특정 사건의 날짜를 예측한 것은 아닙니다.</p>'
+             f'{body}</section>')
+    items = "".join(f'<li data-career-action="{i}">{escape(b)}</li>' for i, b in enumerate(bullets, start=1))
+    tier4 = f'<section data-career-tier="4" data-paywall="unlocked"><h2>커리어를 지키는 실천 3원칙</h2><ol>{items}</ol></section>'
+    return tier3 + tier4
+
+
+def build_lifetime_career_report(
+    core: MyeongriCoreResult,
+    user_name: str,
+    status: str = copy.DEFAULT_STATUS,
+    *,
+    is_unlocked: bool = False,
+    year: int | None = None,
+) -> dict:
+    """Render career/business guidance without deterministic success claims.
+
+    is_unlocked 는 키워드 전용이다. 옛 호출부가 status 를 세 번째 위치 인자로 넘기므로,
+    위치 인자로 두면 문자열 status 가 참값으로 읽혀 전부 잠금 해제되는 사고가 난다.
+    또한 `is True` 로만 비교하므로 "1", "yes" 같은 값으로는 열리지 않는다.
+    """
+    unlocked = is_unlocked is True
+    safe_status = status if status in copy.STATUS_TRACK else copy.DEFAULT_STATUS
+    track = copy.track_of(safe_status)
+    query = build_service_query(core, track)
     name = escape(user_name or "회원")
-    safe_status = status if status in _STATUS_GUIDE else "직장인"
+    year = year or date.today().year
+
     focused = query["natal"]["focused_ten_gods"]
     counts = Counter(item["ten_god"] for item in focused)
     strength = query["synthesis"].get("strength_state")
-    cycles = query["timing"]["luck_cycles"].get("cycles", [])
-    current = query["timing"]["luck_cycles"].get("current") or {}
-    current_index = current.get("index")
-    guide_title, guide_text = _STATUS_GUIDE[safe_status]
-    current_text = (
-        f"현재는 {current['start_age']}~{current['end_age']}세 {current['pillar']['ganji']} 대운이며, {_TEN_GOD.get(current['ten_god'], current['ten_god'])}의 주제가 활성화됩니다. {_CYCLE_TOPIC.get(current['ten_god'], '현재 역할과 자원을 다시 배치하는 일')}을 실제 상황과 함께 살펴보세요."
-        if current else
-        "현재 대운 구간을 확정하지 못해 원국과 전체 대운의 공통 흐름만 제시합니다."
+    group = copy.lead_group(counts)
+    birth = to_solar(core.input.birth_date, core.input.calendar_type, core.input.is_leap_month)
+    seed = seed_from(birth.isoformat(), "career", safe_status, year)
+
+    t1 = copy.compose_tier1(group, track, strength)
+    t2 = copy.compose_tier2(group, seed)
+
+    evidence_summary = dict(
+        natal=dict(lead_group=group, strength=strength, status=safe_status,
+                   ten_gods={_TEN_GOD.get(k, k): v for k, v in counts.items()}),
+        copy_ids=dict(tier1=group, tier2=[b["title"] for b in t2]),
     )
-    title = f"{name}님 정통 명리 평생 직업·사업운"
+
+    if unlocked:
+        scores, details = _month_scores(core, year, track)
+        months = copy.compose_tier3(copy.choose_inflections(scores), track, seed)
+        bullets = copy.compose_tier4(group, safe_status)
+        gated = _unlocked_html(months, bullets, year)
+        evidence_summary["months"] = [dict(month=m["month"], kind=m["kind"], **details.get(m["month"], {})) for m in months]
+        advice = _clean(direction_advice(query["applied_state"], "career", ""), "career.evidence")
+        evidence_extra = f'<p>{escape(advice)}</p>' if advice else ""
+    else:
+        # 티저의 '몇 곳'은 정확히 알려면 월별 계산이 필요하다. 미결제 상태에서는 계산하지 않고
+        # 숫자 없이 일반 문구를 쓴다. (숫자로 호기심을 키우고 싶으면 서버 캐시로 계산해 넘기는 쪽이 낫다.)
+        gated = _locked_html(0)
+        evidence_extra = ""
+
     evidence = (
-        f'<h4>평생 일의 구조 · {safe_status}</h4><p>{_count_summary(counts, mode)}</p>'
-        f'<p>{escape(direction_advice(query["applied_state"], "career", _balance_advice(strength)))}</p>')
-    content = theme_content(query, user_name or "회원", mode, evidence, _uncertainty(core), safe_status)
-    return {"analysis_basis": state_basis(query["applied_state"]), "title": title, "content": content, "narrative_version": VERSION}
+        '<details class="reading-evidence"><summary>이 풀이의 근거 · 명리 용어 포함</summary>'
+        f'<p>{escape(safe_status)} 기준 · {escape(_count_summary(counts, track))}</p>{evidence_extra}</details>')
+
+    content = (
+        f'<div class="theme-reading" data-theme="career" data-narrative-version="{CAREER_NARRATIVE_VERSION}" '
+        f'data-copy-version="{copy.COPY_VERSION}" data-unlocked="{str(unlocked).lower()}">'
+        + _tier1_html(t1) + _tier2_html(t2)
+        + _boundary_html() + gated
+        + evidence + _uncertainty(core) +
+        '<p class="reading-caption">원국과 흐름을 바탕으로 한 해석이며 결과를 보장하지 않습니다. '
+        '중요한 결정은 현실의 조건과 전문가의 판단도 함께 확인해 주세요.</p></div>')
+    return {
+        "analysis_basis": state_basis(query["applied_state"]),
+        "title": f"{name}님 정통 명리 직업·사업운",
+        "content": content,
+        "narrative_version": CAREER_NARRATIVE_VERSION,
+        "copy_version": copy.COPY_VERSION,
+        "is_unlocked": unlocked,
+        "evidence_summary": evidence_summary,
+    }
