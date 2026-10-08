@@ -46,6 +46,17 @@ def sanitize(text: str) -> str:
     return text if len(kept) == len(sentences) else " ".join(kept)
 
 
+def sanitize_any(value):
+    """문자열은 sanitize, dict·list 는 안의 문자열마다 적용한다. (render_overall 의 time_flow 는 dict 다.)"""
+    if isinstance(value, str):
+        return sanitize(value)
+    if isinstance(value, dict):
+        return {k: sanitize_any(v) for k, v in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [sanitize_any(v) for v in value]
+    return value
+
+
 def lead_key(primary_domains) -> str:
     for domain in primary_domains or ():
         theme = DOMAIN_TO_THEME.get(domain)
