@@ -24,6 +24,7 @@ import tarot_service
 import account_store
 import session_store
 import wallet_store
+import report_access
 import account_security
 from style_context import build_style_contexts
 from wada_context_placement import WADA_CONTEXT_PLACEMENT
@@ -526,7 +527,10 @@ def generate_detailed_report(
     user: Optional[Dict[str, Any]] = None,
     partner: Optional[Dict[str, Any]] = None,
     report_year: Optional[int] = None,
+    is_unlocked: bool = False,
 ) -> Dict[str, str]:
+    """is_unlocked 는 서버가 결제 기록에서 계산한 값만 넘긴다. 4단 구조 리포트에만 전달된다."""
+    tier = report_access.builder_kwargs(report_key, is_unlocked)
     if report_key == "sinnian":
         if not user:
             raise ValueError("올해 운세 생성에 사용자 사주 정보가 필요합니다.")
@@ -585,7 +589,7 @@ def generate_detailed_report(
             _birth_input_from_user(user, user_name),
             target_date=kst_today,
         )
-        return build_lifetime_career_report(core, user_name, sub_option)
+        return build_lifetime_career_report(core, user_name, sub_option, **tier)
     elif report_key == "love":
         if not user:
             raise ValueError("평생 애정·관계운 생성에 사용자 사주 정보가 필요합니다.")
@@ -596,7 +600,7 @@ def generate_detailed_report(
             _birth_input_from_user(user, user_name),
             target_date=kst_today,
         )
-        return build_lifetime_love_report(core, user_name, sub_option)
+        return build_lifetime_love_report(core, user_name, sub_option, **tier)
     elif report_key == "health":
         if not user:
             raise ValueError("평생 건강 생활흐름 생성에 사용자 사주 정보가 필요합니다.")
@@ -607,7 +611,7 @@ def generate_detailed_report(
             _birth_input_from_user(user, user_name),
             target_date=kst_today,
         )
-        return build_lifetime_health_report(core, user_name)
+        return build_lifetime_health_report(core, user_name, **tier)
     elif report_key == "study":
         if not user:
             raise ValueError("평생 학업·시험운 생성에 사용자 사주 정보가 필요합니다.")
@@ -619,20 +623,7 @@ def generate_detailed_report(
             target_date=kst_today,
         )
         return build_lifetime_study_report(core, user_name)
-    else:
-        title = f"{user_name}님 {sub_option} 맞춤 심층 감명서"
-        content = f"""
-        <div style="text-align:left; line-height:1.85; color:#1E293B;">
-            <div style="background:#F8FAFC; border-left:4px solid #2D6A4F; padding:16px; border-radius:14px; margin-bottom:14px;">
-                <h4 style="font-size:15.5px; font-weight:800; color:#065F46; margin-bottom:6px;">🎯 {sub_option} 핵심 분석 & 미래 전략</h4>
-                <p style="font-size:13.5px; color:#047857; margin:0; line-height:1.75;">
-                    현재 사주 운명의 흐름상 선택과 집중이 필요한 중요한 변곡점에 서 있습니다. 
-                    단기적인 이익에 흔들리지 않고 장기적인 본질에 집중할 때 기대 이상의 성과와 번영을 달성할 수 있습니다.
-                </p>
-            </div>
-        </div>
-        """
-    return {"title": title, "content": content}
+    raise ValueError(f"지원하지 않는 리포트입니다: {report_key}")
 
 # --- API Endpoints ---
 def _profile_from_kakao_request(req: KakaoAuthRequest) -> Optional[Dict[str, Any]]:
@@ -983,8 +974,7 @@ def unlock_report(req: UnlockReportRequest):
     if req.user_id not in users_db:
         raise HTTPException(status_code=404, detail="User not found")
     
-    prices = {'daewoon':450, 'sinnian':300, 'gunghap':350,
-              'wealth':220, 'business':220, 'love':220, 'health':220, 'study':220}
+    prices = report_access.REPORT_PRICES
     if req.report_key not in prices:
         raise HTTPException(status_code=422, detail='지원하지 않는 리포트입니다.')
     cost = prices[req.report_key]
@@ -1018,6 +1008,7 @@ def unlock_report(req: UnlockReportRequest):
         req.relation,
         user.get("name", "회원"),
         user=user,
+        is_unlocked=True,   # 위에서 복채 잔액을 확인했다. 이 본문은 buy_report 가 성공해야만 응답에 실린다.
         partner={
             "name": req.partner_name,
             "gender": req.partner_gender,
@@ -1055,6 +1046,37 @@ def unlock_report(req: UnlockReportRequest):
     }
 
 
+class PreviewReportRequest(BaseModel):
+    user_id: str
+    report_key: str
+    sub_option: Optional[str] = "기본"
+
+
+@app.post('/api/reports/preview')
+def preview_report(req: PreviewReportRequest):
+    """구매 전 무료 미리보기(1·2단). 3·4단 본문은 만들지도, 보내지도 않는다.
+
+    이미 산 풀이는 보관함에 저장된 본문을 그대로 돌려준다. is_unlocked 는 이 함수 안에서 항상 False 로 생성하며
+    요청 값으로는 바뀌지 않는다.
+    """
+    if req.report_key not in report_access.TIERED_REPORTS:
+        raise HTTPException(status_code=422, detail='미리보기를 지원하지 않는 리포트입니다.')
+    if req.user_id not in users_db:
+        raise HTTPException(status_code=404, detail="User not found")
+    user = hydrate_account(req.user_id)
+    if report_access.owns_report(reports_db.get(req.user_id), req.report_key):
+        stored = next(r for r in reports_db[req.user_id] if r['report_key'] == req.report_key)
+        return dict(status='owned', report_key=req.report_key, report=stored)
+    if not user.get('profile_complete'):
+        raise HTTPException(status_code=422, detail='사주 정보를 먼저 확인해 주세요.')
+    generated = generate_detailed_report(req.report_key, req.sub_option or '기본', '', '',
+                                         user.get('name', '회원'), user=user, is_unlocked=False)
+    return dict(status='preview', report_key=req.report_key, is_unlocked=False,
+                price_coins=report_access.REPORT_PRICES[req.report_key],
+                title=generated['title'], content=generated['content'],
+                narrative_version=generated.get('narrative_version'))
+
+
 class RefreshReportRequest(UnlockReportRequest):
     cost: int = 0
 
@@ -1063,8 +1085,11 @@ class RefreshReportRequest(UnlockReportRequest):
 def refresh_owned_report(req: RefreshReportRequest):
     """Explicit no-charge upgrade. Do not infer a missing partner or situation."""
     from app.engine.services.reading_editorial import THEME_VERSION
-    from app.engine.services.career import _STATUS_GUIDE as CAREER_OPTIONS
-    from app.engine.services.love import _STATUS_GUIDE as LOVE_OPTIONS
+    from app.engine.services.career import CAREER_NARRATIVE_VERSION
+    from app.engine.services.love import LOVE_NARRATIVE_VERSION
+    from app.engine.services.health import HEALTH_NARRATIVE_VERSION
+    from app.engine.services.career_copy import STATUS_TRACK as CAREER_OPTIONS
+    from app.engine.services.love_copy import STATUSES as LOVE_OPTIONS
     if req.report_key not in {'daewoon', 'wealth', 'business', 'love', 'health', 'study', 'gunghap'}:
         raise HTTPException(status_code=422, detail='이 리포트는 해당 업데이트를 지원하지 않습니다.')
     user = hydrate_account(req.user_id)
@@ -1072,7 +1097,10 @@ def refresh_owned_report(req: RefreshReportRequest):
     if original is None:
         raise HTTPException(status_code=403, detail='먼저 해당 풀이를 열람해 주세요.')
     from app.engine.services.lifetime import LIFETIME_NARRATIVE_VERSION
-    target_version = LIFETIME_NARRATIVE_VERSION if req.report_key == 'daewoon' else THEME_VERSION
+    target_version = {
+        'daewoon': LIFETIME_NARRATIVE_VERSION, 'business': CAREER_NARRATIVE_VERSION,
+        'love': LOVE_NARRATIVE_VERSION, 'health': HEALTH_NARRATIVE_VERSION,
+    }.get(req.report_key, THEME_VERSION)
     if original.get('narrative_version') == target_version:
         return dict(status='success', new_balance=user['coin'], unlocked_reports=reports_db[req.user_id])
     if not user.get('profile_complete'):
@@ -1099,7 +1127,8 @@ def refresh_owned_report(req: RefreshReportRequest):
                        sijin_index=req.partner_sijin_index)
     try:
         generated = generate_detailed_report(req.report_key, option, req.partner_name, req.relation,
-                                             user.get('name','회원'), user=user, partner=partner)
+                                             user.get('name','회원'), user=user, partner=partner,
+                                             is_unlocked=True)   # original 이 있다 = 이미 구매한 사용자
     except ValueError:
         raise HTTPException(status_code=422, detail='입력한 사주 정보를 확인해 주세요. 기존 풀이와 복채는 유지됩니다.')
     replacement = dict(report_title=generated['title'], report_content=generated['content'],
