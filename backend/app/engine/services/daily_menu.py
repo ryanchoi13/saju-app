@@ -13,6 +13,7 @@ from app.engine.services.menu_frequency import frequency_evidence, frequency_bon
 from app.engine.services.menu_demographics import demographic_evidence
 from app.engine.services.meal_feedback import preference_bonus
 from app.engine.services.menu_frequency_review import REVIEWED_POPULARITY
+from app.engine.services.daily_menu_copy import QUICK_HOME_MENUS, HOME_ONLY_MENUS
 
 
 MENU_POOL_VERSION = "daily-menu-pool-v3"
@@ -788,6 +789,7 @@ def recommend_daily_menus(
     used_ingredients: frozenset[str] = frozenset(),
     excluded_ingredients: frozenset[str] = frozenset(),
     excluded_menus: frozenset[str] = frozenset(),
+    allowed_menus: frozenset[str] | None = None,
     require_protein: bool = False,
     require_vegetables: bool = False,
     exclude_carb_heavy: bool = False,
@@ -852,6 +854,7 @@ def recommend_daily_menus(
             and item.name not in used_menus
             and _family_available(item.name, used_menus)
             and item.name not in excluded_menus
+            and (allowed_menus is None or item.name in allowed_menus)
             and item.ingredient not in excluded_ingredients
             and (not require_protein or item.has_protein)
             and (not require_vegetables or item.has_vegetables)
@@ -879,9 +882,8 @@ def recommend_daily_menus(
         "meal_period": period,
         "daily_element": daily_element,
         "reason": (
-            "오늘의 보완 방향과 식사 구성을 검토하고, "
-            f"{_SEASON_KO[season]}·{_PERIOD_KO[period]} 시간대와 오늘의 변화 흐름을 함께 "
-            "반영한 음식 추천입니다. 특정 음식의 효능을 뜻하지는 않습니다."
+            f"{_SEASON_KO[season]}과 {_PERIOD_KO[period]} 시간에 어울리고, "
+            "오늘의 기운 흐름과도 맞닿은 메뉴를 골랐어요."
         ),
     }
 
@@ -1217,4 +1219,55 @@ def recommend_daily_diet_plan(
             "carb_heavy_meals": carb_heavy_meals,
             "fat_heavy_meals": fat_heavy_meals,
         },
+    }
+
+
+def recommend_mode_menus(
+    *,
+    mode: str,
+    target_date: date,
+    current_hour: int | None,
+    day_master: str,
+    daily_ganji: str,
+    lucky_element: str,
+    primary_operation: str,
+    count: int = 2,
+    recent_menus: frozenset[str] = frozenset(),
+    age_group: str | None = None,
+    demographic_age: int | None = None,
+    gender: str | None = None,
+    preferences: dict | None = None,
+    timing_element_weights: dict[str, int] | None = None,
+    climate_tags: frozenset[str] = frozenset(),
+) -> dict:
+    """홈 화면 3모드 추천. out=외식·배달, home=10분 집밥, light=가벼운 한 끼(다이어트 풀).
+
+    기존 recommend_daily_menus / recommend_diet_menus 의 점수 체계를 그대로 쓰고,
+    모드는 '후보 범위'만 바꾼다. 해당 시간대에 후보가 없으면 menus 가 빈 리스트로 돌아온다.
+    """
+
+    common = dict(
+        target_date=target_date, current_hour=current_hour, day_master=day_master,
+        daily_ganji=daily_ganji, lucky_element=lucky_element, primary_operation=primary_operation,
+        count=count, recent_menus=recent_menus, age_group=age_group, demographic_age=demographic_age,
+        gender=gender, preferences=preferences, timing_element_weights=timing_element_weights,
+        climate_tags=climate_tags,
+    )
+    if mode == "out":
+        result = recommend_daily_menus(**common, excluded_menus=HOME_ONLY_MENUS)
+    elif mode == "home":
+        result = recommend_daily_menus(**common, allowed_menus=QUICK_HOME_MENUS)
+    elif mode == "light":
+        # 다이어트 풀에는 간식 시간대가 없으므로 저녁 기준으로 고른다.
+        if meal_period_for(current_hour) == "snack":
+            common["current_hour"] = 19
+        result = recommend_diet_menus(**common)
+    else:
+        raise ValueError(f"알 수 없는 메뉴 모드: {mode}")
+    return {
+        "mode": mode,
+        "menus": result["menus"],
+        "season": result["season"],
+        "meal_period": result["meal_period"],
+        "pool_version": result["pool_version"],
     }
