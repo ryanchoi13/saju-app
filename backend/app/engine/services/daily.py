@@ -444,7 +444,7 @@ def build_daily_fortune(
         "mode_badge": f"운세 {score}점",
         "badge_style": _badge_style(score),
         "advice": daily_copy.sanitize(" ".join([narrative["advice"]] + extra_notes)),
-        "time_flow": daily_copy.sanitize(narrative["time_flow"]),
+        "time_flow": daily_copy.sanitize_any(narrative["time_flow"]),
         "unified_advice": daily_copy.sanitize(narrative["unified_advice"]),
         "mindset": daily_copy.sanitize(narrative["title"]),
         "action": daily_copy.sanitize(narrative["unified_advice"]),
