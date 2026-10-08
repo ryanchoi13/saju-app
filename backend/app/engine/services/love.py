@@ -1,20 +1,42 @@
-"""Lifetime love and relationship report backed by the shared Myeongri core."""
+"""애정·관계 테마운 (4단 구조 · 2,900원 페이월).
+
+1단 소통 기질 진단 · 2단 관계 습관의 함정 → 무료
+3단 관계 타이밍 · 4단 다정한 관계 3원칙   → is_unlocked=True 일 때만 본문을 만든다.
+
+보안 원칙은 career.py 와 같다.
+- 잠금 상태에서는 3·4단 '본문'을 HTML, evidence_summary, 반환 dict 어디에도 싣지 않고 월별 계산도 하지 않는다.
+- is_unlocked 는 키워드 전용이며 `is True` 로만 비교한다. (status 가 위치 인자 세 번째이므로,
+  위치 인자로 두면 "솔로" 같은 문자열이 참값으로 읽혀 전부 열리는 사고가 난다.)
+- is_unlocked 는 서버가 결제 내역으로 계산해 넘겨야 하며, 해제된 결과를 캐시할 때는 키에 해제 여부를 넣을 것.
+
+집필 헌칙: 이별·이혼·외도·결혼 시기 등 단정 표현 금지 (love_copy.find_sensitive).
+성별/십신 로직은 이 파일에 없다. build_service_query(core, "love") 가 골라 준 focused_ten_gods 를
+그대로 존중해 '표현 방식과 소통 기질'로만 옮겼다.
+"""
 
 from __future__ import annotations
 
 from collections import Counter
+from datetime import date
 from html import escape
-from app.engine.services.reading_editorial import theme_content, THEME_VERSION as VERSION
 
 from app.engine.core.models import MyeongriCoreResult
-from app.engine.services.applied_guidance import direction_advice, state_basis
+from app.engine.calendar import to_solar
+from app.engine.timing import calculate_timing
 from app.engine.semantic import build_service_query
+from app.engine.semantic.overall import select_overall_domains
+from app.engine.services.applied_guidance import direction_advice, state_basis
+from app.engine.services.annual_copy import seed_from
+from app.engine.services import love_copy as copy
 
+LOVE_NARRATIVE_VERSION = "love-4tier-v1"
 
 _TEN_GOD = {
-    "peer": "비견", "rob_wealth": "겁재", "direct_wealth": "정재",
+    "peer": "비견", "rob_wealth": "겁재", "eating_god": "식신",
+    "hurting_officer": "상관", "direct_wealth": "정재",
     "indirect_wealth": "편재", "direct_officer": "정관",
-    "seven_killings": "편관",
+    "seven_killings": "편관", "direct_resource": "정인",
+    "indirect_resource": "편인",
 }
 _RELATION_LABEL = {
     "stem_combination": "천간합", "stem_control": "천간극",
@@ -23,62 +45,8 @@ _RELATION_LABEL = {
     "branch_directional_combination": "방합", "branch_punishment": "형",
     "branch_harm": "해", "branch_break": "파",
 }
-_PHASES = (
-    ("초년기", 1, 2, "가족·친구 관계에서 거리와 신뢰의 기준을 익히는 구간"),
-    ("청년기", 3, 4, "만남의 방식과 오래 유지할 관계의 기준을 구체화하는 구간"),
-    ("중장년기", 5, 6, "관계의 책임·생활 리듬·공동 목표를 함께 조정하는 구간"),
-    ("말년기", 7, 9, "쌓인 인연을 돌보고 편안한 관계 방식을 정리하는 구간"),
-)
-_CYCLE_TOPIC = {
-    "direct_wealth": "약속과 생활의 안정성을 현실적으로 맞추는 일",
-    "indirect_wealth": "만남의 폭과 관계의 변화를 유연하게 다루는 일",
-    "direct_officer": "책임·신뢰·관계의 기준을 분명히 하는 일",
-    "seven_killings": "긴장이나 빠른 변화 속에서 경계를 지키는 일",
-    "peer": "나와 상대의 독립성을 함께 존중하는 일",
-    "rob_wealth": "경쟁심·주도권·시간 배분을 공정하게 조율하는 일",
-    "eating_god": "편안한 대화와 일상의 즐거움을 꾸준히 나누는 일",
-    "hurting_officer": "솔직한 표현이 비판으로 들리지 않도록 전달하는 일",
-    "direct_resource": "상대의 말을 충분히 듣고 신뢰를 축적하는 일",
-    "indirect_resource": "혼자 해석하기보다 생각을 확인하며 소통하는 일",
-}
-_CAUTION_RELATIONS = {
-    "branch_clash", "branch_punishment", "branch_harm", "branch_break", "stem_control",
-}
-_STATUS_GUIDE = {
-    "솔로": (
-        "새 인연을 볼 때의 기준",
-        "빠른 호감보다 대화의 일관성, 약속을 지키는 태도, 생활 리듬의 호환성을 차례로 확인하세요. 만남의 가능성은 명식만으로 확정할 수 없습니다.",
-    ),
-    "썸/짝사랑": (
-        "관계를 확인하는 방법",
-        "상대의 반응을 혼자 해석하기보다 부담 없는 질문과 구체적인 약속으로 서로의 의사를 확인하세요. 애매함이 길어지면 내가 지킬 시간과 감정의 경계도 정하는 편이 좋습니다.",
-    ),
-    "연애중": (
-        "현재 관계에서의 활용",
-        "감정의 크기보다 반복되는 소통 방식과 갈등 뒤의 회복 과정을 살펴보세요. 중요한 기대와 생활 계획은 추측하지 말고 말로 확인하는 것이 좋습니다.",
-    ),
-    "기혼": (
-        "부부 관계에서의 활용",
-        "역할·돈·가족·휴식처럼 생활에 연결된 주제는 책임 범위를 구체적으로 나누고, 해결 대화와 정서적인 대화를 구분해 시간을 마련하세요.",
-    ),
-}
-
-
-def _relationship_style(counts: Counter) -> str:
-    trust = counts["direct_officer"] + counts["seven_killings"]
-    reality = counts["direct_wealth"] + counts["indirect_wealth"]
-    independence = counts["peer"] + counts["rob_wealth"]
-    leading = max(
-        ((trust, "trust"), (reality, "reality"), (independence, "independence")),
-        key=lambda item: item[0],
-    )
-    if not leading[0]:
-        return "한 가지 십성만으로 관계 성향을 정하기보다 원국 구조와 실제 관계에서 반복되는 소통 방식을 함께 살펴보는 편이 정확합니다."
-    return {
-        "trust": "관계에서 책임과 신뢰의 기준을 분명히 할 때 안정감을 느끼는 성향이 먼저 드러납니다.",
-        "reality": "말뿐인 호감보다 시간·약속·생활을 실제로 나누는 과정이 관계의 중요한 기준이 되기 쉽습니다.",
-        "independence": "가까운 관계에서도 각자의 선택과 공간을 존중하는 방식이 중요한 축이 되기 쉽습니다.",
-    }[leading[1]]
+# 월별 흐름에서 '관계' 신호로 읽을 도메인. (엔진의 실제 의미와 다르면 여기를 고친다.)
+_MONTH_DOMAINS = ("love", "relationships")
 
 
 def _natal_relationship_summary(relationships: list[dict]) -> str:
@@ -103,74 +71,176 @@ def _natal_relationship_summary(relationships: list[dict]) -> str:
     )
 
 
-def _cycle_card(cycle: dict, current_index: int | None) -> str:
-    active = cycle.get("index") == current_index
-    god = cycle["ten_god"]
-    changes = cycle.get("relationship_changes", [])
-    has_caution = any(item.get("type") in _CAUTION_RELATIONS for item in changes)
-    caution = (
-        "원국과의 충돌·조정 신호도 있어 감정이 큰 때일수록 결론을 서두르지 말고 사실과 기대를 나누어 확인하세요."
-        if has_caution else
-        "이 십성 하나로 만남·결혼·이별을 정하지 말고 실제 관계의 상태와 상대의 선택을 함께 살펴보세요."
-    )
-    return f"""
-    <div style="border:1px solid {'#FDA4AF' if active else '#E2E8F0'};background:{'#FFF1F2' if active else '#FFFFFF'};border-radius:10px;padding:10px;">
-      <div style="font-size:13px;font-weight:800;color:#0F172A;">{cycle['start_age']}~{cycle['end_age']}세 · {cycle['pillar']['ganji']} · {_TEN_GOD.get(god, god)}{' · 현재' if active else ''}</div>
-      <p style="font-size:12.5px;color:#475569;margin:5px 0 0;line-height:1.68;">이 시기에는 <strong>{_CYCLE_TOPIC.get(god, '관계에서 나와 상대의 자리를 다시 조정하는 일')}</strong>이 중심 주제가 됩니다. {caution}</p>
-    </div>"""
-
-
-def _phases_html(cycles: list[dict], current_index: int | None) -> str:
-    groups = []
-    for name, start, end, description in _PHASES:
-        phase_cycles = [cycle for cycle in cycles if start <= cycle.get("index", 0) <= end]
-        if not phase_cycles:
-            continue
-        active = current_index is not None and start <= current_index <= end
-        ages = f'{phase_cycles[0]["start_age"]}~{phase_cycles[-1]["end_age"]}세'
-        cards = "".join(_cycle_card(cycle, current_index) for cycle in phase_cycles)
-        groups.append(f"""
-        <details {'open' if active else ''} style="border:1px solid {'#FDA4AF' if active else '#E2E8F0'};border-radius:13px;background:{'#FFF1F2' if active else '#F8FAFC'};padding:11px 12px;">
-          <summary style="cursor:pointer;font-size:14px;font-weight:800;color:#0F172A;">{name} · {ages}{' · 현재 구간' if active else ''}</summary>
-          <p style="font-size:12.5px;color:#64748B;margin:7px 0 9px;">{description}입니다.</p>
-          <div style="display:grid;gap:7px;">{cards}</div>
-        </details>""")
-    return "".join(groups)
-
-
 def _uncertainty(core: MyeongriCoreResult) -> str:
     if not core.uncertainty.time_unknown:
         return ""
     return """
     <div style="background:#FFF7ED;border:1px solid #FED7AA;padding:12px 14px;border-radius:12px;margin-top:12px;">
       <div style="font-size:13px;font-weight:800;color:#9A3412;">생시 미상 안내</div>
-      <p style="font-size:12.5px;color:#7C2D12;margin:5px 0 0;line-height:1.65;">시주에 따라 일부 십성과 관계 후보가 달라질 수 있어, 여러 시주에서 공통으로 유지되는 원국과 대운 흐름을 중심으로 설명했습니다.</p>
+      <p style="font-size:12.5px;color:#7C2D12;margin:5px 0 0;line-height:1.65;">시주에 따라 일부 십성과 관계 후보가 달라질 수 있어, 여러 시주에서 공통으로 유지되는 원국과 흐름을 중심으로 설명했습니다.</p>
     </div>"""
 
 
-def build_lifetime_love_report(
-    core: MyeongriCoreResult, user_name: str, status: str
-) -> dict[str, str]:
-    """Render relationship guidance without deterministic event claims."""
+# ---------------------------------------------------------------------------
+# 3단 계산: 월별 흐름 점수 (유료 전용). 점수 규칙은 career 와 같다.
+#   join +2 · recovery +1 · base 0 · mixed -1 · change -2  (mode 이름만 보고 정한 해석)
+# ---------------------------------------------------------------------------
+def _month_candidate(selection: dict):
+    primary = set(selection.get("primary_domains") or ())
+    pool = [c for c in selection.get("selected", ()) if c["domain"] in _MONTH_DOMAINS]
+    pool.sort(key=lambda c: (c["domain"] not in primary, _MONTH_DOMAINS.index(c["domain"])))
+    return pool[0] if pool else None
 
+
+def _month_scores(core: MyeongriCoreResult, year: int) -> tuple[dict[int, int], dict[int, dict]]:
+    birth = to_solar(core.input.birth_date, core.input.calendar_type, core.input.is_leap_month)
+    scores: dict[int, int] = {}
+    details: dict[int, dict] = {}
+    for month in range(1, 13):
+        target = date(year, month, 15)
+        if target < birth:
+            if (year, month) < (birth.year, birth.month):
+                continue
+            target = birth
+        timing, _, _ = calculate_timing(core.input, core.natal_facts.pillars, target_date=target)
+        selection = select_overall_domains(core, "monthly", timing=timing)
+        cand = _month_candidate(selection)
+        mode = cand.get("mode") if cand else None
+        scores[month] = copy.MODE_SCORE.get(mode, 0)
+        details[month] = dict(mode=mode, source_ids=list(cand["source_ids"]) if cand else [],
+                              domain=cand["domain"] if cand else None)
+    return scores, details
+
+
+# ---------------------------------------------------------------------------
+# HTML 조각 (career.py 와 같은 구조. 세 테마가 끝나면 theme_common 으로 옮길 후보)
+# ---------------------------------------------------------------------------
+_BOX = "border:1px solid #E2E8F0;border-radius:12px;padding:12px 14px;background:#FFFFFF;"
+_SKELETON = (
+    '<div data-locked-body="true" aria-hidden="true" style="filter:blur(3px);margin-top:8px;opacity:.55;">'
+    '<span style="display:block;height:9px;margin:6px 0;border-radius:5px;background:#CBD5E1;"></span>'
+    '<span style="display:block;height:9px;margin:6px 0;border-radius:5px;background:#CBD5E1;width:92%;"></span>'
+    '<span style="display:block;height:9px;margin:6px 0;border-radius:5px;background:#CBD5E1;width:78%;"></span>'
+    '</div>'
+)
+
+
+def _tier1_html(t1: dict) -> str:
+    return (
+        '<section data-love-tier="1" data-paywall="free"><h2>소통 기질 진단</h2>'
+        f'<h3>{escape(t1["headline"])}</h3><p>{escape(t1["body"])}</p></section>')
+
+
+def _tier2_html(boxes: list[dict]) -> str:
+    items = "".join(
+        f'<div data-love-trap="{i}" style="{_BOX}">'
+        f'<strong>{escape(b["title"])}</strong><p style="margin:4px 0 0;">{escape(b["text"])}</p></div>'
+        for i, b in enumerate(boxes, start=1))
+    return (
+        '<section data-love-tier="2" data-paywall="free"><h2>관계에서 반복하기 쉬운 습관 2가지</h2>'
+        f'<div style="display:grid;gap:8px;">{items}</div></section>')
+
+
+def _boundary_html() -> str:
+    return ('<hr data-paywall-boundary="love" data-price="%d" '
+            'style="border:0;border-top:1px dashed #94A3B8;margin:18px 0;">' % copy.PRICE_KRW)
+
+
+def _locked_html() -> str:
+    def block(tier: int, title: str, teaser: str) -> str:
+        return (
+            f'<section data-love-tier="{tier}" data-paywall="locked" data-locked="true" '
+            'style="border:1px dashed #94A3B8;border-radius:12px;background:#F8FAFC;padding:14px;margin-bottom:8px;">'
+            f'<div style="font-size:12px;color:#64748B;font-weight:800;">🔒 {escape(copy.LOCK_LABEL)}</div>'
+            f'<h2 style="margin:4px 0 0;">{escape(title)}</h2>'
+            f'<p data-love-teaser="{tier}" style="margin:6px 0 0;">{escape(teaser)}</p>{_SKELETON}</section>')
+    return (
+        block(3, "올해 관계의 타이밍", copy.TEASER_TIER3)
+        + block(4, "다정한 관계 3원칙", copy.TEASER_TIER4)
+        + f'<a href="{copy.PAYWALL_HREF}" data-paywall-cta="theme-love" style="display:inline-block;margin-top:6px;'
+          'padding:10px 16px;border-radius:10px;background:#2D6A4F;color:#fff;font-weight:700;text-decoration:none;">'
+          f'{escape(copy.cta_label())}</a>')
+
+
+def _unlocked_html(months: list[dict], bullets: list[str], year: int) -> str:
+    if months:
+        rows = "".join(
+            f'<li data-love-month="{m["month"]}" data-month-kind="{m["kind"]}">'
+            f'<strong>{m["month"]}월 · {escape(m["label"])}</strong><br>{escape(m["text"])}</li>'
+            for m in months)
+        body = f'<ul style="padding-left:18px;">{rows}</ul>'
+    else:
+        body = f'<p data-love-month="none">{escape(copy.NO_INFLECTION)}</p>'
+    tier3 = (f'<section data-love-tier="3" data-paywall="unlocked"><h2>올해 관계의 타이밍</h2>'
+             f'<p class="reading-caption">{year}년 각 달 15일의 절기 월주를 기준으로 짚었습니다. 상대의 선택이나 특정 사건을 예측한 것은 아닙니다.</p>'
+             f'{body}</section>')
+    items = "".join(f'<li data-love-action="{i}">{escape(b)}</li>' for i, b in enumerate(bullets, start=1))
+    tier4 = f'<section data-love-tier="4" data-paywall="unlocked"><h2>다정한 관계 3원칙</h2><ol>{items}</ol></section>'
+    return tier3 + tier4
+
+
+def build_lifetime_love_report(
+    core: MyeongriCoreResult,
+    user_name: str,
+    status: str = copy.DEFAULT_STATUS,
+    *,
+    is_unlocked: bool = False,
+    year: int | None = None,
+) -> dict:
+    """Render relationship guidance without deterministic event claims."""
+    unlocked = is_unlocked is True
+    safe_status = copy.safe_status(status)
     query = build_service_query(core, "love")
     name = escape(user_name or "회원")
-    safe_status = status if status in _STATUS_GUIDE else "솔로"
+    year = year or date.today().year
+
     counts = Counter(item["ten_god"] for item in query["natal"]["focused_ten_gods"])
     relationships = query["natal"]["relationships"]
-    cycles = query["timing"]["luck_cycles"].get("cycles", [])
-    current = query["timing"]["luck_cycles"].get("current") or {}
-    current_index = current.get("index")
-    guide_title, guide_text = _STATUS_GUIDE[safe_status]
-    current_text = (
-        f"현재는 {current['start_age']}~{current['end_age']}세 {current['pillar']['ganji']} 대운이며, {_TEN_GOD.get(current['ten_god'], current['ten_god'])}의 주제가 활성화됩니다. {_CYCLE_TOPIC.get(current['ten_god'], '관계에서 나와 상대의 자리를 다시 조정하는 일')}을 실제 상황과 함께 살펴보세요."
-        if current else
-        "현재 대운 구간을 확정하지 못해 원국과 전체 대운의 공통 흐름만 제시합니다."
+    group = copy.lead_group(counts)
+    birth = to_solar(core.input.birth_date, core.input.calendar_type, core.input.is_leap_month)
+    seed = seed_from(birth.isoformat(), "love", safe_status, year)
+
+    t1 = copy.compose_tier1(group, safe_status)
+    t2 = copy.compose_tier2(group, seed)
+
+    evidence_summary = dict(
+        natal=dict(lead_group=group, status=safe_status,
+                   ten_gods={_TEN_GOD.get(k, k): v for k, v in counts.items()}),
+        copy_ids=dict(tier1=group, tier2=[b["title"] for b in t2]),
     )
-    title = f"{name}님 정통 명리 평생 애정·관계운"
+
+    if unlocked:
+        scores, details = _month_scores(core, year)
+        months = copy.compose_tier3(copy.choose_inflections(scores), safe_status, seed)
+        bullets = copy.compose_tier4(group, safe_status)
+        gated = _unlocked_html(months, bullets, year)
+        evidence_summary["months"] = [
+            dict(month=m["month"], kind=m["kind"], **details.get(m["month"], {})) for m in months]
+        advice = copy.sanitize(direction_advice(query["applied_state"], "love", ""))
+        evidence_extra = f'<p>{escape(advice)}</p>' if advice else ""
+    else:
+        gated = _locked_html()
+        evidence_extra = ""
+
+    summary = copy.sanitize(_natal_relationship_summary(relationships))
     evidence = (
-        f'<h4>평생 관계의 구조 · {safe_status}</h4><h5>원국의 관계 작용</h5>'
-        f'<p>{escape(_natal_relationship_summary(relationships))}</p>'
-        f'<p>{escape(direction_advice(query["applied_state"], "love", ""))}</p>')
-    content = theme_content(query, user_name or "회원", "love", evidence, _uncertainty(core), safe_status)
-    return {"analysis_basis": state_basis(query["applied_state"]), "title": title, "content": content, "narrative_version": VERSION}
+        '<details class="reading-evidence"><summary>이 풀이의 근거 · 명리 용어 포함</summary>'
+        f'<h4>관계의 구조 · {escape(safe_status)}</h4><h5>원국의 관계 작용</h5>'
+        f'<p>{escape(summary)}</p>{evidence_extra}</details>')
+
+    content = (
+        f'<div class="theme-reading" data-theme="love" data-narrative-version="{LOVE_NARRATIVE_VERSION}" '
+        f'data-copy-version="{copy.COPY_VERSION}" data-unlocked="{str(unlocked).lower()}">'
+        + _tier1_html(t1) + _tier2_html(t2) + _boundary_html() + gated
+        + evidence + _uncertainty(core) +
+        '<p class="reading-caption">원국과 흐름을 바탕으로 한 해석이며 상대의 마음이나 관계의 결과를 단정하지 않습니다. '
+        '중요한 결정은 현실의 상황과 서로의 대화도 함께 살펴 주세요.</p></div>')
+    return {
+        "analysis_basis": state_basis(query["applied_state"]),
+        "title": f"{name}님 정통 명리 애정·관계운",
+        "content": content,
+        "narrative_version": LOVE_NARRATIVE_VERSION,
+        "copy_version": copy.COPY_VERSION,
+        "is_unlocked": unlocked,
+        "evidence_summary": evidence_summary,
+    }
