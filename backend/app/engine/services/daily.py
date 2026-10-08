@@ -9,7 +9,10 @@ from app.engine.constants import GAN_KO, ZHI_KO
 from app.engine.core.models import MyeongriCoreResult
 from app.engine.semantic.queries import build_service_query
 from app.engine.services.simple_menu import daily_choices
+from app.engine.services.daily_menu import recommend_mode_menus
 from app.engine.services.daily_guidance import build_daily_guidance
+from app.engine.services import daily_copy, daily_menu_copy
+from app.engine.services.annual_copy import seed_from
 from app.engine.services.daily_scenarios import select_daily_scenario
 from app.engine.services.daily_topics import select_daily_topics
 from app.engine.semantic.overall import select_overall_domains
@@ -29,94 +32,6 @@ _TEN_GOD_KO = {
     "seven_killings": "편관",
     "direct_resource": "정인",
     "indirect_resource": "편인",
-}
-
-_DAILY_THEME = {
-    "peer": {
-        "title": "내 기준을 분명히 세우는 날",
-        "topic": "자기 기준과 주도권",
-        "advice": "남의 속도에 휩쓸리기보다 내가 책임질 범위를 분명히 할수록 흐름이 안정됩니다.",
-        "mindset": "내 판단을 지키되 다른 의견을 닫아두지 않기",
-        "action": "혼자 결정할 일과 함께 상의할 일을 구분하기",
-    },
-    "rob_wealth": {
-        "title": "경쟁보다 역할 조율이 중요한 날",
-        "topic": "경쟁·협업과 몫의 배분",
-        "advice": "사람과 일이 몰릴수록 역할과 비용의 기준을 먼저 맞추는 것이 중요합니다.",
-        "mindset": "서두른 양보나 경쟁심보다 내 몫과 상대의 몫을 분명히 보기",
-        "action": "공동 일정이나 비용 한 가지를 말이나 기록으로 확인하기",
-    },
-    "eating_god": {
-        "title": "꾸준히 만든 결과가 남는 날",
-        "topic": "생산·돌봄과 안정적인 결과물",
-        "advice": "크게 벌이기보다 손에 잡히는 결과를 하나 완성할 때 만족과 성과가 함께 따라옵니다.",
-        "mindset": "속도보다 완성도와 지속 가능한 리듬을 지키기",
-        "action": "미뤄둔 일 하나를 끝까지 완성하기",
-    },
-    "hurting_officer": {
-        "title": "생각을 밖으로 꺼내기 좋은 날",
-        "topic": "표현·개선과 기존 방식의 변화",
-        "advice": "새로운 제안과 표현력이 살아납니다. 다만 맞는 말도 날카롭게 들리지 않도록 순서를 다듬으세요.",
-        "mindset": "솔직함과 거친 표현을 구분하기",
-        "action": "바꾸고 싶은 일 한 가지를 구체적인 제안으로 정리하기",
-    },
-    "direct_wealth": {
-        "title": "실속 있는 결과를 챙기는 날",
-        "topic": "예산·약속과 눈에 보이는 성과",
-        "advice": "계획을 실제 결과로 연결하기 좋습니다. 돈과 약속은 감보다 숫자와 조건으로 확인하세요.",
-        "mindset": "작은 이익도 정확히 챙기되 결과를 서두르지 않기",
-        "action": "수입·지출·마감 중 하나를 숫자로 확인하기",
-    },
-    "indirect_wealth": {
-        "title": "새로운 기회를 골라 잡는 날",
-        "topic": "변화하는 기회와 활동 범위",
-        "advice": "평소와 다른 제안이나 움직임이 눈에 들어옵니다. 전부 잡기보다 감당할 수 있는 것부터 시험하세요.",
-        "mindset": "기회의 크기보다 내가 감당할 범위를 먼저 보기",
-        "action": "새 제안 하나를 작은 규모로 시험하기",
-    },
-    "direct_officer": {
-        "title": "원칙과 책임이 힘을 발휘하는 날",
-        "topic": "공식 역할·기준과 책임",
-        "advice": "정해진 기준과 순서를 지킬수록 신뢰를 얻기 좋습니다. 책임의 범위도 함께 분명히 하세요.",
-        "mindset": "원칙을 지키되 책임을 혼자 떠안지 않기",
-        "action": "마감과 책임 범위를 다시 확인하기",
-    },
-    "seven_killings": {
-        "title": "빠른 대응과 냉정한 확인이 필요한 날",
-        "topic": "압박 속 결단과 실행",
-        "advice": "결정을 재촉하는 상황이 생기기 쉽습니다. 핵심은 피하지 않되 확인하지 않은 채 밀어붙이지 마세요.",
-        "mindset": "긴장에 끌려가기보다 우선순위를 좁히기",
-        "action": "가장 급한 일 하나를 정하고 확인 절차를 남기기",
-    },
-    "direct_resource": {
-        "title": "배우고 정리할수록 유리한 날",
-        "topic": "학습·문서와 안정적인 보강",
-        "advice": "자료를 정리하고 조언을 받아들이는 과정에서 해답이 보입니다. 배운 것을 실제 일에 연결하세요.",
-        "mindset": "아는 척하기보다 필요한 도움을 정확히 구하기",
-        "action": "자료나 메모를 정리하고 한 가지를 바로 적용하기",
-    },
-    "indirect_resource": {
-        "title": "익숙한 일을 새롭게 바라보는 날",
-        "topic": "통찰·탐색과 관점의 전환",
-        "advice": "새로운 생각이 떠오르기 쉽지만 확신만으로 결론 내리지는 마세요. 작은 검증을 거치면 쓸모가 생깁니다.",
-        "mindset": "직감을 존중하되 사실 확인을 한 번 더 하기",
-        "action": "떠오른 아이디어 하나를 짧게 기록하고 검증하기",
-    },
-}
-
-
-# Plain-language display copy; calculation details stay in structured evidence.
-_DAILY_BODY = {
-    "peer": "오늘은 내 기준을 분명히 세우는 날입니다. 남의 속도보다 내가 책임질 일에 집중해 보세요.",
-    "rob_wealth": "오늘은 함께하는 일의 역할을 정리하기 좋은 날입니다. 서로 맡을 일과 비용을 미리 확인해 보세요.",
-    "eating_god": "오늘은 하던 일을 차근차근 마무리하기 좋은 날입니다. 크게 벌이기보다 작은 일 하나를 완성하는 데 집중해 보세요.",
-    "hurting_officer": "오늘은 생각을 구체적인 제안으로 꺼내기 좋은 날입니다. 솔직하게 말하되 상대가 받아들일 표현을 골라보세요.",
-    "direct_wealth": "오늘은 실속 있는 결과를 챙기는 날입니다. 돈과 약속은 숫자와 조건을 살펴보세요.",
-    "indirect_wealth": "오늘은 새로운 제안이 눈에 들어오는 날입니다. 감당할 수 있는 것부터 작게 살펴보세요.",
-    "direct_officer": "오늘은 원칙과 책임을 분명히 하는 날입니다. 정해진 순서를 지키고 맡을 범위를 정해보세요.",
-    "seven_killings": "오늘은 급한 일의 우선순위를 좁히는 날입니다. 서두르기보다 필요한 확인부터 해보세요.",
-    "direct_resource": "오늘은 배우고 정리하는 시간이 도움이 되는 날입니다. 필요한 자료나 도움을 찾아보세요.",
-    "indirect_resource": "오늘은 익숙한 일을 새롭게 바라보는 날입니다. 떠오른 생각은 작은 검증을 거쳐보세요.",
 }
 
 _RELATION_KO = {
@@ -385,6 +300,22 @@ def _badge_style(score: int) -> str:
     return "background:#FEF3C7; color:#78350F; border:1px solid #FDE68A;"
 
 
+def _menu_curation(core, target_date, current_hour, account_key, lucky_element, operation_name,
+                   ganji_han, timing_element_weights, query, recent_menus, seed) -> list[dict]:
+    """[외식·배달] / [10분 집밥] / [가벼운 한 끼] 세 모드의 큐레이션 카드."""
+    cards = []
+    for mode in daily_menu_copy.MODE_KEYS:
+        picked = recommend_mode_menus(
+            mode=mode, target_date=target_date, current_hour=current_hour,
+            day_master=account_key or core.input.birth_date.isoformat(),
+            daily_ganji=ganji_han, lucky_element=lucky_element, primary_operation=operation_name,
+            recent_menus=recent_menus, timing_element_weights=timing_element_weights,
+            climate_tags=_menu_climate_tags(query),
+        )
+        cards.append(daily_menu_copy.compose_mode_card(mode, lucky_element, picked["menus"], seed))
+    return cards
+
+
 def _with_ro(word: str) -> str:
     return josa(word, "으로/로")
 
@@ -412,7 +343,6 @@ def build_daily_fortune(
     daily_god = daily["ten_god"]
     monthly_god = monthly.get("ten_god")
     annual_god = annual.get("ten_god")
-    theme = _DAILY_THEME[daily_god]
     daily_pillar = daily["pillar"]
     ganji_han = daily_pillar["ganji"]
     ganji_display = f"{GAN_KO[ganji_han[0]]}{ZHI_KO[ganji_han[1]]}({ganji_han})"
@@ -463,6 +393,12 @@ def build_daily_fortune(
                       if include_menu else dict(menus=[], meals=[], pool_size=0, pool_version=None,
                                                 reason='', season=None, meal_period=None))
 
+    seed = seed_from(target_date.isoformat(), account_key or core.input.birth_date.isoformat(), "daily")
+    menu_curation = _menu_curation(
+        core, target_date, current_hour, account_key, lucky_element, operation_name,
+        daily_pillar["ganji"], timing_element_weights, query, recent_menus, seed,
+    ) if include_menu else []
+
     scenario = select_daily_scenario(query)
     guidance = build_daily_guidance(query, daily_god, relations, scenario=scenario)
     topics = select_daily_topics(query, relations, shensha, scenario=scenario)
@@ -479,6 +415,11 @@ def build_daily_fortune(
                    and not (n["topic"] == "relationships" and "love" in represented)]
     extra_notes.extend(n["text"] for n in topics["evidence"]["notes"]
                        if n["status"] == "assessed" and n["origin"] == "timing:daily-conditions")
+    lead = daily_copy.lead_key(overall["primary_domains"])
+    tone = daily_copy.tone_key(supportive_count, tension_count)
+    story = daily_copy.compose_story(lead, tone, seed)
+    time_tips = daily_copy.compose_tips(lead, seed, current_hour)
+    outfit = daily_copy.compose_outfit(lucky_element)
     topics["evidence"]["legacy_primary_topic"] = topics["evidence"]["primary_topic"]
     topics["evidence"]["primary_topic"] = overall["primary_domains"][0] if overall["primary_domains"] else "balance"
     topics["evidence"]["primary_topics"] = overall["primary_domains"]
@@ -492,15 +433,21 @@ def build_daily_fortune(
         "day_ganji": ganji_display,
         "day_ganji_han": ganji_han,
         "day_ten_god": _TEN_GOD_KO[daily_god],
-        "title": narrative["title"],
+        "copy_version": daily_copy.COPY_VERSION,
+        "story": story,
+        "time_tips": time_tips,
+        "menu_curation": menu_curation,
+        "menu_footnote": daily_menu_copy.FOOTNOTE,
+        "outfit": outfit,
+        "title": daily_copy.sanitize(narrative["title"]),
         "score": score,
         "mode_badge": f"운세 {score}점",
         "badge_style": _badge_style(score),
-        "advice": " ".join([narrative["advice"]] + extra_notes),
-        "time_flow": narrative["time_flow"],
-        "unified_advice": narrative["unified_advice"],
-        "mindset": narrative["title"],
-        "action": narrative["unified_advice"],
+        "advice": daily_copy.sanitize(" ".join([narrative["advice"]] + extra_notes)),
+        "time_flow": daily_copy.sanitize(narrative["time_flow"]),
+        "unified_advice": daily_copy.sanitize(narrative["unified_advice"]),
+        "mindset": daily_copy.sanitize(narrative["title"]),
+        "action": daily_copy.sanitize(narrative["unified_advice"]),
         "lucky_element": lucky_element,
         "lucky_item": item,
         "lucky_item_reason": item_reason,
@@ -509,7 +456,7 @@ def build_daily_fortune(
         "recommended_menu": menu_selection["menus"][0] if menu_selection["menus"] else '',
         "recommended_menus": menu_selection["menus"],
         "recommended_meals": menu_selection["meals"],
-        "recommended_menu_reason": menu_selection["reason"],
+        "recommended_menu_reason": daily_copy.sanitize(menu_selection["reason"]),
         "menu_pool_size": menu_selection["pool_size"],
         "menu_pool_version": menu_selection["pool_version"],
         "menu_context": {
