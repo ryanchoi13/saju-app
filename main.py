@@ -1059,11 +1059,20 @@ def preview_report(req: PreviewReportRequest):
     이미 산 풀이는 보관함에 저장된 본문을 그대로 돌려준다. is_unlocked 는 이 함수 안에서 항상 False 로 생성하며
     요청 값으로는 바뀌지 않는다.
     """
-    if req.report_key not in report_access.TIERED_REPORTS:
+    if req.report_key not in report_access.PREVIEW_REPORTS:
         raise HTTPException(status_code=422, detail='미리보기를 지원하지 않는 리포트입니다.')
     if req.user_id not in users_db:
         raise HTTPException(status_code=404, detail="User not found")
     user = hydrate_account(req.user_id)
+    if req.report_key in report_access.FREE_REPORTS:
+        # 대운: 현재 대운 + 타고난 성향은 무료, 다음 대운부터는 빌더가 잠금 티저로만 만든다.
+        if not user.get('profile_complete'):
+            raise HTTPException(status_code=422, detail='사주 정보를 먼저 확인해 주세요.')
+        generated = generate_detailed_report(req.report_key, '기본', '', '',
+                                             user.get('name', '회원'), user=user, is_unlocked=False)
+        return dict(status='free', report_key=req.report_key, is_unlocked=False, price_coins=0,
+                    title=generated['title'], content=generated['content'],
+                    narrative_version=generated.get('narrative_version'))
     if report_access.owns_report(reports_db.get(req.user_id), req.report_key):
         stored = next(r for r in reports_db[req.user_id] if r['report_key'] == req.report_key)
         return dict(status='owned', report_key=req.report_key, report=stored)

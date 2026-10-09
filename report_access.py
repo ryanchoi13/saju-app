@@ -10,6 +10,10 @@ from __future__ import annotations
 # 1·2단 무료 + 3·4단 구매 후 공개 (career/love/health 빌더). 'daewoon' 은 lifetime.py 에 is_unlocked 가 아직 없다.
 TIERED_REPORTS = frozenset({"business", "love", "health"})
 
+# 무료 공개 리포트. 현재 대운·타고난 성향은 무료이고 미래 대운은 빌더가 잠금 티저로만 만든다(본문 없음).
+FREE_REPORTS = frozenset({"daewoon"})
+PREVIEW_REPORTS = TIERED_REPORTS | FREE_REPORTS
+
 # 보관함에 저장된 풀이가 최신인지 비교할 때 쓰는 키별 문구 버전. main.py 가 빌더 상수로 채운다.
 REPORT_PRICES = {
     "daewoon": 450, "sinnian": 300, "gunghap": 350,

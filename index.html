@@ -505,6 +505,21 @@
         #talismanTitle { color:#544332!important; font-size:15px!important; }
         #talismanPower { color:#846D4A!important; font-size:13px!important; }
         #talismanDesc { color:#6B614F!important; font-size:13px!important; line-height:1.75!important; }
+        /* --- v2: 오늘의 이야기 · 2-Track 코디 · 테마 미리보기 --- */
+        .daily-banner .journal-times > div[data-now="true"] > span:first-child { background:var(--ui-accent)!important; color:#fff!important; }
+        #outfitTrack { display:flex; flex-direction:column; gap:10px; }
+        #outfitTrack .outfit-track-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
+        #outfitTrack .outfit-track { border:1px solid var(--ui-line); border-radius:16px; padding:14px; background:var(--ui-surface); display:flex; flex-direction:column; gap:6px; }
+        #outfitTrack .outfit-track-label { font-size:.8125rem; font-weight:800; color:var(--ui-accent); }
+        #outfitTrack .outfit-swatch { display:block; width:100%; height:34px; border-radius:10px; border:1px solid rgba(15,23,42,.12); }
+        #outfitTrack .outfit-track strong { font-size:1rem; color:var(--ui-ink); }
+        #outfitTrack .outfit-track p { margin:0; font-size:.9375rem; line-height:1.7; color:var(--ui-muted); word-break:keep-all; }
+        .theme-preview { margin-top:14px; display:flex; flex-direction:column; gap:12px; }
+        .theme-preview .theme-unlock-cta { width:100%; }
+        .theme-preview-note { font-size:.8125rem; color:var(--ui-muted); margin:0; }
+        .daewoon-free .lifetime-nature { margin-top:12px; }
+        .lock-soon { display:inline-block; margin-top:10px; padding:6px 12px; border-radius:9px; background:var(--ui-tint); color:var(--ui-muted); }
+        @media (max-width:380px){ #outfitTrack .outfit-track-grid { grid-template-columns:1fr; } }
 </style>
 <script id="dalha-hangul">
 /* es-hangul 2.4.0 | MIT | Copyright (c) Viva Republica, Inc. | third_party/es-hangul-LICENSE */
@@ -675,7 +690,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                         <span id="resScoreBadge" style="background: #FEF3C7; color: #78350F; border: 1px solid #FDE68A; font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 9999px;">운세 88점</span>
                     </div>
 
-                    <h3 id="resTitle" style="font-size: 17px; font-weight: 600; text-align: left; line-height: 1.4; color: #FFFFFF; font-family: 'Noto Serif KR', serif; margin-top: 2px;">도약과 실속의 기운이 깃든 날</h3>
+                    <h3 id="resTitle" style="font-size: 17px; font-weight: 600; text-align: left; line-height: 1.4; color: #FFFFFF; font-family: 'Noto Serif KR', serif; margin-top: 2px;">오늘의 이야기를 준비하고 있어요</h3>
                     
                     <div id="resAdvice" style="font-size: 13.5px; color: #E2E8F0; font-weight: 400; line-height: 1.7; text-align: left; white-space: pre-line;"></div>
 
@@ -716,6 +731,15 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                             <option value="business_formal">비즈니스 포멀</option>
                         </select>
                     </div>
+                    <!-- v2: 행운 오행 컬러 2-Track (서버 daily_fortune.outfit) -->
+                    <div id="outfitTrack" hidden>
+                        <span style="font-size: 12px; font-weight: 700; color: #64748B;">오늘의 행운 컬러</span>
+                        <p id="outfitCaption" class="reading-caption" style="margin:0;"></p>
+                        <div class="outfit-track-grid">
+                            <article class="outfit-track" id="outfitBasic"><span class="outfit-track-label"></span><i class="outfit-swatch"></i><strong></strong><p></p></article>
+                            <article class="outfit-track" id="outfitPoint"><span class="outfit-track-label"></span><i class="outfit-swatch"></i><strong></strong><p></p></article>
+                        </div>
+                    </div>
                     <!-- 개운 컬러 팔레트 (20px 확대 적용) -->
                     <div>
                         <span style="font-size: 12px; font-weight: 700; color: #64748B; display: flex; align-items: center; gap: 4px; margin-bottom: 8px;">
@@ -723,9 +747,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                         </span>
                         <div id="dynamicColorPaletteBox" style="display: flex; align-items: center; justify-content: flex-start; gap: 10px; flex-wrap: wrap; margin-bottom: 8px;">
                         </div>
-                        <p id="paletteMoodStoryBox" style="font-size: 12.5px; color: #475569; line-height: 1.6; margin: 0; background: #F8FAFC; border-radius: 10px; padding: 10px 12px; border-left: 3px solid #2D6A4F;">
-                            "깊은 미드나잇 인디고와 안개빛 스카이블루가 만나 사주의 금전운과 전문성을 견고히 세웁니다."
-                        </p>
+                        <p id="paletteMoodStoryBox" style="font-size: 12.5px; color: #475569; line-height: 1.6; margin: 0; background: #F8FAFC; border-radius: 10px; padding: 10px 12px; border-left: 3px solid #2D6A4F;"></p>
                     </div>
 
                     <!-- 오늘 추천 룩 매칭 -->
@@ -955,23 +977,9 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                         <h3 id="sajuSummaryTitle">지금의 나부터 읽어보세요</h3>
                         <p id="sajuSummaryText">타고난 성향과 현재 대운, 10년 단위 인생 흐름을 함께 읽어요. 올해·월별 운세는 별도 상품입니다.</p>
                     </section>
-                    <div class="card reading-lead">
-                        <span class="reading-eyebrow">정통 명리 · 평생운세</span>
-                        <h3 id="lifetimeLeadTitle">지금의 나에게,<br>어떤 선택이 필요할까요?</h3>
-                        <p id="lifetimeLeadDescription">타고난 성향을 살펴보고, 현재 대운을 중심으로 일·돈·관계에서 돌아볼 점을 읽어요. 지나온 시기와 앞으로의 큰 흐름도 함께 담았어요.</p>
-                        <div class="report-facts"><span>성향 + 현재 대운 + 인생 흐름 · 한 번 구매</span><strong data-report-price="daewoon">450 복채</strong></div>
-                        <div id="daewoonTeaserBox" class="report-preview">
-                            <span class="preview-label">이런 이야기를 읽어요</span>
-                            <ol><li><strong>지금의 나 · 현재 대운</strong><span>일·돈·애정·관계·회복·배움의 6가지 이야기</span></li><li><strong>타고난 성향</strong><span>나의 강점과 반복되는 선택의 이유</span></li><li><strong>인생 흐름</strong><span>필요할 때 펼쳐보는 10년 단위 참고 풀이</span></li></ol>
-                        </div>
-                        <p id="lifetimeScopeNote" class="reading-caption">‘지금의 나’는 현재 속한 약 10년의 대운을 중심으로 읽는 풀이예요. 오늘·이번 달·올해의 운세와는 구분해 주세요.</p>
-                        <div id="daewoonBox" class="hidden"></div>
-                        <button id="btnDaewoon" class="reading-primary" onclick="handleUnlockReportOnServer('daewoon', 450)">450 복채로 평생운세 읽기</button>
-                        <p id="lifetimePurchaseCaption" class="reading-caption">450 복채로 세 내용을 함께 읽어요. 다시 읽을 때는 추가 결제가 없어요.</p>
-                    </div>
-                    <details id="sajuEvidence" class="card reading-evidence">
-                        <summary>내 사주명식과 해석 근거 <span>펼쳐 보기</span></summary>
-                        <p class="reading-caption">태어난 연·월·일·시와 오행 구성을 확인할 수 있습니다.</p>
+                    <details id="sajuEvidence" class="card reading-evidence" open>
+                        <summary>나의 여덟 글자와 오행 <span>접기·펼치기</span></summary>
+                        <p class="reading-caption">태어난 연·월·일·시의 여덟 글자와 오행 구성이에요. 아래 풀이는 이 구성에서 출발해요.</p>
                     <div style="margin-bottom: 12px; text-align: left;">
                         <span id="sajuSingangBadge" style="font-size: 11.5px; background: #FEF3C7; color: #78350F; font-weight: 700; padding: 2px 8px; border-radius: 6px;">분석 결과 확인 중</span>
                     </div>
@@ -1029,6 +1037,20 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                         <p id="sajuElementsNote" style="font-size:11.5px;color:#64748B;line-height:1.55;margin:8px 2px 0;">천간·지지의 표면 구성을 보여줍니다.</p>
                     </div>
                     </details>
+                    <div class="card reading-lead">
+                        <span class="reading-eyebrow">정통 명리 · 평생운세</span>
+                        <h3 id="lifetimeLeadTitle">지금의 나에게,<br>어떤 선택이 필요할까요?</h3>
+                        <p id="lifetimeLeadDescription">타고난 성향을 살펴보고, 현재 대운을 중심으로 일·돈·관계에서 돌아볼 점을 읽어요. 지나온 시기와 앞으로의 큰 흐름도 함께 담았어요.</p>
+                        <div class="report-facts"><span>성향 + 현재 대운 + 인생 흐름 · 한 번 구매</span><strong data-report-price="daewoon">450 복채</strong></div>
+                        <div id="daewoonTeaserBox" class="report-preview">
+                            <span class="preview-label">이런 이야기를 읽어요</span>
+                            <ol><li><strong>지금의 나 · 현재 대운</strong><span>일·돈·애정·관계·회복·배움의 6가지 이야기</span></li><li><strong>타고난 성향</strong><span>나의 강점과 반복되는 선택의 이유</span></li><li><strong>인생 흐름</strong><span>필요할 때 펼쳐보는 10년 단위 참고 풀이</span></li></ol>
+                        </div>
+                        <p id="lifetimeScopeNote" class="reading-caption">‘지금의 나’는 현재 속한 약 10년의 대운을 중심으로 읽는 풀이예요. 오늘·이번 달·올해의 운세와는 구분해 주세요.</p>
+                        <div id="daewoonBox" class="hidden"></div>
+                        <button id="btnDaewoon" class="reading-primary" onclick="handleUnlockReportOnServer('daewoon', 450)">450 복채로 평생운세 읽기</button>
+                        <p id="lifetimePurchaseCaption" class="reading-caption">450 복채로 세 내용을 함께 읽어요. 다시 읽을 때는 추가 결제가 없어요.</p>
+                    </div>
                 <details id="saju-life" class="card lifetime-reference">
                     <summary>참고: 10년 단위 인생 흐름 <span>펼쳐 보기</span></summary>
                     <div class="lifetime-reference-body">
@@ -1099,19 +1121,19 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 <section id="concern-business" class="card report-entry hidden" data-concern="business" aria-labelledby="concern-heading-business">
                     <span class="reading-eyebrow">일·진로 · 한 사람의 사주 풀이</span>
                     <h3 id="concern-heading-business" tabindex="-1">직업·사업운</h3><p>잘하는 일을 오래 이어가고 싶을 때, 나의 일하는 방식과 다음 역할을 준비하는 기준을 살펴봐요.</p>
-                    <div class="report-preview"><span class="preview-label">이런 이야기를 읽어요</span><ol><li><strong>일하는 나의 강점</strong><span>경험을 성과로 이어가는 방식</span></li><li><strong>지금 상황에 맞춰</strong><span>직장·취업·이직·사업·창업 중 선택</span></li><li><strong>앞으로의 준비</strong><span>역할 변화와 시기별 흐름</span></li></ol></div>
-                    <div class="report-facts"><span>성향과 긴 흐름을 살펴봐요</span><strong data-report-price="business">220 복채</strong></div>
+                    <div class="report-preview"><span class="preview-label">이런 이야기를 읽어요</span><ol><li><strong>일하는 나의 강점</strong><span>경험을 내 일의 방식으로 이어가는 법</span></li><li><strong>지금 상황에 맞춰</strong><span>직장·취업·이직·사업·창업 중 선택</span></li><li><strong>앞으로의 준비</strong><span>역할 변화와 시기별 흐름</span></li></ol></div>
+                    <div class="report-facts"><span>성향과 긴 흐름을 살펴봐요</span><strong data-report-price="business">앞부분 무료</strong></div>
                     <div id="themeReport_business" class="hidden"></div>
-                    <button id="btnTheme_business" class="reading-primary" onclick="openThemeSelectModal('business')">상황 고르고 풀이 읽기 · 220 복채</button>
+                    <button id="btnTheme_business" class="reading-primary" onclick="openThemeSelectModal('business')">상황 고르고 먼저 읽어보기</button>
                     <p class="reading-caption report-scope">특정 날짜의 이직·창업 여부를 정해주는 풀이는 아니에요.</p>
                 </section>
                 <section id="concern-love" class="card report-entry hidden" data-concern="love" aria-labelledby="concern-heading-love">
                     <span class="reading-eyebrow">애정·관계 · 한 사람의 사주 풀이</span>
                     <h3 id="concern-heading-love" tabindex="-1">나의 애정운</h3><p>마음이 가는 방식과 관계에서 반복하는 선택을 돌아봐요. 지금의 연애 상황에 맞춰 읽을 수 있어요.</p>
                     <div class="report-preview"><span class="preview-label">이런 이야기를 읽어요</span><ol><li><strong>나의 관계 성향</strong><span>편안함을 느끼는 방식과 표현</span></li><li><strong>지금의 사랑</strong><span>솔로·썸·연애·부부 중 선택</span></li><li><strong>더 나은 대화</strong><span>갈등을 풀고 서로를 이해하는 방법</span></li></ol></div>
-                    <div class="report-facts"><span>성향과 긴 흐름을 살펴봐요</span><strong data-report-price="love">220 복채</strong></div>
+                    <div class="report-facts"><span>성향과 긴 흐름을 살펴봐요</span><strong data-report-price="love">앞부분 무료</strong></div>
                     <div id="themeReport_love" class="hidden"></div>
-                    <button id="btnTheme_love" class="reading-primary" onclick="openThemeSelectModal('love')">상황 고르고 풀이 읽기 · 220 복채</button>
+                    <button id="btnTheme_love" class="reading-primary" onclick="openThemeSelectModal('love')">상황 고르고 먼저 읽어보기</button>
                     <p class="reading-caption report-scope">나의 애정운은 한 사람을 풀이해요. 서로의 차이는 아래 두 사람 궁합에서 살펴보세요.</p>
                 </section>
                 <section id="concern-wealth" class="card report-entry hidden" data-concern="wealth" aria-labelledby="concern-heading-wealth">
@@ -1136,9 +1158,9 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                     <span class="reading-eyebrow">생활 리듬 · 한 사람의 사주 풀이</span>
                     <h3 id="concern-heading-health" tabindex="-1">활동과 회복</h3><p>바쁘게 채우는 일만큼 쉬는 방식도 중요해요. 활동과 회복의 균형을 생활 속에서 돌아봐요.</p>
                     <div class="report-preview"><span class="preview-label">이런 이야기를 읽어요</span><ol><li><strong>생활의 균형</strong><span>활동과 휴식을 나누는 관점</span></li><li><strong>회복의 습관</strong><span>일정을 덜고 여유를 만드는 방법</span></li><li><strong>오래 이어갈 리듬</strong><span>시기별 주제와 생활 속 실천</span></li></ol></div>
-                    <div class="report-facts"><span>성향과 긴 흐름을 살펴봐요</span><strong data-report-price="health">220 복채</strong></div>
+                    <div class="report-facts"><span>성향과 긴 흐름을 살펴봐요</span><strong data-report-price="health">앞부분 무료</strong></div>
                     <div id="themeReport_health" class="hidden"></div>
-                    <button id="btnTheme_health" class="reading-primary" onclick="handleUnlockReportOnServer('health', 220)">생활 리듬 읽기 · 220 복채</button>
+                    <button id="btnTheme_health" class="reading-primary" onclick="showThemePreview('health')">생활 리듬 먼저 읽어보기</button>
                     <p class="reading-caption report-scope">질병을 진단하지 않아요. 몸의 불편함은 의료진과 확인해 주세요.</p>
                 </section>
                 <section id="concern-gunghap" class="card report-entry compatibility-card hidden" data-concern="gunghap" aria-labelledby="compatibilityTitle">
@@ -2337,6 +2359,45 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             document.getElementById('bottomNavBar').classList.add('hidden');
         }
 
+        // ---- v2 Tab 1: 서버 story · time_tips · outfit 을 메인으로, 레거시 title/advice/time_flow 는 보조(없을 때만) ----
+        function renderTodayStory(fortune) {
+            const story = fortune?.story;
+            const hasStory = !!(story && typeof story.body === 'string' && story.body.trim());
+            document.getElementById('resTitle').textContent = (hasStory && story.headline) || fortune?.title || '';
+            document.getElementById('resAdvice').textContent = hasStory ? story.body : (fortune?.advice || '');
+            const slots = {morning:'timeMorningText', afternoon:'timeAfternoonText', evening:'timeEveningText'};
+            const tips = Array.isArray(fortune?.time_tips) ? fortune.time_tips : [];
+            const flow = fortune?.time_flow || {};
+            Object.entries(slots).forEach(([slot, id]) => {
+                const el = document.getElementById(id);
+                const tip = tips.find(t => t && t.slot === slot);
+                el.textContent = (tip && tip.text) || flow[slot] || '';
+                const row = el.parentElement;
+                if (row) row.dataset.now = String(!!(tip && tip.is_now));
+            });
+        }
+
+        const OUTFIT_HEX = {
+            '올리브 그린':'#6B7B3A', '청록':'#2A9D8F', '소프트 코랄':'#F4978E', '레드':'#D64545', '베이지':'#D9C3A5',
+            '브라운':'#8B5A2B', '화이트':'#F8FAFC', '실버':'#C0C7D0', '네이비':'#1E3A8A', '블랙':'#1E293B'
+        };
+        function renderOutfitTrack(fortune) {
+            const box = document.getElementById('outfitTrack');
+            if (!box) return;
+            const outfit = fortune?.outfit;
+            const ok = outfit && outfit.basic && outfit.point && outfit.basic.text && outfit.point.text;
+            box.hidden = !ok;
+            if (!ok) return;
+            document.getElementById('outfitCaption').textContent = outfit.caption || '';
+            [['outfitBasic', outfit.basic], ['outfitPoint', outfit.point]].forEach(([id, track]) => {
+                const el = document.getElementById(id);
+                el.querySelector('.outfit-track-label').textContent = track.label || '';
+                el.querySelector('.outfit-swatch').style.background = OUTFIT_HEX[track.color] || '#CBD5E1';
+                el.querySelector('strong').textContent = track.color || '';
+                el.querySelector('p').textContent = track.text || '';
+            });
+        }
+
         function applySajuAnalysisToUI(data) {
             currentFortuneData = data;
             const resultDate = data.daily_fortune?.date;
@@ -2366,8 +2427,8 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             document.getElementById('sajuOwnerName').innerText = `${currentUserName}님`;
             document.getElementById('sajuOwnerMeta').innerText = data.saju_profile_detail || data.birth_summary;
             document.getElementById('sajuSingangBadge').innerText = data.saju_data?.singang_label || "강약 판단 정보 없음";
-            document.getElementById('resTitle').innerText = data.daily_fortune.title;
-            document.getElementById('resAdvice').innerText = data.daily_fortune.advice;
+            renderTodayStory(data.daily_fortune);
+            renderOutfitTrack(data.daily_fortune);
             
             const scoreBadgeEl = document.getElementById('resScoreBadge');
             if (scoreBadgeEl) {
@@ -2375,12 +2436,6 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 if (data.daily_fortune.badge_style) {
                     scoreBadgeEl.style.cssText = data.daily_fortune.badge_style + " font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 9999px;";
                 }
-            }
-
-            if (data.daily_fortune.time_flow) {
-                document.getElementById('timeMorningText').innerText = data.daily_fortune.time_flow.morning;
-                document.getElementById('timeAfternoonText').innerText = data.daily_fortune.time_flow.afternoon;
-                document.getElementById('timeEveningText').innerText = data.daily_fortune.time_flow.evening;
             }
 
             document.getElementById('resItem').innerText = data.daily_fortune.lucky_item;
@@ -3001,6 +3056,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             currentCoin = data.new_balance;
             updateCoinDisplay();
             serverUnlockedReports = data.unlocked_reports;
+            delete themePreviewCache[reportKey];
             renderServerArchive();
             restoreUnlockedUIFromReports();
             openReadingReport(latestOwnedReportIndex(reportKey));
@@ -3258,7 +3314,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                     </div>`;
             }
             const submit = document.getElementById('themeSelectConfirm');
-            submit.textContent = forRefresh ? '선택한 상황으로 무료 업데이트' : '220 복채로 즉시 열람하기';
+            submit.textContent = forRefresh ? '선택한 상황으로 무료 업데이트' : '무료로 먼저 읽어보기';
             if (forRefresh) {
                 const saved = serverUnlockedReports[ownedIndex]?.reading_context?.sub_option;
                 modalBox.querySelectorAll('input[name="optM"]').forEach(input => { input.checked = input.value === saved; });
@@ -3280,7 +3336,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             const refreshing = themeRefreshMode;
             closeThemeSelectModal();
             if (refreshing) refreshOwnedReading(null, subOpt);
-            else handleUnlockReportOnServer(currentThemeKey, 220, subOpt);
+            else showThemePreview(currentThemeKey, subOpt);
         }
 
         function setGenderType(gender) {
@@ -3482,7 +3538,11 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 slot.classList.toggle('hidden', index < 0);
                 button.classList.toggle('hidden', index >= 0);
                 if (teaserId) document.getElementById(teaserId).classList.toggle('hidden', index >= 0);
-                if (index < 0) return;
+                if (index < 0) {
+                    if (key === 'daewoon') renderDaewoonFree();
+                    else if (themePreviewCache[key]) renderThemePreview(key);
+                    return;
+                }
                 const item = serverUnlockedReports[index];
                 const note = document.createElement('p');
                 note.className = 'reading-caption';
@@ -3519,10 +3579,121 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 }
             });
             document.getElementById('daewoonFlowOpen').textContent = latestOwnedReportIndex('daewoon') >= 0 ? '구매한 평생운세 전체 읽기' : '같은 평생운세에 포함된 풀이';
+            if (latestOwnedReportIndex('daewoon') < 0) applyDaewoonFreeChrome();
+        }
+
+        // ---- v2 Tab 2: 현재 대운 + 타고난 성향은 무료, 다음 대운은 잠금 티저 (서버 /api/reports/preview daewoon) ----
+        const daewoonFreeCache = {};
+        function applyDaewoonFreeChrome() {
+            const price = document.querySelector('[data-report-price="daewoon"]');
+            if (price) { price.textContent = '무료'; price.classList.remove('report-owned'); }
+            const facts = price?.previousElementSibling;
+            if (facts) facts.textContent = '현재 대운 + 타고난 성향';
+            ['btnDaewoon','daewoonTeaserBox','lifetimePurchaseCaption','daewoonFlowOpen'].forEach(id => document.getElementById(id)?.classList.add('hidden'));
+            document.getElementById('daewoonFlowOpen')?.nextElementSibling?.classList.add('hidden');
+            document.getElementById('lifetimeLeadTitle').innerHTML = '지금의 나';
+            document.getElementById('lifetimeLeadDescription').classList.add('hidden');
+        }
+        function paintDaewoonFree(data, box) {
+            const tpl = document.createElement('template');
+            tpl.innerHTML = data.content || '';
+            // 서버가 넣어 둔 '대운 전체 풀이' 결제 링크는 아직 판매 상품이 없으므로 안내 문구로 바꾼다.
+            tpl.content.querySelectorAll('[data-paywall-cta]').forEach(a => {
+                const note = document.createElement('span'); note.className = 'lock-soon'; note.textContent = '다음 대운 풀이는 준비 중이에요'; a.replaceWith(note);
+            });
+            const cur = tpl.content.querySelector('[data-lifetime-section="current-cycle"]');
+            const up = tpl.content.querySelector('[data-lifetime-section="upcoming"]');
+            const nature = tpl.content.querySelector('[data-lifetime-section="nature"]');
+            box.replaceChildren();
+            box.classList.add('daewoon-free');
+            if (cur) box.append(cur);
+            if (up) box.append(up);
+            if (nature) {
+                const d = document.createElement('details'); d.className = 'lifetime-nature';
+                const sum = document.createElement('summary'); sum.textContent = '타고난 성향 전체 읽기';
+                d.append(sum, nature); box.append(d);
+            }
+            box.classList.toggle('hidden', !box.childElementCount);
+        }
+        async function renderDaewoonFree() {
+            const box = document.getElementById('daewoonBox');
+            if (!box || !currentUserId) return;
+            const cached = daewoonFreeCache[currentUserId];
+            if (cached) { paintDaewoonFree(cached, box); return; }
+            if (renderDaewoonFree.pending) return;
+            renderDaewoonFree.pending = true;
+            try {
+                const res = await fetch('/api/reports/preview', {
+                    method:'POST', headers:{'Content-Type':'application/json'},
+                    body: JSON.stringify({user_id: currentUserId, report_key: 'daewoon'})
+                });
+                const data = await res.json();
+                if (!res.ok || !data.content) throw new Error(data.detail || 'preview failed');
+                daewoonFreeCache[currentUserId] = data;
+                if (latestOwnedReportIndex('daewoon') < 0) paintDaewoonFree(data, box);
+            } catch (error) {
+                box.classList.add('hidden');
+            } finally {
+                renderDaewoonFree.pending = false;
+            }
+        }
+
+        // ---- v2 Tab 3: 직업·사업 / 애정 / 생활 리듬 — 1·2단 무료 미리보기 → 가격은 서버 값 → 결제 시 3·4단 해제 ----
+        const COIN_UNIT = '복채';
+        const themePreviewCache = {};
+        function renderThemePreview(key) {
+            const state = themePreviewCache[key];
+            const slot = document.getElementById(`themeReport_${key}`);
+            if (!state || !slot) return;
+            const tpl = document.createElement('template');
+            tpl.innerHTML = state.content || '';
+            // 서버 HTML 안의 결제 링크는 쓰지 않는다. 가격·결제 버튼은 아래에서 서버가 준 price_coins 로 그린다.
+            tpl.content.querySelectorAll('[data-paywall-cta]').forEach(a => a.remove());
+            const wrap = document.createElement('div');
+            wrap.className = 'theme-preview';
+            wrap.append(tpl.content);
+            const cta = document.createElement('button');
+            cta.type = 'button';
+            cta.className = 'reading-primary theme-unlock-cta';
+            cta.textContent = `🔒 ${state.price_coins} ${COIN_UNIT}으로 열람하기`;
+            cta.onclick = () => handleUnlockReportOnServer(key, state.price_coins, state.subOption || '기본');
+            const note = document.createElement('p');
+            note.className = 'theme-preview-note';
+            note.textContent = '결제하면 잠긴 부분이 바로 열려요. 다시 읽을 때는 추가 결제가 없어요.';
+            wrap.append(cta, note);
+            slot.replaceChildren(wrap);
+            slot.classList.remove('hidden');
+            const price = document.querySelector(`[data-report-price="${key}"]`);
+            if (price) price.textContent = `${state.price_coins} ${COIN_UNIT}`;
+            const button = document.getElementById(`btnTheme_${key}`);
+            if (button) button.textContent = key === 'health' ? '다시 불러오기' : '상황 다시 고르기';
+        }
+        async function showThemePreview(key, subOption = '기본') {
+            if (!currentUserId) { alert('로그인이 필요합니다.'); return; }
+            const ownedIndex = latestOwnedReportIndex(key);
+            if (ownedIndex >= 0) { openReadingReport(ownedIndex); return; }
+            if (reportRequestPending) return;
+            reportRequestPending = true; setReportRequestState(true);
+            try {
+                const res = await fetch('/api/reports/preview', {
+                    method:'POST', headers:{'Content-Type':'application/json'},
+                    body: JSON.stringify({user_id: currentUserId, report_key: key, sub_option: subOption})
+                });
+                const data = await res.json();
+                if (!res.ok) { alert(data.detail || '미리보기를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.'); return; }
+                if (data.status === 'owned') { refreshReportEntrypoints(); openReadingReport(latestOwnedReportIndex(key)); return; }
+                themePreviewCache[key] = {...data, subOption};
+                renderThemePreview(key);
+                document.getElementById(`themeReport_${key}`)?.scrollIntoView({block:'start', behavior:'smooth'});
+            } catch (error) {
+                alert('응답을 확인하지 못했어요. 네트워크를 확인한 뒤 다시 시도해 주세요.');
+            } finally {
+                reportRequestPending = false; setReportRequestState(false);
+            }
         }
 
         function setReportRequestState(pending) {
-            document.querySelectorAll('#btnDaewoon,#btnSinnian,#daewoonFlowOpen,#btnOpenGunghapModal,[id^="btnTheme_"],#annualRefreshButton,#lifetimeRefreshButton,.theme-refresh,.annual-upgrade').forEach(button => {
+            document.querySelectorAll('#btnDaewoon,#btnSinnian,#daewoonFlowOpen,#btnOpenGunghapModal,[id^="btnTheme_"],.theme-unlock-cta,#annualRefreshButton,#lifetimeRefreshButton,.theme-refresh,.annual-upgrade').forEach(button => {
                 button.disabled = pending;
                 button.setAttribute('aria-busy', String(pending));
             });
@@ -4044,8 +4215,6 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 if (event.key === 'ArrowLeft') { event.preventDefault(); showFashionV2Slide(0); }
                 if (event.key === 'ArrowRight') { event.preventDefault(); showFashionV2Slide(1); }
             });
-            const evidence = document.getElementById('sajuEvidence');
-            if (evidence) document.getElementById('view-saju').append(evidence);
             if (!window.DALHA_DESIGN_SAMPLE) initKakaoSDK();
             initDateDropdowns();
             document.getElementById('headerCoinSvg').innerHTML = getGoldCoinSvg(16, "#F59E0B");
