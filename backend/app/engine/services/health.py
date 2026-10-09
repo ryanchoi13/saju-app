@@ -150,8 +150,8 @@ def _tier2_html(boxes: list[dict]) -> str:
 
 
 def _boundary_html() -> str:
-    return ('<hr data-paywall-boundary="health" data-price="%d" '
-            'style="border:0;border-top:1px dashed #94A3B8;margin:18px 0;">' % copy.PRICE_KRW)
+    return ('<hr data-paywall-boundary="health" '
+            'style="border:0;border-top:1px dashed #94A3B8;margin:18px 0;">')
 
 
 def _locked_html() -> str:

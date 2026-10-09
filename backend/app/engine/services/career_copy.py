@@ -281,12 +281,12 @@ LOCK_LABEL = "잠긴 풀이"
 TEASER_TIER3 = "올해 일이 풀리는 달과 한 템포 늦출 달, 열두 달 가운데 {n}곳을 짚어 두었어요."
 TEASER_TIER3_NONE = "올해 일의 리듬을 열두 달의 흐름으로 정리해 두었어요."
 TEASER_TIER4 = "오늘부터 바로 옮길 수 있는 실천 3원칙이 준비되어 있어요."
-CTA_TEMPLATE = "{price:,}원으로 올해 일의 타이밍 열어보기"
+CTA_TEMPLATE = "올해 일의 타이밍 열어보기"  # 가격은 서버(report_access.REPORT_PRICES)가 정하고 프론트가 그린다. 문구에 넣지 않는다.
 PAYWALL_HREF = "#paywall-theme-career"
 
 
 def cta_label() -> str:
-    return CTA_TEMPLATE.format(price=PRICE_KRW)
+    return CTA_TEMPLATE
 
 
 # ---------------------------------------------------------------------------

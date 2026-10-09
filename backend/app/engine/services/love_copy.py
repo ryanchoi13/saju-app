@@ -265,12 +265,12 @@ STATUS_BULLET = {
 LOCK_LABEL = "잠긴 풀이"
 TEASER_TIER3 = "올해 마음이 잘 통하는 달과 천천히 이야기할 달을 열두 달의 흐름으로 정리해 두었어요."
 TEASER_TIER4 = "오늘부터 해 볼 수 있는 다정한 관계 3원칙이 준비되어 있어요."
-CTA_TEMPLATE = "{price:,}원으로 올해 관계의 타이밍 열어보기"
+CTA_TEMPLATE = "올해 관계의 타이밍 열어보기"  # 가격은 서버(report_access.REPORT_PRICES)가 정하고 프론트가 그린다. 문구에 넣지 않는다.
 PAYWALL_HREF = "#paywall-theme-love"
 
 
 def cta_label() -> str:
-    return CTA_TEMPLATE.format(price=PRICE_KRW)
+    return CTA_TEMPLATE
 
 
 # ---------------------------------------------------------------------------
