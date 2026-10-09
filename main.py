@@ -355,7 +355,7 @@ def get_saju_pillars_and_analysis(name: str, gender: str, y: int, m: int, d: int
         today_date,
         current_hour=kst_now.hour,
         account_key=menu_account_id,
-        include_menu=False,
+        include_menu=True,   # 신규 daily_menu 큐레이션(menu_curation 3모드). 구버전 sazu/meal_sets 경로는 더 이상 쓰지 않는다.
     )
     today_element = core.timing.daily["pillar"]["stem_element"]
     lucky_element = today_fortune["lucky_element"]
@@ -500,20 +500,6 @@ def get_saju_pillars_and_analysis(name: str, gender: str, y: int, m: int, d: int
         board_weather_profile=weather_profile if complete_weather else None,
     )
     result["daily_fortune"]["fashion_color_basis"] = fashion_color_basis
-    fortune = result["daily_fortune"]
-    from meal_sets import build_set
-    from sazu_food import provider_for, profile_key
-    food_provider = provider_for(menu_account_id)
-    food_profile_key = profile_key(core.input) if food_provider == 'sazu' else ''
-    def build(mode, history, excluded):
-        return build_set(core.input, today_date, mode, history, excluded, provider=food_provider)
-    fortune.update(recommended_menus=[], recommended_menu='', recommended_meals=[])
-    if menu_account_id:
-        try:
-            fortune['menu_recommendations'] = menu_store.load(menu_account_id, today_date, build,
-                provider=food_provider, profile_key=food_profile_key)
-        except (menu_store.StorageUnavailable, ValueError):
-            fortune['menu_error'] = '식단을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.'
     return result
 
 

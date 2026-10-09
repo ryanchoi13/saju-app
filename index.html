@@ -519,6 +519,15 @@
         .theme-preview-note { font-size:.8125rem; color:var(--ui-muted); margin:0; }
         .daewoon-free .lifetime-nature { margin-top:12px; }
         .lock-soon { display:inline-block; margin-top:10px; padding:6px 12px; border-radius:9px; background:var(--ui-tint); color:var(--ui-muted); }
+        .menu-curation { padding:20px 18px; text-align:left; display:flex; flex-direction:column; gap:12px; border:1.5px solid #E2E8F0; }
+        .menu-curation h4 { font-family:'Noto Serif KR',serif; font-size:1.0625rem; font-weight:800; color:var(--ui-ink); margin:0; }
+        .menu-curation-headline { margin:0; font-size:1rem; line-height:1.7; color:var(--ui-ink); word-break:keep-all; }
+        .menu-curation-tabs { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:6px; }
+        .menu-curation-tabs button { border:1px solid var(--ui-line); background:var(--ui-surface); color:var(--ui-muted); border-radius:12px; padding:10px 4px; min-height:44px; font-size:.875rem; font-weight:700; line-height:1.3; cursor:pointer; }
+        .menu-curation-tabs button small { display:block; font-weight:500; font-size:.75rem; margin-top:2px; }
+        .menu-curation-tabs button[aria-selected="true"] { background:var(--ui-accent); border-color:var(--ui-accent); color:#fff; }
+        .menu-curation-caption { margin:0; font-size:.9375rem; line-height:1.7; color:var(--ui-muted); word-break:keep-all; }
+        .menu-curation-footnote { margin:0; font-size:.8125rem; color:var(--ui-muted); }
         @media (max-width:380px){ #outfitTrack .outfit-track-grid { grid-template-columns:1fr; } }
 </style>
 <script id="dalha-hangul">
@@ -530,7 +539,6 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
     <link rel="stylesheet" href="/assets/reading-tabs-v2.css?v=20261001-3">
     <link rel="stylesheet" href="/assets/landing.css?v=1">
     <script src="/assets/design-controls.js?v=20261001-4" defer></script>
-    <script src="/assets/menu-explorer.js?v=20261005-sazu1" defer></script>
     <script src="/assets/design-sample.js?v=20261004-1" defer></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -786,6 +794,19 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                     </div>
                 </div>
 
+                <!-- v2: 오늘 뭐 먹지? — 서버 daily_fortune.menu_curation (3모드 카드) -->
+                <section id="menuCurationCard" class="card menu-curation" hidden aria-labelledby="menuCurationTitle">
+                    <h4 id="menuCurationTitle">오늘 뭐 먹지?</h4>
+                    <p id="menuCurationHeadline" class="menu-curation-headline"></p>
+                    <div id="menuCurationTabs" class="menu-curation-tabs" role="tablist" aria-label="식사 방식"></div>
+                    <div id="menuCurationPanel" role="tabpanel" aria-live="polite">
+                        <p id="menuCurationCaption" class="menu-curation-caption"></p>
+                        <div id="menuCurationPhotos" class="menu-photos"></div>
+                        <p id="menuCurationEmpty" class="menu-curation-caption" hidden></p>
+                    </div>
+                    <p id="menuCurationFootnote" class="menu-curation-footnote"></p>
+                </section>
+
                 <!-- 2. 오늘 나에게 행운을 주는 것들 (폰트 크기 16.5px 통일) -->
                 <div class="card" style="padding: 20px 18px; text-align: left; display: flex; flex-direction: column; gap: 14px; border: 1.5px solid #E2E8F0;">
                     <div style="display: flex; align-items: center; gap: 8px; border-bottom: 1px solid #F1F5F9; padding-bottom: 10px;">
@@ -800,7 +821,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                         <div class="grid-cell"><span style="font-size: 12px; color: #64748B; font-weight: 600; display: block;">아이템</span><p id="resItem" style="font-weight: 800; margin-top: 3px; font-size: 14px; color: #0F172A;">실버 메탈 시계</p></div>
                         <div class="grid-cell"><span style="font-size: 12px; color: #64748B; font-weight: 600; display: block;">숫자</span><p id="resNumber" style="font-weight: 800; margin-top: 3px; font-size: 14.5px; color: #0F172A;">4, 9</p></div>
                         <div class="grid-cell"><span style="font-size: 12px; color: #64748B; font-weight: 600; display: block;">방위</span><p id="resDirection" style="font-weight: 800; margin-top: 3px; font-size: 14px; color: #0F172A;">정서쪽 (백호 방위)</p></div>
-                        <div class="grid-cell">
+                        <div class="grid-cell" hidden style="display:none">
                             <span id="resMenuLabel" style="font-size: 12px; color: #64748B; font-weight: 600; display: block;">🍲 추천 메뉴</span>
                             <p id="resMenu" style="font-weight: 800; margin: 3px 0 8px; font-size: 14px; line-height: 1.65; white-space: pre-line; color: #0F172A;">속이 편안한 영양 솥밥</p>
                             <div id="menuPhotoCards" class="menu-photos"></div>
@@ -1888,25 +1909,54 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             }).join('')}</div></article>`).join('')}</div><p class="look-note">색상과 구성의 이해를 돕는 코디 예시입니다. 비슷한 옷으로 활용해 보세요.</p>` : '';
         }
 
-        function renderRecommendedMenu() {
+        // ---- v2: 신규 daily_menu 카드 모드. 구버전 sazu 텍스트/탐색기(DalhaMenu)는 쓰지 않는다. ----
+        const MENU_CURATION_MODE_KEY = 'dalha_menu_curation_mode_v1';
+        let currentMenuCurationMode = null;
+        function savedMenuCurationMode() { try { return localStorage.getItem(MENU_CURATION_MODE_KEY); } catch (e) { return null; } }
+        function selectMenuCurationMode(mode, persist = true) {
+            currentMenuCurationMode = mode;
+            if (persist) { try { localStorage.setItem(MENU_CURATION_MODE_KEY, mode); } catch (e) {} }
+            paintMenuCuration();
+        }
+        function paintMenuCuration() {
             const fortune = currentFortuneData?.daily_fortune || {};
-            if (window.DalhaMenu && fortune.menu_recommendations) {
-                DalhaMenu.mount(fortune.menu_recommendations);
-                return;
+            const cards = Array.isArray(fortune.menu_curation) ? fortune.menu_curation.filter(c => c && c.mode) : [];
+            const section = document.getElementById('menuCurationCard');
+            if (!section) return;
+            section.hidden = cards.length === 0;
+            if (!cards.length) return;
+            const modes = cards.map(c => c.mode);
+            if (!modes.includes(currentMenuCurationMode)) {
+                const saved = savedMenuCurationMode();
+                currentMenuCurationMode = modes.includes(saved) ? saved : modes[0];
             }
-            window.DalhaMenu?.reset();
-            const menus = fortune.recommended_menus || [fortune.recommended_menu].filter(Boolean);
-            document.getElementById('resMenuLabel').textContent = '🍲 오늘의 추천 메뉴';
-            document.getElementById('resMenu').textContent = menus.length ? menus.slice(0,3).join(' / ') : '추천 메뉴를 준비하고 있어요';
-            document.getElementById('resMenu').hidden = menus.length > 0;
-            renderMenuPhotos(menus);
-            document.getElementById('menuRecommendationComment').hidden = true;
-            document.getElementById('menuExplorerControls').hidden = true;
-            document.getElementById('menuError').textContent = fortune.menu_error || '';
-            document.getElementById('menuModeToggle').hidden = true;
-            document.getElementById('menuPlanLike').hidden = true;
-            document.getElementById('menuLikeStatus').textContent = '';
-            mealExposureObserver?.disconnect();
+            const card = cards.find(c => c.mode === currentMenuCurationMode) || cards[0];
+            // 오행 한 줄은 화면 위에 한 번만. 모드 카드는 메뉴 중심으로 보여 준다.
+            document.getElementById('menuCurationHeadline').textContent = cards[0].headline || '';
+            const tabs = document.getElementById('menuCurationTabs');
+            tabs.replaceChildren();
+            cards.forEach(c => {
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.setAttribute('role', 'tab');
+                button.setAttribute('aria-selected', String(c.mode === card.mode));
+                button.append(document.createTextNode(c.label || c.mode));
+                if (c.sub_label) { const sub = document.createElement('small'); sub.textContent = c.sub_label; button.append(sub); }
+                button.onclick = () => selectMenuCurationMode(c.mode);
+                tabs.append(button);
+            });
+            document.getElementById('menuCurationCaption').textContent = card.caption || '';
+            const empty = document.getElementById('menuCurationEmpty');
+            const photos = document.getElementById('menuCurationPhotos');
+            const menus = Array.isArray(card.menus) ? card.menus.filter(Boolean) : [];
+            empty.hidden = menus.length > 0;
+            empty.textContent = menus.length ? '' : (card.empty_text || '');
+            photos.replaceChildren();
+            if (menus.length) renderMenuPhotos(menus, [], photos);
+            document.getElementById('menuCurationFootnote').textContent = fortune.menu_footnote || '';
+        }
+        function renderRecommendedMenu() {
+            paintMenuCuration();
         }
 
         function toggleMenuMode() {
