@@ -24,6 +24,11 @@ def _all_texts():
 
 
 class SectionBankTests(unittest.TestCase):
+    def test_all_ten_gods_are_covered(self):
+        self.assertEqual(set(ds.SECTION_GODS), {"peer", "rob_wealth", "eating_god", "hurting_officer", "direct_wealth",
+                                                "indirect_wealth", "direct_officer", "seven_killings",
+                                                "direct_resource", "indirect_resource"})
+
     def test_every_cell_has_three_variants(self):
         for god, data in ds.SECTIONS.items():
             self.assertTrue(data["headline"] and len(data["headline"]) <= G["headline_max"], god)
@@ -82,7 +87,7 @@ class EnrichStoryTests(unittest.TestCase):
                 lead="career", tone="calm", god="x", rel="calm")
 
     def test_uncovered_god_is_untouched(self):
-        for god in ("peer", "direct_wealth", None):
+        for god in ("unknown_god", "", None):
             self.assertEqual(ds.enrich_story(dict(self.BASE), god, "calm", 123), self.BASE)
 
     def test_covered_god_gets_four_sections_in_order(self):
