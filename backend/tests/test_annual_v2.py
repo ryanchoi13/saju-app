@@ -11,6 +11,7 @@ from unittest import TestCase
 from unittest.mock import patch
 
 from app.engine.services import annual, annual_v2 as v2
+from app.engine.services.annual_editorial import NARRATIVE_VERSION
 from app.engine.services.annual_copy import CopyLedger, find_banned, seed_from, split_sentences
 
 ENGINE_DOMAINS = ("self", "enjoyment", "love", "relationships", "work", "money",
@@ -269,9 +270,9 @@ class BuilderStructureTests(TestCase):
 
     def test_version_fields_and_basis_note(self):
         r = self.report
-        self.assertEqual(r["narrative_version"], "annual-v2")
+        self.assertEqual(r["narrative_version"], NARRATIVE_VERSION)
         self.assertEqual(r["month_schema"], "dalha.month.v3")
-        self.assertIn('data-narrative-version="annual-v2"', r["content"])
+        self.assertIn(f'data-narrative-version="{NARRATIVE_VERSION}"', r["content"])
         self.assertIn("2026-07-01을 대표일로 삼은 연간 해석", r["content"])
         self.assertIn("丙午", r["content"])
         self.assertIn("대운이 바뀌는 경우 전후 흐름을 각각 계산한 결과는 아닙니다", r["content"])
