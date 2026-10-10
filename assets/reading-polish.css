@@ -32,6 +32,7 @@
 .archive-disclosure #unlockedArchiveList { margin-top:16px; }
 #archiveModalTitle { line-height:1.6!important; padding:0 10px; }
 /* 평생운세 카드: 달·산 그림은 제목 영역(위 140px)에만 두고 본문 글자 아래로 내려오지 않게 한다.
+   brand-ui.js 가 brand.css 를 <head> 맨 끝으로 다시 옮기므로, 로드 순서에 기대지 않도록 .card 를 붙여 우선순위를 높였다.
    랜딩 화면은 moon-landscape.webp 를 그대로 쓰므로 그 파일은 바꾸지 않는다. 그림 교체는 reading-lead-moon.svg 파일만 바꾸면 된다. */
-html[data-brand] .reading-view .reading-lead { background-image:url('/assets/brand-2026/reading-lead-moon.svg'); background-repeat:no-repeat; background-size:100% 140px; background-position:top right; }
+html[data-brand] .reading-view .card.reading-lead { background-image:url('/assets/brand-2026/reading-lead-moon.svg'); background-repeat:no-repeat; background-size:100% 140px; background-position:top right; }
 #unlockedArchiveList .archive-reopen { border:1px solid #dbe5df; background:#fff; color:#34453e; padding:8px 12px; cursor:pointer; }
