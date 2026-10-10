@@ -37,5 +37,7 @@ backend/tests/test_lifetime_service.py::LifetimeServiceTests::test_current_life_
 # C 오늘 운세 문구: 재물일 문구 정리 결과 — 테스트 기대값 또는 문구 조정 필요
 backend/tests/test_daily_fortune_service.py::DailyFortuneServiceTests::test_adjacent_wealth_days_preserve_their_distinct_daily_meanings
 
-# E 메뉴 화면: 테스트는 menuModeToggle 을 JS 로 숨기고 fortune.recommended_menus 를 쓰길 기대하지만 index.html 은 hidden 속성으로 숨기고 해당 문자열이 없음 — 테스트가 낡았는지 화면 기능이 빠졌는지 확인 필요
+# E 식단 구버전 경로: 10/9 업로드(996d1a2)에서 구버전 meal_sets/menu_recommendations 경로를 걷어내고 daily_menu 큐레이션으로 의도적으로 교체함.
+#   아래 두 테스트는 구버전 기대값(menu_recommendations, fortune.recommended_menus, DalhaMenu)을 그대로 요구하는 낡은 테스트 — daily_menu 기준으로 다시 써야 함
 backend/tests/test_profile_persistence.py::ProfilePersistenceTests::test_simple_menu_hides_paused_controls
+backend/tests/test_ranked_menu_explorer.py::MenuStoreTests::test_api_profile_binding_and_service_integration
