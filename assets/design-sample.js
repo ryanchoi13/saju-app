@@ -5,7 +5,7 @@
   const text = (id,value) => { if ($(id)) $(id).textContent = value; };
   const intro = '<div style="background:#ECFDF5;border-left:4px solid #10B981;padding:16px;border-radius:14px;margin-bottom:16px;"><h4 style="color:#065F46;font-size:16px;">내 속도를 지키며, 선택의 기준을 세우는 시간</h4><p style="color:#047857;font-size:13px;">여러 가지를 한꺼번에 바꾸기보다 지금 가장 중요한 일 하나를 정해 보세요. 작은 선택을 이어가는 과정에서 나에게 맞는 방향이 더 선명해질 수 있습니다.</p></div>';
   const paragraph = '<div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:13px;padding:16px;margin:16px 0;"><h5 style="font-size:14px;color:#334155;">일과 생활에서 살펴볼 점</h5><p style="font-size:13px;color:#475569;">일정을 정리할 때는 꼭 해야 할 일과 조정할 수 있는 일을 나누어 보세요. 타인의 기대에 맞추기 전에 나에게 필요한 시간과 여유도 함께 생각해 보는 것이 좋겠습니다.</p><p style="font-size:12px;color:#64748B;">오늘의 작은 실천 · 미루던 일 하나를 정하고, 시작할 시간을 달력에 적어 보세요.</p></div>';
-  const report = (key,title,body) => ({report_key:key,report_title:`[예시] ${title}`,report_content:body,created_at:'디자인 비교용',narrative_version:key==='daewoon'?'lifetime-present-v2':key==='sinnian'?'annual-v2':'reading-conversation-v4'});
+  const report = (key,title,body) => ({report_key:key,report_title:`[예시] ${title}`,report_content:body,created_at:'디자인 비교용',narrative_version:key==='daewoon'?'lifetime-present-v2':key==='sinnian'?'annual-v3':'reading-conversation-v4'});
   function showExample(title) {
     serverUnlockedReports.push(report('design-example',title,intro+paragraph+paragraph));
     document.querySelectorAll('.modal-bg:not(#archiveDetailModal)').forEach(el => el.classList.add('hidden'));

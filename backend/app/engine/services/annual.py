@@ -20,7 +20,7 @@ from app.engine.calendar import to_solar
 from app.engine.semantic.overall import select_overall_domains, OVERALL_VERSION
 from app.engine.services.annual_editorial import NARRATIVE_VERSION, ROLE_NAMES
 from app.engine.services.annual_copy import (
-    THEME_KEYS, DOMAIN_TO_THEME, CopyLedger, seed_from, flow_of,
+    CopyLedger, seed_from, flow_of,
 )
 from app.engine.services import annual_v2
 
@@ -36,31 +36,47 @@ def _annual_reading(selection):
     return reading
 
 
-def _hero_theme(selection, month):
-    """엔진이 짚은 분야에서 월별 문구의 주제를 고른다. 근거가 없으면 달마다 돌아가며 고른다.
-
-    우선순위: primary_domains → selected → candidates → 순환(THEME_KEYS[(month-1) % 4]).
-    DOMAIN_TO_THEME 은 도메인 이름을 보고 추정한 매핑이라, 엔진 쪽 의미와 다르면 여기서 고쳐야 한다.
-    Returns (theme, candidate_or_None).
-    """
-    primary = set(selection.get("primary_domains") or ())
-    pools = (
-        [c for c in selection.get("selected", ()) if c["domain"] in primary],
-        list(selection.get("selected", ())),
-        list(selection.get("candidates", ())),
-    )
-    for pool in pools:
-        for c in pool:
-            theme = DOMAIN_TO_THEME.get(c["domain"])
-            if theme:
-                return theme, c
-    return THEME_KEYS[(month - 1) % len(THEME_KEYS)], None
+TERM_KO = {
+    "小寒": "소한", "立春": "입춘", "惊蛰": "경칩", "驚蟄": "경칩", "清明": "청명", "立夏": "입하",
+    "芒种": "망종", "芒種": "망종", "小暑": "소서", "立秋": "입추", "白露": "백로", "寒露": "한로",
+    "立冬": "입동", "大雪": "대설",
+    "XIAO_HAN": "소한", "LI_CHUN": "입춘", "JING_ZHE": "경칩", "DA_XUE": "대설",
+}
 
 
-def _monthly_reading(selection, ledger, month):
-    theme, cand = _hero_theme(selection, month)
-    flow = flow_of(cand.get("mode") if cand else None)
-    return annual_v2.compose_month(ledger, month, theme, flow)
+def _term_period(target):
+    """대표일이 속한 절기 달의 시작(절입일)과 끝. 계산하지 못하면 None (그 한 줄만 뺀다)."""
+    try:
+        from datetime import timedelta
+        from lunar_python import Solar
+        lunar = Solar.fromYmd(target.year, target.month, target.day).getLunar()
+        prev, nxt = lunar.getPrevJie(), lunar.getNextJie()
+        s, e = prev.getSolar(), nxt.getSolar()
+        start = date(s.getYear(), s.getMonth(), s.getDay())
+        end = date(e.getYear(), e.getMonth(), e.getDay()) - timedelta(days=1)
+        name = TERM_KO.get(prev.getName())
+        if not name or not start <= target <= end:
+            return None
+        return dict(name=name, start=start, end=end)
+    except Exception:  # 라이브러리 버전 차이 등. 풀이 전체를 막지 않는다.
+        logger.warning("절기 기간 계산 실패 target=%s", target, exc_info=True)
+        return None
+
+
+def _month_focus(selection):
+    """그달에 엔진이 짚은 분야(primary_domains 첫째)를 v2 분야로. 없으면 그달 십성의 분야."""
+    modes = {c["domain"]: c.get("mode", "base") for c in selection.get("candidates", ())}
+    for domain in selection.get("primary_domains") or ():
+        area = annual_v2.ENGINE_TO_AREA.get(domain)
+        if area:
+            return area, flow_of(modes.get(domain))
+    return annual_v2.GOD_AREA.get(selection.get("focal_god"), "body"), "base"
+
+
+def _monthly_reading(selection, ledger, month, year_god, target):
+    area, flow = _month_focus(selection)
+    return annual_v2.compose_month(ledger, month, month_god=selection.get("focal_god"), year_god=year_god,
+                                   focus_area=area, flow=flow, period=_term_period(target))
 
 
 # ---------------------------------------------------------------------------
@@ -97,17 +113,27 @@ def _render_year(reading):
 
 
 def _render_month_card(month, reading):
+    lines = "".join(f'<li><strong>{escape(l["label"])}</strong> {escape(l["text"])}</li>' for l in reading["lines"])
+    period = f'<div class="annual-month-period">{escape(reading["period"])}</div>' if reading["period"] else ""
+    link = (f'<h5>올해와 이어지는 점</h5><p>{escape(reading["link"])}</p>') if reading["link"] else ""
     return (
         f'<article data-report-month="{month}" data-flow="{reading["flow"]}" class="annual-month" '
         'style="border-left:4px solid #2D6A4F">'
-        f'<h4>{month}월 · {escape(reading["verdict"])}</h4>'
-        f'<p>{escape(reading["text"])}</p></article>')
+        f'<h4>{month}월 · {escape(reading["verdict"])}</h4>{period}'
+        f'<p class="annual-month-flow">{escape(reading["flow_text"])}</p>{link}'
+        f'<h5>이달의 초점 · {escape(reading["focus"]["label"])}</h5><p>{escape(reading["focus"]["text"])}</p>'
+        + (f'<h5>분야별 한 줄</h5><ul class="annual-month-lines">{lines}</ul>' if lines else "") +
+        f'<p class="annual-month-todo"><strong>할 일</strong> {escape(reading["do"])}<br>'
+        f'<strong>피할 일</strong> {escape(reading["avoid"])}</p></article>')
 
 
 def _log_validation(reading, month_readings):
     """규격 위반은 사용자에게 막지 않고 로그로만 남긴다. (문구 은행 변경 시 배포 전에 잡기 위함)"""
     for issue in annual_v2.validate_year(reading):
         logger.warning("연간 풀이 규격 위반 %s", issue)
+    for idx, r in enumerate(month_readings, start=1):
+        for issue in annual_v2.validate_month(r):
+            logger.warning("월별 풀이 규격 위반 %s번째 %s", idx, issue)
     seen = {}
     for idx, r in enumerate(month_readings, start=1):
         for sentence in r["sentences"]:
@@ -140,7 +166,7 @@ def build_annual_overall_report(core: MyeongriCoreResult, user_name: str, year: 
             target = birth_date
         month_timing, _, _ = calculate_timing(core.input, core.natal_facts.pillars, target_date=target)
         month_selection = select_overall_domains(core, "monthly", timing=month_timing)
-        month_reading = _monthly_reading(month_selection, ledger, month)
+        month_reading = _monthly_reading(month_selection, ledger, month, selection.get("focal_god"), target)
         composed.append(month_reading)
         months.append(dict(month=month, representative_date=target.isoformat(),
                            interpretation=month_selection, reading=month_reading))
@@ -156,7 +182,7 @@ def build_annual_overall_report(core: MyeongriCoreResult, user_name: str, year: 
         '<h3>12개월 흐름</h3>'
         '<p class="annual-note" data-period-basis="monthly">각 달 15일의 절기 월주를 대표값으로 사용했습니다. '
         '출생한 달의 15일이 출생 전이면 출생일을 사용하며, 출생 전 달은 제외합니다. '
-        '달마다 한 단어와 두 문장으로 그 달에 취할 태도를 안내합니다. '
+        '달마다 그달의 십성과 엔진이 짚은 분야를 바탕으로 취할 태도와 할 일을 안내합니다. '
         '달력의 1일을 운의 전환일로 보거나 월 전체의 변화, 특정 사건의 날짜를 예측한 것은 아닙니다.</p>'
         + "".join(cards) +
         '<p class="annual-note">정통 명리의 원국·대운·세운·월운을 근거로 한 해석이며, '
@@ -166,7 +192,7 @@ def build_annual_overall_report(core: MyeongriCoreResult, user_name: str, year: 
         title=f"{year}년 {escape(name)}님의 올해·월별 운세",
         content=content, engine_version=OVERALL_VERSION,
         narrative_version=NARRATIVE_VERSION, copy_version=annual_v2.COPY_V2_VERSION,
-        month_schema="dalha.month.v2", report_year=year,
+        month_schema="dalha.month.v3", report_year=year,
         evidence_summary=dict(annual=selection, natal=natal, months=months),
         reading=reading,
     )
