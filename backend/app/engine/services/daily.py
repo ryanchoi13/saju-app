@@ -11,7 +11,7 @@ from app.engine.semantic.queries import build_service_query
 from app.engine.services.simple_menu import daily_choices
 from app.engine.services.daily_menu import recommend_mode_menus
 from app.engine.services.daily_guidance import build_daily_guidance
-from app.engine.services import daily_copy, daily_menu_copy
+from app.engine.services import daily_copy, daily_menu_copy, daily_sections
 from app.engine.services.annual_copy import seed_from
 from app.engine.services.daily_scenarios import select_daily_scenario
 from app.engine.services.daily_topics import select_daily_topics
@@ -419,6 +419,7 @@ def build_daily_fortune(
     tone = daily_copy.tone_key(supportive_count, tension_count)
     rel = daily_copy.relation_key(supportive_count, tension_count, {item.get("type") for item in tensions})
     story = daily_copy.compose_story(lead, tone, seed, god=daily_god, rel=rel)
+    story = daily_sections.enrich_story(story, daily_god, story.get("rel"), seed)
     time_tips = daily_copy.compose_tips(lead, seed, current_hour)
     outfit = daily_copy.compose_outfit(lucky_element)
     topics["evidence"]["legacy_primary_topic"] = topics["evidence"]["primary_topic"]

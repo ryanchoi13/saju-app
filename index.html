@@ -544,7 +544,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;600;700&display=swap" rel="stylesheet">
-    <link id="dalhaBrandStyles" rel="stylesheet" href="/assets/brand-2026/brand.css?v=20261001-7">
+    <link id="dalhaBrandStyles" rel="stylesheet" href="/assets/brand-2026/brand.css?v=20261010-1">
     <link rel="stylesheet" href="/assets/reading-polish.css?v=20261010-2">
     <script src="/assets/reading-polish.js?v=20261001-1" defer></script>
     <script src="/assets/brand-2026/brand-ui.js?v=20261001-4" defer></script>
@@ -701,7 +701,9 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
 
                     <h3 id="resTitle" style="font-size: 17px; font-weight: 600; text-align: left; line-height: 1.4; color: #FFFFFF; font-family: 'Noto Serif KR', serif; margin-top: 2px;">오늘의 이야기를 준비하고 있어요</h3>
                     
+                    <div id="resOverallLabel" hidden style="font-size: 12px; color: #FDE68A; font-weight: 700; text-align: left; margin-top: 2px;">총운</div>
                     <div id="resAdvice" style="font-size: 13.5px; color: #E2E8F0; font-weight: 400; line-height: 1.7; text-align: left; white-space: pre-line;"></div>
+                    <div id="resSections" hidden style="display: none; flex-direction: column; gap: 12px; border-top: 1px solid rgba(255,255,255,0.12); margin-top: 4px; padding-top: 12px;"></div>
 
                     <div class="journal-times" style="border-top: 1px solid rgba(255,255,255,0.12); margin-top: 4px; padding-top: 12px; display: flex; flex-direction: column; gap: 8px;">
                         <div style="display: flex; align-items: flex-start; gap: 8px; font-size: 12.5px; line-height: 1.55; text-align: left;">
@@ -2416,6 +2418,25 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             const hasStory = !!(story && typeof story.body === 'string' && story.body.trim());
             document.getElementById('resTitle').textContent = (hasStory && story.headline) || fortune?.title || '';
             document.getElementById('resAdvice').textContent = hasStory ? story.body : (fortune?.advice || '');
+            // 십성별 카테고리 문단(재물운·연애·관계·일·생활 리듬). 없으면(아직 다루지 않는 일진) 숨긴다.
+            const secBox = document.getElementById('resSections');
+            const secList = hasStory && Array.isArray(story.sections) ? story.sections.filter(x => x && x.title && x.body) : [];
+            document.getElementById('resOverallLabel').hidden = !secList.length;
+            secBox.hidden = !secList.length;
+            secBox.style.display = secList.length ? 'flex' : 'none';
+            secBox.replaceChildren(...secList.map(x => {
+                const box = document.createElement('div');
+                const label = document.createElement('div');
+                label.textContent = x.title;
+                label.className = 'res-sec-label';
+                label.style.cssText = 'font-size:12px;color:#FDE68A;font-weight:700;margin-bottom:3px;';
+                const text = document.createElement('div');
+                text.textContent = x.body;
+                text.className = 'res-sec-body';
+                text.style.cssText = 'font-size:13px;color:#E2E8F0;line-height:1.7;';
+                box.append(label, text);
+                return box;
+            }));
             const slots = {morning:'timeMorningText', afternoon:'timeAfternoonText', evening:'timeEveningText'};
             const tips = Array.isArray(fortune?.time_tips) ? fortune.time_tips : [];
             const flow = fortune?.time_flow || {};
