@@ -4,6 +4,7 @@ on:
     paths:
       - 'backend/app/engine/**'
       - 'backend/tests/test_annual_reader.py'
+      - 'backend/tests/test_annual_v2.py'
       - 'backend/tests/test_second_tab_reports.py'
       - 'backend/tests/test_reading_editorial.py'
       - 'main.py'
@@ -31,7 +32,7 @@ jobs:
           node-version: '22'
       - run: pip install -r requirements.txt pytest httpx
       - run: npm install --ignore-scripts --package-lock=false
-      - run: python -m pytest -q backend/tests/test_annual_reader.py backend/tests/test_reading_editorial.py backend/tests/test_second_tab_reports.py backend/tests/test_overall_interpretation.py backend/tests/test_account_security_wallet.py backend/tests/test_lifetime_service.py backend/tests/test_wealth_service.py backend/tests/test_career_service.py backend/tests/test_love_service.py backend/tests/test_health_service.py backend/tests/test_study_service.py backend/tests/test_compatibility_service.py backend/tests/test_theme_present_reader.py backend/tests/test_theme_period_quality.py
+      - run: python -m pytest -q backend/tests/test_annual_reader.py backend/tests/test_annual_v2.py backend/tests/test_reading_editorial.py backend/tests/test_second_tab_reports.py backend/tests/test_overall_interpretation.py backend/tests/test_account_security_wallet.py backend/tests/test_lifetime_service.py backend/tests/test_wealth_service.py backend/tests/test_career_service.py backend/tests/test_love_service.py backend/tests/test_health_service.py backend/tests/test_study_service.py backend/tests/test_compatibility_service.py backend/tests/test_theme_present_reader.py backend/tests/test_theme_period_quality.py
       # 알려진 실패(2026-10-10): 서버의 월별 풀이(annual.py: data-month-theme)와 화면 리더(annual-reader.js: data-month-domain)의
       # 구조가 어긋나 있다. 원인 조사 전까지 경고로만 남긴다. 해결되면 continue-on-error 를 지운다.
       - name: 연간 리더 화면 테스트 (알려진 실패 — 경고로만 표시)
