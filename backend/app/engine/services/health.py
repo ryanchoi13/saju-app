@@ -69,6 +69,20 @@ _OPERATION = {
     "preserve_balance": "현재 유지되는 균형을 무리한 보완이나 극단적인 습관으로 흔들지 않기",
 }
 # 월별 흐름에서 '컨디션' 신호로 읽을 도메인. (엔진의 실제 의미와 다르면 여기를 고친다.)
+# 대운 리듬 문구. reading_editorial.cycle_focus 가 이 이름으로 임포트한다(삭제 금지).
+_CYCLE_RHYTHM = {
+    "peer": "자기 주도 일정이 늘기 쉬워, 혼자 감당하는 범위와 휴식 경계를 함께 정하는 일",
+    "rob_wealth": "경쟁·협업으로 생활 리듬이 흔들리지 않도록 시간과 부담을 나누는 일",
+    "eating_god": "꾸준한 활동·식사·돌봄의 리듬을 생활에 정착시키는 일",
+    "hurting_officer": "변화와 표현에 에너지를 많이 쓸 때 회복 시간을 함께 확보하는 일",
+    "direct_wealth": "일정·지출·생활 습관을 측정 가능한 방식으로 관리하는 일",
+    "indirect_wealth": "활동 범위가 넓어질수록 무리한 약속과 이동을 조절하는 일",
+    "direct_officer": "책임이 늘어도 기본 생활 루틴을 뒤로 미루지 않는 일",
+    "seven_killings": "압박과 빠른 결정이 이어질 때 긴장과 휴식의 전환을 의식하는 일",
+    "direct_resource": "수면·휴식·배움처럼 회복을 돕는 시간을 안정적으로 확보하는 일",
+    "indirect_resource": "생각이 많아질 때 정보 탐색과 실제 휴식을 구분하는 일",
+}
+
 _MONTH_DOMAINS = ("wellbeing", "enjoyment")
 
 

@@ -38,6 +38,20 @@ _TEN_GOD = {
     "seven_killings": "편관", "direct_resource": "정인",
     "indirect_resource": "편인",
 }
+# 대운 주제 문구. reading_editorial.cycle_focus 가 이 이름으로 임포트한다(삭제 금지).
+_CYCLE_TOPIC = {
+    "direct_wealth": "약속과 생활의 안정성을 현실적으로 맞추는 일",
+    "indirect_wealth": "만남의 폭과 관계의 변화를 유연하게 다루는 일",
+    "direct_officer": "책임·신뢰·관계의 기준을 분명히 하는 일",
+    "seven_killings": "긴장이나 빠른 변화 속에서 경계를 지키는 일",
+    "peer": "나와 상대의 독립성을 함께 존중하는 일",
+    "rob_wealth": "경쟁심·주도권·시간 배분을 공정하게 조율하는 일",
+    "eating_god": "편안한 대화와 일상의 즐거움을 꾸준히 나누는 일",
+    "hurting_officer": "솔직한 표현이 비판으로 들리지 않도록 전달하는 일",
+    "direct_resource": "상대의 말을 충분히 듣고 신뢰를 축적하는 일",
+    "indirect_resource": "혼자 해석하기보다 생각을 확인하며 소통하는 일",
+}
+
 _RELATION_LABEL = {
     "stem_combination": "천간합", "stem_control": "천간극",
     "branch_six_combination": "육합", "branch_clash": "충",
