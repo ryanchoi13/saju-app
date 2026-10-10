@@ -20,8 +20,8 @@ from app.engine.services.health_copy import find_medical
 COPY_VERSION = "dalha-daily-1"
 
 SPEC = {
-    "story_chars": (180, 220),
-    "story_sentences": (3, 4),
+    "story_chars": (60, 170),        # 길이는 목표가 아니라 범위(안전장치). 내용이 먼저다.
+    "story_sentences": (3, 6),
     "tip_chars": (25, 45),
     "headline_max": 16,
 }
@@ -171,16 +171,178 @@ def _pick(pool, seed: int, shift: int):
     return pool[(seed >> shift) % len(pool)]
 
 
-def compose_story(lead: str, tone: str, seed: int) -> dict:
+# ---------------------------------------------------------------------------
+# 일진 결.  같은 사람이라도 날마다 '오늘의 십성'(일진이 일간에게 갖는 관계)과 '일진과 원국의 관계'가 바뀐다.
+# 이야기의 첫 문장과 제목은 십성 10갈래에서, 둘째 문장은 합/충/형·해 같은 관계 종류에서 고른다.
+# (lead 5갈래·tone 3갈래만으로는 며칠이 같은 글로 보이므로, 매일 바뀌는 두 값을 직접 글에 반영한다.)
+# 문장 길이 45~51자, 어미 순서(합니다 → 해요 → 해 보세요 → 법이죠)는 기존 규격 그대로.
+# ---------------------------------------------------------------------------
+GODS = ("peer", "rob_wealth", "eating_god", "hurting_officer", "direct_wealth",
+        "indirect_wealth", "direct_officer", "seven_killings", "direct_resource", "indirect_resource")
+RELS = ("lift", "clash", "friction", "calm")
+
+HEADLINE_GOD = {
+    "peer": "내 속도로 걷는 하루",
+    "rob_wealth": "기준을 또렷하게",
+    "eating_god": "여유가 번지는 하루",
+    "hurting_officer": "생각이 톡톡 튀는 날",
+    "direct_wealth": "살림이 가지런한 날",
+    "indirect_wealth": "발걸음이 가벼운 날",
+    "direct_officer": "반듯하게 지키는 날",
+    "seven_killings": "집중이 또렷한 하루",
+    "direct_resource": "포근히 배우는 하루",
+    "indirect_resource": "깊이 헤아리는 하루",
+}
+# 제목은 십성 10 × 관계 4 = 40가지. 같은 십성이 돌아와도 관계가 다르면 제목이 달라진다.
+HEADLINE_GOD_REL = {
+    "peer": {"lift": "나다움이 힘이 되는 날", "clash": "내 페이스를 지키는 날", "friction": "나다움을 다정하게"},
+    "rob_wealth": {"lift": "함께해서 든든한 날", "clash": "비교보다 내 길로", "friction": "견주지 않는 하루"},
+    "eating_god": {"lift": "즐거움이 따라오는 날", "clash": "느긋함을 챙기는 날", "friction": "다정한 말이 먼저인 날"},
+    "hurting_officer": {"lift": "아이디어가 반기는 날", "clash": "생각을 갈무리하는 날", "friction": "말을 고르는 하루"},
+    "direct_wealth": {"lift": "차곡차곡 쌓이는 날", "clash": "계획에 여백을 두는 날", "friction": "꼼꼼히 되짚는 하루"},
+    "indirect_wealth": {"lift": "새 인연이 스치는 날", "clash": "움직임에 여유를 둬요", "friction": "만남에 말씨를 더해요"},
+    "direct_officer": {"lift": "약속이 힘이 되는 날", "clash": "일정을 가다듬는 날", "friction": "예의가 빛나는 하루"},
+    "seven_killings": {"lift": "도전이 반기는 하루", "clash": "한 걸음씩 마주하는 날", "friction": "긴장을 풀어 가는 날"},
+    "direct_resource": {"lift": "도움이 스며드는 날", "clash": "차분히 중심 잡는 날", "friction": "마음을 다독이는 하루"},
+    "indirect_resource": {"lift": "직관이 반짝이는 날", "clash": "혼자만의 시간이 필요해요", "friction": "생각을 천천히 풀어요"},
+}
+for _g, _h in HEADLINE_GOD_REL.items():
+    _h["calm"] = HEADLINE_GOD[_g]
+
+# --- 이야기 본문: 길이를 맞추려 문장을 부풀리지 않는다. 내용이 있는 문장만 붙이고, 길이는 '범위'로만 지킨다. ---
+# 첫 문장: 십성 10 × 장면 4(일 · 사람 · 마음 · 생활). 문장 하나에 절은 하나.
+STORY_A_GOD = {
+    "peer": (
+        "오늘은 남의 속도보다 내 속도를 믿어도 좋은 날입니다.",
+        "오늘은 익숙한 사람과 나누는 편한 대화가 힘이 되는 날입니다.",
+        "오늘은 평소의 나답게 지내는 것만으로 충분한 하루입니다.",
+        "오늘은 늘 하던 루틴을 그대로 이어 가기 좋은 날입니다.",
+    ),
+    "rob_wealth": (
+        "오늘은 남과 견주기보다 내 기준에 집중하기 좋은 날입니다.",
+        "오늘은 나누고 도우며 서로 힘이 되어 주는 하루입니다.",
+        "오늘은 부러운 마음이 들어도 내가 가진 것을 돌아볼 날입니다.",
+        "오늘은 쓰는 것과 나누는 것을 가볍게 조율하기 좋은 날입니다.",
+    ),
+    "eating_god": (
+        "오늘은 손으로 무언가 만드는 일이 즐거워지는 날입니다.",
+        "오늘은 맛있는 것을 함께 나누면 분위기가 풀리는 날입니다.",
+        "오늘은 좋아하는 것에 천천히 빠져 보기 좋은 하루입니다.",
+        "오늘은 한 끼를 정성껏 차려 먹기에 어울리는 날입니다.",
+    ),
+    "hurting_officer": (
+        "오늘은 새로운 아이디어가 번뜩이기 쉬운 날입니다.",
+        "오늘은 재치 있는 한마디가 분위기를 바꾸는 날입니다.",
+        "오늘은 마음속 생각을 글로 꺼내 보기 좋은 하루입니다.",
+        "오늘은 익숙한 방식에 작은 변화를 주기 좋은 날입니다.",
+    ),
+    "direct_wealth": (
+        "오늘은 꼼꼼히 챙길수록 일이 매끄러워지는 날입니다.",
+        "오늘은 약속과 연락을 성실히 지키면 믿음이 쌓이는 날입니다.",
+        "오늘은 서두르지 않고 쌓아 가는 일이 든든한 하루입니다.",
+        "오늘은 서랍과 지갑 같은 작은 곳을 정돈하기 좋은 날입니다.",
+    ),
+    "indirect_wealth": (
+        "오늘은 새로운 기회가 가까이 스치기 쉬운 하루입니다.",
+        "오늘은 뜸했던 사람의 소식이 반갑게 닿기 쉬운 날입니다.",
+        "오늘은 한곳에 머물기보다 가볍게 움직이면 좋은 날입니다.",
+        "오늘은 낯선 골목에서 기분 좋은 발견을 만나는 하루입니다.",
+    ),
+    "direct_officer": (
+        "오늘은 맡은 일을 하나씩 반듯하게 마무리하기 좋은 날입니다.",
+        "오늘은 정중한 말씨가 좋은 인상을 남기는 하루입니다.",
+        "오늘은 정해 둔 규칙을 지킬수록 마음이 정돈되는 날입니다.",
+        "오늘은 시간 약속을 넉넉히 지키며 보내기 좋은 날입니다.",
+    ),
+    "seven_killings": (
+        "오늘은 해야 할 일이 몰려도 집중이 또렷해지는 날입니다.",
+        "오늘은 중요한 자리에서 스스로 단단해지는 하루입니다.",
+        "오늘은 팽팽한 긴장 속에서도 해내고 나면 뿌듯한 날입니다.",
+        "오늘은 스스로 정한 기준을 한 단계 올려 보는 하루입니다.",
+    ),
+    "direct_resource": (
+        "오늘은 배우고 익힌 것이 일에 잘 스며드는 날입니다.",
+        "오늘은 믿을 만한 사람의 한마디가 힘이 되는 하루입니다.",
+        "오늘은 충분히 알아본 뒤 차분히 정하기 좋은 날입니다.",
+        "오늘은 책이나 노트를 곁에 두고 정리하기 좋은 하루입니다.",
+    ),
+    "indirect_resource": (
+        "오늘은 남들과 다른 시선이 좋은 영감이 되는 날입니다.",
+        "오늘은 말수를 줄이고 듣는 쪽에 서면 편한 하루입니다.",
+        "오늘은 혼자 생각하다 보면 실마리가 풀리는 날입니다.",
+        "오늘은 낯선 분야에 슬쩍 눈길을 줘 보기 좋은 하루입니다.",
+    ),
+}
+# 둘째 문장: 일진과 원국의 관계 종류.
+STORY_B_REL = {
+    "lift": (
+        "주변 흐름이 등을 밀어 주듯 도와줘서 든든해요.",
+        "작은 도움이 자연스럽게 따라붙어 마음이 놓여요.",
+    ),
+    "calm": (
+        "굳이 속도를 낼 필요 없이 지금 리듬이면 충분해요.",
+        "큰 변화 없이 익숙한 리듬이 편안하게 받쳐 줘요.",
+    ),
+    "clash": (
+        "다만 계획이 바뀔 수 있어서 일정을 넉넉하게 잡는 게 좋아요.",
+        "다만 예상과 다른 변화가 불쑥 올 수 있어요.",
+    ),
+    "friction": (
+        "다만 말이 다르게 전해질 수 있어서 한 번 더 다듬으면 좋아요.",
+        "다만 사소한 오해가 끼어들 수 있어서 여유가 필요해요.",
+    ),
+}
+# 셋째 문장: 오늘 해 볼 일 한 가지 (주제별).
+STORY_TIP = {
+    "health_rest": ("점심 뒤엔 잠깐 바깥 공기를 쐬며 숨을 골라 보세요.", "하루 중 십 분은 아무것도 하지 않고 쉬어 보세요."),
+    "love_relation": ("안부가 궁금했던 사람에게 짧은 메시지를 보내 보세요.", "고마운 사람에게 고맙다는 말을 한 줄 건네 보세요."),
+    "career": ("가장 가벼운 일 하나부터 끝내며 시동을 걸어 보세요.", "오늘 할 일을 세 가지로 좁혀 하나씩 해 보세요."),
+    "spend_life": ("오늘 쓴 돈과 마음을 저녁에 한 줄로 적어 보세요.", "가장 어수선한 한 곳을 골라 십 분만 정리해 보세요."),
+    "balance": ("즐겨 하던 루틴을 오늘도 편안하게 이어 가 보세요.", "좋아하는 음악을 한 곡 틀어 하루를 느긋하게 열어 보세요."),
+}
+# 충·마찰이 걸린 날에만 붙는 대비 한 줄.
+STORY_CAUTION = {
+    "clash": ("약속 시간은 조금 넉넉하게 잡아 보세요.", "일정 사이에 빈 시간을 하나 넣어 보세요."),
+    "friction": ("중요한 말은 한 번 더 확인하고 전해 보세요.", "답장은 한 박자 쉬고 천천히 써 보세요."),
+}
+# 마무리: 짚을 점이 있는 날(합이 든 날, 충·마찰이 걸린 날)에만 붙는다. 무관계인 날은 쓰지 않는다.
+STORY_CLOSING = {
+    "lift": ("흐름이 좋을 때일수록 여유를 함께 챙기는 법이죠.", "좋은 바람은 힘을 빼고 올라탈수록 멀리 가는 법이죠."),
+    "careful": ("서두르지 않고 쉬어 가는 길이 가장 빠른 법이죠.", "조심스러운 날은 작은 확인이 큰 안심이 되는 법이죠."),
+}
+# 길이는 목표가 아니라 안전장치다. 이 범위를 벗어나면 테스트가 알려 준다.
+STORY_GUARD = {"sentences": (3, 6), "chars": (60, 170), "sentence_max": 38}
+
+
+def relation_key(supportive: int, tension: int, tension_types=()) -> str:
+    """합이 우세 → lift, 충이 포함된 긴장 → clash, 그 밖의 긴장(형·해·파·극) → friction, 같으면 calm."""
+    if supportive > tension:
+        return "lift"
+    if tension > supportive:
+        return "clash" if "branch_clash" in set(tension_types) else "friction"
+    return "calm"
+
+
+def compose_story(lead: str, tone: str, seed: int, *, god: str | None = None, rel: str | None = None) -> dict:
     lead = lead if lead in LEADS else "balance"
     tone = tone if tone in TONES else "calm"
-    sentences = [
-        _pick(STORY_A[lead], seed, 0), _pick(STORY_B[tone], seed, 1),
-        _pick(STORY_C[lead], seed, 2), _pick(STORY_D[tone], seed, 3),
-    ]
+    god = god if god in STORY_A_GOD else None
+    rel = rel if rel in STORY_B_REL else None
+    if not god:                                   # 십성을 모르면 예전 4문장 방식 그대로(호환)
+        rel_pool = STORY_B_REL[rel] if rel else STORY_B[tone]
+        sentences = [_pick(STORY_A[lead], seed, 0), _pick(rel_pool, seed, 1), _pick(STORY_C[lead], seed, 2), _pick(STORY_D[tone], seed, 3)]
+        headline = HEADLINES[lead]
+    else:
+        rel = rel or "calm"
+        sentences = [_pick(STORY_A_GOD[god], seed, 5), _pick(STORY_B_REL[rel], seed, 1), _pick(STORY_TIP[lead], seed, 2)]
+        if rel in STORY_CAUTION:                                   # 충·마찰: 대비 한 줄 + 조심 마무리
+            sentences += [_pick(STORY_CAUTION[rel], seed, 3), _pick(STORY_CLOSING["careful"], seed, 4)]
+        elif rel == "lift":                                        # 합: 가볍게 마무리
+            sentences.append(_pick(STORY_CLOSING["lift"], seed, 4))
+        headline = HEADLINE_GOD_REL[god][rel]                      # calm: 마무리 없이 세 문장으로 끝난다
     body = " ".join(sentences)
-    return dict(headline=HEADLINES[lead], body=body, char_count=len(body),
-                sentence_count=len(sentences), lead=lead, tone=tone)
+    return dict(headline=headline, body=body, char_count=len(body), sentence_count=len(sentences),
+                lead=lead, tone=tone, god=god, rel=rel)
 
 
 # ---------------------------------------------------------------------------

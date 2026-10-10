@@ -36,6 +36,20 @@ _TEN_GOD = {
 }
 # 월별 흐름에서 '일' 신호로 읽을 도메인. 직장·이직은 일과 배움, 사업·창업은 일과 돈.
 # (도메인 → 테마 매핑과 같은 결의 가정이며, 엔진의 실제 의미와 다르면 여기를 고친다.)
+# 대운 주제 문구. reading_editorial.cycle_focus 가 이 이름으로 임포트한다(삭제 금지).
+_CYCLE_TOPIC = {
+    "direct_officer": "공식 역할·책임·평가 기준을 안정적으로 관리하는 일",
+    "seven_killings": "압박과 변화 속에서 우선순위를 정하고 결정하는 일",
+    "direct_wealth": "예산·계약·일정처럼 확인할 수 있는 결과를 관리하는 일",
+    "indirect_wealth": "고객·시장·거래 기회를 살피고 활동 범위를 조절하는 일",
+    "eating_god": "상품·서비스·기술을 꾸준한 결과물로 만드는 일",
+    "hurting_officer": "기존 방식을 개선하고 제안을 설득력 있게 전달하는 일",
+    "peer": "독립적인 전문성과 협업 역할의 경계를 정하는 일",
+    "rob_wealth": "경쟁·협업 속 권한·비용·역할을 나누는 기준을 분명히 하는 일",
+    "direct_resource": "학습·문서·자격을 실제 업무 기반으로 축적하는 일",
+    "indirect_resource": "새 관점과 정보를 작게 시험해 업무 방식으로 정착시키는 일",
+}
+
 _TRACK_DOMAINS = {"career": ("work", "learning"), "business": ("work", "money")}
 
 

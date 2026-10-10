@@ -417,7 +417,8 @@ def build_daily_fortune(
                        if n["status"] == "assessed" and n["origin"] == "timing:daily-conditions")
     lead = daily_copy.lead_key(overall["primary_domains"])
     tone = daily_copy.tone_key(supportive_count, tension_count)
-    story = daily_copy.compose_story(lead, tone, seed)
+    rel = daily_copy.relation_key(supportive_count, tension_count, {item.get("type") for item in tensions})
+    story = daily_copy.compose_story(lead, tone, seed, god=daily_god, rel=rel)
     time_tips = daily_copy.compose_tips(lead, seed, current_hour)
     outfit = daily_copy.compose_outfit(lucky_element)
     topics["evidence"]["legacy_primary_topic"] = topics["evidence"]["primary_topic"]
@@ -494,4 +495,4 @@ def build_daily_fortune(
             "confidence": confidence,
             "shensha_is_supporting_only": True,
         },
-    }
+    }
