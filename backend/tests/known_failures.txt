@@ -36,3 +36,6 @@ backend/tests/test_lifetime_service.py::LifetimeServiceTests::test_current_life_
 
 # C 오늘 운세 문구: 재물일 문구 정리 결과 — 테스트 기대값 또는 문구 조정 필요
 backend/tests/test_daily_fortune_service.py::DailyFortuneServiceTests::test_adjacent_wealth_days_preserve_their_distinct_daily_meanings
+
+# E 메뉴 화면: 테스트는 menuModeToggle 을 JS 로 숨기고 fortune.recommended_menus 를 쓰길 기대하지만 index.html 은 hidden 속성으로 숨기고 해당 문자열이 없음 — 테스트가 낡았는지 화면 기능이 빠졌는지 확인 필요
+backend/tests/test_profile_persistence.py::ProfilePersistenceTests::test_simple_menu_hides_paused_controls
