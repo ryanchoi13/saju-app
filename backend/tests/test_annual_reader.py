@@ -13,7 +13,8 @@ import wallet_store
 from fastapi.testclient import TestClient
 from app.engine.core.models import BirthInput
 from app.engine.orchestrator import calculate_myeongri_core
-from app.engine.services.annual import build_annual_overall_report, _domain_readings
+from app.engine.services.annual import build_annual_overall_report
+from app.engine.services import annual_v2
 from app.engine.services.annual_editorial import NARRATIVE_VERSION, GROUPS, ROLES
 
 
@@ -27,51 +28,31 @@ class AnnualReaderTests(TestCase):
     def test_approved_structure_twelve_months_and_reading_volume(self):
         r = self.report
         self.assertEqual(r['narrative_version'], NARRATIVE_VERSION)
-        self.assertEqual(len(r['reading']['domains']), 6)
+        self.assertEqual(r['month_schema'], 'dalha.month.v2')
         months = r['evidence_summary']['months']
         self.assertEqual([m['month'] for m in months], list(range(1,13)))
-        readings = [r['reading']] + [m['reading'] for m in months]
-        count = sum(len(p) for reading in readings for p in reading['paragraphs'])
-        count += sum(len(p) for reading in readings for d in reading['domains'] for p in d['paragraphs'])
-        self.assertGreaterEqual(count, 8000)
-        self.assertLess(count, 14000)
         for month in months:
-            self.assertGreaterEqual(len(month['reading']['paragraphs']), 3)
-            self.assertEqual(len(month['reading']['domains']), 6)
             self.assertEqual(month['representative_date'], f"2026-{month['month']:02}-15")
+            self.assertEqual(len(month['reading']['sentences']), 2)
         for m in range(1,13):
             self.assertEqual(r['content'].count(f'data-report-month="{m}"'), 1)
-            self.assertIn(f'2026-{m:02}-15의 절기 월주를 기준', r['content'])
-        self.assertEqual(r['content'].count('data-period-basis="monthly"'), 12)
+        for area, _ in annual_v2.AREAS:
+            self.assertEqual(r['content'].count(f'data-report-domain="{area}"'), 1)
+        centers = r['reading']['centers']
+        self.assertGreaterEqual(len(centers), 1)
+        self.assertEqual(r['content'].count('data-central="true"'), len(centers))
+        self.assertEqual(r['reading']['areas'][0]['area'], centers[0]['area'])
+        for token in ('<details', '<summary', 'annual-evidence'):
+            self.assertNotIn(token, r['content'])
+        self.assertEqual(annual_v2.validate_year(r['reading']), [])
         self.assertIn('2026-07-01을 대표일로 삼은 연간 해석', r['content'])
         self.assertIn('대운이 바뀌는 경우 전후 흐름을 각각 계산한 결과는 아닙니다', r['content'])
-        for domain, _ in GROUPS:
-            self.assertEqual(r['content'].count(f'data-report-domain="{domain}"'), 1)
-            self.assertEqual(r['content'].count(f'data-month-domain="{domain}"'), 12)
-
-    def test_scoped_evidence_is_preserved_and_general_guidance_is_not_forecast(self):
-        self.assertTrue(self.report['evidence_summary']['annual']['policy']['ranking_is_editorial'])
-        for reading, selection in [(self.report['reading'], self.report['evidence_summary']['annual'])] + [
-                (m['reading'], m['interpretation']) for m in self.report['evidence_summary']['months']]:
-            sources = {s for c in selection['candidates'] for s in c['source_ids']}
-            for domain in reading['domains']:
-                self.assertTrue(set(domain['source_ids']) <= sources)
-                self.assertEqual(bool(domain['source_ids']), domain['kind'] == 'scoped_interpretation')
-                if domain['kind'] == 'general_guidance':
-                    self.assertNotIn('무난', ' '.join(domain['paragraphs']))
-        blank = dict(candidates=[], focal_god='peer')
-        self.assertTrue(all(d['kind'] == 'general_guidance' for d in _domain_readings(blank)))
+        self.assertEqual(r['content'].count('data-period-basis="monthly"'), 1)
 
     def test_daily_layers_cannot_change_the_annual_report(self):
         copy = self.core.model_copy(deep=True)
         copy.timing.daily = {}; copy.timing.monthly = {}
         self.assertEqual(build_annual_overall_report(copy, '가상검증', 2026), self.report)
-
-    def test_monthly_domain_mode_overrides_broad_role_family(self):
-        selection=dict(focal_god='direct_wealth', candidates=[dict(domain='love', mode='change', source_ids=['test'])])
-        row=next(r for r in _domain_readings(selection, monthly=True) if r['domain']=='love')
-        self.assertIn('직접 물어보세요',row['paragraphs'][0])
-        self.assertNotIn('비용',row['paragraphs'][0])
 
     def test_different_births_use_different_calculated_readings_not_fictional_samples(self):
         other = calculate_myeongri_core(BirthInput(name='가상검증', gender='female',
@@ -95,7 +76,6 @@ class AnnualReaderTests(TestCase):
         report = build_annual_overall_report(core, '검증', 2026)
         self.assertEqual(report['content'].count('출생 전 기간'), 8)
         self.assertIn('2026-09-23을 대표일로 삼은 연간 해석', report['content'])
-        self.assertIn('2026-09-23의 절기 월주를 기준', report['content'])
         self.assertIn('출생한 달의 15일이 출생 전이면 출생일을 사용', report['content'])
         self.assertEqual(report['evidence_summary']['months'][0]['representative_date'], '2026-09-23')
         with self.assertRaises(ValueError): build_annual_overall_report(core, '검증', 2025)
