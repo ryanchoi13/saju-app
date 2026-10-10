@@ -98,50 +98,108 @@ class CentralAreaTests(TestCase):
                          v2.compose_year(selection("peer", ["love"], "join")))
 
 
+GODS = list(v2.GODS)
+# 2026년 甲 일간 기준 월간 십성(1~12월): 같은 십성이 두 번 오는 달이 있다.
+SAMPLE_YEAR = ["direct_wealth", "seven_killings", "direct_officer", "indirect_resource", "direct_resource",
+               "peer", "rob_wealth", "eating_god", "hurting_officer", "indirect_wealth",
+               "direct_wealth", "seven_killings"]
+
+
+def month(ledger, m, god, year_god="eating_god", area=None, flow="base", period=None):
+    return v2.compose_month(ledger, m, month_god=god, year_god=year_god,
+                            focus_area=area or v2.GOD_AREA[god], flow=flow, period=period)
+
+
 class MonthTests(TestCase):
-    def test_every_flow_and_theme_gives_one_word_and_two_sentences(self):
-        for flow in MODES:
-            for theme in v2.THEME_LINES:
-                ledger = CopyLedger(seed_from("2000-01-01", 2026))
-                month = v2.compose_month(ledger, 3, theme, flow)
-                self.assertEqual(month["verdict"], v2.VERDICTS[flow])
-                self.assertEqual(len(month["sentences"]), 2)
-                self.assertEqual(find_banned(month["text"]), [])
-                self.assertLessEqual(len(month["verdict"]), 7)
+    def test_every_combination_passes_the_writing_rules(self):
+        for year_god in GODS:
+            for god in GODS:
+                for area in v2.AREA_KEYS:
+                    for flow in MODES:
+                        r = month(CopyLedger(7), 10, god, year_god, area, flow)
+                        self.assertEqual(v2.validate_month(r), [], (year_god, god, area, flow))
+                        self.assertEqual(r["verdict"], v2.VERDICTS[flow])
 
-    def test_twelve_months_do_not_repeat_a_sentence(self):
-        for seed in ("1984-03-02", "1992-05-16", "2001-12-31"):
-            ledger = CopyLedger(seed_from(seed, 2026))
-            themes = list(v2.THEME_LINES)
-            sentences = []
-            for m in range(1, 13):
-                sentences += v2.compose_month(ledger, m, themes[(m - 1) % 4], "base")["sentences"]
-            theme_lines = [s for s in sentences if any(s in v2.THEME_LINES[t] for t in themes)]
-            self.assertEqual(len(theme_lines), len(set(theme_lines)), seed)
-            self.assertEqual(ledger.reused and [k for k, _ in ledger.reused if k.startswith("v2:theme")], [])
+    def test_month_has_all_blocks_and_focus_is_excluded_from_lines(self):
+        r = month(CopyLedger(1), 10, "indirect_wealth", area="workmoney", flow="join")
+        self.assertEqual(len(split_sentences(r["flow_text"])), 3)
+        self.assertEqual(len(split_sentences(r["link"])), 2)
+        self.assertEqual(r["focus"]["area"], "workmoney")
+        self.assertEqual([l["area"] for l in r["lines"]], ["mind", "people", "body", "learn"])
+        self.assertEqual([l["label"] for l in r["lines"]], ["마음", "관계", "건강", "배움"])
+        self.assertTrue(r["do"] and r["avoid"])
+        self.assertGreaterEqual(len(r["sentences"]), 10)
 
-    def test_worst_case_distributions_never_reuse_a_sentence(self):
-        themes = list(v2.THEME_LINES)
-        cases = {
-            "all career, all base": [("career", "base")] * 12,
-            "all career, all change": [("career", "change")] * 12,
-            "two themes alternating": [(themes[m % 2], "mixed") for m in range(12)],
-            "rotation, recovery": [(themes[m % 4], "recovery") for m in range(12)],
-        }
-        for name, plan in cases.items():
-            ledger = CopyLedger(seed_from("1984-03-02", 2026))
+    def test_family_relations_cover_the_five_cycle(self):
+        self.assertEqual(v2.family_relation("eating_god", "indirect_wealth"), "feeds")   # 식상생재
+        self.assertEqual(v2.family_relation("eating_god", "direct_resource"), "controlled")  # 인성극식상
+        self.assertEqual(v2.family_relation("eating_god", "seven_killings"), "controls")  # 식상극관
+        self.assertEqual(v2.family_relation("eating_god", "peer"), "fed")  # 비겁생식상
+        self.assertEqual(v2.family_relation("eating_god", "hurting_officer"), "same")
+        rel = {v2.family_relation(y, m) for y in GODS for m in GODS}
+        self.assertEqual(rel, set(v2.LINK))
+
+    def test_link_templates_fill_cleanly_for_all_pairs(self):
+        for y in GODS:
+            for g in GODS:
+                for template in v2.LINK[v2.family_relation(y, g)]:
+                    text = template.format(m=10, Y=v2.YEAR_PHRASE[y], M=v2.MONTH_PHRASE[g])
+                    self.assertNotIn("{", text)
+                    self.assertEqual(len(split_sentences(text)), 2)
+
+    def test_a_real_shaped_year_never_repeats_a_sentence(self):
+        for seed in ("1984-03-02", "1990-01-01", "2001-12-31"):
+            for flow in MODES:
+                ledger = CopyLedger(seed_from(seed, 2026))
+                sentences = []
+                for m, god in enumerate(SAMPLE_YEAR, start=1):
+                    sentences += month(ledger, m, god, flow=flow)["sentences"]
+                dups = {s for s in sentences if sentences.count(s) > 1}
+                self.assertEqual(dups, set(), (seed, flow))
+
+    def test_worst_case_same_focus_every_month_still_no_repeats(self):
+        for area in v2.AREA_KEYS:
+            ledger = CopyLedger(3)
             sentences = []
-            for month, (theme, flow) in enumerate(plan, start=1):
-                sentences += v2.compose_month(ledger, month, theme, flow)["sentences"]
-            self.assertEqual(len(sentences), len(set(sentences)), name)
-            self.assertEqual(ledger.reused, [], name)
+            for m, god in enumerate(SAMPLE_YEAR, start=1):
+                sentences += month(ledger, m, god, area=area, flow="join")["sentences"]
+            focus_pool = set(v2.FOCUS[area])
+            used_focus = [s for s in sentences if any(s in f for f in focus_pool)]
+            self.assertGreaterEqual(len(v2.FOCUS[area]), 12, area)
+            self.assertEqual(len(used_focus), len(set(used_focus)), area)
+
+    def test_period_line(self):
+        period = dict(name="한로", start=date(2026, 10, 8), end=date(2026, 11, 6))
+        r = month(CopyLedger(1), 10, "indirect_wealth", period=period)
+        self.assertEqual(r["period"], "10월 8일(한로)부터 11월 6일까지의 흐름입니다.")
+        self.assertIsNone(month(CopyLedger(1), 10, "indirect_wealth")["period"])
+
+    def test_unknown_month_god_still_gives_a_month(self):
+        r = v2.compose_month(CopyLedger(1), 3, month_god=None, year_god="peer", focus_area="body")
+        self.assertIsNone(r["link"])
+        self.assertEqual(r["lines"], [])
+        self.assertTrue(r["flow_text"] and r["do"])
+
+    def test_every_month_pool_sentence_passes_rules(self):
+        pools = [*v2.MONTH_FLOW.values(), v2.GENERAL_FLOW, *v2.FOCUS.values(), *v2.MODE_LINES.values(),
+                 *[lines for fam in v2.AREA_LINES.values() for lines in fam.values()],
+                 [x for pairs in [*v2.DO_AVOID.values(), v2.GENERAL_DO_AVOID] for pair in pairs for x in pair]]
+        for pool in pools:
+            for text in pool:
+                for sentence in split_sentences(text):
+                    self.assertLessEqual(len(sentence), v2.SENTENCE_MAX_MONTH, sentence)
+                    self.assertFalse(any(h in sentence for h in v2.HEDGES), sentence)
+        for fam in v2.AREA_LINES.values():
+            self.assertEqual(set(fam), set(v2.AREA_KEYS))
 
     def test_month_text_is_attitude_not_event(self):
-        pattern = re.compile(r"(생깁니다|일어납니다|찾아옵니다|사고가|사고를|질병|수술)")
-        for bank in (*v2.THEME_LINES.values(), *v2.FLOW_LINES.values()):
-            for line in bank:
-                self.assertIsNone(pattern.search(line), line)
-                self.assertLessEqual(len(line), v2.SENTENCE_MAX)
+        pattern = re.compile(r"(생깁니다|일어납니다|찾아옵니다|사고가|사고를|질병|수술|반드시)")
+        pools = [*v2.MONTH_FLOW.values(), v2.GENERAL_FLOW, *v2.FOCUS.values(), *v2.MODE_LINES.values(),
+                 *[lines for fam in v2.AREA_LINES.values() for lines in fam.values()]]
+        for pool in pools:
+            for text in pool:
+                self.assertIsNone(pattern.search(text), text)
+                self.assertEqual(find_banned(text), [], text)
 
 
 def fake_core(birth=date(1984, 3, 2)):
@@ -151,11 +209,21 @@ def fake_core(birth=date(1984, 3, 2)):
 
 
 def run_builder(core, year=2026, god="eating_god", domains=("enjoyment",), mode="base", name="정오"):
+    """계산 함수를 가짜로 바꿔 조립만 확인한다. 월별 십성은 실제 한 해처럼 달마다 바뀐다."""
     timing = SimpleNamespace(annual={"pillar": {"ganji": "丙午"}})
-    sel = selection(god, domains, mode)
+    year_sel = selection(god, domains, mode)
+    months = iter(SAMPLE_YEAR * 2)
+
+    def fake_select(core, scope, timing=None):
+        if scope == "annual":
+            return year_sel
+        if scope == "monthly":
+            return selection(next(months))
+        return selection(None)
+
     with patch.object(annual, "to_solar", side_effect=lambda d, *_: d), \
          patch.object(annual, "calculate_timing", return_value=(timing, None, None)), \
-         patch.object(annual, "select_overall_domains", return_value=sel):
+         patch.object(annual, "select_overall_domains", side_effect=fake_select):
         return annual.build_annual_overall_report(core, name, year)
 
 
@@ -193,15 +261,31 @@ class BuilderStructureTests(TestCase):
         self.assertEqual([int(m) for m, _ in heads], list(range(1, 13)))
         self.assertTrue(all(word in verdicts for _, word in heads))
 
+    def test_no_sentence_repeats_across_twelve_months(self):
+        sentences = [s for m in self.report["evidence_summary"]["months"] for s in m["reading"]["sentences"]]
+        self.assertEqual(len(sentences), len(set(sentences)))
+        for m in self.report["evidence_summary"]["months"]:
+            self.assertEqual(v2.validate_month(m["reading"]), [])
+
     def test_version_fields_and_basis_note(self):
         r = self.report
         self.assertEqual(r["narrative_version"], "annual-v2")
-        self.assertEqual(r["month_schema"], "dalha.month.v2")
+        self.assertEqual(r["month_schema"], "dalha.month.v3")
         self.assertIn('data-narrative-version="annual-v2"', r["content"])
         self.assertIn("2026-07-01을 대표일로 삼은 연간 해석", r["content"])
         self.assertIn("丙午", r["content"])
         self.assertIn("대운이 바뀌는 경우 전후 흐름을 각각 계산한 결과는 아닙니다", r["content"])
         self.assertEqual(v2.validate_year(r["reading"]), [])
+
+    def test_month_card_shows_every_block(self):
+        period = dict(name="한로", start=date(2026, 10, 8), end=date(2026, 11, 6))
+        with patch.object(annual, "_term_period", return_value=period):
+            r = run_builder(fake_core())
+        card = r["content"][r["content"].index('data-report-month="10"'):]
+        card = card[:card.index("</article>")]
+        for token in ("(한로)부터", "annual-month-flow", "올해와 이어지는 점", "이달의 초점 · ",
+                      "분야별 한 줄", "<strong>할 일</strong>", "<strong>피할 일</strong>"):
+            self.assertIn(token, card)
 
     def test_name_is_escaped(self):
         r = run_builder(fake_core(), name="<img src=x onerror=alert(1)>")
