@@ -493,6 +493,14 @@ def get_saju_pillars_and_analysis(name: str, gender: str, y: int, m: int, d: int
         from fashion_v2.svg_recommendation import PALETTE as _FASHION_PALETTE
         tone = _FASHION_PALETTE[_TONGGUAN_TONE[tongguan["element"]]]
         color_a = {"name": tone["id"], "name_ko": tone["name"], "hex": tone["hex"]}
+        # 화면의 추천 색 칩도 같은 두 색으로 맞춘다(세 번째 색이 생기지 않게 A색을 바꿔 끼운다).
+        swap = {"hex": tone["hex"], "name": tone["id"], "name_ko": tone["name"],
+                "original_name": tone["name"], "standard_color": tone["name"]}
+        result["daily_fortune"]["wada_palette"]["top"] = {**result["daily_fortune"]["wada_palette"]["top"], **swap}
+        result["daily_fortune"]["lucky_colors"][0] = tone["name"]
+        for palette in result["daily_fortune"]["style_palettes"].values():
+            if palette.get("top"):
+                palette["top"] = {**palette["top"], **swap}
     complete_weather = weather_profile and all(key in weather_profile for key in (
         "thermal_band", "thermal_label", "daytime_apparent_high",
         "evening_apparent_low", "carry_light_outer", "rainy", "guidance",
