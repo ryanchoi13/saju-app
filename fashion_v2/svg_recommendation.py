@@ -469,6 +469,9 @@ def to_spec(look):
     return s
 
 
+POINT_SLOT_ENABLED=False
+
+
 def add_point_slot(look, a, b):
     """튀는 색이 옷에 갈 수 없는 착장에, 이미 그릴 수 있는 소품 한 칸(머플러·크로스백)을 더한다."""
     if look.get('color_targets') or any(i['category'] in {'tie','bag','accessory'} for i in look['items']):
@@ -503,7 +506,11 @@ def build_svg_catalog_contexts(gender,season,color_a,color_b,weather_profile=Non
                 item.update(key=f'item-{i}',color_name=c['name'],hex=c['hex'],color_relation='base')
             selected['form']='dress' if any(i['category']=='dress' for i in selected['items']) else 'skirt' if any('스커트' in i['label'] for i in selected['items']) else 'pants'
             plain=deepcopy(selected)
-            add_point_slot(selected,color_a,color_b)
+            # 소품 칸 추가는 끈다: 코디 이미지는 미리 그린 일러스트를 '옷·소품 구성이 똑같을 때만' 고르는데
+            # (assets/dalha-illustrations/catalog.js), 머플러·크로스백을 더한 구성은 일러스트가 없어
+            # '이미지를 준비하고 있습니다'만 떴다(2026-10-11 배포 후 확인). 일러스트가 생기면 다시 켠다.
+            if POINT_SLOT_ENABLED:
+                add_point_slot(selected,color_a,color_b)
             try:
                 look=apply_colors(selected,color_a,color_b,previous)
             except ValueError:
