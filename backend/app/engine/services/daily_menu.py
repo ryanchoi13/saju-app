@@ -712,8 +712,8 @@ def _grouped_selection(candidates, score, seed, count, used_menus, category_coun
             frequency = PROFILES[group][0]
             digest = hashlib.sha256(f"{seed}|category|{group}".encode()).hexdigest()
             uniform = (int(digest[:12], 16) + 1) / (16**12 + 1)
-            variation = -math.log(-math.log(uniform)) * 2
-            return (best + frequency * 2 + variation
+            variation = -math.log(-math.log(uniform)) * 3
+            return (best + frequency + variation
                     - min(12, category_counts.get(group, 0) * 2)
                     - (6 if group in used_categories else 0))
         category = max(sorted(groups), key=category_score)

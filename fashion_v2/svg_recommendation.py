@@ -162,8 +162,38 @@ def stable(c, suit=False, denim=False):
     return f=='blue' and l < .34 and s < .72
 
 
+LOUD_FAMILIES={'red','orange','yellow','purple'}   # 분홍은 describe_color 에서 red 로 묶인다
+GARMENT_CATS={'outer','coat','carry_outer','mid','bottom','dress','suit'}
+POINT_CATS={'tie','bag','accessory','shoes'}
+
+
+def loud_for_wearer(c, look):
+    """연령·성별 TPO 룰(2026-10-11 정오님 결정).
+
+    튀는 색(레드·핑크·코랄·옐로·퍼플 계열)은 중년 남성(35+)과 50대 이상에게
+    아우터·하의·원피스로 쓰지 않는다. 아우터 안에 입는 상의는 허용하고, 나머지는 소품으로 보낸다.
+    버건디·딥 플럼처럼 어둡게 가라앉은 톤은 튀는 색으로 보지 않는다.
+    """
+    if c['family'] not in LOUD_FAMILIES: return False
+    if c['lightness'] < .40 and c['saturation'] < .6: return False
+    if c['family']=='orange' and c['saturation'] < .5: return False   # 카멜·탄·러스트 같은 뉴트럴 브라운
+    if c['family']=='yellow' and c['saturation'] < .5: return False   # 카멜·카키·샌드
+    age=look.get('age')
+    if age is None: return False
+    if look['gender']=='male' and age>=35: return True
+    return age>=50 and c['saturation']>.45
+
+
+def worn_outer(look):
+    return any(i['category'] in {'outer','coat'} and i.get('wear_mode','worn')!='carry' for i in look['items'])
+
+
 def permitted(c, group, look):
     cat=group['category']; formal=look['tpo']=='business_formal'
+    if loud_for_wearer(c, look):
+        if cat in GARMENT_CATS: return False
+        if cat=='top' and not worn_outer(look): return False
+        if cat=='shoes' and look['gender']=='male': return False
     if cat=='suit': return stable(c, suit=True)
     if cat=='bottom':
         denim = group['label']=='데님 바지'
@@ -439,6 +469,24 @@ def to_spec(look):
     return s
 
 
+def add_point_slot(look, a, b):
+    """튀는 색이 옷에 갈 수 없는 착장에, 이미 그릴 수 있는 소품 한 칸(머플러·크로스백)을 더한다."""
+    if look.get('color_targets') or any(i['category'] in {'tie','bag','accessory'} for i in look['items']):
+        return
+    if not any(loud_for_wearer(describe_color(c), look) for c in (a, b)):
+        return
+    band=(look.get('weather_fit') or {}).get('thermal_band')
+    cold=band in {'cool','chilly','cold','freezing'} or (not band and look['season'] in {'autumn','winter'})
+    # 시계는 줄·케이스 색이 따로 잡혀 색 수 상한(4)을 넘기기 쉬워, 따뜻한 날은 크로스백을 쓴다.
+    label='머플러' if cold else '크로스백'
+    item=dict(category='accessory' if cold else 'bag', label=label, base_color='charcoal' if cold else 'black',
+              material='wool_knit' if cold else 'leather', wear_mode='worn', added_for='point_color')
+    c=tone(item['base_color'])
+    item.update(key=f"item-{len(look['items'])}", color_name=c['name'], hex=c['hex'], color_relation='base')
+    look['items'].append(item)
+    look.setdefault('selection_changes',[]).append({'reason':'튀는 색을 소품으로 옮기기 위해 '+label+' 추가'})
+
+
 def build_svg_catalog_contexts(gender,season,color_a,color_b,weather_profile=None,age=None,board_weather_profile=None):
     if gender not in {'male','female'}: raise ValueError('성별 확인 필요')
     if season not in {'spring','summer','autumn','winter'}: raise ValueError('계절 확인 필요')
@@ -454,7 +502,20 @@ def build_svg_catalog_contexts(gender,season,color_a,color_b,weather_profile=Non
                 c=tone(item['base_color'])
                 item.update(key=f'item-{i}',color_name=c['name'],hex=c['hex'],color_relation='base')
             selected['form']='dress' if any(i['category']=='dress' for i in selected['items']) else 'skirt' if any('스커트' in i['label'] for i in selected['items']) else 'pants'
-            look=apply_colors(selected,color_a,color_b,previous)
+            plain=deepcopy(selected)
+            add_point_slot(selected,color_a,color_b)
+            try:
+                look=apply_colors(selected,color_a,color_b,previous)
+            except ValueError:
+                if selected['items']==plain['items']:
+                    raise
+                # 소품을 더하면 색 수 상한(4)을 못 지키는 착장: 소품 없이 고르고 튀는 색은 팔레트로 안내한다.
+                look=apply_colors(plain,color_a,color_b,previous)
+            else:
+                added=[i for i in look['items'] if i.get('added_for')=='point_color']
+                if added and not any(i.get('applied_daily_color') for i in added):
+                    # 튀는 색이 톤을 낮춰 옷에 자리 잡았으면 더한 소품은 필요 없다.
+                    look=apply_colors(plain,color_a,color_b,previous)
             previous={r:(p['slot'],p['hex']) for r,p in look['color_strategy']['placements'].items()}
             shoe=next((i for i in look['items'] if i['category']=='shoes'),None)
             if shoe:
