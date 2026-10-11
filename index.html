@@ -2464,7 +2464,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             [['outfitBasic', outfit.basic], ['outfitPoint', outfit.point]].forEach(([id, track]) => {
                 const el = document.getElementById(id);
                 el.querySelector('.outfit-track-label').textContent = track.label || '';
-                el.querySelector('.outfit-swatch').style.background = OUTFIT_HEX[track.color] || '#CBD5E1';
+                el.querySelector('.outfit-swatch').style.background = track.hex || OUTFIT_HEX[track.color] || '#CBD5E1';
                 el.querySelector('strong').textContent = track.color || '';
                 el.querySelector('p').textContent = track.text || '';
             });

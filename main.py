@@ -508,7 +508,60 @@ def get_saju_pillars_and_analysis(name: str, gender: str, y: int, m: int, d: int
         board_weather_profile=weather_profile if complete_weather else None,
     )
     result["daily_fortune"]["fashion_color_basis"] = fashion_color_basis
+    result["daily_fortune"]["outfit"] = _outfit_tracks_from_look(
+        result["daily_fortune"]["fashion_v2"], result["daily_fortune"]["outfit"])
     return result
+
+
+_POINT_SLOTS = {"tie", "bag", "accessory", "shoes"}
+
+
+def _outfit_tracks_from_look(fashion_v2: Dict[str, Any], fallback: Dict[str, Any]) -> Dict[str, Any]:
+    """홈 '베이직/포인트' 카드를 '오늘의 코디 보기' 추천 1과 같은 색으로 맞춘다.
+
+    베이직 = 옷(아우터·상의·하의)에 실제로 놓인 색, 포인트 = 소품(넥타이·가방·머플러·신발)에 놓인 색.
+    소품 자리를 못 찾은 색은 '소품 하나로 더해 보세요'로 안내한다. 코디가 없으면 기존 카드를 그대로 쓴다.
+    """
+    try:
+        look = fashion_v2["casual"]["looks"][0]
+    except (KeyError, IndexError, TypeError):
+        return fallback
+    strategy = look.get("color_strategy", {})
+    placements = strategy.get("placements", {})
+    items = look.get("items", [])
+
+    def label_for(placement):
+        index = (placement.get("indexes") or [None])[0]
+        return items[index]["label"] if index is not None and index < len(items) else ""
+
+    garment = [(r, p) for r, p in placements.items() if p.get("slot") not in _POINT_SLOTS]
+    small = [(r, p) for r, p in placements.items() if p.get("slot") in _POINT_SLOTS]
+    unresolved = strategy.get("unresolved", [])
+    if not garment:
+        return fallback
+    basic_role, basic = garment[0]
+    if small:
+        _, point = small[0]
+        point_track = dict(label="포인트", color=point["name"], hex=point["hex"],
+                           text=f"포인트는 {point['name']} {label_for(point)} 하나면 충분해요.")
+    elif unresolved:
+        point = unresolved[0]
+        point_track = dict(label="포인트", color=point["name"], hex=point["hex"],
+                           text=f"포인트는 {point['name']}빛 소품 하나로 살짝 더해 보세요.")
+    elif len(garment) > 1:
+        _, point = garment[1]
+        point_track = dict(label="포인트", color=point["name"], hex=point["hex"],
+                           text=f"{point['name']} {label_for(point)}로 분위기를 더해요.")
+    else:
+        return fallback
+    return dict(
+        element=fallback.get("element"),
+        caption=fallback.get("caption", ""),
+        source="fashion_v2_recommendation_1",
+        basic=dict(label="베이직", color=basic["name"], hex=basic["hex"],
+                   text=f"{basic['name']} {label_for(basic)}로 하루의 중심을 잡아요."),
+        point=point_track,
+    )
 
 
 # --- Detailed Report Generator Engine ---
