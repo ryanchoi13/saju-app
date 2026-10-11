@@ -11,7 +11,7 @@ SEASONS = ('spring', 'summer', 'autumn', 'winter')
 TPOS = ('casual', 'business_casual', 'business_formal')
 ROLES = ('daily', 'trend')
 PRACTICAL_MALE_BOTTOM_COLORS = {
-    'black', 'navy', 'beige', 'gray', 'charcoal', 'light_gray',
+    'black', 'navy', 'beige', 'gray', 'charcoal', 'light_gray', 'mid_gray',
     'denim_blue', 'dark_denim',
 }
 
@@ -50,7 +50,7 @@ RAW_LOOKS = {
         'pants::::top|니트 폴로|ivory|cotton_knit;bottom|슬랙스|gray|summer_wool;shoes|미니멀 운동화|black|leather'),
     'male-summer-business_formal': (
         'pants::strict::outer|수트 재킷|navy|summer_wool|navy_summer;top|드레스 셔츠|white|cotton;bottom|수트 바지|navy|summer_wool|navy_summer;tie|솔리드 타이|navy|silk;shoes|옥스퍼드 구두|black|leather',
-        'pants::strict::outer|수트 재킷|light_gray|summer_wool|gray_summer;top|드레스 셔츠|light_blue|cotton;bottom|수트 바지|light_gray|summer_wool|gray_summer;tie|레지멘탈 타이|navy_burgundy|silk;shoes|더비 구두|black|leather'),
+        'pants::strict::outer|수트 재킷|mid_gray|summer_wool|gray_summer;top|드레스 셔츠|light_blue|cotton;bottom|수트 바지|mid_gray|summer_wool|gray_summer;tie|레지멘탈 타이|navy_burgundy|silk;shoes|더비 구두|black|leather'),
     'male-autumn-casual': (
         'pants::::outer|필드 점퍼|navy|cotton;top|맨투맨|burgundy|cotton;bottom|스트레이트 청바지|dark_denim|denim;shoes|스웨이드 운동화|dark_brown|suede',
         'pants::::outer|워크 재킷|charcoal|wool_blend;top|후드 티셔츠|gray|cotton;bottom|블랙 청바지|black|denim;shoes|가죽 운동화|black|leather'),
@@ -85,7 +85,7 @@ RAW_LOOKS = {
         'pants::::top|반팔 니트|ivory|cotton_knit;bottom|슬랙스|navy|summer_wool;shoes|로퍼|dark_brown|leather',
         'skirt::::top|반팔 블라우스|light_blue|cotton;bottom|우븐 스커트|gray|woven;shoes|플랫|black|leather'),
     'female-summer-business_formal': (
-        'pants::strict::outer|수트 재킷|light_gray|summer_wool|gray_summer;top|블라우스|white|silk_blend;bottom|수트 바지|light_gray|summer_wool|gray_summer;shoes|펌프스|black|leather',
+        'pants::strict::outer|수트 재킷|mid_gray|summer_wool|gray_summer;top|블라우스|white|silk_blend;bottom|수트 바지|mid_gray|summer_wool|gray_summer;shoes|펌프스|black|leather',
         'dress::dress_jacket::outer|경량 재킷|navy|summer_wool;dress|반팔 정장 원피스|navy|summer_wool;shoes|플랫|black|leather'),
     'female-autumn-casual': (
         'pants::::outer|블루종|olive|cotton;top|크루넥 니트|cream|wool_knit;bottom|스트레이트 청바지|dark_denim|denim;shoes|스웨이드 운동화|brown|suede',

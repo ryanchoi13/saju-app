@@ -21,6 +21,7 @@ BASE_COLORS = {
     'dusty_blue': ('더스티 블루', '#839BAE'), 'gray': ('그레이', '#85888D'),
     'ivory': ('아이보리', '#E8E0CF'), 'ivory_navy': ('아이보리·네이비', '#D6D1C4'),
     'light_blue': ('라이트 블루', '#A9C5D8'), 'light_gray': ('라이트 그레이', '#B6BAC1'),
+    'mid_gray': ('미디엄 그레이', '#6E7277'),
     'navy': ('네이비', '#26354A'), 'navy_burgundy': ('네이비·버건디', '#343747'),
     'olive': ('올리브', '#787E62'), 'soft_pink': ('소프트 핑크', '#D8B4B8'),
     'white': ('화이트', '#F5F4EF'),

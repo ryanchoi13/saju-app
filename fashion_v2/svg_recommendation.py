@@ -26,6 +26,8 @@ PALETTE = json.loads(Path(__file__).with_name('approved_palette.json').read_text
 PALETTE['light_gray'] = dict(id='light_gray', name='라이트 그레이', hex='#CDD0D3', family='neutral', element='금', kind='calm')
 # A wearable tone requested in review, separate from the original research pool.
 PALETTE['pale_pink'] = {**PALETTE['pink'], 'id':'pale_pink', 'name':'연한 분홍', 'hex':'#E8DADB'}
+# 정장 수트용 중간 회색(2026-10-11 정오님 요청: 라이트 그레이 수트보다 미들·다크 그레이가 무난).
+PALETTE['mid_gray'] = dict(id='mid_gray', name='미디엄 그레이', hex='#6E7277', family='neutral', element='금', kind='calm')
 VERSION = 'approved-svg-5'
 TPOS = ('casual', 'business_casual', 'business_formal')
 ALIASES = {'cream':'ivory', 'dark_brown':'brown', 'dark_denim':'navy',
@@ -194,7 +196,8 @@ def permitted(c, group, look):
         if cat in GARMENT_CATS: return False
         if cat=='top' and not worn_outer(look): return False
         if cat=='shoes' and look['gender']=='male': return False
-    if cat=='suit': return stable(c, suit=True)
+    if cat=='suit':   # 라이트 그레이·밝은 회색, 완전 블랙 수트는 빼고 미디엄·다크 그레이(차콜)로 간다
+        return stable(c, suit=True) and c['lightness'] < .55 and c['family']!='black'
     if cat=='bottom':
         denim = group['label']=='데님 바지'
         return stable(c, denim=denim) or (not denim and not formal and muted_green_bottom(c))
