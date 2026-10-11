@@ -84,7 +84,10 @@ class DailyFortuneServiceTests(TestCase):
         self.assertEqual(result['evidence_summary']['primary_operation'], 'unconfirmed')
         basis = result['evidence_summary']['lucky_recommendation_basis']
         self.assertFalse(basis['recommendation_confirmed'])
-        self.assertEqual(basis['element_source'], 'daily_symbolic_reference')
+        # 2026-10-11 정오님 결정: 코어 방향이 보류여도 원국 균형 + 오늘 일진으로 추정한다.
+        # 다만 확정 판정처럼 말하지 않는다(보완 방향·우선입니다 금지, 참고 아이템 표기 유지).
+        self.assertEqual(basis['element_source'], 'natal_balance_plus_daily')
+        self.assertIn(result['lucky_element'], {'木', '火', '土', '金', '水'})
         self.assertNotIn('우선입니다', result['lucky_item_reason'])
         self.assertNotIn('보완 방향', result['talisman']['desc'])
         self.assertIn('참고 아이템', result['lucky_item_reason'])
@@ -129,8 +132,13 @@ class DailyFortuneServiceTests(TestCase):
         core.timing.daily['ten_god'] = 'direct_wealth'
         core.timing.daily['pillar']['stem_element'] = '土'
         result = build_daily_fortune(core, '테스트', target, include_menu=False)
-        self.assertEqual(result['lucky_item'], '베이지 카드지갑')
-        self.assertIn('베이지 카드지갑', result['lucky_item_reason'])
+        # 행운 오행은 이제 원국 균형 + 일진 추정이라 날짜·사람마다 다르다. 남성용 소품 규칙만 확인한다.
+        from app.engine.services.daily import _ITEMS, _MALE_ITEM_OVERRIDES
+        element = result['lucky_element']
+        expected = _MALE_ITEM_OVERRIDES['organize'].get(element, _ITEMS['organize'][element])
+        self.assertEqual(result['lucky_item'], expected)
+        self.assertNotIn('파우치', result['lucky_item'])
+        self.assertIn(expected, result['lucky_item_reason'])
         self.assertFalse(result['evidence_summary']['lucky_recommendation_basis']['recommendation_confirmed'])
 
     def test_fortune_changes_with_the_actual_daily_pillar(self):

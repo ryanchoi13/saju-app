@@ -361,6 +361,14 @@ def get_saju_pillars_and_analysis(name: str, gender: str, y: int, m: int, d: int
     lucky_element = today_fortune["lucky_element"]
     fashion_color_basis = build_fashion_color_basis(core)
     fashion_element = fashion_color_basis["primary_element"]
+    if fashion_color_basis["source"] != "confirmed_natal_direction":
+        # 코어 방향이 보류면: 오늘의 보완 오행(원국 균형 + 일진)과 타고난 보완 오행으로 두 색을 고른다.
+        fashion_element = lucky_element
+        natal_element = today_fortune["natal_balance_element"]
+        today_element = natal_element if natal_element != lucky_element else today_element
+        fashion_color_basis = {**fashion_color_basis, "primary_element": fashion_element,
+                               "secondary_element": today_element,
+                               "source": "natal_balance_plus_daily"}
 
     current_month = today_date.month
 

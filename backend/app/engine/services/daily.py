@@ -17,6 +17,7 @@ from app.engine.services.daily_scenarios import select_daily_scenario
 from app.engine.services.daily_topics import select_daily_topics
 from app.engine.semantic.overall import select_overall_domains
 from app.engine.services.overall_narrative import render_overall
+from app.engine.services.element_balance import natal_balance, daily_blend
 
 
 DAILY_FORTUNE_VERSION = "daily-fortune-v6-exact-daily-role"
@@ -243,7 +244,7 @@ def _lucky_element(query: dict, daily_element: str) -> str:
     return favorable[0] if favorable else daily_element
 
 
-def _menu_timing_element_weights(timing: dict, semantic: dict | None = None) -> dict[str, int]:
+def _menu_timing_element_weights(timing: dict, semantic: dict | None = None, balance: dict | None = None) -> dict[str, int]:
     """Conservative service translation, not a classical food prescription.
 
     Presence does not imply dietary need. Timing only modulates directions already
@@ -267,6 +268,12 @@ def _menu_timing_element_weights(timing: dict, semantic: dict | None = None) -> 
         else:
             value = min(cap, 2 + exposure.get(element, 0) // 4)
             result[element] = -value if element in caution else value
+    if not result and balance:   # 코어 방향이 보류면 원국 균형 추정으로 상수 층을 채운다
+        ranking = balance["ranking"]
+        result[ranking[0]] = 3
+        result[ranking[1]] = result.get(ranking[1], 0) + 1
+        if balance["scores"][ranking[-1]] < 0:
+            result[ranking[-1]] = -2
     # 오늘 층(변수). 원국 방향이 비어 있어도(표본 120명 전원 favorable 없음) 일진은 매일 순위를 움직인다.
     # 상징적 연결이며 식이 처방이 아니다.
     daily_pillar = (timing.get("daily") or {}).get("pillar") or {}
@@ -425,8 +432,11 @@ def build_daily_fortune(
     shensha = _daily_shensha(core)
     positive_shensha = sum(name in {"literary_star", "heavenly_noble"} for name in shensha)
     caution_shensha = sum(name in {"solitary_star", "widow_star"} for name in shensha)
-    lucky_element = _lucky_element(query, daily_element)
-    timing_element_weights = _menu_timing_element_weights(timing, query["semantic_state"])
+    balance = natal_balance(core)
+    blend = daily_blend(balance, daily_element, daily_pillar["ganji"][1])
+    # 코어가 확정한 방향이 있으면 그것을, 없으면 원국 균형 + 오늘 일진을 함께 본 추정을 쓴다.
+    lucky_element = _lucky_element(query, blend["element"])
+    timing_element_weights = _menu_timing_element_weights(timing, query["semantic_state"], balance)
     aligned = daily_element in set(query["semantic_state"].get("favorable_elements", []))
     confidence = str(query["semantic_state"].get("confidence", "undetermined"))
     score = _score(
@@ -457,7 +467,7 @@ def build_daily_fortune(
         f"오늘은 {josa(operation_text, '이/가')} 우선입니다. 추천 아이템은 {item}이며, "
         f"{element['ko']} 기운의 색·소재는 보조 근거로만 반영했습니다."
         if recommendation_confirmed else
-        f"추천 아이템은 {item}입니다. 오늘의 일진을 상징하는 색·소재로 고른 참고 아이템입니다."
+        f"추천 아이템은 {item}입니다. 타고난 오행의 균형과 오늘 일진을 함께 보고 고른 {element['ko']} 기운의 참고 아이템입니다."
     )
     menu_selection = (daily_choices(core.input, target_date, timing_element_weights, account_key)
                       if include_menu else dict(menus=[], meals=[], pool_size=0, pool_version=None,
@@ -522,6 +532,7 @@ def build_daily_fortune(
         "mindset": daily_copy.sanitize(narrative["title"]),
         "action": daily_copy.sanitize(narrative["unified_advice"]),
         "lucky_element": lucky_element,
+        "natal_balance_element": balance["primary"],
         "lucky_item": item,
         "lucky_item_reason": item_reason,
         "lucky_number": element["numbers"],
@@ -542,7 +553,7 @@ def build_daily_fortune(
             "desc": (
                 f"오늘의 보완 방향인 {element['ko']} 기운을 상징적으로 담은 일일 부적입니다."
                 if recommendation_confirmed else
-                f"오늘의 일진에 해당하는 {element['ko']} 기운을 상징적으로 담은 일일 부적입니다."
+                f"타고난 균형과 오늘의 기운을 함께 본 {element['ko']} 기운을 상징적으로 담은 일일 부적입니다."
             ),
             "talisman_type": talisman_type,
         },
@@ -560,7 +571,8 @@ def build_daily_fortune(
             "lucky_element": lucky_element,
             "lucky_recommendation_basis": {
                 "core_operation_confirmed": core_operation_confirmed,
-                "element_source": "core_favorable" if core_element_confirmed else "daily_symbolic_reference",
+                "element_source": "core_favorable" if core_element_confirmed else "natal_balance_plus_daily",
+                "element_balance": {"natal": balance, "daily": blend},
                 "recommendation_confirmed": recommendation_confirmed,
                 "fallback_is_not_a_prescription": not recommendation_confirmed,
             },
