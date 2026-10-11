@@ -148,3 +148,35 @@ def daily_blend(natal: dict, daily_stem_element: str, daily_branch: str) -> dict
                 scores={e: round(total[e], 2) for e in ELEMENTS},
                 natal_part={e: round(base[e], 2) for e in ELEMENTS},
                 daily_part={e: round(today[e], 2) for e in ELEMENTS})
+
+
+# ---------------------------------------------------------------------------
+# 통관(通關): 일진 지지가 내 일지·월지와 충이고 두 오행이 서로 극하는 날,
+# 이기는 쪽이 낳고(生) 지는 쪽을 낳는 제3의 오행으로 두 기운을 잇는다.
+#   예) 子(水)·午(火) 충 → 水克火 → 水生木·木生火 → 木
+# 같은 오행끼리 부딪히는 충(辰戌·丑未, 토-토)은 이어 줄 오행이 없어 쓰지 않는다.
+# 측정(120명 × 60일): 약 11% 날 = 한 달에 3일 남짓. 상극까지 넓히면 40%라 쓰지 않는다.
+# ---------------------------------------------------------------------------
+_CLASH_PAIRS = {frozenset(p) for p in ("子午", "丑未", "寅申", "卯酉", "辰戌", "巳亥")}
+
+
+def mediator(a: str, b: str) -> str | None:
+    """a·b 가 서로 극하면 둘을 잇는 오행, 아니면 None."""
+    if CONTROLS[a] == b:
+        return GENERATES[a]
+    if CONTROLS[b] == a:
+        return GENERATES[b]
+    return None
+
+
+def tongguan_day(core, daily_branch: str) -> dict | None:
+    for position in ("day", "month"):
+        pillar = core.natal_facts.pillars.get(position)
+        if pillar is None or frozenset((daily_branch, pillar.branch)) not in _CLASH_PAIRS:
+            continue
+        today, natal = _BRANCH_ELEMENT[daily_branch], _BRANCH_ELEMENT[pillar.branch]
+        element = mediator(today, natal)
+        if element:
+            return dict(element=element, clash=f"{daily_branch}{pillar.branch}", position=position,
+                        between=[today, natal], rule="branch_clash_mediator")
+    return None
