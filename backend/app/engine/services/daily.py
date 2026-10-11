@@ -197,6 +197,24 @@ def _independent_relation_counts(relations: list[dict]) -> tuple[int, int]:
     return supportive, tension
 
 
+# 이야기 톤(보조 메시지·관계 키)은 '체감이 큰' 신호만 쓴다. 천간극·해·파는 매일 거의 걸리는
+# 약한 신호라(60일 표본에서 천간극만 하루 2회꼴) 톤 판정에서 빼고, 근거(evidence)에는 그대로 남긴다.
+# 운(대운·월운)과의 관계도 톤에서는 뺀다 — '오늘 하루'의 체감은 일진 × 원국이 먼저다.
+_STORY_TENSION = {"branch_clash", "branch_punishment"}
+_STORY_SUPPORT = {"stem_combination", "branch_six_combination", "branch_three_combination",
+                  "branch_half_combination"}
+
+
+def _story_relation_counts(relations: list[dict]) -> tuple[int, int, set[str]]:
+    natal = [r for r in relations
+             if all(m.get("pillar") in {"timing:daily", "year", "month", "day", "hour"} for m in r.get("members", []))]
+    strong_t = [r for r in natal if r.get("type") in _STORY_TENSION]
+    strong_s = [r for r in natal if r.get("type") in _STORY_SUPPORT]
+    s, _ = _independent_relation_counts(strong_s)
+    _, t = _independent_relation_counts(strong_t)
+    return s, t, {r.get("type") for r in strong_t}
+
+
 def _daily_shensha(core: MyeongriCoreResult) -> list[str]:
     evidence = {item.id: item for item in core.evidence}
     names = []
@@ -241,15 +259,38 @@ def _menu_timing_element_weights(timing: dict, semantic: dict | None = None) -> 
             element = pillar.get(key)
             if element:
                 exposure[element] = exposure.get(element, 0) + weight
-    cap = 4 if semantic.get("confidence") in {"low", "undetermined", None} else 6
+    cap = 3 if semantic.get("confidence") in {"low", "undetermined", None} else 4
     result = {}
     for element in favorable | caution:
         if element in favorable and element in caution:
             result[element] = 0  # Conflicting core directions: no invented resolution.
         else:
-            value = min(cap, 3 + exposure.get(element, 0) // 3)
+            value = min(cap, 2 + exposure.get(element, 0) // 4)
             result[element] = -value if element in caution else value
+    # 오늘 층(변수). 원국 방향이 비어 있어도(표본 120명 전원 favorable 없음) 일진은 매일 순위를 움직인다.
+    # 상징적 연결이며 식이 처방이 아니다.
+    daily_pillar = (timing.get("daily") or {}).get("pillar") or {}
+    for key, weight in (("stem_element", 5), ("branch_element", 3)):
+        element = daily_pillar.get(key)
+        if element:
+            result[element] = result.get(element, 0) + weight
     return result
+
+
+_DAY_SEASON_TAGS = {  # 일지의 계절감 → 조후 태그(차고 더움의 상징적 보정)
+    "巳": {"cool", "fresh"}, "午": {"cool", "fresh"}, "未": {"cool", "light"},
+    "亥": {"warm"}, "子": {"warm"}, "丑": {"warm"},
+    "寅": {"fresh"}, "卯": {"fresh"}, "辰": {"light"},
+    "申": {"moisten"}, "酉": {"moisten"}, "戌": {"moisten"},
+}
+
+
+def _day_ganji(target: date) -> str:
+    """60갑자 일진(달력 계산). 2026-10-05 = 壬子 기준."""
+    from app.engine.constants import GAN_KO as _G, ZHI_KO as _Z
+    stems, branches = list(_G), list(_Z)
+    idx = (48 + (target - date(2026, 10, 5)).days) % 60
+    return stems[idx % 10] + branches[idx % 12]
 
 
 def _menu_climate_tags(query: dict) -> frozenset[str]:
@@ -303,17 +344,46 @@ def _badge_style(score: int) -> str:
 def _menu_curation(core, target_date, current_hour, account_key, lucky_element, operation_name,
                    ganji_han, timing_element_weights, query, recent_menus, seed) -> list[dict]:
     """[외식·배달] / [10분 집밥] / [가벼운 한 끼] 세 모드의 큐레이션 카드."""
+    from datetime import timedelta
+    from app.engine.constants import GAN_WUXING, ZHI_WUXING
+    base_tags = _menu_climate_tags(query)
+    natal_weights = dict(timing_element_weights)
+    today_pillar = (query["timing"].get("daily") or {}).get("pillar") or {}
+    for key, weight in (("stem_element", 5), ("branch_element", 3)):   # 오늘 층을 빼 원국 층만 남긴다
+        if today_pillar.get(key):
+            natal_weights[today_pillar[key]] = natal_weights.get(today_pillar[key], 0) - weight
+
+    def weights_for(ganji: str) -> dict[str, int]:
+        w = dict(natal_weights)
+        for element, weight in ((_wx(GAN_WUXING[ganji[0]]), 5), (_wx(ZHI_WUXING[ganji[1]]), 3)):
+            w[element] = w.get(element, 0) + weight
+        return w
+
+    def pick(mode: str, day: date, blocked: frozenset[str]) -> list[str]:
+        ganji = ganji_han if day == target_date else _day_ganji(day)
+        return recommend_mode_menus(
+            mode=mode, target_date=day, current_hour=current_hour,
+            day_master=account_key or core.input.birth_date.isoformat(),
+            daily_ganji=ganji, lucky_element=lucky_element, primary_operation=operation_name,
+            recent_menus=recent_menus | blocked, timing_element_weights=weights_for(ganji),
+            climate_tags=base_tags | frozenset(_DAY_SEASON_TAGS.get(ganji[1], ())),
+        )["menus"]
+
     cards = []
     for mode in daily_menu_copy.MODE_KEYS:
-        picked = recommend_mode_menus(
-            mode=mode, target_date=target_date, current_hour=current_hour,
-            day_master=account_key or core.input.birth_date.isoformat(),
-            daily_ganji=ganji_han, lucky_element=lucky_element, primary_operation=operation_name,
-            recent_menus=recent_menus, timing_element_weights=timing_element_weights,
-            climate_tags=_menu_climate_tags(query),
-        )
-        cards.append(daily_menu_copy.compose_mode_card(mode, lucky_element, picked["menus"], seed))
+        # 무상태 연속 중복 방지: 같은 규칙으로 그제·어제 뽑혔을 메뉴를 다시 계산해 오늘 감점한다.
+        d2 = pick(mode, target_date - timedelta(days=2), frozenset())
+        d1 = pick(mode, target_date - timedelta(days=1), frozenset(d2))
+        menus = pick(mode, target_date, frozenset(d1) | frozenset(d2))
+        cards.append(daily_menu_copy.compose_mode_card(mode, lucky_element, menus, seed))
     return cards
+
+
+def _wx(value) -> str:
+    """constants 의 오행 표기를 한자(木火土金水)로 맞춘다."""
+    table = {"wood": "木", "fire": "火", "earth": "土", "metal": "金", "water": "水",
+             "목": "木", "화": "火", "토": "土", "금": "金", "수": "水"}
+    return table.get(value, value)
 
 
 def _with_ro(word: str) -> str:
@@ -417,7 +487,8 @@ def build_daily_fortune(
                        if n["status"] == "assessed" and n["origin"] == "timing:daily-conditions")
     lead = daily_copy.lead_key(overall["primary_domains"])
     tone = daily_copy.tone_key(supportive_count, tension_count)
-    rel = daily_copy.relation_key(supportive_count, tension_count, {item.get("type") for item in tensions})
+    story_s, story_t, story_types = _story_relation_counts(relations)
+    rel = daily_copy.relation_key(story_s, story_t, story_types)
     story = daily_copy.compose_story(lead, tone, seed, god=daily_god, rel=rel)
     story = daily_sections.enrich_story(story, daily_god, story.get("rel"), seed)
     time_tips = daily_copy.compose_tips(lead, seed, current_hour)
