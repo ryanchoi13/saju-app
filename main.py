@@ -487,6 +487,20 @@ def get_saju_pillars_and_analysis(name: str, gender: str, y: int, m: int, d: int
         "name_ko": wada_bottom_color["name_ko"],
         "hex": wada_bottom_hex,
     }
+    tongguan = today_fortune.get("tongguan")
+    if tongguan:
+        # 충 날: 메인 옷(베이직)에는 두 기운을 잇는 오행의 가라앉은 톤을 쓴다.
+        from fashion_v2.svg_recommendation import PALETTE as _FASHION_PALETTE
+        tone = _FASHION_PALETTE[_TONGGUAN_TONE[tongguan["element"]]]
+        color_a = {"name": tone["id"], "name_ko": tone["name"], "hex": tone["hex"]}
+        # 화면의 추천 색 칩도 같은 두 색으로 맞춘다(세 번째 색이 생기지 않게 A색을 바꿔 끼운다).
+        swap = {"hex": tone["hex"], "name": tone["id"], "name_ko": tone["name"],
+                "original_name": tone["name"], "standard_color": tone["name"]}
+        result["daily_fortune"]["wada_palette"]["top"] = {**result["daily_fortune"]["wada_palette"]["top"], **swap}
+        result["daily_fortune"]["lucky_colors"][0] = tone["name"]
+        for palette in result["daily_fortune"]["style_palettes"].values():
+            if palette.get("top"):
+                palette["top"] = {**palette["top"], **swap}
     complete_weather = weather_profile and all(key in weather_profile for key in (
         "thermal_band", "thermal_label", "daytime_apparent_high",
         "evening_apparent_low", "carry_light_outer", "rainy", "guidance",
@@ -510,10 +524,17 @@ def get_saju_pillars_and_analysis(name: str, gender: str, y: int, m: int, d: int
     result["daily_fortune"]["fashion_color_basis"] = fashion_color_basis
     result["daily_fortune"]["outfit"] = _outfit_tracks_from_look(
         result["daily_fortune"]["fashion_v2"], result["daily_fortune"]["outfit"])
+    if tongguan and result["daily_fortune"]["outfit"].get("basic"):
+        # 문구는 짧게(정오님 원칙): 한 줄.
+        result["daily_fortune"]["outfit"]["caption"] = (
+            f"부딪히는 기운을 잇는 {result['daily_fortune']['outfit']['basic']['color']} 톤이에요.")
+        result["daily_fortune"]["outfit"]["tongguan"] = tongguan
     return result
 
 
 _POINT_SLOTS = {"tie", "bag", "accessory", "shoes"}
+# 통관 오행 → 메인 옷에 쓸 가라앉은 톤 (fashion_v2 팔레트 키)
+_TONGGUAN_TONE = {"木": "olive", "水": "navy", "金": "mid_gray", "火": "burgundy", "土": "beige"}
 
 
 def _outfit_tracks_from_look(fashion_v2: Dict[str, Any], fallback: Dict[str, Any]) -> Dict[str, Any]:
@@ -543,15 +564,15 @@ def _outfit_tracks_from_look(fashion_v2: Dict[str, Any], fallback: Dict[str, Any
     if small:
         _, point = small[0]
         point_track = dict(label="포인트", color=point["name"], hex=point["hex"],
-                           text=f"포인트는 {point['name']} {label_for(point)} 하나면 충분해요.")
+                           text=f"포인트는 {point['name']} {label_for(point)} 하나로.")
     elif unresolved:
         point = unresolved[0]
         point_track = dict(label="포인트", color=point["name"], hex=point["hex"],
-                           text=f"포인트는 {point['name']}빛 소품 하나로 살짝 더해 보세요.")
+                           text=f"포인트는 {point['name']}빛 소품 하나로.")
     elif len(garment) > 1:
         _, point = garment[1]
         point_track = dict(label="포인트", color=point["name"], hex=point["hex"],
-                           text=f"{point['name']} {label_for(point)}로 분위기를 더해요.")
+                           text=f"{josa(point['name'] + ' ' + label_for(point), '으로/로')} 분위기를 더해요.")
     else:
         return fallback
     return dict(
@@ -559,7 +580,7 @@ def _outfit_tracks_from_look(fashion_v2: Dict[str, Any], fallback: Dict[str, Any
         caption=fallback.get("caption", ""),
         source="fashion_v2_recommendation_1",
         basic=dict(label="베이직", color=basic["name"], hex=basic["hex"],
-                   text=f"{basic['name']} {label_for(basic)}로 하루의 중심을 잡아요."),
+                   text=f"{josa(basic['name'] + ' ' + label_for(basic), '으로/로')} 중심을 잡아요."),
         point=point_track,
     )
 

@@ -17,7 +17,7 @@ from app.engine.services.daily_scenarios import select_daily_scenario
 from app.engine.services.daily_topics import select_daily_topics
 from app.engine.semantic.overall import select_overall_domains
 from app.engine.services.overall_narrative import render_overall
-from app.engine.services.element_balance import natal_balance, daily_blend
+from app.engine.services.element_balance import natal_balance, daily_blend, tongguan_day
 
 
 DAILY_FORTUNE_VERSION = "daily-fortune-v6-exact-daily-role"
@@ -436,6 +436,9 @@ def build_daily_fortune(
     blend = daily_blend(balance, daily_element, daily_pillar["ganji"][1])
     # 코어가 확정한 방향이 있으면 그것을, 없으면 원국 균형 + 오늘 일진을 함께 본 추정을 쓴다.
     lucky_element = _lucky_element(query, blend["element"])
+    tongguan = tongguan_day(core, daily_pillar["ganji"][1])
+    if tongguan and not query["semantic_state"].get("favorable_elements"):
+        lucky_element = tongguan["element"]   # 충 날은 두 기운을 잇는 오행이 오늘의 보완 오행
     timing_element_weights = _menu_timing_element_weights(timing, query["semantic_state"], balance)
     aligned = daily_element in set(query["semantic_state"].get("favorable_elements", []))
     confidence = str(query["semantic_state"].get("confidence", "undetermined"))
@@ -533,6 +536,7 @@ def build_daily_fortune(
         "action": daily_copy.sanitize(narrative["unified_advice"]),
         "lucky_element": lucky_element,
         "natal_balance_element": balance["primary"],
+        "tongguan": tongguan,
         "lucky_item": item,
         "lucky_item_reason": item_reason,
         "lucky_number": element["numbers"],
