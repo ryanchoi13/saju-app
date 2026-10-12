@@ -128,7 +128,9 @@ def test_original_denim_is_retained_for_compatible_outfits():
         for option in shoe_color_options(original, PALETTE)
     }
     assert PALETTE['white']['hex'] in shoe_colors
-    assert PALETTE['brown']['hex'] in shoe_colors
+    # 2026-10-12 정오님: 운동화는 블랙·화이트·그레이 중심, 갈색 운동화는 후보에서 뺀다
+    assert PALETTE['black']['hex'] in shoe_colors
+    assert PALETTE['brown']['hex'] not in shoe_colors
     original['review_preference'] = 'approved'
     assert len(list(garment_options(original, PALETTE))) == 1
     assert len(list(garment_options(autumn(tpo='business_formal'), PALETTE))) == 1
@@ -149,32 +151,31 @@ def test_sneaker_range_uses_tpo_season_material_instead_of_white_constant():
     casual = autumn()
     shoe = next(i for i in casual['items'] if i['category'] == 'shoes')
     keys = sneaker_color_keys(casual, shoe)
-    assert 'brown' in keys  # source suede colour remains a candidate
-    assert {'gray', 'beige', 'olive'} <= set(keys)
-    # 2026-10-12 정오님: 캐주얼 가을 운동화는 화이트·블랙·그레이·아이보리·베이지·브라운·올리브만
-    assert set(keys) <= {'white', 'black', 'gray', 'ivory', 'beige', 'brown', 'olive'}
+    # 2026-10-12 정오님: 운동화는 블랙·화이트·그레이 중심 + 아이보리·베이지·올리브. 갈색·네이비·버건디 없음
+    assert {'white', 'black', 'gray'} <= set(keys)
+    assert set(keys) <= {'white', 'black', 'gray', 'ivory', 'beige', 'olive'}
 
     spring_bc = select_template(
         templates_for('male', 'spring', 'business_casual')[1], 48, 2)
     bc_shoe = next(i for i in spring_bc['items'] if i['category'] == 'shoes')
     bc_keys = set(sneaker_color_keys(spring_bc, bc_shoe))
-    assert {'white', 'ivory', 'gray', 'navy', 'brown'} <= bc_keys
-    assert 'burgundy' not in bc_keys and 'olive' not in bc_keys
+    assert {'white', 'ivory', 'gray', 'black'} <= bc_keys
+    assert not bc_keys & {'burgundy', 'olive', 'navy', 'brown'}
 
 
 def test_shoe_color_is_scored_inside_three_four_color_outfit_logic():
     look = autumn()
     options = list(shoe_color_options(look, PALETTE))
-    brown = next(option for option in options
+    black = next(option for option in options
                  if next(i for i in option['items'] if i['category']=='shoes')['hex']
-                 == PALETTE['brown']['hex'])
-    shoe = next(i for i in brown['items'] if i['category']=='shoes')
+                 == PALETTE['black']['hex'])
+    shoe = next(i for i in black['items'] if i['category']=='shoes')
     score = footwear_color_score(
-        brown['items'], brown, describe_color, visible_color_count=4,
+        black['items'], black, describe_color, visible_color_count=4,
         previous_hex=PALETTE['white']['hex'])
-    assert shoe['shoe_color_origin'] == 'template_source'
+    assert shoe['shoe_color_origin'] == 'tpo_season_range'
     assert score['basis'] == 'tpo_season_material_whole_outfit_soft_ranking'
-    assert any('원래 착장 템플릿' in reason for reason in score['reasons'])
+    assert any('블랙·화이트·그레이' in reason for reason in score['reasons'])
 
 
 def test_reported_pair_no_longer_has_to_repeat_white_sneakers():

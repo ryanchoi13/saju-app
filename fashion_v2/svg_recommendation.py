@@ -203,6 +203,10 @@ def permitted(c, group, look):
         denim = group['label']=='데님 바지'
         return stable(c, denim=denim) or (not denim and not formal and muted_green_bottom(c))
     if cat=='shoes':
+        if (look['tpo'], look.get('calendar_season') or look['season']) in STRICT_SNEAKER_RANGES and group['label']=='운동화':
+            # 운동화는 블랙·화이트·그레이 중심, 아이보리·베이지·차분한 올리브만 허용(정오님 10/12). 브라운·네이비·버건디 제외
+            return (c['family'] in {'white','black','gray'} or (c['family']=='brown' and c['lightness']>.62)
+                    or (c['family']=='green' and c['saturation']<=.35))
         if look['gender']=='male' and formal:
             return c['family'] in {'black','brown'} and c['lightness'] < .46
         if formal:
@@ -211,9 +215,6 @@ def permitted(c, group, look):
             restrained = (c['family'] in {'red','green','teal'} and c['saturation'] <= .38
                           and .18 <= c['lightness'] <= .72)
             return stable(c) or restrained
-        if (look['tpo'], look.get('calendar_season') or look['season']) in STRICT_SNEAKER_RANGES and group['label']=='운동화':
-            # 캐주얼 가을 운동화는 화이트·블랙·그레이·아이보리·베이지·브라운·올리브 계열만(정오님 10/12)
-            return c['family'] in {'white','black','gray','brown'} or (c['family']=='green' and c['saturation']<=.35)
         # Casual shoes can carry a calm A/B-adjacent tone, but vivid exact
         # fortune colours still need to move to a wearable related shade.
         casual_color = (c['family'] in {'red','green','teal','purple','blue','brown'}
