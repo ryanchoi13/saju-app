@@ -989,6 +989,16 @@ def _wardrobe_response(user_id):
         return {"wardrobe_items": None, "wardrobe_error": "옷장을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요."}
 
 
+@app.get("/api/version")
+def deployed_version(response: Response):
+    """어느 서버·어느 커밋이 응답하는지 확인용(개인정보 없음). Render 기본 환경변수를 읽는다."""
+    response.headers["Cache-Control"] = "no-store"
+    commit = os.getenv("RENDER_GIT_COMMIT", "")
+    return {"commit": commit[:7] or "unknown",
+            "service": os.getenv("RENDER_SERVICE_NAME", "unknown"),
+            "instance": (os.getenv("RENDER_INSTANCE_ID") or "unknown")[-6:]}
+
+
 @app.get("/api/fashion/weather")
 def fashion_weather():
     """Korea-only rollout: fixed Gyeongju forecast, never browser GPS."""
