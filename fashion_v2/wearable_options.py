@@ -23,24 +23,23 @@ TONE_KEYS = {
 }
 
 
+# 이 칸은 범위가 '허용 목록'이다: 소재별 선호·템플릿 원래 색이 범위 밖이면 후보에서 뺀다.
+STRICT_SNEAKER_RANGES = {(tpo, season) for tpo in ('casual', 'business_casual')
+                         for season in ('spring', 'summer', 'autumn', 'winter')}
+
 SHOE_COLOR_ALIASES = {
     'dark_brown': 'brown', 'dark_denim': 'navy', 'denim_blue': 'denim',
     'cream': 'ivory', 'light_gray': 'gray', 'light_blue': 'sky',
 }
+# 2026-10-12 정오님: 요즘 운동화는 검정·흰색·회색이 대부분이고 갈색·네이비·버건디는 거의 없다.
+# 목표: 운동화의 80% 이상을 블랙·화이트·그레이로. 아이보리·베이지·올리브는 가끔만.
 SNEAKER_COLOR_RANGES = {
-    'casual': {
-        'spring': ('white', 'ivory', 'gray', 'beige', 'navy', 'brown'),
-        'summer': ('white', 'ivory', 'gray', 'beige', 'navy'),
-        'autumn': ('ivory', 'gray', 'beige', 'brown', 'navy', 'olive', 'burgundy', 'white'),
-        'winter': ('gray', 'black', 'navy', 'brown', 'burgundy', 'ivory', 'white'),
-    },
-    'business_casual': {
-        'spring': ('white', 'ivory', 'gray', 'navy', 'beige', 'brown'),
-        'summer': ('white', 'ivory', 'gray', 'navy', 'beige'),
-        'autumn': ('ivory', 'gray', 'navy', 'brown', 'beige', 'black'),
-        'winter': ('gray', 'black', 'navy', 'brown', 'ivory'),
-    },
+    'casual': {season: ('white', 'black', 'gray', 'ivory', 'beige', 'olive')
+               for season in ('spring', 'summer', 'autumn', 'winter')},
+    'business_casual': {season: ('white', 'black', 'gray', 'ivory', 'beige')
+                        for season in ('spring', 'summer', 'autumn', 'winter')},
 }
+SNEAKER_CORE_FAMILIES = {'white', 'black', 'gray'}
 
 
 def wardrobe_tones(color):
@@ -102,6 +101,9 @@ def sneaker_color_keys(look, item):
     elif 'leather' in material:
         preferred = ['white', 'ivory', 'black', 'navy', 'gray', 'brown']
         keys = preferred + keys
+    if (look['tpo'], _effective_season(look)) in STRICT_SNEAKER_RANGES:
+        allowed = set(ranges[_effective_season(look)])
+        keys = [k for k in keys if k in allowed]
     return tuple(dict.fromkeys(keys))
 
 
@@ -231,12 +233,8 @@ def footwear_color_score(items, look, describe, visible_color_count=None, previo
 
     if look['tpo'] == 'casual':
         season = _effective_season(look)
-        seasonal = {
-            'spring': {'white', 'gray', 'brown', 'blue'},
-            'summer': {'white', 'gray', 'brown', 'blue'},
-            'autumn': {'gray', 'brown', 'blue', 'green'},
-            'winter': {'black', 'gray', 'brown', 'blue'},
-        }[season]
+        # 계절과 상관없이 블랙·화이트·그레이가 기본(정오님 10/12). 겨울엔 화이트를 조금 덜 쓴다(아래 -1).
+        seasonal = {'white', 'black', 'gray'}
         if sf in seasonal:
             score += 3
             reasons.append('계절에 자주 쓰는 운동화 색 계열')
@@ -247,13 +245,17 @@ def footwear_color_score(items, look, describe, visible_color_count=None, previo
             score += 4
             reasons.append('비즈니스 캐주얼에서 단정한 운동화 색 범위')
 
+    if sf in SNEAKER_CORE_FAMILIES:   # 아주 밝은 흰색은 HLS 채도가 높게 잡혀 채도 조건을 두지 않는다
+        score += {'black': 12, 'white': 9, 'gray': 8}[sf]   # 요즘 많이 신는 순서: 블랙 > 화이트 > 그레이 (정오님 10/12)
+        reasons.append('요즘 운동화의 기본색(블랙·화이트·그레이) 우선')
+
     # Preserve a researched template's original footwear colour as a useful
     # prior, without forcing it when the full outfit scores worse.
     if shoe.get('shoe_color_origin') == 'template_source':
         score += 3
         reasons.append('원래 착장 템플릿의 신발 색상')
 
-    if visible_color_count == 4 and len(strong) <= 1 and sc['saturation'] <= .58:
+    if visible_color_count == 4 and len(strong) <= 1 and sc['saturation'] <= .58 and sf not in SNEAKER_CORE_FAMILIES:
         score += 8
         reasons.append('차분한 신발색을 네 번째 색으로 제한적으로 허용')
 
