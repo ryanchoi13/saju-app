@@ -18,6 +18,7 @@ from fashion_v2.review_preferences import apply_review_preferences
 from fashion_v2.realwear_rules import styling_for, colour_parts, visible_colors, accessory_spec
 from fashion_v2.coordination import POLICY_VERSION, tie_separation, evaluate_coordination
 from wada_color_rules import WADA_COLORS
+from fashion_v2.wearable_options import STRICT_SNEAKER_RANGES
 from fashion_v2.wearable_options import (wardrobe_tones, tone_explanation,
     muted_green_bottom, garment_options, outfit_balance, footwear_color_score,
     shoe_color_options)
@@ -210,6 +211,9 @@ def permitted(c, group, look):
             restrained = (c['family'] in {'red','green','teal'} and c['saturation'] <= .38
                           and .18 <= c['lightness'] <= .72)
             return stable(c) or restrained
+        if (look['tpo'], look.get('calendar_season') or look['season']) in STRICT_SNEAKER_RANGES and group['label']=='운동화':
+            # 캐주얼 가을 운동화는 화이트·블랙·그레이·아이보리·베이지·브라운·올리브 계열만(정오님 10/12)
+            return c['family'] in {'white','black','gray','brown'} or (c['family']=='green' and c['saturation']<=.35)
         # Casual shoes can carry a calm A/B-adjacent tone, but vivid exact
         # fortune colours still need to move to a wearable related shade.
         casual_color = (c['family'] in {'red','green','teal','purple','blue','brown'}

@@ -150,7 +150,9 @@ def test_sneaker_range_uses_tpo_season_material_instead_of_white_constant():
     shoe = next(i for i in casual['items'] if i['category'] == 'shoes')
     keys = sneaker_color_keys(casual, shoe)
     assert 'brown' in keys  # source suede colour remains a candidate
-    assert {'gray', 'beige', 'navy', 'olive'} <= set(keys)
+    assert {'gray', 'beige', 'olive'} <= set(keys)
+    # 2026-10-12 정오님: 캐주얼 가을 운동화는 화이트·블랙·그레이·아이보리·베이지·브라운·올리브만
+    assert set(keys) <= {'white', 'black', 'gray', 'ivory', 'beige', 'brown', 'olive'}
 
     spring_bc = select_template(
         templates_for('male', 'spring', 'business_casual')[1], 48, 2)

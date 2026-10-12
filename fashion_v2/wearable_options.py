@@ -23,6 +23,9 @@ TONE_KEYS = {
 }
 
 
+# 이 칸은 범위가 '허용 목록'이다: 소재별 선호·템플릿 원래 색이 범위 밖이면 후보에서 뺀다.
+STRICT_SNEAKER_RANGES = {('casual', 'autumn')}
+
 SHOE_COLOR_ALIASES = {
     'dark_brown': 'brown', 'dark_denim': 'navy', 'denim_blue': 'denim',
     'cream': 'ivory', 'light_gray': 'gray', 'light_blue': 'sky',
@@ -31,7 +34,8 @@ SNEAKER_COLOR_RANGES = {
     'casual': {
         'spring': ('white', 'ivory', 'gray', 'beige', 'navy', 'brown'),
         'summer': ('white', 'ivory', 'gray', 'beige', 'navy'),
-        'autumn': ('ivory', 'gray', 'beige', 'brown', 'navy', 'olive', 'burgundy', 'white'),
+        # 2026-10-12 정오님: 캐주얼 가을 운동화는 이 7색만(네이비·버건디 제외)
+        'autumn': ('white', 'black', 'gray', 'ivory', 'beige', 'brown', 'olive'),
         'winter': ('gray', 'black', 'navy', 'brown', 'burgundy', 'ivory', 'white'),
     },
     'business_casual': {
@@ -102,6 +106,9 @@ def sneaker_color_keys(look, item):
     elif 'leather' in material:
         preferred = ['white', 'ivory', 'black', 'navy', 'gray', 'brown']
         keys = preferred + keys
+    if (look['tpo'], _effective_season(look)) in STRICT_SNEAKER_RANGES:
+        allowed = set(ranges[_effective_season(look)])
+        keys = [k for k in keys if k in allowed]
     return tuple(dict.fromkeys(keys))
 
 
