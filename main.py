@@ -487,10 +487,28 @@ def get_saju_pillars_and_analysis(name: str, gender: str, y: int, m: int, d: int
         "name_ko": wada_bottom_color["name_ko"],
         "hex": wada_bottom_hex,
     }
+    # 2026-10-13 정오님: "와다에 너무 얽매이지 말자." 와다 배색 사전에는 금(金)을 표현하는 조합이
+    # 거의 없어(금+금 0개, 금+수 1개) 금이 들어가는 날마다 핑크·레드가 끼어들었다.
+    # 두 목표 오행에서 각각 대표 착장색을 하나씩 골라 오늘의 두 색으로 쓴다.
+    from fashion_v2.svg_recommendation import PALETTE as _FASHION_PALETTE
+    tone_a, tone_b = _element_tone_pair(fashion_element, today_element, today_date.toordinal(), y * 372 + m * 31 + d)
+    color_a = {"name": tone_a["id"], "name_ko": tone_a["name"], "hex": tone_a["hex"]}
+    color_b = {"name": tone_b["id"], "name_ko": tone_b["name"], "hex": tone_b["hex"]}
+    for slot, tone in (("top", tone_a), ("bottom", tone_b)):
+        swap = {"hex": tone["hex"], "name": tone["id"], "name_ko": tone["name"],
+                "original_name": tone["name"], "standard_color": tone["name"]}
+        result["daily_fortune"]["wada_palette"][slot] = {**result["daily_fortune"]["wada_palette"][slot], **swap}
+        for palette in result["daily_fortune"]["style_palettes"].values():
+            if palette.get(slot):
+                palette[slot] = {**palette[slot], **swap}
+    result["daily_fortune"]["lucky_colors"] = [tone_a["name"], tone_b["name"]]
+    result["daily_fortune"]["wada_palette"]["theme"] = f"{fashion_element}{today_element} 착장색"
+    result["daily_fortune"]["wada_palette"]["mood_desc"] = (
+        f"{with_wa_gwa(tone_a['name'])} {josa(tone_b['name'], '으로/로')} 오늘의 의상 컬러를 조합해 보세요.")
+    fashion_color_basis = {**fashion_color_basis, "color_source": "element_wear_palette"}
     tongguan = today_fortune.get("tongguan")
     if tongguan:
         # 충 날: 메인 옷(베이직)에는 두 기운을 잇는 오행의 가라앉은 톤을 쓴다.
-        from fashion_v2.svg_recommendation import PALETTE as _FASHION_PALETTE
         tone = _FASHION_PALETTE[_TONGGUAN_TONE[tongguan["element"]]]
         color_a = {"name": tone["id"], "name_ko": tone["name"], "hex": tone["hex"]}
         # 화면의 추천 색 칩도 같은 두 색으로 맞춘다(세 번째 색이 생기지 않게 A색을 바꿔 끼운다).
@@ -533,6 +551,28 @@ def get_saju_pillars_and_analysis(name: str, gender: str, y: int, m: int, d: int
 
 
 _POINT_SLOTS = {"tie", "bag", "accessory", "shoes"}
+# 오행별 대표 착장색 (fashion_v2 팔레트 키). 튀는 색은 뒤 단계(연령·성별 규칙)가 소품·안 상의로 보낸다.
+_ELEMENT_WEAR_TONES = {
+    "金": ("light_gray", "gray", "mid_gray", "ivory", "white"),
+    "水": ("navy", "black", "sky", "denim"),
+    "木": ("olive", "sage", "forest", "teal"),
+    "火": ("burgundy", "plum", "coral", "rust", "red", "lavender", "pink"),   # 이웃한 날끼리 톤이 겹치지 않게 섞은 순서
+    "土": ("beige", "camel", "brown", "butter"),
+}
+
+
+def _element_tone_pair(first: str, second: str, day: int, salt: int):
+    """두 오행에서 하나씩. 날마다 두 색이 함께 바뀌도록 서로 다른 보폭으로 돈다(같은 오행이면 서로 다른 톤)."""
+    from fashion_v2.svg_recommendation import PALETTE as _P
+    a_pool = _ELEMENT_WEAR_TONES.get(first) or _ELEMENT_WEAR_TONES["金"]
+    b_pool = _ELEMENT_WEAR_TONES.get(second) or _ELEMENT_WEAR_TONES["水"]
+    a = a_pool[(day + salt) % len(a_pool)]
+    b = b_pool[(day * 3 + salt // 7) % len(b_pool)]
+    if b == a:
+        b = b_pool[(b_pool.index(b) + 1) % len(b_pool)]
+    return _P[a], _P[b]
+
+
 # 통관 오행 → 메인 옷에 쓸 가라앉은 톤 (fashion_v2 팔레트 키)
 _TONGGUAN_TONE = {"木": "olive", "水": "navy", "金": "mid_gray", "火": "burgundy", "土": "beige"}
 

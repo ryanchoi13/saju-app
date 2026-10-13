@@ -16,7 +16,7 @@ TONE_KEYS = {
     'red': ('pink', 'burgundy', 'pale_pink'),
     'green': ('sage', 'forest', 'olive'),
     'teal': ('teal', 'forest', 'sage', 'olive'),
-    'purple': ('lavender', 'purple'),
+    'purple': ('lavender', 'purple', 'plum'),
     'brown': ('beige', 'brown'),
     'gray': ('light_gray', 'gray', 'charcoal'),
     'white': ('white', 'ivory'), 'black': ('black',), 'yellow': ('butter',),

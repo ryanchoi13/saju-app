@@ -29,6 +29,9 @@ PALETTE['light_gray'] = dict(id='light_gray', name='라이트 그레이', hex='#
 PALETTE['pale_pink'] = {**PALETTE['pink'], 'id':'pale_pink', 'name':'연한 분홍', 'hex':'#E8DADB'}
 # 정장 수트용 중간 회색(2026-10-11 정오님 요청: 라이트 그레이 수트보다 미들·다크 그레이가 무난).
 PALETTE['mid_gray'] = dict(id='mid_gray', name='미디엄 그레이', hex='#6E7277', family='neutral', element='금', kind='calm')
+# 화(火) 날이 버건디 하나로 몰리지 않게 하는 가라앉은 톤(2026-10-13). 중년 남성 규칙에서도 옷에 쓸 수 있는 깊은 톤이다.
+PALETTE['plum'] = dict(id='plum', name='딥 플럼', hex='#5B3D58', family='purple', element='화', kind='calm')
+PALETTE['rust'] = dict(id='rust', name='러스트 브라운', hex='#8A4F35', family='earth', element='화', kind='calm')
 VERSION = 'approved-svg-5'
 TPOS = ('casual', 'business_casual', 'business_formal')
 ALIASES = {'cream':'ivory', 'dark_brown':'brown', 'dark_denim':'navy',
