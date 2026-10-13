@@ -119,5 +119,8 @@ def test_real_fashion_pipeline_passes_common_state_color_to_palette():
          patch.object(main,'select_wada_duo_for_targets',wraps=main.select_wada_duo_for_targets) as selector:
         result = main.get_saju_pillars_and_analysis('검토', 'female', 1998,5,19,'solar',5)
     assert selector.call_args.args[0] == '水'
-    assert result['daily_fortune']['fashion_color_basis'] == basis
+    got = result['daily_fortune']['fashion_color_basis']
+    assert {k: got[k] for k in basis} == basis
+    # 2026-10-13: 두 색은 와다 배색이 아니라 오행별 착장색에서 고른다(정오님 결정)
+    assert got['color_source'] == 'element_wear_palette'
     assert result['daily_fortune']['fashion_v2']
