@@ -694,6 +694,14 @@ def history_context(target_date: date, history: tuple[dict, ...]) -> tuple[froze
     return frozenset(yesterday | {name for name, n in counts.items() if n >= 2}), groups
 
 
+# 화면에서 '비슷한 메뉴 두 개'로 보이는 종류 묶음.
+_SIMILAR = {
+    "toast": "bread_based", "sandwich": "bread_based", "bread": "bread_based",
+    "soup": "broth", "stew": "broth", "gukbap": "broth", "hotpot": "broth",
+    "noodles": "noodle", "chinese_noodles": "noodle",
+}
+
+
 def _grouped_selection(candidates, score, seed, count, used_menus, category_counts):
     """One entry per culinary category, then choose a suitable variant.
 
@@ -703,10 +711,15 @@ def _grouped_selection(candidates, score, seed, count, used_menus, category_coun
     selected = []
     remaining = list(candidates)
     used_categories = {menu_category(name) for name in used_menus}
+    picked = set()   # 이번에 이미 고른 종류
     while remaining and len(selected) < count:
         groups = {}
         for item in remaining:
             groups.setdefault(menu_category(item.name), []).append(item)
+        # 한 번에 고르는 메뉴끼리는 종류가 겹치지 않게(햄치즈 토스트 + 햄치즈양배추 토스트 같은 짝 방지).
+        # 빵끼리·국물끼리·면끼리도 한 짝으로 본다. 다른 쪽이 하나도 남지 않았을 때만 겹치게 둔다.
+        if any(_SIMILAR.get(group, group) not in picked for group in groups):
+            groups = {group: items for group, items in groups.items() if _SIMILAR.get(group, group) not in picked}
         def category_score(group):
             # 종류 점수 = 그 종류 최고 메뉴 점수 + 날짜별 흔들기. (종류 기본 인기점은 메뉴 인기에 이미 들어 있어 뺐다.)
             best = max(score(item) for item in groups[group])
@@ -727,6 +740,7 @@ def _grouped_selection(candidates, score, seed, count, used_menus, category_coun
         choice = max(shortlist, key=lambda item: (variant_score(item), item.name))
         selected.append(choice)
         used_categories.add(category)
+        picked.add(_SIMILAR.get(category, category))
         remaining = [item for item in remaining if item != choice]
     return selected
 
@@ -1218,6 +1232,11 @@ def recommend_daily_diet_plan(
     }
 
 
+# 한 끼라기보다 곁들이·간식에 가까운 종류. 외식·배달 칸에는 올리지 않는다.
+_LIGHT_BITE_CATEGORIES = frozenset({"drink", "smoothie", "breakfast_bowl", "snack", "bread"})
+_LIGHT_BITES = frozenset(item.name for item in MENU_POOL if menu_category(item.name) in _LIGHT_BITE_CATEGORIES)
+
+
 def recommend_mode_menus(
     *,
     mode: str,
@@ -1250,14 +1269,15 @@ def recommend_mode_menus(
         gender=gender, preferences=preferences, timing_element_weights=timing_element_weights,
         climate_tags=climate_tags, blocked_menus=exclude_menus,   # 그제·어제 메뉴, 다른 칸 메뉴: 아예 뺀다
     )
+    # '오늘 뭐 먹지?'는 끼니 추천이다. 간식 시간(15~17시)에는 세 칸 모두 다가오는 저녁을 고른다.
+    if meal_period_for(current_hour) == "snack":
+        common["current_hour"] = 19
     if mode == "out":
-        result = recommend_daily_menus(**common, excluded_menus=HOME_ONLY_MENUS)
+        # 외식·배달은 한 끼가 되는 메뉴만(최소 주문 금액도 있다): 음료·요거트·빵 한 개·차와 간식은 뺀다.
+        result = recommend_daily_menus(**common, excluded_menus=HOME_ONLY_MENUS | _LIGHT_BITES)
     elif mode == "home":
         result = recommend_daily_menus(**common, allowed_menus=HOME_MENUS)
     elif mode == "light":
-        # 다이어트 풀에는 간식 시간대가 없으므로 저녁 기준으로 고른다.
-        if meal_period_for(current_hour) == "snack":
-            common["current_hour"] = 19
         result = recommend_diet_menus(**common)
     else:
         raise ValueError(f"알 수 없는 메뉴 모드: {mode}")

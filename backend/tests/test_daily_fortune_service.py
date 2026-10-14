@@ -234,3 +234,21 @@ class DailyFortuneServiceTests(TestCase):
             previous = cards
         self.assertLessEqual(repeats, 1)     # 어제와 같은 칸에 같은 메뉴: 무상태 재계산이라 아주 드물게만
         self.assertLessEqual(ramen, 4)       # 예전에는 점심·저녁 집밥의 절반에 라면이 있었다
+
+    def test_mode_menus_are_meals_and_the_two_picks_differ(self):
+        # 2026-10-14: 외식에 흰콩두유·배도라지차와 쌀과자, 집밥에 햄치즈 토스트 두 종류가 함께 뜬 뒤.
+        from app.engine.services.daily_menu import _LIGHT_BITES, _SIMILAR
+        from app.engine.services.menu_categories import menu_category
+        for offset in range(7):
+            target = date(2026, 10, 8) + timedelta(days=offset)
+            core = self._core(target)
+            for hour in (8, 12, 16, 19):
+                cards = {card["mode"]: card["menus"]
+                         for card in build_daily_fortune(core, "테스트", target, current_hour=hour)["menu_curation"]}
+                self.assertFalse(set(cards["out"]) & _LIGHT_BITES, (target, hour, cards["out"]))
+                for mode, menus in cards.items():
+                    kinds = [_SIMILAR.get(menu_category(name), menu_category(name)) for name in menus]
+                    self.assertEqual(len(kinds), len(set(kinds)), (target, hour, mode, menus))
+            snack = build_daily_fortune(core, "테스트", target, current_hour=16)["menu_curation"]
+            dinner = build_daily_fortune(core, "테스트", target, current_hour=19)["menu_curation"]
+            self.assertEqual([c["menus"] for c in snack], [c["menus"] for c in dinner])   # 간식 시간엔 저녁 메뉴
