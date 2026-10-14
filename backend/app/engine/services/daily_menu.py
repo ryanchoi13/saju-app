@@ -9,7 +9,7 @@ from dataclasses import dataclass
 from datetime import date
 from app.engine.services.menu_categories import PROFILES, menu_category, cooking_style
 from app.engine.services.meal_nutrition import serving_suggestion, meal_estimate, macro_summary
-from app.engine.services.menu_frequency import frequency_evidence, frequency_bonus
+from app.engine.services.menu_frequency import frequency_evidence
 from app.engine.services.menu_demographics import demographic_evidence
 from app.engine.services.meal_feedback import preference_bonus
 from app.engine.services.menu_frequency_review import REVIEWED_POPULARITY
@@ -708,12 +708,12 @@ def _grouped_selection(candidates, score, seed, count, used_menus, category_coun
         for item in remaining:
             groups.setdefault(menu_category(item.name), []).append(item)
         def category_score(group):
+            # 종류 점수 = 그 종류 최고 메뉴 점수 + 날짜별 흔들기. (종류 기본 인기점은 메뉴 인기에 이미 들어 있어 뺐다.)
             best = max(score(item) for item in groups[group])
-            frequency = PROFILES[group][0]
             digest = hashlib.sha256(f"{seed}|category|{group}".encode()).hexdigest()
             uniform = (int(digest[:12], 16) + 1) / (16**12 + 1)
             variation = -math.log(-math.log(uniform)) * 3
-            return (best + frequency + variation
+            return (best + variation
                     - min(12, category_counts.get(group, 0) * 2)
                     - (6 if group in used_categories else 0))
         category = max(sorted(groups), key=category_score)
@@ -812,7 +812,7 @@ def recommend_daily_menus(
         raise ValueError("추천 메뉴 수는 1개 이상이어야 합니다.")
     season = season_for(target_date.month)
     period = meal_period_for(current_hour)
-    operation_tag = _OPERATION_TAG.get(primary_operation, "balanced")
+    operation_tag = _OPERATION_TAG.get(primary_operation)   # 보류면 None → 가점 없음
     daily_element = _GAN_ELEMENT.get(daily_ganji[:1], lucky_element)
     seed = (
         f"{target_date.isoformat()}|{current_hour}|{day_master}|{daily_ganji}|"
@@ -820,22 +820,20 @@ def recommend_daily_menus(
     )
 
     def context_score(candidate: MenuCandidate) -> int:
+        # 점수는 단순하게(2026-10-14 정오님): 오행 + 계절·조후 + 인기 하나, 그리고 감점.
+        # 익숙함·설문 빈도·접근성·종류 기본점은 '많이 먹는 메뉴'를 겹겹이 밀어 줘서 뺐다
+        # (된장찌개가 이 넷과 인기로 +13, 중간 메뉴는 +6). 시간대는 후보를 거를 때 이미 맞췄다.
         score = 0
-        # The natal correction and changing daily stem share the main axis.
         score += 4 if timing_element_weights is None and candidate.element == lucky_element else 0
         score += 6 if timing_element_weights is None and candidate.element == daily_element else 0
-        score += (timing_element_weights or {}).get(candidate.element, 0)
-        score += 4 if season in candidate.seasons else 0
-        score += 8 if period in candidate.periods else 0
-        score += 3 if operation_tag in candidate.tags else 0
-        score += min(2, len(climate_tags & candidate.tags))
-        score += candidate.familiarity - 2
-        score += candidate.popularity - 3
-        score += frequency_bonus(candidate.name)
+        score += (timing_element_weights or {}).get(candidate.element, 0)   # 오행: 오늘 일진 + 타고난 균형
+        score += 4 if season in candidate.seasons else 0                      # 계절
+        score += min(2, len(climate_tags & candidate.tags))                   # 조후
+        score += 3 if operation_tag in candidate.tags else 0                  # 코어가 확정한 처방(보류면 0)
+        score += candidate.popularity - 3                                     # 인기(검수 등급) −2~+2
+        score += demographic_evidence(candidate.name, demographic_age, gender)["bonus"]   # 나이 정보가 올 때만
+        score += preference_bonus(candidate, preferences)                     # 사용자 피드백이 있을 때만
         score -= _macro_penalty(candidate, macro_totals)
-        score += max(-1, candidate.accessibility - 3)
-        score += demographic_evidence(candidate.name, demographic_age, gender)["bonus"]
-        score += preference_bonus(candidate, preferences)
         # Cuisine balance and recent repetition are weak tie-breakers only.
         score -= 4 if candidate.cuisine in used_cuisines else 0
         score -= 10 if candidate.ingredient in used_ingredients else 0
@@ -924,7 +922,7 @@ def recommend_diet_menus(
         raise ValueError("추천 메뉴 수는 1개 이상이어야 합니다.")
     season = season_for(target_date.month)
     period = meal_period_for(current_hour)
-    operation_tag = _OPERATION_TAG.get(primary_operation, "balanced")
+    operation_tag = _OPERATION_TAG.get(primary_operation)   # 보류면 None → 가점 없음
     daily_element = _GAN_ELEMENT.get(daily_ganji[:1], lucky_element)
     seed = (
         f"diet|{target_date.isoformat()}|{current_hour}|{day_master}|{daily_ganji}|"
@@ -946,20 +944,18 @@ def recommend_diet_menus(
     ]
 
     def score(candidate: MenuCandidate) -> int:
+        # 일반 메뉴와 같은 단순 점수(recommend_daily_menus.context_score 참고).
         value = 0
         value += 4 if timing_element_weights is None and candidate.element == lucky_element else 0
         value += 6 if timing_element_weights is None and candidate.element == daily_element else 0
         value += (timing_element_weights or {}).get(candidate.element, 0)
         value += 4 if season in candidate.seasons else 0
-        value += 8 if period in candidate.periods else 0
-        value += 3 if operation_tag in candidate.tags else 0
         value += min(2, len(climate_tags & candidate.tags))
+        value += 3 if operation_tag in candidate.tags else 0
         value += candidate.popularity - 3
-        value += frequency_bonus(candidate.name)
-        value -= _macro_penalty(candidate, macro_totals)
-        value += max(-1, candidate.accessibility - 3)
         value += demographic_evidence(candidate.name, demographic_age, gender)["bonus"]
         value += preference_bonus(candidate, preferences)
+        value -= _macro_penalty(candidate, macro_totals)
         value -= 4 if candidate.cuisine in used_cuisines else 0
         value -= 10 if candidate.ingredient in used_ingredients else 0
         value -= 4 if candidate.name in recent_menus else 0
