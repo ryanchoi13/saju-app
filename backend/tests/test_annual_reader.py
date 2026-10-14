@@ -28,12 +28,13 @@ class AnnualReaderTests(TestCase):
     def test_approved_structure_twelve_months_and_reading_volume(self):
         r = self.report
         self.assertEqual(r['narrative_version'], NARRATIVE_VERSION)
-        self.assertEqual(r['month_schema'], 'dalha.month.v2')
+        self.assertEqual(r['month_schema'], 'dalha.month.v3')
         months = r['evidence_summary']['months']
         self.assertEqual([m['month'] for m in months], list(range(1,13)))
         for month in months:
             self.assertEqual(month['representative_date'], f"2026-{month['month']:02}-15")
-            self.assertEqual(len(month['reading']['sentences']), 2)
+            self.assertGreaterEqual(len(month['reading']['sentences']), 8)
+            self.assertEqual(annual_v2.validate_month(month['reading']), [])
         for m in range(1,13):
             self.assertEqual(r['content'].count(f'data-report-month="{m}"'), 1)
         for area, _ in annual_v2.AREAS:
@@ -48,6 +49,11 @@ class AnnualReaderTests(TestCase):
         self.assertIn('2026-07-01을 대표일로 삼은 연간 해석', r['content'])
         self.assertIn('대운이 바뀌는 경우 전후 흐름을 각각 계산한 결과는 아닙니다', r['content'])
         self.assertEqual(r['content'].count('data-period-basis="monthly"'), 1)
+        # 절기 기간은 실제 달력 라이브러리로 계산한다(2026년 10월 = 한로~입동 전).
+        self.assertIn('(한로)부터', r['content'])
+        self.assertEqual(r['content'].count('class="annual-month-period"'), 12)
+        sentences = [s for m in months for s in m['reading']['sentences']]
+        self.assertEqual(len(sentences), len(set(sentences)))
 
     def test_daily_layers_cannot_change_the_annual_report(self):
         copy = self.core.model_copy(deep=True)
