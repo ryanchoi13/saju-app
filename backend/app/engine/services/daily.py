@@ -3,13 +3,14 @@
 from __future__ import annotations
 
 from app.engine.korean import josa
+import copy
 from datetime import date
 
 from app.engine.constants import GAN_KO, ZHI_KO
 from app.engine.core.models import MyeongriCoreResult
 from app.engine.semantic.queries import build_service_query
 from app.engine.services.simple_menu import daily_choices
-from app.engine.services.daily_menu import recommend_mode_menus
+from app.engine.services.daily_menu import NOT_A_MEAL, recommend_daily_menus
 from app.engine.services.daily_guidance import build_daily_guidance
 from app.engine.services import daily_copy, daily_menu_copy, daily_sections
 from app.engine.services.annual_copy import seed_from
@@ -350,7 +351,24 @@ def _badge_style(score: int) -> str:
 
 def _menu_curation(core, target_date, current_hour, account_key, lucky_element, operation_name,
                    ganji_han, timing_element_weights, query, recent_menus, seed) -> list[dict]:
-    """[외식·배달] / [집밥] / [가벼운 한 끼] 세 모드의 큐레이션 카드."""
+    """아침·점심·저녁 카드, 끼니마다 두 개. 하루에 한 번 정해져 몇 시에 보든 같다(현재 시각은 쓰지 않는다)."""
+    # 하루 고정이라 같은 사람·같은 날은 다시 계산하지 않는다(지난 4일 재계산이 메뉴 계산의 대부분).
+    cache_key = (account_key, repr(core.input), target_date.isoformat(), tuple(sorted(recent_menus)))
+    if cache_key in _MENU_CACHE:
+        return copy.deepcopy(_MENU_CACHE[cache_key])
+    cards = _menu_curation_uncached(core, target_date, account_key, lucky_element, operation_name,
+                                    ganji_han, timing_element_weights, query, recent_menus, seed)
+    if len(_MENU_CACHE) >= 4096:
+        _MENU_CACHE.clear()
+    _MENU_CACHE[cache_key] = copy.deepcopy(cards)
+    return cards
+
+
+_MENU_CACHE: dict[tuple, list[dict]] = {}
+
+
+def _menu_curation_uncached(core, target_date, account_key, lucky_element, operation_name,
+                            ganji_han, timing_element_weights, query, recent_menus, seed) -> list[dict]:
     from datetime import timedelta
     from app.engine.constants import GAN_WUXING, ZHI_WUXING
     base_tags = _menu_climate_tags(query)
@@ -379,36 +397,37 @@ def _menu_curation(core, target_date, current_hour, account_key, lucky_element, 
             return tongguan["element"]
         return daily_blend(balance, _wx(GAN_WUXING[ganji[0]]), ganji[1])["element"]
 
-    def pick(mode: str, day: date, avoid: frozenset[str]) -> list[str]:
+    def pick(meal: str, hour: int, day: date, avoid: frozenset[str], used: frozenset[str]) -> list[str]:
         ganji = ganji_han if day == target_date else _day_ganji(day)
-        return recommend_mode_menus(
-            mode=mode, target_date=day, current_hour=current_hour,
+        return recommend_daily_menus(
+            target_date=day, current_hour=hour, count=2,
             day_master=account_key or core.input.birth_date.isoformat(),
             daily_ganji=ganji, lucky_element=lucky_element if day == target_date else lucky_for(ganji),
             primary_operation=operation_name,
             recent_menus=recent_menus, timing_element_weights=weights_for(ganji),
             climate_tags=base_tags | frozenset(_DAY_SEASON_TAGS.get(ganji[1], ())),
-            exclude_menus=avoid,
+            blocked_menus=avoid,                  # 그제·어제 같은 끼니에 나온 메뉴는 뺀다
+            used_menus=used,                      # 같은 날 앞 끼니에 나온 메뉴도 뺀다
+            excluded_menus=NOT_A_MEAL if meal == "breakfast" else frozenset(),
         )["menus"]
 
-    def picks_for(day: date, before: dict[str, frozenset[str]]) -> dict[str, list[str]]:
-        # 그제·어제 같은 칸에 나온 메뉴는 오늘 뺀다(감점 −4로는 집밥에서 하루 걸러 같은 찌개가 나왔다).
-        # 집밥을 먼저 고르고 외식·배달은 그 메뉴도 뺀다 — 같은 시간 두 칸에 같은 메뉴가 뜨지 않게
-        # (집밥 후보를 넓힌 뒤 겹침 75%). 다이어트는 별도 풀이라 따로 고른다.
-        home = pick("home", day, before.get("home", frozenset()))
-        out = pick("out", day, before.get("out", frozenset()) | frozenset(home))
-        light = pick("light", day, before.get("light", frozenset()))
-        return {"home": home, "out": out, "light": light}
+    def meals_for(day: date, before: dict[str, frozenset[str]]) -> dict[str, list[str]]:
+        picked: dict[str, list[str]] = {}
+        used: frozenset[str] = frozenset()
+        for meal, _, hour in daily_menu_copy.MEALS:
+            picked[meal] = pick(meal, hour, day, before.get(meal, frozenset()), used)
+            used |= frozenset(picked[meal])
+        return picked
 
     # 무상태: 저장된 기록 없이 같은 규칙으로 지난 며칠을 다시 계산해 그제·어제 결과를 얻는다.
     # 이틀만 다시 계산하면 그 이틀이 실제로 보였던 것과 달라져(그 전날 기록이 빠지므로) 중복이 샌다.
     # 며칠 앞에서 시작하면 계산이 실제와 맞물린다.
     days: list[dict[str, list[str]]] = []
     for back in range(_MENU_LOOKBACK_DAYS, -1, -1):
-        before = {m: frozenset(x for d in days[-2:] for x in d[m]) for m in ("home", "out", "light")}
-        days.append(picks_for(target_date - timedelta(days=back), before))
-    return [daily_menu_copy.compose_mode_card(mode, lucky_element, days[-1][mode], seed)
-            for mode in daily_menu_copy.MODE_KEYS]
+        before = {m: frozenset(x for d in days[-2:] for x in d[m]) for m in daily_menu_copy.MEAL_KEYS}
+        days.append(meals_for(target_date - timedelta(days=back), before))
+    return [daily_menu_copy.compose_meal_card(meal, lucky_element, days[-1][meal], seed)
+            for meal in daily_menu_copy.MEAL_KEYS]
 
 
 _MENU_LOOKBACK_DAYS = 4   # 2일이면 어제 중복 3.8%, 4일이면 0.7% (25명 × 10일 × 점심·저녁)

@@ -1,63 +1,24 @@
-"""Tab 1 홈 '오늘 뭐 먹지?' 3모드 감성 큐레이션 카피와 모드 데이터.
+"""Tab 1 홈 '오늘 뭐 먹지?' 카드의 끼니 데이터와 화면 문구.
 
-모드: [외식·배달] / [집밥] / [가벼운 한 끼(다이어트)]
-- 메뉴 선택 계산은 daily_menu.py 가 한다. 이 파일은 (1) 모드별 후보 범위 데이터와 (2) 화면에 나가는 말만 가진다.
+2026-10-14 정오님: 외식·집밥·다이어트 구분을 없애고 아침·점심·저녁을 보여 준다.
+끼니마다 두 개("이거나 이거"), 하루에 한 번 정해져 언제 다시 봐도 같다.
+- 메뉴 선택 계산은 daily.py(_menu_curation)와 daily_menu.py 가 한다. 이 파일은 화면에 나가는 말만 가진다.
 - 집필 헌칙: 의학 경고·질병 예방·효능 표현 금지, HR 금기어 금지. 오행은 '그날의 결에 어울리는 취향 제안'이라는
   상징 언어로만 쓴다. (칼로리 숫자는 화면에 싣지 않는다 — 내부 추정치다.)
-
-HOME_MENUS / HOME_ONLY_MENUS 는 '집에서 차려 먹을 만한가'에 대한 편집 판단이다.
-daily_menu.MENU_POOL 에는 조리 정보가 없어 사람이 골랐고, 이름이 풀에 실제로 있는지는 테스트가 확인한다.
 """
 from __future__ import annotations
 
 from app.engine.services.daily_copy import ELEMENT_KO, find_flagged, _pick  # noqa: F401
 
-COPY_VERSION = "dalha-daily-menu-1"
+COPY_VERSION = "dalha-daily-menu-2"
 
-MODES = (
-    ("out", "외식·배달", ""),
-    ("home", "집밥", ""),
-    ("light", "가벼운 한 끼", "다이어트"),
+# (끼니 키, 화면 이름, 고를 때 쓰는 기준 시각)
+MEALS = (
+    ("breakfast", "아침", 8),
+    ("lunch", "점심", 12),
+    ("dinner", "저녁", 19),
 )
-MODE_KEYS = tuple(k for k, _, _ in MODES)
-
-# 집밥 후보 (2026-10-14 정오님: "집밥이라고 간단하게만 먹는 건 아니다. 간단한 것에 가점은 주지 말자.")
-# 간단한 한 끼와 장 봐서 공들이는 요리를 한 목록에 두고, 조리 난이도로 점수를 더하거나 빼지 않는다.
-# 집에서 흔히 해 먹는가만 본다 — 회·초밥·국밥·치킨·피자·중식 면처럼 주로 사 먹는 것은 넣지 않는다.
-HOME_MENUS = frozenset({
-    # 아침
-    "간장계란밥", "토마토 에그스크램블", "누룽지·달걀찜·김", "프렌치토스트", "바나나 팬케이크",
-    "햄치즈 토스트", "햄에그 토스트", "햄치즈양배추 토스트", "계란프라이와 토스트", "삶은 계란과 토스트",
-    "오트밀죽", "야채죽", "소고기죽", "닭죽", "그래놀라 요거트", "과일 그래놀라 볼",
-    "맑은 순두부국", "들깨미역국", "북엇국",
-    # 샌드위치·샐러드
-    "햄에그 샌드위치", "달걀샌드위치", "BLT 샌드위치", "햄치즈 샌드위치", "감자샐러드 샌드위치",
-    "닭가슴살 그린샐러드", "연두부 채소샐러드", "시저샐러드", "그릭샐러드", "카프레제 샐러드",
-    # 밥·볶음밥·덮밥
-    "김치볶음밥", "계란볶음밥", "햄볶음밥", "채소볶음밥", "새우볶음밥", "차돌숙주볶음밥", "오므라이스",
-    "오야코동", "버섯덮밥", "가지덮밥", "김밥", "계란찜과 밥·채소 반찬", "시금치오믈렛",
-    # 면
-    "라면", "잔치국수", "비빔국수", "들기름 막국수", "메밀 비빔국수", "김치말이국수", "유부우동", "해물볶음우동",
-    # 파스타·리조또
-    "알리오 올리오", "토마토파스타", "로제파스타", "봉골레파스타", "버섯크림파스타", "해산물파스타",
-    "바질페스토 파스타", "버섯리조또", "치킨크림리조또",
-    # 카레
-    "카레라이스", "소고기카레", "치킨카레", "야채카레",
-    # 볶음·구이·조림
-    "제육볶음", "소고기불고기", "닭갈비", "오징어볶음", "주꾸미볶음",
-    "삼겹살구이", "고추장삼겹살", "그릴드 스테이크", "연어스테이크", "고등어구이", "흰살생선구이",
-    "두부스테이크", "갈치조림", "꽁치김치조림", "돼지고기수육",
-    # 찌개·국·전골
-    "김치찌개", "된장찌개", "순두부찌개", "부대찌개", "고추장찌개", "콩비지찌개",
-    "소고기미역국", "소고기무국", "떡국", "만둣국", "어묵탕", "콩나물국", "된장국",
-    "소고기 샤브샤브", "버섯전골",
-    # 두부·채소·간식
-    "두부김치", "두부채소볶음", "청경채볶음과 두부구이", "잡채", "월남쌈", "배추전", "떡볶이",
-})
-# 집에서만 어울리는 메뉴: 외식·배달 추천에서는 뺀다.
-HOME_ONLY_MENUS = frozenset({
-    "간장계란밥", "계란프라이와 토스트", "삶은 계란과 토스트", "라면", "오트밀죽", "그래놀라 요거트",
-})
+MEAL_KEYS = tuple(k for k, _, _ in MEALS)
 
 ELEMENT_LINE = {
     "木": ("오늘은 목(木) 기운을 채워 보는 날, 싱그러운 초록빛이 어우러진 한 끼를 골랐어요.",
@@ -71,21 +32,17 @@ ELEMENT_LINE = {
     "水": ("오늘은 수(水) 기운을 채워 보는 날, 촉촉하고 깊은 맛이 스며드는 한 끼예요.",
           "오늘은 잔잔하게 스며드는 수(水) 기운이 어울리는 날이라 깊은 맛의 메뉴를 골랐어요."),
 }
-MODE_CAPTION = {
-    "out": "나가서 드셔도, 시켜 드셔도 좋아요. 마음 가는 쪽으로 골라 보세요.",
-    "home": "집에서 차려 먹는 한 끼. 간단히도, 공들여서도 좋아요.",
-    "light": "든든함은 챙기고 부담은 덜어 낸 가벼운 한 끼예요. 천천히 즐겨 보세요.",
-}
-EMPTY_TEXT = "지금 시간에 어울리는 메뉴를 찾지 못했어요. 다른 모드를 눌러 보세요."
-FOOTNOTE = "메뉴는 오늘의 기운과 계절, 시간대에 어울리는 취향 제안이에요."
+CAPTION = "둘 중 마음 가는 쪽으로 골라 보세요."
+EMPTY_TEXT = "이 끼니에 어울리는 메뉴를 찾지 못했어요. 다른 끼니를 눌러 보세요."
+FOOTNOTE = "메뉴는 오늘의 기운과 계절에 어울리는 취향 제안이에요. 하루 동안 그대로예요."
 
 
-def compose_mode_card(mode: str, element: str, menus: list[str], seed: int) -> dict:
-    mode = mode if mode in MODE_KEYS else "out"
+def compose_meal_card(meal: str, element: str, menus: list[str], seed: int) -> dict:
+    meal = meal if meal in MEAL_KEYS else "lunch"
     key = element if element in ELEMENT_LINE else "土"
-    label, sub = next((l, s) for k, l, s in MODES if k == mode)
+    label = next(name for k, name, _ in MEALS if k == meal)
     return dict(
-        mode=mode, label=label, sub_label=sub, element=key, element_ko=ELEMENT_KO[key],
-        headline=_pick(ELEMENT_LINE[key], seed, 6), caption=MODE_CAPTION[mode],
+        mode=meal, label=label, sub_label="", element=key, element_ko=ELEMENT_KO[key],
+        headline=_pick(ELEMENT_LINE[key], seed, 6), caption=CAPTION,
         menus=list(menus), available=bool(menus), empty_text="" if menus else EMPTY_TEXT,
     )

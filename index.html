@@ -797,11 +797,11 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                     </div>
                 </div>
 
-                <!-- v2: 오늘 뭐 먹지? — 서버 daily_fortune.menu_curation (3모드 카드) -->
+                <!-- v3: 오늘 뭐 먹지? — 서버 daily_fortune.menu_curation (아침·점심·저녁, 끼니마다 두 개, 하루 고정) -->
                 <section id="menuCurationCard" class="card menu-curation" hidden aria-labelledby="menuCurationTitle">
                     <h4 id="menuCurationTitle">오늘 뭐 먹지?</h4>
                     <p id="menuCurationHeadline" class="menu-curation-headline"></p>
-                    <div id="menuCurationTabs" class="menu-curation-tabs" role="tablist" aria-label="식사 방식"></div>
+                    <div id="menuCurationTabs" class="menu-curation-tabs" role="tablist" aria-label="끼니"></div>
                     <div id="menuCurationPanel" role="tabpanel" aria-live="polite">
                         <p id="menuCurationCaption" class="menu-curation-caption"></p>
                         <div id="menuCurationPhotos" class="menu-photos"></div>
@@ -1913,12 +1913,14 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
         }
 
         // ---- v2: 신규 daily_menu 카드 모드. 구버전 sazu 텍스트/탐색기(DalhaMenu)는 쓰지 않는다. ----
-        const MENU_CURATION_MODE_KEY = 'dalha_menu_curation_mode_v1';
         let currentMenuCurationMode = null;
-        function savedMenuCurationMode() { try { return localStorage.getItem(MENU_CURATION_MODE_KEY); } catch (e) { return null; } }
-        function selectMenuCurationMode(mode, persist = true) {
+        // 처음 열 때는 지금 시각의 끼니(아침 4~10시, 점심 11~14시, 그 밖은 저녁)를 보여 준다. 메뉴 자체는 하루 고정.
+        function mealForNow() {
+            const h = new Date().getHours();
+            return h >= 4 && h < 11 ? 'breakfast' : (h >= 11 && h < 15 ? 'lunch' : 'dinner');
+        }
+        function selectMenuCurationMode(mode) {
             currentMenuCurationMode = mode;
-            if (persist) { try { localStorage.setItem(MENU_CURATION_MODE_KEY, mode); } catch (e) {} }
             paintMenuCuration();
         }
         function paintMenuCuration() {
@@ -1930,8 +1932,8 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             if (!cards.length) return;
             const modes = cards.map(c => c.mode);
             if (!modes.includes(currentMenuCurationMode)) {
-                const saved = savedMenuCurationMode();
-                currentMenuCurationMode = modes.includes(saved) ? saved : modes[0];
+                const now = mealForNow();
+                currentMenuCurationMode = modes.includes(now) ? now : modes[0];
             }
             const card = cards.find(c => c.mode === currentMenuCurationMode) || cards[0];
             // 오행 한 줄은 화면 위에 한 번만. 모드 카드는 메뉴 중심으로 보여 준다.

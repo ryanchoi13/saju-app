@@ -212,25 +212,40 @@ class DailyFortuneServiceTests(TestCase):
         self.assertEqual(result['evidence_summary']['guidance']['rendered_by'],
                          result['evidence_summary']['overall']['version'])
 
-    def test_home_meals_include_cooking_and_never_mirror_the_out_tab(self):
-        # 2026-10-14: '10분 집밥' → '집밥'. 간단한 메뉴에 가점 없이 요리형 메뉴도 함께 후보로 둔다.
-        from app.engine.services.daily_menu import MENU_POOL
-        from app.engine.services.daily_menu_copy import HOME_MENUS, HOME_ONLY_MENUS, MODES
-        self.assertEqual(HOME_MENUS - {item.name for item in MENU_POOL}, set())
-        self.assertLessEqual(HOME_ONLY_MENUS, HOME_MENUS)
-        self.assertEqual({key: label for key, label, _ in MODES}["home"], "집밥")
-        self.assertLessEqual({"라면", "토마토파스타", "제육볶음", "된장찌개", "카레라이스"}, HOME_MENUS)
-
+    def test_menu_card_is_breakfast_lunch_dinner_fixed_for_the_day(self):
+        # 2026-10-14 정오님: 외식·집밥 구분 없이 아침·점심·저녁 두 개씩, 몇 시에 다시 봐도 같은 메뉴.
+        from app.engine.services import daily as daily_module
+        from app.engine.services.daily_menu import NOT_A_MEAL, _SIMILAR
+        from app.engine.services.menu_categories import menu_category
         start = date(2026, 10, 1)
         previous, repeats, ramen = None, 0, 0
         for offset in range(14):
             target = start + timedelta(days=offset)
-            result = build_daily_fortune(self._core(target), "테스트", target, current_hour=19)
-            cards = {card["mode"]: set(card["menus"]) for card in result["menu_curation"]}
-            self.assertFalse(cards["home"] & cards["out"], target)   # 같은 시간 두 칸에 같은 메뉴 없음
-            ramen += "라면" in cards["home"]
+            core = self._core(target)
+            cards = build_daily_fortune(core, "테스트", target, current_hour=8)["menu_curation"]
+            self.assertEqual([(c["mode"], c["label"]) for c in cards],
+                             [("breakfast", "아침"), ("lunch", "점심"), ("dinner", "저녁")])
+            for hour in (13, 21):     # 시간이 바뀌어도 같은 메뉴 (캐시 없이 다시 계산해도)
+                daily_module._MENU_CACHE.clear()
+                later = build_daily_fortune(core, "테스트", target, current_hour=hour)["menu_curation"]
+                self.assertEqual([c["menus"] for c in later], [c["menus"] for c in cards])
+            meals = {c["mode"]: c["menus"] for c in cards}
+            all_names = [name for menus in meals.values() for name in menus]
+            self.assertEqual(len(all_names), 6)
+            self.assertEqual(len(set(all_names)), 6, (target, meals))           # 같은 날 끼니끼리 겹침 없음
+            self.assertFalse(set(meals["breakfast"]) & NOT_A_MEAL)              # 음료는 아침 한 끼로 내지 않음
+            for menus in meals.values():                                        # 한 끼의 두 메뉴는 다른 종류
+                kinds = [_SIMILAR.get(menu_category(n), menu_category(n)) for n in menus]
+                self.assertEqual(len(set(kinds)), 2, (target, menus))
+            ramen += "라면" in meals["lunch"] + meals["dinner"]
             if previous:
-                repeats += sum(bool(cards[mode] & previous[mode]) for mode in cards)
-            previous = cards
-        self.assertLessEqual(repeats, 1)     # 어제와 같은 칸에 같은 메뉴: 무상태 재계산이라 아주 드물게만
-        self.assertLessEqual(ramen, 4)       # 예전에는 점심·저녁 집밥의 절반에 라면이 있었다
+                repeats += sum(bool(set(meals[m]) & set(previous[m])) for m in meals)
+            previous = meals
+        self.assertLessEqual(repeats, 1)     # 어제 같은 끼니와 같은 메뉴: 무상태 재계산이라 아주 드물게만
+        self.assertLessEqual(ramen, 3)
+
+    def test_tteokbokki_is_a_lunch_or_dinner_option_but_not_breakfast(self):
+        from app.engine.services.daily_menu import MENU_POOL
+        item = next(m for m in MENU_POOL if m.name == "떡볶이")
+        self.assertLessEqual({"lunch", "dinner"}, set(item.periods))
+        self.assertNotIn("breakfast", item.periods)

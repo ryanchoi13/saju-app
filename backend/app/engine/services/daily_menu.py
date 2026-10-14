@@ -13,7 +13,6 @@ from app.engine.services.menu_frequency import frequency_evidence
 from app.engine.services.menu_demographics import demographic_evidence
 from app.engine.services.meal_feedback import preference_bonus
 from app.engine.services.menu_frequency_review import REVIEWED_POPULARITY
-from app.engine.services.daily_menu_copy import HOME_MENUS, HOME_ONLY_MENUS
 
 
 MENU_POOL_VERSION = "daily-menu-pool-v3"
@@ -178,7 +177,8 @@ _PERIOD_OVERRIDES = {
     "쑥떡과 차": "snack", "바질 토마토 파니니": "breakfast lunch",
     "토마토 에그스크램블": "breakfast", "햄치즈 토스트": "breakfast snack",
     "햄치즈양배추 토스트": "breakfast snack", "길거리 토스트": "breakfast snack",
-    "떡볶이": "snack", "닭꼬치": "snack", "핫도그": "snack",
+    "떡볶이": "lunch dinner snack",   # 2026-10-14 정오님: 점심·저녁 한 끼로도(아침은 제외)
+    "닭꼬치": "snack", "핫도그": "snack",
     "생강차와 구운 떡": "snack", "계피차와 호두빵": "snack",
     "자몽차와 에그타르트": "snack", "오트밀죽": "breakfast",
     "딸기잼 토스트": "breakfast snack", "감자샐러드 샌드위치": "breakfast lunch",
@@ -694,6 +694,14 @@ def history_context(target_date: date, history: tuple[dict, ...]) -> tuple[froze
     return frozenset(yesterday | {name for name, n in counts.items() if n >= 2}), groups
 
 
+# 화면에서 '비슷한 메뉴 두 개'로 보이는 종류 묶음.
+_SIMILAR = {
+    "toast": "bread_based", "sandwich": "bread_based", "bread": "bread_based",
+    "soup": "broth", "stew": "broth", "gukbap": "broth", "hotpot": "broth",
+    "noodles": "noodle", "chinese_noodles": "noodle",
+}
+
+
 def _grouped_selection(candidates, score, seed, count, used_menus, category_counts):
     """One entry per culinary category, then choose a suitable variant.
 
@@ -703,10 +711,15 @@ def _grouped_selection(candidates, score, seed, count, used_menus, category_coun
     selected = []
     remaining = list(candidates)
     used_categories = {menu_category(name) for name in used_menus}
+    picked = set()   # 이번에 이미 고른 종류
     while remaining and len(selected) < count:
         groups = {}
         for item in remaining:
             groups.setdefault(menu_category(item.name), []).append(item)
+        # 한 번에 고르는 메뉴끼리는 종류가 겹치지 않게(햄치즈 토스트 + 햄치즈양배추 토스트 같은 짝 방지).
+        # 빵끼리·국물끼리·면끼리도 한 짝으로 본다. 다른 쪽이 하나도 남지 않았을 때만 겹치게 둔다.
+        if any(_SIMILAR.get(group, group) not in picked for group in groups):
+            groups = {group: items for group, items in groups.items() if _SIMILAR.get(group, group) not in picked}
         def category_score(group):
             # 종류 점수 = 그 종류 최고 메뉴 점수 + 날짜별 흔들기. (종류 기본 인기점은 메뉴 인기에 이미 들어 있어 뺐다.)
             best = max(score(item) for item in groups[group])
@@ -727,6 +740,7 @@ def _grouped_selection(candidates, score, seed, count, used_menus, category_coun
         choice = max(shortlist, key=lambda item: (variant_score(item), item.name))
         selected.append(choice)
         used_categories.add(category)
+        picked.add(_SIMILAR.get(category, category))
         remaining = [item for item in remaining if item != choice]
     return selected
 
@@ -1218,53 +1232,6 @@ def recommend_daily_diet_plan(
     }
 
 
-def recommend_mode_menus(
-    *,
-    mode: str,
-    target_date: date,
-    current_hour: int | None,
-    day_master: str,
-    daily_ganji: str,
-    lucky_element: str,
-    primary_operation: str,
-    count: int = 2,
-    recent_menus: frozenset[str] = frozenset(),
-    age_group: str | None = None,
-    demographic_age: int | None = None,
-    gender: str | None = None,
-    preferences: dict | None = None,
-    timing_element_weights: dict[str, int] | None = None,
-    climate_tags: frozenset[str] = frozenset(),
-    exclude_menus: frozenset[str] = frozenset(),
-) -> dict:
-    """홈 화면 3모드 추천. out=외식·배달, home=집밥, light=가벼운 한 끼(다이어트 풀).
-
-    기존 recommend_daily_menus / recommend_diet_menus 의 점수 체계를 그대로 쓰고,
-    모드는 '후보 범위'만 바꾼다. 해당 시간대에 후보가 없으면 menus 가 빈 리스트로 돌아온다.
-    """
-
-    common = dict(
-        target_date=target_date, current_hour=current_hour, day_master=day_master,
-        daily_ganji=daily_ganji, lucky_element=lucky_element, primary_operation=primary_operation,
-        count=count, recent_menus=recent_menus, age_group=age_group, demographic_age=demographic_age,
-        gender=gender, preferences=preferences, timing_element_weights=timing_element_weights,
-        climate_tags=climate_tags, blocked_menus=exclude_menus,   # 그제·어제 메뉴, 다른 칸 메뉴: 아예 뺀다
-    )
-    if mode == "out":
-        result = recommend_daily_menus(**common, excluded_menus=HOME_ONLY_MENUS)
-    elif mode == "home":
-        result = recommend_daily_menus(**common, allowed_menus=HOME_MENUS)
-    elif mode == "light":
-        # 다이어트 풀에는 간식 시간대가 없으므로 저녁 기준으로 고른다.
-        if meal_period_for(current_hour) == "snack":
-            common["current_hour"] = 19
-        result = recommend_diet_menus(**common)
-    else:
-        raise ValueError(f"알 수 없는 메뉴 모드: {mode}")
-    return {
-        "mode": mode,
-        "menus": result["menus"],
-        "season": result["season"],
-        "meal_period": result["meal_period"],
-        "pool_version": result["pool_version"],
-    }
+# 마실 것에 가까운 종류. 아침 메뉴로도 올리지 않는다(주스 한 잔은 '한 끼'가 아니다).
+_DRINK_CATEGORIES = frozenset({"drink", "smoothie"})
+NOT_A_MEAL = frozenset(item.name for item in MENU_POOL if menu_category(item.name) in _DRINK_CATEGORIES)
