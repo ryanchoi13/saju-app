@@ -350,7 +350,7 @@ def _badge_style(score: int) -> str:
 
 def _menu_curation(core, target_date, current_hour, account_key, lucky_element, operation_name,
                    ganji_han, timing_element_weights, query, recent_menus, seed) -> list[dict]:
-    """[외식·배달] / [10분 집밥] / [가벼운 한 끼] 세 모드의 큐레이션 카드."""
+    """[외식·배달] / [집밥] / [가벼운 한 끼] 세 모드의 큐레이션 카드."""
     from datetime import timedelta
     from app.engine.constants import GAN_WUXING, ZHI_WUXING
     base_tags = _menu_climate_tags(query)
@@ -366,24 +366,52 @@ def _menu_curation(core, target_date, current_hour, account_key, lucky_element, 
             w[element] = w.get(element, 0) + weight
         return w
 
-    def pick(mode: str, day: date, blocked: frozenset[str]) -> list[str]:
+    balance = natal_balance(core)
+    favorable = query["semantic_state"].get("favorable_elements", [])
+
+    def lucky_for(ganji: str) -> str:
+        # 그날의 보완 오행(build_daily_fortune 과 같은 규칙). 지난날을 다시 계산할 때 오늘 값을 쓰면
+        # 그날 시드가 달라져, 실제로 보였던 메뉴와 어긋나고 중복 방지가 샌다.
+        if favorable:
+            return favorable[0]
+        tongguan = tongguan_day(core, ganji[1])
+        if tongguan:
+            return tongguan["element"]
+        return daily_blend(balance, _wx(GAN_WUXING[ganji[0]]), ganji[1])["element"]
+
+    def pick(mode: str, day: date, avoid: frozenset[str]) -> list[str]:
         ganji = ganji_han if day == target_date else _day_ganji(day)
         return recommend_mode_menus(
             mode=mode, target_date=day, current_hour=current_hour,
             day_master=account_key or core.input.birth_date.isoformat(),
-            daily_ganji=ganji, lucky_element=lucky_element, primary_operation=operation_name,
-            recent_menus=recent_menus | blocked, timing_element_weights=weights_for(ganji),
+            daily_ganji=ganji, lucky_element=lucky_element if day == target_date else lucky_for(ganji),
+            primary_operation=operation_name,
+            recent_menus=recent_menus, timing_element_weights=weights_for(ganji),
             climate_tags=base_tags | frozenset(_DAY_SEASON_TAGS.get(ganji[1], ())),
+            exclude_menus=avoid,
         )["menus"]
 
-    cards = []
-    for mode in daily_menu_copy.MODE_KEYS:
-        # 무상태 연속 중복 방지: 같은 규칙으로 그제·어제 뽑혔을 메뉴를 다시 계산해 오늘 감점한다.
-        d2 = pick(mode, target_date - timedelta(days=2), frozenset())
-        d1 = pick(mode, target_date - timedelta(days=1), frozenset(d2))
-        menus = pick(mode, target_date, frozenset(d1) | frozenset(d2))
-        cards.append(daily_menu_copy.compose_mode_card(mode, lucky_element, menus, seed))
-    return cards
+    def picks_for(day: date, before: dict[str, frozenset[str]]) -> dict[str, list[str]]:
+        # 그제·어제 같은 칸에 나온 메뉴는 오늘 뺀다(감점 −4로는 집밥에서 하루 걸러 같은 찌개가 나왔다).
+        # 집밥을 먼저 고르고 외식·배달은 그 메뉴도 뺀다 — 같은 시간 두 칸에 같은 메뉴가 뜨지 않게
+        # (집밥 후보를 넓힌 뒤 겹침 75%). 다이어트는 별도 풀이라 따로 고른다.
+        home = pick("home", day, before.get("home", frozenset()))
+        out = pick("out", day, before.get("out", frozenset()) | frozenset(home))
+        light = pick("light", day, before.get("light", frozenset()))
+        return {"home": home, "out": out, "light": light}
+
+    # 무상태: 저장된 기록 없이 같은 규칙으로 지난 며칠을 다시 계산해 그제·어제 결과를 얻는다.
+    # 이틀만 다시 계산하면 그 이틀이 실제로 보였던 것과 달라져(그 전날 기록이 빠지므로) 중복이 샌다.
+    # 며칠 앞에서 시작하면 계산이 실제와 맞물린다.
+    days: list[dict[str, list[str]]] = []
+    for back in range(_MENU_LOOKBACK_DAYS, -1, -1):
+        before = {m: frozenset(x for d in days[-2:] for x in d[m]) for m in ("home", "out", "light")}
+        days.append(picks_for(target_date - timedelta(days=back), before))
+    return [daily_menu_copy.compose_mode_card(mode, lucky_element, days[-1][mode], seed)
+            for mode in daily_menu_copy.MODE_KEYS]
+
+
+_MENU_LOOKBACK_DAYS = 4   # 2일이면 어제 중복 3.8%, 4일이면 0.7% (25명 × 10일 × 점심·저녁)
 
 
 def _wx(value) -> str:

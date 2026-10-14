@@ -13,7 +13,7 @@ from app.engine.services.menu_frequency import frequency_evidence, frequency_bon
 from app.engine.services.menu_demographics import demographic_evidence
 from app.engine.services.meal_feedback import preference_bonus
 from app.engine.services.menu_frequency_review import REVIEWED_POPULARITY
-from app.engine.services.daily_menu_copy import QUICK_HOME_MENUS, HOME_ONLY_MENUS
+from app.engine.services.daily_menu_copy import HOME_MENUS, HOME_ONLY_MENUS
 
 
 MENU_POOL_VERSION = "daily-menu-pool-v3"
@@ -1239,8 +1239,9 @@ def recommend_mode_menus(
     preferences: dict | None = None,
     timing_element_weights: dict[str, int] | None = None,
     climate_tags: frozenset[str] = frozenset(),
+    exclude_menus: frozenset[str] = frozenset(),
 ) -> dict:
-    """홈 화면 3모드 추천. out=외식·배달, home=10분 집밥, light=가벼운 한 끼(다이어트 풀).
+    """홈 화면 3모드 추천. out=외식·배달, home=집밥, light=가벼운 한 끼(다이어트 풀).
 
     기존 recommend_daily_menus / recommend_diet_menus 의 점수 체계를 그대로 쓰고,
     모드는 '후보 범위'만 바꾼다. 해당 시간대에 후보가 없으면 menus 가 빈 리스트로 돌아온다.
@@ -1251,12 +1252,12 @@ def recommend_mode_menus(
         daily_ganji=daily_ganji, lucky_element=lucky_element, primary_operation=primary_operation,
         count=count, recent_menus=recent_menus, age_group=age_group, demographic_age=demographic_age,
         gender=gender, preferences=preferences, timing_element_weights=timing_element_weights,
-        climate_tags=climate_tags,
+        climate_tags=climate_tags, blocked_menus=exclude_menus,   # 그제·어제 메뉴, 다른 칸 메뉴: 아예 뺀다
     )
     if mode == "out":
         result = recommend_daily_menus(**common, excluded_menus=HOME_ONLY_MENUS)
     elif mode == "home":
-        result = recommend_daily_menus(**common, allowed_menus=QUICK_HOME_MENUS)
+        result = recommend_daily_menus(**common, allowed_menus=HOME_MENUS)
     elif mode == "light":
         # 다이어트 풀에는 간식 시간대가 없으므로 저녁 기준으로 고른다.
         if meal_period_for(current_hour) == "snack":
