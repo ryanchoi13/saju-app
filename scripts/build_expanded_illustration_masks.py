@@ -35,8 +35,13 @@ for q in requests:
   holes=binary_fill_holes(closed)&~closed;cc,n=label(holes);sizes=np.bincount(cc.ravel());good=np.where((sizes>0)&(sizes<160))[0];good=good[good!=0];m=closed|raw|np.isin(cc,good)
   m|=binary_dilation(m,iterations=1)&(lum<190)&(s>.15)
   m&=layers[:,:,0]==0
+  # Running shoes (2026-10-14) have two-tone mesh panels at ~0.85-0.9 of the base; only the collar opening (<0.78) is shadow.
+  runner=slot['field']=='shoeColor' and q['shape'].get('shoe')=='운동화'
+  if runner:  # drop specks on neighbouring garment outlines; a shoe is one large piece
+   cc,n=label(m);sizes=np.bincount(cc.ravel());good=np.where(sizes>=300)[0];good=good[good!=0];m=np.isin(cc,good)
   outer=distance_transform_edt(m)<=2.3;ln=np.clip((local-lum-1)/max(med*.33,18),0,1);ln=np.maximum(ln,np.where(outer,np.clip((med-lum)/(med*.48),0,1),0))
-  clean=gaussian_filter(local*m,1)/np.maximum(gaussian_filter(m.astype(float),1),1e-6);sh=median_filter(clean<med*.90,size=3).astype(float)
+  clean=gaussian_filter(local*m,1)/np.maximum(gaussian_filter(m.astype(float),1),1e-6)
+  sh=median_filter(clean<med*(.80 if runner else .90),size=3).astype(float)
   layers[:,:,0][m]=i+1;layers[:,:,1][m]=np.rint(ln[m]*255).astype('uint8');layers[:,:,2][m]=np.rint(sh[m]*127).astype('uint8')+outer[m].astype('uint8')*128
   counts.append(int(m.sum()))
  buf=io.BytesIO();Image.fromarray(layers).save(buf,format='PNG');(OUT/f'{key}-layers.png').write_bytes(buf.getvalue())

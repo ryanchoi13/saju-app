@@ -14,7 +14,8 @@ for path in root.glob('*-layers.png'):
 
 # Reported red bomber / blue jeans / burgundy sneakers screenshot.
 mask = np.asarray(Image.open(root / 'm-casual-b-layers.png'))[:, :, 0]
-assert mask[433, 618] == 0, 'Trouser cast shadow must retain the original neutral colour'
+# 2026-10-14 running-shoe edit moved the trouser edge ~1px right; the cast-shadow strip is now x=619-621 on this row.
+assert mask[433, 620] == 0, 'Trouser cast shadow must retain the original neutral colour'
 assert mask[591, 159] == 0, 'Ivory sneaker sole must not receive leather colour'
 assert np.count_nonzero(mask[500:] == 1) == 0, 'No jacket colour below the jacket'
 assert mask[300, 200] == 1, 'Keep jacket recolour coverage'
