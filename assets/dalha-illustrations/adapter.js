@@ -19,7 +19,7 @@ export async function hydrateIllustrations(root){
   const status=node.querySelector('[data-illustration-status]');
   status.hidden=false;status.textContent='코디 이미지를 불러오고 있습니다.';
   try{
-   const [source,mask]=await Promise.all([image(BASE+entry.id+'.webp?v=2'),image(BASE+entry.id+'-layers.png?v=4')]);
+   const [source,mask]=await Promise.all([image(BASE+entry.id+'.webp?v=3'),image(BASE+entry.id+'-layers.png?v=5')]);
    if(!node.isConnected||node.dataset.dalhaIllustration!==key)return;
    const original=pixels(source),layers=pixels(mask);
    if(original.width!==layers.width||original.height!==layers.height)throw new Error('Illustration layer size mismatch');

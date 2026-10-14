@@ -57,6 +57,12 @@ async def revalidate_client_code(request: Request, call_next):
     path = request.url.path
     if path == "/" or path.startswith("/design/") or (path.startswith("/assets/") and path.endswith((".html", ".js", ".css"))):
         response.headers["Cache-Control"] = "no-store, max-age=0"
+    elif path.startswith("/assets/dalha-illustrations/") and path.endswith((".webp", ".png")):
+        # A picture and its colour-layer map must come from the same deploy. Without a header the
+        # browser guesses a lifetime and may pair yesterday's picture with today's map (2026-10-14:
+        # old low-top sneakers painted with the new running-shoe region). Revalidate every time;
+        # unchanged files cost one 304.
+        response.headers["Cache-Control"] = "no-cache"
     return response
 
 
