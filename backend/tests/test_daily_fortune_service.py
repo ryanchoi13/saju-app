@@ -243,3 +243,9 @@ class DailyFortuneServiceTests(TestCase):
             previous = meals
         self.assertLessEqual(repeats, 1)     # 어제 같은 끼니와 같은 메뉴: 무상태 재계산이라 아주 드물게만
         self.assertLessEqual(ramen, 3)
+
+    def test_tteokbokki_is_a_lunch_or_dinner_option_but_not_breakfast(self):
+        from app.engine.services.daily_menu import MENU_POOL
+        item = next(m for m in MENU_POOL if m.name == "떡볶이")
+        self.assertLessEqual({"lunch", "dinner"}, set(item.periods))
+        self.assertNotIn("breakfast", item.periods)

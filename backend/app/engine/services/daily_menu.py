@@ -177,7 +177,8 @@ _PERIOD_OVERRIDES = {
     "쑥떡과 차": "snack", "바질 토마토 파니니": "breakfast lunch",
     "토마토 에그스크램블": "breakfast", "햄치즈 토스트": "breakfast snack",
     "햄치즈양배추 토스트": "breakfast snack", "길거리 토스트": "breakfast snack",
-    "떡볶이": "snack", "닭꼬치": "snack", "핫도그": "snack",
+    "떡볶이": "lunch dinner snack",   # 2026-10-14 정오님: 점심·저녁 한 끼로도(아침은 제외)
+    "닭꼬치": "snack", "핫도그": "snack",
     "생강차와 구운 떡": "snack", "계피차와 호두빵": "snack",
     "자몽차와 에그타르트": "snack", "오트밀죽": "breakfast",
     "딸기잼 토스트": "breakfast snack", "감자샐러드 샌드위치": "breakfast lunch",

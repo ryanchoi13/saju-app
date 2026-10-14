@@ -135,7 +135,8 @@ class DailyMenuServiceTests(TestCase):
     def test_breakfast_and_snack_are_classified_separately(self):
         by_name = {item.name: item for item in MENU_POOL}
         self.assertEqual(by_name["닭꼬치"].periods, frozenset({"snack"}))
-        self.assertEqual(by_name["떡볶이"].periods, frozenset({"snack"}))
+        # 2026-10-14 정오님: 떡볶이는 점심·저녁 한 끼로도 낸다(아침은 제외).
+        self.assertEqual(by_name["떡볶이"].periods, frozenset({"lunch", "dinner", "snack"}))
         self.assertNotIn("snack", by_name["토마토 에그스크램블"].periods)
         self.assertNotIn("breakfast", by_name["햄버거"].periods)
         self.assertNotIn("breakfast", by_name["김밥"].periods)
