@@ -16,7 +16,7 @@ PROFILES = {
     "fried_rice": (4, 5), "sushi": (3, 4), "raw_fish": (2, 3),
     "fish_meal": (3, 4), "seafood_meal": (3, 3),
     "meat_stirfry": (4, 5), "meat_grill": (3, 4),
-    "chicken": (4, 5), "burger": (3, 5), "pizza": (3, 4),
+    "chicken": (4, 5), "chinese_dish": (4, 5), "burger": (3, 5), "pizza": (3, 4),
     "cutlet": (4, 5), "salad": (3, 4), "poke": (3, 3),
     "wrap": (3, 3), "egg_meal": (4, 5), "tofu_meal": (4, 4),
     "vegetable_meal": (3, 4), "other": (2, 3),
@@ -29,7 +29,7 @@ def menu_category(name: str) -> str:
         return CATEGORIES[name]
     overrides = {"육개장": "soup", "매운 닭개장": "soup", "감자옹심이": "noodles",
                  "고구마그라탱": "vegetable_meal", "연근조림 정식": "vegetable_meal",
-                 "깐풍기": "chicken", "유자차와 백설기": "snack",
+                 "깐풍기": "chinese_dish", "탕수육": "chinese_dish", "유자차와 백설기": "snack",
                  "메밀전병": "snack", "도토리묵사발": "vegetable_meal",
                  "해파리냉채": "seafood_meal", "똠얌꿍": "soup",
                  "오코노미야키": "snack"}

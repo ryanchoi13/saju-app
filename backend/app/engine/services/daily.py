@@ -408,7 +408,7 @@ def _menu_curation_uncached(core, target_date, account_key, lucky_element, opera
             climate_tags=base_tags | frozenset(_DAY_SEASON_TAGS.get(ganji[1], ())),
             blocked_menus=avoid,                  # 그제·어제 같은 끼니에 나온 메뉴는 뺀다
             used_menus=used,                      # 같은 날 앞 끼니에 나온 메뉴도 뺀다
-            excluded_menus=NOT_A_MEAL if meal == "breakfast" else frozenset(),
+            excluded_menus=_MEAL_EXCLUDED[meal],   # 아침엔 음료, 점심엔 저녁 전용, 저녁엔 점심 전용을 뺀다
         )["menus"]
 
     def meals_for(day: date, before: dict[str, frozenset[str]]) -> dict[str, list[str]]:
@@ -430,6 +430,11 @@ def _menu_curation_uncached(core, target_date, account_key, lucky_element, opera
             for meal in daily_menu_copy.MEAL_KEYS]
 
 
+_MEAL_EXCLUDED = {
+    "breakfast": NOT_A_MEAL,
+    "lunch": daily_menu_copy.DINNER_ONLY,
+    "dinner": daily_menu_copy.LUNCH_ONLY,
+}
 _MENU_LOOKBACK_DAYS = 4   # 2일이면 어제 중복 3.8%, 4일이면 0.7% (25명 × 10일 × 점심·저녁)
 
 

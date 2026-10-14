@@ -249,3 +249,19 @@ class DailyFortuneServiceTests(TestCase):
         item = next(m for m in MENU_POOL if m.name == "떡볶이")
         self.assertLessEqual({"lunch", "dinner"}, set(item.periods))
         self.assertNotIn("breakfast", item.periods)
+
+    def test_lunch_and_dinner_follow_the_reviewed_split(self):
+        # 2026-10-14 정오님 편집표: 점심 전용 59개, 저녁 전용 30개, 나머지는 둘 다.
+        from app.engine.services.daily_menu import MENU_POOL
+        from app.engine.services.daily_menu_copy import LUNCH_ONLY, DINNER_ONLY
+        from app.engine.services.menu_categories import menu_category
+        names = {item.name for item in MENU_POOL}
+        self.assertEqual((LUNCH_ONLY | DINNER_ONLY) - names, set())
+        self.assertFalse(LUNCH_ONLY & DINNER_ONLY)
+        self.assertEqual(menu_category("탕수육"), "chinese_dish")   # '탕' 때문에 국으로 분류되던 것
+        for offset in range(14):
+            target = date(2026, 10, 1) + timedelta(days=offset)
+            meals = {c["mode"]: c["menus"]
+                     for c in build_daily_fortune(self._core(target), "테스트", target, current_hour=12)["menu_curation"]}
+            self.assertFalse(set(meals["lunch"]) & DINNER_ONLY, (target, meals["lunch"]))
+            self.assertFalse(set(meals["dinner"]) & LUNCH_ONLY, (target, meals["dinner"]))
