@@ -13,7 +13,6 @@ from app.engine.services.menu_frequency import frequency_evidence
 from app.engine.services.menu_demographics import demographic_evidence
 from app.engine.services.meal_feedback import preference_bonus
 from app.engine.services.menu_frequency_review import REVIEWED_POPULARITY
-from app.engine.services.daily_menu_copy import HOME_MENUS, HOME_ONLY_MENUS
 
 
 MENU_POOL_VERSION = "daily-menu-pool-v3"
@@ -1232,59 +1231,6 @@ def recommend_daily_diet_plan(
     }
 
 
-# 한 끼라기보다 곁들이·간식에 가까운 종류. 외식·배달 칸에는 올리지 않는다.
-_LIGHT_BITE_CATEGORIES = frozenset({"drink", "smoothie", "breakfast_bowl", "snack", "bread"})
-_LIGHT_BITES = frozenset(item.name for item in MENU_POOL if menu_category(item.name) in _LIGHT_BITE_CATEGORIES)
-
-
-def recommend_mode_menus(
-    *,
-    mode: str,
-    target_date: date,
-    current_hour: int | None,
-    day_master: str,
-    daily_ganji: str,
-    lucky_element: str,
-    primary_operation: str,
-    count: int = 2,
-    recent_menus: frozenset[str] = frozenset(),
-    age_group: str | None = None,
-    demographic_age: int | None = None,
-    gender: str | None = None,
-    preferences: dict | None = None,
-    timing_element_weights: dict[str, int] | None = None,
-    climate_tags: frozenset[str] = frozenset(),
-    exclude_menus: frozenset[str] = frozenset(),
-) -> dict:
-    """홈 화면 3모드 추천. out=외식·배달, home=집밥, light=가벼운 한 끼(다이어트 풀).
-
-    기존 recommend_daily_menus / recommend_diet_menus 의 점수 체계를 그대로 쓰고,
-    모드는 '후보 범위'만 바꾼다. 해당 시간대에 후보가 없으면 menus 가 빈 리스트로 돌아온다.
-    """
-
-    common = dict(
-        target_date=target_date, current_hour=current_hour, day_master=day_master,
-        daily_ganji=daily_ganji, lucky_element=lucky_element, primary_operation=primary_operation,
-        count=count, recent_menus=recent_menus, age_group=age_group, demographic_age=demographic_age,
-        gender=gender, preferences=preferences, timing_element_weights=timing_element_weights,
-        climate_tags=climate_tags, blocked_menus=exclude_menus,   # 그제·어제 메뉴, 다른 칸 메뉴: 아예 뺀다
-    )
-    # '오늘 뭐 먹지?'는 끼니 추천이다. 간식 시간(15~17시)에는 세 칸 모두 다가오는 저녁을 고른다.
-    if meal_period_for(current_hour) == "snack":
-        common["current_hour"] = 19
-    if mode == "out":
-        # 외식·배달은 한 끼가 되는 메뉴만(최소 주문 금액도 있다): 음료·요거트·빵 한 개·차와 간식은 뺀다.
-        result = recommend_daily_menus(**common, excluded_menus=HOME_ONLY_MENUS | _LIGHT_BITES)
-    elif mode == "home":
-        result = recommend_daily_menus(**common, allowed_menus=HOME_MENUS)
-    elif mode == "light":
-        result = recommend_diet_menus(**common)
-    else:
-        raise ValueError(f"알 수 없는 메뉴 모드: {mode}")
-    return {
-        "mode": mode,
-        "menus": result["menus"],
-        "season": result["season"],
-        "meal_period": result["meal_period"],
-        "pool_version": result["pool_version"],
-    }
+# 마실 것에 가까운 종류. 아침 메뉴로도 올리지 않는다(주스 한 잔은 '한 끼'가 아니다).
+_DRINK_CATEGORIES = frozenset({"drink", "smoothie"})
+NOT_A_MEAL = frozenset(item.name for item in MENU_POOL if menu_category(item.name) in _DRINK_CATEGORIES)
