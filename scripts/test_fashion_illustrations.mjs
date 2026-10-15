@@ -26,6 +26,10 @@ assert.deepEqual([...painted.slice(0,4)],[17,24,31,255]);
 assert.deepEqual([...painted.slice(4,8)],[227,221,207,255]);
 assert.deepEqual([...painted.slice(8)],[152,148,139,128]);
 assert.throws(()=>recolor(original,layer,[]),/Missing region/);
+// 100+n paints the lighter inside of slot n (rolled jeans cuff): colour mixed 60% toward warm white.
+const cuff=recolor(new Uint8ClampedArray([9,9,9,255]),new Uint8ClampedArray([101,0,0,255]),['#252629']);
+assert.deepEqual([...cuff],[162,161,158,255]);
+assert.throws(()=>recolor(new Uint8ClampedArray([9,9,9,255]),new Uint8ClampedArray([102,0,0,255]),['#252629']),/Missing region/);
 
 const dom=new JSDOM('<main></main>');globalThis.document=dom.window.document;
 globalThis.ImageData=class{constructor(data,width,height){Object.assign(this,{data,width,height});}};
