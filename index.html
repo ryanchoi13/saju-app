@@ -518,6 +518,7 @@
         .theme-preview .theme-unlock-cta { width:100%; }
         .theme-preview-note { font-size:.8125rem; color:var(--ui-muted); margin:0; }
         .daewoon-free .lifetime-nature { margin-top:12px; }
+        .drawer-card[hidden], .journal-times[hidden], .soon-hidden { display:none!important; }
         .lock-soon { display:inline-block; margin-top:10px; padding:6px 12px; border-radius:9px; background:var(--ui-tint); color:var(--ui-muted); }
         .menu-curation { padding:20px 18px; text-align:left; display:flex; flex-direction:column; gap:12px; border:1.5px solid #E2E8F0; }
         .menu-curation h4 { font-family:'Noto Serif KR',serif; font-size:1.0625rem; font-weight:800; color:var(--ui-ink); margin:0; }
@@ -705,7 +706,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                     <div id="resAdvice" style="font-size: 13.5px; color: #E2E8F0; font-weight: 400; line-height: 1.7; text-align: left; white-space: pre-line;"></div>
                     <div id="resSections" hidden style="display: none; flex-direction: column; gap: 12px; border-top: 1px solid rgba(255,255,255,0.12); margin-top: 4px; padding-top: 12px;"></div>
 
-                    <div class="journal-times" style="border-top: 1px solid rgba(255,255,255,0.12); margin-top: 4px; padding-top: 12px; display: flex; flex-direction: column; gap: 8px;">
+                    <div class="journal-times" hidden aria-hidden="true" style="border-top: 1px solid rgba(255,255,255,0.12); margin-top: 4px; padding-top: 12px; display: flex; flex-direction: column; gap: 8px;">
                         <div style="display: flex; align-items: flex-start; gap: 8px; font-size: 12.5px; line-height: 1.55; text-align: left;">
                             <span style="background: rgba(254,243,199,0.15); color: #FDE68A; font-weight: 700; padding: 2px 7px; border-radius: 6px; flex-shrink: 0;">오전</span>
                             <span id="timeMorningText" style="color: #CBD5E1;">-</span>
@@ -890,7 +891,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
 
                 <div style="display: flex; flex-direction: column; gap: 10px;">
                     <!-- 타로 카드 -->
-                    <div id="drawerTarot" class="drawer-card">
+                    <div id="drawerTarot" class="drawer-card" hidden aria-hidden="true">
                         <div class="drawer-header" onclick="toggleDrawer('drawerTarot')">
                             <div class="drawer-title-box">
                                 <div class="drawer-icon-circle">🔮</div>
@@ -929,7 +930,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                     </div>
 
                     <!-- 띠별 & 별자리 운세 서랍 -->
-                    <div id="drawerZodiac" class="drawer-card">
+                    <div id="drawerZodiac" class="drawer-card" hidden aria-hidden="true">
                         <div class="drawer-header" onclick="toggleDrawer('drawerZodiac')">
                             <div class="drawer-title-box">
                                 <div class="drawer-icon-circle">✨</div>
@@ -3654,6 +3655,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             });
             document.getElementById('daewoonFlowOpen').textContent = latestOwnedReportIndex('daewoon') >= 0 ? '구매한 평생운세 전체 읽기' : '같은 평생운세에 포함된 풀이';
             if (latestOwnedReportIndex('daewoon') < 0) applyDaewoonFreeChrome();
+            DALHA_SOON_REPORTS.forEach(applySoonEntrypoint);
         }
 
         // ---- v2 Tab 2: 현재 대운 + 타고난 성향은 무료, 다음 대운은 잠금 티저 (서버 /api/reports/preview daewoon) ----
@@ -3714,6 +3716,26 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
 
         // ---- v2 Tab 3: 직업·사업 / 애정 / 생활 리듬 — 1·2단 무료 미리보기 → 가격은 서버 값 → 결제 시 3·4단 해제 ----
         const COIN_UNIT = '복채';
+        // 2026-10-15 공개 범위(프로젝트 문서 dalha-roadmap): 공개 때 결제 없음 → 이 풀이들은 '곧 열려요'.
+        // 직업·애정·건강은 앞부분 무료 맛보기는 그대로 두고, 결제 버튼만 '곧 열려요'로 바꾼다. 이미 받은 풀이는 그대로 읽을 수 있다.
+        const DALHA_SOON_REPORTS = new Set(['business','love','health','wealth','study','gunghap']);
+        function applySoonEntrypoint(key) {
+            if (!DALHA_SOON_REPORTS.has(key) || latestOwnedReportIndex(key) >= 0) return;
+            const price = document.querySelector(`[data-report-price="${key}"]`);
+            const hasPreview = ['business','love','health'].includes(key);
+            if (price) price.textContent = hasPreview ? '앞부분 무료 · 전체는 곧 열려요' : '곧 열려요';
+            if (hasPreview) return;
+            const button = document.getElementById(key === 'gunghap' ? 'btnOpenGunghapModal' : `btnTheme_${key}`);
+            if (button) button.classList.add('soon-hidden');
+            if (key === 'gunghap') document.getElementById('gunghapPurchaseNote')?.classList.add('soon-hidden');
+            if (button && !document.getElementById(`soon_${key}`)) {
+                const soon = document.createElement('span');
+                soon.id = `soon_${key}`;
+                soon.className = 'lock-soon';
+                soon.textContent = '곧 열려요';
+                button.after(soon);
+            }
+        }
         const themePreviewCache = {};
         function renderThemePreview(key) {
             const state = themePreviewCache[key];
@@ -3726,19 +3748,25 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             const wrap = document.createElement('div');
             wrap.className = 'theme-preview';
             wrap.append(tpl.content);
-            const cta = document.createElement('button');
-            cta.type = 'button';
-            cta.className = 'reading-primary theme-unlock-cta';
-            cta.textContent = `🔒 ${state.price_coins} ${COIN_UNIT}으로 열람하기`;
-            cta.onclick = () => handleUnlockReportOnServer(key, state.price_coins, state.subOption || '기본');
+            const soon = DALHA_SOON_REPORTS.has(key);
+            const cta = document.createElement(soon ? 'span' : 'button');
+            if (soon) {
+                cta.className = 'lock-soon';
+                cta.textContent = '전체 풀이는 곧 열려요';
+            } else {
+                cta.type = 'button';
+                cta.className = 'reading-primary theme-unlock-cta';
+                cta.textContent = `🔒 ${state.price_coins} ${COIN_UNIT}으로 열람하기`;
+                cta.onclick = () => handleUnlockReportOnServer(key, state.price_coins, state.subOption || '기본');
+            }
             const note = document.createElement('p');
             note.className = 'theme-preview-note';
-            note.textContent = '결제하면 잠긴 부분이 바로 열려요. 다시 읽을 때는 추가 결제가 없어요.';
+            note.textContent = soon ? '앞부분은 지금 무료로 읽을 수 있어요.' : '결제하면 잠긴 부분이 바로 열려요. 다시 읽을 때는 추가 결제가 없어요.';
             wrap.append(cta, note);
             slot.replaceChildren(wrap);
             slot.classList.remove('hidden');
             const price = document.querySelector(`[data-report-price="${key}"]`);
-            if (price) price.textContent = `${state.price_coins} ${COIN_UNIT}`;
+            if (price) price.textContent = DALHA_SOON_REPORTS.has(key) ? '앞부분 무료 · 전체는 곧 열려요' : `${state.price_coins} ${COIN_UNIT}`;
             const button = document.getElementById(`btnTheme_${key}`);
             if (button) button.textContent = key === 'health' ? '다시 불러오기' : '상황 다시 고르기';
         }
