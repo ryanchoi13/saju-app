@@ -3,7 +3,9 @@ from pathlib import Path
 from PIL import Image,ImageDraw
 import numpy as np,json,io
 from scipy.ndimage import grey_closing,gaussian_filter,binary_closing,binary_fill_holes,binary_dilation,distance_transform_edt,label,median_filter
-import argparse
+import argparse,sys
+sys.path.insert(0,str(Path(__file__).resolve().parent))
+from mark_denim_cuffs import DENIM_CUFFS,mark_cuffs
 p=argparse.ArgumentParser();p.add_argument('--workdir',type=Path,required=True);args=p.parse_args()
 R=args.workdir;OUT=Path(__file__).resolve().parents[1]/'assets/dalha-illustrations';P=R/'previews';P.mkdir(exist_ok=True)
 requests=json.loads((OUT/'expansion-provenance.json').read_text())
@@ -57,3 +59,4 @@ for q in requests:
   assert np.array_equal(result[layers[:,:,0]==0],a[layers[:,:,0]==0])
   Image.fromarray(np.rint(result).astype('uint8')).save(P/f'{key}-{mode}.jpg')
  checks.append({'id':key,'pixels':counts,'max_region':int(layers[:,:,0].max())})
+ if key in DENIM_CUFFS:mark_cuffs(key)  # 2026-10-15: lighter inside of rolled jeans cuffs (after previews)

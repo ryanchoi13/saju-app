@@ -5,7 +5,9 @@ from pathlib import Path
 from PIL import Image,ImageDraw
 import numpy as np,json,io
 from scipy.ndimage import grey_closing, gaussian_filter, binary_closing, binary_fill_holes, binary_dilation, distance_transform_edt, label
-import argparse
+import argparse,sys
+sys.path.insert(0,str(Path(__file__).resolve().parent))
+from mark_denim_cuffs import DENIM_CUFFS,mark_cuffs
 p=argparse.ArgumentParser();p.add_argument('--sources',type=Path,required=True);args=p.parse_args()
 OUT=Path(__file__).resolve().parents[1]/'assets/dalha-illustrations'
 RUNNER_SHOES={'m-casual-a','m-casual-b','f-casual-a'}
@@ -50,3 +52,4 @@ for spec in specs:
 
  buf=io.BytesIO();Image.fromarray(layers).save(buf,format='PNG');(OUT/f'{key}-layers.png').write_bytes(buf.getvalue())
  buf=io.BytesIO();Image.fromarray(a.astype('uint8')).save(buf,format='WEBP',quality=94);(OUT/f'{key}.webp').write_bytes(buf.getvalue())
+ if key in DENIM_CUFFS:mark_cuffs(key)  # 2026-10-15: lighter inside of rolled jeans cuffs
