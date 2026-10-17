@@ -1,4 +1,4 @@
 {
- "about": "Owner-approved outfit reviews (see fashion_v2/candidate_reviews.py). Empty on purpose: no candidate has completed the ChatGPT draft -> Claude check -> owner final flow yet.",
+ "about": "Owner-approved outfit reviews (see fashion_v2/candidate_reviews.py for required fields: drawing_version, scope_version, temp_range with numeric or 'open' bounds, rain/snow, three steps, evidence). Empty on purpose: no candidate has completed the ChatGPT draft -> Claude check -> owner final flow yet.",
  "reviews": []
 }

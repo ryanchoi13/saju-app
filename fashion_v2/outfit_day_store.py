@@ -2,8 +2,10 @@
 
 One row per (owner, KST day, TPO, context revision) holds BOTH roles, so a pair is
 written atomically. The first writer wins; a same-day revisit returns the stored row.
-A newer forecast changes the row only when a stored role now breaks a hard rule, and
-then only that role is re-chosen (revision += 1, same day).
+A newer forecast changes the row only when a stored role now breaks a hard rule (then
+only that role is re-chosen), or when an empty role can now be filled because the
+re-evaluation basis changed (weather inputs, reviews, catalogue). Revision += 1 only
+when a look changes; same inputs are never recomputed. Mode is part of the context key.
 
 History = previous days only (same TPO, last 7 days, one row per day: the most recently
 updated context). It is an exposure history, not a record of what was worn.
@@ -92,13 +94,14 @@ class OutfitDayStore:
                 conn.execute("ROLLBACK")
                 raise
 
-    def replace_if_revision(self, owner, day, tpo, ctx, expected_revision, payload, now_utc):
-        """Compare-and-swap update. Returns (revision, stored payload, updated)."""
+    def replace_if_revision(self, owner, day, tpo, ctx, expected_revision, payload, now_utc, bump=True):
+        """Compare-and-swap update. Returns (revision, stored payload, updated).
+        bump=False keeps the revision (used when only the re-evaluation basis changed)."""
         with self._conn() as conn:
             conn.execute("BEGIN IMMEDIATE")
             try:
                 cur = conn.execute("UPDATE outfit_days_v1 SET revision=?, payload=?, updated_at=? WHERE owner_key=? AND day=? AND tpo=? AND context_rev=? AND revision=?",
-                                   (expected_revision + 1, json.dumps(payload, ensure_ascii=False), now_utc.isoformat(),
+                                   (expected_revision + (1 if bump else 0), json.dumps(payload, ensure_ascii=False), now_utc.isoformat(),
                                     owner, str(day), tpo, ctx, expected_revision))
                 row = conn.execute("SELECT revision, payload FROM outfit_days_v1 WHERE owner_key=? AND day=? AND tpo=? AND context_rev=?",
                                    (owner, str(day), tpo, ctx)).fetchone()
@@ -123,29 +126,76 @@ class OutfitDayStore:
             return conn.execute("SELECT COUNT(*) FROM outfit_days_v1").fetchone()[0]
 
 
+_CATALOG_FP = {}
+
+
+def catalog_fingerprint() -> str:
+    """Candidates' material definitions + drawing registry + drawing files (computed once)."""
+    if "value" not in _CATALOG_FP:
+        from fashion_v2.candidate_registry import CANDIDATES
+        from fashion_v2.candidate_reviews import _candidate_definition, drawing_version
+        from fashion_v2.illustration_assets import load_registry
+        registry = load_registry()
+        ids = sorted({e["id"] for e in registry} | {"10"})
+        value = {"candidates": [_candidate_definition(c["candidate_id"]) for c in CANDIDATES],
+                 "registry": registry, "files": {i: drawing_version(i) for i in ids}}
+        _CATALOG_FP["value"] = hashlib.sha256(json.dumps(value, ensure_ascii=False, sort_keys=True).encode()).hexdigest()[:16]
+    return _CATALOG_FP["value"]
+
+
+def reevaluation_basis(weather: dict, reviews, mode: str) -> dict:
+    """Everything that can change which candidates are eligible. If it is unchanged, a
+    stored shortage is returned as-is without recomputing."""
+    from fashion_v2.candidate_reviews import reviews_fingerprint
+    snapshot = weather_snapshot(weather)
+    snapshot.pop("fetched_at", None)
+    return {"weather": snapshot, "legacy_band": (weather.get("legacy_profile") or {}).get("thermal_band"),
+            "reviews": reviews_fingerprint(reviews), "catalog": catalog_fingerprint(), "mode": mode}
+
+
 def recommend_for_day(store: OutfitDayStore, user: dict, tpo: str, now_utc: datetime, context: dict,
                       colors, weather: dict, *, calendar_season: str, mode: str = "strict", reviews=()):
-    """Return the stored (or newly chosen) pair for this user/TPO/KST day."""
+    """Return the stored (or newly chosen) pair for this user/TPO/KST day.
+
+    - A stored role that breaks a hard rule under the new inputs is re-chosen (only it).
+    - An EMPTY role (shortage / no_candidate) is re-evaluated only when the re-evaluation
+      basis changed (weather inputs, reviews, catalogue, mode). Valid roles are kept.
+    - Same basis -> the stored row is returned without recomputing.
+    Revision increases only when a stored look actually changes. The mode is part of the
+    context key, so study results are never reused as strict results.
+    """
     day = today_kst(now_utc)
-    owner, ctx = owner_key(user["id"]), context_rev(context)
+    owner, ctx = owner_key(user["id"]), context_rev({**context, "mode": mode})
+    basis = reevaluation_basis(weather, reviews, mode)
     stored = store.get(owner, day, tpo, ctx)
-    if stored:
-        revision, payload = stored
-        bad = [r for r in outfit_selector.ROLES
-               if payload.get(r) and not outfit_selector.still_valid(payload[r], weather, reviews, mode)]
-        if not bad:
-            return {**payload, "revision": revision, "source": "stored"}
-        keep = {r: payload[r] for r in outfit_selector.ROLES if payload.get(r) and r not in bad}
+    if stored is None:
         result = outfit_selector.select(user, tpo, str(day), colors, weather, calendar_season=calendar_season,
-                                        history=store.history(owner, tpo, day), mode=mode, reviews=reviews, keep=keep)
-        result["weather"] = weather_snapshot(weather)
-        revision, payload, updated = store.replace_if_revision(owner, day, tpo, ctx, revision, result, now_utc)
-        return {**payload, "revision": revision, "source": "revised" if updated else "stored"}
+                                        history=store.history(owner, tpo, day), mode=mode, reviews=reviews)
+        result.update(weather=weather_snapshot(weather), basis=basis)
+        revision, payload, created = store.insert_if_absent(owner, day, tpo, ctx, result, now_utc)
+        return {**payload, "revision": revision, "source": "created" if created else "stored"}
+
+    revision, payload = stored
+    roles = outfit_selector.ROLES
+    bad = [r for r in roles if payload.get(r) and not outfit_selector.still_valid(payload[r], weather, reviews, mode)]
+    empty = [r for r in roles if not payload.get(r)]
+    if not bad and (not empty or payload.get("basis") == basis):
+        return {**payload, "revision": revision, "source": "stored"}
+
+    keep = {r: payload[r] for r in roles if payload.get(r) and r not in bad}
     result = outfit_selector.select(user, tpo, str(day), colors, weather, calendar_season=calendar_season,
-                                    history=store.history(owner, tpo, day), mode=mode, reviews=reviews)
-    result["weather"] = weather_snapshot(weather)
-    revision, payload, created = store.insert_if_absent(owner, day, tpo, ctx, result, now_utc)
-    return {**payload, "revision": revision, "source": "created" if created else "stored"}
+                                    history=store.history(owner, tpo, day), mode=mode, reviews=reviews, keep=keep)
+    result.update(weather=weather_snapshot(weather), basis=basis)
+    looks_changed = any((result.get(r) or {}).get("candidate_id") != (payload.get(r) or {}).get("candidate_id")
+                        or (result.get(r) or {}).get("drawing_id") != (payload.get(r) or {}).get("drawing_id")
+                        for r in roles)
+    if not looks_changed:
+        # Same looks, new basis: remember the basis so the same inputs are not recomputed.
+        new_revision, stored_payload, _ = store.replace_if_revision(owner, day, tpo, ctx, revision,
+                                                                    {**payload, "basis": basis}, now_utc, bump=False)
+        return {**stored_payload, "revision": new_revision, "source": "stored"}
+    new_revision, stored_payload, updated = store.replace_if_revision(owner, day, tpo, ctx, revision, result, now_utc)
+    return {**stored_payload, "revision": new_revision, "source": "revised" if updated else "stored"}
 
 
 def weather_snapshot(weather: dict) -> dict:

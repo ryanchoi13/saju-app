@@ -35,11 +35,12 @@ def weather(t, rain=False, snow=False):
     return {"apparent_c": t, "basis": "test_fixed", "rain": rain, "snow": snow, "legacy_profile": profile}
 
 
-def review(candidate_id, drawing_id, *, low=None, high=None, rain="unknown", snow="unknown", version=None):
+def review(candidate_id, drawing_id, *, low="open", high="open", rain="unknown", snow="unknown", version=None):
     return {"candidate_id": candidate_id, "drawing_id": drawing_id,
             "drawing_version": version or cr.drawing_version(drawing_id),
+            "scope_version": cr.scope_version(candidate_id, drawing_id),
             "temp_range": {"min": low, "max_exclusive": high}, "rain": rain, "snow": snow,
-            "steps": list(cr.REQUIRED_STEPS), "date": "2026-10-17"}
+            "steps": list(cr.REQUIRED_STEPS), "evidence": "test fixture (not a real approval)", "date": "2026-10-17"}
 
 
 def pick(tpo="casual", t=3.0, mode="study", reviews=(), user=USER, colors=COLORS, **w):
@@ -145,10 +146,75 @@ def test_explicit_rain_review_lets_a_look_through():
 
 
 def test_record_validation():
+    good = review("male-winter-casual-daily", "all-018", high=5)
+    assert cr.validate_record(good) == []
     assert cr.validate_record({"candidate_id": "x"})
-    bad_steps = {**review("x", "all-018"), "steps": ["owner_final"]}
-    assert "all three review steps are required" in cr.validate_record(bad_steps)
-    assert cr.validate_record(review("x", "all-018", low=5, high=5))
+    assert cr.validate_record("not a dict") == ["record must be an object"]
+    assert "all three review steps are required" in cr.validate_record({**good, "steps": ["owner_final"]})
+    assert cr.validate_record({**good, "evidence": " "})
+    assert cr.validate_record(review("male-winter-casual-daily", "all-018", low=5, high=5))
+    with pytest.raises(ValueError):
+        cr.scope_version("no-such-candidate", "all-018")
+
+
+@pytest.mark.parametrize("temp_range", [
+    {}, {"min": None, "max_exclusive": None}, {"min": "open", "max_exclusive": "open"},
+    {"min": float("nan"), "max_exclusive": 5}, {"min": True, "max_exclusive": 5},
+    {"min": "-3", "max_exclusive": 5}, {"min": 0}, {"min": 0, "max_exclusive": 5, "extra": 1},
+    {"min": 6, "max_exclusive": 5}, [],
+])
+def test_missing_or_unknown_temperature_range_is_not_a_review(temp_range):
+    trendy = pick("casual", t=3.0, mode="study")["trendy"]
+    record = {**review(trendy["candidate_id"], trendy["drawing_id"], high=11), "temp_range": temp_range}
+    assert cr.validate_record(record)
+    assert cr.find_review([record], trendy["candidate_id"], trendy["drawing_id"]) is None
+    assert pick("casual", t=3.0, mode="strict", reviews=[record])["filtered"]["trendy"] == {"unreviewed": 1}
+
+
+def test_explicit_open_side_is_allowed_with_one_numeric_bound():
+    trendy = pick("casual", t=3.0, mode="study")["trendy"]
+    record = review(trendy["candidate_id"], trendy["drawing_id"], low="open", high=11)
+    assert cr.in_reviewed_range(record, -50) and not cr.in_reviewed_range(record, 11)
+
+
+def _swap_candidates(monkeypatch, mutate):
+    from copy import deepcopy
+    from fashion_v2 import candidate_registry
+    changed = deepcopy(list(candidate_registry.CANDIDATES))
+    for c in changed:
+        if c["candidate_id"] == "male-winter-casual-trend":
+            mutate(c)
+    monkeypatch.setattr(candidate_registry, "CANDIDATES", tuple(changed))
+
+
+def test_review_goes_stale_when_the_reviewed_definition_changes(monkeypatch):
+    trendy = pick("casual", t=3.0, mode="study")["trendy"]
+    record = review(trendy["candidate_id"], trendy["drawing_id"], high=11)
+    assert cr.find_review([record], trendy["candidate_id"], trendy["drawing_id"]) is record
+    _swap_candidates(monkeypatch, lambda c: c["components"][0].update(source_label="다른 코트"))
+    assert cr.find_review([record], trendy["candidate_id"], trendy["drawing_id"]) is None
+
+
+def test_review_survives_order_and_free_text_edits(monkeypatch):
+    trendy = pick("casual", t=3.0, mode="study")["trendy"]
+    record = review(trendy["candidate_id"], trendy["drawing_id"], high=11)
+
+    def edit(c):
+        c["components"].reverse()
+        c["known_issues"] = ["note changed"]
+    _swap_candidates(monkeypatch, edit)
+    assert cr.find_review([record], trendy["candidate_id"], trendy["drawing_id"]) is record
+
+
+def test_review_goes_stale_when_the_drawing_geometry_changes(monkeypatch):
+    trendy = pick("casual", t=3.0, mode="study")["trendy"]
+    record = review(trendy["candidate_id"], trendy["drawing_id"], high=11)
+    original = cr.load_registry()
+
+    def changed():
+        return [dict(e, shape={**e["shape"], "tuck": "in"}) if e["id"] == trendy["drawing_id"] else e for e in original]
+    monkeypatch.setattr(cr, "load_registry", changed)
+    assert cr.find_review([record], trendy["candidate_id"], trendy["drawing_id"]) is None
 
 
 # ---------------- selection ----------------
@@ -259,6 +325,70 @@ def test_concurrent_first_writes_leave_one_row(store):
     assert store.count() == 1
     assert results[0][1] == results[1][1]
     assert sorted(r[2] for r in results) == [False, True]
+
+
+@pytest.fixture
+def count_select(monkeypatch):
+    calls = []
+    real = sel.select
+
+    def counted(*args, **kwargs):
+        calls.append(1)
+        return real(*args, **kwargs)
+    monkeypatch.setattr(store_mod.outfit_selector, "select", counted)
+    return calls
+
+
+def test_missing_weather_then_normal_weather_fills_the_pair(store, count_select):
+    now = datetime(2026, 12, 1, 0, 0, tzinfo=UTC)
+    first = rec(store, now, weather(3.0, rain=None))
+    assert first["shortage"] == "no_candidate"
+    second = rec(store, now + timedelta(hours=1), weather(3.0))
+    assert second["source"] == "revised" and second["revision"] == 1
+    assert second["basic"] and second["trendy"] and second["shortage"] is None
+    assert len(count_select) == 2
+
+
+def test_rain_then_clear_sky_fills_the_pair(store):
+    now = datetime(2026, 12, 1, 0, 0, tzinfo=UTC)
+    assert rec(store, now, weather(3.0, rain=True))["shortage"] == "no_candidate"
+    cleared = rec(store, now + timedelta(hours=2), weather(3.0))
+    assert cleared["basic"] and cleared["trendy"] and cleared["revision"] == 1
+
+
+def test_added_review_fills_the_missing_role_and_keeps_the_other(store):
+    probe = pick("casual", t=3.0, mode="study")
+    only_trendy = [review(probe["trendy"]["candidate_id"], probe["trendy"]["drawing_id"], high=11)]
+    both = only_trendy + [review(probe["basic"]["candidate_id"], probe["basic"]["drawing_id"], high=5)]
+    now = datetime(2026, 12, 1, 0, 0, tzinfo=UTC)
+    run = lambda reviews, h: store_mod.recommend_for_day(store, USER, "casual", now + timedelta(hours=h), CTX, COLORS,
+                                                          weather(3.0), calendar_season="winter", mode="strict",
+                                                          reviews=reviews)
+    first = run(only_trendy, 0)
+    assert first["shortage"] == "basic_missing"
+    filled = run(both, 1)
+    assert filled["trendy"] == first["trendy"] and filled["basic"]["drawing_id"] == probe["basic"]["drawing_id"]
+    assert filled["revision"] == 1 and filled["source"] == "revised"
+
+
+def test_same_inputs_do_not_recompute_a_stored_shortage(store, count_select):
+    now = datetime(2026, 12, 1, 0, 0, tzinfo=UTC)
+    rec(store, now, weather(8.0))                        # basic_missing (short puffer blocked)
+    rec(store, now + timedelta(hours=1), weather(8.0))   # same basis -> no select call
+    assert len(count_select) == 1
+    changed = rec(store, now + timedelta(hours=2), weather(8.5))   # basis changed, still nothing to fill
+    assert changed["revision"] == 0 and changed["source"] == "stored"
+    rec(store, now + timedelta(hours=3), weather(8.5))   # remembered basis -> no recompute
+    assert len(count_select) == 2
+
+
+def test_study_results_are_never_reused_as_strict(store):
+    now = datetime(2026, 12, 1, 0, 0, tzinfo=UTC)
+    rec(store, now, weather(3.0))
+    strict = store_mod.recommend_for_day(store, USER, "casual", now, CTX, COLORS, weather(3.0),
+                                         calendar_season="winter", mode="strict")
+    assert strict["shortage"] == "no_candidate" and strict["source"] == "created"
+    assert store.count() == 2
 
 
 def test_store_requires_a_member_account():
