@@ -7,8 +7,9 @@ only that role is re-chosen), or when an empty role can now be filled because th
 re-evaluation basis changed (weather inputs, reviews, catalogue). Revision += 1 only
 when a look changes; same inputs are never recomputed. Mode is part of the context key.
 
-History = previous days only (same TPO, last 7 days, one row per day: the most recently
-updated context). It is an exposure history, not a record of what was worn.
+History = previous days only, same TPO and same MODE, last 7 days, one row per day (the
+most recently updated context of that mode). The mode is a stored column, so a study row
+saved later on the same day can never replace or join the strict history. It is an exposure history, not a record of what was worn.
 Retention: rows older than 30 days are deleted on write. Other data (wardrobe, saved
 items) is untouched.
 
@@ -35,7 +36,7 @@ HISTORY_DAYS = 7
 RETENTION_DAYS = 30
 SCHEMA = """CREATE TABLE IF NOT EXISTS outfit_days_v1 (
     owner_key TEXT NOT NULL, day TEXT NOT NULL, tpo TEXT NOT NULL, context_rev TEXT NOT NULL,
-    revision INTEGER NOT NULL, payload TEXT NOT NULL, updated_at TEXT NOT NULL,
+    mode TEXT NOT NULL, revision INTEGER NOT NULL, payload TEXT NOT NULL, updated_at TEXT NOT NULL,
     PRIMARY KEY (owner_key, day, tpo, context_rev))"""
 
 
@@ -75,7 +76,7 @@ class OutfitDayStore:
                                (owner, str(day), tpo, ctx)).fetchone()
         return (row[0], json.loads(row[1])) if row else None
 
-    def insert_if_absent(self, owner, day, tpo, ctx, payload, now_utc):
+    def insert_if_absent(self, owner, day, tpo, ctx, payload, now_utc, mode):
         """Atomic first write. Returns (revision, stored payload, created)."""
         with self._conn() as conn:
             conn.execute("BEGIN IMMEDIATE")
@@ -85,8 +86,10 @@ class OutfitDayStore:
                 if row:
                     conn.execute("COMMIT")
                     return row[0], json.loads(row[1]), False
-                conn.execute("INSERT INTO outfit_days_v1 VALUES (?,?,?,?,?,?,?)",
-                             (owner, str(day), tpo, ctx, 0, json.dumps(payload, ensure_ascii=False), now_utc.isoformat()))
+                if mode not in outfit_selector.MODES:
+                    raise ValueError("mode must be strict or study")
+                conn.execute("INSERT INTO outfit_days_v1 VALUES (?,?,?,?,?,?,?,?)",
+                             (owner, str(day), tpo, ctx, mode, 0, json.dumps(payload, ensure_ascii=False), now_utc.isoformat()))
                 conn.execute("DELETE FROM outfit_days_v1 WHERE day < ?", (str(day - timedelta(days=RETENTION_DAYS)),))
                 conn.execute("COMMIT")
                 return 0, payload, True
@@ -111,11 +114,15 @@ class OutfitDayStore:
                 conn.execute("ROLLBACK")
                 raise
 
-    def history(self, owner, tpo, day):
+    def history(self, owner, tpo, day, mode):
+        """Previous days of THIS mode only (study rows never feed strict, and vice versa).
+        Within a mode, several contexts on one day collapse to the latest updated row."""
+        if mode not in outfit_selector.MODES:
+            raise ValueError("mode must be strict or study")
         start = str(day - timedelta(days=HISTORY_DAYS))
         with self._conn() as conn:
-            rows = conn.execute("SELECT day, payload, updated_at FROM outfit_days_v1 WHERE owner_key=? AND tpo=? AND day>=? AND day<? ORDER BY day, updated_at",
-                                (owner, tpo, start, str(day))).fetchall()
+            rows = conn.execute("SELECT day, payload, updated_at FROM outfit_days_v1 WHERE owner_key=? AND tpo=? AND mode=? AND day>=? AND day<? ORDER BY day, updated_at",
+                                (owner, tpo, mode, start, str(day))).fetchall()
         per_day = {}
         for d, payload, _ in rows:      # later updated_at overwrites: one row per day
             per_day[d] = json.loads(payload)
@@ -170,9 +177,9 @@ def recommend_for_day(store: OutfitDayStore, user: dict, tpo: str, now_utc: date
     stored = store.get(owner, day, tpo, ctx)
     if stored is None:
         result = outfit_selector.select(user, tpo, str(day), colors, weather, calendar_season=calendar_season,
-                                        history=store.history(owner, tpo, day), mode=mode, reviews=reviews)
+                                        history=store.history(owner, tpo, day, mode), mode=mode, reviews=reviews)
         result.update(weather=weather_snapshot(weather), basis=basis)
-        revision, payload, created = store.insert_if_absent(owner, day, tpo, ctx, result, now_utc)
+        revision, payload, created = store.insert_if_absent(owner, day, tpo, ctx, result, now_utc, mode)
         return {**payload, "revision": revision, "source": "created" if created else "stored"}
 
     revision, payload = stored
@@ -184,7 +191,7 @@ def recommend_for_day(store: OutfitDayStore, user: dict, tpo: str, now_utc: date
 
     keep = {r: payload[r] for r in roles if payload.get(r) and r not in bad}
     result = outfit_selector.select(user, tpo, str(day), colors, weather, calendar_season=calendar_season,
-                                    history=store.history(owner, tpo, day), mode=mode, reviews=reviews, keep=keep)
+                                    history=store.history(owner, tpo, day, mode), mode=mode, reviews=reviews, keep=keep)
     result.update(weather=weather_snapshot(weather), basis=basis)
     looks_changed = any((result.get(r) or {}).get("candidate_id") != (payload.get(r) or {}).get("candidate_id")
                         or (result.get(r) or {}).get("drawing_id") != (payload.get(r) or {}).get("drawing_id")

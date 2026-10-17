@@ -288,7 +288,7 @@ def test_context_change_is_a_separate_row_but_the_same_history_day(store):
     rec(store, now, weather(3.0), ctx={**CTX, "settings": "changed"})
     assert store.count() == 2
     owner = store_mod.owner_key(USER["id"])
-    assert len(store.history(owner, "casual", store_mod.today_kst(now) + timedelta(days=1))) == 1
+    assert len(store.history(owner, "casual", store_mod.today_kst(now) + timedelta(days=1), "study")) == 1
 
 
 def test_history_is_previous_seven_days_only(store):
@@ -297,7 +297,7 @@ def test_history_is_previous_seven_days_only(store):
         rec(store, start + timedelta(days=i), weather(3.0))
     owner = store_mod.owner_key(USER["id"])
     day10 = store_mod.today_kst(start + timedelta(days=9))
-    days = [h["day"] for h in store.history(owner, "casual", day10)]
+    days = [h["day"] for h in store.history(owner, "casual", day10, "study")]
     assert days == [str(day10 - timedelta(days=k)) for k in range(7, 0, -1)]
 
 
@@ -315,7 +315,7 @@ def test_concurrent_first_writes_leave_one_row(store):
 
     def write(tag):
         barrier.wait()
-        results.append(store.insert_if_absent(owner, day, "casual", "ctx", {"writer": tag}, now))
+        results.append(store.insert_if_absent(owner, day, "casual", "ctx", {"writer": tag}, now, "study"))
 
     threads = [threading.Thread(target=write, args=(t,)) for t in ("a", "b")]
     for t in threads:
@@ -389,6 +389,56 @@ def test_study_results_are_never_reused_as_strict(store):
                                          calendar_season="winter", mode="strict")
     assert strict["shortage"] == "no_candidate" and strict["source"] == "created"
     assert store.count() == 2
+
+
+def _row(store, mode, day, tag, hour, ctx):
+    owner = store_mod.owner_key(USER["id"])
+    when = datetime(2026, 12, 1, hour, 0, tzinfo=UTC) + timedelta(days=day)
+    store.insert_if_absent(owner, store_mod.today_kst(when), "casual", f"{ctx}-{mode}",
+                           {"day": str(store_mod.today_kst(when)), "tag": tag}, when, mode)
+
+
+@pytest.mark.parametrize("first,later", [("strict", "study"), ("study", "strict")])
+def test_history_never_mixes_modes_even_when_the_other_mode_is_saved_later(store, first, later):
+    _row(store, first, 0, f"{first}-day1", hour=1, ctx="a")
+    _row(store, later, 0, f"{later}-day1", hour=5, ctx="a")      # other mode, saved later the same day
+    owner, next_day = store_mod.owner_key(USER["id"]), store_mod.today_kst(datetime(2026, 12, 2, 1, tzinfo=UTC))
+    assert [h["tag"] for h in store.history(owner, "casual", next_day, first)] == [f"{first}-day1"]
+    assert [h["tag"] for h in store.history(owner, "casual", next_day, later)] == [f"{later}-day1"]
+
+
+def test_same_mode_contexts_still_collapse_to_the_latest_row(store):
+    _row(store, "strict", 0, "strict-ctx-a", hour=1, ctx="a")
+    _row(store, "strict", 0, "strict-ctx-b", hour=3, ctx="b")
+    _row(store, "study", 0, "study-latest", hour=6, ctx="c")
+    owner, next_day = store_mod.owner_key(USER["id"]), store_mod.today_kst(datetime(2026, 12, 2, 1, tzinfo=UTC))
+    assert [h["tag"] for h in store.history(owner, "casual", next_day, "strict")] == ["strict-ctx-b"]
+
+
+def test_recommend_reads_only_its_own_mode_history(store, monkeypatch):
+    seen = []
+    real = sel.select
+
+    def spy(*args, **kwargs):
+        seen.append((kwargs["mode"], [h.get("mode") for h in kwargs["history"]]))
+        return real(*args, **kwargs)
+    monkeypatch.setattr(store_mod.outfit_selector, "select", spy)
+    day1 = datetime(2026, 12, 1, 0, 0, tzinfo=UTC)
+    store_mod.recommend_for_day(store, USER, "casual", day1, CTX, COLORS, weather(3.0), calendar_season="winter", mode="strict")
+    store_mod.recommend_for_day(store, USER, "casual", day1 + timedelta(hours=2), CTX, COLORS, weather(3.0),
+                                calendar_season="winter", mode="study")
+    seen.clear()
+    store_mod.recommend_for_day(store, USER, "casual", day1 + timedelta(days=1), CTX, COLORS, weather(3.0),
+                                calendar_season="winter", mode="strict")
+    assert seen == [("strict", ["strict"])]
+
+
+def test_store_rejects_unknown_mode(store):
+    owner, now = store_mod.owner_key(USER["id"]), datetime(2026, 12, 1, 0, 0, tzinfo=UTC)
+    with pytest.raises(ValueError):
+        store.insert_if_absent(owner, store_mod.today_kst(now), "casual", "x", {}, now, "prod")
+    with pytest.raises(ValueError):
+        store.history(owner, "casual", store_mod.today_kst(now), "prod")
 
 
 def test_store_requires_a_member_account():
