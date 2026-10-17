@@ -123,7 +123,22 @@ def validate_hits(hits, expected: int, known_ids) -> None:
             raise MatcherResponseError(f"result {index} names unknown drawing {hit!r}")
 
 
+_CACHE = {}
+
+
+def rows_and_hits():
+    """Built once per process so several test files can share one run (validated)."""
+    if "value" not in _CACHE:
+        rows = build_rows()
+        hits = match(rows)
+        _CACHE["value"] = (rows, hits)
+    return _CACHE["value"]
+
+
 def check(rows=None, matcher=match):
+    if rows is None and matcher is match:
+        rows, cached = rows_and_hits()
+        matcher = lambda _rows: cached
     rows = build_rows() if rows is None else rows
     shapes = {e["id"]: e["shape"] for e in load_registry()}
     for file_id, variant in CONDITIONAL_VARIANTS.items():
