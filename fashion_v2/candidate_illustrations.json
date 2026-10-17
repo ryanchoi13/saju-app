@@ -1,0 +1,483 @@
+{
+ "about": "Observed by scripts/fashion_illustration_coverage.py over its manifest. Illustration ids each active candidate actually rendered. Not an editorial claim.",
+ "candidates": {
+  "female-autumn-business_casual-daily": {
+   "live_sample": [
+    "f-business-a"
+   ],
+   "review_fixture": [
+    "f-business-a"
+   ]
+  },
+  "female-autumn-business_casual-trend": {
+   "live_sample": [
+    "f-business-b"
+   ],
+   "review_fixture": [
+    "f-business-b"
+   ]
+  },
+  "female-autumn-business_formal-daily": {
+   "live_sample": [
+    "f-formal-a"
+   ],
+   "review_fixture": [
+    "f-formal-a"
+   ]
+  },
+  "female-autumn-business_formal-trend": {
+   "live_sample": [
+    "f-formal-b"
+   ],
+   "review_fixture": [
+    "all-060",
+    "f-formal-b"
+   ]
+  },
+  "female-autumn-casual-daily": {
+   "live_sample": [
+    "all-059",
+    "f-casual-a"
+   ],
+   "review_fixture": [
+    "all-059",
+    "f-casual-a"
+   ]
+  },
+  "female-autumn-casual-trend": {
+   "live_sample": [
+    "f-casual-b"
+   ],
+   "review_fixture": [
+    "f-casual-b"
+   ]
+  },
+  "female-spring-business_casual-daily": {
+   "live_sample": [
+    "f-business-a"
+   ],
+   "review_fixture": [
+    "f-business-a"
+   ]
+  },
+  "female-spring-business_casual-trend": {
+   "live_sample": [
+    "f-business-b"
+   ],
+   "review_fixture": [
+    "f-business-b"
+   ]
+  },
+  "female-spring-business_formal-daily": {
+   "live_sample": [
+    "f-formal-a"
+   ],
+   "review_fixture": [
+    "f-formal-a"
+   ]
+  },
+  "female-spring-business_formal-trend": {
+   "live_sample": [
+    "all-030"
+   ],
+   "review_fixture": [
+    "all-030"
+   ]
+  },
+  "female-spring-casual-daily": {
+   "live_sample": [
+    "all-025",
+    "all-058"
+   ],
+   "review_fixture": [
+    "all-025",
+    "all-058"
+   ]
+  },
+  "female-spring-casual-trend": {
+   "live_sample": [
+    "all-026"
+   ],
+   "review_fixture": [
+    "all-026"
+   ]
+  },
+  "female-summer-business_casual-daily": {
+   "live_sample": [
+    "all-033"
+   ],
+   "review_fixture": [
+    "all-033"
+   ]
+  },
+  "female-summer-business_casual-trend": {
+   "live_sample": [
+    "all-034"
+   ],
+   "review_fixture": [
+    "all-034"
+   ]
+  },
+  "female-summer-business_formal-daily": {
+   "live_sample": [
+    "f-formal-a"
+   ],
+   "review_fixture": [
+    "f-formal-a"
+   ]
+  },
+  "female-summer-business_formal-trend": {
+   "live_sample": [
+    "all-035"
+   ],
+   "review_fixture": [
+    "all-035",
+    "all-057"
+   ]
+  },
+  "female-summer-casual-daily": {
+   "live_sample": [
+    "all-031"
+   ],
+   "review_fixture": [
+    "all-031"
+   ]
+  },
+  "female-summer-casual-trend": {
+   "live_sample": [
+    "all-032",
+    "all-037"
+   ],
+   "review_fixture": [
+    "all-032",
+    "all-037"
+   ]
+  },
+  "female-warm-transition-business_casual-daily": {
+   "live_sample": [
+    "all-040"
+   ],
+   "review_fixture": [
+    "all-040"
+   ]
+  },
+  "female-warm-transition-business_casual-trend": {
+   "live_sample": [
+    "all-041"
+   ],
+   "review_fixture": [
+    "all-041"
+   ]
+  },
+  "female-warm-transition-casual-daily": {
+   "live_sample": [
+    "all-038"
+   ],
+   "review_fixture": [
+    "all-038"
+   ]
+  },
+  "female-warm-transition-casual-trend": {
+   "live_sample": [
+    "all-039"
+   ],
+   "review_fixture": [
+    "all-039"
+   ]
+  },
+  "female-winter-business_casual-daily": {
+   "live_sample": [
+    "all-047"
+   ],
+   "review_fixture": [
+    "all-047"
+   ]
+  },
+  "female-winter-business_casual-trend": {
+   "live_sample": [
+    "all-048"
+   ],
+   "review_fixture": [
+    "all-048"
+   ]
+  },
+  "female-winter-business_formal-daily": {
+   "live_sample": [
+    "all-049"
+   ],
+   "review_fixture": [
+    "all-049"
+   ]
+  },
+  "female-winter-business_formal-trend": {
+   "live_sample": [
+    "all-050"
+   ],
+   "review_fixture": [
+    "all-050"
+   ]
+  },
+  "female-winter-casual-daily": {
+   "live_sample": [
+    "all-045"
+   ],
+   "review_fixture": [
+    "all-045",
+    "all-054"
+   ]
+  },
+  "female-winter-casual-trend": {
+   "live_sample": [
+    "all-046"
+   ],
+   "review_fixture": [
+    "all-046",
+    "all-055"
+   ]
+  },
+  "male-autumn-business_casual-daily": {
+   "live_sample": [
+    "m-business-a"
+   ],
+   "review_fixture": [
+    "m-business-a"
+   ]
+  },
+  "male-autumn-business_casual-trend": {
+   "live_sample": [
+    "m-business-b"
+   ],
+   "review_fixture": [
+    "m-business-b"
+   ]
+  },
+  "male-autumn-business_formal-daily": {
+   "live_sample": [
+    "06",
+    "10"
+   ],
+   "review_fixture": [
+    "06",
+    "10"
+   ]
+  },
+  "male-autumn-business_formal-trend": {
+   "live_sample": [
+    "all-006"
+   ],
+   "review_fixture": [
+    "all-006"
+   ]
+  },
+  "male-autumn-casual-daily": {
+   "live_sample": [
+    "all-061",
+    "m-casual-a"
+   ],
+   "review_fixture": [
+    "all-061",
+    "m-casual-a"
+   ]
+  },
+  "male-autumn-casual-trend": {
+   "live_sample": [
+    "all-062",
+    "m-casual-b"
+   ],
+   "review_fixture": [
+    "m-casual-b"
+   ]
+  },
+  "male-spring-business_casual-daily": {
+   "live_sample": [
+    "all-003"
+   ],
+   "review_fixture": [
+    "all-003"
+   ]
+  },
+  "male-spring-business_casual-trend": {
+   "live_sample": [
+    "all-004"
+   ],
+   "review_fixture": [
+    "all-004"
+   ]
+  },
+  "male-spring-business_formal-daily": {
+   "live_sample": [
+    "06",
+    "10"
+   ],
+   "review_fixture": [
+    "06",
+    "10"
+   ]
+  },
+  "male-spring-business_formal-trend": {
+   "live_sample": [
+    "all-006"
+   ],
+   "review_fixture": [
+    "all-006"
+   ]
+  },
+  "male-spring-casual-daily": {
+   "live_sample": [
+    "all-061",
+    "m-casual-a"
+   ],
+   "review_fixture": [
+    "all-061",
+    "m-casual-a"
+   ]
+  },
+  "male-spring-casual-trend": {
+   "live_sample": [
+    "all-002"
+   ],
+   "review_fixture": [
+    "all-002"
+   ]
+  },
+  "male-summer-business_casual-daily": {
+   "live_sample": [
+    "all-009"
+   ],
+   "review_fixture": [
+    "all-009"
+   ]
+  },
+  "male-summer-business_casual-trend": {
+   "live_sample": [
+    "all-010"
+   ],
+   "review_fixture": [
+    "all-010"
+   ]
+  },
+  "male-summer-business_formal-daily": {
+   "live_sample": [
+    "06",
+    "10"
+   ],
+   "review_fixture": [
+    "06",
+    "10"
+   ]
+  },
+  "male-summer-business_formal-trend": {
+   "live_sample": [
+    "all-006"
+   ],
+   "review_fixture": [
+    "all-006"
+   ]
+  },
+  "male-summer-casual-daily": {
+   "live_sample": [
+    "all-007"
+   ],
+   "review_fixture": [
+    "all-007",
+    "all-051"
+   ]
+  },
+  "male-summer-casual-trend": {
+   "live_sample": [
+    "all-008",
+    "all-024"
+   ],
+   "review_fixture": [
+    "all-008",
+    "all-024",
+    "all-051"
+   ]
+  },
+  "male-warm-transition-business_casual-daily": {
+   "live_sample": [
+    "all-013"
+   ],
+   "review_fixture": [
+    "all-013"
+   ]
+  },
+  "male-warm-transition-business_casual-trend": {
+   "live_sample": [
+    "all-014"
+   ],
+   "review_fixture": [
+    "all-014"
+   ]
+  },
+  "male-warm-transition-casual-daily": {
+   "live_sample": [
+    "all-011"
+   ],
+   "review_fixture": [
+    "all-011",
+    "all-052"
+   ]
+  },
+  "male-warm-transition-casual-trend": {
+   "live_sample": [
+    "all-012"
+   ],
+   "review_fixture": [
+    "all-012",
+    "all-053"
+   ]
+  },
+  "male-winter-business_casual-daily": {
+   "live_sample": [
+    "all-020"
+   ],
+   "review_fixture": [
+    "all-020"
+   ]
+  },
+  "male-winter-business_casual-trend": {
+   "live_sample": [
+    "all-021"
+   ],
+   "review_fixture": [
+    "all-021"
+   ]
+  },
+  "male-winter-business_formal-daily": {
+   "live_sample": [
+    "all-022"
+   ],
+   "review_fixture": [
+    "all-022"
+   ]
+  },
+  "male-winter-business_formal-trend": {
+   "live_sample": [
+    "all-023"
+   ],
+   "review_fixture": [
+    "all-023"
+   ]
+  },
+  "male-winter-casual-daily": {
+   "live_sample": [
+    "all-018"
+   ],
+   "review_fixture": [
+    "all-018"
+   ]
+  },
+  "male-winter-casual-trend": {
+   "live_sample": [
+    "all-019",
+    "all-063"
+   ],
+   "review_fixture": [
+    "all-019",
+    "all-056",
+    "all-063"
+   ]
+  }
+ }
+}
