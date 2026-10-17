@@ -29,10 +29,18 @@ ASSUMED = {"coat": (-INF, 11), "shearling": (-INF, 11), "trench": (-INF, 11), "t
 # fleece/quilted lower bound is owner policy; their upper bound 11 is an ASSUMPTION, as are all of ASSUMED.
 
 
-def cand(cid, gender, tpo, role, formula, outer, drawn):
+def cand(cid, gender, tpo, role, composition, outer, drawn):
+    """Three identities kept apart (issue #188 review):
+    - id: the candidate.
+    - composition: colour-free outfit composition. For drawn candidates this is the
+      rendered geometry family (denim/cotton variants chosen by colour scoring count as
+      one composition); for unbuilt art-NNN it is a PROXY written from the planned row,
+      because no geometry exists yet.
+    - editorial_formula: the reviewed style formula. Unassigned (None) for every candidate.
+    Avoidance windows, repeat metrics and distinct counts all use `composition`."""
     lo, hi = POLICY.get(outer) or ASSUMED[outer]
-    return dict(id=cid, gender=gender, tpo=tpo, role=role, formula=formula, outer=outer,
-                tmin=lo, tmax=hi, drawn=drawn, snow="unknown")
+    return dict(id=cid, gender=gender, tpo=tpo, role=role, composition=composition, editorial_formula=None,
+                outer=outer, tmin=lo, tmax=hi, drawn=drawn, snow="unknown")
 
 
 CURRENT = [
@@ -65,7 +73,7 @@ ART_V1 = [  # ChatGPT draft 2026-10-17 07:52Z; role None = held
     cand("art-021", "female", "business_formal", "basic", "suit+coat+knit+loafer+bag", "coat", False),
 ]
 # ChatGPT 08:21Z: art-005 redefined as a basic variant (suit+coat+turtleneck), not trendy.
-ART_V2 = [dict(a, role="basic", formula="suit+coat+turtleneck+oxford") if a["id"] == "art-005" else a for a in ART_V1]
+ART_V2 = [dict(a, role="basic", composition="suit+coat+turtleneck+oxford") if a["id"] == "art-005" else a for a in ART_V1]
 # Comparison candidates named by ChatGPT 08:21Z (winter suitability UNVERIFIED -> ASSUMED window).
 COMPARE = [
     cand("art-015", "male", "business_formal", "trendy", "suit+trench+shirt+tie+oxford", "trench", False),
@@ -97,8 +105,8 @@ def count_table(pool):
     for g, t in itertools.product(GENDERS, TPOS):
         for band, temp in BANDS:
             w = {"temp": temp}
-            nb = len({c["formula"] for c in options(pool, g, t, "basic", w)})
-            nt = len({c["formula"] for c in options(pool, g, t, "trendy", w)})
+            nb = len({c["composition"] for c in options(pool, g, t, "basic", w)})
+            nt = len({c["composition"] for c in options(pool, g, t, "trendy", w)})
             rows.append(dict(gender=g, tpo=t, band=band, basic=nb, trendy=nt,
                              status=("role_gap" if not nb or not nt else
                                      "both_rotate" if nb > 1 and nt > 1 else
@@ -124,40 +132,53 @@ def seed(*parts):
 
 
 def role_penalty(mode, c, role, history, n):
-    """Lower is better. history = previous recommendation days (newest last), this user/TPO."""
+    """Lower is better. history = previous recommendation days (newest last), this user/TPO.
+    n = distinct compositions available for this role today; window = min(2, n-1)."""
     if mode == "none":
-        return (0, 0, 0, 0)
-    window = min(2, n - 1)                    # n distinct compositions available today
-    recent = [d[role]["id"] for d in history[-window:] if d.get(role)] if window > 0 else []
-    composition = int(c["id"] in recent)
+        return (0, 0, 0)
+    window = min(2, n - 1)
+    recent = [d[role]["composition"] for d in history[-window:] if d.get(role)] if window > 0 else []
+    composition = int(c["composition"] in recent)
     if mode == "composition":
-        return (composition, 0, 0, 0)
-    formula = sum(1 for d in history[-3:] for r in ("basic", "trendy") if d.get(r) and d[r]["formula"] == c["formula"])
+        return (composition, 0, 0)
+    # editorial_formula is unassigned for all candidates, so no formula layer is applied here.
     outer = int(bool(history) and bool(history[-1].get(role)) and history[-1][role]["outer"] == c["outer"])
-    last_seen = next((i for i, d in enumerate(reversed(history)) if d.get(role) and d[role]["id"] == c["id"]), len(history))
-    return (composition, formula, outer, -last_seen)   # least recently shown wins ties
+    last_seen = next((i for i, d in enumerate(reversed(history))
+                      if d.get(role) and d[role]["composition"] == c["composition"]), len(history))
+    return (composition, outer, -last_seen)   # least recently shown composition wins ties
+
+
+ROLES = ("basic", "trendy")
 
 
 def choose(pool, user, tpo, w, day, history, mode, keep=None):
-    """keep = {role: candidate} that must stay (only violated roles are re-chosen)."""
+    """keep = {role: candidate} that must stay (only the violated role is re-chosen).
+
+    A kept role is never dropped: if no partner with a different composition exists,
+    the kept role is returned alone and the other role is reported missing."""
     g = user["gender"]
-    opts = {r: ([keep[r]] if keep and r in keep else options(pool, g, tpo, r, w)) for r in ("basic", "trendy")}
-    n = {r: len({c["formula"] for c in opts[r]}) for r in opts}
-    notes = [f"no_alternative_{r}" for r in opts if n[r] == 1 and not (keep and r in keep)]
-    pairs = [(b, t) for b in opts["basic"] for t in opts["trendy"] if b["formula"] != t["formula"]]
+    keep = keep or {}
+    opts = {r: ([keep[r]] if r in keep else options(pool, g, tpo, r, w)) for r in ROLES}
+    n = {r: len({c["composition"] for c in opts[r]}) for r in ROLES}
+    notes = [f"no_alternative_{r}" for r in ROLES if n[r] == 1 and r not in keep]
+    pairs = [(b, t) for b in opts["basic"] for t in opts["trendy"] if b["composition"] != t["composition"]]
     if pairs:
         def score(p):
             pb = role_penalty(mode, p[0], "basic", history, n["basic"])
             pt = role_penalty(mode, p[1], "trendy", history, n["trendy"])
             return (tuple(a + b for a, b in zip(pb, pt)), seed(user["id"], day, tpo, p[0]["id"], p[1]["id"]))
         best = min(pairs, key=score)
-        relaxed = [k for k, v in zip(("composition", "formula", "outer"), score(best)[0][:3]) if v and mode == "hierarchical"]
+        relaxed = [k for k, v in zip(("composition", "outer"), score(best)[0][:2]) if v and mode == "hierarchical"]
         return dict(basic=best[0], trendy=best[1], shortage=None, relaxed=relaxed, notes=notes)
-    for r in ("basic", "trendy"):
+    if keep:
+        kept = next(iter(keep))
+        missing = "trendy" if kept == "basic" else "basic"
+        return dict(**{kept: keep[kept], missing: None}, shortage=f"{missing}_missing", relaxed=[], notes=notes)
+    for r in ROLES:
         if opts[r]:
             pick = min(opts[r], key=lambda c: (role_penalty(mode, c, r, history, n[r]), seed(user["id"], day, tpo, c["id"])))
-            return dict(basic=pick if r == "basic" else None, trendy=pick if r == "trendy" else None,
-                        shortage="second_role_missing", relaxed=[], notes=notes)
+            missing = "trendy" if r == "basic" else "basic"
+            return dict(**{r: pick, missing: None}, shortage=f"{missing}_missing", relaxed=[], notes=notes)
     return dict(basic=None, trendy=None, shortage="no_candidate", relaxed=[], notes=notes)
 
 
@@ -189,7 +210,7 @@ def run(pool, visits, mode):
             out.append(dict(user=user["id"], tpo=tpo, date=v["date"], label=v.get("label", ""), changed=changed,
                             **{r: res[r] and res[r]["id"] for r in ("basic", "trendy")},
                             **{r + "_outer": res[r] and res[r]["outer"] for r in ("basic", "trendy")},
-                            **{r + "_formula": res[r] and res[r]["formula"] for r in ("basic", "trendy")},
+                            **{r + "_composition": res[r] and res[r]["composition"] for r in ("basic", "trendy")},
                             shortage=res["shortage"], relaxed=res["relaxed"], notes=res["notes"],
                             violation=any(res[r] and not fits(res[r], w) for r in ("basic", "trendy"))))
     return out
@@ -214,15 +235,17 @@ def metrics(rows):
                 m["role_slots"] += 1
                 if i > 0 and seq[i - 1][role]:
                     m["slots_with_previous_day"] += 1
-                    m["same_composition_as_previous_day"] += r[role] == seq[i - 1][role]
+                    m["same_composition_as_previous_day"] += r[role + "_composition"] == seq[i - 1][role + "_composition"]
                     m["same_outer_as_previous_day"] += r[role + "_outer"] == seq[i - 1][role + "_outer"]
-                run_len = run_len + 1 if r[role] == prev else 1
-                prev = r[role]
+                run_len = run_len + 1 if r[role + "_composition"] == prev else 1
+                prev = r[role + "_composition"]
                 streaks.append(run_len)
     for r in final.values():
         m["violations"] += r["violation"]
-        m["same_formula_pair"] += bool(r["basic"] and r["trendy"] and r["basic_formula"] == r["trendy_formula"])
-        m["second_role_missing"] += r["shortage"] == "second_role_missing"
+        m["same_composition_pair"] += bool(r["basic"] and r["trendy"] and r["basic_composition"] == r["trendy_composition"])
+        m["basic_missing"] += r["shortage"] == "basic_missing"
+        m["trendy_missing"] += r["shortage"] == "trendy_missing"
+        m["one_role_missing"] += r["shortage"] in ("basic_missing", "trendy_missing")
         m["no_candidate"] += r["shortage"] == "no_candidate"
         m["no_alternative_notes"] += len(r["notes"])
         for k in r["relaxed"]:
@@ -265,7 +288,11 @@ MODES = ("none", "composition", "hierarchical")
 def build():
     result = {"about": ("SYNTHETIC weather; non-current pools are HYPOTHETICAL; windows for coat/shearling/"
                         "trench/tweed and the 11°C cap on fleece/quilted are ASSUMPTIONS. Denominators: "
-                        "pair_requests = users(6) x TPO(3) x days; role_slots = filled basic+trendy slots."),
+                        "pair_requests = users(6) x TPO(3) x days; role_slots = filled basic+trendy slots. "
+                        "Repeats, avoidance windows and distinct counts all use the colour-free `composition` "
+                        "key (a proxy for unbuilt art-NNN); candidate id and editorial_formula are kept separate. "
+                        "NOT tested here: rain suitability (the rain flag is not used by the filter), real "
+                        "UTC->KST conversion (dates are given as KST strings), storage atomicity."),
               "users": [f"{g}-{a}" for g in GENDERS for a in AGES], "tpos": list(TPOS),
               "counts": {}, "runs": {}}
     for name, pool in POOLS.items():

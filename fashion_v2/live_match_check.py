@@ -104,15 +104,35 @@ def geometry_agrees(spec: dict, shape: dict) -> bool:
     return list(spec.get("accessories") or []) == list(shape.get("accessories") or [])
 
 
-def check():
-    rows = build_rows()
-    hits = match(rows)
+class MatcherResponseError(AssertionError):
+    """The matcher's reply cannot be paired one-to-one with the looks sent."""
+
+
+def validate_hits(hits, expected: int, known_ids) -> None:
+    """Fail loudly instead of letting zip() drop looks or a bad id slip through."""
+    if not isinstance(hits, list):
+        raise MatcherResponseError(f"matcher returned {type(hits).__name__}, expected list")
+    if len(hits) != expected:
+        raise MatcherResponseError(f"matcher returned {len(hits)} results for {expected} looks")
+    for index, hit in enumerate(hits):
+        if hit is None:
+            continue
+        if not isinstance(hit, str):
+            raise MatcherResponseError(f"result {index} is {type(hit).__name__}, expected str or null")
+        if hit not in known_ids:
+            raise MatcherResponseError(f"result {index} names unknown drawing {hit!r}")
+
+
+def check(rows=None, matcher=match):
+    rows = build_rows() if rows is None else rows
     shapes = {e["id"]: e["shape"] for e in load_registry()}
     for file_id, variant in CONDITIONAL_VARIANTS.items():
         shapes[file_id] = shapes[variant["base"]]
-    report = {"looks": len(rows), "unmatched": [], "geometry_mismatch": [], "pairs": {},
+    hits = matcher(rows)
+    validate_hits(hits, len(rows), shapes)
+    report = {"looks": len(rows), "checked": len(hits), "unmatched": [], "geometry_mismatch": [], "pairs": {},
               "review_preferences": set(), "conditional_files": set()}
-    for row, hit in zip(rows, hits):
+    for row, hit in zip(rows, hits, strict=True):
         if row["review_preference"]:
             report["review_preferences"].add(row["review_preference"])
         if not hit:

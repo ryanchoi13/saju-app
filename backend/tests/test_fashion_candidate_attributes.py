@@ -4,6 +4,7 @@ None of this changes live output: the recommendation path does not import these
 modules (pinned below), and the legacy rule violations are reproduced, not hidden.
 """
 import ast
+import os
 import shutil
 from pathlib import Path
 
@@ -104,6 +105,8 @@ def test_legacy_cold_band_violations_are_reproduced_exactly():
 @pytest.fixture(scope="module")
 def live_report():
     if shutil.which("node") is None:
+        if os.environ.get("CI"):
+            pytest.fail("node is missing in CI: the live matcher check must not be skipped")
         pytest.skip("node is required (installed in CI)")
     from fashion_v2.live_match_check import check
     return check()
@@ -111,7 +114,27 @@ def live_report():
 
 def test_live_looks_all_match_a_drawing(live_report):
     assert live_report["looks"] > 0
+    assert live_report["checked"] == live_report["looks"]
     assert live_report["unmatched"] == []
+    print(f"live matcher check: {live_report['checked']} looks checked")  # visible with -rA / -s
+
+
+def _two_rows():
+    # Validation runs before any row is read, so two placeholder rows are enough.
+    return [{"candidate_id": "x", "tpo": "casual", "run": {}, "review_preference": None, "look": {}}] * 2
+
+
+@pytest.mark.parametrize("reply,message", [
+    (["all-018"], "1 results for 2 looks"),                      # short reply would drop a look
+    (["all-018", "all-018", "all-018"], "3 results for 2 looks"),  # long reply
+    ({"0": "all-018"}, "expected list"),
+    ([7, None], "expected str or null"),
+    (["no-such-drawing", None], "unknown drawing"),
+])
+def test_matcher_reply_is_validated_before_pairing(reply, message):
+    from fashion_v2.live_match_check import MatcherResponseError, check
+    with pytest.raises(MatcherResponseError, match=message):
+        check(rows=_two_rows(), matcher=lambda rows: reply)
 
 
 def test_returned_drawing_geometry_agrees_in_python(live_report):
