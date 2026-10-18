@@ -9,7 +9,7 @@ from pathlib import Path
 
 from fashion_v2 import candidate_registry as reg
 from fashion_v2.illustration_assets import (
-    CONDITIONAL_VARIANTS, inspect_assets, load_registry, png_size, webp_size, ASSET_DIR)
+    CONDITIONAL_VARIANTS, PENDING_FILES, inspect_assets, load_registry, png_size, webp_size, ASSET_DIR)
 from fashion_v2.template_catalog import TEMPLATES
 from fashion_v2.weather_catalog import WARM_TRANSITION_LOOKS
 
@@ -45,7 +45,9 @@ def test_component_references_are_explicit_but_unmapped():
 
 
 def test_pending_candidates_stay_inactive_and_point_at_drawn_assets():
-    pending = [c for c in reg.CANDIDATES if c["status"] == "review_pending"]
+    # Records for already registered drawings (stage 1). The #188 fleece pilot records point at
+    # stored-only drawings and are checked in test_fashion_pending_assets.py.
+    pending = [c for c in reg.CANDIDATES if c["status"] == "review_pending" and c["source"] == "existing_illustration"]
     assert {c["illustration_id"] for c in pending} == {"all-054", "all-055", "all-056"}
     registry_ids = {e["id"] for e in load_registry()}
     for record in pending:
@@ -57,7 +59,7 @@ def test_pending_candidates_stay_inactive_and_point_at_drawn_assets():
 def test_registry_is_consistent_with_observed_coverage():
     observed = reg.observed_illustrations()
     registry_ids = {e["id"] for e in load_registry()}
-    file_ids = registry_ids | set(CONDITIONAL_VARIANTS)
+    file_ids = registry_ids | set(CONDITIONAL_VARIANTS) | set(PENDING_FILES)
     assert reg.validate_candidates(observed=observed, registry_ids=registry_ids, file_ids=file_ids) == []
 
 

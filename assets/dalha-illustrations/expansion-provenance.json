@@ -2128,5 +2128,100 @@
     ],
     "superseded_job_id": "e48e93f9-ddb5-4b1d-b044-7abfec0d550b",
     "edit_instruction": "Place knit inside open coat with sleeves fully hidden; retain colours and style."
+  },
+  {
+    "index": 64,
+    "id": "all-064",
+    "shape": {
+      "gender": "female",
+      "top": "긴팔 티셔츠",
+      "bottom": "데님 바지",
+      "dress": "",
+      "outer": "플리스",
+      "shoe": "운동화",
+      "bag": "",
+      "accessories": [],
+      "outerOpen": true,
+      "outerMode": "wear",
+      "tuck": "out"
+    },
+    "slots": [
+      {
+        "field": "outerColor",
+        "source": "green"
+      },
+      {
+        "field": "topColor",
+        "source": "rose"
+      },
+      {
+        "field": "bottomColor",
+        "source": "blue"
+      },
+      {
+        "field": "shoeColor",
+        "source": "brown"
+      }
+    ],
+    "prompt": "Create one finished DALHA clothing-only outfit illustration. Reference is ONLY the approved elegant, simple adult 2D editorial illustration style. No person, mannequin, limbs, text, logo or decorations. Calm asymmetrical fashion flat-lay with slightly stylized adult proportions, attractive spacing. Long trousers MUST be full sized in proportion to the top; never tiny. Thin colour-coordinated outlines, ONE flat base + ONE hard-edged shadow tone per garment. NO gradients, fabric texture, grain, glossy highlights, photorealism or 3D. Solid uniform IVORY background, absolutely NO cast shadows on the background, no ground shadows. Each garment has a distinct source colour to enable later automatic recolouring; adhere to colours exactly even if unconventional. Colours on hidden lining match the garment. Keep all items comfortably inside frame. Preserve garment types exactly. Adult female outfit consists of EXACTLY: flat grass GREEN (#79AF79) zip blouson jacket with a collar and rib cuffs, not a cardigan; flat dusty ROSE (#D782A0) long-sleeve crewneck T-shirt; flat BLUE (#5A82C8) full-length straight jeans; warm BROWN (#915A37) pair of low-top sneakers with plain IVORY rubber soles and brown uppers. Top/outerwear at upper left, bottom diagonally down the right side, shoes lower left. Layer the inner top under the outer jacket: inner sleeves fully hidden inside outer sleeves, collar/neck and front clearly visible. Top worn untucked; hem ends naturally at hips, never skirt-like. NO bag. NO accessories or jewelry. ",
+    "job_id": "2366c648-0703-4576-9f98-42c095a012ce",
+    "source_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3JA8zURyEfnFTV7wDtL1dscTGxg/hf_20261018_123050_2366c648-0703-4576-9f98-42c095a012ce.png",
+    "original_sha256": "2f19f94a5460f97f768fe90ffaca74ef74e4594a848e73d838d5004e320a783e",
+    "superseded_job_id": "6e765844-c21b-413d-8351-ae9ec5b65a18",
+    "edit_instruction": "Edit the FIRST reference image, a flat 2D clothing illustration. Change ONLY the green zip jacket so it clearly reads as a soft polar FLEECE jacket, not a thin softshell: add a FEW sparse, short, irregular curved pile marks drawn ONLY in the jacket's existing darker green shadow tone, placed only on the inside of the stand-up collar, along the side seams and around the lower pockets. Use only the existing flat grass GREEN (#79AF79) base and that one existing darker green shadow tone; no new colours. Keep the jacket's soft rounded shoulders, slightly shaped waist, stand-up collar, narrow same-colour binding, open front, zipper, length, position and size exactly as they are. Do NOT add an all-over dot pattern, repeated pattern, gradient, highlight, or fuzzy/bumpy outline: the outer contour stays a clean thin line. Keep everything else in the FIRST image identical: the rose T-shirt, the jeans with their topstitching and rolled cuffs, the sneakers, their shapes, positions, colours, outlines and shadows, and the plain ivory background. No logos or text. No cast or ground shadows.",
+    "edit_history": [
+      {
+        "job_id": "6e765844-c21b-413d-8351-ae9ec5b65a18",
+        "superseded_job_id": "c1dc01ad-c2df-497f-9c1e-393af99cdb2e",
+        "edit_instruction": "Edit the FIRST reference image, a flat 2D clothing illustration. Replace ONLY the green blouson jacket with an OPEN full-zip FLEECE jacket in the same flat grass GREEN (#79AF79) base with one darker green hard-edged shadow tone and thin green outlines: a tall stand-up collar, soft slightly rounded shoulders and outline, medium weight (not padded, no quilting), sleeve cuffs and hem finished with a narrow same-colour binding (NOT ribbed bands), a slightly shaped waist, high-hip length similar to the old jacket, two slanted lower zip pockets, no chest pocket, a small silver-grey zipper only. The jacket is worn open: the rose long-sleeve T-shirt stays visible at the neck and front and its hem shows just below the fleece hem; the T-shirt sleeves stay fully hidden inside the fleece sleeves. Preserve the overall layout, item centers, spacing and canvas occupancy, except for the explicitly requested silhouette and length changes. Keep everything else in the FIRST image identical: the T-shirt, the jeans with their topstitching and rolled cuffs, the sneakers, their shapes, positions, colours, outlines and shadows, and the plain ivory background. No pile texture, dots, fuzz, gradients, contrast-colour trims, logos or text. No cast or ground shadows."
+      }
+    ],
+    "status": "pending",
+    "pending_reason": "#188 fleece pilot (2026-10-18): stored only; not in catalog-data.js, not selectable until review, temperature upper bound, screen registration and a live template exist"
+  },
+  {
+    "index": 65,
+    "id": "all-065",
+    "shape": {
+      "gender": "male",
+      "top": "긴팔 캐주얼 셔츠",
+      "bottom": "면바지",
+      "dress": "",
+      "outer": "플리스",
+      "shoe": "운동화",
+      "bag": "",
+      "accessories": [],
+      "outerOpen": true,
+      "outerMode": "wear",
+      "tuck": "out"
+    },
+    "slots": [
+      {
+        "field": "outerColor",
+        "source": "green"
+      },
+      {
+        "field": "topColor",
+        "source": "rose"
+      },
+      {
+        "field": "bottomColor",
+        "source": "blue"
+      },
+      {
+        "field": "shoeColor",
+        "source": "brown"
+      }
+    ],
+    "prompt": "Create one finished DALHA clothing-only outfit illustration, elegant simple adult 2D editorial style. No person mannequin limbs text logo or decoration. Calm asymmetrical fashion flat-lay, slightly stylized realistic adult proportions. Full-length cotton trousers must be full-sized proportional to jacket, not tiny. Thin coordinated outlines, ONE flat base plus ONE hard-edged shadow per garment. NO gradients fabric texture grain gloss photorealism 3D. Uniform solid IVORY background without any cast shadow or ground shadow. Distinct source colours must remain exact for automated recolouring. Hidden lining same colour as garment. All items inside frame. Adult male: EXACTLY grass GREEN (#79AF79) open zip blouson jacket with collar and rib cuffs; dusty ROSE (#D782A0) long-sleeve crewneck cotton sweatshirt (no hood, not knit); BLUE (#5A82C8) full-length straight cotton chinos (not denim, no jeans rivets); BROWN (#915A37) pair low-top sneakers, plain IVORY rubber soles. Top and outerwear upper left, trousers diagonally down right, shoes lower left. Inner top sleeves entirely hidden inside outer sleeves. Neck and front visible. Untucked top hem ends naturally at hips, never skirt-like. NO bag accessories jewelry.",
+    "job_id": "9dcbbf50-adef-4dae-8a4c-49ccfabc285d",
+    "source_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3JA8zURyEfnFTV7wDtL1dscTGxg/hf_20261018_124038_9dcbbf50-adef-4dae-8a4c-49ccfabc285d.png",
+    "original_sha256": "199a65c66b21e920f69ced313ca0738f71bcde4437a688fd943765dbe83c5622",
+    "superseded_job_id": "46a65858-952d-4d3d-8067-0f806a681590",
+    "edit_instruction": "Edit the FIRST reference image, a flat 2D clothing illustration. Use the SECOND reference image ONLY as a guide for how a polar fleece is drawn (stand-up collar, narrow same-colour binding at cuffs and hem, medium weight, a few sparse short irregular curved pile marks in the darker shadow tone); do NOT copy its women's waist shaping, length, pockets, T-shirt, jeans, shoes or layout. Make exactly TWO changes to the FIRST image. (1) Replace the green blouson jacket with an OPEN full-zip men's FLEECE jacket: a straight boxy cut, hip length, one zipped chest pocket on the left chest, no lower slanted pockets, no waist shaping. Same flat grass GREEN (#79AF79) base, one darker green hard-edged shadow tone, thin green outlines, a small silver-grey zipper only. Add only a FEW sparse, short, irregular curved pile marks in the existing darker green shadow tone, limited to the inside of the collar, the side seams and around the chest pocket; never a wide patch, all-over pattern, gradient or fuzzy outline; the outer contour stays a clean thin line. (2) Replace the rose sweatshirt with a dusty ROSE (#D782A0) long-sleeve casual button-up shirt: a pointed shirt collar visible inside the fleece collar, the button placket visible in the open front with small rose buttons, worn untucked so the shirt hem shows about two finger-widths below the fleece hem; the shirt sleeves stay fully hidden inside the fleece sleeves. Preserve the overall layout, item centers, spacing and canvas occupancy of the FIRST image, except for the explicitly requested silhouette and length changes. Keep everything else in the FIRST image identical: the cotton chinos, the sneakers, their shapes, positions, colours, outlines and shadows, and the plain ivory background. No dots, gradients, contrast-colour trims, logos or text. No cast or ground shadows.",
+    "edit_reference_job_id": "2366c648-0703-4576-9f98-42c095a012ce",
+    "post_process": "SHADOW_FRINGE_NEUTRAL (build_expanded_illustration_masks.py)",
+    "status": "pending",
+    "pending_reason": "#188 fleece pilot (2026-10-18): stored only; not in catalog-data.js, not selectable until review, temperature upper bound, screen registration and a live template exist"
   }
 ]

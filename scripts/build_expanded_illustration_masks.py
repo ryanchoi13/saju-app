@@ -6,6 +6,28 @@ from scipy.ndimage import grey_closing,gaussian_filter,binary_closing,binary_fil
 import argparse,sys
 sys.path.insert(0,str(Path(__file__).resolve().parent))
 from mark_denim_cuffs import DENIM_CUFFS,mark_cuffs
+# 2026-10-18 (#188): drawings whose trouser cast shadow carries blue spill along the leg edge.
+SHADOW_FRINGE_NEUTRAL=('all-065',)
+def neutral_shadow_fringe(a,layers,slots):
+ """The trouser's cast shadow is a ~6px blue-grey strip beside the leg. The hue-based mask
+ takes its inner half into the trouser slot (jagged edge) and leaves the rest blue in slot 0.
+ Fix: return the shadow-toned pixels (low saturation, mid luminance, not a drawn line) to
+ slot 0, mark the new trouser edge as contour, then grey the whole strip at its own luminance.
+ The shadow stays unrecoloured (neutral) in every palette."""
+ bottom=[s['field'] for s in slots].index('bottomColor')+1
+ hsv=np.asarray(Image.fromarray(np.rint(a).astype('uint8')).convert('HSV')).astype(float)
+ h=hsv[:,:,0]*360/255;sat=hsv[:,:,1]/255;v=hsv[:,:,2];lum=a@[.2126,.7152,.0722]
+ blue=(h>=190)&(h<250);slot=layers[:,:,0]%100
+ tone=blue&(sat<.24)&(lum>=90)&(lum<=140)
+ for _ in range(4):  # peel inwards from the outside, at most 4px
+  edge=(slot==bottom)&(distance_transform_edt(slot==bottom)<=1)&binary_dilation(layers[:,:,0]==0)
+  back=edge&tone&(layers[:,:,1]<60)
+  if not back.any():break
+  layers[back]=0;slot=layers[:,:,0]%100
+ m=slot==bottom;contour=m&(distance_transform_edt(m)<=2.3);layers[:,:,2][contour]|=128
+ zone=(distance_transform_edt(slot!=bottom)<=8)&(layers[:,:,0]==0)&blue&(v<235)
+ out=a.copy();out[zone]=lum[zone][:,None]
+ return out,Image.fromarray(np.rint(out).astype('uint8'))
 p=argparse.ArgumentParser();p.add_argument('--workdir',type=Path,required=True);args=p.parse_args()
 R=args.workdir;OUT=Path(__file__).resolve().parents[1]/'assets/dalha-illustrations';P=R/'previews';P.mkdir(exist_ok=True)
 requests=json.loads((OUT/'expansion-provenance.json').read_text())
@@ -46,6 +68,8 @@ for q in requests:
   sh=median_filter(clean<med*(.80 if runner else .90),size=3).astype(float)
   layers[:,:,0][m]=i+1;layers[:,:,1][m]=np.rint(ln[m]*255).astype('uint8');layers[:,:,2][m]=np.rint(sh[m]*127).astype('uint8')+outer[m].astype('uint8')*128
   counts.append(int(m.sum()))
+ if key in SHADOW_FRINGE_NEUTRAL:  # 2026-10-18: grey out blue spill in the neutral trouser cast shadow
+  a,im=neutral_shadow_fringe(a,layers,q['slots'])
  buf=io.BytesIO();Image.fromarray(layers).save(buf,format='PNG');(OUT/f'{key}-layers.png').write_bytes(buf.getvalue())
  buf=io.BytesIO();im.save(buf,format='WEBP',quality=94,method=4);(OUT/f'{key}.webp').write_bytes(buf.getvalue())
  for mode in ['contrast','light','dark']:

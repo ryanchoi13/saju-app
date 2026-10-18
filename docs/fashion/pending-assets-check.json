@@ -1,0 +1,87 @@
+{
+  "rules": {
+    "kept_change_max": 0.03,
+    "iou_pass": 0.95,
+    "iou_eye_review": 0.9
+  },
+  "drawings": {
+    "all-064": {
+      "base": "all-025",
+      "files": {
+        "all-064.webp": "cc24141862433c2def4027ea358f6131a3557a5a1cb8530350b8f4c76ae2e6d5",
+        "all-064-layers.png": "d8fd97a39135ba8c0a3dfd2948ad1dc4c3094cc260984a3fb15f5a5451ebcb0a"
+      },
+      "slots": {
+        "bottomColor": {
+          "kept": true,
+          "base_px": 106124,
+          "new_px": 107114,
+          "change": 0.0093,
+          "iou": 0.9828,
+          "verdict": "pass"
+        },
+        "outerColor": {
+          "kept": false,
+          "base_px": 81890,
+          "new_px": 74561,
+          "change": -0.0895,
+          "iou": 0.8588
+        },
+        "shoeColor": {
+          "kept": true,
+          "base_px": 19031,
+          "new_px": 19171,
+          "change": 0.0074,
+          "iou": 0.9893,
+          "verdict": "pass"
+        },
+        "topColor": {
+          "kept": false,
+          "base_px": 14703,
+          "new_px": 14657,
+          "change": -0.0031,
+          "iou": 0.8111
+        }
+      }
+    },
+    "all-065": {
+      "base": "all-061",
+      "files": {
+        "all-065.webp": "07f7523aaf2961021825adca463033db9748c4da4e7b4f687a120933d8dd8805",
+        "all-065-layers.png": "427b75a2904b5fe3515adfbf9f0cad888ae2878816b737aefa2e13ae48f3d574"
+      },
+      "slots": {
+        "bottomColor": {
+          "kept": true,
+          "base_px": 113491,
+          "new_px": 110603,
+          "change": -0.0254,
+          "iou": 0.9714,
+          "verdict": "pass"
+        },
+        "outerColor": {
+          "kept": false,
+          "base_px": 77704,
+          "new_px": 76582,
+          "change": -0.0144,
+          "iou": 0.87
+        },
+        "shoeColor": {
+          "kept": true,
+          "base_px": 18668,
+          "new_px": 18664,
+          "change": -0.0002,
+          "iou": 0.992,
+          "verdict": "pass"
+        },
+        "topColor": {
+          "kept": false,
+          "base_px": 16304,
+          "new_px": 15935,
+          "change": -0.0226,
+          "iou": 0.6266
+        }
+      }
+    }
+  }
+}

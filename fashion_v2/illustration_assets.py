@@ -30,6 +30,15 @@ CONDITIONAL_VARIANTS = {
 }
 
 
+# Drawings stored for review but NOT registered in catalog-data.js, so the client can never
+# select them (#188 fleece pilot, 2026-10-18). Moving one into the registry is the screen
+# registration step (PR-4) and requires a review record first.
+PENDING_FILES = {
+    "all-064": "pending-female-winter-casual-fleece",
+    "all-065": "pending-male-winter-casual-fleece",
+}
+
+
 def load_registry(path: Path = REGISTRY_FILE) -> list[dict]:
     text = path.read_text(encoding="utf-8")
     marker = "export const illustrations="
@@ -101,6 +110,12 @@ def inspect_assets() -> dict:
             problems.append(f"conditional file {file_id} is also registered")
         expected_files.add(file_id)
 
+    registered_files = set(expected_files)
+    for file_id in PENDING_FILES:
+        if file_id in registered_files:
+            problems.append(f"pending file {file_id} is also registered")
+        expected_files.add(file_id)
+
     sizes = {}
     for file_id in sorted(expected_files):
         art, mask = ASSET_DIR / f"{file_id}.webp", ASSET_DIR / f"{file_id}-layers.png"
@@ -127,7 +142,8 @@ def inspect_assets() -> dict:
     return {
         "registry_entries": len(ids),
         "conditional_files": sorted(CONDITIONAL_VARIANTS),
-        "files": len(expected_files),
+        "files": len(registered_files),
+        "pending_files": sorted(PENDING_FILES),
         "sizes": sizes,
         "versions": asset_versions(),
         "problems": problems,
