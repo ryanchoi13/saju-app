@@ -17,7 +17,7 @@ from PIL import Image
 from scipy.ndimage import binary_opening, binary_closing, binary_dilation, label
 
 OUT = Path(__file__).resolve().parents[1] / 'assets/dalha-illustrations'
-DENIM_CUFFS = ('m-casual-a', 'm-casual-b', 'f-casual-a', 'all-019', 'all-025', 'all-054', 'all-055')
+DENIM_CUFFS = ('m-casual-a', 'm-casual-b', 'f-casual-a', 'all-019', 'all-025', 'all-054', 'all-055', 'all-064')
 INSIDE_OFFSET = 100
 BASE_SLOTS = ['outerColor', 'topColor', 'bottomColor', 'shoeColor']
 

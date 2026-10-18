@@ -116,10 +116,42 @@ def _pending(spec: dict) -> dict:
             "activation_blockers": list(PENDING_BLOCKERS), "known_issues": []}
 
 
+# Newly drawn for the #188 fleece pilot (2026-10-18) and stored as PENDING drawings
+# (illustration_assets.PENDING_FILES): not in catalog-data.js, so never selectable.
+# Components are the planned outfit; colours and materials are not decided yet.
+# All four blockers must be cleared, in this order, before a record may become active.
+PENDING_ASSET_BLOCKERS = ("owner_review_record", "temperature_upper_bound_undecided",
+                          "catalog_registration", "live_template")
+PENDING_DRAWN = (
+    {
+        "candidate_id": "pending-female-winter-casual-fleece", "plan_id": "art-017",
+        "illustration_id": "all-064", "gender": "female", "tpo": "casual", "scope": "winter",
+        "role_draft": "basic", "role_basis": "owner_decision_2026-10-18", "form": "pants",
+        "items": (("outer", "플리스 집업"), ("top", "긴팔 티셔츠"), ("bottom", "청바지"), ("shoes", "운동화")),
+    },
+    {
+        "candidate_id": "pending-male-winter-casual-fleece", "plan_id": "art-001",
+        "illustration_id": "all-065", "gender": "male", "tpo": "casual", "scope": "winter",
+        "role_draft": "basic", "role_basis": "owner_decision_2026-10-18", "form": "pants",
+        "items": (("outer", "플리스 집업"), ("top", "긴팔 캐주얼 셔츠"), ("bottom", "면바지"), ("shoes", "운동화")),
+    },
+)
+
+
+def _pending_drawn(spec: dict) -> dict:
+    record = {k: deepcopy(v) for k, v in spec.items() if k != "items"}
+    components = [{**_component({"category": slot, "label": label, "color": None}), "material": None}
+                  for slot, label in spec["items"]]
+    return {**record, "status": "review_pending", "source": "pending_drawing", "role": None,
+            "editorial_formula_id": None, "components": components,
+            "activation_blockers": list(PENDING_ASSET_BLOCKERS), "known_issues": []}
+
+
 def build_candidates() -> tuple[dict, ...]:
     records = [_record(t, "season_catalog") for t in TEMPLATES]
     records += [_record(t, "weather_transition") for t in WARM_TRANSITION_LOOKS]
     records += [_pending(spec) for spec in REVIEW_PENDING]
+    records += [_pending_drawn(spec) for spec in PENDING_DRAWN]
     return tuple(records)
 
 
@@ -135,8 +167,13 @@ def observed_illustrations(path: Path = OBSERVED_FILE) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))["candidates"]
 
 
-def validate_candidates(candidates=CANDIDATES, observed=None, registry_ids=None, file_ids=None) -> list[str]:
-    """Structural checks. Returns problems; an empty list means the registry is consistent."""
+def validate_candidates(candidates=CANDIDATES, observed=None, registry_ids=None, file_ids=None,
+                        pending_ids=None) -> list[str]:
+    """Structural checks. Returns problems; an empty list means the registry is consistent.
+    pending_ids: stored-only drawing id -> owning candidate id (default PENDING_FILES)."""
+    if pending_ids is None:
+        from fashion_v2.illustration_assets import PENDING_FILES
+        pending_ids = PENDING_FILES
     problems = []
     ids = [c["candidate_id"] for c in candidates]
     if len(ids) != len(set(ids)):
@@ -144,6 +181,13 @@ def validate_candidates(candidates=CANDIDATES, observed=None, registry_ids=None,
     for c in candidates:
         if c["status"] not in STATUSES:
             problems.append(f"{c['candidate_id']}: unknown status")
+        drawing = c.get("illustration_id")
+        if drawing in pending_ids:
+            # A stored-only drawing can never back a selectable candidate (always checked).
+            if c["status"] == "active":
+                problems.append(f"{c['candidate_id']}: active candidate points at pending drawing {drawing}")
+            if pending_ids[drawing] != c["candidate_id"]:
+                problems.append(f"{c['candidate_id']}: pending drawing {drawing} belongs to {pending_ids[drawing]}")
         if c["status"] == "active":
             if c["role"] not in ROLES:
                 problems.append(f"{c['candidate_id']}: active candidate needs a role")
@@ -173,6 +217,7 @@ def validate_candidates(candidates=CANDIDATES, observed=None, registry_ids=None,
             missing = sorted(linked - set(file_ids))
             if missing:
                 problems.append(f"{c['candidate_id']}: linked illustrations without files {missing}")
-            if c.get("illustration_id") and c["illustration_id"] not in registry_ids:
+            drawing = c.get("illustration_id")
+            if drawing and drawing not in registry_ids and drawing not in pending_ids:
                 problems.append(f"{c['candidate_id']}: illustration not registered")
     return problems
