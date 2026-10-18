@@ -49,8 +49,20 @@ function reviewVariants(svg, s, prefix) {
   return svg;
 }
 
+// #188: outer labels added after the approved kit 7.3.1 reuse an approved outer shape here,
+// so the hash-protected engine.js/catalog.js stay untouched. This SVG is a hidden fallback;
+// the accessible label is still built from look.items, so it keeps the real name.
+export const FALLBACK_OUTER_SHAPE=Object.freeze({'플리스':'블루종','퀼팅 재킷':'블루종'});
+function withFallbackShapes(spec){
+  if(!spec)return spec;
+  let s=spec;
+  if(FALLBACK_OUTER_SHAPE[s.outer])s={...s,outer:FALLBACK_OUTER_SHAPE[s.outer]};
+  if(s.overOuter&&typeof s.overOuter==='object'&&FALLBACK_OUTER_SHAPE[s.overOuter.name])s={...s,overOuter:{...s.overOuter,name:FALLBACK_OUTER_SHAPE[s.overOuter.name]}};
+  return s;
+}
+
 export function renderLook(look, prefix='dalha-look') {
-  const s=look?.garment_spec;
+  const s=withFallbackShapes(look?.garment_spec);
   if (!s) throw new Error('착장 도안 정보가 없습니다.');
   for (const k of ['top','bottom','dress','outer','shoe','bag']) {
     if (s[k] && !byName[s[k]]) throw new Error('지원하지 않는 도안');
