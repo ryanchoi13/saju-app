@@ -77,4 +77,4 @@ def test_fallback_svg_accepts_the_new_outer_labels():
     done = subprocess.run(["node", "--no-warnings", "scripts/test_fashion_new_outer_labels.mjs"],
                           cwd=ROOT, capture_output=True, text=True)
     assert done.returncode == 0, done.stderr
-    assert json.loads(done.stdout.strip().splitlines()[-1]) == {"newOuterLabelsRendered": 4, "unknownRejected": True}
+    assert json.loads(done.stdout.strip().splitlines()[-1]) == {"newOuterLabelsRendered": 4, "newOverOuterLabelsRendered": 4, "unknownRejected": True}
