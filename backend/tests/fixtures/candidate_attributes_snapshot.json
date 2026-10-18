@@ -1,0 +1,1806 @@
+{
+ "about": "candidate_attributes.ATTRIBUTES on main 2ddebd3; must stay identical.",
+ "attributes": {
+  "female-autumn-business_casual-daily": {
+   "drawing_outer_types": {
+    "f-business-a": "blazer"
+   },
+   "drawings": [
+    "f-business-a"
+   ],
+   "label_conflict": null,
+   "outer_label": "블레이저",
+   "outer_length": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "outer_slot": "outer",
+   "outer_type": {
+    "source": "label_mapping",
+    "value": "blazer"
+   },
+   "outer_varies_by_branch": false,
+   "rain": {
+    "legacy_handling": "suede/sandal swapped to leather shoes (weather_catalog._rain_safe)",
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "snow": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "suitability_review": "not_reviewed",
+   "temperature_rule": null
+  },
+  "female-autumn-business_casual-trend": {
+   "drawing_outer_types": {
+    "f-business-b": "cardigan"
+   },
+   "drawings": [
+    "f-business-b"
+   ],
+   "label_conflict": null,
+   "outer_label": "가디건",
+   "outer_length": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "outer_slot": "mid",
+   "outer_type": {
+    "source": "label_mapping",
+    "value": "cardigan"
+   },
+   "outer_varies_by_branch": false,
+   "rain": {
+    "legacy_handling": "suede/sandal swapped to leather shoes (weather_catalog._rain_safe)",
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "snow": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "suitability_review": "not_reviewed",
+   "temperature_rule": null
+  },
+  "female-autumn-business_formal-daily": {
+   "drawing_outer_types": {
+    "f-formal-a": "suit_jacket"
+   },
+   "drawings": [
+    "f-formal-a"
+   ],
+   "label_conflict": null,
+   "outer_label": "수트 재킷",
+   "outer_length": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "outer_slot": "outer",
+   "outer_type": {
+    "source": "label_mapping",
+    "value": "suit_jacket"
+   },
+   "outer_varies_by_branch": false,
+   "rain": {
+    "legacy_handling": "suede/sandal swapped to leather shoes (weather_catalog._rain_safe)",
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "snow": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "suitability_review": "not_reviewed",
+   "temperature_rule": null
+  },
+  "female-autumn-business_formal-trend": {
+   "drawing_outer_types": {
+    "all-060": "blazer",
+    "f-formal-b": "blazer"
+   },
+   "drawings": [
+    "all-060",
+    "f-formal-b"
+   ],
+   "label_conflict": null,
+   "outer_label": "정장 재킷",
+   "outer_length": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "outer_slot": "outer",
+   "outer_type": {
+    "source": "label_mapping",
+    "value": "suit_jacket"
+   },
+   "outer_varies_by_branch": false,
+   "rain": {
+    "legacy_handling": "suede/sandal swapped to leather shoes (weather_catalog._rain_safe)",
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "snow": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "suitability_review": "not_reviewed",
+   "temperature_rule": null
+  },
+  "female-autumn-casual-daily": {
+   "drawing_outer_types": {
+    "all-059": "blouson",
+    "f-casual-a": "blouson"
+   },
+   "drawings": [
+    "all-059",
+    "f-casual-a"
+   ],
+   "label_conflict": null,
+   "outer_label": "블루종",
+   "outer_length": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "outer_slot": "outer",
+   "outer_type": {
+    "source": "label_mapping",
+    "value": "blouson"
+   },
+   "outer_varies_by_branch": false,
+   "rain": {
+    "legacy_handling": "suede/sandal swapped to leather shoes (weather_catalog._rain_safe)",
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "snow": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "suitability_review": "not_reviewed",
+   "temperature_rule": null
+  },
+  "female-autumn-casual-trend": {
+   "drawing_outer_types": {
+    "f-casual-b": "cardigan"
+   },
+   "drawings": [
+    "f-casual-b"
+   ],
+   "label_conflict": null,
+   "outer_label": "가디건",
+   "outer_length": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "outer_slot": "outer",
+   "outer_type": {
+    "source": "label_mapping",
+    "value": "cardigan"
+   },
+   "outer_varies_by_branch": false,
+   "rain": {
+    "legacy_handling": "suede/sandal swapped to leather shoes (weather_catalog._rain_safe)",
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "snow": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "suitability_review": "not_reviewed",
+   "temperature_rule": null
+  },
+  "female-spring-business_casual-daily": {
+   "drawing_outer_types": {
+    "f-business-a": "blazer"
+   },
+   "drawings": [
+    "f-business-a"
+   ],
+   "label_conflict": null,
+   "outer_label": "블레이저",
+   "outer_length": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "outer_slot": "outer",
+   "outer_type": {
+    "source": "label_mapping",
+    "value": "blazer"
+   },
+   "outer_varies_by_branch": false,
+   "rain": {
+    "legacy_handling": "suede/sandal swapped to leather shoes (weather_catalog._rain_safe)",
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "snow": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "suitability_review": "not_reviewed",
+   "temperature_rule": null
+  },
+  "female-spring-business_casual-trend": {
+   "drawing_outer_types": {
+    "f-business-b": "cardigan"
+   },
+   "drawings": [
+    "f-business-b"
+   ],
+   "label_conflict": null,
+   "outer_label": "가디건",
+   "outer_length": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "outer_slot": "mid",
+   "outer_type": {
+    "source": "label_mapping",
+    "value": "cardigan"
+   },
+   "outer_varies_by_branch": false,
+   "rain": {
+    "legacy_handling": "suede/sandal swapped to leather shoes (weather_catalog._rain_safe)",
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "snow": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "suitability_review": "not_reviewed",
+   "temperature_rule": null
+  },
+  "female-spring-business_formal-daily": {
+   "drawing_outer_types": {
+    "f-formal-a": "suit_jacket"
+   },
+   "drawings": [
+    "f-formal-a"
+   ],
+   "label_conflict": null,
+   "outer_label": "수트 재킷",
+   "outer_length": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "outer_slot": "outer",
+   "outer_type": {
+    "source": "label_mapping",
+    "value": "suit_jacket"
+   },
+   "outer_varies_by_branch": false,
+   "rain": {
+    "legacy_handling": "suede/sandal swapped to leather shoes (weather_catalog._rain_safe)",
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "snow": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "suitability_review": "not_reviewed",
+   "temperature_rule": null
+  },
+  "female-spring-business_formal-trend": {
+   "drawing_outer_types": {
+    "all-030": "suit_jacket"
+   },
+   "drawings": [
+    "all-030"
+   ],
+   "label_conflict": null,
+   "outer_label": "수트 재킷",
+   "outer_length": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "outer_slot": "outer",
+   "outer_type": {
+    "source": "label_mapping",
+    "value": "suit_jacket"
+   },
+   "outer_varies_by_branch": false,
+   "rain": {
+    "legacy_handling": "suede/sandal swapped to leather shoes (weather_catalog._rain_safe)",
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "snow": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "suitability_review": "not_reviewed",
+   "temperature_rule": null
+  },
+  "female-spring-casual-daily": {
+   "drawing_outer_types": {
+    "all-025": "blouson",
+    "all-058": "blouson"
+   },
+   "drawings": [
+    "all-025",
+    "all-058"
+   ],
+   "label_conflict": null,
+   "outer_label": "블루종",
+   "outer_length": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "outer_slot": "outer",
+   "outer_type": {
+    "source": "label_mapping",
+    "value": "blouson"
+   },
+   "outer_varies_by_branch": false,
+   "rain": {
+    "legacy_handling": "suede/sandal swapped to leather shoes (weather_catalog._rain_safe)",
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "snow": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "suitability_review": "not_reviewed",
+   "temperature_rule": null
+  },
+  "female-spring-casual-trend": {
+   "drawing_outer_types": {
+    "all-026": "cardigan"
+   },
+   "drawings": [
+    "all-026"
+   ],
+   "label_conflict": null,
+   "outer_label": "가디건",
+   "outer_length": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "outer_slot": "outer",
+   "outer_type": {
+    "source": "label_mapping",
+    "value": "cardigan"
+   },
+   "outer_varies_by_branch": false,
+   "rain": {
+    "legacy_handling": "suede/sandal swapped to leather shoes (weather_catalog._rain_safe)",
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "snow": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "suitability_review": "not_reviewed",
+   "temperature_rule": null
+  },
+  "female-summer-business_casual-daily": {
+   "drawing_outer_types": {
+    "all-033": "none"
+   },
+   "drawings": [
+    "all-033"
+   ],
+   "label_conflict": null,
+   "outer_label": null,
+   "outer_length": {
+    "source": "not_applicable",
+    "value": null
+   },
+   "outer_slot": null,
+   "outer_type": {
+    "source": "not_applicable",
+    "value": "none"
+   },
+   "outer_varies_by_branch": false,
+   "rain": {
+    "legacy_handling": "suede/sandal swapped to leather shoes (weather_catalog._rain_safe)",
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "snow": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "suitability_review": "not_reviewed",
+   "temperature_rule": null
+  },
+  "female-summer-business_casual-trend": {
+   "drawing_outer_types": {
+    "all-034": "none"
+   },
+   "drawings": [
+    "all-034"
+   ],
+   "label_conflict": null,
+   "outer_label": null,
+   "outer_length": {
+    "source": "not_applicable",
+    "value": null
+   },
+   "outer_slot": null,
+   "outer_type": {
+    "source": "not_applicable",
+    "value": "none"
+   },
+   "outer_varies_by_branch": false,
+   "rain": {
+    "legacy_handling": "suede/sandal swapped to leather shoes (weather_catalog._rain_safe)",
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "snow": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "suitability_review": "not_reviewed",
+   "temperature_rule": null
+  },
+  "female-summer-business_formal-daily": {
+   "drawing_outer_types": {
+    "f-formal-a": "suit_jacket"
+   },
+   "drawings": [
+    "f-formal-a"
+   ],
+   "label_conflict": null,
+   "outer_label": "수트 재킷",
+   "outer_length": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "outer_slot": "outer",
+   "outer_type": {
+    "source": "label_mapping",
+    "value": "suit_jacket"
+   },
+   "outer_varies_by_branch": false,
+   "rain": {
+    "legacy_handling": "suede/sandal swapped to leather shoes (weather_catalog._rain_safe)",
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "snow": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "suitability_review": "not_reviewed",
+   "temperature_rule": null
+  },
+  "female-summer-business_formal-trend": {
+   "drawing_outer_types": {
+    "all-035": "blazer",
+    "all-057": "blazer"
+   },
+   "drawings": [
+    "all-035",
+    "all-057"
+   ],
+   "label_conflict": null,
+   "outer_label": "경량 재킷",
+   "outer_length": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "outer_slot": "outer",
+   "outer_type": {
+    "source": "label_mapping",
+    "value": "light_jacket"
+   },
+   "outer_varies_by_branch": false,
+   "rain": {
+    "legacy_handling": "suede/sandal swapped to leather shoes (weather_catalog._rain_safe)",
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "snow": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "suitability_review": "not_reviewed",
+   "temperature_rule": null
+  },
+  "female-summer-casual-daily": {
+   "drawing_outer_types": {
+    "all-031": "none"
+   },
+   "drawings": [
+    "all-031"
+   ],
+   "label_conflict": null,
+   "outer_label": null,
+   "outer_length": {
+    "source": "not_applicable",
+    "value": null
+   },
+   "outer_slot": null,
+   "outer_type": {
+    "source": "not_applicable",
+    "value": "none"
+   },
+   "outer_varies_by_branch": false,
+   "rain": {
+    "legacy_handling": "suede/sandal swapped to leather shoes (weather_catalog._rain_safe)",
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "snow": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "suitability_review": "not_reviewed",
+   "temperature_rule": null
+  },
+  "female-summer-casual-trend": {
+   "drawing_outer_types": {
+    "all-032": "none",
+    "all-037": "none"
+   },
+   "drawings": [
+    "all-032",
+    "all-037"
+   ],
+   "label_conflict": null,
+   "outer_label": null,
+   "outer_length": {
+    "source": "not_applicable",
+    "value": null
+   },
+   "outer_slot": null,
+   "outer_type": {
+    "source": "not_applicable",
+    "value": "none"
+   },
+   "outer_varies_by_branch": false,
+   "rain": {
+    "legacy_handling": "suede/sandal swapped to leather shoes (weather_catalog._rain_safe)",
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "snow": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "suitability_review": "not_reviewed",
+   "temperature_rule": null
+  },
+  "female-warm-transition-business_casual-daily": {
+   "drawing_outer_types": {
+    "all-040": "none"
+   },
+   "drawings": [
+    "all-040"
+   ],
+   "label_conflict": null,
+   "outer_label": null,
+   "outer_length": {
+    "source": "not_applicable",
+    "value": null
+   },
+   "outer_slot": null,
+   "outer_type": {
+    "source": "not_applicable",
+    "value": "none"
+   },
+   "outer_varies_by_branch": false,
+   "rain": {
+    "legacy_handling": "suede/sandal swapped to leather shoes (weather_catalog._rain_safe)",
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "snow": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "suitability_review": "not_reviewed",
+   "temperature_rule": null
+  },
+  "female-warm-transition-business_casual-trend": {
+   "drawing_outer_types": {
+    "all-041": "none"
+   },
+   "drawings": [
+    "all-041"
+   ],
+   "label_conflict": null,
+   "outer_label": null,
+   "outer_length": {
+    "source": "not_applicable",
+    "value": null
+   },
+   "outer_slot": null,
+   "outer_type": {
+    "source": "not_applicable",
+    "value": "none"
+   },
+   "outer_varies_by_branch": false,
+   "rain": {
+    "legacy_handling": "suede/sandal swapped to leather shoes (weather_catalog._rain_safe)",
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "snow": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "suitability_review": "not_reviewed",
+   "temperature_rule": null
+  },
+  "female-warm-transition-casual-daily": {
+   "drawing_outer_types": {
+    "all-038": "none"
+   },
+   "drawings": [
+    "all-038"
+   ],
+   "label_conflict": null,
+   "outer_label": null,
+   "outer_length": {
+    "source": "not_applicable",
+    "value": null
+   },
+   "outer_slot": null,
+   "outer_type": {
+    "source": "not_applicable",
+    "value": "none"
+   },
+   "outer_varies_by_branch": false,
+   "rain": {
+    "legacy_handling": "suede/sandal swapped to leather shoes (weather_catalog._rain_safe)",
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "snow": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "suitability_review": "not_reviewed",
+   "temperature_rule": null
+  },
+  "female-warm-transition-casual-trend": {
+   "drawing_outer_types": {
+    "all-039": "none"
+   },
+   "drawings": [
+    "all-039"
+   ],
+   "label_conflict": null,
+   "outer_label": null,
+   "outer_length": {
+    "source": "not_applicable",
+    "value": null
+   },
+   "outer_slot": null,
+   "outer_type": {
+    "source": "not_applicable",
+    "value": "none"
+   },
+   "outer_varies_by_branch": false,
+   "rain": {
+    "legacy_handling": "suede/sandal swapped to leather shoes (weather_catalog._rain_safe)",
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "snow": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "suitability_review": "not_reviewed",
+   "temperature_rule": null
+  },
+  "female-winter-business_casual-daily": {
+   "drawing_outer_types": {
+    "all-047": "coat"
+   },
+   "drawings": [
+    "all-047"
+   ],
+   "label_conflict": null,
+   "outer_label": "울 코트",
+   "outer_length": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "outer_slot": "coat",
+   "outer_type": {
+    "source": "label_mapping",
+    "value": "coat"
+   },
+   "outer_varies_by_branch": false,
+   "rain": {
+    "legacy_handling": "suede/sandal swapped to leather shoes (weather_catalog._rain_safe)",
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "snow": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "suitability_review": "not_reviewed",
+   "temperature_rule": null
+  },
+  "female-winter-business_casual-trend": {
+   "drawing_outer_types": {
+    "all-048": "puffer"
+   },
+   "drawings": [
+    "all-048"
+   ],
+   "label_conflict": null,
+   "outer_label": "비즈니스 패딩",
+   "outer_length": {
+    "source": "asset_observed_2026-10-17",
+    "value": "short"
+   },
+   "outer_slot": "outer",
+   "outer_type": {
+    "source": "label_mapping",
+    "value": "puffer"
+   },
+   "outer_varies_by_branch": false,
+   "rain": {
+    "legacy_handling": "suede/sandal swapped to leather shoes (weather_catalog._rain_safe)",
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "snow": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "suitability_review": "not_reviewed",
+   "temperature_rule": {
+    "max_exclusive": 5,
+    "outer_length": "short",
+    "outer_type": "puffer",
+    "source": "owner_policy_2026-10-15"
+   }
+  },
+  "female-winter-business_formal-daily": {
+   "drawing_outer_types": {
+    "all-049": "coat"
+   },
+   "drawings": [
+    "all-049"
+   ],
+   "label_conflict": null,
+   "outer_label": "울 코트",
+   "outer_length": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "outer_slot": "coat",
+   "outer_type": {
+    "source": "label_mapping",
+    "value": "coat"
+   },
+   "outer_varies_by_branch": false,
+   "rain": {
+    "legacy_handling": "suede/sandal swapped to leather shoes (weather_catalog._rain_safe)",
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "snow": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "suitability_review": "not_reviewed",
+   "temperature_rule": null
+  },
+  "female-winter-business_formal-trend": {
+   "drawing_outer_types": {
+    "all-050": "coat"
+   },
+   "drawings": [
+    "all-050"
+   ],
+   "label_conflict": null,
+   "outer_label": "울 코트",
+   "outer_length": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "outer_slot": "coat",
+   "outer_type": {
+    "source": "label_mapping",
+    "value": "coat"
+   },
+   "outer_varies_by_branch": false,
+   "rain": {
+    "legacy_handling": "suede/sandal swapped to leather shoes (weather_catalog._rain_safe)",
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "snow": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "suitability_review": "not_reviewed",
+   "temperature_rule": null
+  },
+  "female-winter-casual-daily": {
+   "drawing_outer_types": {
+    "all-045": "puffer",
+    "all-054": "puffer"
+   },
+   "drawings": [
+    "all-045",
+    "all-054"
+   ],
+   "label_conflict": null,
+   "outer_label": "숏 패딩",
+   "outer_length": {
+    "source": "asset_observed_2026-10-17",
+    "value": "short"
+   },
+   "outer_slot": "outer",
+   "outer_type": {
+    "source": "label_mapping",
+    "value": "puffer"
+   },
+   "outer_varies_by_branch": false,
+   "rain": {
+    "legacy_handling": "suede/sandal swapped to leather shoes (weather_catalog._rain_safe)",
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "snow": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "suitability_review": "not_reviewed",
+   "temperature_rule": {
+    "max_exclusive": 5,
+    "outer_length": "short",
+    "outer_type": "puffer",
+    "source": "owner_policy_2026-10-15"
+   }
+  },
+  "female-winter-casual-trend": {
+   "drawing_outer_types": {
+    "all-046": "coat",
+    "all-055": "puffer"
+   },
+   "drawings": [
+    "all-046",
+    "all-055"
+   ],
+   "label_conflict": null,
+   "outer_label": "울 코트",
+   "outer_length": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "outer_slot": "coat",
+   "outer_type": {
+    "source": "label_mapping",
+    "value": "coat"
+   },
+   "outer_varies_by_branch": true,
+   "rain": {
+    "legacy_handling": "suede/sandal swapped to leather shoes (weather_catalog._rain_safe)",
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "snow": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "suitability_review": "not_reviewed",
+   "temperature_rule": null
+  },
+  "male-autumn-business_casual-daily": {
+   "drawing_outer_types": {
+    "m-business-a": "blazer"
+   },
+   "drawings": [
+    "m-business-a"
+   ],
+   "label_conflict": null,
+   "outer_label": "블레이저",
+   "outer_length": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "outer_slot": "outer",
+   "outer_type": {
+    "source": "label_mapping",
+    "value": "blazer"
+   },
+   "outer_varies_by_branch": false,
+   "rain": {
+    "legacy_handling": "suede/sandal swapped to leather shoes (weather_catalog._rain_safe)",
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "snow": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "suitability_review": "not_reviewed",
+   "temperature_rule": null
+  },
+  "male-autumn-business_casual-trend": {
+   "drawing_outer_types": {
+    "m-business-b": "blouson"
+   },
+   "drawings": [
+    "m-business-b"
+   ],
+   "label_conflict": null,
+   "outer_label": "필드 재킷",
+   "outer_length": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "outer_slot": "outer",
+   "outer_type": {
+    "source": "label_mapping",
+    "value": "field_jacket"
+   },
+   "outer_varies_by_branch": false,
+   "rain": {
+    "legacy_handling": "suede/sandal swapped to leather shoes (weather_catalog._rain_safe)",
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "snow": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "suitability_review": "not_reviewed",
+   "temperature_rule": null
+  },
+  "male-autumn-business_formal-daily": {
+   "drawing_outer_types": {
+    "06": "suit_jacket",
+    "10": "suit_jacket"
+   },
+   "drawings": [
+    "06",
+    "10"
+   ],
+   "label_conflict": null,
+   "outer_label": "수트 재킷",
+   "outer_length": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "outer_slot": "outer",
+   "outer_type": {
+    "source": "label_mapping",
+    "value": "suit_jacket"
+   },
+   "outer_varies_by_branch": false,
+   "rain": {
+    "legacy_handling": "suede/sandal swapped to leather shoes (weather_catalog._rain_safe)",
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "snow": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "suitability_review": "not_reviewed",
+   "temperature_rule": null
+  },
+  "male-autumn-business_formal-trend": {
+   "drawing_outer_types": {
+    "all-006": "suit_jacket"
+   },
+   "drawings": [
+    "all-006"
+   ],
+   "label_conflict": null,
+   "outer_label": "수트 재킷",
+   "outer_length": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "outer_slot": "outer",
+   "outer_type": {
+    "source": "label_mapping",
+    "value": "suit_jacket"
+   },
+   "outer_varies_by_branch": false,
+   "rain": {
+    "legacy_handling": "suede/sandal swapped to leather shoes (weather_catalog._rain_safe)",
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "snow": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "suitability_review": "not_reviewed",
+   "temperature_rule": null
+  },
+  "male-autumn-casual-daily": {
+   "drawing_outer_types": {
+    "all-061": "blouson",
+    "m-casual-a": "blouson"
+   },
+   "drawings": [
+    "all-061",
+    "m-casual-a"
+   ],
+   "label_conflict": null,
+   "outer_label": "필드 점퍼",
+   "outer_length": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "outer_slot": "outer",
+   "outer_type": {
+    "source": "label_mapping",
+    "value": "field_jacket"
+   },
+   "outer_varies_by_branch": false,
+   "rain": {
+    "legacy_handling": "suede/sandal swapped to leather shoes (weather_catalog._rain_safe)",
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "snow": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "suitability_review": "not_reviewed",
+   "temperature_rule": null
+  },
+  "male-autumn-casual-trend": {
+   "drawing_outer_types": {
+    "all-062": "blouson",
+    "m-casual-b": "blouson"
+   },
+   "drawings": [
+    "all-062",
+    "m-casual-b"
+   ],
+   "label_conflict": null,
+   "outer_label": "워크 재킷",
+   "outer_length": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "outer_slot": "outer",
+   "outer_type": {
+    "source": "label_mapping",
+    "value": "work_jacket"
+   },
+   "outer_varies_by_branch": false,
+   "rain": {
+    "legacy_handling": "suede/sandal swapped to leather shoes (weather_catalog._rain_safe)",
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "snow": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "suitability_review": "not_reviewed",
+   "temperature_rule": null
+  },
+  "male-spring-business_casual-daily": {
+   "drawing_outer_types": {
+    "all-003": "blouson"
+   },
+   "drawings": [
+    "all-003"
+   ],
+   "label_conflict": null,
+   "outer_label": "해링턴 재킷",
+   "outer_length": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "outer_slot": "outer",
+   "outer_type": {
+    "source": "label_mapping",
+    "value": "harrington"
+   },
+   "outer_varies_by_branch": false,
+   "rain": {
+    "legacy_handling": "suede/sandal swapped to leather shoes (weather_catalog._rain_safe)",
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "snow": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "suitability_review": "not_reviewed",
+   "temperature_rule": null
+  },
+  "male-spring-business_casual-trend": {
+   "drawing_outer_types": {
+    "all-004": "blazer"
+   },
+   "drawings": [
+    "all-004"
+   ],
+   "label_conflict": null,
+   "outer_label": "블레이저",
+   "outer_length": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "outer_slot": "outer",
+   "outer_type": {
+    "source": "label_mapping",
+    "value": "blazer"
+   },
+   "outer_varies_by_branch": false,
+   "rain": {
+    "legacy_handling": "suede/sandal swapped to leather shoes (weather_catalog._rain_safe)",
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "snow": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "suitability_review": "not_reviewed",
+   "temperature_rule": null
+  },
+  "male-spring-business_formal-daily": {
+   "drawing_outer_types": {
+    "06": "suit_jacket",
+    "10": "suit_jacket"
+   },
+   "drawings": [
+    "06",
+    "10"
+   ],
+   "label_conflict": null,
+   "outer_label": "수트 재킷",
+   "outer_length": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "outer_slot": "outer",
+   "outer_type": {
+    "source": "label_mapping",
+    "value": "suit_jacket"
+   },
+   "outer_varies_by_branch": false,
+   "rain": {
+    "legacy_handling": "suede/sandal swapped to leather shoes (weather_catalog._rain_safe)",
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "snow": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "suitability_review": "not_reviewed",
+   "temperature_rule": null
+  },
+  "male-spring-business_formal-trend": {
+   "drawing_outer_types": {
+    "all-006": "suit_jacket"
+   },
+   "drawings": [
+    "all-006"
+   ],
+   "label_conflict": null,
+   "outer_label": "수트 재킷",
+   "outer_length": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "outer_slot": "outer",
+   "outer_type": {
+    "source": "label_mapping",
+    "value": "suit_jacket"
+   },
+   "outer_varies_by_branch": false,
+   "rain": {
+    "legacy_handling": "suede/sandal swapped to leather shoes (weather_catalog._rain_safe)",
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "snow": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "suitability_review": "not_reviewed",
+   "temperature_rule": null
+  },
+  "male-spring-casual-daily": {
+   "drawing_outer_types": {
+    "all-061": "blouson",
+    "m-casual-a": "blouson"
+   },
+   "drawings": [
+    "all-061",
+    "m-casual-a"
+   ],
+   "label_conflict": null,
+   "outer_label": "블루종",
+   "outer_length": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "outer_slot": "outer",
+   "outer_type": {
+    "source": "label_mapping",
+    "value": "blouson"
+   },
+   "outer_varies_by_branch": false,
+   "rain": {
+    "legacy_handling": "suede/sandal swapped to leather shoes (weather_catalog._rain_safe)",
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "snow": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "suitability_review": "not_reviewed",
+   "temperature_rule": null
+  },
+  "male-spring-casual-trend": {
+   "drawing_outer_types": {
+    "all-002": "blouson"
+   },
+   "drawings": [
+    "all-002"
+   ],
+   "label_conflict": null,
+   "outer_label": "데님 재킷",
+   "outer_length": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "outer_slot": "outer",
+   "outer_type": {
+    "source": "label_mapping",
+    "value": "denim_jacket"
+   },
+   "outer_varies_by_branch": false,
+   "rain": {
+    "legacy_handling": "suede/sandal swapped to leather shoes (weather_catalog._rain_safe)",
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "snow": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "suitability_review": "not_reviewed",
+   "temperature_rule": null
+  },
+  "male-summer-business_casual-daily": {
+   "drawing_outer_types": {
+    "all-009": "none"
+   },
+   "drawings": [
+    "all-009"
+   ],
+   "label_conflict": null,
+   "outer_label": null,
+   "outer_length": {
+    "source": "not_applicable",
+    "value": null
+   },
+   "outer_slot": null,
+   "outer_type": {
+    "source": "not_applicable",
+    "value": "none"
+   },
+   "outer_varies_by_branch": false,
+   "rain": {
+    "legacy_handling": "suede/sandal swapped to leather shoes (weather_catalog._rain_safe)",
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "snow": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "suitability_review": "not_reviewed",
+   "temperature_rule": null
+  },
+  "male-summer-business_casual-trend": {
+   "drawing_outer_types": {
+    "all-010": "none"
+   },
+   "drawings": [
+    "all-010"
+   ],
+   "label_conflict": null,
+   "outer_label": null,
+   "outer_length": {
+    "source": "not_applicable",
+    "value": null
+   },
+   "outer_slot": null,
+   "outer_type": {
+    "source": "not_applicable",
+    "value": "none"
+   },
+   "outer_varies_by_branch": false,
+   "rain": {
+    "legacy_handling": "suede/sandal swapped to leather shoes (weather_catalog._rain_safe)",
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "snow": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "suitability_review": "not_reviewed",
+   "temperature_rule": null
+  },
+  "male-summer-business_formal-daily": {
+   "drawing_outer_types": {
+    "06": "suit_jacket",
+    "10": "suit_jacket"
+   },
+   "drawings": [
+    "06",
+    "10"
+   ],
+   "label_conflict": null,
+   "outer_label": "수트 재킷",
+   "outer_length": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "outer_slot": "outer",
+   "outer_type": {
+    "source": "label_mapping",
+    "value": "suit_jacket"
+   },
+   "outer_varies_by_branch": false,
+   "rain": {
+    "legacy_handling": "suede/sandal swapped to leather shoes (weather_catalog._rain_safe)",
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "snow": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "suitability_review": "not_reviewed",
+   "temperature_rule": null
+  },
+  "male-summer-business_formal-trend": {
+   "drawing_outer_types": {
+    "all-006": "suit_jacket"
+   },
+   "drawings": [
+    "all-006"
+   ],
+   "label_conflict": null,
+   "outer_label": "수트 재킷",
+   "outer_length": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "outer_slot": "outer",
+   "outer_type": {
+    "source": "label_mapping",
+    "value": "suit_jacket"
+   },
+   "outer_varies_by_branch": false,
+   "rain": {
+    "legacy_handling": "suede/sandal swapped to leather shoes (weather_catalog._rain_safe)",
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "snow": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "suitability_review": "not_reviewed",
+   "temperature_rule": null
+  },
+  "male-summer-casual-daily": {
+   "drawing_outer_types": {
+    "all-007": "none",
+    "all-051": "none"
+   },
+   "drawings": [
+    "all-007",
+    "all-051"
+   ],
+   "label_conflict": null,
+   "outer_label": null,
+   "outer_length": {
+    "source": "not_applicable",
+    "value": null
+   },
+   "outer_slot": null,
+   "outer_type": {
+    "source": "not_applicable",
+    "value": "none"
+   },
+   "outer_varies_by_branch": false,
+   "rain": {
+    "legacy_handling": "suede/sandal swapped to leather shoes (weather_catalog._rain_safe)",
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "snow": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "suitability_review": "not_reviewed",
+   "temperature_rule": null
+  },
+  "male-summer-casual-trend": {
+   "drawing_outer_types": {
+    "all-008": "none",
+    "all-024": "none",
+    "all-051": "none"
+   },
+   "drawings": [
+    "all-008",
+    "all-024",
+    "all-051"
+   ],
+   "label_conflict": null,
+   "outer_label": null,
+   "outer_length": {
+    "source": "not_applicable",
+    "value": null
+   },
+   "outer_slot": null,
+   "outer_type": {
+    "source": "not_applicable",
+    "value": "none"
+   },
+   "outer_varies_by_branch": false,
+   "rain": {
+    "legacy_handling": "suede/sandal swapped to leather shoes (weather_catalog._rain_safe)",
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "snow": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "suitability_review": "not_reviewed",
+   "temperature_rule": null
+  },
+  "male-warm-transition-business_casual-daily": {
+   "drawing_outer_types": {
+    "all-013": "none"
+   },
+   "drawings": [
+    "all-013"
+   ],
+   "label_conflict": null,
+   "outer_label": null,
+   "outer_length": {
+    "source": "not_applicable",
+    "value": null
+   },
+   "outer_slot": null,
+   "outer_type": {
+    "source": "not_applicable",
+    "value": "none"
+   },
+   "outer_varies_by_branch": false,
+   "rain": {
+    "legacy_handling": "suede/sandal swapped to leather shoes (weather_catalog._rain_safe)",
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "snow": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "suitability_review": "not_reviewed",
+   "temperature_rule": null
+  },
+  "male-warm-transition-business_casual-trend": {
+   "drawing_outer_types": {
+    "all-014": "none"
+   },
+   "drawings": [
+    "all-014"
+   ],
+   "label_conflict": null,
+   "outer_label": null,
+   "outer_length": {
+    "source": "not_applicable",
+    "value": null
+   },
+   "outer_slot": null,
+   "outer_type": {
+    "source": "not_applicable",
+    "value": "none"
+   },
+   "outer_varies_by_branch": false,
+   "rain": {
+    "legacy_handling": "suede/sandal swapped to leather shoes (weather_catalog._rain_safe)",
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "snow": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "suitability_review": "not_reviewed",
+   "temperature_rule": null
+  },
+  "male-warm-transition-casual-daily": {
+   "drawing_outer_types": {
+    "all-011": "none",
+    "all-052": "none"
+   },
+   "drawings": [
+    "all-011",
+    "all-052"
+   ],
+   "label_conflict": null,
+   "outer_label": null,
+   "outer_length": {
+    "source": "not_applicable",
+    "value": null
+   },
+   "outer_slot": null,
+   "outer_type": {
+    "source": "not_applicable",
+    "value": "none"
+   },
+   "outer_varies_by_branch": false,
+   "rain": {
+    "legacy_handling": "suede/sandal swapped to leather shoes (weather_catalog._rain_safe)",
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "snow": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "suitability_review": "not_reviewed",
+   "temperature_rule": null
+  },
+  "male-warm-transition-casual-trend": {
+   "drawing_outer_types": {
+    "all-012": "none",
+    "all-053": "none"
+   },
+   "drawings": [
+    "all-012",
+    "all-053"
+   ],
+   "label_conflict": null,
+   "outer_label": null,
+   "outer_length": {
+    "source": "not_applicable",
+    "value": null
+   },
+   "outer_slot": null,
+   "outer_type": {
+    "source": "not_applicable",
+    "value": "none"
+   },
+   "outer_varies_by_branch": false,
+   "rain": {
+    "legacy_handling": "suede/sandal swapped to leather shoes (weather_catalog._rain_safe)",
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "snow": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "suitability_review": "not_reviewed",
+   "temperature_rule": null
+  },
+  "male-winter-business_casual-daily": {
+   "drawing_outer_types": {
+    "all-020": "coat"
+   },
+   "drawings": [
+    "all-020"
+   ],
+   "label_conflict": null,
+   "outer_label": "울 코트",
+   "outer_length": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "outer_slot": "coat",
+   "outer_type": {
+    "source": "label_mapping",
+    "value": "coat"
+   },
+   "outer_varies_by_branch": false,
+   "rain": {
+    "legacy_handling": "suede/sandal swapped to leather shoes (weather_catalog._rain_safe)",
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "snow": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "suitability_review": "not_reviewed",
+   "temperature_rule": null
+  },
+  "male-winter-business_casual-trend": {
+   "drawing_outer_types": {
+    "all-021": "puffer"
+   },
+   "drawings": [
+    "all-021"
+   ],
+   "label_conflict": null,
+   "outer_label": "비즈니스 패딩",
+   "outer_length": {
+    "source": "asset_observed_2026-10-17",
+    "value": "short"
+   },
+   "outer_slot": "outer",
+   "outer_type": {
+    "source": "label_mapping",
+    "value": "puffer"
+   },
+   "outer_varies_by_branch": false,
+   "rain": {
+    "legacy_handling": "suede/sandal swapped to leather shoes (weather_catalog._rain_safe)",
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "snow": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "suitability_review": "not_reviewed",
+   "temperature_rule": {
+    "max_exclusive": 5,
+    "outer_length": "short",
+    "outer_type": "puffer",
+    "source": "owner_policy_2026-10-15"
+   }
+  },
+  "male-winter-business_formal-daily": {
+   "drawing_outer_types": {
+    "all-022": "coat"
+   },
+   "drawings": [
+    "all-022"
+   ],
+   "label_conflict": null,
+   "outer_label": "울 코트",
+   "outer_length": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "outer_slot": "coat",
+   "outer_type": {
+    "source": "label_mapping",
+    "value": "coat"
+   },
+   "outer_varies_by_branch": false,
+   "rain": {
+    "legacy_handling": "suede/sandal swapped to leather shoes (weather_catalog._rain_safe)",
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "snow": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "suitability_review": "not_reviewed",
+   "temperature_rule": null
+  },
+  "male-winter-business_formal-trend": {
+   "drawing_outer_types": {
+    "all-023": "puffer"
+   },
+   "drawings": [
+    "all-023"
+   ],
+   "label_conflict": "template label '비즈니스 롱 패딩' but drawing all-023 is a short puffer",
+   "outer_label": "비즈니스 롱 패딩",
+   "outer_length": {
+    "source": "asset_observed_2026-10-17",
+    "value": "short"
+   },
+   "outer_slot": "coat",
+   "outer_type": {
+    "source": "label_mapping",
+    "value": "puffer"
+   },
+   "outer_varies_by_branch": false,
+   "rain": {
+    "legacy_handling": "suede/sandal swapped to leather shoes (weather_catalog._rain_safe)",
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "snow": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "suitability_review": "not_reviewed",
+   "temperature_rule": {
+    "max_exclusive": 5,
+    "outer_length": "short",
+    "outer_type": "puffer",
+    "source": "owner_policy_2026-10-15"
+   }
+  },
+  "male-winter-casual-daily": {
+   "drawing_outer_types": {
+    "all-018": "puffer"
+   },
+   "drawings": [
+    "all-018"
+   ],
+   "label_conflict": null,
+   "outer_label": "숏 패딩",
+   "outer_length": {
+    "source": "asset_observed_2026-10-17",
+    "value": "short"
+   },
+   "outer_slot": "outer",
+   "outer_type": {
+    "source": "label_mapping",
+    "value": "puffer"
+   },
+   "outer_varies_by_branch": false,
+   "rain": {
+    "legacy_handling": "suede/sandal swapped to leather shoes (weather_catalog._rain_safe)",
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "snow": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "suitability_review": "not_reviewed",
+   "temperature_rule": {
+    "max_exclusive": 5,
+    "outer_length": "short",
+    "outer_type": "puffer",
+    "source": "owner_policy_2026-10-15"
+   }
+  },
+  "male-winter-casual-trend": {
+   "drawing_outer_types": {
+    "all-019": "coat",
+    "all-056": "coat",
+    "all-063": "coat"
+   },
+   "drawings": [
+    "all-019",
+    "all-056",
+    "all-063"
+   ],
+   "label_conflict": null,
+   "outer_label": "울 코트",
+   "outer_length": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "outer_slot": "coat",
+   "outer_type": {
+    "source": "label_mapping",
+    "value": "coat"
+   },
+   "outer_varies_by_branch": false,
+   "rain": {
+    "legacy_handling": "suede/sandal swapped to leather shoes (weather_catalog._rain_safe)",
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "snow": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "suitability_review": "not_reviewed",
+   "temperature_rule": null
+  }
+ }
+}

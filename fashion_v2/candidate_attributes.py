@@ -27,6 +27,7 @@ LAYER_ORDER = ("coat", "outer", "mid")
 # Label -> outer type. Order matters: more specific words first.
 OUTER_TYPE_PATTERNS = (
     ("패딩", "puffer"), ("코트", "coat"), ("수트 재킷", "suit_jacket"), ("정장 재킷", "suit_jacket"),
+    ("플리스", "fleece"), ("퀼팅", "quilted"),
     ("가디건", "cardigan"), ("블레이저", "blazer"), ("바람막이", "windbreaker"),
     ("데님 재킷", "denim_jacket"), ("필드", "field_jacket"), ("워크 재킷", "work_jacket"),
     ("해링턴", "harrington"), ("블루종", "blouson"), ("경량 재킷", "light_jacket"),

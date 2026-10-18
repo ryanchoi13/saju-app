@@ -91,7 +91,9 @@ def canonical_name(item, gender, tpo):
             if '반팔' in n: return '반팔 캐주얼 셔츠'
             return '긴팔 정장 셔츠' if tpo == 'business_formal' else '긴팔 캐주얼 셔츠'
     if cat in {'outer','coat','mid','carry_outer'}:
-        for pattern, name in [('패딩','패딩'),('코트','코트'),('수트','수트 재킷'),('가디건','가디건'),('바람막이','바람막이'),('후드','집업 후드'),('블레이저|정장|언스트럭처드|칼라리스|경량 재킷','블레이저'),('재킷|점퍼|블루종|오버셔츠|크롭 셔츠','블루종')]:
+        # 플리스·퀼팅 sit before the generic 재킷/블루종 rule (퀼팅 재킷 used to fold into 블루종),
+        # after 패딩/코트/수트 so '퀼팅 패딩'·'퀼팅 코트' keep their current meaning (#188).
+        for pattern, name in [('패딩','패딩'),('코트','코트'),('수트','수트 재킷'),('플리스','플리스'),('퀼팅','퀼팅 재킷'),('가디건','가디건'),('바람막이','바람막이'),('후드','집업 후드'),('블레이저|정장|언스트럭처드|칼라리스|경량 재킷','블레이저'),('재킷|점퍼|블루종|오버셔츠|크롭 셔츠','블루종')]:
             if re.search(pattern,n): return name
     raise ValueError(f'지원하지 않는 아이템: {cat} / {n}')
 
