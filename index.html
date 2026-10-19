@@ -662,23 +662,12 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">태어난 시간 (30분 보정 적용)</label>
-                    <select id="inputSijin" class="form-select-box">
-                        <option value="" disabled selected>생시를 확인해 주세요</option>
-                        <option value="-1">태어난 시간 모름</option>
-                        <option value="0">자시 (23:30 ~ 01:29)</option>
-                        <option value="1">축시 (01:30 ~ 03:29)</option>
-                        <option value="2">인시 (03:30 ~ 05:29)</option>
-                        <option value="3">묘시 (05:30 ~ 07:29)</option>
-                        <option value="4">진시 (07:30 ~ 09:29)</option>
-                        <option value="5">사시 (09:30 ~ 11:29)</option>
-                        <option value="6">오시 (11:30 ~ 13:29)</option>
-                        <option value="7">미시 (13:30 ~ 15:29)</option>
-                        <option value="8">신시 (15:30 ~ 17:29)</option>
-                        <option value="9">유시 (17:30 ~ 19:29)</option>
-                        <option value="10">술시 (19:30 ~ 21:29)</option>
-                        <option value="11">해시 (21:30 ~ 23:29)</option>
-                    </select>
+                    <label class="form-label">태어난 시간</label>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 4px;">
+                        <select id="birthHourSelect" class="form-select-box" aria-label="태어난 시"></select>
+                        <select id="birthMinuteSelect" class="form-select-box" aria-label="태어난 분"></select>
+                    </div>
+                    <p id="birthTimeLegacyNote" class="reading-caption" hidden></p>
                 </div>
                 <button onclick="submitSajuRegistration()" class="btn-primary">정밀 감명서 발행하기 ✨</button>
             </div>
@@ -1609,6 +1598,48 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                     el.innerHTML += `<option value="${d}">${d}일</option>`;
                 }
             });
+            initBirthTimeDropdowns();
+        }
+
+        // 태어난 시간: 시(0~23)·분(0~59)을 고른다. 시에서 '모름'을 고르면 분은 비활성.
+        const SIJIN_NAMES = ['자시','축시','인시','묘시','진시','사시','오시','미시','신시','유시','술시','해시'];
+        function initBirthTimeDropdowns() {
+            const hourEl = document.getElementById('birthHourSelect');
+            const minuteEl = document.getElementById('birthMinuteSelect');
+            if (!hourEl || !minuteEl) return;
+            let hours = '<option value="" disabled selected>시</option><option value="unknown">모름</option>';
+            for (let h = 0; h <= 23; h++) hours += `<option value="${h}">${h}시</option>`;
+            hourEl.innerHTML = hours;
+            let minutes = '<option value="" disabled selected>분</option>';
+            for (let m = 0; m <= 59; m++) minutes += `<option value="${m}">${m}분</option>`;
+            minuteEl.innerHTML = minutes;
+            hourEl.onchange = syncBirthMinuteState;
+        }
+        function syncBirthMinuteState() {
+            const hourEl = document.getElementById('birthHourSelect');
+            const minuteEl = document.getElementById('birthMinuteSelect');
+            const unknown = hourEl.value === 'unknown';
+            minuteEl.disabled = unknown;
+            if (unknown) minuteEl.value = '';
+        }
+        function setBirthTimeForm(profile) {
+            const hourEl = document.getElementById('birthHourSelect');
+            const minuteEl = document.getElementById('birthMinuteSelect');
+            const note = document.getElementById('birthTimeLegacyNote');
+            hourEl.value = ''; minuteEl.value = ''; note.hidden = true; note.textContent = '';
+            if (profile.profile_complete !== false) {
+                const h = profile.birth_hour, m = profile.birth_minute;
+                const sijin = profile.sijin_index;
+                if (Number.isInteger(h) && Number.isInteger(m)) {
+                    hourEl.value = String(h); minuteEl.value = String(m);
+                } else if (sijin === -1) {
+                    hourEl.value = 'unknown';
+                } else if (Number.isInteger(sijin) && sijin >= 0 && sijin <= 11) {
+                    note.hidden = false;
+                    note.textContent = `지금은 '${SIJIN_NAMES[sijin]}'(2시간 범위)로 저장되어 있어요. 정확한 시·분을 고르면 더 정확해져요.`;
+                }
+            }
+            syncBirthMinuteState();
         }
 
         function getSajuStorageKey(kakaoId) {
@@ -2001,9 +2032,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             document.getElementById('birthYearSelect').value = profile.birth_year ? String(profile.birth_year) : '';
             document.getElementById('birthMonthSelect').value = profile.birth_month ? String(profile.birth_month) : '';
             document.getElementById('birthDaySelect').value = profile.birth_day ? String(profile.birth_day) : '';
-            document.getElementById('inputSijin').value = String(
-                profile.profile_complete === false ? '' : (profile.sijin_index ?? '')
-            );
+            setBirthTimeForm(profile);
         }
 
         function wardrobeCacheKey() { return 'dalha_wardrobe_v1:' + currentUserId; }
@@ -2051,6 +2080,8 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                     ? localSaju.calendar_type.toUpperCase()
                     : (kakaoAccount.birthday_type || null),
                 sijin_index: localSaju?.sijin_index ?? null,
+                birth_hour: localSaju?.birth_hour ?? null,
+                birth_minute: localSaju?.birth_minute ?? null,
             };
         }
 
@@ -2373,14 +2404,24 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             const y = parseInt(document.getElementById('birthYearSelect').value);
             const m = parseInt(document.getElementById('birthMonthSelect').value);
             const d = parseInt(document.getElementById('birthDaySelect').value);
-            const sijin = parseInt(document.getElementById('inputSijin').value);
-            if (!name || !selectedGender || !y || !m || !d || !Number.isInteger(sijin)) {
-                alert("이름·성별·생년월일을 입력하고 생시를 확인해 주세요. 모르면 '모름'을 선택할 수 있습니다.");
+            const hourValue = document.getElementById('birthHourSelect').value;
+            const minuteValue = document.getElementById('birthMinuteSelect').value;
+            const timeUnknown = hourValue === 'unknown';
+            const birthHour = timeUnknown || hourValue === '' ? null : parseInt(hourValue);
+            const birthMinute = timeUnknown || minuteValue === '' ? null : parseInt(minuteValue);
+            if (!name || !selectedGender || !y || !m || !d) {
+                alert("이름·성별·생년월일을 입력해 주세요.");
                 return;
             }
+            if (!timeUnknown && (!Number.isInteger(birthHour) || !Number.isInteger(birthMinute))) {
+                alert("태어난 시와 분을 골라 주세요. 모르면 시에서 '모름'을 선택할 수 있습니다.");
+                return;
+            }
+            const sijin = -1;  // 정확한 시각을 보내면 서버가 시진 번호를 함께 계산해 저장한다
             const profile = {
                 name: name, gender: selectedGender, birth_year: y,
-                birth_month: m, birth_day: d, calendar_type: selectedCalendarType, sijin_index: sijin
+                birth_month: m, birth_day: d, calendar_type: selectedCalendarType, sijin_index: sijin,
+                birth_hour: birthHour, birth_minute: birthMinute
             };
 
             const res = await fetch('/api/user/register-saju', {
@@ -2389,7 +2430,8 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 body: JSON.stringify({
                     user_id: currentUserId, name: name, gender: selectedGender,
                     birth_year: y, birth_month: m, birth_day: d,
-                    calendar_type: selectedCalendarType, sijin_index: sijin
+                    calendar_type: selectedCalendarType, sijin_index: sijin,
+                    birth_hour: birthHour, birth_minute: birthMinute
                 })
             });
             if (!res.ok) {

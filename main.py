@@ -104,6 +104,8 @@ class KakaoAuthRequest(BaseModel):
     birthday: Optional[str] = None
     birthday_type: Optional[str] = None
     sijin_index: Optional[int] = None
+    birth_hour: Optional[int] = None
+    birth_minute: Optional[int] = None
     profile_source: str = Field(default="saved", pattern=r"^(saved|kakao)$")
     is_leap_month: bool = False
     access_token: Optional[str] = Field(default=None, max_length=4096)
@@ -116,7 +118,10 @@ class RegisterSajuRequest(BaseModel):
     birth_month: int
     birth_day: int
     calendar_type: str
-    sijin_index: int
+    sijin_index: int = -1
+    # 정확한 출생 시각(한국 벽시계). 있으면 sijin_index 보다 우선한다.
+    birth_hour: Optional[int] = None
+    birth_minute: Optional[int] = None
 
 class WardrobeItemRequest(BaseModel):
     user_id: str
@@ -186,9 +191,34 @@ def _sijin_midpoint(sijin: int) -> time | None:
     return time((sijin * 2) % 24, 30)
 
 
+def _valid_clock(hour, minute) -> bool:
+    return (isinstance(hour, int) and not isinstance(hour, bool) and 0 <= hour <= 23
+            and isinstance(minute, int) and not isinstance(minute, bool) and 0 <= minute <= 59)
+
+
+def _sijin_from_clock(hour: int, minute: int) -> int:
+    """Map a clock time to the legacy UI 시진 range (자시 23:30~01:29 ...)."""
+
+    return ((hour * 60 + minute + 30) // 120) % 12
+
+
+def _birth_clock(sijin, birth_hour=None, birth_minute=None) -> time | None:
+    """Exact birth time when saved; otherwise the legacy 시진 midpoint."""
+
+    if _valid_clock(birth_hour, birth_minute):
+        return time(birth_hour, birth_minute)
+    return _sijin_midpoint(int(sijin if sijin is not None else -1))
+
+
+def _birth_time_text(sijin, birth_hour=None, birth_minute=None) -> str:
+    if _valid_clock(birth_hour, birth_minute):
+        return f"{birth_hour}시 {birth_minute:02d}분생"
+    sijin = int(sijin if sijin is not None else -1)
+    return SIJIN_LABELS[sijin] + "생" if 0 <= sijin <= 11 else "생시 미상"
+
+
 def _birth_input_from_user(user: Dict[str, Any], name: str) -> BirthInput:
-    sijin = int(user.get("sijin_index", -1))
-    clock = _sijin_midpoint(sijin)
+    clock = _birth_clock(user.get("sijin_index", -1), user.get("birth_hour"), user.get("birth_minute"))
     calendar_type = "lunar" if user["calendar_type"] in {"lunar", "leap"} else "solar"
     return BirthInput(
         name=name or "회원",
@@ -322,10 +352,10 @@ def calculate_biorhythm(birth_year: int, birth_month: int, birth_day: int, targe
 def with_wa_gwa(word: str):
     return josa(word, "과/와")
 
-def get_saju_pillars_and_analysis(name: str, gender: str, y: int, m: int, d: int, cal_type: str, sijin: int, menu_account_id: str | None = None, weather_profile: dict | None = None):
+def get_saju_pillars_and_analysis(name: str, gender: str, y: int, m: int, d: int, cal_type: str, sijin: int, menu_account_id: str | None = None, weather_profile: dict | None = None, birth_hour: int | None = None, birth_minute: int | None = None):
     backend_calendar_type = "lunar" if cal_type in ["lunar", "leap"] else "solar"
     backend_is_leap = (cal_type == "leap")
-    birth_clock = _sijin_midpoint(sijin)
+    birth_clock = _birth_clock(sijin, birth_hour, birth_minute)
 
     kst_now = datetime.datetime.now(
         datetime.timezone(datetime.timedelta(hours=9))
@@ -349,7 +379,7 @@ def get_saju_pillars_and_analysis(name: str, gender: str, y: int, m: int, d: int
         core.synthesis.strength_state,
         "강약 판정 보류",
     )
-    time_text = SIJIN_LABELS[sijin] + "생" if 0 <= sijin <= 11 else "생시 미상"
+    time_text = _birth_time_text(sijin, birth_hour, birth_minute)
     gender_text = "남성" if gender == "male" else "여성"
     profile_detail = f"{y}년 {m}월 {d}일 · {time_text} · {gender_text}"
 
@@ -765,6 +795,9 @@ def _profile_from_kakao_request(req: KakaoAuthRequest) -> Optional[Dict[str, Any
     sijin_index = req.sijin_index if req.sijin_index is not None else -1
     if not -1 <= sijin_index <= 11:
         sijin_index = -1
+    has_clock = _valid_clock(req.birth_hour, req.birth_minute)
+    if has_clock:
+        sijin_index = _sijin_from_clock(req.birth_hour, req.birth_minute)
     return {
         "name": (req.name or "").strip(),
         "gender": req.gender if req.gender in {"male", "female"} else None,
@@ -773,9 +806,11 @@ def _profile_from_kakao_request(req: KakaoAuthRequest) -> Optional[Dict[str, Any
         "birth_day": day,
         "calendar_type": calendar_type,
         "sijin_index": sijin_index,
+        "birth_hour": req.birth_hour if has_clock else None,
+        "birth_minute": req.birth_minute if has_clock else None,
         "profile_complete": bool(req.profile_source == 'saved' and year and month and day
                                  and req.name and req.gender in {'male','female'}
-                                 and req.sijin_index is not None),
+                                 and (req.sijin_index is not None or has_clock)),
     }
 
 
@@ -802,7 +837,7 @@ def _verified_kakao_request(req):
     return req.model_copy(update=dict(name=shared('name'), gender=shared('gender'),
         birthyear=shared('birthyear'), birthday=shared('birthday'),
         birthday_type=account.get('birthday_type'), is_leap_month=bool(account.get('is_leap_month')),
-        sijin_index=None, access_token=None))
+        sijin_index=None, birth_hour=None, birth_minute=None, access_token=None))
 
 
 
@@ -815,6 +850,8 @@ def _public_profile(user: Dict[str, Any]) -> Dict[str, Any]:
         "birth_day": user.get("birth_day"),
         "calendar_type": user.get("calendar_type", "solar"),
         "sijin_index": user.get("sijin_index", -1),
+        "birth_hour": user.get("birth_hour"),
+        "birth_minute": user.get("birth_minute"),
         "profile_complete": bool(user.get("profile_complete")),
     }
 
@@ -898,6 +935,8 @@ def auth_kakao(req: KakaoAuthRequest, response: Response = None, request: Reques
             "birth_day": None,
             "calendar_type": "solar",
             "sijin_index": -1,
+            "birth_hour": None,
+            "birth_minute": None,
             "profile_complete": False,
             "coin": 1000,
         }
@@ -943,6 +982,7 @@ def auth_kakao(req: KakaoAuthRequest, response: Response = None, request: Reques
             user["birth_month"], user["birth_day"], user["calendar_type"],
             user["sijin_index"], menu_account_id=user_id,
             weather_profile=gyeongju_weather_cache.get(),
+            birth_hour=user.get("birth_hour"), birth_minute=user.get("birth_minute"),
         )
         return {
             "status": "existing_user",
@@ -982,6 +1022,11 @@ def register_saju(req: RegisterSajuRequest):
         raise HTTPException(status_code=422, detail='이름을 입력해 주세요.')
     if req.gender not in {'male','female'} or req.calendar_type not in {'solar','lunar','leap'} or not -1 <= req.sijin_index <= 11:
         raise HTTPException(status_code=422, detail='성별·달력·생시를 확인해 주세요.')
+    if req.birth_hour is not None or req.birth_minute is not None:
+        if not _valid_clock(req.birth_hour, req.birth_minute):
+            raise HTTPException(status_code=422, detail='태어난 시·분을 확인해 주세요.')
+        # 옛 users 표·화면 표시와의 호환을 위해 시진 번호도 함께 저장한다.
+        req = req.model_copy(update={"sijin_index": _sijin_from_clock(req.birth_hour, req.birth_minute)})
     try:
         if not 1900 <= req.birth_year <= date.today().year:
             raise ValueError()
@@ -997,7 +1042,8 @@ def register_saju(req: RegisterSajuRequest):
         saju_res = get_saju_pillars_and_analysis(
             req.name, req.gender, req.birth_year, req.birth_month, req.birth_day,
             req.calendar_type, req.sijin_index, menu_account_id=req.user_id,
-            weather_profile=gyeongju_weather_cache.get())
+            weather_profile=gyeongju_weather_cache.get(),
+            birth_hour=req.birth_hour, birth_minute=req.birth_minute)
     except (ValueError, TypeError):
         raise HTTPException(status_code=422, detail='생년월일과 달력 구분을 확인해 주세요.')
     try:
@@ -1015,6 +1061,8 @@ def register_saju(req: RegisterSajuRequest):
         "birth_day": req.birth_day,
         "calendar_type": req.calendar_type,
         "sijin_index": req.sijin_index,
+        "birth_hour": req.birth_hour,
+        "birth_minute": req.birth_minute,
         "profile_complete": True,
     })
 
