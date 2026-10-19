@@ -5,7 +5,12 @@ from __future__ import annotations
 from collections import defaultdict
 from datetime import date, time
 
-from app.engine.calendar import solar_from_parts, to_solar
+from app.engine.calendar import (
+    TIME_STANDARD_VERSION,
+    natal_eight_chars,
+    solar_from_parts,
+    to_solar,
+)
 from app.engine.constants import GAN_WUXING, ZHI_WUXING
 from app.engine.core.models import (
     BirthInput,
@@ -65,17 +70,14 @@ def _calculate_natal(birth: BirthInput, clock: time | None) -> tuple[NatalFacts,
     solar_date = to_solar(birth.birth_date, birth.calendar_type, birth.is_leap_month)
     hour = clock.hour if clock else 12
     minute = clock.minute if clock else 0
-    lunar = solar_from_parts(
-        solar_date.year, solar_date.month, solar_date.day, hour, minute
-    ).getLunar()
-    eight = lunar.getEightChar()
-    eight.setSect(1)
+    natal = natal_eight_chars(solar_date, hour, minute)
+    seasonal, daily = natal.seasonal, natal.daily
     pillars = {
-        "year": _pillar(eight.getYearGan(), eight.getYearZhi()),
-        "month": _pillar(eight.getMonthGan(), eight.getMonthZhi()),
-        "day": _pillar(eight.getDayGan(), eight.getDayZhi()),
+        "year": _pillar(seasonal.getYearGan(), seasonal.getYearZhi()),
+        "month": _pillar(seasonal.getMonthGan(), seasonal.getMonthZhi()),
+        "day": _pillar(daily.getDayGan(), daily.getDayZhi()),
         "hour": (
-            _pillar(eight.getTimeGan(), eight.getTimeZhi()) if clock is not None else None
+            _pillar(daily.getTimeGan(), daily.getTimeZhi()) if clock is not None else None
         ),
     }
     day_master = pillars["day"].stem
@@ -120,9 +122,13 @@ def _calculate_natal(birth: BirthInput, clock: time | None) -> tuple[NatalFacts,
     facts = NatalFacts(
         calendar={
             "solar_date": solar_date.isoformat(),
-            "lunar_text": lunar.toString(),
+            "lunar_text": solar_from_parts(
+                solar_date.year, solar_date.month, solar_date.day, hour, minute
+            ).getLunar().toString(),
             "sect": 1,
             "time_used": clock.isoformat(timespec="minutes") if clock else None,
+            "time_standard": TIME_STANDARD_VERSION,
+            "solar_time_used": natal.moment.solar_clock.isoformat(timespec="minutes"),
         },
         pillars=pillars,
         day_master=DayMasterFact(

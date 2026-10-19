@@ -14,7 +14,7 @@ from app.engine.services.lifetime import build_lifetime_overall_report
 class OverallInterpretationTests(TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.birth = BirthInput(name="검토", gender="male", birth_date=date(1978, 3, 13), birth_time=time(11))
+        cls.birth = BirthInput(name="검토", gender="male", birth_date=date(1978, 3, 13), birth_time=time(11, 40))  # dalha-time-v1: 태양시 11:07 → 庚午시 유지
         cls.core = calculate_myeongri_core(cls.birth, target_date=date(2026, 9, 15))
 
     def test_complete_core_recovery_can_lead_but_pending_cannot(self):

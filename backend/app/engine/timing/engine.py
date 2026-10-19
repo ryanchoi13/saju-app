@@ -7,7 +7,7 @@ from datetime import date
 
 from lunar_python import Solar
 
-from app.engine.calendar import solar_from_parts, to_solar
+from app.engine.calendar import natal_eight_chars, to_solar
 from app.engine.constants import GAN_WUXING, ZHI_WUXING
 from app.engine.core.models import (
     ActivatedState,
@@ -107,14 +107,13 @@ def calculate_timing(
         raise ValueError("target_date는 출생일보다 빠를 수 없습니다.")
     hour = 12 if birth.time_unknown or birth.birth_time is None else birth.birth_time.hour
     minute = 0 if birth.time_unknown or birth.birth_time is None else birth.birth_time.minute
-    natal_lunar = solar_from_parts(
-        solar_birth.year, solar_birth.month, solar_birth.day, hour, minute
-    ).getLunar()
-    eight_char = natal_lunar.getEightChar()
-    eight_char.setSect(1)
+    natal = natal_eight_chars(solar_birth, hour, minute)
+    # 대운 순역·시작 나이는 절기 기준(seasonal), 십성 기준 일간은 태양시 기준(daily)
+    seasonal = natal.seasonal
+    eight_char = natal.daily
     gender_code = 1 if birth.gender == "male" else 0
-    yun = eight_char.getYun(gender_code)
-    forward = (eight_char.getYearGan() in _YANG_STEMS) == (birth.gender == "male")
+    yun = seasonal.getYun(gender_code)
+    forward = (seasonal.getYearGan() in _YANG_STEMS) == (birth.gender == "male")
 
     cycles = []
     current_cycle = None

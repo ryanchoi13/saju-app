@@ -4,9 +4,10 @@ from dataclasses import dataclass
 from datetime import date, time
 from typing import Literal
 
-from lunar_python import EightChar, Solar
+from lunar_python import Solar
+from lunar_python.util import LunarUtil
 
-from app.engine.calendar import solar_from_parts, to_solar
+from app.engine.calendar import natal_eight_chars, solar_from_parts, to_solar
 from app.engine.characters import GapjaCharacter, get_character
 from app.engine.constants import (
     GAN_KO,
@@ -85,6 +86,14 @@ def _ko_shishen(raw) -> str | None:
     return SHISHEN_KO.get(raw, raw)
 
 
+def _shi_shen_gan(day_gan: str, gan: str) -> str | None:
+    return LunarUtil.SHI_SHEN.get(day_gan + gan)
+
+
+def _shi_shen_zhi(day_gan: str, zhi: str) -> list[str]:
+    return [LunarUtil.SHI_SHEN.get(day_gan + g) for g in LunarUtil.ZHI_HIDE_GAN.get(zhi, [])]
+
+
 def _stem_branch(
     gan_han: str,
     zhi_han: str,
@@ -153,38 +162,40 @@ def calculate_saju(
 
     solar: Solar = solar_from_parts(solar_date.year, solar_date.month, solar_date.day, hour, minute)
     lunar = solar.getLunar()
-    eight: EightChar = lunar.getEightChar()
+    natal = natal_eight_chars(solar_date, hour, minute)
+    seasonal, daily = natal.seasonal, natal.daily
+    day_gan = daily.getDayGan()
 
     year = _stem_branch(
-        eight.getYearGan(),
-        eight.getYearZhi(),
-        eight.getYearShiShenGan(),
-        eight.getYearShiShenZhi(),
-        eight.getYearNaYin(),
+        seasonal.getYearGan(),
+        seasonal.getYearZhi(),
+        _shi_shen_gan(day_gan, seasonal.getYearGan()),
+        _shi_shen_zhi(day_gan, seasonal.getYearZhi()),
+        seasonal.getYearNaYin(),
     )
     month = _stem_branch(
-        eight.getMonthGan(),
-        eight.getMonthZhi(),
-        eight.getMonthShiShenGan(),
-        eight.getMonthShiShenZhi(),
-        eight.getMonthNaYin(),
+        seasonal.getMonthGan(),
+        seasonal.getMonthZhi(),
+        _shi_shen_gan(day_gan, seasonal.getMonthGan()),
+        _shi_shen_zhi(day_gan, seasonal.getMonthZhi()),
+        seasonal.getMonthNaYin(),
     )
     day = _stem_branch(
-        eight.getDayGan(),
-        eight.getDayZhi(),
+        daily.getDayGan(),
+        daily.getDayZhi(),
         "일간",
-        eight.getDayShiShenZhi(),
-        eight.getDayNaYin(),
+        daily.getDayShiShenZhi(),
+        daily.getDayNaYin(),
     )
 
     time_pillar = None
     if not time_unknown and birth_time is not None:
         time_pillar = _stem_branch(
-            eight.getTimeGan(),
-            eight.getTimeZhi(),
-            eight.getTimeShiShenGan(),
-            eight.getTimeShiShenZhi(),
-            eight.getTimeNaYin(),
+            daily.getTimeGan(),
+            daily.getTimeZhi(),
+            daily.getTimeShiShenGan(),
+            daily.getTimeShiShenZhi(),
+            daily.getTimeNaYin(),
         )
 
     pillars = [year, month, day] + ([time_pillar] if time_pillar else [])

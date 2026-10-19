@@ -9,6 +9,7 @@ from datetime import date
 from functools import lru_cache
 from lunar_python import Solar
 from korean_lunar_calendar import KoreanLunarCalendar
+from app.engine.calendar import natal_eight_chars
 
 VERSION='dalha-local-food-state-v1'
 STEMS='甲乙丙丁戊己庚辛壬癸';BRANCHES='子丑寅卯辰巳午未申酉戌亥'
@@ -86,14 +87,17 @@ def natal_thermal(pillars):
                              '오행 개수는 관측 정보로만 보존하며 부족 개수 보충에 사용하지 않음'])
 
 def build_base(birth):
-    d=birth.solar_date();eight=eight_on(d,12 if birth.hour is None else birth.hour,birth.minute)
-    pillars={n:pillar(v) for n,v in [('year',eight.getYear()),('month',eight.getMonth()),('day',eight.getDay())]}
-    pillars['hour']=None if birth.hour is None else pillar(eight.getTime())
+    d=birth.solar_date()
+    # 원국은 메인 풀이와 같은 달하 시간 기준(dalha-time-v1)을 쓴다: 절기=실제 출생 순간, 일주=태양시·23시 일 변경
+    natal=natal_eight_chars(d,12 if birth.hour is None else birth.hour,birth.minute)
+    pillars={n:pillar(v) for n,v in [('year',natal.seasonal.getYear()),('month',natal.seasonal.getMonth()),('day',natal.daily.getDay())]}
+    pillars['hour']=None if birth.hour is None else pillar(natal.daily.getTime())
     return dict(version=VERSION,source='local',scope='natal',input=asdict(birth),
                 solar_birth=d.isoformat(),pillars=pillars,thermal=natal_thermal(pillars),
                 calendar_policy={'library':'lunar-python1.4.8','lunar_conversion':'korean-lunar-calendar0.3.1',
-                    'time':'Korean civil clock as supplied; no city, longitude or true-solar correction',
-                    'day_boundary':'00:00; EightChar sect2','year_month_boundary':'solar terms',
+                    'time_standard':'dalha-time-v1',
+                    'time':'Korean civil clock as supplied, converted with Asia/Seoul history (incl. 1954-61 UTC+8:30 and DST); day/hour pillars use Seoul mean solar time (126.98E)',
+                    'day_boundary':'23:00 solar time; EightChar sect1 (same as main reading)','year_month_boundary':'solar terms at the actual birth instant',
                     'unknown_hour':'hour pillar omitted; noon representative for year/month boundary, uncertainty retained'},
                 incomplete_time=birth.hour is None)
 
