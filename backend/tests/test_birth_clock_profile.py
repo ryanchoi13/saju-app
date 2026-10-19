@@ -97,3 +97,50 @@ class ClockHelpersTests(TestCase):
         self.assertEqual(str(_birth_clock(5, 23, 45)), "23:45:00")
         self.assertEqual(str(_birth_clock(5)), "10:30:00")
         self.assertIsNone(_birth_clock(-1))
+
+
+class PartnerClockTests(TestCase):
+    """궁합 상대방 출생 시각(시·분) 처리."""
+
+    def _req(self, **kw):
+        from main import UnlockReportRequest
+        base = dict(user_id="u", report_key="gunghap", cost=350, partner_name="B",
+                    partner_gender="female", partner_birth_year=1990, partner_birth_month=5,
+                    partner_birth_day=15, partner_calendar_type="solar")
+        base.update(kw)
+        return UnlockReportRequest(**base)
+
+    def test_exact_partner_clock_wins(self):
+        from main import _partner_clock_fields
+        fields = _partner_clock_fields(self._req(partner_birth_hour=23, partner_birth_minute=45))
+        self.assertEqual(fields, {"sijin_index": 0, "birth_hour": 23, "birth_minute": 45})
+
+    def test_partner_unknown_and_legacy_sijin(self):
+        from main import _partner_clock_fields
+        self.assertEqual(_partner_clock_fields(self._req())["sijin_index"], -1)
+        self.assertEqual(_partner_clock_fields(self._req(partner_sijin_index=6))["birth_hour"], None)
+
+    def test_invalid_partner_clock_rejected(self):
+        from main import _partner_clock_fields
+        self.assertIsNone(_partner_clock_fields(self._req(partner_birth_hour=10)))
+        self.assertIsNone(_partner_clock_fields(self._req(partner_birth_hour=10, partner_birth_minute=60)))
+        self.assertIsNone(_partner_clock_fields(self._req(partner_sijin_index=12)))
+
+    def test_partner_exact_clock_reaches_engine(self):
+        from main import _birth_input_from_user, _partner_clock_fields
+        from app.engine.orchestrator import calculate_myeongri_core
+        partner = {"gender": "female", "birth_year": 1990, "birth_month": 5, "birth_day": 15,
+                   "calendar_type": "solar",
+                   **_partner_clock_fields(self._req(partner_birth_hour=23, partner_birth_minute=45))}
+        core = calculate_myeongri_core(_birth_input_from_user(partner, "B"))
+        day = core.natal_facts.pillars["day"]
+        self.assertEqual(day.stem + day.branch, "辛巳")
+
+    def test_gunghap_report_accepts_partner_clock(self):
+        from main import generate_detailed_report
+        user = {"name": "A", "gender": "male", "birth_year": 1988, "birth_month": 4, "birth_day": 12,
+                "calendar_type": "solar", "sijin_index": -1, "birth_hour": 9, "birth_minute": 10}
+        partner = {"name": "B", "gender": "female", "birth_year": 1992, "birth_month": 6, "birth_day": 18,
+                   "calendar_type": "solar", "sijin_index": 0, "birth_hour": 23, "birth_minute": 45}
+        report = generate_detailed_report("gunghap", "기본", "B", "연인 / 결혼", "A", user=user, partner=partner)
+        self.assertIn("A님 & B님", report["title"])
