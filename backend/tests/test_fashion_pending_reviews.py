@@ -3,9 +3,9 @@
 scope_version now works for all-064/all-065 through the same normalised drawing
 definition that registered drawings use, so registering them later keeps the hash.
 Candidate hashes no longer include `status`, and the role is `role or role_draft`, so
-activating a reviewed pending candidate keeps its record. The real records for the two
-pending candidates (owner final, 2026-10-19) remain as audit history. The 4A-0 base-colour
-definition deliberately makes them stale until the new scope hashes complete review.
+activating a reviewed pending candidate keeps its record. The two real records were
+re-approved on #188 (2026-10-19) after 4A-0 added explicit base colours; the obsolete
+pre-colour records remain available through Git history rather than the runtime input file.
 """
 import json
 import shutil
@@ -75,18 +75,14 @@ def test_pending_definition_comes_from_provenance_and_stays_unselectable(drawing
     assert drawing_id not in SHAPES  # the selection list never sees pending drawings
 
 
-EVIDENCE = "https://github.com/ryanchoi13/saju-app/issues/188#issuecomment-6261822732"
-APPROVED = {  # pre-colour values the owner approved on #188 (2026-10-19)
-    "all-064": (FEMALE, "f54766ef35fa967b", "dfc81ccffaf3add5"),
-    "all-065": (MALE, "b946e4a377875872", "f1b932398b2460a7"),
-}
-COLOUR_DRAFT_SCOPES = {  # review targets only; not approved records yet
-    "all-064": "803aec9d2824144e",
-    "all-065": "74a2889f271ca2b7",
+EVIDENCE = "https://github.com/ryanchoi13/saju-app/issues/188#issuecomment-6264128137"
+APPROVED = {  # base-colour values the owner re-approved on #188 (2026-10-19)
+    "all-064": (FEMALE, "f54766ef35fa967b", "803aec9d2824144e"),
+    "all-065": (MALE, "b946e4a377875872", "74a2889f271ca2b7"),
 }
 
 
-def test_real_review_file_keeps_exactly_the_two_pre_colour_records_as_stale_history():
+def test_real_review_file_holds_exactly_the_two_current_approved_records():
     reviews = cr.load_reviews()
     assert sorted(r["drawing_id"] for r in reviews) == ["all-064", "all-065"]
     for r in reviews:
@@ -96,15 +92,9 @@ def test_real_review_file_keeps_exactly_the_two_pre_colour_records_as_stale_hist
         assert r["temp_range"] == {"min": 7, "max_exclusive": 11}
         assert r["rain"] == r["snow"] == "unsuitable"
         assert r["steps"] == list(cr.REQUIRED_STEPS) and r["evidence"] == EVIDENCE
-        assert cr.scope_version(candidate_id, r["drawing_id"]) != scope_version
-        assert cr.find_review(reviews, candidate_id, r["drawing_id"]) is None
+        assert cr.scope_version(candidate_id, r["drawing_id"]) == scope_version
+        assert cr.find_review(reviews, candidate_id, r["drawing_id"]) is r
         assert [t for t in (6.9, 7, 10.9, 11) if cr.in_reviewed_range(r, t)] == [7, 10.9]
-
-
-def test_colour_draft_scope_versions_are_pinned_for_review():
-    for drawing_id, scope_version in COLOUR_DRAFT_SCOPES.items():
-        candidate_id = APPROVED[drawing_id][0]
-        assert cr.scope_version(candidate_id, drawing_id) == scope_version
 
 
 def test_records_do_not_activate_the_candidates():
