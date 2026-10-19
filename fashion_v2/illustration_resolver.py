@@ -97,7 +97,13 @@ def select_illustration(look: dict):
 
 def drawing_attributes(drawing_id: str) -> dict:
     """Outer facts read from the drawing itself, in the shape the constraint oracle expects."""
-    kind = drawing_outer_type(SHAPES[drawing_id])
+    return attributes_for_shape(drawing_id, SHAPES[drawing_id])
+
+
+def attributes_for_shape(drawing_id: str, shape: dict) -> dict:
+    """Same facts for a given shape. Used for stored-only (pending) drawings, which are
+    deliberately absent from SHAPES so they can never be selected."""
+    kind = drawing_outer_type(shape)
     if kind == "none":
         return {"outer_slot": None, "outer_type": {"value": "none", "source": "drawing_shape"},
                 "outer_length": {"value": None, "source": "not_applicable"}, "temperature_rule": None}

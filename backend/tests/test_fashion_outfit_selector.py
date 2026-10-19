@@ -209,11 +209,13 @@ def test_review_survives_order_and_free_text_edits(monkeypatch):
 def test_review_goes_stale_when_the_drawing_geometry_changes(monkeypatch):
     trendy = pick("casual", t=3.0, mode="study")["trendy"]
     record = review(trendy["candidate_id"], trendy["drawing_id"], high=11)
-    original = cr.load_registry()
+    from fashion_v2 import illustration_assets
+    original = illustration_assets.load_registry()
 
-    def changed():
+    def changed(path=None):
         return [dict(e, shape={**e["shape"], "tuck": "in"}) if e["id"] == trendy["drawing_id"] else e for e in original]
-    monkeypatch.setattr(cr, "load_registry", changed)
+    # Drawing definitions are read through illustration_assets.drawing_definition (2026-10-19).
+    monkeypatch.setattr(illustration_assets, "load_registry", changed)
     assert cr.find_review([record], trendy["candidate_id"], trendy["drawing_id"]) is None
 
 
