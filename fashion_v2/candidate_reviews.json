@@ -1,4 +1,43 @@
 {
- "about": "Owner-approved outfit reviews (see fashion_v2/candidate_reviews.py for required fields: drawing_version, scope_version, temp_range with numeric or 'open' bounds, rain/snow, three steps, evidence). Empty on purpose: no candidate has completed the ChatGPT draft -> Claude check -> owner final flow yet.",
- "reviews": []
+ "about": "Owner-approved outfit reviews (see fashion_v2/candidate_reviews.py for required fields: drawing_version, scope_version, temp_range with numeric or 'open' bounds, rain/snow, three steps, evidence). Records are added only after the ChatGPT draft -> Claude check -> owner final flow on #188. 2026-10-19: the two fleece pilot candidates (still review_pending; a record does not activate them).",
+ "reviews": [
+  {
+   "candidate_id": "pending-female-winter-casual-fleece",
+   "drawing_id": "all-064",
+   "drawing_version": "f54766ef35fa967b",
+   "scope_version": "dfc81ccffaf3add5",
+   "temp_range": {
+    "min": 7,
+    "max_exclusive": 11
+   },
+   "rain": "unsuitable",
+   "snow": "unsuitable",
+   "steps": [
+    "chatgpt_style_draft",
+    "claude_consistency_check",
+    "owner_final"
+   ],
+   "evidence": "https://github.com/ryanchoi13/saju-app/issues/188#issuecomment-6261822732",
+   "date": "2026-10-19"
+  },
+  {
+   "candidate_id": "pending-male-winter-casual-fleece",
+   "drawing_id": "all-065",
+   "drawing_version": "b946e4a377875872",
+   "scope_version": "f1b932398b2460a7",
+   "temp_range": {
+    "min": 7,
+    "max_exclusive": 11
+   },
+   "rain": "unsuitable",
+   "snow": "unsuitable",
+   "steps": [
+    "chatgpt_style_draft",
+    "claude_consistency_check",
+    "owner_final"
+   ],
+   "evidence": "https://github.com/ryanchoi13/saju-app/issues/188#issuecomment-6261822732",
+   "date": "2026-10-19"
+  }
+ ]
 }

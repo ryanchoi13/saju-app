@@ -3,7 +3,8 @@
 Flow agreed on #188 (2026-10-17, owner approved): ChatGPT drafts the style/composition
 review, Claude checks drawing/attribute/rule consistency, the owner gives the final
 yes on an image comparison sheet. Only then is a record added to
-`candidate_reviews.json`. The file starts EMPTY: no candidate is reviewed yet.
+`candidate_reviews.json`. First records (2026-10-19): the two #188 fleece pilot candidates,
+which stay review_pending: a record never activates a candidate.
 
 What a record is bound to (any change makes the record stale; it is never inherited):
 - drawing_version: hash of the shipped webp + mask files.
