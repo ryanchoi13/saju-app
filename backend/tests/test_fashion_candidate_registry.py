@@ -8,6 +8,7 @@ import json
 from pathlib import Path
 
 from fashion_v2 import candidate_registry as reg
+from fashion_v2.candidate_activation import activation_problems
 from fashion_v2.illustration_assets import (
     CONDITIONAL_VARIANTS, PENDING_FILES, inspect_assets, load_registry, png_size, webp_size, ASSET_DIR)
 from fashion_v2.template_catalog import TEMPLATES
@@ -20,7 +21,7 @@ BASELINE = ROOT / "docs" / "fashion" / "illustration-coverage-baseline.json"
 def test_every_existing_template_is_exactly_one_active_candidate():
     active = {c["candidate_id"]: c for c in reg.active_candidates()}
     templates = list(TEMPLATES) + list(WARM_TRANSITION_LOOKS)
-    assert len(active) == len(templates) == 56
+    assert len(active) == len(templates) + 2 == 58
     for template in templates:
         record = active[template["id"]]
         assert record["gender"] == template["gender"]
@@ -31,8 +32,12 @@ def test_every_existing_template_is_exactly_one_active_candidate():
 
 def test_roles_only_carry_over_the_legacy_slot():
     for record in reg.active_candidates():
-        assert record["role"] == {"daily": "basic", "trend": "trendy"}[record["legacy_role"]]
-        assert record["role_basis"] == "legacy_daily_trend_slot"
+        if record["source"] == reg.SELECTOR_SOURCE:
+            assert record["role"] == record["role_draft"] == "basic"
+            assert record["role_basis"] == "owner_decision_2026-10-18"
+        else:
+            assert record["role"] == {"daily": "basic", "trend": "trendy"}[record["legacy_role"]]
+            assert record["role_basis"] == "legacy_daily_trend_slot"
         assert record["editorial_formula_id"] is None
 
 
@@ -63,11 +68,15 @@ def test_registry_is_consistent_with_observed_coverage():
     assert reg.validate_candidates(observed=observed, registry_ids=registry_ids, file_ids=file_ids) == []
 
 
+def test_selector_candidate_activation_guard_passes_as_one_unit():
+    assert activation_problems() == []
+
+
 def test_illustration_files_match_registry_and_sizes():
     report = inspect_assets()
     assert report["problems"] == []
-    assert report["registry_entries"] == 63
-    assert report["files"] == 64 and report["conditional_files"] == ["10"]
+    assert report["registry_entries"] == 65
+    assert report["files"] == 66 and report["conditional_files"] == ["10"]
 
 
 def test_header_size_readers_handle_every_shipped_file():
@@ -84,15 +93,18 @@ def test_baseline_records_full_live_sample_match():
     live = summary["groups"]["live_sample"]
     assert live["errors"] == 0 and live["unmatched"] == 0
     assert live["recommendations"] == live["matched"] > 0
-    assert summary["registry_entries"] == 63
+    assert summary["registry_entries"] == 65
 
 
 def test_live_path_does_not_read_the_new_registry_yet():
-    for name in ("svg_recommendation.py", "template_catalog.py", "weather_catalog.py"):
-        tree = ast.parse((ROOT / "fashion_v2" / name).read_text(encoding="utf-8"))
+    banned = {"fashion_v2.candidate_registry", "fashion_v2.illustration_assets",
+              "fashion_v2.candidate_templates", "fashion_v2.outfit_selector"}
+    for path in [ROOT / "main.py"] + [ROOT / "fashion_v2" / name for name in (
+            "svg_recommendation.py", "template_catalog.py", "weather_catalog.py")]:
+        tree = ast.parse(path.read_text(encoding="utf-8"))
         imported = {node.module for node in ast.walk(tree) if isinstance(node, ast.ImportFrom)}
-        assert "fashion_v2.candidate_registry" not in imported
-        assert "fashion_v2.illustration_assets" not in imported
+        imported |= {a.name for node in ast.walk(tree) if isinstance(node, ast.Import) for a in node.names}
+        assert not imported & banned
 
 
 def test_coverage_script_pools_match_main():

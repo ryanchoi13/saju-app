@@ -2,9 +2,10 @@
 
 Each existing whole-outfit template becomes one explicit *candidate* record that
 names its role, its source, its components and the illustrations it was observed
-to render. This is a data layer for later rotation work. **Nothing in the live
-recommendation path reads it yet**: `templates_for`, `weather_templates_for` and
-`build_svg_catalog_contexts` are unchanged, so current outputs are unchanged.
+to render. The non-production selector reads active `selector_candidate` records;
+the live recommendation path still does not: `templates_for`,
+`weather_templates_for` and `build_svg_catalog_contexts` are unchanged, so current
+production outputs are unchanged.
 
 Terms kept deliberately separate (see issue #188):
 - role: basic / trendy. In this stage it is only the legacy daily/trend slot carried
@@ -34,6 +35,7 @@ OBSERVED_FILE = Path(__file__).with_name("candidate_illustrations.json")
 ROLE_FROM_LEGACY = {"daily": "basic", "trend": "trendy"}
 ROLES = ("basic", "trendy")
 STATUSES = ("active", "review_pending")
+SELECTOR_SOURCE = "selector_candidate"
 
 KNOWN_LEGACY_ISSUES = {
     "male-winter-business_formal-trend": [
@@ -116,16 +118,14 @@ def _pending(spec: dict) -> dict:
             "activation_blockers": list(PENDING_BLOCKERS), "known_issues": []}
 
 
-# Newly drawn for the #188 fleece pilot (2026-10-18) and stored as PENDING drawings
-# (illustration_assets.PENDING_FILES): not in catalog-data.js, so never selectable.
+# Newly drawn for the #188 fleece pilot (2026-10-18). PR-4A registers the drawings and
+# activates these records only for the non-production selector; the live builder still
+# does not import this registry or the selector templates.
 # Components are the planned outfit. Materials decided on #188 (2026-10-19) from the
 # vocabulary the live templates already use (the shoe is the same running-shoe drawing
 # the live templates call suede_mesh). Base colours decided on #188 (2026-10-19) reproduce
 # the live winter-casual daily colour rules; runtime luck-colour placement may still vary them.
-# All four blockers must be cleared, in this order, before a record may become active.
-PENDING_ASSET_BLOCKERS = ("owner_review_record", "temperature_upper_bound_undecided",
-                          "catalog_registration", "live_template")
-PENDING_DRAWN = (
+DRAWN_CANDIDATES = (
     {
         "candidate_id": "pending-female-winter-casual-fleece", "plan_id": "art-017",
         "illustration_id": "all-064", "gender": "female", "tpo": "casual", "scope": "winter",
@@ -147,20 +147,20 @@ PENDING_DRAWN = (
 )
 
 
-def _pending_drawn(spec: dict) -> dict:
+def _drawn_candidate(spec: dict) -> dict:
     record = {k: deepcopy(v) for k, v in spec.items() if k != "items"}
     components = [_component({"category": slot, "label": label, "color": color, "material": material})
                   for slot, label, color, material in spec["items"]]
-    return {**record, "status": "review_pending", "source": "pending_drawing", "role": None,
-            "editorial_formula_id": None, "components": components,
-            "activation_blockers": list(PENDING_ASSET_BLOCKERS), "known_issues": []}
+    return {**record, "status": "active", "source": SELECTOR_SOURCE,
+            "role": record["role_draft"], "editorial_formula_id": None,
+            "components": components, "known_issues": []}
 
 
 def build_candidates() -> tuple[dict, ...]:
     records = [_record(t, "season_catalog") for t in TEMPLATES]
     records += [_record(t, "weather_transition") for t in WARM_TRANSITION_LOOKS]
     records += [_pending(spec) for spec in REVIEW_PENDING]
-    records += [_pending_drawn(spec) for spec in PENDING_DRAWN]
+    records += [_drawn_candidate(spec) for spec in DRAWN_CANDIDATES]
     return tuple(records)
 
 
@@ -176,8 +176,21 @@ def observed_illustrations(path: Path = OBSERVED_FILE) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))["candidates"]
 
 
+def _review_policy_intersects(record: dict, drawing_id: str) -> bool:
+    """A reviewed interval must leave at least one temperature allowed by policy."""
+    from fashion_v2.illustration_resolver import drawing_attributes
+    low = float("-inf") if record["temp_range"]["min"] == "open" else float(record["temp_range"]["min"])
+    high = (float("inf") if record["temp_range"]["max_exclusive"] == "open"
+            else float(record["temp_range"]["max_exclusive"]))
+    rule = drawing_attributes(drawing_id).get("temperature_rule") or {}
+    policy_low = float(rule.get("min_inclusive", float("-inf")))
+    policy_high = float(rule.get("max_exclusive", float("inf")))
+    return max(low, policy_low) < min(high, policy_high)
+
+
 def validate_candidates(candidates=CANDIDATES, observed=None, registry_ids=None, file_ids=None,
-                        pending_ids=None) -> list[str]:
+                        pending_ids=None, reviews=None, template_ids=None,
+                        selector_drawings=None) -> list[str]:
     """Structural checks. Returns problems; an empty list means the registry is consistent.
     pending_ids: stored-only drawing id -> owning candidate id (default PENDING_FILES)."""
     if pending_ids is None:
@@ -202,6 +215,10 @@ def validate_candidates(candidates=CANDIDATES, observed=None, registry_ids=None,
                 problems.append(f"{c['candidate_id']}: active candidate needs a role")
             if not c["components"]:
                 problems.append(f"{c['candidate_id']}: active candidate needs components")
+            if c.get("activation_blockers"):
+                problems.append(f"{c['candidate_id']}: active candidate still has blockers")
+            if c["source"] == SELECTOR_SOURCE and any(not x.get("source_color") for x in c["components"]):
+                problems.append(f"{c['candidate_id']}: selector candidate needs base colours")
         else:
             if not c.get("activation_blockers"):
                 problems.append(f"{c['candidate_id']}: pending candidate must list blockers")
@@ -209,6 +226,8 @@ def validate_candidates(candidates=CANDIDATES, observed=None, registry_ids=None,
         for c in candidates:
             if c["status"] != "active":
                 continue
+            if c["source"] == SELECTOR_SOURCE:
+                continue  # exact selector rendering is checked below, not in live coverage
             live = observed.get(c["candidate_id"], {}).get("live_sample", [])
             if not live:
                 problems.append(f"{c['candidate_id']}: no illustration observed on the live sample")
@@ -229,4 +248,23 @@ def validate_candidates(candidates=CANDIDATES, observed=None, registry_ids=None,
             drawing = c.get("illustration_id")
             if drawing and drawing not in registry_ids and drawing not in pending_ids:
                 problems.append(f"{c['candidate_id']}: illustration not registered")
+    selector = [c for c in candidates if c["status"] == "active" and c["source"] == SELECTOR_SOURCE]
+    if reviews is not None:
+        from fashion_v2.candidate_reviews import find_review
+        for c in selector:
+            record = find_review(reviews, c["candidate_id"], c.get("illustration_id"))
+            if record is None:
+                problems.append(f"{c['candidate_id']}: current owner review required")
+            elif not _review_policy_intersects(record, c["illustration_id"]):
+                problems.append(f"{c['candidate_id']}: review and temperature policy do not overlap")
+    if template_ids is not None:
+        for c in selector:
+            if c["candidate_id"] not in template_ids:
+                problems.append(f"{c['candidate_id']}: selector template required")
+    if selector_drawings is not None:
+        for c in selector:
+            rendered = selector_drawings.get(c["candidate_id"])
+            if rendered != c.get("illustration_id"):
+                problems.append(
+                    f"{c['candidate_id']}: selector rendered {rendered!r}, expected {c.get('illustration_id')!r}")
     return problems

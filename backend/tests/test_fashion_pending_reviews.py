@@ -1,9 +1,9 @@
-"""#188 (2026-10-19): review records for stored-only (pending) drawings.
+"""#188 (2026-10-19): review records for the two selector-only fleece drawings.
 
-scope_version now works for all-064/all-065 through the same normalised drawing
-definition that registered drawings use, so registering them later keeps the hash.
+all-064/all-065 moved from stored-only provenance into the normalised registry in
+PR-4A without changing their drawing or scope hashes.
 Candidate hashes no longer include `status`, and the role is `role or role_draft`, so
-activating a reviewed pending candidate keeps its record. The two real records were
+activating a reviewed candidate keeps its record. The two real records were
 re-approved on #188 (2026-10-19) after 4A-0 added explicit base colours; the obsolete
 pre-colour records remain available through Git history rather than the runtime input file.
 """
@@ -41,19 +41,17 @@ def swap_candidate(monkeypatch, candidate_id, mutate):
     monkeypatch.setattr(candidate_registry, "CANDIDATES", tuple(changed))
 
 
-def provenance_copy(tmp_path, monkeypatch, mutate):
-    data = json.loads(ia.PROVENANCE_FILE.read_text(encoding="utf-8"))
+def registry_copy(monkeypatch, mutate):
+    data = deepcopy(ia.load_registry())
     for entry in data:
         mutate(entry)
-    path = tmp_path / "expansion-provenance.json"
-    path.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
-    monkeypatch.setattr(ia, "PROVENANCE_FILE", path)
+    monkeypatch.setattr(ia, "load_registry", lambda path=ia.REGISTRY_FILE: data)
 
 
-# ---------------- pending drawings can be hashed ----------------
+# ---------------- registered selector drawings can be hashed ----------------
 
 @pytest.mark.parametrize("candidate_id,drawing_id", PAIRS)
-def test_pending_pairs_get_drawing_and_scope_versions(candidate_id, drawing_id):
+def test_selector_pairs_get_drawing_and_scope_versions(candidate_id, drawing_id):
     assert len(cr.drawing_version(drawing_id)) == 16
     assert len(cr.scope_version(candidate_id, drawing_id)) == 16
     rec = record(candidate_id, drawing_id)
@@ -62,17 +60,17 @@ def test_pending_pairs_get_drawing_and_scope_versions(candidate_id, drawing_id):
 
 
 @pytest.mark.parametrize("drawing_id", ["all-064", "all-065"])
-def test_pending_definition_comes_from_provenance_and_stays_unselectable(drawing_id):
+def test_selector_definition_comes_from_the_registry_and_is_selectable(drawing_id):
     definition = cr._drawing_definition(drawing_id)
-    entry = next(e for e in json.loads(ia.PROVENANCE_FILE.read_text(encoding="utf-8")) if e["id"] == drawing_id)
+    entry = next(e for e in ia.load_registry() if e["id"] == drawing_id)
     assert definition["shape"] == entry["shape"]
-    assert definition["slots"] == [s["field"] for s in entry["slots"]]
+    assert definition["slots"] == entry["slots"]
     assert definition["linkedSuit"] is False
     assert definition["outer_type"] == "fleece"
     # Decided on #188 (2026-10-19) before any real record, so the hash no longer moves for it.
     assert definition["outer_length"] == "short"
     assert definition["temperature_rule"]["min_inclusive"] == 5 and "max_exclusive" not in definition["temperature_rule"]
-    assert drawing_id not in SHAPES  # the selection list never sees pending drawings
+    assert SHAPES[drawing_id] == entry["shape"]
 
 
 EVIDENCE = "https://github.com/ryanchoi13/saju-app/issues/188#issuecomment-6264128137"
@@ -97,18 +95,19 @@ def test_real_review_file_holds_exactly_the_two_current_approved_records():
         assert [t for t in (6.9, 7, 10.9, 11) if cr.in_reviewed_range(r, t)] == [7, 10.9]
 
 
-def test_records_do_not_activate_the_candidates():
+def test_records_are_current_for_active_selector_candidates_only():
     from fashion_v2 import outfit_selector as sel
     for candidate_id, _, _ in APPROVED.values():
         record = next(c for c in candidate_registry.CANDIDATES if c["candidate_id"] == candidate_id)
-        assert record["status"] == "review_pending" and candidate_id not in sel._ROLE_OF
+        assert record["status"] == "active" and record["source"] == candidate_registry.SELECTOR_SOURCE
+        assert candidate_id in sel._ROLE_OF
 
 
 # ---------------- ownership ----------------
 
 @pytest.mark.parametrize("candidate_id,drawing_id", [
-    (MALE, "all-064"), (FEMALE, "all-065"), ("male-winter-casual-daily", "all-065")])
-def test_pending_drawing_only_with_its_owner(candidate_id, drawing_id):
+    (MALE, "all-064"), (FEMALE, "all-065"), ("male-winter-casual-daily", "all-064")])
+def test_direct_drawing_only_with_its_owner(candidate_id, drawing_id):
     with pytest.raises(ValueError, match="belongs to"):
         cr.scope_version(candidate_id, drawing_id)
     assert cr.find_review([], candidate_id, drawing_id) is None
@@ -122,19 +121,16 @@ def test_owner_must_also_point_at_the_drawing(monkeypatch):
     assert cr.find_review([rec], MALE, "all-065") is None
 
 
-def test_unknown_or_unmarked_drawings_are_rejected(tmp_path, monkeypatch):
+def test_unknown_drawings_are_rejected():
     with pytest.raises(ValueError, match="unknown drawing"):
         cr.scope_version(MALE, "all-999")
-    provenance_copy(tmp_path, monkeypatch, lambda e: e.pop("status", None) if e["id"] == "all-065" else None)
-    with pytest.raises(ValueError, match="status 'pending'"):
-        cr.scope_version(MALE, "all-065")
 
 
 # ---------------- staleness ----------------
 
 @pytest.mark.parametrize("mutate", [
     lambda c: c["components"][0].update(source_label="플리스 후드 집업"),
-    lambda c: c.update(role_draft="trendy"),
+    lambda c: c.update(role="trendy"),
     lambda c: c.update(gender="female"),
 ], ids=["component", "role", "gender"])
 def test_candidate_definition_change_makes_record_stale(monkeypatch, mutate):
@@ -147,11 +143,11 @@ def test_candidate_definition_change_makes_record_stale(monkeypatch, mutate):
     lambda e: e["shape"].update(outerOpen=False),
     lambda e: e["shape"].update(top="맨투맨"),
     lambda e: e["slots"].reverse(),
-    lambda e: e["slots"][0].update(field="overOuter.color"),
+    lambda e: e["slots"].__setitem__(0, "overOuter.color"),
 ], ids=["outerOpen", "top", "slot-order", "slot-field"])
-def test_provenance_definition_change_makes_record_stale(tmp_path, monkeypatch, mutate):
+def test_registry_definition_change_makes_record_stale(monkeypatch, mutate):
     rec = record(MALE, "all-065")
-    provenance_copy(tmp_path, monkeypatch, lambda e: mutate(e) if e["id"] == "all-065" else None)
+    registry_copy(monkeypatch, lambda e: mutate(e) if e["id"] == "all-065" else None)
     assert cr.find_review([rec], MALE, "all-065") is None
 
 
@@ -166,19 +162,14 @@ def test_drawing_or_mask_bytes_change_makes_record_stale(tmp_path, monkeypatch, 
     assert cr.find_review([rec], FEMALE, "all-064") is None
 
 
-def test_free_text_and_order_edits_keep_the_record(tmp_path, monkeypatch):
+def test_free_text_and_component_order_edits_keep_the_record(monkeypatch):
     rec = record(MALE, "all-065")
-
-    def edit_text(e):
-        if e["id"] == "all-065":
-            e.update(edit_instruction="reworded", pending_reason="reworded", source_url="https://example.invalid/x")
-    provenance_copy(tmp_path, monkeypatch, edit_text)
     swap_candidate(monkeypatch, MALE, lambda c: (c.update(known_issues=["note"], plan_id="renamed"),
                                                  c["components"].reverse()))
     assert cr.find_review([rec], MALE, "all-065") is rec
 
 
-# ---------------- lifecycle and registration keep the hash ----------------
+# ---------------- lifecycle keeps the registered hash ----------------
 
 @pytest.mark.parametrize("candidate_id,drawing_id", PAIRS)
 def test_activation_keeps_the_record_but_role_change_does_not(monkeypatch, candidate_id, drawing_id):
@@ -190,21 +181,14 @@ def test_activation_keeps_the_record_but_role_change_does_not(monkeypatch, candi
 
 
 @pytest.mark.parametrize("candidate_id,drawing_id", PAIRS)
-def test_registering_with_the_same_definition_keeps_the_hash(monkeypatch, candidate_id, drawing_id):
-    before = cr.scope_version(candidate_id, drawing_id)
-    pending = ia.drawing_definition(drawing_id)
-    registered = ia.load_registry() + [{"id": drawing_id, "shape": pending["shape"], "slots": pending["slots"],
-                                        "linkedSuit": False}]
-    monkeypatch.setattr(ia, "load_registry", lambda path=ia.REGISTRY_FILE: registered)
-    monkeypatch.delitem(ia.PENDING_FILES, drawing_id)
-    assert ia.drawing_definition(drawing_id) == pending
-    assert cr.scope_version(candidate_id, drawing_id) == before
+def test_registered_selector_hashes_are_the_pinned_approved_values(candidate_id, drawing_id):
+    _, drawing_hash, scope_hash = APPROVED[drawing_id]
+    assert cr.drawing_version(drawing_id) == drawing_hash
+    assert cr.scope_version(candidate_id, drawing_id) == scope_hash
 
 
 def test_registered_and_pending_at_once_is_an_error(monkeypatch):
-    pending = ia.drawing_definition("all-065")
-    registered = ia.load_registry() + [{"id": "all-065", **{k: pending[k] for k in ("shape", "slots", "linkedSuit")}}]
-    monkeypatch.setattr(ia, "load_registry", lambda path=ia.REGISTRY_FILE: registered)
+    monkeypatch.setitem(ia.PENDING_FILES, "all-065", MALE)
     with pytest.raises(ValueError, match="both registered and pending"):
         ia.drawing_definition("all-065")
 

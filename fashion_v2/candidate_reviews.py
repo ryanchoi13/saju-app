@@ -3,8 +3,9 @@
 Flow agreed on #188 (2026-10-17, owner approved): ChatGPT drafts the style/composition
 review, Claude checks drawing/attribute/rule consistency, the owner gives the final
 yes on an image comparison sheet. Only then is a record added to
-`candidate_reviews.json`. First records (2026-10-19): the two #188 fleece pilot candidates,
-which stay review_pending: a record never activates a candidate.
+`candidate_reviews.json`. First records (2026-10-19): the two #188 fleece pilot candidates.
+PR-4A later activates those candidates only in the non-production selector; a record by
+itself still never changes lifecycle state.
 
 What a record is bound to (any change makes the record stale; it is never inherited):
 - drawing_version: hash of the shipped webp + mask files.
@@ -15,10 +16,9 @@ What a record is bound to (any change makes the record stale; it is never inheri
   Lifecycle values are excluded too (2026-10-19, #188): `status` is not hashed and the
   role is `role` or, while pending, `role_draft`. Activating a reviewed pending candidate
   therefore keeps its record; changing its role (basic <-> trendy) does not.
-- Drawings: registered ones (catalog-data.js) and stored-only ones
-  (illustration_assets.PENDING_FILES, read from their pending provenance entry) share one
-  normalised definition, so registering a pending drawing with the same shape/slots
-  keeps the hash. A pending drawing can only be reviewed with the candidate that owns it.
+- Drawings: registered ones (catalog-data.js) and any future stored-only ones
+  (illustration_assets.PENDING_FILES) share one normalised definition. A drawing directly
+  owned by a candidate can only be reviewed with that candidate, before or after registration.
 
 Temperature range in a record:
 - Both `min` and `max_exclusive` must be present. Each is a finite number, or the
@@ -91,10 +91,19 @@ def _drawing_definition(drawing_id: str) -> dict:
 
 
 def check_owner(candidate_id: str, drawing_id: str) -> None:
-    """A stored-only drawing may only be reviewed together with the candidate that owns it."""
+    """A direct drawing may only be reviewed together with the candidate that owns it."""
+    from fashion_v2.candidate_registry import CANDIDATES
+    drawing_definition(drawing_id)  # Preserve the more useful "unknown drawing" error.
+    candidate = _candidate(candidate_id)
+    direct = candidate.get("illustration_id")
+    if direct and direct != drawing_id:
+        raise ValueError(f"drawing {drawing_id!r} belongs to another candidate, not {candidate_id!r} (expected {direct!r})")
+    owners = [c["candidate_id"] for c in CANDIDATES if c.get("illustration_id") == drawing_id]
+    if owners and candidate_id not in owners:
+        raise ValueError(f"drawing {drawing_id!r} belongs to {owners[0]!r}, not {candidate_id!r}")
     if drawing_id in PENDING_FILES:
         owner = PENDING_FILES[drawing_id]
-        if candidate_id != owner or _candidate(candidate_id).get("illustration_id") != drawing_id:
+        if candidate_id != owner or direct != drawing_id:
             raise ValueError(f"pending drawing {drawing_id!r} belongs to {owner!r}, not {candidate_id!r}")
 
 
