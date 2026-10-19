@@ -77,5 +77,40 @@ assert.equal($('birthMinuteSelect').options.length, 61);
   // 생시 미상으로 저장된 사용자
   w.setBirthTimeForm({ profile_complete: true, sijin_index: -1 });
   assert.equal($('birthHourSelect').value, 'unknown');
+  // ── 궁합 상대방 입력 ──
+  assert.ok(!html.includes('id="partnerSijinSelect"'), '상대방 시진 선택 상자는 없어야 함');
+  const gStart = html.indexOf('        function confirmUnlockGunghapOnServer()');
+  const gEnd = html.indexOf('        let themeRefreshMode');
+  const pdom = new JSDOM(`<input id="partnerNameInput" value="상대">
+    <select id="partnerRelationSelect"><option value="친구 / 지인" selected>친구</option></select>
+    <select id="partnerGenderSelect"><option value="female" selected>여</option></select>
+    <select id="partnerBirthYearSelect"><option value="1992" selected>1992</option></select>
+    <select id="partnerBirthMonthSelect"><option value="6" selected>6</option></select>
+    <select id="partnerBirthDaySelect"><option value="18" selected>18</option></select>
+    <select id="partnerCalendarTypeSelect"><option value="solar" selected>양력</option></select>
+    <select id="partnerBirthHourSelect"></select><select id="partnerBirthMinuteSelect"></select>
+    <select id="birthHourSelect"></select><select id="birthMinuteSelect"></select>`, { runScripts: 'outside-only' });
+  const pw = pdom.window, unlocks = [], palerts = [];
+  Object.assign(pw, { gunghapRefreshMode: false, alert: m => palerts.push(m),
+    closeGunghapModal() {}, refreshOwnedReading() {},
+    handleUnlockReportOnServer: (...args) => unlocks.push(args[5]) });
+  pw.eval(helpers.replace('const SIJIN_NAMES', 'var SIJIN_NAMES') + html.slice(gStart, gEnd));
+  pw.initBirthTimeDropdowns();
+  const p$ = id => pw.document.getElementById(id);
+  assert.equal(p$('partnerBirthHourSelect').options.length, 26);
+  // 시만 고르고 분 없음 → 막음
+  p$('partnerBirthHourSelect').value = '23'; p$('partnerBirthHourSelect').onchange();
+  pw.confirmUnlockGunghapOnServer();
+  assert.equal(unlocks.length, 0); assert.match(palerts.at(-1), /상대방의 태어난 시와 분/);
+  // 23시 45분 → 전송
+  p$('partnerBirthMinuteSelect').value = '45';
+  pw.confirmUnlockGunghapOnServer();
+  assert.equal(unlocks.at(-1).partner_birth_hour, 23); assert.equal(unlocks.at(-1).partner_birth_minute, 45);
+  // 모름 → 분 비활성, 시각 없이 전송
+  p$('partnerBirthHourSelect').value = 'unknown'; p$('partnerBirthHourSelect').onchange();
+  assert.equal(p$('partnerBirthMinuteSelect').disabled, true);
+  pw.confirmUnlockGunghapOnServer();
+  assert.equal(unlocks.at(-1).partner_birth_hour, null); assert.equal(unlocks.at(-1).partner_sijin_index, -1);
+
   console.log('birth time picker: ok');
 })().catch(err => { console.error(err); process.exit(1); });

@@ -143,6 +143,9 @@ class UnlockReportRequest(BaseModel):
     partner_birth_day: Optional[int] = None
     partner_calendar_type: Optional[str] = "solar"
     partner_sijin_index: Optional[int] = -1
+    # 상대방의 정확한 출생 시각(한국 벽시계). 있으면 partner_sijin_index 보다 우선한다.
+    partner_birth_hour: Optional[int] = None
+    partner_birth_minute: Optional[int] = None
 
 class ChargeCoinRequest(BaseModel):
     user_id: str
@@ -215,6 +218,19 @@ def _birth_time_text(sijin, birth_hour=None, birth_minute=None) -> str:
         return f"{birth_hour}시 {birth_minute:02d}분생"
     sijin = int(sijin if sijin is not None else -1)
     return SIJIN_LABELS[sijin] + "생" if 0 <= sijin <= 11 else "생시 미상"
+
+
+def _partner_clock_fields(req) -> Dict[str, Any] | None:
+    """상대방 출생 시각을 검증해 partner dict 용 필드로 돌려준다. 잘못되면 None."""
+
+    hour, minute = req.partner_birth_hour, req.partner_birth_minute
+    if hour is not None or minute is not None:
+        if not _valid_clock(hour, minute):
+            return None
+        return {"sijin_index": _sijin_from_clock(hour, minute), "birth_hour": hour, "birth_minute": minute}
+    if req.partner_sijin_index is None or not -1 <= req.partner_sijin_index <= 11:
+        return None
+    return {"sijin_index": req.partner_sijin_index, "birth_hour": None, "birth_minute": None}
 
 
 def _birth_input_from_user(user: Dict[str, Any], name: str) -> BirthInput:
@@ -1166,7 +1182,8 @@ def unlock_report(req: UnlockReportRequest):
             raise HTTPException(status_code=400, detail="상대방 성별 값이 올바르지 않습니다.")
         if req.partner_calendar_type not in {"solar", "lunar", "leap"}:
             raise HTTPException(status_code=400, detail="상대방 달력 구분이 올바르지 않습니다.")
-        if req.partner_sijin_index is None or not -1 <= req.partner_sijin_index <= 11:
+        partner_clock = _partner_clock_fields(req)
+        if partner_clock is None:
             raise HTTPException(status_code=400, detail="상대방 출생시간 값이 올바르지 않습니다.")
         try:
             date(req.partner_birth_year, req.partner_birth_month, req.partner_birth_day)
@@ -1188,7 +1205,7 @@ def unlock_report(req: UnlockReportRequest):
             "birth_month": req.partner_birth_month,
             "birth_day": req.partner_birth_day,
             "calendar_type": req.partner_calendar_type,
-            "sijin_index": req.partner_sijin_index,
+            **partner_clock,
         } if req.report_key == "gunghap" else None,
     )
     new_report = {
@@ -1295,7 +1312,7 @@ def refresh_owned_report(req: RefreshReportRequest):
     if req.report_key == 'gunghap':
         if (not req.partner_name or req.partner_gender not in {'male','female'}
                 or req.partner_calendar_type not in {'solar','lunar','leap'}
-                or req.partner_sijin_index is None or not -1 <= req.partner_sijin_index <= 11
+                or _partner_clock_fields(req) is None
                 or req.relation not in {'연인 / 결혼','동업 / 비즈니스','친구 / 지인'}):
             raise HTTPException(status_code=422, detail='상대방 정보와 관계를 다시 확인해 주세요.')
         try:
@@ -1305,7 +1322,7 @@ def refresh_owned_report(req: RefreshReportRequest):
         partner = dict(name=req.partner_name, gender=req.partner_gender,
                        birth_year=req.partner_birth_year, birth_month=req.partner_birth_month,
                        birth_day=req.partner_birth_day, calendar_type=req.partner_calendar_type,
-                       sijin_index=req.partner_sijin_index)
+                       **_partner_clock_fields(req))
     try:
         generated = generate_detailed_report(req.report_key, option, req.partner_name, req.relation,
                                              user.get('name','회원'), user=user, partner=partner,
