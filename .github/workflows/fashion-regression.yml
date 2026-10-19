@@ -4,6 +4,7 @@ on:
     paths:
       - 'fashion_v2/**'
       - 'assets/dalha-garments/**'
+      - 'assets/dalha-illustrations/**'
       - 'backend/tests/test_fashion*'
       - 'scripts/*fashion*'
       - 'scripts/*svg*'
@@ -28,6 +29,8 @@ jobs:
         run: pip install -r requirements.txt pytest httpx
       - name: Fashion regression and API integration
         run: PYTHONPATH=. python -m pytest -q backend/tests/test_fashion*.py
+      - name: Exhaustive production illustration coverage
+        run: python scripts/fashion_illustration_coverage.py --check
       - name: Render garment matrix and preserve archived art
         run: |
           python scripts/build_fashion_regression.py
