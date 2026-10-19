@@ -57,7 +57,10 @@ def test_pending_candidates_are_inactive_with_all_four_blockers():
         assert record["status"] == "review_pending" and record["source"] == "pending_drawing"
         assert record["role"] is None and record["role_draft"] == "basic"
         assert record["activation_blockers"] == BLOCKERS
-        assert all(c["source_color"] is None for c in record["components"])  # colours are decided per day
+        expected = ({"outer": "ivory", "top": "white", "bottom": "navy", "shoes": "white"}
+                    if record["gender"] == "female" else
+                    {"outer": "ivory", "top": "white", "bottom": "charcoal", "shoes": "white"})
+        assert {c["slot"]: c["source_color"] for c in record["components"]} == expected
     assert not PENDING_IDS & {c["candidate_id"] for c in reg.active_candidates()}
 
 

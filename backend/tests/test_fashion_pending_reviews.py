@@ -3,8 +3,9 @@
 scope_version now works for all-064/all-065 through the same normalised drawing
 definition that registered drawings use, so registering them later keeps the hash.
 Candidate hashes no longer include `status`, and the role is `role or role_draft`, so
-activating a reviewed pending candidate keeps its record. The real records for the two
-pending candidates (owner final, 2026-10-19) are checked at the end of this file.
+activating a reviewed pending candidate keeps its record. The two real records were
+re-approved on #188 (2026-10-19) after 4A-0 added explicit base colours; the obsolete
+pre-colour records remain available through Git history rather than the runtime input file.
 """
 import json
 import shutil
@@ -74,14 +75,14 @@ def test_pending_definition_comes_from_provenance_and_stays_unselectable(drawing
     assert drawing_id not in SHAPES  # the selection list never sees pending drawings
 
 
-EVIDENCE = "https://github.com/ryanchoi13/saju-app/issues/188#issuecomment-6261822732"
-APPROVED = {  # values the owner approved on #188 (2026-10-19)
-    "all-064": (FEMALE, "f54766ef35fa967b", "dfc81ccffaf3add5"),
-    "all-065": (MALE, "b946e4a377875872", "f1b932398b2460a7"),
+EVIDENCE = "https://github.com/ryanchoi13/saju-app/issues/188#issuecomment-6264128137"
+APPROVED = {  # base-colour values the owner re-approved on #188 (2026-10-19)
+    "all-064": (FEMALE, "f54766ef35fa967b", "803aec9d2824144e"),
+    "all-065": (MALE, "b946e4a377875872", "74a2889f271ca2b7"),
 }
 
 
-def test_real_review_file_holds_exactly_the_two_approved_records():
+def test_real_review_file_holds_exactly_the_two_current_approved_records():
     reviews = cr.load_reviews()
     assert sorted(r["drawing_id"] for r in reviews) == ["all-064", "all-065"]
     for r in reviews:
@@ -91,7 +92,8 @@ def test_real_review_file_holds_exactly_the_two_approved_records():
         assert r["temp_range"] == {"min": 7, "max_exclusive": 11}
         assert r["rain"] == r["snow"] == "unsuitable"
         assert r["steps"] == list(cr.REQUIRED_STEPS) and r["evidence"] == EVIDENCE
-        assert cr.find_review(reviews, candidate_id, r["drawing_id"]) is r  # still current, not stale
+        assert cr.scope_version(candidate_id, r["drawing_id"]) == scope_version
+        assert cr.find_review(reviews, candidate_id, r["drawing_id"]) is r
         assert [t for t in (6.9, 7, 10.9, 11) if cr.in_reviewed_range(r, t)] == [7, 10.9]
 
 
