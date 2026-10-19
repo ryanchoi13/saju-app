@@ -8,9 +8,16 @@ yes on an image comparison sheet. Only then is a record added to
 What a record is bound to (any change makes the record stale; it is never inherited):
 - drawing_version: hash of the shipped webp + mask files.
 - scope_version:   hash of the reviewed *definition*: the candidate's material fields
-  (gender, TPO, scope, role, form, components) and the drawing's registered geometry,
+  (gender, TPO, scope, role, form, components) and the drawing's normalised geometry,
   colour slots and outer attributes. Free-text fields (notes, known_issues, role_basis)
   and component order are excluded, so editing a description does not invalidate.
+  Lifecycle values are excluded too (2026-10-19, #188): `status` is not hashed and the
+  role is `role` or, while pending, `role_draft`. Activating a reviewed pending candidate
+  therefore keeps its record; changing its role (basic <-> trendy) does not.
+- Drawings: registered ones (catalog-data.js) and stored-only ones
+  (illustration_assets.PENDING_FILES, read from their pending provenance entry) share one
+  normalised definition, so registering a pending drawing with the same shape/slots
+  keeps the hash. A pending drawing can only be reviewed with the candidate that owns it.
 
 Temperature range in a record:
 - Both `min` and `max_exclusive` must be present. Each is a finite number, or the
@@ -35,7 +42,7 @@ import json
 import math
 from pathlib import Path
 
-from fashion_v2.illustration_assets import ASSET_DIR, load_registry
+from fashion_v2.illustration_assets import ASSET_DIR, PENDING_FILES, drawing_definition
 
 REVIEWS_FILE = Path(__file__).with_name("candidate_reviews.json")
 REQUIRED_STEPS = ("chatgpt_style_draft", "claude_consistency_check", "owner_final")
@@ -57,30 +64,41 @@ def drawing_version(drawing_id: str) -> str:
     return digest.hexdigest()[:16]
 
 
-def _candidate_definition(candidate_id: str) -> dict:
+def _candidate(candidate_id: str) -> dict:
     from fashion_v2.candidate_registry import CANDIDATES
     cand = next((c for c in CANDIDATES if c["candidate_id"] == candidate_id), None)
     if cand is None:
         raise ValueError(f"unknown candidate {candidate_id!r}")
+    return cand
+
+
+def _candidate_definition(candidate_id: str) -> dict:
+    cand = _candidate(candidate_id)
     components = sorted(({k: comp.get(k) for k in MATERIAL_COMPONENT_KEYS} for comp in cand["components"]),
                         key=lambda c: json.dumps(c, ensure_ascii=False, sort_keys=True))
-    return {k: cand.get(k) for k in ("candidate_id", "status", "gender", "tpo", "scope", "role", "form")} | {
-        "components": components}
+    # No `status`: lifecycle, not content. Role = the reviewed role (role_draft while pending).
+    return {k: cand.get(k) for k in ("candidate_id", "gender", "tpo", "scope", "form")} | {
+        "role": cand.get("role") or cand.get("role_draft"), "components": components}
 
 
 def _drawing_definition(drawing_id: str) -> dict:
-    from fashion_v2.illustration_resolver import drawing_attributes
-    base = "06" if drawing_id == "10" else drawing_id
-    entry = next((e for e in load_registry() if e["id"] == base), None)
-    if entry is None:
-        raise ValueError(f"unknown drawing {drawing_id!r}")
-    attrs = drawing_attributes(drawing_id)
-    return {"id": drawing_id, "shape": entry["shape"], "slots": entry["slots"],
-            "linkedSuit": entry.get("linkedSuit"), "outer_type": attrs["outer_type"]["value"],
-            "outer_length": attrs["outer_length"]["value"], "temperature_rule": attrs["temperature_rule"]}
+    from fashion_v2.illustration_resolver import attributes_for_shape
+    definition = drawing_definition(drawing_id)
+    attrs = attributes_for_shape(drawing_id, definition["shape"])
+    return definition | {"outer_type": attrs["outer_type"]["value"],
+                         "outer_length": attrs["outer_length"]["value"], "temperature_rule": attrs["temperature_rule"]}
+
+
+def check_owner(candidate_id: str, drawing_id: str) -> None:
+    """A stored-only drawing may only be reviewed together with the candidate that owns it."""
+    if drawing_id in PENDING_FILES:
+        owner = PENDING_FILES[drawing_id]
+        if candidate_id != owner or _candidate(candidate_id).get("illustration_id") != drawing_id:
+            raise ValueError(f"pending drawing {drawing_id!r} belongs to {owner!r}, not {candidate_id!r}")
 
 
 def scope_version(candidate_id: str, drawing_id: str) -> str:
+    check_owner(candidate_id, drawing_id)
     return _hash({"candidate": _candidate_definition(candidate_id), "drawing": _drawing_definition(drawing_id)})
 
 
@@ -131,8 +149,11 @@ def validate_record(record) -> list[str]:
 
 def find_review(reviews, candidate_id: str, drawing_id: str):
     """The valid record for this candidate + drawing + current file and definition, or None."""
-    file_version = drawing_version(drawing_id)
-    definition = scope_version(candidate_id, drawing_id)
+    try:
+        file_version = drawing_version(drawing_id)
+        definition = scope_version(candidate_id, drawing_id)
+    except (ValueError, FileNotFoundError):
+        return None  # unknown pair, or a pending drawing paired with a candidate that does not own it
     for record in reviews:
         if not isinstance(record, dict):
             continue

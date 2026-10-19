@@ -19,6 +19,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 ASSET_DIR = ROOT / "assets" / "dalha-illustrations"
 REGISTRY_FILE = ASSET_DIR / "catalog-data.js"
+PROVENANCE_FILE = ASSET_DIR / "expansion-provenance.json"
 MATCHER_FILE = ASSET_DIR / "catalog.js"
 ADAPTER_FILE = ASSET_DIR / "adapter.js"
 
@@ -47,6 +48,34 @@ def load_registry(path: Path = REGISTRY_FILE) -> list[dict]:
     if body.endswith(";"):
         body = body[:-1]
     return json.loads(body)
+
+
+def drawing_definition(drawing_id: str, registry=None, provenance=None) -> dict:
+    """Normalised drawing definition used by review hashes (#188).
+
+    Registered drawings come from catalog-data.js; stored-only drawings (PENDING_FILES)
+    from their `status: pending` provenance entry. Both paths return exactly
+    {"id", "shape", "slots": [field names], "linkedSuit"}, so registering a pending
+    drawing later with the same shape/slots (and linkedSuit false) keeps the hash.
+    Free-text provenance fields (prompts, job ids, notes, status) are never included.
+    """
+    registry = load_registry() if registry is None else registry
+    base = CONDITIONAL_VARIANTS[drawing_id]["base"] if drawing_id in CONDITIONAL_VARIANTS else drawing_id
+    entry = next((e for e in registry if e["id"] == base), None)
+    if entry is not None:
+        if drawing_id in PENDING_FILES:
+            raise ValueError(f"drawing {drawing_id!r} is both registered and pending")
+        return {"id": drawing_id, "shape": json.loads(json.dumps(entry["shape"])),
+                "slots": list(entry["slots"]), "linkedSuit": entry.get("linkedSuit")}
+    if drawing_id not in PENDING_FILES:
+        raise ValueError(f"unknown drawing {drawing_id!r}")
+    provenance = (json.loads(PROVENANCE_FILE.read_text(encoding="utf-8"))
+                  if provenance is None else provenance)
+    found = [e for e in provenance if e["id"] == drawing_id]
+    if len(found) != 1 or found[0].get("status") != "pending":
+        raise ValueError(f"pending drawing {drawing_id!r} needs exactly one provenance entry with status 'pending'")
+    return {"id": drawing_id, "shape": json.loads(json.dumps(found[0]["shape"])),
+            "slots": [slot["field"] for slot in found[0]["slots"]], "linkedSuit": False}
 
 
 def png_size(path: Path) -> tuple[int, int]:
