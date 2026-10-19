@@ -68,9 +68,8 @@ def test_pending_definition_comes_from_provenance_and_stays_unselectable(drawing
     assert definition["slots"] == [s["field"] for s in entry["slots"]]
     assert definition["linkedSuit"] is False
     assert definition["outer_type"] == "fleece"
-    # Not observed yet: must be decided before a real record is written (otherwise adding
-    # the length later invalidates that record).
-    assert definition["outer_length"] == "unknown"
+    # Decided on #188 (2026-10-19) before any real record, so the hash no longer moves for it.
+    assert definition["outer_length"] == "short"
     assert definition["temperature_rule"]["min_inclusive"] == 5 and "max_exclusive" not in definition["temperature_rule"]
     assert drawing_id not in SHAPES  # the selection list never sees pending drawings
 

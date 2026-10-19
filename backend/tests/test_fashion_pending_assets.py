@@ -57,7 +57,7 @@ def test_pending_candidates_are_inactive_with_all_four_blockers():
         assert record["status"] == "review_pending" and record["source"] == "pending_drawing"
         assert record["role"] is None and record["role_draft"] == "basic"
         assert record["activation_blockers"] == BLOCKERS
-        assert all(c["source_color"] is None and c["material"] is None for c in record["components"])
+        assert all(c["source_color"] is None for c in record["components"])  # colours are decided per day
     assert not PENDING_IDS & {c["candidate_id"] for c in reg.active_candidates()}
 
 
@@ -156,3 +156,32 @@ def test_observed_and_live_matches_never_use_pending_drawings():
     assert not used & set(PENDING_FILES)
     assert not set(observed) & PENDING_IDS
     assert CONDITIONAL_VARIANTS.keys().isdisjoint(PENDING_FILES)
+
+
+# ---------------- 2026-10-19: length and materials decided on #188 ----------------
+
+MATERIALS = {
+    "pending-female-winter-casual-fleece": [("outer", "fleece"), ("top", "cotton"), ("bottom", "denim"), ("shoes", "suede_mesh")],
+    "pending-male-winter-casual-fleece": [("outer", "fleece"), ("top", "cotton"), ("bottom", "cotton"), ("shoes", "suede_mesh")],
+}
+
+
+def test_pending_materials_are_decided_from_the_live_vocabulary():
+    from fashion_v2.template_catalog import TEMPLATES
+    from fashion_v2.weather_catalog import WARM_TRANSITION_LOOKS
+    live = {i["material"] for t in list(TEMPLATES) + list(WARM_TRANSITION_LOOKS) for i in t["items"]}
+    for record in _pending_records():
+        got = [(c["slot"], c["material"]) for c in record["components"]]
+        assert got == MATERIALS[record["candidate_id"]]
+        assert {m for _, m in got} <= live  # no new vocabulary
+
+
+def test_pending_drawings_are_short_and_say_when_that_was_observed():
+    from fashion_v2.candidate_attributes import OBSERVED_OUTER_LENGTH, observed_length_source
+    from fashion_v2.candidate_reviews import _drawing_definition
+    for file_id in PENDING_FILES:
+        assert OBSERVED_OUTER_LENGTH[file_id] == "short"
+        assert observed_length_source(file_id) == "asset_observed_2026-10-19"
+        assert _drawing_definition(file_id)["outer_length"] == "short"
+    assert observed_length_source("all-018") == "asset_observed_2026-10-17"  # older entries unchanged
+

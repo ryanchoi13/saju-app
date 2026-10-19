@@ -13,7 +13,8 @@ from __future__ import annotations
 import json
 import re
 
-from fashion_v2.candidate_attributes import OBSERVED_OUTER_LENGTH, drawing_outer_type, policy_rule
+from fashion_v2.candidate_attributes import (OBSERVED_OUTER_LENGTH, drawing_outer_type, observed_length_source,
+                                             policy_rule)
 from fashion_v2.illustration_assets import load_registry
 
 RENDERER = "approved-svg-5"
@@ -110,7 +111,7 @@ def attributes_for_shape(drawing_id: str, shape: dict) -> dict:
     length = OBSERVED_OUTER_LENGTH.get(drawing_id)
     length_value = length or "unknown"
     return {"outer_slot": "outer", "outer_type": {"value": kind, "source": "drawing_shape"},
-            "outer_length": {"value": length_value, "source": "asset_observed_2026-10-17" if length else "unknown"},
+            "outer_length": {"value": length_value, "source": observed_length_source(drawing_id) if length else "unknown"},
             "temperature_rule": policy_rule(kind, length_value)}
 
 

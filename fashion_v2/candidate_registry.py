@@ -118,7 +118,9 @@ def _pending(spec: dict) -> dict:
 
 # Newly drawn for the #188 fleece pilot (2026-10-18) and stored as PENDING drawings
 # (illustration_assets.PENDING_FILES): not in catalog-data.js, so never selectable.
-# Components are the planned outfit; colours and materials are not decided yet.
+# Components are the planned outfit. Materials decided on #188 (2026-10-19) from the
+# vocabulary the live templates already use (the shoe is the same running-shoe drawing
+# the live templates call suede_mesh). Colours are decided per day, so source_color is None.
 # All four blockers must be cleared, in this order, before a record may become active.
 PENDING_ASSET_BLOCKERS = ("owner_review_record", "temperature_upper_bound_undecided",
                           "catalog_registration", "live_template")
@@ -127,21 +129,23 @@ PENDING_DRAWN = (
         "candidate_id": "pending-female-winter-casual-fleece", "plan_id": "art-017",
         "illustration_id": "all-064", "gender": "female", "tpo": "casual", "scope": "winter",
         "role_draft": "basic", "role_basis": "owner_decision_2026-10-18", "form": "pants",
-        "items": (("outer", "플리스 집업"), ("top", "긴팔 티셔츠"), ("bottom", "청바지"), ("shoes", "운동화")),
+        "items": (("outer", "플리스 집업", "fleece"), ("top", "긴팔 티셔츠", "cotton"),
+                  ("bottom", "청바지", "denim"), ("shoes", "운동화", "suede_mesh")),
     },
     {
         "candidate_id": "pending-male-winter-casual-fleece", "plan_id": "art-001",
         "illustration_id": "all-065", "gender": "male", "tpo": "casual", "scope": "winter",
         "role_draft": "basic", "role_basis": "owner_decision_2026-10-18", "form": "pants",
-        "items": (("outer", "플리스 집업"), ("top", "긴팔 캐주얼 셔츠"), ("bottom", "면바지"), ("shoes", "운동화")),
+        "items": (("outer", "플리스 집업", "fleece"), ("top", "긴팔 캐주얼 셔츠", "cotton"),
+                  ("bottom", "면바지", "cotton"), ("shoes", "운동화", "suede_mesh")),
     },
 )
 
 
 def _pending_drawn(spec: dict) -> dict:
     record = {k: deepcopy(v) for k, v in spec.items() if k != "items"}
-    components = [{**_component({"category": slot, "label": label, "color": None}), "material": None}
-                  for slot, label in spec["items"]]
+    components = [_component({"category": slot, "label": label, "color": None, "material": material})
+                  for slot, label, material in spec["items"]]
     return {**record, "status": "review_pending", "source": "pending_drawing", "role": None,
             "editorial_formula_id": None, "components": components,
             "activation_blockers": list(PENDING_ASSET_BLOCKERS), "known_issues": []}

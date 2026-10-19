@@ -37,7 +37,15 @@ OUTER_TYPE_PATTERNS = (
 OBSERVED_OUTER_LENGTH = {
     "all-018": "short", "all-021": "short", "all-023": "short",
     "all-045": "short", "all-048": "short", "all-054": "short", "all-055": "short",
+    # #188 fleece pilot (stored-only drawings), decided 2026-10-19: both end around the hip.
+    "all-064": "short", "all-065": "short",
 }
+# Where each observation came from (default OBSERVED_SOURCE).
+OBSERVED_OUTER_LENGTH_SOURCE = {"all-064": "asset_observed_2026-10-19", "all-065": "asset_observed_2026-10-19"}
+
+
+def observed_length_source(drawing_id: str) -> str:
+    return OBSERVED_OUTER_LENGTH_SOURCE.get(drawing_id, OBSERVED_SOURCE)
 
 # Confirmed temperature rules (apparent °C). Only these are owner policy.
 TEMPERATURE_POLICY = (
