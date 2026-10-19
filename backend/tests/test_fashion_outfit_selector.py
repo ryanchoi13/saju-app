@@ -86,10 +86,14 @@ def test_branch_that_draws_a_puffer_is_judged_by_the_drawing():
 
 # ---------------- review gate ----------------
 
-def test_review_file_starts_empty_and_strict_mode_offers_nothing():
-    assert cr.load_reviews() == []
+def test_review_file_reviews_no_active_candidate_and_strict_mode_offers_nothing():
+    # The only records (2026-10-19) belong to review_pending fleece candidates, which the
+    # selector never reads, so strict mode still offers nothing even with the real file.
+    from fashion_v2.candidate_registry import active_candidates
+    active = {c["candidate_id"] for c in active_candidates()}
+    assert not {r["candidate_id"] for r in cr.load_reviews()} & active
     for tpo in ("casual", "business_casual", "business_formal"):
-        result = pick(tpo, mode="strict")
+        result = pick(tpo, mode="strict", reviews=cr.load_reviews())
         assert result["shortage"] == "no_candidate"
         assert set(result["filtered"]["basic"]) | set(result["filtered"]["trendy"]) <= {"unreviewed", "temperature_blocked"}
 

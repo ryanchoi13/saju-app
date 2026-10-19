@@ -3,8 +3,8 @@
 scope_version now works for all-064/all-065 through the same normalised drawing
 definition that registered drawings use, so registering them later keeps the hash.
 Candidate hashes no longer include `status`, and the role is `role or role_draft`, so
-activating a reviewed pending candidate keeps its record. No real record is written:
-candidate_reviews.json stays empty.
+activating a reviewed pending candidate keeps its record. The real records for the two
+pending candidates (owner final, 2026-10-19) are checked at the end of this file.
 """
 import json
 import shutil
@@ -74,8 +74,32 @@ def test_pending_definition_comes_from_provenance_and_stays_unselectable(drawing
     assert drawing_id not in SHAPES  # the selection list never sees pending drawings
 
 
-def test_real_review_file_is_still_empty():
-    assert cr.load_reviews() == []
+EVIDENCE = "https://github.com/ryanchoi13/saju-app/issues/188#issuecomment-6261822732"
+APPROVED = {  # values the owner approved on #188 (2026-10-19)
+    "all-064": (FEMALE, "f54766ef35fa967b", "dfc81ccffaf3add5"),
+    "all-065": (MALE, "b946e4a377875872", "f1b932398b2460a7"),
+}
+
+
+def test_real_review_file_holds_exactly_the_two_approved_records():
+    reviews = cr.load_reviews()
+    assert sorted(r["drawing_id"] for r in reviews) == ["all-064", "all-065"]
+    for r in reviews:
+        candidate_id, drawing_version, scope_version = APPROVED[r["drawing_id"]]
+        assert cr.validate_record(r) == []
+        assert (r["candidate_id"], r["drawing_version"], r["scope_version"]) == (candidate_id, drawing_version, scope_version)
+        assert r["temp_range"] == {"min": 7, "max_exclusive": 11}
+        assert r["rain"] == r["snow"] == "unsuitable"
+        assert r["steps"] == list(cr.REQUIRED_STEPS) and r["evidence"] == EVIDENCE
+        assert cr.find_review(reviews, candidate_id, r["drawing_id"]) is r  # still current, not stale
+        assert [t for t in (6.9, 7, 10.9, 11) if cr.in_reviewed_range(r, t)] == [7, 10.9]
+
+
+def test_records_do_not_activate_the_candidates():
+    from fashion_v2 import outfit_selector as sel
+    for candidate_id, _, _ in APPROVED.values():
+        record = next(c for c in candidate_registry.CANDIDATES if c["candidate_id"] == candidate_id)
+        assert record["status"] == "review_pending" and candidate_id not in sel._ROLE_OF
 
 
 # ---------------- ownership ----------------
