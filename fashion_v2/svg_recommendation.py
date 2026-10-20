@@ -82,6 +82,7 @@ def canonical_name(item, gender, tpo):
             if re.search(pattern,n): return name
     if cat == 'dress': return '반팔 원피스' if '반팔' in n else '긴팔 원피스'
     if cat == 'top':
+        if '하프집업' in n: return '하프집업 니트'  # #188 winter set; no legacy label uses it
         if '후드' in n: return '후드티'
         if '맨투맨' in n: return '맨투맨'
         if '폴로' in n: return '반팔 폴로 티셔츠'
@@ -93,7 +94,9 @@ def canonical_name(item, gender, tpo):
     if cat in {'outer','coat','mid','carry_outer'}:
         # 플리스·퀼팅 sit before the generic 재킷/블루종 rule (퀼팅 재킷 used to fold into 블루종),
         # after 패딩/코트/수트 so '퀼팅 패딩'·'퀼팅 코트' keep their current meaning (#188).
-        for pattern, name in [('패딩','패딩'),('코트','코트'),('수트','수트 재킷'),('플리스','플리스'),('퀼팅','퀼팅 재킷'),('가디건','가디건'),('바람막이','바람막이'),('후드','집업 후드'),('블레이저|정장|언스트럭처드|칼라리스|경량 재킷','블레이저'),('재킷|점퍼|블루종|오버셔츠|크롭 셔츠','블루종')]:
+        # '롱패딩'(no space) and '무스탕' come only from reviewed selector candidates (#188 winter set).
+        # The legacy '비즈니스 롱 패딩' keeps folding to '패딩' so the live fallback does not change.
+        for pattern, name in [('롱패딩','롱패딩'),('무스탕','무스탕'),('패딩','패딩'),('코트','코트'),('수트','수트 재킷'),('플리스','플리스'),('퀼팅','퀼팅 재킷'),('가디건','가디건'),('바람막이','바람막이'),('후드','집업 후드'),('블레이저|정장|언스트럭처드|칼라리스|경량 재킷','블레이저'),('재킷|점퍼|블루종|오버셔츠|크롭 셔츠','블루종')]:
             if re.search(pattern,n): return name
     raise ValueError(f'지원하지 않는 아이템: {cat} / {n}')
 
@@ -104,13 +107,16 @@ def select_template(original, age, number, weather=None):
                   age=age, selection_mode='weather_template_then_approved_garments',
                   renderer=VERSION, selection_changes=[])
     items = []
+    keep_legs = bool(original.get('lock_garment_geometry'))
     for source in original['items']:
-        if source['category'] == 'leg_layer':
+        if source['category'] == 'leg_layer' and not keep_legs:
             # Winter skirt templates are replaced below when no tights drawing exists.
+            # Reviewed selector templates (lock_garment_geometry) have a tights drawing (#188).
             continue
         item = deepcopy(source)
         item['source_label'] = source['label']
-        item['label'] = canonical_name(item, result['gender'], result['tpo'])
+        # Only reviewed selector templates reach here with a leg layer; its one drawing is 타이츠 (#188).
+        item['label'] = '타이츠' if item['category'] == 'leg_layer' else canonical_name(item, result['gender'], result['tpo'])
         if item['label'] != item['source_label']:
             result['selection_changes'].append({'from':item['source_label'], 'to':item['label'], 'reason':'49종 확정 도안으로 구성 선택'})
         item['wear_mode'] = item.get('wear_mode', 'worn')
@@ -122,7 +128,7 @@ def select_template(original, age, number, weather=None):
     cold = (weather or {}).get('thermal_band') in {'cold','freezing'} or (not weather and result['season'] == 'winter')
     hot = (weather or {}).get('thermal_band') in {'hot','very_hot','warm'} or (not weather and result['season'] == 'summer')
     # Avoid recommending a skirt without the required, currently unavailable leg layer.
-    if cold and any(x['category'] == 'leg_layer' for x in original['items']):
+    if cold and not keep_legs and any(x['category'] == 'leg_layer' for x in original['items']):
         items = [x for x in items if x['category'] not in {'dress','bottom'}]
         if not any(x['category']=='top' for x in items):
             items.append(dict(category='top', label='니트', material='wool_knit', base_color='ivory', wear_mode='worn'))
@@ -459,7 +465,7 @@ def to_spec(look):
     layers=[]
     for item in items:
         c=item['category']; n=item['label']
-        slot={'top':'top','bottom':'bottom','dress':'dress','shoes':'shoe','bag':'bag','tie':'accessory','accessory':'accessory'}.get(c)
+        slot={'top':'top','bottom':'bottom','dress':'dress','shoes':'shoe','bag':'bag','tie':'accessory','accessory':'accessory','leg_layer':'legLayer'}.get(c)
         if c in {'outer','coat','mid','carry_outer'}: layers.append(item);continue
         if c in {'tie','accessory'}:
             s['accessories'].append(n)

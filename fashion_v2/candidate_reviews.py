@@ -47,6 +47,10 @@ from fashion_v2.illustration_assets import ASSET_DIR, PENDING_FILES, drawing_def
 
 REVIEWS_FILE = Path(__file__).with_name("candidate_reviews.json")
 REQUIRED_STEPS = ("chatgpt_style_draft", "claude_consistency_check", "owner_final")
+# 2026-10-20 (owner, #188): the style draft may come from Claude's separate review agent that did
+# not produce the work, instead of ChatGPT. The owner's final yes is still required.
+ACCEPTED_STEP_SETS = (set(REQUIRED_STEPS),
+                      {"independent_style_review", "claude_consistency_check", "owner_final"})
 WEATHER_VALUES = ("suitable", "unsuitable", "unknown")
 OPEN = "open"
 REQUIRED_KEYS = ("candidate_id", "drawing_id", "drawing_version", "scope_version", "temp_range",
@@ -75,7 +79,9 @@ def _candidate(candidate_id: str) -> dict:
 
 def _candidate_definition(candidate_id: str) -> dict:
     cand = _candidate(candidate_id)
-    components = sorted(({k: comp.get(k) for k in MATERIAL_COMPONENT_KEYS} for comp in cand["components"]),
+    # `neck` joins the hash only when drawn, so records made before it existed keep their hash.
+    components = sorted(({k: comp.get(k) for k in MATERIAL_COMPONENT_KEYS}
+                         | ({"neck": comp["neck"]} if comp.get("neck") else {}) for comp in cand["components"]),
                         key=lambda c: json.dumps(c, ensure_ascii=False, sort_keys=True))
     # No `status`: lifecycle, not content. Role = the reviewed role (role_draft while pending).
     return {k: cand.get(k) for k in ("candidate_id", "gender", "tpo", "scope", "form")} | {
@@ -136,7 +142,7 @@ def validate_record(record) -> list[str]:
     problems = [f"missing {k}" for k in REQUIRED_KEYS if k not in record]
     if problems:
         return problems
-    if not isinstance(record["steps"], list) or set(record["steps"]) != set(REQUIRED_STEPS):
+    if not isinstance(record["steps"], list) or set(record["steps"]) not in ACCEPTED_STEP_SETS:
         problems.append("all three review steps are required")
     if not isinstance(record["evidence"], str) or not record["evidence"].strip():
         problems.append("evidence (e.g. the approval comment URL) is required")

@@ -422,11 +422,22 @@
    true
   ]
  },
- "registry_entries": 65,
+ "registry_entries": 76,
  "registry_entries_not_reached": [
   "all-036",
   "all-064",
-  "all-065"
+  "all-065",
+  "all-066",
+  "all-067",
+  "all-068",
+  "all-069",
+  "all-070",
+  "all-071",
+  "all-072",
+  "all-073",
+  "all-074",
+  "all-075",
+  "all-076"
  ],
  "registry_entries_reached_live_sample": 54,
  "registry_entries_reached_only_by_review_fixture": [

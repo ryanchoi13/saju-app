@@ -26,7 +26,7 @@ LAYER_ORDER = ("coat", "outer", "mid")
 
 # Label -> outer type. Order matters: more specific words first.
 OUTER_TYPE_PATTERNS = (
-    ("패딩", "puffer"), ("코트", "coat"), ("수트 재킷", "suit_jacket"), ("정장 재킷", "suit_jacket"),
+    ("패딩", "puffer"), ("무스탕", "shearling"), ("코트", "coat"), ("수트 재킷", "suit_jacket"), ("정장 재킷", "suit_jacket"),
     ("플리스", "fleece"), ("퀼팅", "quilted"),
     ("가디건", "cardigan"), ("블레이저", "blazer"), ("바람막이", "windbreaker"),
     ("데님 재킷", "denim_jacket"), ("필드", "field_jacket"), ("워크 재킷", "work_jacket"),
@@ -39,9 +39,15 @@ OBSERVED_OUTER_LENGTH = {
     "all-045": "short", "all-048": "short", "all-054": "short", "all-055": "short",
     # #188 fleece pilot (stored-only drawings), decided 2026-10-19: both end around the hip.
     "all-064": "short", "all-065": "short",
+    # #188 winter set, checked by eye 2026-10-20: long padding reaches below the knee,
+    # shearling and quilted jackets end around the hip.
+    "all-066": "short", "all-067": "long", "all-068": "short", "all-071": "long",
+    "all-073": "long", "all-075": "short",
 }
 # Where each observation came from (default OBSERVED_SOURCE).
-OBSERVED_OUTER_LENGTH_SOURCE = {"all-064": "asset_observed_2026-10-19", "all-065": "asset_observed_2026-10-19"}
+OBSERVED_OUTER_LENGTH_SOURCE = {"all-064": "asset_observed_2026-10-19", "all-065": "asset_observed_2026-10-19",
+                                **{d: "asset_observed_2026-10-20" for d in
+                                   ("all-066", "all-067", "all-068", "all-071", "all-073", "all-075")}}
 
 
 def observed_length_source(drawing_id: str) -> str:

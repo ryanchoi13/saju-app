@@ -31,6 +31,8 @@ def candidate_templates(candidates=None) -> tuple[dict, ...]:
             }
             if component.get("suit_group"):
                 item["suit_group"] = component["suit_group"]
+            if component.get("neck"):
+                item["neck"] = component["neck"]
             items.append(item)
         result.append({
             "id": candidate["candidate_id"],

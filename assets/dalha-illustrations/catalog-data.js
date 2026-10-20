@@ -1537,5 +1537,288 @@ export const illustrations=[
       "shoeColor"
     ],
     "linkedSuit": false
+  },
+  {
+    "id": "all-066",
+    "shape": {
+      "gender": "female",
+      "top": "니트",
+      "bottom": "데님 바지",
+      "dress": "",
+      "outer": "무스탕",
+      "shoe": "앵클부츠",
+      "bag": "",
+      "accessories": [],
+      "outerOpen": true,
+      "outerMode": "wear",
+      "tuck": "out"
+    },
+    "slots": [
+      "outerColor",
+      "topColor",
+      "bottomColor",
+      "shoeColor"
+    ],
+    "linkedSuit": false
+  },
+  {
+    "id": "all-067",
+    "shape": {
+      "gender": "male",
+      "top": "후드티",
+      "bottom": "면바지",
+      "dress": "",
+      "outer": "롱패딩",
+      "shoe": "운동화",
+      "bag": "",
+      "accessories": [],
+      "outerOpen": true,
+      "outerMode": "wear",
+      "tuck": "out"
+    },
+    "slots": [
+      "outerColor",
+      "topColor",
+      "bottomColor",
+      "shoeColor"
+    ],
+    "linkedSuit": false
+  },
+  {
+    "id": "all-068",
+    "shape": {
+      "gender": "male",
+      "top": "니트",
+      "bottom": "데님 바지",
+      "dress": "",
+      "outer": "무스탕",
+      "shoe": "부츠",
+      "bag": "",
+      "accessories": [],
+      "outerOpen": true,
+      "outerMode": "wear",
+      "tuck": "out"
+    },
+    "slots": [
+      "outerColor",
+      "topColor",
+      "bottomColor",
+      "shoeColor"
+    ],
+    "linkedSuit": false
+  },
+  {
+    "id": "all-069",
+    "shape": {
+      "gender": "male",
+      "top": "니트",
+      "bottom": "슬랙스",
+      "dress": "",
+      "outer": "블레이저",
+      "shoe": "옥스퍼드",
+      "bag": "",
+      "accessories": [],
+      "outerOpen": true,
+      "outerMode": "wear",
+      "tuck": "out",
+      "knitNeck": "turtleneck",
+      "overOuter": {
+        "name": "코트",
+        "open": true
+      }
+    },
+    "slots": [
+      "outerColor",
+      "topColor",
+      "bottomColor",
+      "shoeColor",
+      "overOuter.color"
+    ],
+    "linkedSuit": false
+  },
+  {
+    "id": "all-070",
+    "shape": {
+      "gender": "male",
+      "top": "하프집업 니트",
+      "bottom": "슬랙스",
+      "dress": "",
+      "outer": "코트",
+      "shoe": "로퍼",
+      "bag": "",
+      "accessories": [],
+      "outerOpen": true,
+      "outerMode": "wear",
+      "tuck": "out"
+    },
+    "slots": [
+      "outerColor",
+      "topColor",
+      "bottomColor",
+      "shoeColor"
+    ],
+    "linkedSuit": false
+  },
+  {
+    "id": "all-071",
+    "shape": {
+      "gender": "male",
+      "top": "긴팔 정장 셔츠",
+      "bottom": "수트 바지",
+      "dress": "",
+      "outer": "수트 재킷",
+      "shoe": "더비 구두",
+      "bag": "",
+      "accessories": [
+        "넥타이"
+      ],
+      "outerOpen": true,
+      "outerMode": "wear",
+      "tuck": "in",
+      "overOuter": {
+        "name": "롱패딩",
+        "open": true
+      }
+    },
+    "slots": [
+      "outerColor",
+      "topColor",
+      "bottomColor",
+      "shoeColor",
+      "overOuter.color",
+      "tie.body"
+    ],
+    "linkedSuit": false
+  },
+  {
+    "id": "all-072",
+    "shape": {
+      "gender": "male",
+      "top": "긴팔 정장 셔츠",
+      "bottom": "수트 바지",
+      "dress": "",
+      "outer": "수트 재킷",
+      "shoe": "더비 구두",
+      "bag": "",
+      "accessories": [
+        "넥타이"
+      ],
+      "outerOpen": true,
+      "outerMode": "wear",
+      "tuck": "in",
+      "overOuter": {
+        "name": "코트",
+        "open": true
+      }
+    },
+    "slots": [
+      "outerColor",
+      "topColor",
+      "bottomColor",
+      "shoeColor",
+      "overOuter.color",
+      "tie.body"
+    ],
+    "linkedSuit": false
+  },
+  {
+    "id": "all-073",
+    "shape": {
+      "gender": "female",
+      "top": "니트",
+      "bottom": "면바지",
+      "dress": "",
+      "outer": "롱패딩",
+      "shoe": "운동화",
+      "bag": "",
+      "accessories": [],
+      "outerOpen": true,
+      "outerMode": "wear",
+      "tuck": "out"
+    },
+    "slots": [
+      "outerColor",
+      "topColor",
+      "bottomColor",
+      "shoeColor"
+    ],
+    "linkedSuit": false
+  },
+  {
+    "id": "all-074",
+    "shape": {
+      "gender": "female",
+      "top": "니트",
+      "bottom": "수트 바지",
+      "dress": "",
+      "outer": "수트 재킷",
+      "shoe": "로퍼",
+      "bag": "핸드백",
+      "accessories": [],
+      "outerOpen": true,
+      "outerMode": "wear",
+      "tuck": "out",
+      "overOuter": {
+        "name": "코트",
+        "open": true
+      }
+    },
+    "slots": [
+      "outerColor",
+      "topColor",
+      "bottomColor",
+      "shoeColor",
+      "bagColor",
+      "overOuter.color"
+    ],
+    "linkedSuit": false
+  },
+  {
+    "id": "all-075",
+    "shape": {
+      "gender": "female",
+      "top": "니트",
+      "bottom": "슬랙스",
+      "dress": "",
+      "outer": "퀼팅 재킷",
+      "shoe": "앵클부츠",
+      "bag": "",
+      "accessories": [],
+      "outerOpen": true,
+      "outerMode": "wear",
+      "tuck": "out"
+    },
+    "slots": [
+      "outerColor",
+      "topColor",
+      "bottomColor",
+      "shoeColor"
+    ],
+    "linkedSuit": false
+  },
+  {
+    "id": "all-076",
+    "shape": {
+      "gender": "female",
+      "top": "",
+      "bottom": "",
+      "dress": "긴팔 원피스",
+      "outer": "코트",
+      "shoe": "앵클부츠",
+      "bag": "크로스백",
+      "accessories": [],
+      "outerOpen": true,
+      "outerMode": "wear",
+      "tuck": "out",
+      "legLayer": "타이츠"
+    },
+    "slots": [
+      "outerColor",
+      "topColor",
+      "legLayerColor",
+      "shoeColor",
+      "bagColor"
+    ],
+    "linkedSuit": false
   }
 ];
