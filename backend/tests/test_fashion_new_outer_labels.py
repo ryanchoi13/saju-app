@@ -12,6 +12,7 @@ from pathlib import Path
 import pytest
 
 from fashion_v2.candidate_attributes import ATTRIBUTES, outer_type, policy_rule
+from fashion_v2.candidate_registry import SELECTOR_SOURCE, active_candidates
 from fashion_v2.svg_recommendation import canonical_name
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -37,9 +38,12 @@ def test_every_existing_label_maps_exactly_as_on_main():
     assert changed == {}
 
 
-def test_existing_candidate_attributes_are_unchanged():
+def test_existing_attributes_stay_pinned_and_two_reviewed_fleece_records_are_appended():
     snapshot = json.loads((FIXTURES / "candidate_attributes_snapshot.json").read_text(encoding="utf-8"))["attributes"]
     assert json.loads(json.dumps(ATTRIBUTES, ensure_ascii=False)) == snapshot
+    legacy = {c["candidate_id"] for c in active_candidates() if c["source"] != SELECTOR_SOURCE}
+    assert set(ATTRIBUTES) - legacy == {
+            "pending-female-winter-casual-fleece", "pending-male-winter-casual-fleece"}
 
 
 @pytest.mark.parametrize("label,expected", [

@@ -33,10 +33,13 @@ def test_only_owner_policy_rules_are_attached():
     ruled = {cid: a["temperature_rule"] for cid, a in ATTRIBUTES.items() if a["temperature_rule"]}
     assert set(ruled) == {
         "male-winter-casual-daily", "male-winter-business_casual-trend", "male-winter-business_formal-trend",
-        "female-winter-casual-daily", "female-winter-business_casual-trend"}
-    for rule in ruled.values():
+        "female-winter-casual-daily", "female-winter-business_casual-trend",
+        "pending-female-winter-casual-fleece", "pending-male-winter-casual-fleece"}
+    fleece = {"pending-female-winter-casual-fleece", "pending-male-winter-casual-fleece"}
+    for candidate_id, rule in ruled.items():
         assert rule["source"] == "owner_policy_2026-10-15"
-        assert rule == {**policy_rule("puffer", "short")}
+        expected = policy_rule("fleece", None) if candidate_id in fleece else policy_rule("puffer", "short")
+        assert rule == expected
     # Coats, blazers, etc. have no confirmed rule: that is "unknown", not "allowed".
     assert ATTRIBUTES["male-winter-casual-trend"]["temperature_rule"] is None
 
@@ -44,7 +47,7 @@ def test_only_owner_policy_rules_are_attached():
 def test_puffer_lengths_come_from_observed_drawings_only():
     for cid, attrs in ATTRIBUTES.items():
         if attrs["outer_length"]["value"] == "short":
-            assert attrs["outer_length"]["source"] == "asset_observed_2026-10-17"
+            assert attrs["outer_length"]["source"].startswith("asset_observed_2026-10-")
             assert all(OBSERVED_OUTER_LENGTH.get(d) == "short"
                        for d, kind in attrs["drawing_outer_types"].items() if kind == attrs["outer_type"]["value"])
     assert "long" not in {a["outer_length"]["value"] for a in ATTRIBUTES.values()}
@@ -142,7 +145,8 @@ def test_returned_drawing_geometry_agrees_in_python(live_report):
 
 
 def test_every_active_candidate_and_live_branch_is_exercised(live_report):
-    assert set(live_report["pairs"]) == {c["candidate_id"] for c in active_candidates()}
+    assert set(live_report["pairs"]) == {
+        c["candidate_id"] for c in active_candidates() if c["source"] != "selector_candidate"}
     assert live_report["conditional_files"] == {"10"}
     assert live_report["review_preferences"] == {
         "young-summer-yellow-purple", "teen-winter-blue-pink",

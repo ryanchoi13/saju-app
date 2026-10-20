@@ -2,6 +2,8 @@
 import ast
 import os
 import shutil
+import subprocess
+import sys
 import threading
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -86,14 +88,15 @@ def test_branch_that_draws_a_puffer_is_judged_by_the_drawing():
 
 # ---------------- review gate ----------------
 
-def test_review_file_reviews_no_active_candidate_and_strict_mode_offers_nothing():
-    # The only records (2026-10-19) belong to review_pending fleece candidates, which the
-    # selector never reads, so strict mode still offers nothing even with the real file.
+def test_review_file_activates_only_the_two_casual_fleece_candidates():
     from fashion_v2.candidate_registry import active_candidates
     active = {c["candidate_id"] for c in active_candidates()}
-    assert not {r["candidate_id"] for r in cr.load_reviews()} & active
-    for tpo in ("casual", "business_casual", "business_formal"):
-        result = pick(tpo, mode="strict", reviews=cr.load_reviews())
+    reviewed = {r["candidate_id"] for r in cr.load_reviews()}
+    assert reviewed <= active and len(reviewed) == 2
+    casual = pick("casual", t=8.0, mode="strict", reviews=cr.load_reviews())
+    assert casual["basic"]["candidate_id"] in reviewed
+    for tpo in ("business_casual", "business_formal"):
+        result = pick(tpo, t=8.0, mode="strict", reviews=cr.load_reviews())
         assert result["shortage"] == "no_candidate"
         assert set(result["filtered"]["basic"]) | set(result["filtered"]["trendy"]) <= {"unreviewed", "temperature_blocked"}
 
@@ -102,8 +105,9 @@ def test_study_mode_only_skips_the_review_gate():
     result = pick("casual", t=3.0, mode="study")
     assert result["basic"] and result["trendy"]
     assert "unreviewed" in result["basic"]["flags"] and "unreviewed" in result["trendy"]["flags"]
-    warm = pick("casual", t=8.0, mode="study")     # policy still blocks the short puffer
-    assert warm["basic"] is None and warm["filtered"]["basic"] == {"temperature_blocked": 1}
+    warm = pick("casual", t=8.0, mode="study")     # puffer is blocked; selector fleece still needs its record
+    assert warm["basic"] is None
+    assert warm["filtered"]["basic"] == {"temperature_blocked": 1, "unreviewed": 1}
 
 
 def test_strict_passes_only_a_current_reviewed_drawing():
@@ -119,9 +123,11 @@ def test_strict_passes_only_a_current_reviewed_drawing():
 def test_review_can_narrow_but_never_widen_the_policy():
     basic = pick("casual", t=3.0, mode="study")["basic"]       # short puffer
     wide = review(basic["candidate_id"], basic["drawing_id"], low=-20, high=20)
-    assert pick("casual", t=8.0, mode="strict", reviews=[wide])["filtered"]["basic"] == {"temperature_blocked": 1}
+    assert pick("casual", t=8.0, mode="strict", reviews=[wide])["filtered"]["basic"] == {
+        "temperature_blocked": 1, "unreviewed": 1}
     narrow = review(basic["candidate_id"], basic["drawing_id"], low=-20, high=2)
-    assert pick("casual", t=3.0, mode="strict", reviews=[narrow])["filtered"]["basic"] == {"outside_reviewed_range": 1}
+    assert pick("casual", t=3.0, mode="strict", reviews=[narrow])["filtered"]["basic"] == {
+        "outside_reviewed_range": 1, "temperature_blocked": 1}
 
 
 def test_coat_without_policy_rule_needs_a_reviewed_range_in_strict():
@@ -135,11 +141,11 @@ def test_coat_without_policy_rule_needs_a_reviewed_range_in_strict():
 def test_rain_and_snow_unknown_block_in_every_mode(mode):
     rainy = pick("casual", t=3.0, mode=mode, rain=True)
     assert rainy["shortage"] == "no_candidate"
-    assert set(rainy["filtered"]["basic"]) == {"rain_unknown"}
+    assert set(rainy["filtered"]["basic"]) == {"rain_unknown", "temperature_blocked"}
     snowy = pick("casual", t=3.0, mode=mode, snow=True)
     assert set(snowy["filtered"]["trendy"]) == {"snow_unknown"}
     failed = pick("casual", t=3.0, mode=mode, rain=None)
-    assert set(failed["filtered"]["basic"]) == {"weather_unknown"}
+    assert set(failed["filtered"]["basic"]) == {"weather_unknown", "temperature_blocked"}
 
 
 def test_explicit_rain_review_lets_a_look_through():
@@ -454,17 +460,51 @@ def test_store_requires_a_member_account():
 
 # ---------------- isolation ----------------
 
-def test_new_modules_are_not_reachable_from_the_live_path():
+def test_production_entrypoints_do_not_import_selector_modules():
     new = {"fashion_v2.outfit_selector", "fashion_v2.outfit_day_store", "fashion_v2.candidate_reviews",
-           "fashion_v2.illustration_resolver"}
-    for path in [ROOT / "main.py"] + [ROOT / "fashion_v2" / n for n in (
+           "fashion_v2.illustration_resolver", "fashion_v2.candidate_templates", "fashion_v2.candidate_activation"}
+    production = [ROOT / "main.py", *sorted((ROOT / "backend" / "app").rglob("*.py"))]
+    production += [ROOT / "fashion_v2" / n for n in (
             "svg_recommendation.py", "template_catalog.py", "weather_catalog.py", "weather_outfit.py",
-            "weather_service.py", "review_preferences.py", "wearable_options.py", "realwear_rules.py")]:
+            "weather_service.py", "review_preferences.py", "wearable_options.py", "realwear_rules.py")]
+    for path in production:
         tree = ast.parse(path.read_text(encoding="utf-8"))
-        imported = {n.module for n in ast.walk(tree) if isinstance(n, ast.ImportFrom)}
+        imported = set()
+        for node in (n for n in ast.walk(tree) if isinstance(n, ast.ImportFrom)):
+            base = node.module or ""
+            imported.add(base)
+            imported.update(f"{base}.{alias.name}" if base else alias.name for alias in node.names)
         imported |= {a.name for n in ast.walk(tree) if isinstance(n, ast.Import) for a in n.names}
-        assert not imported & new, path.name
+        assert not imported & new, path.relative_to(ROOT)
     for name in ("outfit_selector.py", "outfit_day_store.py", "candidate_reviews.py", "illustration_resolver.py"):
         source = (ROOT / "fashion_v2" / name).read_text(encoding="utf-8")
         assert "import main" not in source and "from main" not in source
         assert "wardrobe_store" not in source and "_connection" not in source
+
+
+def test_importing_main_does_not_transitively_load_selector_modules():
+    code = """
+import sys
+import main
+
+banned = {
+    "fashion_v2.outfit_selector",
+    "fashion_v2.outfit_day_store",
+    "fashion_v2.candidate_reviews",
+    "fashion_v2.illustration_resolver",
+    "fashion_v2.candidate_templates",
+    "fashion_v2.candidate_activation",
+}
+loaded = sorted(banned & sys.modules.keys())
+if loaded:
+    raise SystemExit("production import loaded selector modules: " + ", ".join(loaded))
+"""
+    result = subprocess.run(
+        [sys.executable, "-X", "utf8", "-c", code],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+        timeout=30,
+        check=False,
+    )
+    assert result.returncode == 0, result.stdout + result.stderr

@@ -136,6 +136,16 @@ def test_original_denim_is_retained_for_compatible_outfits():
     assert len(list(garment_options(autumn(tpo='business_formal'), PALETTE))) == 1
 
 
+def test_reviewed_selector_geometry_disables_the_generic_denim_cotton_comparison():
+    original = autumn()
+    assert [next(i['label'] for i in option['items'] if i['category'] == 'bottom')
+            for option in garment_options(original, PALETTE)] == ['데님 바지', '면바지']
+    original['lock_garment_geometry'] = True
+    locked = list(garment_options(original, PALETTE))
+    assert locked == [original]
+    assert next(i['label'] for i in locked[0]['items'] if i['category'] == 'bottom') == '데님 바지'
+
+
 def test_two_coloured_upper_layers_are_not_a_blanket_violation():
     def risk(a,b):
         return outfit_balance([

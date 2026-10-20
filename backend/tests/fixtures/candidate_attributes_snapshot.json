@@ -1,5 +1,5 @@
 {
- "about": "candidate_attributes.ATTRIBUTES on main 2ddebd3; must stay identical.",
+ "about": "candidate_attributes.ATTRIBUTES: the original 56 records stay identical to main 2ddebd3; PR-4A appends two reviewed selector-only fleece records.",
  "attributes": {
   "female-autumn-business_casual-daily": {
    "drawing_outer_types": {
@@ -1801,6 +1801,78 @@
    },
    "suitability_review": "not_reviewed",
    "temperature_rule": null
+  },
+  "pending-female-winter-casual-fleece": {
+   "drawing_outer_types": {
+    "all-064": "fleece"
+   },
+   "drawings": [
+    "all-064"
+   ],
+   "label_conflict": null,
+   "outer_label": "플리스 집업",
+   "outer_length": {
+    "source": "asset_observed_2026-10-19",
+    "value": "short"
+   },
+   "outer_slot": "outer",
+   "outer_type": {
+    "source": "label_mapping",
+    "value": "fleece"
+   },
+   "outer_varies_by_branch": false,
+   "rain": {
+    "legacy_handling": "suede/sandal swapped to leather shoes (weather_catalog._rain_safe)",
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "snow": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "suitability_review": "not_reviewed",
+   "temperature_rule": {
+    "min_inclusive": 5,
+    "outer_length": null,
+    "outer_type": "fleece",
+    "source": "owner_policy_2026-10-15"
+   }
+  },
+  "pending-male-winter-casual-fleece": {
+   "drawing_outer_types": {
+    "all-065": "fleece"
+   },
+   "drawings": [
+    "all-065"
+   ],
+   "label_conflict": null,
+   "outer_label": "플리스 집업",
+   "outer_length": {
+    "source": "asset_observed_2026-10-19",
+    "value": "short"
+   },
+   "outer_slot": "outer",
+   "outer_type": {
+    "source": "label_mapping",
+    "value": "fleece"
+   },
+   "outer_varies_by_branch": false,
+   "rain": {
+    "legacy_handling": "suede/sandal swapped to leather shoes (weather_catalog._rain_safe)",
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "snow": {
+    "source": "unknown",
+    "value": "unknown"
+   },
+   "suitability_review": "not_reviewed",
+   "temperature_rule": {
+    "min_inclusive": 5,
+    "outer_length": null,
+    "outer_type": "fleece",
+    "source": "owner_policy_2026-10-15"
+   }
   }
  }
 }

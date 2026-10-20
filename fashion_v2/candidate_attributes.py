@@ -101,14 +101,20 @@ def build_attributes(candidates=None, observed=None) -> dict:
     for cand in candidates:
         outer = _outermost(cand["components"])
         kind = outer_type(outer["source_label"]) if outer else "none"
-        drawings = sorted({i for ids in observed.get(cand["candidate_id"], {}).values() for i in ids})
+        drawings = {i for ids in observed.get(cand["candidate_id"], {}).values() for i in ids}
+        # Selector-only candidates are deliberately absent from live coverage. Their
+        # reviewed direct drawing is still an observed source for static attributes.
+        if cand.get("illustration_id") and cand["illustration_id"] in shapes:
+            drawings.add(cand["illustration_id"])
+        drawings = sorted(drawings)
         drawn_types = {d: drawing_outer_type(shapes[d]) for d in drawings}
         same_type = [d for d, t in drawn_types.items() if t == kind]
         lengths = {OBSERVED_OUTER_LENGTH.get(d) for d in same_type} if same_type else {None}
         if outer is None:
             length = _value(None, "not_applicable")
         elif len(lengths) == 1 and None not in lengths:
-            length = _value(lengths.pop(), OBSERVED_SOURCE)
+            sources = {observed_length_source(d) for d in same_type}
+            length = _value(lengths.pop(), sources.pop() if len(sources) == 1 else OBSERVED_SOURCE)
         else:
             length = _value("unknown", "unknown")
         rule = policy_rule(kind, length["value"]) if outer else None

@@ -31,13 +31,9 @@ CONDITIONAL_VARIANTS = {
 }
 
 
-# Drawings stored for review but NOT registered in catalog-data.js, so the client can never
-# select them (#188 fleece pilot, 2026-10-18). Moving one into the registry is the screen
-# registration step (PR-4) and requires a review record first.
-PENDING_FILES = {
-    "all-064": "pending-female-winter-casual-fleece",
-    "all-065": "pending-male-winter-casual-fleece",
-}
+# Drawings stored for review but NOT registered in catalog-data.js. The #188 fleece pilot
+# moved all-064/all-065 into the registry in PR-4A after review, so none remain pending.
+PENDING_FILES = {}
 
 
 def load_registry(path: Path = REGISTRY_FILE) -> list[dict]:

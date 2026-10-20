@@ -13,8 +13,8 @@
     "10"
    ],
    "errors": 0,
-   "matched": 59400,
-   "recommendations": 59400,
+   "matched": 63360,
+   "recommendations": 63360,
    "registry_entries_reached": 54,
    "unmatched": 0,
    "unmatched_samples": []
@@ -69,6 +69,10 @@
      58
     ],
     "pairs": [
+     [
+      "beige",
+      "beige"
+     ],
      [
       "beige",
       "black"
@@ -132,6 +136,10 @@
      [
       "burgundy",
       "black"
+     ],
+     [
+      "burgundy",
+      "burgundy"
      ],
      [
       "burgundy",
@@ -267,6 +275,10 @@
      ],
      [
       "mid_gray",
+      "mid_gray"
+     ],
+     [
+      "mid_gray",
       "teal"
      ],
      [
@@ -280,6 +292,10 @@
      [
       "navy",
       "gray"
+     ],
+     [
+      "navy",
+      "navy"
      ],
      [
       "navy",
@@ -300,6 +316,10 @@
      [
       "olive",
       "gray"
+     ],
+     [
+      "olive",
+      "olive"
      ],
      [
       "olive",
@@ -402,9 +422,11 @@
    true
   ]
  },
- "registry_entries": 63,
+ "registry_entries": 65,
  "registry_entries_not_reached": [
-  "all-036"
+  "all-036",
+  "all-064",
+  "all-065"
  ],
  "registry_entries_reached_live_sample": 54,
  "registry_entries_reached_only_by_review_fixture": [

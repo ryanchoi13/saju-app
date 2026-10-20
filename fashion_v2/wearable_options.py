@@ -173,7 +173,7 @@ def garment_options(look, palette):
     may compete with cotton pants and sneakers may use a bounded TPO/season
     colour range. No option adds a new Five Elements colour.
     """
-    if look.get('review_preference') or look.get('color_targets'):
+    if look.get('review_preference') or look.get('color_targets') or look.get('lock_garment_geometry'):
         yield look
         return
     yield from _bottom_options(look, palette)

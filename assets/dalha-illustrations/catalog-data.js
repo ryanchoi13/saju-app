@@ -1491,5 +1491,51 @@ export const illustrations=[
       "shoeColor"
     ],
     "linkedSuit": false
+  },
+  {
+    "id": "all-064",
+    "shape": {
+      "gender": "female",
+      "top": "긴팔 티셔츠",
+      "bottom": "데님 바지",
+      "dress": "",
+      "outer": "플리스",
+      "shoe": "운동화",
+      "bag": "",
+      "accessories": [],
+      "outerOpen": true,
+      "outerMode": "wear",
+      "tuck": "out"
+    },
+    "slots": [
+      "outerColor",
+      "topColor",
+      "bottomColor",
+      "shoeColor"
+    ],
+    "linkedSuit": false
+  },
+  {
+    "id": "all-065",
+    "shape": {
+      "gender": "male",
+      "top": "긴팔 캐주얼 셔츠",
+      "bottom": "면바지",
+      "dress": "",
+      "outer": "플리스",
+      "shoe": "운동화",
+      "bag": "",
+      "accessories": [],
+      "outerOpen": true,
+      "outerMode": "wear",
+      "tuck": "out"
+    },
+    "slots": [
+      "outerColor",
+      "topColor",
+      "bottomColor",
+      "shoeColor"
+    ],
+    "linkedSuit": false
   }
 ];
