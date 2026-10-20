@@ -31,26 +31,51 @@ def test_every_active_candidate_has_attributes_with_sources():
 
 def test_only_owner_policy_rules_are_attached():
     ruled = {cid: a["temperature_rule"] for cid, a in ATTRIBUTES.items() if a["temperature_rule"]}
-    assert set(ruled) == {
+    short_puffer = {
         "male-winter-casual-daily", "male-winter-business_casual-trend", "male-winter-business_formal-trend",
-        "female-winter-casual-daily", "female-winter-business_casual-trend",
-        "pending-female-winter-casual-fleece", "pending-male-winter-casual-fleece"}
+        "female-winter-casual-daily", "female-winter-business_casual-trend"}
     fleece = {"pending-female-winter-casual-fleece", "pending-male-winter-casual-fleece"}
+    # #188 winter set (2026-10-20): long padding < 0, shearling < 5 (new owner rule), quilted >= 5.
+    long_puffer = {"pending-male-winter-casual-longpadding", "pending-male-winter-business_formal-longpadding",
+                   "pending-female-winter-casual-longpadding"}
+    shearling = {"pending-female-winter-casual-shearling", "pending-male-winter-casual-shearling"}
+    quilted = {"pending-female-winter-business_casual-quilted"}
+    assert set(ruled) == short_puffer | fleece | long_puffer | shearling | quilted
+    expected_rule = {**{c: policy_rule("puffer", "short") for c in short_puffer},
+                     **{c: policy_rule("fleece", None) for c in fleece},
+                     **{c: policy_rule("puffer", "long") for c in long_puffer},
+                     **{c: policy_rule("shearling", None) for c in shearling},
+                     **{c: policy_rule("quilted", None) for c in quilted}}
     for candidate_id, rule in ruled.items():
-        assert rule["source"] == "owner_policy_2026-10-15"
-        expected = policy_rule("fleece", None) if candidate_id in fleece else policy_rule("puffer", "short")
-        assert rule == expected
+        assert rule["source"] == ("owner_policy_2026-10-20" if candidate_id in shearling else "owner_policy_2026-10-15")
+        assert rule == expected_rule[candidate_id]
+    assert policy_rule("puffer", "long")["max_exclusive"] == 0
+    assert policy_rule("shearling", None)["max_exclusive"] == 5
     # Coats, blazers, etc. have no confirmed rule: that is "unknown", not "allowed".
     assert ATTRIBUTES["male-winter-casual-trend"]["temperature_rule"] is None
+    for coat in ("pending-male-winter-business_casual-turtleneck", "pending-male-winter-business_casual-halfzip",
+                 "pending-male-winter-business_formal-coat-derby", "pending-female-winter-business_formal-knit",
+                 "pending-female-winter-casual-coat-dress"):
+        assert ATTRIBUTES[coat]["outer_type"]["value"] == "coat", coat
+        assert ATTRIBUTES[coat]["temperature_rule"] is None, coat
 
 
 def test_puffer_lengths_come_from_observed_drawings_only():
     for cid, attrs in ATTRIBUTES.items():
-        if attrs["outer_length"]["value"] == "short":
+        if attrs["outer_length"]["value"] in ("short", "long"):
+            length = attrs["outer_length"]["value"]
             assert attrs["outer_length"]["source"].startswith("asset_observed_2026-10-")
-            assert all(OBSERVED_OUTER_LENGTH.get(d) == "short"
+            assert all(OBSERVED_OUTER_LENGTH.get(d) == length
                        for d, kind in attrs["drawing_outer_types"].items() if kind == attrs["outer_type"]["value"])
-    assert "long" not in {a["outer_length"]["value"] for a in ATTRIBUTES.values()}
+    # The only long outers are the three #188 long-padding drawings, observed 2026-10-20.
+    long_outer = {cid: a for cid, a in ATTRIBUTES.items() if a["outer_length"]["value"] == "long"}
+    assert {cid: a["drawings"] for cid, a in long_outer.items()} == {
+        "pending-male-winter-casual-longpadding": ["all-067"],
+        "pending-male-winter-business_formal-longpadding": ["all-071"],
+        "pending-female-winter-casual-longpadding": ["all-073"]}
+    for attrs in long_outer.values():
+        assert attrs["outer_type"]["value"] == "puffer"
+        assert attrs["outer_length"]["source"] == "asset_observed_2026-10-20"
 
 
 def test_long_puffer_label_conflict_is_recorded_not_fixed():

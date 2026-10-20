@@ -77,27 +77,75 @@ def test_resolver_rejects_what_the_client_rejects():
     assert select_illustration(extra_parts) is None
 
 
-def test_branch_that_draws_a_puffer_is_judged_by_the_drawing():
+TEEN = {"id": "user_teen", "gender": "female", "age": 15}
+TEEN_COLORS = (col("cobalt"), col("pink"))   # teen-winter-blue-pink review preference
+COAT_DRESS = "pending-female-winter-casual-coat-dress"
+
+
+def test_branch_that_draws_a_puffer_is_judged_by_the_drawing(monkeypatch):
     # teen-winter-blue-pink turns the trendy coat into a puffer (all-055); base attributes say coat.
-    teen = {"id": "user_teen", "gender": "female", "age": 15}
-    result = pick("casual", t=8.0, user=teen, colors=(col("cobalt"), col("pink")))
+    template = sel._scope("female", "casual", weather(8.0), "winter")["female-winter-casual-trend"]
+    look = sel.render(template, "trendy", TEEN, TEEN_COLORS, weather(8.0), "winter")
+    assert select_illustration(look) == "all-055"
+    assert sel.evaluate("female-winter-casual-trend", template, "trendy", TEEN, TEEN_COLORS, weather(8.0),
+                        "winter", "study", []) == (None, "temperature_blocked")
+    # Trendy now has two blocked looks: this puffer branch and the #188 shearling candidate
+    # (owner policy: shearling < 5°C).
+    result = pick("casual", t=8.0, user=TEEN, colors=TEEN_COLORS)
     assert result["trendy"] is None or result["trendy"]["drawing_id"] != "all-055"
-    assert result["filtered"]["trendy"].get("temperature_blocked") == 1
+    assert result["filtered"]["trendy"].get("temperature_blocked") == 2
     assert drawing_attributes("all-055")["outer_type"]["value"] == "puffer"
+
+
+def test_review_preferences_never_rewrite_a_reviewed_selector_template():
+    # 2026-10-20: teen-winter-blue-pink used to call change('bottom') on the coat+dress look
+    # (no bottom) and abort the whole day; it also swapped reviewed drawings for other ones.
+    from fashion_v2.candidate_registry import CANDIDATES
+    drawing = {c["candidate_id"]: c.get("illustration_id") for c in CANDIDATES}
+    templates = sel._scope("female", "casual", weather(8.0), "winter")
+    for cid in (COAT_DRESS, "pending-female-winter-casual-shearling", "pending-female-winter-casual-longpadding"):
+        for role in ("basic", "trendy"):
+            look = sel.render(templates[cid], role, TEEN, TEEN_COLORS, weather(8.0), "winter")
+            assert "review_preference" not in look
+            assert select_illustration(look) == drawing[cid]
 
 
 # ---------------- review gate ----------------
 
-def test_review_file_activates_only_the_two_casual_fleece_candidates():
+REVIEWED_SELECTOR_IDS = {
+    "pending-female-winter-casual-fleece", "pending-male-winter-casual-fleece",
+    # #188 winter set, owner-approved 2026-10-20
+    "pending-female-winter-casual-shearling", "pending-male-winter-casual-longpadding",
+    "pending-male-winter-casual-shearling", "pending-male-winter-business_casual-turtleneck",
+    "pending-male-winter-business_casual-halfzip", "pending-male-winter-business_formal-longpadding",
+    "pending-male-winter-business_formal-coat-derby", "pending-female-winter-casual-longpadding",
+    "pending-female-winter-business_formal-knit", "pending-female-winter-business_casual-quilted",
+    "pending-female-winter-casual-coat-dress"}
+
+
+def _ids(result):
+    return tuple(result[r] and (result[r]["candidate_id"], result[r]["drawing_id"]) for r in ("basic", "trendy"))
+
+
+def test_review_file_activates_exactly_the_reviewed_selector_candidates():
     from fashion_v2.candidate_registry import active_candidates
     active = {c["candidate_id"] for c in active_candidates()}
     reviewed = {r["candidate_id"] for r in cr.load_reviews()}
-    assert reviewed <= active and len(reviewed) == 2
+    assert reviewed <= active
+    assert reviewed == REVIEWED_SELECTOR_IDS == sel._REVIEW_REQUIRED
+    # Male user, 8°C, strict: only reviewed selector candidates can appear; every legacy look is
+    # unreviewed or blocked. Puffers (short < 5, long < 0) and shearling (< 5) are blocked at 8°C.
     casual = pick("casual", t=8.0, mode="strict", reviews=cr.load_reviews())
-    assert casual["basic"]["candidate_id"] in reviewed
-    for tpo in ("business_casual", "business_formal"):
-        result = pick(tpo, t=8.0, mode="strict", reviews=cr.load_reviews())
-        assert result["shortage"] == "no_candidate"
+    assert _ids(casual) == (("pending-male-winter-casual-fleece", "all-065"), None)
+    business_casual = pick("business_casual", t=8.0, mode="strict", reviews=cr.load_reviews())
+    assert _ids(business_casual) == (("pending-male-winter-business_casual-halfzip", "all-070"),
+                                     ("pending-male-winter-business_casual-turtleneck", "all-069"))
+    business_formal = pick("business_formal", t=8.0, mode="strict", reviews=cr.load_reviews())
+    assert _ids(business_formal) == (("pending-male-winter-business_formal-coat-derby", "all-072"), None)
+    assert business_formal["filtered"]["trendy"] == {"temperature_blocked": 2}  # legacy puffer + long padding
+    for result in (casual, business_casual, business_formal):
+        for option in (result["basic"], result["trendy"]):
+            assert option is None or option["candidate_id"] in reviewed
         assert set(result["filtered"]["basic"]) | set(result["filtered"]["trendy"]) <= {"unreviewed", "temperature_blocked"}
 
 
@@ -105,9 +153,10 @@ def test_study_mode_only_skips_the_review_gate():
     result = pick("casual", t=3.0, mode="study")
     assert result["basic"] and result["trendy"]
     assert "unreviewed" in result["basic"]["flags"] and "unreviewed" in result["trendy"]["flags"]
-    warm = pick("casual", t=8.0, mode="study")     # puffer is blocked; selector fleece still needs its record
+    # Short puffer (< 5) and the #188 long padding (< 0) are blocked; selector fleece still needs its record.
+    warm = pick("casual", t=8.0, mode="study")
     assert warm["basic"] is None
-    assert warm["filtered"]["basic"] == {"temperature_blocked": 1, "unreviewed": 1}
+    assert warm["filtered"]["basic"] == {"temperature_blocked": 2, "unreviewed": 1}
 
 
 def test_strict_passes_only_a_current_reviewed_drawing():
@@ -122,19 +171,30 @@ def test_strict_passes_only_a_current_reviewed_drawing():
 
 def test_review_can_narrow_but_never_widen_the_policy():
     basic = pick("casual", t=3.0, mode="study")["basic"]       # short puffer
+    assert basic["candidate_id"] == "male-winter-casual-daily"
+    # Besides the reviewed puffer, basic holds two #188 selector looks without a record here:
+    # fleece (>= 5, so unreviewed at 8 and blocked at 3) and long padding (< 0, blocked at both).
     wide = review(basic["candidate_id"], basic["drawing_id"], low=-20, high=20)
-    assert pick("casual", t=8.0, mode="strict", reviews=[wide])["filtered"]["basic"] == {
-        "temperature_blocked": 1, "unreviewed": 1}
+    widened = pick("casual", t=8.0, mode="strict", reviews=[wide])
+    assert widened["basic"] is None
+    assert widened["filtered"]["basic"] == {"temperature_blocked": 2, "unreviewed": 1}
     narrow = review(basic["candidate_id"], basic["drawing_id"], low=-20, high=2)
-    assert pick("casual", t=3.0, mode="strict", reviews=[narrow])["filtered"]["basic"] == {
-        "outside_reviewed_range": 1, "temperature_blocked": 1}
+    narrowed = pick("casual", t=3.0, mode="strict", reviews=[narrow])
+    assert narrowed["basic"] is None
+    assert narrowed["filtered"]["basic"] == {"outside_reviewed_range": 1, "temperature_blocked": 2}
 
 
 def test_coat_without_policy_rule_needs_a_reviewed_range_in_strict():
     trendy = pick("casual", t=3.0, mode="study")["trendy"]
+    assert trendy["candidate_id"] == "male-winter-casual-trend"
     assert drawing_attributes(trendy["drawing_id"])["temperature_rule"] is None
     assert "temperature_unreviewed" in trendy["flags"]
-    assert pick("casual", t=3.0, mode="strict")["filtered"]["trendy"] == {"unreviewed": 1}
+    # Without records: the coat and the #188 shearling (allowed < 5 but record-required) are unreviewed.
+    assert pick("casual", t=3.0, mode="strict")["filtered"]["trendy"] == {"unreviewed": 2}
+    # With the real records the shearling passes and only the coat is still unreviewed.
+    reviewed = pick("casual", t=3.0, mode="strict", reviews=cr.load_reviews())
+    assert reviewed["filtered"]["trendy"] == {"unreviewed": 1}
+    assert reviewed["trendy"]["candidate_id"] == "pending-male-winter-casual-shearling"
 
 
 @pytest.mark.parametrize("mode", ["strict", "study"])
@@ -178,7 +238,10 @@ def test_missing_or_unknown_temperature_range_is_not_a_review(temp_range):
     record = {**review(trendy["candidate_id"], trendy["drawing_id"], high=11), "temp_range": temp_range}
     assert cr.validate_record(record)
     assert cr.find_review([record], trendy["candidate_id"], trendy["drawing_id"]) is None
-    assert pick("casual", t=3.0, mode="strict", reviews=[record])["filtered"]["trendy"] == {"unreviewed": 1}
+    # The real records let the #188 shearling through, so the one unreviewed trendy look is the coat.
+    result = pick("casual", t=3.0, mode="strict", reviews=[record] + cr.load_reviews())
+    assert result["filtered"]["trendy"] == {"unreviewed": 1}
+    assert result["trendy"]["candidate_id"] == "pending-male-winter-casual-shearling" != trendy["candidate_id"]
 
 
 def test_explicit_open_side_is_allowed_with_one_numeric_bound():

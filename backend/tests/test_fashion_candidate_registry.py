@@ -21,7 +21,10 @@ BASELINE = ROOT / "docs" / "fashion" / "illustration-coverage-baseline.json"
 def test_every_existing_template_is_exactly_one_active_candidate():
     active = {c["candidate_id"]: c for c in reg.active_candidates()}
     templates = list(TEMPLATES) + list(WARM_TRANSITION_LOOKS)
-    assert len(active) == len(templates) + 2 == 58
+    # + the two #188 fleece candidates and the eleven #188 winter-set candidates (selector only).
+    assert len(active) == len(templates) + 2 + 11 == 69
+    assert set(active) - {t["id"] for t in templates} == {
+        c["candidate_id"] for c in reg.active_candidates() if c["source"] == reg.SELECTOR_SOURCE}
     for template in templates:
         record = active[template["id"]]
         assert record["gender"] == template["gender"]
@@ -30,11 +33,33 @@ def test_every_existing_template_is_exactly_one_active_candidate():
         assert [c["source_label"] for c in record["components"]] == [i["label"] for i in template["items"]]
 
 
+FLEECE_IDS = ("pending-female-winter-casual-fleece", "pending-male-winter-casual-fleece")
+# #188 winter set (2026-10-20): roles from the owner-approved list.
+WINTER_SET_ROLES = {
+    "pending-female-winter-casual-shearling": "trendy",
+    "pending-male-winter-casual-longpadding": "basic",
+    "pending-male-winter-casual-shearling": "trendy",
+    "pending-male-winter-business_casual-turtleneck": "trendy",
+    "pending-male-winter-business_casual-halfzip": "basic",
+    "pending-male-winter-business_formal-longpadding": "trendy",
+    "pending-male-winter-business_formal-coat-derby": "basic",
+    "pending-female-winter-casual-longpadding": "basic",
+    "pending-female-winter-business_formal-knit": "trendy",
+    "pending-female-winter-business_casual-quilted": "trendy",
+    "pending-female-winter-casual-coat-dress": "trendy",
+}
+SELECTOR_ROLES = {**{c: "basic" for c in FLEECE_IDS}, **WINTER_SET_ROLES}
+SELECTOR_ROLE_BASIS = {**{c: "owner_decision_2026-10-18" for c in FLEECE_IDS},
+                       **{c: "owner_scope_2026-10-20" for c in WINTER_SET_ROLES}}
+
+
 def test_roles_only_carry_over_the_legacy_slot():
+    assert {r["candidate_id"] for r in reg.active_candidates() if r["source"] == reg.SELECTOR_SOURCE} == set(
+        SELECTOR_ROLES)
     for record in reg.active_candidates():
         if record["source"] == reg.SELECTOR_SOURCE:
-            assert record["role"] == record["role_draft"] == "basic"
-            assert record["role_basis"] == "owner_decision_2026-10-18"
+            assert record["role"] == record["role_draft"] == SELECTOR_ROLES[record["candidate_id"]]
+            assert record["role_basis"] == SELECTOR_ROLE_BASIS[record["candidate_id"]]
         else:
             assert record["role"] == {"daily": "basic", "trend": "trendy"}[record["legacy_role"]]
             assert record["role_basis"] == "legacy_daily_trend_slot"
@@ -75,8 +100,8 @@ def test_selector_candidate_activation_guard_passes_as_one_unit():
 def test_illustration_files_match_registry_and_sizes():
     report = inspect_assets()
     assert report["problems"] == []
-    assert report["registry_entries"] == 65
-    assert report["files"] == 66 and report["conditional_files"] == ["10"]
+    assert report["registry_entries"] == 76  # 65 + all-066..all-076 (#188 winter set)
+    assert report["files"] == 77 and report["conditional_files"] == ["10"]
 
 
 def test_header_size_readers_handle_every_shipped_file():
@@ -93,7 +118,7 @@ def test_baseline_records_full_live_sample_match():
     live = summary["groups"]["live_sample"]
     assert live["errors"] == 0 and live["unmatched"] == 0
     assert live["recommendations"] == live["matched"] > 0
-    assert summary["registry_entries"] == 65
+    assert summary["registry_entries"] == 76
 
 
 def test_legacy_builder_stays_independent_from_the_selector_registry():

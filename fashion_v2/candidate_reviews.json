@@ -1,5 +1,5 @@
 {
- "about": "Owner-approved outfit reviews (see fashion_v2/candidate_reviews.py for required fields: drawing_version, scope_version, temp_range with numeric or 'open' bounds, rain/snow, three steps, evidence). Records are added only after the ChatGPT draft -> Claude check -> owner final flow on #188. 2026-10-19: the two fleece pilot candidates were re-approved with explicit base colours (still review_pending; a record does not activate them).",
+ "about": "Owner-approved outfit reviews (see fashion_v2/candidate_reviews.py for required fields: drawing_version, scope_version, temp_range with numeric or 'open' bounds, rain/snow, three steps, evidence). 2026-10-19: the two fleece candidates (active in the selector since PR-4A). 2026-10-20: the eleven #188 winter candidates (all-066..076, flat-lay redraws), style draft by an independent Claude review agent, owner final yes in chat on the coloured sheet, recorded on #188.",
  "reviews": [
   {
    "candidate_id": "pending-female-winter-casual-fleece",
@@ -43,7 +43,7 @@
    "candidate_id": "pending-female-winter-casual-shearling",
    "drawing_id": "all-066",
    "drawing_version": "0da5d658911bc4d3",
-   "scope_version": "6a1aae5b548b8a98",
+   "scope_version": "b5c3dfd3394dbae7",
    "temp_range": {
     "min": "open",
     "max_exclusive": 5
@@ -81,7 +81,7 @@
    "candidate_id": "pending-male-winter-casual-shearling",
    "drawing_id": "all-068",
    "drawing_version": "420d52c006a5bad2",
-   "scope_version": "940c63ffcbc7f80f",
+   "scope_version": "26cc3b75fbe74d89",
    "temp_range": {
     "min": "open",
     "max_exclusive": 5

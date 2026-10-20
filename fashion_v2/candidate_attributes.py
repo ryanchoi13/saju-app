@@ -61,7 +61,8 @@ TEMPERATURE_POLICY = (
     {"outer_type": "quilted", "outer_length": None, "min_inclusive": 5},
     # 2026-10-20 owner (#188 winter set): shearling only below 5°C apparent, like a heavy coat
     # (common Korean temperature charts put leather jackets at 5-8°C; shearling is warmer).
-    {"outer_type": "shearling", "outer_length": None, "max_exclusive": 5},
+    {"outer_type": "shearling", "outer_length": None, "max_exclusive": 5,
+     "source": "owner_policy_2026-10-20"},
 )
 
 LABEL_CONFLICTS = {
@@ -89,7 +90,7 @@ def _outermost(components):
 def policy_rule(kind: str, length: str | None):
     for rule in TEMPERATURE_POLICY:
         if rule["outer_type"] == kind and rule["outer_length"] in (None, length):
-            return {**rule, "source": POLICY_SOURCE}
+            return {**rule, "source": rule.get("source", POLICY_SOURCE)}
     return None
 
 

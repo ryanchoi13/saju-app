@@ -80,24 +80,65 @@ APPROVED = {  # base-colour values the owner re-approved on #188 (2026-10-19)
 }
 
 
-def test_real_review_file_holds_exactly_the_two_current_approved_records():
+# #188 winter set, owner-approved 2026-10-20 with the independent-review step set.
+# The evidence field is still the placeholder written with the records (see report on #188);
+# it is pinned so that replacing it with the real approval link is a deliberate test change.
+WINTER_EVIDENCE = "PENDING_188_COMMENT"
+WINTER_STEPS = ["independent_style_review", "claude_consistency_check", "owner_final"]
+WINTER_APPROVED = {  # drawing -> (candidate, drawing_version, scope_version, temp_range, rain/snow)
+    "all-066": ("pending-female-winter-casual-shearling", "0da5d658911bc4d3", "6a1aae5b548b8a98",
+                {"min": "open", "max_exclusive": 5}, "unsuitable"),
+    "all-067": ("pending-male-winter-casual-longpadding", "a78f6e75be9ab87a", "7c35330a1a6a73cb",
+                {"min": "open", "max_exclusive": 0}, "suitable"),
+    "all-068": ("pending-male-winter-casual-shearling", "420d52c006a5bad2", "940c63ffcbc7f80f",
+                {"min": "open", "max_exclusive": 5}, "unsuitable"),
+    "all-069": ("pending-male-winter-business_casual-turtleneck", "8c152ea5af752ef8", "dbdc8f198259d9d9",
+                {"min": "open", "max_exclusive": 9}, "suitable"),
+    "all-070": ("pending-male-winter-business_casual-halfzip", "5b39ce7a73113bbd", "4b4e4e4363f6e6f7",
+                {"min": "open", "max_exclusive": 9}, "suitable"),
+    "all-071": ("pending-male-winter-business_formal-longpadding", "40c6ff27db373597", "23dee15b74cc3e2a",
+                {"min": "open", "max_exclusive": 0}, "suitable"),
+    "all-072": ("pending-male-winter-business_formal-coat-derby", "76c82957b735c0e3", "5be7dff4ddc63650",
+                {"min": "open", "max_exclusive": 9}, "suitable"),
+    "all-073": ("pending-female-winter-casual-longpadding", "b5f0e03e1b11cc32", "10116d61f200b18b",
+                {"min": "open", "max_exclusive": 0}, "suitable"),
+    "all-074": ("pending-female-winter-business_formal-knit", "9025149262235b76", "b47b03c6a103e996",
+                {"min": "open", "max_exclusive": 9}, "suitable"),
+    "all-075": ("pending-female-winter-business_casual-quilted", "4b1234a748d1e2c0", "bcc7d1f4e6e9de95",
+                {"min": 5, "max_exclusive": 11}, "unsuitable"),
+    "all-076": ("pending-female-winter-casual-coat-dress", "5eee99effa8ab560", "8c7392a71f787939",
+                {"min": "open", "max_exclusive": 9}, "unsuitable"),
+}
+
+
+def test_real_review_file_holds_exactly_the_current_approved_records():
     reviews = cr.load_reviews()
-    assert sorted(r["drawing_id"] for r in reviews) == ["all-064", "all-065"]
+    assert sorted(r["drawing_id"] for r in reviews) == sorted(set(APPROVED) | set(WINTER_APPROVED))
+    assert len(reviews) == 13
     for r in reviews:
-        candidate_id, drawing_version, scope_version = APPROVED[r["drawing_id"]]
         assert cr.validate_record(r) == []
+        if r["drawing_id"] in APPROVED:
+            candidate_id, drawing_version, scope_version = APPROVED[r["drawing_id"]]
+            assert r["temp_range"] == {"min": 7, "max_exclusive": 11}
+            assert r["rain"] == r["snow"] == "unsuitable"
+            assert r["steps"] == list(cr.REQUIRED_STEPS) and r["evidence"] == EVIDENCE
+            assert r["date"] == "2026-10-19"
+            assert [t for t in (6.9, 7, 10.9, 11) if cr.in_reviewed_range(r, t)] == [7, 10.9]
+        else:
+            candidate_id, drawing_version, scope_version, temp_range, weather = WINTER_APPROVED[r["drawing_id"]]
+            assert r["temp_range"] == temp_range
+            assert r["rain"] == r["snow"] == weather
+            assert r["steps"] == WINTER_STEPS and r["evidence"] == WINTER_EVIDENCE
+            assert r["date"] == "2026-10-20"
         assert (r["candidate_id"], r["drawing_version"], r["scope_version"]) == (candidate_id, drawing_version, scope_version)
-        assert r["temp_range"] == {"min": 7, "max_exclusive": 11}
-        assert r["rain"] == r["snow"] == "unsuitable"
-        assert r["steps"] == list(cr.REQUIRED_STEPS) and r["evidence"] == EVIDENCE
         assert cr.scope_version(candidate_id, r["drawing_id"]) == scope_version
+        assert cr.drawing_version(r["drawing_id"]) == drawing_version
         assert cr.find_review(reviews, candidate_id, r["drawing_id"]) is r
-        assert [t for t in (6.9, 7, 10.9, 11) if cr.in_reviewed_range(r, t)] == [7, 10.9]
 
 
 def test_records_are_current_for_active_selector_candidates_only():
     from fashion_v2 import outfit_selector as sel
-    for candidate_id, _, _ in APPROVED.values():
+    for candidate_id in [v[0] for v in APPROVED.values()] + [v[0] for v in WINTER_APPROVED.values()]:
         record = next(c for c in candidate_registry.CANDIDATES if c["candidate_id"] == candidate_id)
         assert record["status"] == "active" and record["source"] == candidate_registry.SELECTOR_SOURCE
         assert candidate_id in sel._ROLE_OF
