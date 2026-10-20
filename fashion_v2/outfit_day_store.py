@@ -1,4 +1,4 @@
-"""Per-day outfit storage (#188 PR-3, NON-PRODUCTION, SQLite only).
+"""Per-day outfit storage (#188).
 
 One row per (owner, KST day, TPO, context revision) holds BOTH roles, so a pair is
 written atomically. The first writer wins; a same-day revisit returns the stored row.
@@ -13,12 +13,13 @@ saved later on the same day can never replace or join the strict history. It is 
 Retention: rows older than 30 days are deleted on write. Other data (wardrobe, saved
 items) is untouched.
 
-Scope limits, stated on purpose:
-- SQLite only. This module never opens the application database and is not called by
-  any app start-up path. Passing the SQLite concurrency tests says nothing about
-  PostgreSQL; a PostgreSQL version needs its own lock (pg_advisory_xact_lock) and tests.
-- `context_rev` currently hashes the region marker "gyeongju_fixed": that only labels
-  the test context. It is not a decision about user regions.
+Storage adapters:
+- ``OutfitDayStore`` is the isolated SQLite adapter retained for focused tests.
+- ``DurableOutfitDayStore`` uses the application's PostgreSQL connection in production
+  and its local SQLite connection in development. PostgreSQL first-insert races are
+  serialized with an advisory transaction lock.
+- `context_rev` hashes the caller's region, profile, season, colour and selector-version
+  context. The first rollout still uses the existing fixed-Gyeongju weather source.
 - Members only (owner key = menu_store._key, which requires a "user_" account id).
 """
 from __future__ import annotations
@@ -131,6 +132,121 @@ class OutfitDayStore:
     def count(self):
         with self._conn() as conn:
             return conn.execute("SELECT COUNT(*) FROM outfit_days_v1").fetchone()[0]
+
+
+class DurableOutfitDayStore:
+    """Application storage adapter; never falls back to ephemeral storage on Render."""
+
+    def __init__(self):
+        self._ready = False
+
+    @staticmethod
+    def _db():
+        from wardrobe_store import _connection
+        return _connection()
+
+    @staticmethod
+    def _execute(conn, pg, sql, params=()):
+        from wardrobe_store import _execute
+        return _execute(conn, pg, sql, params)
+
+    def initialize(self):
+        with self._db() as (conn, pg):
+            if pg:
+                self._execute(conn, pg, "SELECT pg_advisory_xact_lock(74201933)")
+            self._execute(conn, pg, SCHEMA)
+        self._ready = True
+
+    def _ensure(self):
+        if not self._ready:
+            self.initialize()
+
+    def _lock(self, conn, pg, owner, day, tpo, ctx):
+        if pg:
+            key = "|".join((owner, str(day), tpo, ctx))
+            self._execute(conn, pg, "SELECT pg_advisory_xact_lock(hashtext(%s))", (key,))
+        else:
+            conn.execute("BEGIN IMMEDIATE")
+
+    def get(self, owner, day, tpo, ctx):
+        self._ensure()
+        with self._db() as (conn, pg):
+            row = self._execute(
+                conn, pg,
+                "SELECT revision,payload FROM outfit_days_v1 WHERE owner_key=%s AND day=%s AND tpo=%s AND context_rev=%s",
+                (owner, str(day), tpo, ctx),
+            ).fetchone()
+        return (row[0], json.loads(row[1])) if row else None
+
+    def insert_if_absent(self, owner, day, tpo, ctx, payload, now_utc, mode):
+        if mode not in outfit_selector.MODES:
+            raise ValueError("mode must be strict or study")
+        self._ensure()
+        with self._db() as (conn, pg):
+            self._lock(conn, pg, owner, day, tpo, ctx)
+            row = self._execute(
+                conn, pg,
+                "SELECT revision,payload FROM outfit_days_v1 WHERE owner_key=%s AND day=%s AND tpo=%s AND context_rev=%s",
+                (owner, str(day), tpo, ctx),
+            ).fetchone()
+            if row:
+                return row[0], json.loads(row[1]), False
+            self._execute(
+                conn, pg,
+                "INSERT INTO outfit_days_v1(owner_key,day,tpo,context_rev,mode,revision,payload,updated_at) VALUES(%s,%s,%s,%s,%s,%s,%s,%s)",
+                (owner, str(day), tpo, ctx, mode, 0, json.dumps(payload, ensure_ascii=False), now_utc.isoformat()),
+            )
+            self._execute(conn, pg, "DELETE FROM outfit_days_v1 WHERE day < %s",
+                          (str(day - timedelta(days=RETENTION_DAYS)),))
+            return 0, payload, True
+
+    def replace_if_revision(self, owner, day, tpo, ctx, expected_revision, payload, now_utc, bump=True):
+        self._ensure()
+        with self._db() as (conn, pg):
+            self._lock(conn, pg, owner, day, tpo, ctx)
+            next_revision = expected_revision + (1 if bump else 0)
+            cur = self._execute(
+                conn, pg,
+                "UPDATE outfit_days_v1 SET revision=%s,payload=%s,updated_at=%s WHERE owner_key=%s AND day=%s AND tpo=%s AND context_rev=%s AND revision=%s",
+                (next_revision, json.dumps(payload, ensure_ascii=False), now_utc.isoformat(),
+                 owner, str(day), tpo, ctx, expected_revision),
+            )
+            row = self._execute(
+                conn, pg,
+                "SELECT revision,payload FROM outfit_days_v1 WHERE owner_key=%s AND day=%s AND tpo=%s AND context_rev=%s",
+                (owner, str(day), tpo, ctx),
+            ).fetchone()
+            return row[0], json.loads(row[1]), cur.rowcount == 1
+
+    def history(self, owner, tpo, day, mode):
+        if mode not in outfit_selector.MODES:
+            raise ValueError("mode must be strict or study")
+        self._ensure()
+        start = str(day - timedelta(days=HISTORY_DAYS))
+        with self._db() as (conn, pg):
+            rows = self._execute(
+                conn, pg,
+                "SELECT day,payload,updated_at FROM outfit_days_v1 WHERE owner_key=%s AND tpo=%s AND mode=%s AND day>=%s AND day<%s ORDER BY day,updated_at",
+                (owner, tpo, mode, start, str(day)),
+            ).fetchall()
+        per_day = {}
+        for raw_day, payload, _ in rows:
+            per_day[raw_day] = json.loads(payload)
+        return [per_day[raw_day] for raw_day in sorted(per_day)]
+
+    def count(self):
+        self._ensure()
+        with self._db() as (conn, pg):
+            return self._execute(conn, pg, "SELECT COUNT(*) FROM outfit_days_v1").fetchone()[0]
+
+    def health(self):
+        self._ensure()
+        with self._db() as (conn, pg):
+            self._execute(conn, pg, "SELECT owner_key,day,tpo,revision FROM outfit_days_v1 LIMIT 0")
+            return "postgresql" if pg else "local_sqlite"
+
+
+production_store = DurableOutfitDayStore()
 
 
 _CATALOG_FP = {}

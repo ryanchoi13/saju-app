@@ -1,8 +1,8 @@
-"""Daily two-look selector (#188 PR-3, NON-PRODUCTION).
+"""Daily two-look selector (#188 PR-3/PR-4B).
 
 Picks one basic and one trendy look for a user / TPO / day from the existing
-candidates. Not imported by the live path; `build_svg_catalog_contexts` keeps
-producing today's output.
+candidates. The legacy builder remains the fallback; the guarded live bridge may
+replace its two looks after durable selection succeeds.
 
 Order of checks for every candidate (each failure is recorded with a reason):
   1. scope        - the candidate is what the legacy weather catalogue would offer for
@@ -111,9 +111,12 @@ def evaluate(candidate_id, template, role, user, colors, weather, calendar_seaso
         flags.append("unreviewed")
     if policy != "allowed":
         flags.append("temperature_unreviewed")
+    look["candidate_id"] = candidate_id
+    look["drawing_id"] = drawing
     return {"candidate_id": candidate_id, "role": role, "drawing_id": drawing,
             "composition": composition_key(drawing), "outer_type": attrs["outer_type"]["value"],
-            "flags": flags, "items": [{"label": i["label"], "hex": i["hex"]} for i in look["items"]]}, "ok"
+            "flags": flags, "items": [{"label": i["label"], "hex": i["hex"]} for i in look["items"]],
+            "look": look}, "ok"
 
 
 def _penalty(option, role, history, n):

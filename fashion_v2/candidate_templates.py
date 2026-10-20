@@ -1,8 +1,8 @@
 """Whole-outfit templates for reviewed selector-only candidates (#188 PR-4A).
 
-This module is deliberately outside ``template_catalog.TEMPLATES``.  The current
-production builder keeps its fixed 48 season templates and eight transition looks;
-only the non-production ``outfit_selector`` imports these additional templates.
+This module is deliberately outside ``template_catalog.TEMPLATES``. The legacy
+builder keeps its fixed 48 season templates and eight transition looks; the guarded
+selector bridge imports these additional templates without changing that fallback.
 """
 from __future__ import annotations
 

@@ -32,6 +32,12 @@ from wada_color_rules import evaluate_duo
 from wada_color_ko import get_wada_color_ko
 from wada_wuxing_selector import select_wada_duo_for_targets
 from fashion_v2.svg_recommendation import build_svg_catalog_contexts
+from fashion_v2.live_selector import (
+    connect_selector,
+    initialize_storage as initialize_outfit_storage,
+    selected_guidance,
+    storage_health as outfit_storage_health,
+)
 from app.engine.services.fashion_colors import build_fashion_color_basis
 from app.engine.services.annual_editorial import NARRATIVE_VERSION as ANNUAL_NARRATIVE_VERSION
 from fashion_v2.weather_service import gyeongju_weather_cache, weather_api_payload
@@ -582,7 +588,7 @@ def get_saju_pillars_and_analysis(name: str, gender: str, y: int, m: int, d: int
         else None
     )
     result["daily_fortune"]["weather_outfit"]["template_applied"] = bool(selected_weather)
-    result["daily_fortune"]["fashion_v2"] = build_svg_catalog_contexts(
+    legacy_fashion = build_svg_catalog_contexts(
         gender,
         outfit_season,
         color_a,
@@ -591,6 +597,23 @@ def get_saju_pillars_and_analysis(name: str, gender: str, y: int, m: int, d: int
         age=style_age,
         board_weather_profile=weather_profile if complete_weather else None,
     )
+    fashion_v2, selector_diagnostics = connect_selector(
+        legacy_fashion,
+        user_id=menu_account_id,
+        gender=gender,
+        age=style_age,
+        calendar_season=outfit_season,
+        colors=(color_a, color_b),
+        weather_profile=selected_weather,
+    )
+    result["daily_fortune"]["fashion_v2"] = fashion_v2
+    if selector_diagnostics.get("status") != "off":
+        result["daily_fortune"]["fashion_selector"] = selector_diagnostics
+    if selector_diagnostics.get("status") == "applied":
+        guidance = selected_guidance(selected_weather, fashion_v2)
+        if guidance is not None:
+            result["daily_fortune"]["weather_outfit"]["guidance"] = guidance
+        result["daily_fortune"]["weather_outfit"]["selector_applied"] = True
     result["daily_fortune"]["fashion_color_basis"] = fashion_color_basis
     result["daily_fortune"]["outfit"] = _outfit_tracks_from_look(
         result["daily_fortune"]["fashion_v2"], result["daily_fortune"]["outfit"])
@@ -876,6 +899,7 @@ def _public_profile(user: Dict[str, Any]) -> Dict[str, Any]:
 def initialize_menu_storage():
     try:
         menu_store.initialize()
+        initialize_outfit_storage()
     except menu_store.StorageUnavailable:
         pass  # Other sections stay usable; menu writes explicitly return 503.
 
@@ -1118,7 +1142,8 @@ def fashion_weather():
 @app.get("/api/health/storage")
 def storage_health():
     try:
-        return {"status": "ok", "wardrobe": wardrobe_store.health(), "menus": menu_store.health()}
+        return {"status": "ok", "wardrobe": wardrobe_store.health(), "menus": menu_store.health(),
+                "outfits": outfit_storage_health()}
     except wardrobe_store.StorageUnavailable:
         raise HTTPException(status_code=503, detail="Wardrobe storage unavailable")
 

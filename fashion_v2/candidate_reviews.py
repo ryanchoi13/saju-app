@@ -1,11 +1,11 @@
-"""Human review records for outfit candidates (#188 PR-3, non-production).
+"""Human review records for outfit candidates (#188 PR-3/PR-4B).
 
 Flow agreed on #188 (2026-10-17, owner approved): ChatGPT drafts the style/composition
 review, Claude checks drawing/attribute/rule consistency, the owner gives the final
 yes on an image comparison sheet. Only then is a record added to
 `candidate_reviews.json`. First records (2026-10-19): the two #188 fleece pilot candidates.
-PR-4A later activates those candidates only in the non-production selector; a record by
-itself still never changes lifecycle state.
+PR-4A activated those candidates in the selector and PR-4B can expose them through a
+guarded rollout. A review record by itself still never changes lifecycle state.
 
 What a record is bound to (any change makes the record stale; it is never inherited):
 - drawing_version: hash of the shipped webp + mask files.

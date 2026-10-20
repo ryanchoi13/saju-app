@@ -2,10 +2,9 @@
 
 Each existing whole-outfit template becomes one explicit *candidate* record that
 names its role, its source, its components and the illustrations it was observed
-to render. The non-production selector reads active `selector_candidate` records;
-the live recommendation path still does not: `templates_for`,
-`weather_templates_for` and `build_svg_catalog_contexts` are unchanged, so current
-production outputs are unchanged.
+to render. The guarded selector rollout reads active `selector_candidate` records;
+`templates_for`, `weather_templates_for` and `build_svg_catalog_contexts` remain the
+unchanged two-look fallback.
 
 Terms kept deliberately separate (see issue #188):
 - role: basic / trendy. In this stage it is only the legacy daily/trend slot carried
@@ -119,8 +118,8 @@ def _pending(spec: dict) -> dict:
 
 
 # Newly drawn for the #188 fleece pilot (2026-10-18). PR-4A registers the drawings and
-# activates these records only for the non-production selector; the live builder still
-# does not import this registry or the selector templates.
+# activates these records for the selector. PR-4B's guarded bridge may expose them;
+# the legacy builder stays independent and remains the two-look fallback.
 # Components are the planned outfit. Materials decided on #188 (2026-10-19) from the
 # vocabulary the live templates already use (the shoe is the same running-shoe drawing
 # the live templates call suede_mesh). Base colours decided on #188 (2026-10-19) reproduce

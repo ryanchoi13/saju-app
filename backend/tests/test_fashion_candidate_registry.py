@@ -96,10 +96,10 @@ def test_baseline_records_full_live_sample_match():
     assert summary["registry_entries"] == 65
 
 
-def test_live_path_does_not_read_the_new_registry_yet():
+def test_legacy_builder_stays_independent_from_the_selector_registry():
     banned = {"fashion_v2.candidate_registry", "fashion_v2.illustration_assets",
               "fashion_v2.candidate_templates", "fashion_v2.outfit_selector"}
-    for path in [ROOT / "main.py"] + [ROOT / "fashion_v2" / name for name in (
+    for path in [ROOT / "fashion_v2" / name for name in (
             "svg_recommendation.py", "template_catalog.py", "weather_catalog.py")]:
         tree = ast.parse(path.read_text(encoding="utf-8"))
         imported = {node.module for node in ast.walk(tree) if isinstance(node, ast.ImportFrom)}

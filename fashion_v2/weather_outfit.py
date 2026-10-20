@@ -43,6 +43,9 @@ PROFILE_RULES = {
     "freezing": ("winter_base", "heavy", "winter", "보온 내의와 두꺼운 겨울 아우터가 필요해요."),
 }
 
+# WMO weather codes used by Open-Meteo for falling snow, snow grains and showers.
+SNOW_CODES = {71, 73, 75, 77, 85, 86}
+
 
 def thermal_band(apparent_celsius: float) -> dict:
     value = float(apparent_celsius)
@@ -86,6 +89,7 @@ def classify_weather(points: list[dict]) -> dict:
     daytime_humidity = sum(float(p.get("relative_humidity_2m", 0) or 0) for p in daytime) / len(daytime)
 
     rainy = rain_probability >= 40 or precipitation >= 1.0
+    snowy = any(int(p.get("weather_code", 0) or 0) in SNOW_CODES for p in points)
     windy = wind_speed >= 20 or wind_gust >= 35
     humid_hot = day_peak >= 25 and daytime_humidity >= 70
     carry_light_outer = (
@@ -124,6 +128,7 @@ def classify_weather(points: list[dict]) -> dict:
         "catalog_season_hint": band["catalog_season_hint"],
         "carry_light_outer": carry_light_outer,
         "rainy": rainy,
+        "snowy": snowy,
         "avoid_suede": rainy,
         "windy": windy,
         "humid_hot": humid_hot,

@@ -1,8 +1,8 @@
-"""#188 PR-4A: reviewed fleece drawings and selector-only active candidates.
+"""#188 PR-4A/PR-4B: reviewed fleece drawings and guarded live candidates.
 
 all-064 (art-017, female) and all-065 (art-001, male) are registered for the client
-matcher and active in the non-production selector. The production builder remains
-isolated, so registering them does not make them reachable from today's live output.
+matcher and active in the selector. The legacy production builder remains isolated;
+PR-4B reaches them only through its default-off rollout bridge.
 """
 import ast
 import hashlib
