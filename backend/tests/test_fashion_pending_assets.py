@@ -221,7 +221,7 @@ def _matcher_row(look):
                                for item in look["items"]]}}
 
 
-def test_every_ordered_palette_pair_resolves_to_the_reviewed_fleece_in_python_and_js():
+def test_every_ordered_palette_pair_including_equal_colours_resolves_to_the_reviewed_fleece_in_python_and_js():
     if shutil.which("node") is None:
         if os.environ.get("CI"):
             pytest.fail("node is missing in CI: selector matcher parity must not be skipped")
@@ -238,7 +238,7 @@ def test_every_ordered_palette_pair_resolves_to_the_reviewed_fleece_in_python_an
         template = sel._scope(gender, "casual", _weather(8.0), "winter")[candidate_id]
         user = {"id": f"palette-{gender}", "gender": gender, "age": age}
         count = 0
-        for a, b in itertools.permutations(keys, 2):
+        for a, b in itertools.product(keys, repeat=2):
             colors = tuple({"hex": PALETTE[k]["hex"], "name": k, "name_ko": PALETTE[k]["name"]}
                            for k in (a, b))
             look = sel.render(template, "basic", user, colors, _weather(8.0), "winter")
@@ -246,7 +246,7 @@ def test_every_ordered_palette_pair_resolves_to_the_reviewed_fleece_in_python_an
             rows.append(_matcher_row(look))
             expected.append(drawing_id)
             count += 1
-        assert count == 812
+        assert count == 841
     assert match(rows) == expected
 
 

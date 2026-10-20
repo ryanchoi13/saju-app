@@ -458,16 +458,22 @@ def test_store_requires_a_member_account():
 
 # ---------------- isolation ----------------
 
-def test_new_modules_are_not_reachable_from_the_live_path():
+def test_production_entrypoints_do_not_import_selector_modules():
     new = {"fashion_v2.outfit_selector", "fashion_v2.outfit_day_store", "fashion_v2.candidate_reviews",
            "fashion_v2.illustration_resolver", "fashion_v2.candidate_templates", "fashion_v2.candidate_activation"}
-    for path in [ROOT / "main.py"] + [ROOT / "fashion_v2" / n for n in (
+    production = [ROOT / "main.py", *sorted((ROOT / "backend" / "app").rglob("*.py"))]
+    production += [ROOT / "fashion_v2" / n for n in (
             "svg_recommendation.py", "template_catalog.py", "weather_catalog.py", "weather_outfit.py",
-            "weather_service.py", "review_preferences.py", "wearable_options.py", "realwear_rules.py")]:
+            "weather_service.py", "review_preferences.py", "wearable_options.py", "realwear_rules.py")]
+    for path in production:
         tree = ast.parse(path.read_text(encoding="utf-8"))
-        imported = {n.module for n in ast.walk(tree) if isinstance(n, ast.ImportFrom)}
+        imported = set()
+        for node in (n for n in ast.walk(tree) if isinstance(n, ast.ImportFrom)):
+            base = node.module or ""
+            imported.add(base)
+            imported.update(f"{base}.{alias.name}" if base else alias.name for alias in node.names)
         imported |= {a.name for n in ast.walk(tree) if isinstance(n, ast.Import) for a in n.names}
-        assert not imported & new, path.name
+        assert not imported & new, path.relative_to(ROOT)
     for name in ("outfit_selector.py", "outfit_day_store.py", "candidate_reviews.py", "illustration_resolver.py"):
         source = (ROOT / "fashion_v2" / name).read_text(encoding="utf-8")
         assert "import main" not in source and "from main" not in source
