@@ -24,5 +24,4 @@ business-interface-v1, complete-look-and-biorhythm, daily-polish-and-storage, de
 |---|---|
 | diet-menu-expansion.md | 다이어트 모드는 10/14에 없앰 |
 | ranked-menu-explorer.md | 옛 메뉴 탐색기(/api/menu/explore) — 화면에서 안 씀 |
-| sazu-food-trial.md | 외부 SAZU 음식 시험 — 화면에서 안 씀 |
 | fashion-v2-rolling-review.md | 보드 일정(fashion-board-schedule) — 워크플로 꺼 둠 |

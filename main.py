@@ -407,7 +407,7 @@ def get_saju_pillars_and_analysis(name: str, gender: str, y: int, m: int, d: int
         today_date,
         current_hour=kst_now.hour,
         account_key=menu_account_id,
-        include_menu=True,   # 신규 daily_menu 큐레이션(menu_curation 3모드). 구버전 sazu/meal_sets 경로는 더 이상 쓰지 않는다.
+        include_menu=True,   # 신규 daily_menu 큐레이션(menu_curation 3모드). 구버전 meal_sets 경로는 더 이상 쓰지 않는다.
     )
     today_element = core.timing.daily["pillar"]["stem_element"]
     lucky_element = today_fortune["lucky_element"]
@@ -895,19 +895,14 @@ def explore_menus(req: MenuExploreRequest):
     if not user or not user.get('profile_complete'):
         raise HTTPException(status_code=401, detail='다시 접속해 추천 메뉴를 불러와 주세요.')
     day = menu_store.today()
-    from sazu_food import provider_for, profile_key
-    food_provider = provider_for(req.user_id)
     food_profile = _birth_input_from_user(user, user.get('name', ''))
-    food_profile_key = profile_key(food_profile) if food_provider == 'sazu' else ''
     def build(mode, history, excluded):
         from meal_sets import build_set
-        return build_set(food_profile, day, mode, history, excluded,
-                         provider=food_provider)
+        return build_set(food_profile, day, mode, history, excluded)
     try:
         return menu_store.explore(req.user_id, day, build, token=req.token,
                                   mode=req.mode, action=req.action,
-                                  expected_day=req.expected_day, expected_seen=req.expected_seen,
-                                  provider=food_provider, profile_key=food_profile_key)
+                                  expected_day=req.expected_day, expected_seen=req.expected_seen)
     except KeyError:
         raise HTTPException(status_code=403, detail='다시 접속해 추천 기록을 불러와 주세요.')
     except ValueError as exc:
