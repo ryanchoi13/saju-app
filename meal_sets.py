@@ -2,10 +2,7 @@
 from dalha_food.app_adapter import recommend_for_profile
 
 
-def build_set(profile, day, mode, history=(), exclude_ids=(), *, provider='offline'):
-    if provider == 'sazu':
-        from sazu_food import build_set as build_sazu
-        return build_sazu(profile, day)
+def build_set(profile, day, mode, history=(), exclude_ids=()):
     try:
         result = recommend_for_profile(profile, day, mode=mode, history=history, exclude_ids=exclude_ids)
     except AssertionError:

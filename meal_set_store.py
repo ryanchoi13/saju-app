@@ -13,15 +13,6 @@ from wardrobe_store import _connection, _execute, StorageUnavailable
 SET_LIMIT = 3
 
 
-def _provider_owner(user_id, provider, profile_key=''):
-    owner = _key(user_id)
-    if provider == 'offline':
-        return owner
-    if provider != 'sazu':
-        raise ValueError('알 수 없는 식단 제공자입니다.')
-    import hashlib
-    return hashlib.sha256(('sazu-food-v1:' + owner + ':' + profile_key).encode()).hexdigest()
-
 def initialize():
     with _connection() as (conn, pg):
         if pg:
@@ -79,12 +70,6 @@ def _save(conn, pg, owner, day, token, payload):
 
 def _view(token, payload, day):
     mode=payload['mode']
-    current = payload['sets'][mode]
-    if current.get('provider') == 'sazu':
-        return dict(date=str(day), token=token, mode='general', version='sazu-food-v1',
-                    food_balance=current['food_balance'], input_note=current.get('input_note', ''),
-                    items=[], plan=current, history=[], seen_sets=1, set_limit=1,
-                    mode_counts={'general': 1, 'diet': 0}, exhausted=True)
     # Archives are appended when a set is first shown, oldest first. Explicit
     # sequence numbers make display order independent of client array order.
     history=[dict(plan, recommendation_number=i+1)
@@ -96,8 +81,8 @@ def _view(token, payload, day):
                 basis_text='아침·점심·저녁을 한 세트로 준비했어요.',version='meal-set-v1')
 
 
-def load(user_id, day, build, *, provider='offline', profile_key=''):
-    owner=_provider_owner(user_id, provider, profile_key)
+def load(user_id, day, build):
+    owner=_key(user_id)
     initialize()
     with _connection() as (conn, pg):
         _locked(conn,pg,owner,day)
@@ -112,12 +97,10 @@ def load(user_id, day, build, *, provider='offline', profile_key=''):
         return _view(token,payload,day)
 
 
-def explore(user_id, day, build, *, token, mode, action, expected_day, expected_seen, provider='offline', profile_key=''):
+def explore(user_id, day, build, *, token, mode, action, expected_day, expected_seen):
     if mode not in ('general','diet') or action not in ('open','next'):
         raise ValueError('올바른 식단 선택이 아닙니다.')
-    if provider == 'sazu' and (mode != 'general' or action != 'open'):
-        raise ValueError('SAZU 추천은 하루 한 번 준비됩니다.')
-    owner=_provider_owner(user_id, provider, profile_key)
+    owner=_key(user_id)
     initialize()
     with _connection() as (conn,pg):
         _locked(conn,pg,owner,day)
