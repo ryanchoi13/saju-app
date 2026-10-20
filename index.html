@@ -3198,11 +3198,17 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
         }
 
         const ANNUAL_NARRATIVE_VERSION = 'annual-v2';
-        const LIFETIME_NARRATIVE_VERSION = 'lifetime-present-v2';
+        const LIFETIME_NARRATIVE_VERSION = 'lifetime-present-v3';
         const THEME_NARRATIVE_VERSION = 'theme-present-v2';
+        // 서버(main.py refresh_owned_report)의 target_version 과 같아야 한다. 다르면 새로 받아도
+        // '구매한 풀이 새로 받기' 버튼이 사라지지 않는다. backend/tests/test_report_version_sync.py 가 검사.
+        const REPORT_NARRATIVE_VERSION = {
+            sinnian: ANNUAL_NARRATIVE_VERSION, daewoon: LIFETIME_NARRATIVE_VERSION,
+            business: 'career-4tier-v2', love: 'love-4tier-v2', health: 'health-4tier-v2',
+        };
         function readingNeedsRefresh(item) {
             return ['sinnian','daewoon','wealth','business','love','health','study','gunghap'].includes(item?.report_key)
-                && item.narrative_version !== (item.report_key === 'daewoon' ? LIFETIME_NARRATIVE_VERSION : item.report_key === 'sinnian' ? ANNUAL_NARRATIVE_VERSION : THEME_NARRATIVE_VERSION);
+                && item.narrative_version !== (REPORT_NARRATIVE_VERSION[item.report_key] || THEME_NARRATIVE_VERSION);
         }
         async function refreshOwnedReading(partnerInput = null, selectedOption = null) {
             const item = serverUnlockedReports[readingReportIndex];
