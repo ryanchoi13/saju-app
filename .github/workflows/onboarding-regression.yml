@@ -11,6 +11,7 @@ on:
       - 'scripts/test_daily_refresh.cjs'
       - 'backend/tests/test_account_security_wallet.py'
       - 'backend/tests/test_tarot_draw.py'
+      - 'backend/tests/test_debug_endpoints.py'
       - 'scripts/test_landing.cjs'
       - 'scripts/test_kakao_profile.cjs'
       - 'scripts/test_birth_time_picker.cjs'
@@ -45,5 +46,5 @@ jobs:
       - run: node scripts/test_daily_refresh.cjs
       - run: node scripts/test_launch_scope.cjs
       - run: node scripts/test_birth_time_picker.cjs
-      - run: python -m pytest -q backend/tests/test_account_security_wallet.py backend/tests/test_tarot_draw.py
+      - run: python -m pytest -q backend/tests/test_account_security_wallet.py backend/tests/test_tarot_draw.py backend/tests/test_debug_endpoints.py
       - run: python -m pytest -q backend/tests/test_profile_persistence.py backend/tests/test_birth_clock_profile.py backend/tests/test_ranked_menu_explorer.py backend/tests/test_meal_set_limits.py
