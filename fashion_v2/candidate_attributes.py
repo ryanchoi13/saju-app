@@ -26,7 +26,7 @@ LAYER_ORDER = ("coat", "outer", "mid")
 
 # Label -> outer type. Order matters: more specific words first.
 OUTER_TYPE_PATTERNS = (
-    ("패딩", "puffer"), ("코트", "coat"), ("수트 재킷", "suit_jacket"), ("정장 재킷", "suit_jacket"),
+    ("패딩", "puffer"), ("무스탕", "shearling"), ("코트", "coat"), ("수트 재킷", "suit_jacket"), ("정장 재킷", "suit_jacket"),
     ("플리스", "fleece"), ("퀼팅", "quilted"),
     ("가디건", "cardigan"), ("블레이저", "blazer"), ("바람막이", "windbreaker"),
     ("데님 재킷", "denim_jacket"), ("필드", "field_jacket"), ("워크 재킷", "work_jacket"),
@@ -39,9 +39,15 @@ OBSERVED_OUTER_LENGTH = {
     "all-045": "short", "all-048": "short", "all-054": "short", "all-055": "short",
     # #188 fleece pilot (stored-only drawings), decided 2026-10-19: both end around the hip.
     "all-064": "short", "all-065": "short",
+    # #188 winter set, checked by eye 2026-10-20: long padding reaches below the knee,
+    # shearling and quilted jackets end around the hip.
+    "all-066": "short", "all-067": "long", "all-068": "short", "all-071": "long",
+    "all-073": "long", "all-075": "short",
 }
 # Where each observation came from (default OBSERVED_SOURCE).
-OBSERVED_OUTER_LENGTH_SOURCE = {"all-064": "asset_observed_2026-10-19", "all-065": "asset_observed_2026-10-19"}
+OBSERVED_OUTER_LENGTH_SOURCE = {"all-064": "asset_observed_2026-10-19", "all-065": "asset_observed_2026-10-19",
+                                **{d: "asset_observed_2026-10-20" for d in
+                                   ("all-066", "all-067", "all-068", "all-071", "all-073", "all-075")}}
 
 
 def observed_length_source(drawing_id: str) -> str:
@@ -53,6 +59,10 @@ TEMPERATURE_POLICY = (
     {"outer_type": "puffer", "outer_length": "long", "max_exclusive": 0},
     {"outer_type": "fleece", "outer_length": None, "min_inclusive": 5},
     {"outer_type": "quilted", "outer_length": None, "min_inclusive": 5},
+    # 2026-10-20 owner (#188 winter set): shearling only below 5°C apparent, like a heavy coat
+    # (common Korean temperature charts put leather jackets at 5-8°C; shearling is warmer).
+    {"outer_type": "shearling", "outer_length": None, "max_exclusive": 5,
+     "source": "owner_policy_2026-10-20"},
 )
 
 LABEL_CONFLICTS = {
@@ -80,7 +90,7 @@ def _outermost(components):
 def policy_rule(kind: str, length: str | None):
     for rule in TEMPERATURE_POLICY:
         if rule["outer_type"] == kind and rule["outer_length"] in (None, length):
-            return {**rule, "source": POLICY_SOURCE}
+            return {**rule, "source": rule.get("source", POLICY_SOURCE)}
     return None
 
 

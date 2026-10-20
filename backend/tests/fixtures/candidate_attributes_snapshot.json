@@ -1,5 +1,5 @@
 {
- "about": "candidate_attributes.ATTRIBUTES: the original 56 records stay identical to main 2ddebd3; PR-4A appends two reviewed selector-only fleece records.",
+ "about": "candidate_attributes.ATTRIBUTES: the original 56 records stay identical to main 2ddebd3; PR-4A appends two reviewed selector-only fleece records; the #188 winter set (2026-10-20) appends eleven reviewed selector-only records.",
  "attributes": {
   "female-autumn-business_casual-daily": {
    "drawing_outer_types": {
@@ -1873,6 +1873,377 @@
     "outer_type": "fleece",
     "source": "owner_policy_2026-10-15"
    }
+  },
+  "pending-female-winter-casual-shearling": {
+   "outer_slot": "outer",
+   "outer_label": "무스탕",
+   "outer_type": {
+    "value": "shearling",
+    "source": "label_mapping"
+   },
+   "outer_length": {
+    "value": "short",
+    "source": "asset_observed_2026-10-20"
+   },
+   "temperature_rule": {
+    "outer_type": "shearling",
+    "outer_length": null,
+    "max_exclusive": 5,
+    "source": "owner_policy_2026-10-20"
+   },
+   "suitability_review": "not_reviewed",
+   "rain": {
+    "value": "unknown",
+    "source": "unknown",
+    "legacy_handling": "suede/sandal swapped to leather shoes (weather_catalog._rain_safe)"
+   },
+   "snow": {
+    "value": "unknown",
+    "source": "unknown"
+   },
+   "drawings": [
+    "all-066"
+   ],
+   "drawing_outer_types": {
+    "all-066": "shearling"
+   },
+   "outer_varies_by_branch": false,
+   "label_conflict": null
+  },
+  "pending-male-winter-casual-longpadding": {
+   "outer_slot": "outer",
+   "outer_label": "롱패딩",
+   "outer_type": {
+    "value": "puffer",
+    "source": "label_mapping"
+   },
+   "outer_length": {
+    "value": "long",
+    "source": "asset_observed_2026-10-20"
+   },
+   "temperature_rule": {
+    "outer_type": "puffer",
+    "outer_length": "long",
+    "max_exclusive": 0,
+    "source": "owner_policy_2026-10-15"
+   },
+   "suitability_review": "not_reviewed",
+   "rain": {
+    "value": "unknown",
+    "source": "unknown",
+    "legacy_handling": "suede/sandal swapped to leather shoes (weather_catalog._rain_safe)"
+   },
+   "snow": {
+    "value": "unknown",
+    "source": "unknown"
+   },
+   "drawings": [
+    "all-067"
+   ],
+   "drawing_outer_types": {
+    "all-067": "puffer"
+   },
+   "outer_varies_by_branch": false,
+   "label_conflict": null
+  },
+  "pending-male-winter-casual-shearling": {
+   "outer_slot": "outer",
+   "outer_label": "무스탕",
+   "outer_type": {
+    "value": "shearling",
+    "source": "label_mapping"
+   },
+   "outer_length": {
+    "value": "short",
+    "source": "asset_observed_2026-10-20"
+   },
+   "temperature_rule": {
+    "outer_type": "shearling",
+    "outer_length": null,
+    "max_exclusive": 5,
+    "source": "owner_policy_2026-10-20"
+   },
+   "suitability_review": "not_reviewed",
+   "rain": {
+    "value": "unknown",
+    "source": "unknown",
+    "legacy_handling": "suede/sandal swapped to leather shoes (weather_catalog._rain_safe)"
+   },
+   "snow": {
+    "value": "unknown",
+    "source": "unknown"
+   },
+   "drawings": [
+    "all-068"
+   ],
+   "drawing_outer_types": {
+    "all-068": "shearling"
+   },
+   "outer_varies_by_branch": false,
+   "label_conflict": null
+  },
+  "pending-male-winter-business_casual-turtleneck": {
+   "outer_slot": "coat",
+   "outer_label": "울 코트",
+   "outer_type": {
+    "value": "coat",
+    "source": "label_mapping"
+   },
+   "outer_length": {
+    "value": "unknown",
+    "source": "unknown"
+   },
+   "temperature_rule": null,
+   "suitability_review": "not_reviewed",
+   "rain": {
+    "value": "unknown",
+    "source": "unknown",
+    "legacy_handling": "suede/sandal swapped to leather shoes (weather_catalog._rain_safe)"
+   },
+   "snow": {
+    "value": "unknown",
+    "source": "unknown"
+   },
+   "drawings": [
+    "all-069"
+   ],
+   "drawing_outer_types": {
+    "all-069": "coat"
+   },
+   "outer_varies_by_branch": false,
+   "label_conflict": null
+  },
+  "pending-male-winter-business_casual-halfzip": {
+   "outer_slot": "coat",
+   "outer_label": "울 코트",
+   "outer_type": {
+    "value": "coat",
+    "source": "label_mapping"
+   },
+   "outer_length": {
+    "value": "unknown",
+    "source": "unknown"
+   },
+   "temperature_rule": null,
+   "suitability_review": "not_reviewed",
+   "rain": {
+    "value": "unknown",
+    "source": "unknown",
+    "legacy_handling": "suede/sandal swapped to leather shoes (weather_catalog._rain_safe)"
+   },
+   "snow": {
+    "value": "unknown",
+    "source": "unknown"
+   },
+   "drawings": [
+    "all-070"
+   ],
+   "drawing_outer_types": {
+    "all-070": "coat"
+   },
+   "outer_varies_by_branch": false,
+   "label_conflict": null
+  },
+  "pending-male-winter-business_formal-longpadding": {
+   "outer_slot": "coat",
+   "outer_label": "롱패딩",
+   "outer_type": {
+    "value": "puffer",
+    "source": "label_mapping"
+   },
+   "outer_length": {
+    "value": "long",
+    "source": "asset_observed_2026-10-20"
+   },
+   "temperature_rule": {
+    "outer_type": "puffer",
+    "outer_length": "long",
+    "max_exclusive": 0,
+    "source": "owner_policy_2026-10-15"
+   },
+   "suitability_review": "not_reviewed",
+   "rain": {
+    "value": "unknown",
+    "source": "unknown",
+    "legacy_handling": "suede/sandal swapped to leather shoes (weather_catalog._rain_safe)"
+   },
+   "snow": {
+    "value": "unknown",
+    "source": "unknown"
+   },
+   "drawings": [
+    "all-071"
+   ],
+   "drawing_outer_types": {
+    "all-071": "puffer"
+   },
+   "outer_varies_by_branch": false,
+   "label_conflict": null
+  },
+  "pending-male-winter-business_formal-coat-derby": {
+   "outer_slot": "coat",
+   "outer_label": "울 코트",
+   "outer_type": {
+    "value": "coat",
+    "source": "label_mapping"
+   },
+   "outer_length": {
+    "value": "unknown",
+    "source": "unknown"
+   },
+   "temperature_rule": null,
+   "suitability_review": "not_reviewed",
+   "rain": {
+    "value": "unknown",
+    "source": "unknown",
+    "legacy_handling": "suede/sandal swapped to leather shoes (weather_catalog._rain_safe)"
+   },
+   "snow": {
+    "value": "unknown",
+    "source": "unknown"
+   },
+   "drawings": [
+    "all-072"
+   ],
+   "drawing_outer_types": {
+    "all-072": "coat"
+   },
+   "outer_varies_by_branch": false,
+   "label_conflict": null
+  },
+  "pending-female-winter-casual-longpadding": {
+   "outer_slot": "outer",
+   "outer_label": "롱패딩",
+   "outer_type": {
+    "value": "puffer",
+    "source": "label_mapping"
+   },
+   "outer_length": {
+    "value": "long",
+    "source": "asset_observed_2026-10-20"
+   },
+   "temperature_rule": {
+    "outer_type": "puffer",
+    "outer_length": "long",
+    "max_exclusive": 0,
+    "source": "owner_policy_2026-10-15"
+   },
+   "suitability_review": "not_reviewed",
+   "rain": {
+    "value": "unknown",
+    "source": "unknown",
+    "legacy_handling": "suede/sandal swapped to leather shoes (weather_catalog._rain_safe)"
+   },
+   "snow": {
+    "value": "unknown",
+    "source": "unknown"
+   },
+   "drawings": [
+    "all-073"
+   ],
+   "drawing_outer_types": {
+    "all-073": "puffer"
+   },
+   "outer_varies_by_branch": false,
+   "label_conflict": null
+  },
+  "pending-female-winter-business_formal-knit": {
+   "outer_slot": "coat",
+   "outer_label": "울 코트",
+   "outer_type": {
+    "value": "coat",
+    "source": "label_mapping"
+   },
+   "outer_length": {
+    "value": "unknown",
+    "source": "unknown"
+   },
+   "temperature_rule": null,
+   "suitability_review": "not_reviewed",
+   "rain": {
+    "value": "unknown",
+    "source": "unknown",
+    "legacy_handling": "suede/sandal swapped to leather shoes (weather_catalog._rain_safe)"
+   },
+   "snow": {
+    "value": "unknown",
+    "source": "unknown"
+   },
+   "drawings": [
+    "all-074"
+   ],
+   "drawing_outer_types": {
+    "all-074": "coat"
+   },
+   "outer_varies_by_branch": false,
+   "label_conflict": null
+  },
+  "pending-female-winter-business_casual-quilted": {
+   "outer_slot": "outer",
+   "outer_label": "퀼팅 재킷",
+   "outer_type": {
+    "value": "quilted",
+    "source": "label_mapping"
+   },
+   "outer_length": {
+    "value": "short",
+    "source": "asset_observed_2026-10-20"
+   },
+   "temperature_rule": {
+    "outer_type": "quilted",
+    "outer_length": null,
+    "min_inclusive": 5,
+    "source": "owner_policy_2026-10-15"
+   },
+   "suitability_review": "not_reviewed",
+   "rain": {
+    "value": "unknown",
+    "source": "unknown",
+    "legacy_handling": "suede/sandal swapped to leather shoes (weather_catalog._rain_safe)"
+   },
+   "snow": {
+    "value": "unknown",
+    "source": "unknown"
+   },
+   "drawings": [
+    "all-075"
+   ],
+   "drawing_outer_types": {
+    "all-075": "quilted"
+   },
+   "outer_varies_by_branch": false,
+   "label_conflict": null
+  },
+  "pending-female-winter-casual-coat-dress": {
+   "outer_slot": "coat",
+   "outer_label": "울 코트",
+   "outer_type": {
+    "value": "coat",
+    "source": "label_mapping"
+   },
+   "outer_length": {
+    "value": "unknown",
+    "source": "unknown"
+   },
+   "temperature_rule": null,
+   "suitability_review": "not_reviewed",
+   "rain": {
+    "value": "unknown",
+    "source": "unknown",
+    "legacy_handling": "suede/sandal swapped to leather shoes (weather_catalog._rain_safe)"
+   },
+   "snow": {
+    "value": "unknown",
+    "source": "unknown"
+   },
+   "drawings": [
+    "all-076"
+   ],
+   "drawing_outer_types": {
+    "all-076": "coat"
+   },
+   "outer_varies_by_branch": false,
+   "label_conflict": null
   }
  }
 }

@@ -45,7 +45,8 @@ WINTER_PUFFER_NOTE = "winter template also serves the cold (5–11°C apparent) 
 
 
 def _component(item: dict) -> dict:
-    return {
+    extra = {"neck": item["neck"]} if item.get("neck") else {}  # only when drawn (keeps old hashes)
+    return extra | {
         "slot": item["category"],
         "source_label": item["label"],
         "source_color": item["color"],
@@ -143,13 +144,125 @@ DRAWN_CANDIDATES = (
                   ("bottom", "면바지", "charcoal", "cotton"),
                   ("shoes", "운동화", "white", "suede_mesh")),
     },
+) + (
+    # #188 winter set (2026-10-20). Drawn in one batch under the owner's new workflow: scope at
+    # the start (codi-drawing-list-final-2026-10-15, P1 winter), owner check on the comparison
+    # sheet at the end. Base colours/materials follow the live winter templates of the same
+    # gender/TPO; runtime luck-colour placement still varies them. Roles: owner-approved list.
+    {
+        "candidate_id": "pending-female-winter-casual-shearling", "plan_id": "art-016",
+        "illustration_id": "all-066", "gender": "female", "tpo": "casual", "scope": "winter",
+        "role_draft": "trendy", "role_basis": "owner_scope_2026-10-20", "form": "pants",
+        "items": (("outer", "무스탕", "camel", "shearling"),
+                  ("top", "크루넥 니트", "cream", "wool_knit"),
+                  ("bottom", "청바지", "navy", "denim"),
+                  ("shoes", "앵클부츠", "dark_brown", "leather")),
+    },
+    {
+        "candidate_id": "pending-male-winter-casual-longpadding", "plan_id": "art-002",
+        "illustration_id": "all-067", "gender": "male", "tpo": "casual", "scope": "winter",
+        "role_draft": "basic", "role_basis": "owner_scope_2026-10-20", "form": "pants",
+        "items": (("outer", "롱패딩", "navy", "down"),
+                  ("top", "후드 티셔츠", "gray", "fleece_cotton"),
+                  ("bottom", "기모 캐주얼 팬츠", "black", "fleece_cotton"),
+                  ("shoes", "운동화", "black", "leather")),
+    },
+    {
+        "candidate_id": "pending-male-winter-casual-shearling", "plan_id": "art-003",
+        "illustration_id": "all-068", "gender": "male", "tpo": "casual", "scope": "winter",
+        "role_draft": "trendy", "role_basis": "owner_scope_2026-10-20", "form": "pants",
+        "items": (("outer", "무스탕", "dark_brown", "shearling"),
+                  ("top", "크루넥 니트", "burgundy", "wool_knit"),
+                  ("bottom", "진청바지", "dark_denim", "denim"),
+                  ("shoes", "첼시 부츠", "dark_brown", "leather")),
+    },
+    {
+        "candidate_id": "pending-male-winter-business_casual-turtleneck", "plan_id": "art-005",
+        "illustration_id": "all-069", "gender": "male", "tpo": "business_casual", "scope": "winter",
+        "role_draft": "trendy", "role_basis": "owner_scope_2026-10-20", "form": "pants",
+        "items": (("coat", "울 코트", "charcoal", "wool"),
+                  ("outer", "블레이저", "navy", "wool"),
+                  ("top", "터틀넥 니트", "gray", "wool_knit", {"neck": "turtleneck"}),
+                  ("bottom", "슬랙스", "charcoal", "wool"),
+                  ("shoes", "옥스퍼드 구두", "black", "leather")),
+    },
+    {
+        "candidate_id": "pending-male-winter-business_casual-halfzip", "plan_id": "art-004",
+        "illustration_id": "all-070", "gender": "male", "tpo": "business_casual", "scope": "winter",
+        "role_draft": "basic", "role_basis": "owner_scope_2026-10-20", "form": "pants",
+        "items": (("coat", "울 코트", "navy", "wool"),
+                  ("top", "하프집업 니트", "gray", "wool_knit"),
+                  ("bottom", "슬랙스", "charcoal", "wool"),
+                  ("shoes", "로퍼", "dark_brown", "leather")),
+    },
+    {
+        "candidate_id": "pending-male-winter-business_formal-longpadding", "plan_id": "art-007",
+        "illustration_id": "all-071", "gender": "male", "tpo": "business_formal", "scope": "winter",
+        "role_draft": "trendy", "role_basis": "owner_scope_2026-10-20", "form": "pants",
+        "items": (("coat", "롱패딩", "black", "down"),
+                  ("outer", "수트 재킷", "charcoal", "winter_wool", {"suit_group": "charcoal_winter"}),
+                  ("top", "드레스 셔츠", "white", "cotton"),
+                  ("bottom", "수트 바지", "charcoal", "winter_wool", {"suit_group": "charcoal_winter"}),
+                  ("tie", "솔리드 타이", "navy", "silk"),
+                  ("shoes", "더비 구두", "black", "leather")),
+    },
+    {
+        "candidate_id": "pending-male-winter-business_formal-coat-derby", "plan_id": "art-039",
+        "illustration_id": "all-072", "gender": "male", "tpo": "business_formal", "scope": "winter",
+        "role_draft": "basic", "role_basis": "owner_scope_2026-10-20", "form": "pants",
+        "items": (("coat", "울 코트", "charcoal", "wool"),
+                  ("outer", "수트 재킷", "navy", "winter_wool", {"suit_group": "navy_winter"}),
+                  ("top", "드레스 셔츠", "white", "cotton"),
+                  ("bottom", "수트 바지", "navy", "winter_wool", {"suit_group": "navy_winter"}),
+                  ("tie", "솔리드 타이", "burgundy", "silk"),
+                  ("shoes", "더비 구두", "black", "leather")),
+    },
+    {
+        "candidate_id": "pending-female-winter-casual-longpadding", "plan_id": "art-018",
+        "illustration_id": "all-073", "gender": "female", "tpo": "casual", "scope": "winter",
+        "role_draft": "basic", "role_basis": "owner_scope_2026-10-20", "form": "pants",
+        "items": (("outer", "롱패딩", "navy", "down"),
+                  ("top", "크루넥 니트", "cream", "wool_knit"),
+                  ("bottom", "기모 캐주얼 팬츠", "charcoal", "fleece_cotton"),
+                  ("shoes", "운동화", "black", "leather")),
+    },
+    {
+        "candidate_id": "pending-female-winter-business_formal-knit", "plan_id": "art-021",
+        "illustration_id": "all-074", "gender": "female", "tpo": "business_formal", "scope": "winter",
+        "role_draft": "trendy", "role_basis": "owner_scope_2026-10-20", "form": "pants",
+        "items": (("coat", "울 코트", "navy", "wool"),
+                  ("outer", "수트 재킷", "charcoal", "winter_wool", {"suit_group": "charcoal_winter"}),
+                  ("top", "파인 니트", "ivory", "wool_knit"),
+                  ("bottom", "수트 바지", "charcoal", "winter_wool", {"suit_group": "charcoal_winter"}),
+                  ("shoes", "펌프스", "black", "leather"),
+                  ("bag", "핸드백", "black", "leather")),
+    },
+    {
+        "candidate_id": "pending-female-winter-business_casual-quilted", "plan_id": "art-020",
+        "illustration_id": "all-075", "gender": "female", "tpo": "business_casual", "scope": "winter",
+        "role_draft": "trendy", "role_basis": "owner_scope_2026-10-20", "form": "pants",
+        "items": (("outer", "퀼팅 재킷", "navy", "quilted_nylon"),
+                  ("top", "크루넥 니트", "cream", "wool_knit"),
+                  ("bottom", "슬랙스", "charcoal", "wool"),
+                  ("shoes", "앵클부츠", "black", "leather")),
+    },
+    {
+        "candidate_id": "pending-female-winter-casual-coat-dress", "plan_id": "art-T1",
+        "illustration_id": "all-076", "gender": "female", "tpo": "casual", "scope": "winter",
+        "role_draft": "trendy", "role_basis": "owner_scope_2026-10-20", "form": "dress",
+        "items": (("coat", "울 코트", "camel", "wool"),
+                  ("dress", "니트 원피스", "burgundy", "wool_knit"),
+                  ("shoes", "앵클부츠", "dark_brown", "leather"),
+                  ("bag", "크로스백", "black", "leather")),
+    },
 )
 
 
 def _drawn_candidate(spec: dict) -> dict:
     record = {k: deepcopy(v) for k, v in spec.items() if k != "items"}
-    components = [_component({"category": slot, "label": label, "color": color, "material": material})
-                  for slot, label, color, material in spec["items"]]
+    components = [_component({"category": item[0], "label": item[1], "color": item[2], "material": item[3],
+                              **(item[4] if len(item) > 4 else {})})
+                  for item in spec["items"]]
     return {**record, "status": "active", "source": SELECTOR_SOURCE,
             "role": record["role_draft"], "editorial_formula_id": None,
             "components": components, "known_issues": []}

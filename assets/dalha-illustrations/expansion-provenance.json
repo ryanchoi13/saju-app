@@ -2219,5 +2219,746 @@
     "edit_instruction": "Edit the FIRST reference image, a flat 2D clothing illustration. Use the SECOND reference image ONLY as a guide for how a polar fleece is drawn (stand-up collar, narrow same-colour binding at cuffs and hem, medium weight, a few sparse short irregular curved pile marks in the darker shadow tone); do NOT copy its women's waist shaping, length, pockets, T-shirt, jeans, shoes or layout. Make exactly TWO changes to the FIRST image. (1) Replace the green blouson jacket with an OPEN full-zip men's FLEECE jacket: a straight boxy cut, hip length, one zipped chest pocket on the left chest, no lower slanted pockets, no waist shaping. Same flat grass GREEN (#79AF79) base, one darker green hard-edged shadow tone, thin green outlines, a small silver-grey zipper only. Add only a FEW sparse, short, irregular curved pile marks in the existing darker green shadow tone, limited to the inside of the collar, the side seams and around the chest pocket; never a wide patch, all-over pattern, gradient or fuzzy outline; the outer contour stays a clean thin line. (2) Replace the rose sweatshirt with a dusty ROSE (#D782A0) long-sleeve casual button-up shirt: a pointed shirt collar visible inside the fleece collar, the button placket visible in the open front with small rose buttons, worn untucked so the shirt hem shows about two finger-widths below the fleece hem; the shirt sleeves stay fully hidden inside the fleece sleeves. Preserve the overall layout, item centers, spacing and canvas occupancy of the FIRST image, except for the explicitly requested silhouette and length changes. Keep everything else in the FIRST image identical: the cotton chinos, the sneakers, their shapes, positions, colours, outlines and shadows, and the plain ivory background. No dots, gradients, contrast-colour trims, logos or text. No cast or ground shadows.",
     "edit_reference_job_id": "2366c648-0703-4576-9f98-42c095a012ce",
     "post_process": "SHADOW_FRINGE_NEUTRAL (build_expanded_illustration_masks.py)"
+  },
+  {
+    "index": 66,
+    "id": "all-066",
+    "shape": {
+      "gender": "female",
+      "top": "니트",
+      "bottom": "데님 바지",
+      "dress": "",
+      "outer": "무스탕",
+      "shoe": "앵클부츠",
+      "bag": "",
+      "accessories": [],
+      "outerOpen": true,
+      "outerMode": "wear",
+      "tuck": "out"
+    },
+    "slots": [
+      {
+        "field": "outerColor",
+        "source": "green"
+      },
+      {
+        "field": "topColor",
+        "source": "rose"
+      },
+      {
+        "field": "bottomColor",
+        "source": "blue"
+      },
+      {
+        "field": "shoeColor",
+        "source": "brown"
+      }
+    ],
+    "prompt": "Create one finished DALHA clothing-only outfit illustration. Reference is ONLY the approved elegant, simple adult 2D editorial illustration style. No person, mannequin, limbs, text, logo or decorations. Calm asymmetrical fashion flat-lay with slightly stylized adult proportions, attractive spacing. Long trousers MUST be full sized in proportion to the top; never tiny. Thin colour-coordinated outlines, ONE flat base + ONE hard-edged shadow tone per garment. NO gradients, fabric texture, grain, glossy highlights, photorealism or 3D. Solid uniform IVORY background, absolutely NO cast shadows on the background, no ground shadows. Each garment has a distinct source colour to enable later automatic recolouring; adhere to colours exactly even if unconventional. Colours on hidden lining match the garment. Keep all items comfortably inside frame. Preserve garment types exactly. Adult female outfit consists of EXACTLY: flat grass GREEN (#79AF79) hip-length quilted puffer jacket; flat dusty ROSE (#D782A0) long-sleeve crewneck knit sweater; flat BLUE (#5A82C8) full-length straight jeans; warm BROWN (#915A37) pair of ankle boots. Top/outerwear at upper left, bottom diagonally down the right side, shoes lower left. Layer the inner top under the outer jacket: inner sleeves fully hidden inside outer sleeves, collar/neck and front clearly visible. Top worn untucked; hem ends naturally at hips, never skirt-like. NO bag. NO accessories or jewelry. ",
+    "job_id": "5bb61fe5-2f8f-4a23-af19-18c281ede3ee",
+    "source_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3JA8zURyEfnFTV7wDtL1dscTGxg/hf_20261020_084609_5bb61fe5-2f8f-4a23-af19-18c281ede3ee.png",
+    "original_sha256": "83307128edc1a699c1ebd03f161d857f185a08dc52c6d94d3607deb915115e5e",
+    "edit_base_illustration": "all-055",
+    "edit_instruction": "2026-10-20 owner-approved '바' flat-lay layout (garments laid on the floor, top view, worn order, natural gaps and soft folds, ankle-length plain-hem trousers, one shoe flat and one tipped ~45 degrees). Redrawn from the earlier drawing with the layout reference, then edited for proportions (inner jackets and knits realistically sized, padding thicker and masculine for men, knit hem covering the waistband), the floor-laid feel of the approved female reference 72bcc0fb, straight trouser legs, hidden inner cuffs, no coat lining or tights (all-076), and solid-colour highlights so the hue mask covers every garment. Source PNG passes through scripts/prepare_flatlay_sources.py before mask building.",
+    "edit_reference_job_id": "72bcc0fb-0f3c-4727-b7e2-93e254d524fc",
+    "superseded_job_id": "83ba7230-fb06-4e86-b7ce-71d154fb8999",
+    "layout": "flatlay_v2",
+    "redraw_chain_job_prefixes": [
+      "72bcc0fb",
+      "03fddf3d",
+      "5bb61fe5"
+    ],
+    "source_preparation": "scripts/prepare_flatlay_sources.py",
+    "edit_history": [
+      {
+        "job_id": "83ba7230-fb06-4e86-b7ce-71d154fb8999",
+        "edit_instruction": "Edit the reference image, a flat 2D clothing illustration. Replace ONLY the green quilted puffer jacket with an OPEN hip-length SHEARLING (mouton) jacket in the same flat grass GREEN (#79AF79) base with one darker green hard-edged shadow tone and thin green outlines: smooth suede-like body with NO quilting lines, a wide notched shearling lapel collar, shearling-trimmed cuffs and front edges. Make the shearling collar, cuffs and edges read as fleecy ONLY by a few sparse, short, curly pile marks drawn in the jacket's existing darker green shadow tone; the collar stays the SAME green as the body, no cream or white colour anywhere on the jacket. Clean thin outer contour, no fuzzy or bumpy outline, no all-over pattern, no buttons in a contrasting colour. Keep the jacket's position, size and angle at the upper left and the rose knit sweater layered under it with its neckline and front visible and its sleeves hidden inside the jacket sleeves. Keep everything else identical: the rose crewneck knit sweater, the blue jeans with their cream topstitching and rolled cuffs, the brown ankle boots, their shapes, positions, colours, outlines and shadows, and the plain uniform ivory background. ONE flat base plus ONE hard-edged shadow tone per garment, NO gradients, fabric texture, grain, gloss, photorealism or 3D. No person, text, logo, bag or accessories. No cast or ground shadows.",
+        "edit_reference_job_id": "9d9e2272-871f-4ca0-bbbe-2f7e38d29776"
+      }
+    ]
+  },
+  {
+    "index": 67,
+    "id": "all-067",
+    "shape": {
+      "gender": "male",
+      "top": "후드티",
+      "bottom": "면바지",
+      "dress": "",
+      "outer": "롱패딩",
+      "shoe": "운동화",
+      "bag": "",
+      "accessories": [],
+      "outerOpen": true,
+      "outerMode": "wear",
+      "tuck": "out"
+    },
+    "slots": [
+      {
+        "field": "outerColor",
+        "source": "green"
+      },
+      {
+        "field": "topColor",
+        "source": "rose"
+      },
+      {
+        "field": "bottomColor",
+        "source": "blue"
+      },
+      {
+        "field": "shoeColor",
+        "source": "brown"
+      }
+    ],
+    "prompt": "Create one finished DALHA clothing-only outfit illustration. Reference is ONLY the approved elegant, simple adult 2D editorial illustration style. No person, mannequin, limbs, text, logo or decorations. Calm asymmetrical fashion flat-lay with slightly stylized adult proportions, attractive spacing. Long trousers MUST be full sized in proportion to the top; never tiny. Thin colour-coordinated outlines, ONE flat base + ONE hard-edged shadow tone per garment. NO gradients, fabric texture, grain, glossy highlights, photorealism or 3D. Solid uniform IVORY background, absolutely NO cast shadows on the background, no ground shadows. Each garment has a distinct source colour to enable later automatic recolouring; adhere to colours exactly even if unconventional. Colours on hidden lining match the garment. Keep all items comfortably inside frame. Preserve garment types exactly. Adult male outfit consists of EXACTLY: flat grass GREEN (#79AF79) hip-length quilted puffer jacket; flat dusty ROSE (#D782A0) pullover hoodie with visible hood; flat BLUE (#5A82C8) full-length straight cotton chinos; warm BROWN (#915A37) pair of low-top sneakers with plain IVORY rubber soles and brown uppers. Top/outerwear at upper left, bottom diagonally down the right side, shoes lower left. Layer the inner top under the outer jacket: inner sleeves fully hidden inside outer sleeves, collar/neck and front clearly visible. Top worn untucked; hem ends naturally at hips, never skirt-like. NO bag. NO accessories or jewelry. ",
+    "job_id": "95edbb7e-a0d5-4b15-af5e-fce2a9c78ba0",
+    "source_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3JA8zURyEfnFTV7wDtL1dscTGxg/hf_20261020_091112_95edbb7e-a0d5-4b15-af5e-fce2a9c78ba0.png",
+    "original_sha256": "babbd220f0eb277e80bb980b0507e76cdf464f64fa7e80405af5bd32fec8533b",
+    "edit_base_illustration": "all-018",
+    "edit_instruction": "2026-10-20 owner-approved '바' flat-lay layout (garments laid on the floor, top view, worn order, natural gaps and soft folds, ankle-length plain-hem trousers, one shoe flat and one tipped ~45 degrees). Redrawn from the earlier drawing with the layout reference, then edited for proportions (inner jackets and knits realistically sized, padding thicker and masculine for men, knit hem covering the waistband), the floor-laid feel of the approved female reference 72bcc0fb, straight trouser legs, hidden inner cuffs, no coat lining or tights (all-076), and solid-colour highlights so the hue mask covers every garment. Source PNG passes through scripts/prepare_flatlay_sources.py before mask building.",
+    "edit_reference_job_id": "d0b41fcc-fe7b-4835-a141-e918a068b60b",
+    "superseded_job_id": "fee7506f-451d-4378-89c3-8d425707aa28",
+    "layout": "flatlay_v2",
+    "redraw_chain_job_prefixes": [
+      "2544eeae",
+      "2cbab58c",
+      "f9529895",
+      "760b33c7",
+      "52ed75d4",
+      "d3e32b62",
+      "a15fc891",
+      "21195fba",
+      "376727c8",
+      "95edbb7e"
+    ],
+    "source_preparation": "scripts/prepare_flatlay_sources.py",
+    "edit_history": [
+      {
+        "job_id": "fee7506f-451d-4378-89c3-8d425707aa28",
+        "edit_instruction": "Edit the reference image, a flat 2D clothing illustration. Change ONLY the green short puffer jacket into an OPEN LONG PADDED PARKA (Korean long padding) that reaches just below the knee, in the same flat grass GREEN (#79AF79) base with one darker green hard-edged shadow tone and thin green outlines: a hood attached at the back of the neck, a front zipper, evenly spaced horizontal quilted baffle lines drawn in the darker green shadow tone, slightly rounded puffy silhouette. Keep the shoulders, sleeves and upper body like the original jacket; only the length grows. Keep the rose hoodie layered under it with its hood, neckline and front visible and its sleeves hidden inside the parka sleeves. If needed, make the parka slightly smaller or move it a little so that it does NOT cover the trousers or the shoes: the beige-blue cotton trousers must stay full-length, full-sized and fully visible diagonally down the right side, and the brown sneakers fully visible at the lower left. Keep everything else identical: the rose hoodie, the blue trousers, the brown sneakers, their shapes, colours, outlines and shadows, and the plain uniform ivory background. Keep all items comfortably inside the frame. ONE flat base plus ONE hard-edged shadow tone per garment, NO gradients, fabric texture, grain, gloss, photorealism or 3D. No person, text, logo, bag or accessories. No cast or ground shadows.",
+        "edit_reference_job_id": "33a4078b-3dda-4104-adb8-5ae903cc9025"
+      }
+    ]
+  },
+  {
+    "index": 68,
+    "id": "all-068",
+    "shape": {
+      "gender": "male",
+      "top": "니트",
+      "bottom": "데님 바지",
+      "dress": "",
+      "outer": "무스탕",
+      "shoe": "부츠",
+      "bag": "",
+      "accessories": [],
+      "outerOpen": true,
+      "outerMode": "wear",
+      "tuck": "out"
+    },
+    "slots": [
+      {
+        "field": "outerColor",
+        "source": "green"
+      },
+      {
+        "field": "topColor",
+        "source": "rose"
+      },
+      {
+        "field": "bottomColor",
+        "source": "blue"
+      },
+      {
+        "field": "shoeColor",
+        "source": "brown"
+      }
+    ],
+    "prompt": "Create one finished DALHA clothing-only outfit illustration. Reference is ONLY the approved elegant, simple adult 2D editorial illustration style. No person, mannequin, limbs, text, logo or decorations. Calm asymmetrical fashion flat-lay with slightly stylized adult proportions, attractive spacing. Long trousers MUST be full sized in proportion to the top; never tiny. Thin colour-coordinated outlines, ONE flat base + ONE hard-edged shadow tone per garment. NO gradients, fabric texture, grain, glossy highlights, photorealism or 3D. Solid uniform IVORY background, absolutely NO cast shadows on the background, no ground shadows. Each garment has a distinct source colour to enable later automatic recolouring; adhere to colours exactly even if unconventional. Colours on hidden lining match the garment. Keep all items comfortably inside frame. Preserve garment types exactly. Adult male outfit consists of EXACTLY: flat grass GREEN (#79AF79) knee-length wool overcoat; flat dusty ROSE (#D782A0) long-sleeve crewneck knit sweater; flat BLUE (#5A82C8) full-length straight jeans; warm BROWN (#915A37) pair of leather boots. Top/outerwear at upper left, bottom diagonally down the right side, shoes lower left. Layer the inner top under the outer jacket: inner sleeves fully hidden inside outer sleeves, collar/neck and front clearly visible. Top worn untucked; hem ends naturally at hips, never skirt-like. NO bag. NO accessories or jewelry. ",
+    "job_id": "0cceca9f-53e8-4e1c-9ebc-4d2fd27deab1",
+    "source_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3JA8zURyEfnFTV7wDtL1dscTGxg/hf_20261020_084608_0cceca9f-53e8-4e1c-9ebc-4d2fd27deab1.png",
+    "original_sha256": "01b52c17332f8ccf54e11022260c2bf8c0e7b8561ffd9a2cb694bfcb436a3c58",
+    "edit_base_illustration": "all-019",
+    "edit_instruction": "2026-10-20 owner-approved '바' flat-lay layout (garments laid on the floor, top view, worn order, natural gaps and soft folds, ankle-length plain-hem trousers, one shoe flat and one tipped ~45 degrees). Redrawn from the earlier drawing with the layout reference, then edited for proportions (inner jackets and knits realistically sized, padding thicker and masculine for men, knit hem covering the waistband), the floor-laid feel of the approved female reference 72bcc0fb, straight trouser legs, hidden inner cuffs, no coat lining or tights (all-076), and solid-colour highlights so the hue mask covers every garment. Source PNG passes through scripts/prepare_flatlay_sources.py before mask building.",
+    "edit_reference_job_id": "d0b41fcc-fe7b-4835-a141-e918a068b60b",
+    "edit_style_reference_job_ids": [
+      "83ba7230-fb06-4e86-b7ce-71d154fb8999"
+    ],
+    "superseded_job_id": "e4016a5f-290c-4d6b-a7d9-d8fd0da51b88",
+    "layout": "flatlay_v2",
+    "redraw_chain_job_prefixes": [
+      "6e71b526",
+      "00fea6cc",
+      "3d07ed76",
+      "c0299ee0",
+      "28c4eacb",
+      "bf42b100",
+      "0cceca9f"
+    ],
+    "source_preparation": "scripts/prepare_flatlay_sources.py",
+    "edit_history": [
+      {
+        "job_id": "e4016a5f-290c-4d6b-a7d9-d8fd0da51b88",
+        "edit_instruction": "Edit the FIRST reference image, a flat 2D clothing illustration. Replace ONLY the green knee-length wool overcoat with an OPEN hip-length SHEARLING (mouton) jacket drawn in exactly the same way as the green shearling jacket in the SECOND reference image: smooth suede-like body, wide notched shearling lapel collar, shearling cuffs and front edges marked only by sparse short curly pile marks in the darker green shadow tone, the SAME flat grass GREEN (#79AF79) everywhere, no cream or white. Proportion it for an adult man, at the same upper-left position. Keep the rose crewneck knit sweater layered under it with its neckline and front visible and its sleeves hidden inside the jacket sleeves. Keep everything else in the FIRST image identical: every other garment, the shoes, bag and accessories, their shapes, positions, colours, outlines and shadows, and the plain uniform ivory background. Keep all items comfortably inside the frame. ONE flat base plus ONE hard-edged shadow tone per garment, NO gradients, fabric texture, grain, gloss, photorealism or 3D. No person, mannequin, text or logo. No cast or ground shadows.",
+        "edit_reference_job_id": "3c8d53c2-a958-476c-bff3-158784d9809b"
+      }
+    ]
+  },
+  {
+    "index": 69,
+    "id": "all-069",
+    "shape": {
+      "gender": "male",
+      "top": "니트",
+      "bottom": "슬랙스",
+      "dress": "",
+      "outer": "블레이저",
+      "shoe": "옥스퍼드",
+      "bag": "",
+      "accessories": [],
+      "outerOpen": true,
+      "outerMode": "wear",
+      "tuck": "out",
+      "knitNeck": "turtleneck",
+      "overOuter": {
+        "name": "코트",
+        "open": true
+      }
+    },
+    "slots": [
+      {
+        "field": "outerColor",
+        "source": "green"
+      },
+      {
+        "field": "topColor",
+        "source": "rose"
+      },
+      {
+        "field": "bottomColor",
+        "source": "blue"
+      },
+      {
+        "field": "shoeColor",
+        "source": "brown"
+      },
+      {
+        "field": "overOuter.color",
+        "source": "violet"
+      }
+    ],
+    "prompt": "Create one finished DALHA clothing-only outfit illustration. Reference is ONLY the approved elegant, simple adult 2D editorial illustration style. No person, mannequin, limbs, text, logo or decorations. Calm asymmetrical fashion flat-lay with slightly stylized adult proportions, attractive spacing. Long trousers MUST be full sized in proportion to the top; never tiny. Thin colour-coordinated outlines, ONE flat base + ONE hard-edged shadow tone per garment. NO gradients, fabric texture, grain, glossy highlights, photorealism or 3D. Solid uniform IVORY background, absolutely NO cast shadows on the background, no ground shadows. Each garment has a distinct source colour to enable later automatic recolouring; adhere to colours exactly even if unconventional. Colours on hidden lining match the garment. Keep all items comfortably inside frame. Preserve garment types exactly. Adult male outfit consists of EXACTLY: flat grass GREEN (#79AF79) tailored suit jacket with lapels; flat dusty ROSE (#D782A0) long-sleeve collared dress shirt; flat BLUE (#5A82C8) full-length tailored suit trousers; warm BROWN (#915A37) pair of closed-lacing Oxford dress shoes; flat VIOLET (#9664C3) knee-length wool overcoat as an additional outer layer over the inner jacket; solid CYAN (#3CA0AA) necktie with NO pattern under suit jacket, distinct from blue trousers. Top/outerwear at upper left, bottom diagonally down the right side, shoes lower left. Layer the inner top under the outer jacket: inner sleeves fully hidden inside outer sleeves, collar/neck and front clearly visible. Extra outer coat/puffer is OPEN over the inner jacket/cardigan, which remains identifiable through the front. Hide inner sleeves. Keep all layers full sized. Shirt/top tucked neatly into the waistband, no hem sticking out. NO bag. ",
+    "job_id": "286b0096-7eb9-449d-9de6-3c14040f67a7",
+    "source_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3JA8zURyEfnFTV7wDtL1dscTGxg/hf_20261020_084610_286b0096-7eb9-449d-9de6-3c14040f67a7.png",
+    "original_sha256": "f9aaacbd9a5b7321a80422272d8317091411455c2121f2c305ad185a08331e67",
+    "edit_base_illustration": "all-022",
+    "edit_instruction": "2026-10-20 owner-approved '바' flat-lay layout (garments laid on the floor, top view, worn order, natural gaps and soft folds, ankle-length plain-hem trousers, one shoe flat and one tipped ~45 degrees). Redrawn from the earlier drawing with the layout reference, then edited for proportions (inner jackets and knits realistically sized, padding thicker and masculine for men, knit hem covering the waistband), the floor-laid feel of the approved female reference 72bcc0fb, straight trouser legs, hidden inner cuffs, no coat lining or tights (all-076), and solid-colour highlights so the hue mask covers every garment. Source PNG passes through scripts/prepare_flatlay_sources.py before mask building.",
+    "edit_reference_job_id": "d0b41fcc-fe7b-4835-a141-e918a068b60b",
+    "superseded_job_id": "ce09c84e-19a7-481a-ac5f-07680e89a084",
+    "layout": "flatlay_v2",
+    "redraw_chain_job_prefixes": [
+      "dc6fa60b",
+      "02ddb572",
+      "581a8d61",
+      "f67ab184",
+      "6850fbbc",
+      "fdb0d9c8",
+      "8b0d9bf0",
+      "286b0096"
+    ],
+    "source_preparation": "scripts/prepare_flatlay_sources.py",
+    "edit_history": [
+      {
+        "job_id": "ce09c84e-19a7-481a-ac5f-07680e89a084",
+        "edit_instruction": "Edit the FIRST reference image, a flat 2D clothing illustration. Change ONLY the inner top: replace the rose collared dress shirt AND the cyan necktie with a flat dusty ROSE (#D782A0) fine-gauge TURTLENECK knit sweater with a folded roll neck, worn under the green suit jacket with its roll neck and front clearly visible and its sleeves fully hidden inside the jacket sleeves. Remove the necktie completely; no cyan anywhere. Keep the green suit jacket, the violet overcoat over it, the blue trousers and the brown shoes exactly as they are. Keep everything else in the FIRST image identical: every other garment, the shoes, bag and accessories, their shapes, positions, colours, outlines and shadows, and the plain uniform ivory background. Keep all items comfortably inside the frame. ONE flat base plus ONE hard-edged shadow tone per garment, NO gradients, fabric texture, grain, gloss, photorealism or 3D. No person, mannequin, text or logo. No cast or ground shadows.",
+        "edit_reference_job_id": "9482e5d2-bade-499a-bc4b-8c68b531e335"
+      }
+    ]
+  },
+  {
+    "index": 70,
+    "id": "all-070",
+    "shape": {
+      "gender": "male",
+      "top": "하프집업 니트",
+      "bottom": "슬랙스",
+      "dress": "",
+      "outer": "코트",
+      "shoe": "로퍼",
+      "bag": "",
+      "accessories": [],
+      "outerOpen": true,
+      "outerMode": "wear",
+      "tuck": "out"
+    },
+    "slots": [
+      {
+        "field": "outerColor",
+        "source": "green"
+      },
+      {
+        "field": "topColor",
+        "source": "rose"
+      },
+      {
+        "field": "bottomColor",
+        "source": "blue"
+      },
+      {
+        "field": "shoeColor",
+        "source": "brown"
+      }
+    ],
+    "prompt": "Create one finished DALHA clothing-only outfit illustration. Reference is ONLY the approved elegant, simple adult 2D editorial illustration style. No person, mannequin, limbs, text, logo or decorations. Calm asymmetrical fashion flat-lay with slightly stylized adult proportions, attractive spacing. Long trousers MUST be full sized in proportion to the top; never tiny. Thin colour-coordinated outlines, ONE flat base + ONE hard-edged shadow tone per garment. NO gradients, fabric texture, grain, glossy highlights, photorealism or 3D. Solid uniform IVORY background, absolutely NO cast shadows on the background, no ground shadows. Each garment has a distinct source colour to enable later automatic recolouring; adhere to colours exactly even if unconventional. Colours on hidden lining match the garment. Keep all items comfortably inside frame. Preserve garment types exactly. Adult male outfit consists of EXACTLY: flat grass GREEN (#79AF79) knee-length wool overcoat; flat dusty ROSE (#D782A0) long-sleeve crewneck knit sweater; flat BLUE (#5A82C8) full-length tailored slacks; warm BROWN (#915A37) pair of open-lacing Derby dress shoes. Top/outerwear at upper left, bottom diagonally down the right side, shoes lower left. Layer the inner top under the outer jacket: inner sleeves fully hidden inside outer sleeves, collar/neck and front clearly visible. Top worn untucked; hem ends naturally at hips, never skirt-like. NO bag. NO accessories or jewelry. ",
+    "job_id": "bd143f06-b0f9-4376-8c3c-6dcd51b09a7a",
+    "source_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3JA8zURyEfnFTV7wDtL1dscTGxg/hf_20261020_084611_bd143f06-b0f9-4376-8c3c-6dcd51b09a7a.png",
+    "original_sha256": "f77d6ad0119c924af27a0d5e49e90455858ae3d8cf8e9973ad80c636b9885adc",
+    "edit_base_illustration": "all-020",
+    "edit_instruction": "2026-10-20 owner-approved '바' flat-lay layout (garments laid on the floor, top view, worn order, natural gaps and soft folds, ankle-length plain-hem trousers, one shoe flat and one tipped ~45 degrees). Redrawn from the earlier drawing with the layout reference, then edited for proportions (inner jackets and knits realistically sized, padding thicker and masculine for men, knit hem covering the waistband), the floor-laid feel of the approved female reference 72bcc0fb, straight trouser legs, hidden inner cuffs, no coat lining or tights (all-076), and solid-colour highlights so the hue mask covers every garment. Source PNG passes through scripts/prepare_flatlay_sources.py before mask building.",
+    "edit_reference_job_id": "d0b41fcc-fe7b-4835-a141-e918a068b60b",
+    "superseded_job_id": "d08e9a4c-3295-45fd-ade3-71f0f9968ea0",
+    "layout": "flatlay_v2",
+    "redraw_chain_job_prefixes": [
+      "f471cc80",
+      "419cd7e4",
+      "f36b7c0f",
+      "54ae17f1",
+      "bd143f06"
+    ],
+    "source_preparation": "scripts/prepare_flatlay_sources.py",
+    "edit_history": [
+      {
+        "job_id": "d08e9a4c-3295-45fd-ade3-71f0f9968ea0",
+        "edit_instruction": "Edit the FIRST reference image, a flat 2D clothing illustration. Make exactly TWO changes. (1) Replace ONLY the rose crewneck knit sweater with a flat dusty ROSE (#D782A0) HALF-ZIP knit sweater: a short stand-up collar with a short centre-front zipper (zipper drawn in the rose shadow tone, no metal colour), same position under the open green overcoat, its sleeves hidden inside the coat sleeves. (2) Replace ONLY the brown Derby shoes with a pair of warm BROWN (#915A37) penny loafers with a strap across the vamp, same position and size. Keep everything else in the FIRST image identical: every other garment, the shoes, bag and accessories, their shapes, positions, colours, outlines and shadows, and the plain uniform ivory background. Keep all items comfortably inside the frame. ONE flat base plus ONE hard-edged shadow tone per garment, NO gradients, fabric texture, grain, gloss, photorealism or 3D. No person, mannequin, text or logo. No cast or ground shadows.",
+        "edit_reference_job_id": "a4175299-9208-42b4-b445-de1508047ece"
+      }
+    ]
+  },
+  {
+    "index": 71,
+    "id": "all-071",
+    "shape": {
+      "gender": "male",
+      "top": "긴팔 정장 셔츠",
+      "bottom": "수트 바지",
+      "dress": "",
+      "outer": "수트 재킷",
+      "shoe": "더비 구두",
+      "bag": "",
+      "accessories": [
+        "넥타이"
+      ],
+      "outerOpen": true,
+      "outerMode": "wear",
+      "tuck": "in",
+      "overOuter": {
+        "name": "롱패딩",
+        "open": true
+      }
+    },
+    "slots": [
+      {
+        "field": "outerColor",
+        "source": "green"
+      },
+      {
+        "field": "topColor",
+        "source": "rose"
+      },
+      {
+        "field": "bottomColor",
+        "source": "blue"
+      },
+      {
+        "field": "shoeColor",
+        "source": "brown"
+      },
+      {
+        "field": "overOuter.color",
+        "source": "violet"
+      },
+      {
+        "field": "tie.body",
+        "source": "cyan"
+      }
+    ],
+    "prompt": "Create one finished DALHA clothing-only outfit illustration. Reference is ONLY the approved elegant, simple adult 2D editorial illustration style. No person, mannequin, limbs, text, logo or decorations. Calm asymmetrical fashion flat-lay with slightly stylized adult proportions, attractive spacing. Long trousers MUST be full sized in proportion to the top; never tiny. Thin colour-coordinated outlines, ONE flat base + ONE hard-edged shadow tone per garment. NO gradients, fabric texture, grain, glossy highlights, photorealism or 3D. Solid uniform IVORY background, absolutely NO cast shadows on the background, no ground shadows. Each garment has a distinct source colour to enable later automatic recolouring; adhere to colours exactly even if unconventional. Colours on hidden lining match the garment. Keep all items comfortably inside frame. Preserve garment types exactly. Adult male outfit consists of EXACTLY: flat grass GREEN (#79AF79) tailored suit jacket with lapels; flat dusty ROSE (#D782A0) long-sleeve collared dress shirt; flat BLUE (#5A82C8) full-length tailored suit trousers; warm BROWN (#915A37) pair of open-lacing Derby dress shoes; flat VIOLET (#9664C3) hip-length quilted puffer jacket as an additional outer layer over the inner jacket; solid CYAN (#3CA0AA) necktie with NO pattern under suit jacket, distinct from blue trousers. Top/outerwear at upper left, bottom diagonally down the right side, shoes lower left. Layer the inner top under the outer jacket: inner sleeves fully hidden inside outer sleeves, collar/neck and front clearly visible. Extra outer coat/puffer is OPEN over the inner jacket/cardigan, which remains identifiable through the front. Hide inner sleeves. Keep all layers full sized. Shirt/top tucked neatly into the waistband, no hem sticking out. NO bag. ",
+    "job_id": "dd6f7572-6cac-4051-8664-68a689568910",
+    "source_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3JA8zURyEfnFTV7wDtL1dscTGxg/hf_20261020_084607_dd6f7572-6cac-4051-8664-68a689568910.png",
+    "original_sha256": "44ec3c4d7bd9cd4792acfaa00e788811e115c195abad8ffe185214db0ffb40c7",
+    "edit_base_illustration": "all-023",
+    "edit_instruction": "2026-10-20 owner-approved '바' flat-lay layout (garments laid on the floor, top view, worn order, natural gaps and soft folds, ankle-length plain-hem trousers, one shoe flat and one tipped ~45 degrees). Redrawn from the earlier drawing with the layout reference, then edited for proportions (inner jackets and knits realistically sized, padding thicker and masculine for men, knit hem covering the waistband), the floor-laid feel of the approved female reference 72bcc0fb, straight trouser legs, hidden inner cuffs, no coat lining or tights (all-076), and solid-colour highlights so the hue mask covers every garment. Source PNG passes through scripts/prepare_flatlay_sources.py before mask building.",
+    "edit_reference_job_id": "d0b41fcc-fe7b-4835-a141-e918a068b60b",
+    "edit_style_reference_job_ids": [
+      "fee7506f-451d-4378-89c3-8d425707aa28"
+    ],
+    "superseded_job_id": "5b9f6e9b-1cab-4af9-a9b3-72f6840acdc1",
+    "layout": "flatlay_v2",
+    "redraw_chain_job_prefixes": [
+      "1f5d7a60",
+      "45583c81",
+      "8aec4245",
+      "7cf35b8c",
+      "d0b1111b",
+      "1570a4f6",
+      "b5c9586a",
+      "8f7984bf",
+      "dd6f7572"
+    ],
+    "source_preparation": "scripts/prepare_flatlay_sources.py",
+    "edit_history": [
+      {
+        "job_id": "5b9f6e9b-1cab-4af9-a9b3-72f6840acdc1",
+        "edit_instruction": "Edit the FIRST reference image, a flat 2D clothing illustration. Change ONLY the violet hip-length puffer jacket that is the outer layer over the suit into an OPEN LONG PADDED PARKA reaching just below the knee, drawn in the same way as the green long padded parka in the SECOND reference image (attached hood at the back of the neck, front zipper, evenly spaced horizontal quilted baffle lines in the darker shadow tone), but keep it flat VIOLET (#9664C3) with one darker violet shadow tone. The green suit jacket with lapels, the rose dress shirt and the solid CYAN (#3CA0AA) necktie must stay clearly visible inside the open parka. If needed make the parka slightly smaller or move it a little so it does NOT cover the blue suit trousers or the shoes: the trousers stay full-length, full-sized and fully visible diagonally down the right side, the brown Derby shoes fully visible at the lower left. Keep everything else in the FIRST image identical: every other garment, the shoes, bag and accessories, their shapes, positions, colours, outlines and shadows, and the plain uniform ivory background. Keep all items comfortably inside the frame. ONE flat base plus ONE hard-edged shadow tone per garment, NO gradients, fabric texture, grain, gloss, photorealism or 3D. No person, mannequin, text or logo. No cast or ground shadows.",
+        "edit_reference_job_id": "b2ee18e2-c782-4911-8c69-4d51bd1d4e73"
+      }
+    ]
+  },
+  {
+    "index": 72,
+    "id": "all-072",
+    "shape": {
+      "gender": "male",
+      "top": "긴팔 정장 셔츠",
+      "bottom": "수트 바지",
+      "dress": "",
+      "outer": "수트 재킷",
+      "shoe": "더비 구두",
+      "bag": "",
+      "accessories": [
+        "넥타이"
+      ],
+      "outerOpen": true,
+      "outerMode": "wear",
+      "tuck": "in",
+      "overOuter": {
+        "name": "코트",
+        "open": true
+      }
+    },
+    "slots": [
+      {
+        "field": "outerColor",
+        "source": "green"
+      },
+      {
+        "field": "topColor",
+        "source": "rose"
+      },
+      {
+        "field": "bottomColor",
+        "source": "blue"
+      },
+      {
+        "field": "shoeColor",
+        "source": "brown"
+      },
+      {
+        "field": "overOuter.color",
+        "source": "violet"
+      },
+      {
+        "field": "tie.body",
+        "source": "cyan"
+      }
+    ],
+    "prompt": "Create one finished DALHA clothing-only outfit illustration. Reference is ONLY the approved elegant, simple adult 2D editorial illustration style. No person, mannequin, limbs, text, logo or decorations. Calm asymmetrical fashion flat-lay with slightly stylized adult proportions, attractive spacing. Long trousers MUST be full sized in proportion to the top; never tiny. Thin colour-coordinated outlines, ONE flat base + ONE hard-edged shadow tone per garment. NO gradients, fabric texture, grain, glossy highlights, photorealism or 3D. Solid uniform IVORY background, absolutely NO cast shadows on the background, no ground shadows. Each garment has a distinct source colour to enable later automatic recolouring; adhere to colours exactly even if unconventional. Colours on hidden lining match the garment. Keep all items comfortably inside frame. Preserve garment types exactly. Adult male outfit consists of EXACTLY: flat grass GREEN (#79AF79) tailored suit jacket with lapels; flat dusty ROSE (#D782A0) long-sleeve collared dress shirt; flat BLUE (#5A82C8) full-length tailored suit trousers; warm BROWN (#915A37) pair of closed-lacing Oxford dress shoes; flat VIOLET (#9664C3) knee-length wool overcoat as an additional outer layer over the inner jacket; solid CYAN (#3CA0AA) necktie with NO pattern under suit jacket, distinct from blue trousers. Top/outerwear at upper left, bottom diagonally down the right side, shoes lower left. Layer the inner top under the outer jacket: inner sleeves fully hidden inside outer sleeves, collar/neck and front clearly visible. Extra outer coat/puffer is OPEN over the inner jacket/cardigan, which remains identifiable through the front. Hide inner sleeves. Keep all layers full sized. Shirt/top tucked neatly into the waistband, no hem sticking out. NO bag. ",
+    "job_id": "63d37d48-0e40-4f3b-b30e-890a7c11e00e",
+    "source_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3JA8zURyEfnFTV7wDtL1dscTGxg/hf_20261020_084622_63d37d48-0e40-4f3b-b30e-890a7c11e00e.png",
+    "original_sha256": "4435c0e6fcfcb0d41c0adcbfe9cfdaa8e278ea2f9179324462694bd38d84c373",
+    "edit_base_illustration": "all-022",
+    "edit_instruction": "2026-10-20 owner-approved '바' flat-lay layout (garments laid on the floor, top view, worn order, natural gaps and soft folds, ankle-length plain-hem trousers, one shoe flat and one tipped ~45 degrees). Redrawn from the earlier drawing with the layout reference, then edited for proportions (inner jackets and knits realistically sized, padding thicker and masculine for men, knit hem covering the waistband), the floor-laid feel of the approved female reference 72bcc0fb, straight trouser legs, hidden inner cuffs, no coat lining or tights (all-076), and solid-colour highlights so the hue mask covers every garment. Source PNG passes through scripts/prepare_flatlay_sources.py before mask building.",
+    "edit_reference_job_id": "d0b41fcc-fe7b-4835-a141-e918a068b60b",
+    "edit_style_reference_job_ids": [
+      "a4175299-9208-42b4-b445-de1508047ece"
+    ],
+    "superseded_job_id": "6d00e23a-4eff-4b51-8304-0edfc0e2599d",
+    "layout": "flatlay_v2",
+    "redraw_chain_job_prefixes": [
+      "d0b41fcc",
+      "590cc472",
+      "faeab227",
+      "664fc623",
+      "0981260b",
+      "9e8057aa",
+      "51ae8f49",
+      "63d37d48"
+    ],
+    "source_preparation": "scripts/prepare_flatlay_sources.py",
+    "edit_history": [
+      {
+        "job_id": "6d00e23a-4eff-4b51-8304-0edfc0e2599d",
+        "edit_instruction": "Edit the FIRST reference image, a flat 2D clothing illustration. Change ONLY the shoes: replace the brown closed-lacing Oxford dress shoes with a pair of warm BROWN (#915A37) open-lacing DERBY dress shoes drawn like the Derby shoes in the SECOND reference image (visible quarters stitched on top of the vamp), same position, size and angle. Do not change anything from the SECOND image except borrowing the Derby shoe design. Keep everything else in the FIRST image identical: every other garment, the shoes, bag and accessories, their shapes, positions, colours, outlines and shadows, and the plain uniform ivory background. Keep all items comfortably inside the frame. ONE flat base plus ONE hard-edged shadow tone per garment, NO gradients, fabric texture, grain, gloss, photorealism or 3D. No person, mannequin, text or logo. No cast or ground shadows.",
+        "edit_reference_job_id": "9482e5d2-bade-499a-bc4b-8c68b531e335"
+      }
+    ]
+  },
+  {
+    "index": 73,
+    "id": "all-073",
+    "shape": {
+      "gender": "female",
+      "top": "니트",
+      "bottom": "면바지",
+      "dress": "",
+      "outer": "롱패딩",
+      "shoe": "운동화",
+      "bag": "",
+      "accessories": [],
+      "outerOpen": true,
+      "outerMode": "wear",
+      "tuck": "out"
+    },
+    "slots": [
+      {
+        "field": "outerColor",
+        "source": "green"
+      },
+      {
+        "field": "topColor",
+        "source": "rose"
+      },
+      {
+        "field": "bottomColor",
+        "source": "blue"
+      },
+      {
+        "field": "shoeColor",
+        "source": "brown"
+      }
+    ],
+    "prompt": "Create one finished DALHA clothing-only outfit illustration. Reference is ONLY the approved elegant, simple adult 2D editorial illustration style. No person, mannequin, limbs, text, logo or decorations. Calm asymmetrical fashion flat-lay with slightly stylized adult proportions, attractive spacing. Long trousers MUST be full sized in proportion to the top; never tiny. Thin colour-coordinated outlines, ONE flat base + ONE hard-edged shadow tone per garment. NO gradients, fabric texture, grain, glossy highlights, photorealism or 3D. Solid uniform IVORY background, absolutely NO cast shadows on the background, no ground shadows. Each garment has a distinct source colour to enable later automatic recolouring; adhere to colours exactly even if unconventional. Colours on hidden lining match the garment. Keep all items comfortably inside frame. Preserve garment types exactly. Adult female outfit consists of EXACTLY: flat grass GREEN (#79AF79) hip-length quilted puffer jacket; flat dusty ROSE (#D782A0) long-sleeve crewneck knit sweater; flat BLUE (#5A82C8) full-length straight cotton chinos; warm BROWN (#915A37) pair of low-top sneakers with plain IVORY rubber soles and brown uppers. Top/outerwear at upper left, bottom diagonally down the right side, shoes lower left. Layer the inner top under the outer jacket: inner sleeves fully hidden inside outer sleeves, collar/neck and front clearly visible. Top worn untucked; hem ends naturally at hips, never skirt-like. NO bag. NO accessories or jewelry. ",
+    "job_id": "f3ea2e0e-c358-410c-b402-b04b5620dae3",
+    "source_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3JA8zURyEfnFTV7wDtL1dscTGxg/hf_20261020_084624_f3ea2e0e-c358-410c-b402-b04b5620dae3.png",
+    "original_sha256": "d8293776df049797483ce49ba26c4325ab0a48f1f3a3f94a7d47322e3d89f397",
+    "edit_base_illustration": "all-045",
+    "edit_instruction": "2026-10-20 owner-approved '바' flat-lay layout (garments laid on the floor, top view, worn order, natural gaps and soft folds, ankle-length plain-hem trousers, one shoe flat and one tipped ~45 degrees). Redrawn from the earlier drawing with the layout reference, then edited for proportions (inner jackets and knits realistically sized, padding thicker and masculine for men, knit hem covering the waistband), the floor-laid feel of the approved female reference 72bcc0fb, straight trouser legs, hidden inner cuffs, no coat lining or tights (all-076), and solid-colour highlights so the hue mask covers every garment. Source PNG passes through scripts/prepare_flatlay_sources.py before mask building.",
+    "edit_reference_job_id": "72bcc0fb-0f3c-4727-b7e2-93e254d524fc",
+    "edit_style_reference_job_ids": [
+      "fee7506f-451d-4378-89c3-8d425707aa28"
+    ],
+    "superseded_job_id": "48db9ea5-1bc4-4119-b879-7ed5ee1c7f9f",
+    "layout": "flatlay_v2",
+    "redraw_chain_job_prefixes": [
+      "7f2090b6",
+      "c1841f05",
+      "68c1c509",
+      "87fe49c0",
+      "f3ea2e0e"
+    ],
+    "source_preparation": "scripts/prepare_flatlay_sources.py",
+    "edit_history": [
+      {
+        "job_id": "48db9ea5-1bc4-4119-b879-7ed5ee1c7f9f",
+        "edit_instruction": "Edit the FIRST reference image, a flat 2D clothing illustration. Change ONLY the green short puffer jacket into an OPEN LONG PADDED PARKA reaching just below the knee, drawn in the same way as the green long padded parka in the SECOND reference image (attached hood at the back of the neck, front zipper, evenly spaced horizontal quilted baffle lines in the darker green shadow tone, lining the same green), proportioned for an adult woman, same flat grass GREEN (#79AF79). Keep the rose crewneck knit sweater layered under it with its neckline and front visible and its sleeves hidden inside the parka sleeves. If needed make the parka slightly smaller or move it a little so it does NOT cover the blue chinos or the sneakers: the chinos stay full-length, full-sized and fully visible diagonally down the right side, the sneakers fully visible at the lower left. Keep everything else in the FIRST image identical: every other garment, the shoes, bag and accessories, their shapes, positions, colours, outlines and shadows, and the plain uniform ivory background. Keep all items comfortably inside the frame. ONE flat base plus ONE hard-edged shadow tone per garment, NO gradients, fabric texture, grain, gloss, photorealism or 3D. No person, mannequin, text or logo. No cast or ground shadows.",
+        "edit_reference_job_id": "cd8cd77d-dcc9-47d7-82a3-94011b2b6dfc"
+      }
+    ]
+  },
+  {
+    "index": 74,
+    "id": "all-074",
+    "shape": {
+      "gender": "female",
+      "top": "니트",
+      "bottom": "수트 바지",
+      "dress": "",
+      "outer": "수트 재킷",
+      "shoe": "낮은 굽 펌프스",
+      "bag": "핸드백",
+      "accessories": [],
+      "outerOpen": true,
+      "outerMode": "wear",
+      "tuck": "out",
+      "overOuter": {
+        "name": "코트",
+        "open": true
+      }
+    },
+    "slots": [
+      {
+        "field": "outerColor",
+        "source": "green"
+      },
+      {
+        "field": "topColor",
+        "source": "rose"
+      },
+      {
+        "field": "bottomColor",
+        "source": "blue"
+      },
+      {
+        "field": "shoeColor",
+        "source": "brown"
+      },
+      {
+        "field": "bagColor",
+        "source": "yellow"
+      },
+      {
+        "field": "overOuter.color",
+        "source": "violet"
+      }
+    ],
+    "prompt": "Create one finished DALHA clothing-only outfit illustration. Reference is ONLY the approved elegant, simple adult 2D editorial illustration style. No person, mannequin, limbs, text, logo or decorations. Calm asymmetrical fashion flat-lay with slightly stylized adult proportions, attractive spacing. Long trousers MUST be full sized in proportion to the top; never tiny. Thin colour-coordinated outlines, ONE flat base + ONE hard-edged shadow tone per garment. NO gradients, fabric texture, grain, glossy highlights, photorealism or 3D. Solid uniform IVORY background, absolutely NO cast shadows on the background, no ground shadows. Each garment has a distinct source colour to enable later automatic recolouring; adhere to colours exactly even if unconventional. Colours on hidden lining match the garment. Keep all items comfortably inside frame. Preserve garment types exactly. Adult female outfit consists of EXACTLY: flat grass GREEN (#79AF79) tailored suit jacket with lapels; flat dusty ROSE (#D782A0) long-sleeve collared dress shirt; flat BLUE (#5A82C8) full-length tailored suit trousers; warm BROWN (#915A37) pair of penny loafers; mustard YELLOW (#D2B43C) compact structured handbag; flat VIOLET (#9664C3) knee-length wool overcoat as an additional outer layer over the inner jacket. Top/outerwear at upper left, bottom diagonally down the right side, shoes lower left. Layer the inner top under the outer jacket: inner sleeves fully hidden inside outer sleeves, collar/neck and front clearly visible. Extra outer coat/puffer is OPEN over the inner jacket/cardigan, which remains identifiable through the front. Hide inner sleeves. Keep all layers full sized. Shirt/top tucked neatly into the waistband, no hem sticking out. NO accessories or jewelry. ",
+    "job_id": "2cdf4b86-cb3c-4392-9dbe-02124a31f11b",
+    "source_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3JA8zURyEfnFTV7wDtL1dscTGxg/hf_20261020_084623_2cdf4b86-cb3c-4392-9dbe-02124a31f11b.png",
+    "original_sha256": "2e658047c463c5c562b4803425326541ada4aade9e063e619e8f301a6d395897",
+    "edit_base_illustration": "all-050",
+    "edit_instruction": "2026-10-20 owner-approved '바' flat-lay layout (garments laid on the floor, top view, worn order, natural gaps and soft folds, ankle-length plain-hem trousers, one shoe flat and one tipped ~45 degrees). Redrawn from the earlier drawing with the layout reference, then edited for proportions (inner jackets and knits realistically sized, padding thicker and masculine for men, knit hem covering the waistband), the floor-laid feel of the approved female reference 72bcc0fb, straight trouser legs, hidden inner cuffs, no coat lining or tights (all-076), and solid-colour highlights so the hue mask covers every garment. Source PNG passes through scripts/prepare_flatlay_sources.py before mask building.",
+    "edit_reference_job_id": "72bcc0fb-0f3c-4727-b7e2-93e254d524fc",
+    "superseded_job_id": "ae66b1dc-d54c-4535-8317-b79464241b89",
+    "layout": "flatlay_v2",
+    "redraw_chain_job_prefixes": [
+      "a6b6c7e0",
+      "e94d1825",
+      "9f693b73",
+      "5e1d7eee",
+      "c9f0f556",
+      "c74cfbee",
+      "6a2952d4",
+      "ee0081b7",
+      "c2348f3f",
+      "2cdf4b86"
+    ],
+    "source_preparation": "scripts/prepare_flatlay_sources.py",
+    "edit_history": [
+      {
+        "job_id": "ae66b1dc-d54c-4535-8317-b79464241b89",
+        "edit_instruction": "Edit the FIRST reference image, a flat 2D clothing illustration. Change ONLY the inner top: replace the rose collared dress shirt with a flat dusty ROSE (#D782A0) fine-gauge crewneck KNIT sweater with a ribbed neckline, worn under the green suit jacket with its neckline and front visible and its sleeves fully hidden inside the jacket sleeves. No shirt collar. Keep the green suit jacket, the violet overcoat over it, the blue suit trousers, the brown loafers and the yellow handbag exactly as they are. Keep everything else in the FIRST image identical: every other garment, the shoes, bag and accessories, their shapes, positions, colours, outlines and shadows, and the plain uniform ivory background. Keep all items comfortably inside the frame. ONE flat base plus ONE hard-edged shadow tone per garment, NO gradients, fabric texture, grain, gloss, photorealism or 3D. No person, mannequin, text or logo. No cast or ground shadows.",
+        "edit_reference_job_id": "79c55566-29ac-4e35-b33d-7950f5e0e82b"
+      }
+    ]
+  },
+  {
+    "index": 75,
+    "id": "all-075",
+    "shape": {
+      "gender": "female",
+      "top": "니트",
+      "bottom": "슬랙스",
+      "dress": "",
+      "outer": "퀼팅 재킷",
+      "shoe": "앵클부츠",
+      "bag": "",
+      "accessories": [],
+      "outerOpen": true,
+      "outerMode": "wear",
+      "tuck": "out"
+    },
+    "slots": [
+      {
+        "field": "outerColor",
+        "source": "green"
+      },
+      {
+        "field": "topColor",
+        "source": "rose"
+      },
+      {
+        "field": "bottomColor",
+        "source": "blue"
+      },
+      {
+        "field": "shoeColor",
+        "source": "brown"
+      }
+    ],
+    "prompt": "Create one finished DALHA clothing-only outfit illustration. Reference is ONLY the approved elegant, simple adult 2D editorial illustration style. No person, mannequin, limbs, text, logo or decorations. Calm asymmetrical fashion flat-lay with slightly stylized adult proportions, attractive spacing. Long trousers MUST be full sized in proportion to the top; never tiny. Thin colour-coordinated outlines, ONE flat base + ONE hard-edged shadow tone per garment. NO gradients, fabric texture, grain, glossy highlights, photorealism or 3D. Solid uniform IVORY background, absolutely NO cast shadows on the background, no ground shadows. Each garment has a distinct source colour to enable later automatic recolouring; adhere to colours exactly even if unconventional. Colours on hidden lining match the garment. Keep all items comfortably inside frame. Preserve garment types exactly. Adult female outfit consists of EXACTLY: flat grass GREEN (#79AF79) knee-length wool overcoat; flat dusty ROSE (#D782A0) long-sleeve crewneck knit sweater; flat BLUE (#5A82C8) full-length tailored slacks; warm BROWN (#915A37) pair of penny loafers. Top/outerwear at upper left, bottom diagonally down the right side, shoes lower left. Layer the inner top under the outer jacket: inner sleeves fully hidden inside outer sleeves, collar/neck and front clearly visible. Top worn untucked; hem ends naturally at hips, never skirt-like. NO bag. NO accessories or jewelry. ",
+    "job_id": "9a8f6f32-d7b2-486b-a83b-06a786097aac",
+    "source_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3JA8zURyEfnFTV7wDtL1dscTGxg/hf_20261020_084623_9a8f6f32-d7b2-486b-a83b-06a786097aac.png",
+    "original_sha256": "c043b633371477abfc30aa8a13ba29d7b0b9d72124ee8da33c1bdcebbc2f1c92",
+    "edit_base_illustration": "all-047",
+    "edit_instruction": "2026-10-20 owner-approved '바' flat-lay layout (garments laid on the floor, top view, worn order, natural gaps and soft folds, ankle-length plain-hem trousers, one shoe flat and one tipped ~45 degrees). Redrawn from the earlier drawing with the layout reference, then edited for proportions (inner jackets and knits realistically sized, padding thicker and masculine for men, knit hem covering the waistband), the floor-laid feel of the approved female reference 72bcc0fb, straight trouser legs, hidden inner cuffs, no coat lining or tights (all-076), and solid-colour highlights so the hue mask covers every garment. Source PNG passes through scripts/prepare_flatlay_sources.py before mask building.",
+    "edit_reference_job_id": "72bcc0fb-0f3c-4727-b7e2-93e254d524fc",
+    "edit_style_reference_job_ids": [
+      "db22dd1e-347c-48ea-8ad3-6dd9e99143e2"
+    ],
+    "superseded_job_id": "c02c7283-f5f1-4967-bffa-363d87af26ec",
+    "layout": "flatlay_v2",
+    "redraw_chain_job_prefixes": [
+      "1d7d5580",
+      "6e7b00d9",
+      "a6b86903",
+      "a5bf6950",
+      "2bb9d4a5",
+      "03920381",
+      "9a8f6f32"
+    ],
+    "source_preparation": "scripts/prepare_flatlay_sources.py",
+    "edit_history": [
+      {
+        "job_id": "c02c7283-f5f1-4967-bffa-363d87af26ec",
+        "edit_instruction": "Edit the FIRST reference image, a flat 2D clothing illustration. Make exactly TWO changes. (1) Replace ONLY the green knee-length wool overcoat with an OPEN hip-length QUILTED JACKET in the same flat grass GREEN (#79AF79): thin flat padding, a neat diamond quilting pattern drawn only with thin lines in the darker green shadow tone, a small round collarless neckline with narrow same-colour binding, snap front, two welt pockets; not puffy, not a puffer. Keep it at the upper left with the rose crewneck knit sweater layered under it, neckline and front visible, sleeves hidden. (2) Replace ONLY the brown penny loafers with a pair of warm BROWN (#915A37) ankle boots drawn like the ankle boots in the SECOND reference image, same position and size as the loafers. Do not copy anything else from the SECOND image. Keep everything else in the FIRST image identical: every other garment, the shoes, bag and accessories, their shapes, positions, colours, outlines and shadows, and the plain uniform ivory background. Keep all items comfortably inside the frame. ONE flat base plus ONE hard-edged shadow tone per garment, NO gradients, fabric texture, grain, gloss, photorealism or 3D. No person, mannequin, text or logo. No cast or ground shadows.",
+        "edit_reference_job_id": "5779ba64-ccb5-4cc5-8f0f-b4455cf9587e"
+      }
+    ]
+  },
+  {
+    "index": 76,
+    "id": "all-076",
+    "shape": {
+      "gender": "female",
+      "top": "",
+      "bottom": "",
+      "dress": "긴팔 원피스",
+      "outer": "코트",
+      "shoe": "앵클부츠",
+      "bag": "크로스백",
+      "accessories": [],
+      "outerOpen": true,
+      "outerMode": "wear",
+      "tuck": "out"
+    },
+    "slots": [
+      {
+        "field": "outerColor",
+        "source": "green"
+      },
+      {
+        "field": "topColor",
+        "source": "rose"
+      },
+      {
+        "field": "shoeColor",
+        "source": "brown"
+      },
+      {
+        "field": "bagColor",
+        "source": "yellow"
+      }
+    ],
+    "prompt": "Create one finished DALHA clothing-only outfit illustration in exactly the same elegant, simple adult 2D editorial illustration style as the reference image. No person, mannequin, limbs, text, logo or decorations. Calm asymmetrical fashion flat-lay with slightly stylized adult proportions, attractive spacing. Thin colour-coordinated outlines, ONE flat base + ONE hard-edged shadow tone per garment. NO gradients, fabric texture, grain, glossy highlights, photorealism or 3D. Solid uniform IVORY background, absolutely NO cast shadows on the background, no ground shadows. Each garment has a distinct source colour to enable later automatic recolouring; adhere to colours exactly even if unconventional. Colours on hidden lining match the garment. Keep all items comfortably inside frame. Preserve garment types exactly. Adult female outfit consists of EXACTLY: flat grass GREEN (#79AF79) knee-length wool overcoat, worn open; flat dusty ROSE (#D782A0) long-sleeve knee-length knit sweater DRESS with a crew neck; flat BLUE (#5A82C8) pair of opaque TIGHTS laid flat as a full-length pair of legs with feet, clearly tights and not trousers; warm BROWN (#915A37) pair of ankle boots; mustard YELLOW (#D2B43C) small crossbody bag with a thin strap. Coat with the dress layered under it at upper left: the dress sleeves fully hidden inside the coat sleeves, the dress neckline, front and knee-length hem clearly visible below the open coat. Tights diagonally down the right side, full adult length, never tiny. Ankle boots lower left. Bag near the coat. NO accessories or jewelry.",
+    "job_id": "53bf18f9-cd4b-454a-ab3a-b33f4083fa05",
+    "source_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3JA8zURyEfnFTV7wDtL1dscTGxg/hf_20261020_084625_53bf18f9-cd4b-454a-ab3a-b33f4083fa05.png",
+    "original_sha256": "b3463759cf7317f7457ccd931b8c8dc4e0dd995530a5e037c0135174e734bddf",
+    "edit_base_illustration": "new (style ref all-046)",
+    "edit_instruction": "2026-10-20 owner-approved '바' flat-lay layout (garments laid on the floor, top view, worn order, natural gaps and soft folds, ankle-length plain-hem trousers, one shoe flat and one tipped ~45 degrees). Redrawn from the earlier drawing with the layout reference, then edited for proportions (inner jackets and knits realistically sized, padding thicker and masculine for men, knit hem covering the waistband), the floor-laid feel of the approved female reference 72bcc0fb, straight trouser legs, hidden inner cuffs, no coat lining or tights (all-076), and solid-colour highlights so the hue mask covers every garment. Source PNG passes through scripts/prepare_flatlay_sources.py before mask building.",
+    "edit_reference_job_id": "72bcc0fb-0f3c-4727-b7e2-93e254d524fc",
+    "edit_history": [
+      {
+        "job_id": "e5750f7e-00d4-40b5-9eb5-e186353b11bc",
+        "edit_instruction": "Edit the reference image, a flat 2D clothing illustration. Change ONLY the coat length and the rose dress so the outfit clearly reads as a coat over a knit DRESS with tights: shorten the green wool overcoat to mid-thigh length, and make the dusty ROSE (#D782A0) long-sleeve crewneck knit sweater DRESS clearly longer than the coat, with its slightly flared A-line skirt and knee-length hem visibly extending well below the coat hem (at least a quarter of the dress length showing below the coat). The dress must read as a dress, not a sweater: one continuous rose garment from neckline to knee hem. Keep the dress sleeves hidden inside the coat sleeves, the dress neckline and front visible in the open coat. The inside lining and collar underside of the coat must be the SAME flat grass GREEN (#79AF79) as the coat, not darker. Keep everything else identical: the blue tights with feet diagonally down the right side, the brown ankle boots, the yellow crossbody bag, their shapes, positions, colours, outlines and shadows, and the plain uniform ivory background. Keep all items comfortably inside the frame. ONE flat base plus ONE hard-edged shadow tone per garment, NO gradients, fabric texture, grain, gloss, photorealism or 3D. No person, text or logo. No cast or ground shadows.",
+        "edit_reference_job_id": "3f484949-87e4-4b51-b577-29a69217cb53"
+      },
+      {
+        "job_id": "3f484949-87e4-4b51-b577-29a69217cb53",
+        "note": "first generation; dress hidden by the coat, so the coat was shortened in the final edit"
+      }
+    ],
+    "superseded_job_id": "e5750f7e-00d4-40b5-9eb5-e186353b11bc",
+    "layout": "flatlay_v2",
+    "redraw_chain_job_prefixes": [
+      "aff84d40",
+      "a55bfaf9",
+      "1f118dcb",
+      "a6d02009",
+      "e69c3cda",
+      "eed71d4a",
+      "53bf18f9"
+    ],
+    "source_preparation": "scripts/prepare_flatlay_sources.py"
   }
 ]

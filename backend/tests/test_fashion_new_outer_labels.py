@@ -38,12 +38,23 @@ def test_every_existing_label_maps_exactly_as_on_main():
     assert changed == {}
 
 
-def test_existing_attributes_stay_pinned_and_two_reviewed_fleece_records_are_appended():
+WINTER_SET_IDS = {
+    "pending-female-winter-casual-shearling", "pending-male-winter-casual-longpadding",
+    "pending-male-winter-casual-shearling", "pending-male-winter-business_casual-turtleneck",
+    "pending-male-winter-business_casual-halfzip", "pending-male-winter-business_formal-longpadding",
+    "pending-male-winter-business_formal-coat-derby", "pending-female-winter-casual-longpadding",
+    "pending-female-winter-business_formal-knit", "pending-female-winter-business_casual-quilted",
+    "pending-female-winter-casual-coat-dress"}
+
+
+def test_existing_attributes_stay_pinned_and_reviewed_selector_records_are_appended():
     snapshot = json.loads((FIXTURES / "candidate_attributes_snapshot.json").read_text(encoding="utf-8"))["attributes"]
     assert json.loads(json.dumps(ATTRIBUTES, ensure_ascii=False)) == snapshot
     legacy = {c["candidate_id"] for c in active_candidates() if c["source"] != SELECTOR_SOURCE}
+    assert len(legacy) == 56
+    # Two reviewed fleece records (PR-4A) + eleven reviewed #188 winter-set records (2026-10-20).
     assert set(ATTRIBUTES) - legacy == {
-            "pending-female-winter-casual-fleece", "pending-male-winter-casual-fleece"}
+            "pending-female-winter-casual-fleece", "pending-male-winter-casual-fleece"} | WINTER_SET_IDS
 
 
 @pytest.mark.parametrize("label,expected", [

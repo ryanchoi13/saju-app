@@ -34,6 +34,21 @@ FLEECE_DRAWINGS = {
     "all-065": "pending-male-winter-casual-fleece",
 }
 FLEECE_IDS = set(FLEECE_DRAWINGS.values())
+# #188 winter set (2026-10-20): eleven more reviewed selector candidates, all-066..all-076.
+WINTER_DRAWINGS = {
+    "all-066": "pending-female-winter-casual-shearling",
+    "all-067": "pending-male-winter-casual-longpadding",
+    "all-068": "pending-male-winter-casual-shearling",
+    "all-069": "pending-male-winter-business_casual-turtleneck",
+    "all-070": "pending-male-winter-business_casual-halfzip",
+    "all-071": "pending-male-winter-business_formal-longpadding",
+    "all-072": "pending-male-winter-business_formal-coat-derby",
+    "all-073": "pending-female-winter-casual-longpadding",
+    "all-074": "pending-female-winter-business_formal-knit",
+    "all-075": "pending-female-winter-business_casual-quilted",
+    "all-076": "pending-female-winter-casual-coat-dress",
+}
+SELECTOR_IDS = FLEECE_IDS | set(WINTER_DRAWINGS.values())
 
 
 def _pending_records():
@@ -43,10 +58,10 @@ def _pending_records():
 def test_fleece_drawings_are_registered_with_their_existing_files():
     registry_ids = {e["id"] for e in load_registry()}
     assert PENDING_FILES == {}
-    assert set(FLEECE_DRAWINGS) <= registry_ids
+    assert set(FLEECE_DRAWINGS) <= registry_ids and set(WINTER_DRAWINGS) <= registry_ids
     report = inspect_assets()
     assert report["problems"] == []
-    assert report["registry_entries"] == 65 and report["files"] == 66
+    assert report["registry_entries"] == 76 and report["files"] == 77  # + all-066..all-076
     assert report["pending_files"] == []
     for file_id in FLEECE_DRAWINGS:
         assert webp_size(ASSET_DIR / f"{file_id}.webp") == png_size(ASSET_DIR / f"{file_id}-layers.png") == (768, 768)
@@ -72,7 +87,10 @@ def test_fleece_candidates_are_active_only_in_the_selector_registry():
                     {"outer": "ivory", "top": "white", "bottom": "charcoal", "shoes": "white"})
         assert {c["slot"]: c["source_color"] for c in record["components"]} == expected
     assert FLEECE_IDS <= {c["candidate_id"] for c in reg.active_candidates()}
-    assert FLEECE_IDS == template_ids()
+    selector = {c["illustration_id"]: c["candidate_id"] for c in reg.active_candidates()
+                if c["source"] == reg.SELECTOR_SOURCE}
+    assert selector == FLEECE_DRAWINGS | WINTER_DRAWINGS
+    assert SELECTOR_IDS == template_ids()
 
 
 def test_active_candidate_cannot_keep_a_blocker_or_lose_a_base_colour():
@@ -106,7 +124,10 @@ def _validate_activation(**overrides):
 
 def test_activation_guard_rejects_missing_or_stale_review():
     missing = _validate_activation(reviews=[])
-    assert sum("current owner review required" in p for p in missing) == 2
+    # Every selector candidate (fleece pair + #188 winter set) needs its own record.
+    assert sorted(p for p in missing if "current owner review required" in p) == sorted(
+        f"{cid}: current owner review required" for cid in SELECTOR_IDS)
+    assert len(SELECTOR_IDS) == 13
     stale = deepcopy(reviews_mod.load_reviews())
     stale[0]["scope_version"] = "0" * 16
     assert any(stale[0]["candidate_id"] in p and "current owner review required" in p
@@ -117,7 +138,8 @@ def test_activation_guard_rejects_registration_template_and_render_gaps():
     registry_ids = {e["id"] for e in load_registry()} - {"all-065"}
     assert any("illustration not registered" in p for p in _validate_activation(
         registry_ids=registry_ids, file_ids=registry_ids | set(CONDITIONAL_VARIANTS)))
-    assert sum("selector template required" in p for p in _validate_activation(template_ids=set())) == 2
+    assert sorted(p for p in _validate_activation(template_ids=set()) if "selector template required" in p) == sorted(
+        f"{cid}: selector template required" for cid in SELECTOR_IDS)
     rendered = representative_drawings() | {"pending-male-winter-casual-fleece": "all-064"}
     assert any("rendered 'all-064', expected 'all-065'" in p
                for p in _validate_activation(selector_drawings=rendered))

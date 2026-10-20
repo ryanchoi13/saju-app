@@ -67,8 +67,12 @@ def _scope(gender, tpo, weather, calendar_season):
 def render(template, role, user, colors, weather, calendar_season):
     """Same per-look steps as build_svg_catalog_contexts, without the cross-look `previous`."""
     a, b = colors
-    look = apply_review_preferences(
-        select_template(deepcopy(template), user.get("age"), ROLE_NUMBER[role], weather.get("legacy_profile")), a, b)
+    look = select_template(deepcopy(template), user.get("age"), ROLE_NUMBER[role], weather.get("legacy_profile"))
+    # Review preferences rewrite garments of the legacy templates (13-18 user review). A reviewed
+    # selector template (lock_garment_geometry) is already the owner-approved drawing: rewriting
+    # it would swap its drawing or, for the coat+dress look (no bottom), crash (#188, 2026-10-20).
+    if not template.get("lock_garment_geometry"):
+        look = apply_review_preferences(look, a, b)
     look["calendar_season"] = calendar_season
     look["styling"] = styling_for(look)
     for i, item in enumerate(look["items"]):

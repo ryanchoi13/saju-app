@@ -1,5 +1,5 @@
 {
- "about": "Owner-approved outfit reviews (see fashion_v2/candidate_reviews.py for required fields: drawing_version, scope_version, temp_range with numeric or 'open' bounds, rain/snow, three steps, evidence). Records are added only after the ChatGPT draft -> Claude check -> owner final flow on #188. 2026-10-19: the two fleece pilot candidates were re-approved with explicit base colours (still review_pending; a record does not activate them).",
+ "about": "Owner-approved outfit reviews (see fashion_v2/candidate_reviews.py for required fields: drawing_version, scope_version, temp_range with numeric or 'open' bounds, rain/snow, three steps, evidence). 2026-10-19: the two fleece candidates (active in the selector since PR-4A). 2026-10-20: the eleven #188 winter candidates (all-066..076, flat-lay redraws), style draft by an independent Claude review agent, owner final yes in chat on the coloured sheet, recorded on #188.",
  "reviews": [
   {
    "candidate_id": "pending-female-winter-casual-fleece",
@@ -38,6 +38,215 @@
    ],
    "evidence": "https://github.com/ryanchoi13/saju-app/issues/188#issuecomment-6264128137",
    "date": "2026-10-19"
+  },
+  {
+   "candidate_id": "pending-female-winter-casual-shearling",
+   "drawing_id": "all-066",
+   "drawing_version": "0da5d658911bc4d3",
+   "scope_version": "b5c3dfd3394dbae7",
+   "temp_range": {
+    "min": "open",
+    "max_exclusive": 5
+   },
+   "rain": "unsuitable",
+   "snow": "unsuitable",
+   "steps": [
+    "independent_style_review",
+    "claude_consistency_check",
+    "owner_final"
+   ],
+   "evidence": "https://github.com/ryanchoi13/saju-app/issues/188#issuecomment-6287640226",
+   "date": "2026-10-20"
+  },
+  {
+   "candidate_id": "pending-male-winter-casual-longpadding",
+   "drawing_id": "all-067",
+   "drawing_version": "0409ce025ab18202",
+   "scope_version": "7c35330a1a6a73cb",
+   "temp_range": {
+    "min": "open",
+    "max_exclusive": 0
+   },
+   "rain": "suitable",
+   "snow": "suitable",
+   "steps": [
+    "independent_style_review",
+    "claude_consistency_check",
+    "owner_final"
+   ],
+   "evidence": "https://github.com/ryanchoi13/saju-app/issues/188#issuecomment-6287640226",
+   "date": "2026-10-20"
+  },
+  {
+   "candidate_id": "pending-male-winter-casual-shearling",
+   "drawing_id": "all-068",
+   "drawing_version": "420d52c006a5bad2",
+   "scope_version": "26cc3b75fbe74d89",
+   "temp_range": {
+    "min": "open",
+    "max_exclusive": 5
+   },
+   "rain": "unsuitable",
+   "snow": "unsuitable",
+   "steps": [
+    "independent_style_review",
+    "claude_consistency_check",
+    "owner_final"
+   ],
+   "evidence": "https://github.com/ryanchoi13/saju-app/issues/188#issuecomment-6287640226",
+   "date": "2026-10-20"
+  },
+  {
+   "candidate_id": "pending-male-winter-business_casual-turtleneck",
+   "drawing_id": "all-069",
+   "drawing_version": "8c152ea5af752ef8",
+   "scope_version": "dbdc8f198259d9d9",
+   "temp_range": {
+    "min": "open",
+    "max_exclusive": 9
+   },
+   "rain": "suitable",
+   "snow": "suitable",
+   "steps": [
+    "independent_style_review",
+    "claude_consistency_check",
+    "owner_final"
+   ],
+   "evidence": "https://github.com/ryanchoi13/saju-app/issues/188#issuecomment-6287640226",
+   "date": "2026-10-20"
+  },
+  {
+   "candidate_id": "pending-male-winter-business_casual-halfzip",
+   "drawing_id": "all-070",
+   "drawing_version": "5b39ce7a73113bbd",
+   "scope_version": "4b4e4e4363f6e6f7",
+   "temp_range": {
+    "min": "open",
+    "max_exclusive": 9
+   },
+   "rain": "suitable",
+   "snow": "suitable",
+   "steps": [
+    "independent_style_review",
+    "claude_consistency_check",
+    "owner_final"
+   ],
+   "evidence": "https://github.com/ryanchoi13/saju-app/issues/188#issuecomment-6287640226",
+   "date": "2026-10-20"
+  },
+  {
+   "candidate_id": "pending-male-winter-business_formal-longpadding",
+   "drawing_id": "all-071",
+   "drawing_version": "40c6ff27db373597",
+   "scope_version": "23dee15b74cc3e2a",
+   "temp_range": {
+    "min": "open",
+    "max_exclusive": 0
+   },
+   "rain": "suitable",
+   "snow": "suitable",
+   "steps": [
+    "independent_style_review",
+    "claude_consistency_check",
+    "owner_final"
+   ],
+   "evidence": "https://github.com/ryanchoi13/saju-app/issues/188#issuecomment-6287640226",
+   "date": "2026-10-20"
+  },
+  {
+   "candidate_id": "pending-male-winter-business_formal-coat-derby",
+   "drawing_id": "all-072",
+   "drawing_version": "76c82957b735c0e3",
+   "scope_version": "5be7dff4ddc63650",
+   "temp_range": {
+    "min": "open",
+    "max_exclusive": 9
+   },
+   "rain": "suitable",
+   "snow": "suitable",
+   "steps": [
+    "independent_style_review",
+    "claude_consistency_check",
+    "owner_final"
+   ],
+   "evidence": "https://github.com/ryanchoi13/saju-app/issues/188#issuecomment-6287640226",
+   "date": "2026-10-20"
+  },
+  {
+   "candidate_id": "pending-female-winter-casual-longpadding",
+   "drawing_id": "all-073",
+   "drawing_version": "b5f0e03e1b11cc32",
+   "scope_version": "10116d61f200b18b",
+   "temp_range": {
+    "min": "open",
+    "max_exclusive": 0
+   },
+   "rain": "suitable",
+   "snow": "suitable",
+   "steps": [
+    "independent_style_review",
+    "claude_consistency_check",
+    "owner_final"
+   ],
+   "evidence": "https://github.com/ryanchoi13/saju-app/issues/188#issuecomment-6287640226",
+   "date": "2026-10-20"
+  },
+  {
+   "candidate_id": "pending-female-winter-business_formal-knit",
+   "drawing_id": "all-074",
+   "drawing_version": "9025149262235b76",
+   "scope_version": "b47b03c6a103e996",
+   "temp_range": {
+    "min": "open",
+    "max_exclusive": 9
+   },
+   "rain": "suitable",
+   "snow": "suitable",
+   "steps": [
+    "independent_style_review",
+    "claude_consistency_check",
+    "owner_final"
+   ],
+   "evidence": "https://github.com/ryanchoi13/saju-app/issues/188#issuecomment-6287640226",
+   "date": "2026-10-20"
+  },
+  {
+   "candidate_id": "pending-female-winter-business_casual-quilted",
+   "drawing_id": "all-075",
+   "drawing_version": "4b1234a748d1e2c0",
+   "scope_version": "bcc7d1f4e6e9de95",
+   "temp_range": {
+    "min": 5,
+    "max_exclusive": 11
+   },
+   "rain": "unsuitable",
+   "snow": "unsuitable",
+   "steps": [
+    "independent_style_review",
+    "claude_consistency_check",
+    "owner_final"
+   ],
+   "evidence": "https://github.com/ryanchoi13/saju-app/issues/188#issuecomment-6287640226",
+   "date": "2026-10-20"
+  },
+  {
+   "candidate_id": "pending-female-winter-casual-coat-dress",
+   "drawing_id": "all-076",
+   "drawing_version": "5eee99effa8ab560",
+   "scope_version": "8c7392a71f787939",
+   "temp_range": {
+    "min": "open",
+    "max_exclusive": 9
+   },
+   "rain": "unsuitable",
+   "snow": "unsuitable",
+   "steps": [
+    "independent_style_review",
+    "claude_consistency_check",
+    "owner_final"
+   ],
+   "evidence": "https://github.com/ryanchoi13/saju-app/issues/188#issuecomment-6287640226",
+   "date": "2026-10-20"
   }
  ]
 }
