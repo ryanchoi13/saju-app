@@ -16,20 +16,18 @@
 
 from __future__ import annotations
 
-from datetime import date
 from html import escape
 
 from app.engine.core.models import MyeongriCoreResult
 from app.engine.calendar import to_solar
-from app.engine.timing import calculate_timing
 from app.engine.semantic import build_service_query
-from app.engine.semantic.overall import select_overall_domains
 from app.engine.semantic.applied import recommended_directions
 from app.engine.services.applied_guidance import state_basis
 from app.engine.services.annual_copy import seed_from
 from app.engine.services import health_copy as copy
+from app.engine.services import theme_timing
 
-HEALTH_NARRATIVE_VERSION = "health-4tier-v1"
+HEALTH_NARRATIVE_VERSION = "health-4tier-v2"
 
 _STRENGTH = {
     "extremely_weak": "매우 신약", "weak": "신약",
@@ -107,33 +105,6 @@ def _operation_lines(query: dict) -> list[str]:
 # ---------------------------------------------------------------------------
 # 3단 계산: 월별 흐름 점수 (유료 전용). 점수 규칙은 career 와 같다.
 # ---------------------------------------------------------------------------
-def _month_candidate(selection: dict):
-    primary = set(selection.get("primary_domains") or ())
-    pool = [c for c in selection.get("selected", ()) if c["domain"] in _MONTH_DOMAINS]
-    pool.sort(key=lambda c: (c["domain"] not in primary, _MONTH_DOMAINS.index(c["domain"])))
-    return pool[0] if pool else None
-
-
-def _month_scores(core: MyeongriCoreResult, year: int) -> tuple[dict[int, int], dict[int, dict]]:
-    birth = to_solar(core.input.birth_date, core.input.calendar_type, core.input.is_leap_month)
-    scores: dict[int, int] = {}
-    details: dict[int, dict] = {}
-    for month in range(1, 13):
-        target = date(year, month, 15)
-        if target < birth:
-            if (year, month) < (birth.year, birth.month):
-                continue
-            target = birth
-        timing, _, _ = calculate_timing(core.input, core.natal_facts.pillars, target_date=target)
-        selection = select_overall_domains(core, "monthly", timing=timing)
-        cand = _month_candidate(selection)
-        mode = cand.get("mode") if cand else None
-        scores[month] = copy.MODE_SCORE.get(mode, 0)
-        details[month] = dict(mode=mode, source_ids=list(cand["source_ids"]) if cand else [],
-                              domain=cand["domain"] if cand else None)
-    return scores, details
-
-
 # ---------------------------------------------------------------------------
 # HTML 조각
 # ---------------------------------------------------------------------------
@@ -177,25 +148,17 @@ def _locked_html() -> str:
             f'<h2 style="margin:4px 0 0;">{escape(title)}</h2>'
             f'<p data-health-teaser="{tier}" style="margin:6px 0 0;">{escape(teaser)}</p>{_SKELETON}</section>')
     return (
-        block(3, "올해 컨디션 타이밍", copy.TEASER_TIER3)
+        block(3, "앞으로 12개월 컨디션 타이밍", copy.TEASER_TIER3)
         + block(4, "생활 활력 3원칙", copy.TEASER_TIER4)
         + f'<a href="{copy.PAYWALL_HREF}" data-paywall-cta="theme-health" style="display:inline-block;margin-top:6px;'
           'padding:10px 16px;border-radius:10px;background:#2D6A4F;color:#fff;font-weight:700;text-decoration:none;">'
           f'{escape(copy.cta_label())}</a>')
 
 
-def _unlocked_html(months: list[dict], bullets: list[str], year: int) -> str:
-    if months:
-        rows = "".join(
-            f'<li data-health-month="{m["month"]}" data-month-kind="{m["kind"]}">'
-            f'<strong>{m["month"]}월 · {escape(m["label"])}</strong><br>{escape(m["text"])}</li>'
-            for m in months)
-        body = f'<ul style="padding-left:18px;">{rows}</ul>'
-    else:
-        body = f'<p data-health-month="none">{escape(copy.NO_INFLECTION)}</p>'
-    tier3 = (f'<section data-health-tier="3" data-paywall="unlocked"><h2>올해 컨디션 타이밍</h2>'
-             f'<p class="reading-caption">{year}년 각 달 15일의 절기 월주를 기준으로 짚었습니다. 생활 리듬을 돌아보기 위한 흐름이며 몸의 상태를 말하는 것이 아닙니다.</p>'
-             f'{body}</section>')
+def _unlocked_html(t3: dict, bullets: list[str]) -> str:
+    tier3 = theme_timing.tier3_html(t3, "health", "앞으로 12개월 컨디션 타이밍",
+                                    "생활 리듬을 돌아보기 위한 흐름이며 몸의 상태를 말하는 것이 아닙니다.",
+                                    copy.NO_INFLECTION)
     items = "".join(f'<li data-health-action="{i}">{escape(b)}</li>' for i, b in enumerate(bullets, start=1))
     tier4 = f'<section data-health-tier="4" data-paywall="unlocked"><h2>생활 활력 3원칙</h2><ol>{items}</ol></section>'
     return tier3 + tier4
@@ -214,7 +177,8 @@ def build_lifetime_health_report(
     if query["constraints"].get("medical_claim_allowed") is not False:
         raise ValueError("건강 생활흐름 리포트는 의료 주장 금지 설정이 필요합니다.")
     name = escape(user_name or "회원")
-    year = year or date.today().year
+    fixed_year = year
+    year = year or theme_timing.window_start(core)[0]
 
     strength = query["synthesis"].get("strength_state")
     climate_raw = (query["diagnostics"].get("climate") or {}).get("conclusion")
@@ -235,12 +199,12 @@ def build_lifetime_health_report(
 
     evidence_extra = ""
     if unlocked:
-        scores, details = _month_scores(core, year)
-        months = copy.compose_tier3(copy.choose_inflections(scores), strength, seed)
+        t3 = theme_timing.build_tier3(core, "health", _MONTH_DOMAINS,
+                                      lambda inf: copy.compose_tier3(inf, strength, seed), year=fixed_year)
         bullets = copy.compose_tier4(climate, strength)
-        gated = _unlocked_html(months, bullets, year)
-        evidence_summary["months"] = [
-            dict(month=m["month"], kind=m["kind"], **details.get(m["month"], {})) for m in months]
+        gated = _unlocked_html(t3, bullets)
+        evidence_summary["months"] = t3["evidence_months"]
+        evidence_summary["years"] = t3["evidence_years"]
         lines = _operation_lines(query)
         if lines:
             evidence_extra = "<p>" + "<br>".join(f"· {escape(x)}" for x in lines) + "</p>"

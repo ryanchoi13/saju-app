@@ -17,19 +17,17 @@
 from __future__ import annotations
 
 from collections import Counter
-from datetime import date
 from html import escape
 
 from app.engine.core.models import MyeongriCoreResult
 from app.engine.calendar import to_solar
-from app.engine.timing import calculate_timing
 from app.engine.semantic import build_service_query
-from app.engine.semantic.overall import select_overall_domains
 from app.engine.services.applied_guidance import direction_advice, state_basis
 from app.engine.services.annual_copy import seed_from
 from app.engine.services import love_copy as copy
+from app.engine.services import theme_timing
 
-LOVE_NARRATIVE_VERSION = "love-4tier-v1"
+LOVE_NARRATIVE_VERSION = "love-4tier-v2"
 
 _TEN_GOD = {
     "peer": "비견", "rob_wealth": "겁재", "eating_god": "식신",
@@ -99,33 +97,6 @@ def _uncertainty(core: MyeongriCoreResult) -> str:
 # 3단 계산: 월별 흐름 점수 (유료 전용). 점수 규칙은 career 와 같다.
 #   join +2 · recovery +1 · base 0 · mixed -1 · change -2  (mode 이름만 보고 정한 해석)
 # ---------------------------------------------------------------------------
-def _month_candidate(selection: dict):
-    primary = set(selection.get("primary_domains") or ())
-    pool = [c for c in selection.get("selected", ()) if c["domain"] in _MONTH_DOMAINS]
-    pool.sort(key=lambda c: (c["domain"] not in primary, _MONTH_DOMAINS.index(c["domain"])))
-    return pool[0] if pool else None
-
-
-def _month_scores(core: MyeongriCoreResult, year: int) -> tuple[dict[int, int], dict[int, dict]]:
-    birth = to_solar(core.input.birth_date, core.input.calendar_type, core.input.is_leap_month)
-    scores: dict[int, int] = {}
-    details: dict[int, dict] = {}
-    for month in range(1, 13):
-        target = date(year, month, 15)
-        if target < birth:
-            if (year, month) < (birth.year, birth.month):
-                continue
-            target = birth
-        timing, _, _ = calculate_timing(core.input, core.natal_facts.pillars, target_date=target)
-        selection = select_overall_domains(core, "monthly", timing=timing)
-        cand = _month_candidate(selection)
-        mode = cand.get("mode") if cand else None
-        scores[month] = copy.MODE_SCORE.get(mode, 0)
-        details[month] = dict(mode=mode, source_ids=list(cand["source_ids"]) if cand else [],
-                              domain=cand["domain"] if cand else None)
-    return scores, details
-
-
 # ---------------------------------------------------------------------------
 # HTML 조각 (career.py 와 같은 구조. 세 테마가 끝나면 theme_common 으로 옮길 후보)
 # ---------------------------------------------------------------------------
@@ -169,25 +140,16 @@ def _locked_html() -> str:
             f'<h2 style="margin:4px 0 0;">{escape(title)}</h2>'
             f'<p data-love-teaser="{tier}" style="margin:6px 0 0;">{escape(teaser)}</p>{_SKELETON}</section>')
     return (
-        block(3, "올해 관계의 타이밍", copy.TEASER_TIER3)
+        block(3, "앞으로 12개월 관계의 타이밍", copy.TEASER_TIER3)
         + block(4, "다정한 관계 3원칙", copy.TEASER_TIER4)
         + f'<a href="{copy.PAYWALL_HREF}" data-paywall-cta="theme-love" style="display:inline-block;margin-top:6px;'
           'padding:10px 16px;border-radius:10px;background:#2D6A4F;color:#fff;font-weight:700;text-decoration:none;">'
           f'{escape(copy.cta_label())}</a>')
 
 
-def _unlocked_html(months: list[dict], bullets: list[str], year: int) -> str:
-    if months:
-        rows = "".join(
-            f'<li data-love-month="{m["month"]}" data-month-kind="{m["kind"]}">'
-            f'<strong>{m["month"]}월 · {escape(m["label"])}</strong><br>{escape(m["text"])}</li>'
-            for m in months)
-        body = f'<ul style="padding-left:18px;">{rows}</ul>'
-    else:
-        body = f'<p data-love-month="none">{escape(copy.NO_INFLECTION)}</p>'
-    tier3 = (f'<section data-love-tier="3" data-paywall="unlocked"><h2>올해 관계의 타이밍</h2>'
-             f'<p class="reading-caption">{year}년 각 달 15일의 절기 월주를 기준으로 짚었습니다. 상대의 선택이나 특정 사건을 예측한 것은 아닙니다.</p>'
-             f'{body}</section>')
+def _unlocked_html(t3: dict, bullets: list[str]) -> str:
+    tier3 = theme_timing.tier3_html(t3, "love", "앞으로 12개월 관계의 타이밍",
+                                    "상대의 선택이나 특정 사건을 예측한 것은 아닙니다.", copy.NO_INFLECTION)
     items = "".join(f'<li data-love-action="{i}">{escape(b)}</li>' for i, b in enumerate(bullets, start=1))
     tier4 = f'<section data-love-tier="4" data-paywall="unlocked"><h2>다정한 관계 3원칙</h2><ol>{items}</ol></section>'
     return tier3 + tier4
@@ -206,7 +168,8 @@ def build_lifetime_love_report(
     safe_status = copy.safe_status(status)
     query = build_service_query(core, "love")
     name = escape(user_name or "회원")
-    year = year or date.today().year
+    fixed_year = year
+    year = year or theme_timing.window_start(core)[0]
 
     counts = Counter(item["ten_god"] for item in query["natal"]["focused_ten_gods"])
     relationships = query["natal"]["relationships"]
@@ -224,12 +187,12 @@ def build_lifetime_love_report(
     )
 
     if unlocked:
-        scores, details = _month_scores(core, year)
-        months = copy.compose_tier3(copy.choose_inflections(scores), safe_status, seed)
+        t3 = theme_timing.build_tier3(core, "love", _MONTH_DOMAINS,
+                                      lambda inf: copy.compose_tier3(inf, safe_status, seed), year=fixed_year)
         bullets = copy.compose_tier4(group, safe_status)
-        gated = _unlocked_html(months, bullets, year)
-        evidence_summary["months"] = [
-            dict(month=m["month"], kind=m["kind"], **details.get(m["month"], {})) for m in months]
+        gated = _unlocked_html(t3, bullets)
+        evidence_summary["months"] = t3["evidence_months"]
+        evidence_summary["years"] = t3["evidence_years"]
         advice = copy.sanitize(direction_advice(query["applied_state"], "love", ""))
         evidence_extra = f'<p>{escape(advice)}</p>' if advice else ""
     else:
