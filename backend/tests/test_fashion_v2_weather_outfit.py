@@ -12,7 +12,7 @@ from fashion_v2.weather_outfit import (
 )
 
 
-def point(hour, apparent, rain=0, precipitation=0, wind=5, gust=10, humidity=55):
+def point(hour, apparent, rain=0, precipitation=0, wind=5, gust=10, humidity=55, weather_code=0):
     return {
         "time": datetime(2026, 9, 13, hour),
         "apparent_temperature": apparent,
@@ -21,6 +21,7 @@ def point(hour, apparent, rain=0, precipitation=0, wind=5, gust=10, humidity=55)
         "wind_speed_10m": wind,
         "wind_gusts_10m": gust,
         "relative_humidity_2m": humidity,
+        "weather_code": weather_code,
     }
 
 
@@ -57,6 +58,12 @@ def test_rain_avoids_suede_and_wind_requires_a_shell():
     assert result["humid_hot"] is True
     assert result["outerwear"] == "wind_shell"
     assert "생활방수" in result["guidance"]
+
+
+def test_snow_codes_are_preserved_as_a_separate_hazard():
+    result = classify_weather([point(12, 8, rain=70, precipitation=2, weather_code=73)])
+    assert result["rainy"] is True
+    assert result["snowy"] is True
 
 
 def test_fixed_korea_rollout_url_contains_no_user_location():

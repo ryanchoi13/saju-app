@@ -1,4 +1,4 @@
-"""PR-3 (#188): non-production selector, review gate, drawing resolver and day store."""
+"""#188 PR-3/PR-4B: selector, review gate, drawing resolver and day store."""
 import ast
 import os
 import shutil
@@ -460,7 +460,7 @@ def test_store_requires_a_member_account():
 
 # ---------------- isolation ----------------
 
-def test_production_entrypoints_do_not_import_selector_modules():
+def test_production_entrypoints_only_reach_selector_through_the_bridge():
     new = {"fashion_v2.outfit_selector", "fashion_v2.outfit_day_store", "fashion_v2.candidate_reviews",
            "fashion_v2.illustration_resolver", "fashion_v2.candidate_templates", "fashion_v2.candidate_activation"}
     production = [ROOT / "main.py", *sorted((ROOT / "backend" / "app").rglob("*.py"))]
@@ -479,25 +479,23 @@ def test_production_entrypoints_do_not_import_selector_modules():
     for name in ("outfit_selector.py", "outfit_day_store.py", "candidate_reviews.py", "illustration_resolver.py"):
         source = (ROOT / "fashion_v2" / name).read_text(encoding="utf-8")
         assert "import main" not in source and "from main" not in source
-        assert "wardrobe_store" not in source and "_connection" not in source
+        if name != "outfit_day_store.py":
+            assert "wardrobe_store" not in source and "_connection" not in source
 
 
-def test_importing_main_does_not_transitively_load_selector_modules():
+def test_importing_main_loads_the_guarded_selector_bridge():
     code = """
 import sys
 import main
 
-banned = {
+required = {
+    "fashion_v2.live_selector",
     "fashion_v2.outfit_selector",
     "fashion_v2.outfit_day_store",
-    "fashion_v2.candidate_reviews",
-    "fashion_v2.illustration_resolver",
-    "fashion_v2.candidate_templates",
-    "fashion_v2.candidate_activation",
 }
-loaded = sorted(banned & sys.modules.keys())
-if loaded:
-    raise SystemExit("production import loaded selector modules: " + ", ".join(loaded))
+missing = sorted(required - sys.modules.keys())
+if missing:
+    raise SystemExit("production bridge did not load: " + ", ".join(missing))
 """
     result = subprocess.run(
         [sys.executable, "-X", "utf8", "-c", code],

@@ -1,4 +1,4 @@
-"""Server-side port of the client illustration matcher (#188 PR-3, non-production).
+"""Server-side port of the client illustration matcher (#188 PR-3/PR-4B).
 
 `assets/dalha-illustrations/catalog.js::selectIllustration` decides in the browser
 which drawing a look renders. The selector needs the same answer on the server so
@@ -6,7 +6,8 @@ it can judge the *drawn* outer (a review-preference branch can turn a coat into 
 puffer). This is a line-by-line port; a test compares it with the real JS on the
 PR-2 manifest and must agree on every look.
 
-Nothing in the live path imports this module.
+PR-4B reaches this matcher through the guarded selector bridge. The legacy SVG
+builder remains independent and is the fallback whenever selection is unavailable.
 """
 from __future__ import annotations
 

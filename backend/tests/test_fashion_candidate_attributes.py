@@ -160,9 +160,9 @@ def test_committed_observed_map_is_not_stale(live_report):
         assert drawings <= known, f"{cid}: new drawings {sorted(drawings - known)} -> rerun coverage script"
 
 
-# ---------- live path stays independent ----------
+# ---------- legacy live builder stays independent ----------
 
-def test_live_path_does_not_import_check_modules():
+def test_legacy_live_builder_does_not_import_check_modules():
     banned = {"fashion_v2.candidate_registry", "fashion_v2.illustration_assets", "fashion_v2.candidate_attributes",
               "fashion_v2.candidate_constraints", "fashion_v2.live_match_check"}
     for name in ("svg_recommendation.py", "template_catalog.py", "weather_catalog.py", "weather_outfit.py",
