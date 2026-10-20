@@ -2,6 +2,8 @@
 import ast
 import os
 import shutil
+import subprocess
+import sys
 import threading
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -478,3 +480,31 @@ def test_production_entrypoints_do_not_import_selector_modules():
         source = (ROOT / "fashion_v2" / name).read_text(encoding="utf-8")
         assert "import main" not in source and "from main" not in source
         assert "wardrobe_store" not in source and "_connection" not in source
+
+
+def test_importing_main_does_not_transitively_load_selector_modules():
+    code = """
+import sys
+import main
+
+banned = {
+    "fashion_v2.outfit_selector",
+    "fashion_v2.outfit_day_store",
+    "fashion_v2.candidate_reviews",
+    "fashion_v2.illustration_resolver",
+    "fashion_v2.candidate_templates",
+    "fashion_v2.candidate_activation",
+}
+loaded = sorted(banned & sys.modules.keys())
+if loaded:
+    raise SystemExit("production import loaded selector modules: " + ", ".join(loaded))
+"""
+    result = subprocess.run(
+        [sys.executable, "-X", "utf8", "-c", code],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+        timeout=30,
+        check=False,
+    )
+    assert result.returncode == 0, result.stdout + result.stderr

@@ -115,3 +115,6 @@ def test_coverage_script_pools_match_main():
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     assert module.ELEMENT_WEAR_TONES == main._ELEMENT_WEAR_TONES
+    assert module.TONGGUAN_TONE == main._TONGGUAN_TONE
+    equal_pairs = {(a, b) for a, b in module.live_sample_pairs() if a == b}
+    assert equal_pairs == {(tone, tone) for tone in main._TONGGUAN_TONE.values()}

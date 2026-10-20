@@ -5,7 +5,8 @@ fixed input manifest and asks the real client matcher (`catalog.js` via Node) wh
 illustration each look would render. Nothing in the live path is changed.
 
 Two input groups are kept separate so their results are never mixed up:
-- live_sample: colour pairs drawn from the live element wear-tone pools in main.py.
+- live_sample: colour pairs drawn from the live element wear-tone pools in main.py,
+  plus the five equal-colour pairs that its tongguan override can produce.
 - review_fixture: the exact colour pairs used by fashion_v2/review_preferences.py.
   Some of these pairs can no longer occur live (see `live_possible`).
 
@@ -44,6 +45,7 @@ ELEMENT_WEAR_TONES = {
     "火": ("burgundy", "plum", "coral", "rust", "red", "lavender", "pink"),
     "土": ("beige", "camel", "brown", "butter"),
 }
+TONGGUAN_TONE = {"木": "olive", "水": "navy", "金": "mid_gray", "火": "burgundy", "土": "beige"}
 LIVE_TONES = sorted({t for pool in ELEMENT_WEAR_TONES.values() for t in pool})
 # Exact pairs from fashion_v2/review_preferences.py.
 REVIEW_FIXTURE_PAIRS = (
@@ -64,7 +66,7 @@ MATCHER = ROOT / "scripts" / "fashion_illustration_coverage.mjs"
 
 
 def live_sample_pairs():
-    """Three day offsets per element pair, using the same stepping idea as main.py."""
+    """Fixed live sample, including equal pairs created by the tongguan A-colour override."""
     pairs = set()
     for first, second in itertools.product(ELEMENT_WEAR_TONES, repeat=2):
         a_pool, b_pool = ELEMENT_WEAR_TONES[first], ELEMENT_WEAR_TONES[second]
@@ -74,6 +76,7 @@ def live_sample_pairs():
             if a == b:
                 b = b_pool[(b_pool.index(b) + 1) % len(b_pool)]
             pairs.add((a, b))
+    pairs.update((tone, tone) for tone in TONGGUAN_TONE.values())
     return sorted(pairs)
 
 
