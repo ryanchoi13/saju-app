@@ -1752,7 +1752,7 @@ export const illustrations=[
       "bottom": "수트 바지",
       "dress": "",
       "outer": "수트 재킷",
-      "shoe": "로퍼",
+      "shoe": "낮은 굽 펌프스",
       "bag": "핸드백",
       "accessories": [],
       "outerOpen": true,
@@ -1809,13 +1809,11 @@ export const illustrations=[
       "accessories": [],
       "outerOpen": true,
       "outerMode": "wear",
-      "tuck": "out",
-      "legLayer": "타이츠"
+      "tuck": "out"
     },
     "slots": [
       "outerColor",
       "topColor",
-      "legLayerColor",
       "shoeColor",
       "bagColor"
     ],

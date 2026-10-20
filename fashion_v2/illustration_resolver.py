@@ -19,7 +19,7 @@ from fashion_v2.candidate_attributes import (OBSERVED_OUTER_LENGTH, drawing_oute
 from fashion_v2.illustration_assets import load_registry
 
 RENDERER = "approved-svg-5"
-BASIC_KEYS = ("gender", "top", "bottom", "dress", "outer", "shoe", "bag", "outerMode", "tuck", "knitNeck", "legLayer")
+BASIC_KEYS = ("gender", "top", "bottom", "dress", "outer", "shoe", "bag", "outerMode", "tuck", "knitNeck")
 _HEX = re.compile(r"^#[a-f0-9]{6}$", re.IGNORECASE)
 _REGISTRY = load_registry()
 SHAPES = {e["id"]: e["shape"] for e in _REGISTRY}

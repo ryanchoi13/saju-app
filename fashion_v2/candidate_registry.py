@@ -174,7 +174,7 @@ DRAWN_CANDIDATES = (
         "items": (("outer", "무스탕", "dark_brown", "shearling"),
                   ("top", "크루넥 니트", "burgundy", "wool_knit"),
                   ("bottom", "진청바지", "dark_denim", "denim"),
-                  ("shoes", "워크 부츠", "dark_brown", "leather")),
+                  ("shoes", "첼시 부츠", "dark_brown", "leather")),
     },
     {
         "candidate_id": "pending-male-winter-business_casual-turtleneck", "plan_id": "art-005",
@@ -234,7 +234,7 @@ DRAWN_CANDIDATES = (
                   ("outer", "수트 재킷", "charcoal", "winter_wool", {"suit_group": "charcoal_winter"}),
                   ("top", "파인 니트", "ivory", "wool_knit"),
                   ("bottom", "수트 바지", "charcoal", "winter_wool", {"suit_group": "charcoal_winter"}),
-                  ("shoes", "로퍼", "black", "leather"),
+                  ("shoes", "펌프스", "black", "leather"),
                   ("bag", "핸드백", "black", "leather")),
     },
     {
@@ -247,12 +247,11 @@ DRAWN_CANDIDATES = (
                   ("shoes", "앵클부츠", "black", "leather")),
     },
     {
-        "candidate_id": "pending-female-winter-casual-tights", "plan_id": "art-T1",
+        "candidate_id": "pending-female-winter-casual-coat-dress", "plan_id": "art-T1",
         "illustration_id": "all-076", "gender": "female", "tpo": "casual", "scope": "winter",
         "role_draft": "trendy", "role_basis": "owner_scope_2026-10-20", "form": "dress",
         "items": (("coat", "울 코트", "camel", "wool"),
                   ("dress", "니트 원피스", "burgundy", "wool_knit"),
-                  ("leg_layer", "기모 타이츠", "charcoal", "fleece"),
                   ("shoes", "앵클부츠", "dark_brown", "leather"),
                   ("bag", "크로스백", "black", "leather")),
     },

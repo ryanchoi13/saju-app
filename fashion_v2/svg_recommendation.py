@@ -107,16 +107,13 @@ def select_template(original, age, number, weather=None):
                   age=age, selection_mode='weather_template_then_approved_garments',
                   renderer=VERSION, selection_changes=[])
     items = []
-    keep_legs = bool(original.get('lock_garment_geometry'))
     for source in original['items']:
-        if source['category'] == 'leg_layer' and not keep_legs:
+        if source['category'] == 'leg_layer':
             # Winter skirt templates are replaced below when no tights drawing exists.
-            # Reviewed selector templates (lock_garment_geometry) have a tights drawing (#188).
             continue
         item = deepcopy(source)
         item['source_label'] = source['label']
-        # Only reviewed selector templates reach here with a leg layer; its one drawing is 타이츠 (#188).
-        item['label'] = '타이츠' if item['category'] == 'leg_layer' else canonical_name(item, result['gender'], result['tpo'])
+        item['label'] = canonical_name(item, result['gender'], result['tpo'])
         if item['label'] != item['source_label']:
             result['selection_changes'].append({'from':item['source_label'], 'to':item['label'], 'reason':'49종 확정 도안으로 구성 선택'})
         item['wear_mode'] = item.get('wear_mode', 'worn')
@@ -128,7 +125,7 @@ def select_template(original, age, number, weather=None):
     cold = (weather or {}).get('thermal_band') in {'cold','freezing'} or (not weather and result['season'] == 'winter')
     hot = (weather or {}).get('thermal_band') in {'hot','very_hot','warm'} or (not weather and result['season'] == 'summer')
     # Avoid recommending a skirt without the required, currently unavailable leg layer.
-    if cold and not keep_legs and any(x['category'] == 'leg_layer' for x in original['items']):
+    if cold and any(x['category'] == 'leg_layer' for x in original['items']):
         items = [x for x in items if x['category'] not in {'dress','bottom'}]
         if not any(x['category']=='top' for x in items):
             items.append(dict(category='top', label='니트', material='wool_knit', base_color='ivory', wear_mode='worn'))
@@ -465,7 +462,7 @@ def to_spec(look):
     layers=[]
     for item in items:
         c=item['category']; n=item['label']
-        slot={'top':'top','bottom':'bottom','dress':'dress','shoes':'shoe','bag':'bag','tie':'accessory','accessory':'accessory','leg_layer':'legLayer'}.get(c)
+        slot={'top':'top','bottom':'bottom','dress':'dress','shoes':'shoe','bag':'bag','tie':'accessory','accessory':'accessory'}.get(c)
         if c in {'outer','coat','mid','carry_outer'}: layers.append(item);continue
         if c in {'tie','accessory'}:
             s['accessories'].append(n)

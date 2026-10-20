@@ -25,7 +25,7 @@ Temperature range in a record:
   string "open" meaning "explicitly reviewed: no bound on this side". Missing, None or
   {} is NOT a review. At least one side must be a number (an all-open range is not a
   reviewed range).
-- An owner-policy type rule (short puffer < 5, long puffer < 0, fleece/quilted >= 5) is
+- An owner-policy type rule (short puffer < 5, long puffer < 0, shearling < 5, fleece/quilted >= 5) is
   applied first; a record can only narrow it, never widen it.
 - For outers with no policy rule (coat, blazer, ...) the reviewed range is the only
   source of a temperature range.

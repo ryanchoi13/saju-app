@@ -59,6 +59,9 @@ TEMPERATURE_POLICY = (
     {"outer_type": "puffer", "outer_length": "long", "max_exclusive": 0},
     {"outer_type": "fleece", "outer_length": None, "min_inclusive": 5},
     {"outer_type": "quilted", "outer_length": None, "min_inclusive": 5},
+    # 2026-10-20 owner (#188 winter set): shearling only below 5°C apparent, like a heavy coat
+    # (common Korean temperature charts put leather jackets at 5-8°C; shearling is warmer).
+    {"outer_type": "shearling", "outer_length": None, "max_exclusive": 5},
 )
 
 LABEL_CONFLICTS = {

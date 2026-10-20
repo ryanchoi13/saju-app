@@ -32,7 +32,7 @@ p=argparse.ArgumentParser();p.add_argument('--workdir',type=Path,required=True);
 R=args.workdir;OUT=Path(__file__).resolve().parents[1]/'assets/dalha-illustrations';P=R/'previews';P.mkdir(exist_ok=True)
 requests=json.loads((OUT/'expansion-provenance.json').read_text())
 ranges={'green':(78,163),'rose':(330,360),'blue':(201,245),'brown':(10,40),'yellow':(40,76),'violet':(245,295),'cyan':(163,201),'magenta':(295,330),'scarlet':(0,10)}
-pal={'outerColor':'#B52C34','topColor':'#E4DED0','bottomColor':'#526C85','shoeColor':'#762C40','bagColor':'#363C40','overOuter.color':'#CBBCA0','tie.body':'#435466','watch.strap':'#987239','watch.case':'#D8B84A','watch.dial':'#355B48','legLayerColor':'#3E3A45'}
+pal={'outerColor':'#B52C34','topColor':'#E4DED0','bottomColor':'#526C85','shoeColor':'#762C40','bagColor':'#363C40','overOuter.color':'#CBBCA0','tie.body':'#435466','watch.strap':'#987239','watch.case':'#D8B84A','watch.dial':'#355B48'}
 checks=[]
 for q in requests:
  key=q['id'];path=R/'originals'/f'{key}.png'
