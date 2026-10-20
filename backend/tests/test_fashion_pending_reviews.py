@@ -81,16 +81,15 @@ APPROVED = {  # base-colour values the owner re-approved on #188 (2026-10-19)
 
 
 # #188 winter set, owner-approved 2026-10-20 with the independent-review step set.
-# The evidence field is still the placeholder written with the records (see report on #188);
-# it is pinned so that replacing it with the real approval link is a deliberate test change.
-WINTER_EVIDENCE = "PENDING_188_COMMENT"
+# Evidence: the #188 comment recording the owner's chat approval and the independent review.
+WINTER_EVIDENCE = "https://github.com/ryanchoi13/saju-app/issues/188#issuecomment-6287640226"
 WINTER_STEPS = ["independent_style_review", "claude_consistency_check", "owner_final"]
 WINTER_APPROVED = {  # drawing -> (candidate, drawing_version, scope_version, temp_range, rain/snow)
-    "all-066": ("pending-female-winter-casual-shearling", "0da5d658911bc4d3", "6a1aae5b548b8a98",
+    "all-066": ("pending-female-winter-casual-shearling", "0da5d658911bc4d3", "b5c3dfd3394dbae7",
                 {"min": "open", "max_exclusive": 5}, "unsuitable"),
-    "all-067": ("pending-male-winter-casual-longpadding", "a78f6e75be9ab87a", "7c35330a1a6a73cb",
+    "all-067": ("pending-male-winter-casual-longpadding", "0409ce025ab18202", "7c35330a1a6a73cb",
                 {"min": "open", "max_exclusive": 0}, "suitable"),
-    "all-068": ("pending-male-winter-casual-shearling", "420d52c006a5bad2", "940c63ffcbc7f80f",
+    "all-068": ("pending-male-winter-casual-shearling", "420d52c006a5bad2", "26cc3b75fbe74d89",
                 {"min": "open", "max_exclusive": 5}, "unsuitable"),
     "all-069": ("pending-male-winter-business_casual-turtleneck", "8c152ea5af752ef8", "dbdc8f198259d9d9",
                 {"min": "open", "max_exclusive": 9}, "suitable"),

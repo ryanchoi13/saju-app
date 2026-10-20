@@ -2312,9 +2312,9 @@
       }
     ],
     "prompt": "Create one finished DALHA clothing-only outfit illustration. Reference is ONLY the approved elegant, simple adult 2D editorial illustration style. No person, mannequin, limbs, text, logo or decorations. Calm asymmetrical fashion flat-lay with slightly stylized adult proportions, attractive spacing. Long trousers MUST be full sized in proportion to the top; never tiny. Thin colour-coordinated outlines, ONE flat base + ONE hard-edged shadow tone per garment. NO gradients, fabric texture, grain, glossy highlights, photorealism or 3D. Solid uniform IVORY background, absolutely NO cast shadows on the background, no ground shadows. Each garment has a distinct source colour to enable later automatic recolouring; adhere to colours exactly even if unconventional. Colours on hidden lining match the garment. Keep all items comfortably inside frame. Preserve garment types exactly. Adult male outfit consists of EXACTLY: flat grass GREEN (#79AF79) hip-length quilted puffer jacket; flat dusty ROSE (#D782A0) pullover hoodie with visible hood; flat BLUE (#5A82C8) full-length straight cotton chinos; warm BROWN (#915A37) pair of low-top sneakers with plain IVORY rubber soles and brown uppers. Top/outerwear at upper left, bottom diagonally down the right side, shoes lower left. Layer the inner top under the outer jacket: inner sleeves fully hidden inside outer sleeves, collar/neck and front clearly visible. Top worn untucked; hem ends naturally at hips, never skirt-like. NO bag. NO accessories or jewelry. ",
-    "job_id": "376727c8-4f46-4855-a4c6-112c31a20671",
-    "source_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3JA8zURyEfnFTV7wDtL1dscTGxg/hf_20261020_084609_376727c8-4f46-4855-a4c6-112c31a20671.png",
-    "original_sha256": "978d10e1179f326beb7202cb12e303ffe0969bc8cb358081231019cebfc85d79",
+    "job_id": "95edbb7e-a0d5-4b15-af5e-fce2a9c78ba0",
+    "source_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3JA8zURyEfnFTV7wDtL1dscTGxg/hf_20261020_091112_95edbb7e-a0d5-4b15-af5e-fce2a9c78ba0.png",
+    "original_sha256": "babbd220f0eb277e80bb980b0507e76cdf464f64fa7e80405af5bd32fec8533b",
     "edit_base_illustration": "all-018",
     "edit_instruction": "2026-10-20 owner-approved '바' flat-lay layout (garments laid on the floor, top view, worn order, natural gaps and soft folds, ankle-length plain-hem trousers, one shoe flat and one tipped ~45 degrees). Redrawn from the earlier drawing with the layout reference, then edited for proportions (inner jackets and knits realistically sized, padding thicker and masculine for men, knit hem covering the waistband), the floor-laid feel of the approved female reference 72bcc0fb, straight trouser legs, hidden inner cuffs, no coat lining or tights (all-076), and solid-colour highlights so the hue mask covers every garment. Source PNG passes through scripts/prepare_flatlay_sources.py before mask building.",
     "edit_reference_job_id": "d0b41fcc-fe7b-4835-a141-e918a068b60b",
@@ -2329,7 +2329,8 @@
       "d3e32b62",
       "a15fc891",
       "21195fba",
-      "376727c8"
+      "376727c8",
+      "95edbb7e"
     ],
     "source_preparation": "scripts/prepare_flatlay_sources.py",
     "edit_history": [
