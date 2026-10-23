@@ -3198,7 +3198,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
         }
 
         const ANNUAL_NARRATIVE_VERSION = 'annual-v2';
-        const LIFETIME_NARRATIVE_VERSION = 'lifetime-present-v3';
+        const LIFETIME_NARRATIVE_VERSION = 'lifetime-present-v4';
         const THEME_NARRATIVE_VERSION = 'theme-present-v2';
         // 서버(main.py refresh_owned_report)의 target_version 과 같아야 한다. 다르면 새로 받아도
         // '구매한 풀이 새로 받기' 버튼이 사라지지 않는다. backend/tests/test_report_version_sync.py 가 검사.
@@ -3749,7 +3749,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             if (up) box.append(up);
             if (nature) {
                 const d = document.createElement('details'); d.className = 'lifetime-nature';
-                const sum = document.createElement('summary'); sum.textContent = '타고난 성향 전체 읽기';
+                const sum = document.createElement('summary'); sum.textContent = '지금의 나 전체 읽기';
                 d.append(sum, nature); box.append(d);
             }
             box.classList.toggle('hidden', !box.childElementCount);

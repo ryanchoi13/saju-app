@@ -11,11 +11,13 @@
 
 from __future__ import annotations
 
+import logging
 from html import escape
 from app.engine.services.reading_editorial import DETAIL, traits, section, paragraphs
 from app.engine.services.annual_editorial import GROUPS, GENERAL_TITLES, scene
 from app.engine.services.annual_copy import sanitize_paragraph
 from app.engine.services import lifetime_copy as copy
+from app.engine.services.now_me import build_now_me, NOW_ME_VERSION
 
 from app.engine.core.models import MyeongriCoreResult
 from app.engine.semantic.applied import recommended_directions
@@ -24,8 +26,9 @@ from app.engine.semantic import build_service_query
 from app.engine.semantic.overall import select_overall_domains, OVERALL_VERSION
 
 
-LIFETIME_NARRATIVE_VERSION = "lifetime-present-v3"
+LIFETIME_NARRATIVE_VERSION = "lifetime-present-v4"
 SHOW_PAST_CHIP = True  # False 로 두면 지나간 대운은 흔적도 남기지 않는다.
+logger = logging.getLogger(__name__)
 
 
 _STRUCTURE = {
@@ -281,21 +284,23 @@ def build_lifetime_overall_report(
         current_html = _no_current_html()
     upcoming_html = _locked_cards_html(future, current_god, cycle_summaries)
 
-    # --- 타고난 성향 (문장은 금기어 필터를 한 번 거친다) -------------------
-    t = traits(ordinary)
-    chapters = section("나를 이해하는 첫 장", _clean_all([f"{user_name or '회원'}님, " + t[0], t[1]], "nature.first"))
-    chapters += section("강점을 오래 살리려면", _clean_all([t[2]], "nature.strength"))
-    for domain, label in GROUPS:
-        candidate = next((c for c in selection["candidates"] if c["domain"] == domain), None)
-        values = ([scene(candidate)] if candidate else []) + [DETAIL[domain][2].removeprefix("하지만 ")]
-        chapters += section(label + " · " + GENERAL_TITLES[domain], _clean_all(values, f"nature.{domain}"))
+    # --- 지금의 나 (v4: 비유 사전 조립기. 실패하면 옛 성향 본문으로 되돌린다) ---
+    now_me_evidence = None
+    now_me_version = None
+    try:
+        now_me = build_now_me(core, user_name)
+        nature_html = '<section data-lifetime-section="nature"><h2>지금의 나</h2>' + now_me["html"] + '</section>'
+        now_me_evidence = {"sections": now_me["sections"], **now_me["evidence"]}
+        now_me_version = now_me["version"]
+    except Exception:  # noqa: BLE001 - 문구 검증 실패 등. 화면이 비는 것보다 옛 본문이 낫다.
+        logger.exception("now_me 조립 실패 — 옛 성향 본문으로 대체")
+        nature_html = ('<section data-lifetime-section="nature"><h2>나의 타고난 성향</h2>'
+                       + _legacy_nature_chapters(ordinary, selection, user_name) + '</section>')
 
     content = (
         f'<div class="long-reading" data-overall-version="{OVERALL_VERSION}" '
         f'data-narrative-version="{LIFETIME_NARRATIVE_VERSION}" data-copy-version="{copy.COPY_VERSION}">'
-        + current_html +
-        '<section data-lifetime-section="nature"><h2>나의 타고난 성향</h2>' + chapters + '</section>'
-        + upcoming_html +
+        + current_html + nature_html + upcoming_html +
         '<details class="reading-evidence"><summary>이 풀이의 근거 · 명리 용어 포함</summary>'
         f'<p>일간 {day.stem}({day.element}) · {structure} · {strength} · {climate}. 대운은 {direction}입니다.</p>'
         f'<p>원국에서 {escape(" · ".join(c["label"] for c in selection["selected"]))}을 중심 주제로 살폈습니다. '
@@ -305,6 +310,19 @@ def build_lifetime_overall_report(
         '<p class="reading-caption">원국과 현재 대운을 바탕으로 한 해석입니다. 실제 건강과 중요한 결정은 현실의 정보도 함께 확인해 주세요.</p></div>')
     return {"analysis_basis": state_basis(query["applied_state"]), "title": title, "content": content,
             "engine_version": OVERALL_VERSION, "narrative_version": LIFETIME_NARRATIVE_VERSION,
-            "copy_version": copy.COPY_VERSION,
+            "copy_version": copy.COPY_VERSION, "now_me_version": now_me_version,
             # 잠긴 대운의 해석 결과(selection)는 넣지 않는다: 이 dict가 클라이언트로 나가면 유료 내용이 샌다.
-            "evidence_summary": {"natal": selection, "current": current_selection, "cycles": cycle_summaries}}
+            "evidence_summary": {"natal": selection, "current": current_selection, "cycles": cycle_summaries,
+                                 "now_me": now_me_evidence}}
+
+
+def _legacy_nature_chapters(ordinary: str | None, selection: dict, user_name: str) -> str:
+    """v3 '나의 타고난 성향' 본문. build_now_me 가 실패했을 때만 쓴다(문장은 금기어 필터를 한 번 거친다)."""
+    t = traits(ordinary)
+    chapters = section("나를 이해하는 첫 장", _clean_all([f"{user_name or '회원'}님, " + t[0], t[1]], "nature.first"))
+    chapters += section("강점을 오래 살리려면", _clean_all([t[2]], "nature.strength"))
+    for domain, label in GROUPS:
+        candidate = next((c for c in selection["candidates"] if c["domain"] == domain), None)
+        values = ([scene(candidate)] if candidate else []) + [DETAIL[domain][2].removeprefix("하지만 ")]
+        chapters += section(label + " · " + GENERAL_TITLES[domain], _clean_all(values, f"nature.{domain}"))
+    return chapters
