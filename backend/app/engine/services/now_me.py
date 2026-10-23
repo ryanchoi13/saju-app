@@ -273,15 +273,16 @@ def _validated(sentences: list[str], scene_index: int | None, allow_absolute: bo
 
 
 def _chapter(row: dict, label: str, body: str, evidence: str) -> str:
+    # 라벨은 h3 가 아니라 문단 첫 줄 굵은 글씨. h3 는 섹션 제목만 — 화면 목차·번호(reading-polish.js)가 h3 를 센다.
     return (f'<article class="reading-chapter now-me-chapter" data-now-me-row="{escape(row["key"])}">'
-            f'<h3>{escape(label, quote=False)}</h3><p>{escape(body)}</p>'
+            f'<p><strong class="now-me-label">{escape(label, quote=False)}</strong> {escape(body)}</p>'
             f'<small class="now-me-evidence">원국 · {escape(evidence)}</small></article>')
 
 
 def _section(section_id: str, inner: str) -> str:
     title = copy.SECTION_TITLES[section_id]
-    return (f'<div class="now-me-section" data-now-me-section="{section_id}">'
-            f'<p class="now-me-section-title">{escape(title)}</p>{inner}</div>')
+    return (f'<section class="now-me-section" data-now-me-section="{section_id}">'
+            f'<h3>{escape(title)}</h3>{inner}</section>')
 
 
 def _line(section_id: str, text: str, link: str, evidence: str) -> str:

@@ -36,3 +36,16 @@
    랜딩 화면은 moon-landscape.webp 를 그대로 쓰므로 그 파일은 바꾸지 않는다. 그림 교체는 reading-lead-moon.svg 파일만 바꾸면 된다. */
 html[data-brand] .reading-view .card.reading-lead { background-image:url('/assets/brand-2026/reading-lead-moon.svg'); background-repeat:no-repeat; background-size:100% 140px; background-position:top right; }
 #unlockedArchiveList .archive-reopen { border:1px solid #dbe5df; background:#fff; color:#34453e; padding:8px 12px; cursor:pointer; }
+/* '지금의 나' v4 (now_me.py): 머리말·문단 라벨·근거 태그·한 줄 링크. 브랜드 색(남색 #25364A, 구리 #995737, 보조 #59636D)만 쓴다. */
+.now-me-lead { font-size:17px; line-height:1.8; margin:0 0 6px!important; color:#25364A; }
+.now-me-lead strong { color:#995737; font-weight:800; }
+.now-me-pillars { display:inline-block; margin-left:8px; font-size:13px; letter-spacing:.12em; color:#59636D; }
+.now-me-section { margin:0; }
+.now-me-chapter { margin:0 0 22px!important; }
+.now-me-chapter p { margin:0 0 8px!important; line-height:1.85; }
+.now-me-label { display:block; margin-bottom:4px; color:#25364A; font-weight:800; }
+.now-me-evidence { display:inline-block; font-size:12px; line-height:1.6; color:#59636D; background:#F1F3F0; border-radius:8px; padding:3px 9px; }
+.now-me-line { margin:0 0 8px!important; line-height:1.85; }
+.now-me-link { margin-left:6px; color:#995737; font-weight:700; text-decoration:none; border-bottom:1px solid #E4B28F; white-space:nowrap; }
+.now-me-link:hover { border-bottom-color:#995737; }
+.daewoon-free .now-me-section h3 { font-size:16px; font-weight:800; margin:18px 0 10px; color:#25364A; }
