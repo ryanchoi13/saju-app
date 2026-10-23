@@ -125,13 +125,13 @@
     "max_exclusive": 9
    },
    "rain": "suitable",
-   "snow": "suitable",
+   "snow": "unsuitable",
    "steps": [
     "independent_style_review",
     "claude_consistency_check",
     "owner_final"
    ],
-   "evidence": "https://github.com/ryanchoi13/saju-app/issues/188#issuecomment-6287640226",
+   "evidence": "https://github.com/ryanchoi13/saju-app/issues/188#issuecomment-6293149718",
    "date": "2026-10-20"
   },
   {
@@ -201,13 +201,13 @@
     "max_exclusive": 9
    },
    "rain": "suitable",
-   "snow": "suitable",
+   "snow": "unsuitable",
    "steps": [
     "independent_style_review",
     "claude_consistency_check",
     "owner_final"
    ],
-   "evidence": "https://github.com/ryanchoi13/saju-app/issues/188#issuecomment-6287640226",
+   "evidence": "https://github.com/ryanchoi13/saju-app/issues/188#issuecomment-6293149718",
    "date": "2026-10-20"
   },
   {
