@@ -113,7 +113,6 @@ html[data-design="moonlight"] .charge-tag { background:#294E5E; color:#FFFEFA; }
 html[data-design="moonlight"] main { padding-top:28px; gap:28px; }
 html[data-design="moonlight"] .card { box-shadow:none; }
 html[data-design="moonlight"] .daily-banner { border-top:3px solid #B78B35!important; padding-top:28px!important; padding-bottom:28px!important; }
-html[data-design="moonlight"] #resScoreBadge { background:#EEE6D5!important; color:#5A431D!important; border-radius:6px!important; }
 html[data-design="moonlight"] .reading-heading { padding:4px 2px 28px; border-bottom:1px solid var(--ui-line); margin-bottom:24px; }
 html[data-design="moonlight"] .reading-heading h2 { font-size:2.125rem; letter-spacing:-.05em; font-weight:750; }
 html[data-design="moonlight"] .reading-eyebrow { color:#705321; }
