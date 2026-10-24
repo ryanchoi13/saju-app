@@ -243,7 +243,7 @@
         .user-profile-birth { color:var(--ui-muted); font-size:.875rem; }
         .daily-banner { margin-top:0; gap:16px; }
         .daily-banner > div:first-child > div > span { color:var(--ui-ink)!important; font-size:1rem!important; }
-        #resScoreBadge { background:#DCEEEF!important; color:#205C61!important; border:0!important; font-size:1rem!important; padding:7px 12px!important; border-radius:14px!important; flex-shrink:0; }
+        /* 길흉 등급 배지(#resScoreBadge)와 카드 색은 assets/reading-polish.css 의 .daily-grade-* 가 맡는다(단계별 남색·구리·세이지). */
         #resTitle { color:var(--ui-ink)!important; font-size:1.65rem!important; font-weight:800!important; letter-spacing:-.04em; line-height:1.55!important; word-break:keep-all; overflow-wrap:anywhere; }
         #resAdvice { color:var(--ui-muted)!important; font-size:1rem!important; line-height:1.85!important; }
         .daily-banner > div:last-child { border-top:1px solid var(--ui-line)!important; padding-top:18px!important; gap:12px!important; }
@@ -546,7 +546,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;600;700&display=swap" rel="stylesheet">
     <link id="dalhaBrandStyles" rel="stylesheet" href="/assets/brand-2026/brand.css?v=20261010-1">
-    <link rel="stylesheet" href="/assets/reading-polish.css?v=20261010-2">
+    <link rel="stylesheet" href="/assets/reading-polish.css?v=20261024-1">
     <script src="/assets/reading-polish.js?v=20261001-1" defer></script>
     <script src="/assets/brand-2026/brand-ui.js?v=20261001-4" defer></script>
 </head>
@@ -686,7 +686,20 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                             <span data-brand-icon="spark" class="brand-symbol"></span>
                             <span style="font-size: 13.5px; color: #F6E2A1; font-weight: 700;">오늘의 이야기</span>
                         </div>
-                        <span id="resScoreBadge" style="background: #FEF3C7; color: #78350F; border: 1px solid #FDE68A; font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 9999px;">운세 88점</span>
+                    </div>
+
+                    <!-- 길흉 등급 카드 (daily.py: grade·score·domain_note·evidence_text·rx_text). 단계가 주인공, 점수는 작게. -->
+                    <div id="dailyGradeCard" class="daily-grade-card" hidden>
+                        <div class="daily-grade-head">
+                            <span id="resScoreBadge" class="daily-grade-badge" data-grade="보통">보통 <small>77점</small></span>
+                            <span id="resGradeDomain" class="daily-grade-domain" hidden></span>
+                        </div>
+                        <p id="resGradeEvidence" class="daily-grade-evidence"></p>
+                        <p id="resGradeDomainText" class="daily-grade-domain-text" hidden></p>
+                        <div id="resGradeRx" class="daily-grade-rx" hidden>
+                            <span id="resGradeRxLabel" class="daily-grade-rx-label">오늘은 이렇게</span>
+                            <p id="resGradeRxText" class="daily-grade-rx-text"></p>
+                        </div>
                     </div>
 
                     <h3 id="resTitle" style="font-size: 17px; font-weight: 600; text-align: left; line-height: 1.4; color: #FFFFFF; font-family: 'Noto Serif KR', serif; margin-top: 2px;">오늘의 이야기를 준비하고 있어요</h3>
@@ -2502,6 +2515,43 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             });
         }
 
+        // 길흉 등급 카드: 단계 + 작은 점수 (+ · 분야운 주의/좋음) / 근거 2문장 / "오늘은 이렇게" 2문장(주의·나쁨·좋음 날만).
+        function renderGradeCard(fortune) {
+            const card = document.getElementById('dailyGradeCard');
+            const badge = document.getElementById('resScoreBadge');
+            if (!card || !badge) return;
+            const grade = fortune?.grade;
+            const score = fortune?.score;
+            if (!grade) {                               // 등급이 없는 옛 응답: 점수 배지만
+                badge.textContent = fortune?.mode_badge || (score ? `운세 ${score}점` : '');
+                badge.dataset.grade = '보통';
+                card.hidden = !badge.textContent;
+                ['resGradeDomain', 'resGradeEvidence', 'resGradeDomainText', 'resGradeRx'].forEach(id => { document.getElementById(id).hidden = true; });
+                return;
+            }
+            const small = document.createElement('small');
+            small.textContent = `${score}점`;
+            badge.replaceChildren(document.createTextNode(`${grade} `), small);
+            badge.dataset.grade = grade;
+            badge.setAttribute('aria-label', fortune.mode_badge || `${grade} ${score}점`);
+            const note = fortune.domain_note;
+            const domainEl = document.getElementById('resGradeDomain');
+            domainEl.hidden = !note;
+            domainEl.textContent = note ? `· ${note.domain}운 ${note.kind}` : '';
+            domainEl.dataset.kind = note ? note.kind : '';
+            const evidenceEl = document.getElementById('resGradeEvidence');
+            evidenceEl.textContent = fortune.evidence_text || '';
+            evidenceEl.hidden = !fortune.evidence_text;
+            const domainTextEl = document.getElementById('resGradeDomainText');
+            domainTextEl.textContent = (note && note.text) || '';
+            domainTextEl.hidden = !(note && note.text);
+            const rxBox = document.getElementById('resGradeRx');
+            rxBox.hidden = !fortune.rx_text;
+            document.getElementById('resGradeRxLabel').textContent = fortune.rx_label || '오늘은 이렇게';
+            document.getElementById('resGradeRxText').textContent = fortune.rx_text || '';
+            card.hidden = false;
+        }
+
         const OUTFIT_HEX = {
             '올리브 그린':'#6B7B3A', '청록':'#2A9D8F', '소프트 코랄':'#F4978E', '레드':'#D64545', '베이지':'#D9C3A5',
             '브라운':'#8B5A2B', '화이트':'#F8FAFC', '실버':'#C0C7D0', '네이비':'#1E3A8A', '블랙':'#1E293B'
@@ -2555,13 +2605,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             renderTodayStory(data.daily_fortune);
             renderOutfitTrack(data.daily_fortune);
             
-            const scoreBadgeEl = document.getElementById('resScoreBadge');
-            if (scoreBadgeEl) {
-                scoreBadgeEl.innerText = data.daily_fortune.mode_badge || `운세 ${data.daily_fortune.score}점`;
-                if (data.daily_fortune.badge_style) {
-                    scoreBadgeEl.style.cssText = data.daily_fortune.badge_style + " font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 9999px;";
-                }
-            }
+            renderGradeCard(data.daily_fortune);
 
             document.getElementById('resItem').innerText = data.daily_fortune.lucky_item;
             window.renderLuckyItemArt?.(data.daily_fortune.lucky_item);

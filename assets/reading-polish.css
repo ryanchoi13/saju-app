@@ -49,3 +49,20 @@ html[data-brand] .reading-view .card.reading-lead { background-image:url('/asset
 .now-me-link { margin-left:6px; color:#995737; font-weight:700; text-decoration:none; border-bottom:1px solid #E4B28F; white-space:nowrap; }
 .now-me-link:hover { border-bottom-color:#995737; }
 .daewoon-free .now-me-section h3 { font-size:16px; font-weight:800; margin:18px 0 10px; color:#25364A; }
+/* 오늘운세 길흉 등급 카드 (daily_score.py · daily_rx.py). 단계가 주인공, 점수는 작게. 색은 브랜드 남색 #25364A·구리 #995737·보조 #59636D·살구 #E4B28F,
+   단계 색: 나쁨·주의 구리, 보통 남색, 좋음·아주 좋음 세이지 #3F7A5C. */
+.daily-grade-card { display:flex; flex-direction:column; gap:8px; padding:2px 0 14px; border-bottom:1px solid var(--ui-line, #E2E8EB); text-align:left; }
+.daily-grade-head { display:flex; align-items:baseline; gap:8px; flex-wrap:wrap; }
+.daily-grade-badge { display:inline-flex; align-items:baseline; gap:6px; font-family:'Noto Serif KR', serif; font-size:1.45rem; font-weight:800; letter-spacing:-.03em; line-height:1.3; color:#25364A; }
+.daily-grade-badge small { font-family:'Pretendard', sans-serif; font-size:.875rem; font-weight:600; color:#59636D; letter-spacing:0; }
+.daily-grade-badge[data-grade="나쁨"], .daily-grade-badge[data-grade="주의"] { color:#995737; }
+.daily-grade-badge[data-grade="보통"] { color:#25364A; }
+.daily-grade-badge[data-grade="좋음"], .daily-grade-badge[data-grade="아주 좋음"] { color:#3F7A5C; }
+.daily-grade-domain { font-size:.875rem; font-weight:700; color:#59636D; }
+.daily-grade-domain[data-kind="주의"] { color:#995737; }
+.daily-grade-domain[data-kind="좋음"] { color:#3F7A5C; }
+.daily-grade-evidence { margin:0!important; font-size:1rem!important; line-height:1.8!important; color:var(--ui-ink, #142942)!important; word-break:keep-all; }
+.daily-grade-domain-text { margin:0!important; font-size:.9rem!important; line-height:1.75!important; color:#59636D!important; word-break:keep-all; }
+.daily-grade-rx { display:flex; flex-direction:column; gap:4px; margin-top:4px; padding:10px 12px; border-left:3px solid #E4B28F; background:#FBF6F1; border-radius:0 12px 12px 0; }
+.daily-grade-rx-label { font-size:.8rem; font-weight:800; letter-spacing:.04em; color:#995737; }
+.daily-grade-rx-text { margin:0!important; font-size:.95rem!important; line-height:1.75!important; color:#25364A!important; word-break:keep-all; }

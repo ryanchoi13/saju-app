@@ -300,7 +300,8 @@ STORY_TIP = {
     "spend_life": ("오늘 쓴 돈과 마음을 저녁에 한 줄로 적어 보세요.", "가장 어수선한 한 곳을 골라 십 분만 정리해 보세요."),
     "balance": ("즐겨 하던 루틴을 오늘도 편안하게 이어 가 보세요.", "좋아하는 음악을 한 곡 틀어 하루를 느긋하게 열어 보세요."),
 }
-# 충·마찰이 걸린 날에만 붙는 대비 한 줄.
+# 충·마찰이 걸린 날의 대비 한 줄. 2026-10-24 부터 이야기에는 붙이지 않는다(등급 카드의 "오늘은 이렇게"가 대체).
+# daily_rx.BANK 의 '할 것' 풀에 같은 결의 문장이 들어 있어 여기 문장은 참고용으로만 남긴다.
 STORY_CAUTION = {
     "clash": ("약속 시간은 조금 넉넉하게 잡아 보세요.", "일정 사이에 빈 시간을 하나 넣어 보세요."),
     "friction": ("중요한 말은 한 번 더 확인하고 전해 보세요.", "답장은 한 박자 쉬고 천천히 써 보세요."),
@@ -335,11 +336,11 @@ def compose_story(lead: str, tone: str, seed: int, *, god: str | None = None, re
     else:
         rel = rel or "calm"
         sentences = [_pick(STORY_A_GOD[god], seed, 5), _pick(STORY_B_REL[rel], seed, 1), _pick(STORY_TIP[lead], seed, 2)]
-        if rel in STORY_CAUTION:                                   # 충·마찰: 대비 한 줄 + 조심 마무리
-            sentences += [_pick(STORY_CAUTION[rel], seed, 3), _pick(STORY_CLOSING["careful"], seed, 4)]
-        elif rel == "lift":                                        # 합: 가볍게 마무리
+        # 충·마찰의 '대비 한 줄 + 조심 마무리'(STORY_CAUTION·STORY_CLOSING["careful"])는 붙이지 않는다.
+        # 2026-10-24 결정: 길흉 등급 카드의 "오늘은 이렇게" 2문장이 이야기의 할 일·참을 일을 대체한다.
+        if rel == "lift":                                          # 합: 가볍게 마무리
             sentences.append(_pick(STORY_CLOSING["lift"], seed, 4))
-        headline = HEADLINE_GOD_REL[god][rel]                      # calm: 마무리 없이 세 문장으로 끝난다
+        headline = HEADLINE_GOD_REL[god][rel]                      # calm·clash·friction: 마무리 없이 세 문장으로 끝난다
     body = " ".join(sentences)
     return dict(headline=headline, body=body, char_count=len(body), sentence_count=len(sentences),
                 lead=lead, tone=tone, god=god, rel=rel)
