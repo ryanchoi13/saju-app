@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from app.engine.korean import josa
 import copy
+import logging
 from datetime import date
 
 from app.engine.constants import GAN_KO, ZHI_KO
@@ -12,7 +13,7 @@ from app.engine.semantic.queries import build_service_query
 from app.engine.services.simple_menu import daily_choices
 from app.engine.services.daily_menu import NOT_A_MEAL, recommend_daily_menus
 from app.engine.services.daily_guidance import build_daily_guidance
-from app.engine.services import daily_copy, daily_menu_copy, daily_sections, daily_rx, daily_score
+from app.engine.services import daily_copy, daily_menu_copy, daily_sections, daily_rx, daily_score, daily_story
 from app.engine.services.annual_copy import seed_from
 from app.engine.services.daily_scenarios import select_daily_scenario
 from app.engine.services.daily_topics import select_daily_topics
@@ -21,7 +22,8 @@ from app.engine.services.overall_narrative import render_overall
 from app.engine.services.element_balance import natal_balance, daily_blend, tongguan_day
 
 
-DAILY_FORTUNE_VERSION = "daily-fortune-v7-grade-card"
+DAILY_FORTUNE_VERSION = "daily-fortune-v8-story-v2"
+logger = logging.getLogger(__name__)
 
 _TEN_GOD_KO = {
     "peer": "비견",
@@ -331,6 +333,21 @@ _GRADE_STYLE = {   # 나쁨·주의 구리, 보통 남색, 좋음·아주 좋음
 }
 
 
+def _story_v2(fallback: dict, core: MyeongriCoreResult, evaluation: dict, rx: dict, account_key: str, target_date: date) -> dict:
+    """오늘의 이야기 v2(daily_story 은행). daily_rx.render_day 가 30일 이력과 함께 조립해 둔 것을 쓰고, 없으면 여기서 직접 조립한다.
+    조립이 실패하면(로그 남김) 예전 이야기(compose_story + enrich_story)를 그대로 돌려준다."""
+    try:
+        story = rx.get("story")
+        if story is None and "story" not in rx:
+            story = daily_story.build_story(core, evaluation, rx, account_key, target_date, core.input.gender)
+        if not story:
+            return fallback
+        return daily_story.story_payload(fallback, story)
+    except Exception:                                   # noqa: BLE001 — 이야기 실패가 오늘의 운세 전체를 막지 않게
+        logger.exception("오늘의 이야기 v2 조립 실패 %s %s", account_key, target_date)
+        return fallback
+
+
 def _badge_style(grade: str) -> str:
     return _GRADE_STYLE.get(grade, _GRADE_STYLE["보통"])
 
@@ -532,7 +549,8 @@ def build_daily_fortune(
     story_s, story_t, story_types = _story_relation_counts(relations)
     rel = daily_copy.relation_key(story_s, story_t, story_types)
     story = daily_copy.compose_story(lead, tone, seed, god=daily_god, rel=rel)
-    story = daily_sections.enrich_story(story, daily_god, story.get("rel"), seed)
+    story = daily_sections.enrich_story(story, daily_god, story.get("rel"), seed)   # v2 조립 실패 시의 폴백
+    story = _story_v2(story, core, evaluation, rx, account_key or core.input.birth_date.isoformat(), target_date)
     time_tips = daily_copy.compose_tips(lead, seed, current_hour)
     outfit = daily_copy.compose_outfit(lucky_element)
     topics["evidence"]["legacy_primary_topic"] = topics["evidence"]["primary_topic"]

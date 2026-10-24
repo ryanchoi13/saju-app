@@ -12,10 +12,13 @@ test_banned_vocabulary 가 이 파일의 문자열을 전수 검사하고, test_
 from __future__ import annotations
 
 import hashlib
+import logging
 from datetime import date, timedelta
 
 from app.engine.core.models import MyeongriCoreResult
 from app.engine.services import daily_score
+
+logger = logging.getLogger(__name__)
 
 RX_VERSION = "daily-rx-v1"
 RECENT_DAYS = 30          # 같은 요소·같은 구분에서 이 기간 안에 쓴 문장은 다시 쓰지 않는다
@@ -533,7 +536,11 @@ def compose_rx(account_key: str, d: date, element: str,
 
 def select_for_day(core: MyeongriCoreResult, account_key: str, d: date,
                    recent: list[tuple[str, str, int]], evaluation: dict | None = None) -> dict:
-    """하루치 문장 선택. recent 는 그 전 30일에 쓴 (요소, 구분, 번호) 목록."""
+    """하루치 문장 선택. recent 는 그 전 30일에 쓴 (요소, 구분, 번호) 목록(카드 문장 + 이야기 변형이 같은 목록에 섞인다).
+
+    돌려주는 uses 는 카드 문장 몫, story_uses 는 오늘의 이야기(daily_story) 몫. 이력(_history)은 둘 다 쌓는다.
+    이야기 조립이 실패하면 story 는 None 이고(daily.py 가 예전 이야기로 대신한다) 카드는 그대로 나간다.
+    """
     ev = evaluation or daily_score.evaluate(core, daily_score.day_ganji(d), d)
     uses: list[tuple[str, str, int]] = []
     key = evidence_key(ev["items"])
@@ -550,8 +557,16 @@ def select_for_day(core: MyeongriCoreResult, account_key: str, d: date,
         j, text = pick(account_key, d, domain, kind, recent)
         uses.append((domain, kind, j))
         domain_note = {"domain": domain, "kind": kind, "text": text}
-    return {"evaluation": ev, "evidence_key": key, "evidence_text": evidence_text,
-            "rx_element": element, "rx_text": rx_text, "domain_note": domain_note, "uses": uses}
+    out = {"evaluation": ev, "evidence_key": key, "evidence_text": evidence_text,
+           "rx_element": element, "rx_text": rx_text, "domain_note": domain_note, "uses": uses,
+           "story": None, "story_uses": []}
+    try:
+        from app.engine.services import daily_story          # 순환 import 방지(daily_story 가 이 모듈을 읽는다)
+        story = daily_story.build_story(core, ev, out, account_key, d, core.input.gender, recent)
+        out["story"], out["story_uses"] = story, story["uses"]
+    except Exception:                                         # noqa: BLE001 — 이야기 실패가 카드를 막지 않게
+        logger.exception("daily_story 조립 실패 %s %s", account_key, d)
+    return out
 
 
 def _history(core: MyeongriCoreResult, account_key: str, start: date, until: date) -> list[tuple[date, tuple[str, str, int]]]:
@@ -565,7 +580,8 @@ def _history(core: MyeongriCoreResult, account_key: str, start: date, until: dat
     day = cursor + timedelta(days=1)
     while day <= until:
         recent = [u for day_used, u in history if day_used >= day - timedelta(days=RECENT_DAYS)]
-        history.extend((day, u) for u in select_for_day(core, account_key, day, recent)["uses"])
+        picked = select_for_day(core, account_key, day, recent)
+        history.extend((day, u) for u in picked["uses"] + picked["story_uses"])
         day += timedelta(days=1)
     if len(_HISTORY_CACHE) >= 2048:
         _HISTORY_CACHE.clear()
