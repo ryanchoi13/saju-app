@@ -707,6 +707,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                     <div id="resOverallLabel" hidden style="font-size: 12px; color: #FDE68A; font-weight: 700; text-align: left; margin-top: 2px;">총운</div>
                     <div id="resAdvice" style="font-size: 13.5px; color: #E2E8F0; font-weight: 400; line-height: 1.7; text-align: left; white-space: pre-line;"></div>
                     <div id="resSections" hidden style="display: none; flex-direction: column; gap: 12px; border-top: 1px solid rgba(255,255,255,0.12); margin-top: 4px; padding-top: 12px;"></div>
+                    <div id="resClosing" hidden style="font-size: 13.5px; color: #E2E8F0; font-weight: 500; line-height: 1.7; text-align: left; border-top: 1px solid rgba(255,255,255,0.12); margin-top: 4px; padding-top: 12px;"></div>
 
                     <div class="journal-times" hidden aria-hidden="true" style="border-top: 1px solid rgba(255,255,255,0.12); margin-top: 4px; padding-top: 12px; display: flex; flex-direction: column; gap: 8px;">
                         <div style="display: flex; align-items: flex-start; gap: 8px; font-size: 12.5px; line-height: 1.55; text-align: left;">
@@ -2484,9 +2485,10 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             const hasStory = !!(story && typeof story.body === 'string' && story.body.trim());
             document.getElementById('resTitle').textContent = (hasStory && story.headline) || fortune?.title || '';
             document.getElementById('resAdvice').textContent = hasStory ? story.body : (fortune?.advice || '');
-            // 십성별 카테고리 문단(재물운·연애·관계·일·생활 리듬). 없으면(아직 다루지 않는 일진) 숨긴다.
+            // 분야 문단(금전·애정·관계·일·건강). 라벨은 서버 title 그대로. 없으면 숨긴다.
             const secBox = document.getElementById('resSections');
-            const secList = hasStory && Array.isArray(story.sections) ? story.sections.filter(x => x && x.title && x.body) : [];
+            const secList = hasStory && Array.isArray(story.sections)
+                ? story.sections.map(x => x && ({...x, body: x.body || x.text})).filter(x => x && x.title && x.body) : [];
             document.getElementById('resOverallLabel').hidden = !secList.length;
             secBox.hidden = !secList.length;
             secBox.style.display = secList.length ? 'flex' : 'none';
@@ -2503,6 +2505,11 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 box.append(label, text);
                 return box;
             }));
+            // 마무리 한 줄(좋음·나쁨 날에만 온다). 없으면 숨긴다.
+            const closing = document.getElementById('resClosing');
+            const closingText = hasStory && typeof story.closing === 'string' ? story.closing.trim() : '';
+            closing.textContent = closingText;
+            closing.hidden = !closingText;
             const slots = {morning:'timeMorningText', afternoon:'timeAfternoonText', evening:'timeEveningText'};
             const tips = Array.isArray(fortune?.time_tips) ? fortune.time_tips : [];
             const flow = fortune?.time_flow || {};

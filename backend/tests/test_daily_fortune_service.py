@@ -120,9 +120,13 @@ class DailyFortuneServiceTests(TestCase):
                 self.assertIn(male_item, male['lucky_item_reason'])
                 self.assertIn(female_item, female['lucky_item_reason'])
                 self.assertEqual(
-                    {k: v for k, v in male.items() if k not in {'lucky_item', 'lucky_item_reason'}},
-                    {k: v for k, v in female.items() if k not in {'lucky_item', 'lucky_item_reason'}},
+                    {k: v for k, v in male.items() if k not in {'lucky_item', 'lucky_item_reason', 'story'}},
+                    {k: v for k, v in female.items() if k not in {'lucky_item', 'lucky_item_reason', 'story'}},
                 )
+                # 오늘의 이야기 v2 는 성별을 본다(애정·관계 둘째 문장: 남 재성·여 관성). 변형 회전 이력도 성별마다 따로
+                # 쌓이므로 문장은 다를 수 있지만, 근거·등급에서 나오는 뼈대(분야 결·소제목)는 같다.
+                self.assertEqual(male['story']['tiers'], female['story']['tiers'])
+                self.assertEqual([x['title'] for x in male['story']['sections']], [x['title'] for x in female['story']['sections']])
 
     def test_male_daily_symbolic_fallback_uses_card_wallet_instead_of_pouch(self):
         target = date(2026, 9, 22)
