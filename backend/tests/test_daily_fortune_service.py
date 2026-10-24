@@ -190,7 +190,11 @@ class DailyFortuneServiceTests(TestCase):
 
         self.assertEqual(len({item["day_ten_god"] for item in results}), 10)
         self.assertGreaterEqual(len({item["lucky_item"] for item in results}), 4)
-        self.assertTrue(all(62 <= item["score"] <= 91 for item in results))
+        # 2026-10-24 길흉 등급: 표시 점수는 50~100(모집단 분위 매핑), 단계·근거·처방이 함께 나간다.
+        self.assertTrue(all(50 <= item["score"] <= 100 for item in results))
+        self.assertTrue(all(item["grade"] in {"나쁨", "주의", "보통", "좋음", "아주 좋음"} for item in results))
+        self.assertTrue(all(item["mode_badge"].startswith(f"{item['grade']} {item['score']}점") for item in results))
+        self.assertTrue(all(item["evidence_text"] for item in results))
         self.assertTrue(all(item["lucky_item_reason"] for item in results))
 
     def test_short_guidance_is_connected_to_core_and_afternoon(self):

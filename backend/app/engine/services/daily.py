@@ -12,7 +12,7 @@ from app.engine.semantic.queries import build_service_query
 from app.engine.services.simple_menu import daily_choices
 from app.engine.services.daily_menu import NOT_A_MEAL, recommend_daily_menus
 from app.engine.services.daily_guidance import build_daily_guidance
-from app.engine.services import daily_copy, daily_menu_copy, daily_sections
+from app.engine.services import daily_copy, daily_menu_copy, daily_sections, daily_rx, daily_score
 from app.engine.services.annual_copy import seed_from
 from app.engine.services.daily_scenarios import select_daily_scenario
 from app.engine.services.daily_topics import select_daily_topics
@@ -21,7 +21,7 @@ from app.engine.services.overall_narrative import render_overall
 from app.engine.services.element_balance import natal_balance, daily_blend, tongguan_day
 
 
-DAILY_FORTUNE_VERSION = "daily-fortune-v6-exact-daily-role"
+DAILY_FORTUNE_VERSION = "daily-fortune-v7-grade-card"
 
 _TEN_GOD_KO = {
     "peer": "비견",
@@ -316,37 +316,23 @@ def _item_group(operation: str, daily_god: str) -> str:
     return _GOD_ITEM_GROUP.get(daily_god, "record")
 
 
-def _score(
-    *,
-    aligned: bool,
-    supportive_count: int,
-    tension_count: int,
-    daily_god: str,
-    monthly_god: str | None,
-    annual_god: str | None,
-    positive_shensha: int,
-    caution_shensha: int,
-    confidence: str,
-) -> int:
-    value = 76
-    value += 6 if aligned else 0
-    value += min(supportive_count, 2)
-    value -= min(tension_count, 3) * 2
-    value += 2 if daily_god == monthly_god else 0
-    value += 1 if daily_god == annual_god else 0
-    value += min(positive_shensha, 2)
-    value -= min(caution_shensha, 2)
-    if confidence in {"low", "undetermined"}:
-        value = 76 + round((value - 76) * 0.6)
-    return max(62, min(91, value))
+def _score(core: MyeongriCoreResult, day_pillar: str, target_date: date) -> dict:
+    """길흉 등급(daily_score). 일진 × 원국 산식 v2.1 → 모집단 분위 → 50~100 표시 점수와 5단계.
+    코어 confidence 로 편차를 누르지 않는다 — 용신 보류는 억부 항목이 0 으로 표현한다."""
+    return daily_score.evaluate(core, day_pillar, target_date)
 
 
-def _badge_style(score: int) -> str:
-    if score >= 83:
-        return "background:#DCFCE7; color:#166534; border:1px solid #86EFAC;"
-    if score <= 69:
-        return "background:#FFF1F2; color:#9F1239; border:1px solid #FECDD3;"
-    return "background:#FEF3C7; color:#78350F; border:1px solid #FDE68A;"
+_GRADE_STYLE = {   # 나쁨·주의 구리, 보통 남색, 좋음·아주 좋음 세이지. reading-polish.css 의 .daily-grade 와 같은 색.
+    "나쁨": "background:#F8ECE4; color:#995737; border:1px solid #E4B28F;",
+    "주의": "background:#F8ECE4; color:#995737; border:1px solid #E4B28F;",
+    "보통": "background:#EAEEF3; color:#25364A; border:1px solid #C9D2DD;",
+    "좋음": "background:#E6F0EA; color:#3F7A5C; border:1px solid #B9D3C3;",
+    "아주 좋음": "background:#E6F0EA; color:#3F7A5C; border:1px solid #B9D3C3;",
+}
+
+
+def _badge_style(grade: str) -> str:
+    return _GRADE_STYLE.get(grade, _GRADE_STYLE["보통"])
 
 
 def _menu_curation(core, target_date, current_hour, account_key, lucky_element, operation_name,
@@ -482,8 +468,6 @@ def build_daily_fortune(
     tensions = [item for item in relations if item.get("type") in _TENSION_RELATIONS]
     supportive_count, tension_count = _independent_relation_counts(relations)
     shensha = _daily_shensha(core)
-    positive_shensha = sum(name in {"literary_star", "heavenly_noble"} for name in shensha)
-    caution_shensha = sum(name in {"solitary_star", "widow_star"} for name in shensha)
     balance = natal_balance(core)
     blend = daily_blend(balance, daily_element, daily_pillar["ganji"][1])
     # 코어가 확정한 방향이 있으면 그것을, 없으면 원국 균형 + 오늘 일진을 함께 본 추정을 쓴다.
@@ -492,19 +476,12 @@ def build_daily_fortune(
     if tongguan and not query["semantic_state"].get("favorable_elements"):
         lucky_element = tongguan["element"]   # 충 날은 두 기운을 잇는 오행이 오늘의 보완 오행
     timing_element_weights = _menu_timing_element_weights(timing, query["semantic_state"], balance)
-    aligned = daily_element in set(query["semantic_state"].get("favorable_elements", []))
     confidence = str(query["semantic_state"].get("confidence", "undetermined"))
-    score = _score(
-        aligned=aligned,
-        supportive_count=supportive_count,
-        tension_count=tension_count,
-        daily_god=daily_god,
-        monthly_god=monthly_god,
-        annual_god=annual_god,
-        positive_shensha=positive_shensha,
-        caution_shensha=caution_shensha,
-        confidence=confidence,
-    )
+    evaluation = _score(core, ganji_han, target_date)
+    score, grade = evaluation["score"], evaluation["grade"]
+    rx = daily_rx.render_day(core, account_key or core.input.birth_date.isoformat(), target_date, evaluation)
+    domain_note = rx["domain_note"]
+    mode_badge = f"{grade} {score}점" + (f" · {domain_note['domain']}운 {domain_note['kind']}" if domain_note else "")
 
     operation = _primary_operation(query)
     operation_name = operation.get("operation", "unconfirmed")
@@ -579,8 +556,17 @@ def build_daily_fortune(
         "outfit": outfit,
         "title": daily_copy.sanitize(narrative["title"]),
         "score": score,
-        "mode_badge": f"운세 {score}점",
-        "badge_style": _badge_style(score),
+        "grade": grade,
+        "score_raw": evaluation["raw_int"],
+        "score_items": [{"label": label, "weight": weight} for label, weight in evaluation["items"]],
+        "confidence": evaluation["confidence"],
+        "evidence_text": rx["evidence_text"],
+        "rx_label": daily_rx.LABEL,
+        "rx_text": rx["rx_text"],
+        "domain_note": domain_note,
+        "badge": mode_badge,
+        "mode_badge": mode_badge,
+        "badge_style": _badge_style(grade),
         "advice": daily_copy.sanitize(" ".join([narrative["advice"]] + extra_notes)),
         "time_flow": daily_copy.sanitize_any(narrative["time_flow"]),
         "unified_advice": daily_copy.sanitize(narrative["unified_advice"]),
@@ -633,6 +619,9 @@ def build_daily_fortune(
                 "fallback_is_not_a_prescription": not recommendation_confirmed,
             },
             "confidence": confidence,
+            "score": {"version": daily_score.SCORE_VERSION, "raw": evaluation["raw"], "items": evaluation["items"],
+                      "domain": evaluation["domain"], "standout": evaluation["standout"],
+                      "evidence_key": rx["evidence_key"], "rx_element": rx["rx_element"], "rx_version": daily_rx.RX_VERSION},
             "shensha_is_supporting_only": True,
         },
     }
