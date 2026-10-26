@@ -49,21 +49,3 @@ html[data-brand] .reading-view .card.reading-lead { background-image:url('/asset
 .now-me-link { margin-left:6px; color:#995737; font-weight:700; text-decoration:none; border-bottom:1px solid #E4B28F; white-space:nowrap; }
 .now-me-link:hover { border-bottom-color:#995737; }
 .daewoon-free .now-me-section h3 { font-size:16px; font-weight:800; margin:18px 0 10px; color:#25364A; }
-/* 오늘운세 길흉 등급 카드 (daily_score.py · daily_rx.py). 단계가 주인공, 점수는 작게. 색은 브랜드 남색 #25364A·구리 #995737·보조 #59636D·살구 #E4B28F,
-   단계 색: 나쁨·주의 구리, 보통 남색, 좋음·아주 좋음 세이지 #3F7A5C. */
-/* 길흉 등급 카드 — 오늘의 이야기(남색 .journal-fortune) 위에 놓이므로 글자는 아이보리, 단계색은 밝은 톤. (10/24 색 수정) */
-.daily-grade-card { display:flex; flex-direction:column; gap:10px; padding:2px 0 14px; margin-bottom:6px; border-bottom:1px solid rgba(248,246,241,.18); text-align:left; }
-.daily-grade-head { display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; }
-#resScoreBadge.daily-grade-badge { display:inline-flex; align-items:baseline; gap:6px; background:transparent!important; border:0; padding:0; border-radius:0; font-family:'Noto Serif KR', serif; font-size:1.5rem; font-weight:800; letter-spacing:-.03em; line-height:1.3; color:#F8F6F1!important; }
-#resScoreBadge.daily-grade-badge small { font-family:'Pretendard', sans-serif; font-size:.9rem; font-weight:600; color:rgba(248,246,241,.7); letter-spacing:0; }
-#resScoreBadge.daily-grade-badge[data-grade="나쁨"], #resScoreBadge.daily-grade-badge[data-grade="주의"] { color:#F0B98A!important; }
-#resScoreBadge.daily-grade-badge[data-grade="보통"] { color:#F8F6F1!important; }
-#resScoreBadge.daily-grade-badge[data-grade="좋음"], #resScoreBadge.daily-grade-badge[data-grade="아주 좋음"] { color:#BFE3C9!important; }
-.daily-grade-domain { font-size:.9rem; font-weight:700; color:rgba(248,246,241,.75); }
-.daily-grade-domain[data-kind="주의"] { color:#F0B98A; }
-.daily-grade-domain[data-kind="좋음"] { color:#BFE3C9; }
-.daily-grade-evidence { margin:0!important; font-size:1rem!important; line-height:1.8!important; color:#F8F6F1!important; word-break:keep-all; }
-.daily-grade-domain-text { margin:0!important; font-size:.92rem!important; line-height:1.75!important; color:rgba(248,246,241,.78)!important; word-break:keep-all; }
-.daily-grade-rx { display:flex; flex-direction:column; gap:4px; margin-top:2px; padding:10px 12px; border-left:3px solid #E4B28F; background:#FBF6F1; border-radius:0 12px 12px 0; }
-.daily-grade-rx-label { font-size:.8rem; font-weight:800; letter-spacing:.04em; color:#995737; }
-.daily-grade-rx-text { margin:0!important; font-size:.95rem!important; line-height:1.75!important; color:#25364A!important; word-break:keep-all; }

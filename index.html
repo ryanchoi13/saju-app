@@ -243,7 +243,7 @@
         .user-profile-birth { color:var(--ui-muted); font-size:.875rem; }
         .daily-banner { margin-top:0; gap:16px; }
         .daily-banner > div:first-child > div > span { color:var(--ui-ink)!important; font-size:1rem!important; }
-        /* 길흉 등급 배지(#resScoreBadge)와 카드 색은 assets/reading-polish.css 의 .daily-grade-* 가 맡는다(단계별 남색·구리·세이지). */
+        /* 오늘 카드(#resScoreBadge 등)와 "자세히 보기" 창 스타일은 assets/daily-card.css 의 .dc3-* 가 맡는다. */
         #resTitle { color:var(--ui-ink)!important; font-size:1.65rem!important; font-weight:800!important; letter-spacing:-.04em; line-height:1.55!important; word-break:keep-all; overflow-wrap:anywhere; }
         #resAdvice { color:var(--ui-muted)!important; font-size:1rem!important; line-height:1.85!important; }
         .daily-banner > div:last-child { border-top:1px solid var(--ui-line)!important; padding-top:18px!important; gap:12px!important; }
@@ -546,7 +546,8 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;600;700&display=swap" rel="stylesheet">
     <link id="dalhaBrandStyles" rel="stylesheet" href="/assets/brand-2026/brand.css?v=20261010-1">
-    <link rel="stylesheet" href="/assets/reading-polish.css?v=20261024-2">
+    <link rel="stylesheet" href="/assets/reading-polish.css?v=20261025-1">
+    <link rel="stylesheet" href="/assets/daily-card.css?v=20261025-1">
     <script src="/assets/reading-polish.js?v=20261001-1" defer></script>
     <script src="/assets/brand-2026/brand-ui.js?v=20261001-4" defer></script>
 </head>
@@ -674,56 +675,33 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
 
             <!-- 탭 1: 오늘운세 -->
             <div id="view-today" class="tab-view hidden">
-                <header class="page-intro today-intro"><div><span class="journal-kicker">YOUR DAILY NOTE</span><h2>오늘의 나</h2></div><span id="journalDate" class="journal-date"></span></header>
                 <div class="user-profile-bar">
                     <div class="user-profile-name" id="userProfileBarName"></div>
                     <div class="user-profile-birth" id="userProfileBarBirth"></div>
                 </div>
 
-                <div class="daily-banner journal-fortune">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <div style="display: flex; align-items: center; gap: 6px;">
-                            <span data-brand-icon="spark" class="brand-symbol"></span>
-                            <span style="font-size: 13.5px; color: #F6E2A1; font-weight: 700;">오늘의 이야기</span>
-                        </div>
-                    </div>
-
-                    <!-- 길흉 등급 카드 (daily.py: grade·score·domain_note·evidence_text·rx_text). 단계가 주인공, 점수는 작게. -->
-                    <div id="dailyGradeCard" class="daily-grade-card" hidden>
-                        <div class="daily-grade-head">
-                            <span id="resScoreBadge" class="daily-grade-badge" data-grade="보통">보통 <small>77점</small></span>
-                            <span id="resGradeDomain" class="daily-grade-domain" hidden></span>
-                        </div>
-                        <p id="resGradeEvidence" class="daily-grade-evidence"></p>
-                        <p id="resGradeDomainText" class="daily-grade-domain-text" hidden></p>
-                        <div id="resGradeRx" class="daily-grade-rx" hidden>
-                            <span id="resGradeRxLabel" class="daily-grade-rx-label">오늘은 이렇게</span>
-                            <p id="resGradeRxText" class="daily-grade-rx-text"></p>
-                        </div>
-                    </div>
-
-                    <h3 id="resTitle" style="font-size: 17px; font-weight: 600; text-align: left; line-height: 1.4; color: #FFFFFF; font-family: 'Noto Serif KR', serif; margin-top: 2px;">오늘의 이야기를 준비하고 있어요</h3>
-                    
-                    <div id="resOverallLabel" hidden style="font-size: 12px; color: #FDE68A; font-weight: 700; text-align: left; margin-top: 2px;">총운</div>
-                    <div id="resAdvice" style="font-size: 13.5px; color: #E2E8F0; font-weight: 400; line-height: 1.7; text-align: left; white-space: pre-line;"></div>
-                    <div id="resSections" hidden style="display: none; flex-direction: column; gap: 12px; border-top: 1px solid rgba(255,255,255,0.12); margin-top: 4px; padding-top: 12px;"></div>
-                    <div id="resClosing" hidden style="font-size: 13.5px; color: #E2E8F0; font-weight: 500; line-height: 1.7; text-align: left; border-top: 1px solid rgba(255,255,255,0.12); margin-top: 4px; padding-top: 12px;"></div>
-
-                    <div class="journal-times" hidden aria-hidden="true" style="border-top: 1px solid rgba(255,255,255,0.12); margin-top: 4px; padding-top: 12px; display: flex; flex-direction: column; gap: 8px;">
-                        <div style="display: flex; align-items: flex-start; gap: 8px; font-size: 12.5px; line-height: 1.55; text-align: left;">
-                            <span style="background: rgba(254,243,199,0.15); color: #FDE68A; font-weight: 700; padding: 2px 7px; border-radius: 6px; flex-shrink: 0;">오전</span>
-                            <span id="timeMorningText" style="color: #CBD5E1;">-</span>
-                        </div>
-                        <div style="display: flex; align-items: flex-start; gap: 8px; font-size: 12.5px; line-height: 1.55; text-align: left;">
-                            <span style="background: rgba(254,243,199,0.15); color: #FDE68A; font-weight: 700; padding: 2px 7px; border-radius: 6px; flex-shrink: 0;">오후</span>
-                            <span id="timeAfternoonText" style="color: #CBD5E1;">-</span>
-                        </div>
-                        <div style="display: flex; align-items: flex-start; gap: 8px; font-size: 12.5px; line-height: 1.55; text-align: left;">
-                            <span style="background: rgba(254,243,199,0.15); color: #FDE68A; font-weight: 700; padding: 2px 7px; border-radius: 6px; flex-shrink: 0;">저녁</span>
-                            <span id="timeEveningText" style="color: #CBD5E1;">-</span>
-                        </div>
-                    </div>
+                <div class="dc3-intro">
+                    <span id="journalDate" class="dc3-date"></span>
+                    <h2 class="sr-only" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;">오늘의 나</h2>
+                    <h3 id="resTitle">오늘의 이야기를 준비하고 있어요</h3>
                 </div>
+
+                <!-- 길흉 등급 카드 (daily.py: grade·score·domain_note·evidence_text). 단계가 주인공, 점수는 달 옆에 작게. 자세한 건 아래 창. -->
+                <section id="dailyGradeCard" class="dc3-card" hidden aria-label="오늘의 운세">
+                    <div class="dc3-top">
+                        <div>
+                            <span class="dc3-label">오늘의 운세</span>
+                            <p id="resScoreBadge" class="dc3-grade" data-grade="보통">보통</p>
+                            <span id="resGradeDomain" class="dc3-domain" hidden></span>
+                        </div>
+                        <div class="dc3-moon-col" aria-hidden="true">
+                            <svg class="dc3-moon" viewBox="-50 -50 100 100"><circle r="44" class="dc3-moon-dark"/><path id="resMoonLit" class="dc3-moon-lit" d=""/></svg>
+                            <span id="resScoreNum" class="dc3-score"></span>
+                        </div>
+                    </div>
+                    <p id="resGradeEvidence" class="dc3-evidence"></p>
+                    <button type="button" id="dc3Open" class="dc3-open" aria-haspopup="dialog" aria-controls="dc3Sheet" onclick="openDailySheet()"><span>자세히 보기</span><span class="dc3-open-chev" aria-hidden="true">›</span></button>
+                </section>
 
                 <!-- 1. 오늘 뭐 입을까? (Daily Style Nav) -->
                 <div id="dailyStyleCard" class="card journal-style" style="padding: 20px 18px; text-align: left; display: flex; flex-direction: column; gap: 16px; border: 1.5px solid #E2E8F0;">
@@ -1529,6 +1507,48 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             </div>
         </div>
     </div>
+
+    <div id="dc3Backdrop" class="dc3-backdrop" onclick="closeDailySheet()"></div>
+    <section id="dc3Sheet" class="dc3-sheet" role="dialog" aria-modal="true" aria-labelledby="dc3SheetGrade" tabindex="-1">
+        <div class="dc3-grab" aria-hidden="true"></div>
+        <div class="dc3-sheet-head">
+            <div class="dc3-sheet-head-main">
+                <div id="dc3SheetGrade" class="dc3-sheet-grade"></div>
+                <div id="dc3SheetSub" class="dc3-sheet-sub" hidden></div>
+            </div>
+            <svg class="dc3-sheet-moon dc3-sheet-moon-svg" viewBox="-50 -50 100 100" aria-hidden="true"><circle r="44" class="dc3-moon-dark"/><path id="resMoonLit2" class="dc3-moon-lit" d=""/></svg>
+        </div>
+        <div class="dc3-scroll">
+            <div class="dc3-block" id="dc3EvidenceBlock">
+                <p class="dc3-block-title">오늘의 근거</p>
+                <p id="dc3EvidenceFull" class="dc3-text"></p>
+                <p id="resGradeDomainText" class="dc3-text" style="margin-top:10px" hidden></p>
+            </div>
+            <div id="resGradeRx" class="dc3-block" hidden>
+                <p id="resGradeRxLabel" class="dc3-block-title dc3-rx-label">오늘은 이렇게</p>
+                <p id="resGradeRxText" class="dc3-text"></p>
+            </div>
+            <div class="dc3-block" id="dc3StoryBlock">
+                <p id="resOverallLabel" class="dc3-block-title" hidden>총운</p>
+                <p id="resAdvice" class="dc3-text"></p>
+            </div>
+            <div class="dc3-block" id="dc3SecBlock" hidden>
+                <div id="resSections" class="dc3-secs" hidden></div>
+            </div>
+            <div class="dc3-block" id="dc3ClosingBlock" hidden>
+                <p id="resClosing" class="dc3-closing" hidden></p>
+            </div>
+            <div class="dc3-block" id="dc3BasisBlock" hidden>
+                <p class="dc3-block-title">근거</p>
+                <ul id="dc3Basis" class="dc3-basis"></ul>
+                <p class="dc3-basis-note">점수는 50점에서 시작해 위 요소가 더하고 뺀 값이에요(상위 항목만 표시).</p>
+            </div>
+            <div class="journal-times dc3-times" hidden aria-hidden="true">
+                <span id="timeMorningText">-</span><span id="timeAfternoonText">-</span><span id="timeEveningText">-</span>
+            </div>
+        </div>
+        <div class="dc3-foot"><button type="button" id="dc3Close" class="dc3-close" onclick="closeDailySheet()">닫기</button></div>
+    </section>
 
     <script>
         let currentUserId = null;
@@ -2479,30 +2499,51 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             document.getElementById('bottomNavBar').classList.add('hidden');
         }
 
-        // ---- v2 Tab 1: 서버 story · time_tips · outfit 을 메인으로, 레거시 title/advice/time_flow 는 보조(없을 때만) ----
+        // ---- v2 Tab 1: 서버 story 가 한 줄(제목)·총운·분야·마무리를 준다. 레거시 title/advice/time_flow 는 없을 때만 ----
+        const DC3_STEM_LABEL = {day:'일', month:'월', year:'년', hour:'시'};
+        function dc3BasisLabel(label) {
+            return String(label || '').replace(/^(day|month|year|hour)지/, (m, k) => `${DC3_STEM_LABEL[k]}지`);
+        }
+        // 달 모양: 점수 50→초승, 100→보름. 오른쪽이 차오른다.
+        function dc3MoonPath(score) {
+            const k = Math.max(0, Math.min(1, ((Number(score) || 50) - 50) / 50));
+            const rx = Math.abs(1 - 2 * k) * 44;
+            const sweep = k < 0.5 ? 0 : 1;
+            return `M 0 -44 A 44 44 0 0 1 0 44 A ${rx.toFixed(2)} 44 0 0 ${sweep} 0 -44 Z`;
+        }
         function renderTodayStory(fortune) {
             const story = fortune?.story;
             const hasStory = !!(story && typeof story.body === 'string' && story.body.trim());
             document.getElementById('resTitle').textContent = (hasStory && story.headline) || fortune?.title || '';
             document.getElementById('resAdvice').textContent = hasStory ? story.body : (fortune?.advice || '');
-            // 분야 문단(금전·애정·관계·일·건강). 라벨은 서버 title 그대로. 없으면 숨긴다.
+            // 분야 문단(금전·애정·관계·일·건강). 라벨·등급은 서버 title·tiers 그대로. 없으면 숨긴다.
             const secBox = document.getElementById('resSections');
+            const tiers = (hasStory && story.tiers) || {};
             const secList = hasStory && Array.isArray(story.sections)
                 ? story.sections.map(x => x && ({...x, body: x.body || x.text})).filter(x => x && x.title && x.body) : [];
             document.getElementById('resOverallLabel').hidden = !secList.length;
             secBox.hidden = !secList.length;
-            secBox.style.display = secList.length ? 'flex' : 'none';
+            document.getElementById('dc3SecBlock').hidden = !secList.length;
             secBox.replaceChildren(...secList.map(x => {
                 const box = document.createElement('div');
-                const label = document.createElement('div');
+                const head = document.createElement('div');
+                head.className = 'dc3-sec-head';
+                const label = document.createElement('span');
                 label.textContent = x.title;
-                label.className = 'res-sec-label';
-                label.style.cssText = 'font-size:12px;color:#FDE68A;font-weight:700;margin-bottom:3px;';
+                label.className = 'dc3-sec-label';
+                head.append(label);
+                const tier = tiers[x.title];
+                if (tier && tier !== '보통') {
+                    const t = document.createElement('span');
+                    t.className = 'dc3-sec-tier';
+                    t.dataset.tier = tier;
+                    t.textContent = tier;
+                    head.append(t);
+                }
                 const text = document.createElement('div');
                 text.textContent = x.body;
-                text.className = 'res-sec-body';
-                text.style.cssText = 'font-size:13px;color:#E2E8F0;line-height:1.7;';
-                box.append(label, text);
+                text.className = 'dc3-sec-body';
+                box.append(head, text);
                 return box;
             }));
             // 마무리 한 줄(좋음·나쁨 날에만 온다). 없으면 숨긴다.
@@ -2510,6 +2551,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             const closingText = hasStory && typeof story.closing === 'string' ? story.closing.trim() : '';
             closing.textContent = closingText;
             closing.hidden = !closingText;
+            document.getElementById('dc3ClosingBlock').hidden = !closingText;
             const slots = {morning:'timeMorningText', afternoon:'timeAfternoonText', evening:'timeEveningText'};
             const tips = Array.isArray(fortune?.time_tips) ? fortune.time_tips : [];
             const flow = fortune?.time_flow || {};
@@ -2522,33 +2564,64 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             });
         }
 
-        // 길흉 등급 카드: 단계 + 작은 점수 (+ · 분야운 주의/좋음) / 근거 2문장 / "오늘은 이렇게" 2문장(주의·나쁨·좋음 날만).
+        // "근거" 블록: score_items 중 영향이 큰 5개. 값은 서버 weight 그대로(진짜 마이너스 기호).
+        function renderScoreBasis(fortune) {
+            const items = (Array.isArray(fortune?.score_items) ? fortune.score_items : [])
+                .filter(x => x && x.label && Number.isFinite(Number(x.weight)) && Number(x.weight) !== 0)
+                .sort((a, b) => Math.abs(b.weight) - Math.abs(a.weight)).slice(0, 5);
+            const list = document.getElementById('dc3Basis');
+            list.replaceChildren(...items.map(x => {
+                const li = document.createElement('li');
+                const name = document.createElement('span');
+                name.textContent = dc3BasisLabel(x.label);
+                const val = document.createElement('b');
+                val.textContent = (x.weight > 0 ? '+' : '−') + Math.abs(x.weight);
+                li.append(name, val);
+                return li;
+            }));
+            document.getElementById('dc3BasisBlock').hidden = !items.length;
+        }
+
+        // 길흉 등급 카드(홈): 단계 + 달·점수 + 근거 2문장. 창(시트): 근거 전문 · 분야 note · 오늘은 이렇게.
         function renderGradeCard(fortune) {
             const card = document.getElementById('dailyGradeCard');
             const badge = document.getElementById('resScoreBadge');
             if (!card || !badge) return;
             const grade = fortune?.grade;
             const score = fortune?.score;
-            if (!grade) {                               // 등급이 없는 옛 응답: 점수 배지만
+            const rest = ['resGradeDomain', 'resGradeEvidence', 'resGradeDomainText', 'resGradeRx', 'dc3SheetSub'];
+            if (!grade) {                               // 등급이 없는 옛 응답: 점수 배지만, 창 열기 없음
                 badge.textContent = fortune?.mode_badge || (score ? `운세 ${score}점` : '');
                 badge.dataset.grade = '보통';
                 card.hidden = !badge.textContent;
-                ['resGradeDomain', 'resGradeEvidence', 'resGradeDomainText', 'resGradeRx'].forEach(id => { document.getElementById(id).hidden = true; });
+                rest.forEach(id => { document.getElementById(id).hidden = true; });
+                document.getElementById('dc3Open').hidden = true;
+                renderScoreBasis(fortune);
                 return;
             }
-            const small = document.createElement('small');
-            small.textContent = `${score}점`;
-            badge.replaceChildren(document.createTextNode(`${grade} `), small);
+            document.getElementById('dc3Open').hidden = false;
+            badge.textContent = grade;
             badge.dataset.grade = grade;
             badge.setAttribute('aria-label', fortune.mode_badge || `${grade} ${score}점`);
+            const path = dc3MoonPath(score);
+            document.getElementById('resMoonLit').setAttribute('d', path);
+            document.getElementById('resMoonLit2').setAttribute('d', path);
+            document.getElementById('resScoreNum').textContent = `${score}점`;
             const note = fortune.domain_note;
+            const domainLabel = note ? `${note.domain}운 ${note.kind}` : '';
             const domainEl = document.getElementById('resGradeDomain');
             domainEl.hidden = !note;
-            domainEl.textContent = note ? `· ${note.domain}운 ${note.kind}` : '';
+            domainEl.textContent = domainLabel;
             domainEl.dataset.kind = note ? note.kind : '';
+            const sub = document.getElementById('dc3SheetSub');
+            sub.hidden = !note;
+            sub.textContent = domainLabel;
+            document.getElementById('dc3SheetGrade').textContent = `${grade} · ${score}점`;
             const evidenceEl = document.getElementById('resGradeEvidence');
             evidenceEl.textContent = fortune.evidence_text || '';
             evidenceEl.hidden = !fortune.evidence_text;
+            document.getElementById('dc3EvidenceFull').textContent = fortune.evidence_text || '';
+            document.getElementById('dc3EvidenceBlock').hidden = !(fortune.evidence_text || (note && note.text));
             const domainTextEl = document.getElementById('resGradeDomainText');
             domainTextEl.textContent = (note && note.text) || '';
             domainTextEl.hidden = !(note && note.text);
@@ -2556,8 +2629,51 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             rxBox.hidden = !fortune.rx_text;
             document.getElementById('resGradeRxLabel').textContent = fortune.rx_label || '오늘은 이렇게';
             document.getElementById('resGradeRxText').textContent = fortune.rx_text || '';
+            renderScoreBasis(fortune);
             card.hidden = false;
         }
+
+        // ---- "자세히 보기" 창: 열기/닫기 · 포커스 이동·복귀·가둠 · ESC · 뒤로가기 · 스크롤 잠금 ----
+        let dc3Opener = null;
+        let dc3HistoryPushed = false;
+        function dc3IsOpen() { return document.getElementById('dc3Sheet').classList.contains('is-open'); }
+        function dc3Focusables() {
+            return [...document.getElementById('dc3Sheet').querySelectorAll('button, [href], [tabindex]:not([tabindex="-1"])')].filter(el => !el.hidden && el.offsetParent !== null);
+        }
+        function dc3OnKey(e) {
+            if (!dc3IsOpen()) return;
+            if (e.key === 'Escape') { e.preventDefault(); closeDailySheet(); return; }
+            if (e.key !== 'Tab') return;
+            const f = dc3Focusables();
+            if (!f.length) { e.preventDefault(); return; }
+            const first = f[0], last = f[f.length - 1];
+            if (e.shiftKey && (document.activeElement === first || document.activeElement === document.getElementById('dc3Sheet'))) { e.preventDefault(); last.focus(); }
+            else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+        }
+        function openDailySheet() {
+            if (dc3IsOpen()) return;
+            dc3Opener = document.activeElement;
+            document.getElementById('dc3Backdrop').classList.add('is-open');
+            const sheet = document.getElementById('dc3Sheet');
+            sheet.classList.add('is-open');
+            document.body.classList.add('dc3-locked');
+            sheet.querySelector('.dc3-scroll').scrollTop = 0;
+            document.addEventListener('keydown', dc3OnKey);
+            try { history.pushState({dalhaSheet: true}, '', location.href); dc3HistoryPushed = true; } catch (e) { dc3HistoryPushed = false; }
+            sheet.focus({preventScroll: true});
+        }
+        function closeDailySheet(fromPop) {
+            if (!dc3IsOpen()) return;
+            document.getElementById('dc3Backdrop').classList.remove('is-open');
+            document.getElementById('dc3Sheet').classList.remove('is-open');
+            document.body.classList.remove('dc3-locked');
+            document.removeEventListener('keydown', dc3OnKey);
+            if (dc3HistoryPushed && fromPop !== true) { dc3HistoryPushed = false; try { history.back(); } catch (e) {} }
+            else dc3HistoryPushed = false;
+            if (dc3Opener && document.contains(dc3Opener)) dc3Opener.focus({preventScroll: true});
+            dc3Opener = null;
+        }
+        window.addEventListener('popstate', () => { if (dc3IsOpen()) closeDailySheet(true); });
 
         const OUTFIT_HEX = {
             '올리브 그린':'#6B7B3A', '청록':'#2A9D8F', '소프트 코랄':'#F4978E', '레드':'#D64545', '베이지':'#D9C3A5',
