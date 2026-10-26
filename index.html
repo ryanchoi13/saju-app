@@ -2608,7 +2608,8 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             document.getElementById('resMoonLit2').setAttribute('d', path);
             document.getElementById('resScoreNum').textContent = `${score}점`;
             const note = fortune.domain_note;
-            const domainLabel = note ? `${note.domain}운 ${note.kind}` : '';
+            // 카드 라벨: 엔진 분야 '사람'은 '대인관계'로 풀어 쓴다(위험한 사람을 만난다는 뜻으로 읽히지 않게). 나머지는 이름 그대로.
+            const domainLabel = note ? `${note.domain === '사람' ? '대인관계' : note.domain} ${note.kind}` : '';
             const domainEl = document.getElementById('resGradeDomain');
             domainEl.hidden = !note;
             domainEl.textContent = domainLabel;
