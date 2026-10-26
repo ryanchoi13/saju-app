@@ -119,6 +119,28 @@ class ScoreMappingTests(unittest.TestCase):
         self.assertEqual(ds.standout({"금전": 0, "사람": -8, "일": 10, "건강": 0}), ("사람", "주의"))
         self.assertEqual(ds.standout({"금전": 0, "사람": 0, "일": 10, "건강": 0}), ("일", "좋음"))
 
+    def test_good_day_lowers_only_the_good_threshold(self):
+        """좋음·아주 좋음 날은 편차 +3부터 좋은 분야를 말한다(이야기 분야 결과 같은 저울). 주의 쪽은 그대로."""
+        mid = {"금전": 1, "사람": 2, "일": 6, "건강": -4}
+        self.assertIsNone(ds.standout(mid))                                   # 등급을 모르면 예전 규칙
+        self.assertIsNone(ds.standout(mid, "보통"))
+        self.assertIsNone(ds.standout(mid, "주의"))
+        self.assertEqual(ds.standout(mid, "좋음"), ("일", "좋음"))
+        self.assertEqual(ds.standout(mid, "아주 좋음"), ("일", "좋음"))
+        self.assertIsNone(ds.standout({"금전": 1, "사람": 2, "일": 2, "건강": 0}, "좋음"))   # +2+3 < 6
+        self.assertEqual(ds.standout({"금전": 3, "사람": 0, "일": 0, "건강": 0}, "좋음"), ("금전", "좋음"))
+        # 좋은 날에도 −8 이하 분야가 있으면 주의가 먼저다(길흉을 포장하지 않는다)
+        self.assertEqual(ds.standout({"금전": 6, "사람": 0, "일": 0, "건강": -8}, "좋음"), ("건강", "주의"))
+        # 이야기의 분야 결과 같은 판정인지 — 같은 편차·같은 등급이면 둘이 어긋나지 않는다
+        from app.engine.services import daily_story
+        for grade_name in ("좋음", "아주 좋음"):
+            for d in range(-6, 12):
+                deltas = {"금전": d, "사람": 0, "일": 0, "건강": 0}
+                shown = ds.standout(deltas, grade_name)
+                tier = daily_story.domain_tiers(deltas, grade_name)["금전"]
+                if d > ds.STANDOUT_CAUTION and d < ds.STANDOUT_GOOD:
+                    self.assertEqual(shown == ("금전", "좋음"), tier == "좋음", (grade_name, d))
+
     def test_confidence_levels(self):
         self.assertEqual(ds.confidence([("day지 충", -20)]), "강")
         self.assertEqual(ds.confidence([("day지 형", -8), ("문창", 3)]), "중")
@@ -148,9 +170,22 @@ class TestChartTests(unittest.TestCase):
         self.assertIn(("day지 육합", 15), good["items"])
         self.assertTrue(good["grade"] in {"좋음", "아주 좋음"} or abs(good["score"] - 80) <= 2, good)
         self.assertEqual(good["score"], 82)       # 실측 2026-10-24: 좋음 82점
+
         fill = results[date(2026, 11, 5)]         # 癸未: 결핍 채움 +10 (水 0%) + 천을귀인
         self.assertIn(fill["grade"], {"좋음", "아주 좋음"}, fill)
         self.assertIn(("결핍 채움", 10), fill["items"])
+
+    def test_good_day_shows_its_best_domain(self):
+        """10/24 辛未(좋음 85, 일 +6): 예전엔 분야 표시가 없었고, 이제 '일 좋음'이 뜬다."""
+        core = _jungoh()
+        ev = ds.evaluate(core, ds.day_ganji(date(2026, 10, 24)), date(2026, 10, 24))
+        self.assertEqual(ev["grade"], "좋음")
+        self.assertEqual(ev["domain"]["일"], 6)
+        self.assertEqual(ev["standout"], ("일", "좋음"))
+        rx = daily_rx.render_day(core, "test-account", date(2026, 10, 24), ev)
+        self.assertEqual(rx["domain_note"]["domain"], "일")
+        self.assertEqual(rx["domain_note"]["kind"], "좋음")
+        self.assertTrue(rx["domain_note"]["text"])
 
     def test_yong_replaces_fill_only_when_larger(self):
         core = _jungoh()

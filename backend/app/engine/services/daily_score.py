@@ -346,13 +346,23 @@ def domain_delta(core: MyeongriCoreResult, day_pillar: str, items: list[tuple[st
     return {k: round(v) for k, v in d.items()}
 
 
-def standout(deltas: dict[str, int]) -> tuple[str, str] | None:
-    """편차 ≤ −8 이면 (분야, '주의'), ≥ +10 이면 (분야, '좋음'). 둘 다면 주의 우선. 아니면 None."""
+# 좋음·아주 좋음 날의 좋은 분야 문턱(10/26 정오님: "좋은 날에도 좋은 분야를 말해 주자").
+# 오늘의 이야기 분야 결(daily_story.domain_tiers: 편차 + 등급 보정 +3 ≥ +6 이면 좋음)과 같은 저울이다.
+GOOD_GRADES = ("좋음", "아주 좋음")
+GOOD_DAY_ADJ, GOOD_DAY_TIER = 3, 6
+
+
+def standout(deltas: dict[str, int], grade_name: str | None = None) -> tuple[str, str] | None:
+    """편차 ≤ −8 이면 (분야, '주의'), ≥ +10 이면 (분야, '좋음'). 둘 다면 주의 우선. 아니면 None.
+
+    grade_name 이 좋음·아주 좋음이면 좋은 쪽 문턱이 낮아진다(편차 + 3 ≥ +6, 곧 편차 ≥ +3). 주의 쪽 문턱은 그대로다."""
     neg = min(DOMAINS, key=lambda k: deltas.get(k, 0))
     pos = max(DOMAINS, key=lambda k: deltas.get(k, 0))
     if deltas.get(neg, 0) <= STANDOUT_CAUTION:
         return neg, "주의"
     if deltas.get(pos, 0) >= STANDOUT_GOOD:
+        return pos, "좋음"
+    if grade_name in GOOD_GRADES and deltas.get(pos, 0) + GOOD_DAY_ADJ >= GOOD_DAY_TIER:
         return pos, "좋음"
     return None
 
@@ -363,7 +373,9 @@ def evaluate(core: MyeongriCoreResult, day_pillar: str, target_date: date) -> di
     raw = raw_score(items)
     score = display_score(raw)
     deltas = domain_delta(core, day_pillar, items)
+    grade_name = grade(score)
     return {
-        "items": items, "raw": raw, "raw_int": sum(w for _, w in items), "score": score, "grade": grade(score),
-        "confidence": confidence(items), "top": top_item(items), "domain": deltas, "standout": standout(deltas),
+        "items": items, "raw": raw, "raw_int": sum(w for _, w in items), "score": score, "grade": grade_name,
+        "confidence": confidence(items), "top": top_item(items), "domain": deltas,
+        "standout": standout(deltas, grade_name),
     }
