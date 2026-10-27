@@ -98,3 +98,6 @@ body.dc3-locked { overflow: hidden; }
 .dc3-times { display: none; }
 /* 옛 #resAdvice 규칙(!important 1.125rem·muted)을 창 안에서만 덮는다 */
 #dc3Sheet #resAdvice { font-size: 16px !important; line-height: 1.75 !important; color: #25364A !important; }
+
+/* PC 2열 격자(brand.css)에서 제목·카드는 옛 .page-intro·.journal-fortune 처럼 두 열을 다 쓴다 */
+html[data-brand] #view-today > :is(.dc3-intro, .dc3-card) { grid-column: 1 / -1; }
