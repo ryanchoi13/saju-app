@@ -1,0 +1,447 @@
+{
+  "source": {
+    "id": "godi-3color-guide-1",
+    "title": "[고디] 3색 컬러 조합 가이드 (1)",
+    "creator": "고디(인스타그램)",
+    "collected_by": "정오님 노션 정리",
+    "collected_on": "2026-10-28",
+    "notes": [
+      "영상에서 소개한 조합 4가지(1~4) + 이어서 참고할 배색 5가지(5~9)",
+      "HEX는 화면용 근사값, 팬톤 번호는 비슷한 색 후보(원본 지정값 아님)",
+      "비율은 처음 적용해 볼 때의 예시 비율",
+      "원본 이미지는 저장하지 않음(색 값·역할·비율만 기록)"
+    ]
+  },
+  "domain": "graphic_design",
+  "caution": "포스터·메뉴·패키지용 배색이다. 옷 코디에 쓰려면 실착 근거와 대조해 검증해야 한다(2026-10-28 코디 데이터 설계안 원칙).",
+  "role_meaning": {
+    "base": "가장 넓은 면적의 바탕색",
+    "main": "중심 요소의 색",
+    "point": "가장 작은 면적의 강조색"
+  },
+  "combinations": [
+    {
+      "id": "godi-01",
+      "number": 1,
+      "name_ko": "라임 × 그레이 × 블랙",
+      "mood_ko": "산뜻한 배색에 또렷한 중심",
+      "in_video": true,
+      "source_uses": [
+        "행사 포스터",
+        "팝업 안내",
+        "브랜드 카드"
+      ],
+      "colors": [
+        {
+          "role": "base",
+          "name_ko": "그레이",
+          "hex": "#E0D7D0",
+          "ratio": 55,
+          "use_in_source": "강한 라임을 받쳐주는 바탕",
+          "pantone_tcx_near": {
+            "code": "13-0002",
+            "name": "White Sand"
+          }
+        },
+        {
+          "role": "main",
+          "name_ko": "라임",
+          "hex": "#D4FF00",
+          "ratio": 35,
+          "use_in_source": "넓은 색면이나 강한 강조색",
+          "pantone_tcx_near": {
+            "code": "13-0550",
+            "name": "Lime Punch"
+          }
+        },
+        {
+          "role": "point",
+          "name_ko": "블랙",
+          "hex": "#000000",
+          "ratio": 10,
+          "use_in_source": "제목과 정보의 또렷한 중심",
+          "pantone_tcx_near": {
+            "code": "19-0303",
+            "name": "Jet Black"
+          }
+        }
+      ]
+    },
+    {
+      "id": "godi-02",
+      "number": 2,
+      "name_ko": "크림 × 블루 × 오렌지",
+      "mood_ko": "깔끔함에 생기",
+      "in_video": true,
+      "source_uses": [
+        "전시 안내",
+        "카페 포스터",
+        "제품 소개"
+      ],
+      "colors": [
+        {
+          "role": "base",
+          "name_ko": "크림",
+          "hex": "#F3EDE1",
+          "ratio": 60,
+          "use_in_source": "편안하고 밝은 전체 바탕",
+          "pantone_tcx_near": {
+            "code": "11-0103",
+            "name": "Egret"
+          }
+        },
+        {
+          "role": "main",
+          "name_ko": "블루",
+          "hex": "#0030B0",
+          "ratio": 30,
+          "use_in_source": "주요 사물과 중심 요소",
+          "pantone_tcx_near": {
+            "code": "19-4056",
+            "name": "Blue Iolite"
+          }
+        },
+        {
+          "role": "point",
+          "name_ko": "오렌지",
+          "hex": "#ED4806",
+          "ratio": 10,
+          "use_in_source": "제목과 강조 요소의 생기",
+          "pantone_tcx_near": {
+            "code": "17-1464",
+            "name": "Red Orange"
+          }
+        }
+      ]
+    },
+    {
+      "id": "godi-03",
+      "number": 3,
+      "name_ko": "그레이 × 블루 × 화이트",
+      "mood_ko": "차분함에 밝은 세련미",
+      "in_video": true,
+      "source_uses": [
+        "카페 메뉴",
+        "주말 행사 포스터",
+        "일러스트 카드"
+      ],
+      "colors": [
+        {
+          "role": "base",
+          "name_ko": "그레이",
+          "hex": "#D8D3CF",
+          "ratio": 60,
+          "use_in_source": "차분하게 화면을 묶는 배경",
+          "pantone_tcx_near": {
+            "code": "13-0002",
+            "name": "White Sand"
+          }
+        },
+        {
+          "role": "main",
+          "name_ko": "블루",
+          "hex": "#0245BA",
+          "ratio": 25,
+          "use_in_source": "일러스트와 작은 정보 글자",
+          "pantone_tcx_near": {
+            "code": "19-4056",
+            "name": "Blue Iolite"
+          }
+        },
+        {
+          "role": "point",
+          "name_ko": "화이트",
+          "hex": "#FFFFFF",
+          "ratio": 15,
+          "use_in_source": "큰 레터링과 밝은 강조 면",
+          "pantone_tcx_near": {
+            "code": "11-0601",
+            "name": "Bright White"
+          }
+        }
+      ]
+    },
+    {
+      "id": "godi-04",
+      "number": 4,
+      "name_ko": "딥그린 × 크림 × 핑크",
+      "mood_ko": "클래식함에 부드러운 위트",
+      "in_video": true,
+      "source_uses": [
+        "디너 행사",
+        "와인바 메뉴",
+        "초대장"
+      ],
+      "colors": [
+        {
+          "role": "base",
+          "name_ko": "딥그린",
+          "hex": "#294931",
+          "ratio": 65,
+          "use_in_source": "깊이와 차분함을 주는 배경",
+          "pantone_tcx_near": {
+            "code": "19-6050",
+            "name": "Eden"
+          }
+        },
+        {
+          "role": "main",
+          "name_ko": "크림",
+          "hex": "#FFFCF3",
+          "ratio": 25,
+          "use_in_source": "제목과 정보, 밝은 선의 중심",
+          "pantone_tcx_near": {
+            "code": "11-0103",
+            "name": "Egret"
+          }
+        },
+        {
+          "role": "point",
+          "name_ko": "핑크",
+          "hex": "#FFA1CB",
+          "ratio": 10,
+          "use_in_source": "일러스트에 더하는 위트",
+          "pantone_tcx_near": {
+            "code": "14-2311",
+            "name": "Prism Pink"
+          }
+        }
+      ]
+    },
+    {
+      "id": "godi-05",
+      "number": 5,
+      "name_ko": "그레이 × 옐로 × 블랙",
+      "mood_ko": "경쾌한 리듬에 선명한 정보",
+      "in_video": false,
+      "source_uses": [
+        "전시 안내",
+        "팝업 포스터",
+        "브랜드 카드"
+      ],
+      "colors": [
+        {
+          "role": "base",
+          "name_ko": "그레이",
+          "hex": "#CBCBCB",
+          "ratio": 60,
+          "use_in_source": "여러 글자 층을 받쳐주는 넓은 배경",
+          "pantone_tcx_near": {
+            "code": "14-4102",
+            "name": "Glacier Gray"
+          }
+        },
+        {
+          "role": "main",
+          "name_ko": "옐로",
+          "hex": "#FBF217",
+          "ratio": 30,
+          "use_in_source": "산뜻한 리듬을 만드는 큰 글자",
+          "pantone_tcx_near": {
+            "code": "12-0643",
+            "name": "Blazing Yellow"
+          }
+        },
+        {
+          "role": "point",
+          "name_ko": "블랙",
+          "hex": "#171717",
+          "ratio": 10,
+          "use_in_source": "제목과 정보를 또렷하게 정리",
+          "pantone_tcx_near": {
+            "code": "19-0303",
+            "name": "Jet Black"
+          }
+        }
+      ]
+    },
+    {
+      "id": "godi-06",
+      "number": 6,
+      "name_ko": "크림 × 네이비 × 오렌지",
+      "mood_ko": "편안한 바탕에 따뜻한 생기",
+      "in_video": false,
+      "source_uses": [
+        "베이커리 포스터",
+        "카페 메뉴",
+        "식품 패키지"
+      ],
+      "colors": [
+        {
+          "role": "base",
+          "name_ko": "크림",
+          "hex": "#E8DED4",
+          "ratio": 60,
+          "use_in_source": "전체 그림을 편안하게 묶는 바탕",
+          "pantone_tcx_near": {
+            "code": "11-0103",
+            "name": "Egret"
+          }
+        },
+        {
+          "role": "main",
+          "name_ko": "오렌지",
+          "hex": "#D3501C",
+          "ratio": 30,
+          "use_in_source": "손그림에 따뜻함과 생기를 더함",
+          "pantone_tcx_near": {
+            "code": "17-1464",
+            "name": "Red Orange"
+          }
+        },
+        {
+          "role": "point",
+          "name_ko": "네이비",
+          "hex": "#18306C",
+          "ratio": 10,
+          "use_in_source": "작은 라벨과 이름에 선명한 중심",
+          "pantone_tcx_near": {
+            "code": "19-3952",
+            "name": "Surf the Web"
+          }
+        }
+      ]
+    },
+    {
+      "id": "godi-07",
+      "number": 7,
+      "name_ko": "블루 × 브라운 × 핑크",
+      "mood_ko": "안정감에 부드러운 위트",
+      "in_video": false,
+      "source_uses": [
+        "커피 브랜드",
+        "메뉴와 포스터",
+        "캐주얼 패키지"
+      ],
+      "colors": [
+        {
+          "role": "base",
+          "name_ko": "블루",
+          "hex": "#7FA4D8",
+          "ratio": 60,
+          "use_in_source": "전체 화면을 차분하게 묶는 배경",
+          "pantone_tcx_near": {
+            "code": "15-3930",
+            "name": "Vista Blue"
+          }
+        },
+        {
+          "role": "main",
+          "name_ko": "브라운",
+          "hex": "#432918",
+          "ratio": 25,
+          "use_in_source": "컵의 실루엣과 중심 이미지",
+          "pantone_tcx_near": {
+            "code": "19-0915",
+            "name": "Coffee Bean"
+          }
+        },
+        {
+          "role": "point",
+          "name_ko": "핑크",
+          "hex": "#FACDD2",
+          "ratio": 15,
+          "use_in_source": "큰 글자에 부드럽고 밝은 포인트",
+          "pantone_tcx_near": {
+            "code": "13-2005",
+            "name": "Strawberry Cream"
+          }
+        }
+      ]
+    },
+    {
+      "id": "godi-08",
+      "number": 8,
+      "name_ko": "스카이블루 × 그린 × 레드",
+      "mood_ko": "싱그러운 바탕에 경쾌한 활기",
+      "in_video": false,
+      "source_uses": [
+        "디너 행사",
+        "식음료 브랜드",
+        "이벤트 초대장"
+      ],
+      "colors": [
+        {
+          "role": "base",
+          "name_ko": "스카이블루",
+          "hex": "#C8E4F9",
+          "ratio": 60,
+          "use_in_source": "화면을 밝고 가볍게 만드는 배경",
+          "pantone_tcx_near": {
+            "code": "12-4401",
+            "name": "Spun Sugar"
+          }
+        },
+        {
+          "role": "main",
+          "name_ko": "그린",
+          "hex": "#198353",
+          "ratio": 30,
+          "use_in_source": "큰 일러스트의 중심색",
+          "pantone_tcx_near": {
+            "code": "18-6024",
+            "name": "Amazon"
+          }
+        },
+        {
+          "role": "point",
+          "name_ko": "레드",
+          "hex": "#EE2F3F",
+          "ratio": 10,
+          "use_in_source": "제목과 장식에 시선을 모으는 색",
+          "pantone_tcx_near": {
+            "code": "17-1664",
+            "name": "Poppy Red"
+          }
+        }
+      ]
+    },
+    {
+      "id": "godi-09",
+      "number": 9,
+      "name_ko": "블루 × 크림 × 골든브라운",
+      "mood_ko": "깔끔함에 따뜻한 빈티지",
+      "in_video": false,
+      "source_uses": [
+        "로컬 상점",
+        "카페·식료품점 포스터",
+        "브랜드 인쇄물"
+      ],
+      "colors": [
+        {
+          "role": "base",
+          "name_ko": "크림",
+          "hex": "#F4F1E2",
+          "ratio": 55,
+          "use_in_source": "큰 형태와 여백을 밝게 연결",
+          "pantone_tcx_near": {
+            "code": "11-0103",
+            "name": "Egret"
+          }
+        },
+        {
+          "role": "main",
+          "name_ko": "블루",
+          "hex": "#204FD3",
+          "ratio": 35,
+          "use_in_source": "큰 도형과 일부 정보 글자의 중심색",
+          "pantone_tcx_near": {
+            "code": "19-4056",
+            "name": "Blue Iolite"
+          }
+        },
+        {
+          "role": "point",
+          "name_ko": "골든브라운",
+          "hex": "#88693D",
+          "ratio": 10,
+          "use_in_source": "제목과 장식에 따뜻한 깊이를 더함",
+          "pantone_tcx_near": {
+            "code": "17-1125",
+            "name": "Dijon"
+          }
+        }
+      ]
+    }
+  ]
+}
