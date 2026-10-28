@@ -139,7 +139,9 @@ def test_coverage_script_pools_match_main():
         "fashion_illustration_coverage", ROOT / "scripts" / "fashion_illustration_coverage.py")
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
-    assert module.ELEMENT_WEAR_TONES == main._ELEMENT_WEAR_TONES
-    assert module.TONGGUAN_TONE == main._TONGGUAN_TONE
+    from fashion_v2 import daily_colors
+    assert module.ELEMENT_WEAR_TONES is daily_colors.ELEMENT_WEAR_TONES
+    assert module.TONGGUAN_TONE is daily_colors.TONGGUAN_TONE
+    assert main.element_tone_pair is daily_colors.element_tone_pair
     equal_pairs = {(a, b) for a, b in module.live_sample_pairs() if a == b}
-    assert equal_pairs == {(tone, tone) for tone in main._TONGGUAN_TONE.values()}
+    assert equal_pairs == {(tone, tone) for tone in daily_colors.TONGGUAN_TONE.values()}

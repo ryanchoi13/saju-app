@@ -1,10 +1,10 @@
-"""Use existing Wada placement rules within the user's selected clothing context.
+"""Place today's two colors (A/B) within the user's selected clothing context.
 
 Color allowance scores are editorial clothing rules, not fortune scores.
-The original daily A/B selection is preserved across all three contexts.
+The daily A/B selection (fashion_v2/daily_colors.py) is preserved across all three contexts.
+2026-10-28: Wada duo lookup removed; colors come straight from the daily palette.
 """
-from wada_color_rules import evaluate_duo, score_color_for_item, WADA_COLORS
-from wada_color_ko import get_wada_color_ko
+from fashion_v2.wear_allowance import color_meta, ranked_items_for_color, score_color_for_item
 
 TPO_LABELS = {'casual': '캐주얼', 'business_casual': '비즈니스 캐주얼', 'business_formal': '비즈니스 포멀'}
 ITEM_LABELS = {'top':'상의', 'bottom':'바지', 'outer':'겉옷', 'shoes':'신발', 'bag':'가방',
@@ -179,7 +179,7 @@ def _look(color, other, gender, tpo, base, pants, profile, band, season, variant
             pieces.insert(0, _piece('재킷', base, 8 if female else 0, 'jacket'))
             # A tie is optional in business casual; a pale shirt can carry A
             # while the tie carries B. Reuse the formal tie allowance gate.
-            meta = WADA_COLORS[color['hex'].lower()]
+            meta = color_meta(color['hex'])
             if not female and meta['lightness'] >= 72 and meta['saturation'] <= 55 and score_color_for_item(other['hex'], 'male', 'business_formal', 'tie') >= 60:
                 pieces.append(_piece('넥타이 (선택)', (other['name_ko'], other['hex']), 5, 'tie'))
     if tpo == 'casual':
@@ -197,8 +197,9 @@ def _look(color, other, gender, tpo, base, pants, profile, band, season, variant
             'accent_slot': slot, 'description': ' · '.join(f"{x['color_name']} {x['label']}" for x in pieces)}
 
 
-def build_style_contexts(duo_no, gender, casual_palette, daily_element=None, user_name=None,
+def build_style_contexts(color_a, color_b, gender, casual_palette, daily_element=None, user_name=None,
                          age=None, season='autumn'):
+    """color_a/color_b: {'name','name_ko','hex',...} today's two colors."""
     gender = 'female' if gender == 'female' else 'male'
     season = season if season in {'spring', 'summer', 'autumn', 'winter'} else 'autumn'
     band = age_band(age)
@@ -207,9 +208,8 @@ def build_style_contexts(duo_no, gender, casual_palette, daily_element=None, use
     element = {'木':'wood','火':'fire','土':'earth','金':'metal','水':'water'}.get(daily_element, daily_element)
     base = BASES.get(element, BASES['water'])
     for tpo, label in TPO_LABELS.items():
-        evaluation = evaluate_duo(duo_no, gender, tpo)
-        colors = [{**entry, **get_wada_color_ko(entry['hex'], entry['name'])}
-                  for entry in (evaluation['color_a'], evaluation['color_b'])]
+        colors = [{**entry, 'ranked_items': ranked_items_for_color(entry['hex'], gender, tpo)}
+                  for entry in (color_a, color_b)]
         looks = [_look(colors[i], colors[1-i], gender, tpo, base,
                        _pants_base(gender, tpo, element, i), profile, band, season, i) for i in (0, 1)]
         for color, look in zip(colors, looks):

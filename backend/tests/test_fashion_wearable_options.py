@@ -30,9 +30,10 @@ def profile(day, night):
     ])
 
 
-def test_raw_camel_is_yellow_but_has_explicit_wardrobe_mapping():
+def test_raw_camel_has_explicit_wardrobe_mapping():
     raw = describe_color(CAMEL)
-    assert raw['family'] == 'yellow'  # Do not rewrite the fortune/pigment source.
+    # 2026-10-28 와다 색 사전을 걷어 낸 뒤로 팔레트 밖 HEX는 색상각으로 계열을 정한다(#C5A56E ≈ 38° → orange).
+    assert raw['family'] == 'orange'
     assert 'beige' in wardrobe_tones(raw)
     assert 'beige' not in wardrobe_tones(describe_color(PALETTE['yellow']))
     options = list(variants(raw))

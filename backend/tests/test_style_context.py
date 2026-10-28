@@ -1,17 +1,21 @@
 from unittest import TestCase
 from style_context import build_style_contexts
-from wada_color_rules import WADA_DUOS
+from fashion_v2.daily_colors import all_daily_pairs, palette_color
+from fashion_v2.svg_recommendation import PALETTE
+
+PAIRS = [(palette_color(a), palette_color(b)) for a, b in all_daily_pairs()]
+A, B = palette_color(PALETTE['navy']), palette_color(PALETTE['coral'])
 
 class StyleContextTests(TestCase):
-    def test_all_duos_respect_formal_placement_and_original_colors(self):
+    def test_all_daily_pairs_respect_formal_placement_and_original_colors(self):
         for gender in ('male','female'):
-            for duo_no, duo in WADA_DUOS.items():
-                casual={'top':duo['a'],'bottom':duo['b']}
-                contexts=build_style_contexts(duo_no,gender,casual)
+            for a, b in PAIRS:
+                casual={'top':a,'bottom':b}
+                contexts=build_style_contexts(a,b,gender,casual)
                 self.assertEqual(set(contexts),{'casual','business_casual','business_formal'})
                 for tpo in ('business_casual','business_formal'):
                     p=contexts[tpo]
-                    self.assertEqual({p['top']['hex'],p['bottom']['hex']},{duo['a']['hex'],duo['b']['hex']})
+                    self.assertEqual({p['top']['hex'],p['bottom']['hex']},{a['hex'],b['hex']})
                     slots=[p[k]['item_type'] for k in ('top','bottom') if p[k]['item_type']]
                     self.assertNotIn('착장 적용 생략', str(p))
                     self.assertEqual(len(p['looks']), 2)
@@ -31,7 +35,7 @@ class StyleContextTests(TestCase):
         from main import get_saju_pillars_and_analysis
         result=get_saju_pillars_and_analysis('검증','male',1978,3,13,'solar',5)
         contexts=result['daily_fortune']['style_palettes']
-        self.assertEqual({contexts['casual'][k]['hex'] for k in ('top','bottom')}, {result['daily_fortune']['wada_palette'][k]['hex'] for k in ('top','bottom')})
+        self.assertEqual({contexts['casual'][k]['hex'] for k in ('top','bottom')}, {result['daily_fortune']['daily_palette'][k]['hex'] for k in ('top','bottom')})
         self.assertEqual(contexts['business_formal']['tpo'],'business_formal')
         self.assertEqual(contexts['casual']['age_band'],'40s')
 
@@ -43,7 +47,7 @@ class StyleContextTests(TestCase):
             45: ('40s', '캐주얼 필드 점퍼', '맨투맨', '단정한 스트레이트 청바지'),
         }
         for age, (band, outer, top, bottom) in expected.items():
-            palette = build_style_contexts(6, 'male', {}, '木', age=age, season='autumn')['casual']
+            palette = build_style_contexts(A, B, 'male', {}, '木', age=age, season='autumn')['casual']
             look = palette['looks'][0]
             labels = [item['label'] for item in look['items']]
             self.assertEqual(palette['age_band'], band)
@@ -55,7 +59,7 @@ class StyleContextTests(TestCase):
 
     def test_age_never_removes_tpo_or_color_candidates(self):
         for age in (17, 25, 35, 45, 55, 65):
-            contexts = build_style_contexts(6, 'female', {}, '水', age=age, season='summer')
+            contexts = build_style_contexts(A, B, 'female', {}, '水', age=age, season='summer')
             self.assertEqual(set(contexts), {'casual', 'business_casual', 'business_formal'})
             for palette in contexts.values():
                 self.assertEqual(len(palette['looks']), 2)
@@ -64,7 +68,7 @@ class StyleContextTests(TestCase):
     def test_daily_element_selects_supporting_neutral(self):
         from style_context import BASES
         for element, key in [('木','wood'),('火','fire'),('土','earth'),('金','metal'),('水','water')]:
-            palette = build_style_contexts(6,'male',{},element)['business_formal']
+            palette = build_style_contexts(A,B,'male',{},element)['business_formal']
             self.assertEqual(palette['looks'][0]['items'][0]['hex'], BASES[key][1])
 
     def test_every_casual_bottom_stays_in_practical_color_range(self):
@@ -73,8 +77,8 @@ class StyleContextTests(TestCase):
         for gender in ('male','female'):
             allowed = mens | ({'ivory','off_white','olive'} if gender == 'female' else set())
             for element in ('wood','fire','earth','metal','water'):
-                for duo_no in WADA_DUOS:
-                    contexts = build_style_contexts(duo_no,gender,{},element,user_name='정오')
+                for a, b in PAIRS:
+                    contexts = build_style_contexts(a,b,gender,{},element,user_name='정오')
                     for tpo in ('casual','business_casual'):
                         palette = contexts[tpo]
                         self.assertTrue(palette['mood_desc'].startswith('정오님을 위해 두 가지'))
@@ -89,17 +93,17 @@ class StyleContextTests(TestCase):
                         self.assertEqual(len(set(bottom_hexes)),2)
 
     def test_name_suffix_and_blank_fallback(self):
-        self.assertIn('정오님을 위해',build_style_contexts(6,'male',{},user_name=' 정오님 ')['casual']['mood_desc'])
-        self.assertNotIn('님님',build_style_contexts(6,'male',{},user_name='정오님')['casual']['mood_desc'])
-        self.assertTrue(build_style_contexts(6,'male',{},user_name='  ')['casual']['mood_desc'].startswith('오늘의 코디'))
+        self.assertIn('정오님을 위해',build_style_contexts(A,B,'male',{},user_name=' 정오님 ')['casual']['mood_desc'])
+        self.assertNotIn('님님',build_style_contexts(A,B,'male',{},user_name='정오님')['casual']['mood_desc'])
+        self.assertTrue(build_style_contexts(A,B,'male',{},user_name='  ')['casual']['mood_desc'].startswith('오늘의 코디'))
 
     def test_shoes_stay_wearable_and_are_not_fixed_across_outfits(self):
         from style_context import SHOE_COLORS
         for gender in ('male', 'female'):
             seen = set()
             for element in ('wood', 'fire', 'earth', 'metal', 'water'):
-                for duo_no in WADA_DUOS:
-                    for tpo, palette in build_style_contexts(duo_no, gender, {}, element).items():
+                for a, b in PAIRS:
+                    for tpo, palette in build_style_contexts(a, b, gender, {}, element).items():
                         for look in palette['looks']:
                             shoes = [p for p in look['items'] if p['item_type'] == 'shoes']
                             self.assertEqual(len(shoes), 1)

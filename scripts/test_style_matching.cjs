@@ -18,7 +18,7 @@ assert.equal(w.selectDailyAccessory([rubber],fortune,palette).item.id,'1');
 const sneaker={id:'3',category:'신발',nickname:'캐주얼 스니커즈',materials:['면/린넨'],colors:['블랙']};
 assert.equal(w.selectDailyAccessory([sneaker],fortune,palette).item.id,'3');
 assert.equal(w.selectDailyAccessory([sneaker],fortune,formal).item,null);
-// UI color labels and Wada spelling must match without broadening color families.
+// UI color labels and palette spelling must match without broadening color families.
 for (const [saved, recommended] of [['머스터드','머스타드'],['옐로우','옐로'],[' 카멜 / 브라운 ','브라운']]) {
     const p={...palette,top:{standard_color:recommended},bottom:null};
     assert.equal(w.selectDailyAccessory([{...leather,colors:[saved]}],fortune,p).item.id,'2');
@@ -43,7 +43,7 @@ assert.equal(w.selectDailyAccessory([{...leather,materials:[]}],fortune,palette)
 assert.equal(w.selectDailyAccessory([{category:'액세서리',nickname:'포켓 스퀘어',materials:['실크/쉬폰'],colors:['블랙']}],fortune,formal).item,null);
 assert.equal(w.selectDailyAccessory([rubber,leather],fortune,palette).item.id,
  w.selectDailyAccessory([leather,rubber],{date:'2026-09-12',lucky_item:'가죽 시계'},palette).item.id);
-vm.runInContext('currentUserId="style-account";currentFortuneData='+JSON.stringify({daily_fortune:{...fortune,wada_palette:palette,style_palettes:{casual:palette,business_formal:formal}}})+';userWardrobeItems=[];updateTodayWardrobeMatchPick();',dom.getInternalVMContext());
+vm.runInContext('currentUserId="style-account";currentFortuneData='+JSON.stringify({daily_fortune:{...fortune,daily_palette:palette,style_palettes:{casual:palette,business_formal:formal}}})+';userWardrobeItems=[];updateTodayWardrobeMatchPick();',dom.getInternalVMContext());
 assert.equal(w.getStyleTpo(),'casual');
 const pick=w.document.getElementById('wardrobeDailyMatchPick');
 assert.ok(pick.hidden); assert.equal(pick.textContent,'');

@@ -5,7 +5,7 @@ fixed input manifest and asks the real client matcher (`catalog.js` via Node) wh
 illustration each look would render. Nothing in the live path is changed.
 
 Two input groups are kept separate so their results are never mixed up:
-- live_sample: colour pairs drawn from the live element wear-tone pools in main.py,
+- live_sample: colour pairs drawn from the live element wear-tone pools (fashion_v2/daily_colors.py),
   plus the five equal-colour pairs that its tongguan override can produce.
 - review_fixture: the exact colour pairs used by fashion_v2/review_preferences.py.
   Some of these pairs can no longer occur live (see `live_possible`).
@@ -36,16 +36,8 @@ sys.path.insert(0, str(ROOT))
 from fashion_v2.svg_recommendation import PALETTE, build_svg_catalog_contexts  # noqa: E402
 from fashion_v2.weather_outfit import THERMAL_BANDS, thermal_band  # noqa: E402
 
-# Mirrors main._ELEMENT_WEAR_TONES (kept in sync by a test). Copied so this script
-# does not import the whole application.
-ELEMENT_WEAR_TONES = {
-    "金": ("light_gray", "gray", "mid_gray", "ivory", "white"),
-    "水": ("navy", "black", "sky", "denim"),
-    "木": ("olive", "sage", "forest", "teal"),
-    "火": ("burgundy", "plum", "coral", "rust", "red", "lavender", "pink"),
-    "土": ("beige", "camel", "brown", "butter"),
-}
-TONGGUAN_TONE = {"木": "olive", "水": "navy", "金": "mid_gray", "火": "burgundy", "土": "beige"}
+# The live pools themselves (one source of truth since 2026-10-28; no copy to keep in sync).
+from fashion_v2.daily_colors import ELEMENT_WEAR_TONES, TONGGUAN_TONE  # noqa: E402
 LIVE_TONES = sorted({t for pool in ELEMENT_WEAR_TONES.values() for t in pool})
 # Exact pairs from fashion_v2/review_preferences.py.
 REVIEW_FIXTURE_PAIRS = (

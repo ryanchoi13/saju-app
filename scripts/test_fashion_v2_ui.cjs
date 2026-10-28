@@ -18,7 +18,7 @@ const trend={id:'female-autumn-casual-trend',gender:'female',season:'autumn',tpo
 ]};
 const palette={tpo:'casual',gender:'male',style_mood:'casual',mood_desc:'두 가지 코디를 제안드리니 오늘의 옷차림에 참고해 보세요.',top:{name_ko:'페일 레드',hex:'#f48067',standard_color:'레드'},bottom:{name_ko:'딥 네이비',hex:'#051230',standard_color:'네이비'}};
 const ownedShoes={id:'shoe-1',category:'신발',nickname:'호카 운동화',materials:['면/린넨/패브릭'],colors:['네이비']};
-vm.runInContext('currentUserId="fashion-stage3";currentFortuneData='+JSON.stringify({daily_fortune:{wada_palette:palette,style_palettes:{casual:palette},fashion_v2:{casual:{status:'ui_connected_stage3',looks:[daily,trend]}}}})+';userWardrobeItems='+JSON.stringify([ownedShoes])+';updateTodayWardrobeMatchPick();',dom.getInternalVMContext());
+vm.runInContext('currentUserId="fashion-stage3";currentFortuneData='+JSON.stringify({daily_fortune:{daily_palette:palette,style_palettes:{casual:palette},fashion_v2:{casual:{status:'ui_connected_stage3',looks:[daily,trend]}}}})+';userWardrobeItems='+JSON.stringify([ownedShoes])+';updateTodayWardrobeMatchPick();',dom.getInternalVMContext());
 
 const open=w.document.getElementById('openOutfitModalButton');
 assert.equal(open.hidden,false);
@@ -61,10 +61,10 @@ assert.equal(w.document.getElementById('fashionV2DailyTab').getAttribute('aria-s
 w.closeFashionV2Modal();
 assert.equal(modal.classList.contains('hidden'),true);
 
-vm.runInContext('currentFortuneData={daily_fortune:{wada_palette:'+JSON.stringify(palette)+',style_palettes:{casual:'+JSON.stringify(palette)+'}}};updateTodayWardrobeMatchPick();',dom.getInternalVMContext());
+vm.runInContext('currentFortuneData={daily_fortune:{daily_palette:'+JSON.stringify(palette)+',style_palettes:{casual:'+JSON.stringify(palette)+'}}};updateTodayWardrobeMatchPick();',dom.getInternalVMContext());
 assert.equal(open.hidden,true,'legacy responses hide the modal entry point');
 
-vm.runInContext('currentFortuneData='+JSON.stringify({daily_fortune:{wada_palette:palette,style_palettes:{casual:palette},fashion_v2:{casual:{looks:[{...daily,id:'unreviewed-daily',board_image:''},trend]}}}})+';updateTodayWardrobeMatchPick();',dom.getInternalVMContext());
+vm.runInContext('currentFortuneData='+JSON.stringify({daily_fortune:{daily_palette:palette,style_palettes:{casual:palette},fashion_v2:{casual:{looks:[{...daily,id:'unreviewed-daily',board_image:''},trend]}}}})+';updateTodayWardrobeMatchPick();',dom.getInternalVMContext());
 assert.equal(open.hidden,true,'unreviewed scopes never reuse a mismatched board image');
 
 const maleDaily={id:'male-autumn-casual-daily',items:[
@@ -92,7 +92,7 @@ const todayRecoloredTrend={...maleTrend,board_image:'/assets/fashion-v2-boards/s
 ]};
 assert.equal(vm.runInContext('fashionV2BoardImage('+JSON.stringify(todayRecoloredDaily)+')',dom.getInternalVMContext()),todayRecoloredDaily.board_image);
 assert.equal(vm.runInContext('fashionV2BoardImage('+JSON.stringify(todayRecoloredTrend)+')',dom.getInternalVMContext()),todayRecoloredTrend.board_image);
-vm.runInContext('currentFortuneData='+JSON.stringify({daily_fortune:{wada_palette:palette,style_palettes:{casual:palette},fashion_v2:{casual:{looks:[todayRecoloredDaily,todayRecoloredTrend]}}}})+';updateTodayWardrobeMatchPick();',dom.getInternalVMContext());
+vm.runInContext('currentFortuneData='+JSON.stringify({daily_fortune:{daily_palette:palette,style_palettes:{casual:palette},fashion_v2:{casual:{looks:[todayRecoloredDaily,todayRecoloredTrend]}}}})+';updateTodayWardrobeMatchPick();',dom.getInternalVMContext());
 assert.equal(open.hidden,false,'today button stays visible when exact-color reviewed boards exist');
 w.openFashionV2Modal();
 assert.equal(w.document.querySelectorAll('#fashionV2Modal .fashion-v2-board-photo').length,2);
@@ -155,7 +155,7 @@ for(const board of [businessCasualDaily,businessCasualTrend,businessFormalDaily,
 
 const businessCasualPalette={...palette,tpo:'business_casual'};
 const businessFormalPalette={...palette,tpo:'business_formal'};
-vm.runInContext('currentFortuneData='+JSON.stringify({daily_fortune:{wada_palette:palette,style_palettes:{casual:palette,business_casual:businessCasualPalette,business_formal:businessFormalPalette},fashion_v2:{business_casual:{looks:[businessCasualDaily,businessCasualTrend]},business_formal:{looks:[businessFormalDaily,businessFormalTrend]}}}})+';',dom.getInternalVMContext());
+vm.runInContext('currentFortuneData='+JSON.stringify({daily_fortune:{daily_palette:palette,style_palettes:{casual:palette,business_casual:businessCasualPalette,business_formal:businessFormalPalette},fashion_v2:{business_casual:{looks:[businessCasualDaily,businessCasualTrend]},business_formal:{looks:[businessFormalDaily,businessFormalTrend]}}}})+';',dom.getInternalVMContext());
 w.setStyleTpo('business_casual');
 assert.equal(open.hidden,false,'business casual shows the outfit button when both reviewed boards exist');
 w.openFashionV2Modal();
@@ -196,7 +196,7 @@ for(const context of Object.values(femaleContexts)) for(const board of context.l
   assert.ok(fs.existsSync('.'+src),`female reviewed board asset must exist: ${src}`);
   assert.ok(fs.statSync('.'+src).size>20000,`female reviewed board asset must not be an empty placeholder: ${src}`);
 }
-vm.runInContext('currentFortuneData='+JSON.stringify({daily_fortune:{wada_palette:palette,style_palettes:{casual:palette,business_casual:businessCasualPalette,business_formal:businessFormalPalette},fashion_v2:femaleContexts}})+';',dom.getInternalVMContext());
+vm.runInContext('currentFortuneData='+JSON.stringify({daily_fortune:{daily_palette:palette,style_palettes:{casual:palette,business_casual:businessCasualPalette,business_formal:businessFormalPalette},fashion_v2:femaleContexts}})+';',dom.getInternalVMContext());
 for(const tpo of ['casual','business_casual','business_formal']) {
   w.setStyleTpo(tpo);
   assert.equal(open.hidden,false,`female ${tpo} shows the outfit button when both reviewed boards exist`);
