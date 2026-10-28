@@ -9,7 +9,7 @@ from fashion_v2.svg_recommendation import build_svg_catalog_contexts, PALETTE, d
 from fashion_v2.weather_outfit import classify_weather
 from fashion_v2.wearable_options import wardrobe_tones
 from fashion_v2.coordination import tie_separation, POLICY_VERSION
-from wada_color_rules import WADA_DUOS
+from fashion_v2.daily_colors import all_daily_pairs, outfit_color
 
 ROOT=Path(__file__).resolve().parents[2]
 
@@ -43,17 +43,18 @@ class SvgIntegrationTests(TestCase):
             self.assertTrue(tie_separation(items,describe_color)['ok'])
             self.assertEqual(s['accessories'].count('넥타이'),1)
 
-    def test_all_actual_wada_pairs_both_genders_all_seasons(self):
-        # Input pool used by the real app, not just the 24-color review subset.
+    def test_all_actual_daily_pairs_both_genders_all_seasons(self):
+        # Every A/B pair the real app can produce (fashion_v2/daily_colors.py), incl. tongguan days.
+        pairs=all_daily_pairs()
         count=0
         for gender in ('male','female'):
             for season in ('spring','summer','autumn','winter'):
-                for duo in WADA_DUOS.values():
-                    contexts=build_svg_catalog_contexts(gender,season,duo['a'],duo['b'],age=50)
+                for a,b in pairs:
+                    contexts=build_svg_catalog_contexts(gender,season,outfit_color(a),outfit_color(b),age=50)
                     for ctx in contexts.values():
                         self.assertEqual(len(ctx['looks']),2)
                         for look in ctx['looks']:self.check_look(look);count+=1
-        self.assertEqual(count,5760)
+        self.assertEqual(count,len(pairs)*2*4*6)
 
     def test_age_weather_constraints_and_carry(self):
         for age in (15,25,35,45,55):
@@ -140,4 +141,33 @@ class SvgIntegrationTests(TestCase):
             for look in context['looks']:
                 self.assertTrue(look['garment_spec'])
                 for role,slot in [('A','top'),('B','bottom')]:
-                    self.assertEqual(look['color_strategy']['original'][role]['hex'],daily['wada_palette'][slot]['hex'].upper())
+                    self.assertEqual(look['color_strategy']['original'][role]['hex'],daily['daily_palette'][slot]['hex'].upper())
+
+    def test_profile_response_exposes_v2_without_replacing_current_ui_payload(self):
+        from main import get_saju_pillars_and_analysis
+        daily=get_saju_pillars_and_analysis('검증','male',1978,3,13,'solar',5)['daily_fortune']
+        self.assertIn('style_palettes',daily)
+        self.assertNotIn('wada_palette',daily)
+        self.assertEqual(daily['weather_outfit']['available'],False)
+        self.assertEqual(set(daily['fashion_v2']),{'casual','business_casual','business_formal'})
+        self.assertTrue(all(c['status']=='svg_integration_review' for c in daily['fashion_v2'].values()))
+        # 화면 색 칩·옛 코디 카드·코디 엔진이 모두 같은 두 색을 쓴다(와다 배색이 섞이지 않는다).
+        chips={daily['daily_palette'][k]['hex'].upper() for k in ('top','bottom')}
+        for palette in daily['style_palettes'].values():
+            self.assertEqual({palette[k]['hex'].upper() for k in ('top','bottom')},chips)
+        look=daily['fashion_v2']['casual']['looks'][0]
+        self.assertEqual({look['color_strategy']['original'][r]['hex'] for r in ('A','B')},chips)
+        self.assertEqual(daily['lucky_colors'],[daily['daily_palette'][k]['name_ko'] for k in ('top','bottom')])
+
+    def test_profile_response_can_expose_fixed_gyeongju_guidance_without_switching_boards(self):
+        from main import get_saju_pillars_and_analysis
+        weather={'location':'경주','location_mode':'fixed_gyeongju',
+                 'guidance':'낮에는 반팔이 알맞아요. 저녁에는 얇은 바람막이나 긴팔 셔츠를 챙기세요.'}
+        result=get_saju_pillars_and_analysis('검증','male',1978,3,13,'solar',5,weather_profile=weather)
+        baseline=get_saju_pillars_and_analysis('검증','male',1978,3,13,'solar',5)
+        daily=result['daily_fortune']
+        self.assertTrue(daily['weather_outfit']['available'])
+        self.assertEqual(daily['weather_outfit']['location'],'경주')
+        self.assertEqual(daily['weather_outfit']['guidance'],weather['guidance'])
+        self.assertEqual([[l['id'] for l in c['looks']] for c in daily['fashion_v2'].values()],
+                         [[l['id'] for l in c['looks']] for c in baseline['daily_fortune']['fashion_v2'].values()])

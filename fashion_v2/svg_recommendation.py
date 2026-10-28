@@ -17,7 +17,6 @@ from fashion_v2.weather_catalog import weather_templates_for
 from fashion_v2.review_preferences import apply_review_preferences
 from fashion_v2.realwear_rules import styling_for, colour_parts, visible_colors, accessory_spec
 from fashion_v2.coordination import POLICY_VERSION, tie_separation, evaluate_coordination
-from wada_color_rules import WADA_COLORS
 from fashion_v2.wearable_options import STRICT_SNEAKER_RANGES
 from fashion_v2.wearable_options import (wardrobe_tones, tone_explanation,
     muted_green_bottom, garment_options, outfit_balance, footwear_color_score,
@@ -54,8 +53,7 @@ def describe_color(value):
     rgb = [int(c['hex'][i:i+2], 16)/255 for i in (1, 3, 5)]
     h, l, s = colorsys.rgb_to_hls(*rgb)
     known = next((p for p in PALETTE.values() if p['hex'].upper() == c['hex']), None)
-    meta = WADA_COLORS.get(c['hex'].lower(), {})
-    fam = (known or {}).get('family') or meta.get('hue_family')
+    fam = (known or {}).get('family')
     if fam == 'neutral':
         fam = 'black' if known['id'] == 'black' else 'white' if known['id'] in {'white','ivory'} else 'gray'
     fam = {'earth':'brown', 'navy':'blue', 'charcoal':'gray', 'pink':'red', 'violet':'purple', 'gold':'yellow'}.get(fam, fam)

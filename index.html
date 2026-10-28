@@ -541,7 +541,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
     <link rel="stylesheet" href="/assets/reading-tabs-v2.css?v=20261001-3">
     <link rel="stylesheet" href="/assets/landing.css?v=1">
     <script src="/assets/design-controls.js?v=20261001-4" defer></script>
-    <script src="/assets/design-sample.js?v=20261004-1" defer></script>
+    <script src="/assets/design-sample.js?v=20261028-1" defer></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;600;700&display=swap" rel="stylesheet">
@@ -2917,14 +2917,14 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             return (item.colors || []).length > 0 && item.colors.every(c => styleColorTokens(c).some(part => allowed.includes(part)));
         }
 
-        function selectDailyAccessory(items, fortune, wada) {
-            const tpo = wada.tpo || 'casual';
-            const colors = [wada.top, wada.bottom, wada.point].filter(Boolean);
+        function selectDailyAccessory(items, fortune, dayPalette) {
+            const tpo = dayPalette.tpo || 'casual';
+            const colors = [dayPalette.top, dayPalette.bottom, dayPalette.point].filter(Boolean);
             const paletteColors = new Set(colors.flatMap(color => styleColorTokens(color.standard_color)));
             const colorMatch = item => (item.colors || []).some(value =>
                 styleColorTokens(value).some(token => paletteColors.has(token)));
             const candidates = items.filter(item =>
-                accessoryFitsContext(item,tpo) && accessoryColorFits(item,tpo,wada.gender)
+                accessoryFitsContext(item,tpo) && accessoryColorFits(item,tpo,dayPalette.gender)
                 && colorMatch(item));
             // Eligibility comes first. No lucky-item score or date-based anti-repeat.
             candidates.sort((a,b) => String(a.id || a.nickname).localeCompare(String(b.id || b.nickname),'ko'));
@@ -2933,7 +2933,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             return {item,text:`내 옷장의 ${styleWord(label,'을/를')} 함께 매치해 보세요. 선택한 옷차림에 맞는 종류·소재인지 확인하고, 오늘 추천 색상과 맞춰 골랐습니다.`};
         }
 
-        // Wada 개운 팔레트 (20px 원형 확대 적용)
+        // 오늘의 두 색 팔레트 (20px 원형 확대 적용)
         function updateTodayWardrobeMatchPick() {
             const styleEl = document.getElementById('resStyle');
             const pickEl = document.getElementById('wardrobeDailyMatchPick');
@@ -2946,9 +2946,9 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             const selectedTpo = getStyleTpo();
             const tpoSelect = document.getElementById('styleTpoSelect');
             if (tpoSelect) tpoSelect.value = selectedTpo;
-            const wada = fortune.style_palettes?.[selectedTpo]
-                || (selectedTpo === 'casual' ? fortune.wada_palette : null);
-            if (!wada?.top || !wada?.bottom) {
+            const dayPalette = fortune.style_palettes?.[selectedTpo]
+                || (selectedTpo === 'casual' ? fortune.daily_palette : null);
+            if (!dayPalette?.top || !dayPalette?.bottom) {
                 styleEl.textContent = '오늘의 추천 색상을 불러온 뒤 옷차림을 안내합니다.';
                 fashionV2MoodText = '';
                 fashionV2AccessoryRecommendation = {item:null,text:''};
@@ -2962,16 +2962,16 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 return;
             }
 
-            const isReverse = (wada.mode === "reverse");
-            const topColorStd = wada.top.standard_color;
-            const bottomColorStd = wada.bottom.standard_color;
-            const todayMood = wada.style_mood || "casual";
+            const isReverse = (dayPalette.mode === "reverse");
+            const topColorStd = dayPalette.top.standard_color;
+            const bottomColorStd = dayPalette.bottom.standard_color;
+            const todayMood = dayPalette.style_mood || "casual";
 
             const matchedTops = userWardrobeItems.filter(item => item.category === "상의" && (item.colors || []).some(c => c.includes(topColorStd) || topColorStd.includes(c)));
             const matchedBottoms = userWardrobeItems.filter(item => item.category === "하의" && (item.colors || []).some(c => c.includes(bottomColorStd) || bottomColorStd.includes(c)));
 
-            const cleanTopName = (wada.top.name_ko || wada.top.standard_color || wada.top.name).replace(/\//g, ' ');
-            const cleanBottomName = (wada.bottom.name_ko || wada.bottom.standard_color || wada.bottom.name).replace(/\//g, ' ');
+            const cleanTopName = (dayPalette.top.name_ko || dayPalette.top.standard_color || dayPalette.top.name).replace(/\//g, ' ');
+            const cleanBottomName = (dayPalette.bottom.name_ko || dayPalette.bottom.standard_color || dayPalette.bottom.name).replace(/\//g, ' ');
 
             let defaultTop = (todayMood === "casual") 
                 ? `${cleanTopName} 쿨 티셔츠` 
@@ -2984,10 +2984,10 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             let finalBottomText = matchedBottoms.length > 0 ? `내 옷장의 <strong>[${escapeStyleText(matchedBottoms[0].nickname)}]</strong>` : defaultBottom;
 
             const recommendation = FASHION_WARDROBE_UI_ENABLED
-                ? selectDailyAccessory(userWardrobeItems, fortune, wada)
+                ? selectDailyAccessory(userWardrobeItems, fortune, dayPalette)
                 : {item:null,text:''};
             const matchText = recommendation.text;
-            fashionV2MoodText = wada.mood_desc || '';
+            fashionV2MoodText = dayPalette.mood_desc || '';
             fashionV2AccessoryRecommendation = recommendation;
 
             const fashionV2Connected = connectFashionV2Summary();
@@ -2995,11 +2995,11 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 moodStoryEl.innerText = fashionV2Connected ? '' : fashionV2MoodText;
                 moodStoryEl.hidden = fashionV2Connected || !fashionV2MoodText;
             }
-            if (!fashionV2Connected) renderOutfitCards(wada);
+            if (!fashionV2Connected) renderOutfitCards(dayPalette);
             if (fashionV2Connected) { /* The v2 Daily summary is already rendered above. */ }
-            else if (wada.looks?.length) styleEl.textContent = `${wada.mood_tag} 코디 제안`;
+            else if (dayPalette.looks?.length) styleEl.textContent = `${dayPalette.mood_tag} 코디 제안`;
             else if (selectedTpo === 'casual') styleEl.innerHTML = `${finalTopText} &nbsp;&amp;&nbsp; ${finalBottomText}`;
-            else styleEl.textContent = wada.outfit_guidance || '이 옷차림에 적용할 위치를 아직 확인하지 못했습니다.';
+            else styleEl.textContent = dayPalette.outfit_guidance || '이 옷차림에 적용할 위치를 아직 확인하지 못했습니다.';
 
             const colorChip = (color, role, point = false) => {
                 const name = color.name_ko || color.standard_color || color.name || '추천 색상';
@@ -3009,8 +3009,8 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                     <span class="palette-copy"><span class="palette-name">${escapeStyleText(name)}</span><span class="palette-role">${role}</span></span>
                 </div>`;
             };
-            paletteBox.innerHTML = colorChip(wada.top, wada.top.role || '상의 색상') + colorChip(wada.bottom, wada.bottom.role || '하의 색상')
-                + (isReverse && wada.point ? colorChip(wada.point, '추가 포인트 색상', true) : '');
+            paletteBox.innerHTML = colorChip(dayPalette.top, dayPalette.top.role || '상의 색상') + colorChip(dayPalette.bottom, dayPalette.bottom.role || '하의 색상')
+                + (isReverse && dayPalette.point ? colorChip(dayPalette.point, '추가 포인트 색상', true) : '');
 
             const headerTag = isReverse 
                 ? `<span style="font-size:11px; background:#FEF3C7; color:#78350F; font-weight:800; padding:2px 7px; border-radius:4px; margin-right:6px;">✦ 반전 포인트</span>` 

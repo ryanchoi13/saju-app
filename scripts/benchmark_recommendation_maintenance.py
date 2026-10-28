@@ -25,7 +25,9 @@ from app.engine.orchestrator import calculate_myeongri_core
 from app.engine.semantic.overall import select_overall_domains
 from app.engine.services.ranked_menu import build_rankings
 from fashion_v2.svg_recommendation import build_svg_catalog_contexts
-from wada_color_rules import WADA_DUOS
+from fashion_v2.daily_colors import all_daily_pairs, outfit_color
+
+DAILY_PAIRS = [(outfit_color(a), outfit_color(b)) for a, b in all_daily_pairs()]
 
 
 def capture():
@@ -38,8 +40,8 @@ def capture():
 
     for gender in ('male', 'female'):
         for season in ('spring', 'summer', 'autumn', 'winter'):
-            for duo in WADA_DUOS.values():
-                record(build_svg_catalog_contexts(gender, season, duo['a'], duo['b'], age=50))
+            for a, b in DAILY_PAIRS:
+                record(build_svg_catalog_contexts(gender, season, a, b, age=50))
 
     profiles = [('male', 1990, 5, 15), ('female', 1985, 10, 20),
                 ('male', 1970, 3, 1), ('female', 2009, 7, 12)]
@@ -59,9 +61,9 @@ def capture():
                 record(select_overall_domains(core, scope))
 
     tasks = {
-        'fashion_all_duos': lambda: [
-            build_svg_catalog_contexts('female', 'autumn', duo['a'], duo['b'], age=50)
-            for duo in WADA_DUOS.values()
+        'fashion_all_daily_pairs': lambda: [
+            build_svg_catalog_contexts('female', 'autumn', a, b, age=50)
+            for a, b in DAILY_PAIRS
         ],
         'menu_four_profiles': lambda: [
             build_rankings(b, day_zero, {'土': 4}, '土', 'medium') for b in births
@@ -85,7 +87,7 @@ def capture():
 
     return {
         'counts': {
-            'fashion_looks': len(WADA_DUOS) * 2 * 4 * 6,
+            'fashion_looks': len(DAILY_PAIRS) * 2 * 4 * 6,
             'menu_rankings': len(births) * len(offsets) * len(weights),
             'overall_scopes': len(births) * len(offsets) * len(scopes),
         },
