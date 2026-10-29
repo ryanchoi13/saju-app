@@ -35,7 +35,7 @@ class Resources extends ResourceLoader {
         assert.equal(gate.querySelectorAll('h1').length, 1);
         assert.equal(gate.querySelectorAll('.landing-feature').length, 3);
         assert.deepEqual([...gate.querySelectorAll('.landing-feature h3')].map(n => n.textContent),
-            ['오늘 나에게 어울리는 코디', '오늘 나에게 맞는 식단', '오늘의 흐름을 읽어요']);
+            ['오늘 나의 행운 색', '오늘 나에게 맞는 식단', '오늘의 흐름을 읽어요']);
         assert.match(gate.querySelector('#landing-features-title').textContent, /오늘, 뭐 입을까\? 뭐 먹을까\?/);
         assert.match(gate.querySelectorAll('.landing-feature')[1].textContent, /아침·점심·저녁 두 가지씩/);
         assert.ok(!/다이어트|칼로리/.test(gate.textContent), 'landing must not promise removed diet/calorie features');
