@@ -1,0 +1,7 @@
+{
+  "note": "자동 검사 기준. 정오님 10/28 제안 기준(같은 색 이틀 연속 없음, 2주에 3번까지)과 '근거 없는 조합 0'(공개 관문).",
+  "max_hero_consecutive_repeat_rate": 0.0,
+  "max_same_hero_in_14_days": 3,
+  "max_vivid_pair_violations": 0,
+  "min_evidence_share_for_release": 1.0
+}
