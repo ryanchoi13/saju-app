@@ -552,8 +552,8 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
     <link id="dalhaBrandStyles" rel="stylesheet" href="/assets/brand-2026/brand.css?v=20261010-1">
     <link rel="stylesheet" href="/assets/reading-polish.css?v=20261030-2">
     <link rel="stylesheet" href="/assets/daily-card.css?v=20261027-1">
-    <link rel="stylesheet" href="/assets/brand-2026/refine.css?v=20261030-3">
-    <script src="/assets/reading-polish.js?v=20261001-1" defer></script>
+    <link rel="stylesheet" href="/assets/brand-2026/refine.css?v=20261031-1">
+    <script src="/assets/reading-polish.js?v=20261031-1" defer></script>
     <script src="/assets/brand-2026/brand-ui.js?v=20261001-4" defer></script>
 </head>
 <body>
@@ -798,9 +798,9 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                     </div>
 
                     <dl class="grid-2 dh-luck-list">
-                        <div class="grid-cell"><dt>아이템</dt><dd id="resItem">실버 메탈 시계</dd></div>
-                        <div class="grid-cell"><dt>숫자</dt><dd id="resNumber">4, 9</dd></div>
-                        <div class="grid-cell"><dt>방위</dt><dd id="resDirection">정서쪽 (백호 방위)</dd></div>
+                        <div class="grid-cell"><dd id="luckyItemIcon" class="dh-luck-visual" aria-hidden="true"></dd><dt>아이템</dt><dd id="resItem">실버 메탈 시계</dd></div>
+                        <div class="grid-cell"><dd id="resNumber" class="dh-luck-visual dh-luck-num">4, 9</dd><dt>숫자</dt></div>
+                        <div class="grid-cell"><dd id="luckyDirectionIcon" class="dh-luck-visual" aria-hidden="true"></dd><dt>방위</dt><dd id="resDirection">정서쪽 (백호 방위)</dd></div>
                     </dl>
                     <div class="grid-cell" hidden style="display:none">
                             <span id="resMenuLabel" style="font-size: 12px; color: #64748B; font-weight: 600; display: block;">🍲 추천 메뉴</span>
@@ -2735,6 +2735,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             document.getElementById('mealGuideName').textContent = data.user_name || '회원';
             document.getElementById('resNumber').innerText = data.daily_fortune.lucky_number;
             document.getElementById('resDirection').innerText = data.daily_fortune.lucky_direction;
+            window.renderLuckyDirection?.(data.daily_fortune.lucky_direction);
             currentMenuMode = getSavedMenuMode();
             renderRecommendedMenu();
             document.getElementById('resGaewoon').innerText = data.daily_fortune.unified_advice || data.daily_fortune.action;
