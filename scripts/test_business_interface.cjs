@@ -95,7 +95,7 @@ const tick = () => new Promise(resolve => setTimeout(resolve,30));
         assert.equal(doc.querySelectorAll('[data-concern-choice]').length,6);
     });
     await test('concern routes use existing products and preserve situation forms', () => {
-        w.openConcern('love');
+        w.switchTab('theme');w.selectConcern('love',true);
         assert.ok(visible('concern-love')); assert.ok(!visible('concern-business'));
         doc.getElementById('btnTheme_love').click();
         assert.equal(doc.querySelectorAll('input[name="optM"]').length,4);

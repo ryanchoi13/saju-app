@@ -2,4 +2,3 @@
 node_modules/
 __pycache__/
 .pytest_cache/
-assets/fashion-v2-boards/source/

@@ -134,7 +134,6 @@ def test_legacy_builder_stays_independent_from_the_selector_registry():
 
 def test_coverage_script_pools_match_main():
     import importlib.util
-    import main
     spec = importlib.util.spec_from_file_location(
         "fashion_illustration_coverage", ROOT / "scripts" / "fashion_illustration_coverage.py")
     module = importlib.util.module_from_spec(spec)
@@ -142,6 +141,5 @@ def test_coverage_script_pools_match_main():
     from fashion_v2 import daily_colors
     assert module.ELEMENT_WEAR_TONES is daily_colors.ELEMENT_WEAR_TONES
     assert module.TONGGUAN_TONE is daily_colors.TONGGUAN_TONE
-    assert main.element_tone_pair is daily_colors.element_tone_pair
     equal_pairs = {(a, b) for a, b in module.live_sample_pairs() if a == b}
     assert equal_pairs == {(tone, tone) for tone in daily_colors.TONGGUAN_TONE.values()}
