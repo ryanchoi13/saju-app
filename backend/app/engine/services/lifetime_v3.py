@@ -741,17 +741,16 @@ def build_lifetime_v3(core: MyeongriCoreResult, user_name: str, *, past, now, fu
 
     # 6. 한마디 — 일간 비유 + 대표 결 + 빌려 쓰는 것 + 지금 10년 + 마무리 한 줄
     top = core_picks[0][0]
-    closing = [copy.CLOSING_LEAD.format(name=name, day=day_row["label"], label=top["label"])]
+    closing = [copy.CLOSING_LEAD.format(name=name, trait=top["trait"])]
     if map_meta["missing"]:
-        plains = [copy.ELEMENT[e]["plain"] for e in map_meta["missing"]]
-        joined = plains[0] if len(plains) == 1 else josa(plains[0], "과/와") + " " + plains[1]
-        closing.append(copy.CLOSING_MISSING.format(plains=joined, ja=_j(joined, "은/는")))
-    if now_kind:
-        line = copy.CLOSING_NOW[now_kind]
-        if now_kind == "fill" and flow_meta["now_fill"]:
-            nm = copy.ELEMENT[flow_meta["now_fill"][0]]["name"]
-            line = line.format(name=nm, ja=_j(nm, "이/가"))
-        closing.append(line)
+        lacks = [copy.LACK_PLAIN[e] for e in map_meta["missing"]]
+        joined = lacks[0] if len(lacks) == 1 else josa(lacks[0], "과/와") + " " + lacks[1]
+        closing.append(copy.CLOSING_MISSING.format(lacks=josa(joined, "은/는")))
+    if now is not None and now_kind:
+        god = now.get("ten_god") if now.get("ten_god") in copy.NOW_PLAIN else "peer"
+        closing.append(copy.CLOSING_NOW.format(plain=copy.NOW_PLAIN[god]))
+        if now_kind in copy.CLOSING_NOW_KIND:
+            closing.append(copy.CLOSING_NOW_KIND[now_kind])
         if now_kind in copy.CLOSING_NUDGE:
             closing.append(copy.CLOSING_NUDGE[now_kind])
     closing.append(copy.CLOSING_APHORISM[profile["day_element"]])
