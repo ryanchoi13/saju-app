@@ -46,8 +46,12 @@ html[data-brand] body #dhLuckCard .grid-cell:first-child { padding-left:0!import
 html[data-brand] body #dhLuckCard .grid-cell + .grid-cell { border-left:1px solid var(--ui-line)!important; }
 html[data-brand] body #dhLuckCard dt { font-size:12px; color:var(--ui-muted); font-weight:500; }
 html[data-brand] body #dhLuckCard dd { margin:4px 0 0; font-size:15px!important; line-height:1.55!important; font-weight:650; color:var(--ui-ink); word-break:keep-all; overflow-wrap:anywhere; }
-html[data-brand] body #dhLuckCard .lucky-item-art,
-html[data-brand] body #dhLuckCard img { max-width:56px; margin-top:8px; }
+/* 세 칸 모두 위쪽 34px에 '보는 것' 하나(아이콘·큰 숫자·방위 화살표), 그 아래 라벨, 그 아래 값 */
+html[data-brand] body #dhLuckCard .dh-luck-list > .grid-cell { display:flex!important; flex-direction:column; align-items:flex-start; }
+html[data-brand] body #dhLuckCard .dh-luck-visual { position:relative; height:34px; margin:0 0 8px!important; display:flex; align-items:center; color:var(--ui-ink); }
+html[data-brand] body #dhLuckCard .dh-luck-visual:empty { display:none; }
+html[data-brand] body #dhLuckCard #resNumber.dh-luck-num { font-family:var(--brand-serif)!important; font-size:28px!important; font-weight:600!important; line-height:34px!important; letter-spacing:-.02em; white-space:nowrap; }
+html[data-brand] body #dhLuckCard .dh-luck-tint { position:absolute; left:24px; bottom:2px; width:9px; height:9px; border-radius:50%; box-shadow:0 0 0 2px var(--ui-surface); }
 
 /* ---- 오늘, 기억할 한 가지: 노란 경고 상자 대신 세이지 메모 ---- */
 html[data-brand] body #view-today .dh-note {
