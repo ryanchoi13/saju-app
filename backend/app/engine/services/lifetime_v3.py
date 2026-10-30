@@ -367,14 +367,21 @@ def _domains(core, profile, climate, number: int) -> tuple[str, dict]:
     palace = _day_palace_group(core)
     if palace:
         love += list(copy.LOVE_PALACE[palace])
-    if profile["peach_blossom"]:
-        love.append(copy.LOVE_PEACH)
-    if profile["hongyeom"]:
-        love.append(copy.LOVE_RED)
-    lacking = next((bank.ALL_ROWS[_element_row(e, "none")] for e in ELEMENT_ORDER if els[e]["state"] == "none"), None)
-    love.append(lacking["people"] if lacking else bank.PEOPLE_NEUTRAL)
+    charm = "both" if profile["peach_blossom"] and profile["hongyeom"] else \
+        ("peach" if profile["peach_blossom"] else ("red" if profile["hongyeom"] else None))
+    if charm:
+        love.append(copy.LOVE_CHARM[charm])
+    missing = [e for e in ELEMENT_ORDER if els[e]["state"] == "none"]
+    if missing:
+        mates = [copy.LOVE_MATE[e] for e in missing[:2]]
+        love.append(copy.LOVE_MATE_LINE.format(mate=mates[0] if len(mates) == 1 else f"{mates[0]}, 또는 {mates[1]}"))
+        names = copy.ELEMENT[missing[0]]["name"] if len(missing) == 1 else \
+            josa(copy.ELEMENT[missing[0]]["name"], "과/와") + " " + copy.ELEMENT[missing[1]]["name"]
+        love.append(copy.LOVE_MATE_WHY.format(names=names))
+    else:
+        love.append(copy.LOVE_MATE_NEUTRAL)
     love_ev = ("일지 " + (palace or "확인 불가")) + (" · 도화" if profile["peach_blossom"] else "") + \
-        (" · 홍염" if profile["hongyeom"] else "") + (f" · {lacking['element']} 없음" if lacking else "")
+        (" · 홍염" if profile["hongyeom"] else "") + ("".join(f" · {e} 없음" for e in missing))
     chosen["love"] = (love, love_ev, palace or "none")
     # 일
     many = [x for x in ("식상", "관성", "인성", "재성", "비겁") if g[x]["state"] == "many"]
@@ -395,7 +402,8 @@ def _domains(core, profile, climate, number: int) -> tuple[str, dict]:
         k = "neutral"
     people = list(copy.PEOPLE[k])
     if profile["flower_canopy"]:
-        people.insert(min(2, len(people)), copy.PEOPLE_CANOPY)
+        canopy = copy.PEOPLE_CANOPY if k == "rob_many" else copy.PEOPLE_CANOPY.replace("그러면서도 ", "한편 ")
+        people.insert(min(2, len(people)), canopy)
     chosen["people"] = (people, f"비겁 {g['비겁']['main']} · 인성 {g['인성']['main']}" + (" · 화개" if profile["flower_canopy"] else ""), k)
     # 몸과 쉼 — 의학 표현 없이 생활 리듬으로만
     if els["水"]["state"] == "none":
