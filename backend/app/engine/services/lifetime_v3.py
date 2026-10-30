@@ -374,13 +374,13 @@ def _domains(core, profile, climate, number: int, name: str = "회원") -> tuple
     missing = [e for e in ELEMENT_ORDER if els[e]["state"] == "none"]
     if missing:
         mates = [copy.LOVE_MATE[e] for e in missing[:2]]
-        if len(mates) == 1:
-            love.append(copy.LOVE_MATE_LINE.format(name="{name}", mate=mates[0]))
-        else:
-            love += [copy.LOVE_MATE_TWO[0], copy.LOVE_MATE_TWO[1].format(a=mates[0], b=mates[1])]
         names = copy.ELEMENT[missing[0]]["name"] if len(missing) == 1 else \
             josa(copy.ELEMENT[missing[0]]["name"], "과/와") + " " + copy.ELEMENT[missing[1]]["name"]
-        love.append(copy.LOVE_MATE_WHY.format(name="{name}", names=names))
+        love.append(copy.LOVE_MATE_WHY.format(name="{name}", names=names, ja=_j(names, "이/가")))
+        if len(mates) == 1:
+            love.append(copy.LOVE_MATE_LINE.format(mate=mates[0]))
+        else:
+            love += [copy.LOVE_MATE_TWO[0].format(a=mates[0]), copy.LOVE_MATE_TWO[1].format(b=mates[1][0].upper() + mates[1][1:])]
     else:
         love.append(copy.LOVE_MATE_NEUTRAL)
     love_ev = ("일지 " + (palace or "확인 불가")) + (" · 도화" if profile["peach_blossom"] else "") + \
