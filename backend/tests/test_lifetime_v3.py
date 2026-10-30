@@ -109,8 +109,8 @@ class FlowTests(unittest.TestCase):
         result, *_ = _v3(_core(date(1976, 2, 5), time(12, 0), "female"))   # 丁 일간, 겁재 2
         block = re.search(r"data-now-me-row=\"B11\".*?</article>", result["html"], re.S)
         if block:
-            self.assertNotIn("목 기운", block.group(0))
-            self.assertIn("화 기운", block.group(0))
+            self.assertNotIn("목(木) 기운", block.group(0))
+            self.assertIn("화(火) 기운", block.group(0))
 
     def test_event_words_stay_out(self):
         rng = random.Random(7)
