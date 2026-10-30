@@ -16,13 +16,13 @@ from html import escape
 from app.engine.constants import GAN_WUXING
 from app.engine.core.models import MyeongriCoreResult
 from app.engine.korean import josa
-from app.engine.services.annual_copy import ending_family, seed_from, split_sentences
+from app.engine.services.annual_copy import seed_from, split_sentences
 from app.engine.services import lifetime_v3_copy as copy
 from app.engine.services import now_me_copy as bank
 from app.engine.services import lifetime_flow as flow
 from app.engine.services.now_me import (
     ELEMENT_ORDER, natal_profile, select_rows, shensha_rows, _group_row, _element_row,
-    _evidence_text, _scene, LINK_HREF,
+    _evidence_text, LINK_HREF,
 )
 
 V3_VERSION = "lifetime-v3"
@@ -235,7 +235,7 @@ def _meaning(row, profile) -> list[str]:
         n = profile["elements"][row["element"]]["main"]
         name = info["name"]
         if row["state"] == "many":
-            lines = [f"{_glyphs(profile)} 가운데 {josa(name, '이/가')} {n}개로 두텁습니다.",
+            lines = [f"{_glyphs(profile)} 가운데 {josa(name, '이/가')} {copy.COUNT_THING.get(n, f'{n}개')}로 두텁습니다.",
                      f"{josa(info['plain'], '이/가')} 바탕에 깔린 사람이에요."]
         elif row["state"] == "few":
             lines = [f"{josa(name, '은/는')} {_glyphs(profile)}에 하나뿐입니다.",
@@ -247,7 +247,7 @@ def _meaning(row, profile) -> list[str]:
         g = copy.GROUP[row["group"]]
         n = profile["groups"][row["group"]]["main"]
         if row["state"] == "many":
-            lines = [f"{josa(g['what'], '이/가')} {_glyphs(profile)}에 {n}개 있습니다.",
+            lines = [f"{josa(g['what'], '이/가')} {_glyphs(profile)}에 {copy.COUNT_THING.get(n, f'{n}개')} 있습니다.",
                      f"사주는 이를 {josa(g['plain'], '으로/로')} 읽어요."]
         else:
             lines = [f"{josa(g['what'], '이/가')} 겉면에 보이지 않습니다.",
@@ -277,12 +277,12 @@ def _why_row(row, profile) -> list[str]:
 def _row_block(row, profile, seed, shift, heading, *, with_flip=True) -> str:
     allow = bool(row.get("allow_absolute"))
     meaning = _meaning(row, profile)
-    trait_end = ending_family(row["trait"])
-    scene_a = _scene(row, seed, shift, trait_end)
-    scene_b = _scene(row, seed, shift + 4, ending_family(scene_a or row["trait"]), exclude=scene_a)
+    # 장면은 한 문장. 따로 고른 장면 두 개를 붙이면 서로 딴 얘기가 된다(10/30).
+    pool = copy.SCENE_FLOW.get(row.get("scene_key") or "")
+    scene = pool[(seed >> shift) % len(pool)] if pool else ""
     base = len(meaning)
-    p1 = _p(meaning + [row["trait"], scene_a or "", scene_b or ""], allow_absolute=allow,
-            droppable=(base + 1, base + 2), where=f"row.{row['key']}")
+    p1 = _p(meaning + [row["trait"], scene], allow_absolute=allow,
+            droppable=(base + 1,), where=f"row.{row['key']}")
     paras = [p1]
     if with_flip:
         flip = row["flip"] if row["flip"].startswith("다만") else "다만 " + row["flip"]
