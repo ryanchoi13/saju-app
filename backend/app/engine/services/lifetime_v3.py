@@ -347,7 +347,7 @@ def _place_key(profile) -> str:
     return "neutral"
 
 
-def _domains(core, profile, climate, number: int) -> tuple[str, dict]:
+def _domains(core, profile, climate, number: int, name: str = "회원") -> tuple[str, dict]:
     g, els = profile["groups"], profile["elements"]
     chosen: dict[str, tuple[list[str], str, str]] = {}
     # 재물
@@ -374,10 +374,10 @@ def _domains(core, profile, climate, number: int) -> tuple[str, dict]:
     missing = [e for e in ELEMENT_ORDER if els[e]["state"] == "none"]
     if missing:
         mates = [copy.LOVE_MATE[e] for e in missing[:2]]
-        love.append(copy.LOVE_MATE_LINE.format(mate=mates[0] if len(mates) == 1 else f"{mates[0]}, 또는 {mates[1]}"))
+        love.append(copy.LOVE_MATE_LINE.format(name="{name}", mate=mates[0] if len(mates) == 1 else f"{mates[0]}, 또는 {mates[1]}"))
         names = copy.ELEMENT[missing[0]]["name"] if len(missing) == 1 else \
             josa(copy.ELEMENT[missing[0]]["name"], "과/와") + " " + copy.ELEMENT[missing[1]]["name"]
-        love.append(copy.LOVE_MATE_WHY.format(names=names))
+        love.append(copy.LOVE_MATE_WHY.format(name="{name}", names=names))
     else:
         love.append(copy.LOVE_MATE_NEUTRAL)
     love_ev = ("일지 " + (palace or "확인 불가")) + (" · 도화" if profile["peach_blossom"] else "") + \
@@ -424,7 +424,7 @@ def _domains(core, profile, climate, number: int) -> tuple[str, dict]:
     parts = [f"<p>{escape(copy.DOMAIN_INTRO)}</p>"]
     for i, (key, title) in enumerate(copy.DOMAIN_TITLES, 1):
         lines, ev, _ = chosen[key]
-        text = _p(lines, where=f"domain.{key}")
+        text = _p([line.format(name=name) for line in lines], where=f"domain.{key}")
         link = ""
         if key in ("love", "work"):
             target = "gunghap" if key == "love" else "business"
@@ -739,7 +739,7 @@ def build_lifetime_v3(core: MyeongriCoreResult, user_name: str, *, past, now, fu
         html += _section("first-seen", sec, "".join(parts))
 
     sec = next(numbering)
-    domains_html, domain_meta = _domains(core, profile, climate, sec)
+    domains_html, domain_meta = _domains(core, profile, climate, sec, name)
     html += _section("domains", sec, domains_html)
 
     flow_html, now_kind, flow_meta = _flow(core, profile, past, now, future, map_meta["missing"])
