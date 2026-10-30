@@ -118,7 +118,7 @@ window.setupAnnualReader = function(body, navigation) {
 
 window.ANNUAL_PRINT_STYLE = `
     @page { size:A4; margin:18mm 16mm; }
-    body { font-family:sans-serif; font-size:11pt; line-height:1.8; color:#182B3A; }
+    body { font-family:sans-serif; font-size:11pt; line-height:1.8; color:#25364A; }
     h2,h3,h4,h5 { break-after:avoid; page-break-after:avoid; }
     h3 { font-size:15pt; margin-top:24pt; }
     h4 { font-size:13pt; }
@@ -126,12 +126,12 @@ window.ANNUAL_PRINT_STYLE = `
     p { orphans:3; widows:3; margin:0 0 10pt; }
     .annual-month { break-before:auto; page-break-before:auto; border:0!important; }
     .annual-month + .annual-month { margin-top:60pt; }
-    .annual-overview > h3:first-child { color:#205D62; }
+    .annual-overview > h3:first-child { color:#25364A; }
     .annual-kind { display:none; }
-    .annual-domain-label { display:block; color:#205D62; font-size:11pt; margin-bottom:6pt; }
+    .annual-domain-label { display:block; color:#25364A; font-size:11pt; margin-bottom:6pt; }
     .annual-domain-message { display:block; font-size:14pt; }
-    .annual-month-label { display:block; color:#205D62; font-size:14pt; margin-bottom:9pt; }
+    .annual-month-label { display:block; color:#25364A; font-size:14pt; margin-bottom:9pt; }
     .annual-month-message { display:block; font-size:14pt; }
-    .annual-note,.annual-evidence { font-size:9pt; color:#526378; }
+    .annual-note,.annual-evidence { font-size:9pt; color:#59636D; }
     button { display:none; }
 `;
