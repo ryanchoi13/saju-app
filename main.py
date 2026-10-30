@@ -1399,6 +1399,9 @@ def test_saju_engine(
     cal_type: str = "solar",
     gender: str = "male"
 ):
+    # 엔진 비교용 디버그 주소. 공개 운영에서는 닫아 두고, 필요할 때만 서버 환경변수로 연다.
+    if os.getenv("DALHA_ENABLE_DEBUG_ENDPOINTS") != "1":
+        raise HTTPException(status_code=404, detail="Not Found")
     # A. 현재 root main.py 계산 결과
     root_result = get_saju_pillars_and_analysis(
         name="테스트",
