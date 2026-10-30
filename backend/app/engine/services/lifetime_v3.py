@@ -144,17 +144,14 @@ def _map(core, profile, hidden_counts, core_keys) -> tuple[str, dict]:
     present = [e for e in sorted(ELEMENT_ORDER, key=lambda e: -els[e]["main"])
                if els[e]["main"] > 0 and e != profile["day_element"]][:2]
     lead = copy.MAP_LEAD if profile["glyphs"] >= 8 else copy.MAP_LEAD_SIX
-    where = f"{season}에 " if season else ""
-    first = [lead, f"그림으로 옮기면 {where}{josa(day['label'], '이/가')} 보이는 풍경입니다."]
+    first = [lead]
     if present:
-        clauses = [copy.ELEMENT[e]["scene"] for e in present[:-1]] + [copy.ELEMENT[present[-1]]["scene_end"]]
-        first.append("그 곁으로 " + " ".join(clauses) + ".")
+        rest = (copy.ELEMENT[present[0]]["place"] + " " + copy.ELEMENT[present[1]]["mod"]) if len(present) > 1 \
+            else copy.ELEMENT[present[0]]["mod"]
+        first.append(copy.MAP_SCENE.format(season=f"{season}에 " if season else "", label=day["label"],
+                                           ja=_j(day["label"], "이/가"), rest=rest,
+                                           verb=copy.DAY_VERB[profile["day_master"]]))
     first.append(f"{josa(day['label'], '은/는')} {day['trait']}")
-    roles = [profile["day_element"]] + present[:1]
-    if len(roles) == 2:
-        a, b = (copy.ELEMENT[e] for e in roles)
-        first.append(copy.MAP_ROLES.format(a=a["name"], ja=_j(a["name"], "은/는"), pa=a["power"],
-                                           b=b["name"], jb=_j(b["name"], "은/는"), pb=b["power"]))
     first.append(copy.MAP_HARMONY[_harmony([e for e in ELEMENT_ORDER if els[e]["main"] > 0])])
     p1 = _p(first, where="map.1")
 
@@ -169,7 +166,7 @@ def _map(core, profile, hidden_counts, core_keys) -> tuple[str, dict]:
             info = copy.ELEMENT[e]
             j = josa(info["name"], "은/는")[len(info["name"]):]
             if hidden_counts[e]:
-                second.append(copy.MAP_MISSING_HIDDEN.format(name=info["name"], josa=j, power=info["power"], k=hidden_counts[e]))
+                second.append(copy.MAP_MISSING_HIDDEN.format(name=info["name"], josa=j, power=info["power"], k=copy.COUNT_THING.get(hidden_counts[e], f"{hidden_counts[e]}개")))
                 hidden_plain.append(info["plain"])
             else:
                 second.append(copy.MAP_MISSING_DEEP.format(name=info["name"], josa=j, power=info["power"]))
@@ -181,7 +178,6 @@ def _map(core, profile, hidden_counts, core_keys) -> tuple[str, dict]:
                 joined = plains[0] if len(plains) == 1 else \
                     josa(names[plains[0]], "과/와") + " " + "·".join(names[p] for p in plains[1:]) + "의 힘"
                 third.append(tpl.format(plain=joined, josa=josa(joined, "은/는")[len(joined):]))
-        third[0] = "그래서 " + third[0]
         third.append(copy.MAP_CLOSE_MISSING)
     else:
         second.append(copy.MAP_FULL)
@@ -256,7 +252,7 @@ def _meaning(row, profile) -> list[str]:
         else:
             lines = [f"{josa(g['what'], '이/가')} 겉면에 보이지 않습니다.",
                      f"{josa(g['plain'], '은/는')} 밖에서 채우는 편이에요."]
-    lines.append(f"그래서 이 결을 '{row['label']}'에 빗댑니다.")
+    lines.append(f"이러한 결을 '{row['label']}'에 빗댑니다.")
     return lines
 
 
@@ -289,7 +285,9 @@ def _row_block(row, profile, seed, shift, heading, *, with_flip=True) -> str:
             droppable=(base + 1, base + 2), where=f"row.{row['key']}")
     paras = [p1]
     if with_flip:
-        paras.append(_p([copy.SHINE.get(row["key"], ""), row["flip"], _no_today(row["tip"])],
+        flip = row["flip"] if row["flip"].startswith("다만") else "다만 " + row["flip"]
+        tip = copy.TIP_LIFETIME.get(row["key"]) or _no_today(row["tip"])
+        paras.append(_p([copy.SHINE.get(row["key"], ""), flip, tip],
                         allow_absolute=allow, droppable=(0,), where=f"flip.{row['key']}"))
     body = "".join(f"<p>{escape(t)}</p>" for t in paras)
     return (f'<article class="lifetime-sub" data-now-me-row="{escape(row["key"])}">'
