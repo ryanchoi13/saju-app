@@ -1,0 +1,16 @@
+{
+  "name": "달하 — 오늘을 비추는 달",
+  "short_name": "달하",
+  "description": "사주로 읽는 오늘의 운세, 행운 색, 오늘의 메뉴",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#25364A",
+  "theme_color": "#F8F6F1",
+  "icons": [
+    { "src": "/assets/brand-2026/app-icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/assets/brand-2026/app-icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/assets/brand-2026/app-icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}
