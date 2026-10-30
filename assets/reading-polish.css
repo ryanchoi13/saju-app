@@ -62,9 +62,10 @@ html[data-brand] .reading-view .card.reading-lead { background-image:url('/asset
 .lifetime-chart-count { font-size:13px; color:#59636D; margin:0 0 4px!important; }
 .lifetime-cycles tr.is-now td { background:#EEF6F0; font-weight:800; color:#1F5A3D; }
 .lifetime-now-mark { display:inline-block; margin-left:4px; padding:1px 7px; border-radius:999px; background:#2D6A4F; color:#fff; font-size:11px; }
-.lifetime-past { padding-left:18px; margin:0 0 10px; }
-.lifetime-past li { margin:0 0 10px; line-height:1.8; }
-.lifetime-past li strong { display:block; color:#25364A; }
+.lifetime-v3 h5 { margin:16px 0 6px; font-size:14.5px; color:#25364A; font-weight:800; }
+.lifetime-past { padding-left:12px; border-left:2px solid #E8E2D8; }
+.lifetime-now-lead { font-size:13px; color:#59636D; margin:0 0 6px!important; }
+.lifetime-v3 [data-current-cycle="true"] { background:#F3F8F4; border-radius:12px; padding:2px 14px 8px; }
 .lifetime-why { margin:2px 0 6px; font-size:13px; color:#59636D; }
 .lifetime-why summary { cursor:pointer; color:#995737; font-weight:700; list-style:none; }
 .lifetime-why summary::before { content:'▸ '; }

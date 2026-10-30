@@ -16,18 +16,16 @@ from html import escape
 from app.engine.constants import GAN_WUXING
 from app.engine.core.models import MyeongriCoreResult
 from app.engine.korean import josa
-from app.engine.services.annual_copy import ending_family, seed_from
-from app.engine.services import lifetime_copy as cycle_copy
+from app.engine.services.annual_copy import ending_family, seed_from, split_sentences
 from app.engine.services import lifetime_v3_copy as copy
 from app.engine.services import now_me_copy as bank
+from app.engine.services import lifetime_flow as flow
 from app.engine.services.now_me import (
     ELEMENT_ORDER, natal_profile, select_rows, shensha_rows, _group_row, _element_row,
-    _evidence_text, _scene,
+    _evidence_text, _scene, LINK_HREF,
 )
 
 V3_VERSION = "lifetime-v3"
-ZHI = "子丑寅卯辰巳午未申酉戌亥"
-CLASH = {a: b for a, b in ("子午", "丑未", "寅申", "卯酉", "辰戌", "巳亥", "午子", "未丑", "申寅", "酉卯", "戌辰", "亥巳")}
 CLIMATE_KO = {
     "very_cold_wet": "매우 차고 습함", "cold_wet": "차고 습함", "cool_dry": "서늘하고 건조함",
     "mild_wet": "온화하나 습함", "mild_balanced": "한난조습 고름", "warm_dry": "따뜻하고 건조함",
@@ -37,17 +35,36 @@ HOT = {"warm_dry", "hot_dry", "very_hot_dry"}
 COLD = {"very_cold_wet", "cold_wet", "cool_dry"}
 
 
+SENTENCE_LIMIT = 80          # 앉아서 읽는 긴 글이라 두 절까지(10/23). 매일 보는 문구의 46자보다 길다.
+EVENT_BANNED = ("사고", "이혼", "파국")   # 지나온 길에서도 쓰지 않는 사건 말(헌장 10/23)
+
+
+def check_paragraph(text: str, allow_absolute: bool = False) -> list[str]:
+    """now_me_copy.validate_paragraph 와 같은 규칙에서 문장 길이만 80자로 늘린 검사."""
+    issues = [i for i in bank.validate_paragraph(text, allow_absolute=allow_absolute) if not i.startswith("문장이 깁니다")]
+    for sentence in split_sentences(text):
+        if len(sentence) > SENTENCE_LIMIT:
+            issues.append(f"문장이 깁니다({len(sentence)}): {sentence}")
+    issues += [f"사건 말 '{w}'" for w in EVENT_BANNED if w in text]
+    return issues
+
+
 def _p(sentences, *, allow_absolute=False, droppable=(), where="") -> str:
     """문장 목록을 한 문단으로. 검증에 걸리면 droppable(장면) 문장부터 빼 본다."""
     sentences = [s for s in sentences if s]
     text = " ".join(sentences)
-    if bank.validate_paragraph(text, allow_absolute=allow_absolute):
+    if check_paragraph(text, allow_absolute=allow_absolute):
         sentences = [s for i, s in enumerate(sentences) if i not in droppable]
         text = " ".join(sentences)
-    issues = bank.validate_paragraph(text, allow_absolute=allow_absolute)
+    issues = check_paragraph(text, allow_absolute=allow_absolute)
     if issues:
         raise ValueError(f"lifetime_v3 {where}: {issues}")
     return text
+
+
+def _j(word: str, pair: str) -> str:
+    """josa() 결과에서 조사만."""
+    return josa(word, pair)[len(word):]
 
 
 def _why(*lines: str) -> str:
@@ -64,11 +81,11 @@ def _section(sid: str, number: int, inner: str) -> str:
 # 원국표
 # ---------------------------------------------------------------------------
 def _hidden_by_pillar(core: MyeongriCoreResult) -> dict[str, list[str]]:
-    order = {"residual": 0, "middle": 1, "main": 2}
+    order = {"main": 0, "middle": 1, "residual": 2}
     out: dict[str, list[tuple[int, str]]] = {}
     for fact in core.natal_facts.ten_gods.hidden:
         role = fact.hidden_role.value if fact.hidden_role is not None else "main"
-        out.setdefault(fact.pillar, []).append((order.get(role, 2), fact.stem))
+        out.setdefault(fact.pillar, []).append((order.get(role, 0), fact.stem))
     return {k: [s for _, s in sorted(v)] for k, v in out.items()}
 
 
@@ -133,6 +150,12 @@ def _map(core, profile, hidden_counts, core_keys) -> tuple[str, dict]:
         clauses = [copy.ELEMENT[e]["scene"] for e in present[:-1]] + [copy.ELEMENT[present[-1]]["scene_end"]]
         first.append("그 곁으로 " + " ".join(clauses) + ".")
     first.append(f"{josa(day['label'], '은/는')} {day['trait']}")
+    roles = [profile["day_element"]] + present[:1]
+    if len(roles) == 2:
+        a, b = (copy.ELEMENT[e] for e in roles)
+        first.append(copy.MAP_ROLES.format(a=a["name"], ja=_j(a["name"], "은/는"), pa=a["power"],
+                                           b=b["name"], jb=_j(b["name"], "은/는"), pb=b["power"]))
+    first.append(copy.MAP_HARMONY[_harmony([e for e in ELEMENT_ORDER if els[e]["main"] > 0])])
     p1 = _p(first, where="map.1")
 
     missing = [e for e in ELEMENT_ORDER if els[e]["main"] == 0]
@@ -172,7 +195,9 @@ def _map(core, profile, hidden_counts, core_keys) -> tuple[str, dict]:
                 if els[e]["state"] == state:
                     row = bank.ALL_ROWS[_element_row(e, state)]
                     if row["key"] not in core_keys:
-                        third.append(("그래서 " if not third else "") + row["trait"])
+                        nm = copy.ELEMENT[e]["name"]
+                        lead = "그래서 " if state == "many" else f"{nm}{_j(nm, '은/는')} 얇아서 "
+                        third.append(lead + row["trait"])
         else:
             second.append(copy.MAP_FULL_EVEN)
             third.append(copy.MAP_EVEN_MEANS)
@@ -187,12 +212,27 @@ def _map(core, profile, hidden_counts, core_keys) -> tuple[str, dict]:
     return html, {"missing": missing, "present": present}
 
 
+_GEN = {"木": "火", "火": "土", "土": "金", "金": "水", "水": "木"}
+_CTL = {"木": "土", "火": "金", "土": "水", "金": "木", "水": "火"}
+
+
+def _harmony(present: list[str]) -> str:
+    gens = sum(1 for a in present for b in present if _GEN[a] == b)
+    ctls = sum(1 for a in present for b in present if _CTL[a] == b)
+    return "grow" if gens > ctls else ("check" if ctls > gens else "mixed")
+
+
 # ---------------------------------------------------------------------------
 # 2·3. 성격 행 → 문단
 # ---------------------------------------------------------------------------
 def _meaning(row, profile) -> list[str]:
     key = row["key"]
-    if key in copy.MEANING:
+    if key == "B11":
+        el = copy.ELEMENT[profile["day_element"]]["name"]
+        lines = (["태어난 달에 나와 같은 기운이 가장 날카롭게 섭니다."] if profile["yangin"]["month"]
+                 else ["나와 같은 기운이면서 결이 다른 글자(겁재)가 곁에 여럿 섭니다."])
+        lines.append(f"같은 {el} 기운이 빽빽이 어깨를 맞댄 모양이에요.")
+    elif key in copy.MEANING:
         lines = list(copy.MEANING[key])
     elif "element" in row:
         info = copy.ELEMENT[row["element"]]
@@ -222,7 +262,12 @@ def _meaning(row, profile) -> list[str]:
 
 def _why_row(row, profile) -> list[str]:
     key = row["key"]
-    if key in copy.WHY:
+    if key == "B11":
+        where = "월지에 있어" if profile["yangin"]["month"] else f"{profile['rob_wealth']}개 있어"
+        first = copy.WHY[key].format(where=where)
+    elif key == "B18":
+        first = copy.WHY[key].format(glyphs=_glyphs(profile))
+    elif key in copy.WHY:
         first = copy.WHY[key]
     elif "element" in row:
         nm = copy.ELEMENT[row["element"]]["name"]
@@ -244,10 +289,16 @@ def _row_block(row, profile, seed, shift, heading, *, with_flip=True) -> str:
             droppable=(base + 1, base + 2), where=f"row.{row['key']}")
     paras = [p1]
     if with_flip:
-        paras.append(_p([row["flip"], row["tip"]], allow_absolute=allow, where=f"flip.{row['key']}"))
+        paras.append(_p([copy.SHINE.get(row["key"], ""), row["flip"], _no_today(row["tip"])],
+                        allow_absolute=allow, droppable=(0,), where=f"flip.{row['key']}"))
     body = "".join(f"<p>{escape(t)}</p>" for t in paras)
     return (f'<article class="lifetime-sub" data-now-me-row="{escape(row["key"])}">'
             f'<h4>{escape(heading)}</h4>{body}' + _why(*_why_row(row, profile)) + '</article>')
+
+
+def _no_today(tip: str) -> str:
+    """사전의 팁은 매일 보는 문구라 '오늘'로 시작한다. 평생운세에서는 떼고 쓴다."""
+    return tip.replace("오늘은 ", "").replace("오늘 ", "")
 
 
 def _core_rows(ordered: list[dict]) -> tuple[list[tuple[dict, str]], set[str]]:
@@ -261,11 +312,15 @@ def _core_rows(ordered: list[dict]) -> tuple[list[tuple[dict, str]], set[str]]:
     if top["key"] == "B11" and len(ordered) > 1 and ordered[1]["key"] == "B16":
         pair = ordered[1]
         used.add(pair["key"])
-    for row in ordered[1:]:
+    strong = [r for r in ordered[1:] if r.get("state") != "few"]
+    weak = [r for r in ordered[1:] if r.get("state") == "few"]
+    for row in strong + weak:
         if len(picks) + (1 if pair else 0) >= 3:
             break
         if row["key"] in used:
             continue
+        if row.get("state") == "few" and len(picks) + (1 if pair else 0) >= 2:
+            break
         if pair and row.get("group") in ("재성", "비겁"):
             continue
         picks.append((row, "main"))
@@ -294,9 +349,9 @@ def _place_key(profile) -> str:
     return "neutral"
 
 
-def _domains(core, profile, climate) -> tuple[str, dict]:
+def _domains(core, profile, climate, number: int) -> tuple[str, dict]:
     g, els = profile["groups"], profile["elements"]
-    chosen = {}
+    chosen: dict[str, tuple[list[str], str, str]] = {}
     # 재물
     if profile["crowd_rob_wealth"]:
         k = "crowd"
@@ -309,23 +364,26 @@ def _domains(core, profile, climate) -> tuple[str, dict]:
     else:
         k = "neutral"
     chosen["money"] = (list(copy.MONEY[k]), f"재성 {g['재성']['main']} · 겁재 {profile['rob_wealth']} · 식상 {g['식상']['main']}", k)
-    # 애정 — 일지 자리 + 끌림 신살 + 곁에 두면 편한 사람
-    love = []
+    # 애정 — 일지(가까운 관계 자리) + 끌림 신살 + 곁에 두면 편한 사람
+    love: list[str] = []
     palace = _day_palace_group(core)
     if palace:
-        love.append(copy.LOVE_PALACE[palace])
-    if profile["peach_blossom"] or profile["hongyeom"]:
-        love.append(copy.LOVE_CHARM)
+        love += list(copy.LOVE_PALACE[palace])
+    if profile["peach_blossom"]:
+        love.append(copy.LOVE_PEACH)
+    if profile["hongyeom"]:
+        love.append(copy.LOVE_RED)
     lacking = next((bank.ALL_ROWS[_element_row(e, "none")] for e in ELEMENT_ORDER if els[e]["state"] == "none"), None)
     love.append(lacking["people"] if lacking else bank.PEOPLE_NEUTRAL)
     love_ev = ("일지 " + (palace or "확인 불가")) + (" · 도화" if profile["peach_blossom"] else "") + \
         (" · 홍염" if profile["hongyeom"] else "") + (f" · {lacking['element']} 없음" if lacking else "")
     chosen["love"] = (love, love_ev, palace or "none")
     # 일
-    work = [bank.PLACE_LINES[_place_key(profile)]]
     many = [x for x in ("식상", "관성", "인성", "재성", "비겁") if g[x]["state"] == "many"]
-    if many:
-        work.append(copy.WORK_GROUP[many[0]])
+    work = [bank.PLACE_LINES[_place_key(profile)]]
+    work += list(copy.WORK_GROUP[many[0]]) if many else [copy.WORK_NEUTRAL]
+    if g["관성"]["main"] == 0 and (not many or many[0] != "관성"):
+        work.append(copy.WORK_HIDDEN_OFFICER)
     chosen["work"] = (work, f"관성 {g['관성']['main']}" + (f" · {many[0]} {g[many[0]]['main']}" if many and many[0] != "관성" else ""),
                       many[0] if many else "neutral")
     # 사람
@@ -337,141 +395,285 @@ def _domains(core, profile, climate) -> tuple[str, dict]:
         k = "resource_many"
     else:
         k = "neutral"
-    chosen["people"] = (list(copy.PEOPLE[k]), f"비겁 {g['비겁']['main']} · 인성 {g['인성']['main']}", k)
-    # 몸과 쉼
-    if els["水"]["state"] == "none" or g["인성"]["main"] == 0:
-        k = "lack_rest"
-    elif climate in HOT or els["火"]["state"] == "many":
+    people = list(copy.PEOPLE[k])
+    if profile["flower_canopy"]:
+        people.insert(min(2, len(people)), copy.PEOPLE_CANOPY)
+    chosen["people"] = (people, f"비겁 {g['비겁']['main']} · 인성 {g['인성']['main']}" + (" · 화개" if profile["flower_canopy"] else ""), k)
+    # 몸과 쉼 — 의학 표현 없이 생활 리듬으로만
+    if els["水"]["state"] == "none":
+        k = "lack_water"
+    elif els["火"]["state"] == "many" or (climate in HOT and els["火"]["main"] >= 1):
         k = "hot"
-    elif climate in COLD:
+    elif climate in COLD and els["火"]["state"] != "many":
         k = "cold"
+    elif g["인성"]["main"] == 0:
+        k = "no_resource"
     elif els["土"]["state"] == "many":
         k = "earth"
     else:
         k = "neutral"
-    chosen["rest"] = (list(copy.REST[k]), f"水 {els['水']['main']} · 인성 {g['인성']['main']} · " + CLIMATE_KO.get(climate or "", "조후 판정 보류"), k)
+    chosen["rest"] = (list(copy.REST[k]), f"水 {els['水']['main']} · 火 {els['火']['main']} · 인성 {g['인성']['main']} · "
+                      + CLIMATE_KO.get(climate or "", "조후 판정 보류"), k)
 
-    parts = []
+    parts = [f"<p>{escape(copy.DOMAIN_INTRO)}</p>"]
     for i, (key, title) in enumerate(copy.DOMAIN_TITLES, 1):
         lines, ev, _ = chosen[key]
         text = _p(lines, where=f"domain.{key}")
-        parts.append(f'<article class="lifetime-sub" data-domain="{key}"><h4>{i}) {escape(title)}</h4>'
-                     f'<p>{escape(text)}</p><small class="now-me-evidence">원국 · {escape(ev)}</small></article>')
+        link = ""
+        if key in ("love", "work"):
+            target = "gunghap" if key == "love" else "business"
+            link = (f' <a class="now-me-link" href="{LINK_HREF[target]}" data-now-me-link="{target}">'
+                    f'{escape(bank.LINK_LABELS[target])}</a>')
+        parts.append(f'<article class="lifetime-sub" data-domain="{key}"><h4>{number}-{i}. {escape(title)}</h4>'
+                     f'<p>{escape(text)}{link}</p><small class="now-me-evidence">원국 · {escape(ev)}</small></article>')
     return "".join(parts), {k: v[2] for k, v in chosen.items()}
 
 
 # ---------------------------------------------------------------------------
 # 5. 인생의 흐름
 # ---------------------------------------------------------------------------
-def _link(cycle, profile, *, now=False, seen: Counter | None = None) -> tuple[str | None, str | None]:
-    els = profile["elements"]
-    pillar = cycle.get("pillar") or {}
-    cyc = [pillar.get("stem_element"), pillar.get("branch_element")]
-    for e in cyc:
-        if e and els[e]["state"] == "none":
-            name = copy.ELEMENT[e]["name"]
-            key = f"fill:{e}"
-            tpl = copy.LINK_FILL_NOW if now else _varied(seen, key, copy.LINK_FILL, copy.LINK_FILL_AGAIN)
-            return (tpl.format(name=name, josa=josa(name, "이/가")[len(name):]) if tpl else None), key
-    for e in cyc:
-        if e and els[e]["state"] == "many":
-            name = copy.ELEMENT[e]["name"]
-            key = f"thick:{e}"
-            tpl = copy.LINK_THICK_NOW if now else _varied(seen, key, copy.LINK_THICK, copy.LINK_THICK_AGAIN)
-            return (tpl.format(name=name, josa=josa(name, "이/가")[len(name):]) if tpl else None), key
-    return None, None
+def _flow_ctx(core, profile) -> dict:
+    natal = {k: v.branch for k, v in core.natal_facts.pillars.items() if v is not None}
+    solar = (core.natal_facts.calendar or {}).get("solar_date") or ""
+    birth_year = int(solar[:4]) if solar[:4].isdigit() else None
+    return {"natal": natal, "day_stem": core.natal_facts.day_master.stem, "birth_year": birth_year}
 
 
-def _varied(seen, key, first, again):
-    """같은 연결 문장이 지나온 길에 거듭 나오지 않게: 1번째 원문, 2번째 변형, 3번째부터 생략."""
-    if seen is None:
-        return first
-    seen[key] += 1
-    return {1: first, 2: again}.get(seen[key])
+def _kind_first(info: dict, table: dict, seen: Counter | None = None, young=False) -> tuple[str, str]:
+    """유형 첫 문장과, 뒤따를 문장 키. clash 는 자리별 키(clash:day 등)로 돌려준다."""
+    kind = info["kind"]
+    after_key = kind
+    if kind == "fill":
+        e = info["fills"][0]
+        name = copy.ELEMENT[e]["name"]
+        key = "fill"
+        if seen is not None:
+            seen[f"fill:{e}"] += 1
+            if seen[f"fill:{e}"] > 1:
+                key = "fill_again"
+        return table[key].format(name=name, ja=_j(name, "이/가")), after_key
+    if kind in ("thick", "grow"):
+        e = (info["thick"] or info["grow"])[0]
+        name = copy.ELEMENT[e]["name"]
+        return table[kind].format(name=name, ja=_j(name, "이/가")), after_key
+    if kind == "clash":
+        pos = "day" if "day" in info["clash_pos"] else "month"
+        label = copy.POSITION[pos]
+        return table[kind].format(pos=label, jp=_j(label, "을/를")), f"clash:{pos}"
+    return table[kind], after_key
 
 
-def _relation_line(cycle, young=False) -> str | None:
-    found = set()
-    for change in cycle.get("relationship_changes") or ():
-        pillars = {m.get("pillar") for m in change.get("members", ())}
-        for natal in ("day", "month"):
-            if natal in pillars:
-                found.add(f"{change.get('type')}:{natal}")
-    for key in ("branch_clash:day", "branch_clash:month", "branch_six_combination:day"):
-        if key in found:
-            return (copy.REL_PAST_YOUNG if young else copy.REL_PAST)[key]
-    return None
+def _year_lines(years: list[dict], seen: Counter) -> list[str]:
+    order = ("stem_clash", "clash:day", "clash:month", "triple_punish", "clash:year", "clash:hour", "triple", "stem_combine")
+    out = []
+    for y in years:
+        kinds = ["triple" if k.startswith("triple:") else k for k in y["kinds"]]
+        top = next((k for k in order if k in kinds), None)
+        if top is None:
+            continue
+        table = copy.YEAR_EVENT_CHILD if y["age"] <= 12 else (copy.YEAR_EVENT_YOUNG if y["age"] <= 19 else copy.YEAR_EVENT)
+        pool = table[top]
+        seen[f"year:{id(table)}:{top}"] += 1
+        event = pool[(seen[f"year:{id(table)}:{top}"] - 1) % len(pool)]
+        if top == "triple":
+            e = next(k.split(":")[1] for k in y["kinds"] if k.startswith("triple:"))
+            event = event.format(name=copy.ELEMENT[e]["name"])
+        tpl = copy.YEAR_FIRST if not out else copy.YEAR_SECOND
+        out.append(tpl.format(age=y["age"], event=event))
+    return out
 
 
-def _shaken_year(cycle, day_branch: str | None, this_year: int) -> int | None:
-    if not day_branch or day_branch not in CLASH:
-        return None
-    target = CLASH[day_branch]
-    start, end = cycle.get("start_year"), cycle.get("end_year")
-    if not isinstance(start, int) or not isinstance(end, int):
-        return None
-    for year in range(start, min(end, this_year - 1) + 1):
-        if ZHI[(year - 4) % 12] == target:
-            return year
-    return None
+def _past_article(c, info, years, profile, seen: Counter) -> tuple[str, dict]:
+    god = c.get("ten_god") if c.get("ten_god") in copy.THEME_PAST else "peer"
+    group = copy.GOD_GROUP[god]
+    young = c["start_age"] <= 10                      # 어린 시절이 대부분인 첫 구간만 어린 시절 말로
+    title = copy.PAST_TITLE_YOUNG[group] if young else copy.PAST_TITLE_ADULT[god]
+    if title in seen["titles"]:
+        title, young = copy.PAST_TITLE_ADULT[god], False
+    seen["titles"].add(title)
+    first, after_key = _kind_first(info, copy.KIND_PAST, seen, young)
+    theme = list(copy.THEME_YOUNG[group] if young else copy.THEME_PAST[god])
+    year_lines = _year_lines(years, seen)
+    after = (copy.KIND_PAST_AFTER_YOUNG.get(after_key) if young else None) or copy.KIND_PAST_AFTER.get(after_key)
+    if after_key.startswith("clash") and year_lines:
+        after = None                                  # 흔들린 해가 같은 말을 구체적으로 한다
+    origin_key = "new" if info["new_power"] else "old"
+    seen[f"origin:{origin_key}"] += 1
+    pool = copy.ORIGIN_NEW if info["new_power"] else copy.ORIGIN_OLD
+    origin = pool[0] if seen[f"origin:{origin_key}"] == 1 else (pool[1] if seen[f"origin:{origin_key}"] == 2 else "")
+    if info["kind"] == "fill" and after:
+        origin = ""                                   # '처음 들어온' 말을 두 번 하지 않는다
+    body = _p([first] + theme + [after or ""] + year_lines + [origin], where=f"past.{c['index']}")
+    pillar = c["pillar"]
+    why = [f"대운 {pillar['ganji']} — 천간 {pillar['stem']}({copy.GOD_KO.get(c.get('ten_god'), '')}) · 지지 {pillar['branch']}."]
+    rel_text = _relation_text(info)
+    if rel_text:
+        why.append(rel_text)
+    if years:
+        why.append("크게 걸린 해: " + " · ".join(f"{y['year']}년 {y['ganji']}({_kinds_text(y['kinds'])})" for y in years) + ".")
+    ages = f"{c['start_age']}~{c['end_age']}세"
+    html = (f'<article class="lifetime-sub lifetime-past" data-report-cycle="{c["index"]}" data-cycle-state="past">'
+            f'<h5>{escape(ages)} · {escape(pillar["ganji"])} · {escape(title)}</h5>'
+            f'<p>{escape(body)}</p>' + _why(*why) + '</article>')
+    return html, {"index": c["index"], "kind": info["kind"], "years": [y["year"] for y in years]}
 
 
-def _flow(core, profile, past, now, future, current_selection) -> tuple[str, str | None, dict]:
+_KIND_KO = {"stem_clash": "일간 천간충", "clash:day": "일지 충", "clash:month": "월지 충", "clash:year": "년지 충",
+            "clash:hour": "시지 충", "triple_punish": "삼형 완성", "stem_combine": "일간 합"}
+
+
+def _kinds_text(kinds) -> str:
+    out = []
+    for k in kinds:
+        if k.startswith("triple:"):
+            out.append(f"{k.split(':')[1]} 삼합 완성")
+        else:
+            out.append(_KIND_KO.get(k, k))
+    return "·".join(out)
+
+
+def _relation_text(info) -> str:
+    parts = []
+    if info["fills"]:
+        parts.append("원국에 없던 " + "·".join(info["fills"]) + " 채움")
+    if info["thick"]:
+        parts.append("이미 많은 " + "·".join(info["thick"]) + " 더함")
+    if info["stem_rel"] == "clash":
+        parts.append(f"천간 {info['stem']}이 일간과 충")
+    elif info["stem_rel"] == "combine":
+        parts.append(f"천간 {info['stem']}이 일간과 합")
+    pos_ko = {"year": "년지", "month": "월지", "day": "일지", "hour": "시지"}
+    for kind, pos in info["relations"]:
+        parts.append(f"{info['branch']}–{pos_ko[pos]} " + {"clash": "충", "six": "육합", "punish": "형"}[kind])
+    if info["triples"]:
+        parts.append("·".join(info["triples"]) + " 삼합 완성")
+    return ("원국과의 관계: " + ", ".join(parts) + ".") if parts else "원국 글자와 걸리는 충·합이 없습니다."
+
+
+def _now_article(now, info, profile, missing) -> tuple[str, str]:
+    god = now.get("ten_god") if now.get("ten_god") in copy.THEME_NOW else "peer"
+    label = copy.CYCLE_LABEL[god]
+    kind = info["kind"]
+    first_tpl = copy.KIND_NOW[kind]
+    if kind == "fill":
+        e = info["fills"][0]
+        el = copy.ELEMENT[e]
+        lead = [first_tpl[0].format(name=el["name"], ja=_j(el["name"], "이/가"))]
+        if e in missing:
+            lead.append(first_tpl[1].format(power=el["power"], jw=_j(el["power"], "이/가")))
+    elif kind in ("thick", "grow"):
+        e = (info["thick"] or info["grow"])[0]
+        el = copy.ELEMENT[e]
+        lead = [first_tpl[0].format(name=el["name"], ja=_j(el["name"], "이/가")), first_tpl[1]]
+    elif kind == "clash":
+        pos = "day" if "day" in info["clash_pos"] else "month"
+        label_pos = copy.POSITION[pos]
+        lead = [first_tpl[0].format(pos=label_pos, jp=_j(label_pos, "을/를")), first_tpl[1]]
+    else:
+        lead = list(first_tpl)
+    # 보조 관계: 유형이 아닌 일지·월지 충, 일간 충을 한 문장 덧붙인다
+    extra = []
+    if kind != "clash":
+        for pos in ("day", "month"):
+            if pos in info["clash_pos"]:
+                lp = copy.POSITION[pos]
+                extra.append(copy.NOW_ALSO_CLASH.format(pos=lp))
+                break
+    if kind != "stem_clash" and info["stem_rel"] == "clash":
+        extra.append(copy.NOW_ALSO_STEM)
+    p1 = _p(lead + list(copy.THEME_NOW[god]), where="now.1")
+    means_key = f"clash:{'day' if 'day' in info['clash_pos'] else 'month'}" if kind == "clash" else kind
+    means = copy.MEANS_NOW.get(means_key)
+    if kind == "fill":
+        name = copy.ELEMENT[info["fills"][0]]["name"]
+        means = f"{name}{_j(name, '은/는')} " + means
+    p2 = _p(extra + ([means] if means else []) + [copy.TIP_NOW[god]], where="now.2")
+    pillar = now["pillar"]
+    why = [f"대운 {pillar['ganji']} — 천간 {pillar['stem']} · 지지 {pillar['branch']}, {copy.GOD_KO.get(now.get('ten_god'), '')}.",
+           _relation_text(info)]
+    ages = f'{now["start_age"]}~{now["end_age"]}세'
+    html = (f'<article class="lifetime-sub" data-lifetime-section="current-cycle" data-current-cycle="true" '
+            f'data-report-cycle="{now["index"]}" data-cycle-ages="{ages}">'
+            f'<h4>{escape(copy.NOW_HEADING.format(label=label))}</h4>'
+            f'<p class="lifetime-now-lead">{escape(ages)} · {escape(pillar["ganji"])}</p>'
+            f'<p>{escape(p1)}</p><p>{escape(p2)}</p>' + _why(*why) + '</article>')
+    return html, kind
+
+
+def _next_article(nxt, now, info_next, now_info=None) -> str:
+    god = nxt.get("ten_god") if nxt.get("ten_god") in copy.CYCLE_LABEL else "peer"
+    label = copy.CYCLE_LABEL[god]
+    lines = [copy.NEXT_LEAD.format(start=nxt["start_age"], label=label)]
+    now_god = (now or {}).get("ten_god")
+    now_fills = set(now_info.get("fills", [])) if now_info else set()
+    if info_next["fills"] and info_next["fills"][0] in now_fills:
+        if now_god and copy.GOD_GROUP.get(now_god) == copy.GOD_GROUP.get(god) and now_god != god:
+            plain = copy.GROUP[copy.GOD_GROUP[god]]["plain"]
+            lines.append(copy.NEXT_SAME_GROUP.format(plain=plain, now=copy.CYCLE_LABEL[now_god],
+                                                     nxt_ro=josa(f"'{label}'", "으로/로")))
+        else:
+            lines.append(copy.NEXT_FILL_CONT.format(name=copy.ELEMENT[info_next["fills"][0]]["name"]))
+    elif info_next["fills"]:
+        name = copy.ELEMENT[info_next["fills"][0]]["name"]
+        lines.append(copy.NEXT_FILL.format(name=name, ja=_j(name, "이/가")))
+    elif now_god and copy.GOD_GROUP.get(now_god) == copy.GOD_GROUP.get(god) and now_god != god:
+        plain = copy.GROUP[copy.GOD_GROUP[god]]["plain"]
+        nxt_q = f"'{label}'"
+        lines.append(copy.NEXT_SAME_GROUP.format(plain=plain, now=copy.CYCLE_LABEL[now_god], nxt_ro=josa(nxt_q, "으로/로")))
+    else:
+        plain = copy.GROUP[copy.GOD_GROUP[god]]["plain"]
+        lines.append(copy.NEXT_GROUP.format(plain=plain, ja=_j(plain, "이/가")))
+    lines.append(copy.NEXT_BRIDGE)
+    text = _p(lines, where="next")
+    return (f'<article class="lifetime-sub" data-lifetime-section="upcoming" data-locked="true" '
+            f'data-report-cycle="{nxt["index"]}"><h4>{escape(copy.NEXT_HEADING)}</h4>'
+            f'<p data-cycle-teaser="true">{escape(text)}</p>'
+            f'<p class="reading-caption">🔒 {escape(copy.NEXT_LOCK_NOTE)}</p>'
+            f'<a href="#paywall" data-paywall-cta="lifetime-cycles">대운 전체 풀이 열어보기</a></article>')
+
+
+def _flow(core, profile, past, now, future, missing) -> tuple[str, str | None, dict]:
+    ctx = _flow_ctx(core, profile)
+    natal, day_stem, birth_year = ctx["natal"], ctx["day_stem"], ctx["birth_year"]
+    this_year = date.today().year
     rows = []
-    for c in past + ([now] if now else []) + [f for f in future if f.get("start_age", 0) < 90]:
+    shown = past + ([now] if now else []) + [f for f in future if f.get("start_age", 0) < 90]
+    for c in shown:
         is_now = now is not None and c.get("index") == now.get("index")
-        god = copy.GOD_KO.get(c.get("ten_god"), "")
-        mark = f' <span class="lifetime-now-mark">{copy.NOW_MARK}</span>' if is_now else ""
-        rows.append(f'<tr{" class=\"is-now\"" if is_now else ""}><td>{c["start_age"]}~{c["end_age"]}세</td>'
-                    f'<td>{escape(c["pillar"]["ganji"])}</td><td>{escape(god)}{mark}</td></tr>')
+        is_next = bool(future) and c.get("index") == future[0].get("index")
+        mark = copy.NOW_MARK if is_now else (copy.NEXT_MARK if is_next else (copy.PAST_MARK if c in past else ""))
+        god = c.get("ten_god") if c.get("ten_god") in copy.CYCLE_LABEL else None
+        label = copy.CYCLE_LABEL[god] if god else ""
+        cls = ' class="is-now"' if is_now else ""
+        rows.append(f'<tr{cls}><td>{c["start_age"]}~{c["end_age"]}</td>'
+                    f'<td>{escape(c["pillar"]["ganji"])}</td><td>{escape(label)}</td><td>{escape(mark)}</td></tr>')
     head = "".join(f"<th>{h}</th>" for h in copy.TABLE_HEAD)
     table = f'<table class="lifetime-cycles"><thead><tr>{head}</tr></thead><tbody>{"".join(rows)}</tbody></table>'
 
-    day = core.natal_facts.pillars.get("day")
-    this_year = date.today().year
-    past_items, past_meta = [], []
-    seen: Counter = Counter()
-    for c in past:
-        young = c["end_age"] <= 20
-        god = c.get("ten_god") if c.get("ten_god") in copy.PAST_ADULT else "peer"
-        theme = copy.PAST_YOUNG[copy.GOD_GROUP[god]] if young else copy.PAST_ADULT[god]
-        link, link_key = _link(c, profile, seen=seen)
-        rel = _relation_line(c, young)
-        day_clash = rel in (copy.REL_PAST["branch_clash:day"], copy.REL_PAST_YOUNG["branch_clash:day"])
-        year = None if day_clash else _shaken_year(c, day.branch if day else None, this_year)
-        shaken = None
-        if year:
-            shaken = copy.SHAKEN_YEAR[min(seen["shaken"], len(copy.SHAKEN_YEAR) - 1)].format(year=year)
-            seen["shaken"] += 1
-        extra = rel or shaken
-        text = _p([theme, link or "", extra or ""], where=f"past.{c['index']}")
-        past_items.append(f'<li><strong>{c["start_age"]}~{c["end_age"]}세 · {escape(c["pillar"]["ganji"])}</strong> {escape(text)}</li>')
-        past_meta.append(dict(index=c["index"], link=link_key, relation=bool(rel), shaken_year=year))
-
     parts = [f"<p>{escape(copy.FLOW_INTRO)}</p>", table]
-    if past_items:
-        parts.append(f'<h4>{copy.PAST_TITLE}</h4><ul class="lifetime-past">{"".join(past_items)}</ul>')
-    now_link_key = None
+    seen: Counter = Counter()
+    seen["titles"] = set()
+    past_meta = []
+    if past:
+        items = []
+        for c in past:
+            info = flow.classify_cycle(c, profile, natal, day_stem)
+            years = flow.shaken_years(c, natal, day_stem, birth_year, this_year) if birth_year else []
+            html, meta = _past_article(c, info, years, profile, seen)
+            items.append(html)
+            past_meta.append(meta)
+        parts.append(f'<h4>{escape(copy.PAST_TITLE)}</h4>' + "".join(items))
+    now_kind = None
+    now_info = None
     if now is not None:
-        god = (current_selection or {}).get("focal_god") or now.get("ten_god")
-        reading = cycle_copy.compose_current(god, None)
-        link, now_link_key = _link(now, profile, now=True)
-        lead = copy.NOW_LEAD.format(start=now["start_age"], end=now["end_age"], ganji=now["pillar"]["ganji"])
-        parts.append(
-            f'<h4>{copy.NOW_TITLE}</h4><article data-lifetime-section="current-cycle" data-current-cycle="true" '
-            f'data-report-cycle="{now["index"]}"><p class="lifetime-now-headline"><strong>{escape(reading["headline"])}</strong></p>'
-            f'<p class="lifetime-now-lead">{escape(lead)}{(" " + escape(link)) if link else ""}</p>'
-            f'<p>{escape(reading["core"])}</p><p>{escape(reading["tip"])}</p></article>')
+        now_info = flow.classify_cycle(now, profile, natal, day_stem)
+        html, now_kind = _now_article(now, now_info, profile, missing)
+        parts.append(html)
     if future:
-        nxt = future[0]
-        current_god = now.get("ten_god") if now else None
-        hook = cycle_copy.teaser(nxt["start_age"], nxt.get("ten_god"), current_god)
-        parts.append(
-            f'<h4>{copy.NEXT_TITLE}</h4><article data-lifetime-section="upcoming" data-locked="true" '
-            f'data-report-cycle="{nxt["index"]}"><p data-cycle-teaser="true"><strong>{escape(hook)}</strong></p>'
-            f'<p class="reading-caption">🔒 {escape(copy.NEXT_LOCK_NOTE)}</p>'
-            f'<a href="#paywall" data-paywall-cta="lifetime-cycles">{escape(cycle_copy.CTA_LABEL)}</a></article>')
-    return "".join(parts), now_link_key, {"past": past_meta}
+        parts.append(_next_article(future[0], now, flow.classify_cycle(future[0], profile, natal, day_stem), now_info))
+    meta = {"past": past_meta, "now_kind": now_kind,
+            "now_fill": (now_info or {}).get("fills", [])[:1]}
+    return "".join(parts), now_kind, meta
 
 
 # ---------------------------------------------------------------------------
@@ -492,11 +694,12 @@ def build_lifetime_v3(core: MyeongriCoreResult, user_name: str, *, past, now, fu
     visible = sorted(("식상", "재성", "비겁"), key=lambda g: -profile["groups"][g]["main"])
     cands = [bank.ALL_ROWS[_group_row(g, "many")] for g in visible if profile["groups"][g]["state"] == "many"]
     cands += shensha_rows(profile)
-    cands += [r for r in ordered if r.get("state") in ("many", "few")]
+    cands += [r for r in ordered if r.get("state") == "many"]
+    cands += [r for r in ordered if r.get("state") == "few"]
     b16_used = "B16" in used
     first_seen = []
     for r in cands:
-        if len(first_seen) >= 2:
+        if len(first_seen) >= 2 or (first_seen and r.get("state") == "few"):
             break
         if r["key"] in used or (b16_used and r.get("group") in ("재성", "비겁")):
             continue
@@ -513,7 +716,7 @@ def build_lifetime_v3(core: MyeongriCoreResult, user_name: str, *, past, now, fu
     html = head + _section("map", next(numbering), map_html)
 
     sec = next(numbering)
-    core_parts = [f"<p>{escape(copy.CORE_INTRO.format(name=name, n=len(core_picks)))}</p>"]
+    core_parts = [f"<p>{escape(copy.CORE_INTRO.format(name=name, n=copy.COUNT_KO.get(len(core_picks), len(core_picks))))}</p>"]
     for i, (row, mode) in enumerate(core_picks, 1):
         if mode == "main":
             heading = f"{sec}-{i}. '{row['label']}'"
@@ -529,28 +732,34 @@ def build_lifetime_v3(core: MyeongriCoreResult, user_name: str, *, past, now, fu
             parts.append(_row_block(row, profile, seed, 11 + i * 2, f"{sec}-{i}. '{row['label']}'"))
         html += _section("first-seen", sec, "".join(parts))
 
-    domains_html, domain_meta = _domains(core, profile, climate)
-    html += _section("domains", next(numbering), domains_html)
+    sec = next(numbering)
+    domains_html, domain_meta = _domains(core, profile, climate, sec)
+    html += _section("domains", sec, domains_html)
 
-    flow_html, now_link, flow_meta = _flow(core, profile, past, now, future, current_selection)
+    flow_html, now_kind, flow_meta = _flow(core, profile, past, now, future, map_meta["missing"])
     html += _section("flow", next(numbering), flow_html)
 
+    # 6. 한마디 — 일간 비유 + 대표 결 + 빌려 쓰는 것 + 지금 10년 + 마무리 한 줄
     top = core_picks[0][0]
-    closing = [copy.CLOSING_LEAD.format(name=name, label=top["label"])]
-    if now is not None:
-        if now_link and now_link.startswith("fill:"):
-            nm = copy.ELEMENT[now_link[5:]]["name"]
-            closing.append(copy.CLOSING_FILL.format(name=nm, josa=josa(nm, "이/가")[len(nm):]))
-        elif now_link and now_link.startswith("thick:"):
-            closing.append(copy.CLOSING_THICK)
-        else:
-            closing.append(copy.CLOSING_GROUP[copy.GOD_GROUP.get(now.get("ten_god"), "비겁")])
-    closing.append(copy.CLOSING_END if map_meta["missing"] else copy.CLOSING_END_FULL)
+    closing = [copy.CLOSING_LEAD.format(name=name, day=day_row["label"], label=top["label"])]
+    if map_meta["missing"]:
+        plains = [copy.ELEMENT[e]["plain"] for e in map_meta["missing"]]
+        joined = plains[0] if len(plains) == 1 else josa(plains[0], "과/와") + " " + plains[1]
+        closing.append(copy.CLOSING_MISSING.format(plains=joined, ja=_j(joined, "은/는")))
+    if now_kind:
+        line = copy.CLOSING_NOW[now_kind]
+        if now_kind == "fill" and flow_meta["now_fill"]:
+            nm = copy.ELEMENT[flow_meta["now_fill"][0]]["name"]
+            line = line.format(name=nm, ja=_j(nm, "이/가"))
+        closing.append(line)
+        if now_kind in copy.CLOSING_NUDGE:
+            closing.append(copy.CLOSING_NUDGE[now_kind])
+    closing.append(copy.CLOSING_APHORISM[profile["day_element"]])
     html += _section("closing", next(numbering), f'<p class="lifetime-closing">{escape(_p(closing, where="closing"))}</p>')
 
     evidence = {
         "rows": [r["key"] for r, _ in core_picks], "first_seen": [r["key"] for r in first_seen],
-        "map": map_meta, "domains": domain_meta, "flow": flow_meta, "now_link": now_link,
+        "map": map_meta, "domains": domain_meta, "flow": flow_meta, "now_kind": now_kind,
         "hour_confidence": profile["hour_confidence"],
     }
     return {"html": html, "evidence": evidence, "version": V3_VERSION, "copy_version": copy.COPY_VERSION}
