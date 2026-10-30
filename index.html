@@ -550,7 +550,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;600;700&display=swap" rel="stylesheet">
     <link id="dalhaBrandStyles" rel="stylesheet" href="/assets/brand-2026/brand.css?v=20261010-1">
-    <link rel="stylesheet" href="/assets/reading-polish.css?v=20261025-1">
+    <link rel="stylesheet" href="/assets/reading-polish.css?v=20261030-1">
     <link rel="stylesheet" href="/assets/daily-card.css?v=20261027-1">
     <script src="/assets/reading-polish.js?v=20261001-1" defer></script>
     <script src="/assets/brand-2026/brand-ui.js?v=20261001-4" defer></script>
@@ -3350,7 +3350,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
         }
 
         const ANNUAL_NARRATIVE_VERSION = 'annual-v2';
-        const LIFETIME_NARRATIVE_VERSION = 'lifetime-present-v4';
+        const LIFETIME_NARRATIVE_VERSION = 'lifetime-v3';
         const THEME_NARRATIVE_VERSION = 'theme-present-v2';
         // 서버(main.py refresh_owned_report)의 target_version 과 같아야 한다. 다르면 새로 받아도
         // '구매한 풀이 새로 받기' 버튼이 사라지지 않는다. backend/tests/test_report_version_sync.py 가 검사.
@@ -3885,11 +3885,15 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             tpl.content.querySelectorAll('[data-paywall-cta]').forEach(a => {
                 const note = document.createElement('span'); note.className = 'lock-soon'; note.textContent = '다음 대운 풀이는 준비 중이에요'; a.replaceWith(note);
             });
+            box.replaceChildren();
+            box.classList.add('daewoon-free');
+            // v3(B안): 원국표부터 한마디까지 한 편의 글이라 통째로 싣는다. 대운 표가 들어 있어 아래 '참고' 카드는 숨긴다.
+            const v3 = tpl.content.querySelector('[data-lifetime-v3]');
+            document.getElementById('saju-life')?.classList.toggle('hidden', Boolean(v3));
+            if (v3) { box.append(v3); box.classList.remove('hidden'); return; }
             const cur = tpl.content.querySelector('[data-lifetime-section="current-cycle"]');
             const up = tpl.content.querySelector('[data-lifetime-section="upcoming"]');
             const nature = tpl.content.querySelector('[data-lifetime-section="nature"]');
-            box.replaceChildren();
-            box.classList.add('daewoon-free');
             if (cur) box.append(cur);
             if (up) box.append(up);
             if (nature) {

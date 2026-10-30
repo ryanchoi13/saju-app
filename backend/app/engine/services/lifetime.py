@@ -18,6 +18,7 @@ from app.engine.services.annual_editorial import GROUPS, GENERAL_TITLES, scene
 from app.engine.services.annual_copy import sanitize_paragraph
 from app.engine.services import lifetime_copy as copy
 from app.engine.services.now_me import build_now_me, NOW_ME_VERSION
+from app.engine.services.lifetime_v3 import build_lifetime_v3
 
 from app.engine.core.models import MyeongriCoreResult
 from app.engine.semantic.applied import recommended_directions
@@ -26,7 +27,8 @@ from app.engine.semantic import build_service_query
 from app.engine.semantic.overall import select_overall_domains, OVERALL_VERSION
 
 
-LIFETIME_NARRATIVE_VERSION = "lifetime-present-v4"
+LIFETIME_NARRATIVE_VERSION = "lifetime-v3"
+LEGACY_V4_VERSION = "lifetime-present-v4"  # v3 조립이 실패했을 때만
 SHOW_PAST_CHIP = True  # False 로 두면 지나간 대운은 흔적도 남기지 않는다.
 logger = logging.getLogger(__name__)
 
@@ -250,6 +252,51 @@ def build_lifetime_overall_report(
     core: MyeongriCoreResult,
     user_name: str,
 ) -> dict[str, str]:
+    """평생운세 v3(B안). 조립이 실패하면 v4(현재 대운 + 지금의 나)로 되돌린다."""
+    query = build_service_query(core, "lifetime_overall")
+    luck = query["timing"]["luck_cycles"]
+    past, now, future = _split_cycles(luck)
+    current_selection = select_overall_domains(core, "luck_cycle", cycle=now) if now is not None else None
+    try:
+        v3 = build_lifetime_v3(core, user_name, past=past, now=now, future=future,
+                               current_selection=current_selection,
+                               climate=query["synthesis"]["climate_state"].get("state"))
+    except Exception:  # noqa: BLE001 - 문구 검증 실패 등. 빈 화면보다 옛 구성이 낫다.
+        logger.exception("lifetime v3 조립 실패 — v4 로 대체")
+        return _build_v4(core, user_name)
+    name = escape(user_name or "회원")
+    day = core.natal_facts.day_master
+    structure_raw = query["synthesis"]["overall_structure"].get("ordinary")
+    structure = _STRUCTURE.get(structure_raw, structure_raw or "판정 보류")
+    strength = _STRENGTH.get(query["synthesis"].get("strength_state"), "판정 보류")
+    climate = _CLIMATE.get(query["synthesis"]["climate_state"].get("state"), "판정 보류")
+    direction = "순행" if luck.get("direction") == "forward" else "역행"
+    summaries = [dict(index=c["index"], start_age=c["start_age"], end_age=c["end_age"], state="past") for c in past]
+    if now is not None:
+        summaries.append(dict(index=now["index"], start_age=now["start_age"], end_age=now["end_age"], state="current"))
+    summaries += [dict(index=c["index"], start_age=c["start_age"], end_age=c["end_age"],
+                       state="next" if i == 0 else "later", locked=True) for i, c in enumerate(future)]
+    content = (
+        f'<div class="long-reading lifetime-v3" data-lifetime-v3="1" data-overall-version="{OVERALL_VERSION}" '
+        f'data-narrative-version="{LIFETIME_NARRATIVE_VERSION}" data-copy-version="{v3["copy_version"]}">'
+        + v3["html"] +
+        '<details class="reading-evidence"><summary>이 풀이의 근거 · 명리 용어 포함</summary>'
+        f'<p>일간 {day.stem}({day.element}) · {structure} · {strength} · {climate}. 대운은 {direction}입니다.</p>'
+        f'<p>종합 판단의 보완 방향: {_operation_text(query)}</p></details>'
+        + _uncertainty_html(core) +
+        '<p class="reading-caption">원국과 대운을 바탕으로 한 해석입니다. 중요한 결정은 현실의 정보도 함께 확인해 주세요.</p></div>')
+    return {"analysis_basis": state_basis(query["applied_state"]), "title": f"{name}님 정통 명리 평생운세 · 성향과 흐름",
+            "content": content, "engine_version": OVERALL_VERSION, "narrative_version": LIFETIME_NARRATIVE_VERSION,
+            "copy_version": v3["copy_version"], "now_me_version": None,
+            # 잠긴 대운의 해석 결과는 넣지 않는다: 이 dict가 클라이언트로 나가면 유료 내용이 샌다.
+            "evidence_summary": {"natal": select_overall_domains(core, "natal"), "current": current_selection,
+                                 "cycles": summaries, "v3": v3["evidence"]}}
+
+
+def _build_v4(
+    core: MyeongriCoreResult,
+    user_name: str,
+) -> dict[str, str]:
     """Render only claims supported by natal facts and the current luck cycle."""
 
     query = build_service_query(core, "lifetime_overall")
@@ -299,7 +346,7 @@ def build_lifetime_overall_report(
 
     content = (
         f'<div class="long-reading" data-overall-version="{OVERALL_VERSION}" '
-        f'data-narrative-version="{LIFETIME_NARRATIVE_VERSION}" data-copy-version="{copy.COPY_VERSION}">'
+        f'data-narrative-version="{LEGACY_V4_VERSION}" data-copy-version="{copy.COPY_VERSION}">'
         + current_html + nature_html + upcoming_html +
         '<details class="reading-evidence"><summary>이 풀이의 근거 · 명리 용어 포함</summary>'
         f'<p>일간 {day.stem}({day.element}) · {structure} · {strength} · {climate}. 대운은 {direction}입니다.</p>'
@@ -309,7 +356,7 @@ def build_lifetime_overall_report(
         + _uncertainty_html(core) +
         '<p class="reading-caption">원국과 현재 대운을 바탕으로 한 해석입니다. 실제 건강과 중요한 결정은 현실의 정보도 함께 확인해 주세요.</p></div>')
     return {"analysis_basis": state_basis(query["applied_state"]), "title": title, "content": content,
-            "engine_version": OVERALL_VERSION, "narrative_version": LIFETIME_NARRATIVE_VERSION,
+            "engine_version": OVERALL_VERSION, "narrative_version": LEGACY_V4_VERSION,
             "copy_version": copy.COPY_VERSION, "now_me_version": now_me_version,
             # 잠긴 대운의 해석 결과(selection)는 넣지 않는다: 이 dict가 클라이언트로 나가면 유료 내용이 샌다.
             "evidence_summary": {"natal": selection, "current": current_selection, "cycles": cycle_summaries,
