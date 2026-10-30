@@ -368,6 +368,15 @@ def calculate_biorhythm(birth_year: int, birth_month: int, birth_day: int, targe
 def with_wa_gwa(word: str):
     return josa(word, "과/와")
 
+def _public_saju(saju_res):
+    """daily_fortune.evidence_summary(풀이 근거, 약 8KB)는 화면이 읽지 않는 디버깅용 값이다.
+    공개 응답에서는 빼고, 서버 환경변수 DALHA_ENABLE_DEBUG_ENDPOINTS=1 일 때만 그대로 내보낸다."""
+    daily = saju_res.get("daily_fortune") if isinstance(saju_res, dict) else None
+    if os.getenv("DALHA_ENABLE_DEBUG_ENDPOINTS") == "1" or not isinstance(daily, dict) or "evidence_summary" not in daily:
+        return saju_res
+    return {**saju_res, "daily_fortune": {k: v for k, v in daily.items() if k != "evidence_summary"}}
+
+
 def get_saju_pillars_and_analysis(name: str, gender: str, y: int, m: int, d: int, cal_type: str, sijin: int, menu_account_id: str | None = None, weather_profile: dict | None = None, birth_hour: int | None = None, birth_minute: int | None = None):
     backend_calendar_type = "lunar" if cal_type in ["lunar", "leap"] else "solar"
     backend_is_leap = (cal_type == "leap")
@@ -917,7 +926,7 @@ def auth_kakao(req: KakaoAuthRequest, response: Response = None, request: Reques
             "coin_balance": user["coin"],
             "unlocked_reports": reports_db.get(user_id, []),
             **wardrobe,
-            "saju_analysis": saju_res,
+            "saju_analysis": _public_saju(saju_res),
             "profile": _public_profile(user),
             "tarot_state": tarot_service.get_state(user_id),
         }
@@ -996,7 +1005,7 @@ def register_saju(req: RegisterSajuRequest):
     return {
         "status": "success",
         "coin_balance": users_db[req.user_id]["coin"],
-        "saju_analysis": saju_res,
+        "saju_analysis": _public_saju(saju_res),
         "profile": _public_profile(users_db[req.user_id]),
     }
 

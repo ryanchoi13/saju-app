@@ -189,3 +189,21 @@ class AccountSecurityTests(TestCase):
         self.assertEqual(r.status_code,503)
         assets=wallet_store.load('user_qa-owner')
         self.assertEqual(assets['balance'],1000);self.assertEqual(assets['reports'],[])
+
+    def _daily_after_register(self, debug_flag):
+        fake={'daily_fortune':{'grade':'좋음','evidence_summary':{'overall':{'version':'x'}}}}
+        with patch.dict(os.environ,{'DALHA_ENABLE_DEBUG_ENDPOINTS':debug_flag}), \
+             patch.object(main,'get_saju_pillars_and_analysis',return_value=fake):
+            self.login();self.register()
+            return (self.client.post('/api/user/register-saju',json=dict(user_id='user_qa-owner',name='가상사용자',
+                    gender='female',birth_year=1992,birth_month=9,birth_day=21,calendar_type='solar',sijin_index=-1)
+                    ).json()['saju_analysis']['daily_fortune'],
+                    self.client.get('/api/auth/session').json()['saju_analysis']['daily_fortune'])
+
+    def test_evidence_summary_hidden_from_public_responses(self):
+        # 화면이 안 읽는 디버깅용 값(약 8KB)이라 공개 응답에서 뺀다.
+        self.assertEqual(self._daily_after_register(''),({'grade':'좋음'},{'grade':'좋음'}))
+
+    def test_evidence_summary_shown_only_with_debug_flag(self):
+        registered,resumed=self._daily_after_register('1')
+        self.assertIn('evidence_summary',registered);self.assertIn('evidence_summary',resumed)
