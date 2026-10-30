@@ -8,124 +8,189 @@ html[data-brand] {
 }
 
 /* ---- 공통 카드: 홈의 흰 카드는 모두 이 모양 ---- */
-html[data-brand] #view-today .dh-card,
-html[data-brand] #view-today .menu-curation,
-html[data-brand] #view-today .biorhythm-card,
-html[data-brand] #view-today .drawer-card {
+html[data-brand] body #view-today .dh-card,
+html[data-brand] body #view-today .menu-curation,
+html[data-brand] body #view-today .biorhythm-card,
+html[data-brand] body #view-today .drawer-card {
   background:var(--ui-surface)!important; border:1px solid var(--ui-line)!important; border-radius:16px;
   padding:22px 20px!important; box-shadow:none; text-align:left;
   display:flex; flex-direction:column; gap:var(--dh-gap);
 }
-html[data-brand] #view-today .drawer-card { padding:0!important; gap:0; border-radius:16px!important; overflow:hidden; margin:0!important; }
-html[data-brand] #view-today .drawer-card[hidden] { display:none!important; }
+html[data-brand] body #view-today .drawer-card { padding:0!important; gap:0; border-radius:16px!important; overflow:hidden; margin:0!important; }
+html[data-brand] body #view-today .drawer-card[hidden] { display:none!important; }
 
 /* 카드 머리: 아이콘 상자 없이 제목 + 한 줄 설명 */
-html[data-brand] #view-today .dh-head { display:block; border:0!important; padding:0!important; margin:0!important; }
-html[data-brand] #view-today .dh-head h4,
-html[data-brand] #view-today .menu-curation h4,
-html[data-brand] #view-today .dh-bio-title,
-html[data-brand] #view-today .drawer-title {
+html[data-brand] body #view-today .dh-head { display:block; border:0!important; padding:0!important; margin:0!important; }
+html[data-brand] body #view-today .dh-head h4,
+html[data-brand] body #view-today .menu-curation h4,
+html[data-brand] body #view-today .dh-bio-title,
+html[data-brand] body #view-today .drawer-title {
   font-family:'Pretendard',sans-serif!important; font-size:18px!important; font-weight:700!important;
   letter-spacing:-.4px!important; line-height:1.45!important; color:var(--ui-ink)!important; margin:0!important;
 }
-html[data-brand] #view-today .dh-head p,
-html[data-brand] #view-today .drawer-sub { margin:4px 0 0!important; font-size:13px!important; line-height:1.6; color:var(--ui-muted)!important; }
+html[data-brand] body #view-today .dh-head p,
+html[data-brand] body #view-today .drawer-sub { margin:4px 0 0!important; font-size:13px!important; line-height:1.6; color:var(--ui-muted)!important; }
 
 /* 홈에서는 이름·생일 줄을 뺀다(나의 사주 탭 위에 같은 정보가 있음). 날짜 → 한 줄이 화면을 연다 */
-html[data-brand] #view-today .user-profile-bar { display:none!important; }
-html[data-brand] #view-today .dc3-intro { padding-top:8px; }
-html[data-brand] #view-today .dc3-card { margin-bottom:6px; }
+html[data-brand] body #view-today .user-profile-bar { display:none!important; }
+html[data-brand] body #view-today .dc3-intro { padding-top:8px; }
+html[data-brand] body #view-today .dc3-card { margin-bottom:6px; }
 
 /* ---- 오늘의 행운: 세 칸 한 줄, 칸 사이 가는 선 ---- */
-html[data-brand] #dhLuckCard .dh-luck-list {
+html[data-brand] body #dhLuckCard .dh-luck-list {
   display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:0; margin:0;
   border-top:1px solid var(--ui-line); padding-top:14px;
 }
-html[data-brand] #dhLuckCard .grid-cell { grid-column:auto!important; margin:0!important; background:transparent!important; border:0!important; border-radius:0!important; padding:0 12px!important; min-width:0; }
-html[data-brand] #dhLuckCard .grid-cell:first-child { padding-left:0!important; }
-html[data-brand] #dhLuckCard .grid-cell + .grid-cell { border-left:1px solid var(--ui-line)!important; }
-html[data-brand] #dhLuckCard dt { font-size:12px; color:var(--ui-muted); font-weight:500; }
-html[data-brand] #dhLuckCard dd { margin:4px 0 0; font-size:15px!important; line-height:1.55!important; font-weight:650; color:var(--ui-ink); word-break:keep-all; overflow-wrap:anywhere; }
-html[data-brand] #dhLuckCard .lucky-item-art,
-html[data-brand] #dhLuckCard img { max-width:56px; margin-top:8px; }
+html[data-brand] body #dhLuckCard .grid-cell { grid-column:auto!important; margin:0!important; background:transparent!important; border:0!important; border-radius:0!important; padding:0 12px!important; min-width:0; }
+html[data-brand] body #dhLuckCard .grid-cell:first-child { padding-left:0!important; }
+html[data-brand] body #dhLuckCard .grid-cell + .grid-cell { border-left:1px solid var(--ui-line)!important; }
+html[data-brand] body #dhLuckCard dt { font-size:12px; color:var(--ui-muted); font-weight:500; }
+html[data-brand] body #dhLuckCard dd { margin:4px 0 0; font-size:15px!important; line-height:1.55!important; font-weight:650; color:var(--ui-ink); word-break:keep-all; overflow-wrap:anywhere; }
+html[data-brand] body #dhLuckCard .lucky-item-art,
+html[data-brand] body #dhLuckCard img { max-width:56px; margin-top:8px; }
 
 /* ---- 오늘, 기억할 한 가지: 노란 경고 상자 대신 세이지 메모 ---- */
-html[data-brand] #view-today .dh-note {
+html[data-brand] body #view-today .dh-note {
   background:var(--brand-sage)!important; border:0!important; border-radius:16px; padding:18px 20px!important; text-align:left;
 }
-html[data-brand] #view-today .dh-note { border-left:0!important; margin-top:0!important; }
-html[data-brand] #view-today .action-card.dh-note > .dh-note-label { display:block; font-size:13px!important; font-weight:600; color:#47574A!important; margin-bottom:6px!important; }
-html[data-brand] #view-today .dh-note p { margin:0; color:var(--ui-ink)!important; font-size:15px!important; line-height:1.7!important; font-weight:500; word-break:keep-all; }
+html[data-brand] body #view-today .dh-note { border-left:0!important; margin-top:0!important; }
+html[data-brand] body #view-today .action-card.dh-note > .dh-note-label { display:block; font-size:13px!important; font-weight:600; color:#47574A!important; margin-bottom:6px!important; }
+html[data-brand] body #view-today .dh-note p { margin:0; color:var(--ui-ink)!important; font-size:15px!important; line-height:1.7!important; font-weight:500; word-break:keep-all; }
 
 /* ---- 바이오리듬: 원색 대신 오행 색 세 가지, 범례는 짧은 선 ---- */
-html[data-brand] #view-today .biorhythm-card > div:first-child { display:flex; justify-content:space-between; align-items:center; gap:12px; }
-html[data-brand] #view-today .dh-bio-days { font-size:12px; color:var(--ui-muted); font-weight:500; background:transparent; padding:0; }
-html[data-brand] #view-today .bio-legend-box { justify-content:flex-start; gap:18px; font-size:13px; font-weight:500; color:var(--ui-muted); }
-html[data-brand] #view-today .bio-k { display:inline-flex; align-items:center; gap:6px; }
-html[data-brand] #view-today .bio-k::before { content:''; width:14px; height:2px; border-radius:2px; background:currentColor; }
-html[data-brand] #view-today .bio-k-p::before { background:var(--el-fire); }
-html[data-brand] #view-today .bio-k-e::before { background:var(--el-wood); }
-html[data-brand] #view-today .bio-k-i::before { background:var(--el-water); }
-html[data-brand] #view-today .dh-bio-chart { background:var(--ui-page); border-radius:12px; padding:10px 8px 8px; }
-html[data-brand] #view-today .dh-bio-axis { display:flex; justify-content:space-between; font-size:11px; color:var(--ui-muted); padding:4px 4px 0; }
-html[data-brand] #view-today .dh-bio-today { color:var(--ui-ink); font-weight:650; }
-html[data-brand] #view-today .bio-pill-grid { gap:0; border-top:1px solid var(--ui-line); padding-top:12px; }
-html[data-brand] #view-today .bio-pill-cell { background:transparent!important; border:0!important; padding:0 4px!important; text-align:left; }
-html[data-brand] #view-today .bio-pill-cell + .bio-pill-cell { border-left:1px solid var(--ui-line)!important; padding-left:12px!important; }
-html[data-brand] #view-today .bio-pill-k { display:block; font-size:12px; color:var(--ui-muted); }
-html[data-brand] #view-today .bio-v { display:block; font-size:14px; font-weight:650; margin-top:2px; }
-html[data-brand] #view-today .bio-v-p { color:var(--el-fire); }
-html[data-brand] #view-today .bio-v-e { color:var(--el-wood); }
-html[data-brand] #view-today .bio-v-i { color:var(--el-water); }
-html[data-brand] #view-today .dh-bio-read { font-size:14px; line-height:1.7; color:var(--ui-ink); }
-html[data-brand] #view-today .dh-bio-read-k { display:block; font-size:12px; font-weight:600; color:var(--ui-muted); margin-bottom:2px; }
+html[data-brand] body #view-today .biorhythm-card > div:first-child { display:flex; justify-content:space-between; align-items:center; gap:12px; }
+html[data-brand] body #view-today .dh-bio-days { font-size:12px; color:var(--ui-muted); font-weight:500; background:transparent; padding:0; }
+html[data-brand] body #view-today .bio-legend-box { justify-content:flex-start; gap:18px; font-size:13px; font-weight:500; color:var(--ui-muted); }
+html[data-brand] body #view-today .bio-k { display:inline-flex; align-items:center; gap:6px; }
+html[data-brand] body #view-today .bio-k::before { content:''; width:14px; height:2px; border-radius:2px; background:currentColor; }
+html[data-brand] body #view-today .bio-k-p::before { background:var(--el-fire); }
+html[data-brand] body #view-today .bio-k-e::before { background:var(--el-wood); }
+html[data-brand] body #view-today .bio-k-i::before { background:var(--el-water); }
+html[data-brand] body #view-today .dh-bio-chart { background:var(--ui-page); border-radius:12px; padding:10px 8px 8px; }
+html[data-brand] body #view-today .dh-bio-axis { display:flex; justify-content:space-between; font-size:11px; color:var(--ui-muted); padding:4px 4px 0; }
+html[data-brand] body #view-today .dh-bio-today { color:var(--ui-ink); font-weight:650; }
+html[data-brand] body #view-today .bio-pill-grid { gap:0; border-top:1px solid var(--ui-line); padding-top:12px; }
+html[data-brand] body #view-today .bio-pill-cell { background:transparent!important; border:0!important; padding:0 4px!important; text-align:left; }
+html[data-brand] body #view-today .bio-pill-cell + .bio-pill-cell { border-left:1px solid var(--ui-line)!important; padding-left:12px!important; }
+html[data-brand] body #view-today .bio-pill-k { display:block; font-size:12px; color:var(--ui-muted); }
+html[data-brand] body #view-today .bio-v { display:block; font-size:14px; font-weight:650; margin-top:2px; }
+html[data-brand] body #view-today .bio-v-p { color:var(--el-fire); }
+html[data-brand] body #view-today .bio-v-e { color:var(--el-wood); }
+html[data-brand] body #view-today .bio-v-i { color:var(--el-water); }
+html[data-brand] body #view-today .dh-bio-read { font-size:14px; line-height:1.7; color:var(--ui-ink); }
+html[data-brand] body #view-today .dh-bio-read-k { display:block; font-size:12px; font-weight:600; color:var(--ui-muted); margin-bottom:2px; }
 
 /* ---- 부적: 서랍 머리를 다른 카드 머리와 같게, 펼친 안쪽은 아이보리 ---- */
-html[data-brand] #view-today .drawer-header { padding:20px!important; background:transparent!important; }
-html[data-brand] #view-today .drawer-header:hover { background:transparent!important; }
-html[data-brand] #view-today .drawer-icon-circle { display:none; }
-html[data-brand] #view-today .drawer-arrow { color:var(--ui-muted); font-size:11px; }
-html[data-brand] #view-today .drawer-body { padding:0 20px 20px!important; border-top:0!important; }
-html[data-brand] #view-today .talisman-banner { background:var(--ui-page)!important; border:0!important; border-radius:12px; padding:18px!important; gap:14px; }
-html[data-brand] #view-today .talisman-art { background:transparent!important; border:0!important; }
-html[data-brand] .dh-talisman-title { font-family:var(--brand-serif); font-size:16px; font-weight:600; color:var(--ui-ink); margin:0; }
-html[data-brand] .dh-talisman-note { font-size:13px!important; line-height:1.7; color:var(--ui-muted)!important; margin:0; }
+html[data-brand] body #view-today .drawer-header { padding:20px!important; background:transparent!important; }
+html[data-brand] body #view-today .drawer-header:hover { background:transparent!important; }
+html[data-brand] body #view-today .drawer-icon-circle { display:none; }
+html[data-brand] body #view-today .drawer-arrow { color:var(--ui-muted); font-size:11px; }
+html[data-brand] body #view-today .drawer-body { padding:0 20px 20px!important; border-top:0!important; }
+html[data-brand] body #view-today .talisman-banner { background:var(--ui-page)!important; border:0!important; border-radius:12px; padding:18px!important; gap:14px; }
+html[data-brand] body #view-today .talisman-art { background:transparent!important; border:0!important; }
+html[data-brand] body .dh-talisman-title { font-family:var(--brand-serif); font-size:16px; font-weight:600; color:var(--ui-ink); margin:0; }
+html[data-brand] body .dh-talisman-note { font-size:13px!important; line-height:1.7; color:var(--ui-muted)!important; margin:0; }
 
 /* ---- 버튼·칩 ---- */
-html[data-brand] .dh-btn,
-html[data-brand] .talisman-banner > button.dh-btn {
+html[data-brand] body .dh-btn,
+html[data-brand] body .talisman-banner > button.dh-btn {
   width:100%; min-height:48px; border:0; border-radius:12px!important; cursor:pointer;
   background:var(--ui-accent)!important; color:var(--ui-on-accent)!important; font-size:15px; font-weight:650;
 }
-html[data-brand] .btn-primary {
+html[data-brand] body .btn-primary {
   background:var(--ui-accent)!important; color:var(--ui-on-accent)!important; border:0!important;
   box-shadow:none!important; border-radius:12px!important; font-weight:650!important; min-height:52px;
 }
-html[data-brand] .dh-chip {
+html[data-brand] body .dh-chip {
   display:inline-block; font-size:12px; font-weight:600; padding:3px 10px; border-radius:20px;
   background:var(--ui-tint); color:var(--ui-ink);
 }
 
 /* 메뉴 카드 탭: 선택된 끼니만 남색 */
-html[data-brand] #view-today .menu-curation-tabs button { border-radius:10px; background:transparent; }
-html[data-brand] #view-today .menu-curation-tabs button[aria-selected="true"] { background:var(--ui-accent); border-color:var(--ui-accent); color:var(--ui-on-accent); }
+html[data-brand] body #view-today .menu-curation-tabs button { border-radius:10px; background:transparent; }
+html[data-brand] body #view-today .menu-curation-tabs button[aria-selected="true"] { background:var(--ui-accent); border-color:var(--ui-accent); color:var(--ui-on-accent); }
 
 /* 카드 사이 간격을 고르게 */
-html[data-brand] #view-today.tab-view { gap:14px; }
+html[data-brand] body #view-today.tab-view { gap:14px; }
 
 /* ---- 나의 사주: 오행 칩 그림자 제거, 표는 아이보리 ---- */
-html[data-brand] .badge-elem-main { box-shadow:none!important; border-radius:10px; font-weight:700; }
-html[data-brand] .badge-jjg { font-weight:600; }
+html[data-brand] body .badge-elem-main { box-shadow:none!important; border-radius:10px; font-weight:700; }
+html[data-brand] body .badge-jjg { font-weight:600; }
 
 @media (prefers-reduced-motion: reduce) {
-  html[data-brand] [id^="bar"] { transition:none!important; }
+  html[data-brand] body [id^="bar"] { transition:none!important; }
 }
 
 /* ---- 첫 화면: 제목 한 구절만 색을 바꾸지 않는다 ---- */
-html[data-brand] .landing-intro h1 em { color:inherit!important; }
+html[data-brand] body .landing-intro h1 em { color:inherit!important; }
 
 /* ---- 마이페이지: 보조 버튼은 같은 모양(선만) ---- */
-html[data-brand] .dh-btn-quiet {
+html[data-brand] body .dh-btn-quiet {
   min-height:44px; padding:8px 16px; border-radius:10px; cursor:pointer;
   background:transparent; border:1px solid var(--ui-line); color:var(--ui-ink); font-size:14px; font-weight:600;
 }
+
+/* =====================================================================
+   탭 2~4 (나의 사주 · 테마운 · 마이페이지) — 홈과 같은 규칙
+   구리색은 가격·풀이 근거처럼 '정보'에만. 라벨은 작은 보조 글씨. 목록 번호는 순서일 때만.
+   ===================================================================== */
+
+/* 제목 위 작은 라벨: 구리·자간 대신 보조 글씨 */
+html[data-brand] body .reading-view .reading-eyebrow,
+html[data-brand] body .reading-view .reading-lead > .reading-eyebrow,
+html[data-brand] body .reading-heading .reading-eyebrow,
+html[data-brand] body .reading-summary .reading-eyebrow,
+html[data-brand] body .compatibility-card > .reading-eyebrow {
+  color:var(--ui-muted)!important; font-size:13px!important; font-weight:600!important; letter-spacing:0!important; margin-bottom:6px;
+}
+
+/* 나의 사주 / 올해·월별 전환: 선택된 쪽은 남색 */
+html[data-brand] body .reading-tabs button[aria-selected="true"] { color:var(--ui-ink)!important; border-bottom-color:var(--ui-ink)!important; font-weight:700; }
+
+/* 여덟 글자 접기 머리: '접기·펼치기' 글자는 작게 오른쪽 */
+html[data-brand] body .reading-evidence > summary { display:flex; justify-content:space-between; align-items:baseline; gap:12px; font-size:17px; font-weight:700; color:var(--ui-ink); cursor:pointer; }
+html[data-brand] body .reading-evidence > summary > span { font-size:12px; font-weight:500; color:var(--ui-muted); }
+
+/* '이런 이야기를 읽어요' 목록: 담긴 내용이지 순서가 아니므로 01·02·03을 뺀다 */
+html[data-brand] body .reading-view .report-preview li { padding-left:0!important; }
+html[data-brand] body .reading-view .report-preview li::before { content:none!important; }
+html[data-brand] body .reading-view .preview-label { color:var(--ui-muted)!important; font-weight:600!important; letter-spacing:0!important; }
+
+/* 테마운 목록: 질문이 주인공, 분야 이름은 위에 작게, 화살표 대신 › */
+html[data-brand] body .concern-category { font-size:12px!important; font-weight:600!important; color:var(--ui-muted)!important; }
+html[data-brand] body .concern-choices strong { font-size:16px!important; font-weight:600!important; color:var(--ui-ink)!important; line-height:1.55!important; }
+html[data-brand] body .reading-view .concern-choices .concern-open > span { font-size:0!important; }
+html[data-brand] body .reading-view .concern-choices .concern-open > span::after { content:'›'; font-size:22px; line-height:1; color:var(--ui-muted); }
+html[data-brand] body .reading-view .concern-choices > button { border-color:var(--ui-line)!important; background:var(--ui-surface)!important; border-radius:16px!important; }
+html[data-brand] body .reading-view .concern-choices button[aria-pressed="true"] { background:var(--ui-soft)!important; border:1px solid var(--ui-ink)!important; }
+html[data-brand] body .reading-view .concern-symbol { color:var(--ui-ink); }
+
+/* 스크립트로 옮긴 초점(제목 tabindex=-1)에는 테두리를 그리지 않는다. 키보드 초점은 그대로 */
+html[data-brand] body [tabindex="-1"]:focus:not(:focus-visible) { outline:none!important; }
+html[data-brand] body h3[tabindex="-1"]:focus { outline:none!important; }
+
+/* '곧 열려요': 누를 수 없는 버튼 자리 — 같은 폭, 옅은 바탕 */
+html[data-brand] body .lock-soon {
+  display:flex!important; align-items:center; justify-content:center; width:100%; min-height:50px; margin-top:12px;
+  background:var(--ui-tint)!important; color:var(--ui-muted)!important; border-radius:12px; font-size:15px; font-weight:600;
+}
+/* 궁합 카드도 다른 주제 카드와 같은 흰 카드 */
+html[data-brand] body .reading-view .compatibility-card { background-color:var(--ui-surface)!important; }
+
+/* 테마 상황 고르기·궁합 입력 창 */
+html[data-brand] body .modal-content h3 { word-break:keep-all; }
+html[data-brand] body #gunghapModal .form-group { background:transparent!important; border:0!important; padding:0!important; margin-top:16px!important; }
+html[data-brand] body #gunghapModal .modal-content > div:first-child { border-bottom:1px solid var(--ui-line)!important; padding-bottom:12px!important; }
+
+/* 마이페이지: 복채 카드는 숫자가 주인공, 보조 버튼은 선만 */
+html[data-brand] body #view-mypage .page-intro { padding-bottom:4px; }
+html[data-brand] body #coinMypage { font-family:var(--brand-serif); color:var(--ui-ink)!important; }
+html[data-brand] body #view-mypage .report-archive > summary { font-size:16px; font-weight:700; color:var(--ui-ink); }
+html[data-brand] body #unlockedArchiveList button { border:1px solid var(--ui-line)!important; background:transparent!important; color:var(--ui-ink)!important; border-radius:10px!important; min-height:44px; font-weight:600; }
+
+/* 복채 충전 창: 세 상품을 같은 모양으로, 가장 큰 상품만 남색 테두리 */
+html[data-brand] body #chargeModal button[onclick^="openPgModal"],
+html[data-brand] body [onclick^="openPgModal"] { background:var(--ui-surface)!important; border:1px solid var(--ui-line)!important; border-radius:14px!important; min-height:64px; }
+html[data-brand] body [onclick^="openPgModal(1300"] { border-color:var(--ui-ink)!important; }
+html[data-brand] body [onclick^="openPgModal"] > span:last-child { background:var(--ui-tint)!important; color:var(--ui-ink)!important; }
+html[data-brand] body [onclick^="openPgModal(1300"] > span:last-child { background:var(--ui-ink)!important; color:var(--ui-on-accent)!important; }

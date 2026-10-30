@@ -1,32 +1,32 @@
 /* Readable hierarchy for both saved reports and newly generated readings. */
-#mealDailyCard #menuStatus { color:#205d4b!important; font-size:15px!important; font-weight:700!important; background:transparent; border:0; padding:0; line-height:1.6; }
+#mealDailyCard #menuStatus { color:#25364A!important; font-size:15px!important; font-weight:700!important; background:transparent; border:0; padding:0; line-height:1.6; }
 @media(max-width:540px) { #mealDailyCard #menuStatus { font-size:13px!important; font-weight:600!important; } }
 @media(max-width:350px) { #mealDailyCard #menuStatus { font-size:12px!important; } }
 .meal-info-note p { margin:10px 0; line-height:1.8; }
 #mealDailyCard { scroll-margin-top:100px; }
 .lucky-item-art { width:55px; height:49px; display:block; margin:6px auto; }
-#archiveModalBody .reading-section-heading { border-top:1px solid #dbe5df; padding-top:24px; margin:28px 0 16px!important; display:flex; gap:12px; align-items:flex-start; }
-#archiveModalBody .reading-section-number { color:#34725b!important; background:#eef5ef; border-radius:9px; padding:5px 8px; font-size:13px!important; font-weight:800; flex-shrink:0; }
+#archiveModalBody .reading-section-heading { border-top:1px solid #DEDCD4; padding-top:24px; margin:28px 0 16px!important; display:flex; gap:12px; align-items:flex-start; }
+#archiveModalBody .reading-section-number { color:#25364A!important; background:#F3F0E8; border-radius:9px; padding:5px 8px; font-size:13px!important; font-weight:800; flex-shrink:0; }
 #archiveModalBody .reading-heading-copy { display:block; font-size:19px!important; font-weight:800; line-height:1.65!important; }
-#archiveModalBody .reading-heading-topic { display:block; color:#34725b!important; font-size:13px!important; margin-bottom:7px; }
+#archiveModalBody .reading-heading-topic { display:block; color:#25364A!important; font-size:13px!important; margin-bottom:7px; }
 #archiveModalBody p { margin-bottom:18px!important; }
-#archiveModalBody details { padding:12px 14px!important; margin:16px 0!important; border:1px solid #dbe5df; border-radius:12px; }
+#archiveModalBody details { padding:12px 14px!important; margin:16px 0!important; border:1px solid #DEDCD4; border-radius:12px; }
 #archiveModalBody details summary { padding:0!important; min-height:44px; }
 #readingVersionControl.hidden { display:none!important; }
-#readingVersionControl { color:#60716a; margin:0; }
+#readingVersionControl { color:#59636D; margin:0; }
 #readingVersionSelect { font:inherit; }
 #unlockedArchiveList button { flex-shrink:0; min-height:44px; min-width:88px; border-radius:10px; }
 #unlockedArchiveList .archive-reopen { font-size:12px!important; font-weight:600!important; min-width:76px; }
 #unlockedArchiveList .archive-row { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:14px 0; background:transparent; border:0; border-radius:0; }
-#unlockedArchiveList .archive-row + .archive-row { border-top:1px solid #e6ebe8; }
-#unlockedArchiveList .archive-title { flex:1; min-width:0; margin:0; font:400 14px/1.7 'Pretendard',sans-serif!important; color:#34453e; overflow-wrap:anywhere; }
+#unlockedArchiveList .archive-row + .archive-row { border-top:1px solid #F3F0E8; }
+#unlockedArchiveList .archive-title { flex:1; min-width:0; margin:0; font:400 14px/1.7 'Pretendard',sans-serif!important; color:#25364A; overflow-wrap:anywhere; }
 #unlockedArchiveList .archive-row { flex-wrap:nowrap; }
 #archiveModalBody .reading-plain-contents { padding:4px 0 18px; }
 #archiveModalBody .reading-plain-contents h3 { font-size:15px!important; font-weight:600; margin:0 0 10px; }
 #archiveModalBody .reading-plain-contents ol { margin:0; padding-left:24px; }
 #archiveModalBody .reading-plain-contents li { font-size:14px!important; font-weight:400; line-height:1.8!important; margin:3px 0; }
 .archive-disclosure > summary { cursor:pointer; display:flex; justify-content:space-between; align-items:center; gap:10px; min-height:44px; }
-.archive-disclosure > summary::after { content:'펼치기 ＋'; font-size:12px; color:#587166; white-space:nowrap; }
+.archive-disclosure > summary::after { content:'펼치기 ＋'; font-size:12px; color:#59636D; white-space:nowrap; }
 .archive-disclosure[open] > summary::after { content:'접기 −'; }
 .archive-disclosure > summary::-webkit-details-marker { display:none; }
 .archive-disclosure #unlockedArchiveList { margin-top:16px; }
@@ -35,7 +35,7 @@
    brand-ui.js 가 brand.css 를 <head> 맨 끝으로 다시 옮기므로, 로드 순서에 기대지 않도록 .card 를 붙여 우선순위를 높였다.
    랜딩 화면은 moon-landscape.webp 를 그대로 쓰므로 그 파일은 바꾸지 않는다. 그림 교체는 reading-lead-moon.svg 파일만 바꾸면 된다. */
 html[data-brand] .reading-view .card.reading-lead { background-image:url('/assets/brand-2026/reading-lead-moon.svg'); background-repeat:no-repeat; background-size:100% 140px; background-position:top right; }
-#unlockedArchiveList .archive-reopen { border:1px solid #dbe5df; background:#fff; color:#34453e; padding:8px 12px; cursor:pointer; }
+#unlockedArchiveList .archive-reopen { border:1px solid #DEDCD4; background:#fff; color:#25364A; padding:8px 12px; cursor:pointer; }
 /* '지금의 나' v4 (now_me.py): 머리말·문단 라벨·근거 태그·한 줄 링크. 브랜드 색(남색 #25364A, 구리 #995737, 보조 #59636D)만 쓴다. */
 .now-me-lead { font-size:17px; line-height:1.8; margin:0 0 6px!important; color:#25364A; }
 .now-me-lead strong { color:#995737; font-weight:800; }
@@ -44,7 +44,7 @@ html[data-brand] .reading-view .card.reading-lead { background-image:url('/asset
 .now-me-chapter { margin:0 0 22px!important; }
 .now-me-chapter p { margin:0 0 8px!important; line-height:1.85; }
 .now-me-label { display:block; margin-bottom:4px; color:#25364A; font-weight:800; }
-.now-me-evidence { display:inline-block; font-size:12px; line-height:1.6; color:#59636D; background:#F1F3F0; border-radius:8px; padding:3px 9px; }
+.now-me-evidence { display:inline-block; font-size:12px; line-height:1.6; color:#59636D; background:#F3F0E8; border-radius:8px; padding:3px 9px; }
 .now-me-line { margin:0 0 8px!important; line-height:1.85; }
 .now-me-link { margin-left:6px; color:#995737; font-weight:700; text-decoration:none; border-bottom:1px solid #E4B28F; white-space:nowrap; }
 .now-me-link:hover { border-bottom-color:#995737; }
@@ -61,7 +61,7 @@ html[data-brand] .reading-view .card.reading-lead { background-image:url('/asset
 .lifetime-chart tbody th { background:#FBF8F3; color:#59636D; font-weight:700; font-size:12.5px; }
 .lifetime-chart-count { font-size:13px; color:#59636D; margin:0 0 4px!important; }
 .lifetime-cycles tr.is-now td { background:#25364A; font-weight:700; color:#FFFDF6; border-color:#25364A; }
-.lifetime-now-mark { display:inline-block; margin-left:4px; padding:1px 7px; border-radius:999px; background:#2D6A4F; color:#fff; font-size:11px; }
+.lifetime-now-mark { display:inline-block; margin-left:4px; padding:1px 7px; border-radius:999px; background:#25364A; color:#fff; font-size:11px; }
 .lifetime-v3 h5 { margin:16px 0 6px; font-size:14.5px; color:#25364A; font-weight:800; }
 .lifetime-past { padding-left:12px; border-left:2px solid #E8E2D8; }
 .lifetime-now-lead { font-size:13px; color:#59636D; margin:0 0 6px!important; }
