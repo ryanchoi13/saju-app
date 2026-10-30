@@ -84,6 +84,9 @@ APPROVED = {  # base-colour values the owner re-approved on #188 (2026-10-19)
 # Evidence: the #188 comment recording the owner's chat approval and the independent review.
 WINTER_EVIDENCE = "https://github.com/ryanchoi13/saju-app/issues/188#issuecomment-6287640226"
 WINTER_STEPS = ["independent_style_review", "claude_consistency_check", "owner_final"]
+# 2026-10-20 23:24 owner: loafers (all-070) and pumps (all-074) avoid snow; rain unchanged.
+SNOW_CHANGED = {"all-070", "all-074"}
+SNOW_EVIDENCE = "https://github.com/ryanchoi13/saju-app/issues/188#issuecomment-6293149718"
 WINTER_APPROVED = {  # drawing -> (candidate, drawing_version, scope_version, temp_range, rain/snow)
     "all-066": ("pending-female-winter-casual-shearling", "0da5d658911bc4d3", "b5c3dfd3394dbae7",
                 {"min": "open", "max_exclusive": 5}, "unsuitable"),
@@ -126,8 +129,12 @@ def test_real_review_file_holds_exactly_the_current_approved_records():
         else:
             candidate_id, drawing_version, scope_version, temp_range, weather = WINTER_APPROVED[r["drawing_id"]]
             assert r["temp_range"] == temp_range
-            assert r["rain"] == r["snow"] == weather
-            assert r["steps"] == WINTER_STEPS and r["evidence"] == WINTER_EVIDENCE
+            if r["drawing_id"] in SNOW_CHANGED:
+                assert (r["rain"], r["snow"]) == (weather, "unsuitable")
+                assert r["steps"] == WINTER_STEPS and r["evidence"] == SNOW_EVIDENCE
+            else:
+                assert r["rain"] == r["snow"] == weather
+                assert r["steps"] == WINTER_STEPS and r["evidence"] == WINTER_EVIDENCE
             assert r["date"] == "2026-10-20"
         assert (r["candidate_id"], r["drawing_version"], r["scope_version"]) == (candidate_id, drawing_version, scope_version)
         assert cr.scope_version(candidate_id, r["drawing_id"]) == scope_version
