@@ -1,0 +1,131 @@
+/* 달하 화면 다듬기 (2026-10-30) — 맨 마지막에 읽히는 층.
+   원칙: 남색 운세 카드(달)가 홈의 유일한 주인공. 나머지 칸은 같은 흰 카드 한 가지 모양으로 조용하게.
+   색은 brand.css 토큰만 쓴다. 오행 색은 아래 --el-* 한 벌(먹·흙 계열로 낮춘 색)만 쓴다. */
+
+html[data-brand] {
+  --el-wood:#4F6B4C; --el-fire:#A9472F; --el-earth:#93702F; --el-metal:#6B7178; --el-water:#2C4762;
+  --dh-gap:14px;
+}
+
+/* ---- 공통 카드: 홈의 흰 카드는 모두 이 모양 ---- */
+html[data-brand] #view-today .dh-card,
+html[data-brand] #view-today .menu-curation,
+html[data-brand] #view-today .biorhythm-card,
+html[data-brand] #view-today .drawer-card {
+  background:var(--ui-surface)!important; border:1px solid var(--ui-line)!important; border-radius:16px;
+  padding:22px 20px!important; box-shadow:none; text-align:left;
+  display:flex; flex-direction:column; gap:var(--dh-gap);
+}
+html[data-brand] #view-today .drawer-card { padding:0!important; gap:0; border-radius:16px!important; overflow:hidden; margin:0!important; }
+html[data-brand] #view-today .drawer-card[hidden] { display:none!important; }
+
+/* 카드 머리: 아이콘 상자 없이 제목 + 한 줄 설명 */
+html[data-brand] #view-today .dh-head { display:block; border:0!important; padding:0!important; margin:0!important; }
+html[data-brand] #view-today .dh-head h4,
+html[data-brand] #view-today .menu-curation h4,
+html[data-brand] #view-today .dh-bio-title,
+html[data-brand] #view-today .drawer-title {
+  font-family:'Pretendard',sans-serif!important; font-size:18px!important; font-weight:700!important;
+  letter-spacing:-.4px!important; line-height:1.45!important; color:var(--ui-ink)!important; margin:0!important;
+}
+html[data-brand] #view-today .dh-head p,
+html[data-brand] #view-today .drawer-sub { margin:4px 0 0!important; font-size:13px!important; line-height:1.6; color:var(--ui-muted)!important; }
+
+/* 홈에서는 이름·생일 줄을 뺀다(나의 사주 탭 위에 같은 정보가 있음). 날짜 → 한 줄이 화면을 연다 */
+html[data-brand] #view-today .user-profile-bar { display:none!important; }
+html[data-brand] #view-today .dc3-intro { padding-top:8px; }
+html[data-brand] #view-today .dc3-card { margin-bottom:6px; }
+
+/* ---- 오늘의 행운: 세 칸 한 줄, 칸 사이 가는 선 ---- */
+html[data-brand] #dhLuckCard .dh-luck-list {
+  display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:0; margin:0;
+  border-top:1px solid var(--ui-line); padding-top:14px;
+}
+html[data-brand] #dhLuckCard .grid-cell { grid-column:auto!important; margin:0!important; background:transparent!important; border:0!important; border-radius:0!important; padding:0 12px!important; min-width:0; }
+html[data-brand] #dhLuckCard .grid-cell:first-child { padding-left:0!important; }
+html[data-brand] #dhLuckCard .grid-cell + .grid-cell { border-left:1px solid var(--ui-line)!important; }
+html[data-brand] #dhLuckCard dt { font-size:12px; color:var(--ui-muted); font-weight:500; }
+html[data-brand] #dhLuckCard dd { margin:4px 0 0; font-size:15px!important; line-height:1.55!important; font-weight:650; color:var(--ui-ink); word-break:keep-all; overflow-wrap:anywhere; }
+html[data-brand] #dhLuckCard .lucky-item-art,
+html[data-brand] #dhLuckCard img { max-width:56px; margin-top:8px; }
+
+/* ---- 오늘, 기억할 한 가지: 노란 경고 상자 대신 세이지 메모 ---- */
+html[data-brand] #view-today .dh-note {
+  background:var(--brand-sage)!important; border:0!important; border-radius:16px; padding:18px 20px!important; text-align:left;
+}
+html[data-brand] #view-today .dh-note { border-left:0!important; margin-top:0!important; }
+html[data-brand] #view-today .action-card.dh-note > .dh-note-label { display:block; font-size:13px!important; font-weight:600; color:#47574A!important; margin-bottom:6px!important; }
+html[data-brand] #view-today .dh-note p { margin:0; color:var(--ui-ink)!important; font-size:15px!important; line-height:1.7!important; font-weight:500; word-break:keep-all; }
+
+/* ---- 바이오리듬: 원색 대신 오행 색 세 가지, 범례는 짧은 선 ---- */
+html[data-brand] #view-today .biorhythm-card > div:first-child { display:flex; justify-content:space-between; align-items:center; gap:12px; }
+html[data-brand] #view-today .dh-bio-days { font-size:12px; color:var(--ui-muted); font-weight:500; background:transparent; padding:0; }
+html[data-brand] #view-today .bio-legend-box { justify-content:flex-start; gap:18px; font-size:13px; font-weight:500; color:var(--ui-muted); }
+html[data-brand] #view-today .bio-k { display:inline-flex; align-items:center; gap:6px; }
+html[data-brand] #view-today .bio-k::before { content:''; width:14px; height:2px; border-radius:2px; background:currentColor; }
+html[data-brand] #view-today .bio-k-p::before { background:var(--el-fire); }
+html[data-brand] #view-today .bio-k-e::before { background:var(--el-wood); }
+html[data-brand] #view-today .bio-k-i::before { background:var(--el-water); }
+html[data-brand] #view-today .dh-bio-chart { background:var(--ui-page); border-radius:12px; padding:10px 8px 8px; }
+html[data-brand] #view-today .dh-bio-axis { display:flex; justify-content:space-between; font-size:11px; color:var(--ui-muted); padding:4px 4px 0; }
+html[data-brand] #view-today .dh-bio-today { color:var(--ui-ink); font-weight:650; }
+html[data-brand] #view-today .bio-pill-grid { gap:0; border-top:1px solid var(--ui-line); padding-top:12px; }
+html[data-brand] #view-today .bio-pill-cell { background:transparent!important; border:0!important; padding:0 4px!important; text-align:left; }
+html[data-brand] #view-today .bio-pill-cell + .bio-pill-cell { border-left:1px solid var(--ui-line)!important; padding-left:12px!important; }
+html[data-brand] #view-today .bio-pill-k { display:block; font-size:12px; color:var(--ui-muted); }
+html[data-brand] #view-today .bio-v { display:block; font-size:14px; font-weight:650; margin-top:2px; }
+html[data-brand] #view-today .bio-v-p { color:var(--el-fire); }
+html[data-brand] #view-today .bio-v-e { color:var(--el-wood); }
+html[data-brand] #view-today .bio-v-i { color:var(--el-water); }
+html[data-brand] #view-today .dh-bio-read { font-size:14px; line-height:1.7; color:var(--ui-ink); }
+html[data-brand] #view-today .dh-bio-read-k { display:block; font-size:12px; font-weight:600; color:var(--ui-muted); margin-bottom:2px; }
+
+/* ---- 부적: 서랍 머리를 다른 카드 머리와 같게, 펼친 안쪽은 아이보리 ---- */
+html[data-brand] #view-today .drawer-header { padding:20px!important; background:transparent!important; }
+html[data-brand] #view-today .drawer-header:hover { background:transparent!important; }
+html[data-brand] #view-today .drawer-icon-circle { display:none; }
+html[data-brand] #view-today .drawer-arrow { color:var(--ui-muted); font-size:11px; }
+html[data-brand] #view-today .drawer-body { padding:0 20px 20px!important; border-top:0!important; }
+html[data-brand] #view-today .talisman-banner { background:var(--ui-page)!important; border:0!important; border-radius:12px; padding:18px!important; gap:14px; }
+html[data-brand] #view-today .talisman-art { background:transparent!important; border:0!important; }
+html[data-brand] .dh-talisman-title { font-family:var(--brand-serif); font-size:16px; font-weight:600; color:var(--ui-ink); margin:0; }
+html[data-brand] .dh-talisman-note { font-size:13px!important; line-height:1.7; color:var(--ui-muted)!important; margin:0; }
+
+/* ---- 버튼·칩 ---- */
+html[data-brand] .dh-btn,
+html[data-brand] .talisman-banner > button.dh-btn {
+  width:100%; min-height:48px; border:0; border-radius:12px!important; cursor:pointer;
+  background:var(--ui-accent)!important; color:var(--ui-on-accent)!important; font-size:15px; font-weight:650;
+}
+html[data-brand] .btn-primary {
+  background:var(--ui-accent)!important; color:var(--ui-on-accent)!important; border:0!important;
+  box-shadow:none!important; border-radius:12px!important; font-weight:650!important; min-height:52px;
+}
+html[data-brand] .dh-chip {
+  display:inline-block; font-size:12px; font-weight:600; padding:3px 10px; border-radius:20px;
+  background:var(--ui-tint); color:var(--ui-ink);
+}
+
+/* 메뉴 카드 탭: 선택된 끼니만 남색 */
+html[data-brand] #view-today .menu-curation-tabs button { border-radius:10px; background:transparent; }
+html[data-brand] #view-today .menu-curation-tabs button[aria-selected="true"] { background:var(--ui-accent); border-color:var(--ui-accent); color:var(--ui-on-accent); }
+
+/* 카드 사이 간격을 고르게 */
+html[data-brand] #view-today.tab-view { gap:14px; }
+
+/* ---- 나의 사주: 오행 칩 그림자 제거, 표는 아이보리 ---- */
+html[data-brand] .badge-elem-main { box-shadow:none!important; border-radius:10px; font-weight:700; }
+html[data-brand] .badge-jjg { font-weight:600; }
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-brand] [id^="bar"] { transition:none!important; }
+}
+
+/* ---- 첫 화면: 제목 한 구절만 색을 바꾸지 않는다 ---- */
+html[data-brand] .landing-intro h1 em { color:inherit!important; }
+
+/* ---- 마이페이지: 보조 버튼은 같은 모양(선만) ---- */
+html[data-brand] .dh-btn-quiet {
+  min-height:44px; padding:8px 16px; border-radius:10px; cursor:pointer;
+  background:transparent; border:1px solid var(--ui-line); color:var(--ui-ink); font-size:14px; font-weight:600;
+}
