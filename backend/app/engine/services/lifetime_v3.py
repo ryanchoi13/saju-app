@@ -9,6 +9,7 @@
 
 from __future__ import annotations
 
+import re
 from collections import Counter
 from datetime import date
 from html import escape
@@ -63,8 +64,13 @@ def _p(sentences, *, allow_absolute=False, droppable=(), where="") -> str:
 
 
 def _j(word: str, pair: str) -> str:
-    """josa() 결과에서 조사만."""
-    return josa(word, pair)[len(word):]
+    """_jo() 결과에서 조사만. '금(金)'처럼 괄호 한자가 붙으면 앞의 한글로 고른다."""
+    base = re.sub(r"\([^)]*\)$", "", word) or word
+    return josa(base, pair)[len(base):]
+
+
+def _jo(word: str, pair: str) -> str:
+    return word + _j(word, pair)
 
 
 def _why(*lines: str) -> str:
@@ -114,13 +120,13 @@ def _chart_html(core, profile, hidden_counts) -> str:
         if p is None:
             stems.append(cell("모름")); branches.append(cell("모름")); hides.append(cell("—"))
             continue
-        stems.append(cell(f"{p.stem} {copy.ELEMENT[p.stem_element]['name']}", strong=key == "day"))
-        branches.append(cell(f"{p.branch} {copy.ELEMENT[p.branch_element]['name']}"))
+        stems.append(cell(f"{p.stem} {copy.ELEMENT[p.stem_element]['ko']}", strong=key == "day"))
+        branches.append(cell(f"{p.branch} {copy.ELEMENT[p.branch_element]['ko']}"))
         hides.append(cell(" ".join(hidden.get(key, [])) or "—"))
     table = ('<table class="lifetime-chart"><thead><tr><th></th>' + head + '</tr></thead><tbody>'
              '<tr><th>천간</th>' + "".join(stems) + '</tr><tr><th>지지</th>' + "".join(branches) + '</tr>'
              '<tr><th>지장간</th>' + "".join(hides) + '</tr></tbody></table>')
-    surface = " · ".join(f"{copy.ELEMENT[e]['name']}({e}) {profile['elements'][e]['main']}" for e in ELEMENT_ORDER)
+    surface = " · ".join(f"{copy.ELEMENT[e]['name']} {profile['elements'][e]['main']}" for e in ELEMENT_ORDER)
     lines = [f"겉면 {_glyphs(profile)}: {surface}"]
     missing = [e for e in ELEMENT_ORDER if profile["elements"][e]["main"] == 0]
     if missing:
@@ -151,7 +157,7 @@ def _map(core, profile, hidden_counts, core_keys) -> tuple[str, dict]:
         first.append(copy.MAP_SCENE.format(season=f"{season}에 " if season else "", label=day["label"],
                                            ja=_j(day["label"], "이/가"), rest=rest,
                                            verb=copy.DAY_VERB[profile["day_master"]]))
-    first.append(f"{josa(day['label'], '은/는')} {day['trait']}")
+    first.append(f"{_jo(day['label'], '은/는')} {day['trait']}")
     first.append(copy.MAP_HARMONY[_harmony([e for e in ELEMENT_ORDER if els[e]["main"] > 0])])
     p1 = _p(first, where="map.1")
 
@@ -159,12 +165,12 @@ def _map(core, profile, hidden_counts, core_keys) -> tuple[str, dict]:
     second, third = [], []
     if missing:
         nm = [copy.ELEMENT[e]["name"] for e in missing]
-        names = (josa(nm[0], "과/와") + " " + nm[1]) if len(nm) == 2 else ", ".join(nm)
-        second.append(copy.MAP_MISSING_ONE.format(names=names, josa=josa(names, "이/가")[len(names):]))
+        names = (_jo(nm[0], "과/와") + " " + nm[1]) if len(nm) == 2 else ", ".join(nm)
+        second.append(copy.MAP_MISSING_ONE.format(names=names, josa=_jo(names, "이/가")[len(names):]))
         hidden_plain, deep_plain = [], []
         for e in missing:
             info = copy.ELEMENT[e]
-            j = josa(info["name"], "은/는")[len(info["name"]):]
+            j = _jo(info["name"], "은/는")[len(info["name"]):]
             if hidden_counts[e]:
                 second.append(copy.MAP_MISSING_HIDDEN.format(name=info["name"], josa=j, power=info["power"], k=copy.COUNT_THING.get(hidden_counts[e], f"{hidden_counts[e]}개")))
                 hidden_plain.append(info["plain"])
@@ -176,8 +182,8 @@ def _map(core, profile, hidden_counts, core_keys) -> tuple[str, dict]:
             if plains:
                 # 둘 이상이면 문장이 길어지므로 오행 이름으로 묶는다: '나무와 물의 힘'
                 joined = plains[0] if len(plains) == 1 else \
-                    josa(names[plains[0]], "과/와") + " " + "·".join(names[p] for p in plains[1:]) + "의 힘"
-                third.append(tpl.format(plain=joined, josa=josa(joined, "은/는")[len(joined):]))
+                    _jo(names[plains[0]], "과/와") + " " + "·".join(names[p] for p in plains[1:]) + "의 힘"
+                third.append(tpl.format(plain=joined, josa=_jo(joined, "은/는")[len(joined):]))
         third.append(copy.MAP_CLOSE_MISSING)
     else:
         second.append(copy.MAP_FULL)
@@ -185,8 +191,8 @@ def _map(core, profile, hidden_counts, core_keys) -> tuple[str, dict]:
         thick, thin = ranked[0], ranked[-1]
         if els[thick]["main"] - els[thin]["main"] >= 2:
             tn, nn = copy.ELEMENT[thick]["name"], copy.ELEMENT[thin]["name"]
-            second.append(copy.MAP_FULL_TILT.format(thick=tn, thin=nn, josa1=josa(tn, "이/가")[len(tn):],
-                                                    josa2=josa(nn, "은/는")[len(nn):]))
+            second.append(copy.MAP_FULL_TILT.format(thick=tn, thin=nn, josa1=_jo(tn, "이/가")[len(tn):],
+                                                    josa2=_jo(nn, "은/는")[len(nn):]))
             for e, state in ((thick, "many"), (thin, "few")):
                 if els[e]["state"] == state:
                     row = bank.ALL_ROWS[_element_row(e, state)]
@@ -235,23 +241,23 @@ def _meaning(row, profile) -> list[str]:
         n = profile["elements"][row["element"]]["main"]
         name = info["name"]
         if row["state"] == "many":
-            lines = [f"{_glyphs(profile)} 가운데 {josa(name, '이/가')} {copy.COUNT_THING.get(n, f'{n}개')}로 두텁습니다.",
-                     f"{josa(info['plain'], '이/가')} 바탕에 깔린 사람이에요."]
+            lines = [f"{_glyphs(profile)} 가운데 {_jo(name, '이/가')} {copy.COUNT_THING.get(n, f'{n}개')}로 두텁습니다.",
+                     f"{_jo(info['plain'], '이/가')} 바탕에 깔린 사람이에요."]
         elif row["state"] == "few":
-            lines = [f"{josa(name, '은/는')} {_glyphs(profile)}에 하나뿐입니다.",
-                     f"{josa(info['plain'], '을/를')} 아껴 쓰는 사람이에요."]
+            lines = [f"{_jo(name, '은/는')} {_glyphs(profile)}에 하나뿐입니다.",
+                     f"{_jo(info['plain'], '을/를')} 아껴 쓰는 사람이에요."]
         else:
-            lines = [f"겉면 {_glyphs(profile)}에 {josa(name, '이/가')} 한 글자도 없습니다.",
-                     f"{josa(info['plain'], '은/는')} 밖에서 빌려 오는 사람이에요."]
+            lines = [f"겉면 {_glyphs(profile)}에 {_jo(name, '이/가')} 한 글자도 없습니다.",
+                     f"{_jo(info['plain'], '은/는')} 밖에서 빌려 오는 사람이에요."]
     else:
         g = copy.GROUP[row["group"]]
         n = profile["groups"][row["group"]]["main"]
         if row["state"] == "many":
-            lines = [f"{josa(g['what'], '이/가')} {_glyphs(profile)}에 {copy.COUNT_THING.get(n, f'{n}개')} 있습니다.",
-                     f"사주는 이를 {josa(g['plain'], '으로/로')} 읽어요."]
+            lines = [f"{_jo(g['what'], '이/가')} {_glyphs(profile)}에 {copy.COUNT_THING.get(n, f'{n}개')} 있습니다.",
+                     f"사주는 이를 {_jo(g['plain'], '으로/로')} 읽어요."]
         else:
-            lines = [f"{josa(g['what'], '이/가')} 겉면에 보이지 않습니다.",
-                     f"{josa(g['plain'], '은/는')} 밖에서 채우는 편이에요."]
+            lines = [f"{_jo(g['what'], '이/가')} 겉면에 보이지 않습니다.",
+                     f"{_jo(g['plain'], '은/는')} 밖에서 채우는 편이에요."]
     lines.append(f"이러한 결을 '{row['label']}'에 빗댑니다.")
     return lines
 
@@ -267,7 +273,7 @@ def _why_row(row, profile) -> list[str]:
         first = copy.WHY[key]
     elif "element" in row:
         nm = copy.ELEMENT[row["element"]]["name"]
-        first = f"천간·지지를 오행으로 세면 {josa(nm, '이/가')} 정기 {profile['elements'][row['element']]['main']}개입니다."
+        first = f"천간·지지를 오행으로 세면 {_jo(nm, '이/가')} 정기 {profile['elements'][row['element']]['main']}개입니다."
     else:
         g = copy.GROUP[row["group"]]
         first = f"십성으로 보면 {row['group']}({g['members']})이 정기 {profile['groups'][row['group']]['main']}개입니다."
@@ -375,7 +381,7 @@ def _domains(core, profile, climate, number: int, name: str = "회원") -> tuple
     if missing:
         mates = [copy.LOVE_MATE[e] for e in missing[:2]]
         names = copy.ELEMENT[missing[0]]["name"] if len(missing) == 1 else \
-            josa(copy.ELEMENT[missing[0]]["name"], "과/와") + " " + copy.ELEMENT[missing[1]]["name"]
+            _jo(copy.ELEMENT[missing[0]]["name"], "과/와") + " " + copy.ELEMENT[missing[1]]["name"]
         love.append(copy.LOVE_MATE_WHY.format(name="{name}", names=names, ja=_j(names, "이/가")))
         if len(mates) == 1:
             love.append(copy.LOVE_MATE_LINE.format(mate=mates[0]))
@@ -619,7 +625,7 @@ def _next_article(nxt, now, info_next, now_info=None) -> str:
         if now_god and copy.GOD_GROUP.get(now_god) == copy.GOD_GROUP.get(god) and now_god != god:
             plain = copy.GROUP[copy.GOD_GROUP[god]]["plain"]
             lines.append(copy.NEXT_SAME_GROUP.format(plain=plain, now=copy.CYCLE_LABEL[now_god],
-                                                     nxt_ro=josa(f"'{label}'", "으로/로")))
+                                                     nxt_ro=_jo(f"'{label}'", "으로/로")))
         else:
             lines.append(copy.NEXT_FILL_CONT.format(name=copy.ELEMENT[info_next["fills"][0]]["name"]))
     elif info_next["fills"]:
@@ -628,7 +634,7 @@ def _next_article(nxt, now, info_next, now_info=None) -> str:
     elif now_god and copy.GOD_GROUP.get(now_god) == copy.GOD_GROUP.get(god) and now_god != god:
         plain = copy.GROUP[copy.GOD_GROUP[god]]["plain"]
         nxt_q = f"'{label}'"
-        lines.append(copy.NEXT_SAME_GROUP.format(plain=plain, now=copy.CYCLE_LABEL[now_god], nxt_ro=josa(nxt_q, "으로/로")))
+        lines.append(copy.NEXT_SAME_GROUP.format(plain=plain, now=copy.CYCLE_LABEL[now_god], nxt_ro=_jo(nxt_q, "으로/로")))
     else:
         plain = copy.GROUP[copy.GOD_GROUP[god]]["plain"]
         lines.append(copy.NEXT_GROUP.format(plain=plain, ja=_j(plain, "이/가")))
@@ -753,8 +759,8 @@ def build_lifetime_v3(core: MyeongriCoreResult, user_name: str, *, past, now, fu
     closing = [copy.CLOSING_LEAD.format(name=name, trait=top["trait"])]
     if map_meta["missing"]:
         lacks = [copy.LACK_PLAIN[e] for e in map_meta["missing"]]
-        joined = lacks[0] if len(lacks) == 1 else josa(lacks[0], "과/와") + " " + lacks[1]
-        closing.append(copy.CLOSING_MISSING.format(lacks=josa(joined, "은/는")))
+        joined = lacks[0] if len(lacks) == 1 else _jo(lacks[0], "과/와") + " " + lacks[1]
+        closing.append(copy.CLOSING_MISSING.format(lacks=_jo(joined, "은/는")))
     if now is not None and now_kind:
         god = now.get("ten_god") if now.get("ten_god") in copy.NOW_PLAIN else "peer"
         closing.append(copy.CLOSING_NOW.format(plain=copy.NOW_PLAIN[god]))
