@@ -58,3 +58,38 @@ def all_daily_pairs():
             for b in pool:
                 pairs[(a, b)] = None
     return [(PALETTE[a], PALETTE[b]) for a, b in pairs]
+
+
+def todays_lucky_tones(core, today_fortune, day_ordinal: int, salt: int) -> dict:
+    """오늘의 행운 색 두 개를 정하는 단 하나의 입구(2026-10-30).
+
+    화면(main.py)과 자동 검사(scripts/color_plan_report.py)가 같은 함수를 쓴다.
+    1) 두 목표 오행: 원국 방향이 확정이면 그 오행 + 일간 오행, 보류면 오늘의 보완 오행 + 타고난 보완 오행
+    2) 오행마다 대표 착장색 하나씩(element_tone_pair)
+    3) 충 날이면 첫 색을 두 기운을 잇는 오행의 가라앉은 톤으로(통관)
+    """
+    from app.engine.services.fashion_colors import build_fashion_color_basis
+
+    today_element = core.timing.daily["pillar"]["stem_element"]
+    lucky_element = today_fortune["lucky_element"]
+    basis = build_fashion_color_basis(core)
+    fashion_element = basis["primary_element"]
+    if basis["source"] != "confirmed_natal_direction":
+        fashion_element = lucky_element
+        natal_element = today_fortune["natal_balance_element"]
+        today_element = natal_element if natal_element != lucky_element else today_element
+        basis = {**basis, "primary_element": fashion_element, "secondary_element": today_element,
+                 "source": "natal_balance_plus_daily"}
+    tone_a, tone_b = element_tone_pair(fashion_element, today_element, day_ordinal, salt)
+    tongguan = today_fortune.get("tongguan")
+    element_a = fashion_element
+    if tongguan:
+        tone_a = tongguan_tone(tongguan["element"])
+        element_a = tongguan["element"]
+        if tone_b["id"] == tone_a["id"]:
+            # 통관 톤이 두 번째 색과 같아지면 행운 색이 하나로 보인다(10/30 자동 검사에서 발견). 같은 오행의 다음 톤으로.
+            pool = ELEMENT_WEAR_TONES.get(today_element) or ELEMENT_WEAR_TONES["水"]
+            tone_b = PALETTE[pool[(pool.index(tone_b["id"]) + 1) % len(pool)]] if tone_b["id"] in pool else tone_b
+    return dict(tone_a=tone_a, element_a=element_a, tone_b=tone_b, element_b=today_element,
+                fashion_element=fashion_element, today_element=today_element,
+                basis=basis, tongguan=tongguan)

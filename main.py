@@ -27,7 +27,7 @@ import wallet_store
 import report_access
 import account_security
 from style_context import build_style_contexts
-from fashion_v2.daily_colors import element_tone_pair, outfit_color, palette_color, tongguan_tone
+from fashion_v2.daily_colors import element_tone_pair, outfit_color, palette_color, todays_lucky_tones
 from fashion_v2.svg_recommendation import build_svg_catalog_contexts
 from fashion_v2.live_selector import (
     connect_selector,
@@ -412,18 +412,10 @@ def get_saju_pillars_and_analysis(name: str, gender: str, y: int, m: int, d: int
         account_key=menu_account_id,
         include_menu=True,   # 신규 daily_menu 큐레이션(menu_curation 3모드). 구버전 meal_sets 경로는 더 이상 쓰지 않는다.
     )
-    today_element = core.timing.daily["pillar"]["stem_element"]
-    lucky_element = today_fortune["lucky_element"]
-    fashion_color_basis = build_fashion_color_basis(core)
-    fashion_element = fashion_color_basis["primary_element"]
-    if fashion_color_basis["source"] != "confirmed_natal_direction":
-        # 코어 방향이 보류면: 오늘의 보완 오행(원국 균형 + 일진)과 타고난 보완 오행으로 두 색을 고른다.
-        fashion_element = lucky_element
-        natal_element = today_fortune["natal_balance_element"]
-        today_element = natal_element if natal_element != lucky_element else today_element
-        fashion_color_basis = {**fashion_color_basis, "primary_element": fashion_element,
-                               "secondary_element": today_element,
-                               "source": "natal_balance_plus_daily"}
+    # 오늘의 행운 색 두 개는 fashion_v2/daily_colors.todays_lucky_tones 한 곳에서만 정한다(2026-10-30).
+    lucky = todays_lucky_tones(core, today_fortune, today_date.toordinal(), y * 372 + m * 31 + d)
+    fashion_element, today_element = lucky["fashion_element"], lucky["today_element"]
+    fashion_color_basis = lucky["basis"]
 
     current_month = today_date.month
 
@@ -442,14 +434,7 @@ def get_saju_pillars_and_analysis(name: str, gender: str, y: int, m: int, d: int
         (today_date.month, today_date.day) < (solar_birth.month, solar_birth.day)
     )
 
-    # 오늘의 두 색(A·B). 2026-10-28 정오님: 와다 배색은 완전히 뺀다(fashion_v2/daily_colors.py 한 곳에서만 정함).
-    # 두 목표 오행에서 대표 착장색을 하나씩 고르고, 충 날이면 메인 옷(A)을 두 기운을 잇는 오행의 가라앉은 톤으로 바꾼다.
-    tone_a, tone_b = element_tone_pair(fashion_element, today_element, today_date.toordinal(), y * 372 + m * 31 + d)
-    tongguan = today_fortune.get("tongguan")
-    element_a = fashion_element
-    if tongguan:
-        tone_a = tongguan_tone(tongguan["element"])
-        element_a = tongguan["element"]
+    tone_a, tone_b, element_a, tongguan = lucky["tone_a"], lucky["tone_b"], lucky["element_a"], lucky["tongguan"]
     color_a, color_b = outfit_color(tone_a), outfit_color(tone_b)
     outfit_tpo = "casual"
 
