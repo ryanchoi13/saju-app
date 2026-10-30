@@ -442,7 +442,6 @@
         .fashion-v2-sheet,.fashion-v2-sheet button { font-family:Pretendard,sans-serif; }
         .fashion-v2-svg-board { width:100%; max-width:390px; margin:auto; }
         .fashion-v2-svg-board svg { display:block; width:100%; height:auto; }
-        .fashion-v2-board-photo { display:block; width:85%; height:auto; margin-inline:auto; border:1px solid #E8E0D4; border-radius:18px; background:#F7F2E9; box-shadow:0 12px 26px #5A463417; }
         .fashion-v2-detail-copy { width:85%; margin:14px auto 0; display:grid; gap:10px; }
         .fashion-v2-proposal { margin:0; padding:11px 12px; border-radius:12px; background:var(--ui-tint); color:var(--ui-muted); font-size:.75rem; line-height:1.65; font-weight:500; }
         .fashion-v2-accessory { display:grid; grid-template-columns:64px minmax(0,1fr); gap:11px; align-items:center; padding:10px 12px; border:1px solid var(--ui-line); border-radius:14px; background:#fff; }
@@ -1829,11 +1828,6 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
         function fashionV2Context() {
             return currentFortuneData?.daily_fortune?.fashion_v2?.[getStyleTpo()] || null;
         }
-        function fashionV2BoardImage(look) {
-            const published = typeof look?.board_image === 'string' ? look.board_image : '';
-            if (published.startsWith('/assets/fashion-v2-boards/') && published.endsWith('.webp')) return published;
-            return '';
-        }
         function fashionV2Sprite(look, item) {
             const gender = look?.gender === 'female' ? 'female' : 'male';
             if (gender === 'female' && (look?.form === 'skirt' || /스커트/.test(item.label || '')) && item.category === 'bottom') return 12;
@@ -1906,8 +1900,6 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 try { const prefix='dalha-look-'+lookIndex; const svg=window.DalhaGarments.renderLook(look,prefix); return '<div class="fashion-v2-svg-board">' + window.DalhaGarments.decorateLook(look,prefix,svg) + '</div>'; }
                 catch (error) { console.error('DALHA garment render:',error); return '<p>도안을 표시하지 못했습니다.</p>'; }
             }
-            const image = fashionV2BoardImage(look);
-            if (image) return `<img class="fashion-v2-board-photo" src="${image}" alt="${escapeStyleText(fashionV2Summary(look))}" width="800" height="1000">`;
             return '';
         }
         function renderFashionV2Modal(context) {
@@ -1965,7 +1957,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 return false;
             }
             if (box) box.replaceChildren();
-            if (button) button.hidden = !looks.every(look => Boolean(look.garment_spec) || fashionV2BoardImage(look));
+            if (button) button.hidden = !looks.every(look => Boolean(look.garment_spec));
             const styleEl = document.getElementById('resStyle');
             if (styleEl) styleEl.textContent = fashionV2MainSummary(looks[0]);
             return true;
@@ -2816,33 +2808,6 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             return fallback;
         }
 
-        function getItemMood(item) {
-            const nick = (item.nickname || "").toLowerCase();
-            const cat = item.category || "";
-            const mats = item.materials || [];
-
-            if (cat === "시계") {
-                const isCasualWatch = mats.some(m => m.includes("러버") || m.includes("실리콘") || m.includes("패브릭") || m.includes("면")) ||
-                                      nick.includes("스마트") || nick.includes("애플") || nick.includes("갤럭시") || nick.includes("지샥") || nick.includes("전자");
-                if (isCasualWatch) return "casual";
-                return "formal";
-            }
-
-            if (cat === "신발") {
-                const isFormalShoes = nick.includes("구두") || nick.includes("로퍼") || nick.includes("더비") || nick.includes("옥스포드") || nick.includes("부츠") || nick.includes("힐");
-                if (isFormalShoes) return "formal";
-                return "casual";
-            }
-
-            if (mats.some(m => m.includes("데님") || m.includes("러버") || m.includes("패브릭")) || nick.includes("청바지") || nick.includes("티") || nick.includes("맨투맨") || nick.includes("후드") || nick.includes("볼캡") || (cat === "가방" && mats.some(m => m.includes("면") || m.includes("패브릭")))) {
-                return "casual";
-            }
-            if (nick.includes("슬랙스") || nick.includes("셔츠") || nick.includes("블라우스") || nick.includes("자켓") || nick.includes("수트") || mats.some(m => m.includes("실크") || m.includes("가죽"))) {
-                return "formal";
-            }
-
-            return "smart_casual";
-        }
 
         function escapeStyleText(value) {
             return String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
@@ -3743,14 +3708,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             }
         }
 
-        function openConcern(key) {
-            switchTab('theme');
-            selectConcern(key, true);
-        }
 
-        function showCompatibility() {
-            selectConcern('gunghap', true);
-        }
 
         function openAnnualMonths(index) {
             openReadingReport(index);
@@ -4521,14 +4479,6 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             img.src = blobURL;
         }
 
-        function printReportDocument(title, btnElement) {
-            const reportContainer = btnElement.closest('.card') || btnElement.parentElement;
-            const contentClone = reportContainer.cloneNode(true);
-            contentClone.querySelectorAll('button, .teaser-blur-box').forEach(el => el.remove());
-            const printWindow = window.open('', '_blank');
-            printWindow.document.write(`<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"><title>${title} - ${currentUserName} 님</title><style>*{font-family:sans-serif!important}body { font-family: 'Pretendard', sans-serif; padding: 30px; line-height: 1.85; color: #1E293B; }</style></head><body><h2>${title}</h2>${contentClone.innerHTML}<script>window.onload = function() { window.print(); }<\/script></body></html>`);
-            printWindow.document.close();
-        }
 
         function updateCoinDisplay() {
             document.getElementById('coinHeader').innerText = currentCoin;

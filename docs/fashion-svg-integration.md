@@ -71,7 +71,6 @@
 python3 scripts/build_svg_review.py
 node scripts/render_svg_review.mjs
 python3 -m pytest backend/tests/test_fashion_v2_color_application.py backend/tests/test_fashion_v2_weather_outfit.py backend/tests/test_fashion_svg_integration.py -q
-node scripts/test_fashion_v2_ui.cjs
 node scripts/test_svg_browser.cjs
 ```
 

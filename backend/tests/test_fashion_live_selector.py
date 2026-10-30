@@ -35,7 +35,6 @@ def legacy(gender="female", apparent=8.0, *, rain=False, snow=False):
     weather = profile(apparent, rain=rain, snow=snow)
     return build_svg_catalog_contexts(
         gender, "winter", *COLORS, weather_profile=weather, age=40,
-        board_weather_profile=weather,
     ), weather
 
 

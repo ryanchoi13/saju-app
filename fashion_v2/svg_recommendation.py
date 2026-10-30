@@ -504,7 +504,7 @@ def add_point_slot(look, a, b):
     look.setdefault('selection_changes',[]).append({'reason':'튀는 색을 소품으로 옮기기 위해 '+label+' 추가'})
 
 
-def build_svg_catalog_contexts(gender,season,color_a,color_b,weather_profile=None,age=None,board_weather_profile=None):
+def build_svg_catalog_contexts(gender,season,color_a,color_b,weather_profile=None,age=None):
     if gender not in {'male','female'}: raise ValueError('성별 확인 필요')
     if season not in {'spring','summer','autumn','winter'}: raise ValueError('계절 확인 필요')
     result={}

@@ -75,7 +75,7 @@ async function boot(url) {
     doc.getElementById('readingCloseButton').click();
     for(let i=0;i<30 && doc.activeElement.className!=='reading-secondary';i++) await new Promise(r=>setTimeout(r,10));
     assert.equal(doc.activeElement.className,'reading-secondary');
-    w.openConcern('love');doc.getElementById('btnTheme_love').click();
+    w.switchTab('theme');w.selectConcern('love',true);doc.getElementById('btnTheme_love').click();
     await new Promise(r=>setTimeout(r,0));
     assert.equal(doc.querySelectorAll('#modalOptionBox .ui-option').length,4);
     assert.equal(doc.getElementById('themeSelectModal').getAttribute('role'),'dialog');

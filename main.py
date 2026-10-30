@@ -3,7 +3,6 @@ import sys
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "backend"))
 from datetime import date, time
 from app.engine.korean import josa
-from app.engine.pillars import calculate_saju
 from app.engine.constants import GAN_KO, ZHI_KO
 from app.engine.core.models import BirthInput
 from app.engine.orchestrator import calculate_myeongri_core
@@ -27,7 +26,7 @@ import wallet_store
 import report_access
 import account_security
 from style_context import build_style_contexts
-from fashion_v2.daily_colors import element_tone_pair, outfit_color, palette_color, todays_lucky_tones
+from fashion_v2.daily_colors import outfit_color, palette_color, todays_lucky_tones
 from fashion_v2.svg_recommendation import build_svg_catalog_contexts
 from fashion_v2.live_selector import (
     connect_selector,
@@ -35,10 +34,8 @@ from fashion_v2.live_selector import (
     selected_guidance,
     storage_health as outfit_storage_health,
 )
-from app.engine.services.fashion_colors import build_fashion_color_basis
 from app.engine.services.annual_editorial import NARRATIVE_VERSION as ANNUAL_NARRATIVE_VERSION
 from fashion_v2.weather_service import gyeongju_weather_cache, weather_api_payload
-from lunar_python import Solar
 from fastapi import FastAPI, HTTPException, Response, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
@@ -428,7 +425,6 @@ def get_saju_pillars_and_analysis(name: str, gender: str, y: int, m: int, d: int
     else:
         outfit_season = "winter"
 
-    age = today_date.year - y + 1
     solar_birth = datetime.date.fromisoformat(core.natal_facts.calendar["solar_date"])
     style_age = today_date.year - solar_birth.year - (
         (today_date.month, today_date.day) < (solar_birth.month, solar_birth.day)
@@ -499,7 +495,6 @@ def get_saju_pillars_and_analysis(name: str, gender: str, y: int, m: int, d: int
         color_b,
         weather_profile=selected_weather,
         age=style_age,
-        board_weather_profile=weather_profile if complete_weather else None,
     )
     fashion_v2, selector_diagnostics = connect_selector(
         legacy_fashion,
@@ -1370,108 +1365,6 @@ def charge_coin(req: ChargeCoinRequest):
     users_db[req.user_id]['coin'] = assets['balance']
     return {'status':'success', 'new_balance':assets['balance'], 'test_only':True}
 
-@app.get("/api/today-ganji")
-def get_today_ganji():
-    kst_now = datetime.datetime.now(
-        datetime.timezone(datetime.timedelta(hours=9))
-    )
-    today_date = kst_now.date()
-
-    solar = Solar.fromYmd(
-        today_date.year,
-        today_date.month,
-        today_date.day
-    )
-    lunar = solar.getLunar()
-
-    return {
-        "date": today_date.strftime("%Y-%m-%d"),
-        "cheongan": lunar.getDayGan(),
-        "jiji": lunar.getDayZhi(),
-        "ganji": lunar.getDayInGanZhi()
-    }
-
-@app.get("/api/test-saju-engine")
-def test_saju_engine(
-    y: int = 1978,
-    m: int = 8,
-    d: int = 13,
-    cal_type: str = "solar",
-    gender: str = "male"
-):
-    # 엔진 비교용 디버그 주소. 공개 운영에서는 닫아 두고, 필요할 때만 서버 환경변수로 연다.
-    if os.getenv("DALHA_ENABLE_DEBUG_ENDPOINTS") != "1":
-        raise HTTPException(status_code=404, detail="Not Found")
-    # A. 현재 root main.py 계산 결과
-    root_result = get_saju_pillars_and_analysis(
-        name="테스트",
-        gender=gender,
-        y=y,
-        m=m,
-        d=d,
-        cal_type=cal_type,
-        sijin=-1
-    )
-    root_pillars = root_result["saju_data"]["pillars_detail"]
-
-    root_year = f"{root_pillars['year']['cg']}{root_pillars['year']['jj']}"
-    root_month = f"{root_pillars['month']['cg']}{root_pillars['month']['jj']}"
-    root_day = f"{root_pillars['day']['cg']}{root_pillars['day']['jj']}"
-    root_day_master = root_pillars["day"]["cg"]
-
-    # B. backend 엔진 계산 결과
-    b_calendar_type = "lunar" if cal_type in ["lunar", "leap"] else "solar"
-    b_is_leap = (cal_type == "leap")
-
-    backend_result = calculate_saju(
-        birth_date=date(y, m, d),
-        calendar_type=b_calendar_type,
-        is_leap_month=b_is_leap,
-        birth_time=None,
-        time_unknown=True,
-        gender=gender
-    )
-
-    backend_year = backend_result.year.label
-    backend_month = backend_result.month.label
-    backend_day = backend_result.day.label
-    backend_day_master = backend_result.day_master
-
-    return {
-        "engine_version": root_result["daily_fortune"].get("engine_version"),
-        "overall_version": root_result["daily_fortune"].get("evidence_summary", {}).get("overall", {}).get("version"),
-        "input": {
-            "year": y,
-            "month": m,
-            "day": d,
-            "cal_type": cal_type,
-            "gender": gender
-        },
-        "fashion_color_basis": root_result["daily_fortune"]["fashion_color_basis"],
-        "comparison": {
-            "year_pillar": {
-                "root_main": root_year,
-                "backend_engine": backend_year,
-                "is_match": root_year == backend_year
-            },
-            "month_pillar": {
-                "root_main": root_month,
-                "backend_engine": backend_month,
-                "is_match": root_month == backend_month
-            },
-            "day_pillar": {
-                "root_main": root_day,
-                "backend_engine": backend_day,
-                "is_match": root_day == backend_day
-            },
-            "day_master": {
-                "root_main": root_day_master,
-                "backend_engine": backend_day_master,
-                "is_match": root_day_master == backend_day_master
-            }
-        }
-    }
-    
 if os.path.exists("index.html"):
     @app.get("/")
     def serve_index():
@@ -1479,10 +1372,6 @@ if os.path.exists("index.html"):
 
     @app.get("/design/{variant}", include_in_schema=False)
     def serve_design_comparison(variant: str):
-        if variant == "fashion-review":
-            return FileResponse("assets/fashion-review.html", headers={"X-Robots-Tag": "noindex, nofollow"})
-        if variant == "fashion-review-fifty-female":
-            return FileResponse("assets/fashion-review-fifty-female.html", headers={"X-Robots-Tag": "noindex, nofollow"})
         if variant == "fashion-age-research":
             return FileResponse("assets/fashion-age-research.html", headers={"X-Robots-Tag": "noindex, nofollow"})
         if variant == "compare":
