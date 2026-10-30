@@ -143,16 +143,21 @@ class RenderTests(unittest.TestCase):
             result = build_now_me(_core(birth, clock, gender), "테스트")
             self._check_html(result["html"])
 
-    def test_lifetime_report_wraps_now_me_in_nature_section(self):
+    def test_lifetime_report_uses_v3_with_now_me_rows(self):
         report = build_lifetime_overall_report(_core(date(1978, 3, 13), time(11, 0)), "테스트")
-        self.assertEqual(LIFETIME_NARRATIVE_VERSION, "lifetime-present-v4")
+        self.assertEqual(LIFETIME_NARRATIVE_VERSION, "lifetime-v3")
+        self.assertIn('data-lifetime-v3="1"', report["content"])
+        self.assertIn('data-now-me-row="B11"', report["content"])
+        self.assertEqual(report["evidence_summary"]["v3"]["rows"][0], "B11")
+
+    def test_lifetime_report_falls_back_to_v4_when_v3_fails(self):
+        from unittest.mock import patch
+        with patch("app.engine.services.lifetime.build_lifetime_v3", side_effect=ValueError("boom")):
+            report = build_lifetime_overall_report(_core(date(1978, 3, 13), time(11, 0)), "테스트")
+        self.assertEqual(report["narrative_version"], "lifetime-present-v4")
         self.assertEqual(report["now_me_version"], "now-me-v1")
         self.assertIn('<section data-lifetime-section="nature"><h2>지금의 나</h2>', report["content"])
-        self.assertIn('data-now-me-section="core"', report["content"])
-        self.assertNotIn("나의 타고난 성향", report["content"])
-        self.assertIn("now_me", report["evidence_summary"])
         self.assertIn("ordered_rows", report["evidence_summary"]["now_me"])
-
 
 if __name__ == "__main__":
     unittest.main()

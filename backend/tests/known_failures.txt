@@ -28,7 +28,6 @@ backend/tests/test_annual_reader.py::AnnualReaderTests::test_name_is_escaped_and
 backend/tests/test_reading_editorial.py::ReadingRefreshTests::test_lifetime_v3_upgrade_is_free_keeps_original_and_does_not_repeat
 backend/tests/test_second_tab_reports.py::SecondTabReportTests::test_lifetime_report_groups_cycles_and_explains_them
 backend/tests/test_overall_interpretation.py::OverallInterpretationTests::test_all_overall_surfaces_share_version_and_record_domains
-backend/tests/test_lifetime_service.py::LifetimeServiceTests::test_current_life_has_more_depth_than_nature_with_cycles_kept_as_reference
 
 # C 오늘 운세 문구: 재물일 문구 정리 결과 — 테스트 기대값 또는 문구 조정 필요
 backend/tests/test_daily_fortune_service.py::DailyFortuneServiceTests::test_adjacent_wealth_days_preserve_their_distinct_daily_meanings
