@@ -531,6 +531,11 @@
         .menu-curation-footnote { margin:0; font-size:.8125rem; color:var(--ui-muted); }
         /* '오늘의 색 힌트'는 위 행운 컬러와 중복되어 숨긴다 (JS 가 값을 써도 화면에는 나오지 않는다). */
         #outfitColorHint, #dynamicColorPaletteBox, #paletteMoodStoryBox { display:none!important; }
+        /* 2026-10-29 정오님: 코디 지식서가 갖춰질 때까지 '오늘의 행운 색' 두 개만 보여 준다. 코디 코드는 지우지 않고 숨긴다. */
+        #dailyStyleCard.colors-only #styleTpoControls, #dailyStyleCard.colors-only .outfit-looks,
+        #dailyStyleCard.colors-only #drawerWardrobe, #dailyStyleCard.colors-only .outfit-track-title,
+        #dailyStyleCard.colors-only .outfit-track-label { display:none!important; }
+        #dailyStyleCard.colors-only .outfit-swatch { height:44px; border-radius:12px; }
 </style>
 <script id="dalha-hangul">
 /* es-hangul 2.4.0 | MIT | Copyright (c) Viva Republica, Inc. | third_party/es-hangul-LICENSE */
@@ -541,7 +546,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
     <link rel="stylesheet" href="/assets/reading-tabs-v2.css?v=20261001-3">
     <link rel="stylesheet" href="/assets/landing.css?v=1">
     <script src="/assets/design-controls.js?v=20261001-4" defer></script>
-    <script src="/assets/design-sample.js?v=20261028-1" defer></script>
+    <script src="/assets/design-sample.js?v=20261029-1" defer></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;600;700&display=swap" rel="stylesheet">
@@ -606,7 +611,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                     <div class="landing-feature-grid">
                         <article class="landing-feature">
                             <div class="landing-feature-art landing-style-art" aria-hidden="true"><svg viewBox="0 0 220 150" fill="none"><path d="M77 27L95 19H125L143 27L175 59L151 80L140 66V131H80V66L69 80L45 59Z" fill="#E6DDCB" stroke="#A79F8D" stroke-width="1.5"/><path d="M95 19L110 38L125 19M110 38V131M80 66L77 27M140 66L143 27" stroke="#A79F8D" stroke-width="1.5"/><circle cx="115" cy="54" r="1.5" fill="#8C8779"/><circle cx="115" cy="75" r="1.5" fill="#8C8779"/><circle cx="115" cy="96" r="1.5" fill="#8C8779"/></svg><div class="landing-fabric-swatches"><i></i><i></i><i></i></div></div>
-                            <p class="landing-feature-number">01 / WEAR</p><h3>오늘 나에게 어울리는 코디</h3><p>나에게 어울리는 추천색부터 옷차림, 행운의 아이템까지.<br>오늘의 스타일을 완성해 보세요.</p>
+                            <p class="landing-feature-number">01 / WEAR</p><h3>오늘 나의 행운 색</h3><p>사주와 오늘의 기운으로 고른 두 가지 색.<br>옷이나 소품에 더해 보세요.</p>
                         </article>
                         <article class="landing-feature">
                             <div class="landing-feature-art landing-food-art" aria-hidden="true"><div class="landing-plate"><span>아침</span><strong>점심</strong><span>저녁</span></div><span class="landing-food-note">오늘은 무엇을 먹을까?</span></div>
@@ -704,13 +709,13 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 </section>
 
                 <!-- 1. 오늘 뭐 입을까? (Daily Style Nav) -->
-                <div id="dailyStyleCard" class="card journal-style" style="padding: 20px 18px; text-align: left; display: flex; flex-direction: column; gap: 16px; border: 1.5px solid #E2E8F0;">
+                <div id="dailyStyleCard" class="card journal-style colors-only" style="padding: 20px 18px; text-align: left; display: flex; flex-direction: column; gap: 16px; border: 1.5px solid #E2E8F0;">
                     <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 12px;">
                         <div style="display: flex; align-items: center; gap: 8px;">
-                            <span data-brand-icon="hanger" class="brand-service-icon"></span>
+                            <span data-brand-icon="palette" class="brand-service-icon"></span>
                             <div>
-                                <h4 style="font-size: 16.5px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif; letter-spacing: -0.3px;">오늘 뭐 입을까?</h4>
-                                <p style="font-size: 11.5px; color: #64748B; margin-top: 1px;">나의 사주 오행 맞춤 데일리 스타일링</p>
+                                <h4 style="font-size: 16.5px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif; letter-spacing: -0.3px;">오늘의 행운 색</h4>
+                                <p style="font-size: 11.5px; color: #64748B; margin-top: 1px;">오늘의 기운을 채우는 두 가지 색</p>
                             </div>
                         </div>
 
@@ -726,7 +731,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                     </div>
                     <!-- v2: 행운 오행 컬러 2-Track (서버 daily_fortune.outfit) -->
                     <div id="outfitTrack" hidden>
-                        <span style="font-size: 12px; font-weight: 700; color: #64748B;">오늘의 행운 컬러</span>
+                        <span class="outfit-track-title" style="font-size: 12px; font-weight: 700; color: #64748B;">오늘의 행운 컬러</span>
                         <p id="outfitCaption" class="reading-caption" style="margin:0;"></p>
                         <div class="outfit-track-grid">
                             <article class="outfit-track" id="outfitBasic"><span class="outfit-track-label"></span><i class="outfit-swatch"></i><strong></strong><p></p></article>
@@ -743,8 +748,8 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                         <p id="paletteMoodStoryBox" style="font-size: 12.5px; color: #475569; line-height: 1.6; margin: 0; background: #F8FAFC; border-radius: 10px; padding: 10px 12px; border-left: 3px solid #2D6A4F;"></p>
                     </div>
 
-                    <!-- 오늘 추천 룩 매칭 -->
-                    <div>
+                    <!-- 오늘 추천 룩 매칭 (colors-only 동안 숨김: 코디 지식서가 갖춰지면 다시 켠다) -->
+                    <div class="outfit-looks">
                         <span style="font-size: 12px; font-weight: 700; color: #64748B; display: flex; align-items: center; gap: 4px; margin-bottom: 6px;">
                             오늘의 코디
                         </span>
@@ -2683,6 +2688,20 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
         function renderOutfitTrack(fortune) {
             const box = document.getElementById('outfitTrack');
             if (!box) return;
+            const lucky = fortune?.lucky_color_cards;
+            if (document.getElementById('dailyStyleCard')?.classList.contains('colors-only') && lucky?.colors?.length === 2) {
+                box.hidden = false;
+                document.getElementById('outfitCaption').textContent = lucky.caption || '';
+                document.getElementById('outfitCaption').hidden = !lucky.caption;
+                [['outfitBasic', lucky.colors[0]], ['outfitPoint', lucky.colors[1]]].forEach(([id, c]) => {
+                    const el = document.getElementById(id);
+                    el.querySelector('.outfit-track-label').textContent = '';
+                    el.querySelector('.outfit-swatch').style.background = c.hex || '#CBD5E1';
+                    el.querySelector('strong').textContent = c.name || '';
+                    el.querySelector('p').textContent = c.text || '';
+                });
+                return;
+            }
             const outfit = fortune?.outfit;
             const ok = outfit && outfit.basic && outfit.point && outfit.basic.text && outfit.point.text;
             box.hidden = !ok;

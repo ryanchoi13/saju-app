@@ -446,8 +446,10 @@ def get_saju_pillars_and_analysis(name: str, gender: str, y: int, m: int, d: int
     # 두 목표 오행에서 대표 착장색을 하나씩 고르고, 충 날이면 메인 옷(A)을 두 기운을 잇는 오행의 가라앉은 톤으로 바꾼다.
     tone_a, tone_b = element_tone_pair(fashion_element, today_element, today_date.toordinal(), y * 372 + m * 31 + d)
     tongguan = today_fortune.get("tongguan")
+    element_a = fashion_element
     if tongguan:
         tone_a = tongguan_tone(tongguan["element"])
+        element_a = tongguan["element"]
     color_a, color_b = outfit_color(tone_a), outfit_color(tone_b)
     outfit_tpo = "casual"
 
@@ -539,7 +541,26 @@ def get_saju_pillars_and_analysis(name: str, gender: str, y: int, m: int, d: int
         result["daily_fortune"]["outfit"]["caption"] = (
             f"부딪히는 기운을 잇는 {result['daily_fortune']['outfit']['basic']['color']} 톤이에요.")
         result["daily_fortune"]["outfit"]["tongguan"] = tongguan
+    # 2026-10-29 정오님: 코디 지식서가 갖춰질 때까지 화면에는 '오늘의 행운 색' 두 개만 보여 준다.
+    result["daily_fortune"]["lucky_color_cards"] = _lucky_color_cards(
+        (tone_a, element_a), (tone_b, today_element), tongguan)
     return result
+
+
+_ELEMENT_LABEL = {"木": "목(木)", "火": "화(火)", "土": "토(土)", "金": "금(金)", "水": "수(水)"}
+
+
+def _lucky_color_cards(first, second, tongguan):
+    """오늘의 행운 색 두 개. 같이 입으라는 조합이 아니라 각각 오늘의 기운을 채우는 색이다."""
+    cards = []
+    for tone, element in (first, second):
+        label = _ELEMENT_LABEL.get(element, "")
+        cards.append(dict(name=tone["name"], hex=tone["hex"], element=element,
+                          text=f"{label}의 기운" if label else "오늘의 기운"))
+    caption = ""
+    if tongguan:
+        caption = f"오늘은 부딪히는 두 기운이 있어요. {josa(cards[0]['name'], '이/가')} 둘 사이를 이어 줘요."
+    return dict(caption=caption, colors=cards)
 
 
 _POINT_SLOTS = {"tie", "bag", "accessory", "shoes"}
