@@ -120,7 +120,7 @@ def _chart_html(core, profile, hidden_counts) -> str:
     table = ('<table class="lifetime-chart"><thead><tr><th></th>' + head + '</tr></thead><tbody>'
              '<tr><th>천간</th>' + "".join(stems) + '</tr><tr><th>지지</th>' + "".join(branches) + '</tr>'
              '<tr><th>지장간</th>' + "".join(hides) + '</tr></tbody></table>')
-    surface = " · ".join(f"{copy.ELEMENT[e]['name']} {profile['elements'][e]['main']}" for e in ELEMENT_ORDER)
+    surface = " · ".join(f"{copy.ELEMENT[e]['name']}({e}) {profile['elements'][e]['main']}" for e in ELEMENT_ORDER)
     lines = [f"겉면 {_glyphs(profile)}: {surface}"]
     missing = [e for e in ELEMENT_ORDER if profile["elements"][e]["main"] == 0]
     if missing:
@@ -158,8 +158,8 @@ def _map(core, profile, hidden_counts, core_keys) -> tuple[str, dict]:
     missing = [e for e in ELEMENT_ORDER if els[e]["main"] == 0]
     second, third = [], []
     if missing:
-        names = "와 ".join(copy.ELEMENT[e]["name"] for e in missing) if len(missing) == 2 else \
-            ", ".join(copy.ELEMENT[e]["name"] for e in missing)
+        nm = [copy.ELEMENT[e]["name"] for e in missing]
+        names = (josa(nm[0], "과/와") + " " + nm[1]) if len(nm) == 2 else ", ".join(nm)
         second.append(copy.MAP_MISSING_ONE.format(names=names, josa=josa(names, "이/가")[len(names):]))
         hidden_plain, deep_plain = [], []
         for e in missing:
