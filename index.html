@@ -3964,7 +3964,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             title.textContent = item.report_title;
             const report = printWindow.document.createElement('div');
             report.innerHTML = item.report_content;
-            if (owned.report_key === 'sinnian') window.formatAnnualReading?.(report);
+            if (item.report_key === 'sinnian') window.formatAnnualReading?.(report);
             report.querySelectorAll('details').forEach(el => el.open = true);
             printWindow.document.body.append(title, report);
             printWindow.document.close();
