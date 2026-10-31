@@ -730,6 +730,126 @@ AREA_LINES = {
     },
 }
 
+# ---------------------------------------------------------------------------
+# 월 등급: 좋음 · 보통 · 주의 + 이유 한 줄 + 처방 한 줄
+#   근거는 오늘의 운세와 같은 산식(daily_score v2.1: 그달 월주 × 원국의 충·형·합, 억부, 12운성, 신살).
+#   다섯 단계를 셋으로 묶는다: 아주 좋음·좋음 → 좋음 / 보통 / 주의·나쁨 → 주의.
+#   이유는 등급과 같은 방향의 가장 큰 요소로 쓴다(좋음이면 가장 큰 플러스, 주의면 가장 큰 마이너스).
+#   사건 예측은 하지 않는다. "부딪히는 기운" 같은 태도 안내로만 쓴다.
+# ---------------------------------------------------------------------------
+GRADE_OF_DAILY = {"아주 좋음": "good", "좋음": "good", "보통": "normal", "주의": "caution", "나쁨": "caution"}
+GRADE_LABEL = {"good": "좋음", "normal": "보통", "caution": "주의"}
+POSITION_NAME = {"day": "나 자신의 자리(일지)", "month": "일과 생활의 자리(월지)",
+                 "year": "바깥 관계의 자리(연지)", "hour": "계획과 마무리의 자리(시지)"}
+STAGE_UP = {"birth", "official", "prosperity"}
+
+
+def _reason_kind(label: str) -> str:
+    if label.endswith("지 충"):
+        return "clash"
+    if label.endswith("지 형"):
+        return "punish"
+    if label.endswith("해파"):
+        return "harm"
+    if "합" in label:
+        return "join"
+    if label in ("일간 천간충", "일간 천간극"):
+        return "press"
+    if label.startswith("억부"):
+        return "yong_good" if label.endswith("희신") else "yong_bad"
+    if label == "결핍 채움":
+        return "fill"
+    if label == "과다 강화":
+        return "over"
+    if label.startswith("12운성"):
+        return "stage_up" if label.split()[-1] in STAGE_UP else "stage_down"
+    if label == "천을귀인":
+        return "noble"
+    if label == "문창":
+        return "literary"
+    if label in ("양인 일진", "백호 일진"):
+        return "sharp"
+    return "other"
+
+
+def _reason_text(label: str) -> str:
+    kind = _reason_kind(label)
+    pos = POSITION_NAME.get(label.split("지")[0], "") if label[:1].isascii() else ""
+    if kind == "join":
+        if label == "일간 천간합":
+            return "나(일간)와 손잡는 기운(합)이 드는 달입니다."
+        if label in ("삼합", "방합"):
+            return "흩어진 기운이 한쪽으로 크게 모이는 달(삼합·방합)입니다."
+        return f"타고난 {pos}와 손잡는 기운(합)이 드는 달입니다."
+    return {
+        "clash": f"타고난 {pos}와 부딪히는 기운(충)이 드는 달입니다.",
+        "punish": f"타고난 {pos}와 마찰하는 기운(형)이 걸리는 달입니다.",
+        "harm": "타고난 사주와 작게 어긋나는 기운(해·파)이 걸리는 달입니다.",
+        "press": "나(일간)를 누르는 기운(극)이 드는 달입니다.",
+        "yong_good": "내 사주의 기울기를 바로잡아 주는 기운이 드는 달입니다.",
+        "yong_bad": "내 사주를 한쪽으로 더 기울게 하는 기운이 드는 달입니다.",
+        "fill": "타고난 사주에 모자란 오행을 채워주는 달입니다.",
+        "over": "타고난 사주에 이미 많은 오행이 더 쌓이는 달입니다.",
+        "stage_up": "기운이 차오르는 자리(12운성)에 드는 달입니다.",
+        "stage_down": "기운이 가라앉는 자리(12운성)에 드는 달입니다.",
+        "noble": "도움을 받는 자리(천을귀인)에 드는 달입니다.",
+        "literary": "배우고 쓰는 일에 힘이 붙는 자리(문창)에 드는 달입니다.",
+        "sharp": "기세가 날카로워지는 자리(양인·백호)에 드는 달입니다.",
+    }.get(kind, "타고난 사주와 크게 부딪히거나 맞물리는 기운이 없는 달입니다.")
+
+
+# 처방은 등급·이유별로 두세 개씩 두고 달에 따라 돌려 써서, 같은 이유가 여러 달에 나와도 글이 겹치지 않게 한다.
+ADVICE = {
+    "good": {
+        "join": ("함께하면 풀리는 일을 이때 시작하세요.", "도움을 청하거나 손을 내밀기 좋은 때입니다. 먼저 연락하세요.",
+                 "미뤄둔 협의나 약속을 이때 매듭지으세요."),
+        "noble": ("막힌 일은 혼자 끌지 말고 도움을 청하세요.",),
+        "literary": ("시험·자격증·글쓰기처럼 미뤄둔 공부를 시작하세요.",),
+        "default": ("미뤄둔 일 하나를 골라 실행에 옮기세요.", "해온 일을 밖으로 보여주고 다음 단계를 정하세요.",
+                    "새로 시작할 일이 있다면 이때 첫발을 떼세요."),
+    },
+    "normal": {
+        "default": ("평소 리듬을 지키고 새 일은 작게 시험만 하세요.", "하던 일을 다듬고 큰 변화는 다음으로 미루세요.",
+                    "좋은 일과 걸리는 일을 나눠 적고 하나씩 처리하세요."),
+    },
+    "caution": {
+        "clash": ("큰 결정과 계약은 하루 미뤄 한 번 더 확인하세요.", "이동·이사·계약 같은 큰 변화는 조건을 두 번 확인하세요."),
+        "punish": ("말과 약속은 기록으로 남겨 오해를 막으세요.", "날 선 말이 나오기 쉬우니 중요한 대화는 하루 묵혀 하세요."),
+        "harm": ("작은 약속부터 다시 확인하고 넘어가세요.",),
+        "press": ("일을 줄이고 쉬는 시간을 먼저 정하세요.", "맡을 일과 거절할 일을 먼저 가르세요."),
+        "yong_bad": ("새로 늘리기보다 덜어내는 쪽으로 정리하세요.",),
+        "over": ("한쪽으로 쏠린 생활을 덜어내고 쉬는 시간을 넣으세요.", "하던 방식을 고집하지 말고 다른 의견을 한 번 들어보세요."),
+        "stage_down": ("무리한 일정은 줄이고 잠과 식사를 먼저 챙기세요.",),
+        "sharp": ("서두르지 말고 말과 몸을 조심해서 쓰세요.",),
+        "default": ("서두르지 말고 꼭 필요한 일만 하세요.", "벌인 일을 줄이고 마무리에 힘을 쓰세요."),
+    },
+}
+
+
+def month_grade(daily_grade: str | None, items: list[tuple[str, int]] | None, month: int = 0) -> dict | None:
+    """daily_score.evaluate 결과로 월 등급을 만든다. 근거가 없으면 None(등급을 숨긴다)."""
+    key = GRADE_OF_DAILY.get(daily_grade or "")
+    if not key:
+        return None
+    items = list(items or ())
+    plus = max((i for i in items if i[1] > 0), key=lambda x: x[1], default=None)
+    minus = min((i for i in items if i[1] < 0), key=lambda x: x[1], default=None)
+    if key == "good":
+        basis = plus
+    elif key == "caution":
+        basis = minus
+    else:
+        basis = max(items, key=lambda x: abs(x[1]), default=None)
+    reason = _reason_text(basis[0]) if basis else _reason_text("")
+    if key == "normal" and plus and minus:
+        reason = "도움이 되는 기운과 부딪히는 기운이 함께 드는 달입니다."
+    kind = _reason_kind(basis[0]) if basis else "other"
+    pool = ADVICE[key].get(kind, ADVICE[key]["default"])
+    advice = pool[month % len(pool)]
+    return dict(key=key, label=GRADE_LABEL[key], reason=reason, advice=advice,
+                basis=basis[0] if basis else None)
+
+
 def _take_if_free(ledger: CopyLedger, key: str, pool: list, offset: int):
     """풀이 남아 있으면 하나 고르고, 바닥났으면 None. (같은 문장을 다시 쓰지 않기 위해 빼는 쪽을 택한다)"""
     if not pool or not ledger.has_free(key, pool):
@@ -738,7 +858,8 @@ def _take_if_free(ledger: CopyLedger, key: str, pool: list, offset: int):
 
 
 def compose_month(ledger: CopyLedger, month: int, *, month_god: str | None, year_god: str | None,
-                  focus_area: str, flow: str = "base", period: dict | None = None) -> dict:
+                  focus_area: str, flow: str = "base", period: dict | None = None,
+                  grade: dict | None = None) -> dict:
     """한 달치 풀이. 같은 사람·같은 해에는 항상 같은 글이고, 한 해 안에서 문장을 되풀이하지 않는다."""
     flow = flow if flow in VERDICTS else "base"
     focus_area = focus_area if focus_area in FOCUS else "health"
@@ -776,7 +897,7 @@ def compose_month(ledger: CopyLedger, month: int, *, month_god: str | None, year
     sentences = [*split_sentences(flow_text), *(split_sentences(link) if link else []),
                  *focus_sentences, *[l["text"] for l in lines]]
     return dict(
-        verdict=VERDICTS[flow], flow=flow, god=god, period=period_text,
+        verdict=grade["label"] if grade else VERDICTS[flow], grade=grade, flow=flow, god=god, period=period_text,
         flow_text=flow_text, link=link,
         focus=dict(area=focus_area, label=AREA_LABEL[focus_area], text=" ".join(focus_sentences)),
         lines=lines, do=do, avoid=avoid, sentences=sentences,
@@ -785,7 +906,8 @@ def compose_month(ledger: CopyLedger, month: int, *, month_god: str | None, year
 
 def validate_month(reading: dict) -> list[str]:
     issues = []
-    for s in reading["sentences"] + [reading["do"], reading["avoid"]]:
+    extra = [reading["grade"]["reason"], reading["grade"]["advice"]] if reading.get("grade") else []
+    for s in reading["sentences"] + [reading["do"], reading["avoid"]] + extra:
         if len(s) > SENTENCE_MAX_MONTH:
             issues.append(f"문장이 깁니다({len(s)}): {s}")
         if find_banned(s):

@@ -22,7 +22,7 @@ from app.engine.services.annual_editorial import NARRATIVE_VERSION, ROLE_NAMES
 from app.engine.services.annual_copy import (
     CopyLedger, seed_from, flow_of,
 )
-from app.engine.services import annual_v2
+from app.engine.services import annual_v2, daily_score
 
 logger = logging.getLogger("dalha.annual")
 
@@ -77,10 +77,24 @@ def _month_focus(selection):
     return annual_v2.GOD_AREA.get(selection.get("focal_god"), "health"), flow
 
 
-def _monthly_reading(selection, ledger, month, year_god, target):
+def _month_grade(core, target):
+    """그달 월주 × 원국을 오늘의 운세와 같은 산식으로 매겨 좋음·보통·주의로 묶는다. 실패하면 등급 없이 간다."""
+    try:
+        month_pillar = daily_score.calendar_ganji(target)[1]
+        result = daily_score.evaluate(core, month_pillar, target)
+        grade = annual_v2.month_grade(result["grade"], result["items"], target.month)
+        if grade:
+            grade.update(score=result["score"], pillar=month_pillar)
+        return grade
+    except Exception:
+        logger.warning("월 등급 계산 실패 target=%s", target, exc_info=True)
+        return None
+
+
+def _monthly_reading(selection, ledger, month, year_god, target, grade=None):
     area, flow = _month_focus(selection)
     return annual_v2.compose_month(ledger, month, month_god=selection.get("focal_god"), year_god=year_god,
-                                   focus_area=area, flow=flow, period=_term_period(target))
+                                   focus_area=area, flow=flow, period=_term_period(target), grade=grade)
 
 
 # ---------------------------------------------------------------------------
@@ -119,11 +133,15 @@ def _render_year(reading):
 def _render_month_card(month, reading):
     lines = "".join(f'<li><strong>{escape(l["label"])}</strong> {escape(l["text"])}</li>' for l in reading["lines"])
     period = f'<div class="annual-month-period">{escape(reading["period"])}</div>' if reading["period"] else ""
+    g = reading.get("grade")
+    grade = (f'<p class="annual-month-grade" data-grade="{g["key"]}"><strong>왜</strong> {escape(g["reason"])}<br>'
+             f'<strong>처방</strong> {escape(g["advice"])}</p>') if g else ""
     link = (f'<h5>올해와 이어지는 점</h5><p>{escape(reading["link"])}</p>') if reading["link"] else ""
     return (
-        f'<article data-report-month="{month}" data-flow="{reading["flow"]}" class="annual-month" '
+        f'<article data-report-month="{month}" data-flow="{reading["flow"]}" '
+        f'data-grade="{g["key"] if g else ""}" class="annual-month" '
         'style="border-left:4px solid #2D6A4F">'
-        f'<h4>{month}월 · {escape(reading["verdict"])}</h4>{period}'
+        f'<h4>{month}월 · {escape(reading["verdict"])}</h4>{period}{grade}'
         f'<p class="annual-month-flow">{escape(reading["flow_text"])}</p>{link}'
         f'<h5>이달의 초점 · {escape(reading["focus"]["label"])}</h5><p>{escape(reading["focus"]["text"])}</p>'
         + (f'<h5>분야별 한 줄</h5><ul class="annual-month-lines">{lines}</ul>' if lines else "") +
@@ -170,7 +188,8 @@ def build_annual_overall_report(core: MyeongriCoreResult, user_name: str, year: 
             target = birth_date
         month_timing, _, _ = calculate_timing(core.input, core.natal_facts.pillars, target_date=target)
         month_selection = select_overall_domains(core, "monthly", timing=month_timing)
-        month_reading = _monthly_reading(month_selection, ledger, month, selection.get("focal_god"), target)
+        month_reading = _monthly_reading(month_selection, ledger, month, selection.get("focal_god"), target,
+                                         grade=_month_grade(core, target))
         composed.append(month_reading)
         months.append(dict(month=month, representative_date=target.isoformat(),
                            interpretation=month_selection, reading=month_reading))
@@ -187,6 +206,7 @@ def build_annual_overall_report(core: MyeongriCoreResult, user_name: str, year: 
         '<p class="annual-note" data-period-basis="monthly">각 달 15일의 절기 월주를 대표값으로 사용했습니다. '
         '출생한 달의 15일이 출생 전이면 출생일을 사용하며, 출생 전 달은 제외합니다. '
         '달마다 그달의 십성과 엔진이 짚은 분야를 바탕으로 취할 태도와 할 일을 안내합니다. '
+        '좋음·보통·주의는 그달 월주가 타고난 사주와 맺는 관계(충·형·합, 필요한 기운 등)를 오늘의 운세와 같은 산식으로 매긴 것입니다. '
         '달력의 1일을 운의 전환일로 보거나 월 전체의 변화, 특정 사건의 날짜를 예측한 것은 아닙니다.</p>'
         + "".join(cards) +
         '<p class="annual-note">정통 명리의 원국·대운·세운·월운을 근거로 한 해석이며, '

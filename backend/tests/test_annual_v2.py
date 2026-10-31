@@ -324,3 +324,47 @@ class BuilderStructureTests(TestCase):
         changed = run_builder(fake_core(), domains=("work",), god="peer", mode="change")
         self.assertNotEqual(base["reading"]["areas"][0]["text"], changed["reading"]["areas"][0]["text"])
         self.assertEqual(base["reading"]["areas"][0]["area"], "work")
+
+
+class MonthGradeTests(TestCase):
+    def test_five_daily_grades_fold_into_three(self):
+        items = [("day지 육합", 15), ("day지 충", -20)]
+        self.assertEqual(v2.month_grade("아주 좋음", items)["label"], "좋음")
+        self.assertEqual(v2.month_grade("좋음", items)["label"], "좋음")
+        self.assertEqual(v2.month_grade("보통", items)["label"], "보통")
+        self.assertEqual(v2.month_grade("주의", items)["label"], "주의")
+        self.assertEqual(v2.month_grade("나쁨", items)["label"], "주의")
+        self.assertIsNone(v2.month_grade(None, items))
+
+    def test_reason_follows_the_grade_direction(self):
+        items = [("day지 육합", 15), ("hour지 충", -8)]
+        good = v2.month_grade("좋음", items)
+        self.assertIn("나 자신의 자리(일지)와 손잡는", good["reason"])
+        caution = v2.month_grade("주의", items)
+        self.assertIn("계획과 마무리의 자리(시지)", caution["reason"])
+        self.assertIn("(충)", caution["reason"])
+        self.assertIn(caution["advice"], v2.ADVICE["caution"]["clash"])
+        self.assertIn("함께", v2.month_grade("보통", items)["reason"])
+
+    def test_every_reason_and_advice_passes_the_writing_rules(self):
+        labels = ["day지 충", "month지 형", "day지 해파", "삼합", "일간 천간충", "억부 희신", "억부 기신",
+                  "결핍 채움", "과다 강화", "12운성 birth", "12운성 death", "천을귀인", "문창", "양인 일진", ""]
+        texts = [v2._reason_text(l) for l in labels]
+        texts += [t for pool in v2.ADVICE.values() for opts in pool.values() for t in opts]
+        pattern = re.compile(r"(생깁니다|일어납니다|찾아옵니다|사고가|질병|수술|반드시)")
+        for t in texts:
+            self.assertLessEqual(len(t), v2.SENTENCE_MAX_MONTH, t)
+            self.assertIsNone(pattern.search(t), t)
+            self.assertFalse(any(h in t for h in v2.HEDGES), t)
+            self.assertEqual(find_banned(t), [], t)
+
+    def test_grade_is_shown_on_the_card_instead_of_the_flow_word(self):
+        grade = v2.month_grade("주의", [("day지 충", -20)])
+        r = v2.compose_month(CopyLedger(1), 11, month_god="direct_wealth", year_god="eating_god",
+                             focus_area="wealth", flow="change", grade=grade)
+        self.assertEqual(r["verdict"], "주의")
+        self.assertEqual(v2.validate_month(r), [])
+        html = annual._render_month_card(11, r)
+        self.assertIn("<h4>11월 · 주의</h4>", html)
+        self.assertIn('data-grade="caution"', html)
+        self.assertIn("<strong>처방</strong>", html)

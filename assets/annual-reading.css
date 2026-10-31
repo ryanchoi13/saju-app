@@ -86,3 +86,10 @@
 @media(max-width:380px) {
     #archiveDetailModal[data-annual-reader="true"] > .modal-content { padding-left:14px!important; padding-right:14px!important; }
 }
+/* 월 등급: 좋음 · 보통 · 주의 + 왜/처방 */
+:is(#archiveModalBody,.period-reading) .annual-month[data-grade="good"] { --grade:#4F6B4C; --grade-bg:#E9EEE5; }
+:is(#archiveModalBody,.period-reading) .annual-month[data-grade="normal"] { --grade:#59636D; --grade-bg:#F0EFEA; }
+:is(#archiveModalBody,.period-reading) .annual-month[data-grade="caution"] { --grade:#995737; --grade-bg:#F6ECE4; }
+#archiveModalBody .annual-month[data-grade] h4 > .annual-month-message { display:inline-block; color:var(--grade)!important; background:var(--grade-bg); border-radius:999px; padding:2px 14px; font-size:16px!important; }
+:is(#archiveModalBody,.period-reading) .annual-month > p.annual-month-grade { background:var(--grade-bg,#F3F0E8); border-radius:10px; padding:10px 12px; font-size:.95rem!important; font-weight:400!important; line-height:1.8!important; color:var(--ui-ink,#25364A); }
+:is(#archiveModalBody,.period-reading) .annual-month > p.annual-month-grade strong { color:var(--grade,#25364A); margin-right:6px; }
