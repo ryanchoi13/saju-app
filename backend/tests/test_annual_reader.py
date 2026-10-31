@@ -112,57 +112,56 @@ class AnnualRefreshTests(TestCase):
         wallet_store.buy_report(self.owner,'sinnian',300,self.original)
         wallet_store.buy_report(self.owner,'love',220,dict(report_key='love',report_content='별도 풀이'))
 
-    def refresh(self, **kwargs):
-        return self.client.post('/api/reports/refresh-annual',json=self.body,**kwargs)
+    def session_reports(self):
+        main.users_db.clear(); main.reports_db.clear()
+        response = self.client.get('/api/auth/session')
+        self.assertEqual(response.status_code, 200, response.text)
+        return response.json()['unlocked_reports']
 
-    def test_owned_refresh_preserves_year_original_balance_and_other_reports(self):
+    def test_opening_the_archive_brings_the_annual_reading_up_to_date(self):
         self.seed()
-        response=self.refresh(); self.assertEqual(response.status_code,200,response.text)
-        data=response.json(); self.assertEqual(data['new_balance'],480)
-        annual=data['unlocked_reports'][0]
-        self.assertEqual(annual['report_year'],2025)
-        self.assertEqual(annual['created_at'],'2025.02.01')
-        self.assertEqual(annual['previous_versions'],[self.original])
-        self.assertEqual(annual['narrative_version'],NARRATIVE_VERSION)
-        self.assertIn('data-report-year="2025"',annual['report_content'])
-        self.assertEqual(data['unlocked_reports'][1]['report_content'],'별도 풀이')
-        with patch('main.generate_detailed_report',side_effect=AssertionError('must not regenerate')):
-            self.assertEqual(self.refresh().json(),data)
-        main.users_db.clear();main.reports_db.clear()
-        self.assertEqual(self.client.get('/api/auth/session').json()['unlocked_reports'],data['unlocked_reports'])
+        reports = self.session_reports()
+        annual = reports[0]
+        self.assertEqual(annual['narrative_version'], NARRATIVE_VERSION)
+        self.assertEqual(annual['report_year'], 2025)           # 산 해를 그대로 유지
+        self.assertEqual(annual['created_at'], '2025.02.01')    # 결제일 유지
+        self.assertIn('data-report-year="2025"', annual['report_content'])
+        self.assertNotIn('previous_versions', annual)          # 이전 원문은 화면에 보내지 않음
+        self.assertEqual(reports[1]['report_content'], '별도 풀이')
+        state = wallet_store.load(self.owner)
+        self.assertEqual(state['balance'], 480)                # 추가 차감 없음
+        self.assertEqual(state['reports'][0]['previous_versions'], [self.original])   # 서버에는 보관
+        with patch('main.generate_detailed_report', side_effect=AssertionError('must not regenerate')):
+            self.assertEqual(self.session_reports(), reports)
 
-    def test_no_unowned_cross_account_or_csrf_upgrade(self):
-        self.assertEqual(self.refresh().status_code,403)
+    def test_unknown_year_is_left_as_it_was(self):
+        self.original.update(report_content='<p>연도 없음</p>', report_title='이전 풀이')
         self.seed()
-        self.assertEqual(self.refresh(headers={'X-Dalha-Request':''}).status_code,403)
-        self.assertEqual(self.refresh(headers={'Origin':'https://evil.example'}).status_code,403)
-        self.body['user_id']='user_someone-else'
-        self.assertEqual(self.refresh().status_code,403)
-        self.client.cookies.clear()
-        self.assertEqual(self.refresh().status_code,401)
+        self.assertEqual(self.session_reports()[0]['report_content'], '<p>연도 없음</p>')
+        self.assertEqual(wallet_store.load(self.owner)['reports'][0], self.original)
 
-    def test_unknown_year_never_guesses_or_changes_archive(self):
-        self.original.update(report_content='<p>연도 없음</p>',report_title='이전 풀이')
-        self.seed()
-        self.assertEqual(self.refresh().status_code,422)
-        self.assertEqual(wallet_store.load(self.owner)['reports'][0],self.original)
+    def test_generation_failure_keeps_the_old_reading(self):
+        self.seed(); before = wallet_store.load(self.owner)
+        with patch('main.generate_detailed_report', side_effect=ValueError('bad profile')):
+            self.assertEqual(self.session_reports()[0]['report_content'], self.original['report_content'])
+        self.assertEqual(wallet_store.load(self.owner), before)
 
-    def test_generation_failure_preserves_everything(self):
-        self.seed(); before=wallet_store.load(self.owner)
-        with patch('main.generate_detailed_report',side_effect=ValueError('bad profile')):
-            self.assertEqual(self.refresh().status_code,422)
-        self.assertEqual(wallet_store.load(self.owner),before)
-
-    def test_storage_failure_rolls_back_archive_and_balance(self):
-        self.seed(); before=wallet_store.load(self.owner)
-        execute=wallet_store._execute
-        def fail(conn,pg,sql,params=()):
+    def test_storage_failure_keeps_the_old_reading_and_balance(self):
+        self.seed(); before = wallet_store.load(self.owner)
+        execute = wallet_store._execute
+        def fail(conn, pg, sql, params=()):
             if sql.startswith('UPDATE account_assets') and NARRATIVE_VERSION in str(params):
                 raise RuntimeError('simulated storage failure')
-            return execute(conn,pg,sql,params)
-        with patch('wallet_store._execute',side_effect=fail):
-            self.assertEqual(self.refresh().status_code,503)
-        self.assertEqual(wallet_store.load(self.owner),before)
+            return execute(conn, pg, sql, params)
+        with patch('wallet_store._execute', side_effect=fail):
+            self.assertEqual(self.session_reports()[0]['report_content'], self.original['report_content'])
+        self.assertEqual(wallet_store.load(self.owner), before)
+
+    def test_old_refresh_endpoints_are_gone(self):
+        self.seed()
+        for path in ('/api/reports/refresh-annual', '/api/reports/refresh'):
+            self.assertIn(self.client.post(path, json=dict(user_id=self.owner, report_key='sinnian')).status_code,
+                          (404, 405))
 
     def test_concurrent_upgrades_append_history_once_and_do_not_debit(self):
         self.seed()

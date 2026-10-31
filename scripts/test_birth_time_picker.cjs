@@ -80,7 +80,7 @@ assert.equal($('birthMinuteSelect').options.length, 61);
   // ── 궁합 상대방 입력 ──
   assert.ok(!html.includes('id="partnerSijinSelect"'), '상대방 시진 선택 상자는 없어야 함');
   const gStart = html.indexOf('        function confirmUnlockGunghapOnServer()');
-  const gEnd = html.indexOf('        let themeRefreshMode');
+  const gEnd = html.indexOf('        function openThemeSelectModal(');
   const pdom = new JSDOM(`<input id="partnerNameInput" value="상대">
     <select id="partnerRelationSelect"><option value="친구 / 지인" selected>친구</option></select>
     <select id="partnerGenderSelect"><option value="female" selected>여</option></select>
@@ -91,8 +91,8 @@ assert.equal($('birthMinuteSelect').options.length, 61);
     <select id="partnerBirthHourSelect"></select><select id="partnerBirthMinuteSelect"></select>
     <select id="birthHourSelect"></select><select id="birthMinuteSelect"></select>`, { runScripts: 'outside-only' });
   const pw = pdom.window, unlocks = [], palerts = [];
-  Object.assign(pw, { gunghapRefreshMode: false, alert: m => palerts.push(m),
-    closeGunghapModal() {}, refreshOwnedReading() {},
+  Object.assign(pw, { alert: m => palerts.push(m),
+    closeGunghapModal() {},
     handleUnlockReportOnServer: (...args) => unlocks.push(args[5]) });
   pw.eval(helpers.replace('const SIJIN_NAMES', 'var SIJIN_NAMES') + html.slice(gStart, gEnd));
   pw.initBirthTimeDropdowns();

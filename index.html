@@ -1488,10 +1488,6 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 <h3 id="archiveModalTitle" style="font-size: 14px; font-weight: 800; color: #25364A; font-family: 'Noto Serif KR', serif;">운세 리포트</h3>
             </div>
             <p id="readingReportMeta" class="reading-caption" hidden></p>
-            <button id="annualRefreshButton" class="reading-text-button hidden" onclick="refreshOwnedReading()">구매한 풀이 새로 받기 · 무료</button>
-            <label id="readingVersionControl" class="hidden">이전 풀이 보기
-                <select id="readingVersionSelect" onchange="openReadingReport(readingReportIndex, this.value)"></select>
-            </label>
             <nav id="readingReportContents" aria-label="리포트 목차"></nav>
             <div id="archiveModalBody" style="flex: 1; overflow-y: auto; padding-right: 4px; margin-bottom: 12px;"></div>
             <div class="reading-modal-actions">
@@ -3339,86 +3335,8 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             refreshReportEntrypoints();
         }
 
-        const ANNUAL_NARRATIVE_VERSION = 'annual-v3';
-        const LIFETIME_NARRATIVE_VERSION = 'lifetime-v3';
-        const THEME_NARRATIVE_VERSION = 'theme-present-v2';
-        // 서버(main.py refresh_owned_report)의 target_version 과 같아야 한다. 다르면 새로 받아도
-        // '구매한 풀이 새로 받기' 버튼이 사라지지 않는다. backend/tests/test_report_version_sync.py 가 검사.
-        const REPORT_NARRATIVE_VERSION = {
-            sinnian: ANNUAL_NARRATIVE_VERSION, daewoon: LIFETIME_NARRATIVE_VERSION,
-            business: 'career-4tier-v2', love: 'love-4tier-v2', health: 'health-4tier-v2',
-        };
-        function readingNeedsRefresh(item) {
-            return ['sinnian','daewoon','wealth','business','love','health','study','gunghap'].includes(item?.report_key)
-                && item.narrative_version !== (REPORT_NARRATIVE_VERSION[item.report_key] || THEME_NARRATIVE_VERSION);
-        }
-        async function refreshOwnedReading(partnerInput = null, selectedOption = null) {
-            const item = serverUnlockedReports[readingReportIndex];
-            if (!currentUserId || !item || reportRequestPending || !readingNeedsRefresh(item)) return;
-            if (item.report_key === 'sinnian') { await refreshOwnedAnnualReport(); return; }
-            if (item.report_key === 'gunghap' && !partnerInput) {
-                openGunghapInputModal(true); return;
-            }
-            let subOption = item.reading_context?.sub_option || '기본';
-            const options = item.report_key === 'business' ? ['직장인','취업/이직','사업가','창업']
-                : item.report_key === 'love' ? ['솔로','썸/짝사랑','연애중','기혼'] : null;
-            if (options) {
-                if (selectedOption === null) { openThemeSelectModal(item.report_key, true); return; }
-                if (!options.includes(selectedOption)) { alert('현재 상황을 선택해 주세요.'); return; }
-                subOption = selectedOption;
-            }
-            if (!confirm('현재 저장한 사주 정보와 선택한 상황으로 새 풀이를 작성합니다. 추가 복채는 없으며 결제일과 이전 원문은 유지됩니다. 진행할까요?')) return;
-            const owner = currentUserId;
-            const key = item.report_key;
-            reportRequestPending = true; setReportRequestState(true);
-            try {
-                const response = await fetch('/api/reports/refresh', {
-                    method:'POST', headers:{'Content-Type':'application/json'},
-                    body:JSON.stringify({user_id:owner,report_key:key,sub_option:subOption,...(partnerInput || {})})
-                });
-                const data = await response.json();
-                if (!response.ok) throw Error(typeof data.detail === 'string' ? data.detail : '풀이를 업데이트하지 못했습니다.');
-                if (currentUserId !== owner) return;
-                serverUnlockedReports = data.unlocked_reports; currentCoin = data.new_balance;
-                updateCoinDisplay(); renderServerArchive(); restoreUnlockedUIFromReports();
-                openReadingReport(latestOwnedReportIndex(key));
-            } catch (error) {
-                if (currentUserId === owner) alert(error.message || '새로고침 후 보관함을 확인해 주세요.');
-            } finally {
-                reportRequestPending = false; setReportRequestState(false);
-            }
-        }
-        function annualNeedsRefresh(item) {
-            return item?.report_key === 'sinnian' && item.narrative_version !== ANNUAL_NARRATIVE_VERSION;
-        }
-
-        async function refreshOwnedAnnualReport() {
-            const index = latestOwnedReportIndex('sinnian');
-            if (!currentUserId || index < 0 || reportRequestPending) return;
-            if (!annualNeedsRefresh(serverUnlockedReports[index])) { openReadingReport(index); return; }
-            if (!confirm('현재 저장한 사주 정보로 구매한 연도의 풀이를 새로 작성합니다. 추가 복채는 들지 않으며 업데이트 전 원문도 보관됩니다. 진행할까요?')) return;
-            const owner = currentUserId;
-            reportRequestPending = true;
-            setReportRequestState(true);
-            try {
-                const response = await fetch('/api/reports/refresh-annual', {
-                    method:'POST', headers:{'Content-Type':'application/json'},
-                    body:JSON.stringify({user_id:owner})
-                });
-                const data = await response.json();
-                if (!response.ok) throw Error(typeof data.detail === 'string' ? data.detail : '업데이트하지 못했습니다. 다시 시도해 주세요.');
-                if (currentUserId !== owner) return;
-                serverUnlockedReports = data.unlocked_reports;
-                currentCoin = data.new_balance;
-                updateCoinDisplay(); renderServerArchive(); restoreUnlockedUIFromReports();
-                openReadingReport(latestOwnedReportIndex('sinnian'));
-            } catch (error) {
-                if (currentUserId === owner) alert(error.message || '응답을 확인하지 못했습니다. 새로고침 후 보관함을 확인해 주세요.');
-            } finally {
-                reportRequestPending = false;
-                setReportRequestState(false);
-            }
-        }
+        // 구매한 풀이는 서버가 보관함을 보낼 때 최신 버전으로 바꿔 둔다(main.bring_reports_up_to_date).
+        // 화면에는 '새로 받기' 버튼도, 이전 원문 선택도 두지 않는다.
 
         function renderServerArchive() {
             const container = document.getElementById('unlockedArchiveList');
@@ -3479,16 +3397,10 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             finally { pgPaymentBusy = false; button.disabled = false; }
         }
 
-        let gunghapRefreshMode = false;
-        let gunghapRefreshReaderWasOpen = false;
-        function openGunghapInputModal(forRefresh = false) {
+        function openGunghapInputModal() {
             const ownedIndex = latestOwnedReportIndex('gunghap');
-            if (ownedIndex >= 0 && !forRefresh) { openReadingReport(ownedIndex); return; }
-            gunghapRefreshMode = forRefresh;
-            gunghapRefreshReaderWasOpen = forRefresh && !document.getElementById('archiveDetailModal').classList.contains('hidden');
-            if (gunghapRefreshReaderWasOpen) document.getElementById('archiveDetailModal').classList.add('hidden');
-            document.getElementById('gunghapSubmitButton').textContent = forRefresh
-                ? '상대방 정보 확인 후 무료 업데이트' : '350 복채로 두 사람의 인연 풀이 확인하기';
+            if (ownedIndex >= 0) { openReadingReport(ownedIndex); return; }
+            document.getElementById('gunghapSubmitButton').textContent = '350 복채로 두 사람의 인연 풀이 확인하기';
             const nameInput = document.getElementById('partnerNameInput');
             const relSelect = document.getElementById('partnerRelationSelect');
 
@@ -3508,9 +3420,6 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
 
         function closeGunghapModal() {
             document.getElementById('gunghapModal').classList.add('hidden');
-            if (gunghapRefreshReaderWasOpen) document.getElementById('archiveDetailModal').classList.remove('hidden');
-            gunghapRefreshReaderWasOpen = false;
-            gunghapRefreshMode = false;
         }
 
         function confirmUnlockGunghapOnServer() {
@@ -3546,7 +3455,6 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 return;
             }
 
-            const refreshing = gunghapRefreshMode;
             closeGunghapModal();
             const partnerInput = {
                 partner_gender: gender,
@@ -3558,18 +3466,12 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 partner_birth_hour: partnerTime.hour,
                 partner_birth_minute: partnerTime.minute
             };
-            if (refreshing) refreshOwnedReading({partner_name:pName,relation:rel,...partnerInput});
-            else handleUnlockReportOnServer('gunghap', 350, "기본", pName, rel, partnerInput);
+            handleUnlockReportOnServer('gunghap', 350, "기본", pName, rel, partnerInput);
         }
 
-        let themeRefreshMode = false;
-        let themeRefreshReaderWasOpen = false;
-        function openThemeSelectModal(key, forRefresh = false) {
+        function openThemeSelectModal(key) {
             const ownedIndex = latestOwnedReportIndex(key);
-            if (ownedIndex >= 0 && !forRefresh) { openReadingReport(ownedIndex); return; }
-            themeRefreshMode = forRefresh;
-            themeRefreshReaderWasOpen = forRefresh && !document.getElementById('archiveDetailModal').classList.contains('hidden');
-            if (themeRefreshReaderWasOpen) document.getElementById('archiveDetailModal').classList.add('hidden');
+            if (ownedIndex >= 0) { openReadingReport(ownedIndex); return; }
             currentThemeKey = key;
             const modalBox = document.getElementById('modalOptionBox');
             const titleEl = document.getElementById('modalThemeTitle');
@@ -3606,17 +3508,13 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
 
         function closeThemeSelectModal() {
             document.getElementById('themeSelectModal').classList.add('hidden');
-            if (themeRefreshReaderWasOpen) document.getElementById('archiveDetailModal').classList.remove('hidden');
-            themeRefreshReaderWasOpen = false; themeRefreshMode = false;
         }
         function confirmUnlockThemeOnServer() {
             const selEl = document.querySelector('input[name="optM"]:checked');
             if (!selEl) return;
             const subOpt = selEl.value;
-            const refreshing = themeRefreshMode;
             closeThemeSelectModal();
-            if (refreshing) refreshOwnedReading(null, subOpt);
-            else showThemePreview(currentThemeKey, subOpt);
+            showThemePreview(currentThemeKey, subOpt);
         }
 
         function setGenderType(gender) {
@@ -3768,17 +3666,6 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 preview.append(label, legacy.cloneNode(true));
             }
             if (preview.childNodes.length) slot.prepend(preview);
-            if (readingNeedsRefresh(item)) {
-                const update = document.createElement('button');
-                update.id = 'lifetimeRefreshButton';
-                update.className = 'reading-secondary';
-                update.textContent = '현재 중심 풀이로 업데이트 · 무료';
-                update.onclick = () => { readingReportIndex = index; refreshOwnedReading(); };
-                const note = document.createElement('p');
-                note.className = 'reading-caption';
-                note.textContent = '선택하면 지금의 흐름을 보강해 드려요. 이전 원문도 보관됩니다.';
-                slot.append(update, note);
-            }
         }
 
         function refreshReportEntrypoints() {
@@ -3838,13 +3725,6 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                         months.onclick = () => openAnnualMonths(index);
                         slot.append(months);
                     }
-                }
-                if (['wealth','love','business','study','health','gunghap'].includes(key) && readingNeedsRefresh(item)) {
-                    const update = document.createElement('button');
-                    update.className = 'reading-secondary theme-refresh';
-                    update.textContent = '구매한 풀이 새로 받기 · 무료';
-                    update.onclick = () => { readingReportIndex = index; refreshOwnedReading(); };
-                    slot.append(update);
                 }
                 if (key === 'daewoon') {
                     renderLifetimePreview(item, slot, index);
@@ -3997,18 +3877,16 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
         }
 
         function setReportRequestState(pending) {
-            document.querySelectorAll('#btnDaewoon,#btnSinnian,#daewoonFlowOpen,#btnOpenGunghapModal,[id^="btnTheme_"],.theme-unlock-cta,#annualRefreshButton,#lifetimeRefreshButton,.theme-refresh,.annual-upgrade').forEach(button => {
+            document.querySelectorAll('#btnDaewoon,#btnSinnian,#daewoonFlowOpen,#btnOpenGunghapModal,[id^="btnTheme_"],.theme-unlock-cta,.annual-upgrade').forEach(button => {
                 button.disabled = pending;
                 button.setAttribute('aria-busy', String(pending));
             });
         }
 
-        function openReadingReport(index, version = 'current') {
+        function openReadingReport(index) {
             const owned = serverUnlockedReports[index];
             if (!owned) return;
-            const previous = owned.previous_versions || [];
-            const item = version === 'current' ? owned : previous[Number(version)];
-            if (!item) return;
+            const item = owned;
             const modal = document.getElementById('archiveDetailModal');
             modal.dataset.annualReader = String(owned.report_key === 'sinnian');
             if (modal.classList.contains('hidden')) {
@@ -4017,17 +3895,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             }
             readingReportIndex = index;
             document.getElementById('archiveModalTitle').textContent = item.report_title;
-            // Purchase dates belong to My DALHA. Reopening reads the saved document unchanged.
             document.getElementById('readingReportMeta').textContent = '';
-            document.getElementById('annualRefreshButton').classList.toggle('hidden', !readingNeedsRefresh(owned));
-            const versionControl = document.getElementById('readingVersionControl');
-            const versionSelect = document.getElementById('readingVersionSelect');
-            versionSelect.replaceChildren();
-            versionControl.classList.toggle('hidden', previous.length === 0);
-            [{value:'current',label:'현재 풀이'}, ...previous.map((r,i) => ({value:String(i),label:`업데이트 전 원문 ${i+1}`}))].forEach(option => {
-                const el = document.createElement('option'); el.value = option.value; el.textContent = option.label; versionSelect.append(el);
-            });
-            versionSelect.value = String(version);
             const body = document.getElementById('archiveModalBody');
             body.innerHTML = item.report_content;
             if (owned.report_key === 'sinnian') {
@@ -4084,9 +3952,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
         }
 
         function printReadingReport() {
-            const owned = serverUnlockedReports[readingReportIndex];
-            const version = document.getElementById('readingVersionSelect').value;
-            const item = version === 'current' ? owned : owned?.previous_versions?.[Number(version)];
+            const item = serverUnlockedReports[readingReportIndex];
             if (!item) return;
             const printWindow = window.open('', '_blank');
             if (!printWindow) { alert('인쇄를 위해 팝업을 허용해 주세요.'); return; }
@@ -4098,7 +3964,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             title.textContent = item.report_title;
             const report = printWindow.document.createElement('div');
             report.innerHTML = item.report_content;
-            if (owned.report_key === 'sinnian') window.formatAnnualReading?.(report);
+            if (item.report_key === 'sinnian') window.formatAnnualReading?.(report);
             report.querySelectorAll('details').forEach(el => el.open = true);
             printWindow.document.body.append(title, report);
             printWindow.document.close();

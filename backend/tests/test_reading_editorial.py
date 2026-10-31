@@ -75,71 +75,52 @@ class ReadingRefreshTests(TestCase):
                            created_at='2026.02.01',narrative_version=VERSION)
         wallet_store.buy_report(self.owner,key,220,self.original)
 
-    def update(self, key='wealth', **extra):
-        return self.client.post('/api/reports/refresh',json=dict(user_id=self.owner,report_key=key,**extra))
+    def session_reports(self):
+        main.users_db.clear(); main.reports_db.clear()
+        response = self.client.get('/api/auth/session')
+        self.assertEqual(response.status_code, 200, response.text)
+        return response.json()['unlocked_reports']
 
-    def test_refresh_is_free_versioned_idempotent_and_keeps_history(self):
+    def test_theme_reading_is_updated_for_free_and_only_once(self):
         self.seed_theme()
-        response=self.update()
-        self.assertEqual(response.status_code,200,response.text)
-        data=response.json(); report=data['unlocked_reports'][0]
-        self.assertEqual(data['new_balance'],780)
-        self.assertEqual(report['previous_versions'],[self.original])
-        self.assertEqual(report['created_at'],'2026.02.01')
-        self.assertEqual(report['narrative_version'],THEME_VERSION)
-        with patch('main.generate_detailed_report',side_effect=AssertionError('already updated')):
-            self.assertEqual(self.update().json(),data)
+        report = self.session_reports()[0]
+        self.assertEqual(report['narrative_version'], THEME_VERSION)
+        self.assertEqual(report['created_at'], '2026.02.01')
+        self.assertNotIn('previous_versions', report)
+        state = wallet_store.load(self.owner)
+        self.assertEqual(state['balance'], 780)
+        self.assertEqual(state['reports'][0]['previous_versions'], [self.original])
+        with patch('main.generate_detailed_report', side_effect=AssertionError('already updated')):
+            self.assertEqual(self.session_reports()[0], report)
 
-    def test_lifetime_v3_upgrade_is_free_keeps_original_and_does_not_repeat(self):
-        original=dict(report_key='daewoon',report_title='기존 평생운세',report_content='<p>구매한 당시의 풀이</p>',
-                      narrative_version=VERSION,created_at='2026.02.01')
-        wallet_store.buy_report(self.owner,'daewoon',450,original)
-        response=self.update('daewoon')
-        self.assertEqual(response.status_code,200,response.text)
-        data=response.json(); report=data['unlocked_reports'][0]
-        self.assertEqual(data['new_balance'],550)
-        self.assertEqual(report['narrative_version'],LIFETIME_NARRATIVE_VERSION)
-        self.assertEqual(report['previous_versions'],[original])
-        self.assertEqual(report['created_at'],original['created_at'])
-        self.assertIn('data-lifetime-section="current"',report['report_content'])
-        with patch('main.generate_detailed_report',side_effect=AssertionError('must reuse saved report')):
-            self.assertEqual(self.update('daewoon').json(),data)
+    def test_lifetime_reading_is_updated(self):
+        original = dict(report_key='daewoon', report_title='기존 평생운세', report_content='<p>구매한 당시의 풀이</p>',
+                        narrative_version=VERSION, created_at='2026.02.01')
+        wallet_store.buy_report(self.owner, 'daewoon', 450, original)
+        report = self.session_reports()[0]
+        self.assertEqual(report['narrative_version'], LIFETIME_NARRATIVE_VERSION)
+        self.assertIn('data-lifetime-v3="1"', report['report_content'])
+        self.assertEqual(wallet_store.load(self.owner)['balance'], 550)
 
-    def test_status_must_be_selected_not_guessed(self):
-        self.seed_theme('business')
-        self.assertEqual(self.update('business').status_code,422)
-        self.assertEqual(self.update('business',sub_option='창업').status_code,200)
-        report=wallet_store.load(self.owner)['reports'][0]
-        self.assertEqual(report['reading_context']['sub_option'],'창업')
-        self.assertIn('창업 준비에서의 활용',report['report_content'])
+    def test_saved_situation_is_reused_and_never_guessed(self):
+        self.seed_theme('business')                       # 상황 선택값이 없는 옛 풀이
+        self.assertEqual(self.session_reports()[0]['report_content'], '<p>보존할 원문</p>')
+        wallet_store.refresh_owned_report(self.owner, 'business', wallet_store.load(self.owner)['reports'][0],
+                                          dict(narrative_version='older', reading_context=dict(sub_option='창업')))
+        report = self.session_reports()[0]
+        self.assertIn('창업 기준', report['report_content'])
+        self.assertEqual(report['reading_context']['sub_option'], '창업')
 
-    def test_missing_partner_does_not_recalculate_or_charge(self):
+    def test_compatibility_is_left_alone_without_partner_data(self):
         self.seed_theme('gunghap')
-        before=wallet_store.load(self.owner)
-        self.assertEqual(self.update('gunghap').status_code,422)
-        self.assertEqual(wallet_store.load(self.owner),before)
-        response=self.update('gunghap',partner_name='상대',partner_gender='male',
-            partner_birth_year=1986,partner_birth_month=2,partner_birth_day=3,
-            partner_calendar_type='solar',partner_sijin_index=-1,relation='친구 / 지인')
-        self.assertEqual(response.status_code,200,response.text)
-        self.assertEqual(response.json()['new_balance'],780)
-        self.assertNotIn('partner_birth_year',str(wallet_store.load(self.owner)['reports'][0].keys()))
-
-    def test_http_boundary_and_ownership_are_enforced(self):
-        self.assertEqual(self.update().status_code,403)
-        self.seed_theme()
-        for headers in [{'X-Dalha-Request':''},{'Origin':'https://evil.example'}]:
-            self.assertEqual(self.client.post('/api/reports/refresh',
-                json=dict(user_id=self.owner,report_key='wealth'),headers=headers).status_code,403)
-        self.assertEqual(self.client.post('/api/reports/refresh',
-            json=dict(user_id='user_other',report_key='wealth')).status_code,403)
-        self.client.cookies.clear()
-        self.assertEqual(self.update().status_code,401)
+        before = wallet_store.load(self.owner)
+        self.assertEqual(self.session_reports()[0]['report_content'], '<p>보존할 원문</p>')
+        self.assertEqual(wallet_store.load(self.owner), before)
 
     def test_failure_and_concurrency_never_lose_originals_or_balance(self):
         self.seed_theme(); before=wallet_store.load(self.owner)
         with patch('main.generate_detailed_report',side_effect=ValueError('invalid')):
-            self.assertEqual(self.update().status_code,422)
+            self.session_reports()
         self.assertEqual(wallet_store.load(self.owner),before)
         replacement=dict(report_title='새 풀이',report_content='<p>새 원고</p>',narrative_version=THEME_VERSION)
         with ThreadPoolExecutor(max_workers=4) as pool:

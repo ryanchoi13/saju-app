@@ -1,5 +1,6 @@
 import os
 import sys
+import logging
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "backend"))
 from datetime import date, time
 from app.engine.korean import josa
@@ -924,7 +925,7 @@ def auth_kakao(req: KakaoAuthRequest, response: Response = None, request: Reques
             "status": "existing_user",
             "user_id": user_id,
             "coin_balance": user["coin"],
-            "unlocked_reports": reports_db.get(user_id, []),
+            "unlocked_reports": client_reports(user_id),
             **wardrobe,
             "saju_analysis": _public_saju(saju_res),
             "profile": _public_profile(user),
@@ -1097,7 +1098,7 @@ def unlock_report(req: UnlockReportRequest):
     cost = prices[req.report_key]
     user = hydrate_account(req.user_id)
     if any(r['report_key'] == req.report_key for r in reports_db[req.user_id]):
-        return {'status':'success', 'new_balance':user['coin'], 'unlocked_reports':reports_db[req.user_id]}
+        return {'status':'success', 'new_balance':user['coin'], 'unlocked_reports':client_reports(req.user_id)}
     if user["coin"] < cost:
         raise HTTPException(status_code=400, detail="Insufficient coins")
     if req.report_key == "gunghap":
@@ -1160,7 +1161,7 @@ def unlock_report(req: UnlockReportRequest):
     return {
         "status": "success",
         "new_balance": user["coin"],
-        "unlocked_reports": reports_db[req.user_id]
+        "unlocked_reports": client_reports(req.user_id)
     }
 
 
@@ -1204,117 +1205,99 @@ def preview_report(req: PreviewReportRequest):
                 narrative_version=generated.get('narrative_version'))
 
 
-class RefreshReportRequest(UnlockReportRequest):
-    cost: int = 0
+# --- 구매한 풀이는 '그 해(그 주제)를 볼 권리'다 -------------------------------
+# 사용자에게 '새로 받기' 버튼을 보이지 않는다. 문구·엔진 버전이 바뀌면 보관함을 열 때 서버가
+# 조용히 최신 풀이로 바꿔 준다. 이전 원문은 서버 안(previous_versions)에만 남기고 화면에는 보내지 않는다.
+# 바꿀 수 없는 경우(궁합처럼 상대 정보가 없음, 상황 선택값이 없음, 연도를 모름, 생성·저장 실패)는
+# 기존 풀이를 그대로 두고 다음에 다시 시도한다. 결제일·잔액·다른 풀이는 건드리지 않는다.
+logger = logging.getLogger('dalha.reports')
+AUTO_UPDATE_KEYS = ('sinnian', 'daewoon', 'wealth', 'business', 'love', 'health', 'study')
 
 
-@app.post('/api/reports/refresh')
-def refresh_owned_report(req: RefreshReportRequest):
-    """Explicit no-charge upgrade. Do not infer a missing partner or situation."""
+def _report_target_version(report_key):
     from app.engine.services.reading_editorial import THEME_VERSION
     from app.engine.services.career import CAREER_NARRATIVE_VERSION
     from app.engine.services.love import LOVE_NARRATIVE_VERSION
     from app.engine.services.health import HEALTH_NARRATIVE_VERSION
+    from app.engine.services.lifetime import LIFETIME_NARRATIVE_VERSION
+    if report_key not in AUTO_UPDATE_KEYS:
+        return None
+    return {
+        'sinnian': ANNUAL_NARRATIVE_VERSION, 'daewoon': LIFETIME_NARRATIVE_VERSION,
+        'business': CAREER_NARRATIVE_VERSION, 'love': LOVE_NARRATIVE_VERSION,
+        'health': HEALTH_NARRATIVE_VERSION,
+    }.get(report_key, THEME_VERSION)
+
+
+def _owned_year(original):
+    import re
+    year = original.get('report_year')
+    if isinstance(year, int) and not isinstance(year, bool) and 1900 <= year <= 9999:
+        return year
+    matched = (re.search(r'data-report-year=["\x27](\d{4})["\x27]', original.get('report_content', ''))
+               or re.match(r'^(\d{4})\b', original.get('report_title', '')))
+    year = int(matched.group(1)) if matched else None
+    return year if year and 1900 <= year <= 9999 else None
+
+
+def _rebuilt_report(user, original, target_version):
+    """구매한 풀이를 지금 저장된 사주로 다시 쓴다. 다시 쓸 근거가 부족하면 None."""
     from app.engine.services.career_copy import STATUS_TRACK as CAREER_OPTIONS
     from app.engine.services.love_copy import STATUSES as LOVE_OPTIONS
-    if req.report_key not in {'daewoon', 'wealth', 'business', 'love', 'health', 'study', 'gunghap'}:
-        raise HTTPException(status_code=422, detail='이 리포트는 해당 업데이트를 지원하지 않습니다.')
-    user = hydrate_account(req.user_id)
-    original = next((r for r in reports_db[req.user_id] if r['report_key'] == req.report_key), None)
-    if original is None:
-        raise HTTPException(status_code=403, detail='먼저 해당 풀이를 열람해 주세요.')
-    from app.engine.services.lifetime import LIFETIME_NARRATIVE_VERSION
-    target_version = {
-        'daewoon': LIFETIME_NARRATIVE_VERSION, 'business': CAREER_NARRATIVE_VERSION,
-        'love': LOVE_NARRATIVE_VERSION, 'health': HEALTH_NARRATIVE_VERSION,
-    }.get(req.report_key, THEME_VERSION)
-    if original.get('narrative_version') == target_version:
-        return dict(status='success', new_balance=user['coin'], unlocked_reports=reports_db[req.user_id])
-    if not user.get('profile_complete'):
-        raise HTTPException(status_code=422, detail='사주 정보를 먼저 확인해 주세요.')
-    context = original.get('reading_context') or {}
-    option = req.sub_option if req.sub_option != '기본' else context.get('sub_option', '기본')
-    allowed = CAREER_OPTIONS if req.report_key == 'business' else LOVE_OPTIONS if req.report_key == 'love' else None
-    if allowed and option not in allowed:
-        raise HTTPException(status_code=422, detail='현재 상황을 선택한 뒤 업데이트해 주세요.')
-    partner = None
-    if req.report_key == 'gunghap':
-        if (not req.partner_name or req.partner_gender not in {'male','female'}
-                or req.partner_calendar_type not in {'solar','lunar','leap'}
-                or _partner_clock_fields(req) is None
-                or req.relation not in {'연인 / 결혼','동업 / 비즈니스','친구 / 지인'}):
-            raise HTTPException(status_code=422, detail='상대방 정보와 관계를 다시 확인해 주세요.')
-        try:
-            date(req.partner_birth_year, req.partner_birth_month, req.partner_birth_day)
-        except (ValueError, TypeError):
-            raise HTTPException(status_code=422, detail='상대방 생년월일을 확인해 주세요.')
-        partner = dict(name=req.partner_name, gender=req.partner_gender,
-                       birth_year=req.partner_birth_year, birth_month=req.partner_birth_month,
-                       birth_day=req.partner_birth_day, calendar_type=req.partner_calendar_type,
-                       **_partner_clock_fields(req))
-    try:
-        generated = generate_detailed_report(req.report_key, option, req.partner_name, req.relation,
-                                             user.get('name','회원'), user=user, partner=partner,
-                                             is_unlocked=True)   # original 이 있다 = 이미 구매한 사용자
-    except ValueError:
-        raise HTTPException(status_code=422, detail='입력한 사주 정보를 확인해 주세요. 기존 풀이와 복채는 유지됩니다.')
-    replacement = dict(report_title=generated['title'], report_content=generated['content'],
-                       narrative_version=generated.get('narrative_version', target_version), profile_basis='current_saved_profile',
-                       reading_context=dict(sub_option=option, relation=req.relation),
-                       refreshed_at=datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=9))).isoformat())
-    try:
-        assets = wallet_store.refresh_owned_report(req.user_id, req.report_key, original, replacement)
-    except ValueError:
-        raise HTTPException(status_code=409, detail='보관함이 변경되었습니다. 새로고침한 뒤 다시 확인해 주세요.')
-    except wallet_store.StorageUnavailable:
-        raise HTTPException(status_code=503, detail='새 풀이를 저장하지 못했습니다. 기존 풀이와 복채는 유지됩니다.')
-    user['coin'] = assets['balance']
-    reports_db[req.user_id] = assets['reports']
-    return dict(status='success', new_balance=user['coin'], unlocked_reports=assets['reports'])
-
-
-class RefreshAnnualRequest(BaseModel):
-    user_id: str
-
-
-@app.post('/api/reports/refresh-annual')
-def refresh_annual_report(req: RefreshAnnualRequest):
-    """Explicit free upgrade of an owned annual report, not a new purchase."""
-    import re
-    user = hydrate_account(req.user_id)
-    original = next((r for r in reports_db[req.user_id] if r['report_key'] == 'sinnian'), None)
-    if original is None:
-        raise HTTPException(status_code=403, detail='먼저 올해운세를 열람해 주세요.')
-    if original.get('narrative_version') == ANNUAL_NARRATIVE_VERSION:
-        return dict(status='success', new_balance=user['coin'], unlocked_reports=reports_db[req.user_id])
-    if not user.get('profile_complete'):
-        raise HTTPException(status_code=422, detail='사주 정보를 먼저 확인해 주세요.')
-    # Keep the purchased year. Never silently turn an older purchase into this year.
-    year = original.get('report_year')
-    if not isinstance(year, int) or isinstance(year, bool):
-        matched = (re.search(r'data-report-year=[\"\x27](\d{4})[\"\x27]', original.get('report_content', ''))
-                   or re.match(r'^(\d{4})\b', original.get('report_title', '')))
-        year = int(matched.group(1)) if matched else None
-    if year is None or not 1900 <= year <= 9999:
-        raise HTTPException(status_code=422, detail='기존 풀이의 연도를 확인하지 못했습니다. 원문은 그대로 보관되어 있습니다.')
-    try:
+    key = original['report_key']
+    now = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=9))).isoformat()
+    if key == 'sinnian':
+        year = _owned_year(original)
+        if year is None:            # 산 해를 모르면 올해로 바꿔 버리지 않는다.
+            return None
         generated = generate_detailed_report('sinnian', '기본', '', '', user.get('name', '회원'),
                                              user=user, report_year=year)
-    except ValueError:
-        raise HTTPException(status_code=422, detail='현재 저장한 사주 정보와 기존 풀이 연도를 확인해 주세요.')
-    replacement = dict(report_title=generated['title'], report_content=generated['content'],
-                       narrative_version=ANNUAL_NARRATIVE_VERSION, report_year=year,
-                       refreshed_at=datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=9))).isoformat(),
-                       profile_basis='current_saved_profile')
-    try:
-        assets = wallet_store.refresh_owned_annual(req.user_id, original, replacement)
-    except ValueError:
-        raise HTTPException(status_code=409, detail='보관함이 변경되었습니다. 새로고침한 뒤 다시 확인해 주세요.')
-    except wallet_store.StorageUnavailable:
-        raise HTTPException(status_code=503, detail='새 풀이를 저장하지 못했습니다. 기존 풀이와 복채는 유지됩니다.')
-    user['coin'] = assets['balance']
-    reports_db[req.user_id] = assets['reports']
-    return dict(status='success', new_balance=user['coin'], unlocked_reports=assets['reports'])
+        return dict(report_title=generated['title'], report_content=generated['content'],
+                    narrative_version=target_version, report_year=year,
+                    refreshed_at=now, profile_basis='current_saved_profile')
+    context = original.get('reading_context') or {}
+    option = context.get('sub_option', '기본')
+    allowed = CAREER_OPTIONS if key == 'business' else LOVE_OPTIONS if key == 'love' else None
+    if allowed and option not in allowed:   # 사용자가 고른 상황을 짐작하지 않는다.
+        return None
+    generated = generate_detailed_report(key, option, '', context.get('relation', ''), user.get('name', '회원'),
+                                         user=user, is_unlocked=True)
+    return dict(report_title=generated['title'], report_content=generated['content'],
+                narrative_version=generated.get('narrative_version', target_version),
+                profile_basis='current_saved_profile', reading_context=dict(context, sub_option=option),
+                refreshed_at=now)
+
+
+def bring_reports_up_to_date(user_id):
+    """보관함의 풀이 중 버전이 낡은 것을 최신으로 바꾼다. 실패한 것은 그대로 둔다."""
+    user = users_db.get(user_id) or hydrate_account(user_id)
+    if not user.get('profile_complete'):
+        return reports_db.get(user_id, [])
+    for original in list(reports_db.get(user_id, [])):
+        target = _report_target_version(original.get('report_key'))
+        if target is None or original.get('narrative_version') == target:
+            continue
+        try:
+            replacement = _rebuilt_report(user, original, target)
+        except Exception:
+            logger.warning('구매한 풀이 자동 갱신 실패(생성) user=%s key=%s', user_id, original.get('report_key'),
+                           exc_info=True)
+            continue
+        if replacement is None:
+            continue
+        try:
+            assets = wallet_store.refresh_owned_report(user_id, original['report_key'], original, replacement)
+        except (ValueError, wallet_store.StorageUnavailable):
+            logger.warning('구매한 풀이 자동 갱신 실패(저장) user=%s key=%s', user_id, original.get('report_key'))
+            continue
+        user['coin'] = assets['balance']
+        reports_db[user_id] = assets['reports']
+    return reports_db.get(user_id, [])
+
+
+def client_reports(user_id):
+    """화면에 보내는 보관함. 이전 원문은 서버에만 둔다."""
+    return [{k: v for k, v in r.items() if k != 'previous_versions'} for r in bring_reports_up_to_date(user_id)]
 
 # Date-specific Korean daily zodiac/star guides.
 from zodiac_daily import build_daily_zodiac
