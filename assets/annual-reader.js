@@ -72,7 +72,13 @@ window.setupAnnualReader = function(body, navigation) {
         button.textContent = `${card.dataset.reportMonth}월`;
         button.onclick = () => {
             [...choices.children].forEach(el => el.setAttribute('aria-pressed', String(el === button)));
-            monthBody.replaceChildren(card.cloneNode(true));
+            // 달마다 계절 그림 한 장(장식). 그림이 없으면 풀이만 보인다.
+            const art = document.createElement('img');
+            art.className = 'annual-month-art';
+            art.src = `/assets/season/months/${String(card.dataset.reportMonth).padStart(2, '0')}.webp`;
+            art.alt = ''; art.loading = 'lazy'; art.decoding = 'async';
+            art.onerror = () => art.remove();
+            monthBody.replaceChildren(art, card.cloneNode(true));
         };
         choices.append(button);
         return button;
