@@ -38,10 +38,13 @@ class SecondTabReportTests(TestCase):
         # money/career cards just to fill a fixed four-card layout.
         reviewed = report["evidence_summary"]["annual"]["considered_domains"]
         self.assertTrue({"money", "work", "love", "wellbeing", "learning"} <= {r["domain"] for r in reviewed})
-        # v2: 엔진이 고른 분야는 화면의 분야 칸(마음·표현, 사람·관계 등)으로 모두 드러난다.
-        from app.engine.services.annual_v2 import AREA_LABEL, ENGINE_TO_AREA
+        # 분야 칸은 재물·애정·일·건강·학업 다섯 개가 모두 드러난다. (엔진 분야 중 다섯에 겹치는 것만 중심이 된다)
+        from app.engine.services.annual_v2 import AREA_KEYS, AREA_LABEL, ENGINE_TO_AREA
+        for key in AREA_KEYS:
+            self.assertIn(f'data-report-domain="{key}"', report["content"])
         for selected in report["evidence_summary"]["annual"]["selected"]:
-            self.assertIn(AREA_LABEL[ENGINE_TO_AREA[selected["domain"]]], report["content"])
+            if selected["domain"] in ENGINE_TO_AREA:
+                self.assertIn(AREA_LABEL[ENGINE_TO_AREA[selected["domain"]]], report["content"])
         self.assertEqual(report["content"].count("border-left:4px solid #2D6A4F"), 12)
         self.assertNotIn("Chapter", report["content"])
         self.assertNotIn("토정비결", report["title"])
