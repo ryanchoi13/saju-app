@@ -66,11 +66,15 @@ def _term_period(target):
 def _month_focus(selection):
     """그달에 엔진이 짚은 분야(primary_domains 첫째)를 v2 분야로. 없으면 그달 십성의 분야."""
     modes = {c["domain"]: c.get("mode", "base") for c in selection.get("candidates", ())}
-    for domain in selection.get("primary_domains") or ():
+    primary = list(selection.get("primary_domains") or ())
+    for domain in primary:
         area = annual_v2.ENGINE_TO_AREA.get(domain)
         if area:
             return area, flow_of(modes.get(domain))
-    return annual_v2.GOD_AREA.get(selection.get("focal_god"), "body"), "base"
+    # 엔진이 짚은 분야가 다섯 분야 밖(마음·대인관계·이동 등)이면 분야는 십성으로 고르되,
+    # 그달의 흐름(합·충 등)은 엔진이 짚은 첫 분야의 것을 그대로 쓴다.
+    flow = flow_of(modes.get(primary[0])) if primary else "base"
+    return annual_v2.GOD_AREA.get(selection.get("focal_god"), "health"), flow
 
 
 def _monthly_reading(selection, ledger, month, year_god, target):

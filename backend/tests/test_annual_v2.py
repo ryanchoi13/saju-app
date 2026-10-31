@@ -61,12 +61,21 @@ class BankTests(TestCase):
 
 class CentralAreaTests(TestCase):
     def test_central_area_follows_engine_not_a_fixed_work_money_slot(self):
-        for domain in ENGINE_DOMAINS:
+        for domain in v2.ENGINE_TO_AREA:
             reading = v2.compose_year(selection("eating_god", [domain]))
             self.assertEqual(reading["areas"][0]["area"], v2.ENGINE_TO_AREA[domain])
             self.assertTrue(reading["areas"][0]["central"])
-        areas = {v2.compose_year(selection("eating_god", [d]))["areas"][0]["area"] for d in ENGINE_DOMAINS}
-        self.assertEqual(areas, set(v2.AREA_KEYS))
+        self.assertEqual(set(v2.ENGINE_TO_AREA.values()), set(v2.AREA_KEYS))
+
+    def test_engine_domains_outside_the_five_fall_back_to_the_ten_god_but_keep_the_flow(self):
+        for domain in set(ENGINE_DOMAINS) - set(v2.ENGINE_TO_AREA):
+            reading = v2.compose_year(selection("direct_officer", [domain], "change"))
+            self.assertEqual(reading["centers"], [dict(area="work", mode="change", basis="ten_god")])
+            self.assertIn(v2.MODE_NOTE["work"]["change"], reading["areas"][0]["text"])
+
+    def test_five_areas_are_wealth_love_work_health_study(self):
+        self.assertEqual([label for _, label in v2.AREAS], ["재물", "애정", "일", "건강", "학업"])
+        self.assertNotIn("love", set(v2.GOD_AREA.values()))  # 성별로 배우자 별을 나누지 않는다
 
     def test_central_block_is_longer_than_the_others(self):
         reading = v2.compose_year(selection("peer", ["love"]))
@@ -76,12 +85,12 @@ class CentralAreaTests(TestCase):
 
     def test_at_most_two_centers_and_ties_keep_engine_order(self):
         reading = v2.compose_year(selection("peer", ["work", "money", "love", "learning"]))
-        self.assertEqual([c["area"] for c in reading["centers"]], ["workmoney", "people"])
-        self.assertEqual([a["area"] for a in reading["areas"][:2]], ["workmoney", "people"])
+        self.assertEqual([c["area"] for c in reading["centers"]], ["work", "wealth"])
+        self.assertEqual([a["area"] for a in reading["areas"][:2]], ["work", "wealth"])
 
     def test_without_engine_domains_fall_back_to_the_ten_god_area_and_say_so(self):
         reading = v2.compose_year(selection("direct_resource"))
-        self.assertEqual(reading["centers"], [dict(area="learn", mode="base", basis="ten_god")])
+        self.assertEqual(reading["centers"], [dict(area="study", mode="base", basis="ten_god")])
 
     def test_unknown_god_uses_the_general_bank_without_a_center(self):
         reading = v2.compose_year(selection(None))
@@ -91,7 +100,7 @@ class CentralAreaTests(TestCase):
 
     def test_mode_note_only_on_the_central_block(self):
         reading = v2.compose_year(selection("peer", ["work"], "change"))
-        self.assertIn(v2.MODE_NOTE["workmoney"]["change"], reading["areas"][0]["text"])
+        self.assertIn(v2.MODE_NOTE["work"]["change"], reading["areas"][0]["text"])
         self.assertTrue(all("달라지는 대목" not in a["text"] for a in reading["areas"][1:]))
 
     def test_deterministic(self):
@@ -122,12 +131,13 @@ class MonthTests(TestCase):
                         self.assertEqual(r["verdict"], v2.VERDICTS[flow])
 
     def test_month_has_all_blocks_and_focus_is_excluded_from_lines(self):
-        r = month(CopyLedger(1), 10, "indirect_wealth", area="workmoney", flow="join")
+        r = month(CopyLedger(1), 10, "indirect_wealth", area="wealth", flow="join")
         self.assertEqual(len(split_sentences(r["flow_text"])), 3)
         self.assertEqual(len(split_sentences(r["link"])), 2)
-        self.assertEqual(r["focus"]["area"], "workmoney")
-        self.assertEqual([l["area"] for l in r["lines"]], ["mind", "people", "body", "learn"])
-        self.assertEqual([l["label"] for l in r["lines"]], ["마음", "관계", "건강", "배움"])
+        self.assertEqual(r["focus"]["area"], "wealth")
+        self.assertEqual(r["focus"]["label"], "재물")
+        self.assertEqual([l["area"] for l in r["lines"]], ["love", "work", "health", "study"])
+        self.assertEqual([l["label"] for l in r["lines"]], ["애정", "일", "건강", "학업"])
         self.assertTrue(r["do"] and r["avoid"])
         self.assertGreaterEqual(len(r["sentences"]), 10)
 
@@ -176,7 +186,7 @@ class MonthTests(TestCase):
         self.assertIsNone(month(CopyLedger(1), 10, "indirect_wealth")["period"])
 
     def test_unknown_month_god_still_gives_a_month(self):
-        r = v2.compose_month(CopyLedger(1), 3, month_god=None, year_god="peer", focus_area="body")
+        r = v2.compose_month(CopyLedger(1), 3, month_god=None, year_god="peer", focus_area="health")
         self.assertIsNone(r["link"])
         self.assertEqual(r["lines"], [])
         self.assertTrue(r["flow_text"] and r["do"])
@@ -250,8 +260,8 @@ class BuilderStructureTests(TestCase):
     def test_central_marker_and_heading_match_the_reading(self):
         content = self.report["content"]
         self.assertEqual(content.count('data-central="true"'), 1)
-        self.assertIn("올해의 중심 · 마음·표현", content)
-        self.assertEqual(self.report["reading"]["areas"][0]["area"], "mind")
+        self.assertIn("올해의 중심 · 건강", content)
+        self.assertEqual(self.report["reading"]["areas"][0]["area"], "health")
 
     def test_twelve_months_with_a_verdict_each(self):
         content = self.report["content"]
@@ -313,4 +323,4 @@ class BuilderStructureTests(TestCase):
         base = run_builder(fake_core(), domains=("work",), god="peer", mode="base")
         changed = run_builder(fake_core(), domains=("work",), god="peer", mode="change")
         self.assertNotEqual(base["reading"]["areas"][0]["text"], changed["reading"]["areas"][0]["text"])
-        self.assertEqual(base["reading"]["areas"][0]["area"], "workmoney")
+        self.assertEqual(base["reading"]["areas"][0]["area"], "work")
