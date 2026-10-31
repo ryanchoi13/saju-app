@@ -554,7 +554,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
     <link id="dalhaBrandStyles" rel="stylesheet" href="/assets/brand-2026/brand.css?v=20261010-1">
     <link rel="stylesheet" href="/assets/reading-polish.css?v=20261030-2">
     <link rel="stylesheet" href="/assets/daily-card.css?v=20261027-1">
-    <link rel="stylesheet" href="/assets/brand-2026/refine.css?v=20261031-2">
+    <link rel="stylesheet" href="/assets/brand-2026/refine.css?v=20261031-3">
     <script src="/assets/reading-polish.js?v=20261031-2" defer></script>
     <script src="/assets/brand-2026/brand-ui.js?v=20261001-4" defer></script>
 </head>
@@ -995,57 +995,46 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                         <span id="sajuSingangBadge" class="dh-chip">분석 결과 확인 중</span>
                     </div>
 
-                    <!-- 명식표 (천간/지지 리버스 진한 박스 적용) -->
-                    <div style="display: grid; grid-template-columns: 56px 1fr 1fr 1fr 1fr; gap: 6px; background: #F8F6F1; border: 1px solid #DEDCD4; border-radius: 18px; padding: 12px 8px;">
-                        <div style="display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; padding: 8px 0;">
-                            <span style="font-size: 12px; font-weight: 700; color: #59636D;">구분</span>
-                            <div style="height: 44px; display: flex; align-items: center; justify-content: center; color: #59636D; font-size: 12px; font-weight: 700;">천간<br>(天干)</div>
-                            <div style="height: 44px; display: flex; align-items: center; justify-content: center; color: #59636D; font-size: 12px; font-weight: 700;">지지<br>(地支)</div>
-                            <div style="border-top: 1px dashed #D4D0C6; width: 100%; padding-top: 8px;"><div style="color: #59636D; font-size: 12px; font-weight: 700;">지장간</div></div>
-                        </div>
-
-                        <div style="background: #FFFEFA; border: 1px solid #DEDCD4; border-radius: 14px; padding: 8px 4px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center;">
-                            <span style="font-size: 12px; font-weight: 700; color: #59636D;">시주 (時)</span>
+                    <!-- 명식표 (2026-10-31 시안 511): 큰 먹색 한자 + 작은 오행 점 + 읽는 법. 일주는 남색 테두리 -->
+                    <div id="pillarChart" class="pc-grid" role="table" aria-label="사주 여덟 글자">
+                        <div class="pc-col pc-rowhead" aria-hidden="true"><span class="pc-label">&nbsp;</span><div class="pc-rh">천간</div><div class="pc-rh">지지</div><div class="pc-rh pc-rh-small">지장간</div></div>
+                        <div class="pc-col">
+                            <span class="pc-label">시</span>
                             <div id="cg_h_badge" class="badge-elem-main badge-main-none">-</div>
                             <div id="jj_h_badge" class="badge-elem-main badge-main-none">-</div>
-                            <div style="border-top: 1px dashed #D4D0C6; width: 100%; padding-top: 8px;"><div id="jjg_h_box" style="display: flex; flex-direction: column; align-items: center; gap: 4px;">-</div></div>
+                            <div id="jjg_h_box" class="pc-hidden">-</div>
                         </div>
-
-                        <div style="background: #FFFEFA; border: 2px solid #25364A; border-radius: 14px; padding: 8px 4px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center;">
-                            <span style="font-size: 12px; font-weight: 800; color: #25364A;">일주 (본원)</span>
+                        <div class="pc-col is-day">
+                            <span class="pc-label">일</span>
                             <div id="cg_d_badge" class="badge-elem-main badge-main-none">-</div>
                             <div id="jj_d_badge" class="badge-elem-main badge-main-none">-</div>
-                            <div style="border-top: 1px dashed #D4D0C6; width: 100%; padding-top: 8px;"><div id="jjg_d_box" style="display: flex; flex-direction: column; align-items: center; gap: 4px;">-</div></div>
+                            <div id="jjg_d_box" class="pc-hidden">-</div>
                         </div>
-
-                        <div style="background: #FFFEFA; border: 1px solid #DEDCD4; border-radius: 14px; padding: 8px 4px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center;">
-                            <span style="font-size: 12px; font-weight: 700; color: #59636D;">월주 (月)</span>
+                        <div class="pc-col">
+                            <span class="pc-label">월</span>
                             <div id="cg_m_badge" class="badge-elem-main badge-main-none">-</div>
                             <div id="jj_m_badge" class="badge-elem-main badge-main-none">-</div>
-                            <div style="border-top: 1px dashed #D4D0C6; width: 100%; padding-top: 8px;"><div id="jjg_m_box" style="display: flex; flex-direction: column; align-items: center; gap: 4px;">-</div></div>
+                            <div id="jjg_m_box" class="pc-hidden">-</div>
                         </div>
-
-                        <div style="background: #FFFEFA; border: 1px solid #DEDCD4; border-radius: 14px; padding: 8px 4px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center;">
-                            <span style="font-size: 12px; font-weight: 700; color: #59636D;">년주 (年)</span>
+                        <div class="pc-col">
+                            <span class="pc-label">년</span>
                             <div id="cg_y_badge" class="badge-elem-main badge-main-none">-</div>
                             <div id="jj_y_badge" class="badge-elem-main badge-main-none">-</div>
-                            <div style="border-top: 1px dashed #D4D0C6; width: 100%; padding-top: 8px;"><div id="jjg_y_box" style="display: flex; flex-direction: column; align-items: center; gap: 4px;">-</div></div>
+                            <div id="jjg_y_box" class="pc-hidden">-</div>
                         </div>
                     </div>
 
-                    <div style="margin-top: 18px; text-align: left;">
-                        <div style="margin-bottom: 8px;">
-                            <span style="font-size: 14px; font-weight: 800; color: #25364A;">원국 오행(五行) 구성</span>
-                        </div>
-
-                        <div style="background: #F8F6F1; border: 1px solid #DEDCD4; border-radius: 18px; padding: 16px 10px 12px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; text-align: center;">
-                            <div style="display: flex; flex-direction: column; align-items: center; gap: 6px;"><span id="valWood" style="font-size: 13px; font-weight: 700; color: #435C41;">—</span><div style="width: 28px; height: 95px; background: #ECE9E1; border-radius: 14px; display: flex; align-items: flex-end;"><div id="barWood" style="width: 100%; height: 0%; background: #4F6B4C; border-radius: 14px; transition: height 0.6s ease;"></div></div><span style="font-size: 13px; font-weight: 800; color: #435C41;">木</span></div>
-                            <div style="display: flex; flex-direction: column; align-items: center; gap: 6px;"><span id="valFire" style="font-size: 13px; font-weight: 700; color: #923C28;">—</span><div style="width: 28px; height: 95px; background: #ECE9E1; border-radius: 14px; display: flex; align-items: flex-end;"><div id="barFire" style="width: 100%; height: 0%; background: #A9472F; border-radius: 14px; transition: height 0.6s ease;"></div></div><span style="font-size: 13px; font-weight: 800; color: #923C28;">火</span></div>
-                            <div style="display: flex; flex-direction: column; align-items: center; gap: 6px;"><span id="valEarth" style="font-size: 13px; font-weight: 700; color: #7F6029;">—</span><div style="width: 28px; height: 95px; background: #ECE9E1; border-radius: 14px; display: flex; align-items: flex-end;"><div id="barEarth" style="width: 100%; height: 0%; background: #93702F; border-radius: 14px; transition: height 0.6s ease;"></div></div><span style="font-size: 13px; font-weight: 800; color: #7F6029;">土</span></div>
-                            <div style="display: flex; flex-direction: column; align-items: center; gap: 6px;"><span id="valMetal" style="font-size: 13px; font-weight: 700; color: #5C6167;">—</span><div style="width: 28px; height: 95px; background: #ECE9E1; border-radius: 14px; display: flex; align-items: flex-end;"><div id="barMetal" style="width: 100%; height: 0%; background: #6B7178; border-radius: 14px; transition: height 0.6s ease;"></div></div><span style="font-size: 13px; font-weight: 800; color: #5C6167;">金</span></div>
-                            <div style="display: flex; flex-direction: column; align-items: center; gap: 6px;"><span id="valWater" style="font-size: 13px; font-weight: 700; color: #243B52;">—</span><div style="width: 28px; height: 95px; background: #ECE9E1; border-radius: 14px; display: flex; align-items: flex-end;"><div id="barWater" style="width: 100%; height: 0%; background: #2C4762; border-radius: 14px; transition: height 0.6s ease;"></div></div><span style="font-size: 13px; font-weight: 800; color: #243B52;">水</span></div>
-                        </div>
-                        <p id="sajuElementsNote" style="font-size:11.5px;color:#59636D;line-height:1.55;margin:8px 2px 0;">천간·지지의 표면 구성을 보여줍니다.</p>
+                    <div class="pc-elements">
+                        <span class="pc-elements-title">원국 오행(五行) 구성</span>
+                        <div class="pc-bar" aria-hidden="true"><i id="barWood" class="el-wood"></i><i id="barFire" class="el-fire"></i><i id="barEarth" class="el-earth"></i><i id="barMetal" class="el-metal"></i><i id="barWater" class="el-water"></i></div>
+                        <ul class="pc-legend">
+                            <li><i class="el-wood"></i>목(木) <b id="valWood">—</b></li>
+                            <li><i class="el-fire"></i>화(火) <b id="valFire">—</b></li>
+                            <li><i class="el-earth"></i>토(土) <b id="valEarth">—</b></li>
+                            <li><i class="el-metal"></i>금(金) <b id="valMetal">—</b></li>
+                            <li><i class="el-water"></i>수(水) <b id="valWater">—</b></li>
+                        </ul>
+                        <p id="sajuElementsNote" class="pc-note">천간·지지의 표면 구성을 보여줍니다.</p>
                     </div>
                     </details>
                     <div class="card reading-lead">
@@ -2774,7 +2763,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             const elems = data.saju_data.elements;
             ['Wood', 'Fire', 'Earth', 'Metal', 'Water'].forEach(key => {
                 const kLower = key.toLowerCase();
-                document.getElementById(`bar${key}`).style.height = `${elems[kLower]}%`;
+                document.getElementById(`bar${key}`).style.width = `${elems[kLower]}%`;
                 document.getElementById(`val${key}`).innerText = `${elems[kLower]}%`;
             });
             document.getElementById('sajuElementsNote').innerText = data.saju_data.elements_note || '';
@@ -4236,16 +4225,27 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
         function shareZodiacFortune() { alert('📋 오늘의 운세 링크가 복사되었습니다!'); }
 
         // 명식표 천간/지지 본체 리버스 배지
+        // 명식표: 큰 한자 + 오행 점 + 읽는 법(경 · 금). 서버는 한글 글자를 주므로 자리(천간/지지)로 한자를 찾는다.
+        const STEM_HANJA = {갑:'甲',을:'乙',병:'丙',정:'丁',무:'戊',기:'己',경:'庚',신:'辛',임:'壬',계:'癸'};
+        const BRANCH_HANJA = {자:'子',축:'丑',인:'寅',묘:'卯',진:'辰',사:'巳',오:'午',미:'未',신:'申',유:'酉',술:'戌',해:'亥'};
+        const ELEM_KO = {wood:'목',fire:'화',earth:'토',metal:'금',water:'수'};
+        function toHanja(char, isStem) {
+            const map = isStem ? STEM_HANJA : BRANCH_HANJA;
+            return map[char] || char;
+        }
         function setMainElemBadge(id, char, elem) {
             const el = document.getElementById(id);
             if (!el) return;
-            el.innerText = char || "-";
-            el.className = char ? `badge-elem-main badge-main-${elem}` : "badge-elem-main badge-main-none";
+            if (!char) { el.textContent = '-'; el.className = 'badge-elem-main badge-main-none'; return; }
+            const hanja = toHanja(char, id.startsWith('cg_'));
+            el.className = `badge-elem-main badge-main-${elem}`;
+            el.setAttribute('aria-label', `${char} ${ELEM_KO[elem] || ''}`);
+            el.innerHTML = `<span class="pc-char">${hanja}</span><i class="pc-dot el-${elem}" aria-hidden="true"></i><span class="pc-read">${char} · ${ELEM_KO[elem] || ''}</span>`;
         }
 
         function formatJijangganGroup(jjList) {
-            if (!jjList || jjList.length === 0) return `<span style="font-size:11px; color:#94A3B8;">-</span>`;
-            return jjList.map(j => `<span class="badge-jjg elem-${j.elem}">${j.char}</span>`).join('');
+            if (!jjList || jjList.length === 0) return `<span class="pc-hidden-none">-</span>`;
+            return jjList.map(j => `<span class="badge-jjg elem-${j.elem}"><i class="pc-dot el-${j.elem}" aria-hidden="true"></i>${toHanja(j.char, true)}</span>`).join('');
         }
 
         function updateDaewoonPhaseTimeline(phase, age) {

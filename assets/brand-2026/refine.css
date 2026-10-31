@@ -211,3 +211,43 @@ html[data-brand] body #view-today .dh-season.is-today { border-color:var(--ui-in
 
 /* ---- 월별 운세: 달마다 계절 그림 띠 ---- */
 html[data-brand] body .annual-month-art { display:block; width:100%; aspect-ratio:16/7; object-fit:cover; border-radius:14px; margin:0 0 14px; background:var(--ui-tint); }
+
+/* =====================================================================
+   나의 사주 · 명식표 (2026-10-31, 시안 511)
+   큰 먹색 한자 + 작은 오행 점 + 읽는 법. 색 상자 없음. 일주만 남색 테두리. 오행 구성은 가로 막대 하나.
+   ===================================================================== */
+html[data-brand] body .pc-grid { display:grid; grid-template-columns:44px repeat(4,minmax(0,1fr)); gap:0; border-top:1px solid var(--ui-line); border-bottom:1px solid var(--ui-line); margin:4px 0 0; }
+html[data-brand] body .pc-col { display:flex; flex-direction:column; align-items:center; padding:10px 2px 12px; text-align:center; min-width:0; }
+html[data-brand] body .pc-col + .pc-col:not(.is-day) { border-left:1px solid var(--ui-line); }
+html[data-brand] body .pc-col.is-day { border:1.5px solid var(--ui-ink); border-radius:12px; margin:-1px 2px; background:var(--ui-surface); }
+html[data-brand] body .pc-col.is-day + .pc-col { border-left:0; }
+html[data-brand] body .pc-label { font-size:13px; font-weight:600; color:var(--ui-muted); height:22px; line-height:22px; }
+html[data-brand] body .pc-col.is-day .pc-label { color:var(--ui-ink); }
+html[data-brand] body .pc-rh { height:76px; display:flex; align-items:center; font-size:12px; color:var(--ui-muted); writing-mode:horizontal-tb; }
+html[data-brand] body .pc-rh-small { height:auto; padding-top:10px; }
+/* 글자 칸: 상자 대신 한자 + 점 + 읽는 법 */
+html[data-brand] body .pc-grid .badge-elem-main { position:relative; width:auto!important; height:76px!important; display:flex!important; flex-direction:column; align-items:center; justify-content:center; background:transparent!important; border:0!important; box-shadow:none!important; border-radius:0!important; color:var(--ui-ink)!important; padding:0!important; }
+html[data-brand] body .pc-grid .badge-main-none { color:var(--ui-muted)!important; font-size:20px; }
+html[data-brand] body .pc-char { font-family:var(--brand-serif); font-size:34px; font-weight:600; line-height:1.15; color:var(--ui-ink); }
+html[data-brand] body .pc-read { margin-top:4px; font-size:11.5px; font-weight:500; color:var(--ui-muted); white-space:nowrap; }
+html[data-brand] body .pc-grid .badge-elem-main .pc-dot { position:absolute; top:12px; right:calc(50% - 26px); }
+html[data-brand] body .pc-dot { display:inline-block; width:7px; height:7px; border-radius:2px; flex-shrink:0; }
+html[data-brand] body .el-wood { background:var(--el-wood); } html[data-brand] body .el-fire { background:var(--el-fire); }
+html[data-brand] body .el-earth { background:var(--el-earth); } html[data-brand] body .el-metal { background:var(--el-metal); }
+html[data-brand] body .el-water { background:var(--el-water); }
+/* 지장간: 작은 회색 글자 + 점 */
+html[data-brand] body .pc-hidden { display:flex; flex-direction:column; align-items:center; gap:3px; margin-top:8px; padding-top:8px; border-top:1px dashed var(--ui-line); width:80%; }
+html[data-brand] body .pc-hidden .badge-jjg { width:auto!important; height:auto!important; background:transparent!important; border:0!important; color:var(--ui-muted)!important; font-family:var(--brand-serif); font-size:15px!important; font-weight:500!important; display:inline-flex; align-items:center; gap:4px; }
+html[data-brand] body .pc-hidden-none { font-size:12px; color:var(--ui-muted); }
+/* 오행 구성: 가로 막대 하나 + 범례 */
+html[data-brand] body .pc-elements { margin-top:20px; text-align:left; }
+html[data-brand] body .pc-elements-title { display:block; font-size:15px; font-weight:700; color:var(--ui-ink); margin-bottom:10px; }
+html[data-brand] body .pc-bar { display:flex; height:10px; border-radius:5px; overflow:hidden; background:var(--ui-tint); gap:2px; }
+html[data-brand] body .pc-bar > i { display:block; height:100%; width:0; transition:width .6s ease; }
+html[data-brand] body .pc-legend { list-style:none; margin:10px 0 0; padding:0; display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:4px; }
+html[data-brand] body .pc-legend li { display:flex; flex-direction:column; align-items:flex-start; gap:2px; font-size:12px; color:var(--ui-muted); }
+html[data-brand] body .pc-legend li > i { width:10px; height:10px; border-radius:3px; display:block; margin-bottom:2px; }
+html[data-brand] body .pc-legend b { font-size:14px; font-weight:650; color:var(--ui-ink); }
+html[data-brand] body .pc-note { font-size:12.5px; color:var(--ui-muted); line-height:1.6; margin:12px 0 0; }
+@media (prefers-reduced-motion: reduce) { html[data-brand] body .pc-bar > i { transition:none; } }
+html[data-brand] body .pc-legend b#valEarth { color:var(--ui-ink)!important; }
