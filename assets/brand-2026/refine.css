@@ -251,3 +251,14 @@ html[data-brand] body .pc-legend b { font-size:14px; font-weight:650; color:var(
 html[data-brand] body .pc-note { font-size:12.5px; color:var(--ui-muted); line-height:1.6; margin:12px 0 0; }
 @media (prefers-reduced-motion: reduce) { html[data-brand] body .pc-bar > i { transition:none; } }
 html[data-brand] body .pc-legend b#valEarth { color:var(--ui-ink)!important; }
+
+/* 2026-10-31 오늘의 행운 색: 코디 그림이 빠지고 색만 남아 칸이 과했다 → 작은 원 + 이름 한 줄로 */
+html[data-brand] body #dailyStyleCard.colors-only #outfitTrack { margin-top:2px; }
+html[data-brand] body #dailyStyleCard.colors-only .outfit-track-grid { gap:8px; }
+html[data-brand] body #dailyStyleCard.colors-only .outfit-track {
+  display:grid; grid-template-columns:28px minmax(0,1fr); grid-template-areas:"sw name" "sw el";
+  column-gap:10px; row-gap:0; align-items:center; padding:9px 11px; border-radius:12px; }
+html[data-brand] body #dailyStyleCard.colors-only .outfit-swatch {
+  grid-area:sw; width:28px; height:28px; border-radius:50%; border:1px solid rgba(15,23,42,.12); }
+html[data-brand] body #dailyStyleCard.colors-only .outfit-track strong { grid-area:name; font-size:.9375rem; line-height:1.35; }
+html[data-brand] body #dailyStyleCard.colors-only .outfit-track p { grid-area:el; font-size:.75rem; line-height:1.4; }
