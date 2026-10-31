@@ -198,3 +198,16 @@ html[data-brand] body [onclick^="openPgModal"] { background:var(--ui-surface)!im
 html[data-brand] body [onclick^="openPgModal(1300"] { border-color:var(--ui-ink)!important; }
 html[data-brand] body [onclick^="openPgModal"] > span:last-child { background:var(--ui-tint)!important; color:var(--ui-ink)!important; }
 html[data-brand] body [onclick^="openPgModal(1300"] > span:last-child { background:var(--ui-ink)!important; color:var(--ui-on-accent)!important; }
+
+/* ---- 지금 절기 카드: 동그란 절기 그림 + 이름(세리프) + 한 줄 + 다음 절기 ---- */
+html[data-brand] body #view-today .dh-season { flex-direction:row!important; align-items:center; gap:16px!important; }
+html[data-brand] body #view-today .dh-season[hidden] { display:none!important; }
+html[data-brand] body .dh-season-art { width:76px; height:76px; flex-shrink:0; border-radius:50%; object-fit:cover; background:var(--ui-page); }
+html[data-brand] body .dh-season-text { min-width:0; }
+html[data-brand] body #view-today .dh-season h4 { font-family:var(--brand-serif)!important; font-size:19px!important; font-weight:600!important; margin:0 0 4px!important; }
+html[data-brand] body .dh-season-line { margin:0; font-size:14px; line-height:1.6; color:var(--ui-ink); word-break:keep-all; }
+html[data-brand] body .dh-season-next { margin:6px 0 0; font-size:12px; color:var(--ui-muted); }
+html[data-brand] body #view-today .dh-season.is-today { border-color:var(--ui-ink)!important; }
+
+/* ---- 월별 운세: 달마다 계절 그림 띠 ---- */
+html[data-brand] body .annual-month-art { display:block; width:100%; aspect-ratio:16/7; object-fit:cover; border-radius:14px; margin:0 0 14px; background:var(--ui-tint); }

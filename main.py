@@ -1029,6 +1029,14 @@ def deployed_version(response: Response):
             "instance": (os.getenv("RENDER_INSTANCE_ID") or "unknown")[-6:]}
 
 
+@app.get("/api/season")
+def current_season(response: Response):
+    """지금 절기·다음 절기(한국 날짜). 개인정보 없음 — 홈 '지금은 ○○' 카드용."""
+    from season_terms import season_now
+    response.headers["Cache-Control"] = "public, max-age=3600"
+    return season_now()
+
+
 @app.get("/api/fashion/weather")
 def fashion_weather():
     """Korea-only rollout: fixed Gyeongju forecast, never browser GPS."""

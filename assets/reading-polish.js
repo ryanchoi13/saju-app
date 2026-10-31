@@ -64,4 +64,25 @@
     if (deg === undefined) { slot.innerHTML = ''; return; }
     slot.innerHTML = svg(`<circle cx="12" cy="12" r="9"/><g transform="rotate(${deg} 12 12)"><path d="M12 6.5l2.6 6.5H9.4z" fill="currentColor" stroke="none"/><path d="M12 13v4.5"/></g>`);
   };
+
+  // 지금 절기 카드: 서버가 한국 날짜로 계산한 절기를 받아 그림·한 줄·다음 절기를 채운다. 실패하면 카드는 숨긴 채로 둔다.
+  const renderSeason = async () => {
+    const card = document.getElementById('seasonCard');
+    if (!card) return;
+    try {
+      const res = await fetch('/api/season');
+      if (!res.ok) return;
+      const s = await res.json();
+      const [, m, d] = s.next_date.split('-').map(Number);
+      document.getElementById('seasonArt').src = s.art;
+      document.getElementById('seasonTitle').textContent = s.is_today ? `오늘은 ${s.name}` : `지금은 ${s.name}`;
+      document.getElementById('seasonLine').textContent = s.line;
+      document.getElementById('seasonNext').textContent = s.days_to_next === 1
+        ? `내일은 ${s.next_name}` : `${m}월 ${d}일 ${s.next_name}까지 ${s.days_to_next}일`;
+      card.classList.toggle('is-today', !!s.is_today);
+      card.hidden = false;
+    } catch (_) { /* 절기 카드는 없어도 되는 칸 */ }
+  };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', renderSeason);
+  else renderSeason();
 })();
