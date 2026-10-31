@@ -134,7 +134,7 @@ def _render_month_card(month, reading):
     lines = "".join(f'<li><strong>{escape(l["label"])}</strong> {escape(l["text"])}</li>' for l in reading["lines"])
     period = f'<div class="annual-month-period">{escape(reading["period"])}</div>' if reading["period"] else ""
     g = reading.get("grade")
-    grade = (f'<p class="annual-month-grade" data-grade="{g["key"]}"><strong>왜</strong> {escape(g["reason"])}<br>'
+    grade = (f'<p class="annual-month-grade" data-grade="{g["key"]}"><strong>근거</strong> {escape(g["reason"])}<br>'
              f'<strong>처방</strong> {escape(g["advice"])}</p>') if g else ""
     link = (f'<h5>올해와 이어지는 점</h5><p>{escape(reading["link"])}</p>') if reading["link"] else ""
     return (
