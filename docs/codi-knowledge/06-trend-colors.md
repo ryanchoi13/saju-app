@@ -94,6 +94,8 @@
 - **"요즘 이 색이 유행"이라고 말하려면 출처와 시즌을 붙여 둔다.** 지식서에 "유행색 메모"(시즌 / 지역 / 대상 / 색 / 출처 / 등급 / 유효기간)를 시즌마다 짧게 남기면,
   문구를 쓸 때 날짜 지난 유행을 말하는 실수를 막을 수 있다. (크부장 판단) 코드 연결은 하지 않는다(화면에는 행운 색 두 개만).
 - **에너지로 말한다.** 유행색은 "새로운 기분", "가볍게 바꾸는 날" 같은 에너지 문구와 어울린다. 나이 표현("어려 보이는")은 쓰지 않는다.
+- **나이·성별만으로 유행 수용도를 짐작하지 않는다.** 2절의 나이 차이(20대 2.84 vs 40대 이상 2.61)는 2002년 대구 여성 집단 평균이고
+  차이도 작다 `[A·9]`. 한 사람에게 "40대라서 유행을 덜 따른다"고 옮기지 않는다.
 
 ## 아직 모르는 것
 
@@ -111,7 +113,7 @@
 4. 이인성, 「패션 정보지의 디자인 트랜드 예측과 소비자의 수용도에 관한 연구」, 대한가정학회지 41(10), 2003. 삼성패션연구소·인터패션플래닝 트렌드북, 2002/03 F/W. 표본 수는 초록에 없음. [KoreaScience](https://koreascience.kr/article/JAKO200311722664704.pub?lang=ko)
 5. 장원경, 「한국 패션의 유행색 정보기획 사례에 관한 연구」, 이화여대 석사학위논문, 1997. 국내 4개 기관·해외 8개사 예측 자료, 1995 A/W~1998 S/S. [이화여대 dspace](https://dspace.ewha.ac.kr/handle/2015.oak/198902)
 6. 한승희·조규화, 「패션 색채기획의 실제: 'D'社 색채기획을 위한 Bloomsbury Group 회화의 색채 이미지를 중심으로」, 패션비즈니스 13(4), 2009. 회사 1곳 사례. [KoreaScience](https://koreascience.or.kr/article/JAKO200933063805774.pdf)
-7. "Pantone's 2026 Colour of the Year is 'Cloud Dancer' (it's a shade of white)", EWN, 2025-12-09. [EWN](https://www.ewn.co.za/2025/12/09/pantone-s-2026-colour-of-the-year-is-cloud-dancer-it-s-a-shade-of-white) 보도기사. 공식 발표 페이지(pantone.com/color-of-the-year/2026)는 이번 세션에서 열지 못해 교체하지 못했다. 다음 보강 때 공식 발표로 바꾼다.
+7. Pantone, "Pantone Color of the Year 2026: PANTONE 11-4201 Cloud Dancer", 팬톤 공식 페이지(2026-11-01 확인. 색 이름·번호·설명). 발표 시기(2025년 12월)는 보도 기준: EWN, 2025-12-09. [Pantone](https://www.pantone.com/color-of-the-year/2026) · [EWN](https://www.ewn.co.za/2025/12/09/pantone-s-2026-colour-of-the-year-is-cloud-dancer-it-s-a-shade-of-white)
 8. 배수정, 「2011 S/S 서울과 홍콩 스트리트 패션 컬러 비교분석」, 생활과학연구 21, 전남대 생활과학연구소, 2011. 20~30대 여성 스트리트 사진(초록 기준). [교보 스콜라](https://scholar.kyobobook.co.kr/article/detail/4010023481515)
 9. 신수래·류숙희, 「자아존중감과 신체만족도에 따른 패션 트렌드 수용도」, 복식문화연구 13(2), 2005. 대구 성인 여성 460명, 2002년 12월. [KoreaScience](https://koreascience.kr/article/JAKO200520828183104.pdf)
 10. 윤혜연, 「패션 피플들이 '색(色)'을 꺼내들었다!」, 하퍼스 바자 코리아, 2026-01-28. [Harper's BAZAAR Korea](https://www.harpersbazaar.co.kr/article/1896184)
