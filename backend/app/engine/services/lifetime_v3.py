@@ -227,7 +227,20 @@ def _harmony(present: list[str]) -> str:
 # ---------------------------------------------------------------------------
 # 2·3. 성격 행 → 문단
 # ---------------------------------------------------------------------------
-def _meaning(row, profile) -> list[str]:
+LABEL_LINES = (   # 소단락마다 같은 문장이 반복되지 않게 순서대로 돌려 쓴다(11/01)
+    "이러한 결을 '{label}'에 빗댑니다.",
+    "'{label}'{i}라는 이름은 이 모습에서 왔어요.",
+    "그래서 '{label}'{i}라고 불러요.",
+    "이 결에 붙인 이름이 '{label}'입니다.",
+)
+
+
+def _label_line(label: str, style: int) -> str:
+    tpl = LABEL_LINES[style % len(LABEL_LINES)]
+    return tpl.format(label=label, i=_j(label, "이/"))
+
+
+def _meaning(row, profile, style: int = 0) -> list[str]:
     key = row["key"]
     if key == "B11":
         el = copy.ELEMENT[profile["day_element"]]["name"]
@@ -258,7 +271,7 @@ def _meaning(row, profile) -> list[str]:
         else:
             lines = [f"{_jo(g['what'], '이/가')} 겉면에 보이지 않습니다.",
                      f"{_jo(g['plain'], '은/는')} 밖에서 채우는 편이에요."]
-    lines.append(f"이러한 결을 '{row['label']}'에 빗댑니다.")
+    lines.append(_label_line(row["label"], style))
     return lines
 
 
@@ -280,9 +293,9 @@ def _why_row(row, profile) -> list[str]:
     return [first, "원국 · " + _evidence_text(row, profile)]
 
 
-def _row_block(row, profile, seed, shift, heading, *, with_flip=True) -> str:
+def _row_block(row, profile, seed, shift, heading, *, with_flip=True, style: int = 0) -> str:
     allow = bool(row.get("allow_absolute"))
-    meaning = _meaning(row, profile)
+    meaning = _meaning(row, profile, style)
     # 장면은 한 문장. 따로 고른 장면 두 개를 붙이면 서로 딴 얘기가 된다(10/30).
     pool = copy.SCENE_FLOW.get(row.get("scene_key") or "")
     scene = pool[(seed >> shift) % len(pool)] if pool else ""
@@ -481,6 +494,7 @@ def _kind_first(info: dict, table: dict, seen: Counter | None = None, young=Fals
 def _year_lines(years: list[dict], seen: Counter) -> list[str]:
     order = ("stem_clash", "clash:day", "clash:month", "triple_punish", "clash:year", "clash:hour", "triple", "stem_combine")
     out = []
+    pairs = []
     for y in years:
         kinds = ["triple" if k.startswith("triple:") else k for k in y["kinds"]]
         top = next((k for k in order if k in kinds), None)
@@ -495,7 +509,22 @@ def _year_lines(years: list[dict], seen: Counter) -> list[str]:
             event = event.format(name=copy.ELEMENT[e]["name"])
         tpl = copy.YEAR_FIRST if not out else copy.YEAR_SECOND
         out.append(tpl.format(age=y["age"], event=event))
-    return out
+        pairs.append((y["age"], event))
+    return _join_year_pair(out, pairs)
+
+
+YEAR_PAIR = "{age1}세 무렵에는 {event1}, {age2}세 무렵에는 {event2}."   # 11/01: 두 해를 한 문장으로
+
+
+def _join_year_pair(out: list[str], pairs: list[tuple]) -> list[str]:
+    """앞의 두 해를 한 문장으로 잇는다. 어미가 '습니다'가 아니거나 80자를 넘으면 그대로 둔다."""
+    if len(pairs) < 2 or not pairs[0][1].endswith("습니다"):
+        return out
+    (a1, e1), (a2, e2) = pairs[0], pairs[1]
+    joined = YEAR_PAIR.format(age1=a1, event1=e1[:-3] + "고", age2=a2, event2=e2)
+    if len(joined) > SENTENCE_LIMIT:
+        return out
+    return [joined] + out[2:]
 
 
 def _past_article(c, info, years, profile, seen: Counter) -> tuple[str, dict]:
@@ -737,14 +766,15 @@ def build_lifetime_v3(core: MyeongriCoreResult, user_name: str, *, past, now, fu
             heading = f"{sec}-{i}. '{row['label']}'"
         else:
             heading = f"{sec}-{i}. '{mode.split(':', 1)[1]}'의 뒷면 — '{row['label']}'"
-        core_parts.append(_row_block(row, profile, seed, 3 + i * 2, heading))
+        core_parts.append(_row_block(row, profile, seed, 3 + i * 2, heading, style=i - 1))
     html += _section("core", sec, "".join(core_parts))
 
     if first_seen:
         sec = next(numbering)
         parts = [f"<p>{escape(copy.FIRST_SEEN_INTRO)}</p>"]
         for i, row in enumerate(first_seen, 1):
-            parts.append(_row_block(row, profile, seed, 11 + i * 2, f"{sec}-{i}. '{row['label']}'"))
+            parts.append(_row_block(row, profile, seed, 11 + i * 2, f"{sec}-{i}. '{row['label']}'",
+                                    style=len(core_picks) + i - 1))
         html += _section("first-seen", sec, "".join(parts))
 
     sec = next(numbering)
