@@ -560,7 +560,9 @@ def _sk_key(sk: str) -> str:
 
 _YONG_FAV = {"strong": {"output", "wealth", "officer"}, "weak": {"peer", "resource"}}
 _NEG_W = {"stem_clash": -2, "clash:day": -2, "clash:month": -2, "clash:year": -1, "clash:hour": -1,
-          "punish": -1, "thick": -1}
+          "stem_combine": -1, "punish": -1, "thick": -1}
+# 무게가 같을 때 앞에 둘 걸림(사람이 더 크게 겪는 쪽 먼저)
+_NEG_ORDER = ("stem_clash", "clash:day", "clash:month", "stem_combine", "thick", "punish", "clash:year", "clash:hour")
 
 
 def _cycle_items(cycle, info, profile, day_stem) -> list[tuple[str, str, int]]:
@@ -580,15 +582,17 @@ def _cycle_items(cycle, info, profile, day_stem) -> list[tuple[str, str, int]]:
         if direction:
             fav = _YONG_FAV[direction]
             for el in (info.get("stem_element"), info.get("branch_element")):
-                if el:
+                if el and profile["elements"][el]["state"] != "many":   # 이미 많은 기운은 희신이어도 득으로 치지 않는다
                     v += 1 if daily_score._god_group(day_stem, el) in fav else -1
-        items.append(("gain", god, v) if v >= 0 else ("load", god, v))
+        items.append(("gain", god, v) if v > 0 else ("load", god, v) if v < 0 else ("theme", god, 0))
     if info["fills"]:
         items.append(("pos", "fill", 1))
     if info["six_pos"] or info["triples"]:
         items.append(("pos", "bond", 1))
     if info["stem_rel"] == "clash":
         items.append(("neg", "stem_clash", _NEG_W["stem_clash"]))
+    elif info["stem_rel"] == "combine":
+        items.append(("neg", "stem_combine", _NEG_W["stem_combine"]))   # 일간이 묶여 마음대로 움직이기 어렵다
     for pos in dict.fromkeys(info["clash_pos"]):
         items.append(("neg", f"clash:{pos}", _NEG_W[f"clash:{pos}"]))
     if any(kind == "punish" for kind, _ in info["relations"]):
@@ -606,12 +610,13 @@ def _lead_used_god(meta) -> bool:
 def _lead_phrase(kind, key, *, past, concessive, young_group=None) -> str:
     """한 요소의 관형절 또는 양보절."""
     if young_group and past:
-        young = {"gain": copy.LEAD_YOUNG_GAIN, "load": copy.LEAD_YOUNG_LOAD}.get(kind)
+        young = {"gain": copy.LEAD_YOUNG_GAIN, "theme": copy.LEAD_YOUNG_GAIN, "load": copy.LEAD_YOUNG_LOAD}.get(kind)
         if young:
             return young[young_group][1 if concessive else 0]
         if kind == "neg" and key in copy.LEAD_YOUNG_NEG:
             return copy.LEAD_YOUNG_NEG[key][1 if concessive else 0]
-    table = {"gain": copy.LEAD_GAIN, "load": copy.LEAD_LOAD, "pos": copy.LEAD_POS, "neg": copy.LEAD_NEG}[kind]
+    table = {"gain": copy.LEAD_GAIN, "theme": copy.LEAD_THEME, "load": copy.LEAD_LOAD,
+             "pos": copy.LEAD_POS, "neg": copy.LEAD_NEG}[kind]
     return table[key][(2 if concessive else 0) + (1 if past else 0)]
 
 
@@ -630,12 +635,16 @@ def cycle_lead(cycle, info, profile, day_stem, *, past=False, young=False, seen=
         young_group = None
     pos = [it for it in items[1:] if it[2] > 0]
     neg = [it for it in items[1:] if it[2] < 0]
-    top = lambda xs: max(xs, key=lambda it: abs(it[2])) if xs else None
-    god_up = god[0] == "gain"
-    # 주제를 뒤집으려면 합이 ±2 이상이고, 그쪽에 무게 2짜리(일간 충·일지/월지 충·억부 양쪽) 근거가 있어야 한다
-    if total >= 2 and not god_up and abs(top(pos)[2]) >= 2:
+    def top(xs):
+        if not xs:
+            return None
+        rank = lambda it: _NEG_ORDER.index(it[1]) if it[1] in _NEG_ORDER else 0
+        return max(xs, key=lambda it: (abs(it[2]), -rank(it)))
+    god_up = god[0] in ("gain", "theme")
+    # 주제를 뒤집으려면 합이 ±2 이상이고, 그쪽에 무게 2짜리 근거가 있거나 십성 쪽 득실이 0(주제만 있음)이어야 한다
+    if total >= 2 and not god_up and (abs(top(pos)[2]) >= 2 or god[2] == 0):
         main, con = top(pos), god
-    elif total <= -2 and god_up and abs(top(neg)[2]) >= 2:
+    elif total <= -2 and god_up and (abs(top(neg)[2]) >= 2 or god[2] == 0):
         main, con = top(neg), god
     else:
         main = god
@@ -672,6 +681,8 @@ def _past_article(c, info, years, profile, seen: Counter, day_stem: str) -> tupl
     theme = list(copy.THEME_YOUNG[group] if young else copy.THEME_PAST[god])
     if sk and not young:
         theme = list(copy.SK_PAST.get(_sk_key(sk), theme))
+    elif lead_meta["items"][0][0] != "gain":
+        theme = []                                    # 테마 문장은 '얻은 것' 말이라, 득으로 볼 근거가 없으면 쓰지 않는다
     elif _lead_used_god(lead_meta):
         theme = theme[1:]                             # 첫 문장이 이미 그 십성의 10년을 말했다
     year_lines = _year_lines(years, seen)
@@ -680,6 +691,8 @@ def _past_article(c, info, years, profile, seen: Counter, day_stem: str) -> tupl
         after = None                                  # 흔들린 해가 같은 말을 구체적으로 한다
     if after_key in (lead_meta.get("main"), lead_meta.get("concession")):
         after = None                                  # 첫 문장이 이미 같은 말을 했다
+    if after_key == lead_meta.get("main") and after_key not in ("fill",):
+        first = ""                                    # 같은 걸림을 구조 말로 한 번 더 하지 않는다(근거 칸에 남는다)
     origin_key = "new" if info["new_power"] else "old"
     seen[f"origin:{origin_key}"] += 1
     pool = copy.ORIGIN_NEW if info["new_power"] else copy.ORIGIN_OLD
@@ -770,8 +783,11 @@ def _now_article(now, info, profile, missing, day_stem: str, seen=None) -> tuple
         extra.append(copy.NOW_ALSO_STEM)
     sk = _killing_type(profile) if god == "seven_killings" else None
     theme_now = copy.SK_NOW.get(_sk_key(sk), copy.THEME_NOW[god]) if sk else copy.THEME_NOW[god]
-    if not (sk and _sk_key(sk) in copy.SK_NOW) and _lead_used_god(lead_meta):
-        theme_now = theme_now[1:]                     # 첫 문장이 이미 그 십성의 10년을 말했다
+    if not (sk and _sk_key(sk) in copy.SK_NOW):
+        if lead_meta["items"][0][0] == "load":
+            theme_now = ()                            # 테마 문장은 그 십성의 좋은 면 말이라 짐인 10년엔 쓰지 않는다
+        elif _lead_used_god(lead_meta):
+            theme_now = theme_now[1:]                 # 첫 문장이 이미 그 십성의 10년을 말했다
     tip_now = copy.SK_TIP.get(_sk_key(sk), copy.TIP_NOW[god]) if sk else copy.TIP_NOW[god]
     p1 = _p(lead + list(theme_now), where="now.1")
     means_key = f"clash:{'day' if 'day' in info['clash_pos'] else 'month'}" if kind == "clash" else kind
