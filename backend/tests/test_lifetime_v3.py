@@ -40,7 +40,7 @@ class LifetimeV3Tests(unittest.TestCase):
         found = re.findall(r'data-lifetime-section="([a-z-]+)"', report["content"])
         top = [s for s in found if s in ORDER]
         self.assertEqual(top, ORDER)
-        self.assertEqual(report["narrative_version"], "lifetime-v3.2")
+        self.assertEqual(report["narrative_version"], "lifetime-v3.3")
         for n, title in enumerate(["원국 지도", "타고난 결", "사람들이 먼저 보는 것", "분야별로 보면", "인생의 흐름", "한마디"], 1):
             self.assertIn(f"<h3>{n}. {title}</h3>", report["content"])
 
@@ -51,7 +51,7 @@ class LifetimeV3Tests(unittest.TestCase):
         past = html.count('data-cycle-state="past"')
         self.assertGreaterEqual(subs, 3)
         # 성격 행 + 원국 지도 + 지나온 대운 하나하나 + 지금
-        self.assertEqual(html.count('<details class="lifetime-why">'), subs + 1 + past + 1)
+        self.assertEqual(html.count('<div class="lifetime-why">'), subs + 1 + past + 1)
 
     def test_past_cycles_each_get_a_line_and_next_cycle_body_stays_locked(self):
         result, past, now, future = _v3(_core(date(1978, 3, 13), time(11, 0)))
