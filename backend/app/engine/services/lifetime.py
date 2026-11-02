@@ -27,7 +27,7 @@ from app.engine.semantic import build_service_query
 from app.engine.semantic.overall import select_overall_domains, OVERALL_VERSION
 
 
-LIFETIME_NARRATIVE_VERSION = "lifetime-v3.3"   # 문구를 고치면 함께 올린다. 그래야 구매한 풀이도 갱신된다
+LIFETIME_NARRATIVE_VERSION = "lifetime-v3.4"   # 문구를 고치면 함께 올린다. 그래야 구매한 풀이도 갱신된다
 LEGACY_V4_VERSION = "lifetime-present-v4"  # v3 조립이 실패했을 때만
 SHOW_PAST_CHIP = True  # False 로 두면 지나간 대운은 흔적도 남기지 않는다.
 logger = logging.getLogger(__name__)
