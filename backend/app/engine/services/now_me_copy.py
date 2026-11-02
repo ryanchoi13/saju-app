@@ -122,7 +122,7 @@ TEN_GOD_ROWS = [
 CONTRAST_LABELS = {
     "B12": {"group": "식상", "front": ("hurting_officer", "톡 쏘는 말맛"), "back": ("eating_god", "은근한 손맛")},
     "B13": {"group": "재성", "front": ("indirect_wealth", "굴러다니는 큰돈"), "back": ("direct_wealth", "또박또박 들어오는 돈")},
-    "B14": {"group": "관성", "front": ("seven_killings", "맞서는 호랑이"), "back": ("direct_officer", "지켜 주는 울타리")},
+    "B14": {"group": "관성", "front": ("seven_killings", "만만찮은 숙제"), "back": ("direct_officer", "지켜 주는 울타리")},
     "B15": {"group": "인성", "front": ("indirect_resource", "혼자 파고드는 서재"), "back": ("direct_resource", "따뜻한 밥상")},
 }
 
