@@ -40,7 +40,7 @@ class LifetimeV3Tests(unittest.TestCase):
         found = re.findall(r'data-lifetime-section="([a-z-]+)"', report["content"])
         top = [s for s in found if s in ORDER]
         self.assertEqual(top, ORDER)
-        self.assertEqual(report["narrative_version"], "lifetime-v3.1")
+        self.assertEqual(report["narrative_version"], "lifetime-v3.2")
         for n, title in enumerate(["원국 지도", "타고난 결", "사람들이 먼저 보는 것", "분야별로 보면", "인생의 흐름", "한마디"], 1):
             self.assertIn(f"<h3>{n}. {title}</h3>", report["content"])
 
