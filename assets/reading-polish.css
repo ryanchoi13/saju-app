@@ -66,9 +66,8 @@ html[data-brand] .reading-view .card.reading-lead { background-image:url('/asset
 .lifetime-past { padding-left:12px; border-left:2px solid #E8E2D8; }
 .lifetime-now-lead { font-size:13px; color:#59636D; margin:0 0 6px!important; }
 .lifetime-v3 [data-current-cycle="true"] { background:#F3F0E8; border-radius:12px; padding:2px 14px 8px; }
-.lifetime-why { margin:2px 0 6px; font-size:13px; color:#59636D; }
-.lifetime-why summary { cursor:pointer; color:#995737; font-weight:700; list-style:none; }
-.lifetime-why summary::before { content:'▸ '; }
-.lifetime-why[open] summary::before { content:'▾ '; }
-.lifetime-why p { font-size:13px; margin:6px 0 0!important; line-height:1.7; }
+/* 풀이 근거: 접지 않고 본문 아래 작은 글씨로(11/02). 보관함의 긴 글 문단 규칙(#archiveModalBody p)보다 우선 */
+.lifetime-why { margin:2px 0 14px; font-size:12px; line-height:1.5; color:#7A828A; }
+.lifetime-why p, #archiveModalBody .long-reading .lifetime-why p { font-size:12px!important; line-height:1.5!important; margin:0!important; color:#7A828A; }
+.lifetime-why-label { font-weight:700; color:#995737; margin-right:2px; }
 .lifetime-closing { font-size:16px; color:#25364A; }
