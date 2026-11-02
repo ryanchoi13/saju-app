@@ -618,7 +618,7 @@ def _lead_phrase(kind, key, *, past, concessive, young_group=None) -> str:
 def cycle_lead(cycle, info, profile, day_stem, *, past=False, young=False, seen=None) -> tuple[str, dict]:
     """대운 첫 문장의 몸통("…지만, …" 관형절)과 판정 메타. 말끝("10년입니다")은 부르는 쪽이 붙인다.
 
-    주절은 기본이 대운 십성(그 10년의 주제)이다. 무게 합이 ±2 이상으로 십성 반대쪽에 기울 때만
+    주절은 기본이 대운 십성(그 10년의 주제)이다. 무게 합이 ±2 이상으로 십성 반대쪽에 기울고 그쪽에 무게 2 근거가 있을 때만
     그쪽 가장 무거운 요소가 주절이 되고, 십성은 양보절로 내려간다. 양보절은 주절 반대쪽 가장 무거운 요소.
     (형 하나·쏠림 하나 같은 약한 근거가 10년 전체의 주제를 덮지 않게 — 헌장 '근거가 약하면 쓰지 않는다')
     """
@@ -632,9 +632,10 @@ def cycle_lead(cycle, info, profile, day_stem, *, past=False, young=False, seen=
     neg = [it for it in items[1:] if it[2] < 0]
     top = lambda xs: max(xs, key=lambda it: abs(it[2])) if xs else None
     god_up = god[0] == "gain"
-    if total >= 2 and not god_up:
+    # 주제를 뒤집으려면 합이 ±2 이상이고, 그쪽에 무게 2짜리(일간 충·일지/월지 충·억부 양쪽) 근거가 있어야 한다
+    if total >= 2 and not god_up and abs(top(pos)[2]) >= 2:
         main, con = top(pos), god
-    elif total <= -2 and god_up:
+    elif total <= -2 and god_up and abs(top(neg)[2]) >= 2:
         main, con = top(neg), god
     else:
         main = god
