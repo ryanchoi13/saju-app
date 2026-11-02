@@ -71,3 +71,9 @@ html[data-brand] .reading-view .card.reading-lead { background-image:url('/asset
 .lifetime-why p, #archiveModalBody .long-reading .lifetime-why p { font-size:12px!important; line-height:1.5!important; margin:0!important; color:#7A828A; }
 .lifetime-why-label { font-weight:700; color:#995737; margin-right:2px; }
 .lifetime-closing { font-size:16px; color:#25364A; }
+/* 평생운세 제목 위계 (11/02): 브랜드 규칙(#archiveModalBody :is(h3,h4) 명조 21px)이 소제목 h4 를 큰 제목보다 크게 만들던 것.
+   큰 제목(번호 붙은 h3) 명조 22 > 소제목 h4 고딕 18 > 구간 h5 고딕 16 > 본문 16. */
+html[data-brand] #archiveModalBody .lifetime-v3 .reading-heading-copy { font-family:var(--brand-serif,'Noto Serif KR',serif)!important; font-size:22px!important; font-weight:600!important; line-height:1.5!important; }
+html[data-brand] #archiveModalBody .lifetime-v3 .reading-section-number { margin-top:3px; }
+html[data-brand] #archiveModalBody .lifetime-v3 h4 { font-family:'Pretendard',sans-serif!important; font-size:18px!important; font-weight:700!important; line-height:1.55!important; margin:28px 0 10px!important; }
+html[data-brand] #archiveModalBody .lifetime-v3 h5 { font-family:'Pretendard',sans-serif!important; font-size:16px!important; font-weight:700!important; line-height:1.55!important; }
