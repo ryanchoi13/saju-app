@@ -554,7 +554,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
     <link id="dalhaBrandStyles" rel="stylesheet" href="/assets/brand-2026/brand.css?v=20261010-1">
     <link rel="stylesheet" href="/assets/reading-polish.css?v=20261030-2">
     <link rel="stylesheet" href="/assets/daily-card.css?v=20261027-1">
-    <link rel="stylesheet" href="/assets/brand-2026/refine.css?v=20261031-4">
+    <link rel="stylesheet" href="/assets/brand-2026/refine.css?v=20261102-1">
     <script src="/assets/reading-polish.js?v=20261031-2" defer></script>
     <script src="/assets/brand-2026/brand-ui.js?v=20261001-4" defer></script>
 </head>
@@ -3924,7 +3924,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                     const list = document.createElement('ol');
                     headings.forEach(heading => {
                         const entry = document.createElement('li');
-                        entry.textContent = heading.dataset.tocLabel.replace(/^\d+\s+/, ''); list.append(entry);
+                        entry.textContent = heading.dataset.tocLabel.replace(/^\d+\s+/, '').replace(/^\d+[.)]\s*/, ''); list.append(entry); // <ol>이 번호를 붙이므로 제목 속 '1.'은 뺀다
                     });
                     toc.append(label, list); body.prepend(toc);
                 }

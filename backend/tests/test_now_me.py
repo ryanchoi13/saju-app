@@ -130,7 +130,7 @@ class RenderTests(unittest.TestCase):
         self.assertEqual(result["copy_version"], copy.COPY_VERSION)
         self.assertEqual([s["id"] for s in result["sections"]][:2], ["lead", "core"])
         self.assertEqual(len(result["sections"]), 5)
-        self.assertIn("테스트님의 원국은", result["html"])
+        self.assertIn("테스트님은 <strong>", result["html"])
         self.assertNotIn("甲</strong>", result["html"])  # 일간 글자는 노출하지 않는다
 
     def test_random_births_render_without_error(self):
@@ -145,7 +145,7 @@ class RenderTests(unittest.TestCase):
 
     def test_lifetime_report_uses_v3_with_now_me_rows(self):
         report = build_lifetime_overall_report(_core(date(1978, 3, 13), time(11, 0)), "테스트")
-        self.assertEqual(LIFETIME_NARRATIVE_VERSION, "lifetime-v3.4")
+        self.assertEqual(LIFETIME_NARRATIVE_VERSION, "lifetime-v3.5")
         self.assertIn('data-lifetime-v3="1"', report["content"])
         self.assertIn('data-now-me-row="B11"', report["content"])
         self.assertEqual(report["evidence_summary"]["v3"]["rows"][0], "B11")

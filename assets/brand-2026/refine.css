@@ -251,6 +251,21 @@ html[data-brand] body .pc-legend b { font-size:14px; font-weight:650; color:var(
 html[data-brand] body .pc-note { font-size:12.5px; color:var(--ui-muted); line-height:1.6; margin:12px 0 0; }
 @media (prefers-reduced-motion: reduce) { html[data-brand] body .pc-bar > i { transition:none; } }
 html[data-brand] body .pc-legend b#valEarth { color:var(--ui-ink)!important; }
+/* 2026-11-02 평생운세 원국표도 같은 명식표(.pc-grid.lifetime-pc)로. 보관함 창(#archiveModalBody)은
+   div·span 글자색·크기를 !important 로 덮으므로(design-system.css) 표 안에서만 되돌린다. */
+html[data-brand] body #archiveModalBody .pc-grid :is(div,span) { line-height:1.3!important; }
+html[data-brand] body #archiveModalBody .pc-grid .pc-label,
+html[data-brand] body #archiveModalBody .pc-grid .pc-read,
+html[data-brand] body #archiveModalBody .pc-grid .pc-hidden .badge-jjg,
+html[data-brand] body #archiveModalBody .pc-grid .pc-hidden-none { color:var(--ui-muted)!important; }
+html[data-brand] body #archiveModalBody .pc-grid .pc-col.is-day .pc-label { color:var(--ui-ink)!important; }
+html[data-brand] body #archiveModalBody .pc-grid .pc-rh { font-size:12px!important; color:var(--ui-muted)!important; }
+html[data-brand] body #archiveModalBody .pc-grid .pc-hidden { font-size:15px!important; }
+html[data-brand] body #archiveModalBody .pc-grid .badge-main-none { font-size:20px!important; color:var(--ui-muted)!important; }
+html[data-brand] body .lifetime-pc { margin:12px 0 14px; }
+html[data-brand] body #archiveModalBody p.lifetime-chart-count { font-size:13px!important; line-height:1.7!important; color:var(--ui-muted)!important; }
+html[data-brand] body .pc-grid .pc-unknown { font-size:14px!important; }
+html[data-brand] body #archiveModalBody .pc-grid .pc-unknown { font-size:14px!important; }
 
 /* 2026-10-31 오늘의 행운 색: 코디 그림이 빠지고 색만 남아 칸이 과했다 → 작은 원 + 이름 한 줄로 */
 html[data-brand] body #dailyStyleCard.colors-only #outfitTrack { margin-top:2px; }
