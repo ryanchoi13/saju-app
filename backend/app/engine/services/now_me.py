@@ -306,7 +306,7 @@ def build_now_me(core: MyeongriCoreResult, user_name: str) -> dict:
     # 0. 머리말 — 표 D 는 여기서만
     day_row = copy.DAY_MASTER_ROWS[profile["day_master"]]
     pillars_text = " ".join(profile["pillars"].values())
-    lead = (f'<p class="now-me-lead">{name}님의 원국은 <strong>{escape(day_row["label"])}</strong>입니다. '
+    lead = (f'<p class="now-me-lead">{name}님은 <strong>{escape(day_row["label"])}</strong>입니다. '
             f'<span class="now-me-pillars">{escape(pillars_text)}</span></p>')
     sections.append({"id": "lead", "row": day_row["key"]})
 

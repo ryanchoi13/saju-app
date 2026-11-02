@@ -14,7 +14,7 @@ from collections import Counter
 from datetime import date
 from html import escape
 
-from app.engine.constants import GAN_WUXING
+from app.engine.constants import GAN_KO, GAN_WUXING, ZHI_KO
 from app.engine.core.models import MyeongriCoreResult
 from app.engine.korean import josa
 from app.engine.services.annual_copy import seed_from, split_sentences
@@ -110,27 +110,51 @@ def _hidden_counts(core: MyeongriCoreResult) -> Counter:
     return counts
 
 
+ELEMENT_CLASS = {"木": "wood", "火": "fire", "土": "earth", "金": "metal", "水": "water"}
+
+
 def _chart_html(core, profile, hidden_counts) -> str:
+    """원국표 — '나의 사주' 명식표(2026-10-31 시안 511)와 같은 마크업·클래스(assets/brand-2026/refine.css .pc-grid).
+
+    큰 먹색 한자 + 작은 오행 점 + 읽는 법, 일주만 남색 테두리. 화면 두 곳의 표가 같은 모양이어야 한다.
+    """
     pillars = core.natal_facts.pillars
     hidden = _hidden_by_pillar(core)
-    cols = (("hour", "時"), ("day", "日"), ("month", "月"), ("year", "年"))
-    head = "".join(f"<th>{label}</th>" for _, label in cols)
+    cols = (("hour", "시"), ("day", "일"), ("month", "월"), ("year", "년"))
 
-    def cell(text, strong=False):
-        return f"<td>{'<strong>' + text + '</strong>' if strong else text}</td>"
+    def glyph(char, ko, element):
+        if not char:   # 생시 모름 — 지어내지 않고 '모름'으로 적는다
+            return '<div class="badge-elem-main badge-main-none pc-unknown">모름</div>'
+        el = ELEMENT_CLASS[element]
+        el_ko = copy.ELEMENT[element]["ko"]
+        return (f'<div class="badge-elem-main badge-main-{el}" aria-label="{ko} {el_ko}">'
+                f'<span class="pc-char">{char}</span><i class="pc-dot el-{el}" aria-hidden="true"></i>'
+                f'<span class="pc-read">{ko} · {el_ko}</span></div>')
 
-    stems, branches, hides = [], [], []
-    for key, _ in cols:
+    def hidden_box(stems_):
+        if not stems_:
+            return '<div class="pc-hidden"><span class="pc-hidden-none">-</span></div>'
+        spans = "".join(
+            f'<span class="badge-jjg elem-{ELEMENT_CLASS[GAN_WUXING[s]]}">'
+            f'<i class="pc-dot el-{ELEMENT_CLASS[GAN_WUXING[s]]}" aria-hidden="true"></i>{s}</span>'
+            for s in stems_)
+        return f'<div class="pc-hidden">{spans}</div>'
+
+    parts = ['<div class="pc-grid lifetime-pc" role="table" aria-label="사주 여덟 글자">'
+             '<div class="pc-col pc-rowhead" aria-hidden="true"><span class="pc-label">&nbsp;</span>'
+             '<div class="pc-rh">천간</div><div class="pc-rh">지지</div><div class="pc-rh pc-rh-small">지장간</div></div>']
+    for key, label in cols:
         p = pillars.get(key)
+        day = " is-day" if key == "day" else ""
         if p is None:
-            stems.append(cell("모름")); branches.append(cell("모름")); hides.append(cell("—"))
+            parts.append(f'<div class="pc-col{day}"><span class="pc-label">{label}</span>'
+                         + glyph(None, None, None) + glyph(None, None, None) + hidden_box([]) + '</div>')
             continue
-        stems.append(cell(f"{p.stem} {copy.ELEMENT[p.stem_element]['ko']}", strong=key == "day"))
-        branches.append(cell(f"{p.branch} {copy.ELEMENT[p.branch_element]['ko']}"))
-        hides.append(cell(" ".join(hidden.get(key, [])) or "—"))
-    table = ('<table class="lifetime-chart"><thead><tr><th></th>' + head + '</tr></thead><tbody>'
-             '<tr><th>천간</th>' + "".join(stems) + '</tr><tr><th>지지</th>' + "".join(branches) + '</tr>'
-             '<tr><th>지장간</th>' + "".join(hides) + '</tr></tbody></table>')
+        parts.append(f'<div class="pc-col{day}"><span class="pc-label">{label}</span>'
+                     + glyph(p.stem, GAN_KO[p.stem], p.stem_element)
+                     + glyph(p.branch, ZHI_KO[p.branch], p.branch_element)
+                     + hidden_box(hidden.get(key, [])) + '</div>')
+    table = "".join(parts) + '</div>'
     surface = " · ".join(f"{copy.ELEMENT[e]['name']} {profile['elements'][e]['main']}" for e in ELEMENT_ORDER)
     lines = [f"겉면 {_glyphs(profile)}: {surface}"]
     missing = [e for e in ELEMENT_ORDER if profile["elements"][e]["main"] == 0]
@@ -887,7 +911,7 @@ def build_lifetime_v3(core: MyeongriCoreResult, user_name: str, *, past, now, fu
     numbering = iter(range(1, 10))
     day_row = bank.DAY_MASTER_ROWS[profile["day_master"]]
     head = (f'<section class="lifetime-v3-head" data-lifetime-section="head">'
-            f'<p class="now-me-lead">{escape(name)}님의 원국은 <strong>{escape(day_row["label"])}</strong>입니다.</p>'
+            f'<p class="now-me-lead">{escape(name)}님은 <strong>{escape(day_row["label"])}</strong>입니다.</p>'
             + _chart_html(core, profile, hidden_counts) + '</section>')
 
     map_html, map_meta = _map(core, profile, hidden_counts, {r["key"] for r, _ in core_picks})
