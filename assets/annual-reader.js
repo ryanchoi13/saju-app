@@ -39,6 +39,12 @@ window.formatAnnualReading = function(body) {
         label.className = 'annual-domain-label'; label.textContent = title.slice(0,boundary);
         const message = document.createElement('span');
         message.className = 'annual-domain-message'; message.textContent = title.slice(boundary+3);
+        // 올해의 중심: 다른 분야와 같은 제목 줄을 쓰고, 제목 오른쪽 칩으로만 표시한다.
+        if (heading.parentElement?.dataset.central === 'true' && label.textContent === '올해의 중심') {
+            label.className = 'annual-focus-chip';
+            heading.replaceChildren(message, label);
+            return;
+        }
         heading.replaceChildren(label,message);
     });
 };
@@ -136,6 +142,8 @@ window.ANNUAL_PRINT_STYLE = `
     .annual-kind { display:none; }
     .annual-domain-label { display:block; color:#25364A; font-size:11pt; margin-bottom:6pt; }
     .annual-domain-message { display:block; font-size:14pt; }
+    .annual-domain[data-central="true"] .annual-domain-message { display:inline; color:#995737; font-weight:900; }
+    .annual-focus-chip { display:inline-block; vertical-align:middle; margin-left:6pt; padding:1pt 7pt; border:1pt solid #995737; border-radius:99pt; color:#995737; font-size:9pt; font-weight:800; }
     .annual-month-label { display:block; color:#25364A; font-size:14pt; margin-bottom:9pt; }
     .annual-month-message { display:block; font-size:14pt; }
     .annual-note,.annual-evidence { font-size:9pt; color:#59636D; }

@@ -15,8 +15,10 @@
 /* v2: 접고 펼침 없이, 엔진이 짚은 올해의 중심 분야만 눈에 띄게 올린다. */
 #archiveModalBody .annual-three strong { color:var(--ui-accent,#25364A); }
 #archiveModalBody .annual-three p { margin:0 0 .9em; }
-#archiveModalBody .annual-domain[data-central="true"] { border:1px solid var(--ui-accent,#25364A); border-radius:14px; padding:16px 16px 4px; margin:22px 0; background:var(--ui-soft,#F3F0E8); }
-#archiveModalBody .annual-domain[data-central="true"] > h3 { margin-top:0; }
+/* 박스 대신 다른 분야와 같은 구조를 쓰고, 번호·제목·칩으로만 강조한다. */
+#archiveModalBody .annual-domain[data-central="true"] .reading-section-number { background:#F4E7DC; color:var(--brand-copper,#995737)!important; }
+#archiveModalBody .annual-domain[data-central="true"] .annual-domain-message { display:inline; color:var(--brand-copper,#995737)!important; font-weight:900; }
+#archiveModalBody .annual-focus-chip { display:inline-flex; align-items:center; height:24px; margin-left:8px; padding:0 10px; border-radius:999px; background:#F4E7DC; color:var(--brand-copper,#995737)!important; font-family:'Pretendard',sans-serif; font-size:12px!important; font-weight:700; line-height:1!important; letter-spacing:-.2px; vertical-align:.25em; white-space:nowrap; }
 /* v3 월별 카드: 절기 기간 · 흐름 · 올해와 이어지는 점 · 이달의 초점 · 분야별 한 줄 · 할 일/피할 일 */
 :is(#archiveModalBody,.period-reading) .annual-month > .annual-month-period { font-weight:400; font-size:.875rem; color:var(--ui-muted,#425563); margin:-6px 0 14px; }
 :is(#archiveModalBody,.period-reading) .annual-month > p.annual-month-flow { font-weight:700; color:var(--ui-ink,#142942); }
