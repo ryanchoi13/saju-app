@@ -527,16 +527,46 @@ def _join_year_pair(out: list[str], pairs: list[tuple]) -> list[str]:
     return [joined] + out[2:]
 
 
+def _killing_type(profile) -> str:
+    """칠살 대운을 원국 조건으로 나눈다(11/02). 신강이면 식상(제살)을, 신약이면 인성(화살)을 먼저 본다."""
+    weak = profile.get("strength") in ("weak", "extremely_weak")
+    g = profile["groups"]
+    food = g["식상"]["main"] > 0
+    res = g["인성"]["main"] > 0
+    wealth = g["재성"]["main"] >= 2
+    if weak:
+        if res:
+            return "transform"
+        if wealth and not food:
+            return "wealth"
+        return "heavy_food" if food else "heavy"
+    if food:
+        return "control"
+    if res:
+        return "transform"
+    if wealth:
+        return "wealth"
+    return "face"
+
+
+def _sk_key(sk: str) -> str:
+    return copy.SK_TEXT_KEY.get(sk, sk)
+
+
 def _past_article(c, info, years, profile, seen: Counter) -> tuple[str, dict]:
     god = c.get("ten_god") if c.get("ten_god") in copy.THEME_PAST else "peer"
     group = copy.GOD_GROUP[god]
     young = c["start_age"] <= 10                      # 어린 시절이 대부분인 첫 구간만 어린 시절 말로
-    title = copy.PAST_TITLE_YOUNG[group] if young else copy.PAST_TITLE_ADULT[god]
+    sk = _killing_type(profile) if god == "seven_killings" else None
+    adult_title = copy.SK_PAST_TITLE.get(_sk_key(sk), copy.PAST_TITLE_ADULT[god]) if sk else copy.PAST_TITLE_ADULT[god]
+    title = copy.PAST_TITLE_YOUNG[group] if young else adult_title
     if title in seen["titles"]:
-        title, young = copy.PAST_TITLE_ADULT[god], False
+        title, young = adult_title, False
     seen["titles"].add(title)
     first, after_key = _kind_first(info, copy.KIND_PAST, seen, young)
     theme = list(copy.THEME_YOUNG[group] if young else copy.THEME_PAST[god])
+    if sk and not young:
+        theme = list(copy.SK_PAST.get(_sk_key(sk), theme))
     year_lines = _year_lines(years, seen)
     after = (copy.KIND_PAST_AFTER_YOUNG.get(after_key) if young else None) or copy.KIND_PAST_AFTER.get(after_key)
     if after_key.startswith("clash") and year_lines:
@@ -553,6 +583,8 @@ def _past_article(c, info, years, profile, seen: Counter) -> tuple[str, dict]:
     rel_text = _relation_text(info)
     if rel_text:
         why.append(rel_text)
+    if sk and not young:
+        why.append("칠살 대운 · " + copy.SK_WHY[sk])
     if years:
         why.append("크게 걸린 해: " + " · ".join(f"{y['year']}년 {y['ganji']}({_kinds_text(y['kinds'])})" for y in years) + ".")
     ages = f"{c['start_age']}~{c['end_age']}세"
@@ -625,16 +657,21 @@ def _now_article(now, info, profile, missing) -> tuple[str, str]:
                 break
     if kind != "stem_clash" and info["stem_rel"] == "clash":
         extra.append(copy.NOW_ALSO_STEM)
-    p1 = _p(lead + list(copy.THEME_NOW[god]), where="now.1")
+    sk = _killing_type(profile) if god == "seven_killings" else None
+    theme_now = copy.SK_NOW.get(_sk_key(sk), copy.THEME_NOW[god]) if sk else copy.THEME_NOW[god]
+    tip_now = copy.SK_TIP.get(_sk_key(sk), copy.TIP_NOW[god]) if sk else copy.TIP_NOW[god]
+    p1 = _p(lead + list(theme_now), where="now.1")
     means_key = f"clash:{'day' if 'day' in info['clash_pos'] else 'month'}" if kind == "clash" else kind
     means = copy.MEANS_NOW.get(means_key)
     if kind == "fill":
         name = copy.ELEMENT[info["fills"][0]]["name"]
         means = f"{name}{_j(name, '은/는')} " + means
-    p2 = _p(extra + ([means] if means else []) + [copy.TIP_NOW[god]], where="now.2")
+    p2 = _p(extra + ([means] if means else []) + [tip_now], where="now.2")
     pillar = now["pillar"]
     why = [f"대운 {pillar['ganji']} — 천간 {pillar['stem']} · 지지 {pillar['branch']}, {copy.GOD_KO.get(now.get('ten_god'), '')}.",
            _relation_text(info)]
+    if sk:
+        why.append("칠살 대운 · " + copy.SK_WHY[sk])
     ages = f'{now["start_age"]}~{now["end_age"]}세'
     html = (f'<article class="lifetime-sub" data-lifetime-section="current-cycle" data-current-cycle="true" '
             f'data-report-cycle="{now["index"]}" data-cycle-ages="{ages}">'
@@ -724,8 +761,9 @@ def _flow(core, profile, past, now, future, missing) -> tuple[str, str | None, d
 # 조립
 # ---------------------------------------------------------------------------
 def build_lifetime_v3(core: MyeongriCoreResult, user_name: str, *, past, now, future,
-                      current_selection, climate: str | None) -> dict:
+                      current_selection, climate: str | None, strength: str | None = None) -> dict:
     profile = natal_profile(core)
+    profile["strength"] = strength          # 칠살 대운 갈래 판단용(11/02)
     seed = seed_from(*profile["pillars"].values())
     name = user_name or "회원"
     ordered = select_rows(profile)

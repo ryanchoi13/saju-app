@@ -27,7 +27,7 @@ from app.engine.semantic import build_service_query
 from app.engine.semantic.overall import select_overall_domains, OVERALL_VERSION
 
 
-LIFETIME_NARRATIVE_VERSION = "lifetime-v3.1"   # 11/02: 문구 수정분이 구매한 풀이에도 반영되게
+LIFETIME_NARRATIVE_VERSION = "lifetime-v3.2"   # 문구를 고치면 함께 올린다. 그래야 구매한 풀이도 갱신된다
 LEGACY_V4_VERSION = "lifetime-present-v4"  # v3 조립이 실패했을 때만
 SHOW_PAST_CHIP = True  # False 로 두면 지나간 대운은 흔적도 남기지 않는다.
 logger = logging.getLogger(__name__)
@@ -260,7 +260,8 @@ def build_lifetime_overall_report(
     try:
         v3 = build_lifetime_v3(core, user_name, past=past, now=now, future=future,
                                current_selection=current_selection,
-                               climate=query["synthesis"]["climate_state"].get("state"))
+                               climate=query["synthesis"]["climate_state"].get("state"),
+                               strength=query["synthesis"].get("strength_state"))
     except Exception:  # noqa: BLE001 - 문구 검증 실패 등. 빈 화면보다 옛 구성이 낫다.
         logger.exception("lifetime v3 조립 실패 — v4 로 대체")
         return _build_v4(core, user_name)
