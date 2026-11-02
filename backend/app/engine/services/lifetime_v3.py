@@ -74,8 +74,13 @@ def _jo(word: str, pair: str) -> str:
 
 
 def _why(*lines: str) -> str:
-    body = "".join(f"<p>{escape(line)}</p>" for line in lines if line)
-    return f'<details class="lifetime-why"><summary>{copy.WHY_LABEL}</summary>{body}</details>'
+    """풀이 근거 — 접지 않고 본문 아래에 작은 글씨로 바로 보인다(11/02 정오님)."""
+    lines = [escape(line) for line in lines if line]
+    if not lines:
+        return ""
+    first = f'<span class="lifetime-why-label">{copy.WHY_LABEL}</span> {lines[0]}'
+    body = "".join(f"<p>{t}</p>" for t in [first] + lines[1:])
+    return f'<div class="lifetime-why">{body}</div>'
 
 
 def _section(sid: str, number: int, inner: str) -> str:
