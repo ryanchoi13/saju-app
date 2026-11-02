@@ -145,7 +145,7 @@ class RenderTests(unittest.TestCase):
 
     def test_lifetime_report_uses_v3_with_now_me_rows(self):
         report = build_lifetime_overall_report(_core(date(1978, 3, 13), time(11, 0)), "테스트")
-        self.assertEqual(LIFETIME_NARRATIVE_VERSION, "lifetime-v3.1")
+        self.assertEqual(LIFETIME_NARRATIVE_VERSION, "lifetime-v3.2")
         self.assertIn('data-lifetime-v3="1"', report["content"])
         self.assertIn('data-now-me-row="B11"', report["content"])
         self.assertEqual(report["evidence_summary"]["v3"]["rows"][0], "B11")
