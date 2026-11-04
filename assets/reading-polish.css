@@ -77,3 +77,8 @@ html[data-brand] #archiveModalBody .lifetime-v3 .reading-heading-copy { font-fam
 html[data-brand] #archiveModalBody .lifetime-v3 .reading-section-number { margin-top:3px; }
 html[data-brand] #archiveModalBody .lifetime-v3 h4 { font-family:'Pretendard',sans-serif!important; font-size:18px!important; font-weight:700!important; line-height:1.55!important; margin:28px 0 10px!important; }
 html[data-brand] #archiveModalBody .lifetime-v3 h5 { font-family:'Pretendard',sans-serif!important; font-size:16px!important; font-weight:700!important; line-height:1.55!important; }
+/* 테마 풀이 제목 위계 (11/04): 같은 브랜드 규칙이 접힌 근거의 h4(대운 구간·관계의 구조)와 번호 없는 h3를
+   명조 21px로 키워 번호 붙은 제목(고딕 19)보다 커 보이던 것. 묶음 제목 h2 23~24 > h3 고딕 19 > h4 고딕 17 > h5 고딕 16 = 본문 16. */
+html[data-brand] #archiveModalBody .theme-reading h3 { font-family:'Pretendard',sans-serif!important; font-size:19px!important; font-weight:800!important; line-height:1.6!important; }
+html[data-brand] #archiveModalBody .theme-reading h4 { font-family:'Pretendard',sans-serif!important; font-size:17px!important; font-weight:700!important; line-height:1.55!important; }
+html[data-brand] #archiveModalBody .theme-reading h5 { font-family:'Pretendard',sans-serif!important; font-size:16px!important; font-weight:700!important; line-height:1.55!important; }
