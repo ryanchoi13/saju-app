@@ -10,7 +10,7 @@ from __future__ import annotations
 
 from app.engine.services.daily_copy import ELEMENT_KO, find_flagged, _pick  # noqa: F401
 
-COPY_VERSION = "dalha-daily-menu-2"
+COPY_VERSION = "dalha-daily-menu-3"
 
 # (끼니 키, 화면 이름, 고를 때 쓰는 기준 시각)
 MEALS = (
@@ -37,29 +37,20 @@ DINNER_ONLY = frozenset({
     "조개찜", "주꾸미볶음", "참치회", "채소 듬뿍 아귀찜", "탄두리치킨", "탕수육", "편백찜", "해물찜", "해파리냉채", "후라이드치킨",
 })
 
-ELEMENT_LINE = {
-    "木": ("오늘은 목(木) 기운을 채워 보는 날, 싱그러운 초록빛이 어우러진 한 끼를 골랐어요.",
-          "오늘은 새순처럼 싱그러운 목(木) 기운이 어울리는 날이라 산뜻한 메뉴를 모았어요."),
-    "火": ("오늘은 화(火) 기운을 채워 보는 날, 따끈하고 향긋하게 온기가 도는 한 끼예요.",
-          "오늘은 온기가 반가운 화(火)의 날이라 따뜻하고 감칠맛 도는 메뉴를 골랐어요."),
-    "土": ("오늘은 토(土) 기운을 채워 보는 날, 포근하고 든든하게 감싸 주는 한 끼예요.",
-          "오늘은 땅처럼 듬직한 토(土) 기운이 어울리는 날이라 푸근한 메뉴를 모았어요."),
-    "金": ("오늘은 금(金) 기운을 채워 보는 날, 맑고 깔끔한 맛으로 마음을 정돈하는 한 끼예요.",
-          "오늘은 담백하고 선명한 금(金) 기운이 어울리는 날이라 깔끔한 메뉴를 골랐어요."),
-    "水": ("오늘은 수(水) 기운을 채워 보는 날, 촉촉하고 깊은 맛이 스며드는 한 끼예요.",
-          "오늘은 잔잔하게 스며드는 수(水) 기운이 어울리는 날이라 깊은 맛의 메뉴를 골랐어요."),
-}
+# 2026-11-04 정오님: "수 기운을 채워 보는 날, 촉촉하고 깊은 맛이 스며드는 한 끼" 같은 맛 묘사는 실제 메뉴와 안 맞고
+# (오코노미야키·김밥) 굳이 오행 이름을 말할 필요도 없다 → 오행과 상관없이 한 문장. 오행은 메뉴 고르기에만 쓴다.
+HEADLINE = "오늘의 기운에 맞는 한 끼를 골랐어요."
 CAPTION = "둘 중 마음 가는 쪽으로 골라 보세요."
 EMPTY_TEXT = "이 끼니에 어울리는 메뉴를 찾지 못했어요. 다른 끼니를 눌러 보세요."
-FOOTNOTE = "메뉴는 오늘의 기운과 계절에 어울리는 취향 제안이에요. 하루 동안 그대로예요."
+FOOTNOTE = "메뉴는 계절에 맞춘 취향 제안이에요. 하루 동안 그대로예요."
 
 
 def compose_meal_card(meal: str, element: str, menus: list[str], seed: int) -> dict:
     meal = meal if meal in MEAL_KEYS else "lunch"
-    key = element if element in ELEMENT_LINE else "土"
+    key = element if element in ELEMENT_KO else "土"
     label = next(name for k, name, _ in MEALS if k == meal)
     return dict(
         mode=meal, label=label, sub_label="", element=key, element_ko=ELEMENT_KO[key],
-        headline=_pick(ELEMENT_LINE[key], seed, 6), caption=CAPTION,
+        headline=HEADLINE, caption=CAPTION,
         menus=list(menus), available=bool(menus), empty_text="" if menus else EMPTY_TEXT,
     )
