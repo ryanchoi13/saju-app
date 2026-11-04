@@ -554,7 +554,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
     <link id="dalhaBrandStyles" rel="stylesheet" href="/assets/brand-2026/brand.css?v=20261010-1">
     <link rel="stylesheet" href="/assets/reading-polish.css?v=20261102-1">
     <link rel="stylesheet" href="/assets/daily-card.css?v=20261027-1">
-    <link rel="stylesheet" href="/assets/brand-2026/refine.css?v=20261102-1">
+    <link rel="stylesheet" href="/assets/brand-2026/refine.css?v=20261104-1">
     <script src="/assets/reading-polish.js?v=20261031-2" defer></script>
     <script src="/assets/brand-2026/brand-ui.js?v=20261001-4" defer></script>
 </head>
@@ -4111,7 +4111,10 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
 
         function formatJijangganGroup(jjList) {
             if (!jjList || jjList.length === 0) return `<span class="pc-hidden-none">-</span>`;
-            return jjList.map(j => `<span class="badge-jjg elem-${j.elem}"><i class="pc-dot el-${j.elem}" aria-hidden="true"></i>${toHanja(j.char, true)}</span>`).join('');
+            // 여기 → 중기 → 정기(국내 만세력 방식). 중기 없는 자리는 점, 정기는 진하게
+            return jjList.map(j => j.gap
+                ? `<span class="pc-hidden-gap" aria-hidden="true">·</span>`
+                : `<span class="badge-jjg elem-${j.elem}${j.main ? ' is-main' : ''}"><i class="pc-dot el-${j.elem}" aria-hidden="true"></i>${toHanja(j.char, true)}</span>`).join('');
         }
 
         function updateDaewoonPhaseTimeline(phase, age) {

@@ -239,6 +239,10 @@ html[data-brand] body .el-water { background:var(--el-water); }
 html[data-brand] body .pc-hidden { display:flex; flex-direction:column; align-items:center; gap:3px; margin-top:8px; padding-top:8px; border-top:1px dashed var(--ui-line); width:80%; }
 html[data-brand] body .pc-hidden .badge-jjg { width:auto!important; height:auto!important; background:transparent!important; border:0!important; color:var(--ui-muted)!important; font-family:var(--brand-serif); font-size:15px!important; font-weight:500!important; display:inline-flex; align-items:center; gap:4px; }
 html[data-brand] body .pc-hidden-none { font-size:12px; color:var(--ui-muted); }
+/* 2026-11-04 지장간 순서 여기→중기→정기. 정기는 먹색으로, 중기 없는 자리는 흐린 점 */
+html[data-brand] body .pc-hidden .badge-jjg.is-main,
+html[data-brand] body #archiveModalBody .pc-grid .pc-hidden .badge-jjg.is-main { color:var(--ui-ink)!important; font-weight:700!important; }
+html[data-brand] body .pc-hidden-gap { font-size:15px; line-height:1.3; color:var(--ui-line); }
 /* 오행 구성: 가로 막대 하나 + 범례 */
 html[data-brand] body .pc-elements { margin-top:20px; text-align:left; }
 html[data-brand] body .pc-elements-title { display:block; font-size:15px; font-weight:700; color:var(--ui-ink); margin-bottom:10px; }

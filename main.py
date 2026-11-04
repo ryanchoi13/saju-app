@@ -4,7 +4,8 @@ import logging
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "backend"))
 from datetime import date, time
 from app.engine.korean import josa
-from app.engine.constants import GAN_KO, ZHI_KO
+from app.engine.constants import GAN_KO, GAN_WUXING, ZHI_KO
+from app.engine.facts.hidden_stems_display import display_hidden_stems
 from app.engine.core.models import BirthInput
 from app.engine.orchestrator import calculate_myeongri_core
 from app.engine.services import (
@@ -277,15 +278,16 @@ def _pillar_detail(core, pillar_name: str) -> Dict[str, Any]:
     pillar = core.natal_facts.pillars.get(pillar_name)
     if pillar is None:
         return {"cg": "", "cg_elem": "", "jj": "", "jj_elem": "", "jijanggan": []}
-    hidden = core.natal_facts.hidden_stems.get(pillar_name)
     return {
         "cg": GAN_KO[pillar.stem],
         "cg_elem": _ELEMENT_KEY[pillar.stem_element],
         "jj": ZHI_KO[pillar.branch],
         "jj_elem": _ELEMENT_KEY[pillar.branch_element],
+        # 화면 순서: 여기 → 중기 → 정기 (국내 만세력 방식, 2026-11-04). 계산은 hidden 표 그대로.
         "jijanggan": [
-            {"char": GAN_KO[item.stem], "elem": _ELEMENT_KEY[item.element]}
-            for item in (hidden.stems if hidden else [])
+            {"char": GAN_KO[h["stem"]], "elem": _ELEMENT_KEY[GAN_WUXING[h["stem"]]], "main": h["main"]}
+            if h["stem"] else {"char": "", "elem": "", "main": False, "gap": True}
+            for h in display_hidden_stems(pillar.branch)
         ],
     }
 
@@ -319,20 +321,6 @@ ELEM_MAP = {
     "임": "water", "계": "water", "자": "water", "해": "water"
 }
 
-JIJANGGAN_MAP = {
-    "자": [{"char": "임", "elem": "water"}, {"char": "계", "elem": "water"}],
-    "축": [{"char": "계", "elem": "water"}, {"char": "신", "elem": "metal"}, {"char": "기", "elem": "earth"}],
-    "인": [{"char": "무", "elem": "earth"}, {"char": "병", "elem": "fire"}, {"char": "갑", "elem": "wood"}],
-    "묘": [{"char": "갑", "elem": "wood"}, {"char": "을", "elem": "wood"}],
-    "진": [{"char": "을", "elem": "wood"}, {"char": "계", "elem": "water"}, {"char": "무", "elem": "earth"}],
-    "사": [{"char": "무", "elem": "earth"}, {"char": "경", "elem": "metal"}, {"char": "병", "elem": "fire"}],
-    "오": [{"char": "병", "elem": "fire"}, {"char": "기", "elem": "earth"}, {"char": "정", "elem": "fire"}],
-    "미": [{"char": "정", "elem": "fire"}, {"char": "을", "elem": "wood"}, {"char": "기", "elem": "earth"}],
-    "신": [{"char": "무", "elem": "earth"}, {"char": "임", "elem": "water"}, {"char": "경", "elem": "metal"}],
-    "유": [{"char": "경", "elem": "metal"}, {"char": "신", "elem": "metal"}],
-    "술": [{"char": "신", "elem": "metal"}, {"char": "정", "elem": "fire"}, {"char": "무", "elem": "earth"}],
-    "해": [{"char": "무", "elem": "earth"}, {"char": "갑", "elem": "wood"}, {"char": "임", "elem": "water"}]
-}
 
 def calculate_biorhythm(birth_year: int, birth_month: int, birth_day: int, target_date=None):
     import math
