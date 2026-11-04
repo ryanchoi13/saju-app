@@ -287,7 +287,6 @@
         #resMenu { font-size:1.125rem!important; line-height:1.9!important; }
         .action-card { background:var(--ui-tint); border:0; border-radius:20px; padding:20px 22px; }
         .action-card > span { color:var(--ui-accent)!important; font-size:1rem!important; margin-bottom:7px!important; }
-        #resGaewoon { color:var(--ui-ink)!important; font-size:1rem!important; line-height:1.85!important; }
         .bio-legend-box { font-size:.875rem; gap:16px; flex-wrap:wrap; }
         .bio-pill-grid { gap:8px; }
         .bio-pill-cell { border:0; background:var(--ui-page); padding:12px 4px; }
@@ -554,7 +553,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
     <link id="dalhaBrandStyles" rel="stylesheet" href="/assets/brand-2026/brand.css?v=20261010-1">
     <link rel="stylesheet" href="/assets/reading-polish.css?v=20261104-1">
     <link rel="stylesheet" href="/assets/daily-card.css?v=20261027-1">
-    <link rel="stylesheet" href="/assets/brand-2026/refine.css?v=20261104-1">
+    <link rel="stylesheet" href="/assets/brand-2026/refine.css?v=20261104-2">
     <script src="/assets/reading-polish.js?v=20261031-2" defer></script>
     <script src="/assets/brand-2026/brand-ui.js?v=20261001-4" defer></script>
 </head>
@@ -922,11 +921,6 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                         <p id="seasonNext" class="dh-season-next"></p>
                     </div>
                 </section>
-
-                <div class="action-card dh-note">
-                    <span class="dh-note-label">오늘, 기억할 한 가지</span>
-                    <p id="resGaewoon">오늘 완료해야 할 우선순위 3가지 메모하기</p>
-                </div>
 
                 <!-- 바이오리듬 (주기 텍스트 정리 완료) -->
                 <div class="biorhythm-card">
@@ -2735,7 +2729,6 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             window.renderLuckyDirection?.(data.daily_fortune.lucky_direction);
             currentMenuMode = getSavedMenuMode();
             renderRecommendedMenu();
-            document.getElementById('resGaewoon').innerText = data.daily_fortune.unified_advice || data.daily_fortune.action;
 
             baseFashionStyle = data.daily_fortune.fashion_style || "네이비 쿨 티셔츠 & 플랙 연청 데님";
             currentLuckyColors = data.daily_fortune.lucky_colors || ["네이비", "스카이블루"];

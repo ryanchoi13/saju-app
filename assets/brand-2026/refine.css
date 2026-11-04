@@ -53,13 +53,6 @@ html[data-brand] body #dhLuckCard .dh-luck-visual:empty { display:none; }
 html[data-brand] body #dhLuckCard #resNumber.dh-luck-num { font-family:var(--brand-serif)!important; font-size:28px!important; font-weight:600!important; line-height:34px!important; letter-spacing:-.02em; white-space:nowrap; }
 html[data-brand] body #dhLuckCard .dh-luck-tint { position:absolute; left:24px; bottom:2px; width:9px; height:9px; border-radius:50%; box-shadow:0 0 0 2px var(--ui-surface); }
 
-/* ---- 오늘, 기억할 한 가지: 노란 경고 상자 대신 세이지 메모 ---- */
-html[data-brand] body #view-today .dh-note {
-  background:var(--brand-sage)!important; border:0!important; border-radius:16px; padding:18px 20px!important; text-align:left;
-}
-html[data-brand] body #view-today .dh-note { border-left:0!important; margin-top:0!important; }
-html[data-brand] body #view-today .action-card.dh-note > .dh-note-label { display:block; font-size:13px!important; font-weight:600; color:#47574A!important; margin-bottom:6px!important; }
-html[data-brand] body #view-today .dh-note p { margin:0; color:var(--ui-ink)!important; font-size:15px!important; line-height:1.7!important; font-weight:500; word-break:keep-all; }
 
 /* ---- 바이오리듬: 원색 대신 오행 색 세 가지, 범례는 짧은 선 ---- */
 html[data-brand] body #view-today .biorhythm-card > div:first-child { display:flex; justify-content:space-between; align-items:center; gap:12px; }
