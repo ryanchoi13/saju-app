@@ -16,6 +16,7 @@ from html import escape
 
 from app.engine.constants import GAN_KO, GAN_WUXING, ZHI_KO
 from app.engine.core.models import MyeongriCoreResult
+from app.engine.facts.hidden_stems_display import display_hidden_stems
 from app.engine.korean import josa
 from app.engine.services.annual_copy import seed_from, split_sentences
 from app.engine.services import lifetime_v3_copy as copy
@@ -91,15 +92,6 @@ def _section(sid: str, number: int, inner: str) -> str:
 # ---------------------------------------------------------------------------
 # 원국표
 # ---------------------------------------------------------------------------
-def _hidden_by_pillar(core: MyeongriCoreResult) -> dict[str, list[str]]:
-    order = {"main": 0, "middle": 1, "residual": 2}
-    out: dict[str, list[tuple[int, str]]] = {}
-    for fact in core.natal_facts.ten_gods.hidden:
-        role = fact.hidden_role.value if fact.hidden_role is not None else "main"
-        out.setdefault(fact.pillar, []).append((order.get(role, 0), fact.stem))
-    return {k: [s for _, s in sorted(v)] for k, v in out.items()}
-
-
 def _hidden_counts(core: MyeongriCoreResult) -> Counter:
     """정기(겉면에 이미 센 글자)를 뺀 지장간 오행 개수."""
     counts: Counter = Counter()
@@ -119,7 +111,6 @@ def _chart_html(core, profile, hidden_counts) -> str:
     큰 먹색 한자 + 작은 오행 점 + 읽는 법, 일주만 남색 테두리. 화면 두 곳의 표가 같은 모양이어야 한다.
     """
     pillars = core.natal_facts.pillars
-    hidden = _hidden_by_pillar(core)
     cols = (("hour", "시"), ("day", "일"), ("month", "월"), ("year", "년"))
 
     def glyph(char, ko, element):
@@ -131,14 +122,21 @@ def _chart_html(core, profile, hidden_counts) -> str:
                 f'<span class="pc-char">{char}</span><i class="pc-dot el-{el}" aria-hidden="true"></i>'
                 f'<span class="pc-read">{ko} · {el_ko}</span></div>')
 
-    def hidden_box(stems_):
-        if not stems_:
+    def hidden_box(branch):
+        # 화면 순서: 여기 → 중기 → 정기(국내 만세력 방식, 2026-11-04). 중기 없는 자리는 점으로 비운다.
+        if not branch:
             return '<div class="pc-hidden"><span class="pc-hidden-none">-</span></div>'
-        spans = "".join(
-            f'<span class="badge-jjg elem-{ELEMENT_CLASS[GAN_WUXING[s]]}">'
-            f'<i class="pc-dot el-{ELEMENT_CLASS[GAN_WUXING[s]]}" aria-hidden="true"></i>{s}</span>'
-            for s in stems_)
-        return f'<div class="pc-hidden">{spans}</div>'
+        spans = []
+        for h in display_hidden_stems(branch):
+            s = h["stem"]
+            if not s:
+                spans.append('<span class="pc-hidden-gap" aria-hidden="true">·</span>')
+                continue
+            el = ELEMENT_CLASS[GAN_WUXING[s]]
+            main = " is-main" if h["main"] else ""
+            spans.append(f'<span class="badge-jjg elem-{el}{main}">'
+                         f'<i class="pc-dot el-{el}" aria-hidden="true"></i>{s}</span>')
+        return f'<div class="pc-hidden">{"".join(spans)}</div>'
 
     parts = ['<div class="pc-grid lifetime-pc" role="table" aria-label="사주 여덟 글자">'
              '<div class="pc-col pc-rowhead" aria-hidden="true"><span class="pc-label">&nbsp;</span>'
@@ -148,12 +146,12 @@ def _chart_html(core, profile, hidden_counts) -> str:
         day = " is-day" if key == "day" else ""
         if p is None:
             parts.append(f'<div class="pc-col{day}"><span class="pc-label">{label}</span>'
-                         + glyph(None, None, None) + glyph(None, None, None) + hidden_box([]) + '</div>')
+                         + glyph(None, None, None) + glyph(None, None, None) + hidden_box(None) + '</div>')
             continue
         parts.append(f'<div class="pc-col{day}"><span class="pc-label">{label}</span>'
                      + glyph(p.stem, GAN_KO[p.stem], p.stem_element)
                      + glyph(p.branch, ZHI_KO[p.branch], p.branch_element)
-                     + hidden_box(hidden.get(key, [])) + '</div>')
+                     + hidden_box(p.branch) + '</div>')
     table = "".join(parts) + '</div>'
     surface = " · ".join(f"{copy.ELEMENT[e]['name']} {profile['elements'][e]['main']}" for e in ELEMENT_ORDER)
     lines = [f"겉면 {_glyphs(profile)}: {surface}"]
