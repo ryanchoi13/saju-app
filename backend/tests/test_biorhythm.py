@@ -31,3 +31,28 @@ class BiorhythmTests(TestCase):
             for key in ('physical','emotional','intellectual'):
                 self.assertLessEqual(abs(r[key]['val']),100)
                 if days == 0: self.assertEqual(r[key]['val'],0)
+
+
+class BiorhythmPhaseNamingTests(TestCase):
+    """2026-11-04: + 고조기 / - 저조기 / 0을 지나는 날 요주의일 (일반 바이오리듬 앱 관례)."""
+
+    def test_no_more_stable_label(self):
+        from datetime import timedelta
+        for i in range(60):
+            r = calculate_biorhythm(1978,3,13,date(2026,11,1)+timedelta(days=i))
+            self.assertNotIn('안정기', r['overall_summary'])
+
+    def test_reported_day_names_crossing(self):
+        r = calculate_biorhythm(1978,3,13,date(2026,11,4))
+        self.assertEqual(r['physical']['status'], '요주의일')      # -14, 어제 +14 → 0을 지난 첫날
+        self.assertEqual(r['emotional']['status'], '저조기')
+        self.assertEqual(r['intellectual']['status'], '고조기')
+        self.assertIn('신체는 요주의일', r['overall_summary'])
+
+    def test_one_critical_day_per_half_cycle(self):
+        from datetime import timedelta
+        for key, period in (('physical',23),('emotional',28),('intellectual',33)):
+            days = [i for i in range(period*4)
+                    if calculate_biorhythm(2000,1,1,date(2000,1,1)+timedelta(days=i))[key]['status'] == '요주의일']
+            self.assertEqual(len(days), 8, key)                    # 한 주기에 두 번, 네 주기면 여덟 번
+            self.assertEqual(len(set(d // (period/2) for d in days)), 8, key)

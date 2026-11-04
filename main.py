@@ -323,24 +323,42 @@ ELEM_MAP = {
 
 
 def calculate_biorhythm(birth_year: int, birth_month: int, birth_day: int, target_date=None):
+    """바이오리듬 (2026-11-04 정오님 결정: 일반 바이오리듬 앱의 표현에 맞춤).
+
+    값이 + 면 고조기, - 면 저조기. 곡선이 0을 지나는 날(반 주기마다 하루)은 요주의일.
+    예전에는 ±50 안쪽을 '안정기'라 불렀는데, 관례상 0 근처는 오히려 리듬이 바뀌는 불안정한 날이라 반대였다.
+    """
     import math
     today = target_date or datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=9))).date()
     days_lived = (today - datetime.date(birth_year, birth_month, birth_day)).days
-    def status(value):
-        return "고조기" if value >= 50 else ("저조기" if value <= -50 else "안정기")
+
+    def status(value, period):
+        # 0을 지나는 날 하루만: 0인 날, 또는 어제와 오늘 사이에 0을 지났으면 오늘(부호가 바뀐 첫날)
+        half = period / 2
+        crossed = math.floor(days_lived / half) * half          # 오늘 이하에서 가장 가까운 0 지점
+        if days_lived - crossed < 1:
+            return "요주의일"
+        return "고조기" if value > 0 else "저조기"
+
     result = {"days_lived": days_lived}
     for key, period in (("physical", 23), ("emotional", 28), ("intellectual", 33)):
         value = round(math.sin(2 * math.pi * days_lived / period) * 100)
-        result[key] = {"val": value, "status": status(value)}
+        result[key] = {"val": value, "status": status(value, period)}
     # One short interpretation combines all three phases without repeating
     # the numeric legend or treating the curves as measured human abilities.
     labels = (("physical", "신체"), ("emotional", "감성"), ("intellectual", "지성"))
     groups = []
-    for phase in ("고조기", "안정기", "저조기"):
+    for phase in ("고조기", "저조기", "요주의일"):
         names = [label for key, label in labels if result[key]["status"] == phase]
         if names:
             groups.append(f"{josa('·'.join(names), '은/는')} {phase}")
+    critical = tuple(key for key, _ in labels if result[key]["status"] == "요주의일")
     low = tuple(key for key, _ in labels if result[key]["status"] == "저조기")
+    critical_advice = {
+        ("physical",): "몸 쓰는 일은 서두르지 말고 한 박자 천천히 움직여 보세요.",
+        ("emotional",): "기분이 쉽게 출렁이는 날이라, 중요한 대화는 한 번 쉬고 꺼내 보세요.",
+        ("intellectual",): "판단이 흔들리기 쉬운 날이라, 중요한 결정은 한 번 더 확인하세요.",
+    }
     advice = {
         (): "하고 싶은 일 하나를 골라, 평소의 페이스로 가볍게 시작해 보세요.",
         ("physical",): "몸은 쉬엄쉬엄 움직이고, 대화나 생각을 정리하는 데 시간을 써 보세요.",
@@ -351,7 +369,13 @@ def calculate_biorhythm(birth_year: int, birth_month: int, birth_day: int, targe
         ("emotional", "intellectual"): "가볍게 움직이며 기분을 환기하고, 중요한 일은 하나씩 정리해 보세요.",
         ("physical", "emotional", "intellectual"): "오늘은 속도를 조금 늦추고, 꼭 필요한 일부터 차분히 해보세요.",
     }
-    result["overall_summary"] = ', '.join(groups) + "입니다. " + advice[low]
+    if len(critical) == 1:
+        tip = critical_advice[critical]
+    elif critical:
+        tip = "리듬이 바뀌는 날이 겹쳤으니, 새 일보다 하던 일을 차분히 마무리해 보세요."
+    else:
+        tip = advice[low]
+    result["overall_summary"] = ', '.join(groups) + "입니다. " + tip
     return result
 
 def with_wa_gwa(word: str):
