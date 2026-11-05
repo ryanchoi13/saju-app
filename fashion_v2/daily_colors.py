@@ -64,9 +64,12 @@ def todays_lucky_tones(core, today_fortune, day_ordinal: int, salt: int) -> dict
     """오늘의 행운 색 두 개를 정하는 단 하나의 입구(2026-10-30).
 
     화면(main.py)과 자동 검사(scripts/color_plan_report.py)가 같은 함수를 쓴다.
-    1) 두 목표 오행: 원국 방향이 확정이면 그 오행 + 일간 오행, 보류면 오늘의 보완 오행 + 타고난 보완 오행
+    1) 두 목표 오행: 원국 방향이 확정이면 그 오행 + 일간 오행,
+       보류면 오늘의 보완 오행 1·2순위(2026-11-05 정오님: 두 칸 모두 '오늘 필요한 기운').
+       예전 2칸(타고난 보완 오행)은 거의 매일 같은 오행이라 한 칸이 고정되고 같은 오행 두 색이 나왔다.
+       1·2순위는 점수 카드와 같은 억부 방향을 따르므로 기신 오행이 색으로 나오지 않는다(통관 날 제외).
     2) 오행마다 대표 착장색 하나씩(element_tone_pair)
-    3) 충 날이면 첫 색을 두 기운을 잇는 오행의 가라앉은 톤으로(통관)
+    3) 충 날이면 첫 색을 두 기운을 잇는 오행의 가라앉은 톤으로(통관). 2칸은 혼합 순위의 다음 오행
     """
     from app.engine.services.fashion_colors import build_fashion_color_basis
 
@@ -76,10 +79,9 @@ def todays_lucky_tones(core, today_fortune, day_ordinal: int, salt: int) -> dict
     fashion_element = basis["primary_element"]
     if basis["source"] != "confirmed_natal_direction":
         fashion_element = lucky_element
-        natal_element = today_fortune["natal_balance_element"]
-        today_element = natal_element if natal_element != lucky_element else today_element
+        today_element = today_fortune["lucky_second_element"]
         basis = {**basis, "primary_element": fashion_element, "secondary_element": today_element,
-                 "source": "natal_balance_plus_daily"}
+                 "source": "daily_blend_top2"}
     tone_a, tone_b = element_tone_pair(fashion_element, today_element, day_ordinal, salt)
     tongguan = today_fortune.get("tongguan")
     element_a = fashion_element

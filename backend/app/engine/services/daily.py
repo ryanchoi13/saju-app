@@ -492,6 +492,8 @@ def build_daily_fortune(
     tongguan = tongguan_day(core, daily_pillar["ganji"][1])
     if tongguan and not query["semantic_state"].get("favorable_elements"):
         lucky_element = tongguan["element"]   # 충 날은 두 기운을 잇는 오행이 오늘의 보완 오행
+    # 오늘의 행운 색 두 번째 칸(2026-11-05): 오늘 혼합 순위에서 첫 칸 다음 오행. 원국 고정값이 아니다.
+    lucky_second_element = next(e for e in blend["order"] if e != lucky_element)
     timing_element_weights = _menu_timing_element_weights(timing, query["semantic_state"], balance)
     confidence = str(query["semantic_state"].get("confidence", "undetermined"))
     evaluation = _score(core, ganji_han, target_date)
@@ -592,6 +594,7 @@ def build_daily_fortune(
         "action": daily_copy.sanitize(narrative["unified_advice"]),
         "lucky_element": lucky_element,
         "natal_balance_element": balance["primary"],
+        "lucky_second_element": lucky_second_element,
         "tongguan": tongguan,
         "lucky_item": item,
         "lucky_item_reason": item_reason,

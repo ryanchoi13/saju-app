@@ -43,6 +43,9 @@ def test_outlook_fields_have_the_promised_shape(outlooks):
     for core, target, result in outlooks:
         assert result["lucky_element"] in ELEMENTS
         assert result["natal_balance_element"] in ELEMENTS
+        # 2026-11-05: 행운 색 두 번째 칸. 오늘 혼합 순위에서 첫 칸 다음 오행
+        assert result["lucky_second_element"] in ELEMENTS
+        assert result["lucky_second_element"] != result["lucky_element"]
         tongguan = result["tongguan"]
         if tongguan is not None:
             assert tongguan["element"] in ELEMENTS
