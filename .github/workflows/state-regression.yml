@@ -32,6 +32,7 @@ jobs:
           backend/tests/test_daily_sections.py
           backend/tests/test_element_balance.py
           backend/tests/test_engine_handoff_contract.py
+          backend/tests/test_lucky_color_eokbu.py
           backend/tests/test_semantic_engine.py
           backend/tests/test_timing_engine.py
           backend/tests/test_temporal_conditions.py

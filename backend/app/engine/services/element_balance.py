@@ -16,7 +16,22 @@ CONTROLS = {"木": "土", "土": "水", "水": "火", "火": "金", "金": "木"
 GENERATED_BY = {v: k for k, v in GENERATES.items()}                          # 生我 (인성)
 CONTROLLED_BY = {v: k for k, v in CONTROLS.items()}                          # 克我 (관성)
 
-BALANCE_VERSION = "element-balance-v1"
+BALANCE_VERSION = "element-balance-v2"
+
+# 억부 방향(2026-11-05 정오님): 강약 방향이 있는 사람은 오늘의 운세 점수(daily_score.yong_item)와
+# 같은 방향을 따른다. 점수 카드가 '억부 기신'이라 부르는 오행은 보완 순위 맨 아래로 내린다.
+# 방향이 없으면(강약 보류) 지금처럼 비율 + 조후로만 정한다(10/24 "보류자는 보류 유지").
+EOKBU_STRONG = {"strong", "extremely_strong"}
+EOKBU_WEAK = {"weak", "extremely_weak"}
+
+
+def eokbu_avoid(day_master: str, strength: str) -> set[str]:
+    """강약 방향에서 기신이 되는 오행. 신강 → 비겁·인성, 신약 → 식상·재성·관성, 그 밖 → 없음."""
+    if strength in EOKBU_STRONG:
+        return {day_master, GENERATED_BY[day_master]}
+    if strength in EOKBU_WEAK:
+        return {GENERATES[day_master], CONTROLS[day_master], CONTROLLED_BY[day_master]}
+    return set()
 
 _HIDDEN_WEIGHTS = {
     "子": {"main": 1.0},
@@ -114,12 +129,17 @@ def natal_balance(core) -> dict:
         add(CONTROLS[day_master], 1.5, "strength_strong")
         add(CONTROLLED_BY[day_master], 1, "strength_strong")
 
-    order = sorted(ELEMENTS, key=lambda e: (-scores[e], share[e], ELEMENTS.index(e)))
+    avoid = eokbu_avoid(day_master, strength)
+    for e in avoid:
+        reasons[e].append("eokbu_avoid")
+    # 억부 기신은 점수와 상관없이 뒤로. 점수는 그대로 남겨 근거를 볼 수 있게 한다.
+    order = sorted(ELEMENTS, key=lambda e: (e in avoid, -scores[e], share[e], ELEMENTS.index(e)))
     return dict(version=BALANCE_VERSION, source="service_balance_estimate",
                 composition=share, scores={e: round(scores[e], 2) for e in ELEMENTS},
                 primary=order[0], secondary=order[1], ranking=order,
                 reasons={e: reasons[e] for e in ELEMENTS if reasons[e]},
-                strength_used=strength in {"weak", "extremely_weak", "strong", "extremely_strong"},
+                strength_used=strength in EOKBU_STRONG | EOKBU_WEAK,
+                eokbu_avoid=sorted(avoid, key=ELEMENTS.index),
                 climate=dict(temperature=temperature, moisture=moisture))
 
 
@@ -142,8 +162,10 @@ def daily_blend(natal: dict, daily_stem_element: str, daily_branch: str) -> dict
         today[daily_stem_element] -= 3
         today[GENERATES[daily_stem_element]] += 2
     total = {e: base[e] + today[e] for e in ELEMENTS}
-    order = sorted(ELEMENTS, key=lambda e: (-total[e], -base[e], ELEMENTS.index(e)))
-    return dict(element=order[0], second=order[1], natal_primary=natal["primary"],
+    avoid = set(natal.get("eokbu_avoid") or ())
+    # 오늘 일진에 기신이 들어와도 기신을 채우라고 하지 않는다(점수 카드와 같은 방향).
+    order = sorted(ELEMENTS, key=lambda e: (e in avoid, -total[e], -base[e], ELEMENTS.index(e)))
+    return dict(element=order[0], second=order[1], order=order, natal_primary=natal["primary"],
                 from_natal=order[0] == natal["primary"],
                 scores={e: round(total[e], 2) for e in ELEMENTS},
                 natal_part={e: round(base[e], 2) for e in ELEMENTS},
