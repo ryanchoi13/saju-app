@@ -3,8 +3,12 @@
 코어(synthesis)의 용신 판정은 보수적이라 대부분 '보류(pending)'로 남는다. 그 판정은 건드리지 않는다.
 여기서는 색·음식·소품 같은 생활 추천에 쓰려고, 코어가 이미 계산한 사실만으로 '보완 방향'을 추정한다.
 
+  원국 순위(method) — 2026-11-05 정오님 결정:
+    eokbu          강약 방향이 있는 사람. 점수 카드와 같은 억부 기신을 맨 뒤로, 나머지는 아래 점수 순
+    gungtong_johu  강약 보류자. 『궁통보감』 조후용신 1·2순위 → 비율·조후 점수 순 → 원문이 꺼린 오행 →
+                   원국 35% 이상 오행(점수 카드 '과다 강화'와 같은 기준) 순
   원국 점수 = 오행 구성 비율의 과부족 + 조후(차고 더움·습하고 건조함) + 강약(판정된 경우에만)
-  오늘 점수 = 원국 점수(0~5로 정규화) + 일진 천간·지지 오행 + 일지의 계절감
+  오늘 점수 = 원국 층(eokbu: 점수를 0~5로 정규화 / gungtong: 순위 눈금 5·3.5·2·1·0) + 일진 천간·지지 오행 + 일지의 계절감
 
 용신 확정이 아니라 생활 추천을 위한 추정이며, 결과에 source 와 근거를 함께 남긴다.
 """
@@ -16,11 +20,11 @@ CONTROLS = {"木": "土", "土": "水", "水": "火", "火": "金", "金": "木"
 GENERATED_BY = {v: k for k, v in GENERATES.items()}                          # 生我 (인성)
 CONTROLLED_BY = {v: k for k, v in CONTROLS.items()}                          # 克我 (관성)
 
-BALANCE_VERSION = "element-balance-v2"
+BALANCE_VERSION = "element-balance-v3"
 
 # 억부 방향(2026-11-05 정오님): 강약 방향이 있는 사람은 오늘의 운세 점수(daily_score.yong_item)와
 # 같은 방향을 따른다. 점수 카드가 '억부 기신'이라 부르는 오행은 보완 순위 맨 아래로 내린다.
-# 방향이 없으면(강약 보류) 지금처럼 비율 + 조후로만 정한다(10/24 "보류자는 보류 유지").
+# 방향이 없으면(강약 보류) 궁통보감 조후용신으로 정한다(11/5, 아래 _gungtong). 점수 카드의 억부는 여전히 꺼져 있다.
 EOKBU_STRONG = {"strong", "extremely_strong"}
 EOKBU_WEAK = {"weak", "extremely_weak"}
 
@@ -134,13 +138,57 @@ def natal_balance(core) -> dict:
         reasons[e].append("eokbu_avoid")
     # 억부 기신은 점수와 상관없이 뒤로. 점수는 그대로 남겨 근거를 볼 수 있게 한다.
     order = sorted(ELEMENTS, key=lambda e: (e in avoid, -scores[e], share[e], ELEMENTS.index(e)))
-    return dict(version=BALANCE_VERSION, source="service_balance_estimate",
+    method, blend_base, overflow = ("eokbu" if avoid else "composition_climate"), None, None
+    johu = None if avoid else _gungtong(core)
+    if johu:
+        # 강약 보류자(2026-11-05 정오님 결정): 『궁통보감』 조후용신 1·2순위를 앞에 세운다.
+        # - 원국에 이미 35% 이상인 오행은 점수 카드가 '과다 강화'로 감점하는 오행이라 맨 뒤로(한 화면 모순 방지)
+        # - 원문이 꺼린 천간의 오행은 그 앞(단, 1·2순위로 쓰는 오행과 같으면 꺼림을 무시)
+        # - 나머지는 비율 + 조후 점수 순서
+        method = "gungtong_johu"
+        picks, shunned = johu
+        overflow = [e for e in ELEMENTS if share[e] >= EXCESS_SHARE]
+        head = [e for e in picks if e not in overflow]
+        for rank, e in enumerate(head):
+            reasons[e].append(f"gungtong_rank{rank + 1}")
+        shunned = [e for e in shunned if e not in head and e not in overflow]
+        for e in shunned:
+            reasons[e].append("gungtong_avoid")
+        for e in overflow:
+            reasons[e].append("excess_share")
+        rest = [e for e in order if e not in head and e not in shunned and e not in overflow]
+        order = head + rest + [e for e in order if e in shunned] + [e for e in order if e in overflow]
+        blend_base = {e: _JOHU_BASE[i] for i, e in enumerate(order)}
+    return dict(version=BALANCE_VERSION, source="service_balance_estimate", method=method,
                 composition=share, scores={e: round(scores[e], 2) for e in ELEMENTS},
                 primary=order[0], secondary=order[1], ranking=order,
                 reasons={e: reasons[e] for e in ELEMENTS if reasons[e]},
                 strength_used=strength in EOKBU_STRONG | EOKBU_WEAK,
                 eokbu_avoid=sorted(avoid, key=ELEMENTS.index),
+                blend_base=blend_base, overflow=overflow,
                 climate=dict(temperature=temperature, moisture=moisture))
+
+
+# 궁통보감 순서를 오늘 혼합의 원국 층(0~5)으로 옮길 때의 눈금: 1순위 5 … 5순위 0
+_JOHU_BASE = (5.0, 3.5, 2.0, 1.0, 0.0)
+# 원국 과다 기준 — 점수 카드(daily_score '과다 강화')와 같은 값이어야 한다(테스트로 고정)
+EXCESS_SHARE = 35
+
+
+def _gungtong(core) -> tuple[list[str], list[str]] | None:
+    """일간 × 월지의 궁통보감 (1·2순위 오행, 꺼리는 오행). 표에 없으면 None."""
+    from app.engine.constants import GAN_WUXING
+    from app.engine.services.gungtong_johu import GUNGTONG_JOHU
+
+    day, month = core.natal_facts.pillars.get("day"), core.natal_facts.pillars.get("month")
+    entry = GUNGTONG_JOHU.get((day.stem, month.branch)) if day and month else None
+    if not entry:
+        return None
+    primary, secondary, shunned, _checked = entry
+    picks = [GAN_WUXING[primary]]
+    if secondary and GAN_WUXING[secondary] not in picks:
+        picks.append(GAN_WUXING[secondary])
+    return picks, [GAN_WUXING[s] for s in shunned]
 
 
 def daily_blend(natal: dict, daily_stem_element: str, daily_branch: str) -> dict:
@@ -148,7 +196,7 @@ def daily_blend(natal: dict, daily_stem_element: str, daily_branch: str) -> dict
     raw = natal["scores"]
     low, high = min(raw.values()), max(raw.values())
     span = (high - low) or 1
-    base = {e: (raw[e] - low) / span * 5 for e in ELEMENTS}
+    base = natal.get("blend_base") or {e: (raw[e] - low) / span * 5 for e in ELEMENTS}
     today = {e: 0.0 for e in ELEMENTS}
     branch_element = _BRANCH_ELEMENT[daily_branch]
     today[daily_stem_element] += 3
@@ -158,7 +206,8 @@ def daily_blend(natal: dict, daily_stem_element: str, daily_branch: str) -> dict
     elif daily_branch in _COLD_BRANCHES:
         today["火"] += 1.5
     # 오늘 들어온 기운이 원국에서 이미 넘치는 오행이면, 그 힘을 받아 흘려보내는 오행(我生)을 돕는다.
-    if raw.get(daily_stem_element, 0) < 0:
+    overflow = natal.get("overflow")
+    if (daily_stem_element in overflow) if overflow is not None else raw.get(daily_stem_element, 0) < 0:
         today[daily_stem_element] -= 3
         today[GENERATES[daily_stem_element]] += 2
     total = {e: base[e] + today[e] for e in ELEMENTS}
