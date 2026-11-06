@@ -1255,7 +1255,6 @@ def _owned_year(original):
 def _rebuilt_report(user, original, target_version):
     """구매한 풀이를 지금 저장된 사주로 다시 쓴다. 다시 쓸 근거가 부족하면 None."""
     from app.engine.services.career_copy import STATUS_TRACK as CAREER_OPTIONS
-    from app.engine.services.love_copy import STATUSES as LOVE_OPTIONS
     key = original['report_key']
     now = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=9))).isoformat()
     if key == 'sinnian':
@@ -1269,7 +1268,8 @@ def _rebuilt_report(user, original, target_version):
                     refreshed_at=now, profile_basis='current_saved_profile')
     context = original.get('reading_context') or {}
     option = context.get('sub_option', '기본')
-    allowed = CAREER_OPTIONS if key == 'business' else LOVE_OPTIONS if key == 'love' else None
+    # 애정운은 11/06부터 연애 상태를 고르지 않으므로(love-v3) 저장된 상황 값과 관계없이 다시 쓴다.
+    allowed = CAREER_OPTIONS if key == 'business' else None
     if allowed and option not in allowed:   # 사용자가 고른 상황을 짐작하지 않는다.
         return None
     generated = generate_detailed_report(key, option, '', context.get('relation', ''), user.get('name', '회원'),
