@@ -3346,7 +3346,16 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 return;
             }
 
-            serverUnlockedReports.forEach((report, index) => {
+            // 화면 순서만 구매일 최신순으로 바꾼다. 배열 순서(=index)는 다른 곳에서 풀이를 여는 데 쓰므로 그대로 둔다.
+            // 같은 날 산 것은 나중에 산 것(배열 뒤쪽)이 위로, 날짜 없는 옛 기록은 맨 아래로.
+            const purchaseDay = (report) => {
+                const day = String(report.created_at || '').slice(0, 10).replace(/\./g, '-');
+                return /^\d{4}-\d{2}-\d{2}$/.test(day) ? day : '';
+            };
+            serverUnlockedReports
+                .map((report, index) => ({ report, index, day: purchaseDay(report) }))
+                .sort((a, b) => (a.day === b.day ? b.index - a.index : a.day < b.day ? 1 : -1))
+                .forEach(({ report, index }) => {
                 const row = document.createElement('div'); row.className = 'archive-row';
                 const button = document.createElement('button');
                 button.type = 'button'; button.className = 'archive-reopen';
@@ -3357,8 +3366,8 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 const title = document.createElement('span'); title.className = 'archive-title';
                 title.textContent = report.report_title; copy.append(title);
                 // 구매일: 구매할 때 저장한 created_at(자동 최신화돼도 그대로 유지). 없는 옛 기록은 비워 둔다.
-                const boughtOn = String(report.created_at || '').slice(0, 10).replace(/\./g, '-');
-                if (/^\d{4}-\d{2}-\d{2}$/.test(boughtOn)) {
+                const boughtOn = purchaseDay(report);
+                if (boughtOn) {
                     const date = document.createElement('span'); date.className = 'archive-entry-date';
                     date.textContent = `구매일 : ${boughtOn}`; copy.append(date);
                 }
