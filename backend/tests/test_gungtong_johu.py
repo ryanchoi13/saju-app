@@ -17,7 +17,7 @@ from app.engine.services import daily_score
 from app.engine.services.element_balance import (
     ELEMENTS, EXCESS_SHARE, daily_blend, eokbu_avoid, natal_balance,
 )
-from app.engine.services.gungtong_johu import GUNGTONG_JOHU
+from app.engine.services.gungtong_johu import CONDITIONS, GUNGTONG_JOHU, choose
 
 STEMS, BRANCHES = "甲乙丙丁戊己庚辛壬癸", "子丑寅卯辰巳午未申酉戌亥"
 CSV_PATH = pathlib.Path(__file__).resolve().parents[2] / "docs" / "engine" / "gungtong-johu.csv"
@@ -88,6 +88,9 @@ def test_pending_people_follow_the_table_with_guards():
             continue
         day, month = core.natal_facts.pillars["day"], core.natal_facts.pillars["month"]
         primary, secondary, shunned, _ = GUNGTONG_JOHU[(day.stem, month.branch)]
+        if nb["gungtong_condition"]:   # 조건부 칸이 맞은 경우: 조건 규칙의 1·2순위(아래 조건 테스트에서 따로 검사)
+            rule = next(r for r in CONDITIONS[(day.stem, month.branch)] if r[4] == nb["gungtong_condition"])
+            primary, secondary = rule[2], rule[3]
         overflow = set(nb["overflow"])
         assert overflow == {e for e in ELEMENTS if share[e] >= EXCESS_SHARE}
         if GAN_WUXING[primary] not in overflow:
@@ -115,3 +118,96 @@ def test_blend_moves_overflowing_day_element_to_its_outlet():
         blend = daily_blend(nb, e, "子")
         assert blend["daily_part"][e] <= 0   # 넘치는 오행이 일간으로 와도 더 채우라고 하지 않는다
         return
+
+
+# ── 조건부 용신 (2026-11-06) ──
+
+
+_EVEN = {e: 20.0 for e in ELEMENTS}
+
+
+def test_conditions_use_real_stems_and_the_excess_threshold():
+    from app.engine.services import gungtong_johu
+    for key, rules in CONDITIONS.items():
+        assert key in GUNGTONG_JOHU
+        for kind, arg, p, s, note in rules:
+            assert kind in {"second_half", "first_half", "ju", "ju_peer", "many", "many2"}
+            assert p in STEMS and (s is None or s in STEMS) and note.startswith("L")
+    assert gungtong_johu.MANY_SHARE == EXCESS_SHARE
+
+
+def test_each_condition_switches_only_when_it_holds():
+    base = dict(share=_EVEN, branches=["子", "午", "卯", "酉"], other_stems=["壬", "壬", "壬"], second_half=None)
+    for (stem, branch) in CONDITIONS:
+        assert choose(stem, branch, **base)[:2] == GUNGTONG_JOHU[(stem, branch)][:2], (stem, branch)
+    # 절기
+    assert choose("乙", "酉", **{**base, "second_half": True})[:2] == ("丙", "癸")
+    assert choose("乙", "酉", **{**base, "second_half": False})[:2] == GUNGTONG_JOHU[("乙", "酉")][:2]
+    assert choose("癸", "辰", **{**base, "second_half": False})[:2] == ("丙", None)
+    # 국: 甲 辰월 + 巳酉丑 金局
+    assert choose("甲", "辰", **{**base, "branches": ["巳", "辰", "酉", "丑"]})[:2] == ("丁", None)
+    # 반합(酉丑)만으로는 국이 아니다
+    assert choose("甲", "辰", **{**base, "branches": ["子", "辰", "酉", "丑"]})[:2] == GUNGTONG_JOHU[("甲", "辰")][:2]
+    # 국 + 비겁 투출
+    ju_wood = {**base, "branches": ["亥", "酉", "卯", "未"]}
+    assert choose("甲", "酉", **ju_wood)[:2] == GUNGTONG_JOHU[("甲", "酉")][:2]
+    assert choose("甲", "酉", **{**ju_wood, "other_stems": ["乙", "癸", "壬"]})[:2] == ("庚", "丁")
+    # 土局 = 四庫 세 글자
+    assert choose("庚", "未", **{**base, "branches": ["辰", "未", "戌", "子"]})[:2] == ("甲", "丁")
+    # 많음 / 둘 합
+    assert choose("甲", "戌", **{**base, "share": {**_EVEN, "木": 35.0}})[:2] == ("庚", None)
+    assert choose("甲", "戌", **{**base, "share": {**_EVEN, "木": 34.9}})[:2] == GUNGTONG_JOHU[("甲", "戌")][:2]
+    assert choose("乙", "午", **{**base, "share": {**_EVEN, "金": 25.0, "水": 25.0}})[:2] == ("丙", "癸")
+    # 丙 亥월은 위에서부터 첫 조건: 木旺 → 庚, 水旺 → 戊
+    assert choose("丙", "亥", **{**base, "share": {**_EVEN, "木": 40.0, "水": 40.0}})[:2] == ("庚", None)
+    assert choose("丙", "亥", **{**base, "share": {**_EVEN, "水": 40.0}})[:2] == ("戊", None)
+
+
+def test_positive_cases_for_every_rule_kind():
+    base = dict(share=_EVEN, branches=["子", "午", "卯", "酉"], other_stems=["壬", "壬", "壬"], second_half=None)
+    many = lambda e, v=40.0: {**base, "share": {**_EVEN, e: v}}
+    ju = lambda *b: {**base, "branches": list(b)}
+    cases = [
+        (("甲", "午"), many("木"), ("庚", "丁")), (("甲", "午"), many("金"), ("丁", None)),
+        (("甲", "未"), many("木"), ("庚", "丁")),
+        (("乙", "未"), {**base, "share": {**_EVEN, "金": 30.0, "水": 20.0}}, ("丙", "癸")),
+        (("丙", "亥"), many("火"), ("壬", None)),
+        (("丁", "辰"), ju("寅", "辰", "卯", "子"), ("庚", None)),    # 방합 寅卯辰 — 방합도 局으로(해석)
+        (("丁", "巳"), many("木"), ("庚", None)),
+        (("丁", "子"), many("火"), ("甲", "癸")),
+        (("戊", "申"), ju("申", "申", "子", "辰"), ("甲", None)),
+        (("己", "酉"), ju("巳", "酉", "丑", "子"), ("丙", "丁")),
+        (("己", "亥"), many("水"), ("戊", "丙")),
+        (("庚", "巳"), ju("申", "巳", "酉", "戌"), ("丁", None)),    # 방합 申酉戌
+        (("庚", "申"), ju("辰", "申", "丑", "未"), ("甲", "丁")),
+    ]
+    for (stem, branch), ctx, want in cases:
+        assert choose(stem, branch, **ctx)[:2] == want, (stem, branch)
+    # 경계 바로 아래는 안 걸린다
+    assert choose("乙", "午", **{**base, "share": {**_EVEN, "金": 25.0, "水": 24.9}})[:2] == GUNGTONG_JOHU[("乙", "午")][:2]
+    # 癸 辰월 하반월(穀雨 뒤)은 기본 칸(丙 + 辛)
+    assert choose("癸", "辰", **{**base, "second_half": True})[:2] == GUNGTONG_JOHU[("癸", "辰")][:2]
+    # 절기를 모르면(None) 절기 조건은 어느 쪽도 걸리지 않는다
+    assert choose("乙", "酉", **base)[:2] == GUNGTONG_JOHU[("乙", "酉")][:2]
+
+
+def test_midterm_is_read_from_the_birth_moment():
+    from app.engine.services.element_balance import _born_after_midterm
+    before = _core("male", dt.date(1990, 9, 17), 9)   # 白露(9/8)와 秋分(9/23 14:55) 사이
+    after = _core("male", dt.date(1990, 9, 27), 9)    # 秋分 뒤
+    assert _born_after_midterm(before) is False and _born_after_midterm(after) is True
+    assert after.natal_facts.pillars["day"].stem == "乙" and after.natal_facts.pillars["month"].branch == "酉"
+    nb = natal_balance(after)
+    assert nb["method"] == "gungtong_johu"
+    assert nb["gungtong_condition"].startswith("L142") and nb["ranking"][0] == "火"
+    # 다른 달의 중기도 시각으로 판정(谷雨 1990-04-20 앞뒤)
+    assert _born_after_midterm(_core("female", dt.date(1990, 4, 10), 9)) is False
+    assert _born_after_midterm(_core("female", dt.date(1990, 4, 28), 9)) is True
+
+
+def test_midterm_unknown_time_on_the_term_day_is_unknown():
+    from app.engine.services.element_balance import _born_after_midterm
+    core = calculate_myeongri_core(BirthInput(
+        name="검사", gender="male", birth_date=dt.date(1990, 9, 23), calendar_type="solar",
+        is_leap_month=False, birth_time=None, time_unknown=True), target_date=dt.date(2026, 11, 5))
+    assert _born_after_midterm(core) is None

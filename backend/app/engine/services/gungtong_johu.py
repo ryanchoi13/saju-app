@@ -10,7 +10,7 @@
   국내 요약표(徐樂吾 喜用提要 계열)와 순서가 다른 칸은 원문을 따랐다(甲未·甲申·甲酉·甲戌·甲丑·丁寅·己申·己酉·庚寅 등).
   칸별 근거·출처·조건문: docs/engine/gungtong-johu.csv
 - 독립 대조가 안 된 4칸: 戊寅·戊卯(甲 누락 전사본), 辛午(己壬 순서 양쪽), 辛子(선후 불명)
-- 한계: 상반월·하반월(절기)로 갈리는 칸(乙酉·乙午·癸辰·甲未 등)은 대표 순서 하나만 쓴다
+- 원국 조건(절기 중기 앞뒤·支成○局·○多)으로 순서가 바뀌는 칸은 아래 CONDITIONS(2026-11-06)
 """
 from __future__ import annotations
 
@@ -136,3 +136,76 @@ GUNGTONG_JOHU: dict[tuple[str, str], tuple[str, str | None, tuple[str, ...], boo
     ('癸', '子'): ('丙', '辛', ('壬',), True),
     ('癸', '丑'): ('丙', None, (), True),
 }
+
+
+# ── 조건부 용신 (2026-11-06) ────────────────────────────────────────────────
+# 원문이 '이런 원국이면 용신 순서가 바뀐다'고 분명히 적은 칸만. 원문 줄은 殆知閣 계열 전사본(穷通宝鉴.txt) 기준.
+# 조건 종류:
+#   second_half / first_half  절기 중기(中氣) 뒤 / 앞에 태어남
+#   ju       지지에 그 오행의 삼합·방합 세 글자가 다 있음(支成○局). 반합은 치지 않는다.
+#            방합까지 局으로 치는 것은 달하의 해석(원문은 方과 局을 대개 나눠 씀)
+#   ju_peer  ju + 일간과 같은 오행 천간이 연·월·시간에 투출(干透比劫)
+#   many     그 오행이 원국의 35% 이상(○多·○旺·○盛) — 점수 카드 '과다'와 같은 기준
+#   many2    두 오행 합이 원국의 50% 이상(柱多○○)
+# 값: (조건, 인자, 1순위, 2순위 또는 None, 원문 요약). 위에서부터 처음 맞는 것 하나만 쓴다.
+CONDITIONS: dict[tuple[str, str], tuple[tuple, ...]] = {
+    ("甲", "辰"): (("ju", "金", "丁", None, "L36 或支成金局，方可用丁"),),
+    ("甲", "午"): (("many", "木", "庚", "丁", "L47 五六月甲木，木盛先庚"),
+                   ("many", "金", "丁", None, "L47 五六月甲木，庚盛先丁")),
+    ("甲", "未"): (("many", "木", "庚", "丁", "L47 木盛先庚，庚盛先丁"),),
+    ("甲", "酉"): (("ju_peer", "木", "庚", "丁", "L71 支成木局，干透比劫，反取庚金为先，次用丁火"),),
+    ("甲", "戌"): (("many", "木", "庚", None, "L74 四柱木多…端用庚金为妙"),),
+    ("乙", "午"): (("many2", ("金", "水"), "丙", "癸", "L123 柱多金水，丙火为先"),),
+    ("乙", "未"): (("many2", ("金", "水"), "丙", "癸", "L126 柱多金水，丙火为尊"),),
+    ("乙", "酉"): (("second_half", None, "丙", "癸", "L142 秋分後…又宜用丙，癸水次之"),),
+    ("丙", "亥"): (("many", "木", "庚", None, "L316 木旺宜庚"),
+                   ("many", "水", "戊", None, "L316 水旺宜戊"),
+                   ("many", "火", "壬", None, "L316 火旺用壬")),
+    ("丁", "辰"): (("ju", "木", "庚", None, "L401 支成木局，取庚为先"),),
+    ("丁", "巳"): (("many", "木", "庚", None, "L406 甲多、又取庚为先(甲多 → 木 35% 이상으로 봄)"),),
+    ("戊", "申"): (("ju", "水", "甲", None, "L604 支成水局…宜取甲泄之"),),
+    ("己", "酉"): (("ju", "金", "丙", "丁", "L739 支成金局，无丙丁出救…得丙透丁藏"),),
+    ("丁", "子"): (("many", "火", "甲", "癸", "L510 四柱多丙丁，又用癸制火"),),
+    ("己", "亥"): (("many", "水", "戊", "丙", "L752 惟初冬壬旺，取戊制之"),),
+    ("庚", "巳"): (("ju", "金", "丁", None, "L824 支成金局，变弱为强，用丙无力，用丁方妙"),),
+    ("庚", "未"): (("ju", "土", "甲", "丁", "L836 支会土局，甲先丁後"),),
+    ("庚", "申"): (("ju", "土", "甲", "丁", "L853 支成土局，先甲後丁"),),
+    ("癸", "辰"): (("first_half", None, "丙", None, "L1268 清明後，火气未炽，专用丙火"),),
+}
+
+from app.engine.services.element_balance import EXCESS_SHARE as MANY_SHARE  # 점수 카드 '과다'와 같은 값
+MANY2_SHARE = 50
+
+_JU = {"水": ("申子辰", "亥子丑"), "木": ("亥卯未", "寅卯辰"), "火": ("寅午戌", "巳午未"),
+       "金": ("巳酉丑", "申酉戌"), "土": ("辰戌丑未",)}   # 土局은 四庫 중 세 글자 이상(支會土局)
+_ELEMENT_OF = dict(zip("甲乙丙丁戊己庚辛壬癸", "木木火火土土金金水水"))
+
+
+def _has_ju(element: str, branches: list[str]) -> bool:
+    got = set(branches)
+    if element == "土":
+        return len(got & set("辰戌丑未")) >= 3
+    return any(set(trio) <= got for trio in _JU[element])
+
+
+def choose(day_stem: str, month_branch: str, *, share: dict[str, float], branches: list[str],
+           other_stems: list[str], second_half: bool | None) -> tuple[str, str | None, tuple[str, ...], str | None]:
+    """(1순위, 2순위, 꺼리는 천간, 적용한 조건 요약 또는 None). 조건이 안 맞으면 기본 칸."""
+    primary, secondary, shunned, _checked = GUNGTONG_JOHU[(day_stem, month_branch)]
+    for kind, arg, p, s, note in CONDITIONS.get((day_stem, month_branch), ()):
+        hit = False
+        if kind == "second_half":
+            hit = second_half is True
+        elif kind == "first_half":
+            hit = second_half is False
+        elif kind == "ju":
+            hit = _has_ju(arg, branches)
+        elif kind == "ju_peer":
+            hit = _has_ju(arg, branches) and any(_ELEMENT_OF[s_] == _ELEMENT_OF[day_stem] for s_ in other_stems)
+        elif kind == "many":
+            hit = share.get(arg, 0) >= MANY_SHARE
+        elif kind == "many2":
+            hit = share.get(arg[0], 0) + share.get(arg[1], 0) >= MANY2_SHARE
+        if hit:
+            return p, s, shunned, note
+    return primary, secondary, shunned, None
