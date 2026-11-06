@@ -82,3 +82,15 @@ html[data-brand] #archiveModalBody .lifetime-v3 h5 { font-family:'Pretendard',sa
 html[data-brand] #archiveModalBody .theme-reading h3 { font-family:'Pretendard',sans-serif!important; font-size:19px!important; font-weight:800!important; line-height:1.6!important; }
 html[data-brand] #archiveModalBody .theme-reading h4 { font-family:'Pretendard',sans-serif!important; font-size:17px!important; font-weight:700!important; line-height:1.55!important; }
 html[data-brand] #archiveModalBody .theme-reading h5 { font-family:'Pretendard',sans-serif!important; font-size:16px!important; font-weight:700!important; line-height:1.55!important; }
+/* 테마 풀이 위계 (11/06): 큰 주제·소제목·문단이 같은 가는 줄로 나뉘어 묶음이 안 보이던 것.
+   줄은 큰 주제 사이에만(남색 2px), 소제목은 줄 없이 간격으로. 간격: 문단 12 < 소제목 사이 36 < 큰 주제 사이 52.
+   크기: 큰 주제 명조 26 > 소제목 고딕 17 > 본문 16. */
+html[data-brand] #archiveModalBody .theme-reading[data-theme] > section + section { border-top:2px solid #25364A; margin-top:52px; padding-top:30px; }
+html[data-brand] #archiveModalBody .theme-reading [data-theme-section] > h2 { font-family:var(--brand-serif,'Noto Serif KR',serif); font-size:26px; font-weight:700; line-height:1.45; letter-spacing:-.02em; color:#25364A; margin:0 0 6px; }
+html[data-brand] #archiveModalBody .theme-reading .reading-chapter { margin:0 0 36px; }
+html[data-brand] #archiveModalBody .theme-reading .reading-chapter:last-child { margin-bottom:0; }
+html[data-brand] #archiveModalBody .theme-reading .reading-section-heading { border-top:0; padding-top:0; margin:26px 0 12px!important; gap:10px; align-items:center; }
+html[data-brand] #archiveModalBody .theme-reading .reading-section-number { font-size:12px!important; padding:3px 7px; border-radius:7px; margin-top:0; }
+html[data-brand] #archiveModalBody .theme-reading .reading-heading-copy { font-family:'Pretendard',sans-serif!important; font-size:17px!important; font-weight:700!important; line-height:1.5!important; color:#25364A; }
+html[data-brand] #archiveModalBody .theme-reading .reading-chapter p { font-size:16px!important; line-height:1.85!important; margin:0 0 12px!important; color:#2F3A45; }
+html[data-brand] #archiveModalBody .theme-reading .reading-chapter p:last-child { margin-bottom:0!important; }
