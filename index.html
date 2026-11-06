@@ -3356,6 +3356,12 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 const copy = document.createElement('span'); copy.className = 'archive-entry-copy';
                 const title = document.createElement('span'); title.className = 'archive-title';
                 title.textContent = report.report_title; copy.append(title);
+                // 구매일: 구매할 때 저장한 created_at(자동 최신화돼도 그대로 유지). 없는 옛 기록은 비워 둔다.
+                const boughtOn = String(report.created_at || '').slice(0, 10).replace(/\./g, '-');
+                if (/^\d{4}-\d{2}-\d{2}$/.test(boughtOn)) {
+                    const date = document.createElement('span'); date.className = 'archive-entry-date';
+                    date.textContent = `구매일 : ${boughtOn}`; copy.append(date);
+                }
                 row.append(copy, button); container.append(row);
             });
         }
