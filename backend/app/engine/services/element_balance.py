@@ -20,7 +20,7 @@ CONTROLS = {"木": "土", "土": "水", "水": "火", "火": "金", "金": "木"
 GENERATED_BY = {v: k for k, v in GENERATES.items()}                          # 生我 (인성)
 CONTROLLED_BY = {v: k for k, v in CONTROLS.items()}                          # 克我 (관성)
 
-BALANCE_VERSION = "element-balance-v3"
+BALANCE_VERSION = "element-balance-v4"
 
 # 억부 방향(2026-11-05 정오님): 강약 방향이 있는 사람은 오늘의 운세 점수(daily_score.yong_item)와
 # 같은 방향을 따른다. 점수 카드가 '억부 기신'이라 부르는 오행은 보완 순위 맨 아래로 내린다.
@@ -139,14 +139,15 @@ def natal_balance(core) -> dict:
     # 억부 기신은 점수와 상관없이 뒤로. 점수는 그대로 남겨 근거를 볼 수 있게 한다.
     order = sorted(ELEMENTS, key=lambda e: (e in avoid, -scores[e], share[e], ELEMENTS.index(e)))
     method, blend_base, overflow = ("eokbu" if avoid else "composition_climate"), None, None
-    johu = None if avoid else _gungtong(core)
+    johu = None if avoid else _gungtong(core, share)
+    johu_condition = None
     if johu:
         # 강약 보류자(2026-11-05 정오님 결정): 『궁통보감』 조후용신 1·2순위를 앞에 세운다.
         # - 원국에 이미 35% 이상인 오행은 점수 카드가 '과다 강화'로 감점하는 오행이라 맨 뒤로(한 화면 모순 방지)
         # - 원문이 꺼린 천간의 오행은 그 앞(단, 1·2순위로 쓰는 오행과 같으면 꺼림을 무시)
         # - 나머지는 비율 + 조후 점수 순서
         method = "gungtong_johu"
-        picks, shunned = johu
+        picks, shunned, johu_condition = johu
         overflow = [e for e in ELEMENTS if share[e] >= EXCESS_SHARE]
         head = [e for e in picks if e not in overflow]
         for rank, e in enumerate(head):
@@ -165,7 +166,7 @@ def natal_balance(core) -> dict:
                 reasons={e: reasons[e] for e in ELEMENTS if reasons[e]},
                 strength_used=strength in EOKBU_STRONG | EOKBU_WEAK,
                 eokbu_avoid=sorted(avoid, key=ELEMENTS.index),
-                blend_base=blend_base, overflow=overflow,
+                blend_base=blend_base, overflow=overflow, gungtong_condition=johu_condition,
                 climate=dict(temperature=temperature, moisture=moisture))
 
 
@@ -175,20 +176,44 @@ _JOHU_BASE = (5.0, 3.5, 2.0, 1.0, 0.0)
 EXCESS_SHARE = 35
 
 
-def _gungtong(core) -> tuple[list[str], list[str]] | None:
-    """일간 × 월지의 궁통보감 (1·2순위 오행, 꺼리는 오행). 표에 없으면 None."""
+def _gungtong(core, share) -> tuple[list[str], list[str], str | None] | None:
+    """일간 × 월지의 궁통보감 (1·2순위 오행, 꺼리는 오행, 적용한 조건). 표에 없으면 None.
+    원문이 적은 조건(절기 앞뒤·支成○局·○多)이 맞으면 그 순서를 쓴다(gungtong_johu.CONDITIONS)."""
     from app.engine.constants import GAN_WUXING
-    from app.engine.services.gungtong_johu import GUNGTONG_JOHU
+    from app.engine.services.gungtong_johu import GUNGTONG_JOHU, choose
 
-    day, month = core.natal_facts.pillars.get("day"), core.natal_facts.pillars.get("month")
-    entry = GUNGTONG_JOHU.get((day.stem, month.branch)) if day and month else None
-    if not entry:
+    p = core.natal_facts.pillars
+    day, month = p.get("day"), p.get("month")
+    if not day or not month or (day.stem, month.branch) not in GUNGTONG_JOHU:
         return None
-    primary, secondary, shunned, _checked = entry
+    branches = [p[k].branch for k in ("year", "month", "day", "hour") if p.get(k)]
+    other_stems = [p[k].stem for k in ("year", "month", "hour") if p.get(k)]
+    primary, secondary, shunned, applied = choose(
+        day.stem, month.branch, share=share, branches=branches, other_stems=other_stems,
+        second_half=_born_after_midterm(core))
     picks = [GAN_WUXING[primary]]
     if secondary and GAN_WUXING[secondary] not in picks:
         picks.append(GAN_WUXING[secondary])
-    return picks, [GAN_WUXING[s] for s in shunned]
+    return picks, [GAN_WUXING[s] for s in shunned], applied
+
+
+def _born_after_midterm(core) -> bool | None:
+    """달하 시간 기준(dalha-time-v1)의 절기 판정 시각에서, 직전 중기(中氣)가 직전 절(節)보다 뒤면 True(하반월).
+    이름이 아니라 시각을 비교한다. 출생 시각을 모르는데 그날이 절기 당일이면 앞뒤를 알 수 없어 None."""
+    try:
+        from datetime import date
+        from app.engine.calendar import _solar, resolve_birth_moment
+        cal = core.natal_facts.calendar or {}
+        solar_date = date.fromisoformat(cal["solar_date"])
+        hour, minute = (int(x) for x in (cal.get("time_used") or "12:00").split(":")[:2])
+        lunar = _solar(resolve_birth_moment(solar_date, hour, minute).seasonal_clock).getLunar()
+        if getattr(core.input, "time_unknown", False) and lunar.getJieQi():
+            return None
+        return lunar.getPrevQi(False).getSolar().toYmdHms() > lunar.getPrevJie(False).getSolar().toYmdHms()
+    except Exception:   # 달력 정보가 없거나 형식이 다르면 절기 조건을 쓰지 않는다(조용히 틀린 값 대신 None)
+        import logging
+        logging.getLogger(__name__).warning("절기 중기 판정 실패 — 궁통보감 절기 조건을 쓰지 않음", exc_info=True)
+        return None
 
 
 def daily_blend(natal: dict, daily_stem_element: str, daily_branch: str) -> dict:
