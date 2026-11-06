@@ -112,3 +112,9 @@ html[data-brand] #archiveModalBody .theme-reading[data-theme] section > ol { pad
 html[data-brand] #archiveModalBody .theme-reading[data-theme] section > ol > li { padding-left:4px; margin:0 0 10px!important; line-height:1.85!important; }
 html[data-brand] #archiveModalBody .theme-reading[data-theme] section > ol > li::marker { color:#995737; font-weight:700; }
 html[data-brand] #archiveModalBody .theme-reading :is([data-career-trap],[data-love-trap],[data-health-trap]) strong { color:#995737!important; }
+/* 애정운 v3 (11/06): '잘 맞는 사람·부딪히기 쉬운 사람'과 '지금의 사랑' 두 칸도 함정 칸과 같은 방식(구리색 마름모·제목). */
+html[data-brand] #archiveModalBody .theme-reading .love-pair { display:grid; gap:22px; }
+html[data-brand] #archiveModalBody .theme-reading :is([data-love-match],[data-love-now]) { position:relative; padding-left:20px; }
+html[data-brand] #archiveModalBody .theme-reading :is([data-love-match],[data-love-now])::before { content:''; position:absolute; left:2px; top:10px; width:7px; height:7px; background:#995737; transform:rotate(45deg); }
+html[data-brand] #archiveModalBody .theme-reading :is([data-love-match],[data-love-now]) strong { display:block; font-size:17px; font-weight:700; color:#995737; line-height:1.5; }
+html[data-brand] #archiveModalBody .theme-reading :is([data-love-match],[data-love-now]) p { margin:4px 0 0!important; }

@@ -551,7 +551,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;600;700&display=swap" rel="stylesheet">
     <link id="dalhaBrandStyles" rel="stylesheet" href="/assets/brand-2026/brand.css?v=20261010-1">
-    <link rel="stylesheet" href="/assets/reading-polish.css?v=20261106-2">
+    <link rel="stylesheet" href="/assets/reading-polish.css?v=20261106-3">
     <link rel="stylesheet" href="/assets/daily-card.css?v=20261027-1">
     <link rel="stylesheet" href="/assets/brand-2026/refine.css?v=20261104-2">
     <script src="/assets/reading-polish.js?v=20261031-2" defer></script>
@@ -1122,11 +1122,11 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 </section>
                 <section id="concern-love" class="card report-entry hidden" data-concern="love" aria-labelledby="concern-heading-love">
                     <span class="reading-eyebrow">애정·관계</span>
-                    <h3 id="concern-heading-love" tabindex="-1">나의 애정운</h3><p>마음이 가는 방식과 관계에서 반복하는 선택을 돌아봐요. 지금의 연애 상황에 맞춰 읽을 수 있어요.</p>
-                    <div class="report-preview"><span class="preview-label">이런 이야기를 읽어요</span><ol><li><strong>나의 관계 성향</strong><span>편안함을 느끼는 방식과 표현</span></li><li><strong>지금의 사랑</strong><span>솔로·썸·연애·부부 중 선택</span></li><li><strong>더 나은 대화</strong><span>갈등을 풀고 서로를 이해하는 방법</span></li></ol></div>
+                    <h3 id="concern-heading-love" tabindex="-1">나의 애정운</h3><p>마음이 가는 방식과 관계에서 반복하는 선택을 돌아봐요. 잘 맞는 사람과 인연이 들어오는 길도 함께 읽어요.</p>
+                    <div class="report-preview"><span class="preview-label">이런 이야기를 읽어요</span><ol><li><strong>나의 관계 성향</strong><span>편안함을 느끼는 방식과 표현</span></li><li><strong>지금의 사랑</strong><span>솔로일 때와 연애 중일 때를 함께</span></li><li><strong>더 나은 대화</strong><span>갈등을 풀고 서로를 이해하는 방법</span></li></ol></div>
                     <div class="report-facts"><span>성향과 긴 흐름을 살펴봐요</span><strong data-report-price="love">앞부분 무료</strong></div>
                     <div id="themeReport_love" class="hidden"></div>
-                    <button id="btnTheme_love" class="reading-primary" onclick="openThemeSelectModal('love')">상황 고르고 먼저 읽어보기</button>
+                    <button id="btnTheme_love" class="reading-primary" onclick="showThemePreview('love','기본')">먼저 읽어보기</button>
                     <p class="reading-caption report-scope">나의 애정운은 한 사람을 풀이해요. 서로의 차이는 아래 두 사람 궁합에서 살펴보세요.</p>
                 </section>
                 <section id="concern-wealth" class="card report-entry hidden" data-concern="wealth" aria-labelledby="concern-heading-wealth">
@@ -3484,16 +3484,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             const modalBox = document.getElementById('modalOptionBox');
             const titleEl = document.getElementById('modalThemeTitle');
 
-            if (key === 'love') {
-                titleEl.innerText = "지금의 관계에 맞춰 읽어볼까요?";
-                modalBox.innerHTML = `
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                        <label style="padding:10px; border:1px solid #E2E8F0; border-radius:8px; background:white; cursor:pointer;"><input type="radio" name="optM" value="솔로" checked> 솔로 (미혼)</label>
-                        <label style="padding:10px; border:1px solid #E2E8F0; border-radius:8px; background:white; cursor:pointer;"><input type="radio" name="optM" value="썸/짝사랑"> 썸 / 짝사랑</label>
-                        <label style="padding:10px; border:1px solid #E2E8F0; border-radius:8px; background:white; cursor:pointer;"><input type="radio" name="optM" value="연애중"> 연애중</label>
-                        <label style="padding:10px; border:1px solid #E2E8F0; border-radius:8px; background:white; cursor:pointer;"><input type="radio" name="optM" value="기혼"> 기혼 (부부)</label>
-                    </div>`;
-            } else if (key === 'business') {
+            if (key === 'business') {
                 titleEl.innerText = "지금 어떤 일을 준비하고 있나요?";
                 modalBox.innerHTML = `
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
@@ -3504,11 +3495,8 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                     </div>`;
             }
             const submit = document.getElementById('themeSelectConfirm');
-            submit.textContent = forRefresh ? '선택한 상황으로 무료 업데이트' : '무료로 먼저 읽어보기';
-            if (forRefresh) {
-                const saved = serverUnlockedReports[ownedIndex]?.reading_context?.sub_option;
-                modalBox.querySelectorAll('input[name="optM"]').forEach(input => { input.checked = input.value === saved; });
-            }
+            // 11/06: 정의되지 않은 forRefresh 를 읽다 산 적 없는 사람에게 창이 안 열리던 오류 수정(이미 산 풀이는 위에서 바로 열림)
+            submit.textContent = '무료로 먼저 읽어보기';
             const syncSelection = () => { submit.disabled = !modalBox.querySelector('input[name="optM"]:checked'); };
             modalBox.onchange = syncSelection; syncSelection();
             document.getElementById('themeSelectModal').classList.remove('hidden');

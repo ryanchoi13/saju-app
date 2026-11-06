@@ -17,6 +17,7 @@
 from __future__ import annotations
 
 from collections import Counter
+from datetime import date
 from html import escape
 
 from app.engine.core.models import MyeongriCoreResult
@@ -26,8 +27,10 @@ from app.engine.services.applied_guidance import direction_advice, state_basis
 from app.engine.services.annual_copy import seed_from
 from app.engine.services import love_copy as copy
 from app.engine.services import theme_timing
+from app.engine.services.daily_score import calendar_ganji
+from app.engine.facts.ten_gods import get_ten_god
 
-LOVE_NARRATIVE_VERSION = "love-4tier-v2"
+LOVE_NARRATIVE_VERSION = "love-v3"  # 11/06: 잘 맞는 사람·지금의 사랑 추가, 연애 상태 선택 제거
 
 _TEN_GOD = {
     "peer": "비견", "rob_wealth": "겁재", "eating_god": "식신",
@@ -94,6 +97,94 @@ def _uncertainty(core: MyeongriCoreResult) -> str:
 
 
 # ---------------------------------------------------------------------------
+# 잘 맞는 사람·지금의 사랑 (11/06) 계산. 일지 = 가까운 관계 자리.
+# ---------------------------------------------------------------------------
+_SIX_COMBO = {"子": "丑", "丑": "子", "寅": "亥", "亥": "寅", "卯": "戌", "戌": "卯",
+              "辰": "酉", "酉": "辰", "巳": "申", "申": "巳", "午": "未", "未": "午"}
+_CLASH = {"子": "午", "午": "子", "丑": "未", "未": "丑", "寅": "申", "申": "寅",
+          "卯": "酉", "酉": "卯", "辰": "戌", "戌": "辰", "巳": "亥", "亥": "巳"}
+# 도화: 연지·일지가 속한 삼합의 욕지(寅午戌→卯, 申子辰→酉, 巳酉丑→午, 亥卯未→子)
+_PEACH = {**dict.fromkeys("寅午戌", "卯"), **dict.fromkeys("申子辰", "酉"),
+          **dict.fromkeys("巳酉丑", "午"), **dict.fromkeys("亥卯未", "子")}
+
+
+def _ten_god_value(day_master: str, stem: str) -> str:
+    god = get_ten_god(day_master, stem)
+    return getattr(god, "value", str(god))
+
+
+def _window_branches(core: MyeongriCoreResult) -> list[tuple[int, int, str, str]]:
+    """보는 날부터 12개월, 각 달 15일의 (연, 월, 세운 간지, 월운 지지)."""
+    birth = to_solar(core.input.birth_date, core.input.calendar_type, core.input.is_leap_month)
+    out = []
+    for y, m in theme_timing.window_months(theme_timing.window_start(core)):
+        target = date(y, m, 15)
+        if target < birth:
+            continue
+        year_gz, month_gz, _ = calendar_ganji(target)
+        out.append((y, m, year_gz, month_gz[1]))
+    return out
+
+
+def _month_text(y: int, m: int) -> str:
+    return f"{y}년 {m}월"
+
+
+def _match_and_now(core: MyeongriCoreResult, name: str) -> tuple[dict, dict]:
+    pillars = core.natal_facts.pillars
+    day_master = pillars["day"].stem
+    day_branch = pillars["day"].branch
+    good_b, bad_b = _SIX_COMBO[day_branch], _CLASH[day_branch]
+    match = dict(
+        good=copy.MATCH_GOOD.format(name=name, person=copy.BRANCH_PERSON[good_b]),
+        bad=copy.MATCH_BAD.format(name=name, person=copy.BRANCH_PERSON[bad_b]),
+        evidence=dict(day_branch=day_branch, six_combination=good_b, clash=bad_b))
+
+    months = _window_branches(core)
+    # 앞으로 12개월의 세운: 기간 안에서 달이 더 많이 속한 해(같으면 뒤의 해)
+    year_count = Counter(gz for _, _, gz, _ in months)
+    year_gz = max(year_count, key=lambda gz: (year_count[gz], [g for _, _, g, _ in months].index(gz)))
+    current = (core.timing.luck_cycle or {}).get("current") or {}
+    cycle_stem = ((current.get("pillar") or {}).get("stem")) or None
+    cycle_group = copy.GOD_GROUP.get(_ten_god_value(day_master, cycle_stem)) if cycle_stem else None
+    year_group = copy.GOD_GROUP.get(_ten_god_value(day_master, year_gz[0]))
+    if cycle_group is None or cycle_group == year_group:
+        path = copy.NOW_PATH_SAME.format(path=copy.MEET_PATH[year_group])
+    else:
+        path = copy.NOW_PATH_TWO.format(cycle=copy.MEET_PATH[cycle_group], year=copy.MEET_PATH[year_group])
+
+    peach_branches = {_PEACH[pillars["year"].branch], _PEACH[day_branch]}
+    peach = next(((y, m, b) for y, m, _, b in months if b in peach_branches), None)
+    single = [path]
+    if peach:
+        tpl = copy.NOW_PEACH_COMBO if peach[2] == good_b else copy.NOW_PEACH
+        single.append(tpl.format(month=_month_text(peach[0], peach[1])))
+
+    good_m = next(((y, m) for y, m, _, b in months if b == good_b), None)
+    bad_m = next(((y, m) for y, m, _, b in months if b == bad_b), None)
+    couple = []
+    if good_m and bad_m:
+        couple.append(copy.NOW_COUPLE_MONTHS.format(good=_month_text(*good_m), bad=_month_text(*bad_m)))
+    talk_group = cycle_group or year_group
+    couple.append(copy.NOW_TALK.format(talk=copy.TALK[talk_group]))
+    now = dict(single=" ".join(single), couple=" ".join(couple),
+               evidence=dict(cycle=current.get("pillar", {}).get("ganji"), cycle_group=cycle_group,
+                             year=year_gz, year_group=year_group,
+                             peach=[f"{y}-{m:02d}" for y, m, _ in [peach]] if peach else [],
+                             good_month=f"{good_m[0]}-{good_m[1]:02d}" if good_m else None,
+                             bad_month=f"{bad_m[0]}-{bad_m[1]:02d}" if bad_m else None))
+    return match, now
+
+
+def _pair_section(attr: str, heading: str, items: list[tuple[str, str]]) -> str:
+    body = "".join(
+        f'<div data-love-{attr}="{i}"><strong>{escape(t)}</strong><p>{escape(x)}</p></div>'
+        for i, (t, x) in enumerate(items, start=1))
+    return (f'<section data-love-tier="{attr}" data-paywall="unlocked"><h2>{escape(heading)}</h2>'
+            f'<div class="love-pair">{body}</div></section>')
+
+
+# ---------------------------------------------------------------------------
 # 3단 계산: 월별 흐름 점수 (유료 전용). 점수 규칙은 career 와 같다.
 #   join +2 · recovery +1 · base 0 · mixed -1 · change -2  (mode 이름만 보고 정한 해석)
 # ---------------------------------------------------------------------------
@@ -147,12 +238,16 @@ def _locked_html() -> str:
           f'{escape(copy.cta_label())}</a>')
 
 
-def _unlocked_html(t3: dict, bullets: list[str]) -> str:
+def _unlocked_html(t3: dict, bullets: list[str], match: dict, now: dict) -> str:
+    match_html = _pair_section("match", copy.MATCH_HEADING,
+                               [(copy.MATCH_GOOD_TITLE, match["good"]), (copy.MATCH_BAD_TITLE, match["bad"])])
     tier3 = theme_timing.tier3_html(t3, "love", "앞으로 12개월 관계의 타이밍",
                                     "상대의 선택이나 특정 사건을 예측한 것은 아닙니다.", copy.NO_INFLECTION)
+    now_html = _pair_section("now", copy.NOW_HEADING,
+                             [(copy.NOW_SINGLE_TITLE, now["single"]), (copy.NOW_COUPLE_TITLE, now["couple"])])
     items = "".join(f'<li data-love-action="{i}">{escape(b)}</li>' for i, b in enumerate(bullets, start=1))
     tier4 = f'<section data-love-tier="4" data-paywall="unlocked"><h2>다정한 관계 3원칙</h2><ol>{items}</ol></section>'
-    return tier3 + tier4
+    return match_html + tier3 + now_html + tier4
 
 
 def build_lifetime_love_report(
@@ -175,13 +270,13 @@ def build_lifetime_love_report(
     relationships = query["natal"]["relationships"]
     group = copy.lead_group(counts)
     birth = to_solar(core.input.birth_date, core.input.calendar_type, core.input.is_leap_month)
-    seed = seed_from(birth.isoformat(), "love", safe_status, year)
+    seed = seed_from(birth.isoformat(), "love", "-", year)  # 상태를 고르지 않으므로 씨앗에서도 뺀다
 
     t1 = copy.compose_tier1(group, safe_status)
     t2 = copy.compose_tier2(group, seed)
 
     evidence_summary = dict(
-        natal=dict(lead_group=group, status=safe_status,
+        natal=dict(lead_group=group,
                    ten_gods={_TEN_GOD.get(k, k): v for k, v in counts.items()}),
         copy_ids=dict(tier1=group, tier2=[b["title"] for b in t2]),
     )
@@ -190,11 +285,20 @@ def build_lifetime_love_report(
         t3 = theme_timing.build_tier3(core, "love", _MONTH_DOMAINS,
                                       lambda inf: copy.compose_tier3(inf, safe_status, seed), year=fixed_year)
         bullets = copy.compose_tier4(group, safe_status)
-        gated = _unlocked_html(t3, bullets)
+        match, now = _match_and_now(core, user_name or "회원")
+        gated = _unlocked_html(t3, bullets, match, now)
+        evidence_summary["match"] = match["evidence"]
+        evidence_summary["now"] = now["evidence"]
         evidence_summary["months"] = t3["evidence_months"]
         evidence_summary["years"] = t3["evidence_years"]
         advice = copy.sanitize(direction_advice(query["applied_state"], "love", ""))
         evidence_extra = f'<p>{escape(advice)}</p>' if advice else ""
+        me, ne = match["evidence"], now["evidence"]
+        basis = (f"잘 맞는 사람: 일지 {me['day_branch']}의 육합 {me['six_combination']} · "
+                 f"부딪히기 쉬운 사람: 일지 {me['day_branch']}의 충 {me['clash']} · "
+                 f"인연이 들어오는 길: 지금 대운 {ne['cycle'] or '-'}({ne['cycle_group'] or '-'}), "
+                 f"앞으로 12개월의 세운 {ne['year']}({ne['year_group']})")
+        evidence_extra += f'<p data-love-basis="match-now">{escape(basis)}</p>'
     else:
         gated = _locked_html()
         evidence_extra = ""
@@ -202,7 +306,7 @@ def build_lifetime_love_report(
     summary = copy.sanitize(_natal_relationship_summary(relationships))
     evidence = (
         '<details class="reading-evidence"><summary>이 풀이의 근거 · 명리 용어 포함</summary>'
-        f'<h4>관계의 구조 · {escape(safe_status)}</h4><h5>원국의 관계 작용</h5>'
+        f'<h4>관계의 구조</h4><h5>원국의 관계 작용</h5>'
         f'<p>{escape(summary)}</p>{evidence_extra}</details>')
 
     content = (
