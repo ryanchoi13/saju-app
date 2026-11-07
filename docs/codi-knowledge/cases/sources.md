@@ -11,6 +11,8 @@
 - **2026-11-07 03:23 다시 시험**: lacoste.com/kr, cos.com, vogue.co.kr, musinsa.com, uniqlo.com/kr, lowclassic.com, beanpole.com 모두 프록시가 403으로 거부. 그대로 막혀 있다.
 - **2026-11-07 05:11 다시 시험**: lacoste.com/kr, cos.com, vogue.co.kr, musinsa.com, beanpole.com, ssfshop.com, thehandsome.com, lfmall.co.kr — curl·Playwright 모두 프록시 403(터널 거부). 그대로 막혀 있다.
 - **2026-11-07 12:24 KST**: 정오님이 Capabilities 허용 도메인에 11곳을 추가한 직후 다시 시험 → 여전히 프록시 403. 이 세션은 시작할 때의 네트워크 설정을 쓰는 것으로 보인다(크부장 추정). 다음 새 실행(11/8 01:47)에서 다시 시험한다.
+- **2026-11-07 12:27 KST(예약 실행, 새 세션)**: 처음으로 **일부가 열렸다.** 프록시를 통과한 곳은 `lowclassic.com`·`vogue.co.kr`·`cos.com`·`uniqlo.com`·`wconcept.co.kr`·`thehandsome.com`·`musinsa.com`·`lacoste.com` 같은 **`www.` 없는 주소뿐**이다. 그런데 대부분 사이트가 곧바로 `www.` 주소로 넘기고(301), `www.` 주소는 다시 프록시 403이라 결국 못 연다. `musinsa.com`·`lacoste.com`은 사이트 자체가 403(봇 차단으로 보임, 크부장 추정). **사진까지 다 열린 곳은 `lowclassic.com` 하나**(`www.`로 넘기지 않고, 사진도 같은 주소에 있음).
+  - 크부장 추정: 허용 목록에 `vogue.co.kr`처럼 맨 주소만 들어가 있고 `www.vogue.co.kr`(또는 `*.vogue.co.kr`)은 빠져 있다. **허용 목록에 `www.` 주소나 `*.` 와일드카드를 같이 넣어야** 한다. 사진이 다른 주소(CDN)에 있는 사이트는 그 주소도 필요하다(예: 무신사 `image.msscdn.net` — 크부장이 아는 주소, 확인 전).
 - 풀려면: claude.ai 설정 → Capabilities(기능)의 허용 도메인에 아래 "쓸 수 있음" 사이트를 넣어야 한다(정오님 결정 필요). PR 본문에 적었다.
 
 ## 1. 판정 기호
