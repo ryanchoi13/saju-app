@@ -37,6 +37,7 @@ from fashion_v2.live_selector import (
     storage_health as outfit_storage_health,
 )
 from app.engine.services.annual_editorial import NARRATIVE_VERSION as ANNUAL_NARRATIVE_VERSION
+from app.engine.services.element_balance import natal_balance
 from fashion_v2.weather_service import gyeongju_weather_cache, weather_api_payload
 from fastapi import FastAPI, HTTPException, Response, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -169,6 +170,35 @@ _STRENGTH_LABEL = {
     "strong": "신강(身强)",
     "extremely_strong": "매우 신강(身强)",
 }
+# 2026-11-08 '나의 사주' 오행 구성 아래 한 줄(배지 대신): 강약 + 보완 기운.
+# 보완 기운 = element_balance.natal_balance 1순위 — 행운 색·점수 카드가 쓰는 값과 같다.
+# 강약 보류(약 70%)는 '판정 보류' 대신 '강약 치우침 없음'으로 적고, 근거는 접힘에 둔다.
+_STRENGTH_SHORT = {
+    "extremely_weak": "매우 신약", "weak": "신약", "balanced": "강약 치우침 없음",
+    "strong": "신강", "extremely_strong": "매우 신강",
+}
+_ELEMENT_KO_LABEL = {"木": "목(木)", "火": "화(火)", "土": "토(土)", "金": "금(金)", "水": "수(水)"}
+
+
+def _strength_summary(core) -> dict:
+    state = str(core.synthesis.strength_state or "")
+    natal = natal_balance(core)
+    support = natal["primary"]
+    if state in {"strong", "extremely_strong"}:
+        basis = "일간을 돕는 기운이 많아 신강으로 봤어요. 넘치는 힘을 덜어 주는 기운을 보완 기운으로 골랐어요."
+    elif state in {"weak", "extremely_weak"}:
+        basis = "일간을 돕는 기운이 적어 신약으로 봤어요. 힘을 보태 주는 기운을 보완 기운으로 골랐어요."
+    elif natal.get("method") == "gungtong_johu":
+        basis = "힘을 보태는 기운과 덜어내는 기운이 비슷해서 한쪽으로 단정하지 않았어요. 보완 기운은 태어난 달과 일간으로 골랐어요."
+    else:
+        basis = "힘을 보태는 기운과 덜어내는 기운이 비슷해서 한쪽으로 단정하지 않았어요. 보완 기운은 원국에 적은 기운과 계절로 골랐어요."
+    return {
+        "strength": _STRENGTH_SHORT.get(state, "강약 치우침 없음"),
+        "support_element": support,
+        "support_label": _ELEMENT_KO_LABEL[support],
+        "basis": basis,
+    }
+
 # 화면용 오행 구성 비율. 천간 1칸, 지지 1칸을 동일 총량으로 두고
 # 지지 1칸은 엔진의 지장간(본기·중기·여기)에 전통적 상대 비중으로 배분한다.
 # 이는 길흉/강약 점수가 아니며 월령·통근·합충·조후는 진단 엔진에서 별도 평가한다.
@@ -464,6 +494,7 @@ def get_saju_pillars_and_analysis(name: str, gender: str, y: int, m: int, d: int
         "biorhythm": calculate_biorhythm(*map(int, core.natal_facts.calendar["solar_date"].split("-")), target_date=today_date),
         "saju_data": {
             "singang_label": singang_label,
+            "strength_summary": _strength_summary(core),
             "pillars_detail": {
                 "year": _pillar_detail(core, "year"),
                 "month": _pillar_detail(core, "month"),
@@ -472,9 +503,9 @@ def get_saju_pillars_and_analysis(name: str, gender: str, y: int, m: int, d: int
             },
             "elements": elements_weight,
             "elements_note": (
-                "천간 4글자와 지지 속 지장간의 본기·중기·여기 비중을 합산한 원국 구성입니다. 월령·통근·합충·조후는 강약과 해석에 별도로 반영합니다."
+                "오행 비율은 천간과 지지 속 글자(지장간)까지 합해 셌어요."
                 if birth_clock else
-                "생시를 제외한 천간 3글자와 지지 속 지장간 비중을 합산한 원국 구성입니다. 생시 관련 비율은 확정하지 않으며 월령·통근·합충·조후는 별도로 판단합니다."
+                "오행 비율은 생시를 뺀 여섯 글자와 지지 속 글자(지장간)로 셌어요."
             ),
             "daeyun_phase": _daeyun_phase(core.timing.luck_cycle.get("current")),
         },
