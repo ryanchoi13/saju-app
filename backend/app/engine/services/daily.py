@@ -20,6 +20,7 @@ from app.engine.services.daily_topics import select_daily_topics
 from app.engine.semantic.overall import select_overall_domains
 from app.engine.services.overall_narrative import render_overall
 from app.engine.services.element_balance import natal_balance, daily_blend, tongguan_day
+from app.engine.services.lunar_day import lunar_info
 
 
 DAILY_FORTUNE_VERSION = "daily-fortune-v8-story-v2"
@@ -452,6 +453,15 @@ def _with_ro(word: str) -> str:
     return josa(word, "으로/로")
 
 
+def _safe_lunar(target_date: date) -> dict | None:
+    """홈 머리의 음력·달 모양(11/8 A안). 실패해도 운세는 그대로 낸다."""
+    try:
+        return lunar_info(target_date)
+    except Exception:  # pragma: no cover - 달력 라이브러리 예외 방어
+        logging.getLogger(__name__).warning("음력 계산 실패 %s", target_date, exc_info=True)
+        return None
+
+
 def build_daily_fortune(
     core: MyeongriCoreResult,
     user_name: str,
@@ -567,6 +577,7 @@ def build_daily_fortune(
         "date": target_date.isoformat(),
         "day_ganji": ganji_display,
         "day_ganji_han": ganji_han,
+        "lunar": _safe_lunar(target_date),
         "day_ten_god": _TEN_GOD_KO[daily_god],
         "copy_version": daily_copy.COPY_VERSION,
         "story": story,
