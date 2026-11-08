@@ -192,3 +192,22 @@
 /* 리포트 열기·구매 버튼(.reading-primary 등)도 먹 사각 */
 :root[data-brand] body :is(.reading-primary,.reading-secondary,.theme-buy,.report-buy-btn) { border-radius:3px!important; box-shadow:none!important; }
 :root[data-brand] body .reading-primary { background:var(--il-ink)!important; color:var(--c-paper)!important; }
+
+/* ================================================================ 11/8 첫 화면 재정리(정오님과 합의)
+   큰 날짜·큰 달 쪽지를 없애고, 오늘의 운세 쪽지 머리에 날짜 한 줄(양력 · 음력 · 일진)과 작은 실제 달.
+   절기 당일·보름·초하루만 한 줄 더. 쪽지 본문은 오늘의 한 줄 + 도장 + 오늘은 이렇게. */
+:root[data-brand] body #view-today > .dc3-card::before { content:none; }       /* 맨 위 쪽지: 철한 구멍만 */
+:root[data-brand] body #view-today .dc3-card { padding-top:10px!important; }
+#view-today .dc3-card .il-holes { margin:0 0 14px; }
+#view-today .il-dateline { display:flex; align-items:center; gap:8px; margin:0 0 4px; }
+:root[data-brand] body #view-today .il-dateline .dc3-date { margin:0; font-size:14px; font-weight:500; letter-spacing:0; color:var(--c-ink-60); }
+#view-today .il-moon-mini { flex:0 0 18px; width:18px; height:18px; }
+#view-today .il-moon-mini[hidden] { display:none; }
+#view-today .il-moon-mini .il-moon-ring { fill:none; stroke:var(--c-ink-40); stroke-width:5; stroke-dasharray:none; }
+#view-today .il-moon-mini .il-moon-lit { fill:var(--c-ink); }
+#view-today .il-special { margin:2px 0 0; font-size:14px; line-height:1.6; color:var(--c-ink); }
+#view-today .il-special[hidden] { display:none; }
+#view-today .dc3-card .dc3-top { margin-top:16px; }
+#view-today .il-rx-label { margin:20px 0 0; font-size:13px; font-weight:500; color:var(--c-ink-60); }
+#view-today .il-rx-label[hidden] { display:none; }
+:root[data-brand] body #view-today .dc3-card .il-rx-label + .dc3-evidence { margin-top:4px; }

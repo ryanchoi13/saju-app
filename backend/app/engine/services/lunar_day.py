@@ -24,20 +24,23 @@ _PHASES = ((1, "초하루"), (2, "초승달"), (6, "상현달"), (10, "차오르
            (17, "기우는 달"), (21, "하현달"), (25, "그믐달"), (29, "그믐"))
 
 
-# 오늘의 달 한 줄(11/8 정오님: 큰 날짜 옆 달만 두지 말고 무슨 달인지 설명).
-# 앞 문장 = 하늘에서 실제로 보이는 모습(천문 사실), 뒤 문장 = 생활에 옮긴 가벼운 권유(예언 아님).
-PHASE_TITLE = {"초하루": "오늘은 음력 초하루", "보름달": "오늘은 보름달이 뜨는 날", "그믐": "오늘은 음력 그믐"}
-PHASE_NOTE = {
-    "초하루": "달이 새로 시작되는 날이라 밤하늘에 달이 보이지 않아요. 새 달에 해 볼 일 하나를 정해 두기 좋은 날이에요.",
-    "초승달": "해가 진 뒤 서쪽 하늘에 가는 달이 잠깐 떠요. 시작한 일을 조금씩 키워 가는 때예요.",
-    "상현달": "오른쪽 반이 밝은 반달이 저녁 하늘에 떠요. 한 달의 절반쯤 왔으니 속도를 한번 점검해 보세요.",
-    "차오르는 달": "보름을 향해 하루하루 차오르는 달이에요. 벌여 둔 일에 힘을 더 싣기 좋은 때예요.",
-    "보름달": "해가 지면 둥근 달이 떠서 밤새 하늘에 있어요. 한 달 중 가장 밝은 때라 해 온 일을 돌아보기 좋아요.",
-    "기우는 달": "보름을 지나 조금씩 이우는 달이에요. 넘치게 벌인 것을 덜어 내기 좋은 때예요.",
-    "하현달": "왼쪽 반이 밝은 반달이 자정 무렵 떠올라 아침까지 있어요. 남은 일을 정리하는 쪽으로 무게를 옮겨 보세요.",
-    "그믐달": "새벽 동쪽 하늘에 눈썹 같은 달이 잠깐 떠요. 한 달을 마무리할 준비를 하는 때예요.",
-    "그믐": "달이 해와 거의 겹쳐 하늘에서 보이지 않아요. 한 달을 마무리하고 비워 두기 좋은 날이에요.",
+# 뜻 있는 날만 한 줄(11/8 정오님과 정리: 날짜·달을 매일 크게 보여 줄 이유는 약하다).
+# 절기 당일 > 보름 > 초하루 순. 그 밖의 날은 아무것도 띄우지 않는다.
+TERM_NOTE = {
+    "소한": "한 해 중 가장 추운 무렵이 시작돼요.", "대한": "큰 추위라는 뜻의 겨울 마지막 절기예요.",
+    "입춘": "봄이 시작되는 날, 사주에서는 이날부터 새해예요.", "우수": "눈이 비로 바뀌고 얼음이 녹기 시작해요.",
+    "경칩": "겨울잠 자던 벌레가 깨어난다는 날이에요.", "춘분": "낮과 밤의 길이가 거의 같아지는 날이에요.",
+    "청명": "하늘이 맑고 밝아진다는 봄날이에요.", "곡우": "봄비가 곡식을 깨운다는 봄의 마지막 절기예요.",
+    "입하": "여름이 시작되는 날이에요.", "소만": "만물이 차오르기 시작한다는 날이에요.",
+    "망종": "씨 뿌리고 보리 거두기 바쁜 때예요.", "하지": "낮이 가장 긴 날이에요.",
+    "소서": "본격적인 더위가 시작되는 때예요.", "대서": "한 해 중 가장 더운 무렵이에요.",
+    "입추": "가을이 시작되는 날이에요.", "처서": "더위가 물러간다는 날이에요.",
+    "백로": "이슬이 하얗게 맺히기 시작하는 때예요.", "추분": "낮과 밤의 길이가 다시 같아지는 날이에요.",
+    "한로": "찬 이슬이 맺히는 깊은 가을이에요.", "상강": "서리가 내리기 시작하는 가을의 마지막 절기예요.",
+    "입동": "겨울이 시작되는 날이에요.", "소설": "첫눈이 내린다는 때예요.",
+    "대설": "큰 눈이 온다는 때예요.", "동지": "밤이 가장 긴 날, 팥죽 먹는 날이에요.",
 }
+MOON_DAY_NOTE = {1: ("음력 초하루", "새 달이 시작되는 날이에요."), 15: ("음력 보름", "달이 가장 둥근 날이에요.")}
 
 
 def phase_name(lunar_day: int) -> str:
@@ -52,9 +55,7 @@ def lunar_info(target: date) -> dict:
     lunar = Solar.fromYmd(target.year, target.month, target.day).getLunar()
     month = lunar.getMonth()
     day = lunar.getDay()
-    phase = phase_name(day)
-    info = dict(month=abs(month), day=day, leap=month < 0, phase=phase,
-                phase_title=PHASE_TITLE.get(phase, f"오늘은 {phase}이 뜨는 날"), phase_note=PHASE_NOTE[phase])
+    info = dict(month=abs(month), day=day, leap=month < 0, phase=phase_name(day))
     nxt = lunar.getNextJieQi()
     if nxt is not None:
         s = nxt.getSolar()
@@ -62,6 +63,11 @@ def lunar_info(target: date) -> dict:
         name = TERM_KO.get(nxt.getName())
         if name and days >= 0:
             info.update(next_term=name, days_to_term=days)
+    if info.get("days_to_term") == 0 and info["next_term"] in TERM_NOTE:
+        info["special"] = dict(name=info["next_term"], note=TERM_NOTE[info["next_term"]])
+    elif day in MOON_DAY_NOTE:
+        name, note = MOON_DAY_NOTE[day]
+        info["special"] = dict(name=name, note=note)
     prev = lunar.getPrevJieQi()
     if prev is not None and TERM_KO.get(prev.getName()):
         info["prev_term"] = TERM_KO[prev.getName()]

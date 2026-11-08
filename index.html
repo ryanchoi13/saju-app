@@ -555,7 +555,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
     <link rel="stylesheet" href="/assets/daily-card.css?v=20261108-p1">
     <link rel="stylesheet" href="/assets/brand-2026/refine.css?v=20261108-p1">
     <link href="https://fonts.googleapis.com/css2?family=Song+Myung&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/assets/brand-2026/ilryeok.css?v=20261108-p4">
+    <link rel="stylesheet" href="/assets/brand-2026/ilryeok.css?v=20261108-p5">
     <script src="/assets/reading-polish.js?v=20261108-p1" defer></script>
     <script src="/assets/brand-2026/brand-ui.js?v=20261108-p1" defer></script>
 </head>
@@ -688,34 +688,20 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                     <div class="user-profile-birth" id="userProfileBarBirth"></div>
                 </div>
 
-                <!-- 2026-11-08 A안 '일력': 한 장 뜯는 달력. 날짜 + 음력 + 그날의 실제 달 모양(daily_fortune.lunar) -->
-                <div class="dc3-intro il-sheet-head">
-                    <div class="il-holes" aria-hidden="true"><i></i><i></i></div>
-                    <div class="il-date">
-                        <div class="il-date-text">
-                            <span id="journalDate" class="dc3-date"></span>
-                            <p id="ilDayNum" class="il-day" aria-hidden="true"></p>
-                        </div>
-                        <figure id="ilMoon" class="il-moon" hidden>
-                            <svg viewBox="-50 -50 100 100" role="img" aria-labelledby="ilMoonName"><circle r="44" class="il-moon-ring"/><path id="ilMoonLit" class="il-moon-lit" d=""/></svg>
-                            <figcaption id="ilMoonName"></figcaption>
-                        </figure>
-                    </div>
-                    <!-- 11/8 정오님: 달 옆에 이름만 두지 말고 오늘이 어떤 달인지 한 줄로 풀어 준다 -->
-                    <!-- 위 = 양력, 아래 = 음력(11/8 정오님): 음력 날짜·달 이름 → 일진·절기 → 달 풀이 -->
-                    <div id="ilMoonNote" class="il-moon-note" hidden>
-                        <p id="ilMoonTitle" class="il-moon-title"></p>
-                        <p id="ilLunarLine" class="il-lunar"></p>
-                        <p id="ilMoonText" class="il-moon-text"></p>
-                    </div>
-                    <h2 class="sr-only" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;">오늘의 나</h2>
-                </div>
+                <h2 class="sr-only" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;">오늘의 나</h2>
 
                 <!-- 길흉 등급 카드 (daily.py: grade·score·domain_note·evidence_text). A안: 오늘의 한 줄 옆에 인주 도장(단계·점수). 자세한 건 아래 창. -->
+                <!-- 11/8 정오님과 정리: 첫 화면 주인공은 오늘의 한 줄·도장·오늘은 이렇게. 날짜는 쪽지 머리에 한 줄(양력·음력·일진),
+                     달은 그 줄의 작은 실제 모양. 절기 당일·보름·초하루만 한 줄 더(daily_fortune.lunar.special) -->
                 <section id="dailyGradeCard" class="dc3-card" hidden aria-label="오늘의 운세">
+                    <div class="il-holes" aria-hidden="true"><i></i><i></i></div>
+                    <p class="il-dateline">
+                        <svg id="ilMoon" class="il-moon-mini" viewBox="-50 -50 100 100" role="img" aria-labelledby="ilMoonName" hidden><title id="ilMoonName"></title><circle r="44" class="il-moon-ring"/><path id="ilMoonLit" class="il-moon-lit" d=""/></svg>
+                        <span id="journalDate" class="dc3-date"></span>
+                    </p>
+                    <p id="ilSpecial" class="il-special" hidden></p>
                     <div class="dc3-top">
                         <div>
-                            <span class="dc3-label">오늘의 운세</span>
                             <h3 id="resTitle">오늘의 이야기를 준비하고 있어요</h3>
                             <span id="resGradeDomain" class="dc3-domain" hidden></span>
                         </div>
@@ -727,6 +713,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                             <svg class="dc3-moon" viewBox="-50 -50 100 100"><circle r="44" class="dc3-moon-dark"/><path id="resMoonLit" class="dc3-moon-lit" d=""/></svg>
                         </div>
                     </div>
+                    <p id="resGradeRxHomeLabel" class="il-rx-label">오늘은 이렇게</p>
                     <p id="resGradeEvidence" class="dc3-evidence"></p>
                     <button type="button" id="dc3Open" class="dc3-open" aria-haspopup="dialog" aria-controls="dc3Sheet" onclick="openDailySheet()"><span>자세히 보기</span><span class="dc3-open-chev" aria-hidden="true">›</span></button>
                 </section>
@@ -2616,16 +2603,20 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             sub.hidden = !note;
             sub.textContent = domainLabel;
             document.getElementById('dc3SheetGrade').textContent = `${grade} · ${score}점`;
+            // 홈: 근거 대신 '오늘은 이렇게'(처방). 근거는 자세히 창에. 처방이 없는 옛 응답은 근거를 그대로 보인다
             const evidenceEl = document.getElementById('resGradeEvidence');
-            evidenceEl.textContent = fortune.evidence_text || '';
-            evidenceEl.hidden = !fortune.evidence_text;
+            const homeRx = fortune.rx_text || '';
+            evidenceEl.textContent = homeRx || fortune.evidence_text || '';
+            evidenceEl.hidden = !evidenceEl.textContent;
+            document.getElementById('resGradeRxHomeLabel').hidden = !homeRx;
+            if (homeRx) document.getElementById('resGradeRxHomeLabel').textContent = fortune.rx_label || '오늘은 이렇게';
             document.getElementById('dc3EvidenceFull').textContent = fortune.evidence_text || '';
             document.getElementById('dc3EvidenceBlock').hidden = !(fortune.evidence_text || (note && note.text));
             const domainTextEl = document.getElementById('resGradeDomainText');
             domainTextEl.textContent = (note && note.text) || '';
             domainTextEl.hidden = !(note && note.text);
             const rxBox = document.getElementById('resGradeRx');
-            rxBox.hidden = !fortune.rx_text;
+            rxBox.hidden = true;                        // 홈에 이미 보이므로 창에서는 되풀이하지 않는다
             document.getElementById('resGradeRxLabel').textContent = fortune.rx_label || '오늘은 이렇게';
             document.getElementById('resGradeRxText').textContent = fortune.rx_text || '';
             renderScoreBasis(fortune);
@@ -2729,25 +2720,20 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
         function renderIlryeokDate(dateStr, lunar) {
             const d = new Date(`${dateStr}T12:00:00+09:00`);
             const fmt = opts => new Intl.DateTimeFormat('ko-KR', { timeZone:'Asia/Seoul', ...opts }).format(d);
-            document.getElementById('journalDate').textContent = `${fmt({ month:'long' })} · ${fmt({ weekday:'long' })}`;
-            const day = document.getElementById('ilDayNum');
-            if (day) day.textContent = fmt({ day:'numeric' }).replace(/[^0-9]/g, '');
-            const line = document.getElementById('ilLunarLine');
-            const moon = document.getElementById('ilMoon');
-            if (!lunar || !lunar.day) { if (line) line.textContent = ''; if (moon) moon.hidden = true; const n = document.getElementById('ilMoonNote'); if (n) n.hidden = true; return; }
-            const term = lunar.next_term
-                ? (lunar.days_to_term === 0 ? `오늘 ${lunar.next_term}` : `${lunar.next_term}까지 ${lunar.days_to_term}일`) : '';
             const ganji = currentFortuneData?.daily_fortune?.day_ganji_han;
-            line.textContent = [ganji ? `${ganji}일` : '', term].filter(Boolean).join(' · ');
+            const parts = [`${fmt({ month:'long', day:'numeric' })} ${fmt({ weekday:'long' })}`];
+            if (lunar && lunar.day) parts.push(`음력 ${lunar.leap ? '윤' : ''}${lunar.month}월 ${lunar.day}일`);
+            if (ganji) parts.push(`${ganji}일`);
+            document.getElementById('journalDate').textContent = parts.join(' · ');
+            const moon = document.getElementById('ilMoon');
+            const special = document.getElementById('ilSpecial');
+            if (!lunar || !lunar.day) { moon?.setAttribute('hidden', ''); if (special) special.hidden = true; return; }   // SVG 는 .hidden 속성이 없다
             document.getElementById('ilMoonLit').setAttribute('d', ilMoonPath(lunar.day));
-            document.getElementById('ilMoonName').textContent = lunar.phase || '';
-            moon.hidden = false;
-            const note = document.getElementById('ilMoonNote');
-            if (note) {
-                document.getElementById('ilMoonTitle').textContent =
-                    `음력 ${lunar.leap ? '윤' : ''}${lunar.month}월 ${lunar.day}일${lunar.phase ? ` · ${lunar.phase}` : ''}`;
-                document.getElementById('ilMoonText').textContent = lunar.phase_note || '';
-                note.hidden = !lunar.phase_note;
+            document.getElementById('ilMoonName').textContent = `오늘의 달, ${lunar.phase || ''}`;
+            moon.removeAttribute('hidden');
+            if (special) {
+                special.textContent = lunar.special ? `오늘은 ${lunar.special.name} · ${lunar.special.note}` : '';
+                special.hidden = !lunar.special;
             }
         }
 
