@@ -554,6 +554,8 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
     <link rel="stylesheet" href="/assets/reading-polish.css?v=20261106-3">
     <link rel="stylesheet" href="/assets/daily-card.css?v=20261027-1">
     <link rel="stylesheet" href="/assets/brand-2026/refine.css?v=20261108-3">
+    <link href="https://fonts.googleapis.com/css2?family=Song+Myung&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/brand-2026/ilryeok.css?v=20261108-1">
     <script src="/assets/reading-polish.js?v=20261031-2" defer></script>
     <script src="/assets/brand-2026/brand-ui.js?v=20261001-4" defer></script>
 </head>
@@ -686,23 +688,37 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                     <div class="user-profile-birth" id="userProfileBarBirth"></div>
                 </div>
 
-                <div class="dc3-intro">
-                    <span id="journalDate" class="dc3-date"></span>
+                <!-- 2026-11-08 A안 '일력': 한 장 뜯는 달력. 날짜 + 음력 + 그날의 실제 달 모양(daily_fortune.lunar) -->
+                <div class="dc3-intro il-sheet-head">
+                    <div class="il-holes" aria-hidden="true"><i></i><i></i></div>
+                    <div class="il-date">
+                        <div class="il-date-text">
+                            <span id="journalDate" class="dc3-date"></span>
+                            <p id="ilDayNum" class="il-day" aria-hidden="true"></p>
+                            <p id="ilLunarLine" class="il-lunar"></p>
+                        </div>
+                        <figure id="ilMoon" class="il-moon" hidden>
+                            <svg viewBox="-50 -50 100 100" role="img" aria-labelledby="ilMoonName"><circle r="44" class="il-moon-ring"/><path id="ilMoonLit" class="il-moon-lit" d=""/></svg>
+                            <figcaption id="ilMoonName"></figcaption>
+                        </figure>
+                    </div>
                     <h2 class="sr-only" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;">오늘의 나</h2>
-                    <h3 id="resTitle">오늘의 이야기를 준비하고 있어요</h3>
                 </div>
 
-                <!-- 길흉 등급 카드 (daily.py: grade·score·domain_note·evidence_text). 단계가 주인공, 점수는 달 옆에 작게. 자세한 건 아래 창. -->
+                <!-- 길흉 등급 카드 (daily.py: grade·score·domain_note·evidence_text). A안: 오늘의 한 줄 옆에 인주 도장(단계·점수). 자세한 건 아래 창. -->
                 <section id="dailyGradeCard" class="dc3-card" hidden aria-label="오늘의 운세">
                     <div class="dc3-top">
                         <div>
                             <span class="dc3-label">오늘의 운세</span>
-                            <p id="resScoreBadge" class="dc3-grade" data-grade="보통">보통</p>
+                            <h3 id="resTitle">오늘의 이야기를 준비하고 있어요</h3>
                             <span id="resGradeDomain" class="dc3-domain" hidden></span>
+                        </div>
+                        <div class="il-seal" aria-hidden="false">
+                            <p id="resScoreBadge" class="dc3-grade" data-grade="보통">보통</p>
+                            <span id="resScoreNum" class="dc3-score"></span>
                         </div>
                         <div class="dc3-moon-col" aria-hidden="true">
                             <svg class="dc3-moon" viewBox="-50 -50 100 100"><circle r="44" class="dc3-moon-dark"/><path id="resMoonLit" class="dc3-moon-lit" d=""/></svg>
-                            <span id="resScoreNum" class="dc3-score"></span>
                         </div>
                     </div>
                     <p id="resGradeEvidence" class="dc3-evidence"></p>
@@ -2687,14 +2703,46 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             });
         }
 
+        // A안 '일력' 머리(2026-11-08): 큰 날짜 + 음력 한 줄 + 그날의 실제 달 모양.
+        // 달 모양은 음력 날짜(달의 나이)로 그린다. 1일 = 삭(빛 없음), 15일 무렵 = 보름.
+        function ilMoonPath(lunarDay, r = 44) {
+            const age = Math.min(Math.max(lunarDay - 1, 0), 29.53);
+            const angle = age / 29.53 * 2 * Math.PI;
+            const lit = (1 - Math.cos(angle)) / 2;              // 밝은 부분 비율 0~1
+            if (lunarDay <= 1) return '';                        // 초하루(삭): 빛 없음
+            const waxing = age < 14.77;
+            // 그믐·초승 무렵은 실제로 거의 안 보이지만, 가는 눈썹달로 그려 모양을 알아보게 한다
+            const rx = lit < 0.04 ? r * 0.86 : Math.abs(Math.cos(angle)) * r;
+            const gibbous = lit > 0.5;
+            // 바깥 반원: 차오를 땐 오른쪽, 기울 땐 왼쪽. 안쪽 경계(타원)는 초승·그믐이면 밝은 쪽으로, 반달 넘으면 어두운 쪽으로 휜다.
+            const outer = waxing ? 1 : 0;
+            const inner = waxing ? (gibbous ? 1 : 0) : (gibbous ? 0 : 1);
+            return `M0 ${-r} A${r} ${r} 0 0 ${outer} 0 ${r} A${rx.toFixed(2)} ${r} 0 0 ${inner} 0 ${-r}Z`;
+        }
+
+        function renderIlryeokDate(dateStr, lunar) {
+            const d = new Date(`${dateStr}T12:00:00+09:00`);
+            const fmt = opts => new Intl.DateTimeFormat('ko-KR', { timeZone:'Asia/Seoul', ...opts }).format(d);
+            document.getElementById('journalDate').textContent = `${fmt({ month:'long' })} · ${fmt({ weekday:'long' })}`;
+            const day = document.getElementById('ilDayNum');
+            if (day) day.textContent = fmt({ day:'numeric' }).replace(/[^0-9]/g, '');
+            const line = document.getElementById('ilLunarLine');
+            const moon = document.getElementById('ilMoon');
+            if (!lunar || !lunar.day) { if (line) line.textContent = ''; if (moon) moon.hidden = true; return; }
+            const term = lunar.next_term
+                ? (lunar.days_to_term === 0 ? `오늘 ${lunar.next_term}` : `${lunar.next_term}까지 ${lunar.days_to_term}일`) : '';
+            const ganji = currentFortuneData?.daily_fortune?.day_ganji_han;
+            line.textContent = [`음력 ${lunar.leap ? '윤' : ''}${lunar.month}월 ${lunar.day}일`, ganji ? `${ganji}일` : '', term]
+                .filter(Boolean).join(' · ');
+            document.getElementById('ilMoonLit').setAttribute('d', ilMoonPath(lunar.day));
+            document.getElementById('ilMoonName').textContent = lunar.phase || '';
+            moon.hidden = false;
+        }
+
         function applySajuAnalysisToUI(data) {
             currentFortuneData = data;
             const resultDate = data.daily_fortune?.date;
-            if (/^\d{4}-\d{2}-\d{2}$/.test(resultDate || '')) {
-                document.getElementById('journalDate').textContent = new Intl.DateTimeFormat('ko-KR', {
-                    timeZone:'Asia/Seoul', month:'long', day:'numeric', weekday:'short'
-                }).format(new Date(`${resultDate}T12:00:00+09:00`));
-            }
+            if (/^\d{4}-\d{2}-\d{2}$/.test(resultDate || '')) renderIlryeokDate(resultDate, data.daily_fortune?.lunar);
             currentUserName = data.user_name || "회원";
             currentTalisman = data.daily_fortune.talisman;
             currentUserAge = data.current_age;

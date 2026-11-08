@@ -1,0 +1,109 @@
+/* brand.css 가 brand-ui.js 로 나중에 다시 붙으므로 :root[data-brand] 로 한 단계 높인다.
+   2026-11-08 A안 '일력(日曆)' — 정오님 선택(디자인 시안 캔버스 '달하 디자인 방향 시안').
+   한 장씩 뜯는 달력: 책상(바탕) 위 종이 한 장, 칸 사이는 뜯는 선, 강조는 인주 도장 하나.
+   - 바탕 = 책상, 내용 = 종이. 같은 모양 카드를 늘어놓지 않는다
+   - 강조색은 인주 하나. 남색 큰 영역·살구·구리는 쓰지 않는다
+   - 제목은 송명체(목판 느낌), 본문은 Pretendard 그대로
+   - 맨 위 달은 장식이 아니라 그날의 실제 달 모양(daily_fortune.lunar)
+   토큰은 여기서 덮어쓴다(brand.css 는 그대로 두어 되돌리기 쉽게). */
+
+:root[data-brand="journal"] {
+  --il-desk:#E9E6DE; --il-paper:#FDFCF9; --il-ink:#1D2129; --il-seal:#B5341F; --il-blue:#2C4770;
+  --il-perf:#D4D0C6; --il-muted:#575B62;
+  --ui-page:var(--il-desk); --ui-surface:var(--il-paper); --ui-ink:var(--il-ink); --ui-muted:var(--il-muted);
+  --ui-accent:var(--il-ink); --ui-line:#D9D5CB; --ui-tint:#EFECE5; --ui-soft:#F4F2EC;
+  --brand-copper:var(--il-seal); --brand-apricot:#D9A79A;
+  --brand-serif:'Song Myung','Noto Serif KR','Batang',serif;
+  font-synthesis:none;              /* 송명체는 한 굵기뿐 — 가짜 굵게를 만들지 않는다 */
+}
+:root[data-brand] body { background:#DEDAD0; }
+:root[data-brand] button:focus-visible,:root[data-brand] a:focus-visible,:root[data-brand] summary:focus-visible { outline-color:var(--il-seal); }
+
+/* ---------------------------------------------------------------- 오늘운세: 한 장의 종이 */
+:root[data-brand] body #view-today:not(.hidden) { gap:0; }
+:root[data-brand] body #view-today > :is(.il-sheet-head,.dc3-card,.card,.biorhythm-card,div[style*="flex-direction: column"]):not([hidden]):not(.hidden) {
+  position:relative; background:var(--il-paper)!important; border:0!important; border-radius:0!important;
+  box-shadow:none!important; margin:0!important;
+}
+/* 뜯는 선: 위쪽 점선 + 양쪽 둥근 홈(책상 색) */
+:root[data-brand] body #view-today > :is(.dc3-card,.card,.biorhythm-card,div[style*="flex-direction: column"]):not([hidden]):not(.hidden) {
+  border-top:2px dashed var(--il-perf)!important;
+}
+:root[data-brand] body #view-today > :is(.dc3-card,.card,.biorhythm-card,div[style*="flex-direction: column"]):not([hidden]):not(.hidden)::before,
+:root[data-brand] body #view-today > :is(.dc3-card,.card,.biorhythm-card,div[style*="flex-direction: column"]):not([hidden]):not(.hidden)::after {
+  content:''; position:absolute; top:-10px; width:18px; height:18px; border-radius:50%; background:var(--ui-page); z-index:1;
+}
+:root[data-brand] body #view-today > :is(.dc3-card,.card,.biorhythm-card,div[style*="flex-direction: column"]):not([hidden]):not(.hidden)::before { left:-9px; }
+:root[data-brand] body #view-today > :is(.dc3-card,.card,.biorhythm-card,div[style*="flex-direction: column"]):not([hidden]):not(.hidden)::after { right:-9px; }
+:root[data-brand] body #view-today > .il-sheet-head { border-radius:4px 4px 0 0!important; }
+:root[data-brand] body #view-today > .biorhythm-card { border-radius:0 0 4px 4px!important; }
+/* 부적·타로 서랍 묶음: 종이 안에서는 테두리 없는 줄로 */
+:root[data-brand] body #view-today > div[style*="flex-direction: column"] { padding:6px 0!important; }
+:root[data-brand] body #view-today > div[style*="flex-direction: column"] .drawer-card { background:transparent!important; border:0!important; border-radius:0!important; }
+
+/* ---- 머리: 큰 날짜 + 음력 + 그날의 달 ---- */
+:root[data-brand] body #view-today .il-sheet-head { padding:10px 24px 22px!important; }
+#view-today .il-holes { display:flex; justify-content:center; gap:46px; margin:0 0 12px; }
+#view-today .il-holes i { width:10px; height:10px; border-radius:50%; background:var(--ui-page); }
+#view-today .il-date { display:grid; grid-template-columns:minmax(0,1fr) 92px; align-items:end; gap:8px; }
+:root[data-brand] body #view-today .il-date .dc3-date { margin:0; font-size:14px; font-weight:500; letter-spacing:0; color:var(--il-muted); }
+#view-today .il-day { margin:2px 0 0; font-family:'Song Myung','Noto Serif KR',serif; font-size:112px; line-height:.95; color:var(--il-ink); font-variant-numeric:lining-nums; }
+#view-today .il-day:empty { display:none; }
+#view-today .il-lunar { margin:12px 0 0; font-size:13px; line-height:1.5; color:var(--il-muted); word-break:keep-all; }
+#view-today .il-moon { margin:0; display:flex; flex-direction:column; align-items:center; gap:6px; }
+#view-today .il-moon[hidden] { display:none; }
+#view-today .il-moon svg { width:80px; height:80px; display:block; }
+#view-today .il-moon-ring { fill:none; stroke:#B9B5AB; stroke-width:1.4; stroke-dasharray:2.5 3.5; }
+#view-today .il-moon-lit { fill:var(--il-ink); }
+#view-today .il-moon figcaption { font-family:'Song Myung','Noto Serif KR',serif; font-size:15px; color:var(--il-ink); }
+
+/* ---- 오늘의 한 줄 + 인주 도장 ---- */
+:root[data-brand] body #view-today .dc3-card { color:var(--il-ink); padding:24px 24px 0!important; overflow:visible; }
+#view-today .dc3-card .dc3-top { align-items:flex-start; }
+:root[data-brand] body #view-today .dc3-card .dc3-label { color:var(--il-muted); letter-spacing:0; font-weight:500; font-size:13px; margin-bottom:8px; }
+:root[data-brand] body #view-today .dc3-card #resTitle {
+  margin:0!important; padding:0!important; font-family:'Song Myung','Noto Serif KR',serif!important; font-weight:400!important;
+  font-size:27px!important; line-height:1.4!important; color:var(--il-ink)!important; word-break:keep-all; letter-spacing:0;
+}
+#view-today .dc3-card .dc3-moon-col { display:none; }
+#view-today .il-seal {
+  flex:0 0 78px; width:78px; height:78px; margin-top:4px; padding:6px; box-sizing:border-box; text-align:center; background:var(--il-seal); border-radius:5px; transform:rotate(-5deg);
+  display:flex; flex-direction:column; align-items:center; justify-content:center; color:#FDFCF9;
+}
+:root[data-brand] body #view-today .il-seal .dc3-grade { font-family:'Song Myung','Noto Serif KR',serif; font-size:21px; font-weight:400; line-height:1.05; color:#FDFCF9; margin:0; word-break:keep-all; }
+:root[data-brand] body #view-today .il-seal .dc3-score { font-size:12px; font-weight:500; margin-top:4px; color:#FDFCF9; }
+#view-today .il-seal .dc3-score:empty { display:none; }
+:root[data-brand] body #view-today .dc3-card .dc3-domain { color:var(--il-seal); font-size:15px; margin-top:10px; }
+:root[data-brand] body #view-today .dc3-card .dc3-evidence { color:#33373E; font-size:16px; margin:18px 0 6px; }
+/* '자세히 보기': 칸 전체 띠 대신 인주 밑줄 글자 버튼 */
+:root[data-brand] body #view-today .dc3-card .dc3-open {
+  width:auto; margin:4px 0 14px; padding:0; min-height:44px; border:0; color:var(--il-ink); font-size:15px; font-weight:600;
+  display:inline-flex; gap:6px; background:transparent;
+}
+#view-today .dc3-card .dc3-open > span:first-child { border-bottom:2px solid var(--il-seal); padding-bottom:2px; }
+#view-today .dc3-card .dc3-open-chev { display:none; }
+:root[data-brand] body #view-today .dc3-card .dc3-open:active { background:transparent; opacity:.7; }
+
+/* ---- 칸 제목: 송명체, 설명 줄은 짧게 ---- */
+:root[data-brand] body #view-today :is(.dh-head h4,.menu-curation h4,.dh-bio-title,.drawer-title) {
+  font-family:'Song Myung','Noto Serif KR',serif!important; font-weight:400!important; font-size:21px!important; letter-spacing:0!important;
+}
+
+/* ---- 안쪽 상자도 각지게: 둥근 알약·큰 둥근 상자를 쓰지 않는다 ---- */
+:root[data-brand] body #view-today :is(.outfit-track,.menu-photos > *,.menu-curation-tabs button,.bio-pill-cell,.dh-bio-chart) { border-radius:3px!important; }
+:root[data-brand] body #view-today .dh-bio-chart { background:transparent!important; border:1px solid var(--ui-line); }
+
+/* ---- 버튼: 먹 사각(주), 테두리 사각(보조). 둥근 알약을 쓰지 않는다 ---- */
+:root[data-brand] :is(.btn-primary,.primary-btn,.cta-primary,#pgPaymentButton,.outfit-modal-open,.menu-next) {
+  border-radius:3px!important; background:var(--il-ink)!important; color:#FDFCF9!important; border:0!important; box-shadow:none!important;
+}
+:root[data-brand] .coin-btn { border-radius:3px; border-color:var(--il-ink); }
+:root[data-brand] .charge-tag { border-radius:2px; background:var(--il-seal); color:#FDFCF9; }
+
+@media (min-width:940px) {
+  /* 넓은 화면은 두 줄 배치라 한 장 종이 대신 쪽지 여러 장 */
+  :root[data-brand] body #view-today:not(.hidden) { gap:22px; }
+  :root[data-brand] body #view-today > :is(.il-sheet-head,.dc3-card,.card,.biorhythm-card,div[style*="flex-direction: column"]):not([hidden]):not(.hidden) { border-radius:4px!important; }
+  :root[data-brand] body #view-today > .il-sheet-head { grid-column:1 / -1; }
+}
+@media (prefers-reduced-motion: reduce) { #view-today .il-seal { transform:none; } }
