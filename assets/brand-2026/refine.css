@@ -247,7 +247,7 @@ html[data-brand] body .pc-legend li > i { width:10px; height:10px; border-radius
 html[data-brand] body .pc-legend b { font-size:14px; font-weight:650; color:var(--ui-ink); }
 html[data-brand] body .pc-note { font-size:12.5px; color:var(--ui-muted); line-height:1.6; margin:12px 0 0; }
 @media (prefers-reduced-motion: reduce) { html[data-brand] body .pc-bar > i { transition:none; } }
-html[data-brand] body .pc-legend b#valEarth { color:var(--ui-ink)!important; }
+html[data-brand] body :is(.pc-legend,.pc-rows) b#valEarth { color:var(--ui-ink)!important; }
 /* 2026-11-02 평생운세 원국표도 같은 명식표(.pc-grid.lifetime-pc)로. 보관함 창(#archiveModalBody)은
    div·span 글자색·크기를 !important 로 덮으므로(design-system.css) 표 안에서만 되돌린다. */
 html[data-brand] body #archiveModalBody .pc-grid :is(div,span) { line-height:1.3!important; }
@@ -324,5 +324,14 @@ html[data-brand] body .el-ink-earth { color:var(--el-earth-ink); background:var(
 html[data-brand] body .el-ink-metal { color:var(--el-metal-ink); background:var(--el-metal-bg); }
 html[data-brand] body .el-ink-water { color:var(--el-water-ink); background:var(--el-water-bg); }
 html[data-brand] body .pc-basis { margin-top:10px; }
-html[data-brand] body .pc-basis > summary { cursor:pointer; font-size:12.5px; color:var(--ui-muted); min-height:32px; display:flex; align-items:center; }
-html[data-brand] body .pc-basis .pc-note { margin:6px 0 0; }
+html[data-brand] body .pc-elements .pc-basis > summary { cursor:pointer; font-size:12.5px; color:var(--ui-muted); min-height:28px; margin:0!important; display:flex; align-items:center; }
+html[data-brand] body .pc-elements .pc-basis .pc-note { margin:2px 0 0; }
+
+/* 2026-11-08 오행 구성: 한 줄 막대 + 아래 범례가 어긋나 보여 → 오행마다 한 줄(이름 · 막대 · 비율).
+   막대 길이 = 그 오행 비율(전체 100% 기준, 가장 큰 값에 맞추지 않음) */
+html[data-brand] body .pc-rows { list-style:none; margin:4px 0 0; padding:0; display:flex; flex-direction:column; gap:8px; }
+html[data-brand] body .pc-rows li { display:grid; grid-template-columns:52px minmax(0,1fr) 52px; align-items:center; gap:10px; font-size:13px; color:var(--ui-muted); }
+html[data-brand] body .pc-track { display:block; height:10px; border-radius:5px; background:var(--ui-tint); overflow:hidden; }
+html[data-brand] body .pc-track > i { display:block; height:100%; width:0; border-radius:5px; transition:width .6s ease; }
+html[data-brand] body .pc-rows b, html[data-brand] body .pc-rows b[id] { text-align:right; font-size:14px; font-weight:650; color:var(--ui-ink)!important; font-variant-numeric:tabular-nums; }
+@media (prefers-reduced-motion: reduce) { html[data-brand] body .pc-track > i { transition:none; } }
