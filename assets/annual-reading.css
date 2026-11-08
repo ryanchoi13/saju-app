@@ -98,9 +98,12 @@
 
 /* 2026-11-08 맨 아래 '이 풀이의 근거' 상자: 본문(번호 매긴 h3)과 위계를 나눈다 */
 
-/* 11/8 '이 풀이의 근거' — 상자가 아니라 책 끝의 주석처럼. 본문이 끝났다는 굵은 먹 선 하나 아래
+/* 11/8 '이 풀이의 근거' — 상자가 아니라 책 끝의 주석처럼. 본문이 끝났다는 달 구분선 아래
    항목마다 이름(먹)과 설명(옅은 먹), 항목 사이는 점선. 배경·둥근 상자를 쓰지 않는다. */
-:is(#archiveModalBody,.period-reading) .annual-basis { margin:40px 0 8px; padding:16px 0 0; border:0; border-top:2px solid var(--c-ink,#1D2129); border-radius:0; background:transparent; }
+:is(#archiveModalBody,.period-reading) .annual-basis { position:relative; margin:44px 0 8px; padding:30px 0 0; border:0; border-radius:0; background:transparent; }
+/* 위 구분: 테마 리포트 단락 사이와 같은 얇은 선 + 가운데 그믐달(11/8 정오님) */
+:is(#archiveModalBody,.period-reading) .annual-basis::before { content:''; position:absolute; top:0; left:0; right:0; height:1px; background:linear-gradient(to right,#C9C3B8 0,#C9C3B8 calc(50% - 20px),transparent calc(50% - 20px),transparent calc(50% + 20px),#C9C3B8 calc(50% + 20px)); }
+:is(#archiveModalBody,.period-reading) .annual-basis::after { content:''; position:absolute; top:-7px; left:calc(50% - 7px); width:14px; height:14px; background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M10.5 2.2A6 6 0 1 0 13.8 11 4.8 4.8 0 0 1 10.5 2.2z' fill='%231D2129'/%3E%3C/svg%3E") center/contain no-repeat; }
 :is(#archiveModalBody,.period-reading) .annual-basis-title { margin:0 0 4px; font-family:var(--brand-serif,serif)!important; font-weight:400!important; font-size:17px!important; color:var(--c-ink,#1D2129)!important; }
 :is(#archiveModalBody,.period-reading) .annual-basis p { margin:0!important; padding:12px 0!important; font-size:.875rem!important; line-height:1.75!important; color:var(--c-ink-60,#575B62)!important; }
 :is(#archiveModalBody,.period-reading) .annual-basis p + p { border-top:1px dashed var(--c-perf,#D4D0C6); }
