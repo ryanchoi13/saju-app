@@ -18,7 +18,7 @@ from app.engine.core.models import MyeongriCoreResult
 from app.engine.timing import calculate_timing
 from app.engine.calendar import to_solar
 from app.engine.semantic.overall import select_overall_domains, OVERALL_VERSION
-from app.engine.services.annual_editorial import NARRATIVE_VERSION, ROLE_NAMES
+from app.engine.services.annual_editorial import NARRATIVE_VERSION
 from app.engine.services.annual_copy import (
     CopyLedger, seed_from, flow_of,
 )
@@ -150,23 +150,14 @@ def _monthly_reading(selection, ledger, month, year_god, target, grade=None):
 # ---------------------------------------------------------------------------
 # 화면 조립 (접고 펼치는 요소 없이 모두 펼쳐서 보여준다)
 # ---------------------------------------------------------------------------
-def _basis_note(selection, timing, representative):
-    role = ROLE_NAMES.get(selection.get("focal_god"), "미정")
-    ganji = timing.annual.get("pillar", {}).get("ganji", "")
-    return (
-        '<p class="annual-note" data-period-basis="annual"><strong>계산 기준</strong><br>'
-        f'{escape(representative.isoformat())}을 대표일로 삼은 연간 해석입니다 · {escape(ganji)} · {escape(role)}. '
-        '연중 대운이 바뀌는 경우 전후 흐름을 각각 계산한 결과는 아닙니다.</p>')
-
-
-def _render_basis_box(reading, note_html):
+def _render_basis_box(reading):
     """맨 아래 '이 풀이의 근거' 상자(11/8). 번호 매기는 h3 를 쓰지 않아 본문과 위계가 다르다."""
     items = "".join(
         f'<p data-annual-basis="{it["key"]}"><strong>{escape(it["label"])}</strong><br>'
         f'{escape(" ".join(it["sentences"]))}</p>' for it in (reading.get("basis") or {}).get("items", ()))
     return ('<section class="annual-basis" aria-label="이 풀이의 근거">'
             '<h4 class="annual-basis-title">이 풀이의 근거</h4>'
-            f'{items}{note_html}</section>')
+            f'{items}</section>')
 
 
 def _render_year(reading):
@@ -261,19 +252,16 @@ def build_annual_overall_report(core: MyeongriCoreResult, user_name: str, year: 
     content = (
         f'<div class="annual-reading" data-overall-version="{OVERALL_VERSION}" '
         f'data-narrative-version="{NARRATIVE_VERSION}" data-copy-version="{annual_v2.COPY_V2_VERSION}" '
-        f'data-report-year="{year}">'
+        f'data-report-year="{year}" data-representative-date="{representative.isoformat()}">'
         f'{_render_year(reading)}'
-        f'{_render_basis_box(reading, _basis_note(selection, timing, representative))}'
+        f'{_render_basis_box(reading)}'
         '<h3>12개월 흐름</h3>'
         '<p class="annual-note" data-period-basis="monthly">각 달 15일의 절기 월주를 대표값으로 사용했습니다. '
         '출생한 달의 15일이 출생 전이면 출생일을 사용하며, 출생 전 달은 제외합니다. '
         '달마다 그달의 십성과 엔진이 짚은 분야를 바탕으로 취할 태도와 할 일을 안내합니다. '
         '좋음·보통·주의는 그달 월주가 타고난 사주와 맺는 관계(충·형·합, 필요한 기운 등)를 오늘의 운세와 같은 산식으로 매긴 것입니다. '
         '달력의 1일을 운의 전환일로 보거나 월 전체의 변화, 특정 사건의 날짜를 예측한 것은 아닙니다.</p>'
-        + "".join(cards) +
-        '<p class="annual-note">정통 명리의 원국·대운·세운·월운을 근거로 한 해석이며, '
-        '별도의 토정비결 괘 계산과는 구분됩니다. 실제 건강 상태와 중요한 결정은 '
-        '현실의 정보와 전문가의 판단을 함께 확인해 주세요.</p></div>')
+        + "".join(cards) + '</div>')
     return dict(
         title=f"{year}년 {escape(name)}님의 올해·월별 운세",
         content=content, engine_version=OVERALL_VERSION,

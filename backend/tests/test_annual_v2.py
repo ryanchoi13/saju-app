@@ -283,9 +283,10 @@ class BuilderStructureTests(TestCase):
         self.assertEqual(r["narrative_version"], NARRATIVE_VERSION)
         self.assertEqual(r["month_schema"], "dalha.month.v3")
         self.assertIn(f'data-narrative-version="{NARRATIVE_VERSION}"', r["content"])
-        self.assertIn("2026-07-01을 대표일로 삼은 연간 해석", r["content"])
-        self.assertIn("丙午", r["content"])
-        self.assertIn("대운이 바뀌는 경우 전후 흐름을 각각 계산한 결과는 아닙니다", r["content"])
+        # 11/8 정오님: 대표일·맺음 안내 문장은 화면에서 뺐다. 대표일은 데이터 속성으로만 남긴다
+        self.assertIn('data-representative-date="2026-07-01"', r["content"])
+        self.assertNotIn("대표일로 삼은 연간 해석", r["content"])
+        self.assertNotIn("토정비결", r["content"])
         self.assertEqual(v2.validate_year(r["reading"]), [])
 
     def test_month_card_shows_every_block(self):
@@ -315,7 +316,7 @@ class BuilderStructureTests(TestCase):
         r = run_builder(core)
         self.assertEqual(r["content"].count("출생 전 기간"), 8)
         self.assertEqual(r["evidence_summary"]["months"][0]["representative_date"], "2026-09-23")
-        self.assertIn("2026-09-23을 대표일로 삼은 연간 해석", r["content"])
+        self.assertIn('data-representative-date="2026-09-23"', r["content"])
         with self.assertRaises(ValueError):
             run_builder(core, year=2025)
 

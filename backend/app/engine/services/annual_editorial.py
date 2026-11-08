@@ -7,7 +7,7 @@ separately by the composer when a domain has no specific evidence.
 
 # 연간 풀이 v2(중심 주제를 앞세운 구성)부터 다른 풀이와 버전을 따로 쓴다.
 # 이 값이 바뀌면 구매자 화면에 "새 풀이 받기"가 나타난다(main.py 가 같은 값을 비교).
-NARRATIVE_VERSION = 'annual-v5'   # 11/8 근거 상자 + 분야 3~5문장 (v4: 닿는 자리 단락판)
+NARRATIVE_VERSION = 'annual-v6'   # 11/8 계산 기준·맺음 안내 문장 삭제 (v5: 근거 상자 + 분야 3~5문장)
 GROUPS = (
     ("work", "직업·사업운"), ("money", "재물운"), ("love", "애정운"),
     ("relationships", "대인관계·가족운"), ("wellbeing", "건강운"),
