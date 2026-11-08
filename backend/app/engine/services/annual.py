@@ -23,6 +23,8 @@ from app.engine.services.annual_copy import (
     CopyLedger, seed_from, flow_of,
 )
 from app.engine.services import annual_v2, daily_score
+from app.engine.services import annual_touch
+from app.engine.services.element_balance import natal_balance
 
 logger = logging.getLogger("dalha.annual")
 
@@ -30,10 +32,30 @@ logger = logging.getLogger("dalha.annual")
 # ---------------------------------------------------------------------------
 # 올해 풀이
 # ---------------------------------------------------------------------------
-def _annual_reading(selection):
+def _annual_reading(selection, core=None, timing=None, year=None):
     reading = annual_v2.compose_year(selection)
     reading["source_ids"] = sorted({s for c in selection["selected"] for s in c["source_ids"]})
+    if core is not None and timing is not None:
+        reading["touch"] = _touch(core, timing, year, selection.get("focal_god"))
     return reading
+
+
+def _touch(core, timing, year, year_god):
+    """11/8 보강: 올해 간지 × 원국 · 보완 기운 · 대운. 계산 실패는 단락만 빼고 리포트는 그대로 낸다."""
+    try:
+        pillar = timing.annual.get("pillar") or {}
+        stem, branch = pillar.get("stem"), pillar.get("branch")
+        if not stem or not branch:
+            return None
+        p = core.natal_facts.pillars
+        natal = {k: p[k].branch for k in ("year", "month", "day", "hour") if p.get(k)}
+        return annual_touch.compose_touch(
+            year=year, year_stem=stem, year_branch=branch, natal=natal, day_stem=p["day"].stem,
+            balance=natal_balance(core), strength=str(core.synthesis.strength_state or ""),
+            cycle=timing.luck_cycle.get("current"), year_god=year_god)
+    except Exception:
+        logger.warning("올해 보강 단락 계산 실패 year=%s", year, exc_info=True)
+        return None
 
 
 TERM_KO = {
@@ -114,8 +136,12 @@ def _render_year(reading):
         '<section class="annual-overview"><h3>올해 총운</h3>',
         f'<p class="annual-lead">{escape(reading["title"])}</p>',
         f'<p>{escape(" ".join(reading["overview"]))}</p></section>',
-        '<section class="annual-three"><h3>올해의 세 가지</h3>',
     ]
+    for sec in (reading.get("touch") or {}).get("sections", ()):
+        paras = "".join(f'<p>{escape(" ".join(p))}</p>' for p in sec["paragraphs"])
+        parts.append(f'<section class="annual-touch" data-annual-touch="{sec["key"]}">'
+                     f'<h3>{escape(sec["title"])}</h3>{paras}</section>')
+    parts.append('<section class="annual-three"><h3>올해의 세 가지</h3>')
     for item in reading["three"]:
         parts.append(f'<p data-annual-three="{item["key"]}"><strong>{escape(item["label"])}</strong><br>'
                      f'{escape(item["text"])}</p>')
@@ -174,7 +200,7 @@ def build_annual_overall_report(core: MyeongriCoreResult, user_name: str, year: 
     timing, _, _ = calculate_timing(core.input, core.natal_facts.pillars, target_date=representative)
     selection = select_overall_domains(core, "annual", timing=timing)
     natal = select_overall_domains(core, "natal")
-    reading = _annual_reading(selection)
+    reading = _annual_reading(selection, core, timing, year)
 
     # 같은 사람·같은 해에는 항상 같은 글, 다른 사람이면 다른 글이 되도록 시드를 고정한다.
     ledger = CopyLedger(seed_from(birth_date.isoformat(), year))

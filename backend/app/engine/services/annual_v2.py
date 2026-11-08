@@ -21,7 +21,7 @@ from app.engine.services.annual_copy import (
 )
 
 V2_VERSION = "annual-v2"
-COPY_V2_VERSION = "dalha-annual-2"
+COPY_V2_VERSION = "dalha-annual-3"   # 11/8 올해 탭 보강(annual_touch)
 
 AREAS = (
     ("wealth", "재물"),
@@ -930,7 +930,8 @@ TIME_WORDS = ("지금", "이번 달", "이달", "오늘")
 
 
 def _year_sentences(reading: dict) -> list[str]:
-    out = [reading["title"], *reading["overview"]]
+    from app.engine.services.annual_touch import touch_sentence_list
+    out = [reading["title"], *reading["overview"], *touch_sentence_list(reading.get("touch"))]
     for item in reading["three"]:
         out += split_sentences(item["text"])
     for area in reading["areas"]:
