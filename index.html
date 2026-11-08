@@ -553,7 +553,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
     <link id="dalhaBrandStyles" rel="stylesheet" href="/assets/brand-2026/brand.css?v=20261010-1">
     <link rel="stylesheet" href="/assets/reading-polish.css?v=20261106-3">
     <link rel="stylesheet" href="/assets/daily-card.css?v=20261027-1">
-    <link rel="stylesheet" href="/assets/brand-2026/refine.css?v=20261108-1">
+    <link rel="stylesheet" href="/assets/brand-2026/refine.css?v=20261108-2">
     <script src="/assets/reading-polish.js?v=20261031-2" defer></script>
     <script src="/assets/brand-2026/brand-ui.js?v=20261001-4" defer></script>
 </head>
@@ -984,9 +984,6 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                     </section>
                     <details id="sajuEvidence" class="card reading-evidence" open>
                         <summary>나의 여덟 글자와 오행 <span>접기·펼치기</span></summary>
-                    <div style="margin-bottom: 12px; text-align: left;">
-                        <span id="sajuSingangBadge" class="dh-chip">분석 결과 확인 중</span>
-                    </div>
 
                     <!-- 명식표 (2026-10-31 시안 511, 11-08 오행 색 칸): 연한 오행 칸 + 진한 한자 + 읽는 법. 일주는 남색 테두리 -->
                     <div id="pillarChart" class="pc-grid" role="table" aria-label="사주 여덟 글자">
@@ -1027,7 +1024,12 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                             <li><i class="el-metal"></i>금(金) <b id="valMetal">—</b></li>
                             <li><i class="el-water"></i>수(水) <b id="valWater">—</b></li>
                         </ul>
-                        <p id="sajuElementsNote" class="pc-note">천간·지지의 표면 구성을 보여줍니다.</p>
+                        <p id="sajuStrengthLine" class="pc-strength" hidden></p>
+                        <details class="pc-basis">
+                            <summary>풀이 근거</summary>
+                            <p id="sajuStrengthBasis" class="pc-note"></p>
+                            <p id="sajuElementsNote" class="pc-note">천간·지지의 표면 구성을 보여줍니다.</p>
+                        </details>
                     </div>
                     </details>
                     <div class="card reading-lead">
@@ -2714,7 +2716,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
 
             document.getElementById('sajuOwnerName').innerText = `${currentUserName}님`;
             document.getElementById('sajuOwnerMeta').innerText = data.saju_profile_detail || data.birth_summary;
-            document.getElementById('sajuSingangBadge').innerText = data.saju_data?.singang_label || "강약 판단 정보 없음";
+            renderStrengthSummary(data.saju_data?.strength_summary);
             renderTodayStory(data.daily_fortune);
             renderOutfitTrack(data.daily_fortune);
             
@@ -4102,6 +4104,24 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             el.className = `badge-elem-main badge-main-${elem}`;
             el.setAttribute('aria-label', `${char} ${ELEM_KO[elem] || ''}`);
             el.innerHTML = `<span class="pc-char">${hanja}</span><span class="pc-read">${char} · ${ELEM_KO[elem] || ''}</span>`;
+        }
+
+        // 오행 구성 아래 한 줄(2026-11-08, 배지 대신): 강약 · 보완 기운. 근거는 '풀이 근거' 접힘에
+        const ELEM_CLASS = {'木':'wood','火':'fire','土':'earth','金':'metal','水':'water'};
+        function renderStrengthSummary(sum) {
+            const line = document.getElementById('sajuStrengthLine');
+            const basis = document.getElementById('sajuStrengthBasis');
+            if (!line) return;
+            if (!sum || !sum.support_label) { line.hidden = true; if (basis) basis.textContent = ''; return; }
+            line.textContent = '';
+            const strength = document.createElement('b');
+            strength.textContent = sum.strength;
+            const support = document.createElement('b');
+            support.className = `pc-support el-ink-${ELEM_CLASS[sum.support_element] || ''}`;
+            support.textContent = sum.support_label;
+            line.append(strength, ' · 보완 기운 ', support);
+            line.hidden = false;
+            if (basis) basis.textContent = sum.basis || '';
         }
 
         function formatJijangganGroup(jjList) {

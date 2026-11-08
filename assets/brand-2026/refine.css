@@ -312,3 +312,17 @@ html[data-brand] body #dailyStyleCard.colors-only .outfit-swatch {
   grid-area:sw; width:28px; height:28px; border-radius:50%; border:1px solid rgba(15,23,42,.12); }
 html[data-brand] body #dailyStyleCard.colors-only .outfit-track strong { grid-area:name; font-size:.9375rem; line-height:1.35; }
 html[data-brand] body #dailyStyleCard.colors-only .outfit-track p { grid-area:el; font-size:.75rem; line-height:1.4; }
+
+/* 2026-11-08 강약 배지 대신 오행 구성 아래 한 줄 + '풀이 근거' 접힘 */
+html[data-brand] body .pc-strength { margin:14px 0 0; font-size:15px; color:var(--ui-ink); }
+html[data-brand] body .pc-strength[hidden] { display:none; }
+html[data-brand] body .pc-strength b { font-weight:700; }
+html[data-brand] body .pc-support { padding:1px 8px; border-radius:6px; }
+html[data-brand] body .el-ink-wood { color:var(--el-wood-ink); background:var(--el-wood-bg); }
+html[data-brand] body .el-ink-fire { color:var(--el-fire-ink); background:var(--el-fire-bg); }
+html[data-brand] body .el-ink-earth { color:var(--el-earth-ink); background:var(--el-earth-bg); }
+html[data-brand] body .el-ink-metal { color:var(--el-metal-ink); background:var(--el-metal-bg); }
+html[data-brand] body .el-ink-water { color:var(--el-water-ink); background:var(--el-water-bg); }
+html[data-brand] body .pc-basis { margin-top:10px; }
+html[data-brand] body .pc-basis > summary { cursor:pointer; font-size:12.5px; color:var(--ui-muted); min-height:32px; display:flex; align-items:center; }
+html[data-brand] body .pc-basis .pc-note { margin:6px 0 0; }
