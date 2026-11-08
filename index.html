@@ -2551,6 +2551,9 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
 
         // "근거" 블록: score_items 중 영향이 큰 5개. 값은 서버 weight 그대로(진짜 마이너스 기호).
         function renderScoreBasis(fortune) {
+            // 11/8 정오님: 점수를 어떻게 매기는지(가감 항목)는 보여 주지 않는다
+            const block = document.getElementById('dc3BasisBlock');
+            if (block) { block.hidden = true; return; }
             const items = (Array.isArray(fortune?.score_items) ? fortune.score_items : [])
                 .filter(x => x && x.label && Number.isFinite(Number(x.weight)) && Number(x.weight) !== 0)
                 .sort((a, b) => Math.abs(b.weight) - Math.abs(a.weight)).slice(0, 5);
@@ -2596,11 +2599,11 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             // 카드 라벨: 엔진 분야 '사람'은 '대인관계'로 풀어 쓴다(위험한 사람을 만난다는 뜻으로 읽히지 않게). 나머지는 이름 그대로.
             const domainLabel = note ? `${note.domain === '사람' ? '대인관계' : note.domain} ${note.kind}` : '';
             const domainEl = document.getElementById('resGradeDomain');
-            domainEl.hidden = !note;
+            domainEl.hidden = true;                     // 11/8 정오님: '일 좋음' 같은 분야 꼬리표는 홈·창 모두 쓰지 않는다(점수·등급과 겹치고 헷갈림)
             domainEl.textContent = domainLabel;
             domainEl.dataset.kind = note ? note.kind : '';
             const sub = document.getElementById('dc3SheetSub');
-            sub.hidden = !note;
+            sub.hidden = true;
             sub.textContent = domainLabel;
             document.getElementById('dc3SheetGrade').textContent = `${grade} · ${score}점`;
             // 홈: 근거 대신 '오늘은 이렇게'(처방). 근거는 자세히 창에. 처방이 없는 옛 응답은 근거를 그대로 보인다
