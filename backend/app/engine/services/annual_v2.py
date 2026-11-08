@@ -21,7 +21,7 @@ from app.engine.services.annual_copy import (
 )
 
 V2_VERSION = "annual-v2"
-COPY_V2_VERSION = "dalha-annual-3"   # 11/8 올해 탭 보강(annual_touch)
+COPY_V2_VERSION = "dalha-annual-4"   # 11/8 근거 상자 + 분야 문장
 
 AREAS = (
     ("wealth", "재물"),
