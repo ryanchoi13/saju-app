@@ -36,12 +36,16 @@ def _annual_reading(selection, core=None, timing=None, year=None):
     reading = annual_v2.compose_year(selection)
     reading["source_ids"] = sorted({s for c in selection["selected"] for s in c["source_ids"]})
     if core is not None and timing is not None:
-        reading["touch"] = _touch(core, timing, year, selection.get("focal_god"))
+        basis = _basis(core, timing, year, selection.get("focal_god"))
+        if basis:
+            reading["basis"] = basis
+            _extend_areas(reading, basis["area_extra"])
     return reading
 
 
-def _touch(core, timing, year, year_god):
-    """11/8 보강: 올해 간지 × 원국 · 보완 기운 · 대운. 계산 실패는 단락만 빼고 리포트는 그대로 낸다."""
+def _basis(core, timing, year, year_god):
+    """11/8: 올해 간지 × 원국 · 보완 기운 · 대운 → 맨 아래 근거 상자 + 분야별로 더할 문장.
+    계산이 실패하면 리포트는 예전 구성 그대로 낸다."""
     try:
         pillar = timing.annual.get("pillar") or {}
         stem, branch = pillar.get("stem"), pillar.get("branch")
@@ -49,13 +53,37 @@ def _touch(core, timing, year, year_god):
             return None
         p = core.natal_facts.pillars
         natal = {k: p[k].branch for k in ("year", "month", "day", "hour") if p.get(k)}
-        return annual_touch.compose_touch(
+        return annual_touch.compose_basis(
             year=year, year_stem=stem, year_branch=branch, natal=natal, day_stem=p["day"].stem,
             balance=natal_balance(core), strength=str(core.synthesis.strength_state or ""),
             cycle=timing.luck_cycle.get("current"), year_god=year_god)
     except Exception:
-        logger.warning("올해 보강 단락 계산 실패 year=%s", year, exc_info=True)
+        logger.warning("올해 근거 계산 실패 year=%s", year, exc_info=True)
         return None
+
+
+def _month_focus_lines(months):
+    """분야마다 월별 탭에서 초점이 모이는 달(최대 3개)을 한 문장으로 — 올해 탭과 월별 탭을 잇는다."""
+    by_area = {}
+    for m in months:
+        area = (m["reading"].get("focus") or {}).get("area")
+        if area:
+            by_area.setdefault(area, []).append(m["month"])
+    return {area: [f"{annual_v2.AREA_LABEL[area]}은 {'·'.join(f'{n}월' for n in ms[:3])}에 특히 초점이 모입니다."]
+            for area, ms in by_area.items()}
+
+
+def _extend_areas(reading, extra):
+    """분야마다 원국 근거·올해 관계·대운 문장을 뒤에 붙인다(일반 분야 최대 5, 중심 분야 최대 7)."""
+    for area in reading["areas"]:
+        cap = annual_v2.AREA_SENTENCE_MAX_CENTRAL if area["central"] else annual_v2.AREA_SENTENCE_MAX
+        sentences = list(area["sentences"])
+        for s in extra.get(area["area"], ()):
+            if len(sentences) >= cap:
+                break
+            if s not in sentences:
+                sentences.append(s)
+        area["sentences"], area["text"] = sentences, " ".join(sentences)
 
 
 TERM_KO = {
@@ -126,9 +154,19 @@ def _basis_note(selection, timing, representative):
     role = ROLE_NAMES.get(selection.get("focal_god"), "미정")
     ganji = timing.annual.get("pillar", {}).get("ganji", "")
     return (
-        '<p class="annual-note" data-period-basis="annual">'
+        '<p class="annual-note" data-period-basis="annual"><strong>계산 기준</strong><br>'
         f'{escape(representative.isoformat())}을 대표일로 삼은 연간 해석입니다 · {escape(ganji)} · {escape(role)}. '
         '연중 대운이 바뀌는 경우 전후 흐름을 각각 계산한 결과는 아닙니다.</p>')
+
+
+def _render_basis_box(reading, note_html):
+    """맨 아래 '이 풀이의 근거' 상자(11/8). 번호 매기는 h3 를 쓰지 않아 본문과 위계가 다르다."""
+    items = "".join(
+        f'<p data-annual-basis="{it["key"]}"><strong>{escape(it["label"])}</strong><br>'
+        f'{escape(" ".join(it["sentences"]))}</p>' for it in (reading.get("basis") or {}).get("items", ()))
+    return ('<section class="annual-basis" aria-label="이 풀이의 근거">'
+            '<h4 class="annual-basis-title">이 풀이의 근거</h4>'
+            f'{items}{note_html}</section>')
 
 
 def _render_year(reading):
@@ -136,12 +174,8 @@ def _render_year(reading):
         '<section class="annual-overview"><h3>올해 총운</h3>',
         f'<p class="annual-lead">{escape(reading["title"])}</p>',
         f'<p>{escape(" ".join(reading["overview"]))}</p></section>',
+        '<section class="annual-three"><h3>올해의 세 가지</h3>',
     ]
-    for sec in (reading.get("touch") or {}).get("sections", ()):
-        paras = "".join(f'<p>{escape(" ".join(p))}</p>' for p in sec["paragraphs"])
-        parts.append(f'<section class="annual-touch" data-annual-touch="{sec["key"]}">'
-                     f'<h3>{escape(sec["title"])}</h3>{paras}</section>')
-    parts.append('<section class="annual-three"><h3>올해의 세 가지</h3>')
     for item in reading["three"]:
         parts.append(f'<p data-annual-three="{item["key"]}"><strong>{escape(item["label"])}</strong><br>'
                      f'{escape(item["text"])}</p>')
@@ -220,6 +254,8 @@ def build_annual_overall_report(core: MyeongriCoreResult, user_name: str, year: 
         months.append(dict(month=month, representative_date=target.isoformat(),
                            interpretation=month_selection, reading=month_reading))
         cards.append(_render_month_card(month, month_reading))
+    if reading.get("basis"):
+        _extend_areas(reading, _month_focus_lines(months))
     _log_validation(reading, composed)
 
     content = (
@@ -227,7 +263,7 @@ def build_annual_overall_report(core: MyeongriCoreResult, user_name: str, year: 
         f'data-narrative-version="{NARRATIVE_VERSION}" data-copy-version="{annual_v2.COPY_V2_VERSION}" '
         f'data-report-year="{year}">'
         f'{_render_year(reading)}'
-        f'{_basis_note(selection, timing, representative)}'
+        f'{_render_basis_box(reading, _basis_note(selection, timing, representative))}'
         '<h3>12개월 흐름</h3>'
         '<p class="annual-note" data-period-basis="monthly">각 달 15일의 절기 월주를 대표값으로 사용했습니다. '
         '출생한 달의 15일이 출생 전이면 출생일을 사용하며, 출생 전 달은 제외합니다. '

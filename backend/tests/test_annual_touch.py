@@ -34,18 +34,21 @@ class NatalTouchTest(unittest.TestCase):
         self.assertNotIn("half", [t["kind"] for t in found])
 
     def test_no_relation_says_so_without_inventing(self):
-        touch = T.compose_touch(year=2026, year_stem="丙", year_branch="午",
+        basis = T.compose_basis(year=2026, year_stem="丙", year_branch="午",
                                 natal={"year": "卯", "month": "巳", "day": "巳", "hour": "卯"}, day_stem="庚",
-                                balance=dict(ranking=["水", "金", "土", "木", "火"], overflow=[], eokbu_avoid=[]),
+                                balance=dict(ranking=["水", "金", "土", "木", "火"], overflow=[], eokbu_avoid=[],
+                                             composition={"木": 30, "火": 40, "土": 10, "金": 20, "水": 0}),
                                 strength="", cycle=None, year_god=None)
-        self.assertEqual(touch["sections"][0]["paragraphs"], [list(T.NO_TOUCH)])
+        self.assertEqual(basis["items"][0]["sentences"], list(T.NO_TOUCH))
 
 
 class CopyRulesTest(unittest.TestCase):
-    def test_every_attitude_sentence_fits_the_annual_rules(self):
+    def test_every_area_and_attitude_sentence_fits_the_annual_rules(self):
         bank = [s for d in T.ATTITUDE.values() for s in d.values()] + list(T.TRIPLE_ATTITUDE.values())
         bank += [T.STEM_CLASH_ATTITUDE, T.STEM_COMBINE_ATTITUDE, T.TRIPLE_PUNISH_ATTITUDE, *T.NO_TOUCH]
         bank += list(T.REASON.values()) + [s for pair in T.LINK.values() for s in pair[1:]]
+        bank += [s for d in T.STAR_STATE.values() for s in d.values()]
+        bank += list(T.LOVE_SEAT.values()) + list(T.HEALTH_STRENGTH.values())
         self.assertEqual(len(bank), len(set(bank)))
         for s in bank:
             self.assertLessEqual(len(s), annual_v2.SENTENCE_MAX, s)
@@ -58,6 +61,7 @@ class CopyRulesTest(unittest.TestCase):
         self.assertEqual(T._j("화(火)", "이가"), "화(火)가")
         self.assertEqual(T._j("금(金)", "이가"), "금(金)이")
         self.assertEqual(T._jp("관성", "을를"), "을")
+        self.assertEqual(T._j(T._lab("戌"), "과와"), "戌(술)과")
 
 
 class CycleLinkTest(unittest.TestCase):
@@ -77,20 +81,32 @@ class ReportTest(unittest.TestCase):
             is_leap_month=False, birth_time=time(11, 0), time_unknown=False), target_date=date(2026, 7, 1))
         cls.report = build_annual_overall_report(core, "정오", 2026)
 
-    def test_three_sections_sit_between_overview_and_three_things(self):
+    def test_basis_box_sits_after_areas_and_is_not_a_numbered_section(self):
         c = self.report["content"]
-        for key in ("natal", "balance", "cycle"):
-            self.assertEqual(c.count(f'data-annual-touch="{key}"'), 1)
-        self.assertLess(c.index("annual-overview"), c.index('data-annual-touch="natal"'))
-        self.assertLess(c.index('data-annual-touch="cycle"'), c.index("annual-three"))
+        self.assertEqual(c.count('class="annual-basis"'), 1)
+        self.assertNotIn("annual-touch", c)
+        box = c[c.index('class="annual-basis"'):c.index("<h3>12개월 흐름</h3>")]
+        self.assertNotIn("<h3", box)                     # 번호 매기는 본문 h3 와 위계가 다르다
+        self.assertIn("계산 기준", box)
+        self.assertIn('data-period-basis="annual"', box)  # 대표일 설명이 상자 안에
+        self.assertLess(c.index('data-report-domain="study"'), c.index('class="annual-basis"'))
         self.assertEqual(annual_v2.validate_year(self.report["reading"]), [])
 
+    def test_every_area_has_three_to_five_sentences(self):
+        for area in self.report["reading"]["areas"]:
+            cap = annual_v2.AREA_SENTENCE_MAX_CENTRAL if area["central"] else annual_v2.AREA_SENTENCE_MAX
+            self.assertTrue(3 <= len(area["sentences"]) <= cap, area)
+
     def test_owner_sample(self):
-        text = " ".join(T.touch_sentence_list(self.report["reading"]["touch"]))
-        self.assertIn("일지 戌과 올해 午가 반합해 화(火) 쪽으로 기웁니다.", text)
-        self.assertIn("두 번째 보완 기운 화(火)가", text)
+        r = self.report["reading"]
+        text = " ".join(T.basis_sentence_list(r["basis"]))
+        self.assertIn("배우자 자리(일지)의 戌(술)과 올해 午(오)가 반쯤 합쳐져 화(火) 기운이 커집니다(반합).", text)
+        self.assertIn("이 관계는 애정 풀이에 반영했습니다.", text)
         self.assertIn("식신제살(食神制殺)", text)
-        self.assertIn("올해는 그 두 번째 해입니다.", text)
+        love = next(a for a in r["areas"] if a["area"] == "love")["text"]
+        self.assertIn("가까운 사람과 함께하는 시간에서 힘을 얻는 해입니다.", love)
+        work = next(a for a in r["areas"] if a["area"] == "work")["text"]
+        self.assertIn("대운 庚申의 관성 기운", work)
 
 
 if __name__ == "__main__":

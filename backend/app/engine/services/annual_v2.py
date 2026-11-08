@@ -21,7 +21,7 @@ from app.engine.services.annual_copy import (
 )
 
 V2_VERSION = "annual-v2"
-COPY_V2_VERSION = "dalha-annual-3"   # 11/8 올해 탭 보강(annual_touch)
+COPY_V2_VERSION = "dalha-annual-4"   # 11/8 근거 상자 + 분야 문장
 
 AREAS = (
     ("wealth", "재물"),
@@ -925,13 +925,15 @@ def validate_month(reading: dict) -> list[str]:
 # ---------------------------------------------------------------------------
 SENTENCE_MAX = 46
 SENTENCE_MAX_MONTH = 52
+BASIS_SENTENCE_MAX = 64
+AREA_SENTENCE_MAX = 5           # 11/8 정오님: 분야마다 3~5문장
+AREA_SENTENCE_MAX_CENTRAL = 7   # 중심 분야는 더 길게(기본 2 + 중심 2 + 흐름 1 + 원국 근거 + 대운·관계)
 HEDGES = ("좋겠습니다", "좋겠어요", "수 있어요", "수 있습니다", "듯합니다", "것 같")
 TIME_WORDS = ("지금", "이번 달", "이달", "오늘")
 
 
 def _year_sentences(reading: dict) -> list[str]:
-    from app.engine.services.annual_touch import touch_sentence_list
-    out = [reading["title"], *reading["overview"], *touch_sentence_list(reading.get("touch"))]
+    out = [reading["title"], *reading["overview"]]
     for item in reading["three"]:
         out += split_sentences(item["text"])
     for area in reading["areas"]:
@@ -959,6 +961,22 @@ def validate_year(reading: dict) -> list[str]:
         for w in TIME_WORDS:
             if w in s:
                 issues.append(f"시점 표현 '{w}': {s}")
+    # 11/8 맨 아래 '이 풀이의 근거' 상자: 용어 괄호·읽는 법이 붙어 길이 기준만 넉넉하게
+    from app.engine.services.annual_touch import basis_sentence_list
+    basis = basis_sentence_list(reading.get("basis"))
+    for s in basis:
+        if len(s) > BASIS_SENTENCE_MAX:
+            issues.append(f"근거 문장이 깁니다({len(s)}): {s}")
+        if find_banned(s):
+            issues.append(f"금기어 {find_banned(s)}: {s}")
+        for w in HEDGES + TIME_WORDS:
+            if w in s:
+                issues.append(f"근거 문장 표현 '{w}': {s}")
+    for area in reading["areas"]:
+        cap = AREA_SENTENCE_MAX_CENTRAL if area["central"] else AREA_SENTENCE_MAX
+        if reading.get("basis") and not 3 <= len(area["sentences"]) <= cap:
+            issues.append(f"분야 문장 수 {area['label']} {len(area['sentences'])}")
+    sentences = sentences + basis
     seen: set[str] = set()
     for s in sentences:
         if s in seen:
