@@ -555,7 +555,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
     <link rel="stylesheet" href="/assets/daily-card.css?v=20261108-p1">
     <link rel="stylesheet" href="/assets/brand-2026/refine.css?v=20261108-p1">
     <link href="https://fonts.googleapis.com/css2?family=Song+Myung&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/assets/brand-2026/ilryeok.css?v=20261108-p1">
+    <link rel="stylesheet" href="/assets/brand-2026/ilryeok.css?v=20261108-p3">
     <script src="/assets/reading-polish.js?v=20261108-p1" defer></script>
     <script src="/assets/brand-2026/brand-ui.js?v=20261108-p1" defer></script>
 </head>
@@ -695,13 +695,18 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                         <div class="il-date-text">
                             <span id="journalDate" class="dc3-date"></span>
                             <p id="ilDayNum" class="il-day" aria-hidden="true"></p>
-                            <p id="ilLunarLine" class="il-lunar"></p>
                         </div>
                         <figure id="ilMoon" class="il-moon" hidden>
                             <svg viewBox="-50 -50 100 100" role="img" aria-labelledby="ilMoonName"><circle r="44" class="il-moon-ring"/><path id="ilMoonLit" class="il-moon-lit" d=""/></svg>
                             <figcaption id="ilMoonName"></figcaption>
                         </figure>
                     </div>
+                    <!-- 11/8 정오님: 달 옆에 이름만 두지 말고 오늘이 어떤 달인지 한 줄로 풀어 준다 -->
+                    <div id="ilMoonNote" class="il-moon-note" hidden>
+                        <p id="ilMoonTitle" class="il-moon-title"></p>
+                        <p id="ilMoonText" class="il-moon-text"></p>
+                    </div>
+                    <p id="ilLunarLine" class="il-lunar"></p>
                     <h2 class="sr-only" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;">오늘의 나</h2>
                 </div>
 
@@ -2728,7 +2733,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             if (day) day.textContent = fmt({ day:'numeric' }).replace(/[^0-9]/g, '');
             const line = document.getElementById('ilLunarLine');
             const moon = document.getElementById('ilMoon');
-            if (!lunar || !lunar.day) { if (line) line.textContent = ''; if (moon) moon.hidden = true; return; }
+            if (!lunar || !lunar.day) { if (line) line.textContent = ''; if (moon) moon.hidden = true; const n = document.getElementById('ilMoonNote'); if (n) n.hidden = true; return; }
             const term = lunar.next_term
                 ? (lunar.days_to_term === 0 ? `오늘 ${lunar.next_term}` : `${lunar.next_term}까지 ${lunar.days_to_term}일`) : '';
             const ganji = currentFortuneData?.daily_fortune?.day_ganji_han;
@@ -2737,6 +2742,12 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             document.getElementById('ilMoonLit').setAttribute('d', ilMoonPath(lunar.day));
             document.getElementById('ilMoonName').textContent = lunar.phase || '';
             moon.hidden = false;
+            const note = document.getElementById('ilMoonNote');
+            if (note) {
+                document.getElementById('ilMoonTitle').textContent = lunar.phase_title || '';
+                document.getElementById('ilMoonText').textContent = lunar.phase_note || '';
+                note.hidden = !lunar.phase_note;
+            }
         }
 
         function applySajuAnalysisToUI(data) {
