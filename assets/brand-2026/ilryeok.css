@@ -59,17 +59,23 @@
 :root[data-brand] body #view-today .il-sheet-head { padding:10px 24px 22px!important; }
 #view-today .il-holes { display:flex; justify-content:center; gap:46px; margin:0 0 12px; }
 #view-today .il-holes i { width:10px; height:10px; border-radius:50%; background:var(--ui-page); }
-#view-today .il-date { display:grid; grid-template-columns:minmax(0,1fr) 92px; align-items:end; gap:8px; }
+#view-today .il-date { display:grid; grid-template-columns:minmax(0,1fr) 96px; align-items:center; gap:8px; }
 :root[data-brand] body #view-today .il-date .dc3-date { margin:0; font-size:14px; font-weight:500; letter-spacing:0; color:var(--il-muted); }
 #view-today .il-day { margin:2px 0 0; font-family:'Song Myung','Noto Serif KR',serif; font-size:112px; line-height:.95; color:var(--il-ink); font-variant-numeric:lining-nums; }
 #view-today .il-day:empty { display:none; }
-#view-today .il-lunar { margin:12px 0 0; font-size:13px; line-height:1.5; color:var(--il-muted); word-break:keep-all; }
+#view-today .il-lunar { margin:4px 0 0; font-size:13px; line-height:1.6; color:var(--c-ink-60); word-break:keep-all; }
+/* 오늘의 달 풀이: 날짜·달 아래 점선 하나, 송명체 한 줄 + 설명 두 문장 */
+#view-today .il-moon-note { margin:18px 0 0; padding:16px 0 0; border-top:1px dashed var(--c-perf); }
+#view-today .il-moon-note[hidden] { display:none; }
+#view-today .il-moon-title { margin:0; font-family:'Song Myung','Noto Serif KR',serif; font-size:19px; line-height:1.4; color:var(--c-ink); }
+#view-today .il-moon-text { margin:10px 0 0; font-size:15px; line-height:1.7; color:var(--c-ink-80); word-break:keep-all; }
 #view-today .il-moon { margin:0; display:flex; flex-direction:column; align-items:center; gap:6px; }
 #view-today .il-moon[hidden] { display:none; }
 #view-today .il-moon svg { width:80px; height:80px; display:block; }
 #view-today .il-moon-ring { fill:none; stroke:var(--c-ink-40); stroke-width:1.4; stroke-dasharray:2.5 3.5; }
 #view-today .il-moon-lit { fill:var(--il-ink); }
-#view-today .il-moon figcaption { font-family:'Song Myung','Noto Serif KR',serif; font-size:15px; color:var(--il-ink); }
+/* 달 이름은 아래 '오늘은 ~' 줄이 말하므로 그림 밑 글자는 화면에서 숨기고 읽어 주기에만 남긴다 */
+#view-today .il-moon figcaption { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
 
 /* ---- 오늘의 한 줄 + 인주 도장 ---- */
 :root[data-brand] body #view-today .dc3-card { color:var(--il-ink); padding:24px 24px 0!important; overflow:visible; }
@@ -186,3 +192,22 @@
 /* 리포트 열기·구매 버튼(.reading-primary 등)도 먹 사각 */
 :root[data-brand] body :is(.reading-primary,.reading-secondary,.theme-buy,.report-buy-btn) { border-radius:3px!important; box-shadow:none!important; }
 :root[data-brand] body .reading-primary { background:var(--il-ink)!important; color:var(--c-paper)!important; }
+
+/* ================================================================ 11/8 첫 화면 재정리(정오님과 합의)
+   큰 날짜·큰 달 쪽지를 없애고, 오늘의 운세 쪽지 머리에 날짜 한 줄(양력 · 음력 · 일진)과 작은 실제 달.
+   절기 당일·보름·초하루만 한 줄 더. 쪽지 본문은 오늘의 한 줄 + 도장 + 오늘은 이렇게. */
+:root[data-brand] body #view-today > .dc3-card::before { content:none; }       /* 맨 위 쪽지: 철한 구멍만 */
+:root[data-brand] body #view-today .dc3-card { padding-top:10px!important; }
+#view-today .dc3-card .il-holes { margin:0 0 14px; }
+#view-today .il-dateline { display:flex; align-items:center; gap:8px; margin:0 0 4px; }
+:root[data-brand] body #view-today .il-dateline .dc3-date { margin:0; font-size:14px; font-weight:500; letter-spacing:0; color:var(--c-ink-60); }
+#view-today .il-moon-mini { flex:0 0 18px; width:18px; height:18px; }
+#view-today .il-moon-mini[hidden] { display:none; }
+#view-today .il-moon-mini .il-moon-ring { fill:none; stroke:var(--c-ink-40); stroke-width:5; stroke-dasharray:none; }
+#view-today .il-moon-mini .il-moon-lit { fill:var(--c-ink); }
+#view-today .il-special { margin:2px 0 0; font-size:14px; line-height:1.6; color:var(--c-ink); }
+#view-today .il-special[hidden] { display:none; }
+#view-today .dc3-card .dc3-top { margin-top:16px; }
+#view-today .il-rx-label { margin:20px 0 0; font-size:13px; font-weight:500; color:var(--c-ink-60); }
+#view-today .il-rx-label[hidden] { display:none; }
+:root[data-brand] body #view-today .dc3-card .il-rx-label + .dc3-evidence { margin-top:4px; }
