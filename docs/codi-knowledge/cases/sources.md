@@ -26,6 +26,8 @@
 - **2026-11-08 03:24 KST**: 01:47과 같은 상태(`www.thehandsome.com`·`www.ssfshop.com`·`www.wconcept.co.kr`·`www.vogue.co.kr` 열림, `www.gqkorea.co.kr`·`www.lfmall.co.kr`·`www.29cm.co.kr`·`www.kolonmall.com`·패션지(엘르·바자·마리끌레르·에스콰이어) 연결 실패, `www.musinsa.com` 403).
   - SSF샵 기획전 페이지(`/special/<번호>/view`)는 사진이 `img.ssfshop.com/display/html/PROMT/...` 에 있다. 빈폴 26 F/W 캠페인은 착장마다 상품명 목록을 같이 보여 줘 아이템 이름 확인에 좋다.
   - **주의: 생성형 AI 이미지.** 빈폴 맨 "더 클래식 노트 #3"(special 124340) 사진에 "생성형 AI 활용 이미지" 표시가 있다. 실제 착장이 아니므로 카드로 쓰지 않는다(크부장 판단). 기획전 사진은 오른쪽 아래 표시를 확인한다.
+- **2026-11-09 03:23 KST**: 같은 상태. 아웃도어·애슬레저 후보(`www.thenorthfacekorea.co.kr`·`www.k2.co.kr`·`www.kolonsport.com`·`www.patagonia.co.kr`·`www.xexymix.com`·`www.andar.co.kr`·`www.nike.com`·`www.adidas.co.kr`·`www.nbkorea.com`·`www.lululemon.co.kr` 등)는 모두 프록시 거부(정책 거부).
+  - **SSF샵 매거진** `www.ssfshop.com/ssfMgz/list` 가 열린다. 브랜드 에디토리얼(예: 스노우피크×빈폴멘 출근룩 124692, 시에라디자인 124136)에 착장 사진과 상품명·색 목록이 함께 있다. 사진은 `img.ssfshop.com/display/html/PROMT/...` 에 있고 슬라이드라 페이지 HTML에서 주소를 찾아야 보인다. SSF샵 검색(`/search?keyword=`)은 키워드와 관계없이 같은 기획전 목록을 보여 줘 쓸모가 없다.
 - 풀려면: claude.ai 설정 → Capabilities(기능)의 허용 도메인에 아래 "쓸 수 있음" 사이트를 넣어야 한다(정오님 결정 필요). PR 본문에 적었다.
 
 ## 1. 판정 기호
