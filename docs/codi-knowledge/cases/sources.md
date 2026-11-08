@@ -20,6 +20,12 @@
   - `cos.com`: 301 → `www.cos.com` 프록시 거부 / 터널 실패
   - `vogue.co.kr`: 301 → `www.vogue.co.kr` 프록시 거부 / 터널 실패
   - → 5곳 모두 **사진까지 못 엶.** 12:27 실행과 같은 결론: `www.`(또는 `*.`) 주소가 허용 목록에 필요하다.
+- **2026-11-08 01:47 KST(예약 실행, 새 세션)**: `www.` 주소가 **더 열렸다**. curl 기준 200: `www.vogue.co.kr`, `www.ssfshop.com`, `www.thehandsome.com`, `www.wconcept.co.kr`, `lowclassic.com`. 사진 주소 `cdn-img.thehandsome.com`·`img.ssfshop.com`도 열림 → 더한섬닷컴 룩북(타임옴므 등)과 SSF샵 갤럭시 기획전 사진을 실제로 봤다.
+  - 그대로 막힌 곳: `www.cos.com`·`www.musinsa.com`·`www.lacoste.com`(403), `www.lowclassic.com`·`www.uniqlo.com`·`www.lfmall.co.kr`·`www.gqkorea.co.kr`·`www.29cm.co.kr`·`www.beanpole.com`·일본·미국·유럽 사이트 대부분(연결 실패).
+  - 더한섬닷컴 룩북 목록은 공개 주소 `/api/display/1/ko/category/webzineList?contGbCd=20&brandNo=<브랜드코드>`로 시즌별 목록을 볼 수 있다(타임옴므 BR06, 시스템옴므 BR07, 타임 BR01, 시스템 BR03, 마인 BR02, SJSJ BR04). 한 번에 룩북 몇 권만 연다(크롤링 아님).
+- **2026-11-08 03:24 KST**: 01:47과 같은 상태(`www.thehandsome.com`·`www.ssfshop.com`·`www.wconcept.co.kr`·`www.vogue.co.kr` 열림, `www.gqkorea.co.kr`·`www.lfmall.co.kr`·`www.29cm.co.kr`·`www.kolonmall.com`·패션지(엘르·바자·마리끌레르·에스콰이어) 연결 실패, `www.musinsa.com` 403).
+  - SSF샵 기획전 페이지(`/special/<번호>/view`)는 사진이 `img.ssfshop.com/display/html/PROMT/...` 에 있다. 빈폴 26 F/W 캠페인은 착장마다 상품명 목록을 같이 보여 줘 아이템 이름 확인에 좋다.
+  - **주의: 생성형 AI 이미지.** 빈폴 맨 "더 클래식 노트 #3"(special 124340) 사진에 "생성형 AI 활용 이미지" 표시가 있다. 실제 착장이 아니므로 카드로 쓰지 않는다(크부장 판단). 기획전 사진은 오른쪽 아래 표시를 확인한다.
 - 풀려면: claude.ai 설정 → Capabilities(기능)의 허용 도메인에 아래 "쓸 수 있음" 사이트를 넣어야 한다(정오님 결정 필요). PR 본문에 적었다.
 
 ## 1. 판정 기호
