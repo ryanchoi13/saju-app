@@ -264,6 +264,44 @@ html[data-brand] body #archiveModalBody p.lifetime-chart-count { font-size:13px!
 html[data-brand] body .pc-grid .pc-unknown { font-size:14px!important; }
 html[data-brand] body #archiveModalBody .pc-grid .pc-unknown { font-size:14px!important; }
 
+/* 2026-11-08 명식표 오행 색 (정오님 시안 ②): 점을 없애고 연한 칸 + 진한 글자로.
+   예전 색(--el-*)은 다섯 색이 모두 어둡고 탁해 목·토, 금·수가 헷갈렸다. 원색은 촌스러워 피하고,
+   토는 머스터드(황), 금은 은회색 칸, 수는 먹색 글자 + 연남색 칸으로 금·수를 가른다.
+   글자/칸 대비는 다섯 색 모두 4.5:1 이상(목 5.4 · 화 5.0 · 토 4.8 · 금 5.3 · 수 13.1).
+   --el-*(바이오리듬 등)는 그대로 두고 명식표 전용 토큰을 따로 둔다. */
+html[data-brand] {
+  --el-wood-ink:#2E6A44;  --el-wood-bg:#E2EFE4;  --el-wood-bar:#3F8A5A;
+  --el-fire-ink:#AE3823;  --el-fire-bg:#F9E1DA;  --el-fire-bar:#CC4E36;
+  --el-earth-ink:#82600E; --el-earth-bg:#F5E8C4; --el-earth-bar:#D3A12A;
+  --el-metal-ink:#5F6670; --el-metal-bg:#E9ECEF; --el-metal-bar:#A7AEB6;
+  --el-water-ink:#151D2E; --el-water-bg:#DAE4F1; --el-water-bar:#1F2B42;
+}
+html[data-brand] body .pc-grid :is(.badge-main-wood,.elem-wood)   { --e-ink:var(--el-wood-ink);  --e-bg:var(--el-wood-bg); }
+html[data-brand] body .pc-grid :is(.badge-main-fire,.elem-fire)   { --e-ink:var(--el-fire-ink);  --e-bg:var(--el-fire-bg); }
+html[data-brand] body .pc-grid :is(.badge-main-earth,.elem-earth) { --e-ink:var(--el-earth-ink); --e-bg:var(--el-earth-bg); }
+html[data-brand] body .pc-grid :is(.badge-main-metal,.elem-metal) { --e-ink:var(--el-metal-ink); --e-bg:var(--el-metal-bg); }
+html[data-brand] body .pc-grid :is(.badge-main-water,.elem-water) { --e-ink:var(--el-water-ink); --e-bg:var(--el-water-bg); }
+/* 이미 저장된 평생운세 표에는 점 마크업이 남아 있어 CSS로도 숨긴다 */
+html[data-brand] body .pc-grid .pc-dot { display:none!important; }
+/* 천간·지지: 연한 칸(76px 줄 높이 유지 = 72 + 위아래 2) + 진한 한자 */
+html[data-brand] body .pc-grid .badge-elem-main:not(.badge-main-none),
+html[data-brand] body #archiveModalBody .pc-grid .badge-elem-main:not(.badge-main-none) {
+  width:calc(100% - 8px)!important; height:72px!important; margin:2px 4px; border-radius:10px!important; background:var(--e-bg)!important; }
+html[data-brand] body .pc-grid .badge-elem-main .pc-char,
+html[data-brand] body #archiveModalBody .pc-grid .badge-elem-main .pc-char { color:var(--e-ink)!important; }
+/* 지장간: 같은 크기 칸에 글자를 가운데로(점이 빠져 왼쪽 쏠림도 사라짐). 정기는 굵게 */
+html[data-brand] body .pc-hidden .badge-jjg,
+html[data-brand] body #archiveModalBody .pc-grid .pc-hidden .badge-jjg {
+  width:30px!important; height:26px!important; padding:0!important; gap:0; justify-content:center; border-radius:6px!important;
+  background:var(--e-bg)!important; color:var(--e-ink)!important; font-weight:500!important; line-height:1!important; text-indent:0; }
+html[data-brand] body .pc-hidden .badge-jjg.is-main,
+html[data-brand] body #archiveModalBody .pc-grid .pc-hidden .badge-jjg.is-main { color:var(--e-ink)!important; font-weight:700!important; }
+html[data-brand] body .pc-hidden-gap { height:26px; display:flex; align-items:center; justify-content:center; }
+/* 오행 구성 막대·범례도 같은 다섯 색 */
+html[data-brand] body .el-wood { background:var(--el-wood-bar); } html[data-brand] body .el-fire { background:var(--el-fire-bar); }
+html[data-brand] body .el-earth { background:var(--el-earth-bar); } html[data-brand] body .el-metal { background:var(--el-metal-bar); }
+html[data-brand] body .el-water { background:var(--el-water-bar); }
+
 /* 2026-10-31 오늘의 행운 색: 코디 그림이 빠지고 색만 남아 칸이 과했다 → 작은 원 + 이름 한 줄로 */
 html[data-brand] body #dailyStyleCard.colors-only #outfitTrack { margin-top:2px; }
 html[data-brand] body #dailyStyleCard.colors-only .outfit-track-grid { gap:8px; }

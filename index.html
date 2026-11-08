@@ -553,7 +553,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
     <link id="dalhaBrandStyles" rel="stylesheet" href="/assets/brand-2026/brand.css?v=20261010-1">
     <link rel="stylesheet" href="/assets/reading-polish.css?v=20261106-3">
     <link rel="stylesheet" href="/assets/daily-card.css?v=20261027-1">
-    <link rel="stylesheet" href="/assets/brand-2026/refine.css?v=20261104-2">
+    <link rel="stylesheet" href="/assets/brand-2026/refine.css?v=20261108-1">
     <script src="/assets/reading-polish.js?v=20261031-2" defer></script>
     <script src="/assets/brand-2026/brand-ui.js?v=20261001-4" defer></script>
 </head>
@@ -989,7 +989,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                         <span id="sajuSingangBadge" class="dh-chip">분석 결과 확인 중</span>
                     </div>
 
-                    <!-- 명식표 (2026-10-31 시안 511): 큰 먹색 한자 + 작은 오행 점 + 읽는 법. 일주는 남색 테두리 -->
+                    <!-- 명식표 (2026-10-31 시안 511, 11-08 오행 색 칸): 연한 오행 칸 + 진한 한자 + 읽는 법. 일주는 남색 테두리 -->
                     <div id="pillarChart" class="pc-grid" role="table" aria-label="사주 여덟 글자">
                         <div class="pc-col pc-rowhead" aria-hidden="true"><span class="pc-label">&nbsp;</span><div class="pc-rh">천간</div><div class="pc-rh">지지</div><div class="pc-rh pc-rh-small">지장간</div></div>
                         <div class="pc-col">
@@ -4087,7 +4087,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
         function shareZodiacFortune() { alert('📋 오늘의 운세 링크가 복사되었습니다!'); }
 
         // 명식표 천간/지지 본체 리버스 배지
-        // 명식표: 큰 한자 + 오행 점 + 읽는 법(경 · 금). 서버는 한글 글자를 주므로 자리(천간/지지)로 한자를 찾는다.
+        // 명식표: 오행 색 칸 + 큰 한자 + 읽는 법(경 · 금). 서버는 한글 글자를 주므로 자리(천간/지지)로 한자를 찾는다.
         const STEM_HANJA = {갑:'甲',을:'乙',병:'丙',정:'丁',무:'戊',기:'己',경:'庚',신:'辛',임:'壬',계:'癸'};
         const BRANCH_HANJA = {자:'子',축:'丑',인:'寅',묘:'卯',진:'辰',사:'巳',오:'午',미:'未',신:'申',유:'酉',술:'戌',해:'亥'};
         const ELEM_KO = {wood:'목',fire:'화',earth:'토',metal:'금',water:'수'};
@@ -4102,15 +4102,15 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             const hanja = toHanja(char, id.startsWith('cg_'));
             el.className = `badge-elem-main badge-main-${elem}`;
             el.setAttribute('aria-label', `${char} ${ELEM_KO[elem] || ''}`);
-            el.innerHTML = `<span class="pc-char">${hanja}</span><i class="pc-dot el-${elem}" aria-hidden="true"></i><span class="pc-read">${char} · ${ELEM_KO[elem] || ''}</span>`;
+            el.innerHTML = `<span class="pc-char">${hanja}</span><span class="pc-read">${char} · ${ELEM_KO[elem] || ''}</span>`;
         }
 
         function formatJijangganGroup(jjList) {
             if (!jjList || jjList.length === 0) return `<span class="pc-hidden-none">-</span>`;
-            // 여기 → 중기 → 정기(국내 만세력 방식). 중기 없는 자리는 점, 정기는 진하게
+            // 여기 → 중기 → 정기(국내 만세력 방식). 중기 없는 자리는 점, 정기는 굵게. 오행은 칸 색으로
             return jjList.map(j => j.gap
                 ? `<span class="pc-hidden-gap" aria-hidden="true">·</span>`
-                : `<span class="badge-jjg elem-${j.elem}${j.main ? ' is-main' : ''}"><i class="pc-dot el-${j.elem}" aria-hidden="true"></i>${toHanja(j.char, true)}</span>`).join('');
+                : `<span class="badge-jjg elem-${j.elem}${j.main ? ' is-main' : ''}">${toHanja(j.char, true)}</span>`).join('');
         }
 
         function updateDaewoonPhaseTimeline(phase, age) {

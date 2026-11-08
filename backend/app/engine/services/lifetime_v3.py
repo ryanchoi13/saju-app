@@ -108,7 +108,7 @@ ELEMENT_CLASS = {"木": "wood", "火": "fire", "土": "earth", "金": "metal", "
 def _chart_html(core, profile, hidden_counts) -> str:
     """원국표 — '나의 사주' 명식표(2026-10-31 시안 511)와 같은 마크업·클래스(assets/brand-2026/refine.css .pc-grid).
 
-    큰 먹색 한자 + 작은 오행 점 + 읽는 법, 일주만 남색 테두리. 화면 두 곳의 표가 같은 모양이어야 한다.
+    오행 색 칸 + 진한 한자 + 읽는 법, 일주만 남색 테두리(2026-11-08 점 → 칸 색). 화면 두 곳의 표가 같은 모양이어야 한다.
     """
     pillars = core.natal_facts.pillars
     cols = (("hour", "시"), ("day", "일"), ("month", "월"), ("year", "년"))
@@ -119,7 +119,7 @@ def _chart_html(core, profile, hidden_counts) -> str:
         el = ELEMENT_CLASS[element]
         el_ko = copy.ELEMENT[element]["ko"]
         return (f'<div class="badge-elem-main badge-main-{el}" aria-label="{ko} {el_ko}">'
-                f'<span class="pc-char">{char}</span><i class="pc-dot el-{el}" aria-hidden="true"></i>'
+                f'<span class="pc-char">{char}</span>'
                 f'<span class="pc-read">{ko} · {el_ko}</span></div>')
 
     def hidden_box(branch):
@@ -134,8 +134,7 @@ def _chart_html(core, profile, hidden_counts) -> str:
                 continue
             el = ELEMENT_CLASS[GAN_WUXING[s]]
             main = " is-main" if h["main"] else ""
-            spans.append(f'<span class="badge-jjg elem-{el}{main}">'
-                         f'<i class="pc-dot el-{el}" aria-hidden="true"></i>{s}</span>')
+            spans.append(f'<span class="badge-jjg elem-{el}{main}">{s}</span>')
         return f'<div class="pc-hidden">{"".join(spans)}</div>'
 
     parts = ['<div class="pc-grid lifetime-pc" role="table" aria-label="사주 여덟 글자">'
