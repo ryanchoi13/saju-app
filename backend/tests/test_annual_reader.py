@@ -46,8 +46,7 @@ class AnnualReaderTests(TestCase):
         for token in ('<details', '<summary', 'annual-evidence'):
             self.assertNotIn(token, r['content'])
         self.assertEqual(annual_v2.validate_year(r['reading']), [])
-        self.assertIn('2026-07-01을 대표일로 삼은 연간 해석', r['content'])
-        self.assertIn('대운이 바뀌는 경우 전후 흐름을 각각 계산한 결과는 아닙니다', r['content'])
+        self.assertIn('data-representative-date="2026-07-01"', r['content'])
         self.assertEqual(r['content'].count('data-period-basis="monthly"'), 1)
         # 절기 기간은 실제 달력 라이브러리로 계산한다(2026년 10월 = 한로~입동 전).
         self.assertIn('(한로)부터', r['content'])
@@ -81,7 +80,7 @@ class AnnualReaderTests(TestCase):
             birth_date=date(2026,9,23), time_unknown=True), target_date=date(2026,9,23))
         report = build_annual_overall_report(core, '검증', 2026)
         self.assertEqual(report['content'].count('출생 전 기간'), 8)
-        self.assertIn('2026-09-23을 대표일로 삼은 연간 해석', report['content'])
+        self.assertIn('data-representative-date="2026-09-23"', report['content'])
         self.assertIn('출생한 달의 15일이 출생 전이면 출생일을 사용', report['content'])
         self.assertEqual(report['evidence_summary']['months'][0]['representative_date'], '2026-09-23')
         with self.assertRaises(ValueError): build_annual_overall_report(core, '검증', 2025)

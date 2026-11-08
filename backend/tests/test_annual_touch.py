@@ -87,8 +87,7 @@ class ReportTest(unittest.TestCase):
         self.assertNotIn("annual-touch", c)
         box = c[c.index('class="annual-basis"'):c.index("<h3>12개월 흐름</h3>")]
         self.assertNotIn("<h3", box)                     # 번호 매기는 본문 h3 와 위계가 다르다
-        self.assertIn("계산 기준", box)
-        self.assertIn('data-period-basis="annual"', box)  # 대표일 설명이 상자 안에
+        self.assertNotIn("계산 기준", box)                # 11/8 정오님: 대표일 문장 삭제
         self.assertLess(c.index('data-report-domain="study"'), c.index('class="annual-basis"'))
         self.assertEqual(annual_v2.validate_year(self.report["reading"]), [])
 
