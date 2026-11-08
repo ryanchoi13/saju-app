@@ -18,7 +18,7 @@ from app.engine.services.lifetime_flow import (
     _completes_punish, _completes_triple,
 )
 
-TOUCH_VERSION = "annual-touch-1"
+TOUCH_VERSION = "annual-touch-2"   # 11/8 근거 상자 + 분야 문장
 
 READ = dict(zip("甲乙丙丁戊己庚辛壬癸子丑寅卯辰巳午未申酉戌亥",
                 "갑을병정무기경신임계자축인묘진사오미신유술해"))
@@ -61,7 +61,7 @@ ATTITUDE = {
     "half": dict(
         year="윗사람에게서 받은 것을 내 방식으로 다시 써 보세요.",
         month="일터에서 맡은 일의 방향을 한쪽으로 모아 보세요.",
-        day="생활 가까이에서 시작한 일이 힘을 얻는 해입니다.",
+        day="가까운 사람과 함께하는 시간에서 힘을 얻는 해입니다.",
         hour="멀리 둔 계획 하나를 골라 구체적으로 적어 보세요."),
     "punish": dict(
         year="윗사람과 얽힌 일은 서로의 기준부터 확인하세요.",
@@ -71,7 +71,7 @@ ATTITUDE = {
     "self": dict(
         year="익숙한 방식을 되풀이하며 스스로를 몰아붙이지 마세요.",
         month="같은 일을 되풀이하다 지치지 않게 속도를 조절하세요.",
-        day="같은 기운이 겹치니 쉬는 시간을 일정에 넣어 두세요.",
+        day="가까운 사이에서도 혼자 쉬는 시간을 지켜 두세요.",
         hour="욕심을 겹쳐 세우지 말고 계획을 하나씩 끝내세요."),
 }
 TRIPLE_ATTITUDE = {
@@ -132,26 +132,48 @@ def natal_touch(year_stem: str, year_branch: str, natal: dict[str, str], day_ste
     return found[:2]
 
 
-def touch_sentences(t: dict, year_stem: str, year_branch: str, day_stem: str) -> list[str]:
-    k, pos = t["kind"], t.get("pos")
+POS_PLAIN = {"year": "뿌리 자리(년지)", "month": "사회 자리(월지)", "day": "배우자 자리(일지)", "hour": "계획 자리(시지)"}
+# 자리 관계 중 분야 풀이로 옮겨 쓰는 것: 일지 → 애정, 월지 → 일 (나머지는 근거 상자에만).
+# 그래서 ATTITUDE 의 day 문장은 관계, month 문장은 일터 이야기로 쓴다.
+POS_AREA = {"day": "love", "month": "work"}
+
+
+def _lab(ch: str) -> str:
+    return f"{ch}({READ[ch]})"
+
+
+def touch_fact(t: dict, year_stem: str, year_branch: str, day_stem: str) -> str:
+    """근거 상자용 — 무엇이 닿는지 쉬운 말로(괄호에 용어). 읽는 법을 함께 적는다."""
+    k, Y = t["kind"], _lab(year_branch)
     if k == "stem_clash":
-        return [f"일간 {_j(day_stem, '과와')} 올해 천간 {_j(year_stem, '이가')} 부딪히는 천간충입니다.", STEM_CLASH_ATTITUDE]
+        return f"일간 {_j(_lab(day_stem), '과와')} 올해 천간 {_j(_lab(year_stem), '이가')} 정면으로 부딪힙니다(천간충)."
     if k == "stem_combine":
-        return [f"일간 {_j(day_stem, '과와')} 올해 천간 {_j(year_stem, '이가')} 합으로 묶입니다.", STEM_COMBINE_ATTITUDE]
+        return f"일간 {_j(_lab(day_stem), '과와')} 올해 천간 {_j(_lab(year_stem), '이가')} 서로 끌어당깁니다(천간합)."
     if k == "triple_punish":
-        return [f"올해 {_j(year_branch, '이가')} 들어와 원국에 삼형(三刑)이 완성됩니다.", TRIPLE_PUNISH_ATTITUDE]
+        return f"올해 {_j(Y, '이가')} 원국의 두 글자와 만나 세 글자가 서로 긁습니다(삼형)."
     if k == "triple":
-        el = EL_LABEL[t["element"]]
-        return [f"올해 {_j(year_branch, '이가')} 원국과 삼합을 이뤄 {el} 기운이 모입니다.", TRIPLE_ATTITUDE[t["element"]]]
-    where = f"{POS_NAME[pos]} {_j(t['branch'], '과와')} 올해 {_j(year_branch, '이가')}"
-    first = {
-        "clash": f"{where} 정면으로 부딪히는 충(沖)입니다.",
-        "six": f"{where} 육합(六合)으로 묶입니다.",
-        "half": f"{where} 반합해 {EL_LABEL.get(t.get('element'), '')} 쪽으로 기웁니다.",
-        "punish": f"{where} 형(刑)을 이룹니다.",
-        "self": f"{POS_NAME[pos]} {_j(t['branch'], '과와')} 같은 글자가 겹쳐 자형(自刑)을 이룹니다.",
+        return f"올해 {_j(Y, '이가')} 원국의 두 글자와 모여 {EL_LABEL[t['element']]} 기운이 크게 모입니다(삼합)."
+    where = f"{POS_PLAIN[t['pos']]}의 {_j(_lab(t['branch']), '과와')}"
+    return {
+        "clash": f"{where} 올해 {_j(Y, '이가')} 정면으로 부딪힙니다(충).",
+        "six": f"{where} 올해 {_j(Y, '이가')} 서로 끌어당겨 묶입니다(육합).",
+        "half": f"{where} 올해 {_j(Y, '이가')} 반쯤 합쳐져 {EL_LABEL.get(t.get('element'), '')} 기운이 커집니다(반합).",
+        "punish": f"{where} 올해 {_j(Y, '이가')} 서로 긁는 관계입니다(형).",
+        "self": f"{where} 올해의 같은 글자가 겹쳐 스스로를 조입니다(자형).",
     }[k]
-    return [first, ATTITUDE[k][pos]]
+
+
+def touch_attitude(t: dict) -> str:
+    k = t["kind"]
+    if k == "stem_clash":
+        return STEM_CLASH_ATTITUDE
+    if k == "stem_combine":
+        return STEM_COMBINE_ATTITUDE
+    if k == "triple_punish":
+        return TRIPLE_PUNISH_ATTITUDE
+    if k == "triple":
+        return TRIPLE_ATTITUDE[t["element"]]
+    return ATTITUDE[k][t["pos"]]
 
 
 # ---------------------------------------------------------------------------
@@ -271,25 +293,134 @@ def _jp(word: str, pair: str) -> str:
 
 
 # ---------------------------------------------------------------------------
-# 조립
+# 분야별로 더하는 원국 근거 (11/8 정오님: 분야마다 3~5문장)
 # ---------------------------------------------------------------------------
-def compose_touch(*, year: int, year_stem: str, year_branch: str, natal: dict[str, str], day_stem: str,
+from app.engine.services.element_balance import CONTROLLED_BY, CONTROLS, GENERATED_BY, GENERATES  # noqa: E402
+
+AREA_STAR = {"wealth": "재성", "work": "관성", "study": "인성"}
+STAR_STATE = {
+    "재성": dict(
+        none="원국에 재성이 드러나지 않아 돈은 규칙으로 관리할수록 남습니다.",
+        few="원국의 재성이 가벼워 큰돈보다 꾸준히 쌓는 방식이 맞습니다.",
+        normal="원국에 재성이 고르게 있어 벌고 쓰는 균형을 잡기 좋습니다.",
+        many="원국에 재성이 많아 기회가 많은 만큼 고르는 기준이 중요합니다."),
+    "관성": dict(
+        none="원국에 관성이 드러나지 않아 스스로 정한 규칙이 일의 틀이 됩니다.",
+        few="원국의 관성이 가벼워 맡는 책임을 하나씩 늘려 가는 편이 맞습니다.",
+        normal="원국에 관성이 고르게 있어 조직의 틀 안에서 힘을 잘 냅니다.",
+        many="원국에 관성이 많아 책임을 다 끌어안지 말고 덜어내야 합니다."),
+    "인성": dict(
+        none="원국에 인성이 드러나지 않아 직접 해 보며 익히는 배움이 맞습니다.",
+        few="원국의 인성이 가벼워 짧게 자주 배우는 방식이 오래갑니다.",
+        normal="원국에 인성이 고르게 있어 배운 것을 내 것으로 소화하기 좋습니다.",
+        many="원국에 인성이 많아 배우기만 하지 말고 꺼내 쓰는 연습이 필요합니다."),
+}
+LOVE_SEAT = {
+    "비겁": "배우자 자리(일지)에 비겁이 있어 대등하게 마주 서는 관계가 편합니다.",
+    "식상": "배우자 자리(일지)에 식상이 있어 표현하고 챙기는 방식으로 마음을 전합니다.",
+    "재성": "배우자 자리(일지)에 재성이 있어 생활을 함께 꾸리는 관계에서 안정됩니다.",
+    "관성": "배우자 자리(일지)에 관성이 있어 약속과 책임을 지키는 관계를 중히 여깁니다.",
+    "인성": "배우자 자리(일지)에 인성이 있어 서로 기대고 돌보는 관계에서 편안해집니다.",
+}
+HEALTH_STRENGTH = {
+    "strong": "일간의 힘이 강해 몸을 움직여 기운을 풀어야 가벼워집니다.",
+    "weak": "일간의 힘이 약한 편이라 쉬는 시간을 먼저 확보해야 오래갑니다.",
+    "even": "기운이 한쪽으로 쏠리지 않아 생활 리듬을 지키는 것이 먼저입니다.",
+}
+YEAR_STAR = {
+    "wealth": ("재성", "올해 들어오는 재성이 돈의 흐름을 직접 움직입니다."),
+    "work": ("관성", "올해 들어오는 관성이 맡은 일의 무게를 키웁니다."),
+    "study": ("인성", "올해 들어오는 인성이 배우고 싶은 마음을 키웁니다."),
+}
+CYCLE_AREA = {"비겁": "wealth", "식상": "health", "재성": "wealth", "관성": "work", "인성": "study"}
+AREA_KO = {"wealth": "재물", "love": "애정", "work": "일", "health": "건강", "study": "학업"}
+
+
+def element_group(element: str, day_element: str) -> str:
+    if element == day_element:
+        return "비겁"
+    if GENERATES[day_element] == element:
+        return "식상"
+    if CONTROLS[day_element] == element:
+        return "재성"
+    if CONTROLLED_BY[day_element] == element:
+        return "관성"
+    return "인성"
+
+
+def _star_state(share: float) -> str:
+    if share <= 0:
+        return "none"
+    if share < 12:
+        return "few"
+    if share >= 30:
+        return "many"
+    return "normal"
+
+
+def natal_area_sentences(composition: dict, day_element: str, day_branch: str | None, strength: str) -> dict:
+    """분야마다 원국 근거 한 문장. composition = 오행별 비율(%)."""
+    shares = {g: 0.0 for g in GROUP_ORDER}
+    for el, v in composition.items():
+        shares[element_group(el, day_element)] += v or 0
+    out = {area: STAR_STATE[star][_star_state(shares[star])] for area, star in AREA_STAR.items()}
+    if day_branch:
+        out["love"] = LOVE_SEAT[element_group(ZHI_WUXING[day_branch], day_element)]
+    side = "strong" if strength in {"strong", "extremely_strong"} else "weak" if strength in {"weak", "extremely_weak"} else "even"
+    out["health"] = HEALTH_STRENGTH[side]
+    return out
+
+
+def cycle_area_sentence(cycle: dict | None) -> tuple[str | None, str | None]:
+    if not cycle or not (cycle.get("pillar") or {}).get("ganji"):
+        return None, None
+    group = GOD_GROUP.get(cycle.get("ten_god") or "")
+    if not group:
+        return None, None
+    ganji = cycle["pillar"]["ganji"]
+    return CYCLE_AREA[group], f"대운 {ganji}의 {group} 기운이 이 분야에 10년의 무게를 싣습니다."
+
+
+# ---------------------------------------------------------------------------
+# 조립: 분야에 더할 문장 + 맨 아래 '이 풀이의 근거' 상자
+# ---------------------------------------------------------------------------
+def compose_basis(*, year: int, year_stem: str, year_branch: str, natal: dict[str, str], day_stem: str,
                   balance: dict, strength: str, cycle: dict | None, year_god: str | None) -> dict:
     touches = natal_touch(year_stem, year_branch, natal, day_stem)
-    natal_paras = [touch_sentences(t, year_stem, year_branch, day_stem) for t in touches] or [list(NO_TOUCH)]
+    day_el = GAN_WUXING[day_stem]
+    area_extra = {k: [v] for k, v in natal_area_sentences(balance.get("composition") or {}, day_el,
+                                                          natal.get("day"), strength).items()}
+    year_groups = {element_group(GAN_WUXING[year_stem], day_el), element_group(ZHI_WUXING[year_branch], day_el)}
+    for area, (star, line) in YEAR_STAR.items():
+        if star in year_groups:
+            area_extra[area].append(line)
+    natal_lines = []
+    for t in touches:
+        fact = touch_fact(t, year_stem, year_branch, day_stem)
+        area = POS_AREA.get(t.get("pos"))
+        if area:
+            area_extra[area].append(touch_attitude(t))
+            natal_lines += [fact, f"이 관계는 {AREA_KO[area]} 풀이에 반영했습니다."]
+        else:
+            natal_lines += [fact, touch_attitude(t)]
+    if not touches:
+        natal_lines = list(NO_TOUCH)
+    c_area, c_line = cycle_area_sentence(cycle)
+    if c_area:
+        area_extra[c_area].append(c_line)
     b_kind, b_sent = balance_sentences(year_stem, year_branch, balance, strength)
     c_kind, c_sent = cycle_sentences(cycle, year, year_god, year_stem, year_branch)
-    sections = [
-        dict(key="natal", title="올해가 내 사주에 닿는 자리", paragraphs=natal_paras,
-             kinds=[t["kind"] + (":" + t["pos"] if t.get("pos") else "") for t in touches]),
-        dict(key="balance", title="올해와 보완 기운", paragraphs=[b_sent], kinds=[b_kind]),
-    ]
+    if c_area and c_sent:
+        c_sent = c_sent + [f"대운의 흐름은 {AREA_KO[c_area]} 풀이에 더했습니다."]
+    items = [dict(key="natal", label=f"올해 {year_stem}{year_branch}{_jp(year_branch, '과와')} 내 사주", sentences=natal_lines,
+                  kinds=[t["kind"] + (":" + t["pos"] if t.get("pos") else "") for t in touches]),
+             dict(key="balance", label="보완 기운", sentences=b_sent, kinds=[b_kind])]
     if c_sent:
-        sections.append(dict(key="cycle", title="대운 속의 올해", paragraphs=[c_sent], kinds=[c_kind or "none"]))
-    return dict(version=TOUCH_VERSION, ganji=year_stem + year_branch, sections=sections)
+        items.append(dict(key="cycle", label="대운", sentences=c_sent, kinds=[c_kind or "none"]))
+    return dict(version=TOUCH_VERSION, ganji=year_stem + year_branch, items=items, area_extra=area_extra)
 
 
-def touch_sentence_list(touch: dict | None) -> list[str]:
-    if not touch:
+def basis_sentence_list(basis: dict | None) -> list[str]:
+    if not basis:
         return []
-    return [s for sec in touch["sections"] for para in sec["paragraphs"] for s in para]
+    return [s for it in basis["items"] for s in it["sentences"]]

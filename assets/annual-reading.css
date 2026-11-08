@@ -95,3 +95,10 @@
 #archiveModalBody .annual-month[data-grade] h4 > .annual-month-message { display:inline-block; color:var(--grade)!important; background:var(--grade-bg); border-radius:999px; padding:2px 14px; font-size:16px!important; }
 :is(#archiveModalBody,.period-reading) .annual-month > p.annual-month-grade { background:var(--grade-bg,#F3F0E8); border-radius:10px; padding:10px 12px; font-size:.95rem!important; font-weight:400!important; line-height:1.8!important; color:var(--ui-ink,#25364A); }
 :is(#archiveModalBody,.period-reading) .annual-month > p.annual-month-grade strong { color:var(--grade,#25364A); margin-right:6px; }
+
+/* 2026-11-08 맨 아래 '이 풀이의 근거' 상자: 본문(번호 매긴 h3)과 위계를 나눈다 */
+:is(#archiveModalBody,.period-reading) .annual-basis { margin:28px 0 8px; padding:16px 18px; border-radius:14px; background:var(--ui-tint,#F3F0E8); border:1px solid var(--ui-line,#DEDCD4); }
+:is(#archiveModalBody,.period-reading) .annual-basis-title { margin:0 0 10px; font-size:15px!important; font-weight:800; color:var(--ui-ink,#25364A)!important; }
+:is(#archiveModalBody,.period-reading) .annual-basis p { margin:0 0 12px!important; font-size:.875rem!important; line-height:1.75!important; color:var(--ui-muted,#59636D)!important; }
+:is(#archiveModalBody,.period-reading) .annual-basis p:last-child { margin-bottom:0!important; }
+:is(#archiveModalBody,.period-reading) .annual-basis strong { color:var(--ui-ink,#25364A)!important; font-weight:700; }
