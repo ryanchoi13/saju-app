@@ -1,14 +1,14 @@
 /* Readable hierarchy for both saved reports and newly generated readings. */
-#mealDailyCard #menuStatus { color:#25364A!important; font-size:15px!important; font-weight:700!important; background:transparent; border:0; padding:0; line-height:1.6; }
+#mealDailyCard #menuStatus { color:var(--c-ink,#1D2129)!important; font-size:15px!important; font-weight:700!important; background:transparent; border:0; padding:0; line-height:1.6; }
 @media(max-width:540px) { #mealDailyCard #menuStatus { font-size:13px!important; font-weight:600!important; } }
 @media(max-width:350px) { #mealDailyCard #menuStatus { font-size:12px!important; } }
 .meal-info-note p { margin:10px 0; line-height:1.8; }
 #mealDailyCard { scroll-margin-top:100px; }
 .lucky-item-art { width:55px; height:49px; display:block; margin:6px auto; }
 #archiveModalBody .reading-section-heading { border-top:1px solid #DEDCD4; padding-top:24px; margin:28px 0 16px!important; display:flex; gap:12px; align-items:flex-start; }
-#archiveModalBody .reading-section-number { color:#25364A!important; background:#F3F0E8; border-radius:9px; padding:5px 8px; font-size:13px!important; font-weight:800; flex-shrink:0; }
+#archiveModalBody .reading-section-number { color:var(--c-ink,#1D2129)!important; background:#F3F0E8; border-radius:9px; padding:5px 8px; font-size:13px!important; font-weight:800; flex-shrink:0; }
 #archiveModalBody .reading-heading-copy { display:block; font-size:19px!important; font-weight:800; line-height:1.65!important; }
-#archiveModalBody .reading-heading-topic { display:block; color:#25364A!important; font-size:13px!important; margin-bottom:7px; }
+#archiveModalBody .reading-heading-topic { display:block; color:var(--c-ink,#1D2129)!important; font-size:13px!important; margin-bottom:7px; }
 #archiveModalBody p { margin-bottom:18px!important; }
 #archiveModalBody details { padding:12px 14px!important; margin:16px 0!important; border:1px solid #DEDCD4; border-radius:12px; }
 #archiveModalBody details summary { padding:0!important; min-height:44px; }
@@ -19,7 +19,7 @@
 #unlockedArchiveList .archive-reopen { font-size:12px!important; font-weight:600!important; min-width:76px; }
 #unlockedArchiveList .archive-row { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:14px 0; background:transparent; border:0; border-radius:0; }
 #unlockedArchiveList .archive-row + .archive-row { border-top:1px solid #F3F0E8; }
-#unlockedArchiveList .archive-title { flex:1; min-width:0; margin:0; font:400 14px/1.7 'Pretendard',sans-serif!important; color:#25364A; overflow-wrap:anywhere; }
+#unlockedArchiveList .archive-title { flex:1; min-width:0; margin:0; font:400 14px/1.7 'Pretendard',sans-serif!important; color:var(--c-ink,#1D2129); overflow-wrap:anywhere; }
 #unlockedArchiveList .archive-row { flex-wrap:nowrap; }
 #archiveModalBody .reading-plain-contents { padding:4px 0 18px; }
 #archiveModalBody .reading-plain-contents h3 { font-size:15px!important; font-weight:600; margin:0 0 10px; }
@@ -35,23 +35,23 @@
    brand-ui.js 가 brand.css 를 <head> 맨 끝으로 다시 옮기므로, 로드 순서에 기대지 않도록 .card 를 붙여 우선순위를 높였다.
    랜딩 화면은 moon-landscape.webp 를 그대로 쓰므로 그 파일은 바꾸지 않는다. 그림 교체는 reading-lead-moon.svg 파일만 바꾸면 된다. */
 html[data-brand] .reading-view .card.reading-lead { background-image:url('/assets/brand-2026/reading-lead-moon.svg'); background-repeat:no-repeat; background-size:100% 140px; background-position:top right; }
-#unlockedArchiveList .archive-reopen { border:1px solid #DEDCD4; background:#fff; color:#25364A; padding:8px 12px; cursor:pointer; }
-/* '지금의 나' v4 (now_me.py): 머리말·문단 라벨·근거 태그·한 줄 링크. 브랜드 색(남색 #25364A, 구리 #995737, 보조 #59636D)만 쓴다. */
-.now-me-lead { font-size:17px; line-height:1.8; margin:0 0 6px!important; color:#25364A; }
-.now-me-lead strong { color:#995737; font-weight:800; }
+#unlockedArchiveList .archive-reopen { border:1px solid #DEDCD4; background:#fff; color:var(--c-ink,#1D2129); padding:8px 12px; cursor:pointer; }
+/* '지금의 나' v4 (now_me.py): 머리말·문단 라벨·근거 태그·한 줄 링크. 브랜드 색(남색 var(--c-ink,#1D2129), 구리 var(--c-point,#B5341F), 보조 #59636D)만 쓴다. */
+.now-me-lead { font-size:17px; line-height:1.8; margin:0 0 6px!important; color:var(--c-ink,#1D2129); }
+.now-me-lead strong { color:var(--c-ink,#1D2129); font-weight:800; }
 .now-me-pillars { display:inline-block; margin-left:8px; font-size:13px; letter-spacing:.12em; color:#59636D; }
 .now-me-section { margin:0; }
 .now-me-chapter { margin:0 0 22px!important; }
 .now-me-chapter p { margin:0 0 8px!important; line-height:1.85; }
-.now-me-label { display:block; margin-bottom:4px; color:#25364A; font-weight:800; }
+.now-me-label { display:block; margin-bottom:4px; color:var(--c-ink,#1D2129); font-weight:800; }
 .now-me-evidence { display:inline-block; font-size:12px; line-height:1.6; color:#59636D; background:#F3F0E8; border-radius:8px; padding:3px 9px; }
 .now-me-line { margin:0 0 8px!important; line-height:1.85; }
-.now-me-link { margin-left:6px; color:#995737; font-weight:700; text-decoration:none; border-bottom:1px solid #E4B28F; white-space:nowrap; }
-.now-me-link:hover { border-bottom-color:#995737; }
-.daewoon-free .now-me-section h3 { font-size:16px; font-weight:800; margin:18px 0 10px; color:#25364A; }
+.now-me-link { margin-left:6px; color:var(--c-ink,#1D2129); font-weight:700; text-decoration:none; border-bottom:1px solid var(--c-point,#B5341F); white-space:nowrap; }
+.now-me-link:hover { border-bottom-color:var(--c-point,#B5341F); }
+.daewoon-free .now-me-section h3 { font-size:16px; font-weight:800; margin:18px 0 10px; color:var(--c-ink,#1D2129); }
 /* 평생운세 v3 (B안) */
-.lifetime-v3 h3 { margin:30px 0 12px; font-size:18px; color:#25364A; }
-.lifetime-v3 h4 { margin:20px 0 8px; font-size:15.5px; color:#25364A; font-weight:800; }
+.lifetime-v3 h3 { margin:30px 0 12px; font-size:18px; color:var(--c-ink,#1D2129); }
+.lifetime-v3 h4 { margin:20px 0 8px; font-size:15.5px; color:var(--c-ink,#1D2129); font-weight:800; }
 .lifetime-v3 p { line-height:1.85; margin:0 0 10px; word-break:keep-all; }
 .lifetime-v3-section + .lifetime-v3-section { border-top:1px solid #E8E2D8; }
 .lifetime-sub { margin:0 0 18px; }
@@ -60,17 +60,17 @@ html[data-brand] .reading-view .card.reading-lead { background-image:url('/asset
 .lifetime-chart thead th, .lifetime-cycles thead th { background:#F6F1E8; color:#59636D; font-weight:700; }
 .lifetime-chart tbody th { background:#FBF8F3; color:#59636D; font-weight:700; font-size:12.5px; }
 .lifetime-chart-count { font-size:13px; color:#59636D; margin:0 0 4px!important; }
-.lifetime-cycles tr.is-now td { background:#25364A; font-weight:700; color:#FFFDF6; border-color:#25364A; }
-.lifetime-now-mark { display:inline-block; margin-left:4px; padding:1px 7px; border-radius:999px; background:#25364A; color:#fff; font-size:11px; }
-.lifetime-v3 h5 { margin:16px 0 6px; font-size:14.5px; color:#25364A; font-weight:800; }
+.lifetime-cycles tr.is-now td { background:var(--c-ink,#1D2129); font-weight:700; color:#FFFDF6; border-color:var(--c-ink,#1D2129); }
+.lifetime-now-mark { display:inline-block; margin-left:4px; padding:1px 7px; border-radius:999px; background:var(--c-ink,#1D2129); color:#fff; font-size:11px; }
+.lifetime-v3 h5 { margin:16px 0 6px; font-size:14.5px; color:var(--c-ink,#1D2129); font-weight:800; }
 .lifetime-past { padding-left:12px; border-left:2px solid #E8E2D8; }
 .lifetime-now-lead { font-size:13px; color:#59636D; margin:0 0 6px!important; }
 .lifetime-v3 [data-current-cycle="true"] { background:#F3F0E8; border-radius:12px; padding:2px 14px 8px; }
 /* 풀이 근거: 접지 않고 본문 아래 작은 글씨로(11/02). 보관함의 긴 글 문단 규칙(#archiveModalBody p)보다 우선 */
 .lifetime-why { margin:2px 0 14px; font-size:12px; line-height:1.5; color:#7A828A; }
 .lifetime-why p, #archiveModalBody .long-reading .lifetime-why p { font-size:12px!important; line-height:1.5!important; margin:0!important; color:#7A828A; }
-.lifetime-why-label { font-weight:700; color:#995737; margin-right:2px; }
-.lifetime-closing { font-size:16px; color:#25364A; }
+.lifetime-why-label { font-weight:700; color:var(--c-ink,#1D2129); margin-right:2px; }
+.lifetime-closing { font-size:16px; color:var(--c-ink,#1D2129); }
 /* 평생운세 제목 위계 (11/02): 브랜드 규칙(#archiveModalBody :is(h3,h4) 명조 21px)이 소제목 h4 를 큰 제목보다 크게 만들던 것.
    큰 제목(번호 붙은 h3) 명조 22 > 소제목 h4 고딕 18 > 구간 h5 고딕 16 > 본문 16. */
 html[data-brand] #archiveModalBody .lifetime-v3 .reading-heading-copy { font-family:var(--brand-serif,'Noto Serif KR',serif)!important; font-size:22px!important; font-weight:600!important; line-height:1.5!important; }
@@ -87,34 +87,34 @@ html[data-brand] #archiveModalBody .theme-reading h5 { font-family:'Pretendard',
    크기: 큰 주제 명조 26 > 소제목 고딕 17 > 본문 16. */
 html[data-brand] #archiveModalBody .theme-reading[data-theme] > section + section { border-top:0; position:relative; margin-top:44px; padding-top:44px; }
 html[data-brand] #archiveModalBody .theme-reading[data-theme] > section + section::before { content:''; position:absolute; top:0; left:0; right:0; height:1px; background:linear-gradient(to right,#C9C3B8 0,#C9C3B8 calc(50% - 20px),transparent calc(50% - 20px),transparent calc(50% + 20px),#C9C3B8 calc(50% + 20px)); }
-html[data-brand] #archiveModalBody .theme-reading[data-theme] > section + section::after { content:''; position:absolute; top:-7px; left:calc(50% - 7px); width:14px; height:14px; background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M10.5 2.2A6 6 0 1 0 13.8 11 4.8 4.8 0 0 1 10.5 2.2z' fill='%2325364A'/%3E%3C/svg%3E") center/contain no-repeat; }
-html[data-brand] #archiveModalBody .theme-reading [data-theme-section] > h2 { font-family:var(--brand-serif,'Noto Serif KR',serif); font-size:26px; font-weight:700; line-height:1.45; letter-spacing:-.02em; color:#25364A; margin:0 0 6px; }
+html[data-brand] #archiveModalBody .theme-reading[data-theme] > section + section::after { content:''; position:absolute; top:-7px; left:calc(50% - 7px); width:14px; height:14px; background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M10.5 2.2A6 6 0 1 0 13.8 11 4.8 4.8 0 0 1 10.5 2.2z' fill='%231D2129'/%3E%3C/svg%3E") center/contain no-repeat; }
+html[data-brand] #archiveModalBody .theme-reading [data-theme-section] > h2 { font-family:var(--brand-serif,'Noto Serif KR',serif); font-size:26px; font-weight:700; line-height:1.45; letter-spacing:-.02em; color:var(--c-ink,#1D2129); margin:0 0 6px; }
 html[data-brand] #archiveModalBody .theme-reading .reading-chapter { margin:0 0 36px; }
 html[data-brand] #archiveModalBody .theme-reading .reading-chapter:last-child { margin-bottom:0; }
 html[data-brand] #archiveModalBody .theme-reading .reading-section-heading { border-top:0; padding-top:0; margin:26px 0 12px!important; gap:10px; align-items:center; }
 html[data-brand] #archiveModalBody .theme-reading .reading-section-number { font-size:12px!important; padding:3px 7px; border-radius:7px; margin-top:0; }
-html[data-brand] #archiveModalBody .theme-reading .reading-heading-copy { font-family:'Pretendard',sans-serif!important; font-size:17px!important; font-weight:700!important; line-height:1.5!important; color:#25364A; }
+html[data-brand] #archiveModalBody .theme-reading .reading-heading-copy { font-family:'Pretendard',sans-serif!important; font-size:17px!important; font-weight:700!important; line-height:1.5!important; color:var(--c-ink,#1D2129); }
 html[data-brand] #archiveModalBody .theme-reading .reading-chapter p { font-size:16px!important; line-height:1.85!important; margin:0 0 12px!important; color:#2F3A45; }
 html[data-brand] #archiveModalBody .theme-reading .reading-chapter p:last-child { margin-bottom:0!important; }
 /* 테마 풀이 함정 칸 (11/06 정오님 선택 4번): 베이지 상자(원래 흰 카드가 브랜드의 [style*=background] 규칙에 칠해진 것) 대신
    구리색 마름모 + 구리색 제목으로 강조. 무료/유료 경계 점선은 산 풀이에선 숨기고 그 자리도 초승달 구분선. 실천 원칙 번호 복원. */
 html[data-brand] #archiveModalBody .theme-reading :is([data-career-trap],[data-love-trap],[data-health-trap]) { border:0!important; border-radius:0!important; background:transparent!important; padding:0!important; }
 html[data-brand] #archiveModalBody .theme-reading :is([data-career-tier="2"],[data-love-tier="2"],[data-health-tier="2"]) > div { gap:22px!important; }
-html[data-brand] #archiveModalBody .theme-reading :is([data-career-trap],[data-love-trap],[data-health-trap]) strong { display:block; font-size:17px; font-weight:700; color:#25364A; line-height:1.5; }
+html[data-brand] #archiveModalBody .theme-reading :is([data-career-trap],[data-love-trap],[data-health-trap]) strong { display:block; font-size:17px; font-weight:700; color:var(--c-ink,#1D2129); line-height:1.5; }
 html[data-brand] #archiveModalBody .theme-reading :is([data-career-trap],[data-love-trap],[data-health-trap]) p { margin:4px 0 0!important; }
 html[data-brand] #archiveModalBody .theme-reading :is([data-career-trap],[data-love-trap],[data-health-trap]) { position:relative; padding-left:20px!important; }
-html[data-brand] #archiveModalBody .theme-reading :is([data-career-trap],[data-love-trap],[data-health-trap])::before { content:''; position:absolute; left:2px; top:10px; width:7px; height:7px; background:#995737; transform:rotate(45deg); }
+html[data-brand] #archiveModalBody .theme-reading :is([data-career-trap],[data-love-trap],[data-health-trap])::before { content:''; position:absolute; left:2px; top:10px; width:7px; height:7px; background:var(--c-point,#B5341F); transform:rotate(45deg); }
 html[data-brand] #archiveModalBody .theme-reading[data-theme] > hr[data-paywall-boundary] { display:none; }
 html[data-brand] #archiveModalBody .theme-reading[data-theme] > hr[data-paywall-boundary] + section { border-top:0; position:relative; margin-top:44px; padding-top:44px; }
 html[data-brand] #archiveModalBody .theme-reading[data-theme] > hr[data-paywall-boundary] + section::before { content:''; position:absolute; top:0; left:0; right:0; height:1px; background:linear-gradient(to right,#C9C3B8 0,#C9C3B8 calc(50% - 20px),transparent calc(50% - 20px),transparent calc(50% + 20px),#C9C3B8 calc(50% + 20px)); }
-html[data-brand] #archiveModalBody .theme-reading[data-theme] > hr[data-paywall-boundary] + section::after { content:''; position:absolute; top:-7px; left:calc(50% - 7px); width:14px; height:14px; background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M10.5 2.2A6 6 0 1 0 13.8 11 4.8 4.8 0 0 1 10.5 2.2z' fill='%2325364A'/%3E%3C/svg%3E") center/contain no-repeat; }
+html[data-brand] #archiveModalBody .theme-reading[data-theme] > hr[data-paywall-boundary] + section::after { content:''; position:absolute; top:-7px; left:calc(50% - 7px); width:14px; height:14px; background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M10.5 2.2A6 6 0 1 0 13.8 11 4.8 4.8 0 0 1 10.5 2.2z' fill='%231D2129'/%3E%3C/svg%3E") center/contain no-repeat; }
 html[data-brand] #archiveModalBody .theme-reading[data-theme] section > ol { padding-left:22px!important; margin:6px 0 0!important; list-style:decimal; }
 html[data-brand] #archiveModalBody .theme-reading[data-theme] section > ol > li { padding-left:4px; margin:0 0 10px!important; line-height:1.85!important; }
-html[data-brand] #archiveModalBody .theme-reading[data-theme] section > ol > li::marker { color:#995737; font-weight:700; }
-html[data-brand] #archiveModalBody .theme-reading :is([data-career-trap],[data-love-trap],[data-health-trap]) strong { color:#995737!important; }
+html[data-brand] #archiveModalBody .theme-reading[data-theme] section > ol > li::marker { color:var(--c-ink,#1D2129); font-weight:700; }
+html[data-brand] #archiveModalBody .theme-reading :is([data-career-trap],[data-love-trap],[data-health-trap]) strong { color:var(--c-ink,#1D2129)!important; }
 /* 애정운 v3 (11/06): '잘 맞는 사람·부딪히기 쉬운 사람'과 '지금의 사랑' 두 칸도 함정 칸과 같은 방식(구리색 마름모·제목). */
 html[data-brand] #archiveModalBody .theme-reading .love-pair { display:grid; gap:22px; }
 html[data-brand] #archiveModalBody .theme-reading :is([data-love-match],[data-love-now]) { position:relative; padding-left:20px; }
-html[data-brand] #archiveModalBody .theme-reading :is([data-love-match],[data-love-now])::before { content:''; position:absolute; left:2px; top:10px; width:7px; height:7px; background:#995737; transform:rotate(45deg); }
-html[data-brand] #archiveModalBody .theme-reading :is([data-love-match],[data-love-now]) strong { display:block; font-size:17px; font-weight:700; color:#995737; line-height:1.5; }
+html[data-brand] #archiveModalBody .theme-reading :is([data-love-match],[data-love-now])::before { content:''; position:absolute; left:2px; top:10px; width:7px; height:7px; background:var(--c-point,#B5341F); transform:rotate(45deg); }
+html[data-brand] #archiveModalBody .theme-reading :is([data-love-match],[data-love-now]) strong { display:block; font-size:17px; font-weight:700; color:var(--c-ink,#1D2129); line-height:1.5; }
 html[data-brand] #archiveModalBody .theme-reading :is([data-love-match],[data-love-now]) p { margin:4px 0 0!important; }

@@ -25,8 +25,8 @@
     <meta name="theme-color" content="#F8F6F1">
     <script src="/assets/design-init.js?v=20261001-4"></script>
     <script src="/assets/session-client.js?v=1"></script>
-    <link rel="stylesheet" href="/assets/annual-reading.css?v=20261108-1">
-    <script src="/assets/annual-reader.js?v=20261102-1" defer></script>
+    <link rel="stylesheet" href="/assets/annual-reading.css?v=20261108-p2">
+    <script src="/assets/annual-reader.js?v=20261108-p1" defer></script>
     <script src="https://developers.kakao.com/sdk/js/kakao.min.js"></script>
     <script src="/assets/food-thumbnails-v1/catalog.js?v=3" defer></script>
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
@@ -40,7 +40,7 @@
         header { background: #0D1527; border-bottom: 1px solid rgba(226,192,104,0.3); padding: 14px 18px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 30; }
         .logo-box { display: flex; align-items: center; gap: 10px; cursor: pointer; user-select: none; }
         .coin-btn { display: flex; align-items: center; gap: 6px; background: rgba(254,243,199,0.1); border: 1px solid rgba(252,211,77,0.4); padding: 5px 12px; border-radius: 9999px; font-size: 13px; font-weight: 700; color: #FDE68A; cursor: pointer; }
-        .charge-tag { font-size: 11px; background: #2D6A4F; color: white; padding: 2px 7px; border-radius: 9999px; margin-left: 2px; }
+        .charge-tag { font-size: 11px; background: var(--c-ink,#1D2129); color: white; padding: 2px 7px; border-radius: 9999px; margin-left: 2px; }
 
         main { flex: 1; padding: 16px; display: flex; flex-direction: column; gap: 16px; }
         .tab-view { display: flex; flex-direction: column; gap: 16px; width: 100%; }
@@ -51,15 +51,15 @@
         .gift-badge { background: #FEF3C7; color: #78350F; font-size: 12px; font-weight: 800; padding: 4px 12px; border-radius: 9999px; display: inline-block; }
 
         .user-profile-bar { background: #FFFFFF; border-radius: 16px; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; border: 1.5px solid #E2E8F0; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
-        .user-profile-name { font-size: 15.5px; font-weight: 800; color: #0F172A; font-family: 'Noto Serif KR', serif; }
-        .user-profile-birth { font-size: 12.5px; color: #64748B; font-weight: 500; }
+        .user-profile-name { font-size: 15.5px; font-weight: 800; color: var(--c-ink,#1D2129); font-family: 'Noto Serif KR', serif; }
+        .user-profile-birth { font-size: 12.5px; color: var(--c-ink-60,#575B62); font-weight: 500; }
 
         .form-group { background: #F8FAFC; border-radius: 14px; border: 1px solid #E2E8F0; padding: 12px; margin-bottom: 10px; text-align: left; }
-        .form-label { font-size: 12px; color: #64748B; font-weight: 600; display: block; margin-bottom: 4px; }
+        .form-label { font-size: 12px; color: var(--c-ink-60,#575B62); font-weight: 600; display: block; margin-bottom: 4px; }
         .form-input { width: 100%; background: transparent; border: none; font-size: 15px; font-weight: 700; color: #1E293B; outline: none; }
         .form-select-box { width: 100%; background: #FFFFFF; border: 1px solid #CBD5E1; border-radius: 8px; padding: 10px 8px; font-size: 14px; font-weight: 700; color: #1E293B; outline: none; cursor: pointer; }
         .cal-toggle { display: flex; background: #E2E8F0; padding: 2px; border-radius: 8px; font-size: 12px; font-weight: 700; gap: 2px; }
-        .cal-btn { padding: 6px 12px; border-radius: 6px; border: none; background: transparent; color: #64748B; cursor: pointer; transition: all 0.2s; }
+        .cal-btn { padding: 6px 12px; border-radius: 6px; border: none; background: transparent; color: var(--c-ink-60,#575B62); cursor: pointer; transition: all 0.2s; }
         .cal-btn.active { background: #FFFFFF; color: #111D1E; box-shadow: 0 1px 2px rgba(0,0,0,0.05); font-weight: 800; }
         .btn-primary { width: 100%; background: linear-gradient(135deg, #1B4D3E 0%, #111D1E 100%); color: #FDE68A; border: 1px solid #D4AF37; font-size: 15px; font-weight: 800; padding: 15px; border-radius: 16px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.2); margin-top: 8px; }
 
@@ -97,25 +97,25 @@
         .drawer-header:hover { background: #F8FAFC; }
         .drawer-title-box { display: flex; align-items: center; gap: 10px; }
         .drawer-icon-circle { width: 36px; height: 36px; border-radius: 10px; background: #F1F5F9; display: flex; align-items: center; justify-content: center; font-size: 18px; }
-        .drawer-title { font-size: 15px; font-weight: 800; color: #0F172A; }
-        .drawer-sub { font-size: 12px; color: #64748B; margin-top: 2px; }
+        .drawer-title { font-size: 15px; font-weight: 800; color: var(--c-ink,#1D2129); }
+        .drawer-sub { font-size: 12px; color: var(--c-ink-60,#575B62); margin-top: 2px; }
         .drawer-arrow { font-size: 13px; color: #94A3B8; font-weight: 800; transition: transform 0.3s ease; }
-        .drawer-card.open .drawer-arrow { transform: rotate(180deg); color: #2D6A4F; }
+        .drawer-card.open .drawer-arrow { transform: rotate(180deg); color: var(--c-ink,#1D2129); }
         .drawer-body { padding: 0 16px 16px 16px; border-top: 1px solid #F1F5F9; }
 
         .tile-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 6px; }
-        .tile-btn { background: #F8FAFC; border: 1.5px solid #E2E8F0; border-radius: 12px; padding: 12px 6px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; cursor: pointer; transition: all 0.2s; font-size: 12px; font-weight: 700; color: #334155; }
+        .tile-btn { background: #F8FAFC; border: 1.5px solid #E2E8F0; border-radius: 12px; padding: 12px 6px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; cursor: pointer; transition: all 0.2s; font-size: 12px; font-weight: 700; color: var(--c-ink-80,#3A3E45); }
         .tile-btn .t-icon { font-size: 22px; }
         .tile-btn.selected { background: #FEF3C7; border-color: #D97706; color: #78350F; font-weight: 800; transform: scale(1.02); }
 
         .color-chip-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 6px; max-height: 240px; overflow-y: auto; padding-right: 2px; }
         .color-chip { border: 1.5px solid #CBD5E1; border-radius: 10px; padding: 8px 4px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; cursor: pointer; font-size: 10.5px; font-weight: 600; color: #475569; background: #FFFFFF; transition: all 0.15s; }
         .color-dot { width: 18px; height: 18px; border-radius: 9999px; border: 1px solid rgba(0,0,0,0.15); flex-shrink: 0; }
-        .color-chip.selected { border-color: #2D6A4F; background: #EBF5EE; color: #166534; font-weight: 800; box-shadow: 0 0 0 1.5px #2D6A4F; }
+        .color-chip.selected { border-color: var(--c-ink,#1D2129); background: #EBF5EE; color: #166534; font-weight: 800; box-shadow: 0 0 0 1.5px var(--c-ink,#1D2129); }
 
         .mat-chip-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; margin-top: 6px; }
         .mat-chip { border: 1.5px solid #CBD5E1; border-radius: 10px; padding: 10px 8px; display: flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer; font-size: 11.5px; font-weight: 600; color: #475569; background: #FFFFFF; transition: all 0.15s; }
-        .mat-chip.selected { border-color: #2D6A4F; background: #EBF5EE; color: #166534; font-weight: 800; box-shadow: 0 0 0 1.5px #2D6A4F; }
+        .mat-chip.selected { border-color: var(--c-ink,#1D2129); background: #EBF5EE; color: #166534; font-weight: 800; box-shadow: 0 0 0 1.5px var(--c-ink,#1D2129); }
 
         .wardrobe-item-card { background: #FFFFFF; border: 1.2px solid #E2E8F0; border-radius: 16px; padding: 12px 14px; display: flex; justify-content: space-between; align-items: center; text-align: left; margin-bottom: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
         .item-icon-frame { width: 44px; height: 44px; border-radius: 12px; background: #F8FAFC; border: 1px solid #E2E8F0; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
@@ -127,10 +127,10 @@
         .zodiac-icon { font-size: 19px; line-height: 1.2; }
         .star-glyph-box { display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; }
         .star-glyph-box svg { width: 22px; height: 22px; }
-        .zodiac-label { font-size: 11px; font-weight: 700; color: #334155; margin-top: 4px; }
+        .zodiac-label { font-size: 11px; font-weight: 700; color: var(--c-ink-80,#3A3E45); margin-top: 4px; }
 
         .sub-tab-box { display: flex; background: #F1F5F9; border-radius: 12px; padding: 3px; gap: 4px; margin-top: 12px; margin-bottom: 8px; }
-        .sub-tab-btn { flex: 1; padding: 8px; font-size: 13px; font-weight: 700; color: #64748B; border: none; background: transparent; border-radius: 8px; cursor: pointer; }
+        .sub-tab-btn { flex: 1; padding: 8px; font-size: 13px; font-weight: 700; color: var(--c-ink-60,#575B62); border: none; background: transparent; border-radius: 8px; cursor: pointer; }
         .sub-tab-btn.active { background: #0D1527; color: #F6E2A1; box-shadow: 0 1px 3px rgba(0,0,0,0.15); font-weight: 800; }
 
         .ad-slot-box { background: #F8FAFC; border: 1px dashed #CBD5E1; border-radius: 14px; padding: 12px; text-align: center; color: #94A3B8; font-size: 12px; font-weight: 600; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 64px; }
@@ -147,7 +147,7 @@
         .talisman-art { height: 120px; background: rgba(254,243,199,0.5); border-radius: 14px; border: 1px solid rgba(253,230,138,0.8); display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
 
         .teaser-blur-box { background: #FFFFFF; border: 1.5px solid #FCD34D; border-radius: 18px; padding: 16px; text-align: left; position: relative; overflow: hidden; margin-bottom: 12px; }
-        .teaser-blur-text { filter: blur(4px); user-select: none; color: #64748B; font-size: 13.5px; line-height: 1.7; }
+        .teaser-blur-text { filter: blur(4px); user-select: none; color: var(--c-ink-60,#575B62); font-size: 13.5px; line-height: 1.7; }
         .teaser-lock-badge { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(255,255,255,0.75); backdrop-filter: blur(2px); }
 
         nav#bottomNavBar { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 448px; background: rgba(13,21,39,0.98); backdrop-filter: blur(8px); border-top: 1px solid rgba(226,192,104,0.3); padding: 10px 24px; display: flex; justify-content: space-between; align-items: center; z-index: 1000; }
@@ -159,55 +159,55 @@
         .modal-content { background: #FAF9F6; border-radius: 24px; padding: 20px; width: 100%; max-width: 350px; text-align: center; display: flex; flex-direction: column; gap: 14px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.4); border: 1px solid #E2E8F0; }
 
         /* Reading tabs share one calm hierarchy; the today tab keeps its visual identity. */
-        .reading-view { gap:0; text-align:left; --reading-ink:#17243A; --reading-muted:#657080; }
+        .reading-view { gap:0; text-align:left; --reading-ink:var(--c-ink,#1D2129); --reading-muted:#657080; }
         .reading-heading { display:block; position:static; background:transparent; border:0; z-index:auto; padding:16px 4px 22px; }
         .reading-eyebrow { display:block; color:#8B7048; font-size:11px; font-weight:800; letter-spacing:.08em; margin-bottom:9px; }
-        .reading-heading h2 { font-family:'Noto Serif KR',serif; color:#17243A; font-size:27px; letter-spacing:-.04em; margin:0 0 10px; }
+        .reading-heading h2 { font-family:'Noto Serif KR',serif; color:var(--c-ink,#1D2129); font-size:27px; letter-spacing:-.04em; margin:0 0 10px; }
         .reading-heading p, .reading-view .card > p { color:#657080; font-size:13px; line-height:1.8; margin:8px 0 16px; }
         .reading-profile { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:15px 16px; background:#F1EFE9; border-radius:14px; margin-bottom:17px; }
-        .reading-profile strong { color:#17243A; font-size:14px; }
+        .reading-profile strong { color:var(--c-ink,#1D2129); font-size:14px; }
         .reading-profile p { font-size:11px; color:#657080; line-height:1.65; margin:3px 0 0; overflow-wrap:anywhere; }
         .reading-profile > div { min-width:0; }
         .reading-text-button { border:0; background:transparent; color:#44566B; padding:8px 3px; font-size:12px; font-weight:700; cursor:pointer; flex-shrink:0; }
         .reading-tabs { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:3px; background:#EBEDF0; border-radius:12px; padding:4px; margin-bottom:20px; }
-        .reading-tabs button { border:0; background:transparent; color:#64748B; border-radius:9px; padding:12px 2px; font-size:13px; font-weight:700; cursor:pointer; }
-        .reading-tabs button[aria-selected="true"] { background:#fff; color:#17243A; box-shadow:0 2px 5px #17243A0D; }
-        .reading-view .card { text-align:left; border:1px solid #E6E4DE; padding:22px 20px; box-shadow:0 4px 15px #17243A04; border-radius:18px; }
-        .reading-view .card h3 { color:#17243A; font-family:'Noto Serif KR',serif; font-size:20px; font-weight:800; line-height:1.65; letter-spacing:-.035em; margin:0; }
+        .reading-tabs button { border:0; background:transparent; color:var(--c-ink-60,#575B62); border-radius:9px; padding:12px 2px; font-size:13px; font-weight:700; cursor:pointer; }
+        .reading-tabs button[aria-selected="true"] { background:#fff; color:var(--c-ink,#1D2129); box-shadow:0 2px 5px var(--c-ink,#1D2129)0D; }
+        .reading-view .card { text-align:left; border:1px solid #E6E4DE; padding:22px 20px; box-shadow:0 4px 15px var(--c-ink,#1D2129)04; border-radius:18px; }
+        .reading-view .card h3 { color:var(--c-ink,#1D2129); font-family:'Noto Serif KR',serif; font-size:20px; font-weight:800; line-height:1.65; letter-spacing:-.035em; margin:0; }
         .reading-view .reading-lead { background:linear-gradient(135deg,#FFFEFB,#F9F7F1); }
         .report-facts { display:flex; flex-wrap:wrap; gap:6px 14px; color:#6B665B; font-size:11px; padding:11px 0; border-top:1px solid #E8E5DD; border-bottom:1px solid #E8E5DD; margin:16px 0 12px; }
         .reading-caption, .reading-view .card > .reading-caption { font-size:11.5px; color:#707887; line-height:1.75; margin:9px 0 13px; }
-        .reading-primary, .reading-view .report-entry > button { width:100%; border:0!important; border-radius:12px!important; background:#17243A!important; color:white!important; padding:14px 12px!important; font-size:13px!important; font-weight:700; cursor:pointer; margin-top:10px; }
+        .reading-primary, .reading-view .report-entry > button { width:100%; border:0!important; border-radius:12px!important; background:var(--c-ink,#1D2129)!important; color:white!important; padding:14px 12px!important; font-size:13px!important; font-weight:700; cursor:pointer; margin-top:10px; }
         .reading-primary:disabled, .reading-view button:disabled { opacity:.55; cursor:wait; }
         .reading-section-title { display:flex; justify-content:space-between; align-items:center; gap:10px; margin:24px 3px 13px; }
-        .reading-section-title h3 { color:#17243A; font-size:15px; margin:0; font-weight:800; }
+        .reading-section-title h3 { color:var(--c-ink,#1D2129); font-size:15px; margin:0; font-weight:800; }
         .reading-section-title > span { font-size:11px; color:#89919B; }
         .reading-links { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:9px; margin-bottom:20px; }
         .reading-links button { text-align:left; background:#fff; border:1px solid #E6E4DE; border-radius:12px; padding:14px; cursor:pointer; }
         .reading-links strong, .reading-links span { display:block; }
         .reading-links strong { color:#28364A; font-size:13px; }
         .reading-links span { color:#858A92; font-size:11px; margin-top:5px; }
-        .reading-evidence summary { color:#334155; font-size:13px; font-weight:800; cursor:pointer; }
+        .reading-evidence summary { color:var(--c-ink-80,#3A3E45); font-size:13px; font-weight:800; cursor:pointer; }
         .reading-evidence summary > span { color:#88909A; font-size:10px; font-weight:500; margin-left:5px; }
         .reading-evidence[open] summary { margin-bottom:17px; }
         .reading-archive-link { display:block; width:100%; border:0; border-top:1px solid #E6E4DE; background:transparent; color:#687484; padding:20px 8px; font-size:12px; cursor:pointer; text-align:center; }
         .concern-choices { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:9px; }
         .concern-choices button { text-align:left; border:1px solid #E6E4DE; background:#FFFEFB; color:#7C838C; border-radius:13px; padding:15px 13px; font-size:11px; line-height:1.7; cursor:pointer; }
         .concern-choices button span { display:block; color:#28364A; font-size:14px; font-weight:800; margin-bottom:3px; }
-        .concern-choices button[aria-pressed="true"] { border-color:#17243A; background:#EEF0F3; }
+        .concern-choices button[aria-pressed="true"] { border-color:var(--c-ink,#1D2129); background:#EEF0F3; }
         .reading-view .report-entry { margin-top:16px; }
         .reading-view .report-entry > p:first-child { font-size:16px!important; }
         .reading-view .report-entry > p:not(:first-child) { font-size:12.5px!important; line-height:1.8; }
         .period-choices { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:6px; margin:17px 0 12px; }
         #lifeCycleChoices { grid-template-columns:repeat(3,minmax(0,1fr)); }
-        .period-choices button { border:1px solid #E4E6E9; border-radius:9px; padding:10px 3px; font-size:12px; color:#64748B; background:#fff; cursor:pointer; }
-        .period-choices button[aria-pressed="true"] { background:#17243A; border-color:#17243A; color:white; }
+        .period-choices button { border:1px solid #E4E6E9; border-radius:9px; padding:10px 3px; font-size:12px; color:var(--c-ink-60,#575B62); background:#fff; cursor:pointer; }
+        .period-choices button[aria-pressed="true"] { background:var(--c-ink,#1D2129); border-color:var(--c-ink,#1D2129); color:white; }
         .period-reading { margin-bottom:16px; }
         #archiveDetailModal .modal-content { width:100%; max-width:620px!important; max-height:92dvh!important; gap:8px; }
         #archiveModalTitle { line-height:1.6; overflow-wrap:anywhere; padding-right:12px; }
         #archiveModalBody { overscroll-behavior:contain; overflow-wrap:anywhere; min-height:0; }
         #readingReportContents { display:flex; flex-wrap:wrap; gap:5px; max-height:90px; overflow:auto; flex-shrink:0; }
-        #readingReportContents button { font-size:11px; border:1px solid #E2E8F0; padding:6px 8px; background:#fff; color:#64748B; border-radius:6px; text-align:left; cursor:pointer; }
+        #readingReportContents button { font-size:11px; border:1px solid #E2E8F0; padding:6px 8px; background:#fff; color:var(--c-ink-60,#575B62); border-radius:6px; text-align:left; cursor:pointer; }
         .reading-view button:focus-visible, .reading-view summary:focus-visible, #archiveDetailModal button:focus-visible { outline:3px solid #AE8D53; outline-offset:3px; }
         @media(max-width:380px) { .reading-view .card { padding:18px 15px; } .reading-heading h2 { font-size:25px; } .reading-tabs button { font-size:12px; } }
         @media(max-width:480px) { #archiveDetailModal { padding:0; } #archiveDetailModal .modal-content { max-height:100dvh!important; height:100dvh; border-radius:0!important; padding:20px 18px!important; padding-bottom:max(18px,env(safe-area-inset-bottom))!important; } }
@@ -419,7 +419,7 @@
         .look-pieces { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px 4px; }
         .look-piece { margin:0; min-width:0; text-align:center; }
         .garment { display:block; width:100%; aspect-ratio:1; overflow:hidden; isolation:isolate; }
-        .menu-meal-label { display:block; padding:12px 14px 0; font-size:13px; font-weight:800; color:#2D6A4F; }
+        .menu-meal-label { display:block; padding:12px 14px 0; font-size:13px; font-weight:800; color:var(--c-ink,#1D2129); }
         .menu-recommendation-comment { margin:12px 0 0; color:#475569; font-size:14px; line-height:1.7; }
         .look-piece figcaption { font-size:14px!important; line-height:1.5; color:#4B586D; overflow-wrap:anywhere; }
         .look-piece figcaption strong { display:block; font-size:14px!important; color:#25334A; }
@@ -451,7 +451,7 @@
         .fashion-v2-accessory-copy { min-width:0; color:var(--ui-muted); font-size:.75rem; line-height:1.6; }
         .fashion-v2-accessory-copy strong { display:block; margin-bottom:2px; color:var(--ui-ink); font-size:.8125rem; }
         .fashion-v2-footer { flex:0 0 auto; padding:12px 20px calc(12px + env(safe-area-inset-bottom)); border-top:1px solid var(--ui-line); background:#fff; }
-        .fashion-v2-close { width:100%; min-height:50px; border:0; border-radius:14px; background:#17243A; color:#fff; font-size:1rem; font-weight:800; cursor:pointer; }
+        .fashion-v2-close { width:100%; min-height:50px; border:0; border-radius:14px; background:var(--c-ink,#1D2129); color:#fff; font-size:1rem; font-weight:800; cursor:pointer; }
         @media(max-width:380px) { .fashion-v2-header,.fashion-v2-slide { padding-left:16px; padding-right:16px; } .fashion-v2-tabs { margin-left:16px; margin-right:16px; } }
         .menu-photos { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; margin-top:12px; }
         .menu-photo-card { margin:0; background:#FFF; border:1px solid #E5E9F0; border-radius:16px; overflow:hidden; }
@@ -541,23 +541,23 @@
 /* es-hangul 2.4.0 | MIT | Copyright (c) Viva Republica, Inc. | third_party/es-hangul-LICENSE */
 var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDescriptor;var N=Object.getOwnPropertyNames;var p=Object.prototype.hasOwnProperty;var S=(u,C)=>{for(var o in C)g(u,o,{get:C[o],enumerable:!0})},j=(u,C,o,n)=>{if(C&&typeof C=="object"||typeof C=="function")for(let t of N(C))!p.call(u,t)&&t!==o&&g(u,t,{get:()=>C[t],enumerable:!(n=d(C,t))||n.enumerable});return u};var O=u=>j(g({},"__esModule",{value:!0}),u);var R={};S(R,{josa:()=>D});var B=[..."\uAC01\uD7A3".normalize("NFD")].map(u=>u.charCodeAt(0)),c=44032,f=55203,i=28,E=21,_={"":"",\u3131:"\u3131",\u3132:"\u3132",\u3133:"\u3131\u3145",\u3134:"\u3134",\u3135:"\u3134\u3148",\u3136:"\u3134\u314E",\u3137:"\u3137",\u3138:"\u3138",\u3139:"\u3139",\u313A:"\u3139\u3131",\u313B:"\u3139\u3141",\u313C:"\u3139\u3142",\u313D:"\u3139\u3145",\u313E:"\u3139\u314C",\u313F:"\u3139\u314D",\u3140:"\u3139\u314E",\u3141:"\u3141",\u3142:"\u3142",\u3143:"\u3143",\u3144:"\u3142\u3145",\u3145:"\u3145",\u3146:"\u3146",\u3147:"\u3147",\u3148:"\u3148",\u3149:"\u3149",\u314A:"\u314A",\u314B:"\u314B",\u314C:"\u314C",\u314D:"\u314D",\u314E:"\u314E"},h={\u314F:"\u314F",\u3150:"\u3150",\u3151:"\u3151",\u3152:"\u3152",\u3153:"\u3153",\u3154:"\u3154",\u3155:"\u3155",\u3156:"\u3156",\u3157:"\u3157",\u3158:"\u3157\u314F",\u3159:"\u3157\u3150",\u315A:"\u3157\u3163",\u315B:"\u315B",\u315C:"\u315C",\u315D:"\u315C\u3153",\u315E:"\u315C\u3154",\u315F:"\u315C\u3163",\u3160:"\u3160",\u3161:"\u3161",\u3162:"\u3161\u3163",\u3163:"\u3163"},v=["\u3131","\u3132","\u3134","\u3137","\u3138","\u3139","\u3141","\u3142","\u3143","\u3145","\u3146","\u3147","\u3148","\u3149","\u314A","\u314B","\u314C","\u314D","\u314E"],m=Object.values(h),l=["","\u3131","\u3132","\u3133","\u3134","\u3135","\u3136","\u3137","\u3139","\u313A","\u313B","\u313C","\u313D","\u313E","\u313F","\u3140","\u3141","\u3142","\u3144","\u3145","\u3146","\u3147","\u3148","\u314A","\u314B","\u314C","\u314D","\u314E"].map(u=>_[u]),G=["","\uB9CC","\uC5B5","\uC870","\uACBD","\uD574","\uC790","\uC591","\uAD6C","\uAC04","\uC815","\uC7AC","\uADF9","\uD56D\uD558\uC0AC","\uC544\uC2B9\uAE30","\uB098\uC720\uD0C0","\uBD88\uAC00\uC0AC\uC758","\uBB34\uB7C9\uB300\uC218","\uAC81","\uC5C5"],P=G.length*4;var b={A:"\uC5D0\uC774",B:"\uBE44",C:"\uC528",D:"\uB514",E:"\uC774",F:"\uC5D0\uD504",G:"\uC9C0",H:"\uC5D0\uC774\uCE58",I:"\uC544\uC774",J:"\uC81C\uC774",K:"\uCF00\uC774",L:"\uC5D8",M:"\uC5E0",N:"\uC5D4",O:"\uC624",P:"\uD53C",Q:"\uD050",R:"\uC54C",S:"\uC5D0\uC2A4",T:"\uD2F0",U:"\uC720",V:"\uBE0C\uC774",W:"\uB354\uBE14\uC720",X:"\uC5D1\uC2A4",Y:"\uC640\uC774",Z:"\uC9C0"};function F(u){let C=u.charCodeAt(0);if(!(c<=C&&C<=f))return;let n=C-c,t=n%i,r=(n-t)/i%E,s=Math.floor((n-t)/i/E);return{choseong:v[s],jungseong:m[r],jongseong:l[t]}}function $(u,C){let o=u[u.length-1];if(o==null)return!1;let n=o.charCodeAt(0);if(n<c||n>f)return!1;let r=(n-c)%i,s=l[r].length;switch(C?.only){case"single":return s===1;case"double":return s===2;default:return r>0}}var e={START_CHOSEONG:B[0],START_JUNGSEONG:B[1],START_JONGSEONG:B[2],END_CHOSEONG:B[3],END_JUNGSEONG:B[4],END_JONGSEONG:B[5]};var x=new RegExp(`[^\\u${e.START_CHOSEONG.toString(16)}-\\u${e.END_CHOSEONG.toString(16)}\u3131-\u314E\\s]+`,"ug"),y=new RegExp(`[\\u${e.START_CHOSEONG.toString(16)}-\\u${e.END_CHOSEONG.toString(16)}]`,"g"),L=new RegExp(`[\\u${e.START_JUNGSEONG.toString(16)}-\\u${e.END_JUNGSEONG.toString(16)}\\u${e.START_JONGSEONG.toString(16)}-\\u${e.END_JONGSEONG.toString(16)}]+`,"ug");var U=new RegExp(`[^\\u${e.START_JUNGSEONG.toString(16)}-\\u${e.END_JUNGSEONG.toString(16)}\u314F-\u3163\\s]+`,"ug"),w=new RegExp(`[\\u${e.START_JUNGSEONG.toString(16)}-\\u${e.END_JUNGSEONG.toString(16)}]`,"g"),M=Object.keys(h);var k=new RegExp(`[^\\u${e.START_JONGSEONG.toString(16)}-\\u${e.END_JONGSEONG.toString(16)}\\s]+`,"ug"),W=new RegExp(`[\\u${e.START_JONGSEONG.toString(16)}-\\u${e.END_JONGSEONG.toString(16)}]`,"g"),V=l.slice(1).map(u=>Object.fromEntries(Object.entries(_).map(([C,o])=>[o,C]))[u]),T=["\uC73C\uB85C/\uB85C","\uC73C\uB85C\uC11C/\uB85C\uC11C","\uC73C\uB85C\uC368/\uB85C\uC368","\uC73C\uB85C\uBD80\uD130/\uB85C\uBD80\uD130"];function D(u,C){if(u.length===0)return u;if(/^[A-Z]+$/.test(u)){let o=u[u.length-1],n=b[o];return u+a(n,C)}return u+a(u,C)}D.pick=a;function a(u,C){var o;if(u.length===0)return C.split("/")[0];let n=$(u),t=n?0:1,r=n&&((o=F(u[u.length-1]))==null?void 0:o.jongseong)==="\u3139",s=n&&r&&T.includes(C);return(C==="\uC640/\uACFC"||s)&&(t=t===0?1:0),C.split("/")[t]}var J={\uBCA0\uAC2F\uC787:"\uBCA0\uAC20\uB2CF",\uAE7B\uC78E:"\uAE6C\uB2D9",\uB098\uBB47\uC78E:"\uB098\uBB38\uB2D9",\uB3C4\uB9AC\uAE7B\uC5F4:"\uB3C4\uB9AC\uAE6C\uB148",\uB4B7\uC737:"\uB4A8\uB27B"},H={\uC804\uC5ED:"\uC800\uB141"};var A=u=>C=>u[C],X=[A(J),A(H)];return O(R);})();
 </script>
-    <link rel="stylesheet" href="/assets/design-system.css?v=7">
+    <link rel="stylesheet" href="/assets/design-system.css?v=20261108-p1">
     <link rel="stylesheet" href="/assets/tarot-v2.css?v=1">
-    <link rel="stylesheet" href="/assets/reading-tabs-v2.css?v=20261030-1">
+    <link rel="stylesheet" href="/assets/reading-tabs-v2.css?v=20261108-p1">
     <link rel="stylesheet" href="/assets/landing.css?v=1">
     <script src="/assets/design-controls.js?v=20261001-4" defer></script>
     <script src="/assets/design-sample.js?v=20261029-1" defer></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;600;700&display=swap" rel="stylesheet">
-    <link id="dalhaBrandStyles" rel="stylesheet" href="/assets/brand-2026/brand.css?v=20261010-1">
-    <link rel="stylesheet" href="/assets/reading-polish.css?v=20261106-3">
-    <link rel="stylesheet" href="/assets/daily-card.css?v=20261027-1">
-    <link rel="stylesheet" href="/assets/brand-2026/refine.css?v=20261108-3">
+    <link id="dalhaBrandStyles" rel="stylesheet" href="/assets/brand-2026/brand.css?v=20261108-p1">
+    <link rel="stylesheet" href="/assets/reading-polish.css?v=20261108-p2">
+    <link rel="stylesheet" href="/assets/daily-card.css?v=20261108-p1">
+    <link rel="stylesheet" href="/assets/brand-2026/refine.css?v=20261108-p1">
     <link href="https://fonts.googleapis.com/css2?family=Song+Myung&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/assets/brand-2026/ilryeok.css?v=20261108-2">
-    <script src="/assets/reading-polish.js?v=20261031-2" defer></script>
-    <script src="/assets/brand-2026/brand-ui.js?v=20261001-4" defer></script>
+    <link rel="stylesheet" href="/assets/brand-2026/ilryeok.css?v=20261108-p1">
+    <script src="/assets/reading-polish.js?v=20261108-p1" defer></script>
+    <script src="/assets/brand-2026/brand-ui.js?v=20261108-p1" defer></script>
 </head>
 <body>
 
@@ -635,9 +635,9 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             <div id="onboardingInputView" class="card hidden" style="text-align: center;">
                 <div class="gift-badge" style="margin-bottom: 12px;">🎁 카카오 연동 완료 (+1,000 복채 지급)</div>
                 <h2 style="font-size: 21px; font-weight: 800; margin-bottom: 2px; font-family: 'Noto Serif KR', serif;">사주 명식 입력</h2>
-                <p style="font-size: 13px; color: #64748B; margin-bottom: 16px;">처음 한 번만 정보를 입력해 주세요.<br>다음 로그인부터 저장된 정보로 이어서 이용할 수 있어요.</p>
+                <p style="font-size: 13px; color: var(--c-ink-60,#575B62); margin-bottom: 16px;">처음 한 번만 정보를 입력해 주세요.<br>다음 로그인부터 저장된 정보로 이어서 이용할 수 있어요.</p>
                 <div id="kakaoProfileHelp" hidden style="margin-bottom:16px; text-align:left;">
-                    <p id="kakaoProfileNotice" role="status" style="font-size:13px; color:#64748B; margin-bottom:8px;"></p>
+                    <p id="kakaoProfileNotice" role="status" style="font-size:13px; color:var(--c-ink-60,#575B62); margin-bottom:8px;"></p>
                     <button id="btnKakaoProfile" type="button" class="kakao-login-btn hidden" onclick="requestKakaoProfileConsent()">카카오 정보 불러오기</button>
                 </div>
 
@@ -742,7 +742,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                     </div>
                     <!-- v2: 행운 오행 컬러 2-Track (서버 daily_fortune.outfit) -->
                     <div id="outfitTrack" hidden>
-                        <span class="outfit-track-title" style="font-size: 12px; font-weight: 700; color: #64748B;">오늘의 행운 컬러</span>
+                        <span class="outfit-track-title" style="font-size: 12px; font-weight: 700; color: var(--c-ink-60,#575B62);">오늘의 행운 컬러</span>
                         <p id="outfitCaption" class="reading-caption" style="margin:0;"></p>
                         <div class="outfit-track-grid">
                             <article class="outfit-track" id="outfitBasic"><span class="outfit-track-label"></span><i class="outfit-swatch"></i><strong></strong><p></p></article>
@@ -751,21 +751,21 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                     </div>
                     <!-- 개운 컬러 팔레트 (20px 확대 적용) · 행운 컬러(#outfitTrack)와 중복되어 숨김 -->
                     <div id="outfitColorHint">
-                        <span style="font-size: 12px; font-weight: 700; color: #64748B; display: flex; align-items: center; gap: 4px; margin-bottom: 8px;">
+                        <span style="font-size: 12px; font-weight: 700; color: var(--c-ink-60,#575B62); display: flex; align-items: center; gap: 4px; margin-bottom: 8px;">
                             <span data-brand-icon="palette" class="brand-symbol"></span> 오늘의 색 힌트
                         </span>
                         <div id="dynamicColorPaletteBox" style="display: flex; align-items: center; justify-content: flex-start; gap: 10px; flex-wrap: wrap; margin-bottom: 8px;">
                         </div>
-                        <p id="paletteMoodStoryBox" style="font-size: 12.5px; color: #475569; line-height: 1.6; margin: 0; background: #F8FAFC; border-radius: 10px; padding: 10px 12px; border-left: 3px solid #2D6A4F;"></p>
+                        <p id="paletteMoodStoryBox" style="font-size: 12.5px; color: #475569; line-height: 1.6; margin: 0; background: #F8FAFC; border-radius: 10px; padding: 10px 12px; border-left: 3px solid var(--c-ink,#1D2129);"></p>
                     </div>
 
                     <!-- 오늘 추천 룩 매칭 (colors-only 동안 숨김: 코디 지식서가 갖춰지면 다시 켠다) -->
                     <div class="outfit-looks">
-                        <span style="font-size: 12px; font-weight: 700; color: #64748B; display: flex; align-items: center; gap: 4px; margin-bottom: 6px;">
+                        <span style="font-size: 12px; font-weight: 700; color: var(--c-ink-60,#575B62); display: flex; align-items: center; gap: 4px; margin-bottom: 6px;">
                             오늘의 코디
                         </span>
-                        <p id="weatherOutfitGuidance" hidden style="font-size: 12.5px; color: #334155; line-height: 1.65; margin: 0 0 8px; background: #F8FAFC; border-radius: 10px; padding: 10px 12px;"></p>
-                        <p id="resStyle" style="font-weight: 800; font-size: 15.5px; color: #0F172A; margin: 0 0 8px 0; line-height: 1.5;">
+                        <p id="weatherOutfitGuidance" hidden style="font-size: 12.5px; color: var(--c-ink-80,#3A3E45); line-height: 1.65; margin: 0 0 8px; background: #F8FAFC; border-radius: 10px; padding: 10px 12px;"></p>
+                        <p id="resStyle" style="font-weight: 800; font-size: 15.5px; color: var(--c-ink,#1D2129); margin: 0 0 8px 0; line-height: 1.5;">
                             네이비 쿨 티셔츠 &nbsp;&amp;&nbsp; 스카이블루 데님 팬츠
                         </p>
                         <div id="outfitCards"></div>
@@ -779,14 +779,14 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                             <div class="drawer-title-box" style="gap: 8px;">
                                 <span style="font-size: 16px;">👗</span>
                                 <div style="display: flex; align-items: center; gap: 6px;">
-                                    <h5 style="font-size: 13.5px; font-weight: 800; color: #0F172A;">내 옷장 열어보기 (뭘 꺼내 입지?)</h5>
+                                    <h5 style="font-size: 13.5px; font-weight: 800; color: var(--c-ink,#1D2129);">내 옷장 열어보기 (뭘 꺼내 입지?)</h5>
                                     <span id="wardrobeCountBadge" style="font-size: 11px; background: #0D1527; color: #F6E2A1; font-weight: 800; padding: 1px 6px; border-radius: 9999px;">0개</span>
                                 </div>
                             </div>
                             <span class="drawer-arrow" style="font-size: 12px;">▼</span>
                         </div>
                         <div class="drawer-body hidden" id="drawerBodyWardrobe" style="padding: 12px 14px; border-top: 1px solid #E2E8F0; background: #FFFFFF;">
-                            <button onclick="openWardrobeAddWizard()" style="width: 100%; background: #2D6A4F; color: white; border: none; font-size: 13px; font-weight: 700; padding: 10px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; margin-bottom: 10px;">
+                            <button onclick="openWardrobeAddWizard()" style="width: 100%; background: var(--c-ink,#1D2129); color: white; border: none; font-size: 13px; font-weight: 700; padding: 10px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; margin-bottom: 10px;">
                                 <span>➕</span> 새 아이템 옷장에 등록하기 (3초)
                             </button>
                             <p id="wardrobeStorageNotice" role="status" hidden style="font-size:12px; color:#92400E; margin:8px 0;"></p>
@@ -820,8 +820,8 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                         <div class="grid-cell"><dd id="luckyDirectionIcon" class="dh-luck-visual" aria-hidden="true"></dd><dt>방위</dt><dd id="resDirection">정서쪽 (백호 방위)</dd></div>
                     </dl>
                     <div class="grid-cell" hidden style="display:none">
-                            <span id="resMenuLabel" style="font-size: 12px; color: #64748B; font-weight: 600; display: block;">🍲 추천 메뉴</span>
-                            <p id="resMenu" style="font-weight: 800; margin: 3px 0 8px; font-size: 14px; line-height: 1.65; white-space: pre-line; color: #0F172A;">속이 편안한 영양 솥밥</p>
+                            <span id="resMenuLabel" style="font-size: 12px; color: var(--c-ink-60,#575B62); font-weight: 600; display: block;">🍲 추천 메뉴</span>
+                            <p id="resMenu" style="font-weight: 800; margin: 3px 0 8px; font-size: 14px; line-height: 1.65; white-space: pre-line; color: var(--c-ink,#1D2129);">속이 편안한 영양 솥밥</p>
                             <div id="menuPhotoCards" class="menu-photos"></div>
                             <p id="menuRecommendationComment" class="menu-recommendation-comment" hidden></p>
                             <div id="menuExplorerControls" hidden>
@@ -834,8 +834,8 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                                 <details class="meal-info-note"><summary>식단 추천 이용 안내</summary><p><span id="mealGuideName">회원</span>님의 사주 원국과 오늘의 기운을 음양오행의 관점에서 참고해, 오늘의 한 끼에 어울리는 식단을 골라봤어요.</p><p>표시 열량은 음식 자료에 등록된 분량과 열량을 바탕으로 각 끼니를 합산한 추정치예요. 실제 섭취량과 조리법에 따라 달라질 수 있어요.</p><p>일상의 참고를 위한 정보이며, 건강·영양에 대한 전문적인 판단을 대신하지 않습니다.</p></details>
                             </div>
                             <p id="menuError" class="menu-error" role="alert"></p>
-                            <button id="menuPlanLike" type="button" onclick="togglePlanLike()" aria-label="오늘 식단 좋아요" aria-pressed="false" hidden style="border:0;background:transparent;color:#64748B;font-size:25px;cursor:pointer;padding:4px 10px;min-width:44px;min-height:44px;">♡</button>
-                            <span id="menuLikeStatus" role="status" style="font-size:11px;color:#64748B;"></span>
+                            <button id="menuPlanLike" type="button" onclick="togglePlanLike()" aria-label="오늘 식단 좋아요" aria-pressed="false" hidden style="border:0;background:transparent;color:var(--c-ink-60,#575B62);font-size:25px;cursor:pointer;padding:4px 10px;min-width:44px;min-height:44px;">♡</button>
+                            <span id="menuLikeStatus" role="status" style="font-size:11px;color:var(--c-ink-60,#575B62);"></span>
                             <button id="menuModeToggle" hidden type="button" onclick="toggleMenuMode()" style="width: 100%; border: 1px solid #BBF7D0; background: #F0FDF4; color: #166534; border-radius: 8px; padding: 6px 8px; font-size: 11.5px; font-weight: 800; cursor: pointer;">다이어트 식단으로 보기</button>
                     </div>
                 </section>
@@ -1067,7 +1067,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                         <h3>길게 보면, 이런 흐름이에요</h3>
                         <p>현재 풀이를 읽은 뒤, 지나온 시기와 앞으로의 큰 흐름이 궁금할 때 참고해 보세요.</p>
                     <div style="background: #F3F0E8; border-radius: 18px; border: 1px solid #DEDCD4; padding: 18px 12px 14px; margin-bottom: 14px; text-align: left;">
-                        <div style="font-size:13.5px;font-weight:800;color:#25364A;margin-bottom:6px;">생애 4단계 대운 흐름</div>
+                        <div style="font-size:13.5px;font-weight:800;color:var(--c-ink,#1D2129);margin-bottom:6px;">생애 4단계 대운 흐름</div>
                         <p style="font-size:11.5px;color:#59636D;line-height:1.55;margin:0 0 11px;">10년마다 바뀌는 흐름을 네 시기로 묶었어요. 구간별 이야기는 보조 자료로 읽어주세요.</p>
                         <div id="daewoonPhaseTimeline" style="display:grid;grid-template-columns:repeat(4,1fr);gap:5px;">
                             <div data-phase="초년기" style="border:1px solid #DEDCD4;border-radius:10px;padding:10px 4px;text-align:center;background:#FFFFFF;"><div style="font-size:12px;font-weight:800;">초년기</div><div style="font-size:10px;color:#59636D;margin-top:3px;">대운 1~2</div></div>
@@ -1076,7 +1076,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                             <div data-phase="말년기" style="border:1px solid #DEDCD4;border-radius:10px;padding:10px 4px;text-align:center;background:#FFFFFF;"><div style="font-size:12px;font-weight:800;">말년기</div><div style="font-size:10px;color:#59636D;margin-top:3px;">대운 7~9</div></div>
                         </div>
                         <p id="sajuCurrentPosition" class="reading-caption"></p>
-                        <div id="daewoonCurrentPhaseText" style="font-size:12.5px;font-weight:800;color:#25364A;margin-top:10px;">현재 대운 구간을 계산 중입니다.</div>
+                        <div id="daewoonCurrentPhaseText" style="font-size:12.5px;font-weight:800;color:var(--c-ink,#1D2129);margin-top:10px;">현재 대운 구간을 계산 중입니다.</div>
                     </div>
 
                         <div id="lifeCycleExplorer" class="hidden">
@@ -1192,13 +1192,13 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 <div class="card" style="text-align: left;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                         <span style="font-size: 14px; color: #59636D;">현재 보유 복채</span>
-                        <div style="display: flex; align-items: center; gap: 6px; font-size: 20px; font-weight: 800; color: #25364A;"><span id="mypageCoinSvg"></span><span id="coinMypage">—</span></div>
+                        <div style="display: flex; align-items: center; gap: 6px; font-size: 20px; font-weight: 800; color: var(--c-ink,#1D2129);"><span id="mypageCoinSvg"></span><span id="coinMypage">—</span></div>
                     </div>
-                    <button onclick="openChargeStore()" style="width: 100%; background: #25364A; color: white; border: none; font-size: 15px; font-weight: 700; padding: 14px; border-radius: 16px; cursor: pointer;">복채 충전하기</button>
+                    <button onclick="openChargeStore()" style="width: 100%; background: var(--c-ink,#1D2129); color: white; border: none; font-size: 15px; font-weight: 700; padding: 14px; border-radius: 16px; cursor: pointer;">복채 충전하기</button>
                 </div>
 
                 <div class="card" style="display: flex; justify-content: space-between; align-items: center; text-align: left;">
-                    <div><p style="font-size: 14px; font-weight: 800; color: #25364A;">사주 정보 수정</p><p id="mypageProfileDesc" style="font-size: 12px; color: #59636D; margin-top: 2px;">-</p></div>
+                    <div><p style="font-size: 14px; font-weight: 800; color: var(--c-ink,#1D2129);">사주 정보 수정</p><p id="mypageProfileDesc" style="font-size: 12px; color: #59636D; margin-top: 2px;">-</p></div>
                     <div style="display: flex; gap: 6px;">
                         <button type="button" class="dh-btn-quiet" onclick="reopenSajuEditForm()">정보 수정</button>
                         <button type="button" class="dh-btn-quiet" onclick="logoutKakaoUser()">로그아웃</button>
@@ -1230,8 +1230,8 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
         <div class="modal-content" style="max-width: 360px; text-align: left; padding: 20px;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F3F0E8; padding-bottom: 8px;">
                 <div>
-                    <h3 id="wardrobeModalMainTitle" style="font-size: 15px; font-weight: 800; color: #25364A; font-family: 'Noto Serif KR', serif;">👗 내 옷장 아이템 등록</h3>
-                    <p id="wizardStepLabel" style="font-size: 11.5px; color: #25364A; font-weight: 600; margin-top: 2px;">Step 1. 아이템 종류 선택 (단일)</p>
+                    <h3 id="wardrobeModalMainTitle" style="font-size: 15px; font-weight: 800; color: var(--c-ink,#1D2129); font-family: 'Noto Serif KR', serif;">👗 내 옷장 아이템 등록</h3>
+                    <p id="wizardStepLabel" style="font-size: 11.5px; color: var(--c-ink,#1D2129); font-weight: 600; margin-top: 2px;">Step 1. 아이템 종류 선택 (단일)</p>
                 </div>
                 <button onclick="closeWardrobeAddWizard()" style="background: none; border: none; font-size: 20px; color: #59636D; cursor: pointer;">&times;</button>
             </div>
@@ -1247,7 +1247,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                     <div class="tile-btn" onclick="selectWizardCat('신발', this)"><span class="t-icon">👟</span><span>신발</span></div>
                     <div class="tile-btn" onclick="selectWizardCat('액세서리', this)" style="grid-column: span 3;"><span class="t-icon">💍</span><span>주얼리 / 모자 / 스카프</span></div>
                 </div>
-                <button onclick="goToWizardStep(2)" style="width: 100%; background: #25364A; color: #FFFDF6; border: none; font-size: 13.5px; font-weight: 600; padding: 12px; border-radius: 12px; cursor: pointer; margin-top: 8px;">다음: 색상 선택하기 👉</button>
+                <button onclick="goToWizardStep(2)" style="width: 100%; background: var(--c-ink,#1D2129); color: #FFFDF6; border: none; font-size: 13.5px; font-weight: 600; padding: 12px; border-radius: 12px; cursor: pointer; margin-top: 8px;">다음: 색상 선택하기 👉</button>
             </div>
 
             <div id="wizardStep2" class="hidden" style="display: flex; flex-direction: column; gap: 6px;">
@@ -1280,7 +1280,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 </div>
                 <div style="display: flex; gap: 6px; margin-top: 8px;">
                     <button onclick="goToWizardStep(1)" style="flex: 1; background: #DEDCD4; color: #59636D; border: none; font-size: 13px; font-weight: 600; padding: 11px; border-radius: 10px; cursor: pointer;">이전</button>
-                    <button onclick="goToWizardStep(3)" style="flex: 2; background: #25364A; color: #FFFDF6; border: none; font-size: 13.5px; font-weight: 600; padding: 11px; border-radius: 10px; cursor: pointer;">다음: 소재 & 이름 설정 👉</button>
+                    <button onclick="goToWizardStep(3)" style="flex: 2; background: var(--c-ink,#1D2129); color: #FFFDF6; border: none; font-size: 13.5px; font-weight: 600; padding: 11px; border-radius: 10px; cursor: pointer;">다음: 소재 & 이름 설정 👉</button>
                 </div>
             </div>
 
@@ -1297,13 +1297,13 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 </div>
 
                 <div class="form-group" style="margin-top: 6px; margin-bottom: 0;">
-                    <label class="form-label" style="color: #25364A; font-weight: 700;">🏷️ 아이템 애칭/이름 (선택)</label>
+                    <label class="form-label" style="color: var(--c-ink,#1D2129); font-weight: 700;">🏷️ 아이템 애칭/이름 (선택)</label>
                     <input type="text" id="wardrobeNicknameInput" class="form-input" placeholder="예: 플랙 연청 청바지, 세이코 시계">
                 </div>
 
                 <div style="display: flex; gap: 6px; margin-top: 4px;">
                     <button onclick="goToWizardStep(2)" style="flex: 1; background: #DEDCD4; color: #59636D; border: none; font-size: 13px; font-weight: 600; padding: 11px; border-radius: 10px; cursor: pointer;">이전</button>
-                    <button id="btnSaveWardrobeItem" onclick="saveWardrobeItemToServer()" style="flex: 2; background: #25364A; color: white; border: none; font-size: 13.5px; font-weight: 600; padding: 11px; border-radius: 10px; cursor: pointer;">✨ 내 옷장에 저장 완료</button>
+                    <button id="btnSaveWardrobeItem" onclick="saveWardrobeItemToServer()" style="flex: 2; background: var(--c-ink,#1D2129); color: white; border: none; font-size: 13.5px; font-weight: 600; padding: 11px; border-radius: 10px; cursor: pointer;">✨ 내 옷장에 저장 완료</button>
                 </div>
             </div>
         </div>
@@ -1332,7 +1332,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
     <div id="gunghapModal" class="modal-bg hidden">
         <div class="modal-content" style="max-width: 350px; max-height: 90vh; overflow-y: auto; text-align: left;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F3F0E8; padding-bottom: 8px;">
-                <h3 style="font-size: 15px; font-weight: 800; color: #25364A; font-family: 'Noto Serif KR', serif;">상대방 사주 정보 입력</h3>
+                <h3 style="font-size: 15px; font-weight: 800; color: var(--c-ink,#1D2129); font-family: 'Noto Serif KR', serif;">상대방 사주 정보 입력</h3>
                 <button onclick="closeGunghapModal()" style="background: none; border: none; font-size: 20px; color: #59636D; cursor: pointer;">&times;</button>
             </div>
             <div class="form-group" style="margin-top: 4px;">
@@ -1379,7 +1379,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                     <option value="친구 / 지인">친구 / 지인</option>
                 </select>
             </div>
-            <button id="gunghapSubmitButton" onclick="confirmUnlockGunghapOnServer()" style="width: 100%; background: #25364A; color: white; border: none; font-size: 14.5px; font-weight: 800; padding: 13px; border-radius: 12px; cursor: pointer;">
+            <button id="gunghapSubmitButton" onclick="confirmUnlockGunghapOnServer()" style="width: 100%; background: var(--c-ink,#1D2129); color: white; border: none; font-size: 14.5px; font-weight: 800; padding: 13px; border-radius: 12px; cursor: pointer;">
                 <span class="btn-coin-icon-white"></span> 350 복채로 두 사람의 인연 풀이 확인하기
             </button>
         </div>
@@ -1389,11 +1389,11 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
     <div id="themeSelectModal" class="modal-bg hidden">
         <div class="modal-content" style="text-align: left;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F3F0E8; padding-bottom: 8px;">
-                <h3 id="modalThemeTitle" style="font-size: 15px; font-weight: 800; color: #25364A; font-family: 'Noto Serif KR', serif;">상황별 맞춤 리포트 선택</h3>
+                <h3 id="modalThemeTitle" style="font-size: 15px; font-weight: 800; color: var(--c-ink,#1D2129); font-family: 'Noto Serif KR', serif;">상황별 맞춤 리포트 선택</h3>
                 <button onclick="closeThemeSelectModal()" style="background: none; border: none; font-size: 18px; color: #59636D; cursor: pointer;">&times;</button>
             </div>
             <div id="modalOptionBox" style="display: flex; flex-direction: column; gap: 8px;"></div>
-            <button id="themeSelectConfirm" onclick="confirmUnlockThemeOnServer()" style="width: 100%; background: #25364A; color: white; border: none; font-size: 14.5px; font-weight: 800; padding: 13px; border-radius: 12px; cursor: pointer;"><span class="btn-coin-icon-white"></span> 220 복채로 즉시 열람하기</button>
+            <button id="themeSelectConfirm" onclick="confirmUnlockThemeOnServer()" style="width: 100%; background: var(--c-ink,#1D2129); color: white; border: none; font-size: 14.5px; font-weight: 800; padding: 13px; border-radius: 12px; cursor: pointer;"><span class="btn-coin-icon-white"></span> 220 복채로 즉시 열람하기</button>
         </div>
     </div>
 
@@ -1402,22 +1402,22 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
         <div class="modal-content" style="max-width: 360px; text-align: left; padding: 22px; border-radius: 24px;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #F3F0E8; padding-bottom: 10px;">
                 <div style="display: flex; align-items: center; gap: 10px;">
-                    <div id="zodiacModalIconBox" style="width: 44px; height: 44px; border-radius: 12px; background: #25364A; display: flex; align-items: center; justify-content: center; border: 1px solid #DEDCD4;"></div>
+                    <div id="zodiacModalIconBox" style="width: 44px; height: 44px; border-radius: 12px; background: var(--c-ink,#1D2129); display: flex; align-items: center; justify-content: center; border: 1px solid #DEDCD4;"></div>
                     <div>
-                        <h3 id="zodiacModalName" style="font-size: 17px; font-weight: 800; color: #25364A; font-family: 'Noto Serif KR', serif;">운세</h3>
+                        <h3 id="zodiacModalName" style="font-size: 17px; font-weight: 800; color: var(--c-ink,#1D2129); font-family: 'Noto Serif KR', serif;">운세</h3>
                         <p id="zodiacModalSub" style="font-size: 12px; color: #59636D;"></p>
                     </div>
                 </div>
                 <button onclick="closeZodiacModal()" style="background: none; border: none; font-size: 22px; color: #59636D; cursor: pointer;">&times;</button>
             </div>
             <div style="display: flex; align-items: center; justify-content: space-between; border-left: 4px solid #10B981; padding-left: 10px; margin: 2px 0;">
-                <span style="font-size: 14px; font-weight: 700; color: #25364A;">오늘의 종합 운세 지수</span>
-                <span id="zodiacModalScore" style="font-size: 19px; font-weight: 900; color: #25364A;">95점</span>
+                <span style="font-size: 14px; font-weight: 700; color: var(--c-ink,#1D2129);">오늘의 종합 운세 지수</span>
+                <span id="zodiacModalScore" style="font-size: 19px; font-weight: 900; color: var(--c-ink,#1D2129);">95점</span>
             </div>
             <div style="display: flex; flex-direction: column; gap: 12px; max-height: 52vh; overflow-y: auto; padding-right: 2px;">
-                <div><h4 id="zodiacModalTitle" style="font-size: 15px; font-weight: 600; color: #25364A; margin-bottom: 4px;">총평</h4><p id="zodiacModalOverview" style="font-size: 14px; color: #59636D; line-height: 1.7;"></p></div>
+                <div><h4 id="zodiacModalTitle" style="font-size: 15px; font-weight: 600; color: var(--c-ink,#1D2129); margin-bottom: 4px;">총평</h4><p id="zodiacModalOverview" style="font-size: 14px; color: #59636D; line-height: 1.7;"></p></div>
                 <div style="border-top: 1px solid #F3F0E8; padding-top: 10px;"><div id="zodiacYearTipsBox"></div></div>
-                <div id="zodiacExtraInfo" style="font-size: 13px; color: #25364A; font-weight: 600; border-top: 1px dashed #DEDCD4; padding-top: 8px;"></div>
+                <div id="zodiacExtraInfo" style="font-size: 13px; color: var(--c-ink,#1D2129); font-weight: 600; border-top: 1px dashed #DEDCD4; padding-top: 8px;"></div>
                 <p id="zodiacGuideNote" style="font-size:12px; color:#59636D; line-height:1.6;"></p>
             </div>
             
@@ -1439,19 +1439,19 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
     <div id="talismanModal" class="modal-bg hidden">
         <div class="modal-content" style="max-width: 340px; padding: 18px; border-radius: 24px;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F3F0E8; padding-bottom: 8px;">
-                <h3 style="font-size: 14px; font-weight: 800; color: #25364A; font-family: 'Noto Serif KR', serif;">오늘의 오행 부적</h3>
+                <h3 style="font-size: 14px; font-weight: 800; color: var(--c-ink,#1D2129); font-family: 'Noto Serif KR', serif;">오늘의 오행 부적</h3>
                 <button onclick="closeTalismanModal()" style="background: none; border: none; font-size: 20px; color: #59636D; cursor: pointer;">&times;</button>
             </div>
             <div id="talismanRealBox" style="display: flex; justify-content: center; align-items: center; padding: 4px 0;"></div>
             <div style="text-align: left; background: #F8F6F1; border: 1px solid #DEDCD4; border-radius: 12px; padding: 12px;">
-                <h4 id="talismanTitle" style="font-size: 13.5px; font-weight: 800; color: #25364A;">결단정리부</h4>
-                <p id="talismanPower" style="font-size: 12px; font-weight: 700; color: #995737; margin: 2px 0;"></p>
+                <h4 id="talismanTitle" style="font-size: 13.5px; font-weight: 800; color: var(--c-ink,#1D2129);">결단정리부</h4>
+                <p id="talismanPower" style="font-size: 12px; font-weight: 700; color: var(--c-ink,#1D2129); margin: 2px 0;"></p>
                 <p id="talismanDesc" style="font-size: 11.5px; color: #59636D; line-height: 1.5;"></p>
-                <div style="border-top: 1px dashed #D4D0C6; margin-top: 6px; padding-top: 4px; font-size: 11px; color: #25364A;">하루의 시작에 마음을 가다듬고, 지키고 싶은 뜻을 새겨 보세요.</div>
+                <div style="border-top: 1px dashed #D4D0C6; margin-top: 6px; padding-top: 4px; font-size: 11px; color: var(--c-ink,#1D2129);">하루의 시작에 마음을 가다듬고, 지키고 싶은 뜻을 새겨 보세요.</div>
             </div>
             <div style="display: flex; gap: 8px;">
-                <button onclick="downloadTalismanImage()" style="flex: 1; background: #25364A; color: white; border: none; font-size: 13.5px; font-weight: 800; padding: 12px; border-radius: 12px; cursor: pointer;">부적 이미지 저장</button>
-                <button onclick="closeTalismanModal()" style="flex: 1; background: #DEDCD4; color: #25364A; border: none; font-size: 13.5px; font-weight: 700; padding: 12px; border-radius: 12px; cursor: pointer;">확인</button>
+                <button onclick="downloadTalismanImage()" style="flex: 1; background: var(--c-ink,#1D2129); color: white; border: none; font-size: 13.5px; font-weight: 800; padding: 12px; border-radius: 12px; cursor: pointer;">부적 이미지 저장</button>
+                <button onclick="closeTalismanModal()" style="flex: 1; background: #DEDCD4; color: var(--c-ink,#1D2129); border: none; font-size: 13.5px; font-weight: 700; padding: 12px; border-radius: 12px; cursor: pointer;">확인</button>
             </div>
         </div>
     </div>
@@ -1460,21 +1460,21 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
     <div id="chargeModal" class="modal-bg hidden">
         <div class="modal-content" style="max-width: 340px;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F3F0E8; padding-bottom: 10px;">
-                <div style="display: flex; align-items: center; gap: 6px;"><span id="chargeModalHeaderCoinSvg"></span><h3 style="font-size: 15px; font-weight: 800; color: #25364A; font-family: 'Noto Serif KR', serif;">복채 충전소</h3></div>
+                <div style="display: flex; align-items: center; gap: 6px;"><span id="chargeModalHeaderCoinSvg"></span><h3 style="font-size: 15px; font-weight: 800; color: var(--c-ink,#1D2129); font-family: 'Noto Serif KR', serif;">복채 충전소</h3></div>
                 <button onclick="closeChargeStore()" style="background: none; border: none; font-size: 20px; color: #59636D; cursor: pointer;">&times;</button>
             </div>
             <div style="display: flex; flex-direction: column; gap: 10px;">
                 <button onclick="openPgModal(250, 2900, '250 복채')" style="background: #F3F0E8; border: 1px solid #DEDCD4; border-radius: 16px; padding: 11px 14px; display: flex; justify-content: space-between; align-items: center; text-align: left; cursor: pointer;">
-                    <div style="display: flex; align-items: center; gap: 6px;"><span class="btn-coin-icon"></span><p style="font-size: 13px; font-weight: 800; color: #25364A;">250 복채 체험팩</p></div>
-                    <span style="background: #DEDCD4; color: #25364A; font-size: 12px; font-weight: 800; padding: 3px 8px; border-radius: 6px;">₩2,900</span>
+                    <div style="display: flex; align-items: center; gap: 6px;"><span class="btn-coin-icon"></span><p style="font-size: 13px; font-weight: 800; color: var(--c-ink,#1D2129);">250 복채 체험팩</p></div>
+                    <span style="background: #DEDCD4; color: var(--c-ink,#1D2129); font-size: 12px; font-weight: 800; padding: 3px 8px; border-radius: 6px;">₩2,900</span>
                 </button>
                 <button onclick="openPgModal(550, 4900, '550 복채 (추천)')" style="background: #F8F6F1; border: 1.5px solid #DEDCD4; border-radius: 16px; padding: 11px 14px; display: flex; justify-content: space-between; align-items: center; text-align: left; cursor: pointer;">
-                    <div style="display: flex; align-items: center; gap: 6px;"><span class="btn-coin-icon"></span><div><p style="font-size: 13px; font-weight: 800; color: #25364A;">550 복채 실속팩</p><p style="font-size: 10.5px; color: #25364A; font-weight: 700;">+10% 보너스</p></div></div>
-                    <span style="background: #25364A; color: white; font-size: 12px; font-weight: 800; padding: 3px 8px; border-radius: 6px;">₩4,900</span>
+                    <div style="display: flex; align-items: center; gap: 6px;"><span class="btn-coin-icon"></span><div><p style="font-size: 13px; font-weight: 800; color: var(--c-ink,#1D2129);">550 복채 실속팩</p><p style="font-size: 10.5px; color: var(--c-ink,#1D2129); font-weight: 700;">+10% 보너스</p></div></div>
+                    <span style="background: var(--c-ink,#1D2129); color: white; font-size: 12px; font-weight: 800; padding: 3px 8px; border-radius: 6px;">₩4,900</span>
                 </button>
-                <button onclick="openPgModal(1300, 9900, '1,300 복채 (인기 최고)')" style="background: #F8F6F1; border: 1.5px solid #25364A; border-radius: 16px; padding: 11px 14px; display: flex; justify-content: space-between; align-items: center; text-align: left; cursor: pointer;">
-                    <div style="display: flex; align-items: center; gap: 6px;"><span class="btn-coin-icon-white"></span><div><p style="font-size: 13px; font-weight: 800; color: #25364A;">1,300 복채 인기팩</p><p style="font-size: 10.5px; color: #25364A; font-weight: 700;">+25% 보너스</p></div></div>
-                    <span style="background: #25364A; color: white; font-size: 12px; font-weight: 800; padding: 3px 8px; border-radius: 6px;">₩9,900</span>
+                <button onclick="openPgModal(1300, 9900, '1,300 복채 (인기 최고)')" style="background: #F8F6F1; border: 1.5px solid var(--c-ink,#1D2129); border-radius: 16px; padding: 11px 14px; display: flex; justify-content: space-between; align-items: center; text-align: left; cursor: pointer;">
+                    <div style="display: flex; align-items: center; gap: 6px;"><span class="btn-coin-icon-white"></span><div><p style="font-size: 13px; font-weight: 800; color: var(--c-ink,#1D2129);">1,300 복채 인기팩</p><p style="font-size: 10.5px; color: var(--c-ink,#1D2129); font-weight: 700;">+25% 보너스</p></div></div>
+                    <span style="background: var(--c-ink,#1D2129); color: white; font-size: 12px; font-weight: 800; padding: 3px 8px; border-radius: 6px;">₩9,900</span>
                 </button>
             </div>
         </div>
@@ -1483,10 +1483,10 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
     <!-- PG 결제 모달 -->
     <div id="pgModal" class="modal-bg hidden">
         <div class="modal-content" style="max-width: 340px; text-align: left;">
-            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F3F0E8; padding-bottom: 8px;"><h3 style="font-size: 15px; font-weight: 800; color: #25364A;">💳 안전 결제창</h3><button onclick="closePgModal()" style="background: none; border: none; font-size: 20px; color: #59636D; cursor: pointer;">&times;</button></div>
-            <div style="background: #F3F0E8; border-radius: 12px; padding: 12px; border: 1px solid #DEDCD4;"><span style="font-size: 12px; color: #59636D;">선택 상품</span><h4 id="pgItemName" style="font-size: 15px; font-weight: 800; color: #25364A; margin: 2px 0 4px;">550 복채</h4><div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px dashed #D4D0C6; padding-top: 6px; margin-top: 4px;"><span style="font-size: 12px; font-weight: 700; color: #59636D;">최종 결제 금액</span><span id="pgItemPrice" style="font-size: 16px; font-weight: 900; color: #DC2626;">₩4,900</span></div></div>
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F3F0E8; padding-bottom: 8px;"><h3 style="font-size: 15px; font-weight: 800; color: var(--c-ink,#1D2129);">💳 안전 결제창</h3><button onclick="closePgModal()" style="background: none; border: none; font-size: 20px; color: #59636D; cursor: pointer;">&times;</button></div>
+            <div style="background: #F3F0E8; border-radius: 12px; padding: 12px; border: 1px solid #DEDCD4;"><span style="font-size: 12px; color: #59636D;">선택 상품</span><h4 id="pgItemName" style="font-size: 15px; font-weight: 800; color: var(--c-ink,#1D2129); margin: 2px 0 4px;">550 복채</h4><div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px dashed #D4D0C6; padding-top: 6px; margin-top: 4px;"><span style="font-size: 12px; font-weight: 700; color: #59636D;">최종 결제 금액</span><span id="pgItemPrice" style="font-size: 16px; font-weight: 900; color: #DC2626;">₩4,900</span></div></div>
             <p id="pgPaymentStatus" class="tarot-draw-status" role="status"></p>
-            <button id="pgPaymentButton" onclick="processPgPaymentOnServer()" style="width: 100%; background: #25364A; color: white; border: none; font-size: 14.5px; font-weight: 800; padding: 13px; border-radius: 12px; cursor: pointer; margin-top: 4px;">결제 완료하기 ✨</button>
+            <button id="pgPaymentButton" onclick="processPgPaymentOnServer()" style="width: 100%; background: var(--c-ink,#1D2129); color: white; border: none; font-size: 14.5px; font-weight: 800; padding: 13px; border-radius: 12px; cursor: pointer; margin-top: 4px;">결제 완료하기 ✨</button>
         </div>
     </div>
 
@@ -1495,7 +1495,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
         <div class="modal-content" style="max-width: 380px; max-height: 85vh; display: flex; flex-direction: column; text-align: left; padding: 20px; border-radius: 24px;">
             <div class="reading-report-heading" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F3F0E8; padding-bottom: 10px; margin-bottom: 12px;">
                 <button id="readingCloseButton" class="reading-text-button" aria-label="풀이 닫기" onclick="closeArchiveDetailModal()">×</button>
-                <h3 id="archiveModalTitle" style="font-size: 14px; font-weight: 800; color: #25364A; font-family: 'Noto Serif KR', serif;">운세 리포트</h3>
+                <h3 id="archiveModalTitle" style="font-size: 14px; font-weight: 800; color: var(--c-ink,#1D2129); font-family: 'Noto Serif KR', serif;">운세 리포트</h3>
             </div>
             <p id="readingReportMeta" class="reading-caption" hidden></p>
             <nav id="readingReportContents" aria-label="리포트 목차"></nav>
@@ -1713,7 +1713,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             button.hidden = !feedback?.token;
             button.disabled = feedback ? pendingPlanLikes.has(feedback.token) : false;
             button.innerText = feedback?.liked ? '♥' : '♡';
-            button.style.color = feedback?.liked ? '#E85D75' : '#64748B';
+            button.style.color = feedback?.liked ? '#E85D75' : 'var(--c-ink-60,#575B62)';
             button.setAttribute('aria-pressed', String(!!feedback?.liked));
             button.setAttribute('aria-label', feedback?.liked ? '오늘 식단 좋아요 취소' : '오늘 식단 좋아요');
         }
@@ -1873,7 +1873,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 const color = Array.isArray(item.colors) ? item.colors[0] : '';
                 const pseudoItem = {category:itemCategory,label:item.nickname || item.category};
                 const cell = fashionV2Sprite(look,pseudoItem);
-                return renderGarmentSprite(cell,getHexColor(color,'#64748B'),`fashion-v2-accessory-${lookIndex}`);
+                return renderGarmentSprite(cell,getHexColor(color,'var(--c-ink-60,#575B62)'),`fashion-v2-accessory-${lookIndex}`);
             }
             return {시계:'⌚',가방:'👜',액세서리:'✦'}[item?.category] || '✦';
         }
@@ -2821,13 +2821,13 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
 
         const COLOR_HEX_MAP = {
             "화이트": "#FFFFFF", "아이보리/크림": "#FAF5EA", "베이지": "#D9C3A5", "카멜/브라운": "#8B5A2B",
-            "블랙": "#1E293B", "차콜": "#334155", "그레이": "#94A3B8", "실버": "#CBD5E1",
+            "블랙": "#1E293B", "차콜": "var(--c-ink-80,#3A3E45)", "그레이": "#94A3B8", "실버": "#CBD5E1",
             "골드": "#EAB308", "레드": "#EF4444", "와인/버건디": "#881337", "핑크": "#F472B6",
             "코랄/오렌지": "#FB923C", "옐로우": "#FBBF24", "머스터드": "#D97706", "올리브/카키": "#556B2F",
             "민트/라임": "#10B981", "그린": "#16A34A", "스카이블루": "#60A5FA", "네이비": "#1E3A8A"
         };
 
-        function getHexColor(colorName, fallback = "#64748B") {
+        function getHexColor(colorName, fallback = "var(--c-ink-60,#575B62)") {
             if (!colorName) return fallback;
             for (let k in COLOR_HEX_MAP) {
                 if (colorName.includes(k) || k.includes(colorName)) return COLOR_HEX_MAP[k];
@@ -3029,7 +3029,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
 
             pickEl.hidden = !FASHION_WARDROBE_UI_ENABLED || fashionV2Connected || !recommendation.item;
             pickEl.innerHTML = FASHION_WARDROBE_UI_ENABLED && !fashionV2Connected && recommendation.item ? `
-                <div style="font-size: 13px; color: #334155; line-height: 1.6;">
+                <div style="font-size: 13px; color: var(--c-ink-80,#3A3E45); line-height: 1.6;">
                     ${headerTag} ${matchText}
                 </div>
             ` : '';
@@ -3053,7 +3053,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             } 
             else if (cat === "하의") {
                 const isDenim = materials.some(m => m.includes("데님"));
-                let defaultC = isDenim ? "#1E3A8A" : "#334155";
+                let defaultC = isDenim ? "#1E3A8A" : "var(--c-ink-80,#3A3E45)";
                 const c1 = getHexColor(colors[0], defaultC);
                 const c2 = getHexColor(colors[1], c1);
                 const stroke = (c1 === "#FFFFFF" || c1 === "#FAF5EA") ? "#94A3B8" : "rgba(0,0,0,0.2)";
@@ -3075,7 +3075,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 colors.forEach(col => {
                     if (metallicColors.some(mc => col.includes(mc))) {
                         dialColor = getHexColor(col, "#E2E8F0");
-                        dialRim = col.includes("골드") ? "#D97706" : "#64748B";
+                        dialRim = col.includes("골드") ? "#D97706" : "var(--c-ink-60,#575B62)";
                     } else if (strapColors.some(sc => col.includes(sc))) {
                         strapColor = getHexColor(col, "#1E293B");
                     }
@@ -3122,7 +3122,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 </svg>`;
             } 
             else if (cat === "아우터") {
-                const c1 = getHexColor(colors[0], "#334155");
+                const c1 = getHexColor(colors[0], "var(--c-ink-80,#3A3E45)");
                 const c2 = getHexColor(colors[1], "#E2E8F0");
                 return `
                 <svg viewBox="0 0 36 36" width="30" height="30" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -3160,8 +3160,8 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                             ${getDynamicItemIconSvg(item)}
                         </div>
                         <div style="overflow: hidden;">
-                            <h5 style="font-size:14px; font-weight:800; color:#0F172A; margin-bottom:3px; white-space:nowrap; text-overflow:ellipsis; overflow:hidden;">${item.nickname}</h5>
-                            <p style="font-size:11.5px; color:#64748B; line-height: 1.4;">
+                            <h5 style="font-size:14px; font-weight:800; color:var(--c-ink,#1D2129); margin-bottom:3px; white-space:nowrap; text-overflow:ellipsis; overflow:hidden;">${item.nickname}</h5>
+                            <p style="font-size:11.5px; color:var(--c-ink-60,#575B62); line-height: 1.4;">
                                 <span style="background:#FEF3C7; color:#78350F; font-weight:700; padding:1px 5px; border-radius:4px;">${item.category}</span> · 
                                 <span>${item.colors.join(', ')}</span> · 
                                 <span>${item.materials.join(', ')}</span>
@@ -3169,7 +3169,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                         </div>
                     </div>
                     <div style="display:flex; gap:4px; margin-left:8px; flex-shrink: 0;">
-                        <button onclick="openWardrobeEditWizard(${item.id})" style="background:#F1F5F9; border:none; color:#334155; font-size:11.5px; font-weight:700; padding:5px 7px; border-radius:6px; cursor:pointer;">✏️ 수정</button>
+                        <button onclick="openWardrobeEditWizard(${item.id})" style="background:#F1F5F9; border:none; color:var(--c-ink-80,#3A3E45); font-size:11.5px; font-weight:700; padding:5px 7px; border-radius:6px; cursor:pointer;">✏️ 수정</button>
                         <button onclick="deleteWardrobeItem(${item.id})" style="background:#FEF2F2; border:1px solid #FECDD3; color:#EF4444; font-size:11.5px; font-weight:700; padding:5px 7px; border-radius:6px; cursor:pointer;">삭제</button>
                     </div>
                 </div>
@@ -4093,17 +4093,17 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                     tipsBox.innerHTML = `
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; font-size: 12.5px;">
                             <div style="background: #F8FAFC; border: 1px solid #E2E8F0; padding: 10px; border-radius: 12px; text-align: left;">
-                                <span style="color: #64748B; font-size: 11px; display: block; margin-bottom: 2px;">✨ 4대 원소</span>
-                                <strong style="color: #0F172A; font-size: 13.5px;">${data.star_element || '불 (Fire)'}</strong>
+                                <span style="color: var(--c-ink-60,#575B62); font-size: 11px; display: block; margin-bottom: 2px;">✨ 4대 원소</span>
+                                <strong style="color: var(--c-ink,#1D2129); font-size: 13.5px;">${data.star_element || '불 (Fire)'}</strong>
                             </div>
                             <div style="background: #F8FAFC; border: 1px solid #E2E8F0; padding: 10px; border-radius: 12px; text-align: left;">
-                                <span style="color: #64748B; font-size: 11px; display: block; margin-bottom: 2px;">🪐 지배 수호성</span>
-                                <strong style="color: #0F172A; font-size: 13.5px;">${data.star_planet || '태양 (Sun)'}</strong>
+                                <span style="color: var(--c-ink-60,#575B62); font-size: 11px; display: block; margin-bottom: 2px;">🪐 지배 수호성</span>
+                                <strong style="color: var(--c-ink,#1D2129); font-size: 13.5px;">${data.star_planet || '태양 (Sun)'}</strong>
                             </div>
                         </div>
                         <div style="background: #FAF9F6; border: 1px solid #FCD34D; border-radius: 14px; padding: 14px; text-align: left;">
                             <span style="font-size: 12px; font-weight: 800; color: #78350F; display: block; margin-bottom: 6px;">🔮 오늘의 실천 가이드</span>
-                            <p style="color: #334155; font-size: 13.5px; line-height: 1.7; margin: 0;">${data.focus_content || ''}</p>
+                            <p style="color: var(--c-ink-80,#3A3E45); font-size: 13.5px; line-height: 1.7; margin: 0;">${data.focus_content || ''}</p>
                         </div>
                     `;
                     document.getElementById('zodiacExtraInfo').innerHTML = `🎨 행운 컬러: <strong>${data.lucky_color || '골드'}</strong> &nbsp;|&nbsp; ⏱️ 행운 시간: <strong>${data.lucky_time || '오전 10시'}</strong>`;
@@ -4112,12 +4112,12 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                     iconBox.innerHTML = `<span style="font-size: 24px;">${zIcons[key] || '✨'}</span>`;
 
                     tipsBox.innerHTML = `
-                        <p style="font-weight: 800; color: #0F172A; margin-bottom: 8px; font-size: 14px; text-align: left;">📅 출생연도별 핵심 가이드</p>
+                        <p style="font-weight: 800; color: var(--c-ink,#1D2129); margin-bottom: 8px; font-size: 14px; text-align: left;">📅 출생연도별 핵심 가이드</p>
                         <div style="display: flex; flex-direction: column; gap: 8px; text-align: left;">
                             ${(data.year_tips || []).map(item => `
                                 <div style="display: flex; align-items: flex-start; gap: 10px; font-size: 13px; line-height: 1.5; padding: 6px 0; border-bottom: 1px solid #F1F5F9;">
-                                    <span style="background: #F1F5F9; color: #0F172A; font-weight: 800; padding: 3px 6px; border-radius: 6px; flex-shrink: 0; font-size: 11.5px;">${item.year_label}</span>
-                                    <span style="color: #334155; flex: 1;">${item.tip}</span>
+                                    <span style="background: #F1F5F9; color: var(--c-ink,#1D2129); font-weight: 800; padding: 3px 6px; border-radius: 6px; flex-shrink: 0; font-size: 11.5px;">${item.year_label}</span>
+                                    <span style="color: var(--c-ink-80,#3A3E45); flex: 1;">${item.tip}</span>
                                 </div>
                             `).join('')}
                         </div>
@@ -4186,7 +4186,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 const active = el.dataset.phase === currentPhase;
                 el.style.background = active ? '#ECFDF5' : '#FFFFFF';
                 el.style.borderColor = active ? '#34D399' : '#E2E8F0';
-                el.style.color = active ? '#047857' : '#334155';
+                el.style.color = active ? '#047857' : 'var(--c-ink-80,#3A3E45)';
                 el.style.boxShadow = active ? '0 3px 10px rgba(16,185,129,.14)' : 'none';
             });
             const details = [phase?.cycle, phase?.age_range].filter(Boolean).join(' · ');

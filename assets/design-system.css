@@ -1,7 +1,7 @@
 /* Shared reading and dialog foundation. Color-bearing outfit/food/SVG assets stay intact. */
 :root {
   --ui-page:#F5F7F8; --ui-surface:#FFFFFF; --ui-ink:#182B3A;
-  --ui-muted:#425563; --ui-line:#D5DFE3; --ui-accent:#205D62;
+  --ui-muted:#425563; --ui-line:#D5DFE3; --ui-accent:var(--c-ink,#1D2129);
   --ui-tint:#F0F5F5; --ui-radius:20px; --ui-soft:#F2F5F6;
 }
 body { color:var(--ui-ink); }
@@ -159,7 +159,7 @@ html[data-design="moonlight"] .login-gate-card { background:var(--ui-surface); b
 .menu-mode-controls button { flex:1; min-height:42px; border:0; border-radius:8px; font:inherit; font-size:14px; font-weight:700; color:var(--ui-muted,#475569); background:transparent; cursor:pointer; }
 .menu-mode-controls button[aria-pressed="true"] { color:var(--ui-ink,#172B3A); background:var(--ui-surface,#FFF); box-shadow:0 1px 4px #10202c1a; }
 .menu-status { margin:10px 0; font-size:13px; line-height:1.6; color:var(--ui-muted,#475569); }
-.menu-next { width:100%; min-height:46px; border:0; border-radius:11px; font:inherit; font-size:14px; font-weight:700; background:var(--ui-accent,#2D6A4F); color:var(--ui-on-accent,#FFF); cursor:pointer; }
+.menu-next { width:100%; min-height:46px; border:0; border-radius:11px; font:inherit; font-size:14px; font-weight:700; background:var(--ui-accent,var(--c-ink,#1D2129)); color:var(--ui-on-accent,#FFF); cursor:pointer; }
 .menu-next:disabled, .menu-mode-controls button:disabled { opacity:.6; cursor:wait; }
 .menu-error { font-size:13px; line-height:1.65; color:#A12C2C; margin:8px 0 0; }
 .menu-error:empty { display:none; }

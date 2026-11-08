@@ -325,12 +325,12 @@ def _score(core: MyeongriCoreResult, day_pillar: str, target_date: date) -> dict
     return daily_score.evaluate(core, day_pillar, target_date)
 
 
-_GRADE_STYLE = {   # 나쁨·주의 구리, 보통 남색, 좋음·아주 좋음 세이지. reading-polish.css 의 .daily-grade 와 같은 색.
-    "나쁨": "background:#F8ECE4; color:#995737; border:1px solid #E4B28F;",
-    "주의": "background:#F8ECE4; color:#995737; border:1px solid #E4B28F;",
-    "보통": "background:#EAEEF3; color:#25364A; border:1px solid #C9D2DD;",
-    "좋음": "background:#E6F0EA; color:#3F7A5C; border:1px solid #B9D3C3;",
-    "아주 좋음": "background:#E6F0EA; color:#3F7A5C; border:1px solid #B9D3C3;",
+_GRADE_STYLE = {   # 11/8 달하 팔레트(먹·종이·인주). 좋음 쪽은 인주 도장, 주의 쪽은 먹 테두리.
+    "나쁨": "background:#FDFCF9; color:#1D2129; border:1px solid #1D2129;",
+    "주의": "background:#FDFCF9; color:#1D2129; border:1px solid #1D2129;",
+    "보통": "background:#F1EEE7; color:#1D2129; border:1px solid #D9D5CB;",
+    "좋음": "background:#B5341F; color:#FDFCF9; border:1px solid #B5341F;",
+    "아주 좋음": "background:#B5341F; color:#FDFCF9; border:1px solid #B5341F;",
 }
 
 

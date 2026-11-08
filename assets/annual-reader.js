@@ -130,7 +130,7 @@ window.setupAnnualReader = function(body, navigation) {
 
 window.ANNUAL_PRINT_STYLE = `
     @page { size:A4; margin:18mm 16mm; }
-    body { font-family:sans-serif; font-size:11pt; line-height:1.8; color:#25364A; }
+    body { font-family:sans-serif; font-size:11pt; line-height:1.8; color:var(--c-ink,#1D2129); }
     h2,h3,h4,h5 { break-after:avoid; page-break-after:avoid; }
     h3 { font-size:15pt; margin-top:24pt; }
     h4 { font-size:13pt; }
@@ -138,13 +138,13 @@ window.ANNUAL_PRINT_STYLE = `
     p { orphans:3; widows:3; margin:0 0 10pt; }
     .annual-month { break-before:auto; page-break-before:auto; border:0!important; }
     .annual-month + .annual-month { margin-top:60pt; }
-    .annual-overview > h3:first-child { color:#25364A; }
+    .annual-overview > h3:first-child { color:var(--c-ink,#1D2129); }
     .annual-kind { display:none; }
-    .annual-domain-label { display:block; color:#25364A; font-size:11pt; margin-bottom:6pt; }
+    .annual-domain-label { display:block; color:var(--c-ink,#1D2129); font-size:11pt; margin-bottom:6pt; }
     .annual-domain-message { display:block; font-size:14pt; }
-    .annual-domain[data-central="true"] .annual-domain-message { display:inline; color:#995737; font-weight:900; }
-    .annual-focus-chip { display:inline-block; vertical-align:middle; margin-left:6pt; padding:1pt 7pt; border:1pt solid #995737; border-radius:99pt; color:#995737; font-size:9pt; font-weight:800; }
-    .annual-month-label { display:block; color:#25364A; font-size:14pt; margin-bottom:9pt; }
+    .annual-domain[data-central="true"] .annual-domain-message { display:inline; }
+    .annual-focus-chip { display:inline-block; vertical-align:middle; margin-left:6pt; padding:1pt 7pt; border:0; border-radius:1pt; background:#B5341F; color:#FDFCF9; font-size:9pt; font-weight:800; }
+    .annual-month-label { display:block; color:var(--c-ink,#1D2129); font-size:14pt; margin-bottom:9pt; }
     .annual-month-message { display:block; font-size:14pt; }
     .annual-note,.annual-evidence { font-size:9pt; color:#59636D; }
     button { display:none; }

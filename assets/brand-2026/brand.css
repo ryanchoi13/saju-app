@@ -1,15 +1,15 @@
 /* DALHA / Moon journal. Canonical 2026 brand layer. All visual tokens live here. */
 html[data-brand="journal"] {
-  --ui-page:#F8F6F1; --ui-surface:#FFFEFA; --ui-ink:#25364A; --ui-muted:#59636D;
-  --ui-line:#DEDCD4; --ui-accent:#25364A; --ui-tint:#EEECE4; --ui-soft:#F3F0E8;
-  --ui-on-accent:#FFFDF6; --ui-radius:16px; --brand-copper:#995737; --brand-apricot:#E4B28F;
+  --ui-page:#F8F6F1; --ui-surface:#FFFEFA; --ui-ink:var(--c-ink,#1D2129); --ui-muted:#59636D;
+  --ui-line:#DEDCD4; --ui-accent:var(--c-ink,#1D2129); --ui-tint:#EEECE4; --ui-soft:#F3F0E8;
+  --ui-on-accent:#FFFDF6; --ui-radius:16px; --brand-copper:var(--c-point,#B5341F); --brand-apricot:var(--c-point,#B5341F);
   --brand-sage:#DFE5D9; --brand-serif:'Noto Serif KR','Batang',serif;
   scroll-padding-top:92px;
 }
 html[data-brand] body { background:#EAE7E0; color:var(--ui-ink); }
 html[data-brand] button,html[data-brand] select,html[data-brand] input { font-family:'Pretendard',sans-serif; }
 html[data-brand] button { touch-action:manipulation; }
-html[data-brand] button:focus-visible,html[data-brand] a:focus-visible,html[data-brand] summary:focus-visible { outline:3px solid #995737; outline-offset:4px; }
+html[data-brand] button:focus-visible,html[data-brand] a:focus-visible,html[data-brand] summary:focus-visible { outline:3px solid var(--c-point,#B5341F); outline-offset:4px; }
 html[data-brand] .app-container { background:var(--ui-page); width:100%; max-width:600px; box-shadow:none; padding-bottom:110px; }
 html[data-brand] .app-container > header { background:var(--ui-page); border-bottom:1px solid var(--ui-line); padding:17px 24px; min-height:80px; gap:15px; }
 html[data-brand] .logo-box { display:flex; align-items:center; gap:8px; padding:0; border:0; color:var(--ui-ink); background:transparent; cursor:pointer; }
@@ -37,19 +37,19 @@ html[data-brand] .brand-service-icon { display:inline-flex; align-items:center; 
 html[data-brand] .brand-symbol { display:inline-flex; align-items:center; color:inherit; }
 html[data-brand] .brand-symbol .brand-icon { width:17px; height:17px; }
 /* The daily reading is the focal point; time-specific advice remains real text below it. */
-html[data-brand] #view-today .journal-fortune { position:relative; background:#25364A!important; color:#FFFCF4; border:0!important; border-radius:18px; padding:25px 23px!important; gap:17px; overflow:hidden; }
+html[data-brand] #view-today .journal-fortune { position:relative; background:var(--c-ink,#1D2129)!important; color:#FFFCF4; border:0!important; border-radius:18px; padding:25px 23px!important; gap:17px; overflow:hidden; }
 html[data-brand] .journal-fortune::after { content:''; position:absolute; width:38px; height:38px; border-radius:50%; box-shadow:8px 5px 0 #E8D9B9; right:35px; top:77px; pointer-events:none; transform:rotate(-18deg); }
 html[data-brand] #view-today .journal-fortune > div:first-child > div > span { color:#E6D9BF!important; font-size:12px!important; font-weight:500!important; letter-spacing:1px; }
 html[data-brand] #view-today .journal-fortune #resScoreBadge { color:#F7EDDC!important; background:#3C4C5D!important; border:1px solid #677382!important; font-size:11px!important; font-weight:500!important; border-radius:30px; }
 html[data-brand] #view-today .journal-fortune #resTitle { color:#FFFDF5!important; font-family:var(--brand-serif)!important; font-size:26px!important; line-height:1.65!important; font-weight:600; padding-right:45px; margin:2px 0!important; }
 html[data-brand] #view-today .journal-fortune #resAdvice { color:#F1EDE4!important; font-size:15px!important; line-height:1.85!important; padding-right:8px; }
-html[data-brand] #view-today .journal-fortune #resOverallLabel { color:#E4B28F!important; font-size:12px!important; font-weight:600!important; letter-spacing:1px; margin:6px 0 -8px!important; }
+html[data-brand] #view-today .journal-fortune #resOverallLabel { color:var(--c-point,#B5341F)!important; font-size:12px!important; font-weight:600!important; letter-spacing:1px; margin:6px 0 -8px!important; }
 html[data-brand] #view-today .journal-fortune #resSections { border-top:1px solid #566371!important; padding-top:18px!important; gap:18px!important; }
-html[data-brand] #view-today .journal-fortune #resSections .res-sec-label { color:#E4B28F!important; font-size:12px!important; font-weight:600!important; letter-spacing:1px; margin-bottom:5px!important; }
+html[data-brand] #view-today .journal-fortune #resSections .res-sec-label { color:var(--c-point,#B5341F)!important; font-size:12px!important; font-weight:600!important; letter-spacing:1px; margin-bottom:5px!important; }
 html[data-brand] #view-today .journal-fortune #resSections .res-sec-body { color:#E8E8E3!important; font-size:14px!important; line-height:1.8!important; word-break:keep-all; overflow-wrap:anywhere; padding-right:8px; }
 html[data-brand] #view-today .journal-fortune .journal-times { border-top:1px solid #566371!important; padding-top:16px!important; display:grid!important; grid-template-columns:repeat(3,minmax(0,1fr)); gap:15px!important; }
 html[data-brand] #view-today .journal-times > div { flex-direction:column!important; gap:9px!important; align-items:flex-start!important; }
-html[data-brand] #view-today .journal-times > div > span:first-child { min-width:0!important; background:transparent!important; color:#E4B28F!important; font-size:12px!important; padding:0!important; font-weight:600!important; }
+html[data-brand] #view-today .journal-times > div > span:first-child { min-width:0!important; background:transparent!important; color:var(--c-point,#B5341F)!important; font-size:12px!important; padding:0!important; font-weight:600!important; }
 html[data-brand] #view-today .journal-times > div > span:last-child { color:#E8E8E3!important; font-size:13px!important; line-height:1.75!important; word-break:keep-all; overflow-wrap:anywhere; }
 /* Daily service entries. No global filters touch color recommendations, garment canvases or food photos. */
 html[data-brand] #dailyStyleCard > div:first-child { border-bottom:0!important; padding-bottom:0!important; }
@@ -120,7 +120,7 @@ html[data-brand] .reading-view .report-preview li { padding-left:34px; padding-b
 html[data-brand] .reading-view .report-preview li::before { color:var(--brand-copper); top:2px; font-size:11px; }
 html[data-brand] .reading-view .report-preview li strong { font-weight:600; color:var(--ui-ink); }
 html[data-brand] .reading-view .report-preview li span { color:var(--ui-muted); }
-html[data-brand] .reading-primary,html[data-brand] .reading-view .report-entry > button { background:#25364A!important; border-radius:9px!important; min-height:50px; font-size:15px!important; font-weight:600; }
+html[data-brand] .reading-primary,html[data-brand] .reading-view .report-entry > button { background:var(--c-ink,#1D2129)!important; border-radius:9px!important; min-height:50px; font-size:15px!important; font-weight:600; }
 html[data-brand] .reading-view .reading-secondary { border-color:#CFC9BD; border-radius:9px; color:var(--ui-ink); background:transparent; font-size:14px; }
 html[data-brand] .reading-caption,html[data-brand] .reading-view .card > .reading-caption { font-size:12px!important; line-height:1.9!important; color:var(--ui-muted); }
 html[data-brand] .reading-current { border-color:var(--ui-line); }
@@ -169,7 +169,7 @@ html[data-brand] .modal-content .ui-modal-heading h3 { font-family:var(--brand-s
 html[data-brand] .modal-content .ui-action { border-radius:9px!important; }
 html[data-brand] .modal-content .ui-action-primary { background:var(--ui-accent)!important; color:#FFF!important; }
 html[data-brand] .modal-content .ui-option { border-color:var(--ui-line)!important; border-radius:9px!important; }
-html[data-brand] .modal-content .ui-option:has(input:checked) { background:#F1E9DC!important; border-color:#995737!important; }
+html[data-brand] .modal-content .ui-option:has(input:checked) { background:var(--c-point-tint,#F5E1DC)!important; border-color:var(--c-point,#B5341F)!important; }
 html[data-brand] #fashionV2Modal { align-items:center; padding:12px!important; }
 html[data-brand] #fashionV2Modal .fashion-v2-sheet { padding:0!important; gap:0; height:min(800px,calc(100dvh - 24px)); max-height:calc(100dvh - 24px)!important; overflow:hidden; }
 html[data-brand] .fashion-v2-header,html[data-brand] .fashion-v2-tabs { flex:0 0 auto; }
@@ -204,11 +204,11 @@ html[data-brand] .app-container:has(#view-login-gate:not(.hidden)) > header { ba
 html[data-brand] .dalha-landing { color:var(--ui-ink); }
 html[data-brand] .landing-eyebrow { color:var(--brand-copper); }
 html[data-brand] .landing-intro h1 { font-family:var(--brand-serif); font-size:clamp(31px,4vw,50px); line-height:1.6; letter-spacing:-1.6px; color:var(--ui-ink); }
-html[data-brand] .landing-intro h1 em { color:#995737; font-family:inherit; }
+html[data-brand] .landing-intro h1 em { color:var(--c-ink,#1D2129); font-family:inherit; }
 html[data-brand] .landing-description,html[data-brand] .landing-signup-note { color:var(--ui-muted); }
 html[data-brand] .landing-scene { background:url('/assets/brand-2026/moon-landscape.webp') center/cover; padding:65px 28px; border-radius:18px; }
 html[data-brand] .landing-orbit { display:none; }
-html[data-brand] .landing-day-card { background:#FFFEF9F2; border:1px solid #E3DACE; transform:rotate(-3deg); box-shadow:0 14px 30px #25364A12; }
+html[data-brand] .landing-day-card { background:#FFFEF9F2; border:1px solid #E3DACE; transform:rotate(-3deg); box-shadow:0 14px 30px var(--c-ink,#1D2129)12; }
 html[data-brand] .landing-card-quote { color:var(--ui-ink); font-family:var(--brand-serif); font-size:27px; line-height:1.7; }
 html[data-brand] .landing-floating-note { background:var(--ui-ink); color:#FFFDF6; border-radius:7px; box-shadow:none; }
 html[data-brand] .landing-text-link { color:var(--ui-ink); }
@@ -239,7 +239,7 @@ html[data-brand] .design-comparison a { border:0; padding:0; min-height:28px; fo
   html[data-brand] #view-today .journal-fortune .journal-times { gap:30px!important; }
   html[data-brand] #view-today .journal-times > div > span:last-child { font-size:14px!important; }
   html[data-brand] .reading-view,#view-mypage { max-width:720px; width:100%; margin:0 auto; }
-  html[data-brand] #bottomNavBar { max-width:580px; bottom:16px; border:1px solid var(--ui-line); border-radius:17px; padding:7px 14px; box-shadow:0 8px 30px #25364A12; }
+  html[data-brand] #bottomNavBar { max-width:580px; bottom:16px; border:1px solid var(--ui-line); border-radius:17px; padding:7px 14px; box-shadow:0 8px 30px var(--c-ink,#1D2129)12; }
 }
 @media(max-width:420px) {
   html[data-brand] .app-container > header { padding:15px 18px!important; min-height:74px; }
