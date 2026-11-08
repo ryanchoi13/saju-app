@@ -63,12 +63,12 @@
 :root[data-brand] body #view-today .il-date .dc3-date { margin:0; font-size:14px; font-weight:500; letter-spacing:0; color:var(--il-muted); }
 #view-today .il-day { margin:2px 0 0; font-family:'Song Myung','Noto Serif KR',serif; font-size:112px; line-height:.95; color:var(--il-ink); font-variant-numeric:lining-nums; }
 #view-today .il-day:empty { display:none; }
-#view-today .il-lunar { margin:12px 0 0; font-size:13px; line-height:1.6; color:var(--c-ink-60); word-break:keep-all; }
+#view-today .il-lunar { margin:4px 0 0; font-size:13px; line-height:1.6; color:var(--c-ink-60); word-break:keep-all; }
 /* 오늘의 달 풀이: 날짜·달 아래 점선 하나, 송명체 한 줄 + 설명 두 문장 */
 #view-today .il-moon-note { margin:18px 0 0; padding:16px 0 0; border-top:1px dashed var(--c-perf); }
 #view-today .il-moon-note[hidden] { display:none; }
 #view-today .il-moon-title { margin:0; font-family:'Song Myung','Noto Serif KR',serif; font-size:19px; line-height:1.4; color:var(--c-ink); }
-#view-today .il-moon-text { margin:6px 0 0; font-size:15px; line-height:1.7; color:var(--c-ink-80); word-break:keep-all; }
+#view-today .il-moon-text { margin:10px 0 0; font-size:15px; line-height:1.7; color:var(--c-ink-80); word-break:keep-all; }
 #view-today .il-moon { margin:0; display:flex; flex-direction:column; align-items:center; gap:6px; }
 #view-today .il-moon[hidden] { display:none; }
 #view-today .il-moon svg { width:80px; height:80px; display:block; }

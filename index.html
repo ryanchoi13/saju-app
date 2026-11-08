@@ -555,7 +555,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
     <link rel="stylesheet" href="/assets/daily-card.css?v=20261108-p1">
     <link rel="stylesheet" href="/assets/brand-2026/refine.css?v=20261108-p1">
     <link href="https://fonts.googleapis.com/css2?family=Song+Myung&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/assets/brand-2026/ilryeok.css?v=20261108-p3">
+    <link rel="stylesheet" href="/assets/brand-2026/ilryeok.css?v=20261108-p4">
     <script src="/assets/reading-polish.js?v=20261108-p1" defer></script>
     <script src="/assets/brand-2026/brand-ui.js?v=20261108-p1" defer></script>
 </head>
@@ -702,11 +702,12 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                         </figure>
                     </div>
                     <!-- 11/8 정오님: 달 옆에 이름만 두지 말고 오늘이 어떤 달인지 한 줄로 풀어 준다 -->
+                    <!-- 위 = 양력, 아래 = 음력(11/8 정오님): 음력 날짜·달 이름 → 일진·절기 → 달 풀이 -->
                     <div id="ilMoonNote" class="il-moon-note" hidden>
                         <p id="ilMoonTitle" class="il-moon-title"></p>
+                        <p id="ilLunarLine" class="il-lunar"></p>
                         <p id="ilMoonText" class="il-moon-text"></p>
                     </div>
-                    <p id="ilLunarLine" class="il-lunar"></p>
                     <h2 class="sr-only" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;">오늘의 나</h2>
                 </div>
 
@@ -2737,14 +2738,14 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             const term = lunar.next_term
                 ? (lunar.days_to_term === 0 ? `오늘 ${lunar.next_term}` : `${lunar.next_term}까지 ${lunar.days_to_term}일`) : '';
             const ganji = currentFortuneData?.daily_fortune?.day_ganji_han;
-            line.textContent = [`음력 ${lunar.leap ? '윤' : ''}${lunar.month}월 ${lunar.day}일`, ganji ? `${ganji}일` : '', term]
-                .filter(Boolean).join(' · ');
+            line.textContent = [ganji ? `${ganji}일` : '', term].filter(Boolean).join(' · ');
             document.getElementById('ilMoonLit').setAttribute('d', ilMoonPath(lunar.day));
             document.getElementById('ilMoonName').textContent = lunar.phase || '';
             moon.hidden = false;
             const note = document.getElementById('ilMoonNote');
             if (note) {
-                document.getElementById('ilMoonTitle').textContent = lunar.phase_title || '';
+                document.getElementById('ilMoonTitle').textContent =
+                    `음력 ${lunar.leap ? '윤' : ''}${lunar.month}월 ${lunar.day}일${lunar.phase ? ` · ${lunar.phase}` : ''}`;
                 document.getElementById('ilMoonText').textContent = lunar.phase_note || '';
                 note.hidden = !lunar.phase_note;
             }
