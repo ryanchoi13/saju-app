@@ -185,13 +185,13 @@ def _strength_summary(core) -> dict:
     natal = natal_balance(core)
     support = natal["primary"]
     if state in {"strong", "extremely_strong"}:
-        basis = "일간을 돕는 기운이 많아 신강으로 봤어요. 넘치는 힘을 덜어 주는 기운을 보완 기운으로 골랐어요."
+        basis = "월령·통근과 비겁·인성의 힘을 종합하면 일간이 강한 신강(身强)입니다. 억부(抑扶)의 원칙에 따라 넘치는 힘을 덜어 주는 기운을 보완 기운으로 봅니다."
     elif state in {"weak", "extremely_weak"}:
-        basis = "일간을 돕는 기운이 적어 신약으로 봤어요. 힘을 보태 주는 기운을 보완 기운으로 골랐어요."
+        basis = "월령·통근과 비겁·인성의 힘을 종합하면 일간이 약한 신약(身弱)입니다. 억부(抑扶)의 원칙에 따라 일간에 힘을 보태는 기운을 보완 기운으로 봅니다."
     elif natal.get("method") == "gungtong_johu":
-        basis = "힘을 보태는 기운과 덜어내는 기운이 비슷해서 한쪽으로 단정하지 않았어요. 보완 기운은 태어난 달과 일간으로 골랐어요."
+        basis = "일간을 돕는 힘과 덜어내는 힘이 비등해 억부로 강약을 단정하지 않습니다. 보완 기운은 태어난 계절과 일간을 함께 보는 조후(調候)로 정합니다."
     else:
-        basis = "힘을 보태는 기운과 덜어내는 기운이 비슷해서 한쪽으로 단정하지 않았어요. 보완 기운은 원국에 적은 기운과 계절로 골랐어요."
+        basis = "일간을 돕는 힘과 덜어내는 힘이 비등해 억부로 강약을 단정하지 않습니다. 보완 기운은 원국에 부족한 기운과 계절의 조후(調候)를 함께 따져 정합니다."
     return {
         "strength": _STRENGTH_SHORT.get(state, "강약 치우침 없음"),
         "support_element": support,
@@ -503,9 +503,9 @@ def get_saju_pillars_and_analysis(name: str, gender: str, y: int, m: int, d: int
             },
             "elements": elements_weight,
             "elements_note": (
-                "오행 비율은 천간과 지지 속 글자(지장간)까지 합해 셌어요."
+                "오행 비율은 천간과 지장간(地藏干)의 본기·중기·여기 비중을 합산한 값입니다."
                 if birth_clock else
-                "오행 비율은 생시를 뺀 여섯 글자와 지지 속 글자(지장간)로 셌어요."
+                "오행 비율은 생시를 제외한 여섯 글자에서 천간과 지장간(地藏干)의 비중을 합산한 값입니다."
             ),
             "daeyun_phase": _daeyun_phase(core.timing.luck_cycle.get("current")),
         },
