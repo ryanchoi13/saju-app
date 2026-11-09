@@ -33,6 +33,7 @@
   - 룩북 탭이 없는 브랜드: 오라리(일본)·캡틴선샤인(일본)·COS·토리버치·르메르·노스페이스·아크테릭스·파타고니아.
   - SSF샵 매거진 "소재사전: 남성 울/캐시미어 아우터"(ssfMgz 124271)에 갤럭시·GLXY·로가디스 전신 착장 3컷 — 칸 #4(40대 남성 클래식) 보강 후보(나머지는 옷걸이 상품 컷).
 - **2026-11-10 03:23 KST**: 같은 상태. 브랜드관 주소 추가 확인 — 헨리코튼 `/HENRY-COTTONS/main?brandShopNo=BDMA42A03&brndShopId=REFAAA7`(탭: 26 F/W 7컷·25 F/W 5컷·26SS·25 S/S·BSC·FFC — BSC·FFC는 2025-04 게시 봄여름·낚시 컬렉션), 라코스테 `/LACOSTE/main?brandShopNo=BDMA19X86&brndShopId=RTLCT`(26FW COLLECTION 8컷 중 남성 4), 가니 `/GANNI/main?brandShopNo=BDMA07A99&brndShopId=BQCGN`(26 F/W 10컷), 스튜디오 니콜슨 `/Studio%20Nicholson/main?brandShopNo=BDMA07A97&brndShopId=BQSN`(26 F/W 10컷). 메종 키츠네·아미는 룩북 탭(cnrSn 23417)이 없다. 브랜드관 첫 탭 사진은 페이지 HTML에 바로 들어 있고, 다른 탭은 `getTabDataMore`로 부른다.
+- **2026-11-10 05:11 KST**: 같은 상태. 브랜드관 주소 추가 확인 — 산드로 MEN 탭(cnrSetSn 460154, 15컷, 2026-09-23 게시, 시즌 표기 없음), 리바이스 `/LEVIS/main?brandShopNo=BDMA19AEG&brndShopId=RTLVS`(탭: 리바이스X심시티·26 F/W 6컷·26 SPRING), 건지울른스 `/GUERNSEYWOOLLENS/main?brandShopNo=BDMA19M66&brndShopId=GRGUE`(탭: 남성 26 F/W 12컷·리오브건지 26 F/W·26 S/S·25 F/W 8컷·25 SUMMER·24 F/W). 건지울른스 "남성 26 F/W"는 흰 스튜디오·큰 로고 스웨트셔츠가 많아 **한국 전개 컬렉션일 수 있다(크부장 추정, 확인 전)** — 유럽 칸에는 25 F/W 항구 화보만 썼다. 단톤·세인트제임스·COS 브랜드관은 룩북 탭이 없다. 샌드사운드는 탭이 S/S·잡화뿐.
 - 풀려면: claude.ai 설정 → Capabilities(기능)의 허용 도메인에 아래 "쓸 수 있음" 사이트를 넣어야 한다(정오님 결정 필요). PR 본문에 적었다.
 
 ## 1. 판정 기호
