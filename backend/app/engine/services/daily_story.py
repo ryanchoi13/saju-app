@@ -27,7 +27,7 @@ from app.engine.facts.twelve_stages import get_twelve_stage
 from app.engine.services import daily_score
 from app.engine.services import daily_story_bank as B
 
-STORY_VERSION = "dalha-daily-story-v2-bank5"
+STORY_VERSION = "dalha-daily-story-v2-bank5-spine"
 SECTION_ORDER = (("money", "금전"), ("love", "애정·관계"), ("work", "일"), ("health", "건강"))
 USE_ELEMENT = "story"        # recent 목록의 element 자리
 
@@ -45,6 +45,7 @@ CROSS = ["짜증", "서두르", "실수", "고집", "윗사람", "선배", "조�
 KEY_DOMAIN = {"month지 충": "일", "month지 형": "일", "month지 육합": "일",
               "day지 충": "애정·관계", "day지 형": "애정·관계", "일간 천간충": "애정·관계", "일간 천간극": "일",
               "year지 충": "애정·관계", "year지 형": "애정·관계"}
+RX_CALM = ["조용한 편", "조용히", "특별한 일", "큰 움직임"]
 CALM = ["평소대로", "평소와 비슷", "평소와 같은", "특별한 신호", "조용한 하루", "편하게 지내는", "오래 알던", "고르게 가는"]
 BODY_WORDS = re.compile("넘치|에너지|힘이 나|가볍|체력")
 DAY = re.compile(B.DAY_END_RE)
@@ -167,6 +168,11 @@ def love_signal(items, god: str | None, gender: str | None, natal_branches: tupl
     return None
 
 
+def rx_spine(items, grade):
+    from app.engine.services.daily_rx import spine_item
+    return spine_item(items, grade)
+
+
 def derive(core: MyeongriCoreResult, ev: dict, rx: dict, d: date, gender: str | None) -> dict:
     pillars = core.natal_facts.pillars
     dm = pillars["day"].stem
@@ -178,7 +184,7 @@ def derive(core: MyeongriCoreResult, ev: dict, rx: dict, d: date, gender: str | 
     if ev["confidence"] == "약":
         key, top_sign, rest = "잔잔", None, []
     else:
-        top = max(items, key=lambda x: (abs(x[1]), x[1] > 0))
+        top = rx_spine(items, grade)                      # 11/9: 제목·총운도 같은 줄기에서(daily_rx.spine_item)
         key, top_sign = top[0], ("길" if top[1] > 0 else "흉")
         rest = [x for x in items if x != top]
     if key not in B.LEAD:
@@ -210,7 +216,8 @@ def derive(core: MyeongriCoreResult, ev: dict, rx: dict, d: date, gender: str | 
     card = {}
     if note:
         card[note["domain"].replace("사람", "애정·관계")] = card_nouns(note["text"])
-    return dict(date=d, grade=grade, evidence=key, top_sign=top_sign, god=god, stage=stage,
+    rx_domain = {"돈": "금전", "일": "일", "사람": "애정·관계", "몸": "건강"}.get(rx.get("rx_scene") or "")
+    return dict(date=d, grade=grade, evidence=key, rx_domain=rx_domain, top_sign=top_sign, god=god, stage=stage,
                 same=same, opp=opp, body_flag=body, domains=tiers, deltas=score, standout=standout, love=love,
                 card_first_words=(card_ev.split(" ")[0],) if card_ev else (), card_nouns=card, items=items)
 
@@ -274,6 +281,10 @@ def _build_domain(day: dict, dom: str, recent) -> tuple[str, dict, list]:
     paras_all = B.DOMAIN[dom][g]
     order = _order(len(paras_all), recent, f"para:{dom}:{g}")
     paras = [(pi, paras_all[pi]) for pi in order if B.grade_ok(paras_all[pi], grade)]
+    if g == "보통" and day.get("rx_domain") == dom:
+        # 11/9: '오늘은 이렇게'가 이 분야를 말하는 날, 분야 문단이 "조용한 편·평소대로"라고 하면 앞뒤가 어긋난다
+        lively = [(pi, p) for pi, p in paras if not any(c in p["text"] for c in CALM + RX_CALM)]
+        paras = lively or paras
     bad_keys = [day["evidence"]] + [x[0] for x in (day["same"], day["opp"]) if x and x[1] < 0]
     for pi, p in paras:
         ss = sents(p["text"])
@@ -391,6 +402,8 @@ def story_payload(base: dict | None, story: dict) -> dict:
     out.update(
         headline=story["title"], title=story["title"],
         body=story["overall"], overall=story["overall"],
+        # 11/9 정오님: 제목과 총운 첫 문장이 같은 말이다. 자세히 창은 제목을 머리에 두고 본문은 둘째 문장부터 보인다
+        body_rest=" ".join(sents(story["overall"])[1:]) or story["overall"],
         char_count=len(story["overall"]), sentence_count=len(sents(story["overall"])),
         sections=[{"key": s["key"], "title": s["title"], "body": s["text"], "text": s["text"]} for s in story["sections"]],
         closing=story["closing"], tiers=story["tiers"], standout=story["standout"],

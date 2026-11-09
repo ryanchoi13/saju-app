@@ -20,7 +20,7 @@ from app.engine.services import daily_score
 
 logger = logging.getLogger(__name__)
 
-RX_VERSION = "daily-rx-v1"
+RX_VERSION = "daily-rx-v2"   # 11/9 하루 줄기 + 처방 장면 규칙
 RECENT_DAYS = 30          # 같은 요소·같은 구분에서 이 기간 안에 쓴 문장은 다시 쓰지 않는다
 REPLAY_WARMUP = 30        # RX_EPOCH 이전 날짜를 볼 때 그 앞에 더 돌리는 날 수
 RX_EPOCH = date(2026, 10, 24)   # 최근 목록 복원의 고정 시작점(기능 도입일). 이 날 이후는 어느 날 계산해도 같게 복원된다.
@@ -471,7 +471,8 @@ def _seed(account_key: str, d: date, element: str, kind: str) -> int:
 
 
 def pick(account_key: str, d: date, element: str, kind: str,
-         recent: list[tuple[str, str, int]], scene: str | None = None) -> tuple[int, str]:
+         recent: list[tuple[str, str, int]], scene: str | None = None,
+         blocked_scenes: set[str] | None = None, prefer_scene: str | None = None) -> tuple[int, str]:
     """계정·날짜 시드로 결정론적으로 문장 하나를 고른다.
 
     recent = 최근 30일 사용 목록 [(요소, 구분, 번호)] (오래된 것부터). 변형 조건(평일·주말·계절)에 맞는 후보 중
@@ -480,6 +481,10 @@ def pick(account_key: str, d: date, element: str, kind: str,
     """
     rows = _rows(element, kind)
     cand = [i for i, (_, v, _) in enumerate(rows) if _variant_ok(v, d)] or list(range(len(rows)))
+    if blocked_scenes:
+        cand = [i for i in cand if rows[i][0] not in blocked_scenes] or cand
+    if prefer_scene and any(rows[i][0] == prefer_scene for i in cand) and not scene:
+        scene = prefer_scene
     if scene and any(rows[i][0] == scene for i in cand):
         cand = [i for i in cand if rows[i][0] == scene] + [i for i in cand if rows[i][0] != scene]
     else:
@@ -495,11 +500,32 @@ def pick(account_key: str, d: date, element: str, kind: str,
     return idx, rows[idx][2]
 
 
-def evidence_key(items: list[tuple[str, int]]) -> str:
-    """근거 2문장의 요소. 최대 요소 하나, |w|<4 이거나 해·파만이면 '잔잔'."""
+def spine_item(items: list[tuple[str, int]], grade: str | None) -> tuple[str, int] | None:
+    """하루의 줄기(11/9 정오님: 칸끼리 앞뒤가 안 맞는다). 제목·총운·'오늘은 이런 날'·'오늘은 이렇게'가 모두 이 요소에서 나온다.
+
+    등급과 같은 방향의 가장 센 요소를 줄기로 삼는다(좋음 이상 = 가장 센 길 요소, 주의 이하 = 가장 센 흉 요소).
+    예전에는 칸마다 따로 골라서, 좋음 81점인 날에도 '가장 센 요소'인 시지 충(−8)이 근거·제목을 잡고
+    처방은 가장 센 길 요소(결핍 채움)로 가 서로 다른 이야기를 했다. 반대 방향 요소는 총운의 '다만' 문장으로 간다.
+    같은 방향에 |w|≥4 요소가 없거나 보통 날이면 예전처럼 가장 센 요소.
+    """
+    if not items:
+        return None
+    if grade in LUCKY_GRADES:
+        pos = [x for x in items if x[1] >= 4]
+        if pos:
+            return max(pos, key=lambda x: x[1])
+    if grade in CAUTION_GRADES:
+        neg = [x for x in items if x[1] <= -4]
+        if neg:
+            return min(neg, key=lambda x: x[1])
+    return daily_score.top_item(items)
+
+
+def evidence_key(items: list[tuple[str, int]], grade: str | None = None) -> str:
+    """근거 2문장의 요소 = 하루의 줄기. |w|<4 이거나 해·파만이면 '잔잔'."""
     if daily_score.confidence(items) == "약":
         return "잔잔"
-    name = daily_score.top_item(items)[0]
+    name = spine_item(items, grade)[0]
     return EVIDENCE_ALIAS.get(name, name)
 
 
@@ -525,12 +551,32 @@ def rx_element(items: list[tuple[str, int]], grade: str, standout: tuple[str, st
     return None
 
 
+SCENE_DOMAIN = {"돈": "금전", "일": "일", "사람": "애정·관계", "몸": "건강"}   # '말'·'이동'은 분야 없음
+DOMAIN_SCENE = {v: k for k, v in SCENE_DOMAIN.items()}
+
+
+def rx_scene_rules(grade: str, tiers: dict[str, str] | None, standout: tuple[str, str] | None) -> tuple[set[str], str | None]:
+    """처방 장면 규칙(11/9). 등급과 반대로 가는 분야(좋은 날의 주의 분야, 나쁜 날의 좋음 분야)를 말하는 장면은 막고,
+    튀는 분야가 등급과 같은 방향이면 그 분야 장면을 앞세운다."""
+    if not tiers:
+        return set(), None
+    against = "주의" if grade in LUCKY_GRADES else ("좋음" if grade in CAUTION_GRADES else None)
+    blocked = {DOMAIN_SCENE[dom] for dom, t in tiers.items() if against and t == against and dom in DOMAIN_SCENE}
+    prefer = None
+    if standout:
+        dom = {"사람": "애정·관계"}.get(standout[0], standout[0])
+        if (standout[1] == "좋음") == (grade in LUCKY_GRADES) and dom in DOMAIN_SCENE:
+            prefer = DOMAIN_SCENE[dom]
+    return blocked, prefer
+
+
 def compose_rx(account_key: str, d: date, element: str,
-               recent: list[tuple[str, str, int]]) -> tuple[str, list[tuple[str, str, int]]]:
+               recent: list[tuple[str, str, int]], blocked_scenes: set[str] | None = None,
+               prefer_scene: str | None = None) -> tuple[str, list[tuple[str, str, int]]]:
     """하지 말 것 1 + 할 것 1 (같은 장면을 앞세움). (문장, 이번에 쓴 [(요소, 구분, 번호)]) 를 돌려준다."""
-    i, dont = pick(account_key, d, element, "dont", recent)
+    i, dont = pick(account_key, d, element, "dont", recent, blocked_scenes=blocked_scenes, prefer_scene=prefer_scene)
     scene = BANK[element]["dont"][i][0]
-    j, do = pick(account_key, d, element, "do", recent, scene=scene)
+    j, do = pick(account_key, d, element, "do", recent, scene=scene, blocked_scenes=blocked_scenes)
     return f"{dont} {do}", [(element, "dont", i), (element, "do", j)]
 
 
@@ -543,14 +589,17 @@ def select_for_day(core: MyeongriCoreResult, account_key: str, d: date,
     """
     ev = evaluation or daily_score.evaluate(core, daily_score.day_ganji(d), d)
     uses: list[tuple[str, str, int]] = []
-    key = evidence_key(ev["items"])
+    key = evidence_key(ev["items"], ev["grade"])
     i, evidence_text = pick(account_key, d, key, "evidence", recent)
     uses.append((key, "evidence", i))
     element = rx_element(ev["items"], ev["grade"], ev["standout"])
-    rx_text = None
+    rx_text, rx_scene = None, None
     if element:
-        rx_text, used = compose_rx(account_key, d, element, recent)
+        from app.engine.services.daily_story import domain_tiers   # 순환 import 방지
+        blocked, prefer = rx_scene_rules(ev["grade"], domain_tiers(ev["domain"], ev["grade"]), ev["standout"])
+        rx_text, used = compose_rx(account_key, d, element, recent, blocked, prefer)
         uses.extend(used)
+        rx_scene = BANK[element]["dont"][used[0][2]][0]
     domain_note = None
     if ev["standout"]:
         domain, kind = ev["standout"]
@@ -558,7 +607,7 @@ def select_for_day(core: MyeongriCoreResult, account_key: str, d: date,
         uses.append((domain, kind, j))
         domain_note = {"domain": domain, "kind": kind, "text": text}
     out = {"evaluation": ev, "evidence_key": key, "evidence_text": evidence_text,
-           "rx_element": element, "rx_text": rx_text, "domain_note": domain_note, "uses": uses,
+           "rx_element": element, "rx_text": rx_text, "rx_scene": rx_scene, "domain_note": domain_note, "uses": uses,
            "story": None, "story_uses": []}
     try:
         from app.engine.services import daily_story          # 순환 import 방지(daily_story 가 이 모듈을 읽는다)

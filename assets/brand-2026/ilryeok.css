@@ -137,7 +137,8 @@
 .dc3-sheet .dc3-sheet-grade { font-family:'Song Myung','Noto Serif KR',serif; font-weight:400; font-size:25px; color:var(--il-ink); }
 .dc3-sheet .dc3-sheet-sub { color:var(--il-seal); }
 .dc3-sheet .dc3-sheet-moon { display:none; }   /* 점수 달은 쓰지 않는다 — 달은 홈 머리의 실제 달 하나 */
-.dc3-sheet .dc3-block + .dc3-block { border-top:1px solid var(--ui-line); }
+.dc3-sheet .dc3-block + .dc3-block { border-top:0; }
+.dc3-sheet .dc3-block:not([hidden]) ~ .dc3-block { border-top:1px solid var(--ui-line); }   /* 숨은 블록 뒤 첫 블록에 줄이 겹치지 않게 */
 .dc3-sheet .dc3-block-title { font-family:'Song Myung','Noto Serif KR',serif; font-weight:400; font-size:17px; letter-spacing:0; color:var(--il-seal); }
 .dc3-sheet :is(.dc3-text,.dc3-sec-label,.dc3-sec-body,.dc3-closing,.dc3-basis b) { color:var(--il-ink); }
 .dc3-sheet #resAdvice { color:var(--il-ink)!important; }
@@ -211,3 +212,6 @@
 #view-today .il-rx-label { margin:20px 0 0; font-size:13px; font-weight:500; color:var(--c-ink-60); }
 #view-today .il-rx-label[hidden] { display:none; }
 :root[data-brand] body #view-today .dc3-card .il-rx-label + .dc3-evidence { margin-top:4px; }
+
+/* 11/9 자세히 창: 총운 머리에 오늘의 제목(본문은 제목 문장을 뺀 나머지) */
+.dc3-sheet .dc3-block-title.dc3-story-head { color:var(--c-ink); font-size:20px; line-height:1.45; word-break:keep-all; margin-bottom:10px; }

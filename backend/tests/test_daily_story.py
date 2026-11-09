@@ -170,14 +170,14 @@ def _body_checks(tc, story):
 
 class AssemblyTests(unittest.TestCase):
     # v5 조립본(/home/claude/reports/오늘의 이야기 은행 v5 보고.md §7)과 같은 계산: 계정 "x", 이력은 RX_EPOCH 60일 전부터 복원.
-    SNAPSHOT = {
-        date(2026, 10, 24): ("힘을 덜 들여도 일이 되는 날", (6, 2, 3, 4, 2), True),
-        date(2026, 10, 25): ("평소 못 하던 일이 되는 날", (4, 2, 3, 3, 4), True),
+    SNAPSHOT = {   # 11/9 하루 줄기(daily_rx.spine_item)·처방 장면 규칙 반영
+        date(2026, 10, 24): ("힘을 덜 들여도 일이 되는 날", (6, 3, 3, 4, 2), True),
+        date(2026, 10, 25): ("안 풀리던 문제가 해결되는 날", (4, 2, 3, 3, 4), True),
         date(2026, 10, 26): ("하던 일 하나만 끝내는 날", (4, 3, 3, 3, 4), False),
-        date(2026, 10, 27): ("일터에서 도움을 받을 수 있는 날", (4, 3, 2, 3, 2), False),
-        date(2026, 10, 28): ("몸이 무겁고 마음이 급해지기 쉬운 날", (4, 2, 4, 2, 2), True),
+        date(2026, 10, 27): ("동료와 호흡이 잘 맞는 날", (4, 2, 2, 3, 3), False),
+        date(2026, 10, 28): ("몸이 무겁고 마음이 급해지기 쉬운 날", (4, 2, 4, 2, 3), True),
         date(2026, 10, 29): ("집안에서 뜻밖의 소식이 오는 날", (5, 2, 2, 3, 2), True),
-        date(2026, 10, 30): ("그럭저럭 무난히 흘러가는 하루", (6, 2, 3, 4, 2), False),
+        date(2026, 10, 30): ("그럭저럭 무난히 흘러가는 하루", (6, 3, 3, 4, 2), False),
     }
 
     def test_seven_days_match_the_v5_assembly(self):
@@ -323,3 +323,28 @@ class FortuneWiringTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class SpineTests(unittest.TestCase):
+    """11/9 정오님: 칸끼리 앞뒤가 안 맞는다 / 같은 말을 반복한다."""
+
+    def test_good_day_spine_is_positive(self):
+        from app.engine.services.daily_rx import spine_item
+        items = [("시지 충", -8), ("억부 희신", 6), ("방합", 4)]
+        self.assertEqual(spine_item(items, "좋음"), ("억부 희신", 6))
+        self.assertEqual(spine_item(items, "나쁨"), ("시지 충", -8))
+        self.assertEqual(spine_item(items, "보통"), ("시지 충", -8))
+
+    def test_rx_scene_avoids_domain_against_grade(self):
+        from app.engine.services.daily_rx import rx_scene_rules
+        blocked, prefer = rx_scene_rules("좋음", {"금전": "주의", "일": "좋음", "건강": "보통", "애정·관계": "보통"}, ("일", "좋음"))
+        self.assertEqual(blocked, {"돈"})
+        self.assertEqual(prefer, "일")
+
+    def test_body_rest_drops_title_sentence(self):
+        core = _jungoh()
+        _fresh()
+        out = daily_rx.render_day(core, "x", date(2026, 11, 9))
+        story = out["story"]
+        pay = S.story_payload({}, story)
+        self.assertEqual(S.sents(pay["body_rest"]), S.sents(story["overall"])[1:])
