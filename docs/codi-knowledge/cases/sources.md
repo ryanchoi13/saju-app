@@ -26,6 +26,12 @@
 - **2026-11-08 03:24 KST**: 01:47과 같은 상태(`www.thehandsome.com`·`www.ssfshop.com`·`www.wconcept.co.kr`·`www.vogue.co.kr` 열림, `www.gqkorea.co.kr`·`www.lfmall.co.kr`·`www.29cm.co.kr`·`www.kolonmall.com`·패션지(엘르·바자·마리끌레르·에스콰이어) 연결 실패, `www.musinsa.com` 403).
   - SSF샵 기획전 페이지(`/special/<번호>/view`)는 사진이 `img.ssfshop.com/display/html/PROMT/...` 에 있다. 빈폴 26 F/W 캠페인은 착장마다 상품명 목록을 같이 보여 줘 아이템 이름 확인에 좋다.
   - **주의: 생성형 AI 이미지.** 빈폴 맨 "더 클래식 노트 #3"(special 124340) 사진에 "생성형 AI 활용 이미지" 표시가 있다. 실제 착장이 아니므로 카드로 쓰지 않는다(크부장 판단). 기획전 사진은 오른쪽 아래 표시를 확인한다.
+- **2026-11-09 03:23 KST**: 같은 상태. 아웃도어·애슬레저 후보(`www.thenorthfacekorea.co.kr`·`www.k2.co.kr`·`www.kolonsport.com`·`www.patagonia.co.kr`·`www.xexymix.com`·`www.andar.co.kr`·`www.nike.com`·`www.adidas.co.kr`·`www.nbkorea.com`·`www.lululemon.co.kr` 등)는 모두 프록시 거부(정책 거부).
+  - **SSF샵 매거진** `www.ssfshop.com/ssfMgz/list` 가 열린다. 브랜드 에디토리얼(예: 스노우피크×빈폴멘 출근룩 124692, 시에라디자인 124136)에 착장 사진과 상품명·색 목록이 함께 있다. 사진은 `img.ssfshop.com/display/html/PROMT/...` 에 있고 슬라이드라 페이지 HTML에서 주소를 찾아야 보인다. SSF샵 검색(`/search?keyword=`)은 키워드와 관계없이 같은 기획전 목록을 보여 줘 쓸모가 없다.
+- **2026-11-09 05:11 KST**: 같은 상태(`www.vogue.co.kr`는 이번에 연결 실패). **SSF샵 브랜드관 LOOKBOOK 칸**을 찾았다. 브랜드관 주소(`/<브랜드>/main?brandShopNo=…&brndShopId=…`)의 "LOOKBOOK" 탭은 페이지 안에서 `/getTabDataMore?cnrSetSn=<탭번호>&cnrSn=23417&tabCount=<탭순서>&tmplatScKey=<brandShopNo>`로 탭별 사진을 불러온다. 사진은 `img.ssfshop.com/display/category/BDM/.../contents/` 에 있다. **해외 브랜드는 본사 룩북 사진을 그대로 건다** → 일본·미국·유럽 칸의 브랜드 공식 룩북(① 자료원)으로 쓸 수 있다(한국 판매처가 고른 컷이라는 한계를 카드 머리에 적는다).
+  - 룩북 탭이 있는 브랜드(2026-11-09 확인): 띠어리(Night Still·Made by NYC·Wardrobe·Modern Tailoring), 랙앤본(26 FW WOMEN·26 FW MEN·데님), 라코스테(26FW 등, 글로벌 캠페인), 헨리코튼(26 F/W·25 F/W 등), 수트서플라이(26 F/W·25 F/W 등), 슬로웨어(26 F/W), 스튜디오 니콜슨(26 F/W), 가니(26 F/W), 산드로(WOMEN·MEN), 마쥬(26 F/W·26 S/S), 리바이스(26 F/W).
+  - 룩북 탭이 없는 브랜드: 오라리(일본)·캡틴선샤인(일본)·COS·토리버치·르메르·노스페이스·아크테릭스·파타고니아.
+  - SSF샵 매거진 "소재사전: 남성 울/캐시미어 아우터"(ssfMgz 124271)에 갤럭시·GLXY·로가디스 전신 착장 3컷 — 칸 #4(40대 남성 클래식) 보강 후보(나머지는 옷걸이 상품 컷).
 - 풀려면: claude.ai 설정 → Capabilities(기능)의 허용 도메인에 아래 "쓸 수 있음" 사이트를 넣어야 한다(정오님 결정 필요). PR 본문에 적었다.
 
 ## 1. 판정 기호
