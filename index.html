@@ -2500,7 +2500,12 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             const story = fortune?.story;
             const hasStory = !!(story && typeof story.body === 'string' && story.body.trim());
             document.getElementById('resTitle').textContent = (hasStory && story.headline) || fortune?.title || '';
-            document.getElementById('resAdvice').textContent = hasStory ? story.body : (fortune?.advice || '');
+            document.getElementById('resAdvice').textContent = hasStory ? (story.body_rest || story.body) : (fortune?.advice || '');
+            {   // 창의 총운 머리 = 오늘의 제목(본문은 제목과 같은 첫 문장을 뺀 나머지)
+                const lab = document.getElementById('resOverallLabel');
+                lab.textContent = hasStory && story.body_rest ? story.headline : '총운';
+                lab.classList.toggle('dc3-story-head', !!(hasStory && story.body_rest));
+            }
             // 분야 문단(금전·애정·관계·일·건강). 라벨·등급은 서버 title·tiers 그대로. 없으면 숨긴다.
             const secBox = document.getElementById('resSections');
             const tiers = (hasStory && story.tiers) || {};
@@ -2614,7 +2619,8 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             document.getElementById('resGradeRxHomeLabel').hidden = !homeRx;
             if (homeRx) document.getElementById('resGradeRxHomeLabel').textContent = fortune.rx_label || '오늘은 이렇게';
             document.getElementById('dc3EvidenceFull').textContent = fortune.evidence_text || '';
-            document.getElementById('dc3EvidenceBlock').hidden = !(fortune.evidence_text || (note && note.text));
+            // 11/9 정오님: 하루 줄기가 하나가 되면서 '오늘은 이런 날'은 총운과 같은 말을 되풀이했다. 창에서는 총운 하나로 말한다
+            document.getElementById('dc3EvidenceBlock').hidden = !!(fortune.story && fortune.story.body_rest);
             const domainTextEl = document.getElementById('resGradeDomainText');
             domainTextEl.textContent = (note && note.text) || '';
             domainTextEl.hidden = !(note && note.text);
