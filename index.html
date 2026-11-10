@@ -1068,7 +1068,6 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                             <div data-phase="중장년기" style="border:1px solid #DEDCD4;border-radius:10px;padding:10px 4px;text-align:center;background:#FFFFFF;"><div style="font-size:12px;font-weight:800;">중장년기</div><div style="font-size:10px;color:#59636D;margin-top:3px;">대운 5~6</div></div>
                             <div data-phase="말년기" style="border:1px solid #DEDCD4;border-radius:10px;padding:10px 4px;text-align:center;background:#FFFFFF;"><div style="font-size:12px;font-weight:800;">말년기</div><div style="font-size:10px;color:#59636D;margin-top:3px;">대운 7~9</div></div>
                         </div>
-                        <p id="sajuCurrentPosition" class="reading-caption"></p>
                         <div id="daewoonCurrentPhaseText" style="font-size:12.5px;font-weight:800;color:var(--c-ink,#1D2129);margin-top:10px;">현재 대운 구간을 계산 중입니다.</div>
                     </div>
 
@@ -2813,8 +2812,6 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             document.getElementById('sajuElementsNote').innerText = data.saju_data.elements_note || '';
 
             updateDaewoonPhaseTimeline(data.saju_data.daeyun_phase, currentUserAge);
-            const phaseText = document.getElementById('daewoonCurrentPhaseText').textContent.replace('📍 ', '');
-            document.getElementById('sajuCurrentPosition').textContent = phaseText;
             document.getElementById('sajuSummaryTitle').textContent = `${currentUserName}님을 알아가는 시간`;
             document.getElementById('sajuSummaryText').textContent = '타고난 성향과 현재 대운, 10년 단위 인생 흐름을 함께 읽어요. 올해·월별 운세는 별도 상품입니다.';
             document.getElementById('mypageProfileDesc').innerText = `${currentUserName} (${data.birth_summary})`;
@@ -3673,6 +3670,15 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             return {year:Number(parts.find(p => p.type === 'year').value), month:Number(parts.find(p => p.type === 'month').value)};
         }
 
+        function cycleChoiceLabel(card, index) {
+            // 지난 구간·다음 구간 카드에 data-cycle-ages가 없던 리포트도 버튼 글자가 비지 않게 한다.
+            if (card.dataset.cycleAges) return card.dataset.cycleAges;
+            const heading = card.querySelector('h4, h5')?.textContent || '';
+            const ages = heading.match(/\d+\s*~\s*\d+\s*세/);
+            if (ages) return ages[0].replace(/\s+/g, '');
+            return card.dataset.lifetimeSection === 'upcoming' ? '다음 10년' : `대운 ${index + 1}`;
+        }
+
         function renderPeriodChoices(item, kind) {
             const doc = reportDocument(item);
             const monthMode = kind === 'month';
@@ -3688,7 +3694,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             const defaultIndex = monthMode ? (year === today.year ? cards.findIndex(c => Number(c.dataset.reportMonth) === today.month) : 0) : cards.findIndex(c => c.dataset.currentCycle === 'true');
             const buttons = cards.map((card, index) => {
                 const button = document.createElement('button');
-                button.textContent = monthMode ? `${card.dataset.reportMonth}월` : card.dataset.cycleAges;
+                button.textContent = monthMode ? `${card.dataset.reportMonth}월` : cycleChoiceLabel(card, index);
                 button.type = 'button';
                 button.setAttribute('aria-pressed', 'false');
                 button.onclick = () => {
