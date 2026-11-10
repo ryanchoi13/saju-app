@@ -314,8 +314,8 @@ def _build_domain(day: dict, dom: str, recent) -> tuple[str, dict, list]:
         if g == "보통" and any(KEY_DOMAIN.get(k) == dom for k in bad_keys) and any(c in p["text"] for c in CALM):
             continue
         love_opts = [x["text"] for x in B.LOVE[love] if B.grade_ok(x, grade)] if love else [None]
-        if pool_key == "보통아래":
-            love_opts = [None]          # 아래로 기운 문단에 "가까워지기 좋습니다" 같은 애정 신호를 끼우지 않는다
+        if love != "일지 충" and (pool_key in ("보통아래", "주의") or any(c in p["text"] for c in CALM)):
+            love_opts = [None]   # 11/10 검토: 아래로 기운·주의·"특별한 신호 없음" 문단에 "특히 … 잘 맞습니다"가 붙지 않게
         if standout and g != "보통":
             ex_all = B.DOMAIN_EXTRA[dom][g]
             extra_opts = [(i, ex_all[i]["text"]) for i in _order(len(ex_all), recent, f"extra:{dom}:{g}") if B.grade_ok(ex_all[i], grade)]
@@ -392,7 +392,7 @@ def _conflict_line(day: dict, dom: str, g: str) -> str | None:
 _HAEYO = (("쉽습니다", "쉬워요"), ("해야 합니다", "해야 해요"), ("있습니다", "있어요"), ("편입니다", "편이에요"),
           ("됩니다", "돼요"), ("맞습니다", "맞아요"), ("보태집니다", "보태져요"), ("움직입니다", "움직여요"),
           ("들어옵니다", "들어와요"), ("따뜻합니다", "따뜻해요"), ("생깁니다", "생겨요"),
-          ("뻐근합니다", "뻐근해요"), ("지칩니다", "지쳐요"), ("붙습니다", "붙어요"), ("빠릅니다", "빨라요"),
+          ("뻐근합니다", "뻐근해요"), ("지칩니다", "지쳐요"), ("빠릅니다", "빨라요"),
           ("됩니다", "돼요"), ("합니다", "해요"))
 
 

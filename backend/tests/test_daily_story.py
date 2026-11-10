@@ -126,7 +126,8 @@ class BankTests(unittest.TestCase):
                 self.assertFalse(any(w in s for w in B.LUKEWARM + B.LUKEWARM_MID_ONLY), s)
 
     def test_god_color_topics_meet_a_neutral_paragraph(self):
-        dom_topics = {d: {t for p in B.DOMAIN[d]["보통"] for t in p["topics"]} for d in B.DOMAIN}
+        dom_topics = {d: {t for g, ps in B.DOMAIN[d].items() if g.startswith("보통") for p in ps for t in p["topics"]}
+                      for d in B.DOMAIN}   # 11/10: 기울기 있는 보통(보통위·보통아래)도 포함
         for god, doms in B.GOD_COLOR.items():
             for d, lst in doms.items():
                 for e in lst:
@@ -145,6 +146,10 @@ def _body_checks(tc, story):
     """조립 규칙 — build_story 안의 assert 와 별도로 결과물에서 다시 센다."""
     body = " ".join([story["overall"]] + [s["text"] for s in story["sections"]] + ([story["closing"]] if story["closing"] else []))
     tc.assertLessEqual(body.count("기운"), 1, body)
+    # 11/10 문장 다듬기: 하루에 같은 맺음이 몰리지 않게(정오님 "~하기 쉽습니다 계속 거슬림")
+    ss = S.sents(body)
+    tc.assertLessEqual(sum("기 쉽습니다" in x for x in ss), 1, body)
+    tc.assertLessEqual(sum(bool(re.search(r"(거예요|겁니다)\.$", x)) for x in ss), 4, body)   # 남는 '겁니다'는 정오님 확정 문장
     tc.assertLessEqual(len(S.GYEOL.findall(story["title"] + " " + body)), 2, body)
     tc.assertLessEqual(len(_day_ends(body)), 6, body)
     tc.assertLessEqual(len(_day_ends(story["overall"])), 2, story["overall"])
@@ -170,12 +175,12 @@ def _body_checks(tc, story):
 
 class AssemblyTests(unittest.TestCase):
     # v5 조립본(/home/claude/reports/오늘의 이야기 은행 v5 보고.md §7)과 같은 계산: 계정 "x", 이력은 RX_EPOCH 60일 전부터 복원.
-    SNAPSHOT = {   # 11/10 분야 규칙표(daily_domain_rules)·기울기 있는 보통 반영
+    SNAPSHOT = {   # 11/10 문장 조각 다듬기 반영
         date(2026, 10, 24): ('힘을 덜 들여도 일이 되는 날', (6, 2, 4, 4, 2), True),
         date(2026, 10, 25): ('안 풀리던 문제가 해결되는 날', (4, 3, 2, 2, 3), True),
         date(2026, 10, 26): ('하던 일 하나만 끝내는 날', (4, 2, 3, 4, 3), False),
-        date(2026, 10, 27): ('동료와 호흡이 잘 맞는 날', (4, 3, 3, 3, 3), False),
-        date(2026, 10, 28): ('몸이 무겁고 마음이 급해지기 쉬운 날', (4, 3, 2, 2, 3), True),
+        date(2026, 10, 27): ('동료와 호흡이 잘 맞는 날', (4, 3, 3, 2, 3), False),
+        date(2026, 10, 28): ('결정을 하루 묵히는 날', (4, 3, 2, 2, 3), True),
         date(2026, 10, 29): ('집안에서 뜻밖의 소식이 오는 날', (5, 4, 2, 3, 2), True),
         date(2026, 10, 30): ('그럭저럭 무난히 흘러가는 하루', (6, 3, 3, 3, 3), False),
     }
