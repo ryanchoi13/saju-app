@@ -142,6 +142,17 @@ def _order(n: int, recent, kind: str) -> list[int]:
 # ---------------------------------------------------------------------------
 # 입력 유도 — evaluate() 결과 → 조립 입력
 # ---------------------------------------------------------------------------
+STORY_DOMAIN = {"금전": "금전", "사람": "애정·관계", "일": "일", "건강": "건강"}
+
+
+def rule_tiers(ev: dict) -> dict[str, str]:
+    """분야 결(11/10 규칙표). evaluate 결과에 domain_rules 가 없으면(옛 호출) 편차 방식으로."""
+    rules = ev.get("domain_rules")
+    if not rules:
+        return domain_tiers(ev["domain"], ev["grade"])
+    return {STORY_DOMAIN[k]: v["tier"] for k, v in rules.items()}
+
+
 def domain_tiers(deltas: dict, grade: str) -> dict[str, str]:
     """분야 결: 편차 + 등급 보정(좋음·아주 좋음 +3 / 주의·나쁨 −3) → ≥+6 좋음, ≤−6 주의, 그 밖 보통."""
     adj = 3 if grade in GOOD else (-3 if grade in ("주의", "나쁨") else 0)
@@ -201,14 +212,20 @@ def derive(core: MyeongriCoreResult, ev: dict, rx: dict, d: date, gender: str | 
     opp = pick("흉" if top_sign == "길" else "길", 6) if top_sign else None
     health = ev["domain"].get("건강", 0)
     body = health <= -4 or (stage in ("tomb", "death", "extinction") and health <= 0)
-    tiers = domain_tiers(ev["domain"], grade)
+    tiers = rule_tiers(ev)
     score = {"금전": ev["domain"].get("금전", 0), "애정·관계": ev["domain"].get("사람", 0),
              "일": ev["domain"].get("일", 0), "건강": health}
-    cand = [x for x in tiers if tiers[x] != "보통"]
+    rules = ev.get("domain_rules") or {}
+    lean = {STORY_DOMAIN[k]: v.get("lean") for k, v in rules.items()}
+    reasons = {STORY_DOMAIN[k]: v for k, v in rules.items()}
     standout: tuple = ()
-    if cand:
-        m = max(abs(score[x]) for x in cand)
-        standout = tuple(x for x in cand if abs(score[x]) == m)
+    if ev.get("standout"):
+        standout = (STORY_DOMAIN.get(ev["standout"][0], ev["standout"][0]),)
+    elif not rules:
+        cand = [x for x in tiers if tiers[x] != "보통"]
+        if cand:
+            m = max(abs(score[x]) for x in cand)
+            standout = tuple(x for x in cand if abs(score[x]) == m)
     natal_branches = tuple(pillars[p].branch for p in ("year", "day") if pillars.get(p))
     love = love_signal(items, god, gender, natal_branches, gj[1])
     card_ev = rx.get("evidence_text") or ""
@@ -218,7 +235,7 @@ def derive(core: MyeongriCoreResult, ev: dict, rx: dict, d: date, gender: str | 
         card[note["domain"].replace("사람", "애정·관계")] = card_nouns(note["text"])
     rx_domain = {"돈": "금전", "일": "일", "사람": "애정·관계", "몸": "건강"}.get(rx.get("rx_scene") or "")
     return dict(date=d, grade=grade, evidence=key, rx_domain=rx_domain, top_sign=top_sign, god=god, stage=stage,
-                same=same, opp=opp, body_flag=body, domains=tiers, deltas=score, standout=standout, love=love,
+                same=same, opp=opp, body_flag=body, domains=tiers, lean=lean, reasons=reasons, deltas=score, standout=standout, love=love,
                 card_first_words=(card_ev.split(" ")[0],) if card_ev else (), card_nouns=card, items=items)
 
 
@@ -278,8 +295,10 @@ def _build_domain(day: dict, dom: str, recent) -> tuple[str, dict, list]:
     standout = dom in day["standout"]
     love = day["love"] if dom == "애정·관계" else None
     cn = day["card_nouns"].get(dom, set())
-    paras_all = B.DOMAIN[dom][g]
-    order = _order(len(paras_all), recent, f"para:{dom}:{g}")
+    ln = (day.get("lean") or {}).get(dom) if g == "보통" else None
+    pool_key = f"보통{ln}" if ln and f"보통{ln}" in B.DOMAIN[dom] else g     # 11/10 기울기 있는 보통
+    paras_all = B.DOMAIN[dom][pool_key]
+    order = _order(len(paras_all), recent, f"para:{dom}:{pool_key}")
     paras = [(pi, paras_all[pi]) for pi in order if B.grade_ok(paras_all[pi], grade)]
     if g == "보통" and day.get("rx_domain") == dom:
         # 11/9: '오늘은 이렇게'가 이 분야를 말하는 날, 분야 문단이 "조용한 편·평소대로"라고 하면 앞뒤가 어긋난다
@@ -295,6 +314,8 @@ def _build_domain(day: dict, dom: str, recent) -> tuple[str, dict, list]:
         if g == "보통" and any(KEY_DOMAIN.get(k) == dom for k in bad_keys) and any(c in p["text"] for c in CALM):
             continue
         love_opts = [x["text"] for x in B.LOVE[love] if B.grade_ok(x, grade)] if love else [None]
+        if pool_key == "보통아래":
+            love_opts = [None]          # 아래로 기운 문단에 "가까워지기 좋습니다" 같은 애정 신호를 끼우지 않는다
         if standout and g != "보통":
             ex_all = B.DOMAIN_EXTRA[dom][g]
             extra_opts = [(i, ex_all[i]["text"]) for i in _order(len(ex_all), recent, f"extra:{dom}:{g}") if B.grade_ok(ex_all[i], grade)]
@@ -332,11 +353,55 @@ def _build_domain(day: dict, dom: str, recent) -> tuple[str, dict, list]:
                     if day["_myeon"] + len(MYEON.findall(par)) > MYEON_MAX:   # "~면 됩니다" 하루 예산
                         continue
                     day["_myeon"] += len(MYEON.findall(par))
-                    uses = [(USE_ELEMENT, f"para:{dom}:{g}", pi)]
+                    lead_line = _conflict_line(day, dom, g)
+                    if lead_line:
+                        if ending(lead_line) == ending(seq[0]):
+                            lead_line = _haeyo(lead_line)
+                        if ending(lead_line) == ending(seq[0]):
+                            continue
+                        par = lead_line + " " + par
+                    uses = [(USE_ELEMENT, f"para:{dom}:{pool_key}", pi)]
                     if ex:
                         uses.append((USE_ELEMENT, f"extra:{dom}:{g}", ei))
                     return par, dict(p=pi, love=lv, extra=ex, color=col), uses
     raise RuntimeError(f"{dom} 조립 실패")
+
+
+def _conflict_line(day: dict, dom: str, g: str) -> str | None:
+    """11/10 (가): 등급과 반대로 가는 분야는 걸린 이유를 앞세운다. 좋은 날의 주의 → "하루 전체로는 좋아도 …",
+    나쁜 날의 좋음 → "하루가 무거워도 …"."""
+    grade = day["grade"]
+    if g == "주의" and grade in GOOD:
+        head, key = "하루 전체로는 좋아도", "bad"
+    elif g == "좋음" and grade in ("주의", "나쁨"):
+        head, key = "하루가 무거워도", "good"
+    else:
+        return None
+    reasons = ((day.get("reasons") or {}).get(dom) or {}).get(key) or []
+    for r in reasons:
+        c = B.REASON_CLAUSE.get(r)
+        if isinstance(c, dict):
+            c = c.get(dom)
+        if not c and dom == "일" and key == "good":
+            c = B.REASON_CLAUSE_WORK_GOOD
+        if c:
+            return f"{head} {c}."
+    return None
+
+
+_HAEYO = (("쉽습니다", "쉬워요"), ("해야 합니다", "해야 해요"), ("있습니다", "있어요"), ("편입니다", "편이에요"),
+          ("됩니다", "돼요"), ("맞습니다", "맞아요"), ("보태집니다", "보태져요"), ("움직입니다", "움직여요"),
+          ("들어옵니다", "들어와요"), ("따뜻합니다", "따뜻해요"), ("생깁니다", "생겨요"),
+          ("뻐근합니다", "뻐근해요"), ("지칩니다", "지쳐요"), ("붙습니다", "붙어요"), ("빠릅니다", "빨라요"),
+          ("됩니다", "돼요"), ("합니다", "해요"))
+
+
+def _haeyo(line: str) -> str:
+    """이유 문장을 해요체로(바로 뒤 문장과 말끝이 겹칠 때)."""
+    for a, b in _HAEYO:
+        if line.endswith(a + "."):
+            return line[: -len(a) - 1] + b + "."
+    return line
 
 
 def _check(title: str, general: str, sections: list[dict], closing: str | None, grade: str) -> None:

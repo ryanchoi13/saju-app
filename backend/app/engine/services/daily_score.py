@@ -374,8 +374,11 @@ def evaluate(core: MyeongriCoreResult, day_pillar: str, target_date: date) -> di
     score = display_score(raw)
     deltas = domain_delta(core, day_pillar, items)
     grade_name = grade(score)
+    # 11/10: 분야 결은 이름 붙은 규칙표(daily_domain_rules)가 정한다. deltas 는 몸 신호(daily_story body_flag)와 옛 호환용으로만 남긴다
+    from app.engine.services import daily_domain_rules as DR
+    rules = DR.evaluate_domains(core, day_pillar, items, yong_direction(core), grade_name)
     return {
         "items": items, "raw": raw, "raw_int": sum(w for _, w in items), "score": score, "grade": grade_name,
         "confidence": confidence(items), "top": top_item(items), "domain": deltas,
-        "standout": standout(deltas, grade_name),
+        "domain_rules": rules, "standout": DR.standout(rules, grade_name),
     }
