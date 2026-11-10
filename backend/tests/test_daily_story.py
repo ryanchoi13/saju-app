@@ -104,7 +104,7 @@ class BankTests(unittest.TestCase):
             if name == "LEAD":
                 self.assertEqual(n, 2 if path[2] == "scene" else 1, (path, s))
             elif name == "DOMAIN":
-                self.assertEqual(n, 2 if path[1] == "보통" else 3, (path, s))
+                self.assertEqual(n, 2 if path[1].startswith("보통") else 3, (path, s))   # 11/10 기울기 있는 보통(보통위·보통아래)도 2문장
             elif name in ("LOVE", "GOD_COLOR", "CLOSE", "DOMAIN_EXTRA"):
                 self.assertEqual(n, 1, (name, path, s))
             elif name in ("ATTITUDE", "SECOND"):
@@ -170,14 +170,14 @@ def _body_checks(tc, story):
 
 class AssemblyTests(unittest.TestCase):
     # v5 조립본(/home/claude/reports/오늘의 이야기 은행 v5 보고.md §7)과 같은 계산: 계정 "x", 이력은 RX_EPOCH 60일 전부터 복원.
-    SNAPSHOT = {   # 11/9 하루 줄기(daily_rx.spine_item)·처방 장면 규칙 반영
-        date(2026, 10, 24): ("힘을 덜 들여도 일이 되는 날", (6, 3, 3, 4, 2), True),
-        date(2026, 10, 25): ("안 풀리던 문제가 해결되는 날", (4, 2, 3, 3, 4), True),
-        date(2026, 10, 26): ("하던 일 하나만 끝내는 날", (4, 3, 3, 3, 4), False),
-        date(2026, 10, 27): ("동료와 호흡이 잘 맞는 날", (4, 2, 2, 3, 3), False),
-        date(2026, 10, 28): ("몸이 무겁고 마음이 급해지기 쉬운 날", (4, 2, 4, 2, 3), True),
-        date(2026, 10, 29): ("집안에서 뜻밖의 소식이 오는 날", (5, 2, 2, 3, 2), True),
-        date(2026, 10, 30): ("그럭저럭 무난히 흘러가는 하루", (6, 3, 3, 4, 2), False),
+    SNAPSHOT = {   # 11/10 분야 규칙표(daily_domain_rules)·기울기 있는 보통 반영
+        date(2026, 10, 24): ('힘을 덜 들여도 일이 되는 날', (6, 2, 4, 4, 2), True),
+        date(2026, 10, 25): ('안 풀리던 문제가 해결되는 날', (4, 3, 2, 2, 3), True),
+        date(2026, 10, 26): ('하던 일 하나만 끝내는 날', (4, 2, 3, 4, 3), False),
+        date(2026, 10, 27): ('동료와 호흡이 잘 맞는 날', (4, 3, 3, 3, 3), False),
+        date(2026, 10, 28): ('몸이 무겁고 마음이 급해지기 쉬운 날', (4, 3, 2, 2, 3), True),
+        date(2026, 10, 29): ('집안에서 뜻밖의 소식이 오는 날', (5, 4, 2, 3, 2), True),
+        date(2026, 10, 30): ('그럭저럭 무난히 흘러가는 하루', (6, 3, 3, 3, 3), False),
     }
 
     def test_seven_days_match_the_v5_assembly(self):
@@ -323,6 +323,32 @@ class FortuneWiringTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class DomainRuleTests(unittest.TestCase):
+    """11/10 정오님: 금전이 맨날 '조용한 편' → 분야 결을 이름 붙은 규칙으로."""
+
+    def test_peer_day_is_money_caution_for_strong(self):
+        from app.engine.services import daily_score as ds
+        core = _jungoh()                                  # 甲 일간, 엔진 판정 신강
+        d = date(2026, 11, 12)                            # 庚寅 — 천간 庚은 관성
+        ev = ds.evaluate(core, ds.day_ganji(d), d)
+        self.assertIn("관성 · 감당", ev["domain_rules"]["일"]["good"])
+        d = date(2026, 11, 20)                            # 甲 천간 = 비견 → 탈재
+        while ds.day_ganji(d)[0] not in "甲乙":
+            d += timedelta(days=1)
+        ev = ds.evaluate(core, ds.day_ganji(d), d)
+        self.assertIn("비겁 · 탈재", ev["domain_rules"]["금전"]["bad"] + [ev["domain_rules"]["금전"]["lean_reason"]])
+
+    def test_conflicts_keep_one(self):
+        from app.engine.services.daily_domain_rules import _ease_conflicts
+        out = {k: {"good": [], "bad": [], "tier": "보통", "lean": None, "lean_reason": None, "eased": None}
+               for k in ("금전", "사람", "일", "건강")}
+        out["금전"].update(bad=["비겁 · 탈재"], tier="주의")
+        out["사람"].update(bad=["일지 충"], tier="주의")
+        _ease_conflicts(out, "좋음")
+        self.assertEqual(out["사람"]["tier"], "주의")
+        self.assertEqual((out["금전"]["tier"], out["금전"]["lean"]), ("보통", "아래"))
 
 
 class SpineTests(unittest.TestCase):

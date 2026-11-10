@@ -595,8 +595,8 @@ def select_for_day(core: MyeongriCoreResult, account_key: str, d: date,
     element = rx_element(ev["items"], ev["grade"], ev["standout"])
     rx_text, rx_scene = None, None
     if element:
-        from app.engine.services.daily_story import domain_tiers   # 순환 import 방지
-        blocked, prefer = rx_scene_rules(ev["grade"], domain_tiers(ev["domain"], ev["grade"]), ev["standout"])
+        from app.engine.services.daily_story import rule_tiers   # 순환 import 방지
+        blocked, prefer = rx_scene_rules(ev["grade"], rule_tiers(ev), ev["standout"])
         rx_text, used = compose_rx(account_key, d, element, recent, blocked, prefer)
         uses.extend(used)
         rx_scene = BANK[element]["dont"][used[0][2]][0]
