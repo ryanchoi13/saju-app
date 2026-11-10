@@ -280,10 +280,14 @@ def _menu_timing_element_weights(timing: dict, semantic: dict | None = None, bal
             result[ranking[-1]] = -2
     # 오늘 층(변수). 원국 방향이 비어 있어도(표본 120명 전원 favorable 없음) 일진은 매일 순위를 움직인다.
     # 상징적 연결이며 식이 처방이 아니다.
+    # 11/10: 조심할 오행·원국에서 넘치는 오행(위에서 음수로 정해진 것)에는 오늘 층을 더하지 않는다.
+    # 예전에는 무조건 +5/+3을 더해, 조심할 火가 들어오는 날 오히려 火 음식이 위로 올라갔다(이 파일 첫 원칙 "있다 ≠ 필요하다" 위배).
+    if not semantic and not balance:
+        return result            # 원국 정보가 전혀 없으면 오늘 층만으로 방향을 만들지 않는다(운영에서는 balance 가 늘 들어옴)
     daily_pillar = (timing.get("daily") or {}).get("pillar") or {}
     for key, weight in (("stem_element", 5), ("branch_element", 3)):
         element = daily_pillar.get(key)
-        if element:
+        if element and result.get(element, 0) >= 0:
             result[element] = result.get(element, 0) + weight
     return result
 
@@ -656,4 +660,4 @@ def build_daily_fortune(
                       "evidence_key": rx["evidence_key"], "rx_element": rx["rx_element"], "rx_version": daily_rx.RX_VERSION},
             "shensha_is_supporting_only": True,
         },
-    }
+    }
