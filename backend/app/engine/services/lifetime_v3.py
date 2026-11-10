@@ -731,7 +731,7 @@ def _past_article(c, info, years, profile, seen: Counter, day_stem: str) -> tupl
     if years:
         why.append("크게 걸린 해: " + " · ".join(f"{y['year']}년 {y['ganji']}({_kinds_text(y['kinds'])})" for y in years) + ".")
     ages = f"{c['start_age']}~{c['end_age']}세"
-    html = (f'<article class="lifetime-sub lifetime-past" data-report-cycle="{c["index"]}" data-cycle-state="past">'
+    html = (f'<article class="lifetime-sub lifetime-past" data-report-cycle="{c["index"]}" data-cycle-ages="{escape(ages)}" data-cycle-state="past">'
             f'<h5>{escape(ages)} · {escape(pillar["ganji"])}</h5>'
             f'<p>{escape(body)}</p>' + _why(*why) + '</article>')
     return html, {"index": c["index"], "kind": info["kind"], "years": [y["year"] for y in years],
@@ -843,7 +843,8 @@ def _next_article(nxt, info_next, profile, day_stem, now_info=None) -> str:
     lines.append(copy.NEXT_BRIDGE)
     text = _p(lines, where="next")
     return (f'<article class="lifetime-sub" data-lifetime-section="upcoming" data-locked="true" '
-            f'data-report-cycle="{nxt["index"]}"><h4>{escape(copy.NEXT_HEADING)}</h4>'
+            f'data-report-cycle="{nxt["index"]}" data-cycle-ages="{nxt["start_age"]}~{nxt["end_age"]}세">'
+            f'<h4>{escape(copy.NEXT_HEADING)}</h4>'
             f'<p data-cycle-teaser="true">{escape(text)}</p>'
             f'<p class="reading-caption">🔒 {escape(copy.NEXT_LOCK_NOTE)}</p>'
             f'<a href="#paywall" data-paywall-cta="lifetime-cycles">대운 전체 풀이 열어보기</a></article>')
