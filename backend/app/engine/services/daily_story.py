@@ -102,6 +102,24 @@ def _noun_clash(segs: list[str]) -> str | None:
     return None
 
 
+# 11/10 조합 검토(150일치) — 문장을 고르는 단계에서 막는 것들
+FATIGUE = re.compile("피곤|지치|지쳐|힘이 (먼저 )?빠|기운이 빠|무거|컨디션까지|한 박자 늦게 따라")
+PEOPLE_POS = re.compile("말까지 잘 통|손발이 (잘 )?맞|어울리기 좋|뜻을 모으|마음이 (잘 )?맞|마음이 통|사람들과 (사이가|마음)")
+BODY_POS = re.compile("몸이 (가볍|먼저 깨어|생각보다 가볍)|체력도 채워|아침부터 몸이 가벼")
+STEM_STOP = {"오늘", "하루", "오늘은", "오늘의", "날입", "날이", "있습", "좋습", "그래", "평소"}
+CLOSE_DOMAIN = {"일": re.compile("일이 (순조|잘 풀)|일도 잘|일이 술술"), "금전": re.compile("돈이 (잘|들어)|재물"),
+                "애정·관계": re.compile("사람(들)?과 (잘|사이)|관계가 (좋|풀)"), "건강": re.compile("몸이 (가볍|개운)|컨디션이 좋")}
+
+
+def _stems(text: str) -> set[str]:
+    return {w[:2] for w in re.findall(r"[가-힣]{2,}", text)} - STEM_STOP
+
+
+def _echoes_title(title: str, tail: str) -> bool:
+    """맺는 태도·조언 문장이 제목을 되풀이하는지(예: 제목 '중요한 일 하나를 밀어 볼 만한 날' + '미뤄 둔 중요한 일 하나를 오늘 밀어 보는 게 낫습니다')."""
+    return len(_stems(title) & _stems(tail)) >= 3
+
+
 def _first_word_clash(segs: list[str]) -> bool:
     fw = [s.split(" ")[0] for s in segs]
     return len(fw) != len(set(fw))
@@ -283,6 +301,16 @@ def _build_general(day: dict, recent) -> tuple[str, int, dict, list]:
                                 continue
                             if n_day(par) > 2:           # scene 첫 문장 + 정오님 문장 1개까지
                                 continue
+                            if relax < 3 and _echoes_title(B.TITLE[key][li]["text"], tail):
+                                continue
+                            fat = sum(bool(FATIGUE.search(x)) for x in sents(" ".join(segs))[1:])
+                            if relax < 3 and fat >= 2:
+                                continue                 # 피로 이야기를 두 번("게다가 저녁엔 힘이 빠져서…" + "덧붙이면 몸이 쉽게 피곤해서…")
+                            rest = " ".join(segs[1:])
+                            if relax < 3 and PEOPLE_POS.search(rest) and day["domains"].get("애정·관계") == "주의":
+                                continue                 # 총운은 "사람과 잘 통한다"인데 애정 문단은 주의
+                            if relax < 3 and BODY_POS.search(rest) and day["domains"].get("건강") == "주의":
+                                continue
                             uses.append((USE_ELEMENT, f"lead:{key}", li))
                             if kind == "ATTITUDE":
                                 uses.append((USE_ELEMENT, f"att:{grade}", ti))
@@ -431,6 +459,11 @@ def build_story(core: MyeongriCoreResult, evaluation: dict, rx: dict, account_ke
     title = B.TITLE[day["evidence"]][li]["text"]
     scene = B.LEAD[day["evidence"]][li]["scene"]
     day["_body_mentioned"] = bool(ginfo["body"]) or ("몸" in scene) or ("지치" in scene) or ("피곤" in scene)
+    rest = " ".join(sents(general)[1:])
+    lean = day.get("lean") or {}
+    if PEOPLE_POS.search(rest) and day["domains"].get("애정·관계") == "보통" and not lean.get("애정·관계"):
+        lean["애정·관계"] = "위"            # 총운이 사람 운을 좋게 말한 날, 애정 문단이 "특별한 신호 없음"으로 따로 놀지 않게
+        day["lean"] = lean
     day["_general"] = general
     day["_myeon"] = len(MYEON.findall(general))
     sections, picks = [], {"general": dict(title=title, **ginfo)}
@@ -449,6 +482,9 @@ def build_story(core: MyeongriCoreResult, evaluation: dict, rx: dict, account_ke
                 continue
             if day["_myeon"] + len(MYEON.findall(c)) > MYEON_MAX:
                 continue
+            if any(rx.search(c) and (day["domains"].get(dm) == "주의" or (day["domains"].get(dm) == "보통" and (day.get("lean") or {}).get(dm) == "아래"))
+                   for dm, rx in CLOSE_DOMAIN.items()):
+                continue                         # 맺음 "오늘은 일이 순조로우니"와 일 문단 "더디게"가 함께 나오지 않게
             closing = c
             uses.append((USE_ELEMENT, f"close:{day['grade']}", ci))
             break
