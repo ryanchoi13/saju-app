@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import re
+
 import hashlib
 import math
 from collections import Counter
@@ -205,6 +207,12 @@ _PERIOD_OVERRIDES = {
     "맑은 순두부국": "breakfast lunch dinner", "소고기미역국": "breakfast lunch dinner",
     "매생이국": "lunch dinner", "굴국밥": "lunch dinner",
     "재첩국과 따뜻한 쌀밥": "breakfast lunch dinner",
+    # 11/10 아침 밥상형 보강: 국민건강영양조사 아침 다빈도 음식(잡곡밥·김치·김·계란프라이·김치찌개·된장찌개·미역국)과
+    # 식품소비행태조사 '아침에 밥을 먹는 성인 66.7%(2024)'를 근거로, 이미 있는 국·찌개 밥상을 아침에도 낸다(사진 그대로)
+    "김치찌개": "breakfast lunch dinner", "된장찌개": "breakfast lunch dinner",
+    "된장국": "breakfast lunch dinner", "콩나물국": "breakfast lunch dinner",
+    "소고기무국": "breakfast lunch dinner", "김치국": "breakfast lunch dinner",
+    "시래기국": "breakfast lunch dinner", "동태국": "breakfast lunch dinner",
 }
 
 def _periods_for(name: str, default_periods: str) -> frozenset[str]:
@@ -1235,3 +1243,11 @@ def recommend_daily_diet_plan(
 # 마실 것에 가까운 종류. 아침 메뉴로도 올리지 않는다(주스 한 잔은 '한 끼'가 아니다).
 _DRINK_CATEGORIES = frozenset({"drink", "smoothie"})
 NOT_A_MEAL = frozenset(item.name for item in MENU_POOL if menu_category(item.name) in _DRINK_CATEGORIES)
+
+# 11/10 정오님: 아침 두 메뉴는 '밥상형 하나 + 간단식형 하나'. 연령대로 나누지 않고 두 갈래를 한 끼에 같이 보여 준다
+# (아침 결식 20대 62% · 70대 이상 5%, 아침에 밥 먹는 성인 66.7% — 두 집단이 다 고를 수 있게)
+_BAPSANG_RE = re.compile("밥|국|죽|찌개|누룽지")
+BREAKFAST_BAPSANG = frozenset(item.name for item in MENU_POOL
+                              if "breakfast" in item.periods and item.cuisine == "korean" and _BAPSANG_RE.search(item.name))
+BREAKFAST_SIMPLE = frozenset(item.name for item in MENU_POOL
+                             if "breakfast" in item.periods and item.name not in BREAKFAST_BAPSANG) - NOT_A_MEAL
