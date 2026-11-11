@@ -276,3 +276,44 @@ def tongguan_day(core, daily_branch: str) -> dict | None:
             return dict(element=element, clash=f"{daily_branch}{pillar.branch}", position=position,
                         between=[today, natal], rule="branch_clash_mediator")
     return None
+
+
+# ── 오늘의 행운 색용 오행 3단계 (2026-11-11 정오님 결정, B안) ─────────────────────────
+# 한 가지 틀(억부)만 따르면 기신이 2~3개 빠져 한 달 내내 같은 오행 두 개만 남는 사람이 생긴다.
+# 그래서 세 틀이 각자 찬성(+)·반대(-)를 내고, 확실한 정도로 나눈다.
+#   억부  강약 방향이 있을 때만: 기신 -, 나머지 +   (점수 카드와 같은 정의)
+#   조후  『궁통보감』 1·2순위 +, 원문이 꺼린 오행 -
+#   비율  원국 35% 이상 -(점수 카드 '과다 강화'와 같은 기준), 10% 미만 +
+# 좋음 = 찬성이 있고 반대가 없음 / 피함 = 반대 둘 이상이고 찬성이 없음 / 무난 = 그 밖(틀끼리 의견이 갈림)
+# 결정 문서: 프로젝트 claude/decisions-2026-11-11-lucky-color-tiers.md
+DEFICIENT_SHARE = 10
+TIER_GOOD, TIER_OK, TIER_AVOID = "good", "ok", "avoid"
+
+
+def element_tiers(core) -> dict:
+    share = composition(core)
+    day_master = core.natal_facts.pillars["day"].stem_element
+    avoid = eokbu_avoid(day_master, str(core.synthesis.strength_state or ""))
+    votes: dict[str, list[tuple[str, int]]] = {e: [] for e in ELEMENTS}
+    if avoid:
+        for e in ELEMENTS:
+            votes[e].append(("eokbu", -1 if e in avoid else 1))
+    johu = _gungtong(core, share)
+    if johu:
+        picks, shunned, _ = johu
+        for e in picks:
+            votes[e].append(("johu", 1))
+        for e in dict.fromkeys(shunned):
+            if e not in picks:
+                votes[e].append(("johu", -1))
+    for e in ELEMENTS:
+        if share[e] >= EXCESS_SHARE:
+            votes[e].append(("share", -1))
+        elif share[e] < DEFICIENT_SHARE:
+            votes[e].append(("share", 1))
+    tiers = {}
+    for e, vs in votes.items():
+        pos = sum(1 for _, v in vs if v > 0)
+        neg = sum(1 for _, v in vs if v < 0)
+        tiers[e] = TIER_GOOD if pos and not neg else (TIER_AVOID if neg >= 2 and not pos else TIER_OK)
+    return dict(tiers=tiers, votes=votes, composition=share)
