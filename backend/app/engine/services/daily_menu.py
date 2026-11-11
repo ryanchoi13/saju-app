@@ -209,7 +209,7 @@ _PERIOD_OVERRIDES = {
     "재첩국과 따뜻한 쌀밥": "breakfast lunch dinner",
     # 11/10 아침 밥상형 보강: 국민건강영양조사 아침 다빈도 음식(잡곡밥·김치·김·계란프라이·김치찌개·된장찌개·미역국)과
     # 식품소비행태조사 '아침에 밥을 먹는 성인 66.7%(2024)'를 근거로, 이미 있는 국·찌개 밥상을 아침에도 낸다(사진 그대로)
-    "김치찌개": "breakfast lunch dinner", "된장찌개": "breakfast lunch dinner",
+    "된장찌개": "breakfast lunch dinner",    # 김치찌개는 아침에 무거워 뺌(11/11 정오님). 근거 자료(6~17세, 2013~14)의 5.5%보다 추천이 18%로 몰렸다
     "된장국": "breakfast lunch dinner", "콩나물국": "breakfast lunch dinner",
     "소고기무국": "breakfast lunch dinner", "김치국": "breakfast lunch dinner",
     "시래기국": "breakfast lunch dinner", "동태국": "breakfast lunch dinner",
