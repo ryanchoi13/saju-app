@@ -104,7 +104,7 @@ class ScoreMappingTests(unittest.TestCase):
             previous = score
         self.assertEqual([ds.grade(s) for s in (50, 59, 60, 69, 70, 79, 80, 89, 90, 100)],
                          ["나쁨", "나쁨", "주의", "주의", "보통", "보통", "좋음", "좋음", "아주 좋음", "아주 좋음"])
-        self.assertEqual(ds.display_score(ds.raw_score([])), 74)   # 요소 없는 날은 보통 한가운데
+        self.assertEqual(ds.grade(ds.display_score(ds.raw_score([]))), "보통")   # 요소 없는 날은 보통(11/11 재생성 후 70)
 
     def test_cdf_knots_are_sorted(self):
         fs = [f for f, _ in ds.RAW_CDF]
@@ -166,38 +166,41 @@ class TestChartTests(unittest.TestCase):
         self.assertIn(("day지 충", -20), bad["items"])
         self.assertIn(("일간 천간충", -12), bad["items"])
         self.assertEqual(bad["standout"], ("사람", "주의"))
-        good = results[date(2026, 11, 1)]         # 己卯: 일지 육합 +15, 일간 합 +8 (양인 −6, 과다 −8 상쇄)
+        good = results[date(2026, 11, 1)]         # 己卯: 일지 육합 +15, 일간 합 +8 (양인 −6, 卯 木 피함 −6 상쇄)
         self.assertIn(("day지 육합", 15), good["items"])
-        self.assertTrue(good["grade"] in {"좋음", "아주 좋음"} or abs(good["score"] - 80) <= 2, good)
-        self.assertEqual(good["score"], 82)       # 실측 2026-10-24: 좋음 82점
+        self.assertIn(("억부 기신", -6), good["items"])     # 己 土 무난 0 + 卯 木 피함 −6
+        self.assertTrue(abs(good["score"] - 80) <= 2, good)   # 실측 2026-11-11: 79점
 
-        fill = results[date(2026, 11, 5)]         # 癸未: 결핍 채움 +10 (水 0%) + 천을귀인
-        self.assertIn(fill["grade"], {"좋음", "아주 좋음"}, fill)
-        self.assertIn(("결핍 채움", 10), fill["items"])
+        # 癸未: 예전엔 결핍 채움 +10(水 0%). 11/11 3단계에서 水·土는 무난(틀끼리 의견이 갈림)이라 0
+        neutral = results[date(2026, 11, 5)]
+        names = [n for n, _ in neutral["items"]]
+        for label in ("결핍 채움", "과다 강화", "억부 희신", "억부 기신"):
+            self.assertNotIn(label, names)
 
     def test_good_day_shows_its_best_domain(self):
-        """10/24 辛未(좋음 85, 일 +6): 예전엔 분야 표시가 없었고, 이제 '일 좋음'이 뜬다."""
+        """좋은 날엔 가장 좋은 분야가 뜬다. 11/12 庚寅(좋음 80, 일 +6) — 11/11 3단계 후 실측."""
         core = _jungoh()
-        ev = ds.evaluate(core, ds.day_ganji(date(2026, 10, 24)), date(2026, 10, 24))
+        d = date(2026, 11, 12)
+        ev = ds.evaluate(core, ds.day_ganji(d), d)
         self.assertEqual(ev["grade"], "좋음")
         self.assertEqual(ev["domain"]["일"], 6)
         self.assertEqual(ev["standout"], ("일", "좋음"))
-        rx = daily_rx.render_day(core, "test-account", date(2026, 10, 24), ev)
+        rx = daily_rx.render_day(core, "test-account", d, ev)
         self.assertEqual(rx["domain_note"]["domain"], "일")
         self.assertEqual(rx["domain_note"]["kind"], "좋음")
         self.assertTrue(rx["domain_note"]["text"])
 
-    def test_yong_replaces_fill_only_when_larger(self):
+    def test_tier_item_replaces_yong_and_balance(self):
+        """11/11: 억부·결핍·과다 대신 오행 3단계 항목 하나. 행운 색과 같은 판정(정오님: 좋음 金火 / 무난 土水 / 피함 木)."""
         core = _jungoh()
-        # 11/5 癸未: 억부 −4(癸 水 기신 −10, 未 土 희신 +6) < 결핍+과다 +5 → 결핍·과다가 남는다
-        names = [n for n, _ in ds.score_items(core, "癸未", date(2026, 11, 5))]
-        self.assertIn("결핍 채움", names)
-        self.assertNotIn("억부 기신", names)
-        # 10/24 辛未: 억부 +10 > 결핍 +6·과다 −5 합 → 억부만
-        names = [n for n, _ in ds.score_items(core, "辛未", date(2026, 10, 24))]
-        self.assertIn("억부 희신", names)
-        self.assertNotIn("결핍 채움", names)
-        self.assertNotIn("과다 강화", names)
+        cases = {"辛未": ("억부 희신", 10),     # 辛 金 좋음 +10, 未 土 무난 0
+                 "乙卯": ("억부 기신", -10),    # 木 피함 둘(천간 −10, 지지 −6 → −10으로 자름)
+                 "甲午": ("억부 기신", -4),     # 甲 木 −10 + 午 火 +6
+                 "癸亥": None, "己丑": None}    # 水·土 무난 → 항목 없음
+        for gz, want in cases.items():
+            self.assertEqual(ds.tier_item(core, gz), want, gz)
+            names = [n for n, _ in ds.score_items(core, gz, date(2026, 11, 11))]
+            self.assertEqual(sum(n in ("억부 희신", "억부 기신", "결핍 채움", "과다 강화") for n in names), 1 if want else 0, (gz, names))
 
     def test_scoring_from_a_base_core_matches_the_core_of_that_day(self):
         base = _jungoh()

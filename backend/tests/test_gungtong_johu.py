@@ -47,8 +47,11 @@ def test_table_matches_the_evidence_csv():
 
 
 def test_excess_threshold_is_the_score_cards():
+    """점수 카드(11/11부터 daily_score.tier_item)와 행운 색이 같은 element_tiers 판정을 쓴다 → 과다 기준이 하나다."""
+    from app.engine.services import element_balance
     source = pathlib.Path(daily_score.__file__).read_text(encoding="utf-8")
-    assert f"share >= {EXCESS_SHARE}:" in source
+    assert "element_tiers" in source and "share >= " not in source
+    assert "share[e] >= EXCESS_SHARE" in pathlib.Path(element_balance.__file__).read_text(encoding="utf-8")
 
 
 def _core(gender, birth, hour):

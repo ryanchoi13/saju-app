@@ -3,12 +3,13 @@
 하루의 체감은 일진 × 원국이다. 대운·세운·월운과의 관계는 점수에서 뺀다(월운 지지는 삼합·방합을
 완성하는 셋째 글자로만 끼어든다). 사람별 평균을 50으로 맞추는 정규화는 하지 않는다.
 
-  raw   = Σ 요소 가중치 (충·형·해파·합 × 위치 계수, 일간 충·극·합, 결핍·과다 또는 억부, 12운성, 신살)
+  raw   = Σ 요소 가중치 (충·형·해파·합 × 위치 계수, 일간 충·극·합, 오행 3단계(필요한 기운), 12운성, 신살)
   표시  = raw 의 모집단 누적 분위 F 를 50~100 으로 옮긴 값. 분포 목표 15/20/30/20/15.
   단계  = 나쁨 50~59 · 주의 60~69 · 보통 70~79 · 좋음 80~89 · 아주 좋음 90~100
 
-용신(억부)은 코어 strength_state 가 strong/weak 일 때만 켠다(W=10). 조후·통관의 보류는 그대로 두고,
-undetermined 는 결핍·과다 항목이 대신한다. 억부와 결핍·과다 합이 같은 날에 걸리면 절댓값이 큰 쪽 하나만 쓴다.
+2026-11-11 정오님: 억부(강약 방향 있을 때)·결핍·과다 항목을 '오행 3단계'(tier_item) 하나로 바꿨다.
+억부·조후·원국 비율 세 틀이 함께 판정하고 행운 색(fashion_v2.daily_colors)과 같은 판정을 쓴다 — 한 화면 안의 모순 방지.
+yong_item 은 다른 화면(평생운세 등)이 강약 방향 판정을 쓰려고 남겨 둔다.
 코어(core/facts/diagnostics/synthesis)는 읽기만 한다.
 """
 from __future__ import annotations
@@ -28,7 +29,7 @@ from app.engine.facts.twelve_stages import get_twelve_stage
 from app.engine.services.element_balance import composition, CONTROLS, CONTROLLED_BY, GENERATES, GENERATED_BY
 from app.engine.shensha.engine import _DAY_STEM_RULES
 
-SCORE_VERSION = "daily-score-v2.1-yong10"
+SCORE_VERSION = "daily-score-v2.2-tiers10"
 
 # ---------------------------------------------------------------------------
 # 산식 상수
@@ -45,6 +46,7 @@ YANGIN = {"甲": "卯", "乙": "寅", "丙": "午", "丁": "巳", "戊": "午", 
           "庚": "酉", "辛": "申", "壬": "子", "癸": "亥"}
 BAEKHO = frozenset({"甲辰", "乙未", "丙戌", "丁丑", "戊辰", "壬戌", "癸丑"})   # 백호대살 7일주
 FILL_CAP, OVER_CAP = 10, -8
+TIER_W = 10                      # 오행 3단계 가중치(2026-11-11). 억부 W=10 과 같은 크기로 시작.
 YONG_W = 10                       # 억부 가중치. 15면 일지 형+백호 날을 좋음으로 뒤집어 버린다(보정안 C-3).
 YONG_STRONG = {"strong", "extremely_strong"}
 YONG_WEAK = {"weak", "extremely_weak"}
@@ -55,20 +57,21 @@ DISPLAY_KNOTS = ((0.0, 50.0), (0.15, 59.5), (0.35, 69.5), (0.65, 79.5), (0.85, 8
 GRADES = tuple(g for g, _, _ in GRADE_BANDS)
 
 # 모집단 raw 분위수 매듭 (타이브레이크 키 기준). scripts/build_daily_score_cdf.py 가 만든다 — 가중치를 바꾸면 다시 만든다.
-# 생성 2026-10-24: N = 1,000명 × 60갑자 = 60,000건(seed 20261024), 억부 ON (W=10, strong 146 · weak 128 · 보류 726),
-# 산식 v2.1. raw 평균 −0.27 · 표준편차 14.56 · 범위 −65~+54. 형식 (누적 분위 F, 그 분위의 raw 키), 사이는 선형 보간.
+# 생성 2026-11-11(오행 3단계 항목으로 교체 후 재생성): N = 1,000명 × 60갑자 = 60,000건(seed 20261024), 산식 v2.2.
+# raw 평균 4.11 · 표준편차 14.34 · 범위 −58~+54. (이전 2026-10-24 v2.1 억부: 평균 −0.27 · 표준편차 14.56)
+# 형식 (누적 분위 F, 그 분위의 raw 키), 사이는 선형 보간.
 RAW_CDF: tuple[tuple[float, float], ...] = (
-    (0.0, -65.48), (0.025, -30.36), (0.05, -25.3), (0.075, -22.22),
-    (0.1, -19.33), (0.125, -17.25), (0.15, -15.3), (0.175, -14.13),
-    (0.2, -12.25), (0.225, -11.17), (0.25, -10.12), (0.275, -8.33),
-    (0.3, -7.43), (0.325, -6.36), (0.35, -5.41), (0.375, -4.38),
-    (0.4, -4.06), (0.425, -3.12), (0.45, -2.13), (0.475, -1.18),
-    (0.5, 0.19), (0.525, 1.23), (0.55, 2.18), (0.575, 3.14),
-    (0.6, 4.06), (0.625, 4.37), (0.65, 5.5), (0.675, 6.32),
-    (0.7, 7.37), (0.725, 8.36), (0.75, 9.49), (0.775, 10.43),
-    (0.8, 12.19), (0.825, 13.31), (0.85, 15.08), (0.875, 16.32),
-    (0.9, 18.33), (0.925, 21.14), (0.95, 23.39), (0.975, 28.26),
-    (1.0, 54.53),
+    (0.0, -58.47), (0.025, -26.21), (0.05, -21.19), (0.075, -17.35),
+    (0.1, -15.13), (0.125, -12.33), (0.15, -10.46), (0.175, -9.23),
+    (0.2, -8.07), (0.225, -6.25), (0.25, -5.2), (0.275, -4.18),
+    (0.3, -3.12), (0.325, -2.12), (0.35, -1.18), (0.375, 0.26),
+    (0.4, 1.3), (0.425, 2.19), (0.45, 3.18), (0.475, 4.13),
+    (0.5, 5.06), (0.525, 6.06), (0.55, 6.25), (0.575, 7.25),
+    (0.6, 8.19), (0.625, 9.23), (0.65, 10.12), (0.675, 10.45),
+    (0.7, 12.12), (0.725, 12.62), (0.75, 14.13), (0.775, 15.18),
+    (0.8, 16.2), (0.825, 17.31), (0.85, 19.19), (0.875, 20.36),
+    (0.9, 22.36), (0.925, 25.15), (0.95, 27.38), (0.975, 31.55),
+    (1.0, 54.46),
 )
 
 
@@ -170,6 +173,49 @@ def yong_item(core: MyeongriCoreResult, day_pillar: str, weight: int = YONG_W) -
     return ("억부 희신" if value > 0 else "억부 기신", value)
 
 
+def tier_item(core: MyeongriCoreResult, day_pillar: str, weight: int = TIER_W) -> tuple[str, int] | None:
+    """오늘 들어온 기운이 나한테 필요한가 — 행운 색과 같은 오행 3단계(element_balance.element_tiers, 2026-11-11 정오님).
+
+    천간(1.0)·지지 본기(0.6) 오행이 좋음이면 +, 피함이면 −, 무난(틀끼리 의견이 갈림)이면 0. ±weight 로 자른다.
+    예전 억부 항목(yong_item)과 결핍·과다 항목을 이 하나로 대신한다(억부 하나만 따르면 행운 색과 어긋났다).
+    라벨은 기존 문구 은행을 그대로 쓰도록, 그 오행에 표를 던진 틀로 고른다:
+      + 억부 찬성 → '억부 희신' / 비율 찬성 → '결핍 채움' / 조후만 → '억부 희신'(문구가 '필요한 기운'이라 맞다)
+      − 억부 반대 → '억부 기신' / 비율 반대 → '과다 강화' / 그 밖 → '억부 기신'
+    """
+    from app.engine.services.element_balance import TIER_AVOID, TIER_GOOD
+
+    info = _tiers_cached(core)
+    tiers, votes = info["tiers"], info["votes"]
+    signed = []
+    for element, w in ((GAN_WUXING[day_pillar[0]], 1.0), (ZHI_WUXING[day_pillar[1]], 0.6)):
+        sign = 1 if tiers[element] == TIER_GOOD else -1 if tiers[element] == TIER_AVOID else 0
+        signed.append((element, sign, w))
+    value = max(-weight, min(weight, round(sum(sign * weight * w for _, sign, w in signed))))
+    if not value:
+        return None
+    lead = next(e for e, sign, _ in signed if sign == (1 if value > 0 else -1))
+    lenses = {name for name, v in votes[lead] if (v > 0) == (value > 0)}
+    if value > 0:
+        label = "억부 희신" if "eokbu" in lenses or "share" not in lenses else "결핍 채움"
+    else:
+        label = "억부 기신" if "eokbu" in lenses or "share" not in lenses else "과다 강화"
+    return (label, value)
+
+
+def _tiers_cached(core: MyeongriCoreResult) -> dict:
+    """원국은 그대로라 한 core 에서 한 번만 계산한다(연간 리포트는 12번 부른다)."""
+    from app.engine.services.element_balance import element_tiers
+
+    cached = getattr(core, "_dalha_element_tiers", None)
+    if cached is None:
+        cached = element_tiers(core)
+        try:
+            object.__setattr__(core, "_dalha_element_tiers", cached)
+        except Exception:
+            pass
+    return cached
+
+
 def score_items(core: MyeongriCoreResult, day_pillar: str, target_date: date) -> list[tuple[str, int]]:
     """산식 v2.1 요소 목록 [(라벨, 가중치)]. 합이 raw 점수다."""
     pillars = core.natal_facts.pillars
@@ -202,27 +248,9 @@ def score_items(core: MyeongriCoreResult, day_pillar: str, target_date: date) ->
         elif kind == "stem_control" and pos == "day":
             items.append(("일간 천간충", -12) if frozenset((dm, stem)) in STEM_CLASH_PAIRS else ("일간 천간극", -6))
 
-    comp = composition(core)
-    fill = over = 0.0
-    for element, w in ((GAN_WUXING[stem], 1.0), (ZHI_WUXING[branch], 0.6)):
-        share = comp[element]
-        if share == 0:
-            fill += 10 * w
-        elif share < 10:
-            fill += 6 * w
-        elif share >= 35:
-            over -= 8 * w
-    balance_items: list[tuple[str, int]] = []
-    if fill:
-        balance_items.append(("결핍 채움", min(FILL_CAP, round(fill))))
-    if over:
-        balance_items.append(("과다 강화", max(OVER_CAP, round(over))))
-    yong = yong_item(core, day_pillar)
-    # 억부와 결핍·과다는 "이 기운이 나한테 더 필요한가"에 다른 답을 내는 장치라 겹쳐 쓰지 않는다. 큰 쪽 하나만.
-    if yong and abs(yong[1]) >= abs(sum(w for _, w in balance_items)):
-        items.append(yong)
-    else:
-        items.extend(balance_items)
+    tier = tier_item(core, day_pillar)
+    if tier:
+        items.append(tier)
 
     stage = get_twelve_stage(dm, branch).value
     if STAGE_W.get(stage):
