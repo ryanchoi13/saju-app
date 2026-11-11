@@ -175,14 +175,14 @@ def _body_checks(tc, story):
 
 class AssemblyTests(unittest.TestCase):
     # v5 조립본(/home/claude/reports/오늘의 이야기 은행 v5 보고.md §7)과 같은 계산: 계정 "x", 이력은 RX_EPOCH 60일 전부터 복원.
-    SNAPSHOT = {   # 11/10 확정 문장 다듬기·조합 규칙 반영
-        date(2026, 10, 24): ('힘을 덜 들여도 일이 되는 날', (6, 2, 4, 4, 2), True),
-        date(2026, 10, 25): ('안 풀리던 문제가 해결되는 날', (4, 3, 2, 2, 3), True),
-        date(2026, 10, 26): ('하던 일 하나만 끝내는 날', (4, 2, 3, 4, 3), False),
-        date(2026, 10, 27): ('동료와 호흡이 잘 맞는 날', (4, 3, 2, 2, 3), False),
-        date(2026, 10, 28): ('결정을 하루 묵히는 날', (5, 3, 3, 2, 3), True),
-        date(2026, 10, 29): ('집안에서 뜻밖의 소식이 오는 날', (5, 4, 2, 3, 2), True),
-        date(2026, 10, 30): ('그럭저럭 무난히 흘러가는 하루', (6, 3, 3, 3, 3), False),
+    SNAPSHOT = {   # 11/11 점수 카드 오행 3단계(daily_score.tier_item)로 바뀐 뒤 실측. 11/10 문장 다듬기 반영
+        date(2026, 10, 24): ("밀린 일을 하나씩 정리하는 날", (7, 3, 3, 3, 3), False),
+        date(2026, 10, 25): ("저녁 만남이 즐거운 날", (4, 3, 2, 2, 3), False),
+        date(2026, 10, 26): ("하던 일 하나만 끝내는 날", (4, 2, 3, 4, 4), True),
+        date(2026, 10, 27): ("동료와 호흡이 잘 맞는 날", (4, 3, 2, 2, 3), False),
+        date(2026, 10, 28): ("몸이 무겁고 마음이 급해지기 쉬운 날", (4, 3, 2, 2, 3), True),
+        date(2026, 10, 29): ("오래된 사람이 마음을 흔드는 날", (5, 4, 2, 3, 2), True),
+        date(2026, 10, 30): ("그럭저럭 무난히 흘러가는 하루", (6, 3, 3, 3, 3), False),
     }
 
     def test_seven_days_match_the_v5_assembly(self):
@@ -201,7 +201,7 @@ class AssemblyTests(unittest.TestCase):
 
     def test_grade_changes_the_overall_for_the_same_ten_god(self):
         core = _jungoh()
-        d = date(2026, 10, 24)                                   # 辛未 · 정관 · 억부 희신 top
+        d = date(2026, 11, 8)                                    # 丙戌 · 식신 · 좋음 89 (11/11 3단계 후)
         ev = daily_score.evaluate(core, daily_score.day_ganji(d), d)
         rx = daily_rx.select_for_day(core, "x", d, [], ev)
         good = S.build_story(core, ev, rx, "x", d, "male", [])
@@ -304,15 +304,15 @@ class FortuneWiringTests(unittest.TestCase):
         from app.engine.services.daily import build_daily_fortune, DAILY_FORTUNE_VERSION
         core = _jungoh()
         _fresh()
-        out = build_daily_fortune(core, "테스트", date(2026, 10, 24), account_key="x", include_menu=False)
+        out = build_daily_fortune(core, "테스트", date(2026, 11, 8), account_key="x", include_menu=False)
         story = out["story"]
         self.assertEqual(out["engine_version"], DAILY_FORTUNE_VERSION)
         self.assertEqual(story["story_version"], S.STORY_VERSION)
-        self.assertEqual(story["headline"], "힘을 덜 들여도 일이 되는 날")
+        self.assertEqual(story["headline"], "중요한 일 하나를 밀어 볼 만한 날")
         self.assertEqual(story["title"], story["headline"])
         self.assertEqual([s["title"] for s in story["sections"]], ["금전", "애정·관계", "일", "건강"])
         self.assertTrue(all(s["body"] == s["text"] for s in story["sections"]))
-        self.assertEqual(story["closing"], "순조로운 하루이니 무리 없이 보내도 좋겠네요.")
+        self.assertEqual(story["closing"], "이런 날은 힘과 시간을 아끼지 말고 쓰세요.")
         self.assertNotIn("한 가지 더", story["body"])
 
     def test_falls_back_to_the_old_story_when_v2_fails(self):
@@ -320,10 +320,11 @@ class FortuneWiringTests(unittest.TestCase):
         core = _jungoh()
         base = {"headline": "기존", "body": "기존 본문입니다.", "sections": []}
         rx = {"evidence_text": "x", "domain_note": None}          # story 키가 없으면 직접 조립을 시도한다
-        ev = daily_score.evaluate(core, daily_score.day_ganji(date(2026, 10, 24)), date(2026, 10, 24))
-        self.assertEqual(daily._story_v2(base, core, ev, rx, "x", date(2026, 10, 24))["title"], "업무와 약속이 제때 지켜지는 날")   # 이력 없이 직접 조립
-        self.assertIs(daily._story_v2(base, core, ev, {"story": None}, "x", date(2026, 10, 24)), base)
-        self.assertIs(daily._story_v2(base, core, {"items": None}, rx, "x", date(2026, 10, 24)), base)   # 조립 예외 → 폴백
+        d = date(2026, 11, 8)
+        ev = daily_score.evaluate(core, daily_score.day_ganji(d), d)
+        self.assertEqual(daily._story_v2(base, core, ev, rx, "x", d)["title"], "일터에서 도움을 받을 수 있는 날")   # 이력 없이 직접 조립
+        self.assertIs(daily._story_v2(base, core, ev, {"story": None}, "x", d), base)
+        self.assertIs(daily._story_v2(base, core, {"items": None}, rx, "x", d), base)   # 조립 예외 → 폴백
 
 
 if __name__ == "__main__":
