@@ -11,7 +11,8 @@ from app.engine.constants import GAN_KO, ZHI_KO
 from app.engine.core.models import MyeongriCoreResult
 from app.engine.semantic.queries import build_service_query
 from app.engine.services.simple_menu import daily_choices
-from app.engine.services.daily_menu import NOT_A_MEAL, recommend_daily_menus
+from app.engine.services.daily_menu import BREAKFAST_BAPSANG, BREAKFAST_SIMPLE, MENU_POOL, NOT_A_MEAL, _SIMILAR, recommend_daily_menus
+from app.engine.services.menu_categories import menu_category
 from app.engine.services.daily_guidance import build_daily_guidance
 from app.engine.services import daily_copy, daily_menu_copy, daily_sections, daily_rx, daily_score, daily_story
 from app.engine.services.annual_copy import seed_from
@@ -406,9 +407,21 @@ def _menu_curation_uncached(core, target_date, account_key, lucky_element, opera
         return daily_blend(balance, _wx(GAN_WUXING[ganji[0]]), ganji[1])["element"]
 
     def pick(meal: str, hour: int, day: date, avoid: frozenset[str], used: frozenset[str]) -> list[str]:
+        if meal == "breakfast":
+            # 11/10 정오님: 아침은 밥상형 하나 + 간단식형 하나
+            first = pick_one(meal, hour, day, avoid, used, 1, BREAKFAST_SIMPLE)       # 간단식을 빼고 고름 = 밥상형
+            kind = (lambda n: _SIMILAR.get(menu_category(n), menu_category(n)))
+            same_kind = frozenset(m.name for m in MENU_POOL if first and kind(m.name) == kind(first[0]))
+            second = pick_one(meal, hour, day, avoid, used | frozenset(first), 1, BREAKFAST_BAPSANG | same_kind)   # 간단식형(다른 종류)
+            both = first + second
+            return both if len(both) == 2 else pick_one(meal, hour, day, avoid, used, 2, frozenset())
+        return pick_one(meal, hour, day, avoid, used, 2, frozenset())
+
+    def pick_one(meal: str, hour: int, day: date, avoid: frozenset[str], used: frozenset[str],
+                 count: int, extra_excluded: frozenset[str]) -> list[str]:
         ganji = ganji_han if day == target_date else _day_ganji(day)
         return recommend_daily_menus(
-            target_date=day, current_hour=hour, count=2,
+            target_date=day, current_hour=hour, count=count,
             day_master=account_key or core.input.birth_date.isoformat(),
             daily_ganji=ganji, lucky_element=lucky_element if day == target_date else lucky_for(ganji),
             primary_operation=operation_name,
@@ -416,7 +429,7 @@ def _menu_curation_uncached(core, target_date, account_key, lucky_element, opera
             climate_tags=base_tags | frozenset(_DAY_SEASON_TAGS.get(ganji[1], ())),
             blocked_menus=avoid,                  # 그제·어제 같은 끼니에 나온 메뉴는 뺀다
             used_menus=used,                      # 같은 날 앞 끼니에 나온 메뉴도 뺀다
-            excluded_menus=_MEAL_EXCLUDED[meal],   # 아침엔 음료, 점심엔 저녁 전용, 저녁엔 점심 전용을 뺀다
+            excluded_menus=_MEAL_EXCLUDED[meal] | extra_excluded,   # 아침엔 음료, 점심엔 저녁 전용, 저녁엔 점심 전용을 뺀다
         )["menus"]
 
     def meals_for(day: date, before: dict[str, frozenset[str]]) -> dict[str, list[str]]:
