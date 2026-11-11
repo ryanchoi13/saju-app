@@ -61,37 +61,94 @@ def all_daily_pairs():
 
 
 def todays_lucky_tones(core, today_fortune, day_ordinal: int, salt: int) -> dict:
-    """오늘의 행운 색 두 개를 정하는 단 하나의 입구(2026-10-30).
+    """오늘의 행운 색 두 개를 정하는 단 하나의 입구(2026-10-30). 화면(main.py)과 자동 검사가 같은 함수를 쓴다.
 
-    화면(main.py)과 자동 검사(scripts/color_plan_report.py)가 같은 함수를 쓴다.
-    1) 두 목표 오행: 원국 방향이 확정이면 그 오행 + 일간 오행,
-       보류면 오늘의 보완 오행 1·2순위(2026-11-05 정오님: 두 칸 모두 '오늘 필요한 기운').
-       예전 2칸(타고난 보완 오행)은 거의 매일 같은 오행이라 한 칸이 고정되고 같은 오행 두 색이 나왔다.
-       1·2순위는 점수 카드와 같은 억부 방향을 따르므로 기신 오행이 색으로 나오지 않는다(통관 날 제외).
-    2) 오행마다 대표 착장색 하나씩(element_tone_pair)
-    3) 충 날이면 첫 색을 두 기운을 잇는 오행의 가라앉은 톤으로(통관). 2칸은 혼합 순위의 다음 오행
+    2026-11-11 정오님 결정(3단계 원칙 B안). 결정 문서: 프로젝트 claude/decisions-2026-11-11-lucky-color-tiers.md
+    - 오행을 좋음·무난·피함으로 나눈다(element_balance.element_tiers). 피함 오행은 색으로 내지 않는다.
+    - 1칸 = 그날 천간의 오행. 좋음이나 무난이면 그대로, 피함이면 그것을 누르는 오행(제어) → 힘을 빼는 오행(설기)
+      중 좋음인 것, 없으면 원국 순위의 첫 좋음.
+    - 2칸 = 그날 지지의 지장간(정기 → 중기 → 여기)에서 피함이 아니고 1칸과 다른 첫 오행.
+      없으면 정기 오행을 제어·설기하는 오행, 그래도 없으면 남은 좋음·무난 순위.
+    - 통관 날: 통관 오행이 피함이 아니면 1칸을 통관 톤으로 바꾼다(피함이면 통관 처방을 쓰지 않는다).
+    예전(11/5)에는 억부 기신을 모두 빼고 혼합 1·2순위를 썼다. 정오님 사주로 30일 중 28일이 금·화로 고정돼 바꿨다.
     """
+    from app.engine.facts.hidden_stems import get_hidden_stems
+    from app.engine.constants import GAN_WUXING
+    from app.engine.services.element_balance import (
+        CONTROLLED_BY, GENERATES, TIER_AVOID, TIER_GOOD, element_tiers, natal_balance)
+
     from app.engine.services.fashion_colors import build_fashion_color_basis
 
-    today_element = core.timing.daily["pillar"]["stem_element"]
-    lucky_element = today_fortune["lucky_element"]
     basis = build_fashion_color_basis(core)
-    fashion_element = basis["primary_element"]
-    if basis["source"] != "confirmed_natal_direction":
-        fashion_element = lucky_element
-        today_element = today_fortune["lucky_second_element"]
-        basis = {**basis, "primary_element": fashion_element, "secondary_element": today_element,
-                 "source": "daily_blend_top2"}
-    tone_a, tone_b = element_tone_pair(fashion_element, today_element, day_ordinal, salt)
+    if basis["source"] == "confirmed_natal_direction":
+        # 코어가 용신 방향을 확정한 드문 경우는 예전(10/30) 그대로: 확정 오행 + 오늘 일간 오행
+        today_element = core.timing.daily["pillar"]["stem_element"]
+        tone_a, tone_b = element_tone_pair(basis["primary_element"], today_element, day_ordinal, salt)
+        element_a, tongguan = basis["primary_element"], today_fortune.get("tongguan")
+        if tongguan:
+            tone_a, element_a = tongguan_tone(tongguan["element"]), tongguan["element"]
+            if tone_b["id"] == tone_a["id"]:
+                pool = ELEMENT_WEAR_TONES.get(today_element) or ELEMENT_WEAR_TONES["水"]
+                tone_b = PALETTE[pool[(pool.index(tone_b["id"]) + 1) % len(pool)]] if tone_b["id"] in pool else tone_b
+        return dict(tone_a=tone_a, element_a=element_a, tone_b=tone_b, element_b=today_element,
+                    fashion_element=basis["primary_element"], today_element=today_element,
+                    basis=basis, tongguan=tongguan)
+
+    info = element_tiers(core)
+    tiers = info["tiers"]
+    ranking = natal_balance(core)["ranking"]
+    good = [e for e in ranking if tiers[e] == TIER_GOOD]
+    usable = [e for e in ranking if tiers[e] != TIER_AVOID]
+    if not usable:   # 이론상 없지만 막아 둔다
+        usable = list(ranking)
+
+    def ok(e, taken=()):
+        return tiers[e] != TIER_AVOID and e not in taken
+
+    pillar = core.timing.daily["pillar"]
+    stem, branch = pillar["ganji"][0], pillar["ganji"][1]
+
+    first, first_rule = GAN_WUXING[stem], "stem"
+    if not ok(first):
+        for cand, rule in ((CONTROLLED_BY[first], "stem_control"), (GENERATES[first], "stem_drain")):
+            if cand in good:
+                first, first_rule = cand, rule
+                break
+        else:
+            first, first_rule = (good or usable)[0], "natal_rank"
+
+    second, second_rule = None, None
+    hidden = get_hidden_stems(branch).stems
+    for item in hidden:
+        if ok(item.element, (first,)):
+            second, second_rule = item.element, f"hidden_{getattr(item.role, 'value', item.role)}"
+            break
+    if second is None:
+        main_el = hidden[0].element
+        for cand, rule in ((CONTROLLED_BY[main_el], "branch_control"), (GENERATES[main_el], "branch_drain")):
+            if ok(cand, (first,)):
+                second, second_rule = cand, rule
+                break
+        else:
+            rest = [e for e in usable if e != first] or [e for e in ranking if e != first]
+            second, second_rule = rest[0], "natal_rank"
+
+    tone_a, tone_b = element_tone_pair(first, second, day_ordinal, salt)
+    element_a = first
     tongguan = today_fortune.get("tongguan")
-    element_a = fashion_element
+    if tongguan and tiers.get(tongguan["element"]) == TIER_AVOID:
+        tongguan = None
     if tongguan:
-        tone_a = tongguan_tone(tongguan["element"])
-        element_a = tongguan["element"]
+        tg = tongguan["element"]
+        tone_a, element_a = tongguan_tone(tg), tg
+        if second == tg:
+            second, second_rule = first, "tongguan_shift"
+            tone_b = element_tone_pair(first, first, day_ordinal, salt)[1]
         if tone_b["id"] == tone_a["id"]:
-            # 통관 톤이 두 번째 색과 같아지면 행운 색이 하나로 보인다(10/30 자동 검사에서 발견). 같은 오행의 다음 톤으로.
-            pool = ELEMENT_WEAR_TONES.get(today_element) or ELEMENT_WEAR_TONES["水"]
+            pool = ELEMENT_WEAR_TONES.get(second) or ELEMENT_WEAR_TONES["水"]
             tone_b = PALETTE[pool[(pool.index(tone_b["id"]) + 1) % len(pool)]] if tone_b["id"] in pool else tone_b
-    return dict(tone_a=tone_a, element_a=element_a, tone_b=tone_b, element_b=today_element,
-                fashion_element=fashion_element, today_element=today_element,
+    basis = dict(source="element_tiers_daily", primary_element=element_a, secondary_element=second,
+                 tiers=tiers, rules=[first_rule if not tongguan else "tongguan", second_rule])
+    return dict(tone_a=tone_a, element_a=element_a, tone_b=tone_b, element_b=second,
+                fashion_element=element_a, today_element=second,
                 basis=basis, tongguan=tongguan)

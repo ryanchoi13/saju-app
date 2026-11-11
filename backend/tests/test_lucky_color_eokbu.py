@@ -1,4 +1,4 @@
-"""오늘의 행운 색 = 오늘 필요한 기운 1·2순위, 점수 카드와 같은 억부 방향 (2026-11-05 정오님 결정).
+"""오늘의 행운 색 — 2026-11-05 억부 방향 정합 + 2026-11-11 3단계 원칙(B안).\n\n11/11: 행운 색은 억부·조후·비율 세 틀로 오행을 좋음·무난·피함으로 나누고, 피함만 뺀다.\n결정 문서: 프로젝트 claude/decisions-2026-11-11-lucky-color-tiers.md\n아래 11/5 내용 중 '점수 카드 기신은 색으로 내지 않는다'는 3단계 원칙으로 바뀌었다(점수 카드 정합은 정오님 검토 중).
 
 결정 문서: 프로젝트 claude/decisions-2026-11-05-lucky-color.md
 - 강약 방향이 있는 사람은 점수 카드(daily_score.yong_item)가 '억부 기신'이라 부르는 오행을
@@ -14,7 +14,7 @@ from app.engine.core.models import BirthInput
 from app.engine.orchestrator import calculate_myeongri_core
 from app.engine.services.daily import build_daily_fortune
 from app.engine.services.daily_score import _god_group, yong_direction
-from app.engine.services.element_balance import ELEMENTS, eokbu_avoid, natal_balance
+from app.engine.services.element_balance import ELEMENTS, TIER_AVOID, element_tiers, eokbu_avoid, natal_balance
 from fashion_v2.daily_colors import todays_lucky_tones
 
 START = dt.date(2026, 11, 5)
@@ -61,18 +61,48 @@ def test_natal_primary_never_gisin(users):
         assert bool(nb["eokbu_avoid"]) == bool(direction)
 
 
-def test_two_lucky_colors_are_different_elements_and_not_gisin(users):
+def _lucky(gender, birth, hour, day):
+    core = _core(gender, birth, hour, day)
+    fortune = build_daily_fortune(core, "검사", day, current_hour=8, account_key=None, include_menu=False)
+    return core, todays_lucky_tones(core, fortune, day.toordinal(), birth.year * 372 + birth.month * 31 + birth.day)
+
+
+def test_two_lucky_colors_are_different_elements_and_never_avoid_tier(users):
+    """2026-11-11 3단계 원칙: '피함' 오행은 색으로 내지 않는다(통관 날 포함). 두 색은 서로 다른 오행."""
     for gender, birth, hour, direction in users:
+        tiers = None
         for i in range(DAYS):
             day = START + dt.timedelta(days=i)
-            core = _core(gender, birth, hour, day)
-            fortune = build_daily_fortune(core, "검사", day, current_hour=8, account_key=None, include_menu=False)
-            lucky = todays_lucky_tones(core, fortune, day.toordinal(), birth.year * 372 + birth.month * 31 + birth.day)
+            core, lucky = _lucky(gender, birth, hour, day)
+            tiers = tiers or element_tiers(core)["tiers"]
             a, b = lucky["element_a"], lucky["element_b"]
             assert a != b, (birth, day, a, b)
             assert lucky["tone_a"]["id"] != lucky["tone_b"]["id"]
-            if direction:
-                avoid = eokbu_avoid(core.natal_facts.pillars["day"].stem_element, direction)
-                assert b not in avoid, (birth, day, b)
-                if not lucky["tongguan"]:
-                    assert a not in avoid, (birth, day, a)
+            assert tiers[a] != TIER_AVOID and tiers[b] != TIER_AVOID, (birth, day, a, b, tiers)
+
+
+def test_no_one_gets_the_same_pair_all_month(users):
+    """11/11 발단: 억부 기신을 다 빼면 오행 두 개만 남아 한 달 내내 같은 조합이 나왔다."""
+    for gender, birth, hour, direction in users:
+        pairs = {frozenset((l["element_a"], l["element_b"]))
+                 for l in (_lucky(gender, birth, hour, START + dt.timedelta(days=i))[1] for i in range(30))}
+        assert len(pairs) >= 3, (birth, pairs)
+
+
+def test_tiers_rules():
+    """좋음 = 찬성 있고 반대 없음 / 피함 = 반대 둘 이상, 찬성 없음 / 무난 = 그 밖."""
+    core = _core("male", dt.date(1978, 3, 13), 11, START)   # 정오님 사례(문서에 기록된 원국)
+    info = element_tiers(core)
+    assert info["tiers"] == {"木": "avoid", "火": "good", "土": "ok", "金": "good", "水": "ok"}, info
+
+
+def test_jungoh_month_mixes_four_elements():
+    """정오님 30일: 금·화 28일 고정(11/5 방식) → 금·토·화·수가 섞이고 목은 나오지 않는다."""
+    seen = []
+    for i in range(30):
+        _, lucky = _lucky("male", dt.date(1978, 3, 13), 11, dt.date(2026, 11, 11) + dt.timedelta(days=i))
+        seen += [lucky["element_a"], lucky["element_b"]]
+    counts = {e: seen.count(e) for e in ELEMENTS}
+    assert counts["木"] == 0
+    assert all(counts[e] >= 5 for e in ("火", "土", "金", "水")), counts
+    assert max(counts.values()) <= 24, counts
