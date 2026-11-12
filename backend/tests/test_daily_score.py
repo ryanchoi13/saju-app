@@ -34,10 +34,12 @@ class BankTests(unittest.TestCase):
         self.assertEqual(sorted(daily_rx.DOMAIN), sorted(ds.DOMAINS))
         self.assertEqual(sum(len(rows) for k in daily_rx.DOMAIN.values() for rows in k.values()), 48)
         self.assertEqual(len(daily_rx.BANK), 10)
-        self.assertEqual(sum(len(d["dont"]) + len(d["do"]) for d in daily_rx.BANK.values()), 120)
+        self.assertEqual(sum(len(d["dont"]) + len(d["do"]) for d in daily_rx.BANK.values()), 361)   # 11/12 BANK_EXTRA 241 더함(union 몸 하지 말 것은 원래 0개라 4개)
         for name, data in daily_rx.BANK.items():
             for kind in ("dont", "do"):
-                self.assertEqual(len(data[kind]), 6, f"{name}.{kind}")
+                self.assertGreaterEqual(len(data[kind]), 6, f"{name}.{kind}")
+                for scene in ("돈", "일", "사람", "몸"):    # 11/12: 분야 장면은 칸마다 4문장 이상(되풀이 방지)
+                    self.assertGreaterEqual(sum(sc == scene for sc, _, _ in data[kind]), 4, f"{name}.{kind}.{scene}")
                 variants = [v for _, v, _ in data[kind]]
                 self.assertIn("season", variants, f"{name}.{kind}")
                 self.assertTrue(set(variants) & {"weekday", "weekend"}, f"{name}.{kind}")
