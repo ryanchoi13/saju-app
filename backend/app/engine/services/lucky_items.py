@@ -18,7 +18,7 @@ from __future__ import annotations
 from datetime import date
 import hashlib
 
-ITEMS_VERSION = "lucky-items-v2-20261112"
+ITEMS_VERSION = "lucky-items-v2.1-20261112"
 
 _W, _F, _E, _M, _S = "木", "火", "土", "金", "水"
 
@@ -69,7 +69,9 @@ CATALOG: dict[str, tuple[str, str | None, dict[str, str]]] = {
     "tie": ("all", "male", _v("올리브 넥타이", "버건디 넥타이", "카멜 넥타이", "실버 넥타이핀", "네이비 넥타이")),
     # 편관 — 긴장과 대비
     "belt": ("all", None, _v("올리브 캔버스 벨트", "버건디 가죽 벨트", "브라운 가죽 벨트", "실버 버클 벨트", "블랙 가죽 벨트")),
-    "badge": ("all", None, _v("나뭇잎 핀 배지", "붉은 에나멜 배지", "도자기 핀 배지", "실버 핀 배지", "남색 에나멜 배지")),
+    # 11/12 정오님: 핀 배지는 어른이 평소 쓰는 물건이 아니고, 브로치는 여성 쪽이라 남녀 모두 매일 쓰는 안경 케이스로
+    "glasses_case": ("all", None, _v("나무 안경 케이스", "버건디 안경 케이스", "브라운 가죽 안경 케이스",
+                                     "메탈 안경 케이스", "남색 안경 케이스")),
     "umbrella": ("all", None, _v("올리브 접이식 우산", "버건디 접이식 우산", "베이지 접이식 우산",
                                  "실버 접이식 우산", "네이비 접이식 우산")),
     "gloves": ("winter", None, _v("올리브 니트 장갑", "버건디 장갑", "브라운 가죽 장갑", "그레이 장갑", "블랙 가죽 장갑")),
@@ -98,7 +100,7 @@ BY_TEN_GOD: dict[str, tuple[str, tuple[str, ...]]] = {
     "direct_wealth": ("실속을 챙기는 날", ("cardwallet", "coinpurse", "pouch", "moneyclip")),
     "indirect_wealth": ("돈과 발이 바깥으로 도는 날", ("ecobag", "bag", "keycase", "battery", "sunglasses")),
     "direct_officer": ("약속과 시간이 앞서는 날", ("watch", "planner", "cardcase", "tie")),
-    "seven_killings": ("긴장하고 대비하는 날", ("belt", "badge", "umbrella", "gloves")),
+    "seven_killings": ("긴장하고 대비하는 날", ("belt", "glasses_case", "umbrella", "gloves")),
     "direct_resource": ("배우고 정리하는 날", ("notebook", "bookmark", "pencil")),
     "indirect_resource": ("혼자 쉬며 채우는 날", ("earphone", "eyemask", "scarf", "muffler", "blanket")),
 }
