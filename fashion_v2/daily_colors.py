@@ -73,9 +73,8 @@ def todays_lucky_tones(core, today_fortune, day_ordinal: int, salt: int) -> dict
     예전(11/5)에는 억부 기신을 모두 빼고 혼합 1·2순위를 썼다. 정오님 사주로 30일 중 28일이 금·화로 고정돼 바꿨다.
     """
     from app.engine.facts.hidden_stems import get_hidden_stems
-    from app.engine.constants import GAN_WUXING
     from app.engine.services.element_balance import (
-        CONTROLLED_BY, GENERATES, TIER_AVOID, TIER_GOOD, element_tiers, natal_balance)
+        CONTROLLED_BY, GENERATES, TIER_AVOID, element_tiers, natal_balance, tier_first_element)
 
     from app.engine.services.fashion_colors import build_fashion_color_basis
 
@@ -97,25 +96,13 @@ def todays_lucky_tones(core, today_fortune, day_ordinal: int, salt: int) -> dict
     info = element_tiers(core)
     tiers = info["tiers"]
     ranking = natal_balance(core)["ranking"]
-    good = [e for e in ranking if tiers[e] == TIER_GOOD]
-    usable = [e for e in ranking if tiers[e] != TIER_AVOID]
-    if not usable:   # 이론상 없지만 막아 둔다
-        usable = list(ranking)
+    usable = [e for e in ranking if tiers[e] != TIER_AVOID] or list(ranking)
 
     def ok(e, taken=()):
         return tiers[e] != TIER_AVOID and e not in taken
 
-    pillar = core.timing.daily["pillar"]
-    stem, branch = pillar["ganji"][0], pillar["ganji"][1]
-
-    first, first_rule = GAN_WUXING[stem], "stem"
-    if not ok(first):
-        for cand, rule in ((CONTROLLED_BY[first], "stem_control"), (GENERATES[first], "stem_drain")):
-            if cand in good:
-                first, first_rule = cand, rule
-                break
-        else:
-            first, first_rule = (good or usable)[0], "natal_rank"
+    branch = core.timing.daily["pillar"]["ganji"][1]
+    first, first_rule = tier_first_element(core, tiers)   # 행운 카드·부적과 같은 함수(11/12)
 
     second, second_rule = None, None
     hidden = get_hidden_stems(branch).stems

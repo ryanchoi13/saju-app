@@ -317,3 +317,40 @@ def element_tiers(core) -> dict:
         neg = sum(1 for _, v in vs if v < 0)
         tiers[e] = TIER_GOOD if pos and not neg else (TIER_AVOID if neg >= 2 and not pos else TIER_OK)
     return dict(tiers=tiers, votes=votes, composition=share)
+
+
+# ── 오늘의 행운 오행 하나 (2026-11-12 정오님: 아이템·숫자·방위·부적을 행운 색 1칸과 같은 기준으로) ──
+# 결정 문서: 프로젝트 claude/decisions-2026-11-12-lucky-item.md
+# 행운 색(fashion_v2.daily_colors.todays_lucky_tones)의 1칸 오행과 이 함수의 결과는 항상 같다(계약 테스트).
+
+def tier_first_element(core, tiers: dict | None = None) -> tuple[str, str]:
+    """3단계 원칙의 1칸: 그날 천간 오행. 피함이면 제어 → 설기 중 좋음, 없으면 원국 순위의 첫 좋음."""
+    from app.engine.constants import GAN_WUXING
+
+    tiers = tiers or element_tiers(core)["tiers"]
+    ranking = natal_balance(core)["ranking"]
+    good = [e for e in ranking if tiers[e] == TIER_GOOD]
+    usable = [e for e in ranking if tiers[e] != TIER_AVOID] or list(ranking)
+    first = GAN_WUXING[core.timing.daily["pillar"]["ganji"][0]]
+    if tiers[first] != TIER_AVOID:
+        return first, "stem"
+    for cand, rule in ((CONTROLLED_BY[first], "stem_control"), (GENERATES[first], "stem_drain")):
+        if cand in good:
+            return cand, rule
+    return (good or usable)[0], "natal_rank"
+
+
+def luck_card_element(core, tongguan: dict | None) -> dict:
+    """행운 색 1칸 = 오늘의 행운 카드(아이템·숫자·방위)와 부적의 오행."""
+    from app.engine.services.fashion_colors import build_fashion_color_basis
+
+    basis = build_fashion_color_basis(core)
+    if basis["source"] == "confirmed_natal_direction":
+        if tongguan:
+            return dict(element=tongguan["element"], rule="tongguan", source="confirmed_natal_direction")
+        return dict(element=basis["primary_element"], rule="confirmed", source="confirmed_natal_direction")
+    tiers = element_tiers(core)["tiers"]
+    if tongguan and tiers.get(tongguan["element"]) != TIER_AVOID:
+        return dict(element=tongguan["element"], rule="tongguan", source="element_tiers_daily")
+    element, rule = tier_first_element(core, tiers)
+    return dict(element=element, rule=rule, source="element_tiers_daily")

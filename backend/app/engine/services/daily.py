@@ -14,13 +14,13 @@ from app.engine.services.simple_menu import daily_choices
 from app.engine.services.daily_menu import BREAKFAST_BAPSANG, BREAKFAST_SIMPLE, MENU_POOL, NOT_A_MEAL, _SIMILAR, recommend_daily_menus
 from app.engine.services.menu_categories import menu_category
 from app.engine.services.daily_guidance import build_daily_guidance
-from app.engine.services import daily_copy, daily_menu_copy, daily_sections, daily_rx, daily_score, daily_story
+from app.engine.services import daily_copy, daily_menu_copy, daily_sections, daily_rx, daily_score, daily_story, lucky_items
 from app.engine.services.annual_copy import seed_from
 from app.engine.services.daily_scenarios import select_daily_scenario
 from app.engine.services.daily_topics import select_daily_topics
 from app.engine.semantic.overall import select_overall_domains
 from app.engine.services.overall_narrative import render_overall
-from app.engine.services.element_balance import natal_balance, daily_blend, tongguan_day
+from app.engine.services.element_balance import natal_balance, daily_blend, tongguan_day, luck_card_element
 from app.engine.services.lunar_day import lunar_info
 
 
@@ -58,22 +58,6 @@ _SUPPORT_RELATIONS = {
 }
 _TENSION_RELATIONS = {
     "stem_control", "branch_clash", "branch_punishment", "branch_harm", "branch_break",
-}
-
-_OPERATION_KO = {
-    "protect": "중요한 것을 지키고 정리하는 일",
-    "resolve_conflict": "엇갈린 기준을 정리하는 일",
-    "release_binding": "묶인 일을 작은 단계로 푸는 일",
-    "drain": "과한 힘을 적절히 빼는 일",
-    "mediate": "서로 다른 입장을 연결하는 일",
-    "warm": "몸과 분위기를 따뜻하게 만드는 일",
-    "cool": "흥분과 과열을 식히는 일",
-    "moisten": "여유와 회복을 보충하는 일",
-    "dry": "늘어진 흐름을 정돈하는 일",
-    "support": "체력과 준비를 보강하는 일",
-    "stabilize": "흐트러진 순서를 바로잡는 일",
-    "preserve_balance": "무리하지 않고 균형을 지키는 일",
-    "preserve_special_structure": "잘 작동하는 방식을 함부로 바꾸지 않는 일",
 }
 
 _ELEMENT_GUIDE = {
@@ -115,44 +99,6 @@ _TALISMAN = {
     "土": ("안정수호부 (安定守護)", "안정과 생활 기반의 정돈", "earth_stability"),
     "金": ("결단정리부 (決斷整理)", "판단과 정리의 힘", "metal_clarity"),
     "水": ("지혜유통부 (智慧流通)", "유연한 판단과 흐름", "water_wisdom"),
-}
-
-_ITEMS = {
-    "record": {
-        "木": "초록 표지 메모장", "火": "붉은색 포인트 펜", "土": "베이지 메모패드",
-        "金": "메탈 소재 펜", "水": "남색 노트",
-    },
-    "organize": {
-        "木": "나무 소재 카드 케이스", "火": "붉은색 포인트 파우치", "土": "베이지 지퍼 파우치",
-        "金": "메탈 손목시계", "水": "남색 카드지갑",
-    },
-    "pace": {
-        "木": "나무 손잡이 텀블러", "火": "보온 텀블러", "土": "도자기 머그",
-        "金": "스테인리스 텀블러", "水": "남색 물병",
-    },
-    "move": {
-        "木": "작은 스케치 노트", "火": "붉은색 키링", "土": "베이지 크로스백",
-        "金": "휴대용 보조배터리", "水": "남색 휴대용 파우치",
-    },
-}
-
-# Product defaults for male profiles; preserve the element and practical purpose.
-_MALE_ITEM_OVERRIDES = {
-    "organize": {"火": "붉은색 포인트 카드 케이스", "土": "베이지 카드지갑"},
-    "move": {"土": "베이지 키 케이스", "水": "남색 슬림 카드지갑"},
-}
-
-_GOD_ITEM_GROUP = {
-    "peer": "record",
-    "rob_wealth": "organize",
-    "eating_god": "pace",
-    "hurting_officer": "record",
-    "direct_wealth": "organize",
-    "indirect_wealth": "move",
-    "direct_officer": "organize",
-    "seven_killings": "pace",
-    "direct_resource": "record",
-    "indirect_resource": "record",
 }
 
 _SHENSHA_KO = {
@@ -316,12 +262,6 @@ def _menu_climate_tags(query: dict) -> frozenset[str]:
     mapping = {"warming": "warm", "cooling": "cool", "moistening": "moisten", "stabilizing": "stabilize"}
     return frozenset(mapping[item["operation"]] for item in climate.get("recommended_operations", [])
                      if item.get("operation") in mapping)
-
-
-def _item_group(operation: str, daily_god: str) -> str:
-    # The daily ten-god decides the practical item category so the recommendation
-    # can change with the day. The natal synthesis decides why and which element.
-    return _GOD_ITEM_GROUP.get(daily_god, "record")
 
 
 def _score(core: MyeongriCoreResult, day_pillar: str, target_date: date) -> dict:
@@ -531,22 +471,20 @@ def build_daily_fortune(
 
     operation = _primary_operation(query)
     operation_name = operation.get("operation", "unconfirmed")
-    operation_text = _OPERATION_KO.get(operation_name, "하루의 우선순위를 지키는 일")
-    item_group = _item_group(operation_name, daily_god)
-    item = _ITEMS[item_group][lucky_element]
-    if core.input.gender == "male":
-        item = _MALE_ITEM_OVERRIDES.get(item_group, {}).get(lucky_element, item)
-    element = _ELEMENT_GUIDE[lucky_element]
-    talisman_title, talisman_power, talisman_type = _TALISMAN[lucky_element]
+    # 오늘의 행운 카드(아이템·숫자·방위)와 부적은 행운 색 1칸과 같은 오행(2026-11-12 정오님).
+    # 음식 카드는 lucky_element(오늘 혼합)를 그대로 쓴다 — 음식 파트 결정 전이라 건드리지 않는다.
+    luck = luck_card_element(core, tongguan)
+    luck_element = luck["element"]
+    picked = lucky_items.pick(daily_god, luck_element, target_date, core.input.gender,
+                              account_key or core.input.birth_date.isoformat())
+    item = picked["name"]
+    element = _ELEMENT_GUIDE[luck_element]
+    talisman_title, talisman_power, talisman_type = _TALISMAN[luck_element]
     core_operation_confirmed = bool(query["synthesis"].get("favorable_operations"))
     core_element_confirmed = bool(query["semantic_state"].get("favorable_elements"))
     recommendation_confirmed = core_operation_confirmed and core_element_confirmed
-    item_reason = (
-        f"오늘은 {josa(operation_text, '이/가')} 우선입니다. 추천 아이템은 {item}이며, "
-        f"{element['ko']} 기운의 색·소재는 보조 근거로만 반영했습니다."
-        if recommendation_confirmed else
-        f"추천 아이템은 {item}입니다. 타고난 오행의 균형과 오늘 일진을 함께 보고 고른 {element['ko']} 기운의 참고 아이템입니다."
-    )
+    # 화면에는 내지 않는다(11/12 정오님: 이유는 달지 않는다). 근거 기록용.
+    item_reason = f"{picked['day_phrase']}이라 고른 {element['ko']} 기운의 참고 아이템, {item}입니다."
     menu_selection = (daily_choices(core.input, target_date, timing_element_weights, account_key)
                       if include_menu else dict(menus=[], meals=[], pool_size=0, pool_version=None,
                                                 reason='', season=None, meal_period=None))
@@ -624,6 +562,7 @@ def build_daily_fortune(
         "natal_balance_element": balance["primary"],
         "lucky_second_element": lucky_second_element,
         "tongguan": tongguan,
+        "luck_element": luck_element,
         "lucky_item": item,
         "lucky_item_reason": item_reason,
         "lucky_number": element["numbers"],
@@ -660,6 +599,9 @@ def build_daily_fortune(
             "independent_tension_relations": tension_count,
             "primary_operation": operation_name,
             "lucky_element": lucky_element,
+            "luck_card": {"element": luck_element, "rule": luck["rule"], "source": luck["source"],
+                          "item_key": picked["key"], "item_candidates": picked["candidates"],
+                          "items_version": lucky_items.ITEMS_VERSION},
             "lucky_recommendation_basis": {
                 "core_operation_confirmed": core_operation_confirmed,
                 "element_source": "core_favorable" if core_element_confirmed else "natal_balance_plus_daily",
