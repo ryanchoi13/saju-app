@@ -24,7 +24,7 @@ from datetime import date
 from app.engine.core.models import MyeongriCoreResult
 from app.engine.facts.ten_gods import get_ten_god
 from app.engine.facts.twelve_stages import get_twelve_stage
-from app.engine.services import daily_score
+from app.engine.services import daily_score, daily_shinsal
 from app.engine.services import daily_story_bank as B
 
 STORY_VERSION = "dalha-daily-story-v2-bank5-spine"
@@ -32,6 +32,9 @@ SECTION_ORDER = (("money", "금전"), ("love", "애정·관계"), ("work", "일"
 USE_ELEMENT = "story"        # recent 목록의 element 자리
 
 GOOD = set(B.GOOD)
+# 11/13 신살 결(daily_shinsal)의 제목·총운 앞부분을 같은 꼴로 합쳐 읽는다. 키는 "신살 역마"처럼 붙어 은행 키와 겹치지 않는다.
+TITLES = {**B.TITLE, **daily_shinsal.TITLE}
+LEADS = {**B.LEAD, **daily_shinsal.LEAD}
 TIE_PRIORITY = ["천을귀인", "문창", "삼합", "일간 천간합", "day지 육합", "month지 육합", "year지 육합", "hour지 육합",
                 "일간 천간충", "day지 충", "month지 충", "year지 충", "hour지 충", "day지 형", "month지 형"]
 ALIAS = {"12운성 birth": "12운성 up", "12운성 official": "12운성 up", "12운성 prosperity": "12운성 up",
@@ -216,8 +219,12 @@ def derive(core: MyeongriCoreResult, ev: dict, rx: dict, d: date, gender: str | 
         top = rx_spine(items, grade)                      # 11/9: 제목·총운도 같은 줄기에서(daily_rx.spine_item)
         key, top_sign = top[0], ("길" if top[1] > 0 else "흉")
         rest = [x for x in items if x != top]
-    if key not in B.LEAD:
+    if key not in LEADS:
         key = "잔잔"
+    shinsal = rx.get("shinsal")
+    if shinsal:                                           # 11/13 신살이 줄기를 맡는 날: 원래 줄기는 보조 문장 후보로 내려간다
+        key, rest = shinsal["key"], list(items)
+        top_sign = {"길": "길", "흉": "흉"}.get(shinsal["tone"], top_sign)
 
     def pick(sign, min_w):
         c = [x for x in rest if (x[1] > 0) == (sign == "길") and abs(x[1]) >= min_w]
@@ -253,7 +260,7 @@ def derive(core: MyeongriCoreResult, ev: dict, rx: dict, d: date, gender: str | 
         card[note["domain"].replace("사람", "애정·관계")] = card_nouns(note["text"])
     rx_domain = {"돈": "금전", "일": "일", "사람": "애정·관계", "몸": "건강"}.get(rx.get("rx_scene") or "")
     return dict(date=d, grade=grade, evidence=key, rx_domain=rx_domain, top_sign=top_sign, god=god, stage=stage,
-                same=same, opp=opp, body_flag=body, domains=tiers, lean=lean, reasons=reasons, deltas=score, standout=standout, love=love,
+                same=same, opp=opp, body_flag=body, domains=tiers, lean=lean, reasons=reasons, deltas=score, standout=standout, love=love, shinsal=shinsal,
                 card_first_words=(card_ev.split(" ")[0],) if card_ev else (), card_nouns=card, items=items)
 
 
@@ -263,14 +270,21 @@ def derive(core: MyeongriCoreResult, ev: dict, rx: dict, d: date, gender: str | 
 def _build_general(day: dict, recent) -> tuple[str, int, dict, list]:
     grade, key = day["grade"], day["evidence"]
     uses = []
-    order = _order(len(B.LEAD[key]), recent, f"lead:{key}")           # 안 쓴 것(은행 순서) → 오래전에 쓴 것
+    order = _order(len(LEADS[key]), recent, f"lead:{key}")           # 안 쓴 것(은행 순서) → 오래전에 쓴 것
     used = {j for e, k, j in recent if e == USE_ELEMENT and k == f"lead:{key}"}
-    lead_all = [(i, B.LEAD[key][i]) for i in order]
+    lead_all = [(i, LEADS[key][i]) for i in order]
     lead_v = [(i, v) for i, v in lead_all if B.grade_ok(v, grade)] or lead_all
     fresh_v = [(i, v) for i, v in lead_v if i not in used] or lead_v
-    lead_v = [(i, v) for i, v in fresh_v if B.TITLE[key][i]["text"].split(" ")[0] not in day["card_first_words"]] or fresh_v
+    lead_v = [(i, v) for i, v in fresh_v if TITLES[key][i]["text"].split(" ")[0] not in day["card_first_words"]] or fresh_v
     top = day["top_sign"]
     same_list = _fit_order(B.SECOND[("길" if day["same"][1] > 0 else "흉") + "_순접"], day["same"][0], grade) if day["same"] else [None]
+    shinsal = day.get("shinsal")
+    if shinsal:
+        # 카드 근거와 다른 벌만 쓴다(같은 벌이면 홈 카드와 총운이 같은 말을 한다). 조립이 안 되면 daily_rx 가 벌을 바꿔 다시 부른다
+        pref = daily_shinsal.lead_index(shinsal["tone"], shinsal.get("variant", 0))
+        lead_v = [(i, v) for i, v in lead_all if i == pref]
+        if day["same"]:                                    # 줄기에서 내려온 억부·결핍 이유를 말하는 문장을 앞세운다
+            same_list = daily_shinsal.reason_second(day["same"], day["date"]) + same_list
     opp_list = _fit_order(B.SECOND[("길" if day["opp"][1] > 0 else "흉") + "_역접"], day["opp"][0], grade) if day["opp"] else [None]
     body_group = ("순접" if top == "흉" else "역접") if day["body_flag"] else None
     body_list = ([x["text"] for x in B.SECOND["몸"][body_group] if B.grade_ok(x, grade)] + [None]) if body_group else [None]
@@ -301,7 +315,7 @@ def _build_general(day: dict, recent) -> tuple[str, int, dict, list]:
                                 continue
                             if n_day(par) > 2:           # scene 첫 문장 + 정오님 문장 1개까지
                                 continue
-                            if relax < 3 and _echoes_title(B.TITLE[key][li]["text"], tail):
+                            if relax < 3 and _echoes_title(TITLES[key][li]["text"], tail):
                                 continue
                             fat = sum(bool(FATIGUE.search(x)) for x in sents(" ".join(segs))[1:])
                             if relax < 3 and fat >= 2:
@@ -456,8 +470,8 @@ def build_story(core: MyeongriCoreResult, evaluation: dict, rx: dict, account_ke
     recent = list(recent)
     day = derive(core, evaluation, rx, d, gender)
     general, li, ginfo, uses = _build_general(day, recent)
-    title = B.TITLE[day["evidence"]][li]["text"]
-    scene = B.LEAD[day["evidence"]][li]["scene"]
+    title = TITLES[day["evidence"]][li]["text"]
+    scene = LEADS[day["evidence"]][li]["scene"]
     day["_body_mentioned"] = bool(ginfo["body"]) or ("몸" in scene) or ("지치" in scene) or ("피곤" in scene)
     rest = " ".join(sents(general)[1:])
     lean = day.get("lean") or {}

@@ -552,7 +552,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;600;700&display=swap" rel="stylesheet">
     <link id="dalhaBrandStyles" rel="stylesheet" href="/assets/brand-2026/brand.css?v=20261108-p1">
     <link rel="stylesheet" href="/assets/reading-polish.css?v=20261108-p2">
-    <link rel="stylesheet" href="/assets/daily-card.css?v=20261108-p1">
+    <link rel="stylesheet" href="/assets/daily-card.css?v=20261113-s1">
     <link rel="stylesheet" href="/assets/brand-2026/refine.css?v=20261108-p1">
     <link href="https://fonts.googleapis.com/css2?family=Song+Myung&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/assets/brand-2026/ilryeok.css?v=20261108-p5">
@@ -1528,6 +1528,9 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             </div>
             <div class="dc3-block" id="dc3ClosingBlock" hidden>
                 <p id="resClosing" class="dc3-closing" hidden></p>
+            </div>
+            <div class="dc3-block" id="dc3ShinsalBlock" hidden>
+                <p class="dc3-shinsal"><b>오늘의 신살</b><span id="dc3Shinsal"></span></p>
             </div>
             <div class="dc3-block" id="dc3BasisBlock" hidden>
                 <p class="dc3-block-title">근거</p>
@@ -2541,6 +2544,10 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             closing.textContent = closingText;
             closing.hidden = !closingText;
             document.getElementById('dc3ClosingBlock').hidden = !closingText;
+            // 11/13 오늘의 신살 한 줄: 이름은 여기에만 나온다(본문은 장면으로 말한다). 점수 가감 항목은 여전히 보이지 않는다
+            const shinsalLine = hasStory && fortune?.shinsal && typeof fortune.shinsal.line === 'string' ? fortune.shinsal.line : '';
+            document.getElementById('dc3Shinsal').textContent = shinsalLine;
+            document.getElementById('dc3ShinsalBlock').hidden = !shinsalLine;
             const slots = {morning:'timeMorningText', afternoon:'timeAfternoonText', evening:'timeEveningText'};
             const tips = Array.isArray(fortune?.time_tips) ? fortune.time_tips : [];
             const flow = fortune?.time_flow || {};

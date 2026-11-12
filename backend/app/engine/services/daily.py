@@ -14,7 +14,7 @@ from app.engine.services.simple_menu import daily_choices
 from app.engine.services.daily_menu import BREAKFAST_BAPSANG, BREAKFAST_SIMPLE, MENU_POOL, NOT_A_MEAL, _SIMILAR, recommend_daily_menus
 from app.engine.services.menu_categories import menu_category
 from app.engine.services.daily_guidance import build_daily_guidance
-from app.engine.services import daily_copy, daily_menu_copy, daily_sections, daily_rx, daily_score, daily_story, lucky_items
+from app.engine.services import daily_copy, daily_menu_copy, daily_sections, daily_rx, daily_score, daily_shinsal, daily_story, lucky_items
 from app.engine.services.annual_copy import seed_from
 from app.engine.services.daily_scenarios import select_daily_scenario
 from app.engine.services.daily_topics import select_daily_topics
@@ -548,6 +548,8 @@ def build_daily_fortune(
         "confidence": evaluation["confidence"],
         "evidence_text": rx["evidence_text"],
         "rx_label": daily_rx.LABEL,
+        # 11/13 오늘의 신살 한 줄(일지 기준 12신살). 이름이 화면에 나오는 곳은 여기뿐이고, 본문은 장면으로만 말한다
+        "shinsal": daily_shinsal.note(core, target_date) if target_date >= daily_shinsal.EPOCH else None,
         "rx_text": rx["rx_text"],
         "domain_note": domain_note,
         "badge": mode_badge,
