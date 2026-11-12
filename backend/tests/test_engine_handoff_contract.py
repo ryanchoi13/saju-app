@@ -46,6 +46,9 @@ def test_outlook_fields_have_the_promised_shape(outlooks):
         # 2026-11-05: 행운 색 두 번째 칸. 오늘 혼합 순위에서 첫 칸 다음 오행
         assert result["lucky_second_element"] in ELEMENTS
         assert result["lucky_second_element"] != result["lucky_element"]
+        # 2026-11-12: 행운 카드(아이템·숫자·방위)와 부적의 오행 = 행운 색 1칸 오행(test_lucky_items 가 같음을 검사)
+        assert result["luck_element"] in ELEMENTS
+        assert result["evidence_summary"]["luck_card"]["element"] == result["luck_element"]
         tongguan = result["tongguan"]
         if tongguan is not None:
             assert tongguan["element"] in ELEMENTS

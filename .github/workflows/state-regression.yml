@@ -33,6 +33,7 @@ jobs:
           backend/tests/test_element_balance.py
           backend/tests/test_engine_handoff_contract.py
           backend/tests/test_lucky_color_eokbu.py
+          backend/tests/test_lucky_items.py
           backend/tests/test_gungtong_johu.py
           backend/tests/test_semantic_engine.py
           backend/tests/test_timing_engine.py
