@@ -13,6 +13,7 @@ from app.engine.services.health_copy import find_medical
 from app.engine.services.now_me_copy import validate_paragraph
 
 SENTENCE_MAX = 46
+RX_SENTENCE_MAX = 52   # 11/12 정오님: 처방 문장은 짧은 것보다 자연스럽게 이해되는 게 먼저
 FORBIDDEN = re.compile(r"친다|꼰다|자리를|정면")
 
 
@@ -51,7 +52,8 @@ class BankTests(unittest.TestCase):
             self.assertEqual(find_medical(text), [], src)
             self.assertIsNone(FORBIDDEN.search(text), f"{src}: {text}")
             for s in split_sentences(text):
-                self.assertLessEqual(len(s), SENTENCE_MAX, f"{src}: {s}")
+                limit = RX_SENTENCE_MAX if src.startswith("BANK[") else SENTENCE_MAX
+                self.assertLessEqual(len(s), limit, f"{src}: {s}")
 
     def test_evidence_and_domain_are_two_sentences_and_bank_is_one(self):
         for key, rows in daily_rx.EVIDENCE.items():
