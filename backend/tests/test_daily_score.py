@@ -13,6 +13,7 @@ from app.engine.services.health_copy import find_medical
 from app.engine.services.now_me_copy import validate_paragraph
 
 SENTENCE_MAX = 46
+RX_SENTENCE_MAX = 52   # 11/12 정오님: 처방 문장은 짧은 것보다 자연스럽게 이해되는 게 먼저
 FORBIDDEN = re.compile(r"친다|꼰다|자리를|정면")
 
 
@@ -34,10 +35,12 @@ class BankTests(unittest.TestCase):
         self.assertEqual(sorted(daily_rx.DOMAIN), sorted(ds.DOMAINS))
         self.assertEqual(sum(len(rows) for k in daily_rx.DOMAIN.values() for rows in k.values()), 48)
         self.assertEqual(len(daily_rx.BANK), 10)
-        self.assertEqual(sum(len(d["dont"]) + len(d["do"]) for d in daily_rx.BANK.values()), 120)
+        self.assertEqual(sum(len(d["dont"]) + len(d["do"]) for d in daily_rx.BANK.values()), 361)   # 11/12 BANK_EXTRA 241 더함(union 몸 하지 말 것은 원래 0개라 4개)
         for name, data in daily_rx.BANK.items():
             for kind in ("dont", "do"):
-                self.assertEqual(len(data[kind]), 6, f"{name}.{kind}")
+                self.assertGreaterEqual(len(data[kind]), 6, f"{name}.{kind}")
+                for scene in ("돈", "일", "사람", "몸"):    # 11/12: 분야 장면은 칸마다 4문장 이상(되풀이 방지)
+                    self.assertGreaterEqual(sum(sc == scene for sc, _, _ in data[kind]), 4, f"{name}.{kind}.{scene}")
                 variants = [v for _, v, _ in data[kind]]
                 self.assertIn("season", variants, f"{name}.{kind}")
                 self.assertTrue(set(variants) & {"weekday", "weekend"}, f"{name}.{kind}")
@@ -49,7 +52,8 @@ class BankTests(unittest.TestCase):
             self.assertEqual(find_medical(text), [], src)
             self.assertIsNone(FORBIDDEN.search(text), f"{src}: {text}")
             for s in split_sentences(text):
-                self.assertLessEqual(len(s), SENTENCE_MAX, f"{src}: {s}")
+                limit = RX_SENTENCE_MAX if src.startswith("BANK[") else SENTENCE_MAX
+                self.assertLessEqual(len(s), limit, f"{src}: {s}")
 
     def test_evidence_and_domain_are_two_sentences_and_bank_is_one(self):
         for key, rows in daily_rx.EVIDENCE.items():
@@ -290,8 +294,13 @@ class SelectorTests(unittest.TestCase):
             prior = [p_idx for p_d, p_e, p_k, p_idx in timeline[:n]
                      if (p_e, p_k) == (e, k) and p_d >= d - timedelta(days=daily_rx.RECENT_DAYS)]
             if idx in prior:
-                # 30일 안에 같은 문장이 다시 나오는 건 후보(최소 4개)를 다 썼을 때만
-                self.assertGreaterEqual(len(set(prior)), 4, (d, e, k, idx, prior))
+                # 30일 안에 같은 문장이 다시 나오는 건 후보(최소 4개)를 다 썼을 때, 또는 (11/12) 처방이 이야기의 분야 장면에
+                # 묶여 그 장면 문장을 다시 쓸 때뿐. 어느 쪽이든 7일 안에는 되풀이하지 않는다.
+                week = [p_idx for p_d, p_e, p_k, p_idx in timeline[:n]
+                        if (p_e, p_k) == (e, k) and p_d >= d - timedelta(days=daily_rx.WEEK_DAYS)]
+                self.assertNotIn(idx, week, (d, e, k, idx, week))
+                if k not in ("dont", "do"):
+                    self.assertGreaterEqual(len(set(prior)), 4, (d, e, k, idx, prior))
         used_elements = {e for _, e, k, _ in timeline if k == "evidence"}
         self.assertGreaterEqual(len(used_elements), 5)
 
