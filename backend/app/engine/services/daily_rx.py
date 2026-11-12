@@ -389,7 +389,7 @@ BANK: dict[str, dict] = {
                        ("일", "", "함께하자는 제안을 바로 거절하지 마세요."),
                        ("돈", "", "좋은 자리 밥값에 인색하지 마세요."),
                        ("이동", "weekend", "주말 모임 초대를 그냥 넘기지 마세요."),
-                       ("몸", "season", "쌀쌀한 날일수록 혼자 있지 말고 사람을 만나세요.")),
+                       ("사람", "season", "쌀쌀한 날일수록 혼자 있지 말고 사람을 만나세요.")),
               "do": (("사람", "", "연락을 오래 미룬 사람에게 먼저 연락해 보세요."),
                      ("일", "", "같이 할 일을 오늘 하나 매듭지어 보세요."),
                      ("말", "", "부탁할 말이 있으면 오늘 꺼내세요."),
@@ -441,6 +441,7 @@ LUCKY_MAP = {
     "천을귀인": "noble", "문창": "noble",
 }
 CAUTION_GRADES = {"나쁨", "주의"}
+WEEK_DAYS = 7          # 11/12: 처방 장면 문장은 30일 안 되풀이를 허용하되 7일 안에는 되풀이하지 않는다
 LUCKY_GRADES = {"좋음", "아주 좋음"}
 
 
@@ -473,7 +474,7 @@ def _seed(account_key: str, d: date, element: str, kind: str) -> int:
 def pick(account_key: str, d: date, element: str, kind: str,
          recent: list[tuple[str, str, int]], scene: str | None = None,
          blocked_scenes: set[str] | None = None, prefer_scene: str | None = None,
-         avoid_head: str | None = None) -> tuple[int, str]:
+         avoid_head: str | None = None, recent_week: list[tuple[str, str, int]] | None = None) -> tuple[int, str]:
     """계정·날짜 시드로 결정론적으로 문장 하나를 고른다.
 
     recent = 최근 30일 사용 목록 [(요소, 구분, 번호)] (오래된 것부터). 변형 조건(평일·주말·계절)에 맞는 후보 중
@@ -489,7 +490,14 @@ def pick(account_key: str, d: date, element: str, kind: str,
     if prefer_scene and any(rows[i][0] == prefer_scene for i in cand) and not scene:
         scene = prefer_scene
     if scene and any(rows[i][0] == scene for i in cand):
-        cand = [i for i in cand if rows[i][0] == scene] + [i for i in cand if rows[i][0] != scene]
+        # 11/12: 장면이 정해졌으면 그 장면 안에서만 고른다. 예전엔 장면 문장을 최근에 썼으면 다른 장면으로 넘어가서,
+        # 홈 '오늘은 이렇게'가 자세히 보기의 이야기(튀는 분야)와 다른 말을 했다. 반복은 장면 안 LRU 로 처리.
+        in_scene = [i for i in cand if rows[i][0] == scene]
+        week = {i for (e, k, i) in (recent_week or []) if e == element and k == kind}
+        if any(i not in week for i in in_scene):
+            cand = in_scene
+        else:                             # 장면 문장을 이번 주에 이미 썼으면 같은 말 되풀이보다 다른 장면(막힌 장면 제외)
+            cand = in_scene + [i for i in cand if rows[i][0] != scene]
     else:
         shift = _seed(account_key, d, element, kind) % len(cand)
         cand = cand[shift:] + cand[:shift]
@@ -565,27 +573,39 @@ def rx_scene_rules(grade: str, tiers: dict[str, str] | None, standout: tuple[str
         return set(), None
     against = "주의" if grade in LUCKY_GRADES else ("좋음" if grade in CAUTION_GRADES else None)
     blocked = {DOMAIN_SCENE[dom] for dom, t in tiers.items() if against and t == against and dom in DOMAIN_SCENE}
+    if "사람" in blocked:
+        blocked.add("말")                 # 11/12: '말' 장면(부탁·고마움 전하기)도 사람 일이라 함께 막는다
     prefer = None
     if standout:
         dom = {"사람": "애정·관계"}.get(standout[0], standout[0])
         if (standout[1] == "좋음") == (grade in LUCKY_GRADES) and dom in DOMAIN_SCENE:
             prefer = DOMAIN_SCENE[dom]
+    if prefer is None and grade in LUCKY_GRADES | CAUTION_GRADES:
+        # 11/12: 카드 standout 이 없어도 이야기에서 등급 쪽으로 기운 분야가 있으면 그 분야를 말한다(일 → 금전 → 애정·관계 → 건강)
+        along = "좋음" if grade in LUCKY_GRADES else "주의"
+        for dom in ("일", "금전", "애정·관계", "건강"):
+            if tiers.get(dom) == along:
+                prefer = DOMAIN_SCENE[dom]
+                break
     return blocked, prefer
 
 
 def compose_rx(account_key: str, d: date, element: str,
                recent: list[tuple[str, str, int]], blocked_scenes: set[str] | None = None,
-               prefer_scene: str | None = None) -> tuple[str, list[tuple[str, str, int]]]:
+               prefer_scene: str | None = None,
+               recent_week: list[tuple[str, str, int]] | None = None) -> tuple[str, list[tuple[str, str, int]]]:
     """하지 말 것 1 + 할 것 1 (같은 장면을 앞세움). (문장, 이번에 쓴 [(요소, 구분, 번호)]) 를 돌려준다."""
-    i, dont = pick(account_key, d, element, "dont", recent, blocked_scenes=blocked_scenes, prefer_scene=prefer_scene)
+    i, dont = pick(account_key, d, element, "dont", recent, blocked_scenes=blocked_scenes, prefer_scene=prefer_scene,
+                   recent_week=recent_week)
     scene = BANK[element]["dont"][i][0]
     j, do = pick(account_key, d, element, "do", recent, scene=scene, blocked_scenes=blocked_scenes,
-                 avoid_head=dont.split()[0])
+                 avoid_head=dont.split()[0], recent_week=recent_week)
     return f"{dont} {do}", [(element, "dont", i), (element, "do", j)]
 
 
 def select_for_day(core: MyeongriCoreResult, account_key: str, d: date,
-                   recent: list[tuple[str, str, int]], evaluation: dict | None = None) -> dict:
+                   recent: list[tuple[str, str, int]], evaluation: dict | None = None,
+                   recent_week: list[tuple[str, str, int]] | None = None) -> dict:
     """하루치 문장 선택. recent 는 그 전 30일에 쓴 (요소, 구분, 번호) 목록(카드 문장 + 이야기 변형이 같은 목록에 섞인다).
 
     돌려주는 uses 는 카드 문장 몫, story_uses 는 오늘의 이야기(daily_story) 몫. 이력(_history)은 둘 다 쌓는다.
@@ -601,7 +621,7 @@ def select_for_day(core: MyeongriCoreResult, account_key: str, d: date,
     if element:
         from app.engine.services.daily_story import rule_tiers   # 순환 import 방지
         blocked, prefer = rx_scene_rules(ev["grade"], rule_tiers(ev), ev["standout"])
-        rx_text, used = compose_rx(account_key, d, element, recent, blocked, prefer)
+        rx_text, used = compose_rx(account_key, d, element, recent, blocked, prefer, recent_week)
         uses.extend(used)
         rx_scene = BANK[element]["dont"][used[0][2]][0]
     domain_note = None
@@ -633,7 +653,8 @@ def _history(core: MyeongriCoreResult, account_key: str, start: date, until: dat
     day = cursor + timedelta(days=1)
     while day <= until:
         recent = [u for day_used, u in history if day_used >= day - timedelta(days=RECENT_DAYS)]
-        picked = select_for_day(core, account_key, day, recent)
+        week = [u for day_used, u in history if day_used >= day - timedelta(days=WEEK_DAYS)]
+        picked = select_for_day(core, account_key, day, recent, recent_week=week)
         history.extend((day, u) for u in picked["uses"] + picked["story_uses"])
         day += timedelta(days=1)
     if len(_HISTORY_CACHE) >= 2048:
@@ -656,7 +677,8 @@ def render_day(core: MyeongriCoreResult, account_key: str, d: date, evaluation: 
     start = min(RX_EPOCH, d - timedelta(days=RECENT_DAYS + REPLAY_WARMUP))
     history = _history(core, account_key, start, d - timedelta(days=1))
     recent = [u for day_used, u in history if d - timedelta(days=RECENT_DAYS) <= day_used < d]
-    result = select_for_day(core, account_key, d, recent, evaluation)
+    week = [u for day_used, u in history if d - timedelta(days=WEEK_DAYS) <= day_used < d]
+    result = select_for_day(core, account_key, d, recent, evaluation, recent_week=week)
     if len(_RENDER_CACHE) >= 4096:
         _RENDER_CACHE.clear()
     _RENDER_CACHE[cache_key] = dict(result)

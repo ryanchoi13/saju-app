@@ -290,8 +290,13 @@ class SelectorTests(unittest.TestCase):
             prior = [p_idx for p_d, p_e, p_k, p_idx in timeline[:n]
                      if (p_e, p_k) == (e, k) and p_d >= d - timedelta(days=daily_rx.RECENT_DAYS)]
             if idx in prior:
-                # 30일 안에 같은 문장이 다시 나오는 건 후보(최소 4개)를 다 썼을 때만
-                self.assertGreaterEqual(len(set(prior)), 4, (d, e, k, idx, prior))
+                # 30일 안에 같은 문장이 다시 나오는 건 후보(최소 4개)를 다 썼을 때, 또는 (11/12) 처방이 이야기의 분야 장면에
+                # 묶여 그 장면 문장을 다시 쓸 때뿐. 어느 쪽이든 7일 안에는 되풀이하지 않는다.
+                week = [p_idx for p_d, p_e, p_k, p_idx in timeline[:n]
+                        if (p_e, p_k) == (e, k) and p_d >= d - timedelta(days=daily_rx.WEEK_DAYS)]
+                self.assertNotIn(idx, week, (d, e, k, idx, week))
+                if k not in ("dont", "do"):
+                    self.assertGreaterEqual(len(set(prior)), 4, (d, e, k, idx, prior))
         used_elements = {e for _, e, k, _ in timeline if k == "evidence"}
         self.assertGreaterEqual(len(used_elements), 5)
 
