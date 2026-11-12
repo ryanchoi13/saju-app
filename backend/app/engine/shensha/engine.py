@@ -82,6 +82,29 @@ _DAY_STEM_RULES = {
 }
 
 
+# 12신살(十二神殺): 기준 지지가 속한 삼합의 생지(生支)를 지살로 두고 12지지를 차례로 배정한다.
+# 역마·년살(도화)·화개는 위 _TRIAD_RULES 와 같은 글자가 나온다(test_twelve_shensha 가 맞춰 본다).
+# 길흉 판정이 아니라 그날·그해의 결(주제)을 가리키는 이름표로만 쓴다. 기준은 쓰는 쪽이 정한다(오늘의 운세 = 일지).
+TWELVE_SHENSHA = ("지살", "년살", "월살", "망신", "장성", "반안", "역마", "육해", "화개", "겁살", "재살", "천살")
+TWELVE_SHENSHA_HANJA = {
+    "지살": "地殺", "년살": "年殺", "월살": "月殺", "망신": "亡身", "장성": "將星", "반안": "攀鞍",
+    "역마": "驛馬", "육해": "六害", "화개": "華蓋", "겁살": "劫殺", "재살": "災殺", "천살": "天殺",
+}
+_BRANCH_ORDER = "子丑寅卯辰巳午未申酉戌亥"
+_TRIAD_BIRTH_BRANCH = {
+    "申": "申", "子": "申", "辰": "申",
+    "寅": "寅", "午": "寅", "戌": "寅",
+    "巳": "巳", "酉": "巳", "丑": "巳",
+    "亥": "亥", "卯": "亥", "未": "亥",
+}
+
+
+def twelve_shensha(base_branch: str, target_branch: str) -> str:
+    """기준 지지(base)에서 본 대상 지지(target)의 12신살 이름."""
+    start = _BRANCH_ORDER.index(_TRIAD_BIRTH_BRANCH[base_branch])
+    return TWELVE_SHENSHA[(_BRANCH_ORDER.index(target_branch) - start) % 12]
+
+
 def _timing_branches(timing: TimingResult | None) -> dict[str, str]:
     if timing is None:
         return {}

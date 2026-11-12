@@ -16,7 +16,7 @@ import logging
 from datetime import date, timedelta
 
 from app.engine.core.models import MyeongriCoreResult
-from app.engine.services import daily_score
+from app.engine.services import daily_score, daily_shinsal
 
 logger = logging.getLogger(__name__)
 
@@ -632,6 +632,8 @@ LUCKY_GRADES = {"좋음", "아주 좋음"}
 # ---------------------------------------------------------------------------
 def _rows(element: str, kind: str) -> tuple[tuple[str, str, str], ...]:
     """(장면, 변형, 문장) 행. 근거·분야 은행은 장면·변형이 없다."""
+    if daily_shinsal.is_key(element):          # 11/13 신살 결(구분에 방향이 붙는다: 'evidence:길' · 'dont:흉')
+        return daily_shinsal.rows(element, kind)
     if kind == "evidence":
         return tuple(("", "", t) for t in EVIDENCE[element])
     if kind in ("주의", "좋음"):
@@ -798,22 +800,45 @@ def compose_rx(account_key: str, d: date, element: str,
 
 def select_for_day(core: MyeongriCoreResult, account_key: str, d: date,
                    recent: list[tuple[str, str, int]], evaluation: dict | None = None,
-                   recent_week: list[tuple[str, str, int]] | None = None) -> dict:
+                   recent_week: list[tuple[str, str, int]] | None = None, use_shinsal: bool = True,
+                   shinsal_variant: int | None = None) -> dict:
     """하루치 문장 선택. recent 는 그 전 30일에 쓴 (요소, 구분, 번호) 목록(카드 문장 + 이야기 변형이 같은 목록에 섞인다).
 
     돌려주는 uses 는 카드 문장 몫, story_uses 는 오늘의 이야기(daily_story) 몫. 이력(_history)은 둘 다 쌓는다.
     이야기 조립이 실패하면 story 는 None 이고(daily.py 가 예전 이야기로 대신한다) 카드는 그대로 나간다.
+
+    11/13 신살 결(daily_shinsal): 하루의 줄기가 구체 관계가 아닌 날은 12신살이 줄기를 맡아 근거 2문장·처방·제목·총운이
+    모두 신살 결로 나간다. 제목·총운·처방 이유는 한 벌, 카드 근거는 다른 벌이다. 조립이 실패하면 벌을 바꿔(shinsal_variant)
+    한 번 더 해 보고, 그래도 안 되면 신살 없이(use_shinsal=False) 같은 날을 다시 고른다.
     """
     ev = evaluation or daily_score.evaluate(core, daily_score.day_ganji(d), d)
     uses: list[tuple[str, str, int]] = []
+    from app.engine.services.daily_story import rule_tiers   # 순환 import 방지
     key = evidence_key(ev["items"], ev["grade"])
-    i, evidence_text = pick(account_key, d, key, "evidence", recent)
-    uses.append((key, "evidence", i))
+    tiers = rule_tiers(ev)
+    shinsal = daily_shinsal.spine(core, ev, d, key, tiers) if use_shinsal else None
+    if shinsal:
+        key, tone = shinsal["key"], shinsal["tone"]
+        i, evidence_text = pick(account_key, d, key, f"evidence:{tone}", recent)
+        if shinsal_variant is not None:          # 벌을 바꿔 다시 고르는 중
+            i = 1 - shinsal_variant
+            evidence_text = daily_shinsal.rows(key, f"evidence:{tone}")[i][2]
+        uses.append((key, f"evidence:{tone}", i))
+        shinsal["variant"] = 1 - i               # 제목·총운·처방 이유는 카드 근거와 다른 벌(같은 말 되풀이 방지)
+    else:
+        i, evidence_text = pick(account_key, d, key, "evidence", recent)
+        uses.append((key, "evidence", i))
     element = rx_element(ev["items"], ev["grade"], ev["standout"])
     rx_text, rx_scene = None, None
-    if element:
-        from app.engine.services.daily_story import rule_tiers   # 순환 import 방지
-        blocked, prefer = rx_scene_rules(ev["grade"], rule_tiers(ev), ev["standout"])
+    if shinsal and shinsal["tone"] != "평":       # 줄기가 신살이면 처방도 신살 결(분야 장면 없음)
+        tone, element = shinsal["tone"], shinsal["key"]
+        i = shinsal["variant"]                    # '~날이니' 이유가 제목과 같은 벌에서 나오게
+        dont = daily_shinsal.rows(element, f"dont:{tone}")[i][2]
+        j, do = pick(account_key, d, element, f"do:{tone}", recent, avoid_head=dont.split()[0], avoid_words=_stems(dont))
+        rx_text = f"{dont} {do}"
+        uses.extend([(element, f"dont:{tone}", i), (element, f"do:{tone}", j)])
+    elif element:
+        blocked, prefer = rx_scene_rules(ev["grade"], tiers, ev["standout"])
         rx_text, used = compose_rx(account_key, d, element, recent, blocked, prefer, recent_week)
         uses.extend(used)
         rx_scene = BANK[element]["dont"][used[0][2]][0]
@@ -825,12 +850,17 @@ def select_for_day(core: MyeongriCoreResult, account_key: str, d: date,
         domain_note = {"domain": domain, "kind": kind, "text": text}
     out = {"evaluation": ev, "evidence_key": key, "evidence_text": evidence_text,
            "rx_element": element, "rx_text": rx_text, "rx_scene": rx_scene, "domain_note": domain_note, "uses": uses,
-           "story": None, "story_uses": []}
+           "story": None, "story_uses": [], "shinsal": shinsal, "use_shinsal": use_shinsal}
     try:
         from app.engine.services import daily_story          # 순환 import 방지(daily_story 가 이 모듈을 읽는다)
         story = daily_story.build_story(core, ev, out, account_key, d, core.input.gender, recent)
         out["story"], out["story_uses"] = story, story["uses"]
     except Exception:                                         # noqa: BLE001 — 이야기 실패가 카드를 막지 않게
+        if shinsal and shinsal_variant is None:               # 다른 벌로 한 번 더
+            return select_for_day(core, account_key, d, recent, ev, recent_week, shinsal_variant=1 - shinsal["variant"])
+        if shinsal:
+            logger.warning("daily_story 신살 결 조립 실패, 신살 없이 다시 고름 %s %s", account_key, d)
+            return select_for_day(core, account_key, d, recent, ev, recent_week, use_shinsal=False)
         logger.exception("daily_story 조립 실패 %s %s", account_key, d)
     return out
 
