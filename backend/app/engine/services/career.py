@@ -222,7 +222,7 @@ def _people(core: MyeongriCoreResult, tiers: dict, ranking: list[str]) -> tuple[
     return helper, hard
 
 
-def _months(core: MyeongriCoreResult, seed: int) -> tuple[list[dict], list[dict], list[dict], dict]:
+def _months(core: MyeongriCoreResult, seed: int, start: tuple[int, int] | None = None) -> tuple[list[dict], list[dict], list[dict], dict]:
     """12달 등급·한 줄, 핵심 달, 움직이는 달, 세운. 등급은 오늘의 운세 '일' 분야 규칙표(월주에 적용)."""
     pillars = core.natal_facts.pillars
     dm = pillars["day"].stem
@@ -230,7 +230,7 @@ def _months(core: MyeongriCoreResult, seed: int) -> tuple[list[dict], list[dict]
     move_branches = {_YEOKMA[pillars["year"].branch]: "yeokma", _YEOKMA[pillars["day"].branch]: "yeokma",
                      _CLASH[pillars["month"].branch]: "clash"}
     rows, prev = [], None
-    for y, m in theme_timing.window_months(theme_timing.window_start(core)):
+    for y, m in theme_timing.window_months(start or theme_timing.window_start(core)):
         target = date(y, m, 15)
         if target < birth:
             continue
@@ -270,7 +270,8 @@ def _months(core: MyeongriCoreResult, seed: int) -> tuple[list[dict], list[dict]
 
 
 def _compose_v3(core: MyeongriCoreResult, query: dict, name: str, group: str, track: str,
-                strength: str | None, status: str, counts: Counter, seed: int) -> dict:
+                strength: str | None, status: str, counts: Counter, seed: int, year: int | None = None) -> dict:
+    start = (year, 1) if year else theme_timing.window_start(core)   # year 를 주면(옛 호출·테스트) 그해 1~12월
     dm = core.natal_facts.pillars["day"].stem
     info = element_tiers(core)
     tiers = info["tiers"]
@@ -295,12 +296,11 @@ def _compose_v3(core: MyeongriCoreResult, query: dict, name: str, group: str, tr
                                               ganji_ko=GAN_KO.get(nxt["pillar"]["ganji"][0], "") + ZHI_KO.get(nxt["pillar"]["ganji"][1], ""),
                                               short=sec.NEXT_SHORT[nxt["ten_god"]])
 
-    rows, keys, moves, year = _months(core, seed)
+    rows, keys, moves, year = _months(core, seed, start)
     year_text, year_head = "", ""
     if year["ganji"]:
         year_text = sec.YEAR.get(_god_value(dm, year["ganji"][0]), "")
         year_head = sec.YEAR_HEAD.format(year=year["year"], ganji_ko=GAN_KO.get(year["ganji"][0], "") + ZHI_KO.get(year["ganji"][1], ""))
-    start = theme_timing.window_start(core)
 
     has_move, no_move = sec.MOVE_STATUS.get(status, sec.MOVE_STATUS[copy.DEFAULT_STATUS])
     if moves:
@@ -376,7 +376,7 @@ def build_lifetime_career_report(
     )
 
     if unlocked:
-        d = _compose_v3(core, query, user_name or "회원", group, track, strength, safe_status, counts, seed)
+        d = _compose_v3(core, query, user_name or "회원", group, track, strength, safe_status, counts, seed, fixed_year)
         gated = _unlocked_html(d)
         ev = d["evidence"]
         evidence_summary["months"] = ev["months"]

@@ -106,6 +106,11 @@ JOB_KIND = {
     "resource": "연구·교육·상담·문서·기록처럼 알고 정리하는 직무가 잘 맞아요. 깊이 파고들어 근거를 세우는 역할에서 믿음을 얻습니다.",
     "balanced": "한 직무에 묶이기보다 여러 일을 잇는 조율·기획·운영 직무가 잘 맞아요. 이 사람 저 사람 사이에서 일을 매끄럽게 만드는 역할을 잘 해냅니다.",
 }
+def _copula(element: str) -> str:
+    """'금(金)이에요' / '화(火)예요' — 괄호 앞 한글(목·금은 받침)로 고른다."""
+    return "이에요" if element in ("木", "金") else "예요"
+
+
 ELEMENT_NAME = {"木": "목(木)", "火": "화(火)", "土": "토(土)", "金": "금(金)", "水": "수(水)"}
 _TOPIC = {"木": "은", "火": "는", "土": "는", "金": "은", "水": "는"}  # 목·금은 받침
 ELEMENT_FIELDS = {
@@ -125,7 +130,7 @@ def field_text(name: str, elements: list[str]) -> str:
     names = "·".join(ELEMENT_NAME[e] for e in elements)
     fields = ", ".join(f"{ELEMENT_NAME[e]}{_TOPIC[e]} {ELEMENT_FIELDS[e]}" for e in elements)
     return (f"명리에서는 내게 필요한 오행과 닿는 분야에서 일이 손에 잘 붙는다고 봐요. "
-            f"{name}님에게 필요한 기운은 {names}이에요. {fields} 쪽이 여기에 닿아요. {FIELD_TAIL}")
+            f"{name}님에게 필요한 기운은 {names}{_copula(elements[-1])}. {fields} 쪽이 여기에 닿아요. {FIELD_TAIL}")
 
 
 # ---------------------------------------------------------------------------
