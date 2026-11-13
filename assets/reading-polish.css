@@ -136,3 +136,14 @@ html[data-brand] #archiveModalBody .theme-reading :is([data-career-trap-fix],[da
 html[data-brand] #archiveModalBody .theme-reading [data-love-section="past"] > ul { padding-left:18px; margin:8px 0 12px; }
 html[data-brand] #archiveModalBody .theme-reading [data-love-past] { margin:0 0 10px; line-height:1.8; }
 html[data-brand] #archiveModalBody .theme-reading [data-love-weak-fix] { color:#55606B; }
+/* 건강운 v3 (11/13): 몸·나이 목록, 눈여겨볼 달·12달 목록은 다른 테마와 같은 방식 */
+html[data-brand] #archiveModalBody .theme-reading :is([data-health-section="body"],[data-health-section="age"]) > ul { padding-left:18px; margin:8px 0 12px; }
+html[data-brand] #archiveModalBody .theme-reading :is([data-health-body],[data-health-age]) { margin:0 0 10px; line-height:1.8; }
+html[data-brand] #archiveModalBody .theme-reading [data-health-key-month] { border:0!important; border-radius:0!important; background:transparent!important; padding:0 0 0 20px!important; position:relative; }
+html[data-brand] #archiveModalBody .theme-reading [data-health-key-month]::before { content:''; position:absolute; left:2px; top:10px; width:7px; height:7px; background:var(--c-point,#B5341F); transform:rotate(45deg); }
+html[data-brand] #archiveModalBody .theme-reading [data-health-key-month] strong { display:block; font-size:17px; font-weight:700; color:var(--c-ink,#1D2129)!important; line-height:1.5; }
+html[data-brand] #archiveModalBody .theme-reading [data-health-section="months"] > ul { list-style:none; padding-left:0!important; margin:6px 0 0; }
+html[data-brand] #archiveModalBody .theme-reading [data-health-month] { margin:0 0 8px; line-height:1.75; }
+html[data-brand] #archiveModalBody .theme-reading [data-health-month] > strong { margin-right:6px; }
+html[data-brand] #archiveModalBody .theme-reading [data-health-month][data-month-grade="caution"] > strong { color:var(--c-point,#B5341F); }
+html[data-brand] #archiveModalBody .theme-reading [data-health-month][data-month-grade="normal"] > strong { color:#7A828A; font-weight:600; }
