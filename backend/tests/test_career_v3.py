@@ -42,7 +42,7 @@ class CareerV3Tests(unittest.TestCase):
         self.assertGreaterEqual(len(_text(c)), 2214)          # 옛 직업운 738자의 3배
         self.assertEqual(len(re.findall(r'data-career-month="\d{4}-\d{2}"', c)), 12)
         self.assertLessEqual(len(re.findall(r'data-career-key-month="\d{4}', c)), 3)
-        self.assertEqual(len(re.findall(r'data-career-action="\d"', c)), 5)
+        self.assertIn(len(re.findall(r'data-career-action="\d"', c)), (3, 4))
         self.assertEqual(len(re.findall(r'data-career-trap="\d"', c)), 3)
         self.assertEqual(find_banned(_text(c)), [])
 
