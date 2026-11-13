@@ -29,11 +29,11 @@ class LoveV3Tests(unittest.TestCase):
 
     def test_version(self):
         self.assertEqual(self.unlocked["narrative_version"], LOVE_NARRATIVE_VERSION)
-        self.assertEqual(LOVE_NARRATIVE_VERSION, "love-v3")
+        self.assertEqual(LOVE_NARRATIVE_VERSION, "love-v4")
 
     def test_unlocked_has_new_sections_in_order(self):
         c = self.unlocked["content"]
-        order = [c.index(f'data-love-tier="{t}"') for t in ("1", "2", "match", "3", "now", "4")]
+        order = [c.index(f'data-love-tier="{t}"') for t in ("1", "2", "match", "now", "3", "4")]  # v4: 12개월 칸이 지금의 사랑 뒤로
         self.assertEqual(order, sorted(order))
         for title in (love_copy.MATCH_GOOD_TITLE, love_copy.MATCH_BAD_TITLE,
                       love_copy.NOW_SINGLE_TITLE, love_copy.NOW_COUPLE_TITLE):

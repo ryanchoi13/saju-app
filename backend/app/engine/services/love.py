@@ -27,10 +27,15 @@ from app.engine.services.applied_guidance import direction_advice, state_basis
 from app.engine.services.annual_copy import seed_from
 from app.engine.services import love_copy as copy
 from app.engine.services import theme_timing
+from app.engine.services import love_sections as sec
+from app.engine.services import daily_score
+from app.engine.services.daily_score import _god_group
+from app.engine.services.element_balance import element_tiers, natal_balance
+from app.engine.constants import GAN_KO, GAN_WUXING, ZHI_KO
 from app.engine.services.daily_score import calendar_ganji
 from app.engine.facts.ten_gods import get_ten_god
 
-LOVE_NARRATIVE_VERSION = "love-v3"  # 11/06: 잘 맞는 사람·지금의 사랑 추가, 연애 상태 선택 제거
+LOVE_NARRATIVE_VERSION = "love-v4"  # 11/13: 칸 10개 · 12달 등급 (11/06 v3: 잘 맞는 사람·지금의 사랑, 상태 선택 제거)
 
 _TEN_GOD = {
     "peer": "비견", "rob_wealth": "겁재", "eating_god": "식신",
@@ -201,20 +206,29 @@ _SKELETON = (
 )
 
 
-def _tier1_html(t1: dict) -> str:
-    return (
-        '<section data-love-tier="1" data-paywall="free"><h2>소통 기질 진단</h2>'
-        f'<h3>{escape(t1["headline"])}</h3><p>{escape(t1["body"])}</p></section>')
+def _section(key: str, title: str, body: str, paywall: str = "unlocked", tier: str | None = None) -> str:
+    tier_attr = f' data-love-tier="{tier}"' if tier else ""
+    return (f'<section data-love-section="{key}"{tier_attr} data-paywall="{paywall}">'
+            f'<h2>{escape(title)}</h2>{body}</section>')
+
+
+def _p(text: str, attr: str = "") -> str:
+    return f'<p{attr}>{escape(text)}</p>' if text else ""
+
+
+def _tier1_html(t1: dict, stem_text: str) -> str:
+    return _section("nature", "소통 기질 진단",
+                    f'<h3>{escape(t1["headline"])}</h3>{_p(t1["body"])}{_p(stem_text)}', "free", "1")
 
 
 def _tier2_html(boxes: list[dict]) -> str:
     items = "".join(
         f'<div data-love-trap="{i}" style="{_BOX}">'
-        f'<strong>{escape(b["title"])}</strong><p style="margin:4px 0 0;">{escape(b["text"])}</p></div>'
+        f'<strong>{escape(b["title"])}</strong><p style="margin:4px 0 0;">{escape(b["text"])}</p>'
+        f'<p data-love-trap-fix="{i}" style="margin:4px 0 0;">{escape(b["fix"])}</p></div>'
         for i, b in enumerate(boxes, start=1))
-    return (
-        '<section data-love-tier="2" data-paywall="free"><h2>관계에서 반복하기 쉬운 습관 2가지</h2>'
-        f'<div style="display:grid;gap:8px;">{items}</div></section>')
+    return _section("traps", f"관계에서 반복하기 쉬운 습관 {len(boxes)}가지",
+                    f'<div style="display:grid;gap:8px;">{items}</div>', "free", "2")
 
 
 def _boundary_html() -> str:
@@ -223,31 +237,159 @@ def _boundary_html() -> str:
 
 
 def _locked_html() -> str:
-    def block(tier: int, title: str, teaser: str) -> str:
-        return (
-            f'<section data-love-tier="{tier}" data-paywall="locked" data-locked="true" '
-            'style="border:1px dashed #94A3B8;border-radius:12px;background:#F8FAFC;padding:14px;margin-bottom:8px;">'
-            f'<div style="font-size:12px;color:#64748B;font-weight:800;">🔒 {escape(copy.LOCK_LABEL)}</div>'
-            f'<h2 style="margin:4px 0 0;">{escape(title)}</h2>'
-            f'<p data-love-teaser="{tier}" style="margin:6px 0 0;">{escape(teaser)}</p>{_SKELETON}</section>')
+    titles = "".join(f'<li data-love-locked="{k}">{escape(t)}</li>' for k, t in sec.LOCKED_SECTIONS)
     return (
-        block(3, "앞으로 12개월 관계의 타이밍", copy.TEASER_TIER3)
-        + block(4, "다정한 관계 3원칙", copy.TEASER_TIER4)
-        + f'<a href="{copy.PAYWALL_HREF}" data-paywall-cta="theme-love" style="display:inline-block;margin-top:6px;'
-          'padding:10px 16px;border-radius:10px;background:#2D6A4F;color:#fff;font-weight:700;text-decoration:none;">'
-          f'{escape(copy.cta_label())}</a>')
+        '<section data-love-tier="3" data-paywall="locked" data-locked="true" '
+        'style="border:1px dashed #94A3B8;border-radius:12px;background:#F8FAFC;padding:14px;margin-bottom:8px;">'
+        f'<div style="font-size:12px;color:#64748B;font-weight:800;">🔒 {escape(copy.LOCK_LABEL)}</div>'
+        '<h2 style="margin:4px 0 0;">이어지는 풀이</h2>'
+        f'<p data-love-teaser="3" style="margin:6px 0 0;">{escape(sec.LOCKED_TEASER)}</p>'
+        f'<ul style="padding-left:18px;margin:6px 0 0;">{titles}</ul>{_SKELETON}</section>'
+        f'<a href="{copy.PAYWALL_HREF}" data-paywall-cta="theme-love" style="display:inline-block;margin-top:6px;'
+        'padding:10px 16px;border-radius:10px;background:#2D6A4F;color:#fff;font-weight:700;text-decoration:none;">'
+        f'{escape(copy.cta_label())}</a>')
 
 
-def _unlocked_html(t3: dict, bullets: list[str], match: dict, now: dict) -> str:
-    match_html = _pair_section("match", copy.MATCH_HEADING,
-                               [(copy.MATCH_GOOD_TITLE, match["good"]), (copy.MATCH_BAD_TITLE, match["bad"])])
-    tier3 = theme_timing.tier3_html(t3, "love", "앞으로 12개월 관계의 타이밍",
-                                    "상대의 선택이나 특정 사건을 예측한 것은 아닙니다.", copy.NO_INFLECTION)
-    now_html = _pair_section("now", copy.NOW_HEADING,
-                             [(copy.NOW_SINGLE_TITLE, now["single"]), (copy.NOW_COUPLE_TITLE, now["couple"])])
-    items = "".join(f'<li data-love-action="{i}">{escape(b)}</li>' for i, b in enumerate(bullets, start=1))
-    tier4 = f'<section data-love-tier="4" data-paywall="unlocked"><h2>다정한 관계 3원칙</h2><ol>{items}</ol></section>'
-    return match_html + tier3 + now_html + tier4
+def _pair_section(attr: str, heading: str, items: list[tuple[str, str]]) -> str:
+    body = "".join(
+        f'<div data-love-{attr}="{i}"><strong>{escape(t)}</strong><p>{escape(x)}</p></div>'
+        for i, (t, x) in enumerate(items, start=1))
+    return (f'<section data-love-section="{attr}" data-love-tier="{attr}" data-paywall="unlocked"><h2>{escape(heading)}</h2>'
+            f'<div class="love-pair">{body}</div></section>')
+
+
+def _unlocked_html(d: dict, match: dict, now: dict) -> str:
+    g = d["group"]
+    out = [
+        _pair_section("express", "사랑을 표현하는 방식",
+                      [(sec.EXPRESS_TITLE, sec.EXPRESS[g]), (sec.RECEIVE_TITLE, sec.RECEIVE[g])]),
+        _pair_section("match", copy.MATCH_HEADING,
+                      [(copy.MATCH_GOOD_TITLE, match["good"]), (copy.MATCH_BAD_TITLE, match["bad"])]),
+        _pair_section("fight", "다툴 때 나의 모습과 화해법",
+                      [(sec.FIGHT_TITLE, sec.FIGHT[g]), (sec.MAKEUP_TITLE, sec.MAKEUP[g])]),
+        _pair_section("now", copy.NOW_HEADING,
+                      [(copy.NOW_SINGLE_TITLE, now["single"]), (copy.NOW_COUPLE_TITLE, now["couple"])]),
+    ]
+    if d["cycle"]:
+        out.append(_section("cycle", "이번 10년의 사랑",
+                            f'<h3>{escape(d["cycle_head"])}</h3>' + _p(d["cycle"]) + _p(d["cycle_tier"]) + _p(d["cycle_next"])))
+    rows = "".join(
+        f'<li data-love-month="{m["y"]}-{m["m"]:02d}" data-month-grade="{m["grade"]}">'
+        f'<strong>{escape(m["display"])} · {escape(m["label"])}</strong> {escape(m["line"])}</li>'
+        for m in d["months"])
+    keys = "".join(
+        f'<div data-love-key-month="{k["y"]}-{k["m"]:02d}" style="{_BOX}">'
+        f'<strong>{escape(k["display"])} · {escape(k["label"])}</strong>'
+        f'<p style="margin:4px 0 0;">{escape(k["text"])}</p></div>'
+        for k in d["key_months"])
+    keys_html = (f'<h3>눈여겨볼 달</h3><div style="display:grid;gap:8px;">{keys}</div>' if keys
+                 else _p(sec.NO_KEY_MONTH, ' data-love-key-month="none"'))
+    year_html = (f'<h3>{escape(d["year_head"])}</h3>' + _p(d["year"])) if d["year"] else ""
+    out.append(_section("months", "앞으로 12개월 관계의 타이밍",
+                        f'<p class="reading-caption">{escape(d["month_caption"])}</p>' + year_html
+                        + f'<h3>달별 흐름</h3><ul style="padding-left:18px;">{rows}</ul>' + keys_html, tier="3"))
+    out.append(_section("place", "함께 가면 좋은 곳", _p(d["place"])))
+    items = "".join(f'<li data-love-action="{i}">{escape(b)}</li>' for i, b in enumerate(d["bullets"], start=1))
+    out.append(_section("actions", "다정한 관계 5원칙", f'<ol>{items}</ol>', tier="4"))
+    return "".join(out)
+
+
+# ---------------------------------------------------------------------------
+# v4 계산 (유료 칸). 잠금 상태에서는 부르지 않는다.
+# ---------------------------------------------------------------------------
+_GENDER_RULE = "이성 인연의 기운"   # 성별로 배우자 별을 정하는 규칙 — 애정운에서는 쓰지 않는다(헌칙)
+
+
+def _love_tier(rule: dict) -> tuple[str, str | None]:
+    good = [r for r in rule["good"] if r != _GENDER_RULE]
+    if rule["tier"] == "주의":
+        return "caution", (rule["bad"] or [None])[0]
+    if rule["tier"] == "좋음" and good:
+        return "good", good[0]
+    return "normal", None
+
+
+def _months(core: MyeongriCoreResult, seed: int, start: tuple[int, int] | None = None) -> tuple[list[dict], list[dict], dict]:
+    dm = core.natal_facts.pillars["day"].stem
+    birth = to_solar(core.input.birth_date, core.input.calendar_type, core.input.is_leap_month)
+    rows, prev = [], None
+    for y, m in theme_timing.window_months(start or theme_timing.window_start(core)):
+        target = date(y, m, 15)
+        if target < birth:
+            continue
+        year_gz, month_gz, _ = calendar_ganji(target)
+        r = daily_score.evaluate(core, month_gz, target)
+        grade, reason = _love_tier(r["domain_rules"]["사람"])
+        group = _god_group(dm, GAN_WUXING[month_gz[0]])
+        rows.append(dict(y=y, m=m, ganji=month_gz, year_ganji=year_gz, grade=grade,
+                         label=sec.GRADE_LABEL[grade], line=sec.MONTH_LINE[group][grade][(seed + m) % 2],
+                         score=r["score"], reason=reason, display=theme_timing.month_label(y, m, prev)))
+        prev = y
+    # '지금의 사랑'이 짚은 일지 육합 달이 좋음이면 그 달을 먼저 고른다(두 칸이 다른 달을 가리키지 않게)
+    combo = _SIX_COMBO[core.natal_facts.pillars["day"].branch]
+    goods = sorted((r for r in rows if r["grade"] == "good"), key=lambda r: (r["ganji"][1] != combo, -r["score"]))
+    bads = sorted((r for r in rows if r["grade"] == "caution"), key=lambda r: r["score"])
+    picked = ([goods.pop(0)] if goods else []) + ([bads.pop(0)] if bads else [])
+    picked += sorted(goods + bads, key=lambda r: -abs(r["score"] - 75))[: max(0, 3 - len(picked))]
+    picked.sort(key=lambda r: (r["y"], r["m"]))
+    keys = [dict(y=r["y"], m=r["m"], display=f'{r["y"]}년 {r["m"]}월', label=r["label"], basis=r["reason"],
+                 text=" ".join(t for t in (sec.LOVE_REASON.get(r["reason"], ""), r["line"],
+                                           sec.LOVE_ADVICE.get(r["reason"], "")) if t))
+            for r in picked]
+    count = Counter(r["year_ganji"] for r in rows)
+    order = [r["year_ganji"] for r in rows]
+    year_gz = max(count, key=lambda g: (count[g], -order.index(g))) if rows else None
+    year_num = Counter(r["y"] for r in rows if r["year_ganji"] == year_gz).most_common(1)[0][0] if year_gz else None
+    return rows, keys, dict(ganji=year_gz, year=year_num)
+
+
+def _compose_v4(core: MyeongriCoreResult, query: dict, name: str, group: str, seed: int,
+                year: int | None = None) -> dict:
+    start = (year, 1) if year else theme_timing.window_start(core)   # year 를 주면(옛 호출·테스트) 그해 1~12월
+    dm = core.natal_facts.pillars["day"].stem
+    tiers = element_tiers(core)["tiers"]
+    ranking = natal_balance(core)["ranking"]
+    good = [e for e in ranking if tiers[e] == "good"][:2]
+
+    timing = query["timing"]["luck_cycles"]
+    current = timing.get("current") or {}
+    god = current.get("ten_god")
+    cycle = sec.CYCLE.get(god, "")
+    cycle_head = cycle_tier = cycle_next = ""
+    if cycle:
+        pillar = current["pillar"]
+        cycle_head = (f'{current["start_age"]}~{current["end_age"]}세 · '
+                      f'{GAN_KO.get(pillar["stem"], "")}{ZHI_KO.get(pillar["branch"], "")}({pillar["ganji"]}) 대운')
+        cycle_tier = sec.CYCLE_TIER[tiers[GAN_WUXING[pillar["stem"]]]]
+        nxt = next((c for c in timing.get("cycles", []) if c.get("index") == current.get("index", -9) + 1), None)
+        if nxt and nxt.get("ten_god") in sec.NEXT_SHORT:
+            gz = nxt["pillar"]["ganji"]
+            cycle_next = sec.NEXT_LINE.format(age=nxt["start_age"], ganji=gz,
+                                              ganji_ko=GAN_KO.get(gz[0], "") + ZHI_KO.get(gz[1], ""),
+                                              short=sec.NEXT_SHORT[nxt["ten_god"]])
+
+    rows, keys, year = _months(core, seed, start)
+    year_text = year_head = ""
+    if year["ganji"]:
+        year_text = sec.YEAR.get(_ten_god_value(dm, year["ganji"][0]), "")
+        year_head = sec.YEAR_HEAD.format(year=year["year"],
+                                         ganji_ko=GAN_KO.get(year["ganji"][0], "") + ZHI_KO.get(year["ganji"][1], ""))
+    best = next((k for k in keys if k["label"] == "좋음"), None)
+    month_bullet = sec.MONTH_BULLET.format(month=best["display"]) if best else sec.MONTH_BULLET_NONE
+    bullets = [*copy.GROUP_BULLETS[group if group in copy.GROUP_BULLETS else "balanced"], copy.COMMON_BULLET]
+    if god in sec.CYCLE_BULLET:
+        bullets.append(sec.CYCLE_BULLET[god])
+    bullets.append(month_bullet)
+    return dict(
+        group=group if group in sec.EXPRESS else "balanced",
+        cycle=cycle, cycle_head=cycle_head, cycle_tier=cycle_tier, cycle_next=cycle_next,
+        year=year_text, year_head=year_head, month_caption=sec.MONTH_CAPTION.format(y=start[0], m=start[1]),
+        months=rows, key_months=keys, place=sec.place_text(name, good), bullets=bullets,
+        evidence=dict(good_elements=good, cycle=current.get("pillar", {}).get("ganji"), cycle_god=god, year=year,
+                      months=[dict(month=f'{r["y"]}-{r["m"]:02d}', ganji=r["ganji"], grade=r["grade"],
+                                   reason=r["reason"]) for r in rows],
+                      key_months=[k["basis"] for k in keys]),
+    )
 
 
 def build_lifetime_love_report(
@@ -273,7 +415,11 @@ def build_lifetime_love_report(
     seed = seed_from(birth.isoformat(), "love", "-", year)  # 상태를 고르지 않으므로 씨앗에서도 뺀다
 
     t1 = copy.compose_tier1(group, safe_status)
-    t2 = copy.compose_tier2(group, seed)
+    stem_text = sec.STEM_LOVE.get(core.natal_facts.pillars["day"].stem, "")
+    pool = copy.TRAPS[group if group in copy.TRAPS else "balanced"]
+    first = seed % len(pool)
+    t2 = [dict(title=pool[(first + i) % len(pool)][0], text=pool[(first + i) % len(pool)][1],
+               fix=sec.TRAP_FIX[pool[(first + i) % len(pool)][0]]) for i in range(len(pool))]
 
     evidence_summary = dict(
         natal=dict(lead_group=group,
@@ -282,22 +428,23 @@ def build_lifetime_love_report(
     )
 
     if unlocked:
-        t3 = theme_timing.build_tier3(core, "love", _MONTH_DOMAINS,
-                                      lambda inf: copy.compose_tier3(inf, safe_status, seed), year=fixed_year)
-        bullets = copy.compose_tier4(group, safe_status)
         match, now = _match_and_now(core, user_name or "회원")
-        gated = _unlocked_html(t3, bullets, match, now)
+        d = _compose_v4(core, query, user_name or "회원", group, seed, fixed_year)
+        gated = _unlocked_html(d, match, now)
         evidence_summary["match"] = match["evidence"]
         evidence_summary["now"] = now["evidence"]
-        evidence_summary["months"] = t3["evidence_months"]
-        evidence_summary["years"] = t3["evidence_years"]
+        evidence_summary["months"] = d["evidence"]["months"]
+        evidence_summary["years"] = [d["evidence"]["year"]]
+        evidence_summary["v4"] = {k: v for k, v in d["evidence"].items() if k != "months"}
         advice = copy.sanitize(direction_advice(query["applied_state"], "love", ""))
         evidence_extra = f'<p>{escape(advice)}</p>' if advice else ""
         me, ne = match["evidence"], now["evidence"]
         basis = (f"잘 맞는 사람: 일지 {me['day_branch']}의 육합 {me['six_combination']} · "
                  f"부딪히기 쉬운 사람: 일지 {me['day_branch']}의 충 {me['clash']} · "
                  f"인연이 들어오는 길: 지금 대운 {ne['cycle'] or '-'}({ne['cycle_group'] or '-'}), "
-                 f"앞으로 12개월의 세운 {ne['year']}({ne['year_group']})")
+                 f"앞으로 12개월의 세운 {ne['year']}({ne['year_group']}) · "
+                 f"달별 등급: 각 달 15일 월주를 오늘의 운세 '사람' 분야 규칙표로 판정(성별 규칙 제외) · "
+                 f"함께 가면 좋은 곳: 행운 색과 같은 오행 3단계의 '좋음'")
         evidence_extra += f'<p data-love-basis="match-now">{escape(basis)}</p>'
     else:
         gated = _locked_html()
@@ -312,7 +459,7 @@ def build_lifetime_love_report(
     content = (
         f'<div class="theme-reading" data-theme="love" data-narrative-version="{LOVE_NARRATIVE_VERSION}" '
         f'data-copy-version="{copy.COPY_VERSION}" data-unlocked="{str(unlocked).lower()}">'
-        + _tier1_html(t1) + _tier2_html(t2) + _boundary_html() + gated
+        + _tier1_html(t1, stem_text) + _tier2_html(t2) + _boundary_html() + gated
         + evidence + _uncertainty(core) +
         '<p class="reading-caption">원국과 흐름을 바탕으로 한 해석이며 상대의 마음이나 관계의 결과를 단정하지 않습니다. '
         '중요한 결정은 현실의 상황과 서로의 대화도 함께 살펴 주세요.</p></div>')
