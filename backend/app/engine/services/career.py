@@ -186,7 +186,7 @@ def _unlocked_html(d: dict) -> str:
                         + f'<h3>달별 흐름</h3><ul style="padding-left:18px;">{rows}</ul>' + keys_html))
     out.append(_section("move", "자리가 움직이는 달", _p(d["move"])))
     items = "".join(f'<li data-career-action="{i}">{escape(b)}</li>' for i, b in enumerate(d["bullets"], start=1))
-    out.append(_section("actions", "일을 지키는 실천 5원칙", f'<ol>{items}</ol>'))
+    out.append(_section("actions", "일을 지키는 실천", f'<ol>{items}</ol>'))
     return "".join(out)
 
 
@@ -222,6 +222,16 @@ def _people(core: MyeongriCoreResult, tiers: dict, ranking: list[str]) -> tuple[
     return helper, hard
 
 
+def _pick_line(pool: tuple, start: int, used: set) -> str:
+    """같은 문장이 12달 목록에 두 번 나오지 않게, 아직 안 쓴 변형부터 고른다(다 썼으면 처음 자리)."""
+    for i in range(len(pool)):
+        line = pool[(start + i) % len(pool)]
+        if line not in used:
+            used.add(line)
+            return line
+    return pool[start % len(pool)]
+
+
 def _months(core: MyeongriCoreResult, seed: int, start: tuple[int, int] | None = None) -> tuple[list[dict], list[dict], list[dict], dict]:
     """12달 등급·한 줄, 핵심 달, 움직이는 달, 세운. 등급은 오늘의 운세 '일' 분야 규칙표(월주에 적용)."""
     pillars = core.natal_facts.pillars
@@ -229,7 +239,7 @@ def _months(core: MyeongriCoreResult, seed: int, start: tuple[int, int] | None =
     birth = to_solar(core.input.birth_date, core.input.calendar_type, core.input.is_leap_month)
     move_branches = {_YEOKMA[pillars["year"].branch]: "yeokma", _YEOKMA[pillars["day"].branch]: "yeokma",
                      _CLASH[pillars["month"].branch]: "clash"}
-    rows, prev = [], None
+    rows, prev, used = [], None, set()
     for y, m in theme_timing.window_months(start or theme_timing.window_start(core)):
         target = date(y, m, 15)
         if target < birth:
@@ -239,7 +249,7 @@ def _months(core: MyeongriCoreResult, seed: int, start: tuple[int, int] | None =
         work = r["domain_rules"]["일"]
         grade = sec.TIER_TO_GRADE.get(work["tier"], "normal")
         group = _god_group(dm, GAN_WUXING[month_gz[0]])
-        line = sec.MONTH_LINE[group][grade][(seed + m) % 2]
+        line = _pick_line(sec.MONTH_LINE[group][grade], seed + m, used)
         reasons = work["good"] if grade == "good" else work["bad"] if grade == "caution" else []
         rows.append(dict(y=y, m=m, ganji=month_gz, year_ganji=year_gz, grade=grade,
                          label=sec.GRADE_LABEL[grade], line=line, score=r["score"],
@@ -251,15 +261,19 @@ def _months(core: MyeongriCoreResult, seed: int, start: tuple[int, int] | None =
     goods = sorted((r for r in rows if r["grade"] == "good"), key=lambda r: -r["score"])
     bads = sorted((r for r in rows if r["grade"] == "caution"), key=lambda r: r["score"])
     picked = ([goods.pop(0)] if goods else []) + ([bads.pop(0)] if bads else [])
-    rest = sorted(goods + bads, key=lambda r: -abs(r["score"] - 75))
-    picked += rest[: max(0, 3 - len(picked))]
+    # 셋째 달은 앞의 달과 이유가 다른 달만 고른다(같은 이유·같은 처방 문장이 두 번 나오지 않게)
+    for r in sorted(goods + bads, key=lambda r: -abs(r["score"] - 75)):
+        if len(picked) >= 3:
+            break
+        if r["reason"] not in {x["reason"] for x in picked}:
+            picked.append(r)
     picked.sort(key=lambda r: (r["y"], r["m"]))
     keys = []
     for r in picked:
         reason = sec.WORK_REASON.get(r["reason"], "")
         advice = sec.WORK_ADVICE.get(r["reason"], "")
         keys.append(dict(y=r["y"], m=r["m"], display=f'{r["y"]}년 {r["m"]}월', label=r["label"],
-                         text=" ".join(t for t in (reason, r["line"], advice) if t), basis=r["reason"]))
+                         text=" ".join(t for t in (reason, advice) if t), basis=r["reason"]))   # 달 한 줄은 위 목록에 있으니 되풀이하지 않는다
 
     moves = [r for r in rows if r["move"]]
     count = Counter(r["year_ganji"] for r in rows)
@@ -310,10 +324,13 @@ def _compose_v3(core: MyeongriCoreResult, query: dict, name: str, group: str, tr
     else:
         move = " ".join((sec.MOVE_NONE, no_move))
 
-    bullets = [*copy.GROUP_BULLETS[group if group in copy.GROUP_BULLETS else "balanced"],
-               sec.HELPER_BULLET[helper]]
+    # 11/13: 줄기 원칙(career_copy.GROUP_BULLETS)은 함정 칸의 대처와 겹쳐서 뺐다
+    year_god = _god_value(dm, year["ganji"][0]) if year["ganji"] else None
+    bullets = [sec.HELPER_BULLET[helper]]
     if god in sec.CYCLE_BULLET:
         bullets.append(sec.CYCLE_BULLET[god])
+    if year_god in sec.YEAR_BULLET and year_god != god:
+        bullets.append(sec.YEAR_BULLET[year_god])
     bullets.append(copy.STATUS_BULLET.get(status, copy.STATUS_BULLET[copy.DEFAULT_STATUS]))
 
     return dict(
