@@ -288,8 +288,8 @@ def _compose_paid(core: MyeongriCoreResult, query: dict, name: str, a: dict, see
     age, now_line, now_state, kinds, phases = [], "", "plain", [], []
     age_now = this_year - birth.year + 1
     for c in (core.timing.luck_cycle or {}).get("cycles", []):
-        if c.get("end_age", 0) < 18 or c.get("start_age", 0) > 77:
-            continue
+        if c.get("start_age", 0) < 20 or c.get("start_age", 0) > 77:
+            continue                                     # 절반 넘게 학생 시절인 대운은 재물 시기로 읽지 않는다(11/13 정오님 대조)
         sg = god(c["pillar"]["stem"])
         state = (("flow" if a["rob_heavy"] else "gather") if sg in _WEALTH else "make" if (sg in _OUTPUT and not a["weak"])
                  else "leak" if (sg == "rob_wealth" or (sg == "peer" and not a["weak"]))
