@@ -194,12 +194,13 @@ def _analyse(core: MyeongriCoreResult, query: dict) -> dict:
             if _POS[pos] not in positions:
                 positions.append(_POS[pos])
     positions.sort(key=("year", "month", "day", "hour").index)
+    rob_heavy = n.get("rob_wealth", 0) >= 2 or "month_branch" in counts.get("rob_wealth", [])
     invest_rank = sorted((("indirect", i), ("direct", d), ("output", o), ("resource", r), ("officer", of), ("peer", pe)),
                          key=lambda kv: -kv[1])
-    invest = [k for k, v in invest_rank if v][:2] or ["direct"]
+    invest = [k for k, v in invest_rank if v and not (k == "output" and rob_heavy)][:2] or ["direct"]
     people = "rival" if (pe >= 3 or n.get("rob_wealth", 0) >= 2) else ("some" if pe else "alone")
     spouse = "day_branch" in counts.get("direct_wealth", []) + counts.get("indirect_wealth", [])
-    return dict(counts=counts, n=n, strength=strength, weak=weak, strong=strong, vessel=vessel, style=style, leaks=leaks,
+    return dict(counts=counts, n=n, strength=strength, rob_heavy=rob_heavy, weak=weak, strong=strong, vessel=vessel, style=style, leaks=leaks,
                 positions=positions, invest=invest, people=people, spouse=spouse)
 
 
@@ -240,19 +241,21 @@ def _compose_paid(core: MyeongriCoreResult, query: dict, name: str, a: dict, see
     else:
         path = [sec.PATH_HIDDEN if _hidden_wealth(core) else sec.PATH_NONE]
     # 4 재테크
-    invest = [sec.INVEST[k] for k in a["invest"]] + [sec.INVEST_STRENGTH[
+    invest = [sec.INVEST[k] for k in a["invest"]] + [sec.INVEST_ROB if a["rob_heavy"] else sec.INVEST_STRENGTH[
         "weak" if a["weak"] else "strong" if a["strong"] else "balanced"]]
     # 5 돈과 사람
-    people = [sec.PEOPLE[a["people"]]] + ([sec.PEOPLE_SPOUSE] if a["spouse"] else [])
+    people = [sec.PEOPLE[a["people"]]] + ([sec.PEOPLE_SPOUSE] if a["spouse"] and "day" not in a["positions"] else [])
 
     # 6 지나온 재물 흐름
-    wealth_branches = {p[k].branch for k in ("year", "month", "day", "hour") if p.get(k) is not None
+    # 일지 충은 배우자 자리라 애정운에서 읽는다(11/13 정오님 대조: 2000·2012·2024 辰년은 돈이 아니라 인연이 움직임).
+    # 재물운의 '판이 바뀐 해'는 일·사회 자리(월지)와 일지 밖 재성 자리의 충으로 본다.
+    wealth_branches = {p[k].branch for k in ("year", "month", "hour") if p.get(k) is not None
                        and getattr(get_ten_god(dm, get_hidden_stems(p[k].branch).stems[0].stem), "value", "") in _WEALTH}
     clash = {"子": "午", "午": "子", "丑": "未", "未": "丑", "寅": "申", "申": "寅", "卯": "酉", "酉": "卯",
              "辰": "戌", "戌": "辰", "巳": "亥", "亥": "巳"}
-    move_branches = {clash[b] for b in wealth_branches}
+    move_branches = {clash[b] for b in wealth_branches | {p["month"].branch}}
     ins, moves, outs = [], [], []
-    for y in range(birth.year + 19, this_year):          # 세는 나이 20세부터 지난해까지
+    for y in range(birth.year + 24, this_year):          # 세는 나이 25세(제 돈을 쓰기 시작할 무렵)부터 지난해까지
         gz = calendar_ganji(date(y, 6, 15))[0]
         sg, bg = god(gz[0]), god(get_hidden_stems(gz[1]).stems[0].stem)
         if sg in _WEALTH or (sg in _OUTPUT and bg in _WEALTH):
@@ -267,12 +270,17 @@ def _compose_paid(core: MyeongriCoreResult, query: dict, name: str, a: dict, see
             periods[-1][1] = y
         else:
             periods.append([y, y])
-    dated = [(s0, (sec.PAST_IN if k == 0 else sec.PAST_IN_AGAIN).format(span=_span(birth.year, s0, e0)))
+    p_in = (sec.PAST_FLOW, sec.PAST_FLOW_AGAIN) if a["rob_heavy"] else (sec.PAST_IN, sec.PAST_IN_AGAIN)
+    dated = [(s0, p_in[0 if k == 0 else 1].format(span=_span(birth.year, s0, e0)))
              for k, (s0, e0) in enumerate(periods)]
+    both = set(moves) & set(outs)
+    dated += [(y, sec.PAST_MOVE_OUT.format(span=_span(birth.year, y, y))) for y in sorted(both)][:1]
+    only_m, only_o = [y for y in moves if y not in both], [y for y in outs if y not in both]
+    dated += [(y, sec.PAST_MOVE_AGAIN.format(span=_span(birth.year, y, y))) for y in sorted(both)][1:]
     dated += [(y, (sec.PAST_MOVE if k == 0 else sec.PAST_MOVE_AGAIN).format(span=_span(birth.year, y, y)))
-              for k, y in enumerate(moves)]
+              for k, y in enumerate(only_m)]
     dated += [(y, (sec.PAST_OUT if k == 0 else sec.PAST_OUT_AGAIN).format(span=_span(birth.year, y, y)))
-              for k, y in enumerate(outs)]
+              for k, y in enumerate(only_o)]
     dated.sort(key=lambda t: t[0])
     past = [t for _, t in dated]
 
@@ -283,14 +291,16 @@ def _compose_paid(core: MyeongriCoreResult, query: dict, name: str, a: dict, see
         if c.get("end_age", 0) < 18 or c.get("start_age", 0) > 77:
             continue
         sg = god(c["pillar"]["stem"])
-        state = ("gather" if sg in _WEALTH else "make" if (sg in _OUTPUT and not a["weak"])
-                 else "leak" if (sg == "rob_wealth" or (sg == "peer" and not a["weak"])) else "plain")
+        state = (("flow" if a["rob_heavy"] else "gather") if sg in _WEALTH else "make" if (sg in _OUTPUT and not a["weak"])
+                 else "leak" if (sg == "rob_wealth" or (sg == "peer" and not a["weak"]))
+                 else "guard" if (a["rob_heavy"] and sg in _OFFICER) else "plain")
         span = f'{c["start_age"]}~{c["end_age"]}세'
         gz = GAN_KO.get(c["pillar"]["stem"], "") + ZHI_KO.get(c["pillar"]["branch"], "")
         if state != "plain":
             again = state in kinds
             tpl = {"gather": (sec.AGE_GATHER, sec.AGE_GATHER_AGAIN), "make": (sec.AGE_MAKE, sec.AGE_MAKE),
-                   "leak": (sec.AGE_LEAK, sec.AGE_LEAK_AGAIN)}[state][1 if again else 0]
+                   "leak": (sec.AGE_LEAK, sec.AGE_LEAK_AGAIN), "flow": (sec.AGE_FLOW, sec.AGE_FLOW_AGAIN),
+                   "guard": (sec.AGE_GUARD, sec.AGE_GUARD_AGAIN)}[state][1 if again else 0]
             if not (state == "make" and again):
                 age.append(tpl.format(span=span, ganji=gz))
             kinds.append(state)
@@ -299,7 +309,7 @@ def _compose_paid(core: MyeongriCoreResult, query: dict, name: str, a: dict, see
             if grp:
                 age.append((sec.AGE_FUTURE_AGAIN if grp in kinds else sec.AGE_FUTURE)[grp].format(span=span, ganji=gz))
                 kinds.append(grp)
-        if state in ("gather", "make"):
+        if state in ("gather", "make", "guard"):
             phases.append("early" if c["start_age"] < 38 else "middle" if c["start_age"] < 58 else "late")
         if c["start_age"] <= age_now <= c["end_age"]:
             now_state = state
@@ -313,7 +323,10 @@ def _compose_paid(core: MyeongriCoreResult, query: dict, name: str, a: dict, see
 
     # 7-3 집·문서와 큰돈
     res_n = a["n"].get("direct_resource", 0) + a["n"].get("indirect_resource", 0)
-    big = [sec.BIG_HOME["strong" if res_n >= 2 else "some" if res_n else "none"]]
+    land = _CONTROLS[GAN_WUXING[dm]] == "土"
+    big = [sec.BIG_HOME["strong"] if res_n >= 2 else sec.BIG_LAND if land else sec.BIG_HOME["some" if res_n else "none"]]
+    if a["rob_heavy"]:
+        big = [x for x in big if x != sec.BIG_HOME["none"]] + [sec.BIG_LOCK]
     goods_y, docs_y, moves_y = [], [], []
     for y in range(this_year, this_year + 10):
         gz = calendar_ganji(date(y, 6, 15))[0]
@@ -377,7 +390,7 @@ def _compose_paid(core: MyeongriCoreResult, query: dict, name: str, a: dict, see
         bullets.append(sec.BULLET_MONTH.format(month=f'{goods[0]["y"]}년 {goods[0]["m"]}월'))
     return dict(path=path, invest=invest, people=people, past=past, age=age, age_now=now_line, life=life_line, big=big, months=rows, keys=keys,
                 month_caption=sec.MONTH_CAPTION.format(y=start[0], m=start[1]), kaiun=kaiun, bullets=bullets,
-                evidence=dict(vessel=a["vessel"], leaks=a["leaks"], positions=a["positions"], invest=a["invest"],
+                evidence=dict(vessel=a["vessel"], rob_heavy=a["rob_heavy"], leaks=a["leaks"], positions=a["positions"], invest=a["invest"],
                               people=a["people"], ins=periods, moves=moves, outs=outs, now_state=now_state, kaiun_element=el, life=life, big_years=goods_y, doc_years=docs_y, move_years=moves_y,
                               months=[dict(month=f'{r["y"]}-{r["m"]:02d}', grade=r["grade"], reason=r["reason"]) for r in rows]))
 
@@ -398,6 +411,8 @@ def build_lifetime_wealth_report(core: MyeongriCoreResult, user_name: str, *, is
 
     head, body = sec.VESSEL[a["vessel"]]
     vessel_html = f"<h3>{escape(head)}</h3>" + _p(body.format(name=name)) + _p(sec.STYLE[a["style"]])
+    if a["rob_heavy"] and a["vessel"] != "rival":
+        vessel_html += _p(sec.VESSEL_ROB)
     leaks_html = '<div style="display:grid;gap:8px;">' + "".join(
         f'<div data-wealth-trap="{k}" style="{_BOX}"><strong>{escape(t)}</strong>'
         f'<p style="margin:4px 0 0;">{escape(x)}</p><p data-wealth-trap-fix="{k}" style="margin:4px 0 0;">{escape(f)}</p></div>'

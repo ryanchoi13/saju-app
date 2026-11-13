@@ -60,14 +60,20 @@ class WealthV3Tests(unittest.TestCase):
         self.assertNotIn('data-wealth-section="path"', r["content"])
 
     def test_reference_person(self):
-        # 정오님 甲戌 일주: 식상(午·巳) + 재성(戊·己·戌) → 식상생재 그릇, 일지 재성, 辰년이 재물 자리 충
+        # 정오님 甲戌 일주 · 乙卯 월주(겁재 둘): 식상생재 그릇이지만 남기는 힘이 약함(장사는 되는데 남는 게 없음),
+        # 2017(卯酉충) IT 사업 시작, 2025(乙巳 겁재) 카페 투자, 토 재성 = 집·땅(2016 전농동 아파트가 유일하게 크게 남음),
+        # 지금 庚申 대운 = 관성이 겁재를 누르는 정리·지킴. 일지 辰戌충(2000·2012·2024)은 애정운에서만 읽는다.
         ev = self.paid["evidence_summary"]["v3"]
         self.assertEqual(ev["vessel"], "output")
-        self.assertEqual(ev["moves"], [2000, 2012, 2024])
+        self.assertTrue(ev["rob_heavy"])
+        self.assertEqual(ev["moves"], [2005, 2017])
         self.assertIn(2025, ev["outs"])
+        self.assertEqual(ev["now_state"], "guard")
         t = _text(self.paid["content"])
-        self.assertIn("배우자 자리(일지)에 재물의 별이 있어서", t)
-        self.assertIn("2027년·2028년·2029년이에요", t)
+        self.assertIn("버는 힘에 비해 남기는 힘이 약한 편이에요", t)
+        self.assertIn("땅과 집이 곧 재물이 되는 사주예요", t)
+        self.assertNotIn("가장 좋은 재테크는 나 자신이에요", t)     # 겁재 강한 사주에 '내 사업에 돈 넣기'를 권하지 않음
+        self.assertNotIn("2000년", t)
 
     def test_no_sentence_repeats(self):
         sents = [x.strip() for line in _text(self.paid["content"]).split("\n")

@@ -111,8 +111,8 @@ PAST_HEADING = "지나온 재물 흐름"
 PAST_INTRO = "{name}님 사주에서 재물의 기운이 움직인 해를 지나온 시간에 대어 보면 이래요."
 PAST_IN = "{span}에는 재물의 기운이 크게 들어 돈이 들어오거나 판이 커지는 때였어요."
 PAST_IN_AGAIN = "{span}에도 재물의 기운이 크게 들었어요."
-PAST_MOVE = "{span}에는 재물의 자리가 크게 움직였어요(충). 일이나 돈의 흐름이 크게 바뀌는 해예요."
-PAST_MOVE_AGAIN = "{span}에도 재물의 자리가 크게 움직였어요."
+PAST_MOVE = "{span}에는 일과 재물의 자리가 크게 움직였어요(충). 하던 일이나 돈의 판이 바뀌는 해예요."
+PAST_MOVE_AGAIN = "{span}에도 일과 재물의 자리가 크게 움직였어요."
 PAST_OUT = "{span}에는 겁재가 들어 돈이 사람을 따라 나가거나 경쟁에 쓰이기 쉬운 해였어요."
 PAST_OUT_AGAIN = "{span}에도 겁재가 들어 돈이 나가기 쉬웠어요."
 PAST_NONE = "아직 재물의 기운이 크게 움직인 해를 지나지 않았어요. 재물의 흐름은 앞으로 열려요."
@@ -126,7 +126,9 @@ AGE_MAKE = "{span}({ganji}) — 재주가 재물로 이어지는(식상생재) 1
 AGE_LEAK = "{span}({ganji}) — 겁재가 들어 돈이 새기 쉬운 10년이에요. 이 시기엔 넓히기보다 지키는 쪽이 맞아요."
 AGE_LEAK_AGAIN = "{span}({ganji}) — 다시 돈이 새기 쉬운 10년이에요."
 AGE_NOW = "지금은 {span}로, {state}"
-AGE_NOW_STATE = {"gather": "돈이 모이는 10년 안에 있어요.", "make": "재주가 재물로 이어지는 10년 안에 있어요.",
+AGE_NOW_STATE = {"flow": "돈이 크게 오가는 10년 안에 있어요. 들어오는 대로 묶어 두는 것이 핵심이에요.",
+                 "guard": "새던 돈을 막고 지키는 10년 안에 있어요. 정리할 것은 정리하고, 남은 것을 묶어 두는 때예요.",
+                 "gather": "돈이 모이는 10년 안에 있어요.", "make": "재주가 재물로 이어지는 10년 안에 있어요.",
                  "leak": "지키는 쪽이 맞는 10년 안에 있어요.", "plain": "재물의 흐름이 크게 기울지 않은 10년이라, 하던 대로 꾸준히 쌓으면 돼요."}
 
 # 7-2 ── 앞으로 올 10년들 (지금 이후 대운, 77세까지)
@@ -157,7 +159,20 @@ BIG_HOME = {
 BIG_YEARS_GOOD = "앞으로 10년 안에서 재물의 기운이 들어와 큰돈을 움직이기 좋은 해는 {years}이에요."
 BIG_YEARS_NONE = "앞으로 10년 안에는 재물의 기운이 크게 드는 해가 뚜렷하지 않아서, 큰돈은 한 번에 움직이기보다 나눠서 움직이는 편이 맞아요."
 BIG_YEARS_DOC = "집이나 계약 같은 문서를 정리하기 좋은 해는 {years}이에요."
-BIG_YEARS_MOVE = "{years}에는 재물의 자리가 크게 움직여요. 이때 하는 큰 계약은 서두르지 말고 조건을 한 번 더 보세요."
+BIG_YEARS_MOVE = "{years}에는 일과 재물의 자리가 크게 움직여요. 이때 하는 큰 계약은 서두르지 말고 조건을 한 번 더 보세요."
+
+# 11/13 정오님 대조 후 추가: 겁재가 단단한 원국(겁재 2자리 이상 또는 월지 겁재) — 군겁쟁재
+VESSEL_ROB = "다만 원국에 겁재가 단단히 자리 잡고 있어서, 버는 힘에 비해 남기는 힘이 약한 편이에요. 매출이나 수입보다 실제로 남은 돈을 기준으로 삼아야 그릇이 채워져요."
+INVEST_ROB = "겁재가 강한 사주라 남의 말을 듣고 들어가는 투자와 내 돈을 크게 넣는 사업에서 손해가 커요. 직접 확인한 것, 쉽게 꺼내 쓸 수 없게 묶어 두는 자산 위주로 가세요."
+PAST_MOVE_OUT = "{span}에는 일과 재물의 자리가 크게 움직이고 겁재까지 들어, 판이 바뀌면서 돈이 나가기 쉬운 해였어요."
+PAST_FLOW = "{span}에는 재물의 기운이 크게 들었지만, 원국의 겁재가 함께 움직여 들어온 만큼 나가기도 쉬운 때였어요."
+PAST_FLOW_AGAIN = "{span}에도 돈이 크게 오갔어요."
+AGE_FLOW = "{span}({ganji}) — 재물의 기운이 크게 들어오지만 겁재도 함께 움직여, 들어온 만큼 나가기도 쉬운 10년이에요. 이때 들어온 돈은 바로 묶어 두어야 남아요."
+AGE_FLOW_AGAIN = "{span}({ganji}) — 다시 돈이 크게 오가는 10년이에요."
+AGE_GUARD = "{span}({ganji}) — 관성이 겁재를 눌러 새던 돈을 막는 10년이에요. 벌이를 넓히기보다 정리하고 지킬 때 재물이 남아요."
+AGE_GUARD_AGAIN = "{span}({ganji}) — 다시 새는 돈을 막고 지키는 10년이에요."
+BIG_LAND = "재물의 별이 흙(토)의 기운이라, 땅과 집이 곧 재물이 되는 사주예요. 손에 쥔 현금보다 집이나 땅처럼 형태가 있는 재산으로 바꿔 두었을 때 재물이 커져요."
+BIG_LOCK = "현금은 사람과 일을 따라 새기 쉬운 사주라, 들어온 돈을 집처럼 쉽게 꺼내 쓸 수 없는 재산으로 묶어 둘 때 오래 남아요."
 
 # 8 ── 앞으로 12개월
 MONTH_CAPTION = "{y}년 {m}월부터 12개월, 각 달의 월운을 오늘의 운세와 같은 '금전' 분야 기준으로 짚었어요. 금액이나 수익을 예측한 것은 아닙니다."
@@ -205,6 +220,8 @@ BULLET_VESSEL = {
 }
 BULLET_MONTH = "{month}처럼 금전 흐름이 좋은 달에 미뤄 둔 거래나 협상을 꺼내 보세요."
 BULLET_AGE = {
+    "flow": "지금은 돈이 크게 오가는 10년이라, 들어온 돈의 절반은 바로 꺼내 쓰기 어려운 곳에 옮겨 두세요.",
+    "guard": "지금은 정리하고 지키는 10년이라, 남는 것 없이 돌아가는 일부터 하나씩 줄이세요.",
     "gather": "지금은 모이는 10년이라, 들어온 돈의 일부를 바로 묶어 두는 습관이 가장 큰 차이를 만들어요.",
     "make": "지금은 재주가 돈이 되는 10년이라, 만든 것을 밖에 내놓는 횟수를 늘리세요.",
     "leak": "지금은 지키는 10년이라, 큰 투자보다 빚을 줄이고 현금을 쌓는 쪽을 고르세요.",
@@ -235,5 +252,6 @@ def all_sentences() -> list[str]:
     out += [PATH_LEAD, PATH_HIDDEN, PATH_NONE, PEOPLE_SPOUSE, PAST_INTRO, PAST_IN, PAST_IN_AGAIN, PAST_MOVE,
             PAST_MOVE_AGAIN, PAST_OUT, PAST_OUT_AGAIN, PAST_NONE, AGE_LEAD, AGE_GATHER, AGE_GATHER_AGAIN, AGE_MAKE,
             AGE_LEAK, AGE_LEAK_AGAIN, MONTH_CAPTION, NO_KEY_MONTH, KAIUN_LEAD, KAIUN_COLOR, KAIUN_HABIT,
-            BULLET_MONTH, BIG_YEARS_GOOD, BIG_YEARS_NONE, BIG_YEARS_DOC, BIG_YEARS_MOVE, LOCKED_TEASER, CTA, DISCLAIMER]
+            VESSEL_ROB, INVEST_ROB, PAST_MOVE_OUT, PAST_FLOW, PAST_FLOW_AGAIN, AGE_FLOW, AGE_FLOW_AGAIN, AGE_GUARD, AGE_GUARD_AGAIN,
+            BIG_LAND, BIG_LOCK, BULLET_MONTH, BIG_YEARS_GOOD, BIG_YEARS_NONE, BIG_YEARS_DOC, BIG_YEARS_MOVE, LOCKED_TEASER, CTA, DISCLAIMER]
     return out
