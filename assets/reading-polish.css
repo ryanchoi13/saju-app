@@ -159,3 +159,14 @@ html[data-brand] #archiveModalBody .theme-reading [data-wealth-month] { margin:0
 html[data-brand] #archiveModalBody .theme-reading [data-wealth-month] > strong { margin-right:6px; }
 html[data-brand] #archiveModalBody .theme-reading [data-wealth-month][data-month-grade="caution"] > strong { color:var(--c-point,#B5341F); }
 html[data-brand] #archiveModalBody .theme-reading [data-wealth-month][data-month-grade="normal"] > strong { color:#7A828A; font-weight:600; }
+/* 11/13 테마운 v3 위계: 칸 제목(h2, 번호) > 칸 안 소제목(h3) > 본문. 소제목이 칸 제목보다 커 보이지 않게. */
+html[data-brand] #archiveModalBody .theme-reading[data-theme] > section > h2.reading-section-heading { margin:34px 0 14px!important; }
+html[data-brand] #archiveModalBody .theme-reading[data-theme] > section:first-child > h2.reading-section-heading { margin-top:4px!important; }
+html[data-brand] #archiveModalBody .theme-reading[data-theme] > section > h2 .reading-heading-copy { font-size:20px!important; font-weight:800!important; }
+html[data-brand] #archiveModalBody .theme-reading[data-theme] > section > h3,
+html[data-brand] #archiveModalBody .theme-reading[data-theme] > section h3 { font-size:16px!important; font-weight:700!important; margin:14px 0 6px!important; color:var(--c-ink,#1D2129); }
+/* 미리보기(결제 전 카드 안): 같은 위계를 카드 크기에 맞춰 */
+:root[data-brand] body .tab-view:not(#view-today) .theme-preview .theme-reading[data-theme] > section > h2, .theme-preview .theme-reading[data-theme] > section > h2 { font-family:'Pretendard',sans-serif; font-size:19px; font-weight:800; line-height:1.5; margin:22px 0 10px; color:var(--c-ink,#1D2129); }
+.theme-preview .theme-reading[data-theme] > section:first-child > h2 { margin-top:4px; }
+:root[data-brand] body .tab-view:not(#view-today) .card .theme-preview .theme-reading[data-theme] h3, .reading-view .card .theme-preview .theme-reading[data-theme] h3 { font-family:'Pretendard',sans-serif!important; font-size:16px!important; font-weight:700!important; line-height:1.6!important; margin:12px 0 6px!important; }
+.theme-preview .theme-reading[data-theme] p { font-size:15px; line-height:1.8; margin:0 0 10px; }
