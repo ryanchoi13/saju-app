@@ -113,10 +113,18 @@
       const s = await res.json();
       const [, m, d] = s.next_date.split('-').map(Number);
       document.getElementById('seasonArt').src = s.art;
-      document.getElementById('seasonTitle').textContent = s.is_today ? `오늘은 ${s.name}` : `지금은 ${s.name}`;
+      // 11/13 정오님: 절기를 모르면 '입동'이 무엇인지, '소설'이 책인지 알 수 없다 → 24절기 이름표 + 한자 + "다음 절기"
+      const withHanja = (name, hanja) => hanja ? `${name}(${hanja})` : name;
+      const kicker = document.getElementById('seasonKicker');
+      if (kicker) kicker.textContent = s.order_label ? `24절기 · ${s.order_label}` : '24절기';
+      document.getElementById('seasonTitle').textContent = `${s.is_today ? '오늘은' : '지금은'} ${withHanja(s.name, s.hanja)}`;
       document.getElementById('seasonLine').textContent = s.line;
-      document.getElementById('seasonNext').textContent = s.days_to_next === 1
-        ? `내일은 ${s.next_name}` : `${m}월 ${d}일 ${s.next_name}까지 ${s.days_to_next}일`;
+      // 줄이 넘치면 가운뎃점에서 끊기게 두 덩어리로 넣는다("…9일 / 뒤"처럼 한 글자만 떨어지지 않게)
+      const next = document.getElementById('seasonNext');
+      const part = (text) => { const el = document.createElement('span'); el.style.whiteSpace = 'nowrap'; el.textContent = text; return el; };
+      next.replaceChildren(
+        part(`다음은 ${withHanja(s.next_name, s.next_hanja)}`), ' · ',
+        part(s.days_to_next === 1 ? `내일(${m}월 ${d}일)` : `${m}월 ${d}일, ${s.days_to_next}일 뒤`));
       card.classList.toggle('is-today', !!s.is_today);
       card.hidden = false;
     } catch (_) { /* 절기 카드는 없어도 되는 칸 */ }

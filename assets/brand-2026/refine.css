@@ -198,6 +198,8 @@ html[data-brand] body #view-today .dh-season[hidden] { display:none!important; }
 html[data-brand] body .dh-season-art { width:76px; height:76px; flex-shrink:0; border-radius:50%; object-fit:cover; background:var(--ui-page); }
 html[data-brand] body .dh-season-text { min-width:0; }
 html[data-brand] body #view-today .dh-season h4 { font-family:var(--brand-serif)!important; font-size:19px!important; font-weight:600!important; margin:0 0 4px!important; }
+html[data-brand] body .dh-season-kicker { margin:0 0 2px; font-size:12px; letter-spacing:.04em; color:var(--ui-muted); }
+html[data-brand] body .dh-season-next { word-break:keep-all; }
 html[data-brand] body .dh-season-line { margin:0; font-size:14px; line-height:1.6; color:var(--ui-ink); word-break:keep-all; }
 html[data-brand] body .dh-season-next { margin:6px 0 0; font-size:12px; color:var(--ui-muted); }
 html[data-brand] body #view-today .dh-season.is-today { border-color:var(--ui-ink)!important; }
