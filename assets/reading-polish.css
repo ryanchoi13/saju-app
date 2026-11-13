@@ -170,3 +170,33 @@ html[data-brand] #archiveModalBody .theme-reading[data-theme] > section h3 { fon
 .theme-preview .theme-reading[data-theme] > section:first-child > h2 { margin-top:4px; }
 :root[data-brand] body .tab-view:not(#view-today) .card .theme-preview .theme-reading[data-theme] h3, .reading-view .card .theme-preview .theme-reading[data-theme] h3 { font-family:'Pretendard',sans-serif!important; font-size:16px!important; font-weight:700!important; line-height:1.6!important; margin:12px 0 6px!important; }
 .theme-preview .theme-reading[data-theme] p { font-size:15px; line-height:1.8; margin:0 0 10px; }
+
+/* ── 11/13 테마 풀이 정리 (정오님: 선·초승달·숫자 상자 때문에 정신없고 간격이 안 맞음) ──
+   원칙: 구분은 선이 아니라 여백으로. 번호는 상자 없이 포인트 색 숫자만. 간격은 세 단계만 쓴다.
+   큰 칸 사이 56 · 칸 제목→본문 14 · 문단 사이 14 (소제목 위 28). 크기: 칸 제목 20 굵게 > 소제목 17 굵게 > 본문 16. */
+html[data-brand] #archiveModalBody .theme-reading[data-theme] > section,
+html[data-brand] #archiveModalBody .theme-reading[data-theme] > section + section,
+html[data-brand] #archiveModalBody .theme-reading[data-theme] > hr[data-paywall-boundary] + section { border:0!important; margin:56px 0 0!important; padding:0!important; position:static!important; }
+html[data-brand] #archiveModalBody .theme-reading[data-theme] > section:first-child { margin-top:0!important; }
+html[data-brand] #archiveModalBody .theme-reading[data-theme] > section::before,
+html[data-brand] #archiveModalBody .theme-reading[data-theme] > section::after { content:none!important; display:none!important; }
+html[data-brand] #archiveModalBody .theme-reading[data-theme] > section > h2,
+html[data-brand] #archiveModalBody .theme-reading[data-theme] > section > h2.reading-section-heading { display:flex!important; align-items:baseline!important; gap:10px!important; margin:0 0 14px!important; padding:0!important; border:0!important; font-family:'Pretendard',sans-serif!important; font-size:20px!important; font-weight:700!important; line-height:1.45!important; letter-spacing:-.02em; color:var(--c-ink,#1D2129); }
+html[data-brand] #archiveModalBody .theme-reading[data-theme] > section > h2 .reading-section-number { background:none!important; padding:0!important; border-radius:0!important; margin:0!important; color:var(--c-point,#B5341F)!important; font-size:17px!important; font-weight:700!important; letter-spacing:.02em; font-variant-numeric:tabular-nums; line-height:1.45!important; }
+html[data-brand] #archiveModalBody .theme-reading[data-theme] > section > h2 .reading-heading-copy { font-family:'Pretendard',sans-serif!important; font-size:20px!important; font-weight:700!important; line-height:1.45!important; color:var(--c-ink,#1D2129); }
+html[data-brand] #archiveModalBody .theme-reading[data-theme] > section h3 { font-family:'Pretendard',sans-serif!important; font-size:17px!important; font-weight:700!important; line-height:1.5!important; margin:28px 0 10px!important; color:var(--c-ink,#1D2129); }
+html[data-brand] #archiveModalBody .theme-reading[data-theme] > section > h2 + h3 { margin-top:0!important; }
+html[data-brand] #archiveModalBody .theme-reading[data-theme] > section p { font-size:16px!important; line-height:1.8!important; margin:0 0 14px!important; color:#2F3A45; }
+html[data-brand] #archiveModalBody .theme-reading[data-theme] > section p:last-child { margin-bottom:0!important; }
+html[data-brand] #archiveModalBody .theme-reading[data-theme] > section > ul,
+html[data-brand] #archiveModalBody .theme-reading[data-theme] > section > ol { margin:0 0 14px!important; padding-left:20px!important; }
+html[data-brand] #archiveModalBody .theme-reading[data-theme] > section li { font-size:16px; line-height:1.8!important; margin:0 0 8px!important; }
+html[data-brand] #archiveModalBody .theme-reading[data-theme] > section li:last-child { margin-bottom:0!important; }
+/* 함정·눈여겨볼 달 같은 항목 묶음: 상자·마름모 없이 굵은 제목 + 본문, 항목 사이 20 */
+html[data-brand] #archiveModalBody .theme-reading[data-theme] > section > div[style*="grid"] { gap:20px!important; }
+html[data-brand] #archiveModalBody .theme-reading[data-theme] :is([data-career-trap],[data-love-trap],[data-health-trap],[data-wealth-trap],[data-health-key-month],[data-wealth-key-month],[data-career-key-month],[data-love-key-month],[data-love-match],[data-love-now],[data-love-makeup],[data-love-remedy],[data-love-weak],[data-career-helper],[data-career-hard]) { padding:0!important; border:0!important; background:transparent!important; }
+html[data-brand] #archiveModalBody .theme-reading[data-theme] :is([data-career-trap],[data-love-trap],[data-health-trap],[data-wealth-trap],[data-health-key-month],[data-wealth-key-month],[data-career-key-month],[data-love-key-month],[data-love-match],[data-love-now],[data-love-makeup],[data-love-remedy],[data-love-weak],[data-career-helper],[data-career-hard])::before { content:none!important; display:none!important; }
+html[data-brand] #archiveModalBody .theme-reading[data-theme] :is([data-career-trap],[data-love-trap],[data-health-trap],[data-wealth-trap],[data-health-key-month],[data-wealth-key-month],[data-career-key-month],[data-love-key-month],[data-love-match],[data-love-now],[data-love-makeup],[data-love-remedy],[data-love-weak],[data-career-helper],[data-career-hard]) strong { display:block; font-size:16px!important; font-weight:700!important; line-height:1.6!important; color:var(--c-ink,#1D2129)!important; margin:0 0 4px; }
+html[data-brand] #archiveModalBody .theme-reading[data-theme] :is([data-career-trap],[data-love-trap],[data-health-trap],[data-wealth-trap],[data-health-key-month],[data-wealth-key-month],[data-career-key-month],[data-love-key-month],[data-love-match],[data-love-now],[data-love-makeup],[data-love-remedy],[data-love-weak],[data-career-helper],[data-career-hard]) p { margin:0 0 6px!important; }
+html[data-brand] #archiveModalBody .theme-reading[data-theme] > details.reading-evidence { margin-top:56px!important; }
+html[data-brand] #archiveModalBody .theme-reading[data-theme] > section[data-paywall] > ul:has(> li[data-month-grade]) { padding-left:0!important; list-style:none; }
