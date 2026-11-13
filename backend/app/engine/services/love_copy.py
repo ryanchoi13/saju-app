@@ -287,6 +287,7 @@ TALK = {
     "인성": "결론을 내기 전에 상대 이야기를 끝까지 들어 주는 게 잘 맞아요",
 }
 NOW_TALK = "이번 10년은 {talk}."
+GOD_GROUP_EN = {"비겁": "peer", "식상": "output", "재성": "wealth", "관성": "officer", "인성": "resource"}
 
 # 잠금 영역 문구
 LOCK_LABEL = "잠긴 풀이"
