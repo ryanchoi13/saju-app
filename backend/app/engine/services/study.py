@@ -53,7 +53,7 @@ def _uncertainty(core: MyeongriCoreResult) -> str:
             '여러 시주에서 공통으로 유지되는 원국과 대운 흐름을 중심으로 설명했습니다.</p></div>')
 
 
-STUDY_NARRATIVE_VERSION = "study-v3"   # 11/13: 공부 머리·새는 습관 무료 + 유료 8칸(옛 공통 안내 걷어 냄)
+STUDY_NARRATIVE_VERSION = "study-v3"   # 11/13: 공부 머리·방해하는 습관 무료 + 유료 8칸(옛 공통 안내 걷어 냄)
 
 _BOX = "border:1px solid #E2E8F0;border-radius:12px;padding:12px 14px;background:#FFFFFF;"
 _SKELETON = (
@@ -335,7 +335,7 @@ def build_lifetime_study_report(core: MyeongriCoreResult, user_name: str, *, is_
         f'<p style="margin:4px 0 0;">{escape(x)}</p><p data-study-trap-fix="{k}" style="margin:4px 0 0;">{escape(f)}</p></div>'
         for k, (t, x, f) in ((k, sec.LEAK[k]) for k in a["leaks"])) + "</div>"
     free = (_sec_html("mind", "타고난 공부 머리", mind_html, "free", "1")
-            + _sec_html("leaks", f"공부가 새는 습관 {len(a['leaks'])}가지", leaks_html, "free", "2")
+            + _sec_html("leaks", f"공부를 방해하는 습관 {len(a['leaks'])}가지", leaks_html, "free", "2")
             + '<hr data-paywall-boundary="study" style="border:0;border-top:1px dashed #94A3B8;margin:18px 0;">')
     evidence_summary = dict(natal=dict(mind=a["mind"], strength=a["strength"], ten_gods=a["n"]),
                             copy_ids=dict(tier1=a["mind"], tier2=a["leaks"]))
