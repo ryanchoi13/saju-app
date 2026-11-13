@@ -255,7 +255,9 @@ def _compose_paid(core: MyeongriCoreResult, query: dict, name: str, a: dict, see
              "辰": "戌", "戌": "辰", "巳": "亥", "亥": "巳"}
     move_branches = {clash[b] for b in wealth_branches | {p["month"].branch}}
     ins, moves, outs = [], [], []
-    for y in range(birth.year + 24, this_year):          # 세는 나이 25세(제 돈을 쓰기 시작할 무렵)부터 지난해까지
+    # 제 돈을 벌기 시작하는 나이(세는 나이). 남자는 군 복무로 졸업·취업이 늦어 27세, 여자는 25세 (11/13 정오님)
+    earn = 27 if getattr(core.input, "gender", "") == "male" else 25
+    for y in range(birth.year + earn - 1, this_year):
         gz = calendar_ganji(date(y, 6, 15))[0]
         sg, bg = god(gz[0]), god(get_hidden_stems(gz[1]).stems[0].stem)
         if sg in _WEALTH or (sg in _OUTPUT and bg in _WEALTH):
@@ -288,8 +290,8 @@ def _compose_paid(core: MyeongriCoreResult, query: dict, name: str, a: dict, see
     age, now_line, now_state, kinds, phases = [], "", "plain", [], []
     age_now = this_year - birth.year + 1
     for c in (core.timing.luck_cycle or {}).get("cycles", []):
-        if c.get("start_age", 0) < 20 or c.get("start_age", 0) > 77:
-            continue                                     # 절반 넘게 학생 시절인 대운은 재물 시기로 읽지 않는다(11/13 정오님 대조)
+        if c.get("start_age", 0) < earn - 5 or c.get("start_age", 0) > 77:
+            continue                                     # 10년 중 절반 넘게 벌이 전(학생·군 복무)인 대운은 재물 시기로 읽지 않는다
         sg = god(c["pillar"]["stem"])
         state = (("flow" if a["rob_heavy"] else "gather") if sg in _WEALTH else "make" if (sg in _OUTPUT and not a["weak"])
                  else "leak" if (sg == "rob_wealth" or (sg == "peer" and not a["weak"]))
