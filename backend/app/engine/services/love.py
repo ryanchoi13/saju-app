@@ -24,7 +24,7 @@ from app.engine.core.models import MyeongriCoreResult
 from app.engine.calendar import to_solar
 from app.engine.semantic import build_service_query
 from app.engine.services.applied_guidance import direction_advice, state_basis
-from app.engine.services.annual_copy import seed_from
+from app.engine.services.annual_copy import seed_from, split_sentences
 from app.engine.services import love_copy as copy
 from app.engine.services import theme_timing
 from app.engine.services import love_sections as sec
@@ -261,12 +261,13 @@ def _pair_section(attr: str, heading: str, items: list[tuple[str, str]]) -> str:
 def _unlocked_html(d: dict, match: dict, now: dict) -> str:
     g = d["group"]
     out = [
-        _pair_section("express", "사랑을 표현하는 방식",
-                      [(sec.EXPRESS_TITLE, sec.EXPRESS[g]), (sec.RECEIVE_TITLE, sec.RECEIVE[g])]),
+        _section("charm", sec.CHARM_HEADING, _p(d["charm"])),
+        _pair_section("course", "연애의 시작과 그 뒤",
+                      [(sec.START_TITLE, sec.START[g]), (sec.LATER_TITLE, sec.LATER[g])]),
         _pair_section("match", copy.MATCH_HEADING,
                       [(copy.MATCH_GOOD_TITLE, match["good"]), (copy.MATCH_BAD_TITLE, match["bad"])]),
-        _pair_section("fight", "다툴 때 나의 모습과 화해법",
-                      [(sec.FIGHT_TITLE, sec.FIGHT[g]), (sec.MAKEUP_TITLE, sec.MAKEUP[g])]),
+        _pair_section("makeup", sec.MAKEUP_HEADING,
+                      [(sec.MAKEUP_TITLE, sec.MAKEUP[g]), (sec.PARTNER_TITLE, sec.PARTNER[g])]),
         _pair_section("now", copy.NOW_HEADING,
                       [(copy.NOW_SINGLE_TITLE, now["single"]), (copy.NOW_COUPLE_TITLE, now["couple"])]),
     ]
@@ -290,7 +291,7 @@ def _unlocked_html(d: dict, match: dict, now: dict) -> str:
                         + f'<h3>달별 흐름</h3><ul style="padding-left:18px;">{rows}</ul>' + keys_html, tier="3"))
     out.append(_section("place", "함께 가면 좋은 곳", _p(d["place"])))
     items = "".join(f'<li data-love-action="{i}">{escape(b)}</li>' for i, b in enumerate(d["bullets"], start=1))
-    out.append(_section("actions", "다정한 관계 5원칙", f'<ol>{items}</ol>', tier="4"))
+    out.append(_section("actions", "다정한 관계를 위한 실천", f'<ol>{items}</ol>', tier="4"))
     return "".join(out)
 
 
@@ -309,10 +310,20 @@ def _love_tier(rule: dict) -> tuple[str, str | None]:
     return "normal", None
 
 
-def _months(core: MyeongriCoreResult, seed: int, start: tuple[int, int] | None = None) -> tuple[list[dict], list[dict], dict]:
+def _pick_line(pool: tuple, start: int, used: set) -> str:
+    """같은 문장이 12달 목록에 두 번 나오지 않게, 아직 안 쓴 변형부터 고른다(다 썼으면 처음 자리)."""
+    for i in range(len(pool)):
+        line = pool[(start + i) % len(pool)]
+        if line not in used:
+            used.add(line)
+            return line
+    return pool[start % len(pool)]
+
+
+def _months(core: MyeongriCoreResult, seed: int, start: tuple[int, int] | None = None, skip=None) -> tuple[list[dict], list[dict], dict]:
     dm = core.natal_facts.pillars["day"].stem
     birth = to_solar(core.input.birth_date, core.input.calendar_type, core.input.is_leap_month)
-    rows, prev = [], None
+    rows, prev, used = [], None, set()
     for y, m in theme_timing.window_months(start or theme_timing.window_start(core)):
         target = date(y, m, 15)
         if target < birth:
@@ -322,18 +333,24 @@ def _months(core: MyeongriCoreResult, seed: int, start: tuple[int, int] | None =
         grade, reason = _love_tier(r["domain_rules"]["사람"])
         group = _god_group(dm, GAN_WUXING[month_gz[0]])
         rows.append(dict(y=y, m=m, ganji=month_gz, year_ganji=year_gz, grade=grade,
-                         label=sec.GRADE_LABEL[grade], line=sec.MONTH_LINE[group][grade][(seed + m) % 2],
+                         label=sec.GRADE_LABEL[grade], line=_pick_line(sec.MONTH_LINE[group][grade], seed + m, used),
                          score=r["score"], reason=reason, display=theme_timing.month_label(y, m, prev)))
         prev = y
-    # '지금의 사랑'이 짚은 일지 육합 달이 좋음이면 그 달을 먼저 고른다(두 칸이 다른 달을 가리키지 않게)
-    combo = _SIX_COMBO[core.natal_facts.pillars["day"].branch]
-    goods = sorted((r for r in rows if r["grade"] == "good"), key=lambda r: (r["ganji"][1] != combo, -r["score"]))
-    bads = sorted((r for r in rows if r["grade"] == "caution"), key=lambda r: r["score"])
+    # '지금의 사랑'이 이미 이름을 짚은 달(도화·합·충 달)은 눈여겨볼 달에서 빼서 같은 말을 되풀이하지 않는다(11/13 정오님).
+    # 12달 목록에는 그대로 남으므로 두 칸이 어긋나지는 않는다.
+    skip = set(skip or ())
+    goods = sorted((r for r in rows if r["grade"] == "good" and (r["y"], r["m"]) not in skip), key=lambda r: -r["score"])
+    bads = sorted((r for r in rows if r["grade"] == "caution" and (r["y"], r["m"]) not in skip), key=lambda r: r["score"])
     picked = ([goods.pop(0)] if goods else []) + ([bads.pop(0)] if bads else [])
-    picked += sorted(goods + bads, key=lambda r: -abs(r["score"] - 75))[: max(0, 3 - len(picked))]
+    # 셋째 달은 앞의 달과 이유가 다른 달만 고른다(같은 이유·같은 처방 문장이 두 번 나오지 않게)
+    for r in sorted(goods + bads, key=lambda r: -abs(r["score"] - 75)):
+        if len(picked) >= 3:
+            break
+        if r["reason"] not in {x["reason"] for x in picked}:
+            picked.append(r)
     picked.sort(key=lambda r: (r["y"], r["m"]))
     keys = [dict(y=r["y"], m=r["m"], display=f'{r["y"]}년 {r["m"]}월', label=r["label"], basis=r["reason"],
-                 text=" ".join(t for t in (sec.LOVE_REASON.get(r["reason"], ""), r["line"],
+                 text=" ".join(t for t in (sec.LOVE_REASON.get(r["reason"], ""),
                                            sec.LOVE_ADVICE.get(r["reason"], "")) if t))
             for r in picked]
     count = Counter(r["year_ganji"] for r in rows)
@@ -343,8 +360,23 @@ def _months(core: MyeongriCoreResult, seed: int, start: tuple[int, int] | None =
     return rows, keys, dict(ganji=year_gz, year=year_num)
 
 
+def _charm(core: MyeongriCoreResult, name: str) -> dict:
+    """원국 도화(연지·일지 삼합의 욕지가 원국 어느 자리에 있나)와 홍염(일간 기준)."""
+    p = core.natal_facts.pillars
+    have = {k: p[k].branch for k in sec.PILLAR_ORDER if p.get(k) is not None}
+    sources = [k for k in ("year", "day") if k in have]
+    targets = {k: _PEACH[have[k]] for k in sources}
+    positions = sorted({pos for t in targets.values() for pos, b in have.items() if b == t},
+                       key=sec.PILLAR_ORDER.index)
+    double = len(sources) == 2 and targets["year"] == targets["day"] and bool(positions)
+    red_branch = sec.REDFLOWER_STEM[p["day"].stem]
+    red = [pos for pos, b in have.items() if b == red_branch]
+    return dict(text=sec.charm_text(name, positions, double, bool(red)),
+                evidence=dict(peach_targets=targets, peach_positions=positions, redflower=red))
+
+
 def _compose_v4(core: MyeongriCoreResult, query: dict, name: str, group: str, seed: int,
-                year: int | None = None) -> dict:
+                year: int | None = None, now: dict | None = None) -> dict:
     start = (year, 1) if year else theme_timing.window_start(core)   # year 를 주면(옛 호출·테스트) 그해 1~12월
     dm = core.natal_facts.pillars["day"].stem
     tiers = element_tiers(core)["tiers"]
@@ -368,24 +400,31 @@ def _compose_v4(core: MyeongriCoreResult, query: dict, name: str, group: str, se
                                               ganji_ko=GAN_KO.get(gz[0], "") + ZHI_KO.get(gz[1], ""),
                                               short=sec.NEXT_SHORT[nxt["ten_god"]])
 
-    rows, keys, year = _months(core, seed, start)
+    ne = (now or {}).get("evidence", {})
+    named = [ne.get("good_month"), ne.get("bad_month"), *(ne.get("peach") or [])]
+    skip = {(int(v[:4]), int(v[5:7])) for v in named if v}
+    rows, keys, year = _months(core, seed, start, skip)
     year_text = year_head = ""
     if year["ganji"]:
         year_text = sec.YEAR.get(_ten_god_value(dm, year["ganji"][0]), "")
         year_head = sec.YEAR_HEAD.format(year=year["year"],
                                          ganji_ko=GAN_KO.get(year["ganji"][0], "") + ZHI_KO.get(year["ganji"][1], ""))
-    best = next((k for k in keys if k["label"] == "좋음"), None)
-    month_bullet = sec.MONTH_BULLET.format(month=best["display"]) if best else sec.MONTH_BULLET_NONE
-    bullets = [*copy.GROUP_BULLETS[group if group in copy.GROUP_BULLETS else "balanced"], copy.COMMON_BULLET]
+    charm = _charm(core, name)
+    year_god = _ten_god_value(dm, year["ganji"][0]) if year["ganji"] else None
+    bullets = [copy.COMMON_BULLET]
     if god in sec.CYCLE_BULLET:
         bullets.append(sec.CYCLE_BULLET[god])
-    bullets.append(month_bullet)
+    if year_god in sec.YEAR_BULLET and year_god != god:
+        bullets.append(sec.YEAR_BULLET[year_god])
+    bullets.append(sec.CHARM_BULLET[bool(charm["evidence"]["peach_positions"])])
+    if good:
+        bullets.append(sec.PLACE_BULLET.format(place=sec.PLACE_SHORT[good[0]]))
     return dict(
-        group=group if group in sec.EXPRESS else "balanced",
+        group=group if group in sec.START else "balanced", charm=charm["text"],
         cycle=cycle, cycle_head=cycle_head, cycle_tier=cycle_tier, cycle_next=cycle_next,
         year=year_text, year_head=year_head, month_caption=sec.MONTH_CAPTION.format(y=start[0], m=start[1]),
         months=rows, key_months=keys, place=sec.place_text(name, good), bullets=bullets,
-        evidence=dict(good_elements=good, cycle=current.get("pillar", {}).get("ganji"), cycle_god=god, year=year,
+        evidence=dict(good_elements=good, charm=charm["evidence"], cycle=current.get("pillar", {}).get("ganji"), cycle_god=god, year=year,
                       months=[dict(month=f'{r["y"]}-{r["m"]:02d}', ganji=r["ganji"], grade=r["grade"],
                                    reason=r["reason"]) for r in rows],
                       key_months=[k["basis"] for k in keys]),
@@ -415,7 +454,11 @@ def build_lifetime_love_report(
     seed = seed_from(birth.isoformat(), "love", "-", year)  # 상태를 고르지 않으므로 씨앗에서도 뺀다
 
     t1 = copy.compose_tier1(group, safe_status)
-    stem_text = sec.STEM_LOVE.get(core.natal_facts.pillars["day"].stem, "")
+    # 11/13 정오님 중복 지적: 1단 B 문장(표현 방식)은 2단 습관이 그대로 되받아 겹친다 → 기질(A)과 마무리(D)만 쓴다
+    tb = copy.TIER1.get(t1.get("group", group), copy.TIER1["balanced"])
+    t1 = dict(t1, body=" ".join((tb["A"], tb["D"])))
+    # 일간 문단은 앞 두 문장만 — 셋째 문장(주의점)은 바로 아래 '관계 습관'과 겹친다(11/13 정오님 중복 지적)
+    stem_text = " ".join(split_sentences(sec.STEM_LOVE.get(core.natal_facts.pillars["day"].stem, ""))[:2])
     pool = copy.TRAPS[group if group in copy.TRAPS else "balanced"]
     first = seed % len(pool)
     t2 = [dict(title=pool[(first + i) % len(pool)][0], text=pool[(first + i) % len(pool)][1],
@@ -429,7 +472,7 @@ def build_lifetime_love_report(
 
     if unlocked:
         match, now = _match_and_now(core, user_name or "회원")
-        d = _compose_v4(core, query, user_name or "회원", group, seed, fixed_year)
+        d = _compose_v4(core, query, user_name or "회원", group, seed, fixed_year, now)
         gated = _unlocked_html(d, match, now)
         evidence_summary["match"] = match["evidence"]
         evidence_summary["now"] = now["evidence"]
@@ -444,7 +487,8 @@ def build_lifetime_love_report(
                  f"인연이 들어오는 길: 지금 대운 {ne['cycle'] or '-'}({ne['cycle_group'] or '-'}), "
                  f"앞으로 12개월의 세운 {ne['year']}({ne['year_group']}) · "
                  f"달별 등급: 각 달 15일 월주를 오늘의 운세 '사람' 분야 규칙표로 판정(성별 규칙 제외) · "
-                 f"함께 가면 좋은 곳: 행운 색과 같은 오행 3단계의 '좋음'")
+                 f"함께 가면 좋은 곳: 행운 색과 같은 오행 3단계의 '좋음' · "
+                 f"타고난 매력: 도화 = 연지·일지 삼합의 욕지 {d['evidence']['charm']['peach_targets']}, 홍염 = 일간 기준")
         evidence_extra += f'<p data-love-basis="match-now">{escape(basis)}</p>'
     else:
         gated = _locked_html()

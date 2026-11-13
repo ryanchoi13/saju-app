@@ -10,7 +10,7 @@ from app.engine.orchestrator import calculate_myeongri_core
 from app.engine.services import love_copy, love_sections as sec
 from app.engine.services.love import build_lifetime_love_report
 
-PAID = ("express", "match", "fight", "now", "cycle", "months", "place", "actions")
+PAID = ("charm", "course", "match", "makeup", "now", "cycle", "months", "place", "actions")
 
 
 def _core(birth=datetime.date(1978, 3, 13), gender="male", hour=11):
@@ -42,7 +42,7 @@ class LoveV4Tests(unittest.TestCase):
             self.assertIn(f'data-love-section="{key}"', c)
         self.assertGreaterEqual(len(_text(c)), 2912)          # 옛 애정운 1,456자의 2배(직업운 v3와 비슷한 분량)
         self.assertEqual(len(re.findall(r'data-love-month="\d{4}-\d{2}"', c)), 12)
-        self.assertEqual(len(re.findall(r'data-love-action="\d"', c)), 5)
+        self.assertIn(len(re.findall(r'data-love-action="\d"', c)), (4, 5))
         self.assertEqual(len(re.findall(r'data-love-trap="\d"', c)), 3)
         self.assertEqual(love_copy.find_sensitive(_text(c)), [])
 
@@ -53,11 +53,32 @@ class LoveV4Tests(unittest.TestCase):
         self.assertNotIn('data-paywall="unlocked"', c)
         self.assertNotIn("months", self.free["evidence_summary"])
 
-    def test_good_key_month_agrees_with_now_section(self):
-        # 일지 戌의 육합 卯 = 2027년 3월: '지금의 사랑'과 '눈여겨볼 달'·실천 원칙이 같은 달을 가리킨다
+    def test_key_months_skip_months_already_named_in_now_section(self):
+        # '지금의 사랑'이 짚은 2027년 3월(도화·육합)·4월(충)은 눈여겨볼 달에서 되풀이하지 않고, 12달 목록에는 남는다
         c = self.paid["content"]
-        self.assertIn('data-love-key-month="2027-03"', c)
-        self.assertIn("2027년 3월처럼", _text(c))
+        for month in ("2027-03", "2027-04"):
+            self.assertNotIn(f'data-love-key-month="{month}"', c)
+            self.assertIn(f'data-love-month="{month}"', c)
+
+    def test_no_sentence_repeats_within_a_report(self):
+        sents = [x for x in re.split(r"(?<=[.!?])\s+|\n", _text(re.sub(r"<(p|li|strong|h2|h3)[^>]*>", "\n", self.paid["content"]))) if len(x.strip()) > 12]
+        self.assertEqual(len(sents), len(set(sents)))
+
+    def test_natal_peach_blossom_and_red_flower(self):
+        # 정오님: 연지 午·일지 戌 → 도화 卯가 월지에(두 쪽이 같은 도화), 일간 甲의 홍염 午가 연지에
+        t = _text(self.paid["content"])
+        self.assertIn(sec.PEACH_PLACE["month"], t)
+        self.assertIn(sec.PEACH_DOUBLE, t)
+        self.assertIn(sec.REDFLOWER, t)
+        ev = self.paid["evidence_summary"]["v4"]["charm"]
+        self.assertEqual(ev["peach_positions"], ["month"])
+        self.assertEqual(ev["redflower"], ["year"])
+        self.assertIn(sec.CHARM_NONE.format(name="a")[:20], sec.charm_text("a", [], False, False))
+
+    def test_tier1_does_not_preview_the_habits(self):
+        # 11/13: 1단 B 문장(표현 방식)은 2단 습관과 겹쳐서 뺐다
+        from app.engine.services import love_copy as lc
+        self.assertNotIn(lc.TIER1["reality"]["B"], self.paid["content"])
 
     def test_gender_rule_is_not_used(self):
         for m in self.paid["evidence_summary"]["months"]:
