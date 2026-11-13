@@ -37,6 +37,10 @@ TERMS = [
     ("大寒", "대한", "24-daehan", "겨울의 마지막 절기예요. 이제 봄을 기다려요."),
 ]
 _BY_HANJA = {t[0]: t for t in TERMS}
+# 24절기 가운데 몇 번째인지(입춘이 첫 번째). 절기를 모르는 사람도 "1년을 24로 나눈 것 중 하나"로 읽게 한다(11/13).
+_ORDER = {t[0]: i + 1 for i, t in enumerate(TERMS)}
+_ORDINAL = ["첫", "두", "세", "네", "다섯", "여섯", "일곱", "여덟", "아홉", "열", "열한", "열두", "열세", "열네", "열다섯",
+            "열여섯", "열일곱", "열여덟", "열아홉", "스무", "스물한", "스물두", "스물세", "스물네"]
 # lunar_python 은 일부 이름을 다른 글자로 돌려준다(간체·이체자).
 _ALIAS = {"惊蛰": "驚蟄", "谷雨": "穀雨", "小满": "小滿", "芒种": "芒種", "处暑": "處暑",
           "白露": "白露", "寒露": "寒露", "清明": "清明", "大雪": "大雪", "小雪": "小雪"}
@@ -63,5 +67,6 @@ def season_now(today=None):
     return {
         "name": cur[1], "hanja": cur[0], "art": f"/assets/season/jeolgi/{cur[2]}.webp", "line": cur[3],
         "start": start.isoformat(), "is_today": start == today,
-        "next_name": nx[1], "next_date": next_date.isoformat(), "days_to_next": (next_date - today).days,
+        "order": _ORDER[cur[0]], "order_label": f"{_ORDINAL[_ORDER[cur[0]] - 1]} 번째",
+        "next_name": nx[1], "next_hanja": nx[0], "next_date": next_date.isoformat(), "days_to_next": (next_date - today).days,
     }
