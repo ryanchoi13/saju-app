@@ -10,7 +10,7 @@ from app.engine.orchestrator import calculate_myeongri_core
 from app.engine.services import love_copy, love_sections as sec
 from app.engine.services.love import build_lifetime_love_report
 
-PAID = ("charm", "course", "match", "makeup", "remedy", "now", "cycle", "months", "place", "actions")
+PAID = ("charm", "past", "palace", "weak", "match", "makeup", "remedy", "now", "partner", "cycle", "months", "place", "actions")
 
 
 def _core(birth=datetime.date(1978, 3, 13), gender="male", hour=11):
@@ -91,6 +91,25 @@ class LoveV4Tests(unittest.TestCase):
         line = sec.charm_text("민지", [], False, False, sec.PEACH_YEAR_NONE.format(year=2029, ganji_ko="기유"))
         self.assertIn("도화가 드러나 있지 않아요", line)
         self.assertIn("2029년(기유년)은 도화가 드는 해", line)
+
+    def test_depth_for_reference_person(self):
+        # 11/13 정오님 결정: 남 = 재성이 인연의 별. 1998~99·2011·2023 인연의 해 → 2000·2012·2024 일지(戌) 충의 해
+        dep = self.paid["evidence_summary"]["v4"]["depth"]
+        self.assertEqual([(p["start"], p["end"], p["shake"]) for p in dep["periods"]],
+                         [(1998, 1999, 2000), (2011, 2011, 2012), (2023, 2023, 2024)])
+        self.assertEqual(dep["weak"], ["timing", "rival", "mixed"])     # 겁재 2(월간·월지), 정재·편재 섞임
+        self.assertEqual(dep["palace"]["god"], "indirect_wealth")      # 일지 戌 본기 戊 = 편재
+        t = _text(self.paid["content"])
+        self.assertIn("28~47세", t)                                     # 戊午·己未 대운(재성)을 하나로
+        self.assertIn("2028년(무신년), 2029년(기유년), 2035년(을묘년)", t)
+        for banned in ("이별", "이혼", "결혼"):
+            self.assertNotIn(banned, t)
+
+    def test_female_uses_officer_as_star(self):
+        core = _core(datetime.date(1990, 5, 5), "female", 9)
+        r = build_lifetime_love_report(core, "a", is_unlocked=True)
+        self.assertEqual(r["evidence_summary"]["v4"]["depth"]["gender_star"], "female")
+        self.assertIn("정관·편관", _text(r["content"])) if r["evidence_summary"]["v4"]["depth"]["periods"] else None
 
     def test_tier1_does_not_preview_the_habits(self):
         # 11/13: 1단 B 문장(표현 방식)은 2단 습관과 겹쳐서 뺐다

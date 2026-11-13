@@ -28,6 +28,7 @@ from app.engine.services.annual_copy import seed_from, split_sentences
 from app.engine.services import love_copy as copy
 from app.engine.services import theme_timing
 from app.engine.services import love_sections as sec
+from app.engine.services import love_depth as depth
 from app.engine.services import daily_score
 from app.engine.services.daily_score import _god_group
 from app.engine.services.element_balance import element_tiers, natal_balance
@@ -262,8 +263,18 @@ def _unlocked_html(d: dict, match: dict, now: dict) -> str:
     g = d["group"]
     out = [
         _section("charm", sec.CHARM_HEADING, "".join(_p(x) for x in d["charm"].split("\n\n"))),
-        _pair_section("course", "연애의 시작과 그 뒤",
-                      [(sec.START_TITLE, sec.START[g]), (sec.LATER_TITLE, sec.LATER[g])]),
+        _section("past", sec.PAST_HEADING,
+                 _p(d["depth"]["past"]["intro"])
+                 + ("<ul>" + "".join(f'<li data-love-past="{i}">{escape(t)}</li>'
+                                     for i, t in enumerate(d["depth"]["past"]["items"], start=1)) + "</ul>"
+                    if d["depth"]["past"]["items"] else "")
+                 + _p(d["depth"]["past"]["tail"])),
+        _section("palace", sec.PALACE_HEADING, "".join(_p(t) for t in d["depth"]["palace"])),
+        _section("weak", sec.WEAK_HEADING,
+                 '<div class="love-pair">' + "".join(
+                     f'<div data-love-weak="{k}"><strong>{escape(t)}</strong><p>{escape(b)}</p>'
+                     f'<p data-love-weak-fix="{k}">{escape(f)}</p></div>' for k, t, b, f in d["depth"]["weak"]) + '</div>'
+                 if d["depth"]["weak"] else _p(sec.WEAK_NONE)),
         _pair_section("match", copy.MATCH_HEADING,
                       [(copy.MATCH_GOOD_TITLE, match["good"]), (copy.MATCH_BAD_TITLE, match["bad"])]),
         _pair_section("makeup", sec.MAKEUP_HEADING,
@@ -274,6 +285,7 @@ def _unlocked_html(d: dict, match: dict, now: dict) -> str:
                             ("luck", sec.LUCK_TITLE, d["remedy"]["luck"])) if x).join(('<div class="love-pair">', '</div>'))),
         _pair_section("now", copy.NOW_HEADING,
                       [(copy.NOW_SINGLE_TITLE, now["single"]), (copy.NOW_COUPLE_TITLE, now["couple"])]),
+        _section("partner", sec.PARTNER_HEADING, "".join(_p(t) for t in d["depth"]["partner"])),
     ]
     if d["cycle"]:
         out.append(_section("cycle", "이번 10년의 사랑",
@@ -392,6 +404,80 @@ def _charm(core: MyeongriCoreResult, name: str) -> dict:
                               peach_year=list(peach_year) if peach_year else None))
 
 
+def _age_span(birth_year: int, a: int, b: int) -> str:
+    aa, bb = a - birth_year + 1, b - birth_year + 1
+    return f"{aa}세({a}년)" if a == b else f"{aa}~{bb}세({a}~{b}년)"
+
+
+def _depth(core: MyeongriCoreResult, query: dict, name: str) -> dict:
+    """깊이 읽기 네 칸: 지나온 사랑 · 배우자 자리 · 되풀이되는 약점 · 동반자 시기 (love_depth 계산 + 문장)."""
+    gender = "female" if str(getattr(core.input, "gender", "")) == "female" else "male"
+    birth_year = to_solar(core.input.birth_date, core.input.calendar_type, core.input.is_leap_month).year
+    this_year = theme_timing.window_start(core)[0]
+    strength = query["synthesis"].get("strength_state")
+    past = depth.past_love(core, gender, birth_year, this_year)
+    pal = depth.palace(core, query, gender)
+    counts = depth.natal_counts(core)
+    weak = depth.weak_points(core, gender, strength, counts, past)
+    tim = depth.partner_timing(core, gender, counts, pal, this_year)
+
+    # 지나온 사랑
+    if past["periods"]:
+        lines = [sec.PAST_INTRO.format(name=name, star=sec.STAR_NAME[gender])]
+        items = []
+        for per in past["periods"]:
+            t = sec.PAST_PERIOD.format(span=_age_span(birth_year, per["start"], per["end"]))
+            if per.get("shake"):
+                t += " " + sec.PAST_SHAKE.format(age=per["shake"] - birth_year + 1, year=per["shake"])
+            items.append(t)
+        repeat = sum(1 for per in past["periods"] if per.get("shake"))
+        tail = []
+        if repeat >= 2:
+            tail.append(sec.PAST_REPEAT.format(n=repeat))
+        if past["star_cycles"]:
+            merged = []
+            for a, b in past["star_cycles"]:          # 이어진 10년들은 하나로(28~37·38~47 → 28~47세)
+                if merged and a == merged[-1][1] + 1:
+                    merged[-1] = (merged[-1][0], b)
+                else:
+                    merged.append((a, b))
+            spans = ", ".join(f"{a}~{b}세" for a, b in merged)
+            tail.append(sec.PAST_CYCLE.format(spans=spans))
+        past_html = dict(intro=" ".join(lines), items=items, tail=" ".join(tail))
+    else:
+        past_html = dict(intro=sec.PAST_NONE, items=[], tail="")
+
+    # 배우자 자리
+    state = (sec.PALACE_CLASH if pal["clash"] else sec.PALACE_PUNISH if pal["punish"]
+             else sec.PALACE_COMBO if pal["combo"] else sec.PALACE_CALM)
+    palace_text = [sec.PALACE_LEAD,
+                   " ".join(t for t in (sec.PALACE_GOD[pal["god"]].format(name=name),
+                                        sec.PALACE_STAR if pal["star"] else "") if t),
+                   " ".join(t for t in (state, sec.PALACE_VOID if pal["void"] else "") if t)]
+
+    # 약점
+    weak_items = []
+    for k in weak:
+        title, body, fix = sec.WEAK[k]
+        weak_items.append((k, title, body.format(pair=sec.MIXED_PAIR[gender]), fix))
+
+    # 동반자 시기
+    if tim["verdict"] == "late":
+        reasons = ", ".join(sec.LATE_REASON[r] for r in tim["late"][:2])
+        verdict = sec.PARTNER_LATE.format(reasons=reasons.replace(", ", "·", 1) if False else reasons, name=name)
+    elif tim["verdict"] == "early":
+        verdict = sec.PARTNER_EARLY.format(name=name)
+    else:
+        verdict = sec.PARTNER_MIDDLE.format(name=name)
+    years = ", ".join(f'{y["year"]}년({y["ko"]}년)' for y in tim["years"])
+    partner = [verdict, sec.PARTNER_YEARS.format(years=years) if years else sec.PARTNER_NO_YEARS]
+    return dict(past=past_html, palace=palace_text, weak=weak_items, partner=partner,
+                evidence=dict(gender_star=gender, periods=past["periods"], star_cycles=past["star_cycles"],
+                              palace=pal, weak=weak, natal_counts={k: len(v) for k, v in counts.items()},
+                              timing=dict(verdict=tim["verdict"], late=tim["late"], early=tim["early"],
+                                          years=[y["year"] for y in tim["years"]])))
+
+
 _RISK_OF = (("words", ("eating_god", "hurting_officer"), 3), ("rival", ("peer", "rob_wealth"), 3),
             ("money", ("direct_wealth", "indirect_wealth"), 3), ("pressure", ("direct_officer", "seven_killings"), 3))
 
@@ -419,7 +505,7 @@ def _remedy(core: MyeongriCoreResult, query: dict, name: str, counts: Counter, t
         luck = sec.LUCK_LINE.format(name=name, branch=peach_branch, branch_ko=sec.BRANCH_KO[peach_branch],
                                     dir=sec.DIRECTION[peach_branch])
     return dict(key=" ".join((sec.KEY_WHY, sec.KEY[key_group].format(name=name))),
-                crisis=" ".join(t for t in (sec.CRISIS[risk].format(name=name), crisis_year) if t),
+                crisis=crisis_year,      # 11/13: 위기의 모습은 '되풀이되는 약점' 칸으로 옮겼다(성별 인연의 별 반영)
                 luck=luck, evidence=dict(key_group=key_group, risk=risk, day_clash_natal=day_hit))
 
 
@@ -458,6 +544,7 @@ def _compose_v4(core: MyeongriCoreResult, query: dict, name: str, group: str, se
         year_head = sec.YEAR_HEAD.format(year=year["year"],
                                          ganji_ko=GAN_KO.get(year["ganji"][0], "") + ZHI_KO.get(year["ganji"][1], ""))
     charm = _charm(core, name)
+    depth = _depth(core, query, name)
     remedy = _remedy(core, query, name, counts or Counter(), tiers, ranking, charm["peach_branch"])
     year_god = _ten_god_value(dm, year["ganji"][0]) if year["ganji"] else None
     bullets = [copy.COMMON_BULLET]
@@ -469,11 +556,11 @@ def _compose_v4(core: MyeongriCoreResult, query: dict, name: str, group: str, se
     if good:
         bullets.append(sec.PLACE_BULLET.format(place=sec.PLACE_SHORT[good[0]]))
     return dict(
-        group=group if group in sec.START else "balanced", charm=charm["text"], remedy=remedy,
+        group=group if group in sec.START else "balanced", charm=charm["text"], remedy=remedy, depth=depth,
         cycle=cycle, cycle_head=cycle_head, cycle_tier=cycle_tier, cycle_next=cycle_next,
         year=year_text, year_head=year_head, month_caption=sec.MONTH_CAPTION.format(y=start[0], m=start[1]),
         months=rows, key_months=keys, place=sec.place_text(name, good), bullets=bullets,
-        evidence=dict(good_elements=good, charm=charm["evidence"], remedy=remedy["evidence"], cycle=current.get("pillar", {}).get("ganji"), cycle_god=god, year=year,
+        evidence=dict(good_elements=good, charm=charm["evidence"], remedy=remedy["evidence"], depth=depth["evidence"], cycle=current.get("pillar", {}).get("ganji"), cycle_god=god, year=year,
                       months=[dict(month=f'{r["y"]}-{r["m"]:02d}', ganji=r["ganji"], grade=r["grade"],
                                    reason=r["reason"]) for r in rows],
                       key_months=[k["basis"] for k in keys]),
