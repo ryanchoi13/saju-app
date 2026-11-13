@@ -1,7 +1,9 @@
 (() => {
   window.polishReading = body => {
     // Number major sections only, leaving nested periods and monthly labels intact.
-    const headings = [...body.querySelectorAll('h3')].filter(h => !h.closest('details'));
+    // 11/13: 직업·애정·건강·재물 v3 는 칸 제목이 h2 다. 칸 제목(h2)에만 번호를 달고, 칸 안의 소제목(h3)은 번호 없이 둔다.
+    const sectionTitles = [...body.querySelectorAll('.theme-reading[data-theme] > section:not([data-locked]) > h2')];
+    const headings = sectionTitles.length ? sectionTitles : [...body.querySelectorAll('h3')].filter(h => !h.closest('details'));
     headings.forEach((heading, index) => {
       if (heading.classList.contains('reading-section-heading')) return;
       const original = heading.textContent.trim();
