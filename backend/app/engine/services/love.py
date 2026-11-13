@@ -454,6 +454,9 @@ def _depth(core: MyeongriCoreResult, query: dict, name: str) -> dict:
                   for i, y in enumerate(sorted(past.get("entries", [])))]
         dated += [(y, (sec.PAST_MOVE if i == 0 else sec.PAST_MOVE_AGAIN).format(span=_age_span(birth_year, y, y)), [y])
                   for i, y in enumerate(sorted(past.get("moves", [])))]
+        covered = {y for _, _, ys in dated for y in ys}
+        dated += [(y, sec.PAST_RIVAL_YEAR.format(span=_age_span(birth_year, y, y)), [])
+                  for y in sorted(rivals - covered)]      # 다른 사건이 없는 겁재 해는 따로 한 줄
         dated.sort(key=lambda x: x[0])                  # 해 순서대로 놓은 뒤 경쟁 문장을 붙인다(처음 것만 길게)
         items = [t + rival_tail(ys) for _, t, ys in dated]
         repeat = sum(1 for per in past["periods"] if per.get("shake"))

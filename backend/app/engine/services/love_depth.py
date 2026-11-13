@@ -141,9 +141,11 @@ def past_love(core, gender: str, birth_year: int, this_year: int) -> dict:
     moves = [y for y, gz in shakes.items() if y not in used and CLASH[dm_branch] == gz[1]]
     # 11/13 정오님 실제(2005 양다리 끝에 상대가 다른 남자에게, 2024 밀당 끝에 무산): 비겁(비견·겁재) 세운 = 인연을 두고
     # 경쟁자·자존심 싸움(군겁쟁재). 비겁 해만으로 세우면 아무 일 없던 해(2014·2015)도 잡혀서, 다른 사건이 있는 해에만 덧붙인다.
-    event_years = {y for per in periods for y in range(per["start"], per["end"] + 1)}
+    # 11/13 2차: 정오님 실제 2025년(고백 뒤 밀당 끝에 무산, 乙巳 겁재)은 잡히고 2024년(甲辰 비견)은 아니었다 →
+    # 쟁재(爭財)는 본래 겁재의 일이라 겁재만 쓴다. 인연이 든 시기 안이나 끝난 뒤 2년 안의 겁재 해도 잡는다.
+    event_years = {y for per in periods for y in range(per["start"], per["end"] + 3)}
     event_years |= {per["shake"] for per in periods if per.get("shake")} | set(entries) | set(moves)
-    rivals = sorted(y for y in event_years if _god(dm, _year_gz(y)[0]) in ("peer", "rob_wealth"))
+    rivals = sorted(y for y in event_years if birth_year + 17 <= y < this_year and _god(dm, _year_gz(y)[0]) == "rob_wealth")
     for per in periods:
         per["kind"] = "heart" if "star" in per.pop("why") else "popular"
     return dict(periods=periods, shakes=shakes, star_cycles=cycles, entries=entries, moves=moves, rivals=rivals)

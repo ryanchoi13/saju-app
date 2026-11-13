@@ -173,8 +173,9 @@ PAST_INTRO = "{name}님 사주에서 인연의 별({star})과 가까운 관계�
 PAST_PERIOD = "{span}에는 인연의 별이 들어 마음을 크게 주는 인연이 닿았어요."
 # 인연의 별 없이 일지 합·도화만 겹친 시기(11/13 정오님 2011년: 인기 많고 만남은 잦았지만 깊어지지 않음)
 PAST_POPULAR = "{span}에는 도화와 합이 겹쳐 사람들이 많이 따르고 만남이 잦았어요. 다만 인연의 별이 든 해는 아니라, 만남이 깊은 마음으로 이어지기는 어려운 때예요."
-PAST_RIVAL = "이 해는 나와 같은 기운(비견·겁재)이 들어온 해라, 인연을 두고 경쟁자가 끼어들거나 자존심 싸움이 생기기 쉬웠어요."
-PAST_RIVAL_AGAIN = "이 해에도 비견·겁재가 들어 경쟁과 자존심이 얽혔어요."
+PAST_RIVAL = "이 해는 겁재(나와 같은 기운이 인연을 다투는 별)가 들어온 해라, 인연을 두고 경쟁자가 끼어들거나 밀고 당기다 어긋나기 쉬웠어요."
+PAST_RIVAL_AGAIN = "이 해에도 겁재가 들어 경쟁과 자존심이 얽혔어요."
+PAST_RIVAL_YEAR = "{span}에는 겁재가 들어, 이어 오던 인연이 경쟁이나 밀고 당기기 끝에 어긋나기 쉬운 해였어요."
 PAST_SHAKE = "그리고 곧이어 {age}세({year}년)에 가까운 관계의 자리가 크게 움직였어요(충)."
 # 11/13 정오님 실제 연애사(1998·2005·2024~25)와 맞춰 보며 고침: 충은 '흔들림'만이 아니라 '움직임' — 끝나기도, 새로 시작되기도 한다.
 PAST_MOVE = "{span}에는 가까운 관계의 자리가 크게 움직였어요(충). 이어 오던 관계가 끝나기도, 새 인연이 시작되기도 하는 해예요."
@@ -443,7 +444,7 @@ def all_sentences() -> list[str]:
             MAKEUP_HEADING, MAKEUP_TITLE, PARTNER_TITLE, PEACH_INTRO, PEACH_DOUBLE, REDFLOWER, REDFLOWER_ONLY,
             CHARM_CARE, CHARM_NONE, PEACH_YEAR_NONE, PEACH_YEAR_HAVE, PEACH_YEAR_NOW, REMEDY_HEADING, KEY_TITLE,
             CRISIS_TITLE, LUCK_TITLE, KEY_WHY, CRISIS_YEAR, LUCK_LINE, PAST_INTRO, PAST_PERIOD, PAST_SHAKE,
-            PAST_REPEAT, PAST_CYCLE, PAST_NONE, PAST_MOVE, PAST_ENTRY, PAST_MOVE_AGAIN, PAST_ENTRY_AGAIN, PAST_POPULAR, PAST_RIVAL, PAST_RIVAL_AGAIN, PALACE_LEAD, PALACE_STAR, PALACE_CLASH, PALACE_PUNISH, PALACE_COMBO,
+            PAST_REPEAT, PAST_CYCLE, PAST_NONE, PAST_MOVE, PAST_ENTRY, PAST_MOVE_AGAIN, PAST_ENTRY_AGAIN, PAST_POPULAR, PAST_RIVAL, PAST_RIVAL_AGAIN, PAST_RIVAL_YEAR, PALACE_LEAD, PALACE_STAR, PALACE_CLASH, PALACE_PUNISH, PALACE_COMBO,
             PALACE_VOID, PALACE_CALM, WEAK_NONE, PARTNER_LATE, PARTNER_EARLY, PARTNER_MIDDLE, PARTNER_YEARS,
             PARTNER_NO_YEARS] + [x for t in WEAK.values() for x in t]
     return out
