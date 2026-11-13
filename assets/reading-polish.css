@@ -1,3 +1,5 @@
+/* 11/13 칸 번호 숫자 글꼴: Outfit Bold (SIL OFL 1.1, assets/fonts/OUTFIT-OFL.txt). 숫자만 쓰므로 라틴 부분만 직접 올림 */
+@font-face { font-family:'Dalha Num'; src:url('/assets/fonts/outfit-700-latin.woff2') format('woff2'); font-weight:700; font-style:normal; font-display:swap; unicode-range:U+0030-0039; }
 /* Readable hierarchy for both saved reports and newly generated readings. */
 #mealDailyCard #menuStatus { color:var(--c-ink,#1D2129)!important; font-size:15px!important; font-weight:700!important; background:transparent; border:0; padding:0; line-height:1.6; }
 @media(max-width:540px) { #mealDailyCard #menuStatus { font-size:13px!important; font-weight:600!important; } }
@@ -200,3 +202,6 @@ html[data-brand] #archiveModalBody .theme-reading[data-theme] :is([data-career-t
 html[data-brand] #archiveModalBody .theme-reading[data-theme] :is([data-career-trap],[data-love-trap],[data-health-trap],[data-wealth-trap],[data-health-key-month],[data-wealth-key-month],[data-career-key-month],[data-love-key-month],[data-love-match],[data-love-now],[data-love-makeup],[data-love-remedy],[data-love-weak],[data-career-helper],[data-career-hard]) p { margin:0 0 6px!important; }
 html[data-brand] #archiveModalBody .theme-reading[data-theme] > details.reading-evidence { margin-top:56px!important; }
 html[data-brand] #archiveModalBody .theme-reading[data-theme] > section[data-paywall] > ul:has(> li[data-month-grade]) { padding-left:0!important; list-style:none; }
+
+/* 칸 번호: Outfit. 숫자 높이를 제목 한글 높이(20px Pretendard 기준 약 17.8px)에 맞추고 가운데 정렬(1.5px 내림) */
+html[data-brand] #archiveModalBody .theme-reading[data-theme] > section > h2 .reading-section-number { font-family:'Dalha Num','Pretendard',sans-serif!important; font-size:24px!important; font-weight:700!important; line-height:1!important; letter-spacing:0!important; font-variant-numeric:tabular-nums lining-nums; display:inline-block; min-width:30px; transform:translateY(1.5px); }
