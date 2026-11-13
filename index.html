@@ -551,7 +551,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;600;700&display=swap" rel="stylesheet">
     <link id="dalhaBrandStyles" rel="stylesheet" href="/assets/brand-2026/brand.css?v=20261108-p1">
-    <link rel="stylesheet" href="/assets/reading-polish.css?v=20261113-health3">
+    <link rel="stylesheet" href="/assets/reading-polish.css?v=20261113-wealth3">
     <link rel="stylesheet" href="/assets/daily-card.css?v=20261113-s1">
     <link rel="stylesheet" href="/assets/brand-2026/refine.css?v=20261113-season">
     <link href="https://fonts.googleapis.com/css2?family=Song+Myung&display=swap" rel="stylesheet">
@@ -1141,10 +1141,10 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 <section id="concern-wealth" class="card report-entry hidden" data-concern="wealth" aria-labelledby="concern-heading-wealth">
                     <span class="reading-eyebrow">돈·생활</span>
                     <h3 id="concern-heading-wealth" tabindex="-1">평생 재물운</h3><p>돈을 벌고 관리하는 나의 성향을 읽어봐요. 큰 지출이나 새로운 계획 앞에서 돌아볼 기준을 함께 정리해요.</p>
-                    <div class="report-preview"><span class="preview-label">이런 이야기를 읽어요</span><ol><li><strong>돈을 대하는 나</strong><span>수입과 지출을 바라보는 성향</span></li><li><strong>지켜갈 기준</strong><span>소비·거래·금전 관계에서 살필 점</span></li><li><strong>긴 흐름 속 재물</strong><span>대운별 주제와 현실적인 참고 행동</span></li></ol></div>
-                    <div class="report-facts"><span>성향과 긴 흐름을 살펴봐요</span><strong data-report-price="wealth">220 복채</strong></div>
+                    <div class="report-preview"><span class="preview-label">이런 이야기를 읽어요</span><ol><li><strong>타고난 돈 그릇</strong><span>버는 방식과 돈이 새는 습관</span></li><li><strong>돈이 들어오는 길</strong><span>맞는 재테크와 돈·사람 문제</span></li><li><strong>재물의 시기</strong><span>지나온 흐름, 모이는 나이, 앞으로 12개월</span></li></ol></div>
+                    <div class="report-facts"><span>성향과 긴 흐름을 살펴봐요</span><strong data-report-price="wealth">앞부분 무료</strong></div>
                     <div id="themeReport_wealth" class="hidden"></div>
-                    <button id="btnTheme_wealth" class="reading-primary" onclick="handleUnlockReportOnServer('wealth', 220)">재물운 읽기 · 220 복채</button>
+                    <button id="btnTheme_wealth" class="reading-primary" onclick="showThemePreview('wealth')">돈 그릇 먼저 읽어보기</button>
                     <p class="reading-caption report-scope">투자 수익이나 금액을 예측하는 풀이가 아니에요.</p>
                 </section>
                 <section id="concern-study" class="card report-entry hidden" data-concern="study" aria-labelledby="concern-heading-study">
@@ -3869,7 +3869,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
         function applySoonEntrypoint(key) {
             if (!DALHA_SOON_REPORTS.has(key) || latestOwnedReportIndex(key) >= 0) return;
             const price = document.querySelector(`[data-report-price="${key}"]`);
-            const hasPreview = ['business','love','health'].includes(key);
+            const hasPreview = ['business','love','health','wealth'].includes(key);
             if (price) price.textContent = hasPreview ? '앞부분 무료 · 전체는 곧 열려요' : '곧 열려요';
             if (hasPreview) return;
             const button = document.getElementById(key === 'gunghap' ? 'btnOpenGunghapModal' : `btnTheme_${key}`);
@@ -3915,7 +3915,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             const price = document.querySelector(`[data-report-price="${key}"]`);
             if (price) price.textContent = DALHA_SOON_REPORTS.has(key) ? '앞부분 무료 · 전체는 곧 열려요' : `${state.price_coins} ${COIN_UNIT}`;
             const button = document.getElementById(`btnTheme_${key}`);
-            if (button) button.textContent = key === 'health' ? '다시 불러오기' : '상황 다시 고르기';
+            if (button) button.textContent = (key === 'health' || key === 'wealth') ? '다시 불러오기' : '상황 다시 고르기';
         }
         async function showThemePreview(key, subOption = '기본') {
             if (!currentUserId) { alert('로그인이 필요합니다.'); return; }

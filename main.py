@@ -706,7 +706,7 @@ def generate_detailed_report(
             _birth_input_from_user(user, user_name),
             target_date=kst_today,
         )
-        return build_lifetime_wealth_report(core, user_name)
+        return build_lifetime_wealth_report(core, user_name, **tier)
     elif report_key == "business":
         if not user:
             raise ValueError("평생 직업·사업운 생성에 사용자 사주 정보가 필요합니다.")
@@ -1262,13 +1262,14 @@ def _report_target_version(report_key):
     from app.engine.services.career import CAREER_NARRATIVE_VERSION
     from app.engine.services.love import LOVE_NARRATIVE_VERSION
     from app.engine.services.health import HEALTH_NARRATIVE_VERSION
+    from app.engine.services.wealth import WEALTH_NARRATIVE_VERSION
     from app.engine.services.lifetime import LIFETIME_NARRATIVE_VERSION
     if report_key not in AUTO_UPDATE_KEYS:
         return None
     return {
         'sinnian': ANNUAL_NARRATIVE_VERSION, 'daewoon': LIFETIME_NARRATIVE_VERSION,
         'business': CAREER_NARRATIVE_VERSION, 'love': LOVE_NARRATIVE_VERSION,
-        'health': HEALTH_NARRATIVE_VERSION,
+        'health': HEALTH_NARRATIVE_VERSION, 'wealth': WEALTH_NARRATIVE_VERSION,
     }.get(report_key, THEME_VERSION)
 
 

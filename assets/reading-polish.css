@@ -98,12 +98,12 @@ html[data-brand] #archiveModalBody .theme-reading .reading-chapter p { font-size
 html[data-brand] #archiveModalBody .theme-reading .reading-chapter p:last-child { margin-bottom:0!important; }
 /* 테마 풀이 함정 칸 (11/06 정오님 선택 4번): 베이지 상자(원래 흰 카드가 브랜드의 [style*=background] 규칙에 칠해진 것) 대신
    구리색 마름모 + 구리색 제목으로 강조. 무료/유료 경계 점선은 산 풀이에선 숨기고 그 자리도 초승달 구분선. 실천 원칙 번호 복원. */
-html[data-brand] #archiveModalBody .theme-reading :is([data-career-trap],[data-love-trap],[data-health-trap]) { border:0!important; border-radius:0!important; background:transparent!important; padding:0!important; }
-html[data-brand] #archiveModalBody .theme-reading :is([data-career-tier="2"],[data-love-tier="2"],[data-health-tier="2"]) > div { gap:22px!important; }
-html[data-brand] #archiveModalBody .theme-reading :is([data-career-trap],[data-love-trap],[data-health-trap]) strong { display:block; font-size:17px; font-weight:700; color:var(--c-ink,#1D2129); line-height:1.5; }
-html[data-brand] #archiveModalBody .theme-reading :is([data-career-trap],[data-love-trap],[data-health-trap]) p { margin:4px 0 0!important; }
-html[data-brand] #archiveModalBody .theme-reading :is([data-career-trap],[data-love-trap],[data-health-trap]) { position:relative; padding-left:20px!important; }
-html[data-brand] #archiveModalBody .theme-reading :is([data-career-trap],[data-love-trap],[data-health-trap])::before { content:''; position:absolute; left:2px; top:10px; width:7px; height:7px; background:var(--c-point,#B5341F); transform:rotate(45deg); }
+html[data-brand] #archiveModalBody .theme-reading :is([data-career-trap],[data-love-trap],[data-health-trap],[data-wealth-trap]) { border:0!important; border-radius:0!important; background:transparent!important; padding:0!important; }
+html[data-brand] #archiveModalBody .theme-reading :is([data-career-tier="2"],[data-love-tier="2"],[data-health-tier="2"],[data-wealth-tier="2"]) > div { gap:22px!important; }
+html[data-brand] #archiveModalBody .theme-reading :is([data-career-trap],[data-love-trap],[data-health-trap],[data-wealth-trap]) strong { display:block; font-size:17px; font-weight:700; color:var(--c-ink,#1D2129); line-height:1.5; }
+html[data-brand] #archiveModalBody .theme-reading :is([data-career-trap],[data-love-trap],[data-health-trap],[data-wealth-trap]) p { margin:4px 0 0!important; }
+html[data-brand] #archiveModalBody .theme-reading :is([data-career-trap],[data-love-trap],[data-health-trap],[data-wealth-trap]) { position:relative; padding-left:20px!important; }
+html[data-brand] #archiveModalBody .theme-reading :is([data-career-trap],[data-love-trap],[data-health-trap],[data-wealth-trap])::before { content:''; position:absolute; left:2px; top:10px; width:7px; height:7px; background:var(--c-point,#B5341F); transform:rotate(45deg); }
 html[data-brand] #archiveModalBody .theme-reading[data-theme] > hr[data-paywall-boundary] { display:none; }
 html[data-brand] #archiveModalBody .theme-reading[data-theme] > hr[data-paywall-boundary] + section { border-top:0; position:relative; margin-top:44px; padding-top:44px; }
 html[data-brand] #archiveModalBody .theme-reading[data-theme] > hr[data-paywall-boundary] + section::before { content:''; position:absolute; top:0; left:0; right:0; height:1px; background:linear-gradient(to right,#C9C3B8 0,#C9C3B8 calc(50% - 20px),transparent calc(50% - 20px),transparent calc(50% + 20px),#C9C3B8 calc(50% + 20px)); }
@@ -111,7 +111,7 @@ html[data-brand] #archiveModalBody .theme-reading[data-theme] > hr[data-paywall-
 html[data-brand] #archiveModalBody .theme-reading[data-theme] section > ol { padding-left:22px!important; margin:6px 0 0!important; list-style:decimal; }
 html[data-brand] #archiveModalBody .theme-reading[data-theme] section > ol > li { padding-left:4px; margin:0 0 10px!important; line-height:1.85!important; }
 html[data-brand] #archiveModalBody .theme-reading[data-theme] section > ol > li::marker { color:var(--c-ink,#1D2129); font-weight:700; }
-html[data-brand] #archiveModalBody .theme-reading :is([data-career-trap],[data-love-trap],[data-health-trap]) strong { color:var(--c-ink,#1D2129)!important; }
+html[data-brand] #archiveModalBody .theme-reading :is([data-career-trap],[data-love-trap],[data-health-trap],[data-wealth-trap]) strong { color:var(--c-ink,#1D2129)!important; }
 /* 애정운 v3 (11/06): '잘 맞는 사람·부딪히기 쉬운 사람'과 '지금의 사랑' 두 칸도 함정 칸과 같은 방식(구리색 마름모·제목). */
 html[data-brand] #archiveModalBody .theme-reading .love-pair { display:grid; gap:22px; }
 html[data-brand] #archiveModalBody .theme-reading :is([data-love-match],[data-love-now],[data-love-makeup],[data-love-remedy],[data-love-weak]) { position:relative; padding-left:20px; }
@@ -147,3 +147,15 @@ html[data-brand] #archiveModalBody .theme-reading [data-health-month] { margin:0
 html[data-brand] #archiveModalBody .theme-reading [data-health-month] > strong { margin-right:6px; }
 html[data-brand] #archiveModalBody .theme-reading [data-health-month][data-month-grade="caution"] > strong { color:var(--c-point,#B5341F); }
 html[data-brand] #archiveModalBody .theme-reading [data-health-month][data-month-grade="normal"] > strong { color:#7A828A; font-weight:600; }
+
+/* 재물운 v3 (11/13): 건강운과 같은 다이아 표기 */
+html[data-brand] #archiveModalBody .theme-reading :is([data-wealth-section="past"],[data-wealth-section="age"]) > ul { padding-left:18px; margin:8px 0 12px; }
+html[data-brand] #archiveModalBody .theme-reading :is([data-wealth-past],[data-wealth-age]) { margin:0 0 10px; line-height:1.8; }
+html[data-brand] #archiveModalBody .theme-reading [data-wealth-key-month] { border:0!important; border-radius:0!important; background:transparent!important; padding:0 0 0 20px!important; position:relative; }
+html[data-brand] #archiveModalBody .theme-reading [data-wealth-key-month]::before { content:''; position:absolute; left:2px; top:10px; width:7px; height:7px; background:var(--c-point,#B5341F); transform:rotate(45deg); }
+html[data-brand] #archiveModalBody .theme-reading [data-wealth-key-month] strong { display:block; font-size:17px; font-weight:700; color:var(--c-ink,#1D2129)!important; line-height:1.5; }
+html[data-brand] #archiveModalBody .theme-reading [data-wealth-section="months"] > ul { list-style:none; padding-left:0!important; margin:6px 0 0; }
+html[data-brand] #archiveModalBody .theme-reading [data-wealth-month] { margin:0 0 8px; line-height:1.75; }
+html[data-brand] #archiveModalBody .theme-reading [data-wealth-month] > strong { margin-right:6px; }
+html[data-brand] #archiveModalBody .theme-reading [data-wealth-month][data-month-grade="caution"] > strong { color:var(--c-point,#B5341F); }
+html[data-brand] #archiveModalBody .theme-reading [data-wealth-month][data-month-grade="normal"] > strong { color:#7A828A; font-weight:600; }

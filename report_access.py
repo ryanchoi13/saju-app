@@ -3,12 +3,12 @@
 핵심 규칙
 - is_unlocked 는 반드시 서버가 '결제(복채 차감) 기록'에서 계산한다. 요청 본문·쿼리·헤더의 값은 쓰지 않는다.
 - 기록의 출처는 wallet_store 가 돌려준 reports 목록이며, main.hydrate_account() 가 DB 기준으로 다시 채운 값이다.
-- 4단 구조 리포트(business·love·health)만 is_unlocked 를 받는다. 나머지 빌더는 인자를 받지 않는다.
+- 4단 구조 리포트(business·love·health·wealth)만 is_unlocked 를 받는다. 나머지 빌더는 인자를 받지 않는다.
 """
 from __future__ import annotations
 
-# 1·2단 무료 + 3·4단 구매 후 공개 (career/love/health 빌더). 'daewoon' 은 lifetime.py 에 is_unlocked 가 아직 없다.
-TIERED_REPORTS = frozenset({"business", "love", "health"})
+# 1·2단 무료 + 3·4단 구매 후 공개 (career/love/health/wealth 빌더). 'daewoon' 은 lifetime.py 에 is_unlocked 가 아직 없다.
+TIERED_REPORTS = frozenset({"business", "love", "health", "wealth"})
 
 # 무료 공개 리포트. 현재 대운·타고난 성향은 무료이고 미래 대운은 빌더가 잠금 티저로만 만든다(본문 없음).
 FREE_REPORTS = frozenset({"daewoon"})
