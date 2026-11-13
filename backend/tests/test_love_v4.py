@@ -105,6 +105,11 @@ class LoveV4Tests(unittest.TestCase):
         self.assertEqual(dep["cycle_entries"], [2005])
         self.assertIn("28세(2005년)에는 인연의 별이 든 대운이 시작됐어요", t)
         self.assertNotIn("흔들리는 해가 곧바로", t)
+        # 11/13 정오님 상세 연애사: 2005 양다리 끝에 상대가 다른 남자에게(乙酉 겁재) · 2024 밀당 끝에 무산(甲辰 비견)
+        #                         · 2011 인기는 많았지만 깊어지지 않음(辛卯: 인연의 별 없이 도화+육합)
+        self.assertEqual(dep["rivals"], [2005, 2024])
+        self.assertEqual([p["kind"] for p in dep["periods"]], ["heart", "popular", "popular"])
+        self.assertIn("34세(2011년)에는 도화와 합이 겹쳐 사람들이 많이 따르고", t)
         self.assertIn("2028년(무신년), 2029년(기유년), 2035년(을묘년)", t)
         for banned in ("이별", "이혼", "결혼"):
             self.assertNotIn(banned, t)

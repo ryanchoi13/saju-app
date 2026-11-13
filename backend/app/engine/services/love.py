@@ -424,18 +424,38 @@ def _depth(core: MyeongriCoreResult, query: dict, name: str) -> dict:
     # 지나온 사랑
     if past["periods"] or past.get("entries") or past.get("moves"):
         lines = [sec.PAST_INTRO.format(name=name, star=sec.STAR_NAME[gender])]
+        rivals = set(past.get("rivals", []))
+        seen_rival = []
+
+        def rival_tail(years) -> str:
+            hit = [y for y in years if y in rivals]
+            if not hit:
+                return ""
+            seen_rival.append(1)
+            return " " + (sec.PAST_RIVAL if len(seen_rival) == 1 else sec.PAST_RIVAL_AGAIN)
+
         dated = []
+        popular_seen = False
         for per in past["periods"]:
-            t = sec.PAST_PERIOD.format(span=_age_span(birth_year, per["start"], per["end"]))
+            span = _age_span(birth_year, per["start"], per["end"])
+            if per.get("kind") == "popular" and not popular_seen:
+                t, popular_seen = sec.PAST_POPULAR.format(span=span), True
+            elif per.get("kind") == "popular":
+                t = sec.PAST_POPULAR.split(". ")[0].format(span=span) + "."
+            else:
+                t = sec.PAST_PERIOD.format(span=span)
+            years = list(range(per["start"], per["end"] + 1))
             if per.get("shake"):
                 t += " " + sec.PAST_SHAKE.format(age=per["shake"] - birth_year + 1, year=per["shake"])
-            dated.append((per["start"], t))
+                years.append(per["shake"])
+            dated.append((per["start"], t, years))
         # 풀이 문장은 처음 한 번만, 다음부터는 짧게(같은 문장 되풀이 금지)
-        dated += [(y, (sec.PAST_ENTRY if i == 0 else sec.PAST_ENTRY_AGAIN).format(span=_age_span(birth_year, y, y)))
+        dated += [(y, (sec.PAST_ENTRY if i == 0 else sec.PAST_ENTRY_AGAIN).format(span=_age_span(birth_year, y, y)), [y])
                   for i, y in enumerate(sorted(past.get("entries", [])))]
-        dated += [(y, (sec.PAST_MOVE if i == 0 else sec.PAST_MOVE_AGAIN).format(span=_age_span(birth_year, y, y)))
+        dated += [(y, (sec.PAST_MOVE if i == 0 else sec.PAST_MOVE_AGAIN).format(span=_age_span(birth_year, y, y)), [y])
                   for i, y in enumerate(sorted(past.get("moves", [])))]
-        items = [t for _, t in sorted(dated)]           # 해 순서대로
+        dated.sort(key=lambda x: x[0])                  # 해 순서대로 놓은 뒤 경쟁 문장을 붙인다(처음 것만 길게)
+        items = [t + rival_tail(ys) for _, t, ys in dated]
         repeat = sum(1 for per in past["periods"] if per.get("shake"))
         tail = []
         if repeat >= 2:
@@ -480,6 +500,7 @@ def _depth(core: MyeongriCoreResult, query: dict, name: str) -> dict:
     return dict(past=past_html, palace=palace_text, weak=weak_items, partner=partner,
                 evidence=dict(gender_star=gender, periods=past["periods"], star_cycles=past["star_cycles"],
                               cycle_entries=past.get("entries", []), moves=past.get("moves", []),
+                              rivals=past.get("rivals", []),
                               palace=pal, weak=weak, natal_counts={k: len(v) for k, v in counts.items()},
                               timing=dict(verdict=tim["verdict"], late=tim["late"], early=tim["early"],
                                           years=[y["year"] for y in tim["years"]])))

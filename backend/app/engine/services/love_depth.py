@@ -105,14 +105,15 @@ def past_love(core, gender: str, birth_year: int, this_year: int) -> dict:
     shakes = {}
     for y in range(birth_year + 17, this_year):            # 세는 나이 18세부터 지난해까지
         gz = _year_gz(y)
-        score, shake, _ = year_signal(core, gz, gender)
+        score, shake, why = year_signal(core, gz, gender)
         if shake:
             shakes[y] = gz
         if score >= 3:
             if cur and y - cur["end"] <= 2:
                 cur["end"] = y
+                cur["why"] |= set(why)
             else:
-                cur = dict(start=y, end=y)
+                cur = dict(start=y, end=y, why=set(why))
                 periods.append(cur)
     for per in periods:
         per["shake"] = next((y for y in sorted(shakes) if per["end"] <= y <= per["end"] + 2 and y >= per["start"]), None)
@@ -138,7 +139,14 @@ def past_love(core, gender: str, birth_year: int, this_year: int) -> dict:
     used = {per["shake"] for per in periods if per.get("shake")}
     dm_branch = core.natal_facts.pillars["day"].branch
     moves = [y for y, gz in shakes.items() if y not in used and CLASH[dm_branch] == gz[1]]
-    return dict(periods=periods, shakes=shakes, star_cycles=cycles, entries=entries, moves=moves)
+    # 11/13 정오님 실제(2005 양다리 끝에 상대가 다른 남자에게, 2024 밀당 끝에 무산): 비겁(비견·겁재) 세운 = 인연을 두고
+    # 경쟁자·자존심 싸움(군겁쟁재). 비겁 해만으로 세우면 아무 일 없던 해(2014·2015)도 잡혀서, 다른 사건이 있는 해에만 덧붙인다.
+    event_years = {y for per in periods for y in range(per["start"], per["end"] + 1)}
+    event_years |= {per["shake"] for per in periods if per.get("shake")} | set(entries) | set(moves)
+    rivals = sorted(y for y in event_years if _god(dm, _year_gz(y)[0]) in ("peer", "rob_wealth"))
+    for per in periods:
+        per["kind"] = "heart" if "star" in per.pop("why") else "popular"
+    return dict(periods=periods, shakes=shakes, star_cycles=cycles, entries=entries, moves=moves, rivals=rivals)
 
 
 def palace(core, query: dict, gender: str) -> dict:
