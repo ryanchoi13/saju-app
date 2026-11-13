@@ -26,8 +26,15 @@ from app.engine.services.applied_guidance import state_basis
 from app.engine.services.annual_copy import seed_from
 from app.engine.services import health_copy as copy
 from app.engine.services import theme_timing
+from app.engine.services import health_sections as sec
+from app.engine.services import daily_score
+from app.engine.services.daily_score import calendar_ganji
+from app.engine.services.element_balance import composition, element_tiers, natal_balance
+from app.engine.constants import GAN_KO, GAN_WUXING, ZHI_KO, ZHI_WUXING
+from app.engine.facts.hidden_stems import get_hidden_stems
+from datetime import date
 
-HEALTH_NARRATIVE_VERSION = "health-4tier-v2"
+HEALTH_NARRATIVE_VERSION = "health-v3"  # 11/13: 체질·강한 곳·음식·운동·나이·계절·12달·개운
 
 _STRENGTH = {
     "extremely_weak": "매우 신약", "weak": "신약",
@@ -139,29 +146,213 @@ def _boundary_html() -> str:
             'style="border:0;border-top:1px dashed #94A3B8;margin:18px 0;">')
 
 
+def _section(key: str, title: str, body: str) -> str:
+    return f'<section data-health-section="{key}" data-paywall="unlocked"><h2>{escape(title)}</h2>{body}</section>'
+
+
+def _p(text: str, attr: str = "") -> str:
+    return f'<p{attr}>{escape(text)}</p>' if text else ""
+
+
 def _locked_html() -> str:
-    def block(tier: int, title: str, teaser: str) -> str:
-        return (
-            f'<section data-health-tier="{tier}" data-paywall="locked" data-locked="true" '
-            'style="border:1px dashed #94A3B8;border-radius:12px;background:#F8FAFC;padding:14px;margin-bottom:8px;">'
-            f'<div style="font-size:12px;color:#64748B;font-weight:800;">🔒 {escape(copy.LOCK_LABEL)}</div>'
-            f'<h2 style="margin:4px 0 0;">{escape(title)}</h2>'
-            f'<p data-health-teaser="{tier}" style="margin:6px 0 0;">{escape(teaser)}</p>{_SKELETON}</section>')
+    titles = "".join(f'<li data-health-locked="{k}">{escape(t)}</li>' for k, t in sec.LOCKED_SECTIONS)
     return (
-        block(3, "앞으로 12개월 컨디션 타이밍", copy.TEASER_TIER3)
-        + block(4, "생활 활력 3원칙", copy.TEASER_TIER4)
-        + f'<a href="{copy.PAYWALL_HREF}" data-paywall-cta="theme-health" style="display:inline-block;margin-top:6px;'
-          'padding:10px 16px;border-radius:10px;background:#2D6A4F;color:#fff;font-weight:700;text-decoration:none;">'
-          f'{escape(copy.cta_label())}</a>')
+        '<section data-health-tier="3" data-paywall="locked" data-locked="true" '
+        'style="border:1px dashed #94A3B8;border-radius:12px;background:#F8FAFC;padding:14px;margin-bottom:8px;">'
+        f'<div style="font-size:12px;color:#64748B;font-weight:800;">🔒 {escape(copy.LOCK_LABEL)}</div>'
+        '<h2 style="margin:4px 0 0;">이어지는 풀이</h2>'
+        f'<p data-health-teaser="3" style="margin:6px 0 0;">{escape(sec.LOCKED_TEASER)}</p>'
+        f'<ul style="padding-left:18px;margin:6px 0 0;">{titles}</ul>{_SKELETON}</section>'
+        f'<a href="{copy.PAYWALL_HREF}" data-paywall-cta="theme-health" style="display:inline-block;margin-top:6px;'
+        'padding:10px 16px;border-radius:10px;background:#2D6A4F;color:#fff;font-weight:700;text-decoration:none;">'
+        f'{escape(copy.cta_label())}</a>')
 
 
-def _unlocked_html(t3: dict, bullets: list[str]) -> str:
-    tier3 = theme_timing.tier3_html(t3, "health", "앞으로 12개월 컨디션 타이밍",
-                                    "생활 리듬을 돌아보기 위한 흐름이며 몸의 상태를 말하는 것이 아닙니다.",
-                                    copy.NO_INFLECTION)
+def _items(key: str, items: list[str]) -> str:
+    return "<ul>" + "".join(f'<li data-health-{key}="{i}">{escape(t)}</li>' for i, t in enumerate(items, 1)) + "</ul>"
+
+
+def _unlocked_html(d: dict, bullets: list[str]) -> str:
+    out = [
+        _section("const", sec.CONST_HEADING, _p(d["const"]) + _p(d["const_climate"]) + _p(d["share"], ' class="reading-caption"')),
+        _section("body", sec.BODY_HEADING, _p(sec.BODY_LEAD) + (_items("body", d["body"]) if d["body"] else _p(sec.BODY_EVEN))),
+        _section("food", sec.FOOD_HEADING, "".join(_p(t) for t in d["food"])),
+        _section("move", sec.MOVE_HEADING, _p(d["move"][0]) + _p(d["move"][1])),
+        _section("age", sec.AGE_HEADING, _p(sec.AGE_LEAD) + (_items("age", d["age"]) if d["age"] else _p(sec.AGE_NONE)) + _p(d["age_now"])),
+        _section("season", sec.SEASON_HEADING, "".join(_p(t) for t in d["season"])),
+    ]
+    rows = "".join(
+        f'<li data-health-month="{m["y"]}-{m["m"]:02d}" data-month-grade="{m["grade"]}">'
+        f'<strong>{escape(m["display"])} · {escape(m["label"])}</strong> {escape(m["line"])}</li>' for m in d["months"])
+    keys = "".join(
+        f'<div data-health-key-month="{k["y"]}-{k["m"]:02d}" style="{_BOX}"><strong>{escape(k["display"])} · {escape(k["label"])}</strong>'
+        f'<p style="margin:4px 0 0;">{escape(k["text"])}</p></div>' for k in d["keys"])
+    out.append(_section("months", "앞으로 12개월 컨디션",
+                        f'<p class="reading-caption">{escape(d["month_caption"])}</p>'
+                        + f'<ul style="padding-left:18px;">{rows}</ul>'
+                        + (f'<h3>눈여겨볼 달</h3><div style="display:grid;gap:8px;">{keys}</div>' if keys else _p(sec.NO_KEY_MONTH))))
+    out.append(_section("kaiun", sec.KAIUN_HEADING, _p(d["kaiun"])))
     items = "".join(f'<li data-health-action="{i}">{escape(b)}</li>' for i, b in enumerate(bullets, start=1))
-    tier4 = f'<section data-health-tier="4" data-paywall="unlocked"><h2>생활 활력 3원칙</h2><ol>{items}</ol></section>'
-    return tier3 + tier4
+    out.append(f'<section data-health-section="actions" data-health-tier="4" data-paywall="unlocked"><h2>생활 활력 3원칙</h2><ol>{items}</ol></section>')
+    return "".join(out)
+
+
+# ---------------------------------------------------------------------------
+# v3 계산 (유료). 잠금 상태에서는 부르지 않는다.
+# ---------------------------------------------------------------------------
+_CLASH = {"子": "午", "午": "子", "丑": "未", "未": "丑", "寅": "申", "申": "寅",
+          "卯": "酉", "酉": "卯", "辰": "戌", "戌": "辰", "巳": "亥", "亥": "巳"}
+EXCESS, DEFICIENT = 35, 10
+
+
+def _pick_line(pool, start, used):
+    """아직 안 쓴 변형을 고른다. 다 썼으면 빈 줄(그 달은 등급만 보인다)."""
+    for i in range(len(pool)):
+        line = pool[(start + i) % len(pool)]
+        if line not in used:
+            used.add(line)
+            return line
+    return ""
+
+
+def _compose_v3(core: MyeongriCoreResult, name: str, climate: str, strength: str | None, seed: int,
+                fixed_year: int | None) -> dict:
+    comp = composition(core)
+    tiers = element_tiers(core)["tiers"]
+    ranking = natal_balance(core)["ranking"]
+    good = [e for e in ranking if tiers[e] == "good"][:2]
+    excess = sorted((e for e in comp if comp[e] >= EXCESS), key=lambda e: -comp[e])
+    weak = sorted((e for e in comp if comp[e] < DEFICIENT), key=lambda e: comp[e])[:2]
+    mid = [e for e in sorted(comp, key=lambda e: -comp[e]) if DEFICIENT <= comp[e] < EXCESS]
+
+    # 3 체질
+    if excess and weak:
+        const = sec.CONST_MIX.format(name=name, many=sec.names(excess), few=sec.names(weak),
+                                     ga1=sec.ga(excess[-1]), ga2=sec.ga(weak[-1]))
+    elif excess:
+        const = sec.CONST_MANY_ONLY.format(name=name, many=sec.names(excess), ga1=sec.ga(excess[-1]))
+    elif weak:
+        const = sec.CONST_FEW_ONLY.format(name=name, few=sec.names(weak), ga2=sec.ga(weak[-1]))
+    else:
+        const = sec.CONST_EVEN.format(name=name)
+    share = sec.CONST_SHARE.format(line=" · ".join(f"{sec.ELEMENT_NAME[e]} {round(comp[e])}%" for e in "木火土金水"))
+
+    # 4 몸
+    body = []
+    if mid:
+        body.append(sec.STRONG_LINE.format(el=sec.ELEMENT_NAME[mid[0]], organ=sec.ORGAN[mid[0]]))
+    body += [sec.EXCESS_LINE.format(el=sec.ELEMENT_NAME[e], ga=sec.ga(e), organ=sec.ORGAN[e], care=sec.EXCESS_CARE[e]) for e in excess]
+    body += [sec.WEAK_LINE.format(el=sec.ELEMENT_NAME[e], ga=sec.ga(e), organ=sec.ORGAN[e], care=sec.WEAK_CARE[e]) for e in weak]
+    if not excess and not weak:
+        body = []
+
+    # 5 음식
+    if good:
+        parts = [sec.FOOD_ITEM.format(el=sec.ELEMENT_NAME[e], taste=sec.TASTE[e], eul="을", food=sec.FOOD[e]) for e in good]
+        food = [sec.FOOD_LEAD,
+                f"{name}님에게 필요한 기운은 {sec.names(good)}{sec.copula(good[-1])}. " + ", ".join(parts)
+                + ("이" if (ord(parts[-1][-1]) - 0xAC00) % 28 else "가") + " 몸에 잘 맞아요."]
+        red = [e for e in excess if e not in good]
+        if red:
+            food.append(sec.FOOD_REDUCE.format(el=sec.ELEMENT_NAME[red[0]], taste=sec.TASTE[red[0]], eun="은"))
+    else:
+        food = [sec.FOOD_NONE]
+    if climate in sec.FOOD_CLIMATE:
+        food[-1] = food[-1] + " " + sec.FOOD_CLIMATE[climate]
+    food.append(sec.FOOD_DALHA)
+
+    # 6 운동
+    move = [sec.MOVE_CLIMATE[climate], sec.MOVE_STRENGTH[copy.strength_key(strength)]]
+
+    # 7 나이
+    p = core.natal_facts.pillars
+    birth = to_solar(core.input.birth_date, core.input.calendar_type, core.input.is_leap_month)
+    this_year = theme_timing.window_start(core)[0]
+    age_now = this_year - birth.year + 1
+    age, now_line, age_ev, age_kinds = [], "", [], []
+    for c in (core.timing.luck_cycle or {}).get("cycles", []):
+        if c.get("end_age", 0) < 18 or c.get("start_age", 0) > 77:
+            continue
+        stem, branch = c["pillar"]["stem"], c["pillar"]["branch"]
+        se, be = GAN_WUXING[stem], GAN_WUXING[get_hidden_stems(branch).stems[0].stem]
+        why = None
+        if tiers[se] == "avoid":
+            why = sec.AGE_WHY["avoid"]
+        elif se in excess or (be in excess and be == se):
+            el = se if se in excess else be
+            why = sec.AGE_WHY["excess"].format(el=sec.ELEMENT_NAME[el], ga=sec.ga(el))
+        else:
+            hit = next((k for k in ("day", "month") if p.get(k) is not None and _CLASH[p[k].branch] == branch), None)
+            if hit:
+                why = sec.AGE_WHY["clash"].format(pos=sec.POS_NAME[hit])
+        recover = why is None and tiers[se] == "good" and tiers[be] != "avoid"
+        span = f'{c["start_age"]}~{c["end_age"]}세'
+        gz = GAN_KO.get(stem, "") + ZHI_KO.get(branch, "")
+        state = "caution" if why else ("recover" if recover else "plain")
+        if why:
+            first = not any(x.startswith("caution:") for x in age_kinds)
+            age.append(sec.AGE_CAUTION.format(span=span, ganji=gz, why=why) + (" " + sec.AGE_CAUTION_TIP if first else ""))
+            age_kinds.append("caution:" + span)
+        elif recover:
+            again = any(x.startswith("recover:") for x in age_kinds)
+            age.append((sec.AGE_RECOVER_AGAIN if again else sec.AGE_RECOVER).format(span=span, ganji=gz))
+            age_kinds.append("recover:" + span)
+        if c["start_age"] <= age_now <= c["end_age"]:
+            now_line = sec.AGE_NOW.format(span=span, state=sec.AGE_NOW_STATE[state])
+        age_ev.append(dict(span=span, ganji=c["pillar"]["ganji"], state=state))
+
+    # 8 계절
+    season = []
+    if excess:
+        season.append(sec.SEASON_EXCESS.format(season=sec.SEASON[excess[0]], el=sec.ELEMENT_NAME[excess[0]]))
+    if weak:
+        season.append(sec.SEASON_WEAK.format(season=sec.SEASON[weak[0]], el=sec.ELEMENT_NAME[weak[0]]))
+    if climate in sec.SEASON_CLIMATE:
+        season.append(sec.SEASON_CLIMATE[climate])
+    if not season:
+        season = [sec.SEASON_EVEN]
+
+    # 9 12개월
+    start = (fixed_year, 1) if fixed_year else theme_timing.window_start(core)
+    rows, prev, used = [], None, set()
+    for y, m in theme_timing.window_months(start):
+        target = date(y, m, 15)
+        if target < birth:
+            continue
+        mg = calendar_ganji(target)[1]
+        r = daily_score.evaluate(core, mg, target)
+        h = r["domain_rules"]["건강"]
+        grade = {"좋음": "good", "주의": "caution"}.get(h["tier"], "normal")
+        # 넘치는 오행이 또 들어오는 것만으로는, 그 오행이 '피함'일 때만 주의로 본다(넘치는 오행이 둘인 사주는 절반이 주의가 됐다)
+        if grade == "caution" and h["bad"] == ["넘치는 오행이 또 들어옴"] and tiers[GAN_WUXING[mg[0]]] != "avoid":
+            grade = "normal"
+        reasons = h["good"] if grade == "good" else h["bad"] if grade == "caution" else []
+        rows.append(dict(y=y, m=m, grade=grade, label=sec.GRADE_LABEL[grade], score=r["score"],
+                         line=_pick_line(sec.MONTH_LINE[grade], seed + m, used), reason=reasons[0] if reasons else None,
+                         display=theme_timing.month_label(y, m, prev)))
+        prev = y
+    goods = sorted((r for r in rows if r["grade"] == "good"), key=lambda r: -r["score"])
+    bads = sorted((r for r in rows if r["grade"] == "caution"), key=lambda r: r["score"])
+    picked = ([goods.pop(0)] if goods else []) + ([bads.pop(0)] if bads else [])
+    for r in sorted(goods + bads, key=lambda r: -abs(r["score"] - 75)):
+        if len(picked) >= 3:
+            break
+        if r["reason"] not in {x["reason"] for x in picked}:
+            picked.append(r)
+    picked.sort(key=lambda r: (r["y"], r["m"]))
+    keys = [dict(y=r["y"], m=r["m"], display=f'{r["y"]}년 {r["m"]}월', label=r["label"],
+                 text=" ".join(t for t in (sec.HEALTH_REASON.get(r["reason"], ""), sec.HEALTH_ADVICE.get(r["reason"], "")) if t))
+            for r in picked if sec.HEALTH_REASON.get(r["reason"])]
+
+    # 10 개운
+    kaiun = (sec.KAIUN_LINE.format(name=name, items=", 그리고 ".join(sec.KAIUN[e] for e in good)) if good
+             else sec.KAIUN_NONE.format(name=name))
+    return dict(const=const, const_climate=sec.CONST_CLIMATE[climate], share=share, body=body, food=food, move=move,
+                age=age[:6], age_now=now_line, season=season, months=rows, keys=keys,
+                month_caption=sec.MONTH_CAPTION.format(y=start[0], m=start[1]), kaiun=kaiun,
+                evidence=dict(composition={e: round(v, 1) for e, v in comp.items()}, tiers=tiers, good=good,
+                              excess=excess, weak=weak, ages=age_ev,
+                              months=[dict(month=f'{r["y"]}-{r["m"]:02d}', grade=r["grade"], reason=r["reason"]) for r in rows]))
 
 
 def build_lifetime_health_report(
@@ -199,12 +390,12 @@ def build_lifetime_health_report(
 
     evidence_extra = ""
     if unlocked:
-        t3 = theme_timing.build_tier3(core, "health", _MONTH_DOMAINS,
-                                      lambda inf: copy.compose_tier3(inf, strength, seed), year=fixed_year)
+        d = _compose_v3(core, user_name or "회원", climate, strength, seed, fixed_year)
         bullets = copy.compose_tier4(climate, strength)
-        gated = _unlocked_html(t3, bullets)
-        evidence_summary["months"] = t3["evidence_months"]
-        evidence_summary["years"] = t3["evidence_years"]
+        gated = _unlocked_html(d, bullets)
+        evidence_summary["months"] = d["evidence"]["months"]
+        evidence_summary["years"] = []
+        evidence_summary["v3"] = {k: v for k, v in d["evidence"].items() if k != "months"}
         lines = _operation_lines(query)
         if lines:
             evidence_extra = "<p>" + "<br>".join(f"· {escape(x)}" for x in lines) + "</p>"
