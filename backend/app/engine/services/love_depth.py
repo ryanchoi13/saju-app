@@ -126,7 +126,19 @@ def past_love(core, gender: str, birth_year: int, this_year: int) -> dict:
         pil = c["pillar"]
         if _god(dm, pil["stem"]) in stars or _god(dm, _main(pil["branch"])) in stars:
             cycles.append((c["start_age"], c["end_age"]))
-    return dict(periods=periods, shakes=shakes, star_cycles=cycles)
+    # 인연 대운에 들어선 해: 이어진 인연 대운 묶음의 첫해만(28~47세면 28세 한 번)
+    entries, prev_end = [], None
+    for c in sorted((core.timing.luck_cycle or {}).get("cycles", []), key=lambda c: c.get("start_age", 0)):
+        if (c.get("start_age", 0), c.get("end_age", 0)) in cycles:
+            if prev_end is None or c["start_age"] != prev_end + 1:
+                if c.get("start_year") and birth_year + 17 <= c["start_year"] < this_year:
+                    entries.append(c["start_year"])
+            prev_end = c["end_age"]
+    # 시기 뒤에 붙지 않은 따로 선 충의 해(형은 작은 신호라 따로 세우지 않는다)
+    used = {per["shake"] for per in periods if per.get("shake")}
+    dm_branch = core.natal_facts.pillars["day"].branch
+    moves = [y for y, gz in shakes.items() if y not in used and CLASH[dm_branch] == gz[1]]
+    return dict(periods=periods, shakes=shakes, star_cycles=cycles, entries=entries, moves=moves)
 
 
 def palace(core, query: dict, gender: str) -> dict:

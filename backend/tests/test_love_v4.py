@@ -101,6 +101,10 @@ class LoveV4Tests(unittest.TestCase):
         self.assertEqual(dep["palace"]["god"], "indirect_wealth")      # 일지 戌 본기 戊 = 편재
         t = _text(self.paid["content"])
         self.assertIn("28~47세", t)                                     # 戊午·己未 대운(재성)을 하나로
+        # 11/13 정오님 실제 연애사(1998 · 2005 · 2024~25)로 보정: 인연 대운에 들어선 해(2005)와 충 = '움직임'
+        self.assertEqual(dep["cycle_entries"], [2005])
+        self.assertIn("28세(2005년)에는 인연의 별이 든 대운이 시작됐어요", t)
+        self.assertNotIn("흔들리는 해가 곧바로", t)
         self.assertIn("2028년(무신년), 2029년(기유년), 2035년(을묘년)", t)
         for banned in ("이별", "이혼", "결혼"):
             self.assertNotIn(banned, t)

@@ -138,7 +138,7 @@ PARTNER = {
 #   ③ 관계가 흔들리는 해 = 세운 지지가 일지를 충하는 해(앞으로 12년 안 가장 가까운 해).
 #   ④ 인연을 돕는 작은 개운 = 도화 글자의 방위(전해 오는 개운법이라고 밝힌다).
 REMEDY_HEADING = "실패 없는 연애를 위한 개운법"
-KEY_TITLE, CRISIS_TITLE, LUCK_TITLE = "관계가 잘 풀리는 열쇠", "관계가 흔들리는 해", "인연을 돕는 작은 개운"
+KEY_TITLE, CRISIS_TITLE, LUCK_TITLE = "관계가 잘 풀리는 열쇠", "관계가 크게 움직이는 해", "인연을 돕는 작은 개운"
 KEY = {
     "officer": "{name}님 사주는 관계에 분명한 약속과 기준이 설 때 안정돼요. 만나는 요일, 연락하는 방식처럼 둘만의 규칙을 하나씩 정해 두면 불안이 줄고 관계가 오래 갑니다.",
     "output": "{name}님 사주는 관계에 즐거움과 표현이 흐를 때 살아나요. 함께 웃을 거리, 새로 해 볼 일을 꾸준히 만들어야 관계가 메마르지 않습니다.",
@@ -155,7 +155,7 @@ CRISIS = {
     "pressure": "{name}님 원국은 책임과 압박의 기운(관성)이 강해서, 일이나 집안의 부담이 커질 때 관계를 돌볼 여유가 사라져요. 바쁜 시기일수록 짧은 안부 한 줄을 거르지 말고, 힘든 일은 숨기지 말고 먼저 알리세요.",
     "drift": "{name}님 원국은 관계를 크게 흔드는 구조가 두드러지지 않아요. 그래서 위기는 큰 사건보다 무심함이 쌓일 때 와요. 익숙해질수록 둘만의 새로운 경험을 일부러 만들어 주세요.",
 }
-CRISIS_YEAR = "가까운 관계의 자리가 흔들리는 해는 {year}년({ganji_ko}년)이에요. 그해에는 큰 결정을 서두르지 말고 서로의 이야기를 평소보다 더 들어 주세요."
+CRISIS_YEAR = "앞으로 가까운 관계의 자리가 크게 움직이는(충) 해는 {year}년({ganji_ko}년)이에요. 곁에 있는 관계는 시험을 받고, 혼자라면 새 인연이 들기도 하는 해라, 큰 결정은 서두르지 말고 상대의 이야기를 평소보다 더 들어 주세요."
 DIRECTION = {"子": "북쪽", "午": "남쪽", "卯": "동쪽", "酉": "서쪽"}
 LUCK_LINE = ("전해 오는 개운법 중에는 도화 글자가 놓인 방향을 쓰는 방법이 있어요. {name}님의 도화는 {branch_ko}({branch})라 {dir}이에요. "
              "방이나 거실의 {dir}에 생화 한 송이를 두거나, 중요한 만남 장소를 집에서 {dir}으로 잡아 보세요.")
@@ -170,9 +170,15 @@ STAR_NAME = {"male": "정재·편재", "female": "정관·편관"}
 # 지나온 사랑
 PAST_HEADING = "지나온 사랑"
 PAST_INTRO = "{name}님 사주에서 인연의 별({star})과 가까운 관계의 자리(일지)가 함께 움직인 해를 지나온 시간에 대어 보면 이래요."
-PAST_PERIOD = "{span}은 인연의 기운이 크게 든 시기예요."
-PAST_SHAKE = "그리고 {age}세({year}년)에 가까운 관계의 자리가 흔들리는 해가 곧바로 이어졌어요."
-PAST_REPEAT = "만남 뒤에 흔들림이 바로 따라오는 흐름이 {n}번 되풀이됐어요. 마음을 크게 준 인연이 있었다면 대개 이 시기들이었을 거예요."
+PAST_PERIOD = "{span}에는 인연의 기운이 크게 들었어요."
+PAST_SHAKE = "그리고 곧이어 {age}세({year}년)에 가까운 관계의 자리가 크게 움직였어요(충)."
+# 11/13 정오님 실제 연애사(1998·2005·2024~25)와 맞춰 보며 고침: 충은 '흔들림'만이 아니라 '움직임' — 끝나기도, 새로 시작되기도 한다.
+PAST_MOVE = "{span}에는 가까운 관계의 자리가 크게 움직였어요(충). 이어 오던 관계가 끝나기도, 새 인연이 시작되기도 하는 해예요."
+# 인연의 별이 든 대운으로 들어서는 해(이어진 인연 대운의 첫해만)
+PAST_MOVE_AGAIN = "{span}에도 가까운 관계의 자리가 크게 움직였어요(충)."
+PAST_ENTRY_AGAIN = "{span}에도 인연의 별이 든 대운이 다시 시작됐어요."
+PAST_ENTRY = "{span}에는 인연의 별이 든 대운이 시작됐어요. 인연의 흐름이 크게 바뀌는 해라, 이 무렵 만난 사람은 오래 마음에 남아요."
+PAST_REPEAT = "인연이 든 뒤 곧바로 관계의 자리가 크게 움직이는 흐름이 {n}번 되풀이됐어요. 마음을 크게 준 인연이 있었다면 대개 이 무렵이었을 거예요."
 PAST_CYCLE = "특히 {spans}는 대운에 인연의 별이 들어 있던 때라, 마음이 가는 사람이 많고 관계가 삶의 큰 줄기가 되던 시기예요."
 PAST_NONE = "아직 인연의 별과 가까운 관계의 자리가 크게 함께 움직인 해를 지나지 않았어요. 큰 인연은 앞으로의 흐름에서 열려요."
 
@@ -202,8 +208,8 @@ PALACE_CALM = "배우자 자리가 원국의 다른 자리와 크게 부딪히�
 WEAK_HEADING = "사랑에서 되풀이되는 약점"
 WEAK = {
     "timing": ("때를 붙잡기 어려운 사랑",
-               "마음이 깊어질 무렵 시험이 먼저 와서, 관계를 굳힐 시간이 늘 짧았던 사주예요. 좋은 때를 알아보지 못한 게 아니라, 붙잡을 틈이 짧았던 거예요.",
-               "인연이 들어온 해에는 관계를 서둘러 정하기보다, 다음 해의 흔들림을 함께 넘길 수 있는 사람인지 지켜보세요."),
+               "마음이 깊어질 무렵 관계의 자리가 먼저 크게 움직여서, 관계를 굳힐 시간이 늘 짧았던 사주예요. 좋은 때를 알아보지 못한 게 아니라, 붙잡을 틈이 짧았던 거예요.",
+               "인연이 들어온 해에는 관계를 서둘러 정하기보다, 다음 해의 큰 변화를 함께 넘길 수 있는 사람인지 지켜보세요."),
     "rival": ("자존심이 먼저 다치는 사랑",
               "원국에 승부욕과 자존심의 기운(겁재·비견)이 강해요. 마음을 다 줬는데 상대가 망설이거나 밀고 당기면, 서운함보다 자존심이 먼저 다쳐서 스스로 물러나거나 답을 재촉하게 됩니다.",
               "상대의 망설임을 거절로 읽지 마세요. 답을 기다릴 시간을 미리 넉넉히 정해 두면, 지는 기분 없이 기다리게 돼요."),
@@ -433,7 +439,7 @@ def all_sentences() -> list[str]:
             MAKEUP_HEADING, MAKEUP_TITLE, PARTNER_TITLE, PEACH_INTRO, PEACH_DOUBLE, REDFLOWER, REDFLOWER_ONLY,
             CHARM_CARE, CHARM_NONE, PEACH_YEAR_NONE, PEACH_YEAR_HAVE, PEACH_YEAR_NOW, REMEDY_HEADING, KEY_TITLE,
             CRISIS_TITLE, LUCK_TITLE, KEY_WHY, CRISIS_YEAR, LUCK_LINE, PAST_INTRO, PAST_PERIOD, PAST_SHAKE,
-            PAST_REPEAT, PAST_CYCLE, PAST_NONE, PALACE_LEAD, PALACE_STAR, PALACE_CLASH, PALACE_PUNISH, PALACE_COMBO,
+            PAST_REPEAT, PAST_CYCLE, PAST_NONE, PAST_MOVE, PAST_ENTRY, PAST_MOVE_AGAIN, PAST_ENTRY_AGAIN, PALACE_LEAD, PALACE_STAR, PALACE_CLASH, PALACE_PUNISH, PALACE_COMBO,
             PALACE_VOID, PALACE_CALM, WEAK_NONE, PARTNER_LATE, PARTNER_EARLY, PARTNER_MIDDLE, PARTNER_YEARS,
             PARTNER_NO_YEARS] + [x for t in WEAK.values() for x in t]
     return out
