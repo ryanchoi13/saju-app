@@ -28,21 +28,14 @@ class LifetimeStudyReportTests(unittest.TestCase):
         self.assertTrue(profile["natal"]["focused_ten_gods"])
         self.assertTrue(all(item["ten_god"] in allowed for item in profile["natal"]["focused_ten_gods"]))
 
-    def test_report_uses_actual_core_and_all_cycles(self):
-        report = build_lifetime_study_report(self.core, "최정오")
-        for marker in [
-            "평생 학업·시험운", "평생 학습 구조", "시험과 실전에서 달라지는 부분",
-            "현재 학업·시험 흐름", "48~57세", "庚申",
-            "초년기", "청년기", "중장년기", "말년기",
-        ]:
+    def test_report_uses_actual_core_and_cycles(self):
+        report = build_lifetime_study_report(self.core, "최정오", is_unlocked=True)
+        for marker in ["평생 학업·시험운", "평생 학습 구조", "48~57세(경신)", "공부가 잘 붙는 나이"]:
             self.assertIn(marker, report["title"] + report["content"])
-        self.assertIn("중장년기 · 48~67세", report["content"])
-        self.assertIn("말년기 · 68~97세", report["content"])
-        self.assertNotIn("98~107세", report["content"])
 
     def test_report_does_not_claim_score_or_pass_result(self):
-        report = build_lifetime_study_report(self.core, "최정오")
-        self.assertIn("합격·불합격을 확정하지 않습니다", report["content"])
+        report = build_lifetime_study_report(self.core, "최정오", is_unlocked=True)
+        self.assertIn("합격이나 점수를 보장하지 않습니다", report["content"])
         self.assertIn("지능이나 합격 점수가 아닙니다", report["content"])
 
     def test_main_report_generator_is_connected(self):
@@ -57,6 +50,8 @@ class LifetimeStudyReportTests(unittest.TestCase):
             "study", "기본", "상대방", "선택안함", "최정오", user=user
         )
         self.assertIn("정통 명리 평생 학업·시험운", report["title"])
+        self.assertIn("타고난 공부 머리", report["content"])
+        self.assertNotIn('data-study-section="age"', report["content"])     # 결제 전에는 잠김
 
 
 if __name__ == "__main__":

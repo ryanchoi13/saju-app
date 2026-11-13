@@ -70,7 +70,7 @@ class EditorialCoverageTests(TestCase):
 class ReadingRefreshTests(TestCase):
     setUp = annual_tests.AnnualRefreshTests.setUp
 
-    def seed_theme(self, key='study'):   # 재물운은 11/13 wealth-v3 로 따로 버전을 가진다
+    def seed_theme(self, key='study'):
         self.original=dict(report_key=key,report_title='이전 풀이',report_content='<p>보존할 원문</p>',
                            created_at='2026.02.01',narrative_version=VERSION)
         wallet_store.buy_report(self.owner,key,220,self.original)
@@ -84,7 +84,8 @@ class ReadingRefreshTests(TestCase):
     def test_theme_reading_is_updated_for_free_and_only_once(self):
         self.seed_theme()
         report = self.session_reports()[0]
-        self.assertEqual(report['narrative_version'], THEME_VERSION)
+        from app.engine.services.study import STUDY_NARRATIVE_VERSION       # 11/13 학업운도 v3 로 따로 버전을 가진다
+        self.assertEqual(report['narrative_version'], STUDY_NARRATIVE_VERSION)
         self.assertEqual(report['created_at'], '2026.02.01')
         self.assertNotIn('previous_versions', report)
         state = wallet_store.load(self.owner)
