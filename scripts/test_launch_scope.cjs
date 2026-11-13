@@ -36,18 +36,18 @@ class Resources extends ResourceLoader {
         assert.ok(!doc.querySelector('#drawerTalisman').hasAttribute('hidden'), 'talisman stays');
 
         w.eval('DALHA_SOON_REPORTS.forEach(applySoonEntrypoint)');
-        for (const key of ['wealth', 'study', 'gunghap']) {
+        for (const key of ['study', 'gunghap']) {
             const button = doc.getElementById(key === 'gunghap' ? 'btnOpenGunghapModal' : `btnTheme_${key}`);
             assert.ok(button.classList.contains('soon-hidden'), `${key} purchase button hidden`);
             assert.equal(doc.getElementById(`soon_${key}`).textContent, '곧 열려요');
             assert.equal(doc.querySelector(`[data-report-price="${key}"]`).textContent, '곧 열려요');
         }
-        for (const key of ['business', 'love', 'health']) {
+        for (const key of ['business', 'love', 'health', 'wealth']) {
             assert.ok(!doc.getElementById(`btnTheme_${key}`).classList.contains('soon-hidden'), `${key} free preview stays`);
             assert.equal(doc.querySelector(`[data-report-price="${key}"]`).textContent, '앞부분 무료 · 전체는 곧 열려요');
         }
         w.eval('DALHA_SOON_REPORTS.forEach(applySoonEntrypoint)');
-        assert.equal(doc.querySelectorAll('#soon_wealth').length, 1, 'idempotent');
+        assert.equal(doc.querySelectorAll('#soon_study').length, 1, 'idempotent');
 
         w.eval(`themePreviewCache.business = {content:'<p>앞부분</p><a data-paywall-cta href="#">결제</a>', price_coins:220}; renderThemePreview('business');`);
         const slot = doc.getElementById('themeReport_business');
