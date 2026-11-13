@@ -80,14 +80,10 @@ PILLAR_ORDER = ("year", "month", "day", "hour")
 
 def charm_text(name: str, peach_positions: list[str], double: bool, redflower: bool) -> str:
     if peach_positions:
-        parts = [PEACH_INTRO.format(name=name)]
-        if double:
-            parts.append(PEACH_DOUBLE)
-        parts += [PEACH_PLACE[p] for p in PILLAR_ORDER if p in peach_positions]
-        if redflower:
-            parts.append(REDFLOWER)
-        parts.append(CHARM_CARE)
-        return " ".join(parts)
+        first = [PEACH_INTRO.format(name=name)] + ([PEACH_DOUBLE] if double else [])
+        second = [PEACH_PLACE[p] for p in PILLAR_ORDER if p in peach_positions]
+        second += ([REDFLOWER] if redflower else []) + [CHARM_CARE]
+        return " ".join(first) + "\n\n" + " ".join(second)      # 두 문단(긴 한 문단은 읽기 어렵다)
     if redflower:
         return " ".join((REDFLOWER_ONLY.format(name=name), CHARM_CARE))
     return CHARM_NONE.format(name=name)

@@ -261,7 +261,7 @@ def _pair_section(attr: str, heading: str, items: list[tuple[str, str]]) -> str:
 def _unlocked_html(d: dict, match: dict, now: dict) -> str:
     g = d["group"]
     out = [
-        _section("charm", sec.CHARM_HEADING, _p(d["charm"])),
+        _section("charm", sec.CHARM_HEADING, "".join(_p(x) for x in d["charm"].split("\n\n"))),
         _pair_section("course", "연애의 시작과 그 뒤",
                       [(sec.START_TITLE, sec.START[g]), (sec.LATER_TITLE, sec.LATER[g])]),
         _pair_section("match", copy.MATCH_HEADING,
