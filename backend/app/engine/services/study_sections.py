@@ -76,6 +76,33 @@ LEAK = {
              "하루 30분이라도 매일 같은 시간에 펴는 습관을 만드세요."),
 }
 
+# 2-2 ── 학교 공부와의 궁합 (11/13 정오님: 성적이 어땠는지도 보고 싶다)
+# 성적 '등급'을 매기지 않는다. 인성이 하나도 없는데 반에서 1·2등을 한 정오님처럼, 원국 하나로 성적을 단정하면 틀린다.
+# 대신 '시험 제도 안에서 실력이 성적으로 드러나기 쉬운가'를 원국 + 학창 시절 대운 + 문창으로 본다.
+SCHOOL_HEADING = "학교 공부와의 궁합"
+SCHOOL = {
+    "high": "학교 공부와 궁합이 좋은 사주예요. 시험 제도 안에서도 실력이 성적으로 잘 드러나서, 학창 시절 성적이 좋은 편으로 나오기 쉬워요.",
+    "mid": "학교 공부를 무난하게 따라가는 사주예요. 다만 진짜 실력은 성적표보다 성적표 밖, 직접 해 보고 만들어 내는 자리에서 더 크게 드러나요.",
+    "other": "교과 성적보다 다른 길에서 더 빛나는 사주예요. 학창 시절 성적이 기대보다 덜 나왔다면 머리가 모자라서가 아니라 시험 형식과 결이 달라서예요. 성적만으로 나를 판단하지 마세요.",
+}
+SCHOOL_CYCLE = {
+    "good": "학창 시절({span})의 대운도 공부를 돕는 흐름이라, 이 시기에 들인 노력이 그대로 성적으로 이어지는 때예요.",
+    "busy": "학창 시절({span})의 대운은 공부보다 다른 일과 바깥에 마음이 가기 쉬운 흐름이에요. 이때 성적이 출렁였다면 운의 결 때문이에요.",
+    "plain": "학창 시절({span})의 대운은 공부 쪽으로 크게 기울지 않은 흐름이라, 습관을 들인 만큼 성적이 따라오는 때예요.",
+}
+
+# 2-3 ── 어울리는 진로 방향 (학문 · 기술 · 예체능)
+PATHWAY_HEADING = "어울리는 진로 방향"
+PATHWAY_LEAD = "명리에서는 배움의 별(인성), 재주의 별(식신·상관), 현실의 별(재성)이 어떻게 놓였는지로 학문·기술·예체능 중 어느 길이 맞는지 읽어요."
+PATHWAY = {
+    "scholar": ("학문의 길", "깊이 읽고 생각해서 이론을 세우는 일이 잘 맞아요. 연구·교육·전문 자격처럼 오래 공부할수록 값이 커지는 길이에요."),
+    "craft": ("기술·실무의 길", "배운 것을 손과 현장에서 바로 쓰는 일이 잘 맞아요. 설계·기술·전문 실무처럼 만들어 낸 결과물로 실력을 보여 주는 길이에요."),
+    "art": ("예체능의 길", "느낌과 표현, 몸의 감각을 쓰는 일이 잘 맞아요. 예술·디자인·공연·운동처럼 정답보다 나만의 결이 값이 되는 길이에요."),
+}
+PATHWAY_FIRST = "{name}님에게 가장 잘 맞는 건 {title}이에요. {text}"
+PATHWAY_SECOND = "그다음으로 {title}에도 재주가 있어서, 두 길을 섞은 일에서 남다른 힘을 내요."
+PATHWAY_EVEN = "세 길 중 한쪽으로 크게 기울지 않아서, 어느 길이든 마음이 가는 쪽을 깊게 파는 것이 맞아요."
+
 # 3 ── 나에게 맞는 공부법
 METHOD_HEADING = "나에게 맞는 공부법"
 METHOD = {
@@ -204,11 +231,11 @@ BULLET_AGE = {
 BULLET_MONTH = "{month}처럼 공부 흐름이 좋은 달에 시험이나 새 과목 시작을 맞춰 보세요."
 
 LOCKED_SECTIONS = (
-    ("method", "나에게 맞는 공부법"), ("field", "잘 맞는 공부 분야"), ("exam", "나의 시험운"),
+    ("school", "학교 공부와의 궁합"), ("pathway", "어울리는 진로 방향"), ("method", "나에게 맞는 공부법"), ("field", "잘 맞는 공부 분야"), ("exam", "나의 시험운"),
     ("age", "공부가 잘 붙는 나이"), ("year", "시험·자격에 좋은 해"), ("months", "앞으로 12개월 학업 흐름"),
     ("kaiun", "학업 개운"), ("actions", "공부를 이어 가는 실천"),
 )
-LOCKED_TEASER = "나에게 맞는 공부법과 잘 맞는 분야, 시험운, 공부가 잘 붙는 나이와 시험·자격에 좋은 해, 앞으로 12개월 학업 흐름까지 풀어 두었어요."
+LOCKED_TEASER = "학교 공부와의 궁합, 학문·기술·예체능 중 어울리는 길, 나에게 맞는 공부법과 잘 맞는 분야, 시험운, 공부가 잘 붙는 나이와 시험·자격에 좋은 해, 앞으로 12개월 학업 흐름까지 풀어 두었어요."
 CTA = "학업의 흐름 전체 열어보기"
 DISCLAIMER = "원국과 흐름을 바탕으로 한 해석이며 합격이나 점수를 보장하지 않습니다. 실제 준비량과 시험 조건을 함께 살펴 주세요."
 
@@ -219,12 +246,14 @@ def all_sentences() -> list[str]:
         out += list(v)
     for v in LEAK.values():
         out += list(v)
-    for bank in (STYLE, METHOD, METHOD_STRENGTH, FIELD, EXAM, AGE_NOW_STATE, STUDY_REASON, STUDY_ADVICE,
+    for v in PATHWAY.values():
+        out += list(v)
+    for bank in (SCHOOL, SCHOOL_CYCLE, STYLE, METHOD, METHOD_STRENGTH, FIELD, EXAM, AGE_NOW_STATE, STUDY_REASON, STUDY_ADVICE,
                  BULLET_MIND, BULLET_AGE):
         out += [x for x in bank.values() if x]
     for v in MONTH_LINE.values():
         out += list(v)
-    out += [LITERARY, FIELD_LEAD, FIELD_FIRST, FIELD_SECOND, FIELD_NOTE, EXAM_NO_OFFICER, AGE_LEAD, AGE_LEARN,
+    out += [PATHWAY_LEAD, PATHWAY_FIRST, PATHWAY_SECOND, PATHWAY_EVEN, LITERARY, FIELD_LEAD, FIELD_FIRST, FIELD_SECOND, FIELD_NOTE, EXAM_NO_OFFICER, AGE_LEAD, AGE_LEARN,
             AGE_LEARN_AGAIN, AGE_EXAM, AGE_EXAM_AGAIN, AGE_MAKE, AGE_MAKE_AGAIN, AGE_BUSY, AGE_BUSY_AGAIN,
             YEAR_GOOD, YEAR_LEARN, YEAR_BUSY, YEAR_NONE, MONTH_CAPTION, NO_KEY_MONTH, KAIUN_LEAD, KAIUN_DESK,
             KAIUN_COLOR, KAIUN_HABIT, BULLET_MONTH, LOCKED_TEASER, CTA, DISCLAIMER]

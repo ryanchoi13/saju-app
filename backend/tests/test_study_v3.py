@@ -11,7 +11,7 @@ from app.engine.services import study_sections as sec
 from app.engine.services.annual_copy import find_banned
 from app.engine.services.study import build_lifetime_study_report
 
-PAID = ("method", "field", "exam", "age", "year", "months", "kaiun", "actions")
+PAID = ("school", "pathway", "method", "field", "exam", "age", "year", "months", "kaiun", "actions")
 
 
 def _core(birth=datetime.date(1978, 3, 13), gender="male", hour=10, minute=30):
@@ -68,6 +68,10 @@ class StudyV3Tests(unittest.TestCase):
         self.assertEqual(ev["exam"], "practical")
         self.assertEqual(ev["leaks"][0], "busy")
         self.assertEqual(ev["now_state"], "exam")
+        # 중학교 때 반에서 1·2등(정오님): 외우는 힘(인성)은 없어도 학교 공부 궁합은 좋음으로 나와야 한다
+        self.assertEqual(ev["school"], "high")
+        self.assertEqual(ev["school_cycle"], "good")
+        self.assertEqual(ev["pathway"][:2], ["craft", "art"])
         t = _text(self.paid["content"])
         self.assertIn("건축·부동산·행정·사회과학", t)
         self.assertIn("남동쪽", t)

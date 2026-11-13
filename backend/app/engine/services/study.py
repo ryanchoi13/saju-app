@@ -182,6 +182,35 @@ def _compose_paid(core: MyeongriCoreResult, name: str, a: dict, seed: int, fixed
     comp = composition(core)
     dm_el = GAN_WUXING[dm]
 
+    # 2-2 학교 공부와의 궁합
+    fit = {"exam": 2, "absorb": 2, "insight": 1, "make": 1, "even": 1, "field": 0, "rival": 0}[a["mind"]] + (1 if a["literary"] else 0)
+    school_cycle, school_span = "plain", ""
+    for c in (core.timing.luck_cycle or {}).get("cycles", []):
+        if c.get("start_age", 0) <= 14 <= c.get("end_age", 0):          # 중학교 무렵(세는 나이 14세)을 품은 대운
+            g = _GROUP.get(god(c["pillar"]["stem"]))
+            school_span = f'{c["start_age"]}~{c["end_age"]}세'
+            school_cycle = ("good" if g in ("resource", "officer") or (g == "output" and not a["weak"])
+                            else "busy" if g == "wealth" else "plain")
+    fit += 1 if school_cycle == "good" else -1 if school_cycle == "busy" else 0
+    school_level = "high" if fit >= 3 else "mid" if fit >= 1 else "other"
+    school = [sec.SCHOOL[school_level]] + ([sec.SCHOOL_CYCLE[school_cycle].format(span=school_span)] if school_span else [])
+
+    # 2-3 진로 방향 (학문 · 기술 · 예체능)
+    n = a["n"]
+    path_score = {
+        "scholar": 2 * n.get("direct_resource", 0) + n.get("indirect_resource", 0) + (a["off"] if a["res"] else 0) + (1 if a["literary"] else 0),
+        "craft": 2 * n.get("eating_god", 0) + a["wea"] + n.get("direct_officer", 0),
+        "art": 2 * n.get("hurting_officer", 0) + n.get("indirect_resource", 0) + n.get("rob_wealth", 0),
+    }
+    order = sorted(path_score, key=lambda k: -path_score[k])
+    if path_score[order[0]] - path_score[order[2]] <= 1:
+        pathway = [sec.PATHWAY_LEAD, sec.PATHWAY_EVEN]
+    else:
+        t1, x1 = sec.PATHWAY[order[0]]
+        pathway = [sec.PATHWAY_LEAD, sec.PATHWAY_FIRST.format(name=name, title=t1, text=x1)]
+        if path_score[order[1]] >= 2 and path_score[order[0]] - path_score[order[1]] <= 2:
+            pathway.append(sec.PATHWAY_SECOND.format(title=sec.PATHWAY[order[1]][0]))
+
     # 3 공부법
     method = [sec.METHOD[k] for k in a["method"]] + [sec.METHOD_STRENGTH[
         "weak" if a["weak"] else "strong" if a["strong"] else "balanced"]]
@@ -305,9 +334,9 @@ def _compose_paid(core: MyeongriCoreResult, name: str, a: dict, seed: int, fixed
     bullets = [sec.BULLET_MIND[a["mind"]], sec.BULLET_AGE[now_state]]
     if goods:
         bullets.append(sec.BULLET_MONTH.format(month=f'{goods[0]["y"]}년 {goods[0]["m"]}월'))
-    return dict(method=method, field=field, exam=exam, age=age, age_now=now_line, years=years, months=rows, keys=keys,
+    return dict(school=school, pathway=pathway, method=method, field=field, exam=exam, age=age, age_now=now_line, years=years, months=rows, keys=keys,
                 month_caption=sec.MONTH_CAPTION.format(y=start[0], m=start[1]), kaiun=kaiun, bullets=bullets,
-                evidence=dict(mind=a["mind"], leaks=a["leaks"], method=a["method"], fields=els, exam=a["exam"],
+                evidence=dict(mind=a["mind"], school=school_level, school_cycle=school_cycle, pathway=order if len(pathway) > 2 or pathway[1] != sec.PATHWAY_EVEN else [], path_score=path_score, leaks=a["leaks"], method=a["method"], fields=els, exam=a["exam"],
                               literary=a["literary"], ages=age_ev, now_state=now_state, exam_years=exam_y,
                               learn_years=learn_y, busy_years=busy_y, kaiun_element=el,
                               months=[dict(month=f'{r["y"]}-{r["m"]:02d}', grade=r["grade"], reason=r["reason"]) for r in rows]))
@@ -349,6 +378,8 @@ def build_lifetime_study_report(core: MyeongriCoreResult, user_name: str, *, is_
             f'<p style="margin:4px 0 0;">{escape(k["text"])}</p></div>' for k in d["keys"])
         lst = lambda key, items: "<ul>" + "".join(f'<li data-study-{key}="{i}">{escape(t)}</li>' for i, t in enumerate(items, 1)) + "</ul>"
         gated = "".join((
+            _sec_html("school", sec.SCHOOL_HEADING, "".join(_p(t) for t in d["school"])),
+            _sec_html("pathway", sec.PATHWAY_HEADING, "".join(_p(t) for t in d["pathway"])),
             _sec_html("method", sec.METHOD_HEADING, "".join(_p(t) for t in d["method"])),
             _sec_html("field", sec.FIELD_HEADING, "".join(_p(t) for t in d["field"])),
             _sec_html("exam", sec.EXAM_HEADING, "".join(_p(t) for t in d["exam"])),
