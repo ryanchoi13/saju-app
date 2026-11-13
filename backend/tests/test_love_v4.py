@@ -10,7 +10,7 @@ from app.engine.orchestrator import calculate_myeongri_core
 from app.engine.services import love_copy, love_sections as sec
 from app.engine.services.love import build_lifetime_love_report
 
-PAID = ("charm", "course", "match", "makeup", "now", "cycle", "months", "place", "actions")
+PAID = ("charm", "course", "match", "makeup", "remedy", "now", "cycle", "months", "place", "actions")
 
 
 def _core(birth=datetime.date(1978, 3, 13), gender="male", hour=11):
@@ -74,6 +74,23 @@ class LoveV4Tests(unittest.TestCase):
         self.assertEqual(ev["peach_positions"], ["month"])
         self.assertEqual(ev["redflower"], ["year"])
         self.assertIn(sec.CHARM_NONE.format(name="a")[:20], sec.charm_text("a", [], False, False))
+
+    def test_remedy_section_for_reference_person(self):
+        # 정오님: 필요한 오행 1순위 金 = 甲에게 관성 → 약속·기준 / 애정 십성에 재성 5 → 돈·생활 위기 / 일지 戌의 충 辰 = 2036 병진년
+        # 도화 卯 = 동쪽
+        c = self.paid["content"]
+        ev = self.paid["evidence_summary"]["v4"]["remedy"]
+        self.assertEqual((ev["key_group"], ev["risk"]), ("officer", "money"))
+        t = _text(c)
+        self.assertIn("2036년(병진년)", t)
+        self.assertIn("동쪽", t)
+        # 지금의 사랑 대화법(관성)이 열쇠와 같은 말이라 빠진다
+        self.assertNotIn(love_copy.TALK["관성"], t)
+
+    def test_chart_without_peach_gets_the_year_it_arrives(self):
+        line = sec.charm_text("민지", [], False, False, sec.PEACH_YEAR_NONE.format(year=2029, ganji_ko="기유"))
+        self.assertIn("도화가 드러나 있지 않아요", line)
+        self.assertIn("2029년(기유년)은 도화가 드는 해", line)
 
     def test_tier1_does_not_preview_the_habits(self):
         # 11/13: 1단 B 문장(표현 방식)은 2단 습관과 겹쳐서 뺐다

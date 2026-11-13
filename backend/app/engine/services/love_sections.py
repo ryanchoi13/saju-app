@@ -73,20 +73,23 @@ REDFLOWER_ONLY = "{name}님 원국에는 홍염(紅艶)이 들어 있어요. 다
 CHARM_CARE = "사람이 따르는 만큼 관계의 선을 분명히 해 두면, 이 매력이 오해 없이 좋은 인연으로 이어져요."
 CHARM_NONE = ("{name}님 원국에는 도화가 드러나 있지 않아요. 첫눈에 시선을 끌기보다 알수록 진가가 보이는 사람이라, "
               "짧은 만남보다 꾸준히 보는 자리에서 인연이 깊어져요.")
+# 도화가 운에서 들어오는 해 (11/13 정오님: "원국에 도화가 없는 경우는?") — 세운 지지가 연지·일지 기준 도화 글자인 해
+PEACH_YEAR_NONE = "도화는 원국에 없어도 운에서 들어와요. {year}년({ganji_ko}년)은 도화가 드는 해라, 평소보다 사람들 눈에 잘 띄고 새 인연이 잘 닿아요."
+PEACH_YEAR_HAVE = "타고난 도화가 한 번 더 힘을 얻는 해는 {year}년({ganji_ko}년)이에요."
+PEACH_YEAR_NOW = "올해({year}년 {ganji_ko}년)가 바로 도화가 드는 해라, 새 인연이 닿기 좋은 때예요."
 REDFLOWER_STEM = {"甲": "午", "乙": "午", "丙": "寅", "丁": "未", "戊": "辰", "己": "辰",
                   "庚": "戌", "辛": "酉", "壬": "子", "癸": "申"}
 PILLAR_ORDER = ("year", "month", "day", "hour")
 
 
-def charm_text(name: str, peach_positions: list[str], double: bool, redflower: bool) -> str:
+def charm_text(name: str, peach_positions: list[str], double: bool, redflower: bool, year_line: str = "") -> str:
     if peach_positions:
         first = [PEACH_INTRO.format(name=name)] + ([PEACH_DOUBLE] if double else [])
         second = [PEACH_PLACE[p] for p in PILLAR_ORDER if p in peach_positions]
-        second += ([REDFLOWER] if redflower else []) + [CHARM_CARE]
+        second += ([REDFLOWER] if redflower else []) + [CHARM_CARE] + ([year_line] if year_line else [])
         return " ".join(first) + "\n\n" + " ".join(second)      # 두 문단(긴 한 문단은 읽기 어렵다)
-    if redflower:
-        return " ".join((REDFLOWER_ONLY.format(name=name), CHARM_CARE))
-    return CHARM_NONE.format(name=name)
+    head = REDFLOWER_ONLY.format(name=name) if redflower else CHARM_NONE.format(name=name)
+    return head + ("\n\n" + year_line if year_line else "")
 
 
 # 4 ── 연애의 시작과 그 뒤 (줄기 6). 1단 기질·2단 습관과 겹치지 않게 '시간'으로 나눈다(11/13 정오님: 1~3칸 중복 지적).
@@ -127,6 +130,36 @@ PARTNER = {
     "care": "상대가 '그때 많이 속상했겠다'고 내 마음을 먼저 알아봐 주면 금방 풀려요.",
     "balanced": "상대가 '너는 어떻게 하고 싶어?'라고 내 뜻을 먼저 물어봐 주면 금방 풀려요.",
 }
+
+# 6-2 ── 실패 없는 연애를 위한 개운법 (11/13 정오님: "실패 없는 연애, 위기를 극복하는 방법, 개운 방안을 제시하는 게 기본 원칙")
+#   ① 관계가 잘 풀리는 열쇠 = 내 사주에 필요한 오행(element_tiers 좋음 1순위)이 일간에게 어떤 십성인가.
+#      명리의 개운은 '모자라고 필요한 기운을 채운다'는 원칙이라, 관계에서 그 십성의 역할을 늘리라고 쓴다.
+#   ② 위기가 오는 모습 = 원국 구조(애정 질의의 십성 개수·일지 충형). 성별로 배우자 별을 정하지 않는다.
+#   ③ 관계가 흔들리는 해 = 세운 지지가 일지를 충하는 해(앞으로 12년 안 가장 가까운 해).
+#   ④ 인연을 돕는 작은 개운 = 도화 글자의 방위(전해 오는 개운법이라고 밝힌다).
+REMEDY_HEADING = "실패 없는 연애를 위한 개운법"
+KEY_TITLE, CRISIS_TITLE, LUCK_TITLE = "관계가 잘 풀리는 열쇠", "위기가 오는 모습과 넘기는 법", "인연을 돕는 작은 개운"
+KEY = {
+    "officer": "{name}님 사주는 관계에 분명한 약속과 기준이 설 때 안정돼요. 만나는 요일, 연락하는 방식처럼 둘만의 규칙을 하나씩 정해 두면 불안이 줄고 관계가 오래 갑니다.",
+    "output": "{name}님 사주는 관계에 즐거움과 표현이 흐를 때 살아나요. 함께 웃을 거리, 새로 해 볼 일을 꾸준히 만들어야 관계가 메마르지 않습니다.",
+    "wealth": "{name}님 사주는 관계가 현실 감각 위에 설 때 단단해져요. 돈 쓰는 방식과 생활 습관을 일찍 맞춰 두면 큰 다툼의 씨앗이 미리 사라집니다.",
+    "peer": "{name}님 사주는 친구처럼 대등한 관계에서 힘을 얻어요. 한쪽이 끌고 가기보다 같이 정하고 같이 책임지는 관계일 때 오래 갑니다.",
+    "resource": "{name}님 사주는 기댈 수 있는 관계에서 마음이 놓여요. 상대에게 의지하는 걸 부끄러워하지 말고, 고민을 먼저 털어놓는 쪽이 되면 관계가 깊어집니다.",
+}
+KEY_WHY = "명리의 개운은 내 사주에 필요한 기운을 채우는 데서 시작해요. 관계에서는 그 기운이 이런 모습으로 채워집니다."
+CRISIS = {
+    "clash": "{name}님 원국은 가까운 관계의 자리(일지)가 다른 자리와 부딪히는 구조라, 이사·이직처럼 생활이 크게 바뀔 때 관계도 함께 흔들려요. 큰 변화는 정하기 전에 상대와 먼저 의논하고, 바뀐 생활에 서로 적응할 시간을 넉넉히 두세요.",
+    "words": "{name}님 원국은 표현의 기운(상관)이 강해서, 위기는 대개 말에서 시작돼요. 감정이 올라온 날 보낸 메시지 하나가 오래 남으니, 화가 난 날에는 답장을 다음 날 아침으로 미루는 규칙만 지켜도 큰 고비를 넘깁니다.",
+    "rival": "{name}님 원국은 나와 같은 기운(비겁)이 많아서, 주변 사람이 관계에 끼어들 때 위기가 와요. 친구나 가족의 말보다 두 사람의 대화를 먼저 두고, 둘 사이 일은 둘 사이에서 푸는 원칙을 지키세요.",
+    "money": "{name}님 원국은 재물의 기운(재성)이 두드러져서, 돈과 생활 문제가 쌓일 때 관계가 지쳐요. 돈 이야기를 불편하다고 미루지 말고 서운함이 작을 때 숫자로 꺼내면, 작은 불만이 큰 다툼으로 번지지 않습니다.",
+    "pressure": "{name}님 원국은 책임과 압박의 기운(관성)이 강해서, 일이나 집안의 부담이 커질 때 관계를 돌볼 여유가 사라져요. 바쁜 시기일수록 짧은 안부 한 줄을 거르지 말고, 힘든 일은 숨기지 말고 먼저 알리세요.",
+    "drift": "{name}님 원국은 관계를 크게 흔드는 구조가 두드러지지 않아요. 그래서 위기는 큰 사건보다 무심함이 쌓일 때 와요. 익숙해질수록 둘만의 새로운 경험을 일부러 만들어 주세요.",
+}
+CRISIS_YEAR = "가까운 관계의 자리가 흔들리는 해는 {year}년({ganji_ko}년)이에요. 그해에는 큰 결정을 서두르지 말고 서로의 이야기를 평소보다 더 들어 주세요."
+DIRECTION = {"子": "북쪽", "午": "남쪽", "卯": "동쪽", "酉": "서쪽"}
+LUCK_LINE = ("전해 오는 개운법 중에는 도화 글자가 놓인 방향을 쓰는 방법이 있어요. {name}님의 도화는 {branch_ko}({branch})라 {dir}이에요. "
+             "방이나 거실의 {dir}에 생화 한 송이를 두거나, 중요한 만남 장소를 집에서 {dir}으로 잡아 보세요.")
+BRANCH_KO = {"子": "자", "午": "오", "卯": "묘", "酉": "유"}
 
 # 7 ── 이번 10년의 사랑 (대운 천간 십성 10)
 CYCLE = {
@@ -291,19 +324,20 @@ LOCKED_SECTIONS = (
     ("course", "연애의 시작과 그 뒤"),
     ("match", "나와 맞는 사람, 부딪히는 사람"),
     ("makeup", "다툰 뒤 마음이 풀리는 법"),
+    ("remedy", "실패 없는 연애를 위한 개운법"),
     ("now", "지금의 사랑"),
     ("cycle", "이번 10년의 사랑"),
     ("months", "앞으로 12개월 관계의 타이밍"),
     ("place", "함께 가면 좋은 곳"),
     ("actions", "다정한 관계를 위한 실천"),
 )
-LOCKED_TEASER = "타고난 매력과 도화, 나와 맞는 사람, 화해하는 법부터 이번 10년과 앞으로 12개월의 달별 흐름까지 아홉 칸이 준비되어 있어요."
+LOCKED_TEASER = "타고난 매력과 도화, 나와 맞는 사람, 위기를 넘기는 개운법부터 이번 10년과 앞으로 12개월의 달별 흐름까지 열 칸이 준비되어 있어요."
 
 
 def all_sentences() -> list[str]:
     out: list[str] = []
     for bank in (STEM_LOVE, TRAP_FIX, PEACH_PLACE, START, LATER, MAKEUP, PARTNER, CYCLE, CYCLE_TIER, NEXT_SHORT,
-                 YEAR, LOVE_REASON, LOVE_ADVICE, PLACE, CYCLE_BULLET, PLACE_SHORT, YEAR_BULLET, CHARM_BULLET):
+                 YEAR, LOVE_REASON, LOVE_ADVICE, PLACE, CYCLE_BULLET, PLACE_SHORT, YEAR_BULLET, CHARM_BULLET, KEY, CRISIS):
         out += list(bank.values())
     for d in MONTH_LINE.values():
         for pair in d.values():
@@ -311,5 +345,6 @@ def all_sentences() -> list[str]:
     out += [NO_KEY_MONTH, MONTH_CAPTION, PLACE_LEAD, PLACE_TAIL, PLACE_NONE, MONTH_BULLET,
             MONTH_BULLET_NONE, CAUTION_BULLET, PLACE_BULLET, LOCKED_TEASER, START_TITLE, LATER_TITLE,
             MAKEUP_HEADING, MAKEUP_TITLE, PARTNER_TITLE, PEACH_INTRO, PEACH_DOUBLE, REDFLOWER, REDFLOWER_ONLY,
-            CHARM_CARE, CHARM_NONE]
+            CHARM_CARE, CHARM_NONE, PEACH_YEAR_NONE, PEACH_YEAR_HAVE, PEACH_YEAR_NOW, REMEDY_HEADING, KEY_TITLE,
+            CRISIS_TITLE, LUCK_TITLE, KEY_WHY, CRISIS_YEAR, LUCK_LINE]
     return out

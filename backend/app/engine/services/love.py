@@ -268,6 +268,10 @@ def _unlocked_html(d: dict, match: dict, now: dict) -> str:
                       [(copy.MATCH_GOOD_TITLE, match["good"]), (copy.MATCH_BAD_TITLE, match["bad"])]),
         _pair_section("makeup", sec.MAKEUP_HEADING,
                       [(sec.MAKEUP_TITLE, sec.MAKEUP[g]), (sec.PARTNER_TITLE, sec.PARTNER[g])]),
+        _section("remedy", sec.REMEDY_HEADING, "".join(
+            f'<div data-love-remedy="{k}"><strong>{escape(t)}</strong><p>{escape(x)}</p></div>'
+            for k, t, x in (("key", sec.KEY_TITLE, d["remedy"]["key"]), ("crisis", sec.CRISIS_TITLE, d["remedy"]["crisis"]),
+                            ("luck", sec.LUCK_TITLE, d["remedy"]["luck"])) if x).join(('<div class="love-pair">', '</div>'))),
         _pair_section("now", copy.NOW_HEADING,
                       [(copy.NOW_SINGLE_TITLE, now["single"]), (copy.NOW_COUPLE_TITLE, now["couple"])]),
     ]
@@ -371,12 +375,56 @@ def _charm(core: MyeongriCoreResult, name: str) -> dict:
     double = len(sources) == 2 and targets["year"] == targets["day"] and bool(positions)
     red_branch = sec.REDFLOWER_STEM[p["day"].stem]
     red = [pos for pos, b in have.items() if b == red_branch]
-    return dict(text=sec.charm_text(name, positions, double, bool(red)),
-                evidence=dict(peach_targets=targets, peach_positions=positions, redflower=red))
+    # 도화가 운(세운)에서 들어오는 가장 가까운 해 — 일지 기준 도화(없으면 연지 기준)
+    peach_branch = targets.get("day") or targets.get("year")
+    this_year = theme_timing.window_start(core)[0]
+    year_line, peach_year = "", None
+    for y in range(this_year, this_year + 12):
+        gz = calendar_ganji(date(y, 6, 15))[0]
+        if gz[1] == peach_branch:
+            peach_year = (y, gz)
+            ko = GAN_KO.get(gz[0], "") + ZHI_KO.get(gz[1], "")
+            tpl = sec.PEACH_YEAR_NOW if y == this_year else (sec.PEACH_YEAR_HAVE if positions else sec.PEACH_YEAR_NONE)
+            year_line = tpl.format(year=y, ganji_ko=ko)
+            break
+    return dict(text=sec.charm_text(name, positions, double, bool(red), year_line), peach_branch=peach_branch,
+                evidence=dict(peach_targets=targets, peach_positions=positions, redflower=red,
+                              peach_year=list(peach_year) if peach_year else None))
+
+
+_RISK_OF = (("words", ("eating_god", "hurting_officer"), 3), ("rival", ("peer", "rob_wealth"), 3),
+            ("money", ("direct_wealth", "indirect_wealth"), 3), ("pressure", ("direct_officer", "seven_killings"), 3))
+
+
+def _remedy(core: MyeongriCoreResult, query: dict, name: str, counts: Counter, tiers: dict, ranking: list[str],
+            peach_branch: str | None) -> dict:
+    """실패 없는 연애를 위한 개운법: 관계의 열쇠(필요한 오행의 십성) · 위기의 모습(원국 구조) · 흔들리는 해 · 도화 방위."""
+    dm = core.natal_facts.pillars["day"].stem
+    day_branch = core.natal_facts.pillars["day"].branch
+    good = [e for e in ranking if tiers[e] == "good"] or [ranking[0]]
+    key_group = _god_group(dm, good[0])
+    day_hit = any(r.get("type") == "branch_clash"      # 일지충만 본다(형까지 넣으면 절반 가까이가 이 갈래로 몰렸다)
+                  and any(m.get("pillar") == "day" for m in r.get("members", []))
+                  for r in query["natal"]["relationships"])
+    risk = "clash" if day_hit else next((k for k, gods, n in _RISK_OF if sum(counts.get(g, 0) for g in gods) >= n), "drift")
+    this_year = theme_timing.window_start(core)[0]
+    crisis_year = ""
+    for y in range(this_year, this_year + 12):
+        gz = calendar_ganji(date(y, 6, 15))[0]
+        if gz[1] == _CLASH[day_branch]:
+            crisis_year = sec.CRISIS_YEAR.format(year=y, ganji_ko=GAN_KO.get(gz[0], "") + ZHI_KO.get(gz[1], ""))
+            break
+    luck = ""
+    if peach_branch in sec.DIRECTION:
+        luck = sec.LUCK_LINE.format(name=name, branch=peach_branch, branch_ko=sec.BRANCH_KO[peach_branch],
+                                    dir=sec.DIRECTION[peach_branch])
+    return dict(key=" ".join((sec.KEY_WHY, sec.KEY[key_group].format(name=name))),
+                crisis=" ".join(t for t in (sec.CRISIS[risk].format(name=name), crisis_year) if t),
+                luck=luck, evidence=dict(key_group=key_group, risk=risk, day_clash_natal=day_hit))
 
 
 def _compose_v4(core: MyeongriCoreResult, query: dict, name: str, group: str, seed: int,
-                year: int | None = None, now: dict | None = None) -> dict:
+                year: int | None = None, now: dict | None = None, counts: Counter | None = None) -> dict:
     start = (year, 1) if year else theme_timing.window_start(core)   # year 를 주면(옛 호출·테스트) 그해 1~12월
     dm = core.natal_facts.pillars["day"].stem
     tiers = element_tiers(core)["tiers"]
@@ -410,6 +458,7 @@ def _compose_v4(core: MyeongriCoreResult, query: dict, name: str, group: str, se
         year_head = sec.YEAR_HEAD.format(year=year["year"],
                                          ganji_ko=GAN_KO.get(year["ganji"][0], "") + ZHI_KO.get(year["ganji"][1], ""))
     charm = _charm(core, name)
+    remedy = _remedy(core, query, name, counts or Counter(), tiers, ranking, charm["peach_branch"])
     year_god = _ten_god_value(dm, year["ganji"][0]) if year["ganji"] else None
     bullets = [copy.COMMON_BULLET]
     if god in sec.CYCLE_BULLET:
@@ -420,11 +469,11 @@ def _compose_v4(core: MyeongriCoreResult, query: dict, name: str, group: str, se
     if good:
         bullets.append(sec.PLACE_BULLET.format(place=sec.PLACE_SHORT[good[0]]))
     return dict(
-        group=group if group in sec.START else "balanced", charm=charm["text"],
+        group=group if group in sec.START else "balanced", charm=charm["text"], remedy=remedy,
         cycle=cycle, cycle_head=cycle_head, cycle_tier=cycle_tier, cycle_next=cycle_next,
         year=year_text, year_head=year_head, month_caption=sec.MONTH_CAPTION.format(y=start[0], m=start[1]),
         months=rows, key_months=keys, place=sec.place_text(name, good), bullets=bullets,
-        evidence=dict(good_elements=good, charm=charm["evidence"], cycle=current.get("pillar", {}).get("ganji"), cycle_god=god, year=year,
+        evidence=dict(good_elements=good, charm=charm["evidence"], remedy=remedy["evidence"], cycle=current.get("pillar", {}).get("ganji"), cycle_god=god, year=year,
                       months=[dict(month=f'{r["y"]}-{r["m"]:02d}', ganji=r["ganji"], grade=r["grade"],
                                    reason=r["reason"]) for r in rows],
                       key_months=[k["basis"] for k in keys]),
@@ -472,7 +521,11 @@ def build_lifetime_love_report(
 
     if unlocked:
         match, now = _match_and_now(core, user_name or "회원")
-        d = _compose_v4(core, query, user_name or "회원", group, seed, fixed_year, now)
+        d = _compose_v4(core, query, user_name or "회원", group, seed, fixed_year, now, counts)
+        # '지금의 사랑'의 대화법이 개운법의 열쇠와 같은 십성 묶음이면 같은 말이 되므로 대화법 문장을 뺀다
+        if copy.GOD_GROUP_EN.get(now["evidence"].get("cycle_group") or now["evidence"].get("year_group")) == d["remedy"]["evidence"]["key_group"]:
+            now = dict(now, couple=now["couple"].replace(" " + copy.NOW_TALK.format(
+                talk=copy.TALK[now["evidence"].get("cycle_group") or now["evidence"]["year_group"]]), ""))
         gated = _unlocked_html(d, match, now)
         evidence_summary["match"] = match["evidence"]
         evidence_summary["now"] = now["evidence"]
