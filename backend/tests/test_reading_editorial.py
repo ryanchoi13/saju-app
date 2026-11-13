@@ -70,7 +70,7 @@ class EditorialCoverageTests(TestCase):
 class ReadingRefreshTests(TestCase):
     setUp = annual_tests.AnnualRefreshTests.setUp
 
-    def seed_theme(self, key='wealth'):
+    def seed_theme(self, key='study'):   # 재물운은 11/13 wealth-v3 로 따로 버전을 가진다
         self.original=dict(report_key=key,report_title='이전 풀이',report_content='<p>보존할 원문</p>',
                            created_at='2026.02.01',narrative_version=VERSION)
         wallet_store.buy_report(self.owner,key,220,self.original)
@@ -125,7 +125,7 @@ class ReadingRefreshTests(TestCase):
         replacement=dict(report_title='새 풀이',report_content='<p>새 원고</p>',narrative_version=THEME_VERSION)
         with ThreadPoolExecutor(max_workers=4) as pool:
             list(pool.map(lambda _:wallet_store.refresh_owned_report(
-                self.owner,'wealth',self.original,replacement),range(8)))
+                self.owner,'study',self.original,replacement),range(8)))
         state=wallet_store.load(self.owner)
         self.assertEqual(state['balance'],780)
         self.assertEqual(state['reports'][0]['previous_versions'],[self.original])

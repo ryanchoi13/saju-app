@@ -18,16 +18,13 @@ class LifetimeWealthServiceTests(TestCase):
             target_date=date(2026, 9, 7),
         )
 
-    def test_report_uses_natal_wealth_facts_and_all_cycles(self):
-        report = build_lifetime_wealth_report(self.core, "최정오")
+    def test_report_uses_natal_wealth_facts_and_cycles(self):
+        report = build_lifetime_wealth_report(self.core, "최정오", is_unlocked=True)
         self.assertIn("평생 재물 구조", report["content"])
         self.assertIn("정재", report["content"])
         self.assertIn("편재", report["content"])
-        self.assertIn("庚申", report["content"])
-        for phase in ("초년기", "청년기", "중장년기", "말년기"):
-            self.assertIn(phase, report["content"])
-        self.assertIn("중장년기 · 48~67세", report["content"])
-        self.assertIn("말년기 · 68~97세", report["content"])
+        self.assertIn("48~57세", report["content"])
+        self.assertIn("58~67세(신유)", report["content"])
         self.assertNotIn("98~107세", report["content"])
 
     def test_report_avoids_guaranteed_investment_claims_and_scores(self):
@@ -49,4 +46,5 @@ class LifetimeWealthServiceTests(TestCase):
             "wealth", "기본", "상대방", "선택안함", "최정오", user=user
         )
         self.assertIn("정통 명리 평생 재물운", report["title"])
-        self.assertIn("48~57세", report["content"])
+        self.assertIn("타고난 돈 그릇", report["content"])
+        self.assertNotIn('data-wealth-section="age"', report["content"])     # 결제 전에는 잠김
