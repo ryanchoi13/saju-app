@@ -91,13 +91,15 @@ GROUP_OF_TEN_GOD = {
 }
 
 
-def lead_group(counts: dict) -> str:
+def lead_group(counts: dict, tiebreak: dict | None = None) -> str:
     totals = {g: 0 for g in GROUPS if g != "balanced"}
-    for god, n in counts.items():
-        g = GROUP_OF_TEN_GOD.get(god)
-        if g:
-            totals[g] += n
-    best = max(totals, key=totals.get)   # 동률이면 GROUPS 순서가 앞선 줄기
+    extra = {g: 0 for g in totals}
+    for source, bucket in ((counts, totals), (tiebreak or {}, extra)):
+        for god, n in source.items():
+            g = GROUP_OF_TEN_GOD.get(god)
+            if g:
+                bucket[g] += n
+    best = max(totals, key=lambda g: (totals[g], extra[g]))   # 여덟 글자가 같으면 지장간 중기·여기가 많은 쪽, 그래도 같으면 GROUPS 순서가 앞선 줄기
     return best if totals[best] else "balanced"
 
 

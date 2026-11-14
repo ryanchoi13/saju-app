@@ -27,6 +27,7 @@ from app.engine.services.annual_copy import seed_from
 from app.engine.services import health_copy as copy
 from app.engine.services import theme_timing
 from app.engine.services import health_sections as sec
+from app.engine.services.theme_core import CLASH
 from app.engine.services import daily_score
 from app.engine.services.daily_score import calendar_ganji
 from app.engine.services.element_balance import composition, element_tiers, natal_balance
@@ -200,8 +201,6 @@ def _unlocked_html(d: dict, bullets: list[str]) -> str:
 # ---------------------------------------------------------------------------
 # v3 계산 (유료). 잠금 상태에서는 부르지 않는다.
 # ---------------------------------------------------------------------------
-_CLASH = {"子": "午", "午": "子", "丑": "未", "未": "丑", "寅": "申", "申": "寅",
-          "卯": "酉", "酉": "卯", "辰": "戌", "戌": "辰", "巳": "亥", "亥": "巳"}
 EXCESS, DEFICIENT = 35, 10
 
 
@@ -282,7 +281,7 @@ def _compose_v3(core: MyeongriCoreResult, name: str, climate: str, strength: str
             el = se if se in excess else be
             why = sec.AGE_WHY["excess"].format(el=sec.ELEMENT_NAME[el], ga=sec.ga(el))
         else:
-            hit = next((k for k in ("day", "month") if p.get(k) is not None and _CLASH[p[k].branch] == branch), None)
+            hit = next((k for k in ("day", "month") if p.get(k) is not None and CLASH[p[k].branch] == branch), None)
             if hit:
                 why = sec.AGE_WHY["clash"].format(pos=sec.POS_NAME[hit])
         recover = why is None and tiers[se] == "good" and tiers[be] != "avoid"

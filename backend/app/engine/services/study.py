@@ -94,9 +94,9 @@ def _years(ys) -> str:
 
 
 def _analyse(core: MyeongriCoreResult, query: dict) -> dict:
-    from app.engine.services import love_depth
+    from app.engine.services.theme_core import natal_counts
     from app.engine.shensha.engine import _DAY_STEM_RULES
-    counts = love_depth.natal_counts(core)
+    counts = natal_counts(core)
     n = {k: len(v) for k, v in counts.items()}
     tot = lambda gods: sum(n.get(g, 0) for g in gods)
     res, off, out, wea, pee = tot(_RES), tot(_OFF), tot(_OUT), tot(_WEA), tot(_PEE)
