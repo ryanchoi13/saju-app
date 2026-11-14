@@ -38,7 +38,7 @@ class WealthV3Tests(unittest.TestCase):
 
     def test_paid_sections_and_volume(self):
         c = self.paid["content"]
-        self.assertEqual(self.paid["narrative_version"], "wealth-v3")
+        self.assertEqual(self.paid["narrative_version"], "wealth-v3.1")
         for key in PAID:
             self.assertIn(f'data-wealth-section="{key}"', c)
         self.assertGreaterEqual(len(_text(c).replace("\n", "")), 2900)

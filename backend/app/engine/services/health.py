@@ -35,7 +35,7 @@ from app.engine.constants import GAN_KO, GAN_WUXING, ZHI_KO, ZHI_WUXING
 from app.engine.facts.hidden_stems import get_hidden_stems
 from datetime import date
 
-HEALTH_NARRATIVE_VERSION = "health-v3"  # 11/13: 체질·강한 곳·음식·운동·나이·계절·12달·개운
+HEALTH_NARRATIVE_VERSION = "health-v3.1"  # 11/15: 12달 보통 달에도 한 줄.  11/13: 체질·강한 곳·음식·운동·나이·계절·12달·개운
 
 _STRENGTH = {
     "extremely_weak": "매우 신약", "weak": "신약",
@@ -205,6 +205,12 @@ def _unlocked_html(d: dict, bullets: list[str]) -> str:
 EXCESS, DEFICIENT = 35, 10
 
 
+def _normal_line(pool, common, start, used):
+    """보통 달 한 줄: 그달 무리 두 줄 중 안 쓴 것 → 공통 줄 중 안 쓴 것 순서(빈 줄·같은 문장 반복 없이)."""
+    return (_pick_line(pool, start, used) or _pick_line(common, start, used)
+            or pool[start % len(pool)])
+
+
 def _pick_line(pool, start, used):
     """아직 안 쓴 변형을 고른다. 다 썼으면 빈 줄(그 달은 등급만 보인다)."""
     for i in range(len(pool)):
@@ -328,7 +334,9 @@ def _compose_v3(core: MyeongriCoreResult, name: str, climate: str, strength: str
             grade = "normal"
         reasons = h["good"] if grade == "good" else h["bad"] if grade == "caution" else []
         rows.append(dict(y=y, m=m, grade=grade, label=sec.GRADE_LABEL[grade], score=r["score"],
-                         line=_pick_line(sec.MONTH_LINE[grade], seed + m, used), reason=reasons[0] if reasons else None,
+                         line=(_pick_line(sec.MONTH_LINE[grade], seed + m, used) if grade != "normal"
+                               else _normal_line(sec.MONTH_NORMAL[GAN_WUXING[mg[0]]], sec.MONTH_NORMAL_COMMON, seed + m, used)),
+                         reason=reasons[0] if reasons else None,
                          display=theme_timing.month_label(y, m, prev)))
         prev = y
     goods = sorted((r for r in rows if r["grade"] == "good"), key=lambda r: -r["score"])

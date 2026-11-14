@@ -53,7 +53,7 @@ def _uncertainty(core: MyeongriCoreResult) -> str:
             '여러 시주에서 공통으로 유지되는 원국과 대운 흐름을 중심으로 설명했습니다.</p></div>')
 
 
-STUDY_NARRATIVE_VERSION = "study-v3"   # 11/13: 공부 머리·방해하는 습관 무료 + 유료 8칸(옛 공통 안내 걷어 냄)
+STUDY_NARRATIVE_VERSION = "study-v3.1"   # 11/15: 12달 보통 달에도 한 줄.  11/13: 공부 머리·방해하는 습관 무료 + 유료 8칸(옛 공통 안내 걷어 냄)
 
 _BOX = "border:1px solid #E2E8F0;border-radius:12px;padding:12px 14px;background:#FFFFFF;"
 _SKELETON = (
@@ -78,6 +78,12 @@ def _sec_html(key: str, title: str, body: str, paywall: str = "unlocked", tier: 
 
 def _p(text: str, attr: str = "") -> str:
     return f"<p{attr}>{escape(text)}</p>" if text else ""
+
+
+def _normal_line(pool, common, start, used):
+    """보통 달 한 줄: 그달 무리 두 줄 중 안 쓴 것 → 공통 줄 중 안 쓴 것 순서(빈 줄·같은 문장 반복 없이)."""
+    return (_pick_line(pool, start, used) or _pick_line(common, start, used)
+            or pool[start % len(pool)])
 
 
 def _pick_line(pool, start, used):
@@ -303,7 +309,8 @@ def _compose_paid(core: MyeongriCoreResult, name: str, a: dict, seed: int, fixed
             grade, reason = "good", "문창"
         score = daily_score.evaluate(core, mg, target)["score"]
         rows.append(dict(y=y, m=m, grade=grade, label=sec.GRADE_LABEL[grade], score=score, reason=reason,
-                         line=_pick_line(sec.MONTH_LINE[grade], seed + m, used),
+                         line=(_pick_line(sec.MONTH_LINE[grade], seed + m, used) if grade != "normal"
+                               else _normal_line(sec.MONTH_NORMAL.get(grp or "", sec.MONTH_NORMAL["officer"]), sec.MONTH_NORMAL_COMMON, seed + m, used)),
                          display=theme_timing.month_label(y, m, prev)))
         prev = y
     goods = sorted((r for r in rows if r["grade"] == "good"), key=lambda r: -r["score"])
