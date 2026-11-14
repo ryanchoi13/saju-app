@@ -38,7 +38,7 @@ class StudyV3Tests(unittest.TestCase):
 
     def test_paid_sections_and_volume(self):
         c = self.paid["content"]
-        self.assertEqual(self.paid["narrative_version"], "study-v3")
+        self.assertEqual(self.paid["narrative_version"], "study-v3.1")
         for key in PAID:
             self.assertIn(f'data-study-section="{key}"', c)
         self.assertGreaterEqual(len(_text(c).replace("\n", "")), 2400)

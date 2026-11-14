@@ -116,7 +116,7 @@ def _uncertainty(core: MyeongriCoreResult) -> str:
     </div>"""
 
 
-WEALTH_NARRATIVE_VERSION = "wealth-v3"   # 11/13: 돈 그릇·새는 습관 무료 + 유료 8칸(옛 공통 안내 걷어 냄)
+WEALTH_NARRATIVE_VERSION = "wealth-v3.1"   # 11/15: 12달 보통 달에도 한 줄.  11/13: 돈 그릇·새는 습관 무료 + 유료 8칸(옛 공통 안내 걷어 냄)
 
 _BOX = "border:1px solid #E2E8F0;border-radius:12px;padding:12px 14px;background:#FFFFFF;"
 _SKELETON = (
@@ -145,6 +145,17 @@ def _p(text: str, attr: str = "") -> str:
 
 def _span(birth_year: int, a: int, b: int) -> str:
     return f"{a - birth_year + 1}세({a}년)" if a == b else f"{a - birth_year + 1}~{b - birth_year + 1}세({a}~{b}년)"
+
+
+_MONTH_GROUP = {"direct_resource": "resource", "indirect_resource": "resource", "direct_officer": "officer",
+                "seven_killings": "officer", "eating_god": "output", "hurting_officer": "output",
+                "direct_wealth": "wealth", "indirect_wealth": "wealth", "peer": "peer", "rob_wealth": "peer"}
+
+
+def _normal_line(pool, common, start, used):
+    """보통 달 한 줄: 그달 무리 두 줄 중 안 쓴 것 → 공통 줄 중 안 쓴 것 순서(빈 줄·같은 문장 반복 없이)."""
+    return (_pick_line(pool, start, used) or _pick_line(common, start, used)
+            or pool[start % len(pool)])
 
 
 def _pick_line(pool, start, used):
@@ -358,7 +369,9 @@ def _compose_paid(core: MyeongriCoreResult, query: dict, name: str, a: dict, see
         grade = {"좋음": "good", "주의": "caution"}.get(h["tier"], "normal")
         reasons = h["good"] if grade == "good" else h["bad"] if grade == "caution" else []
         rows.append(dict(y=y, m=m, grade=grade, label=sec.GRADE_LABEL[grade], score=r["score"],
-                         line=_pick_line(sec.MONTH_LINE[grade], seed + m, used), reason=reasons[0] if reasons else None,
+                         line=(_pick_line(sec.MONTH_LINE[grade], seed + m, used) if grade != "normal"
+                               else _normal_line(sec.MONTH_NORMAL.get(_MONTH_GROUP.get(god(mg[0]), ""), sec.MONTH_NORMAL["wealth"]), sec.MONTH_NORMAL_COMMON, seed + m, used)),
+                         reason=reasons[0] if reasons else None,
                          display=theme_timing.month_label(y, m, prev)))
         prev = y
     goods = sorted((r for r in rows if r["grade"] == "good"), key=lambda r: -r["score"])
