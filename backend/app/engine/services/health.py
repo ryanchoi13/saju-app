@@ -156,14 +156,15 @@ def _p(text: str, attr: str = "") -> str:
 
 
 def _locked_html() -> str:
-    titles = "".join(f'<li data-health-locked="{k}">{escape(t)}</li>' for k, t in sec.LOCKED_SECTIONS)
+    # 11/14: 잠긴 목록도 풀이 안 번호(01·02 무료 칸 다음 03부터)와 같게 매긴다.
+    titles = "".join(f'<li data-health-locked="{k}"><span class="locked-num">{i:02d}</span> {escape(t)}</li>' for i, (k, t) in enumerate(sec.LOCKED_SECTIONS, 3))
     return (
         '<section data-health-tier="3" data-paywall="locked" data-locked="true" '
         'style="border:1px dashed #94A3B8;border-radius:12px;background:#F8FAFC;padding:14px;margin-bottom:8px;">'
         f'<div style="font-size:12px;color:#64748B;font-weight:800;">🔒 {escape(copy.LOCK_LABEL)}</div>'
         '<h2 style="margin:4px 0 0;">이어지는 풀이</h2>'
         f'<p data-health-teaser="3" style="margin:6px 0 0;">{escape(sec.LOCKED_TEASER)}</p>'
-        f'<ul style="padding-left:18px;margin:6px 0 0;">{titles}</ul>{_SKELETON}</section>'
+        f'<ul data-locked-toc style="list-style:none;padding-left:0;margin:6px 0 0;">{titles}</ul>{_SKELETON}</section>'
         f'<a href="{copy.PAYWALL_HREF}" data-paywall-cta="theme-health" style="display:inline-block;margin-top:6px;'
         'padding:10px 16px;border-radius:10px;background:#2D6A4F;color:#fff;font-weight:700;text-decoration:none;">'
         f'{escape(copy.cta_label())}</a>')

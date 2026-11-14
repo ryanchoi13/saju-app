@@ -395,13 +395,14 @@ def build_lifetime_study_report(core: MyeongriCoreResult, user_name: str, *, is_
         evidence_summary["months"] = d["evidence"]["months"]
         evidence_summary["v3"] = {k: v for k, v in d["evidence"].items() if k != "months"}
     else:
-        titles = "".join(f'<li data-study-locked="{k}">{escape(t)}</li>' for k, t in sec.LOCKED_SECTIONS)
+        # 11/14: 잠긴 목록도 풀이 안 번호(01·02 무료 칸 다음 03부터)와 같게 매긴다.
+        titles = "".join(f'<li data-study-locked="{k}"><span class="locked-num">{i:02d}</span> {escape(t)}</li>' for i, (k, t) in enumerate(sec.LOCKED_SECTIONS, 3))
         gated = ('<section data-study-tier="3" data-paywall="locked" data-locked="true" '
                  'style="border:1px dashed #94A3B8;border-radius:12px;background:#F8FAFC;padding:14px;margin-bottom:8px;">'
                  '<div style="font-size:12px;color:#64748B;font-weight:800;">🔒 잠긴 풀이</div>'
                  '<h2 style="margin:4px 0 0;">이어지는 풀이</h2>'
                  f'<p data-study-teaser="3" style="margin:6px 0 0;">{escape(sec.LOCKED_TEASER)}</p>'
-                 f'<ul style="padding-left:18px;margin:6px 0 0;">{titles}</ul>{_SKELETON}</section>'
+                 f'<ul data-locked-toc style="list-style:none;padding-left:0;margin:6px 0 0;">{titles}</ul>{_SKELETON}</section>'
                  '<a href="#paywall-theme-study" data-paywall-cta="theme-study" style="display:inline-block;margin-top:6px;'
                  'padding:10px 16px;border-radius:10px;background:#1D2129;color:#fff;font-weight:700;text-decoration:none;">'
                  f'{escape(sec.CTA)}</a>')
