@@ -19,11 +19,13 @@ from html import escape
 from app.engine.core.models import MyeongriCoreResult
 from app.engine.calendar import to_solar
 from app.engine.semantic import build_service_query
+from app.engine.semantic.queries import profile_ten_gods
 from app.engine.services.applied_guidance import direction_advice, state_basis
 from app.engine.services.annual_copy import sanitize_paragraph, seed_from
 from app.engine.services import career_copy as copy
 from app.engine.services import theme_timing
 from app.engine.services import career_sections as sec
+from app.engine.services.theme_core import CLASH, YEOKMA, hidden_tally, tally
 from app.engine.services import daily_score
 from app.engine.services.daily_score import _god_group, calendar_ganji
 from app.engine.services.element_balance import composition, element_tiers, natal_balance
@@ -193,10 +195,6 @@ def _unlocked_html(d: dict) -> str:
 # ---------------------------------------------------------------------------
 # v3 계산 (유료 칸). 잠금 상태에서는 부르지 않는다.
 # ---------------------------------------------------------------------------
-_YEOKMA = {**dict.fromkeys("寅午戌", "申"), **dict.fromkeys("申子辰", "寅"),
-           **dict.fromkeys("巳酉丑", "亥"), **dict.fromkeys("亥卯未", "巳")}
-_CLASH = {"子": "午", "午": "子", "丑": "未", "未": "丑", "寅": "申", "申": "寅",
-          "卯": "酉", "酉": "卯", "辰": "戌", "戌": "辰", "巳": "亥", "亥": "巳"}
 _GROUP5 = {"peer": "peer", "rob_wealth": "peer", "eating_god": "output", "hurting_officer": "output",
            "direct_wealth": "wealth", "indirect_wealth": "wealth", "direct_officer": "officer",
            "seven_killings": "officer", "direct_resource": "resource", "indirect_resource": "resource"}
@@ -237,8 +235,8 @@ def _months(core: MyeongriCoreResult, seed: int, start: tuple[int, int] | None =
     pillars = core.natal_facts.pillars
     dm = pillars["day"].stem
     birth = to_solar(core.input.birth_date, core.input.calendar_type, core.input.is_leap_month)
-    move_branches = {_YEOKMA[pillars["year"].branch]: "yeokma", _YEOKMA[pillars["day"].branch]: "yeokma",
-                     _CLASH[pillars["month"].branch]: "clash"}
+    move_branches = {YEOKMA[pillars["year"].branch]: "yeokma", YEOKMA[pillars["day"].branch]: "yeokma",
+                     CLASH[pillars["month"].branch]: "clash"}
     rows, prev, used = [], None, set()
     for y, m in theme_timing.window_months(start or theme_timing.window_start(core)):
         target = date(y, m, 15)
@@ -292,7 +290,7 @@ def _compose_v3(core: MyeongriCoreResult, query: dict, name: str, group: str, tr
     ranking = natal_balance(core)["ranking"]
     good = [e for e in ranking if tiers[e] == "good"][:2]
     helper, hard = _people(core, tiers, ranking)
-    money = sec.money_type(counts)
+    money = sec.money_type(counts, hidden_tally(core, profile_ten_gods(track)))
 
     timing = query["timing"]["luck_cycles"]
     current = timing.get("current") or {}
@@ -372,10 +370,9 @@ def build_lifetime_career_report(
     fixed_year = year
     year = year or theme_timing.window_start(core)[0]
 
-    focused = query["natal"]["focused_ten_gods"]
-    counts = Counter(item["ten_god"] for item in focused)
+    counts = tally(core, profile_ten_gods(track))   # 공용 엔진: 여덟 글자 본기만, 이 테마가 보는 별만
     strength = query["synthesis"].get("strength_state")
-    group = copy.lead_group(counts)
+    group = copy.lead_group(counts, hidden_tally(core, profile_ten_gods(track)))
     birth = to_solar(core.input.birth_date, core.input.calendar_type, core.input.is_leap_month)
     seed = seed_from(birth.isoformat(), "career", safe_status, year)
 

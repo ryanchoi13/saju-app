@@ -110,6 +110,11 @@ def _timing_for_scope(core: MyeongriCoreResult, scope: str) -> dict:
     return timing
 
 
+def profile_ten_gods(query: ServiceQuery) -> tuple[str, ...]:
+    """그 상품이 보는 십성 목록(비어 있으면 전부)."""
+    return tuple(_PROFILES[query]["ten_gods"])
+
+
 def build_service_query(core: MyeongriCoreResult, query: ServiceQuery) -> dict:
     """Project only the evidence layers relevant to one product surface."""
 

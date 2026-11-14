@@ -157,11 +157,14 @@ MONEY_TAIL = {
 }
 
 
-def money_type(counts: dict) -> str:
-    """원국 십성 묶음 중 가장 많은 쪽. 같으면 가장 많이 나온 십성 하나가 든 쪽, 그래도 같으면 월급형이 앞선다."""
+def money_type(counts: dict, tiebreak: dict | None = None) -> str:
+    """원국 십성 묶음 중 가장 많은 쪽. 같으면 가장 많이 나온 십성 하나가 든 쪽, 그다음 지장간 중기·여기(tiebreak)가
+    많은 쪽, 그래도 같으면 월급형이 앞선다."""
+    tb = tiebreak or {}
     totals = {k: sum(counts.get(g, 0) for g in gods) for k, gods in MONEY_GODS.items()}
     peak = {k: max(counts.get(g, 0) for g in gods) for k, gods in MONEY_GODS.items()}
-    best = max(totals, key=lambda k: (totals[k], peak[k]))
+    extra = {k: sum(tb.get(g, 0) for g in gods) for k, gods in MONEY_GODS.items()}
+    best = max(totals, key=lambda k: (totals[k], peak[k], extra[k]))
     return best if totals[best] else "salary"
 
 

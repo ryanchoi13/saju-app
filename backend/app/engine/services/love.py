@@ -23,12 +23,14 @@ from html import escape
 from app.engine.core.models import MyeongriCoreResult
 from app.engine.calendar import to_solar
 from app.engine.semantic import build_service_query
+from app.engine.semantic.queries import profile_ten_gods
 from app.engine.services.applied_guidance import direction_advice, state_basis
 from app.engine.services.annual_copy import seed_from, split_sentences
 from app.engine.services import love_copy as copy
 from app.engine.services import theme_timing
 from app.engine.services import love_sections as sec
 from app.engine.services import love_depth as depth
+from app.engine.services.theme_core import CLASH, PEACH, SIX, hidden_tally, natal_counts, tally
 from app.engine.services import daily_score
 from app.engine.services.daily_score import _god_group
 from app.engine.services.element_balance import element_tiers, natal_balance
@@ -105,13 +107,7 @@ def _uncertainty(core: MyeongriCoreResult) -> str:
 # ---------------------------------------------------------------------------
 # 잘 맞는 사람·지금의 사랑 (11/06) 계산. 일지 = 가까운 관계 자리.
 # ---------------------------------------------------------------------------
-_SIX_COMBO = {"子": "丑", "丑": "子", "寅": "亥", "亥": "寅", "卯": "戌", "戌": "卯",
-              "辰": "酉", "酉": "辰", "巳": "申", "申": "巳", "午": "未", "未": "午"}
-_CLASH = {"子": "午", "午": "子", "丑": "未", "未": "丑", "寅": "申", "申": "寅",
-          "卯": "酉", "酉": "卯", "辰": "戌", "戌": "辰", "巳": "亥", "亥": "巳"}
 # 도화: 연지·일지가 속한 삼합의 욕지(寅午戌→卯, 申子辰→酉, 巳酉丑→午, 亥卯未→子)
-_PEACH = {**dict.fromkeys("寅午戌", "卯"), **dict.fromkeys("申子辰", "酉"),
-          **dict.fromkeys("巳酉丑", "午"), **dict.fromkeys("亥卯未", "子")}
 
 
 def _ten_god_value(day_master: str, stem: str) -> str:
@@ -140,7 +136,7 @@ def _match_and_now(core: MyeongriCoreResult, name: str) -> tuple[dict, dict]:
     pillars = core.natal_facts.pillars
     day_master = pillars["day"].stem
     day_branch = pillars["day"].branch
-    good_b, bad_b = _SIX_COMBO[day_branch], _CLASH[day_branch]
+    good_b, bad_b = SIX[day_branch], CLASH[day_branch]
     match = dict(
         good=copy.MATCH_GOOD.format(name=name, person=copy.BRANCH_PERSON[good_b]),
         bad=copy.MATCH_BAD.format(name=name, person=copy.BRANCH_PERSON[bad_b]),
@@ -159,7 +155,7 @@ def _match_and_now(core: MyeongriCoreResult, name: str) -> tuple[dict, dict]:
     else:
         path = copy.NOW_PATH_TWO.format(cycle=copy.MEET_PATH[cycle_group], year=copy.MEET_PATH[year_group])
 
-    peach_branches = {_PEACH[pillars["year"].branch], _PEACH[day_branch]}
+    peach_branches = {PEACH[pillars["year"].branch], PEACH[day_branch]}
     peach = next(((y, m, b) for y, m, _, b in months if b in peach_branches), None)
     single = [path]
     if peach:
@@ -381,7 +377,7 @@ def _charm(core: MyeongriCoreResult, name: str) -> dict:
     p = core.natal_facts.pillars
     have = {k: p[k].branch for k in sec.PILLAR_ORDER if p.get(k) is not None}
     sources = [k for k in ("year", "day") if k in have]
-    targets = {k: _PEACH[have[k]] for k in sources}
+    targets = {k: PEACH[have[k]] for k in sources}
     positions = sorted({pos for t in targets.values() for pos, b in have.items() if b == t},
                        key=sec.PILLAR_ORDER.index)
     double = len(sources) == 2 and targets["year"] == targets["day"] and bool(positions)
@@ -417,7 +413,7 @@ def _depth(core: MyeongriCoreResult, query: dict, name: str) -> dict:
     strength = query["synthesis"].get("strength_state")
     past = depth.past_love(core, gender, birth_year, this_year)
     pal = depth.palace(core, query, gender)
-    counts = depth.natal_counts(core)
+    counts = natal_counts(core)
     weak = depth.weak_points(core, gender, strength, counts, past)
     tim = depth.partner_timing(core, gender, counts, pal, this_year)
 
@@ -528,7 +524,7 @@ def _remedy(core: MyeongriCoreResult, query: dict, name: str, counts: Counter, t
     crisis_year = ""
     for y in range(this_year, this_year + 12):
         gz = calendar_ganji(date(y, 6, 15))[0]
-        if gz[1] == _CLASH[day_branch]:
+        if gz[1] == CLASH[day_branch]:
             crisis_year = sec.CRISIS_YEAR.format(year=y, ganji_ko=GAN_KO.get(gz[0], "") + ZHI_KO.get(gz[1], ""))
             break
     luck = ""
@@ -614,9 +610,9 @@ def build_lifetime_love_report(
     fixed_year = year
     year = year or theme_timing.window_start(core)[0]
 
-    counts = Counter(item["ten_god"] for item in query["natal"]["focused_ten_gods"])
+    counts = tally(core, profile_ten_gods("love"))   # 공용 엔진: 여덟 글자 본기만, 애정운이 보는 별만
     relationships = query["natal"]["relationships"]
-    group = copy.lead_group(counts)
+    group = copy.lead_group(counts, hidden_tally(core, profile_ten_gods("love")))
     birth = to_solar(core.input.birth_date, core.input.calendar_type, core.input.is_leap_month)
     seed = seed_from(birth.isoformat(), "love", "-", year)  # 상태를 고르지 않으므로 씨앗에서도 뺀다
 

@@ -15,62 +15,16 @@
 """
 from __future__ import annotations
 
-from datetime import date
-
-from app.engine.constants import GAN_KO, ZHI_KO
+from app.engine.services.theme_core import (  # 공용 판정 엔진 — 테마운 다섯 개가 같은 기준을 쓴다
+    BRANCHES, CLASH, PEACH, SIX, STEMS, TRIAD,
+    god as _god, ko as _ko, main_qi as _main, punishes as _punishes, year_gz as _year_gz,
+)
 from app.engine.facts.hidden_stems import get_hidden_stems
-from app.engine.facts.ten_gods import get_ten_god
-from app.engine.services.daily_score import calendar_ganji
-
-STEMS = "甲乙丙丁戊己庚辛壬癸"
-BRANCHES = "子丑寅卯辰巳午未申酉戌亥"
-SIX = {"子": "丑", "丑": "子", "寅": "亥", "亥": "寅", "卯": "戌", "戌": "卯",
-       "辰": "酉", "酉": "辰", "巳": "申", "申": "巳", "午": "未", "未": "午"}
-CLASH = {"子": "午", "午": "子", "丑": "未", "未": "丑", "寅": "申", "申": "寅",
-         "卯": "酉", "酉": "卯", "辰": "戌", "戌": "辰", "巳": "亥", "亥": "巳"}
-TRIAD = [set("申子辰"), set("寅午戌"), set("巳酉丑"), set("亥卯未")]
-PEACH = {**dict.fromkeys("寅午戌", "卯"), **dict.fromkeys("申子辰", "酉"),
-         **dict.fromkeys("巳酉丑", "午"), **dict.fromkeys("亥卯未", "子")}
-# 형: 인사신·축술미 삼형, 자묘 상형, 진오유해 자형
-PUNISH = {"寅": {"巳"}, "巳": {"申"}, "申": {"寅"}, "丑": {"戌"}, "戌": {"未"}, "未": {"丑"},
-          "子": {"卯"}, "卯": {"子"}, "辰": {"辰"}, "午": {"午"}, "酉": {"酉"}, "亥": {"亥"}}
-
-
-def _god(dm: str, stem: str) -> str:
-    g = get_ten_god(dm, stem)
-    return getattr(g, "value", str(g))
-
-
-def _main(branch: str) -> str:
-    return get_hidden_stems(branch).stems[0].stem
-
-
-def _ko(gz: str) -> str:
-    return GAN_KO.get(gz[0], "") + ZHI_KO.get(gz[1], "")
-
-
-def _punishes(a: str, b: str) -> bool:
-    return b in PUNISH.get(a, set()) or a in PUNISH.get(b, set())
 
 
 def star_gods(gender: str) -> tuple[str, str]:
     """(정, 편) 인연의 별. 남 = 재성, 여 = 관성. 성별을 모르면 남 기준(엔진 기본값과 같음)."""
     return ("direct_officer", "seven_killings") if gender == "female" else ("direct_wealth", "indirect_wealth")
-
-
-def natal_counts(core) -> dict:
-    """원국 여덟 글자(천간 3 + 지지 본기 4, 일간 제외) 십성 개수와 자리."""
-    p = core.natal_facts.pillars
-    dm = p["day"].stem
-    out: dict[str, list[str]] = {}
-    for pos in ("year", "month", "day", "hour"):
-        pil = p.get(pos)
-        if pil is None:
-            continue
-        if pos != "day":
-            out.setdefault(_god(dm, pil.stem), []).append(f"{pos}_stem")
-        out.setdefault(_god(dm, _main(pil.branch)), []).append(f"{pos}_branch")
-    return out
 
 
 def year_signal(core, gz: str, gender: str) -> tuple[int, bool, list[str]]:
@@ -94,10 +48,6 @@ def year_signal(core, gz: str, gender: str) -> tuple[int, bool, list[str]]:
         why.append("peach")
     shake = CLASH[db] == gz[1] or _punishes(db, gz[1])
     return score, shake, why
-
-
-def _year_gz(y: int) -> str:
-    return calendar_ganji(date(y, 6, 15))[0]
 
 
 def past_love(core, gender: str, birth_year: int, this_year: int) -> dict:

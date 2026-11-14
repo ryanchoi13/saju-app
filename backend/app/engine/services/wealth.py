@@ -157,8 +157,8 @@ def _pick_line(pool, start, used):
 
 
 def _analyse(core: MyeongriCoreResult, query: dict) -> dict:
-    from app.engine.services import love_depth
-    counts = love_depth.natal_counts(core)
+    from app.engine.services.theme_core import natal_counts, rob_heavy as _rob_heavy
+    counts = natal_counts(core)
     n = {k: len(v) for k, v in counts.items()}
     tot = lambda gods: sum(n.get(g, 0) for g in gods)
     strength = query["synthesis"].get("strength_state")
@@ -194,7 +194,7 @@ def _analyse(core: MyeongriCoreResult, query: dict) -> dict:
             if _POS[pos] not in positions:
                 positions.append(_POS[pos])
     positions.sort(key=("year", "month", "day", "hour").index)
-    rob_heavy = n.get("rob_wealth", 0) >= 2 or "month_branch" in counts.get("rob_wealth", [])
+    rob_heavy = _rob_heavy(counts)
     invest_rank = sorted((("indirect", i), ("direct", d), ("output", o), ("resource", r), ("officer", of), ("peer", pe)),
                          key=lambda kv: -kv[1])
     invest = [k for k, v in invest_rank if v and not (k == "output" and rob_heavy)][:2] or ["direct"]
@@ -251,8 +251,7 @@ def _compose_paid(core: MyeongriCoreResult, query: dict, name: str, a: dict, see
     # 재물운의 '판이 바뀐 해'는 일·사회 자리(월지)와 일지 밖 재성 자리의 충으로 본다.
     wealth_branches = {p[k].branch for k in ("year", "month", "hour") if p.get(k) is not None
                        and getattr(get_ten_god(dm, get_hidden_stems(p[k].branch).stems[0].stem), "value", "") in _WEALTH}
-    clash = {"子": "午", "午": "子", "丑": "未", "未": "丑", "寅": "申", "申": "寅", "卯": "酉", "酉": "卯",
-             "辰": "戌", "戌": "辰", "巳": "亥", "亥": "巳"}
+    from app.engine.services.theme_core import CLASH as clash
     move_branches = {clash[b] for b in wealth_branches | {p["month"].branch}}
     ins, moves, outs = [], [], []
     # 제 돈을 벌기 시작하는 나이(세는 나이). 남자는 군 복무로 졸업·취업이 늦어 27세, 여자는 25세 (11/13 정오님)
