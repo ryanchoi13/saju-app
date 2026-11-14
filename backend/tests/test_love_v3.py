@@ -51,8 +51,9 @@ class LoveV3Tests(unittest.TestCase):
 
     def test_locked_does_not_leak_new_sections(self):
         c = self.locked["content"]
-        for marker in ('data-love-tier="match"', 'data-love-tier="now"', love_copy.MATCH_GOOD_TITLE,
-                       love_copy.NOW_COUPLE_TITLE, "data-love-basis"):
+        # 11/14: 잠긴 목차에 칸 제목 '나와 잘 맞는 사람, …'이 보이므로 소제목은 본문 표식(<strong>)으로 확인한다.
+        for marker in ('data-love-tier="match"', 'data-love-tier="now"', f"<strong>{love_copy.MATCH_GOOD_TITLE}</strong>",
+                       f"<strong>{love_copy.NOW_COUPLE_TITLE}</strong>", "data-love-basis"):
             self.assertNotIn(marker, c)
         self.assertNotIn("match", self.locked["evidence_summary"])
 

@@ -111,7 +111,7 @@ const tick = () => new Promise(resolve => setTimeout(resolve,30));
             assert.ok(visible(`concern-${key}`));
             assert.equal(doc.querySelectorAll('[data-concern]:not(.hidden)').length,1);
             assert.equal(doc.activeElement.id,`concern-heading-${key}`);
-            assert.equal(doc.querySelectorAll(`#concern-${key} .report-preview li`).length,3);
+            assert.ok(doc.querySelectorAll(`#concern-${key} .report-preview li`).length>=10);
             assert.match(doc.querySelector(`[data-report-price="${key}"]`).textContent,/220/);
         }
         doc.querySelector('[data-concern-choice=gunghap]').click();

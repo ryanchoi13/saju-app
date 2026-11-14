@@ -153,6 +153,19 @@ html[data-brand] body .reading-view .report-preview li { padding-left:0!importan
 html[data-brand] body .reading-view .report-preview li::before { content:none!important; }
 html[data-brand] body .reading-view .preview-label { color:var(--ui-muted)!important; font-weight:600!important; letter-spacing:0!important; }
 
+/* 11/14 테마운 '이런 이야기를 읽어요': 풀이 안 칸 번호(01~)·제목을 그대로 옮긴 목차.
+   번호는 풀이 안처럼 포인트 색 숫자만, 제목은 굵게. 칸이 10~15개라 줄 간격은 촘촘하게. */
+html[data-brand] body .reading-view .report-preview ol.theme-toc { gap:0!important; }
+html[data-brand] body .reading-view .report-preview ol.theme-toc li { display:flex; align-items:baseline; gap:12px; padding:9px 0!important; border-bottom:1px solid #E5E0D6; }
+html[data-brand] body .reading-view .report-preview ol.theme-toc li:last-child { border-bottom:0; }
+html[data-brand] body .reading-view .report-preview ol.theme-toc .toc-num,
+html[data-brand] body [data-locked-toc] .locked-num { font-family:'Dalha Num','Pretendard',sans-serif; font-weight:700; color:var(--c-point,#B5341F); font-variant-numeric:tabular-nums lining-nums; letter-spacing:0; }
+html[data-brand] body .reading-view .report-preview ol.theme-toc .toc-num { flex:0 0 24px; font-size:15px; line-height:1.5; }
+html[data-brand] body .reading-view .report-preview ol.theme-toc li strong { display:block; font-size:15px!important; font-weight:600!important; line-height:1.5!important; color:var(--ui-ink); }
+html[data-brand] body [data-locked-toc] li { padding:3px 0; }
+/* 풀이 화면 공통 글자색(design-system: #archiveModalBody span !important)보다 앞서도록 id 수준 선택자 */
+html[data-brand] body :is(#archiveModalBody,#view-theme) [data-locked-toc] span.locked-num { display:inline-block; min-width:24px; color:var(--c-point,#B5341F)!important; }
+
 /* 테마운 목록: 질문이 주인공, 분야 이름은 위에 작게, 화살표 대신 › */
 html[data-brand] body .concern-category { font-size:12px!important; font-weight:600!important; color:var(--ui-muted)!important; }
 html[data-brand] body .concern-choices strong { font-size:16px!important; font-weight:600!important; color:var(--ui-ink)!important; line-height:1.55!important; }
