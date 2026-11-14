@@ -989,7 +989,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 <section id="saju-basic" class="saju-section" role="tabpanel" aria-labelledby="saju-tab-basic">
                     <section class="reading-summary hidden" aria-labelledby="sajuSummaryTitle">
                         <span class="reading-eyebrow">성향과 현재를 한 편으로</span>
-                        <h3 id="sajuSummaryTitle">지금의 나부터 읽어보세요</h3>
+                        <h3 id="sajuSummaryTitle">평생운세부터 읽어보세요</h3>
                         <p id="sajuSummaryText">타고난 성향과 현재 대운, 10년 단위 인생 흐름을 함께 읽어요. 올해·월별 운세는 별도 상품입니다.</p>
                     </section>
                     <details id="sajuEvidence" class="card reading-evidence" open>
@@ -1043,14 +1043,13 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                     </details>
                     <div class="card reading-lead">
                         <span class="reading-eyebrow">평생운세</span>
-                        <h3 id="lifetimeLeadTitle">지금의 나에게,<br>어떤 선택이 필요할까요?</h3>
+                        <h3 id="lifetimeLeadTitle">타고난 성향과 인생 흐름</h3>
                         <p id="lifetimeLeadDescription">타고난 성향을 살펴보고, 현재 대운을 중심으로 일·돈·관계에서 돌아볼 점을 읽어요. 지나온 시기와 앞으로의 큰 흐름도 함께 담았어요.</p>
                         <div class="report-facts"><span>성향 + 현재 대운 + 인생 흐름 · 한 번 구매</span><strong data-report-price="daewoon">450 복채</strong></div>
                         <div id="daewoonTeaserBox" class="report-preview">
                             <span class="preview-label">이런 이야기를 읽어요</span>
-                            <ol><li><strong>지금의 나 · 현재 대운</strong><span>일·돈·애정·관계·회복·배움의 6가지 이야기</span></li><li><strong>타고난 성향</strong><span>나의 강점과 반복되는 선택의 이유</span></li><li><strong>인생 흐름</strong><span>필요할 때 펼쳐보는 10년 단위 참고 풀이</span></li></ol>
+                            <ol><li><strong>현재 대운</strong><span>일·돈·애정·관계·회복·배움의 6가지 이야기</span></li><li><strong>타고난 성향</strong><span>나의 강점과 반복되는 선택의 이유</span></li><li><strong>인생 흐름</strong><span>필요할 때 펼쳐보는 10년 단위 참고 풀이</span></li></ol>
                         </div>
-                        <p id="lifetimeScopeNote" class="reading-caption">‘지금의 나’는 현재 속한 약 10년의 대운을 중심으로 읽는 풀이예요. 오늘·이번 달·올해의 운세와는 구분해 주세요.</p>
                         <div id="daewoonBox" class="hidden"></div>
                         <button id="btnDaewoon" class="reading-primary" onclick="handleUnlockReportOnServer('daewoon', 450)">450 복채로 평생운세 읽기</button>
                         <p id="lifetimePurchaseCaption" class="reading-caption">450 복채로 세 내용을 함께 읽어요. 다시 읽을 때는 추가 결제가 없어요.</p>
@@ -3715,24 +3714,6 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             buttons[Math.max(0, defaultIndex)].click();
         }
 
-        function renderLifetimePreview(item, slot, index) {
-            const doc = reportDocument(item);
-            const current = doc.querySelector('[data-lifetime-section="current"] .reading-chapter');
-            const legacy = doc.querySelector('[data-current-cycle="true"]');
-            const preview = document.createElement('div');
-            preview.id = 'lifetimeCurrentReading';
-            preview.className = 'lifetime-current-preview';
-            if (current) {
-                preview.append(current.cloneNode(true));
-            } else if (legacy) {
-                const label = document.createElement('p');
-                label.className = 'reading-caption';
-                label.textContent = '구매한 풀이에 담긴 현재 구간';
-                preview.append(label, legacy.cloneNode(true));
-            }
-            if (preview.childNodes.length) slot.prepend(preview);
-        }
-
         function refreshReportEntrypoints() {
             const configs = {
                 daewoon:['daewoonBox','btnDaewoon','daewoonTeaserBox'],
@@ -3747,7 +3728,9 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             Object.entries(configs).forEach(([key, [slotId, buttonId, teaserId]]) => {
                 const index = latestOwnedReportIndex(key);
                 if (key === 'daewoon') {
-                    document.getElementById('lifetimeLeadTitle').innerHTML = index >= 0 ? '지금의 나' : '지금의 나에게,<br>어떤 선택이 필요할까요?';
+                    document.getElementById('lifetimeLeadTitle').textContent = '타고난 성향과 인생 흐름';
+                    const facts = document.querySelector('[data-report-price="daewoon"]')?.previousElementSibling;
+                    if (facts && index >= 0) facts.textContent = '성향 + 현재 대운 + 인생 흐름';
                     ['lifetimeLeadDescription','lifetimePurchaseCaption'].forEach(id => document.getElementById(id).classList.toggle('hidden', index >= 0));
                 }
                 const price = document.querySelector(`[data-report-price="${key}"]`);
@@ -3792,7 +3775,6 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                     }
                 }
                 if (key === 'daewoon') {
-                    renderLifetimePreview(item, slot, index);
                     renderPeriodChoices(item, 'cycle');
                 }
             });
@@ -3810,7 +3792,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             if (facts) facts.textContent = '현재 대운 + 타고난 성향';
             ['btnDaewoon','daewoonTeaserBox','lifetimePurchaseCaption','daewoonFlowOpen'].forEach(id => document.getElementById(id)?.classList.add('hidden'));
             document.getElementById('daewoonFlowOpen')?.nextElementSibling?.classList.add('hidden');
-            document.getElementById('lifetimeLeadTitle').innerHTML = '지금의 나';
+            document.getElementById('lifetimeLeadTitle').textContent = '타고난 성향과 인생 흐름';
             document.getElementById('lifetimeLeadDescription').classList.add('hidden');
         }
         function paintDaewoonFree(data, box) {
@@ -3833,7 +3815,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             if (up) box.append(up);
             if (nature) {
                 const d = document.createElement('details'); d.className = 'lifetime-nature';
-                const sum = document.createElement('summary'); sum.textContent = '지금의 나 전체 읽기';
+                const sum = document.createElement('summary'); sum.textContent = '타고난 성향 전체 읽기';
                 d.append(sum, nature); box.append(d);
             }
             box.classList.toggle('hidden', !box.childElementCount);
