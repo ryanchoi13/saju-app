@@ -552,7 +552,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;600;700&display=swap" rel="stylesheet">
     <link id="dalhaBrandStyles" rel="stylesheet" href="/assets/brand-2026/brand.css?v=20261115-reader">
     <link rel="stylesheet" href="/assets/reading-polish.css?v=20261113-study4">
-    <link rel="stylesheet" href="/assets/daily-card.css?v=20261115-full">
+    <link rel="stylesheet" href="/assets/daily-card.css?v=20261115-title">
     <link rel="stylesheet" href="/assets/brand-2026/refine.css?v=20261115-toc4">
     <link href="https://fonts.googleapis.com/css2?family=Song+Myung&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/assets/brand-2026/ilryeok.css?v=20261108-p5">
@@ -1494,11 +1494,11 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             <button type="button" class="dc3-back" aria-label="뒤로 가기" onclick="closeDailySheet()"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
             <div class="dc3-sheet-head-main">
                 <div id="dc3SheetGrade" class="dc3-sheet-grade">오늘의 운세</div>
-                <div id="dc3SheetSub" class="dc3-sheet-sub" hidden></div>
             </div>
             <svg class="dc3-sheet-moon dc3-sheet-moon-svg" viewBox="-50 -50 100 100" aria-hidden="true"><circle r="44" class="dc3-moon-dark"/><path id="resMoonLit2" class="dc3-moon-lit" d=""/></svg>
         </div>
         <div class="dc3-scroll">
+            <p id="dc3SheetSub" class="dc3-sheet-sub" hidden></p>
             <div class="dc3-block" id="dc3EvidenceBlock">
                 <p class="dc3-block-title">오늘은 이런 날</p>
                 <p id="dc3EvidenceFull" class="dc3-text"></p>
