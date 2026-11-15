@@ -51,6 +51,12 @@
         /* 11/15: 정보 수정 화면의 뒤로 가기(처음 입력할 때는 숨김) */
         .saju-edit-back { appearance:none; -webkit-appearance:none; display:flex; align-items:center; justify-content:center; width:44px; height:44px; margin:-8px 0 4px -10px; padding:0; border:0; border-radius:50%; background:transparent; color:var(--c-ink,#1D2129); cursor:pointer; }
         .saju-edit-back.hidden { display:none; }
+        /* 11/15: 정보 수정은 오늘의 운세 창처럼 화면 가득, 위쪽에 ← 와 제목 */
+        #onboardingInputView.is-edit { position:fixed; inset:0; z-index:3200; margin:0; max-width:none; border:0; border-radius:0; box-shadow:none; overflow-y:auto; -webkit-overflow-scrolling:touch; background:#F8F6F1; padding:max(10px,env(safe-area-inset-top)) 20px 32px; }
+        #onboardingInputView.is-edit > * { max-width:600px; margin-left:auto; margin-right:auto; }
+        #onboardingInputView.is-edit .saju-first-only { display:none; }
+        #onboardingInputView.is-edit .saju-edit-back { position:absolute; left:6px; top:max(6px,env(safe-area-inset-top)); margin:0; z-index:1; }
+        #onboardingInputView.is-edit #sajuFormTitle { font-size:17px!important; margin:0 0 18px!important; min-height:44px; line-height:44px; }
         .gift-badge { background: #FEF3C7; color: #78350F; font-size: 12px; font-weight: 800; padding: 4px 12px; border-radius: 9999px; display: inline-block; }
 
         .user-profile-bar { background: #FFFFFF; border-radius: 16px; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; border: 1.5px solid #E2E8F0; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
@@ -637,9 +643,9 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             <!-- 온보딩 명식 입력 폼 -->
             <div id="onboardingInputView" class="card hidden" style="text-align: center;">
                 <button type="button" id="sajuEditBack" class="saju-edit-back hidden" aria-label="뒤로 가기" onclick="closeSajuEditForm()"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
-                <div class="gift-badge" style="margin-bottom: 12px;">🎁 카카오 연동 완료 (+1,000 복채 지급)</div>
-                <h2 style="font-size: 21px; font-weight: 800; margin-bottom: 2px; font-family: 'Noto Serif KR', serif;">사주 명식 입력</h2>
-                <p style="font-size: 13px; color: var(--c-ink-60,#575B62); margin-bottom: 16px;">처음 한 번만 정보를 입력해 주세요.<br>다음 로그인부터 저장된 정보로 이어서 이용할 수 있어요.</p>
+                <div class="gift-badge saju-first-only" style="margin-bottom: 12px;">🎁 카카오 연동 완료 (+1,000 복채 지급)</div>
+                <h2 id="sajuFormTitle" style="font-size: 21px; font-weight: 800; margin-bottom: 2px; font-family: 'Noto Serif KR', serif;">사주 명식 입력</h2>
+                <p class="saju-first-only" style="font-size: 13px; color: var(--c-ink-60,#575B62); margin-bottom: 16px;">처음 한 번만 정보를 입력해 주세요.<br>다음 로그인부터 저장된 정보로 이어서 이용할 수 있어요.</p>
                 <div id="kakaoProfileHelp" hidden style="margin-bottom:16px; text-align:left;">
                     <p id="kakaoProfileNotice" role="status" style="font-size:13px; color:var(--c-ink-60,#575B62); margin-bottom:8px;"></p>
                     <button id="btnKakaoProfile" type="button" class="kakao-login-btn hidden" onclick="requestKakaoProfileConsent()">카카오 정보 불러오기</button>
@@ -682,7 +688,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                     </div>
                     <p id="birthTimeLegacyNote" class="reading-caption" hidden></p>
                 </div>
-                <button onclick="submitSajuRegistration()" class="btn-primary">정밀 감명서 발행하기</button>
+                <button id="btnSajuSubmit" onclick="submitSajuRegistration()" class="btn-primary">정밀 감명서 발행하기</button>
             </div>
 
             <!-- 탭 1: 오늘운세 -->
@@ -2467,6 +2473,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
 
             document.getElementById('onboardingInputView').classList.add('hidden');
             document.getElementById('sajuEditBack').classList.add('hidden');
+            resetSajuFormMode();
             if (sajuEditPushed) { sajuEditPushed = false; try { history.back(); } catch (e) {} }
             switchTab('today');
             document.getElementById('bottomNavBar').classList.remove('hidden');
@@ -2474,11 +2481,19 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
 
         // 11/15: 정보 수정 화면은 뒤로 가기 화살표·폰 뒤로 가기로 열기 전 탭으로 돌아간다(처음 입력할 때는 뒤로 갈 곳이 없어 화살표를 숨긴다).
         let sajuEditReturnTab = 'saju', sajuEditPushed = false;
+        function resetSajuFormMode() {
+            document.getElementById('onboardingInputView').classList.remove('is-edit');
+            document.getElementById('sajuFormTitle').textContent = '사주 명식 입력';
+            document.getElementById('btnSajuSubmit').textContent = '정밀 감명서 발행하기';
+        }
         function reopenSajuEditForm() {
             sajuEditReturnTab = ['today', 'saju', 'theme', 'mypage'].find(t => !document.getElementById(`view-${t}`).classList.contains('hidden')) || 'saju';
             populateSajuForm(currentSajuProfile || getSavedUserSaju());
             document.getElementById('onboardingInputView').classList.remove('hidden');
             document.getElementById('sajuEditBack').classList.remove('hidden');
+            document.getElementById('onboardingInputView').classList.add('is-edit');
+            document.getElementById('sajuFormTitle').textContent = '내 정보';
+            document.getElementById('btnSajuSubmit').textContent = '저장';
             ['today', 'saju', 'theme', 'mypage'].forEach(t => document.getElementById(`view-${t}`).classList.add('hidden'));
             document.getElementById('bottomNavBar').classList.add('hidden');
             window.scrollTo(0, 0);
@@ -2489,6 +2504,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             if (form.classList.contains('hidden')) return;
             form.classList.add('hidden');
             document.getElementById('sajuEditBack').classList.add('hidden');
+            resetSajuFormMode();
             if (sajuEditPushed && fromPop !== true) { sajuEditPushed = false; try { history.back(); } catch (e) {} }
             else sajuEditPushed = false;
             switchTab(sajuEditReturnTab);
