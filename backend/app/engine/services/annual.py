@@ -41,20 +41,29 @@ def _annual_reading(selection, core=None, timing=None, year=None):
         if basis:
             reading["basis"] = basis
             _extend_areas(reading, basis["area_extra"])
-        reading["extras"] = _extras(core, timing)
+        reading["extras"] = _extras(core, timing, year)
     return reading
 
 
-def _extras(core, timing):
+def _extras(core, timing, year=None):
     """11/15 새 칸: 올해 힘이 되는 사람 · 올해의 신살 · 올해 개운법. 계산이 실패하면 칸 없이 간다."""
     try:
-        from app.engine.services.annual_touch import GAN_WUXING
+        from app.engine.services.annual_touch import GAN_WUXING, ZHI_WUXING
         p = core.natal_facts.pillars
         pillar = timing.annual.get("pillar") or {}
-        supplement = (natal_balance(core).get("ranking") or [None])[0]
+        ranking = natal_balance(core).get("ranking") or [None]
+        supplement = ranking[0]
+        months = []
+        if year and supplement:
+            # 보완 기운이 그달 월주(15일 기준, 월별 탭과 같은 대표일)의 천간이나 지지에 드는 달
+            for m in range(1, 13):
+                ganji = daily_score.calendar_ganji(date(year, m, 15))[1]
+                if supplement in (GAN_WUXING.get(ganji[0]), ZHI_WUXING.get(ganji[1])):
+                    months.append(m)
         return annual_depth.compose_extras(
             supplement=supplement, day_element=GAN_WUXING.get(p["day"].stem),
-            year_branch=pillar.get("branch"), day_branch=p["day"].branch)
+            year_branch=pillar.get("branch"), day_branch=p["day"].branch,
+            avoid=ranking[-1] if len(ranking) > 1 else None, supplement_months=months)
     except Exception:
         logger.warning("올해 새 칸 계산 실패", exc_info=True)
         return []
@@ -195,8 +204,11 @@ def _render_extras(reading):
     out = []
     for extra in reading.get("extras") or ():
         note = f'<p class="annual-extra-note">{escape(extra["note"])}</p>' if extra.get("note") else ""
+        body = "".join(
+            (f'<p data-annual-tip="extra"><strong>{escape(label)}</strong> ' if label else '<p>')
+            + f'{escape(" ".join(ss))}</p>' for label, ss in extra.get("paragraphs") or [(None, extra["sentences"])])
         out.append(f'<section class="annual-extra" data-annual-extra="{extra["key"]}">'
-                   f'<h3>{escape(extra["label"])}</h3>{note}<p>{escape(" ".join(extra["sentences"]))}</p></section>')
+                   f'<h3>{escape(extra["label"])}</h3>{note}{body}</section>')
     return "".join(out)
 
 
