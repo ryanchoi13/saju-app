@@ -24,6 +24,7 @@ from app.engine.services.annual_copy import (
 )
 from app.engine.services import annual_v2, daily_score
 from app.engine.services import annual_touch
+from app.engine.services import annual_depth
 from app.engine.services.element_balance import natal_balance
 
 logger = logging.getLogger("dalha.annual")
@@ -40,7 +41,23 @@ def _annual_reading(selection, core=None, timing=None, year=None):
         if basis:
             reading["basis"] = basis
             _extend_areas(reading, basis["area_extra"])
+        reading["extras"] = _extras(core, timing)
     return reading
+
+
+def _extras(core, timing):
+    """11/15 새 칸: 올해 힘이 되는 사람 · 올해의 신살 · 올해 개운법. 계산이 실패하면 칸 없이 간다."""
+    try:
+        from app.engine.services.annual_touch import GAN_WUXING
+        p = core.natal_facts.pillars
+        pillar = timing.annual.get("pillar") or {}
+        supplement = (natal_balance(core).get("ranking") or [None])[0]
+        return annual_depth.compose_extras(
+            supplement=supplement, day_element=GAN_WUXING.get(p["day"].stem),
+            year_branch=pillar.get("branch"), day_branch=p["day"].branch)
+    except Exception:
+        logger.warning("올해 새 칸 계산 실패", exc_info=True)
+        return []
 
 
 def _basis(core, timing, year, year_god):
@@ -69,8 +86,8 @@ def _month_focus_lines(months):
         area = (m["reading"].get("focus") or {}).get("area")
         if area:
             by_area.setdefault(area, []).append(m["month"])
-    return {area: [f"{annual_v2.AREA_LABEL[area]}은 {'·'.join(f'{n}월' for n in ms[:3])}에 특히 초점이 모입니다."]
-            for area, ms in by_area.items()}
+    # 11/15: 초점 달이 한쪽 반기에 몰리면 '상반기에는/하반기에는' 안내까지 녹인다(따로 칸을 두지 않는다).
+    return {area: annual_depth.focus_lines(area, ms) for area, ms in by_area.items()}
 
 
 def _extend_areas(reading, extra):
@@ -78,11 +95,13 @@ def _extend_areas(reading, extra):
     for area in reading["areas"]:
         cap = annual_v2.AREA_SENTENCE_MAX_CENTRAL if area["central"] else annual_v2.AREA_SENTENCE_MAX
         sentences = list(area["sentences"])
+        added = area.setdefault("paragraphs", dict(lead=list(sentences), do=[], watch=[], basis=[]))["basis"]
         for s in extra.get(area["area"], ()):
             if len(sentences) >= cap:
                 break
             if s not in sentences:
                 sentences.append(s)
+                added.append(s)
         area["sentences"], area["text"] = sentences, " ".join(sentences)
 
 
@@ -160,6 +179,27 @@ def _render_basis_box(reading):
             f'{items}</section>')
 
 
+def _render_area_body(area):
+    """분야 글: 풀이 → 이렇게 해 보세요 → 조심할 점 → 원국·대운·초점 달. 빈 단락은 쓰지 않는다."""
+    para = area.get("paragraphs")
+    if not para:
+        return f'<p>{escape(area["text"])}</p>'
+    out = [f'<p>{escape(" ".join(para["lead"] + para["basis"]))}</p>'] if para["lead"] or para["basis"] else []
+    for key, label in (("do", "이렇게 해 보세요"), ("watch", "조심할 점")):
+        if para[key]:
+            out.append(f'<p data-annual-tip="{key}"><strong>{label}</strong> {escape(" ".join(para[key]))}</p>')
+    return "".join(out)
+
+
+def _render_extras(reading):
+    out = []
+    for extra in reading.get("extras") or ():
+        note = f'<p class="annual-extra-note">{escape(extra["note"])}</p>' if extra.get("note") else ""
+        out.append(f'<section class="annual-extra" data-annual-extra="{extra["key"]}">'
+                   f'<h3>{escape(extra["label"])}</h3>{note}<p>{escape(" ".join(extra["sentences"]))}</p></section>')
+    return "".join(out)
+
+
 def _render_year(reading):
     parts = [
         '<section class="annual-overview"><h3>올해 총운</h3>',
@@ -177,7 +217,8 @@ def _render_year(reading):
             f'<section class="annual-domain" data-report-domain="{area["area"]}" '
             f'data-central="{str(area["central"]).lower()}" data-flow="{area["mode"]}">'
             f'<h3 data-toc-label="{escape(area["label"], quote=True)}">{escape(heading)}</h3>'
-            f'<p>{escape(area["text"])}</p></section>')
+            f'{_render_area_body(area)}</section>')
+    parts.append(_render_extras(reading))
     return "".join(parts)
 
 
@@ -247,6 +288,10 @@ def build_annual_overall_report(core: MyeongriCoreResult, user_name: str, year: 
         cards.append(_render_month_card(month, month_reading))
     if reading.get("basis"):
         _extend_areas(reading, _month_focus_lines(months))
+    # 11/15: 한 해의 앞뒤 모양(좋음·주의 달 분포)을 총운에 녹인다. 상·하반기 칸은 따로 두지 않는다.
+    grades = {m["month"]: (m["reading"].get("grade") or {}).get("key") for m in months}
+    reading["overview"] = reading["overview"] + [s for s in annual_depth.year_shape(grades)
+                                                 if s not in reading["overview"]]
     _log_validation(reading, composed)
 
     content = (

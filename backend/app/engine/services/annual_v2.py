@@ -21,7 +21,7 @@ from app.engine.services.annual_copy import (
 )
 
 V2_VERSION = "annual-v2"
-COPY_V2_VERSION = "dalha-annual-4"   # 11/8 근거 상자 + 분야 문장
+COPY_V2_VERSION = "dalha-annual-5"   # 11/15 분량 보강(총운·분야 두 단락·힘이 되는 사람·신살·개운법)
 
 AREAS = (
     ("wealth", "재물"),
@@ -406,6 +406,11 @@ def central_areas(selection: dict, god: str | None) -> list[dict]:
     return found
 
 
+def _overview_more(god):
+    from app.engine.services import annual_depth
+    return annual_depth.OVERVIEW_MORE.get(god, annual_depth.OVERVIEW_MORE_GENERAL)
+
+
 def compose_year(selection: dict) -> dict:
     """올해 총운 · 세 가지 · 분야 5칸. 같은 입력이면 항상 같은 결과."""
     god = selection.get("focal_god")
@@ -415,27 +420,35 @@ def compose_year(selection: dict) -> dict:
     mode_of = {c["area"]: c["mode"] for c in centers}
 
     def block(area: str, central: bool) -> dict:
+        # 11/15 정오님 '분야마다 두세 줄은 하다 마는 느낌': 모든 분야에 깊은 두 줄을 넣고,
+        # '이렇게 해 보세요'·'조심할 점' 두 단락을 더한다(annual_depth). 근거·초점 달은 annual.py 가 뒤에 붙인다.
+        from app.engine.services import annual_depth
         short, deep = bank["areas"][area]
-        sentences = split_sentences(short)
+        lead = split_sentences(short) + (split_sentences(deep) if deep else [])
         if central:
-            sentences += split_sentences(deep)
+            lead = [annual_depth.CENTRAL_LEAD[area]] + lead
             note = MODE_NOTE.get(area, {}).get(mode_of.get(area, "base"))
             if note:
-                sentences += split_sentences(note)
+                lead += split_sentences(note)
+        do, watch = annual_depth.area_more(god if god in GODS else None, area)
+        sentences = lead + do + watch
         return dict(area=area, label=AREA_LABEL[area], central=central,
                     mode=mode_of.get(area, "base"), sentences=sentences,
+                    paragraphs=dict(lead=lead, do=do, watch=watch, basis=[]),
                     text=" ".join(sentences))
 
     ordered = center_keys + [k for k in AREA_KEYS if k not in center_keys]
+    from app.engine.services import annual_depth
+    more3 = annual_depth.THREE_MORE.get(god, annual_depth.THREE_MORE_GENERAL)
     return dict(
         version=COPY_V2_VERSION,
         god=god if god in GODS else None,
         title=bank["title"],
-        overview=list(bank["overview"]),
+        overview=list(bank["overview"]) + list(_overview_more(god)),
         three=[
-            dict(key="best", label="가장 좋은 것", text=bank["best"]),
-            dict(key="caution", label="주의할 것", text=bank["caution"]),
-            dict(key="advice", label="한 가지 조언", text=bank["advice"]),
+            dict(key="best", label="가장 좋은 것", text=f'{bank["best"]} {more3[0]}'),
+            dict(key="caution", label="주의할 것", text=f'{bank["caution"]} {more3[1]}'),
+            dict(key="advice", label="한 가지 조언", text=f'{bank["advice"]} {more3[2]}'),
         ],
         centers=centers,
         areas=[block(k, k in center_keys) for k in ordered],
@@ -926,8 +939,8 @@ def validate_month(reading: dict) -> list[str]:
 SENTENCE_MAX = 46
 SENTENCE_MAX_MONTH = 52
 BASIS_SENTENCE_MAX = 64
-AREA_SENTENCE_MAX = 5           # 11/8 정오님: 분야마다 3~5문장
-AREA_SENTENCE_MAX_CENTRAL = 7   # 중심 분야는 더 길게(기본 2 + 중심 2 + 흐름 1 + 원국 근거 + 대운·관계)
+AREA_SENTENCE_MAX = 16          # 11/15 정오님 2.5~3배: 기본 4 + 이렇게 2 + 조심 2 + 근거·대운·초점 달
+AREA_SENTENCE_MAX_CENTRAL = 18  # 중심 분야는 흐름 1문장이 더 붙는다
 HEDGES = ("좋겠습니다", "좋겠어요", "수 있어요", "수 있습니다", "듯합니다", "것 같")
 TIME_WORDS = ("지금", "이번 달", "이달", "오늘")
 
@@ -938,13 +951,15 @@ def _year_sentences(reading: dict) -> list[str]:
         out += split_sentences(item["text"])
     for area in reading["areas"]:
         out += area["sentences"]
+    for extra in reading.get("extras") or ():
+        out += extra["sentences"]
     return out
 
 
 def validate_year(reading: dict) -> list[str]:
     issues: list[str] = []
     sentences = _year_sentences(reading)
-    if not 4 <= len(reading["overview"]) <= 6:
+    if not 4 <= len(reading["overview"]) <= 11:
         issues.append(f"총운 문장 수 {len(reading['overview'])}")
     if len(reading["areas"]) != len(AREA_KEYS):
         issues.append("분야 칸 수가 다릅니다")
