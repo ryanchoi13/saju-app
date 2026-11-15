@@ -552,7 +552,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;600;700&display=swap" rel="stylesheet">
     <link id="dalhaBrandStyles" rel="stylesheet" href="/assets/brand-2026/brand.css?v=20261115-reader">
     <link rel="stylesheet" href="/assets/reading-polish.css?v=20261113-study4">
-    <link rel="stylesheet" href="/assets/daily-card.css?v=20261113-s1">
+    <link rel="stylesheet" href="/assets/daily-card.css?v=20261115-full">
     <link rel="stylesheet" href="/assets/brand-2026/refine.css?v=20261115-toc4">
     <link href="https://fonts.googleapis.com/css2?family=Song+Myung&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/assets/brand-2026/ilryeok.css?v=20261108-p5">
@@ -1490,8 +1490,8 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
 
     <div id="dc3Backdrop" class="dc3-backdrop" onclick="closeDailySheet()"></div>
     <section id="dc3Sheet" class="dc3-sheet" role="dialog" aria-modal="true" aria-labelledby="dc3SheetGrade" tabindex="-1">
-        <div class="dc3-grab" aria-hidden="true"></div>
         <div class="dc3-sheet-head">
+            <button type="button" class="dc3-back" aria-label="뒤로 가기" onclick="closeDailySheet()"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
             <div class="dc3-sheet-head-main">
                 <div id="dc3SheetGrade" class="dc3-sheet-grade"></div>
                 <div id="dc3SheetSub" class="dc3-sheet-sub" hidden></div>
@@ -3939,7 +3939,9 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 history.pushState({dalhaReader:true}, '', '#report');
             }
             readingReportIndex = index;
-            document.getElementById('archiveModalTitle').textContent = item.report_title;
+            // 11/15: 화면 제목에서 '○○님 정통 명리' 머리말은 뺀다(예: '평생운세 · 성향과 흐름'). 저장된 원래 제목은 그대로 둔다.
+            const shortTitle = String(item.report_title || '').replace(/^\S+님\s*정통\s*명리\s*/, '').trim() || item.report_title;
+            document.getElementById('archiveModalTitle').textContent = shortTitle;
             document.getElementById('readingReportMeta').textContent = '';
             const body = document.getElementById('archiveModalBody');
             body.innerHTML = item.report_content;
