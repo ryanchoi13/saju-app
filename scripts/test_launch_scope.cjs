@@ -44,7 +44,8 @@ class Resources extends ResourceLoader {
         }
         for (const key of ['business', 'love', 'health', 'wealth', 'study']) {
             assert.ok(!doc.getElementById(`btnTheme_${key}`).classList.contains('soon-hidden'), `${key} free preview stays`);
-            assert.equal(doc.querySelector(`[data-report-price="${key}"]`).textContent, '앞부분 무료 · 전체는 곧 열려요');
+            // 11/15: 테마운 칸의 가격 안내 줄은 뺐다(열람 버튼·'전체 풀이는 곧 열려요'가 대신 알려 줌).
+            assert.equal(doc.querySelector(`[data-report-price="${key}"]`), null);
         }
         w.eval('DALHA_SOON_REPORTS.forEach(applySoonEntrypoint)');
         assert.equal(doc.querySelectorAll('#soon_gunghap').length, 1, 'idempotent');
