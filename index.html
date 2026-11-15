@@ -3379,6 +3379,19 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
         // 구매한 풀이는 서버가 보관함을 보낼 때 최신 버전으로 바꿔 둔다(main.bring_reports_up_to_date).
         // 화면에는 '새로 받기' 버튼도, 이전 원문 선택도 두지 않는다.
 
+        // 구매일: 구매할 때 저장한 created_at. 'YYYY-MM-DD'로 돌려주고, 없는 옛 기록은 빈 문자열.
+        function reportPurchaseDay(report) {
+            const day = String(report?.created_at || '').slice(0, 10).replace(/\./g, '-');
+            return /^\d{4}-\d{2}-\d{2}$/.test(day) ? day : '';
+        }
+        // 상품 칸의 구매 표시: 'M월 D일 구매'. 날짜가 없는 옛 기록은 '구매함'.
+        function reportPurchaseLabel(report) {
+            const day = reportPurchaseDay(report);
+            if (!day) return '구매함';
+            const [, month, date] = day.split('-').map(Number);
+            return `${month}월 ${date}일 구매`;
+        }
+
         function renderServerArchive() {
             const container = document.getElementById('unlockedArchiveList');
             const countBadge = document.getElementById('archiveCountBadge');
@@ -3396,10 +3409,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
 
             // 화면 순서만 구매일 최신순으로 바꾼다. 배열 순서(=index)는 다른 곳에서 풀이를 여는 데 쓰므로 그대로 둔다.
             // 같은 날 산 것은 나중에 산 것(배열 뒤쪽)이 위로, 날짜 없는 옛 기록은 맨 아래로.
-            const purchaseDay = (report) => {
-                const day = String(report.created_at || '').slice(0, 10).replace(/\./g, '-');
-                return /^\d{4}-\d{2}-\d{2}$/.test(day) ? day : '';
-            };
+            const purchaseDay = reportPurchaseDay;
             serverUnlockedReports
                 .map((report, index) => ({ report, index, day: purchaseDay(report) }))
                 .sort((a, b) => (a.day === b.day ? b.index - a.index : a.day < b.day ? 1 : -1))
@@ -3407,8 +3417,8 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 const row = document.createElement('div'); row.className = 'archive-row';
                 const button = document.createElement('button');
                 button.type = 'button'; button.className = 'archive-reopen';
-                button.textContent = '다시보기';
-                button.setAttribute('aria-label', `${report.report_title} 다시보기`);
+                button.textContent = '풀이 보기';
+                button.setAttribute('aria-label', `${report.report_title} 풀이 보기`);
                 button.onclick = () => openServerArchiveDetail(index);
                 const copy = document.createElement('span'); copy.className = 'archive-entry-copy';
                 const title = document.createElement('span'); title.className = 'archive-title';
@@ -3725,7 +3735,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 const price = document.querySelector(`[data-report-price="${key}"]`);
                 if (price) {
                     if (!price.dataset.price) price.dataset.price = price.textContent;
-                    price.textContent = index >= 0 ? '구매한 풀이' : price.dataset.price;
+                    price.textContent = index >= 0 ? reportPurchaseLabel(serverUnlockedReports[index]) : price.dataset.price;
                     price.classList.toggle('report-owned', index >= 0);
                 }
                 if (key === 'gunghap') document.getElementById('gunghapPurchaseNote').classList.toggle('hidden', index >= 0);
@@ -3744,7 +3754,8 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 // 11/15: '구매한 결과 · 제목' 안내는 지금 보는 칸과 같은 말이라 뺀다.
                 const open = document.createElement('button');
                 open.className = 'reading-primary';
-                open.textContent = key === 'sinnian' ? `${item.report_year || item.report_title?.match(/^(\d{4})/)?.[1] || ''}년 올해운세 확인하기`.replace(/^년 /, '') : '구매한 풀이 다시 읽기';
+                // 11/15: 산 풀이는 어느 칸이든 같은 '풀이 보기'. 구매 사실은 위 칸에 구매일로 작게 보인다.
+                open.textContent = '풀이 보기';
                 open.onclick = () => openReadingReport(index);
                 slot.append(open);
                 if (key === 'sinnian') {
