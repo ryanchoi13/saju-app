@@ -108,3 +108,8 @@
 :is(#archiveModalBody,.period-reading) .annual-basis p { margin:0!important; padding:12px 0!important; font-size:.875rem!important; line-height:1.75!important; color:var(--c-ink-60,#575B62)!important; }
 :is(#archiveModalBody,.period-reading) .annual-basis p + p { border-top:1px dashed var(--c-perf,#D4D0C6); }
 :is(#archiveModalBody,.period-reading) .annual-basis strong { display:inline-block; margin-bottom:2px; font-size:13px!important; font-weight:700; color:var(--c-ink,#1D2129)!important; }
+
+/* 11/15 올해 운세 보강: 분야 안 '이렇게 해 보세요'·'조심할 점' 단락, 새 칸(힘이 되는 사람·신살·개운법) */
+:is(#archiveModalBody,.period-reading) .annual-domain p[data-annual-tip] strong { display:block; margin-bottom:2px; color:var(--ui-accent,var(--c-ink,#1D2129)); font-weight:700; }
+:is(#archiveModalBody,.period-reading) .annual-domain p[data-annual-tip] { margin-top:.9em; }
+:is(#archiveModalBody,.period-reading) .annual-extra-note { margin:0 0 6px; color:var(--ui-muted,#6B665B)!important; font-size:.875rem!important; }
