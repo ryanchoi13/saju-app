@@ -104,3 +104,13 @@ body.dc3-locked { overflow: hidden; }
 
 /* PC 2열 격자(brand.css)에서 제목·카드는 옛 .page-intro·.journal-fortune 처럼 두 열을 다 쓴다 */
 html[data-brand] #view-today > :is(.dc3-intro, .dc3-card) { grid-column: 1 / -1; }
+
+/* 11/15: 자세히 보기 창도 풀이 읽기 화면처럼 화면 전체 + 왼쪽 위 뒤로 가기(위에 틈·둥근 모서리 없음) */
+#dc3Sheet.dc3-sheet { height: 100dvh; max-width: 640px; border-radius: 0; box-shadow: none; }
+#dc3Sheet .dc3-sheet-head { padding-top: max(10px, env(safe-area-inset-top)); }
+#dc3Sheet .dc3-back {
+    appearance: none; -webkit-appearance: none; flex: 0 0 44px; width: 44px; height: 44px; margin-left: -12px; padding: 0;
+    border: 0; border-radius: 50%; background: transparent; color: var(--c-ink,#1D2129);
+    display: inline-flex; align-items: center; justify-content: center; cursor: pointer;
+}
+#dc3Sheet .dc3-back:focus-visible { outline: 2px solid var(--c-point,#B5341F); outline-offset: 2px; }
