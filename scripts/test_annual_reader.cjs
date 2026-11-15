@@ -39,8 +39,8 @@ const current={report_key:'sinnian',report_title:generated.title,report_content:
     assert.equal(typeof w.refreshOwnedReading,'undefined');
     evaluate(`currentUserId='user_qa';currentCoin=700;serverUnlockedReports=${JSON.stringify([current])};`);
     w.restoreUnlockedUIFromReports();
-    assert.equal(doc.querySelector('#sinnianBox .reading-primary').textContent,'2026년 올해운세 확인하기');
-    assert.equal(doc.querySelector('[data-report-price="sinnian"]').textContent,'구매한 풀이');
+    assert.equal(doc.querySelector('#sinnianBox .reading-primary').textContent,'풀이 보기');
+    assert.equal(doc.querySelector('[data-report-price="sinnian"]').textContent,'2월 1일 구매');
     w.openReadingReport(0);
     assert.equal(doc.querySelectorAll('#archiveModalBody [data-report-domain]').length,5);
     assert.equal(doc.getElementById('annualYearPanel').hidden,false);
