@@ -44,6 +44,14 @@ class AnnualDepthTests(unittest.TestCase):
             self.assertNotIn("<h3>상반기", html)
             self.assertNotIn("<h3>하반기", html)
 
+    def test_extras_are_full(self):
+        """8·9·10번 칸(11/15 2차): 힘이 되는 사람 6문장 이상, 신살 7문장, 개운법 8문장 이상."""
+        for r in self.reports:
+            n = {e["key"]: len(e["sentences"]) for e in r["reading"]["extras"]}
+            self.assertGreaterEqual(n["people"], 6)
+            self.assertEqual(n["shinsal"], 7)
+            self.assertGreaterEqual(n["gaewoon"], 8)
+
     def test_body_is_at_least_two_and_a_half_times(self):
         for r in self.reports:
             year = r["content"].split("12개월 흐름")[0].split("이 풀이의 근거")[0]
@@ -52,7 +60,9 @@ class AnnualDepthTests(unittest.TestCase):
     def test_bank_sentence_lengths(self):
         pools = [annual_depth.OVERVIEW_MORE_GENERAL, annual_depth.THREE_MORE_GENERAL, *annual_depth.OVERVIEW_MORE.values(),
                  *annual_depth.THREE_MORE.values(), *annual_depth.PEOPLE.values(), *annual_depth.SHINSAL_YEAR.values(),
-                 *annual_depth.GAEWOON.values(), *annual_depth.HALF.values(), annual_depth.CENTRAL_LEAD.values()]
+                 *annual_depth.GAEWOON.values(), *annual_depth.HALF.values(), annual_depth.CENTRAL_LEAD.values(),
+                 *annual_depth.PEOPLE_WHERE.values(), *annual_depth.PEOPLE_WATCH.values(),
+                 *annual_depth.SHINSAL_MORE.values(), [annual_depth.SHINSAL_INTRO], *annual_depth.GAEWOON_MORE.values()]
         for areas in [*annual_depth.AREA_MORE.values(), annual_depth.AREA_MORE_GENERAL]:
             for do, watch in areas.values():
                 pools.append(split_sentences(do) + split_sentences(watch))
