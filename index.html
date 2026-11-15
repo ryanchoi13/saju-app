@@ -1165,8 +1165,6 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                     <button id="btnOpenGunghapModal" class="reading-primary" onclick="openGunghapInputModal()">상대방 정보 입력하기</button>
                     <p id="gunghapPurchaseNote" class="reading-caption">정보를 입력한 다음 350 복채로 열람해요.</p>
                 </section>
-                <button id="allConcernTopicsLink" class="reading-archive-link" onclick="selectConcern('all', true)">전체 주제의 목차 살펴보기 →</button>
-                <details class="reading-help"><summary>어떤 풀이부터 보면 좋을까요?</summary><p>하루의 운세와 옷차림·식단은 ‘오늘’에서, 성향과 긴 인생 흐름은 ‘나의 사주’에서 읽어요. 한 해와 이달이 궁금하면 ‘올해·월별’을, 한 가지 고민을 살펴보려면 주제별 풀이를 골라보세요.</p></details>
             </div>
 
             <!-- 탭 4: 마이페이지 -->
@@ -3628,15 +3626,15 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
         }
 
         function selectConcern(key, reveal = false) {
-            const labels = {wealth:'돈과 생활을 살펴보는 풀이', love:'나의 연애 패턴을 살펴보는 풀이', business:'일과 사업의 방향을 살펴보는 풀이', study:'공부 방식을 살펴보는 풀이', health:'체질과 건강을 살펴보는 풀이', gunghap:'두 사람의 관계를 살펴보는 풀이', all:'전체 주제별 풀이'};
+            const labels = {wealth:'돈과 생활을 살펴보는 풀이', love:'나의 연애 패턴을 살펴보는 풀이', business:'일과 사업의 방향을 살펴보는 풀이', study:'공부 방식을 살펴보는 풀이', health:'체질과 건강을 살펴보는 풀이', gunghap:'두 사람의 관계를 살펴보는 풀이'};
             if (!labels[key]) return;
-            document.querySelectorAll('[data-concern]').forEach(el => el.classList.toggle('hidden', key !== 'all' && el.dataset.concern !== key));
+            document.querySelectorAll('[data-concern]').forEach(el => el.classList.toggle('hidden', el.dataset.concern !== key));
             document.querySelectorAll('[data-concern-choice]').forEach(el => el.setAttribute('aria-pressed', String(el.dataset.concernChoice === key)));
             document.getElementById('concernSelectionTitle').textContent = labels[key];
             document.getElementById('concernSelectionHint').classList.add('hidden');
             document.querySelector('.concern-result-title').classList.remove('hidden');
             if (reveal) {
-                const heading = key === 'all' ? document.getElementById('concernSelectionTitle') : document.getElementById(key === 'gunghap' ? 'compatibilityTitle' : `concern-heading-${key}`);
+                const heading = document.getElementById(key === 'gunghap' ? 'compatibilityTitle' : `concern-heading-${key}`);
                 heading.focus({preventScroll:true});
                 heading.scrollIntoView({block:'start', behavior:'smooth'});
             }
