@@ -1493,7 +1493,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
         <div class="dc3-sheet-head">
             <button type="button" class="dc3-back" aria-label="뒤로 가기" onclick="closeDailySheet()"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
             <div class="dc3-sheet-head-main">
-                <div id="dc3SheetGrade" class="dc3-sheet-grade"></div>
+                <div id="dc3SheetGrade" class="dc3-sheet-grade">오늘의 운세</div>
                 <div id="dc3SheetSub" class="dc3-sheet-sub" hidden></div>
             </div>
             <svg class="dc3-sheet-moon dc3-sheet-moon-svg" viewBox="-50 -50 100 100" aria-hidden="true"><circle r="44" class="dc3-moon-dark"/><path id="resMoonLit2" class="dc3-moon-lit" d=""/></svg>
@@ -2602,10 +2602,10 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             domainEl.hidden = true;                     // 11/8 정오님: '일 좋음' 같은 분야 꼬리표는 홈·창 모두 쓰지 않는다(점수·등급과 겹치고 헷갈림)
             domainEl.textContent = domainLabel;
             domainEl.dataset.kind = note ? note.kind : '';
+            // 11/15 정오님: 창 제목은 '오늘의 운세'(홈 카드와 같은 이름), 등급·점수는 제목 아래 한 줄로.
             const sub = document.getElementById('dc3SheetSub');
-            sub.hidden = true;
-            sub.textContent = domainLabel;
-            document.getElementById('dc3SheetGrade').textContent = `${grade} · ${score}점`;
+            sub.hidden = false;
+            sub.textContent = `${grade} · ${score}점`;
             // 홈: 근거 대신 '오늘은 이렇게'(처방). 근거는 자세히 창에. 처방이 없는 옛 응답은 근거를 그대로 보인다
             const evidenceEl = document.getElementById('resGradeEvidence');
             const homeRx = fortune.rx_text || '';
