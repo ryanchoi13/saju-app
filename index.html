@@ -48,6 +48,9 @@
         .card { background: #FFFFFF; border-radius: 20px; border: 1px solid #E2E8F0; padding: 18px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.03); position: relative; }
         .login-gate-card { background: radial-gradient(circle at center, #172746 0%, #0D1527 100%); border: 1.5px solid #E2C068; border-radius: 24px; padding: 32px 20px; text-align: center; color: white; display: flex; flex-direction: column; align-items: center; gap: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.4); margin-top: 10px; }
         .kakao-login-btn { width: 100%; background: #FEE500; color: #191919; border: none; font-size: 15px; font-weight: 800; padding: 15px; border-radius: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); transition: all 0.2s; }
+        /* 11/15: 정보 수정 화면의 뒤로 가기(처음 입력할 때는 숨김) */
+        .saju-edit-back { appearance:none; -webkit-appearance:none; display:flex; align-items:center; justify-content:center; width:44px; height:44px; margin:-8px 0 4px -10px; padding:0; border:0; border-radius:50%; background:transparent; color:var(--c-ink,#1D2129); cursor:pointer; }
+        .saju-edit-back.hidden { display:none; }
         .gift-badge { background: #FEF3C7; color: #78350F; font-size: 12px; font-weight: 800; padding: 4px 12px; border-radius: 9999px; display: inline-block; }
 
         .user-profile-bar { background: #FFFFFF; border-radius: 16px; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; border: 1.5px solid #E2E8F0; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
@@ -633,6 +636,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
 
             <!-- 온보딩 명식 입력 폼 -->
             <div id="onboardingInputView" class="card hidden" style="text-align: center;">
+                <button type="button" id="sajuEditBack" class="saju-edit-back hidden" aria-label="뒤로 가기" onclick="closeSajuEditForm()"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
                 <div class="gift-badge" style="margin-bottom: 12px;">🎁 카카오 연동 완료 (+1,000 복채 지급)</div>
                 <h2 style="font-size: 21px; font-weight: 800; margin-bottom: 2px; font-family: 'Noto Serif KR', serif;">사주 명식 입력</h2>
                 <p style="font-size: 13px; color: var(--c-ink-60,#575B62); margin-bottom: 16px;">처음 한 번만 정보를 입력해 주세요.<br>다음 로그인부터 저장된 정보로 이어서 이용할 수 있어요.</p>
@@ -1085,13 +1089,11 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                     <div class="card reading-lead">
                         <span id="annualYearLabel" class="reading-eyebrow">올해·월별</span>
                         <h3>올해의 큰 그림,<br>한 달씩 나의 속도로</h3>
-                        <p>한 해의 중심 이야기를 먼저 읽고, 궁금한 달을 골라보세요. 일과 돈, 관계부터 생활 리듬까지 함께 짚어드려요.</p>
                         <div class="report-facts"><span>올해 총운 + 5개 분야 + 12개월</span><strong data-report-price="sinnian">300 복채</strong></div>
                         <div id="sinnianTeaserBox" class="report-preview">
                             <span class="preview-label">한 해를 이렇게 읽어요</span>
                             <ol><li><strong>올해 총운</strong><span>한 해의 중심 흐름과 살펴볼 점</span></li><li><strong>분야별 이야기</strong><span>재물·애정·일·건강·학업</span></li><li><strong>12개월 풀이</strong><span>달마다 눈여겨볼 점과 생활 속 실천</span></li></ol>
                         </div>
-                        <p id="annualScopeNote" class="reading-caption">월별 풀이는 각 달의 대표일(대체로 15일)을 기준으로 한 참고 풀이예요. 달 안의 매일이나 절기 전후 변화를 모두 다루지는 않아요.</p>
                         <div id="sinnianBox" class="hidden"></div>
                         <div id="annualMonthExplorer" class="hidden">
                             <div id="annualMonthChoices" class="period-choices" role="group" aria-label="월별 풀이 선택"></div>
@@ -2464,16 +2466,36 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             applySajuAnalysisToUI(data.saju_analysis);
 
             document.getElementById('onboardingInputView').classList.add('hidden');
+            document.getElementById('sajuEditBack').classList.add('hidden');
+            if (sajuEditPushed) { sajuEditPushed = false; try { history.back(); } catch (e) {} }
             switchTab('today');
             document.getElementById('bottomNavBar').classList.remove('hidden');
         }
 
+        // 11/15: 정보 수정 화면은 뒤로 가기 화살표·폰 뒤로 가기로 열기 전 탭으로 돌아간다(처음 입력할 때는 뒤로 갈 곳이 없어 화살표를 숨긴다).
+        let sajuEditReturnTab = 'saju', sajuEditPushed = false;
         function reopenSajuEditForm() {
+            sajuEditReturnTab = ['today', 'saju', 'theme', 'mypage'].find(t => !document.getElementById(`view-${t}`).classList.contains('hidden')) || 'saju';
             populateSajuForm(currentSajuProfile || getSavedUserSaju());
             document.getElementById('onboardingInputView').classList.remove('hidden');
+            document.getElementById('sajuEditBack').classList.remove('hidden');
             ['today', 'saju', 'theme', 'mypage'].forEach(t => document.getElementById(`view-${t}`).classList.add('hidden'));
             document.getElementById('bottomNavBar').classList.add('hidden');
+            window.scrollTo(0, 0);
+            try { history.pushState({dalhaSajuEdit: true}, '', location.href); sajuEditPushed = true; } catch (e) { sajuEditPushed = false; }
         }
+        function closeSajuEditForm(fromPop) {
+            const form = document.getElementById('onboardingInputView');
+            if (form.classList.contains('hidden')) return;
+            form.classList.add('hidden');
+            document.getElementById('sajuEditBack').classList.add('hidden');
+            if (sajuEditPushed && fromPop !== true) { sajuEditPushed = false; try { history.back(); } catch (e) {} }
+            else sajuEditPushed = false;
+            switchTab(sajuEditReturnTab);
+            document.getElementById('bottomNavBar').classList.remove('hidden');
+            window.scrollTo(0, 0);
+        }
+        window.addEventListener('popstate', () => { if (sajuEditPushed && !history.state?.dalhaSajuEdit) closeSajuEditForm(true); });
 
         // ---- v2 Tab 1: 서버 story 가 한 줄(제목)·총운·분야·마무리를 준다. 레거시 title/advice/time_flow 는 없을 때만 ----
         const DC3_STEM_LABEL = {day:'일', month:'월', year:'년', hour:'시'};
