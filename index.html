@@ -562,7 +562,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
     <link id="dalhaBrandStyles" rel="stylesheet" href="/assets/brand-2026/brand.css?v=20261115-reader">
     <link rel="stylesheet" href="/assets/reading-polish.css?v=20261113-study4">
     <link rel="stylesheet" href="/assets/daily-card.css?v=20261115-title">
-    <link rel="stylesheet" href="/assets/brand-2026/refine.css?v=20261115-toc4">
+    <link rel="stylesheet" href="/assets/brand-2026/refine.css?v=20261116-pptx3">
     <link href="https://fonts.googleapis.com/css2?family=Song+Myung&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/assets/brand-2026/ilryeok.css?v=20261108-p5">
     <link rel="stylesheet" href="/assets/brand-2026/splash.css?v=20261116-s1">
@@ -991,7 +991,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 </header>
                 <div class="reading-profile">
                     <div><strong id="sajuOwnerName">내 정보</strong><p id="sajuOwnerMeta">입력한 생년정보를 확인해 주세요.</p></div>
-                    <button class="reading-text-button" onclick="reopenSajuEditForm()">정보 수정</button>
+                    <button class="reading-text-button reading-edit-btn" onclick="reopenSajuEditForm()">정보 수정</button>
                 </div>
                 <div class="reading-tabs" role="tablist" aria-label="나의 사주 살펴보기">
                     <button id="saju-tab-basic" role="tab" aria-selected="true" aria-controls="saju-basic" onclick="selectSajuSection('basic')">나의 사주</button>
@@ -1005,10 +1005,10 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                         <p id="sajuSummaryText">타고난 성향과 현재 대운, 10년 단위 인생 흐름을 함께 읽어요. 올해·월별 운세는 별도 상품입니다.</p>
                     </section>
                     <details id="sajuEvidence" class="card reading-evidence" open>
-                        <summary>나의 여덟 글자와 오행 <span>접기·펼치기</span></summary>
+                        <summary>나의 원국(原局)과 오행 <span>접기·펼치기</span></summary>
 
                     <!-- 명식표 (2026-10-31 시안 511, 11-08 오행 색 칸): 연한 오행 칸 + 진한 한자 + 읽는 법. 일주는 남색 테두리 -->
-                    <div id="pillarChart" class="pc-grid" role="table" aria-label="사주 여덟 글자">
+                    <div id="pillarChart" class="pc-grid" role="table" aria-label="사주 원국">
                         <div class="pc-col pc-rowhead" aria-hidden="true"><span class="pc-label">&nbsp;</span><div class="pc-rh">천간</div><div class="pc-rh">지지</div><div class="pc-rh pc-rh-small">지장간</div></div>
                         <div class="pc-col">
                             <span class="pc-label">시</span>
@@ -1047,7 +1047,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                         </ul>
                         <p id="sajuStrengthLine" class="pc-strength" hidden></p>
                         <details class="pc-basis">
-                            <summary>풀이 근거</summary>
+                            <summary class="basis-sum">풀이 근거<i class="fold-caret" aria-hidden="true"></i></summary>
                             <p id="sajuStrengthBasis" class="pc-note"></p>
                             <p id="sajuElementsNote" class="pc-note">천간·지지의 표면 구성을 보여줍니다.</p>
                         </details>
@@ -1060,7 +1060,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                         <div class="report-facts"><span>성향 + 현재 대운 + 인생 흐름 · 한 번 구매</span><strong data-report-price="daewoon">450 복채</strong></div>
                         <div id="daewoonTeaserBox" class="report-preview">
                             <span class="preview-label">이런 이야기를 읽어요</span>
-                            <ol><li><strong>현재 대운</strong><span>일·돈·애정·관계·회복·배움의 6가지 이야기</span></li><li><strong>타고난 성향</strong><span>나의 강점과 반복되는 선택의 이유</span></li><li><strong>인생 흐름</strong><span>필요할 때 펼쳐보는 10년 단위 참고 풀이</span></li></ol>
+                            <ol class="theme-toc"><li><span class="toc-num">01</span><strong>원국 지도</strong></li><li><span class="toc-num">02</span><strong>타고난 결</strong></li><li><span class="toc-num">03</span><strong>사람들이 먼저 보는 것</strong></li><li><span class="toc-num">04</span><strong>분야별로 보면</strong></li><li><span class="toc-num">05</span><strong>인생의 흐름</strong></li><li><span class="toc-num">06</span><strong>한마디</strong></li></ol>
                         </div>
                         <div id="daewoonBox" class="hidden"></div>
                         <button id="btnDaewoon" class="reading-primary" onclick="handleUnlockReportOnServer('daewoon', 450)">450 복채로 평생운세 읽기</button>
@@ -1120,11 +1120,11 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 </header>
                 <div class="reading-section-title concern-choice-title"><h3 id="concernChoiceTitle">궁금한 이야기를 골라보세요</h3></div>
                 <div class="concern-choices" role="group" aria-label="궁금한 주제 선택">
-                    <button data-concern-choice="business" aria-pressed="false" aria-controls="concern-business" onclick="selectConcern('business', true)"><i data-brand-icon="briefcase" class="concern-symbol" aria-hidden="true"></i><span class="concern-category">일·진로</span><strong>내 강점을 어떤 일에 써볼까요?</strong><span class="concern-open">풀이 살펴보기 <span aria-hidden="true">→</span></span></button>
-                    <button data-concern-choice="love" aria-pressed="false" aria-controls="concern-love" onclick="selectConcern('love', true)"><i data-brand-icon="heart" class="concern-symbol" aria-hidden="true"></i><span class="concern-category">애정·관계</span><strong>나는 어떤 사랑이 편할까요?</strong><span class="concern-open">풀이 살펴보기 <span aria-hidden="true">→</span></span></button>
-                    <button data-concern-choice="wealth" aria-pressed="false" aria-controls="concern-wealth" onclick="selectConcern('wealth', true)"><i data-brand-icon="coins" class="concern-symbol" aria-hidden="true"></i><span class="concern-category">돈·생활</span><strong>돈을 모으고 쓰는 기준이 궁금해요</strong><span class="concern-open">풀이 살펴보기 <span aria-hidden="true">→</span></span></button>
-                    <button data-concern-choice="study" aria-pressed="false" aria-controls="concern-study" onclick="selectConcern('study', true)"><i data-brand-icon="book" class="concern-symbol" aria-hidden="true"></i><span class="concern-category">학업·시험</span><strong>나에게 맞는 공부법을 찾고 싶어요</strong><span class="concern-open">풀이 살펴보기 <span aria-hidden="true">→</span></span></button>
-                    <button data-concern-choice="health" aria-pressed="false" aria-controls="concern-health" onclick="selectConcern('health', true)"><i data-brand-icon="moon" class="concern-symbol" aria-hidden="true"></i><span class="concern-category">몸·건강</span><strong>타고난 체질과 조심할 때가 궁금해요</strong><span class="concern-open">풀이 살펴보기 <span aria-hidden="true">→</span></span></button>
+                    <button data-concern-choice="business" aria-pressed="false" aria-controls="concern-business" onclick="openThemeIntro('business')"><i data-brand-icon="briefcase" class="concern-symbol" aria-hidden="true"></i><span class="concern-category">일·진로</span><strong>내 강점을 어떤 일에 써볼까요?</strong><span class="concern-open">풀이 살펴보기 <span aria-hidden="true">→</span></span></button>
+                    <button data-concern-choice="love" aria-pressed="false" aria-controls="concern-love" onclick="openThemeIntro('love')"><i data-brand-icon="heart" class="concern-symbol" aria-hidden="true"></i><span class="concern-category">애정·관계</span><strong>나는 어떤 사랑이 편할까요?</strong><span class="concern-open">풀이 살펴보기 <span aria-hidden="true">→</span></span></button>
+                    <button data-concern-choice="wealth" aria-pressed="false" aria-controls="concern-wealth" onclick="openThemeIntro('wealth')"><i data-brand-icon="coins" class="concern-symbol" aria-hidden="true"></i><span class="concern-category">돈·생활</span><strong>돈을 모으고 쓰는 기준이 궁금해요</strong><span class="concern-open">풀이 살펴보기 <span aria-hidden="true">→</span></span></button>
+                    <button data-concern-choice="study" aria-pressed="false" aria-controls="concern-study" onclick="openThemeIntro('study')"><i data-brand-icon="book" class="concern-symbol" aria-hidden="true"></i><span class="concern-category">학업·시험</span><strong>나에게 맞는 공부법을 찾고 싶어요</strong><span class="concern-open">풀이 살펴보기 <span aria-hidden="true">→</span></span></button>
+                    <button data-concern-choice="health" aria-pressed="false" aria-controls="concern-health" onclick="openThemeIntro('health')"><i data-brand-icon="moon" class="concern-symbol" aria-hidden="true"></i><span class="concern-category">몸·건강</span><strong>타고난 체질과 조심할 때가 궁금해요</strong><span class="concern-open">풀이 살펴보기 <span aria-hidden="true">→</span></span></button>
                     <button data-concern-choice="gunghap" aria-pressed="false" aria-controls="concern-gunghap" onclick="selectConcern('gunghap', true)"><i data-brand-icon="people" class="concern-symbol" aria-hidden="true"></i><span class="concern-category">궁합</span><strong>두 사람은 어떻게 잘 지낼 수 있을까요?</strong><span class="concern-open">풀이 살펴보기 <span aria-hidden="true">→</span></span></button>
                 </div>
                 <div class="reading-section-title concern-result-title hidden"><h3 id="concernSelectionTitle" tabindex="-1">관련 풀이 안내</h3></div>
@@ -1188,25 +1188,29 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                     <button onclick="openChargeStore()" style="width: 100%; background: var(--c-ink,#1D2129); color: white; border: none; font-size: 15px; font-weight: 700; padding: 14px; border-radius: 16px; cursor: pointer;">복채 충전하기</button>
                 </div>
 
-                <div class="card" style="display: flex; justify-content: space-between; align-items: center; text-align: left;">
-                    <div><p style="font-size: 14px; font-weight: 800; color: var(--c-ink,#1D2129);">사주 정보 수정</p><p id="mypageProfileDesc" style="font-size: 12px; color: #59636D; margin-top: 2px;">-</p></div>
-                    <div style="display: flex; gap: 6px;">
-                        <button type="button" class="dh-btn-quiet" onclick="reopenSajuEditForm()">정보 수정</button>
-                    </div>
-                </div>
+                <section class="my-box" aria-labelledby="myInfoHeading">
+                    <h3 id="myInfoHeading" class="my-box-title">내 정보</h3>
+                    <ul class="my-rows">
+                        <li><button type="button" class="my-row" onclick="reopenSajuEditForm()"><span class="my-row-main"><b>사주 정보 수정</b><small id="mypageProfileDesc">-</small></span><i class="my-chevron" aria-hidden="true"></i></button></li>
+                        <li><button type="button" id="reportArchiveToggle" class="my-row" onclick="openArchiveListModal()"><span class="my-row-main"><b>감명서 보관함</b></span><span id="archiveCountBadge" class="my-row-meta">0건</span><i class="my-chevron" aria-hidden="true"></i></button></li>
+                    </ul>
+                </section>
 
-                <details id="reportArchive" class="report-archive">
-                    <summary id="reportArchiveToggle"><span>감명서 보관함</span><span id="archiveCountBadge">0건</span></summary>
-                    <div id="unlockedArchiveList"></div>
-                </details>
+                <section class="my-box" aria-labelledby="myAccountHeading">
+                    <h3 id="myAccountHeading" class="my-box-title">계정</h3>
+                    <ul class="my-rows">
+                        <li><button type="button" class="my-row" onclick="logoutKakaoUser()"><span class="my-row-main"><b>로그아웃</b></span></button></li>
+                        <li><button type="button" class="my-row" onclick="openWithdrawDialog()"><span class="my-row-main"><b>회원 탈퇴</b></span></button></li>
+                    </ul>
+                </section>
 
-                <div class="card" style="display: flex; justify-content: space-between; align-items: center; text-align: left;">
-                    <div><p style="font-size: 14px; font-weight: 800; color: var(--c-ink,#1D2129);">계정</p><p style="font-size: 12px; color: #59636D; margin-top: 2px;">로그아웃하거나 탈퇴할 수 있어요.</p></div>
-                    <div style="display: flex; gap: 6px;">
-                        <button type="button" class="dh-btn-quiet" onclick="logoutKakaoUser()">로그아웃</button>
-                        <button type="button" class="dh-btn-quiet" onclick="openWithdrawDialog()">회원 탈퇴</button>
-                    </div>
-                </div>
+                <section class="my-box" aria-labelledby="myLegalHeading">
+                    <h3 id="myLegalHeading" class="my-box-title">약관 및 정책</h3>
+                    <ul class="my-rows">
+                        <li><button type="button" class="my-row" onclick="openLegalNotice('개인정보처리방침')"><span class="my-row-main"><b>개인정보처리방침</b></span><span class="my-row-meta">준비 중</span><i class="my-chevron" aria-hidden="true"></i></button></li>
+                        <li><button type="button" class="my-row" onclick="openLegalNotice('이용약관')"><span class="my-row-main"><b>이용약관</b></span><span class="my-row-meta">준비 중</span><i class="my-chevron" aria-hidden="true"></i></button></li>
+                    </ul>
+                </section>
             </div>
         </main>
 
@@ -1486,6 +1490,31 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
     </div>
 
     <!-- 보관함 다시보기 모달 -->
+    <div id="themeIntroModal" class="modal-bg hidden" role="dialog" aria-modal="true" aria-labelledby="themeIntroTitle" onclick="if(event.target===this)closeThemeIntro()">
+        <div class="modal-content theme-intro-modal" style="text-align: left; gap: 12px;">
+            <h3 id="themeIntroTitle" style="font-size: 18px; font-weight: 800; font-family: 'Noto Serif KR', serif; color: var(--c-ink,#1D2129);"></h3>
+            <p id="themeIntroDesc" style="font-size: 13px; line-height: 1.75; color: #3C4651;"></p>
+            <div id="themeIntroToc"></div>
+            <div style="display: flex; gap: 8px; justify-content: flex-end;">
+                <button type="button" class="dh-btn-quiet" onclick="closeThemeIntro()">닫기</button>
+                <button type="button" id="themeIntroGo" class="dh-btn-quiet theme-intro-go" onclick="confirmThemeIntro()">풀이 보기</button>
+            </div>
+        </div>
+    </div>
+    <div id="archiveListModal" class="modal-bg hidden" role="dialog" aria-modal="true" aria-labelledby="archiveListTitle" onclick="if(event.target===this)closeArchiveListModal()">
+        <div class="modal-content archive-list-modal" style="text-align: left; gap: 12px;">
+            <h3 id="archiveListTitle" style="font-size: 17px; font-weight: 800; font-family: 'Noto Serif KR', serif; color: var(--c-ink,#1D2129);">감명서 보관함</h3>
+            <div id="unlockedArchiveList"></div>
+            <div style="display: flex; justify-content: flex-end;"><button type="button" class="dh-btn-quiet" onclick="closeArchiveListModal()">닫기</button></div>
+        </div>
+    </div>
+    <div id="legalModal" class="modal-bg hidden" role="dialog" aria-modal="true" aria-labelledby="legalModalTitle" onclick="if(event.target===this)closeLegalNotice()">
+        <div class="modal-content" style="text-align: left; gap: 12px;">
+            <h3 id="legalModalTitle" style="font-size: 17px; font-weight: 800; font-family: 'Noto Serif KR', serif; color: var(--c-ink,#1D2129);"></h3>
+            <p style="font-size: 14px; line-height: 1.8; color: #3C4651;">아직 준비 중이에요. 내용이 정리되는 대로 이곳에 올릴게요.</p>
+            <div style="display: flex; justify-content: flex-end;"><button type="button" class="dh-btn-quiet" onclick="closeLegalNotice()">닫기</button></div>
+        </div>
+    </div>
     <div id="withdrawModal" class="modal-bg hidden" role="dialog" aria-modal="true" aria-labelledby="withdrawTitle">
         <div class="modal-content" style="text-align: left; gap: 12px;">
             <h3 id="withdrawTitle" style="font-size: 17px; font-weight: 800; font-family: 'Noto Serif KR', serif; color: var(--c-ink,#1D2129);"></h3>
@@ -2378,6 +2407,10 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             keep.focus();
         }
         function openWithdrawDialog() { showWithdrawDialog('request'); }
+        function openArchiveListModal() { document.getElementById('archiveListModal').classList.remove('hidden'); }
+        function closeArchiveListModal() { document.getElementById('archiveListModal')?.classList.add('hidden'); }
+        function openLegalNotice(title) { document.getElementById('legalModalTitle').textContent = title; document.getElementById('legalModal').classList.remove('hidden'); }
+        function closeLegalNotice() { document.getElementById('legalModal').classList.add('hidden'); }
         function closeWithdrawDialog() { document.getElementById('withdrawModal').classList.add('hidden'); }
         async function submitWithdrawDialog() {
             const confirm = document.getElementById('withdrawConfirm');
@@ -3739,7 +3772,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
 
         function switchTab(tabId) {
             if (tabId === 'today') refreshDailyAnalysisIfNeeded();
-            if (tabId !== 'mypage') document.getElementById('reportArchive').open = false;
+            if (tabId !== 'mypage') closeArchiveListModal();
             ['today', 'saju', 'theme', 'mypage'].forEach(t => {
                 document.getElementById(`view-${t}`)?.classList.add('hidden');
                 document.getElementById(`tab-${t}`)?.classList.remove('active');
@@ -3771,6 +3804,26 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             });
         }
 
+        let themeIntroKey = null;
+        function openThemeIntro(key) {
+            const section = document.getElementById(`concern-${key}`);
+            if (!section) { selectConcern(key, true); return; }
+            themeIntroKey = key;
+            document.getElementById('themeIntroTitle').textContent = section.querySelector('h3')?.textContent || '';
+            document.getElementById('themeIntroDesc').textContent = section.querySelector('h3 + p')?.textContent || '';
+            const toc = section.querySelector('.report-preview');
+            document.getElementById('themeIntroToc').replaceChildren(...(toc ? [toc.cloneNode(true)] : []));
+            document.querySelectorAll('[data-concern-choice]').forEach(el => el.setAttribute('aria-pressed', String(el.dataset.concernChoice === key)));
+            document.getElementById('themeIntroModal').classList.remove('hidden');
+        }
+        function closeThemeIntro() { document.getElementById('themeIntroModal')?.classList.add('hidden'); }
+        function confirmThemeIntro() {
+            const key = themeIntroKey;
+            closeThemeIntro();
+            if (!key) return;
+            selectConcern(key, true);
+            return showThemePreview(key, '기본');
+        }
         function selectConcern(key, reveal = false) {
             const labels = {wealth:'돈과 생활을 살펴보는 풀이', love:'나의 연애 패턴을 살펴보는 풀이', business:'일과 사업의 방향을 살펴보는 풀이', study:'공부 방식을 살펴보는 풀이', health:'체질과 건강을 살펴보는 풀이', gunghap:'두 사람의 관계를 살펴보는 풀이'};
             if (!labels[key]) return;
@@ -3880,7 +3933,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 slot.replaceChildren();
                 slot.classList.toggle('hidden', index < 0);
                 button.classList.toggle('hidden', index >= 0);
-                if (teaserId) document.getElementById(teaserId).classList.toggle('hidden', index >= 0);
+                if (teaserId) document.getElementById(teaserId).classList.toggle('hidden', key === 'daewoon' ? index < 0 : index >= 0);
                 if (index < 0) {
                     if (key === 'daewoon') renderDaewoonFree();
                     else if (themePreviewCache[key]) renderThemePreview(key);
