@@ -562,7 +562,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
     <link id="dalhaBrandStyles" rel="stylesheet" href="/assets/brand-2026/brand.css?v=20261115-reader">
     <link rel="stylesheet" href="/assets/reading-polish.css?v=20261113-study4">
     <link rel="stylesheet" href="/assets/daily-card.css?v=20261115-title">
-    <link rel="stylesheet" href="/assets/brand-2026/refine.css?v=20261116-pptx4">
+    <link rel="stylesheet" href="/assets/brand-2026/refine.css?v=20261116-pptx5">
     <link href="https://fonts.googleapis.com/css2?family=Song+Myung&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/assets/brand-2026/ilryeok.css?v=20261108-p5">
     <link rel="stylesheet" href="/assets/brand-2026/splash.css?v=20261116-s1">
@@ -3833,6 +3833,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             go.onclick = () => openReadingReport(index);   // 같은 팝업 안에서 본문으로 바꾼다
             intro.append(heading, desc, ...document.getElementById('themeIntroToc').children, go);
             body.replaceChildren(intro);
+            document.getElementById('archiveDetailModal').dataset.themeIntro = 'true';   // 목차 화면에서는 PDF 저장·닫기 줄을 숨긴다
             body.scrollTop = 0;
         }
         function closeThemeIntro() { document.getElementById('themeIntroModal')?.classList.add('hidden'); }
@@ -4142,6 +4143,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             const item = owned;
             const modal = document.getElementById('archiveDetailModal');
             modal.dataset.annualReader = String(owned.report_key === 'sinnian');
+            delete modal.dataset.themeIntro;
             if (modal.classList.contains('hidden')) {
                 readingReturnState = {scrollY:window.scrollY, focus:document.activeElement, overflow:document.body.style.overflow, url:location.href};
                 history.pushState({dalhaReader:true}, '', '#report');
