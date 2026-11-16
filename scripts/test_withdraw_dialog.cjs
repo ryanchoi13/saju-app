@@ -10,9 +10,9 @@ const $=id=>w.document.getElementById(id);
     run('currentUserId="user_owner"; currentCoin=550; serverUnlockedReports=[{report_key:"daewoon"}];');
     // 마이페이지: 로그아웃은 사주 정보 카드 밖의 '계정' 카드에 있고 탈퇴 버튼과 함께 있다.
     const buttons=[...w.document.querySelectorAll('#view-mypage button')].map(b=>b.textContent.trim());
-    assert.ok(buttons.includes('회원 탈퇴') && buttons.includes('로그아웃') && buttons.includes('정보 수정'));
-    const profileCard=[...w.document.querySelectorAll('#view-mypage .card')].find(c=>c.textContent.includes('사주 정보 수정'));
-    assert.ok(!profileCard.textContent.includes('로그아웃'));
+    assert.ok(buttons.includes('회원 탈퇴') && buttons.includes('로그아웃') && buttons.some(t=>t.includes('사주 정보 수정')));
+    const infoBox=$('myInfoHeading').closest('.my-box');
+    assert.ok(!infoBox.textContent.includes('로그아웃'));
 
     // 신청 화면: 잔여 복채·감명서 건수 표시, 확인 체크 전에는 신청 불가.
     w.openWithdrawDialog();

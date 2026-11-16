@@ -42,7 +42,7 @@ jobs:
           node-version: '22'
       - run: pip install -r requirements.txt pytest httpx
       - run: npm install --ignore-scripts --package-lock=false
-      - run: node scripts/test_landing.cjs && node scripts/test_kakao_profile.cjs && node scripts/test_withdraw_dialog.cjs
+      - run: node scripts/test_landing.cjs && node scripts/test_kakao_profile.cjs && node scripts/test_withdraw_dialog.cjs && node scripts/test_pptx_comments.cjs
       - run: node scripts/test_session_client.cjs
       - run: node scripts/test_daily_refresh.cjs
       - run: node scripts/test_launch_scope.cjs

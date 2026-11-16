@@ -106,6 +106,9 @@ const tick = () => new Promise(resolve => setTimeout(resolve,30));
         let requests=0; w.fetch=async()=>{requests++;throw Error('unexpected purchase');};
         for (const key of ['business','love','wealth','study','health']) {
             doc.querySelector(`[data-concern-choice="${key}"]`).click();
+            assert.ok(!doc.getElementById('themeIntroModal').classList.contains('hidden'));
+            assert.equal(doc.querySelectorAll('#themeIntroToc li').length,doc.querySelectorAll(`#concern-${key} .report-preview li`).length);
+            w.alert=()=>{}; w.confirmThemeIntro();
             assert.ok(visible(`concern-${key}`));
             assert.equal(doc.querySelectorAll('[data-concern]:not(.hidden)').length,1);
             assert.equal(doc.activeElement.id,`concern-heading-${key}`);

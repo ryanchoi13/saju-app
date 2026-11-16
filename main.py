@@ -248,7 +248,8 @@ def _birth_clock(sijin, birth_hour=None, birth_minute=None) -> time | None:
 
 def _birth_time_text(sijin, birth_hour=None, birth_minute=None) -> str:
     if _valid_clock(birth_hour, birth_minute):
-        return f"{birth_hour}시 {birth_minute:02d}분생"
+        # 6/11 슬라이드 코멘트: 시각만으론 어느 시진인지 안 보이므로 시진을 함께 적는다. 예) 10시 30분(사시)생
+        return f"{birth_hour}시 {birth_minute:02d}분({JIJI[_sijin_from_clock(birth_hour, birth_minute)]}시)생"
     sijin = int(sijin if sijin is not None else -1)
     return SIJIN_LABELS[sijin] + "생" if 0 <= sijin <= 11 else "생시 미상"
 
