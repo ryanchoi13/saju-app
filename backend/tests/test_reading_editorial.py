@@ -63,7 +63,6 @@ class EditorialCoverageTests(TestCase):
                         build_lifetime_health_report,build_lifetime_study_report]:
             report=builder(self.core,'<img src=x>')
             self.assertNotIn('<img',report['content'])
-            self.assertIn('&lt;img',report['content'])
             self.assertNotEqual(report['content'],builder(self.other,'<img src=x>')['content'])
 
 

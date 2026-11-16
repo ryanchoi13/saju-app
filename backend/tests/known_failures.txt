@@ -5,8 +5,6 @@
 
 # A 옛 리포트(theme-present-v2) 기준의 낡은 테스트 — 4단 구조에 맞게 수정 필요
 backend/tests/test_reading_editorial.py::EditorialCoverageTests::test_all_products_have_expanded_versioned_copy
-backend/tests/test_reading_editorial.py::EditorialCoverageTests::test_all_theme_names_are_escaped_and_personalized
-backend/tests/test_reading_editorial.py::ReadingRefreshTests::test_status_must_be_selected_not_guessed
 backend/tests/test_career_service.py::LifetimeCareerReportTests::test_business_report_uses_natal_and_all_cycles
 backend/tests/test_career_service.py::LifetimeCareerReportTests::test_main_report_generator_is_connected
 backend/tests/test_career_service.py::LifetimeCareerReportTests::test_status_selects_career_or_business_language
@@ -16,7 +14,6 @@ backend/tests/test_love_service.py::LifetimeLoveReportTests::test_status_selects
 backend/tests/test_health_service.py::LifetimeHealthReportTests::test_main_report_generator_is_connected
 backend/tests/test_health_service.py::LifetimeHealthReportTests::test_report_blocks_medical_and_deterministic_claims
 backend/tests/test_health_service.py::LifetimeHealthReportTests::test_report_uses_climate_strength_bottleneck_and_all_cycles
-backend/tests/test_theme_present_reader.py::ThemePresentReaderTests::test_core_based_text_is_repeatable_and_names_are_never_executable
 backend/tests/test_theme_present_reader.py::ThemePresentReaderTests::test_every_situation_has_sustained_plain_reading_before_collapsed_references
 backend/tests/test_theme_present_reader.py::ThemePresentReaderTests::test_selected_situations_do_not_mix_dating_or_business_contexts
 backend/tests/test_applied_service_adapters.py::test_theme_report_actually_consumes_state[build_lifetime_career_report-args1-career]
@@ -24,15 +21,9 @@ backend/tests/test_applied_service_adapters.py::test_theme_report_actually_consu
 backend/tests/test_applied_service_adapters.py::test_health_and_lifetime_use_applied_eligibility
 
 # B 연간·대운: 원인 조사 필요(코드/테스트 불일치 가능)
-backend/tests/test_annual_reader.py::AnnualReaderTests::test_name_is_escaped_and_unknown_hour_never_invented
-backend/tests/test_reading_editorial.py::ReadingRefreshTests::test_lifetime_v3_upgrade_is_free_keeps_original_and_does_not_repeat
 backend/tests/test_second_tab_reports.py::SecondTabReportTests::test_lifetime_report_groups_cycles_and_explains_them
 backend/tests/test_overall_interpretation.py::OverallInterpretationTests::test_all_overall_surfaces_share_version_and_record_domains
 
-# C 오늘 운세 문구: 재물일 문구 정리 결과 — 테스트 기대값 또는 문구 조정 필요
-backend/tests/test_daily_fortune_service.py::DailyFortuneServiceTests::test_adjacent_wealth_days_preserve_their_distinct_daily_meanings
-
 # E 식단 구버전 경로: 10/9 업로드(996d1a2)에서 구버전 meal_sets/menu_recommendations 경로를 걷어내고 daily_menu 큐레이션으로 의도적으로 교체함.
-#   아래 두 테스트는 구버전 기대값(menu_recommendations, fortune.recommended_menus, DalhaMenu)을 그대로 요구하는 낡은 테스트 — daily_menu 기준으로 다시 써야 함
+#   아래 테스트는 구버전 기대값(menu_recommendations, fortune.recommended_menus, DalhaMenu)을 그대로 요구하는 낡은 테스트 — daily_menu 기준으로 다시 써야 함
 backend/tests/test_profile_persistence.py::ProfilePersistenceTests::test_simple_menu_hides_paused_controls
-backend/tests/test_ranked_menu_explorer.py::MenuStoreTests::test_api_profile_binding_and_service_integration
