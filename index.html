@@ -991,7 +991,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 </header>
                 <div class="reading-profile">
                     <div><strong id="sajuOwnerName">내 정보</strong><p id="sajuOwnerMeta">입력한 생년정보를 확인해 주세요.</p></div>
-                    <button class="reading-text-button" onclick="reopenSajuEditForm()">정보 확인</button>
+                    <button class="reading-text-button" onclick="reopenSajuEditForm()">정보 수정</button>
                 </div>
                 <div class="reading-tabs" role="tablist" aria-label="나의 사주 살펴보기">
                     <button id="saju-tab-basic" role="tab" aria-selected="true" aria-controls="saju-basic" onclick="selectSajuSection('basic')">나의 사주</button>
@@ -1192,7 +1192,6 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                     <div><p style="font-size: 14px; font-weight: 800; color: var(--c-ink,#1D2129);">사주 정보 수정</p><p id="mypageProfileDesc" style="font-size: 12px; color: #59636D; margin-top: 2px;">-</p></div>
                     <div style="display: flex; gap: 6px;">
                         <button type="button" class="dh-btn-quiet" onclick="reopenSajuEditForm()">정보 수정</button>
-                        <button type="button" class="dh-btn-quiet" onclick="logoutKakaoUser()">로그아웃</button>
                     </div>
                 </div>
 
@@ -1200,6 +1199,14 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                     <summary id="reportArchiveToggle"><span>감명서 보관함</span><span id="archiveCountBadge">0건</span></summary>
                     <div id="unlockedArchiveList"></div>
                 </details>
+
+                <div class="card" style="display: flex; justify-content: space-between; align-items: center; text-align: left;">
+                    <div><p style="font-size: 14px; font-weight: 800; color: var(--c-ink,#1D2129);">계정</p><p style="font-size: 12px; color: #59636D; margin-top: 2px;">로그아웃하거나 탈퇴할 수 있어요.</p></div>
+                    <div style="display: flex; gap: 6px;">
+                        <button type="button" class="dh-btn-quiet" onclick="logoutKakaoUser()">로그아웃</button>
+                        <button type="button" class="dh-btn-quiet" onclick="openWithdrawDialog()">회원 탈퇴</button>
+                    </div>
+                </div>
             </div>
         </main>
 
@@ -1479,6 +1486,22 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
     </div>
 
     <!-- 보관함 다시보기 모달 -->
+    <div id="withdrawModal" class="modal-bg hidden" role="dialog" aria-modal="true" aria-labelledby="withdrawTitle">
+        <div class="modal-content" style="text-align: left; gap: 12px;">
+            <h3 id="withdrawTitle" style="font-size: 17px; font-weight: 800; font-family: 'Noto Serif KR', serif; color: var(--c-ink,#1D2129);"></h3>
+            <div id="withdrawBody" style="font-size: 13px; line-height: 1.8; color: #3C4651;"></div>
+            <label id="withdrawAgreeRow" style="display: flex; gap: 8px; align-items: flex-start; font-size: 13px; line-height: 1.6; color: #3C4651;">
+                <input id="withdrawAgree" type="checkbox" onchange="syncWithdrawButton()" style="margin-top: 4px;">
+                <span>위 내용을 확인했어요.</span>
+            </label>
+            <p id="withdrawError" role="alert" class="hidden" style="font-size: 12px; color: #B3402E;"></p>
+            <div style="display: flex; gap: 8px; justify-content: flex-end;">
+                <button type="button" id="withdrawKeep" class="dh-btn-quiet" onclick="closeWithdrawDialog()">닫기</button>
+                <button type="button" id="withdrawConfirm" class="dh-btn-quiet" onclick="submitWithdrawDialog()"></button>
+            </div>
+        </div>
+    </div>
+
     <div id="archiveDetailModal" class="modal-bg hidden" role="dialog" aria-modal="true" aria-labelledby="archiveModalTitle">
         <div class="modal-content" style="max-width: 380px; max-height: 85vh; display: flex; flex-direction: column; text-align: left; padding: 20px; border-radius: 24px;">
             <div class="reading-report-heading" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F3F0E8; padding-bottom: 10px; margin-bottom: 12px;">
@@ -2195,6 +2218,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                                         switchTab('today');
                                         document.getElementById('bottomNavBar').classList.remove('hidden');
                                         restoreUnlockedUIFromReports();
+                                        offerWithdrawalCancel(sData);
                                     } else {
                                         acceptWardrobeResponse(sData);
                                         renderWardrobeUI();
@@ -2203,6 +2227,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
 
                                         document.getElementById('view-login-gate').classList.add('hidden');
                                         document.getElementById('onboardingInputView').classList.remove('hidden');
+                                        offerWithdrawalCancel(sData);
                                     }
                                 } catch(innerErr) {
                                     alert("로그인 처리 중 오류가 발생했습니다: " + innerErr.message);
@@ -2257,6 +2282,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                     }
                     document.getElementById('bottomNavBar').classList.remove('hidden');
                     restoreUnlockedUIFromReports();
+                    offerWithdrawalCancel(sData);
                 } else {
                     currentUserId = sData.user_id;
                     acceptTarotState(sData.tarot_state);
@@ -2301,6 +2327,80 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 clearTimeout(timeout);
                 dailyRefreshPending = false;
             }
+        }
+
+        // ---- 회원 탈퇴: 신청 후 7일 동안은 다시 로그인해 취소할 수 있고, 이후 모두 삭제된다 ----
+        let withdrawMode = 'request';
+        function withdrawDateText(epochSeconds) {
+            return new Date(epochSeconds * 1000).toLocaleDateString('ko-KR', {month:'long', day:'numeric'});
+        }
+        function setWithdrawError(message) {
+            const box = document.getElementById('withdrawError');
+            box.textContent = message || '';
+            box.classList.toggle('hidden', !message);
+        }
+        function syncWithdrawButton() {
+            const confirm = document.getElementById('withdrawConfirm');
+            confirm.disabled = withdrawMode === 'request' && !document.getElementById('withdrawAgree').checked;
+        }
+        function showWithdrawDialog(mode, info) {
+            withdrawMode = mode;
+            setWithdrawError('');
+            const title = document.getElementById('withdrawTitle');
+            const body = document.getElementById('withdrawBody');
+            const agreeRow = document.getElementById('withdrawAgreeRow');
+            const confirm = document.getElementById('withdrawConfirm');
+            const keep = document.getElementById('withdrawKeep');
+            document.getElementById('withdrawAgree').checked = false;
+            if (mode === 'pending') {
+                title.textContent = '탈퇴를 신청한 계정이에요';
+                body.textContent = `${withdrawDateText(info.delete_at)}에 모든 정보가 삭제돼요. 지금 취소하면 계정과 복채, 감명서를 그대로 쓸 수 있어요.`;
+                agreeRow.classList.add('hidden');
+                confirm.textContent = '탈퇴 취소';
+                keep.textContent = '그대로 둘게요';
+            } else {
+                const reports = Array.isArray(serverUnlockedReports) ? serverUnlockedReports.length : 0;
+                title.textContent = '회원 탈퇴';
+                body.replaceChildren();
+                [
+                    `사라지는 것: 사주 정보, 남은 복채 ${currentCoin}, 구매한 감명서 ${reports}건, 보관함 기록`,
+                    '탈퇴를 신청하면 로그아웃되고, 7일 뒤에 삭제돼요. 삭제 후에는 되돌릴 수 없어요.',
+                    '7일 안에 다시 로그인해서 탈퇴를 취소할 수 있어요.',
+                    '남은 복채는 탈퇴하면 사라져요. 환불이 필요하면 탈퇴 전에 문의해 주세요.',
+                    '탈퇴 후 30일 안에 다시 가입하면 가입 선물 복채는 지급되지 않아요.'
+                ].forEach(text => { const line = document.createElement('p'); line.style.margin = '0 0 6px'; line.textContent = text; body.append(line); });
+                agreeRow.classList.remove('hidden');
+                confirm.textContent = '탈퇴 신청';
+                keep.textContent = '닫기';
+            }
+            syncWithdrawButton();
+            document.getElementById('withdrawModal').classList.remove('hidden');
+            keep.focus();
+        }
+        function openWithdrawDialog() { showWithdrawDialog('request'); }
+        function closeWithdrawDialog() { document.getElementById('withdrawModal').classList.add('hidden'); }
+        async function submitWithdrawDialog() {
+            const confirm = document.getElementById('withdrawConfirm');
+            if (!currentUserId || confirm.disabled) return;
+            confirm.disabled = true; setWithdrawError('');
+            const cancelling = withdrawMode === 'pending';
+            try {
+                const response = await fetch(cancelling ? '/api/user/withdraw/cancel' : '/api/user/withdraw', {
+                    method: 'POST', headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({user_id: currentUserId, confirm: true})
+                });
+                if (!response.ok) throw new Error('withdraw failed');
+            } catch (_) {
+                setWithdrawError(cancelling ? '탈퇴 취소를 완료하지 못했어요. 잠시 후 다시 시도해 주세요.' : '탈퇴 신청을 완료하지 못했어요. 잠시 후 다시 시도해 주세요.');
+                confirm.disabled = false;
+                return;
+            }
+            if (cancelling) { closeWithdrawDialog(); return; }
+            localStorage.removeItem('dalha_kakao_id');
+            location.reload();
+        }
+        function offerWithdrawalCancel(payload) {
+            if (payload && payload.withdrawal_pending) showWithdrawDialog('pending', payload.withdrawal_pending);
         }
 
         async function logoutKakaoUser() {
