@@ -4117,7 +4117,10 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             contents.classList.toggle('hidden', !contents.childElementCount);
             modal.classList.remove('hidden');
             document.body.style.overflow = 'hidden';
-            document.getElementById('readingCloseButton').focus();
+            // 11/16: 창이 숨겨진 상태(display:none)에서는 scrollTop 초기화가 먹지 않아 풀이가 중간부터 열리는 경우가 있었다. 보이게 한 뒤 맨 위로 되돌린다.
+            body.scrollTop = 0;
+            (window.requestAnimationFrame || setTimeout)(() => { body.scrollTop = 0; });
+            document.getElementById('readingCloseButton').focus({preventScroll:true});
         }
 
         function dismissReadingReport() {
