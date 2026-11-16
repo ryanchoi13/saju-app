@@ -1192,7 +1192,6 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                     <div><p style="font-size: 14px; font-weight: 800; color: var(--c-ink,#1D2129);">사주 정보 수정</p><p id="mypageProfileDesc" style="font-size: 12px; color: #59636D; margin-top: 2px;">-</p></div>
                     <div style="display: flex; gap: 6px;">
                         <button type="button" class="dh-btn-quiet" onclick="reopenSajuEditForm()">정보 수정</button>
-                        <button type="button" class="dh-btn-quiet" onclick="logoutKakaoUser()">로그아웃</button>
                     </div>
                 </div>
 
@@ -1200,6 +1199,10 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                     <summary id="reportArchiveToggle"><span>감명서 보관함</span><span id="archiveCountBadge">0건</span></summary>
                     <div id="unlockedArchiveList"></div>
                 </details>
+
+                <div class="mypage-account" style="display: flex; justify-content: center; padding: 20px 0 8px;">
+                    <button type="button" class="dh-btn-quiet" onclick="logoutKakaoUser()">로그아웃</button>
+                </div>
             </div>
         </main>
 
