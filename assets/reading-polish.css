@@ -1,9 +1,6 @@
 /* 11/13 칸 번호 숫자 글꼴: Outfit Bold (SIL OFL 1.1, assets/fonts/OUTFIT-OFL.txt). 숫자만 쓰므로 라틴 부분만 직접 올림 */
 @font-face { font-family:'Dalha Num'; src:url('/assets/fonts/outfit-700-latin.woff2') format('woff2'); font-weight:700; font-style:normal; font-display:swap; unicode-range:U+0030-0039; }
 /* Readable hierarchy for both saved reports and newly generated readings. */
-#mealDailyCard #menuStatus { color:var(--c-ink,#1D2129)!important; font-size:15px!important; font-weight:700!important; background:transparent; border:0; padding:0; line-height:1.6; }
-@media(max-width:540px) { #mealDailyCard #menuStatus { font-size:13px!important; font-weight:600!important; } }
-@media(max-width:350px) { #mealDailyCard #menuStatus { font-size:12px!important; } }
 .meal-info-note p { margin:10px 0; line-height:1.8; }
 #mealDailyCard { scroll-margin-top:100px; }
 .lucky-item-art { width:55px; height:49px; display:block; margin:6px auto; }

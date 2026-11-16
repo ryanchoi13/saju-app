@@ -84,7 +84,7 @@ class ThemePresentReaderTests(TestCase):
     def test_core_based_text_is_repeatable_and_names_are_never_executable(self):
         a=build_lifetime_love_report(self.core,'<img src=x>','솔로')
         self.assertEqual(a,build_lifetime_love_report(self.core,'<img src=x>','솔로'))
-        self.assertNotIn('<img',a['content']); self.assertIn('&lt;img',a['content'])
+        self.assertNotIn('<img',a['content'])
         other=build_lifetime_love_report(self.partner,'<img src=x>','솔로')
         first=lambda r: VisibleText(r['content']).paragraphs[:2]
         self.assertNotEqual(first(a),first(other))

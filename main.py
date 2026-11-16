@@ -849,37 +849,6 @@ def initialize_menu_storage():
         pass  # Other sections stay usable; menu writes explicitly return 503.
 
 
-class MenuExploreRequest(BaseModel):
-    user_id: str = Field(min_length=6, max_length=55)
-    token: str = Field(min_length=64, max_length=64)
-    mode: str
-    action: str
-    expected_day: str = Field(pattern=r'^\d{4}-\d{2}-\d{2}$')
-    expected_seen: int = Field(ge=0, le=1000000)
-
-
-@app.post('/api/menu/explore')
-def explore_menus(req: MenuExploreRequest):
-    user = users_db.get(req.user_id)
-    if not user or not user.get('profile_complete'):
-        raise HTTPException(status_code=401, detail='다시 접속해 추천 메뉴를 불러와 주세요.')
-    day = menu_store.today()
-    food_profile = _birth_input_from_user(user, user.get('name', ''))
-    def build(mode, history, excluded):
-        from meal_sets import build_set
-        return build_set(food_profile, day, mode, history, excluded)
-    try:
-        return menu_store.explore(req.user_id, day, build, token=req.token,
-                                  mode=req.mode, action=req.action,
-                                  expected_day=req.expected_day, expected_seen=req.expected_seen)
-    except KeyError:
-        raise HTTPException(status_code=403, detail='다시 접속해 추천 기록을 불러와 주세요.')
-    except ValueError as exc:
-        raise HTTPException(status_code=422, detail=str(exc))
-    except menu_store.StorageUnavailable:
-        raise HTTPException(status_code=503, detail='추천 기록을 저장하지 못했습니다. 잠시 후 다시 시도해 주세요.')
-
-
 class MealFeedbackRequest(BaseModel):
     token: str = Field(min_length=32, max_length=128)
     liked: Optional[bool] = None

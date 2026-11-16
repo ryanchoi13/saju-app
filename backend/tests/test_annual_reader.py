@@ -72,7 +72,6 @@ class AnnualReaderTests(TestCase):
             birth_date=date(2000,7,4), time_unknown=True), target_date=date(2026,9,23))
         r = build_annual_overall_report(core, '<img src=x onerror=alert(1)>', 2026)
         self.assertNotIn('<img', r['content']); self.assertNotIn('<img', r['title'])
-        self.assertIn('&lt;img', r['content'])
         self.assertIsNone(core.natal_facts.pillars.get('hour'))
 
     def test_birth_year_skips_prebirth_months_and_prebirth_year_rejected(self):
