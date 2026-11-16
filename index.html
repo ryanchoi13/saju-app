@@ -565,10 +565,19 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
     <link rel="stylesheet" href="/assets/brand-2026/refine.css?v=20261115-toc4">
     <link href="https://fonts.googleapis.com/css2?family=Song+Myung&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/assets/brand-2026/ilryeok.css?v=20261108-p5">
+    <link rel="stylesheet" href="/assets/brand-2026/splash.css?v=20261116-s1">
     <script src="/assets/reading-polish.js?v=20261113-hier1" defer></script>
     <script src="/assets/brand-2026/brand-ui.js?v=20261108-p1" defer></script>
 </head>
 <body>
+    <div id="dalhaSplash" aria-hidden="true">
+        <svg class="sp-moon" viewBox="0 0 100 100"></svg>
+        <div class="sp-title">달하</div>
+        <div class="sp-date"></div>
+        <p class="sp-phrase">정읍사의 달빛처럼<br>당신의 앞날을 비춰요</p>
+        <div class="sp-seal">月</div>
+    </div>
+    <script src="/assets/brand-2026/splash.js?v=20261116-s1"></script>
 
     <div class="app-container">
 
@@ -1194,9 +1203,6 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             </div>
         </main>
 
-        <footer style="width: 100%; text-align: center; padding: 24px 12px; font-size: 11px; color: #59636D; line-height: 1.6; border-top: 1px solid rgba(0,0,0,0.06); margin-top: 30px;">
-            <p>달하(DALHA)는 고대가요 정읍사의 달빛처럼<br>인생의 갈림길에서 당신의 앞날을 비춰주는 정통 명리학 운명 나침반입니다.</p>
-        </footer>
 
         <nav id="bottomNavBar" class="hidden">
             <button onclick="switchTab('today')" id="tab-today" class="tab-btn active"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>오늘운세</span></button>
