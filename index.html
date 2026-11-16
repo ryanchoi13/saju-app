@@ -562,7 +562,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
     <link id="dalhaBrandStyles" rel="stylesheet" href="/assets/brand-2026/brand.css?v=20261115-reader">
     <link rel="stylesheet" href="/assets/reading-polish.css?v=20261113-study4">
     <link rel="stylesheet" href="/assets/daily-card.css?v=20261115-title">
-    <link rel="stylesheet" href="/assets/brand-2026/refine.css?v=20261116-pptx3">
+    <link rel="stylesheet" href="/assets/brand-2026/refine.css?v=20261116-pptx4">
     <link href="https://fonts.googleapis.com/css2?family=Song+Myung&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/assets/brand-2026/ilryeok.css?v=20261108-p5">
     <link rel="stylesheet" href="/assets/brand-2026/splash.css?v=20261116-s1">
@@ -3814,7 +3814,26 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             const toc = section.querySelector('.report-preview');
             document.getElementById('themeIntroToc').replaceChildren(...(toc ? [toc.cloneNode(true)] : []));
             document.querySelectorAll('[data-concern-choice]').forEach(el => el.setAttribute('aria-pressed', String(el.dataset.concernChoice === key)));
+            // 이미 산 풀이: 팝업을 두 번 띄우지 않고, 풀이 팝업 하나 안에서 목차 → 풀이 보기로 이어 간다.
+            const ownedIndex = latestOwnedReportIndex(key);
+            if (ownedIndex >= 0) { openOwnedThemeIntro(key, ownedIndex); return; }
             document.getElementById('themeIntroModal').classList.remove('hidden');
+        }
+        function openOwnedThemeIntro(key, index) {
+            openReadingReport(index);
+            const body = document.getElementById('archiveModalBody');
+            const intro = document.createElement('section');
+            intro.className = 'theme-intro-inline';
+            const heading = document.createElement('h3');
+            heading.textContent = document.getElementById('themeIntroTitle').textContent;
+            const desc = document.createElement('p');
+            desc.textContent = document.getElementById('themeIntroDesc').textContent;
+            const go = document.createElement('button');
+            go.type = 'button'; go.className = 'reading-primary'; go.textContent = '풀이 보기';
+            go.onclick = () => openReadingReport(index);   // 같은 팝업 안에서 본문으로 바꾼다
+            intro.append(heading, desc, ...document.getElementById('themeIntroToc').children, go);
+            body.replaceChildren(intro);
+            body.scrollTop = 0;
         }
         function closeThemeIntro() { document.getElementById('themeIntroModal')?.classList.add('hidden'); }
         function confirmThemeIntro() {
