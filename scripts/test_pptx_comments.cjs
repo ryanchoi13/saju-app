@@ -58,7 +58,10 @@ const hidden=id=>$(id).classList.contains('hidden');
     assert.ok(!hidden('archiveDetailModal'));
     assert.ok(doc.querySelectorAll('#archiveModalBody .theme-intro-inline li').length>=5);
     assert.doesNotMatch($('archiveModalBody').textContent,/본문 시작/);
+    assert.equal($('archiveDetailModal').dataset.themeIntro,'true');   // 목차 화면: PDF 저장·닫기 줄 숨김
+    assert.match(fs.readFileSync('assets/brand-2026/refine.css','utf8'),/data-theme-intro="true"\] \.reading-modal-actions \{ display:none/);
     $('archiveModalBody').querySelector('button.reading-primary').onclick();
+    assert.equal($('archiveDetailModal').dataset.themeIntro,undefined);
     assert.match($('archiveModalBody').textContent,/본문 시작/);
     assert.ok(hidden('themeIntroModal'));
     vm.runInContext('serverUnlockedReports=[]',ctx);
