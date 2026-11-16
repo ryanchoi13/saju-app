@@ -124,13 +124,13 @@ FIELD_TAIL = "꼭 이 분야로 옮기라는 뜻은 아니에요. 지금 하는 
 FIELD_NONE = "타고난 오행이 고르게 놓여 있어서 특정 분야를 꼭 집어 고를 필요는 없어요. 위의 직무 성격을 기준으로 고르면 충분해요."
 
 
-def field_text(name: str, elements: list[str]) -> str:
+def field_text(name: str, elements: list[str], reason: str = "") -> str:
     if not elements:
         return FIELD_NONE
     names = "·".join(ELEMENT_NAME[e] for e in elements)
     fields = ", ".join(f"{ELEMENT_NAME[e]}{_TOPIC[e]} {ELEMENT_FIELDS[e]}" for e in elements)
     return (f"명리에서는 내게 필요한 오행과 닿는 분야에서 일이 손에 잘 붙는다고 봐요. "
-            f"{name}님에게 필요한 기운은 {names}{_copula(elements[-1])}. {fields} 쪽이 여기에 닿아요. {FIELD_TAIL}")
+            f"{name}님에게 필요한 기운은 {names}{_copula(elements[-1])}. " + (reason + " " if reason else "") + f"{fields} 쪽이 여기에 닿아요. {FIELD_TAIL}")
 
 
 # ---------------------------------------------------------------------------

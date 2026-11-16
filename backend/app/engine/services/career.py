@@ -25,6 +25,7 @@ from app.engine.services.annual_copy import sanitize_paragraph, seed_from
 from app.engine.services import career_copy as copy
 from app.engine.services import theme_timing
 from app.engine.services import career_sections as sec
+from app.engine.services.need_reason import need_reason
 from app.engine.services.theme_core import CLASH, YEOKMA, hidden_tally, tally
 from app.engine.services import daily_score
 from app.engine.services.daily_score import _god_group, calendar_ganji
@@ -334,7 +335,7 @@ def _compose_v3(core: MyeongriCoreResult, query: dict, name: str, group: str, tr
 
     return dict(
         workplace=sec.WORKPLACE[group][track], workplace_strength=sec.WORKPLACE_STRENGTH[copy.strength_key(strength)],
-        job_kind=sec.JOB_KIND[group], fields=sec.field_text(name, good),
+        job_kind=sec.JOB_KIND[group], fields=sec.field_text(name, good, need_reason(core, good)),
         money_title=sec.MONEY_TITLE[money], money=sec.MONEY_TEXT[money], money_tail=sec.MONEY_TAIL[(money, track)],
         helper=sec.HELPER[helper], hard=sec.HARD[hard],
         cycle=cycle, cycle_head=cycle_head, cycle_tier=cycle_tier, cycle_next=cycle_next,

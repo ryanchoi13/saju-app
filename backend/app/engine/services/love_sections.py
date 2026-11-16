@@ -368,12 +368,12 @@ PLACE_TAIL = "데이트 장소나 중요한 이야기를 꺼낼 자리를 고를
 PLACE_NONE = "타고난 오행이 고르게 놓여 있어서 장소를 크게 가리지 않아요. 두 사람이 편하게 오래 이야기할 수 있는 곳이면 충분해요."
 
 
-def place_text(name: str, elements: list[str]) -> str:
+def place_text(name: str, elements: list[str], reason: str = "") -> str:
     if not elements:
         return PLACE_NONE
     names = "·".join(ELEMENT_NAME[e] for e in elements)
     places = ", 또는 ".join(PLACE[e] for e in elements)
-    return f"{PLACE_LEAD} {name}님에게 필요한 기운은 {names}{_copula(elements[-1])}. 함께 가면 좋은 곳은 {places}이에요. {PLACE_TAIL}"
+    return f"{PLACE_LEAD} {name}님에게 필요한 기운은 {names}{_copula(elements[-1])}. " + (reason + " " if reason else "") + f"함께 가면 좋은 곳은 {places}이에요. {PLACE_TAIL}"
 
 
 # 실천: 공통 · 이번 10년 · 올해(10년과 십성이 다를 때만) · 타고난 매력 · 장소
