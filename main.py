@@ -25,6 +25,7 @@ import tarot_service
 import account_store
 import session_store
 import wallet_store
+import account_withdrawal
 import report_access
 import account_security
 from style_context import build_style_contexts
@@ -849,6 +850,17 @@ def initialize_menu_storage():
         pass  # Other sections stay usable; menu writes explicitly return 503.
 
 
+def _forget_cached_account(user_id):
+    users_db.pop(user_id, None)
+    reports_db.pop(user_id, None)
+
+
+@app.on_event('startup')
+def start_withdrawal_sweeper():
+    # 탈퇴 신청 7일이 지난 계정을 한 시간마다 정리한다.
+    account_withdrawal.start_sweeper(on_purged=_forget_cached_account)
+
+
 class MealFeedbackRequest(BaseModel):
     token: str = Field(min_length=32, max_length=128)
     liked: Optional[bool] = None
@@ -861,6 +873,13 @@ def menu_feedback(req: MealFeedbackRequest):
         return update(req.token, liked=req.liked, seen=req.liked is None)
     except KeyError:
         raise HTTPException(status_code=404, detail="식단을 다시 불러와 주세요.")
+
+
+def _withdrawal_pending(user_id):
+    try:
+        return account_withdrawal.pending(user_id)
+    except account_withdrawal.StorageUnavailable:
+        raise HTTPException(status_code=503, detail='회원 정보를 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.')
 
 
 @app.post("/api/auth/kakao")
@@ -942,12 +961,14 @@ def auth_kakao(req: KakaoAuthRequest, response: Response = None, request: Reques
             "saju_analysis": _public_saju(saju_res),
             "profile": _public_profile(user),
             "tarot_state": tarot_service.get_state(user_id),
+            "withdrawal_pending": _withdrawal_pending(user_id),
         }
     return {
         "status": "new_user",
         "user_id": user_id,
         "coin_balance": user["coin"],
         "kakao_prefill": _public_profile(user),
+        "withdrawal_pending": _withdrawal_pending(user_id),
         **wardrobe,
     }
 
@@ -961,6 +982,33 @@ def logout_account(request: Request, response: Response):
     session_store.revoke(request.cookies.get(session_store.COOKIE))
     response.delete_cookie(session_store.COOKIE, path='/')
     return {'status':'success'}
+
+
+class WithdrawRequest(BaseModel):
+    user_id: str
+    confirm: bool = False
+
+
+@app.post("/api/user/withdraw")
+def withdraw_account(req: WithdrawRequest, request: Request, response: Response):
+    if req.confirm is not True:
+        raise HTTPException(status_code=422, detail='탈퇴 내용을 확인해 주세요.')
+    try:
+        state = account_withdrawal.request(req.user_id)
+    except account_withdrawal.StorageUnavailable:
+        raise HTTPException(status_code=503, detail='탈퇴 신청을 저장하지 못했습니다. 다시 시도해 주세요.')
+    session_store.revoke(request.cookies.get(session_store.COOKIE))
+    response.delete_cookie(session_store.COOKIE, path='/')
+    return {'status': 'success', **state}
+
+
+@app.post("/api/user/withdraw/cancel")
+def cancel_withdrawal(req: WithdrawRequest):
+    try:
+        cancelled = account_withdrawal.cancel(req.user_id)
+    except account_withdrawal.StorageUnavailable:
+        raise HTTPException(status_code=503, detail='탈퇴 취소를 저장하지 못했습니다. 다시 시도해 주세요.')
+    return {'status': 'success', 'cancelled': cancelled}
 
 
 @app.post("/api/user/register-saju")
