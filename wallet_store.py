@@ -1,6 +1,7 @@
 """Authoritative wallet and report archive; account row is locked for every write."""
 from contextlib import contextmanager
 import json
+import account_withdrawal
 from account_store import owner_key
 from wardrobe_store import _connection, _execute, StorageUnavailable
 
@@ -9,6 +10,7 @@ def initialize():
         _execute(conn, pg, '''CREATE TABLE IF NOT EXISTS account_assets (
             owner_key VARCHAR(64) PRIMARY KEY, balance INTEGER NOT NULL CHECK(balance>=0),
             reports TEXT NOT NULL DEFAULT '[]')''')
+    account_withdrawal.initialize()
 
 @contextmanager
 def locked(user_id, *, initial_balance=1000, initial_reports=None):
@@ -17,6 +19,8 @@ def locked(user_id, *, initial_balance=1000, initial_reports=None):
         if not pg:
             conn.execute('BEGIN IMMEDIATE')
         key = owner_key(user_id)
+        if account_withdrawal.recently_withdrawn(conn, pg, key):
+            initial_balance, initial_reports = 0, []  # a deleted account gets no welcome coins back
         _execute(conn, pg, '''INSERT INTO account_assets(owner_key,balance,reports) VALUES(%s,%s,%s)
             ON CONFLICT(owner_key) DO NOTHING''',
             (key, max(0, int(initial_balance)), json.dumps(initial_reports or [], ensure_ascii=False)))
