@@ -51,6 +51,18 @@ const hidden=id=>$(id).classList.contains('hidden');
     assert.ok(!doc.querySelector('#concern-wealth').classList.contains('hidden'));
     assert.ok(previewed.includes('wealth'));
 
+    // 이미 산 풀이: 팝업은 하나(풀이 팝업). 목차 → 풀이 보기가 같은 팝업 안에서 이어진다.
+    vm.runInContext('serverUnlockedReports=[{report_key:"wealth",report_title:"재물운",report_content:"<h3>본문 시작</h3>"}]',ctx);
+    w.openThemeIntro('wealth');
+    assert.ok(hidden('themeIntroModal'));
+    assert.ok(!hidden('archiveDetailModal'));
+    assert.ok(doc.querySelectorAll('#archiveModalBody .theme-intro-inline li').length>=5);
+    assert.doesNotMatch($('archiveModalBody').textContent,/본문 시작/);
+    $('archiveModalBody').querySelector('button.reading-primary').onclick();
+    assert.match($('archiveModalBody').textContent,/본문 시작/);
+    assert.ok(hidden('themeIntroModal'));
+    vm.runInContext('serverUnlockedReports=[]',ctx);
+
     // 나의 사주: 용어, 풀이 근거 ▼▲, 평생운세 번호 목차, 정보 수정 버튼 상자
     assert.match($('saju-basic').textContent,/나의 원국\(原局\)과 오행/);
     assert.doesNotMatch($('saju-basic').textContent,/여덟 글자/);

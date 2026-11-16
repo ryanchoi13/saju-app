@@ -407,3 +407,12 @@ html[data-brand] body #themeIntroModal ol.theme-toc li { display:flex; gap:12px;
 html[data-brand] body #themeIntroModal .toc-num { flex:0 0 20px; font-size:12px; color:var(--c-point); font-variant-numeric:tabular-nums; }
 html[data-brand] body #themeIntroModal ol.theme-toc li strong { font-size:14px; font-weight:500; line-height:1.5; color:var(--c-ink); }
 html[data-brand] body #themeIntroModal .theme-intro-go { background:var(--c-ink); color:var(--c-paper); border-color:var(--c-ink); }
+
+/* 산 풀이의 목차 화면(풀이 팝업 안) */
+html[data-brand] body #archiveModalBody .theme-intro-inline { display:flex; flex-direction:column; gap:14px; padding:8px 0 24px; }
+html[data-brand] body #archiveModalBody .theme-intro-inline h3 { margin:0; font-family:var(--brand-serif); font-size:22px; color:var(--c-ink); }
+html[data-brand] body #archiveModalBody .theme-intro-inline > p { margin:0; font-size:14px; line-height:1.75; color:var(--c-ink-60); }
+html[data-brand] body #archiveModalBody .theme-intro-inline .report-preview { display:block; background:transparent; border:0; padding:0; margin:0; }
+html[data-brand] body #archiveModalBody .theme-intro-inline ol.theme-toc { list-style:none; margin:0; padding:0; }
+html[data-brand] body #archiveModalBody .theme-intro-inline ol.theme-toc li { display:flex; gap:12px; align-items:baseline; padding:5px 0; }
+html[data-brand] body #archiveModalBody .theme-intro-inline .toc-num { flex:0 0 20px; font-size:12px; color:var(--c-point); }
