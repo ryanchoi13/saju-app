@@ -417,3 +417,19 @@ html[data-brand] body #archiveModalBody .theme-intro-inline ol.theme-toc { list-
 html[data-brand] body #archiveModalBody .theme-intro-inline ol.theme-toc li { display:flex; gap:12px; align-items:baseline; padding:5px 0; }
 html[data-brand] body #archiveModalBody .theme-intro-inline .toc-num { flex:0 0 20px; font-size:12px; color:var(--c-point); }
 #archiveDetailModal[data-theme-intro="true"] .reading-modal-actions { display:none; }
+
+/* 풀이 팝업 안 접이식 칸(근거·참고): 둥근 상자 + 큰 여백이 섞여 깨져 보이던 것을 '윗줄 하나' 평면 칸으로 통일 */
+html[data-brand] body #archiveModalBody details,
+html[data-brand] body #archiveModalBody .theme-reading[data-theme] > details.reading-evidence {
+  border:0!important; border-top:1px solid var(--c-line)!important; border-radius:0!important; background:transparent!important;
+  padding:6px 0 10px!important; margin:0!important;
+}
+html[data-brand] body #archiveModalBody .theme-reading[data-theme] > details.reading-evidence { margin-top:28px!important; }
+html[data-brand] body #archiveModalBody details > summary {
+  display:flex; align-items:center; justify-content:space-between; gap:12px; min-height:44px; list-style:none; cursor:pointer;
+  font-size:15px; font-weight:700; color:var(--c-ink);
+}
+html[data-brand] body #archiveModalBody details > summary::-webkit-details-marker { display:none; }
+html[data-brand] body #archiveModalBody details > summary::after { content:''; flex-shrink:0; border-left:4px solid transparent; border-right:4px solid transparent; border-top:6px solid var(--c-ink-60); }   /* ▼ */
+html[data-brand] body #archiveModalBody details[open] > summary::after { border-top:0; border-bottom:6px solid var(--c-ink-60); }                                                                              /* ▲ */
+html[data-brand] body #archiveModalBody details[open] > summary { margin-bottom:6px; }
