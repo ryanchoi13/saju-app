@@ -76,5 +76,7 @@ const hidden=id=>$(id).classList.contains('hidden');
     const css=fs.readFileSync('assets/brand-2026/refine.css','utf8');
     assert.match(css,/details\[open\] > summary > \.fold-caret/);
     assert.match(css,/\[data-current-cycle="true"\][\s\S]{0,120}border:0!important/);
+    assert.match(css,/#archiveModalBody details > summary::after/);   // 풀이 팝업 접이식 칸: 평면 + ▼▲
+    assert.match(css,/body #archiveModalBody details,[\s\S]{0,260}border-radius:0!important/);
     process.exit(0);
 })().catch(e=>{console.error(e);process.exit(1)});
