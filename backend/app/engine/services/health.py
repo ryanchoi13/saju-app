@@ -27,6 +27,7 @@ from app.engine.services.annual_copy import seed_from
 from app.engine.services import health_copy as copy
 from app.engine.services import theme_timing
 from app.engine.services import health_sections as sec
+from app.engine.services.need_reason import need_reason
 from app.engine.services.theme_core import CLASH
 from app.engine.services import daily_score
 from app.engine.services.daily_score import calendar_ganji
@@ -256,7 +257,7 @@ def _compose_v3(core: MyeongriCoreResult, name: str, climate: str, strength: str
     if good:
         parts = [sec.FOOD_ITEM.format(el=sec.ELEMENT_NAME[e], taste=sec.TASTE[e], eul="을", food=sec.FOOD[e]) for e in good]
         food = [sec.FOOD_LEAD,
-                f"{name}님에게 필요한 기운은 {sec.names(good)}{sec.copula(good[-1])}. " + ", ".join(parts)
+                f"{name}님에게 필요한 기운은 {sec.names(good)}{sec.copula(good[-1])}. " + (need_reason(core, good) + " " if need_reason(core, good) else "") + ", ".join(parts)
                 + ("이" if (ord(parts[-1][-1]) - 0xAC00) % 28 else "가") + " 몸에 잘 맞아요."]
         red = [e for e in excess if e not in good]
         if red:

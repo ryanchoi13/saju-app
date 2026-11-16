@@ -29,6 +29,7 @@ from app.engine.services.annual_copy import seed_from, split_sentences
 from app.engine.services import love_copy as copy
 from app.engine.services import theme_timing
 from app.engine.services import love_sections as sec
+from app.engine.services.need_reason import need_reason
 from app.engine.services import love_depth as depth
 from app.engine.services.theme_core import CLASH, PEACH, SIX, hidden_tally, natal_counts, tally
 from app.engine.services import daily_score
@@ -587,7 +588,7 @@ def _compose_v4(core: MyeongriCoreResult, query: dict, name: str, group: str, se
         group=group if group in sec.START else "balanced", charm=charm["text"], remedy=remedy, depth=depth,
         cycle=cycle, cycle_head=cycle_head, cycle_tier=cycle_tier, cycle_next=cycle_next,
         year=year_text, year_head=year_head, month_caption=sec.MONTH_CAPTION.format(y=start[0], m=start[1]),
-        months=rows, key_months=keys, place=sec.place_text(name, good), bullets=bullets,
+        months=rows, key_months=keys, place=sec.place_text(name, good, need_reason(core, good)), bullets=bullets,
         evidence=dict(good_elements=good, charm=charm["evidence"], remedy=remedy["evidence"], depth=depth["evidence"], cycle=current.get("pillar", {}).get("ganji"), cycle_god=god, year=year,
                       months=[dict(month=f'{r["y"]}-{r["m"]:02d}', ganji=r["ganji"], grade=r["grade"],
                                    reason=r["reason"]) for r in rows],
