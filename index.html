@@ -25,6 +25,7 @@
     <meta name="theme-color" content="#F8F6F1">
     <script src="/assets/design-init.js?v=20261001-4"></script>
     <script src="/assets/session-client.js?v=1"></script>
+    <script src="/assets/talisman.js?v=20261117-1"></script>
     <link rel="stylesheet" href="/assets/annual-reading.css?v=20261115-depth2">
     <script src="/assets/annual-reader.js?v=20261108-p1" defer></script>
     <script src="https://developers.kakao.com/sdk/js/kakao.min.js"></script>
@@ -876,8 +877,8 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                         </div>
                         <div class="drawer-body hidden" id="drawerBodyTalisman">
                             <div class="talisman-banner">
-                                <h3 id="talismanBannerHeader" class="dh-talisman-title">오늘의 오행 부적</h3>
-                                <div class="talisman-art"><div id="talismanBannerPreview" style="width: 84px; height: 144px; filter: drop-shadow(0 5px 7px rgba(67,50,30,0.14));"></div></div>
+                                <h3 id="talismanBannerHeader" class="dh-talisman-title">오늘의 부적</h3>
+                                <div class="talisman-art"><div id="talismanBannerPreview" style="width: 84px; height: 140px; filter: drop-shadow(0 5px 7px rgba(67,50,30,0.14));"></div></div>
                                 <p class="dh-talisman-note">하루의 시작에 마음을 가다듬고, 지키고 싶은 뜻을 새겨 보세요.</p>
                                 <button type="button" class="dh-btn" onclick="openTalismanModal()">부적 크게 보기</button>
                             </div>
@@ -1438,16 +1439,10 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
     <div id="talismanModal" class="modal-bg hidden">
         <div class="modal-content" style="max-width: 340px; padding: 18px; border-radius: 24px;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F3F0E8; padding-bottom: 8px;">
-                <h3 style="font-size: 14px; font-weight: 800; color: var(--c-ink,#1D2129); font-family: 'Noto Serif KR', serif;">오늘의 오행 부적</h3>
+                <h3 style="font-size: 14px; font-weight: 800; color: var(--c-ink,#1D2129); font-family: 'Noto Serif KR', serif;">오늘의 부적</h3>
                 <button onclick="closeTalismanModal()" style="background: none; border: none; font-size: 20px; color: #59636D; cursor: pointer;">&times;</button>
             </div>
             <div id="talismanRealBox" style="display: flex; justify-content: center; align-items: center; padding: 4px 0;"></div>
-            <div style="text-align: left; background: #F8F6F1; border: 1px solid #DEDCD4; border-radius: 12px; padding: 12px;">
-                <h4 id="talismanTitle" style="font-size: 13.5px; font-weight: 800; color: var(--c-ink,#1D2129);">결단정리부</h4>
-                <p id="talismanPower" style="font-size: 12px; font-weight: 700; color: var(--c-ink,#1D2129); margin: 2px 0;"></p>
-                <p id="talismanDesc" style="font-size: 11.5px; color: #59636D; line-height: 1.5;"></p>
-                <div style="border-top: 1px dashed #D4D0C6; margin-top: 6px; padding-top: 4px; font-size: 11px; color: var(--c-ink,#1D2129);">하루의 시작에 마음을 가다듬고, 지키고 싶은 뜻을 새겨 보세요.</div>
-            </div>
             <div style="display: flex; gap: 8px;">
                 <button onclick="downloadTalismanImage()" style="flex: 1; background: var(--c-ink,#1D2129); color: white; border: none; font-size: 13.5px; font-weight: 800; padding: 12px; border-radius: 12px; cursor: pointer;">부적 이미지 저장</button>
                 <button onclick="closeTalismanModal()" style="flex: 1; background: #DEDCD4; color: var(--c-ink,#1D2129); border: none; font-size: 13.5px; font-weight: 700; padding: 12px; border-radius: 12px; cursor: pointer;">확인</button>
@@ -2498,34 +2493,10 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             </svg>`;
         }
 
-        function renderAuthenticCinnabarTalisman(type = 'metal_clarity', width = 168, height = 288, id = 'svgTalismanMain') {
-            const motifs = {
-                wood_growth: {glyph:'木',motto:'成長進展',path:'M42 103 Q70 99 100 102 M70 81 Q68 111 70 143 M68 102 Q58 120 38 133 M72 104 Q83 120 101 130'},
-                fire_vitality: {glyph:'火',motto:'明光活力',path:'M69 80 Q73 113 61 126 Q51 139 36 145 M70 108 Q81 132 104 142 M47 100 L52 115 M93 94 Q88 109 80 112'},
-                earth_stability: {glyph:'土',motto:'安定守護',path:'M45 104 Q70 100 97 104 M71 81 L69 140 M35 143 Q68 138 105 142'},
-                metal_clarity: {glyph:'金',motto:'決斷整理',path:'M70 80 Q60 97 36 110 M70 81 Q84 96 105 104 M49 108 L91 106 M42 120 L98 118 M70 105 L69 146 M47 127 L53 138 M92 125 L84 137 M34 148 Q70 143 105 147'},
-                water_wisdom: {glyph:'水',motto:'智慧流通',path:'M71 80 L70 146 Q67 153 58 147 M38 109 L57 106 Q55 126 35 138 M91 94 L78 114 Q88 132 107 139'},
-            };
-            const motif = motifs[type] || motifs.metal_clarity;
-            const fibers = Array.from({length:28},(_,i)=>{const x=12+(i*37)%116,y=14+(i*61)%211;return `<path d="M${x} ${y}l${3+i%5} ${i%2?'.6':'-.6'}"/>`;}).join('');
-            return `<svg id="${id}" width="${width}" height="${height}" viewBox="0 0 140 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${motif.motto} 오행 부적">
-                <defs><linearGradient id="${id}-paper" x2="1" y2="1"><stop stop-color="#F3E8CC"/><stop offset=".5" stop-color="#E9D9B4"/><stop offset="1" stop-color="#F0E3C5"/></linearGradient></defs>
-                <rect width="140" height="240" rx="1.5" fill="url(#${id}-paper)"/>
-                <g fill="none" stroke="#9D865C" stroke-width=".35" opacity=".24">${fibers}</g>
-                <rect class="talisman-frame" x="8" y="8" width="124" height="224" rx="1" fill="none" stroke="#9B7847" stroke-width=".65" opacity=".65"/>
-                <g fill="none" stroke="#893D2D" stroke-linecap="square" stroke-linejoin="miter">
-                    <path d="M47 32 Q64 25 93 29 M39 42 Q69 34 102 40 M69 22 L68 53 M49 50 L92 47" stroke-width="2.5"/>
-                    <path d="M49 62 Q72 57 93 61 L77 72 M61 62 L58 72" stroke-width="2"/>
-                    <path d="${motif.path}" stroke-width="4.1"/>
-                    <path d="M48 159 Q70 154 94 158 M56 167 L86 165 M70 156 L67 187 Q65 201 51 206" stroke-width="3"/>
-                    <path d="M45 185 Q55 186 64 178 M74 179 Q83 186 94 185" stroke-width="1.8"/>
-                </g>
-                <g transform="translate(101 194)" fill="none" stroke="#893D2D" stroke-width="1.1">
-                    <rect width="21" height="23"/><path d="M3 5h15M10.5 2v8M4 10h13M4 14h13v6H4Z"/>
-                </g>
-                <path d="M49 221h42" stroke="#AD9267" stroke-width=".5"/>
-                <text x="70" y="229" text-anchor="middle" fill="#8E7957" font-family="serif" font-size="4.6" letter-spacing="2.6">DALHA</text>
-            </svg>`;
+        // 오늘의 부적: 서버가 준 spec(분야·방향·신살·시드)로 화면에서 그린다. 글귀·도장은 두지 않는다.
+        function renderDailyTalisman(width = 168, id = 'svgTalismanMain') {
+            if (!window.DalhaTalisman) return '';
+            return window.DalhaTalisman.compose(currentTalisman && currentTalisman.spec, { width, id });
         }
 
         function renderBiorhythmWaveSvg(daysLived) {
@@ -2983,9 +2954,8 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             
             updateTodayWardrobeMatchPick();
 
-            document.getElementById('talismanBannerHeader').textContent = currentTalisman?.title || '오늘의 오행 부적';
             const talismanPreview = document.getElementById('talismanBannerPreview');
-            if (talismanPreview) talismanPreview.innerHTML = renderAuthenticCinnabarTalisman(currentTalisman?.talisman_type || "metal_clarity", 84, 144, "svgTalismanPreview");
+            if (talismanPreview) talismanPreview.innerHTML = renderDailyTalisman(84, "svgTalismanPreview");
         }
 
         const COLOR_HEX_MAP = {
@@ -4587,10 +4557,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
         }
 
         function openTalismanModal() {
-            document.getElementById('talismanTitle').innerText = currentTalisman?.title || "결단정리부 (決斷整理)";
-            document.getElementById('talismanPower').innerText = currentTalisman?.power || "판단과 정리의 힘";
-            document.getElementById('talismanDesc').innerText = currentTalisman?.desc || "차분히 판단하고 필요한 것을 정리하는 마음을 담은 부적입니다.";
-            document.getElementById('talismanRealBox').innerHTML = renderAuthenticCinnabarTalisman(currentTalisman?.talisman_type || "metal_clarity", 168, 288);
+            document.getElementById('talismanRealBox').innerHTML = renderDailyTalisman(192, 'svgTalismanMain');
             document.getElementById('talismanModal').classList.remove('hidden');
         }
 
@@ -4614,7 +4581,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
 
                 ctx.fillStyle = "#FAF9F6";
                 ctx.fillRect(0, 0, 420, 720);
-                ctx.drawImage(img, 21, 36, 378, 648);
+                ctx.drawImage(img, 30, 60, 360, 600);
 
                 const dlLink = document.createElement('a');
                 const downloadedAt = new Date(Date.now() + 9 * 60 * 60 * 1000).toISOString();
