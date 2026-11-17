@@ -1443,6 +1443,10 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 <button onclick="closeTalismanModal()" style="background: none; border: none; font-size: 20px; color: #59636D; cursor: pointer;">&times;</button>
             </div>
             <div id="talismanRealBox" style="display: flex; justify-content: center; align-items: center; padding: 4px 0;"></div>
+            <div id="talismanMeaning" style="text-align: center; padding: 2px 6px 4px;">
+                <h4 id="talismanTitle" style="font-size: 15px; font-weight: 800; color: var(--c-ink,#1D2129); font-family: 'Noto Serif KR', serif;"></h4>
+                <p id="talismanDesc" style="font-size: 13px; color: #59636D; line-height: 1.6; margin-top: 4px; word-break: keep-all;"></p>
+            </div>
             <div style="display: flex; gap: 8px;">
                 <button onclick="downloadTalismanImage()" style="flex: 1; background: var(--c-ink,#1D2129); color: white; border: none; font-size: 13.5px; font-weight: 800; padding: 12px; border-radius: 12px; cursor: pointer;">부적 이미지 저장</button>
                 <button onclick="closeTalismanModal()" style="flex: 1; background: #DEDCD4; color: var(--c-ink,#1D2129); border: none; font-size: 13.5px; font-weight: 700; padding: 12px; border-radius: 12px; cursor: pointer;">확인</button>
@@ -4558,6 +4562,10 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
 
         function openTalismanModal() {
             document.getElementById('talismanRealBox').innerHTML = renderDailyTalisman(192, 'svgTalismanMain');
+            const tSpec = (currentTalisman && currentTalisman.spec) || {};
+            document.getElementById('talismanTitle').textContent = tSpec.name || '';
+            document.getElementById('talismanDesc').textContent = tSpec.desc || '';
+            document.getElementById('talismanMeaning').hidden = !tSpec.name;
             document.getElementById('talismanModal').classList.remove('hidden');
         }
 

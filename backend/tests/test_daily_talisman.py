@@ -7,6 +7,7 @@ from unittest import TestCase
 from app.engine.core.models import BirthInput
 from app.engine.orchestrator import calculate_myeongri_core
 from app.engine.services import daily_talisman as dt
+from app.engine.services.annual_copy import find_banned
 from app.engine.services.daily import build_daily_fortune
 
 JS = Path(__file__).resolve().parents[2] / "assets" / "talisman.js"
@@ -86,3 +87,24 @@ class DailyTalismanTests(TestCase):
                     self.assertEqual(spec["dir"], dt.tone_of(r["grade"]))
                 seen_kinds.add(spec["kind"])
         self.assertEqual(seen_kinds, {"domain", "shinsal"})
+
+    def test_name_and_desc_for_every_form(self):
+        d = date(2026, 11, 17)
+        texts = set()
+        for dom in ("금전", "사람", "일"):
+            for kind in ("좋음", "주의"):
+                s = dt.pick(domain_note={"domain": dom, "kind": kind}, shinsal_name="지살", grade="보통",
+                            luck_element="木", account_key="a", d=d)
+                texts.add((s["name"], s["desc"]))
+        for name in dt.SHINSAL_PARTS:
+            for grade in ("좋음", "보통", "주의"):
+                s = dt.pick(domain_note=None, shinsal_name=name, grade=grade, luck_element="木", account_key="a", d=d)
+                texts.add((s["name"], s["desc"]))
+        self.assertEqual(len(texts), 6 + 36)          # 42가지 모두 서로 다른 이름+설명
+        for name, desc in texts:
+            self.assertTrue(name.endswith("부") and 2 <= len(name) <= 5, name)
+            self.assertLessEqual(len(desc), 60, desc)
+            self.assertEqual(find_banned(name + desc), [], desc)
+            for bad in ("기운", "효과", "반드시", "액운", "재앙", "복이", "행운이 온"):
+                self.assertNotIn(bad, name + desc)
+        self.assertEqual({k for k in dt.SHINSAL_TEXT}, set(dt.SHINSAL_PARTS))

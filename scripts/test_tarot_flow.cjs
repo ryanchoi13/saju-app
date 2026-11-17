@@ -87,7 +87,9 @@ function fetcher(fn){w.fetch=async(url,options)=>{calls.push({url,...JSON.parse(
  assert.equal(new Set(talismans).size,3);
  assert.equal(talismans[0],(run('currentTalisman='+JSON.stringify({spec:specs[0]})+';'),w.renderDailyTalisman(168)));
  assert.ok(talismans.every(svg=>!svg.includes('<text')&&!svg.includes('NaN')&&svg.includes('viewBox="0 0 200 334"')));
- run('currentTalisman={title:"결단정리부",spec:'+JSON.stringify(specs[0])+'};');w.openTalismanModal();
+ run('currentTalisman={spec:'+JSON.stringify({...specs[0],name:'곳간부',desc:'금전 흐름이 가벼운 날의 뜻을 담았어요.'})+'};');w.openTalismanModal();
+ assert.equal(doc.getElementById('talismanTitle').textContent,'곳간부');
+ assert.ok(doc.getElementById('talismanDesc').textContent.includes('금전'));
  assert.ok(doc.querySelector('#talismanRealBox #svgTalismanMain'));
  assert.ok(!doc.getElementById('talismanModal').textContent.includes('비급'));
  console.log('PASS free/paid direct draw, cancel, single flight, reread, server balance, retry ID, insufficient funds, automatic top-up return, account restore, cross-tab free conflict, coin icon order, card descriptions, spec-based talismans, unique SVG IDs');

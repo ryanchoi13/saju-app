@@ -61,6 +61,40 @@ _SHINSAL_DOMAIN = {"지살": "work", "월살": "work", "장성": "work", "천살
                    "년살": "people", "재살": "people", "겁살": "money"}
 
 
+# 크게 보기 창에 붙는 이름·한 줄 설명. 그림에는 글자가 없고, 뜻은 여기서만 말한다.
+# 사건을 말하지 않고 그날의 태도만 말한다(문체 헌법). 신살 이름은 화면에 쓰지 않는다.
+DOMAIN_TEXT: dict[tuple[str, str], tuple[str, str]] = {
+    ("money", "good"): ("곳간부", "금전 흐름이 가벼운 날의 뜻을 담았어요. 쓸 곳과 모을 곳을 먼저 나눠 보세요."),
+    ("money", "caution"): ("살핌부", "씀씀이를 한 번 더 살피는 날의 뜻을 담았어요. 결제 전에 금액을 다시 확인하세요."),
+    ("people", "good"): ("어울림부", "사람 사이가 가벼운 날의 뜻을 담았어요. 먼저 안부 한 줄 건네 보세요."),
+    ("people", "caution"): ("말아낌부", "말이 앞서기 쉬운 날의 뜻을 담았어요. 답하기 전에 한 박자 쉬어 보세요."),
+    ("work", "good"): ("첫손부", "일이 손에 붙는 날의 뜻을 담았어요. 가장 먼저 할 일 하나를 정해 보세요."),
+    ("work", "caution"): ("매듭부", "새 일보다 마무리가 맞는 날의 뜻을 담았어요. 열어 둔 일 하나를 닫아 보세요."),
+}
+# 신살별 (이름, 뜻풀이). 뜻풀이는 daily_shinsal.GLOSS 와 같은 말이다.
+SHINSAL_TEXT: dict[str, tuple[str, str]] = {
+    "지살": ("첫걸음부", "새로 나서는 날"), "년살": ("눈길부", "시선이 모이는 날"),
+    "월살": ("아낌부", "아껴 쓰는 날"), "망신": ("드러냄부", "있는 그대로 드러나는 날"),
+    "장성": ("앞장부", "앞장서는 날"), "반안": ("제자리부", "안정을 찾는 날"),
+    "역마": ("걸음부", "움직임이 많은 날"), "육해": ("잔손부", "잔손이 가는 날"),
+    "화개": ("갈무리부", "혼자 정리하는 날"), "겁살": ("결단부", "결단이 필요한 날"),
+    "재살": ("꼼꼼부", "꼼꼼히 따지는 날"), "천살": ("차례부", "순서를 따르는 날"),
+}
+_TONE_LINE = {
+    "good": "오늘은 그 뜻대로 가볍게 밀어 보세요.",
+    "neutral": "오늘은 곁에 두고 하루를 지내 보세요.",
+    "caution": "오늘은 한 박자 늦추고 마음에 두세요.",
+}
+
+
+def text_for(kind: str, domain: str, shinsal: str | None, direction: str) -> tuple[str, str]:
+    """(이름, 설명). 어떤 명세가 와도 빈 값을 내지 않는다."""
+    if kind == "domain" and (domain, direction) in DOMAIN_TEXT:
+        return DOMAIN_TEXT[(domain, direction)]
+    name, gloss = SHINSAL_TEXT.get(shinsal or "", SHINSAL_TEXT["지살"])
+    return name, f"{gloss}의 뜻을 붓으로 옮겼어요. {_TONE_LINE[direction]}"
+
+
 def tone_of(grade: str) -> str:
     return "good" if grade in GOOD_GRADES else ("caution" if grade in BAD_GRADES else "neutral")
 
@@ -79,14 +113,16 @@ def pick(*, shinsal_name: str | None, grade: str, domain_note: dict | None,
         domain = _DOMAIN.get(domain_note["domain"])
         direction = "good" if domain_note["kind"] == "좋음" else "caution"
         if domain and (domain, direction) in DOMAIN_PARTS:
+            name, desc = text_for("domain", domain, None, direction)
             return {"version": SPEC_VERSION, "kind": "domain", "domain": domain, "shinsal": None,
                     "dir": direction, "element": element, "layout": "dense",
-                    "keys": list(DOMAIN_PARTS[(domain, direction)]), "seed": seed}
+                    "keys": list(DOMAIN_PARTS[(domain, direction)]), "seed": seed, "name": name, "desc": desc}
     name = shinsal_name if shinsal_name in SHINSAL_PARTS else "지살"   # 일주가 없을 때만 닿는 안전장치
     tone = tone_of(grade)
+    sname, sdesc = text_for("shinsal", "", name, tone)
     return {"version": SPEC_VERSION, "kind": "shinsal", "domain": _SHINSAL_DOMAIN.get(name, "work"), "shinsal": name,
             "dir": tone, "element": element, "layout": "simple" if tone == "neutral" else "dense",
-            "keys": list(SHINSAL_PARTS[name]), "seed": seed}
+            "keys": list(SHINSAL_PARTS[name]), "seed": seed, "name": sname, "desc": sdesc}
 
 
 def for_day(core, *, grade: str, domain_note: dict | None, luck_element: str, account_key: str, d: date) -> dict:
