@@ -245,8 +245,8 @@ def _render_month_card(month, reading):
         f'<article data-report-month="{month}" data-flow="{reading["flow"]}" '
         f'data-grade="{g["key"] if g else ""}" class="annual-month" '
         'style="border-left:4px solid #2D6A4F">'
-        f'<h4>{month}월 · {escape(reading["verdict"])}</h4>{period}{grade}'
-        f'<p class="annual-month-flow">{escape(reading["flow_text"])}</p>{link}'
+        f'<h4>{month}월 · {escape(reading["verdict"])}</h4>{period}'
+        f'<p class="annual-month-flow">{escape(reading["flow_text"])}</p>{grade}{link}'
         f'<h5>이달의 초점 · {escape(reading["focus"]["label"])}</h5><p>{escape(reading["focus"]["text"])}</p>'
         + (f'<h5>분야별 한 줄</h5><ul class="annual-month-lines">{lines}</ul>' if lines else "") +
         f'<p class="annual-month-todo"><strong>할 일</strong> {escape(reading["do"])}<br>'
