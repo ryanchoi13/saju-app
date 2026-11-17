@@ -27,6 +27,10 @@
 :is(#archiveModalBody,.period-reading) .annual-month-lines li { display:grid; grid-template-columns:4.4em minmax(0,1fr); margin:0 0 .5em; line-height:1.8; }
 :is(#archiveModalBody,.period-reading) .annual-month-lines strong { color:var(--ui-accent,var(--c-ink,#1D2129)); }
 :is(#archiveModalBody,.period-reading) .annual-month > p.annual-month-todo { background:var(--ui-soft,#EEF4F5); border-radius:10px; padding:10px 12px; font-weight:400; }
+/* 할 일/피할 일: 글자 시작 줄을 위 '분야별 한 줄'(라벨 4.4em)과 맞춘다. 박스 안쪽 여백 12px 만큼 라벨 칸을 줄임 */
+:is(#archiveModalBody,.period-reading) .annual-month > p.annual-month-todo { margin-bottom:0; }
+:is(#archiveModalBody,.period-reading) .annual-todo-row { display:grid; grid-template-columns:calc(4.4em - 12px) minmax(0,1fr); line-height:1.8; }
+:is(#archiveModalBody,.period-reading) .annual-todo-row > strong { white-space:nowrap; }
 :is(#archiveModalBody,.period-reading) :is(.annual-reading,.annual-month) { min-width:0; overflow-wrap:anywhere; word-break:keep-all; }
 :is(#archiveModalBody,.period-reading) :is(.annual-reading,.annual-month) p { margin:0 0 1.15em; line-height:1.9!important; }
 :is(#archiveModalBody,.period-reading) .annual-reading h3 { margin:28px 0 12px; font-weight:800; }
