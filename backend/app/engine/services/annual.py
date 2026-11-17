@@ -249,8 +249,8 @@ def _render_month_card(month, reading):
         f'<p class="annual-month-flow">{escape(reading["flow_text"])}</p>{link}'
         f'<h5>이달의 초점 · {escape(reading["focus"]["label"])}</h5><p>{escape(reading["focus"]["text"])}</p>'
         + (f'<h5>분야별 한 줄</h5><ul class="annual-month-lines">{lines}</ul>' if lines else "") +
-        f'<p class="annual-month-todo"><strong>할 일</strong> {escape(reading["do"])}<br>'
-        f'<strong>피할 일</strong> {escape(reading["avoid"])}</p></article>')
+        f'<p class="annual-month-todo"><span class="annual-todo-row"><strong>할 일</strong><span>{escape(reading["do"])}</span></span>'
+        f'<span class="annual-todo-row"><strong>피할 일</strong><span>{escape(reading["avoid"])}</span></span></p></article>')
 
 
 def _log_validation(reading, month_readings):
