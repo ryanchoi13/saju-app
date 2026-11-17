@@ -238,8 +238,8 @@ def _render_month_card(month, reading):
     lines = "".join(f'<li><strong>{escape(l["label"])}</strong> {escape(l["text"])}</li>' for l in reading["lines"])
     period = f'<div class="annual-month-period">{escape(reading["period"])}</div>' if reading["period"] else ""
     g = reading.get("grade")
-    grade = (f'<p class="annual-month-grade" data-grade="{g["key"]}"><strong>근거</strong> {escape(g["reason"])}<br>'
-             f'<strong>처방</strong> {escape(g["advice"])}</p>') if g else ""
+    grade = (f'<p class="annual-month-grade" data-grade="{g["key"]}"><span class="annual-month-row"><strong>근거</strong><span>{escape(g["reason"])}</span></span>'
+             f'<span class="annual-month-row"><strong>처방</strong><span>{escape(g["advice"])}</span></span></p>') if g else ""
     link = (f'<h5>올해와 이어지는 점</h5><p>{escape(reading["link"])}</p>') if reading["link"] else ""
     return (
         f'<article data-report-month="{month}" data-flow="{reading["flow"]}" '
@@ -249,8 +249,8 @@ def _render_month_card(month, reading):
         f'<p class="annual-month-flow">{escape(reading["flow_text"])}</p>{grade}{link}'
         f'<h5>이달의 초점 · {escape(reading["focus"]["label"])}</h5><p>{escape(reading["focus"]["text"])}</p>'
         + (f'<h5>분야별 한 줄</h5><ul class="annual-month-lines">{lines}</ul>' if lines else "") +
-        f'<p class="annual-month-todo"><span class="annual-todo-row"><strong>할 일</strong><span>{escape(reading["do"])}</span></span>'
-        f'<span class="annual-todo-row"><strong>피할 일</strong><span>{escape(reading["avoid"])}</span></span></p></article>')
+        f'<p class="annual-month-todo"><span class="annual-month-row"><strong>할 일</strong><span>{escape(reading["do"])}</span></span>'
+        f'<span class="annual-month-row"><strong>피할 일</strong><span>{escape(reading["avoid"])}</span></span></p></article>')
 
 
 def _log_validation(reading, month_readings):
