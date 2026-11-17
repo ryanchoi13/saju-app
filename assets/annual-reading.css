@@ -21,7 +21,7 @@
 #archiveModalBody .annual-focus-chip { display:inline-flex; align-items:center; height:24px; margin-left:8px; padding:0 10px; border-radius:2px; background:var(--c-point,#B5341F); color:var(--c-paper,#FDFCF9)!important; font-family:'Pretendard',sans-serif; font-size:12px!important; font-weight:700; line-height:1!important; letter-spacing:-.2px; vertical-align:.25em; white-space:nowrap; }
 /* v3 월별 카드: 절기 기간 · 흐름 · 올해와 이어지는 점 · 이달의 초점 · 분야별 한 줄 · 할 일/피할 일 */
 :is(#archiveModalBody,.period-reading) .annual-month > .annual-month-period { font-weight:400; font-size:.875rem; color:var(--ui-muted,#425563); margin:-6px 0 14px; }
-:is(#archiveModalBody,.period-reading) .annual-month > p.annual-month-flow { font-weight:700; font-size:1rem!important; color:var(--c-point,#B5341F); }
+:is(#archiveModalBody,.period-reading) .annual-month > p.annual-month-flow { font-weight:700; font-size:1rem!important; color:#142942; }
 :is(#archiveModalBody,.period-reading) .annual-month > h5 { margin:18px 0 6px; font-size:.9rem!important; font-weight:800; color:var(--ui-accent,var(--c-ink,#1D2129)); }
 :is(#archiveModalBody,.period-reading) .annual-month-lines { list-style:none; margin:0 0 1.15em; padding:0; }
 :is(#archiveModalBody,.period-reading) .annual-month-lines li { display:grid; grid-template-columns:4.4em minmax(0,1fr); margin:0 0 .5em; line-height:1.8; }
@@ -92,7 +92,7 @@
 :is(#archiveModalBody,.period-reading) .annual-month-row > strong { white-space:nowrap; font-weight:800; color:var(--ui-accent,var(--c-ink,#1D2129)); }
 :is(#archiveModalBody,.period-reading) .annual-month > p.annual-month-grade { padding-bottom:14px; border-bottom:1px solid var(--ui-line,#DEDCD4); }
 :is(#archiveModalBody,.period-reading) .annual-month > p.annual-month-todo { padding-top:14px; border-top:1px solid var(--ui-line,#DEDCD4); }
-:is(#archiveModalBody,.period-reading) .annual-month > p.annual-month-todo .annual-month-row > strong { color:var(--c-point,#B5341F); }
+:is(#archiveModalBody,.period-reading) .annual-month > p.annual-month-todo .annual-month-row > strong { color:#142942; }
 /* 월 등급: 좋음 · 보통 · 주의 + 왜/처방 */
 :is(#archiveModalBody,.period-reading) .annual-month[data-grade="good"] { --grade:#4F6B4C; --grade-bg:#E9EEE5; }
 :is(#archiveModalBody,.period-reading) .annual-month[data-grade="normal"] { --grade:#59636D; --grade-bg:#F0EFEA; }
