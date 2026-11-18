@@ -33,19 +33,24 @@ class Resources extends ResourceLoader {
         assert.equal(errors.length, 0, errors.map(e => e.message).join('\n'));
         assert.equal(gate.classList.contains('hidden'), false);
         assert.equal(gate.querySelectorAll('h1').length, 1);
-        assert.equal(gate.querySelectorAll('.landing-feature').length, 3);
-        assert.deepEqual([...gate.querySelectorAll('.landing-feature h3')].map(n => n.textContent),
-            ['오늘 나의 행운 색', '오늘 나에게 맞는 식단', '오늘의 흐름을 읽어요']);
-        assert.match(gate.querySelector('#landing-features-title').textContent, /오늘, 뭐 입을까\? 뭐 먹을까\?/);
-        assert.match(gate.querySelectorAll('.landing-feature')[1].textContent, /아침·점심·저녁 두 가지씩/);
-        assert.ok(!/다이어트|칼로리/.test(gate.textContent), 'landing must not promise removed diet/calorie features');
+        assert.match(gate.querySelector('h1').textContent, /서두르지 않아도\s*되는 날이에요/);
+        assert.match(gate.querySelector('.landing-eyebrow').textContent, /나의 오늘 운세/);
+        assert.equal(gate.querySelectorAll('.landing-chip').length, 3, 'lucky colour chips');
+        assert.deepEqual([...gate.querySelectorAll('.landing-dish-name')].map(n => n.textContent), ['비빔밥', '설렁탕', '제육볶음', '샐러드']);
+        for (const dish of gate.querySelectorAll('.landing-dish i')) {
+            const file = /url\((\/assets\/food-thumbnails-v1\/[^)]+)\)/.exec(dish.getAttribute('style'))[1];
+            assert.ok(fs.existsSync(path.join(root, file)), 'real food illustration exists: ' + file);
+        }
+        assert.ok(!/다이어트|칼로리|식단/.test(gate.textContent), 'landing must not promise removed diet/calorie features');
+        assert.match(gate.querySelector('.landing-gift').textContent, /첫 가입 선물 복채 1,000/);
+        assert.equal(gate.querySelector('#btnKakaoLogin').textContent.trim(), '카카오로 시작하기');
+        assert.ok(!/생년월일을 입력|기본 정보를 입력/.test(gate.querySelector('.landing-hero').textContent));
         assert.match(gate.querySelector('.landing-footer').textContent, /정읍사/);
         assert.match(gate.querySelector('.landing-footer').textContent, /음양오행과 전통 명리학/);
         assert.ok(!gate.querySelector('.landing-footer').textContent.includes('전문적인 판단'));
         assert.match(doc.querySelector('#menuExplorerControls details').textContent, /건강·영양에 대한 전문적인 판단을 대신하지 않습니다/);
         assert.ok(gate.textContent.includes('소개용 예시'));
         assert.ok(!gate.textContent.includes('3초'));
-        assert.ok(!gate.textContent.includes('1,000'));
         for (const link of gate.querySelectorAll('a[href^="#"]')) {
             assert.ok(doc.querySelector(link.getAttribute('href')), 'anchor target exists');
         }
@@ -67,6 +72,6 @@ class Resources extends ResourceLoader {
         assert.equal(doc.getElementById('birthDaySelect').value, '21');
         w.updateKakaoProfileHelp({profile_complete:true});
         assert.equal(doc.getElementById('kakaoProfileHelp').hidden, true);
-        console.log('PASS: landing structure, sample disclosure, anchors, login CTA, manual onboarding, real form population');
+        console.log('PASS: landing one-page sheet, sample disclosure, anchors, login CTA, manual onboarding, real form population');
     } finally { w.close(); }
 })().catch(e => { console.error(e); process.exitCode = 1; });
