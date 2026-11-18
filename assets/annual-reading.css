@@ -97,6 +97,9 @@
 :is(#archiveModalBody,.period-reading) .annual-month[data-grade="good"] { --grade:#4F6B4C; --grade-bg:#E9EEE5; }
 :is(#archiveModalBody,.period-reading) .annual-month[data-grade="normal"] { --grade:#59636D; --grade-bg:#F0EFEA; }
 :is(#archiveModalBody,.period-reading) .annual-month[data-grade="caution"] { --grade:var(--c-point,#B5341F); --grade-bg:var(--c-point-tint,#F5E1DC); }
+/* 제목 줄: 왼쪽 '11월', 오른쪽 끝에 등급 칩 */
+#archiveModalBody .annual-month[data-grade] h4 { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:12px; }
+#archiveModalBody .annual-month[data-grade] h4 > .annual-month-label { margin-bottom:0; }
 #archiveModalBody .annual-month[data-grade] h4 > .annual-month-message { display:inline-block; color:var(--grade)!important; background:var(--grade-bg); border-radius:999px; padding:2px 14px; font-size:16px!important; }
 
 /* 2026-11-08 맨 아래 '이 풀이의 근거' 상자: 본문(번호 매긴 h3)과 위계를 나눈다 */
