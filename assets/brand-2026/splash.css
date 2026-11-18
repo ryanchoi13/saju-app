@@ -4,7 +4,7 @@
   background:#1D2129;color:#FDFCF9;transition:opacity .35s ease}
 #dalhaSplash.on{display:flex}
 #dalhaSplash.out{opacity:0;pointer-events:none}
-#dalhaSplash .sp-moon{width:132px;height:132px;animation:spRise .9s cubic-bezier(.2,.8,.2,1) both}
+#dalhaSplash .sp-moon{width:132px;height:132px;overflow:visible;animation:spRise .9s cubic-bezier(.2,.8,.2,1) both}
 #dalhaSplash .sp-title{font-family:'Song Myung','Noto Serif KR',serif;font-weight:400;font-synthesis:none;
   font-size:56px;line-height:1;margin-top:40px;letter-spacing:.06em;padding-left:.06em}
 #dalhaSplash .sp-date{margin-top:18px;font-size:14px;color:rgba(253,252,249,.62)}

@@ -1,5 +1,5 @@
 /* 앱 시작 화면. 설치형 앱으로 켰을 때(또는 ?splash=1) 한 번만, 최소 1.6초 보여 준다.
-   달 모양은 음력 계산 없이 평균 삭망월로 어림한다(홈의 달과 하루쯤 어긋날 수 있음). */
+   (2026-11-18: 달 모양을 오늘의 달 위상에서 앱 아이콘 모양으로 통일) */
 (function () {
   var el = document.getElementById('dalhaSplash');
   if (!el) return;
@@ -10,15 +10,12 @@
   if (!(forced || (standalone && !seen))) { el.parentNode.removeChild(el); return; }
   try { sessionStorage.setItem('dalhaSplashSeen', '1'); } catch (e) {}
 
-  var SYN = 29.530588853, REF = Date.UTC(2000, 0, 6, 18, 14);
-  var age = (((Date.now() - REF) / 86400000) % SYN + SYN) % SYN;       // 달의 나이(일)
-  var angle = age / SYN * 2 * Math.PI, c = Math.cos(angle), r = 44;
-  var waxing = age < SYN / 2, lit = waxing ? 1 : 0, inner = c > 0 ? (lit ? 0 : 1) : (lit ? 1 : 0);
-  var rx = Math.max(Math.abs(c) * r, 0.01);
-  var d = 'M50 ' + (50 - r) + ' A' + r + ' ' + r + ' 0 0 ' + lit + ' 50 ' + (50 + r) +
-          ' A' + rx.toFixed(2) + ' ' + r + ' 0 0 ' + inner + ' 50 ' + (50 - r) + 'Z';
+  // 달 모양은 홈 화면 아이콘(app-icon.svg)과 똑같이 그린다: 아이보리 초승달 + 살구 점. 켤 때 아이콘 → 시작 화면 → 앱 안 로고가 한 모양으로 이어진다.
   var moon = el.querySelector('.sp-moon');
-  moon.innerHTML = '<circle cx="50" cy="50" r="44" fill="#2A2F39"/><path d="' + d + '" fill="#FDFCF9"/>';
+  moon.setAttribute('viewBox', '64 74 372 372');
+  moon.innerHTML = '<defs><mask id="spCrescent" maskUnits="userSpaceOnUse" x="0" y="0" width="512" height="512">' +
+    '<rect width="512" height="512" fill="#000"/><circle cx="252" cy="258" r="168" fill="#fff"/><circle cx="342" cy="292" r="124" fill="#000"/></mask></defs>' +
+    '<rect width="512" height="512" fill="#F8F6F1" mask="url(#spCrescent)"/><circle cx="320" cy="322" r="42" fill="#E4B28F"/>';
 
   var kst = new Date(Date.now() + 9 * 3600000);                         // 한국 날짜
   var w = ['일', '월', '화', '수', '목', '금', '토'];
