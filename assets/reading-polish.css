@@ -45,6 +45,8 @@ html[data-brand] .reading-view .card.reading-lead { background-image:url('/asset
 .now-me-label { display:block; margin-bottom:4px; color:var(--c-ink,#1D2129); font-weight:800; }
 .now-me-evidence { display:inline-block; font-size:12px; line-height:1.6; color:#59636D; background:#F3F0E8; border-radius:8px; padding:3px 9px; }
 .now-me-line { margin:0 0 8px!important; line-height:1.85; }
+/* 11/19 '궁합 보기·직업운 보기' 링크는 더 만들지 않는다. 이미 저장된 풀이에 남은 것은 숨긴다. */
+.now-me-link { display:none!important; }
 .now-me-link { margin-left:6px; color:var(--c-ink,#1D2129); font-weight:700; text-decoration:none; border-bottom:1px solid var(--c-point,#B5341F); white-space:nowrap; }
 .now-me-link:hover { border-bottom-color:var(--c-point,#B5341F); }
 .daewoon-free .now-me-section h3 { font-size:16px; font-weight:800; margin:18px 0 10px; color:var(--c-ink,#1D2129); }
