@@ -473,13 +473,8 @@ def _domains(core, profile, climate, number: int, name: str = "회원") -> tuple
     for i, (key, title) in enumerate(copy.DOMAIN_TITLES, 1):
         lines, ev, _ = chosen[key]
         text = _p([line.format(name=name) for line in lines], where=f"domain.{key}")
-        link = ""
-        if key in ("love", "work"):
-            target = "gunghap" if key == "love" else "business"
-            link = (f' <a class="now-me-link" href="{LINK_HREF[target]}" data-now-me-link="{target}">'
-                    f'{escape(bank.LINK_LABELS[target])}</a>')
         parts.append(f'<article class="lifetime-sub" data-domain="{key}"><h4>{number}-{i}. {escape(title)}</h4>'
-                     f'<p>{escape(text)}{link}</p><small class="now-me-evidence">원국 · {escape(ev)}</small></article>')
+                     f'<p>{escape(text)}</p><small class="now-me-evidence">원국 · {escape(ev)}</small></article>')
     return "".join(parts), {k: v[2] for k, v in chosen.items()}
 
 
