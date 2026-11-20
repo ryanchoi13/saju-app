@@ -34,6 +34,7 @@ PALETTE['rust'] = dict(id='rust', name='러스트 브라운', hex='#8A4F35', fam
 # 토(土) 날 톤 폭을 넓히는 어스 톤(2026-11-20 테스트). family 'earth'라 35+ 남성 '튀는 색' 규칙에 걸리지 않는다.
 PALETTE['terracotta'] = dict(id='terracotta', name='테라코타', hex='#A9593F', family='earth', element='토', kind='calm')
 PALETTE['mustard'] = dict(id='mustard', name='머스타드', hex='#B8902F', family='earth', element='토', kind='calm')
+PALETTE['khaki'] = dict(id='khaki', name='카키', hex='#B5AC7A', family='earth', element='토', kind='calm')
 VERSION = 'approved-svg-5'
 TPOS = ('casual', 'business_casual', 'business_formal')
 ALIASES = {'cream':'ivory', 'dark_brown':'brown', 'dark_denim':'navy',
