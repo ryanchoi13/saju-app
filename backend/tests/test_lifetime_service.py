@@ -55,3 +55,17 @@ class LifetimeServiceTests(TestCase):
         self.assertIn("정통 명리 평생운세", report["title"])
         self.assertIn("庚(金)", report["content"])
         self.assertNotIn("자수성가형 귀격", report["content"])
+
+
+class LifetimeNextCycleNoLinkTests(TestCase):
+    def test_next_cycle_has_no_lock_note_or_paywall_link(self):
+        """11/20 정오님 요청: '다음 구간' 아래 잠금 안내와 '대운 전체 풀이 열어보기' 링크를 지운다."""
+        core = calculate_myeongri_core(
+            BirthInput(name="검증", gender="male", birth_date=date(1978, 3, 13), birth_time="10:30"),
+            target_date=date(2026, 11, 20),
+        )
+        content = build_lifetime_overall_report(core, "검증")["content"]
+        self.assertIn('data-lifetime-section="upcoming"', content)
+        self.assertNotIn("data-paywall-cta", content)
+        self.assertNotIn("열어보기", content)
+        self.assertNotIn("따로 열립니다", content)
