@@ -1,9 +1,9 @@
 /* 달하 화면 다듬기 (2026-10-30) — 맨 마지막에 읽히는 층.
    원칙: 남색 운세 카드(달)가 홈의 유일한 주인공. 나머지 칸은 같은 흰 카드 한 가지 모양으로 조용하게.
-   색은 brand.css 토큰만 쓴다. 오행 색은 아래 --el-* 한 벌(먹·흙 계열로 낮춘 색)만 쓴다. */
+   색은 brand.css 토큰만 쓴다. 오행 색은 아래 --el-* 한 벌(2026-11-21: 탁한 먹·흙 톤 → 또렷한 청·적·황·백·흑 계열)만 쓴다. */
 
 html[data-brand] {
-  --el-wood:#4F6B4C; --el-fire:#A9472F; --el-earth:#93702F; --el-metal:#6B7178; --el-water:#2C4762;
+  --el-wood:#0B7A4B; --el-fire:#C42A1C; --el-earth:#8A5A00; --el-metal:#4B5563; --el-water:#1F4FD8;
   --dh-gap:14px;
 }
 
@@ -286,11 +286,12 @@ html[data-brand] body #archiveModalBody .pc-grid .pc-unknown { font-size:14px!im
    글자/칸 대비는 다섯 색 모두 4.5:1 이상(목 5.4 · 화 5.0 · 토 4.8 · 금 5.3 · 수 13.1).
    --el-*(바이오리듬 등)는 그대로 두고 명식표 전용 토큰을 따로 둔다. */
 html[data-brand] {
-  --el-wood-ink:#2E6A44;  --el-wood-bg:#E2EFE4;  --el-wood-bar:#3F8A5A;
-  --el-fire-ink:#AE3823;  --el-fire-bg:#F9E1DA;  --el-fire-bar:#CC4E36;
-  --el-earth-ink:#82600E; --el-earth-bg:#F5E8C4; --el-earth-bar:#D3A12A;
-  --el-metal-ink:#5F6670; --el-metal-bg:#E9ECEF; --el-metal-bar:#A7AEB6;
-  --el-water-ink:#151D2E; --el-water-bg:#DAE4F1; --el-water-bar:#1F2B42;
+  /* 2026-11-21 또렷한 색으로 교체: 목=에메랄드 · 화=주홍 · 토=황금 · 금=은청회 · 수=코발트(글자는 깊은 남색). 글자/칸 대비 4.6 이상 */
+  --el-wood-ink:#0B7A4B;  --el-wood-bg:#D9F2E3;  --el-wood-bar:#17A35F;
+  --el-fire-ink:#C42A1C;  --el-fire-bg:#FFE0D9;  --el-fire-bar:#E8412E;
+  --el-earth-ink:#8A5A00; --el-earth-bg:#FFEBB0; --el-earth-bar:#F2B01E;
+  --el-metal-ink:#4B5563; --el-metal-bg:#E8ECF1; --el-metal-bar:#9CA6B5;
+  --el-water-ink:#0F2C73; --el-water-bg:#D7E5FF; --el-water-bar:#1F4FD8;
 }
 html[data-brand] body .pc-grid :is(.badge-main-wood,.elem-wood)   { --e-ink:var(--el-wood-ink);  --e-bg:var(--el-wood-bg); }
 html[data-brand] body .pc-grid :is(.badge-main-fire,.elem-fire)   { --e-ink:var(--el-fire-ink);  --e-bg:var(--el-fire-bg); }

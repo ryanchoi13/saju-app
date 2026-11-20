@@ -26,7 +26,7 @@
     <script src="/assets/design-init.js?v=20261001-4"></script>
     <script src="/assets/session-client.js?v=1"></script>
     <script src="/assets/talisman.js?v=20261117-1"></script>
-    <link rel="stylesheet" href="/assets/annual-reading.css?v=20261118-chip1">
+    <link rel="stylesheet" href="/assets/annual-reading.css?v=20261121-el1">
     <script src="/assets/annual-reader.js?v=20261117-flat4" defer></script>
     <script src="https://developers.kakao.com/sdk/js/kakao.min.js"></script>
     <script src="/assets/food-thumbnails-v1/catalog.js?v=3" defer></script>
@@ -75,20 +75,20 @@
 
         /* 명식표 천간/지지 본체: 리버스 진한 배경 + 흰 글씨 */
         .badge-elem-main { width: 44px; height: 44px; border-radius: 12px; display: inline-flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 900; color: #FFFFFF !important; box-shadow: 0 2px 4px rgba(0,0,0,0.12); }
-        .badge-main-wood { background: #4F6B4C; border: 1px solid #435C41; }
-        .badge-main-fire { background: #A9472F; border: 1px solid #923C28; }
-        .badge-main-earth { background: #93702F; border: 1px solid #7F6029; }
-        .badge-main-metal { background: #6B7178; border: 1px solid #5C6167; }
-        .badge-main-water { background: #2C4762; border: 1px solid #243B52; }
+        .badge-main-wood { background: #0B7A4B; border: 1px solid #096340; }
+        .badge-main-fire { background: #C42A1C; border: 1px solid #A82216; }
+        .badge-main-earth { background: #8A5A00; border: 1px solid #704800; }
+        .badge-main-metal { background: #4B5563; border: 1px solid #3C4450; }
+        .badge-main-water { background: #1F4FD8; border: 1px solid #1840B0; }
         .badge-main-none { background: #E4E1D9; color: #59636D !important; }
 
         /* 지장간: 연한 파스텔 배경 + 컬러 글씨 */
         .badge-jjg { width: 34px; height: 26px; border-radius: 6px; display: inline-flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; }
-        .elem-wood { background: #E8EDE3; color: #435C41; border: 1px solid #CCD6C5; }
-        .elem-fire { background: #F5E6DF; color: #923C28; border: 1px solid #E6C8BB; }
-        .elem-earth { background: #F3EBDB; color: #7F6029; border: 1px solid #E0D0AE; }
-        .elem-metal { background: #ECEDEE; color: #5C6167; border: 1px solid #D3D6D9; }
-        .elem-water { background: #E3E8EE; color: #243B52; border: 1px solid #C6D0DB; }
+        .elem-wood { background: #D9F2E3; color: #0B7A4B; border: 1px solid #B5E0C8; }
+        .elem-fire { background: #FFE0D9; color: #C42A1C; border: 1px solid #F5BFB3; }
+        .elem-earth { background: #FFEBB0; color: #8A5A00; border: 1px solid #EFD27A; }
+        .elem-metal { background: #E8ECF1; color: #4B5563; border: 1px solid #CBD2DB; }
+        .elem-water { background: #D7E5FF; color: #0F2C73; border: 1px solid #B2CBF5; }
         .elem-none { background: #F3F0E8; color: #8A8F94; border: 1px solid #DEDCD4; }
         
         .daily-banner { background: linear-gradient(135deg, #0D1527 0%, #17233D 100%); border: 1.5px solid #D4AF37; border-radius: 20px; padding: 20px 18px; color: white; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 10px 20px -3px rgba(13,21,39,0.25); margin-top: 4px; }
@@ -551,7 +551,7 @@
 /* es-hangul 2.4.0 | MIT | Copyright (c) Viva Republica, Inc. | third_party/es-hangul-LICENSE */
 var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDescriptor;var N=Object.getOwnPropertyNames;var p=Object.prototype.hasOwnProperty;var S=(u,C)=>{for(var o in C)g(u,o,{get:C[o],enumerable:!0})},j=(u,C,o,n)=>{if(C&&typeof C=="object"||typeof C=="function")for(let t of N(C))!p.call(u,t)&&t!==o&&g(u,t,{get:()=>C[t],enumerable:!(n=d(C,t))||n.enumerable});return u};var O=u=>j(g({},"__esModule",{value:!0}),u);var R={};S(R,{josa:()=>D});var B=[..."\uAC01\uD7A3".normalize("NFD")].map(u=>u.charCodeAt(0)),c=44032,f=55203,i=28,E=21,_={"":"",\u3131:"\u3131",\u3132:"\u3132",\u3133:"\u3131\u3145",\u3134:"\u3134",\u3135:"\u3134\u3148",\u3136:"\u3134\u314E",\u3137:"\u3137",\u3138:"\u3138",\u3139:"\u3139",\u313A:"\u3139\u3131",\u313B:"\u3139\u3141",\u313C:"\u3139\u3142",\u313D:"\u3139\u3145",\u313E:"\u3139\u314C",\u313F:"\u3139\u314D",\u3140:"\u3139\u314E",\u3141:"\u3141",\u3142:"\u3142",\u3143:"\u3143",\u3144:"\u3142\u3145",\u3145:"\u3145",\u3146:"\u3146",\u3147:"\u3147",\u3148:"\u3148",\u3149:"\u3149",\u314A:"\u314A",\u314B:"\u314B",\u314C:"\u314C",\u314D:"\u314D",\u314E:"\u314E"},h={\u314F:"\u314F",\u3150:"\u3150",\u3151:"\u3151",\u3152:"\u3152",\u3153:"\u3153",\u3154:"\u3154",\u3155:"\u3155",\u3156:"\u3156",\u3157:"\u3157",\u3158:"\u3157\u314F",\u3159:"\u3157\u3150",\u315A:"\u3157\u3163",\u315B:"\u315B",\u315C:"\u315C",\u315D:"\u315C\u3153",\u315E:"\u315C\u3154",\u315F:"\u315C\u3163",\u3160:"\u3160",\u3161:"\u3161",\u3162:"\u3161\u3163",\u3163:"\u3163"},v=["\u3131","\u3132","\u3134","\u3137","\u3138","\u3139","\u3141","\u3142","\u3143","\u3145","\u3146","\u3147","\u3148","\u3149","\u314A","\u314B","\u314C","\u314D","\u314E"],m=Object.values(h),l=["","\u3131","\u3132","\u3133","\u3134","\u3135","\u3136","\u3137","\u3139","\u313A","\u313B","\u313C","\u313D","\u313E","\u313F","\u3140","\u3141","\u3142","\u3144","\u3145","\u3146","\u3147","\u3148","\u314A","\u314B","\u314C","\u314D","\u314E"].map(u=>_[u]),G=["","\uB9CC","\uC5B5","\uC870","\uACBD","\uD574","\uC790","\uC591","\uAD6C","\uAC04","\uC815","\uC7AC","\uADF9","\uD56D\uD558\uC0AC","\uC544\uC2B9\uAE30","\uB098\uC720\uD0C0","\uBD88\uAC00\uC0AC\uC758","\uBB34\uB7C9\uB300\uC218","\uAC81","\uC5C5"],P=G.length*4;var b={A:"\uC5D0\uC774",B:"\uBE44",C:"\uC528",D:"\uB514",E:"\uC774",F:"\uC5D0\uD504",G:"\uC9C0",H:"\uC5D0\uC774\uCE58",I:"\uC544\uC774",J:"\uC81C\uC774",K:"\uCF00\uC774",L:"\uC5D8",M:"\uC5E0",N:"\uC5D4",O:"\uC624",P:"\uD53C",Q:"\uD050",R:"\uC54C",S:"\uC5D0\uC2A4",T:"\uD2F0",U:"\uC720",V:"\uBE0C\uC774",W:"\uB354\uBE14\uC720",X:"\uC5D1\uC2A4",Y:"\uC640\uC774",Z:"\uC9C0"};function F(u){let C=u.charCodeAt(0);if(!(c<=C&&C<=f))return;let n=C-c,t=n%i,r=(n-t)/i%E,s=Math.floor((n-t)/i/E);return{choseong:v[s],jungseong:m[r],jongseong:l[t]}}function $(u,C){let o=u[u.length-1];if(o==null)return!1;let n=o.charCodeAt(0);if(n<c||n>f)return!1;let r=(n-c)%i,s=l[r].length;switch(C?.only){case"single":return s===1;case"double":return s===2;default:return r>0}}var e={START_CHOSEONG:B[0],START_JUNGSEONG:B[1],START_JONGSEONG:B[2],END_CHOSEONG:B[3],END_JUNGSEONG:B[4],END_JONGSEONG:B[5]};var x=new RegExp(`[^\\u${e.START_CHOSEONG.toString(16)}-\\u${e.END_CHOSEONG.toString(16)}\u3131-\u314E\\s]+`,"ug"),y=new RegExp(`[\\u${e.START_CHOSEONG.toString(16)}-\\u${e.END_CHOSEONG.toString(16)}]`,"g"),L=new RegExp(`[\\u${e.START_JUNGSEONG.toString(16)}-\\u${e.END_JUNGSEONG.toString(16)}\\u${e.START_JONGSEONG.toString(16)}-\\u${e.END_JONGSEONG.toString(16)}]+`,"ug");var U=new RegExp(`[^\\u${e.START_JUNGSEONG.toString(16)}-\\u${e.END_JUNGSEONG.toString(16)}\u314F-\u3163\\s]+`,"ug"),w=new RegExp(`[\\u${e.START_JUNGSEONG.toString(16)}-\\u${e.END_JUNGSEONG.toString(16)}]`,"g"),M=Object.keys(h);var k=new RegExp(`[^\\u${e.START_JONGSEONG.toString(16)}-\\u${e.END_JONGSEONG.toString(16)}\\s]+`,"ug"),W=new RegExp(`[\\u${e.START_JONGSEONG.toString(16)}-\\u${e.END_JONGSEONG.toString(16)}]`,"g"),V=l.slice(1).map(u=>Object.fromEntries(Object.entries(_).map(([C,o])=>[o,C]))[u]),T=["\uC73C\uB85C/\uB85C","\uC73C\uB85C\uC11C/\uB85C\uC11C","\uC73C\uB85C\uC368/\uB85C\uC368","\uC73C\uB85C\uBD80\uD130/\uB85C\uBD80\uD130"];function D(u,C){if(u.length===0)return u;if(/^[A-Z]+$/.test(u)){let o=u[u.length-1],n=b[o];return u+a(n,C)}return u+a(u,C)}D.pick=a;function a(u,C){var o;if(u.length===0)return C.split("/")[0];let n=$(u),t=n?0:1,r=n&&((o=F(u[u.length-1]))==null?void 0:o.jongseong)==="\u3139",s=n&&r&&T.includes(C);return(C==="\uC640/\uACFC"||s)&&(t=t===0?1:0),C.split("/")[t]}var J={\uBCA0\uAC2F\uC787:"\uBCA0\uAC20\uB2CF",\uAE7B\uC78E:"\uAE6C\uB2D9",\uB098\uBB47\uC78E:"\uB098\uBB38\uB2D9",\uB3C4\uB9AC\uAE7B\uC5F4:"\uB3C4\uB9AC\uAE6C\uB148",\uB4B7\uC737:"\uB4A8\uB27B"},H={\uC804\uC5ED:"\uC800\uB141"};var A=u=>C=>u[C],X=[A(J),A(H)];return O(R);})();
 </script>
-    <link rel="stylesheet" href="/assets/design-system.css?v=20261108-p1">
+    <link rel="stylesheet" href="/assets/design-system.css?v=20261121-el1">
     <link rel="stylesheet" href="/assets/tarot-v2.css?v=1">
     <link rel="stylesheet" href="/assets/reading-tabs-v2.css?v=20261108-p1">
     <link rel="stylesheet" href="/assets/landing.css?v=20261118-onepage">
@@ -563,7 +563,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
     <link id="dalhaBrandStyles" rel="stylesheet" href="/assets/brand-2026/brand.css?v=20261115-reader">
     <link rel="stylesheet" href="/assets/reading-polish.css?v=20261120-num1">
     <link rel="stylesheet" href="/assets/daily-card.css?v=20261115-title">
-    <link rel="stylesheet" href="/assets/brand-2026/refine.css?v=20261116-pptx6">
+    <link rel="stylesheet" href="/assets/brand-2026/refine.css?v=20261121-el1">
     <link href="https://fonts.googleapis.com/css2?family=Song+Myung&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/assets/brand-2026/ilryeok.css?v=20261108-p5">
     <link rel="stylesheet" href="/assets/brand-2026/splash.css?v=20261120-s3">
@@ -2514,12 +2514,12 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             return `
                 <line x1="0" y1="${midY}" x2="${width}" y2="${midY}" stroke="#DEDCD4" stroke-width="1.2" />
                 <line x1="${width/2}" y1="5" x2="${width/2}" y2="${height-5}" stroke="#B9B6AC" stroke-width="1.5" stroke-dasharray="3 3" />
-                <path d="${getPath(23)}" fill="none" stroke="#A9472F" stroke-width="2.2" opacity="0.9" />
-                <path d="${getPath(28)}" fill="none" stroke="#4F6B4C" stroke-width="2.2" opacity="0.9" />
-                <path d="${getPath(33)}" fill="none" stroke="#2C4762" stroke-width="2.2" opacity="0.9" />
-                <circle cx="${width/2}" cy="${todayP.toFixed(1)}" r="4.5" fill="#A9472F" stroke="#FFFEFA" stroke-width="1.8" />
-                <circle cx="${width/2}" cy="${todayE.toFixed(1)}" r="4.5" fill="#4F6B4C" stroke="#FFFEFA" stroke-width="1.8" />
-                <circle cx="${width/2}" cy="${todayI.toFixed(1)}" r="4.5" fill="#2C4762" stroke="#FFFEFA" stroke-width="1.8" />
+                <path d="${getPath(23)}" fill="none" stroke="#C42A1C" stroke-width="2.2" opacity="0.9" />
+                <path d="${getPath(28)}" fill="none" stroke="#0B7A4B" stroke-width="2.2" opacity="0.9" />
+                <path d="${getPath(33)}" fill="none" stroke="#1F4FD8" stroke-width="2.2" opacity="0.9" />
+                <circle cx="${width/2}" cy="${todayP.toFixed(1)}" r="4.5" fill="#C42A1C" stroke="#FFFEFA" stroke-width="1.8" />
+                <circle cx="${width/2}" cy="${todayE.toFixed(1)}" r="4.5" fill="#0B7A4B" stroke="#FFFEFA" stroke-width="1.8" />
+                <circle cx="${width/2}" cy="${todayI.toFixed(1)}" r="4.5" fill="#1F4FD8" stroke="#FFFEFA" stroke-width="1.8" />
             `;
         }
 
