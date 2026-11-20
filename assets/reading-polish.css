@@ -22,7 +22,9 @@
 #unlockedArchiveList .archive-row { flex-wrap:nowrap; }
 #archiveModalBody .reading-plain-contents { padding:4px 0 18px; }
 #archiveModalBody .reading-plain-contents h3 { font-size:15px!important; font-weight:600; margin:0 0 10px; }
-#archiveModalBody .reading-plain-contents ol { margin:0; padding-left:24px; }
+#archiveModalBody .reading-plain-contents ol { margin:0; padding-left:0; list-style:none; }
+#archiveModalBody .reading-plain-contents li { display:flex; align-items:baseline; gap:12px; }
+#archiveModalBody .reading-plain-contents .toc-num { flex:0 0 24px; color:var(--c-point,#B5341F); font-family:'Dalha Num','Pretendard',sans-serif; font-weight:700; font-variant-numeric:tabular-nums lining-nums; }
 #archiveModalBody .reading-plain-contents li { font-size:14px!important; font-weight:400; line-height:1.8!important; margin:3px 0; }
 .archive-disclosure > summary { cursor:pointer; display:flex; justify-content:space-between; align-items:center; gap:10px; min-height:44px; }
 .archive-disclosure > summary::after { content:'펼치기 ＋'; font-size:12px; color:#59636D; white-space:nowrap; }

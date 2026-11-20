@@ -561,7 +561,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;600;700&display=swap" rel="stylesheet">
     <link id="dalhaBrandStyles" rel="stylesheet" href="/assets/brand-2026/brand.css?v=20261115-reader">
-    <link rel="stylesheet" href="/assets/reading-polish.css?v=20261119-nolink">
+    <link rel="stylesheet" href="/assets/reading-polish.css?v=20261120-toc1">
     <link rel="stylesheet" href="/assets/daily-card.css?v=20261115-title">
     <link rel="stylesheet" href="/assets/brand-2026/refine.css?v=20261116-pptx6">
     <link href="https://fonts.googleapis.com/css2?family=Song+Myung&display=swap" rel="stylesheet">
@@ -4147,7 +4147,11 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                     const list = document.createElement('ol');
                     headings.forEach(heading => {
                         const entry = document.createElement('li');
-                        entry.textContent = heading.dataset.tocLabel.replace(/^\d+\s+/, '').replace(/^\d+[.)]\s*/, ''); list.append(entry); // <ol>이 번호를 붙이므로 제목 속 '1.'은 뺀다
+                        // 11/20: 본문 칸 번호(01·02…)와 같은 번호를 목차에도 쓴다. 제목 속 '1.'은 뺀다.
+                        const label = heading.dataset.tocLabel, match = label.match(/^(\d+)\s+(.*)$/);
+                        const num = document.createElement('span'); num.className = 'toc-num'; num.textContent = match ? match[1] : '';
+                        const text = document.createElement('span'); text.textContent = (match ? match[2] : label).replace(/^\d+[.)]\s*/, '');
+                        entry.append(num, text); list.append(entry);
                     });
                     toc.append(label, list); body.prepend(toc);
                 }
