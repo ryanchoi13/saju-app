@@ -31,6 +31,9 @@ PALETTE['mid_gray'] = dict(id='mid_gray', name='미디엄 그레이', hex='#6E72
 # 화(火) 날이 버건디 하나로 몰리지 않게 하는 가라앉은 톤(2026-10-13). 중년 남성 규칙에서도 옷에 쓸 수 있는 깊은 톤이다.
 PALETTE['plum'] = dict(id='plum', name='딥 플럼', hex='#5B3D58', family='purple', element='화', kind='calm')
 PALETTE['rust'] = dict(id='rust', name='러스트 브라운', hex='#8A4F35', family='earth', element='화', kind='calm')
+# 토(土) 날 톤 폭을 넓히는 어스 톤(2026-11-20 테스트). family 'earth'라 35+ 남성 '튀는 색' 규칙에 걸리지 않는다.
+PALETTE['terracotta'] = dict(id='terracotta', name='테라코타', hex='#A9593F', family='earth', element='토', kind='calm')
+PALETTE['mustard'] = dict(id='mustard', name='머스타드', hex='#B8902F', family='earth', element='토', kind='calm')
 VERSION = 'approved-svg-5'
 TPOS = ('casual', 'business_casual', 'business_formal')
 ALIASES = {'cream':'ivory', 'dark_brown':'brown', 'dark_denim':'navy',
