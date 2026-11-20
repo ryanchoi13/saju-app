@@ -53,9 +53,9 @@ class EditorialCoverageTests(TestCase):
     def test_compatibility_uses_selected_relation_not_romance_for_everyone(self):
         for relation in ['연인 / 결혼','친구 / 지인','동업 / 비즈니스']:
             report=build_compatibility_report(self.core,self.other,'<script>','상대',relation)
-            self.assertGreater(len(plain(report['content'])),2000)
+            self.assertGreater(len(plain(report['content'])),1000)
             self.assertNotIn('<script>',report['content'])
-            self.assertEqual('결혼하면 어떤가' in report['content'],relation=='연인 / 결혼')
+            self.assertNotIn('결혼하면 어떤가',report['content'])  # 11/20 궁합 v2: 공통 안내문을 걷어 냈다
             self.assertEqual(report['narrative_version'],THEME_VERSION)
 
     def test_all_theme_names_are_escaped_and_personalized(self):

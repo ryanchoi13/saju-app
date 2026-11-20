@@ -4,7 +4,6 @@ from __future__ import annotations
 
 from html import escape
 from app.engine.services.reading_editorial import THEME_VERSION as VERSION, section, paragraphs
-from app.engine.services.theme_editorial import pair_practice
 from itertools import product
 
 from app.engine.constants import GAN_WUXING
@@ -211,136 +210,194 @@ def _favorable_overlap(core: MyeongriCoreResult, other: MyeongriCoreResult) -> s
     return "상대 명식의 오행 존재만으로 이쪽의 유리 작용을 직접 보완한다고 보기 어렵습니다. 필요한 생활 역할을 말과 행동으로 조정하는 편이 중요합니다."
 
 
+# ── 궁합 v2 (2026-11-20) ─────────────────────────────────────────────────────────────
+# 신호 계산은 compat_signals, 문구는 compat_copy. 위의 _cross_interactions 등은 '판단 근거' 상자에만 쓴다.
+from datetime import date as _date
+
+from app.engine.services import compat_copy as _cc
+from app.engine.services.compat_signals import GROUP, analyze_pair
+
+_EL_KO = {"木": "목(木)", "火": "화(火)", "土": "토(土)", "金": "금(金)", "水": "수(水)"}
+
+
+def _this_year(core) -> int:
+    raw = (core.timing.daily or {}).get("date") if getattr(core, "timing", None) else None
+    try:
+        return _date.fromisoformat(raw).year if raw else _date.today().year
+    except (TypeError, ValueError):
+        return _date.today().year
+
+
+def _years_text(years: list[int]) -> str:
+    return "·".join(str(y) for y in years[:-1]) + (f"·{years[-1]}년" if len(years) > 1 else f"{years[-1]}년")
+
+
+_CROSS_KIND = {"육합": ("six", "intact"), "충": ("clash", None), "형": ("punish", None), "해": ("harm", None), "파": ("break", None)}
+
+
+def _candidates(sig: dict, variant: str, a: str, b: str, shensha: list[dict], interactions: list[dict] | None = None) -> list[dict]:
+    ex = 1 if variant == "work" else 0
+    out: list[dict] = []
+
+    def add(good: bool, weight: int, first: str, extra: str):
+        out.append({"good": good, "weight": weight, "first": first, "extra": extra})
+
+    for slot, info in sig["branches"].items():
+        kind, state = info["kind"], info["state"]
+        entry = _cc.KIND.get((kind, state) if kind == "six" else (kind, None))
+        if not entry:
+            continue
+        good, first, close_extra, work_extra = entry
+        weight = _cc.SLOT_WEIGHT[variant][slot] + (1 if state == "intact" else 0)
+        add(good, weight, f"{_cc.SLOT[variant][slot]} {first}", work_extra if ex else close_extra)
+    used = {(i["kind"], i["state"] if i["kind"] == "six" else None) for i in sig["branches"].values() if i["kind"]}
+    crossed = 0
+    for item in sorted(interactions or [], key=lambda i: -i["importance"]):
+        key = _CROSS_KIND.get(item["kind"])
+        if not key or item["left"] == item["right"] or item["importance"] < 2 or key in used or crossed >= 2:
+            continue
+        good, first, close_extra, work_extra = _cc.KIND[key]
+        used.add(key)
+        crossed += 1
+        where = f"{a}님의 {_cc.ROLE[item['left']]}, {b}님의 {_cc.ROLE[item['right']]}가 만나는 곳에서는"
+        add(good, 1, f"{where} {first}", work_extra if ex else close_extra)
+    stem = _cc.STEM_CAND.get(sig["stem_rel"])
+    if stem:
+        add(stem[0], 3 if variant == "close" else 2, stem[1], stem[3] if ex else stem[2])
+    for who, other, els in ((a, b, sig["fills_l"]), (b, a, sig["fills_r"])):
+        for el in els[:1]:
+            extra = (f"{who}님이 약한 부분은 {other}님에게 맡겨 보세요." if ex
+                     else f"{who}님이 지칠 때는 {other}님과 함께하는 시간을 일부러 늘려 보세요.")
+            add(True, 2, f"{other}님의 원국에는 {who}님에게 필요한 {_EL_KO[el]} 기운이 넉넉해서, 곁에 있으면 {who}님은 {_cc.EL_FILL[el]}.", extra)
+    tl, tr = sig["climate"]["L"], sig["climate"]["R"]
+    kind = "opposite" if {tl, tr} == {"cold", "hot"} else tl if tl == tr and tl in {"hot", "cold"} else None
+    if kind:
+        good, first, close_extra, work_extra = _cc.CLIMATE[kind]
+        very = sig["climate"]["very"]["L"] or sig["climate"]["very"]["R"]
+        add(good, 3 + (1 if very else 0), first, work_extra if ex else close_extra)
+    for el in sig["heavy_both"][:1]:
+        if (el, kind) in {("火", "hot"), ("水", "cold")}:
+            continue  # 조후 문장과 같은 말이라 한 번만 쓴다
+        text, tip = _cc.EL_HEAVY[el]
+        add(False, 3, f"두 사람 모두 {_EL_KO[el]} 기운이 강해서 {text}.", tip)
+    for el in sig["lack_both"][:1]:
+        text, tip = _cc.EL_LACK[el]
+        add(False, 2, f"두 사람 모두 {_EL_KO[el]} 기운이 비어 있어 {text}.", tip)
+    kinds = {x["kind"]: x for x in sorted(shensha, key=lambda i: i["importance"])}  # 같은 종류는 가장 센 것이 남는다
+    if "원진살" in kinds and kinds["원진살"]["importance"] >= 2:
+        _, first, close_extra, work_extra = _cc.SHENSHA["wonjin"]
+        add(False, 3, first, work_extra if ex else close_extra)
+    if variant == "close" and "도화살" in kinds and kinds["도화살"]["importance"] >= 2:  # 동업 풀이에는 쓰지 않는다
+        _, first, close_extra, work_extra = _cc.SHENSHA["dohwa"]
+        add(True, 2, first, work_extra if ex else close_extra)
+    return out
+
+
+def _pick(cands: list[dict], good: bool, limit: int = 4) -> list[dict]:
+    pool = sorted((c for c in cands if c["good"] is good), key=lambda c: -c["weight"])
+    seen, out = set(), []
+    for c in pool:
+        if c["first"] in seen:
+            continue
+        seen.add(c["first"])
+        out.append(c)
+    return out[:limit]
+
+
+def _ranked(items: list[dict]) -> list[str]:
+    """센 신호 둘은 두 문장(풀이 + 처방), 나머지는 한 문장. 같은 처방 문장은 한 번만. 신호가 없으면 아무것도 채우지 않는다."""
+    texts, used = [], set()
+    for i, c in enumerate(items):
+        extra = c["extra"] if i < 2 and c["extra"] not in used else ""
+        used.add(c["extra"])
+        texts.append(f"{c['first']} {extra}".strip())
+    return texts
+
+
+def _decade(sig: dict, a: str, b: str) -> list[str]:
+    cl, cr = sig["cycles"]["L"], sig["cycles"]["R"]
+    lines: list[str] = []
+    if cl and cr:
+        lines.append(
+            f"지금 {a}님은 {cl['start_age']}~{cl['end_age']}세의 {_cc.CYCLE[cl['group']]} 10년을, "
+            f"{b}님은 {cr['start_age']}~{cr['end_age']}세의 {_cc.CYCLE[cr['group']]} 10년을 지나고 있어요.")
+        lines.append("두 사람의 10년이 같은 결이라 서로의 사정을 이해하기 쉬워요." if cl["group"] == cr["group"]
+                     else "10년의 결이 서로 달라서, 한 사람이 바쁠 때 다른 사람은 여유가 있을 수 있어요. 바쁜 쪽이 먼저 상황을 알려 주세요.")
+    rows = sig["years"]
+    both_good = [r["year"] for r in rows if r["L"] == "good" and r["R"] == "good"]
+    both_hard = [r["year"] for r in rows if r["L"] == "hard" and r["R"] == "hard"]
+    l_carry = [r["year"] for r in rows if r["L"] == "good" and r["R"] == "hard"]
+    r_carry = [r["year"] for r in rows if r["R"] == "good" and r["L"] == "hard"]
+    if both_good:
+        lines.append(f"{_years_text(both_good[:3])}은 두 사람 모두 기운을 받는 해예요. 함께 시작하고 싶은 일이 있다면 이때 맞춰 보세요.")
+    if both_hard:
+        lines.append(f"{_years_text(both_hard[:3])}은 두 사람 모두 부담이 커지는 해예요. 큰 약속은 서두르지 말고 서로를 챙기는 데 쓰세요.")
+    if l_carry:
+        lines.append(f"{_years_text(l_carry[:2])}은 {a}님은 힘을 받지만 {b}님은 부담이 있는 해예요. {a}님이 한 걸음 더 받쳐 주세요.")
+    if r_carry:
+        lines.append(f"{_years_text(r_carry[:2])}은 {b}님은 힘을 받지만 {a}님은 부담이 있는 해예요. {b}님이 한 걸음 더 받쳐 주세요.")
+    if not (both_good or both_hard or l_carry or r_carry):
+        lines.append("앞으로 10년 동안 두 사람이 눈에 띄게 겹치는 해는 없어요. 해마다 서로의 컨디션을 한 번씩 물어봐 주세요.")
+    return lines
+
+
+def _evidence(sig: dict, interactions: list[dict], left, right, ln: str, rn: str) -> str:
+    gods = sig["gods"]
+    return (
+        '<details data-theme-section="evidence" class="reading-evidence">'
+        '<summary>이 풀이의 근거 · 명리 용어 포함</summary>'
+        f'<p>{escape(ln)}님 기준 {escape(rn)}님은 {_TEN_GOD.get(gods["l_sees_r"], gods["l_sees_r"])}, '
+        f'{escape(rn)}님 기준 {escape(ln)}님은 {_TEN_GOD.get(gods["r_sees_l"], gods["r_sees_l"])}입니다. '
+        f'{_day_master_relation(left.natal_facts.day_master.stem, right.natal_facts.day_master.stem)}</p>'
+        + _interaction_html(interactions) +
+        '<p>합의 상태는 두 사람 원국 안의 충·같은 글자 유무로만 가르며, 오행이 바뀌는 합화는 판정하지 않습니다. '
+        '세운은 올해부터 10년, 각자의 오행 3단계(좋음·무난·피함)로 봤습니다.</p></details>')
+
+
 def build_compatibility_report(left: MyeongriCoreResult, right: MyeongriCoreResult, left_name: str, right_name: str, relation: str) -> dict[str, str]:
-    """Compare two cores without a fixed score or deterministic relationship claim."""
-    ln, rn = escape(left_name or "회원"), escape(right_name or "상대방")
+    """두 사람의 원국을 맞대어 읽는 궁합. 점수·단정 없이, 신호가 있는 만큼만 쓴다(compat_signals 참고)."""
+    a, b = left_name or "회원", right_name or "상대방"
     safe_relation = relation if relation in _RELATION_GUIDE else "친구 / 지인"
-    left_dm, right_dm = left.natal_facts.day_master, right.natal_facts.day_master
+    variant = _cc.VARIANT[safe_relation]
+    sig = analyze_pair(left, right, _this_year(left))
     interactions = _cross_interactions(left, right)
-    supportive, tense = _relationship_signals(interactions)
-    left_to_right = get_ten_god(left_dm.stem, right_dm.stem).value
-    right_to_left = get_ten_god(right_dm.stem, left_dm.stem).value
-    closeness_level = _signal_level(supportive)
-    conflict_level = _signal_level(tense)
-    relationship_summary = _plain_reason(supportive, tense)
-    deepening, cooling = _love_path(supportive, tense)
-    shensha_text = _relationship_shensha_text(left, right, interactions, ln, rn)
-    left_view = _TEN_GOD_ROLE.get(left_to_right, "서로의 반응을 천천히 확인하게 하는 사람")
-    right_view = _TEN_GOD_ROLE.get(right_to_left, "서로의 반응을 천천히 확인하게 하는 사람")
-    marriage_text = (
-        "결혼생활에서는 감정의 크기보다 돈, 집안일, 개인 시간, 양가 가족의 경계를 미리 합의하는 것이 중요합니다. "
-        + ("두 사람은 접점과 긴장이 함께 있어 규칙을 합의하면 결속력이 생기지만, 한쪽 방식으로 밀어붙이면 피로가 커질 수 있습니다." if supportive and tense else
-           "두 사람은 친밀감을 생활의 협력으로 옮기기 좋은 편이지만, 역할을 말하지 않아도 알 것이라 기대하면 서운함이 쌓일 수 있습니다." if supportive else
-           "두 사람은 차이를 관리하는 방식이 결혼의 안정성을 좌우합니다. 반복되는 갈등 주제에 합의가 가능할 때 결혼을 구체적으로 검토하는 편이 좋습니다." if tense else
-           "명식의 강한 신호보다 실제 생활 검증이 더 중요합니다. 동거 방식, 재정, 갈등 회복을 충분히 경험한 뒤 결정하는 편이 좋습니다.")
-    )
-    money_text = (
-        "둘이 힘을 합칠 때의 장점은 한 사람의 부족한 관점을 상대가 보완할 가능성에 있습니다. "
-        + ("다만 협력과 주도권 충돌이 함께 보이므로, 공동재산·투자·대출은 담당자와 최종 결정권, 잃어도 되는 금액의 범위를 먼저 정해야 합니다." if tense else
-           "협력의 흐름은 비교적 자연스럽지만, 친밀함과 재정 책임을 섞지 말고 공동비용과 개인자금을 구분하는 것이 좋습니다.")
-        + " 두 사람의 사주만으로 부의 규모나 투자 성공을 보장할 수는 없습니다."
-    )
-    child_text = (
-        "아이가 관계를 좋아지게 하거나 나쁘게 만든다고 단정할 수는 없습니다. 다만 부모가 된 뒤에는 애정보다 수면, 돌봄, 교육관, 비용 분담이 관계에 더 직접적으로 작용합니다. "
-        + ("두 사람은 의견 충돌 신호가 있어 임신·출산 전 돌봄 시간과 훈육 원칙을 구체적으로 정해 두는 것이 특히 중요합니다." if tense else
-           "두 사람은 협력의 접점을 살릴 수 있으므로 돌봄 역할을 공평하게 가시화하면 관계의 결속을 높이는 쪽으로 작용할 수 있습니다.")
-        + " 임신 가능성이나 실제 자녀와의 궁합은 이 두 사람의 명식만으로 판단하지 않습니다."
-    )
-    if safe_relation != "연인 / 결혼":
-        relationship_summary = relationship_summary.replace("끌림", "관심")
-        left_view = left_view.replace("끌림", "관심")
-        right_view = right_view.replace("끌림", "관심")
+    shensha = [i for i in interactions if i["kind"] in {"원진살", "도화살"}]
+    cands = _candidates(sig, variant, a, b, shensha, interactions)
+    good, hard = _pick(cands, True), _pick(cands, False)
+    gods = sig["gods"]
+    view = _cc.VIEW[variant]
     unknown = left.uncertainty.time_unknown or right.uncertainty.time_unknown
+
+    def sec(key: str, title: str, values: list[str]) -> str:
+        return f'<section data-compat-section="{key}"><h2>{escape(title)}</h2>{paragraphs(values)}</section>'
+
+    see = [f"{a}님에게 {b}님은 {view[gods['l_sees_r']]}으로 느껴져요.",
+           f"{b}님에게 {a}님은 {view[gods['r_sees_l']]}으로 느껴져요.",
+           _cc.STEM_REL[sig["stem_rel"]],
+           f"{a}님이 {b}님에게 바라는 것은 {_cc.NEED[variant][gods['l_sees_r']]}이에요. "
+           f"{b}님이 {a}님에게 바라는 것은 {_cc.NEED[variant][gods['r_sees_l']]}이에요."]
+    fr_friction, fr_repair = _cc.FR[variant][gods["l_sees_r"]]
+    fmt = {"a": a, "b": b}
+    me_a, me_b = sig["self"]["L"], sig["self"]["R"]
+    same_strength = me_a["strength"] == me_b["strength"]
+    selfs = [f"{a}님은 {_cc.EL_SELF[me_a['top']]} 사람이에요." + ("" if same_strength else " " + _cc.STRENGTH_SELF[variant][me_a["strength"]]),
+             f"{b}님은 {_cc.EL_SELF[me_b['top']]} 사람이에요. "
+             + (_cc.STRENGTH_BOTH[variant][me_b["strength"]] if same_strength else _cc.STRENGTH_SELF[variant][me_b["strength"]])]
+    body = sec("view", "서로가 보는 서로", see)
+    body += sec("self", "각자 관계에서 보이는 모습", selfs)
+    body += sec("good", "잘 맞는 점", _ranked(good) or ["두 원국을 맞대어 봐도 눈에 띄게 맞물리는 자리는 없어요. 닮은 점으로 가까워지기보다, 서로 다른 점을 알아 가며 가까워지는 사이예요."])
+    body += sec("hard", "부딪히기 쉬운 점", _ranked(hard) or ["두 원국을 맞대어 봐도 크게 부딪히는 신호는 보이지 않아요. 다만 생활 방식은 짐작하지 말고 직접 물어서 알아 가세요."])
+    body += sec("repair", "다툰 뒤 풀리는 법", [fr_friction.format(**fmt), fr_repair.format(**fmt)])
+    body += sec("decade", "앞으로 10년, 두 사람의 흐름", _decade(sig, a, b))
+    title, items = (_cc.CLOSING_FRIEND if safe_relation == "친구 / 지인" else _cc.CLOSING[variant])
+    body += sec("closing", title, list(items))
+    name_title = f"{escape(a)}님 & {escape(b)}님 정통 사주 궁합 감명서"
     uncertainty = (
-        '<div style="background:#FFF7ED;border:1px solid #FED7AA;padding:12px 14px;border-radius:12px;margin-top:12px;"><strong style="font-size:13px;color:#9A3412;">생시 미상 안내</strong><p style="font-size:12.5px;color:#7C2D12;margin:5px 0 0;">한 사람 이상 출생시간을 몰라 시주 사이의 관계는 조건부입니다. 확인 가능한 년·월·일주와 여러 시주에서 공통인 결론을 중심으로 설명했습니다.</p></div>'
-        if unknown else ""
-    )
-    title = f"{ln}님 & {rn}님 정통 사주 궁합 감명서"
-    opening = '<section data-theme-section="current"><h2>두 사람의 관계</h2>' + section("두 사람의 궁합, 먼저 답하면", [relationship_summary,
-        "두 사람이 편하게 느끼는 부분과 조율이 필요한 부분을 함께 살펴보세요. "
-        "잘 맞는 점은 더 자주 활용하고, 반복해서 어긋나는 일은 구체적인 약속으로 바꾸는 겁니다. "
-        "상대를 자신과 같은 방식으로 바꾸려 하기보다 함께 편해질 방법을 찾는 데 의미가 있습니다."])
-    opening += '</section><section data-theme-section="nature"><h2>서로 다른 방식 이해하기</h2>'
-    opening += section("서로를 어떻게 느끼는가", [
-        f"{left_name or '회원'}님에게 {right_name or '상대방'}님은 {left_view}으로 읽힙니다. "
-        f"반대로 {right_name or '상대방'}님에게 {left_name or '회원'}님은 {right_view}으로 읽힙니다.",
-        "같은 일을 겪어도 두 사람이 받아들이는 느낌은 다를 수 있어요. "
-        "한 사람은 도움을 준다고 생각하지만 다른 사람은 간섭으로 느끼기도 합니다. "
-        "상대가 무엇을 원하는지 물어보고, 고마웠던 점과 불편했던 점을 함께 이야기해 보세요. "
-        "좋은 의도만큼 상대가 실제로 어떻게 받아들였는지도 중요합니다."])
-    opening += section("함께할 때 살릴 장점", [
-        ("두 사람 사이에는 서로를 연결하는 접점이 보입니다. " if supportive else
-         "두 사람은 함께 경험하면서 잘 맞는 부분을 찾아가는 데 의미가 있습니다. ") +
-        "각자가 잘하는 일을 나누고 상대에게 배울 점도 찾아보세요. "
-        "작은 약속을 함께 지켜보면 어떤 방식으로 협력할 때 편한지 알기 쉽습니다.",
-        "취향이나 의견이 모두 같을 필요는 없어요. 다른 생각을 들었을 때 곧바로 반박하기보다 "
-        "그렇게 생각한 이유부터 물어보세요. 자신에게 익숙하지 않은 방법이 오히려 막혀 있던 일을 푸는 데 도움이 되기도 합니다."])
-    opening += section("부딪힐 때 먼저 살필 것", [
-        ("의견이나 결정 속도가 달라질 때 조율이 특히 중요합니다. " if tense else
-         "편한 사이일수록 설명을 생략하지 않는 것이 좋습니다. ") +
-        "같은 문제로 다시 다투게 된다면 누구 말이 옳은지보다 무엇을 서로 다르게 기대했는지 살펴보세요. "
-        "약속 시간, 연락 방식, 함께 쓰는 비용처럼 구체적인 내용부터 맞추는 편이 낫습니다.",
-        "감정이 커졌을 때는 이번에 있었던 일부터 이야기하세요. 과거의 서운함을 한꺼번에 꺼내면 "
-        "해결할 문제가 너무 많아집니다. 잠시 쉬었다 이야기할 필요가 있다면 언제 다시 대화할지도 정해두세요. "
-        "문제를 미루는 것과 차분해질 시간을 갖는 것은 다릅니다."])
-    opening += '</section><section data-theme-section="practice"><h2>함께 정할 약속</h2>'
-    if safe_relation == "연인 / 결혼":
-        opening += section("사랑이 깊어지는 방식", [deepening,
-            "상대가 좋아했던 말이나 작은 약속을 기억해 보세요. 특별한 날에만 크게 표현하기보다 "
-            "평소에 관심을 보여주는 편이 서로에게 오래 남습니다. 함께 해보고 싶은 일을 제안하고 "
-            "상대가 기대하는 일도 들어주세요. 서로의 일상을 알아갈 시간이 필요합니다."])
-        opening += section("사랑이 식을 수 있는 지점", [cooling,
-            "마음에 걸리는 일이 있다면 상대가 알아채기를 기다리기보다 직접 얘기해 주세요. "
-            "항상 그렇다는 말 대신 어떤 상황이 서운했는지 설명하는 겁니다. "
-            "상대에게 바라는 변화도 구체적일수록 함께 실천하기 쉽습니다."])
-        opening += section("결혼하면 어떤가", [
-            "함께 살아갈 계획이 있다면 애정만큼 생활을 맞추는 대화가 필요합니다. "
-            "돈을 쓰고 모으는 방식, 집안일, 각자 쉴 시간, 양가 가족과의 거리를 차례로 이야기해 보세요. "
-            "한 번에 모든 답을 정할 필요는 없지만 중요한 차이를 모른 채 넘기지는 마세요.",
-            "한 사람의 방식에 다른 사람이 계속 맞춰야 한다면 오래 유지하기 어렵습니다. "
-            "의견이 다를 때 서로 양보할 수 있는지, 약속한 것을 실제로 지키는지 살펴보세요. "
-            "결혼 여부는 이런 생활의 경험과 두 사람의 뜻을 바탕으로 정해야 합니다."])
-        opening += section("자녀와 부모 역할", [
-            "부모가 될 계획이 있다면 돌봄을 누가 어떻게 맡을지 먼저 의논해 보세요. "
-            "일하는 시간과 휴식, 비용을 함께 생각해야 한 사람에게 부담이 몰리지 않습니다. "
-            "교육관이 다르다면 아이 앞에서 바로 결론을 내리기보다 둘이 따로 이야기할 시간을 가지세요.",
-            "아이가 생기면 관계가 저절로 좋아질 것이라고 기대하지는 마세요. "
-            "지금 두 사람이 도움을 구하고 갈등을 풀어가는 방식부터 살펴보는 것이 좋습니다. "
-            "임신 가능성이나 실제 자녀와의 궁합은 두 사람의 명식만으로 판단하지 않습니다."])
-    else:
-        opening += section("지금 관계에서 맞춰볼 기준", [
-            ("함께 일을 한다면 결정권과 맡을 업무를 처음부터 나누세요. "
-             "의견이 갈렸을 때 누가 최종 판단을 할지도 정해두는 편이 좋습니다. "
-             "친분이 좋아 시작한 일이라도 업무의 책임까지 같다고 생각해서는 안 됩니다."
-             if safe_relation == "동업 / 비즈니스" else
-             "친구나 지인 사이에서는 편하게 느끼는 연락 빈도와 부탁의 범위가 다를 수 있어요. "
-             "자주 연락하지 않는다고 마음이 멀어졌다고 단정하지 마세요. "
-             "함께하고 싶은 일이 있다면 먼저 제안하고 상대의 사정도 들어보세요."),
-            "도움을 주었다고 같은 방식으로 돌아오기를 기대하면 서운해질 수 있습니다. "
-            "꼭 필요한 것이 있다면 부탁으로 분명히 말하고, 상대가 어렵다고 하면 가능한 다른 방법을 찾아보세요. "
-            "거절할 수 있는 여유가 있어야 도움도 편하게 주고받을 수 있습니다."])
-    opening += section("함께 돈을 만들고 지키는 힘", [
-        "함께 돈을 쓰는 일은 금액과 나누는 방법을 먼저 정하세요. 좋은 마음으로 시작했어도 "
-        "생각한 부담이 다르면 불편해질 수 있습니다. 공동 비용과 개인적으로 쓰는 돈을 나누고 "
-        "큰 지출은 결정하기 전에 서로 확인하는 편이 좋습니다.",
-        "동업이나 거래를 한다면 수입뿐 아니라 비용과 책임도 함께 나눠야 합니다. "
-        "수정 요청, 취소, 일정 변경이 생겼을 때 어떻게 처리할지 약속해 두세요. "
-        "상대를 믿는 마음과 조건을 문서로 남기는 일은 서로 반대되는 것이 아닙니다."])
-    opening += pair_practice(safe_relation) + '</section>'
-    content = f"""
-    <div class="long-reading theme-reading" data-theme="gunghap" data-reading-status="{escape(safe_relation, quote=True)}" data-narrative-version="{VERSION}">
-      {opening}
-      <details data-theme-section="evidence" class="reading-evidence" style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:13px;padding:12px 14px;">
-        <summary style="font-size:13px;font-weight:800;color:#334155;cursor:pointer;">판단 근거 보기 · 명리 용어 포함</summary>
-        <h5>관계에서 눈여겨볼 신살</h5><p>{shensha_text}</p>
-        <p style="font-size:12.5px;color:#64748B;margin:10px 0;">두 사람의 원국을 각각 계산한 뒤 일간 관계, 상대 일간이 만드는 십성 역할, 서로 다른 명식 사이의 천간합·천간극과 지지의 합·충·형·파·해, 원진·도화·고신·과숙을 함께 비교했습니다.</p>
-        <p style="font-size:12.5px;color:#475569;margin:0 0 8px;"><strong>{ln} → {rn}</strong>: {_TEN_GOD.get(left_to_right, left_to_right)} · <strong>{rn} → {ln}</strong>: {_TEN_GOD.get(right_to_left, right_to_left)}</p>
-        <p style="font-size:12.5px;color:#64748B;margin:0 0 10px;">일간 관계: {_day_master_relation(left_dm.stem, right_dm.stem)}</p>
-        {_interaction_html(interactions)}
-        <p style="font-size:12.5px;color:#64748B;margin:10px 0 0;"><strong>{ln}님 보완 관점</strong>: {_favorable_overlap(left, right)}<br><strong>{rn}님 보완 관점</strong>: {_favorable_overlap(right, left)}</p>
-        {uncertainty}
-      </details>
-      <p style="font-size:11.5px;color:#94A3B8;margin:12px 0 0;">이 풀이는 구매하거나 업데이트한 시점의 두 사람 정보를 바탕으로 작성했습니다. 다시 열어도 저장된 내용은 유지됩니다. 사랑의 크기, 결혼·이별, 임신·출산, 재산의 규모를 확정하지 않으며 실제 관계와 선택이 명리 판단보다 우선합니다.</p>
-    </div>
-    """
-    return {"title": title, "content": content, "narrative_version": VERSION}
+        '<p class="reading-caption" data-compat-uncertainty="true">출생 시간을 모르는 쪽은 연·월·일 여섯 글자만으로 봤어요. '
+        '시간이 확인되면 풀이가 더 정확해질 수 있어요.</p>' if unknown else "")
+    content = (
+        f'<div class="long-reading theme-reading" data-theme="gunghap" data-reading-status="{escape(safe_relation, quote=True)}" '
+        f'data-narrative-version="{VERSION}" data-copy-version="{_cc.COPY_VERSION}">'
+        + body + _evidence(sig, interactions, left, right, a, b) + uncertainty +
+        '<p class="reading-caption">구매하거나 업데이트한 시점의 두 사람 정보를 바탕으로 쓴 풀이예요. 다시 열어도 저장된 내용은 유지됩니다.</p></div>')
+    return {"title": name_title, "content": content, "narrative_version": VERSION}
