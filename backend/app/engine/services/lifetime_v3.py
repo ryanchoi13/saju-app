@@ -840,9 +840,7 @@ def _next_article(nxt, info_next, profile, day_stem, now_info=None) -> str:
     return (f'<article class="lifetime-sub" data-lifetime-section="upcoming" data-locked="true" '
             f'data-report-cycle="{nxt["index"]}" data-cycle-ages="{nxt["start_age"]}~{nxt["end_age"]}세">'
             f'<h4>{escape(copy.NEXT_HEADING)}</h4>'
-            f'<p data-cycle-teaser="true">{escape(text)}</p>'
-            f'<p class="reading-caption">🔒 {escape(copy.NEXT_LOCK_NOTE)}</p>'
-            f'<a href="#paywall" data-paywall-cta="lifetime-cycles">대운 전체 풀이 열어보기</a></article>')
+            f'<p data-cycle-teaser="true">{escape(text)}</p></article>')  # 11/20: 잠금 안내·결제 링크 제거
 
 
 def _flow(core, profile, past, now, future, missing) -> tuple[str, str | None, dict]:
