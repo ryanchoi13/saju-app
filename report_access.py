@@ -16,7 +16,7 @@ PREVIEW_REPORTS = TIERED_REPORTS | FREE_REPORTS
 
 # 보관함에 저장된 풀이가 최신인지 비교할 때 쓰는 키별 문구 버전. main.py 가 빌더 상수로 채운다.
 REPORT_PRICES = {
-    "daewoon": 450, "sinnian": 300, "gunghap": 350,
+    "daewoon": 450, "sinnian": 300, "gunghap": 250,
     "wealth": 220, "business": 220, "love": 220, "health": 220, "study": 220,
 }
 

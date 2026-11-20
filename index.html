@@ -1163,10 +1163,10 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                     <h3 id="compatibilityTitle" tabindex="-1">우리는 어디서 잘 맞고,<br>어떤 점이 다를까요?</h3>
                     <p>연인, 동료, 친구 사이의 대화와 역할을 살펴봐요. 관계를 선택하고 두 사람의 사주를 함께 읽어보세요.</p>
                     <div class="compatibility-topics"><span>끌림과 차이</span><span>대화와 갈등</span><span>함께하는 생활</span></div>
-                    <div class="report-facts"><span>두 사람의 생년정보로 풀이</span><strong data-report-price="gunghap">350 복채</strong></div>
+                    <div class="report-facts"><span>두 사람의 생년정보로 풀이</span><strong data-report-price="gunghap">250 복채</strong></div>
                     <div id="gunghapReportBox" class="hidden"></div>
                     <button id="btnOpenGunghapModal" class="reading-primary" onclick="openGunghapInputModal()">상대방 정보 입력하기</button>
-                    <p id="gunghapPurchaseNote" class="reading-caption">정보를 입력한 다음 350 복채로 열람해요.</p>
+                    <p id="gunghapPurchaseNote" class="reading-caption">정보를 입력한 다음 250 복채로 열람해요.</p>
                 </section>
             </div>
 
@@ -1372,7 +1372,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 </select>
             </div>
             <button id="gunghapSubmitButton" onclick="confirmUnlockGunghapOnServer()" style="width: 100%; background: var(--c-ink,#1D2129); color: white; border: none; font-size: 14.5px; font-weight: 800; padding: 13px; border-radius: 12px; cursor: pointer;">
-                <span class="btn-coin-icon-white"></span> 350 복채로 두 사람의 인연 풀이 확인하기
+                <span class="btn-coin-icon-white"></span> 250 복채로 두 사람의 인연 풀이 확인하기
             </button>
         </div>
     </div>
@@ -3601,7 +3601,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
         function openGunghapInputModal() {
             const ownedIndex = latestOwnedReportIndex('gunghap');
             if (ownedIndex >= 0) { openReadingReport(ownedIndex); return; }
-            document.getElementById('gunghapSubmitButton').textContent = '350 복채로 두 사람의 인연 풀이 확인하기';
+            document.getElementById('gunghapSubmitButton').textContent = '250 복채로 두 사람의 인연 풀이 확인하기';
             const nameInput = document.getElementById('partnerNameInput');
             const relSelect = document.getElementById('partnerRelationSelect');
 
@@ -3667,7 +3667,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 partner_birth_hour: partnerTime.hour,
                 partner_birth_minute: partnerTime.minute
             };
-            handleUnlockReportOnServer('gunghap', 350, "기본", pName, rel, partnerInput);
+            handleUnlockReportOnServer('gunghap', 250, "기본", pName, rel, partnerInput);
         }
 
         function openThemeSelectModal(key) {
@@ -4020,7 +4020,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
         const COIN_UNIT = '복채';
         // 2026-10-15 공개 범위(프로젝트 문서 dalha-roadmap): 공개 때 결제 없음 → 이 풀이들은 '곧 열려요'.
         // 직업·애정·건강은 앞부분 무료 맛보기는 그대로 두고, 결제 버튼만 '곧 열려요'로 바꾼다. 이미 받은 풀이는 그대로 읽을 수 있다.
-        const DALHA_SOON_REPORTS = new Set(['business','love','health','wealth','study','gunghap']);
+        const DALHA_SOON_REPORTS = new Set(['business','love','health','wealth','study']);
         function applySoonEntrypoint(key) {
             if (!DALHA_SOON_REPORTS.has(key) || latestOwnedReportIndex(key) >= 0) return;
             const price = document.querySelector(`[data-report-price="${key}"]`);
