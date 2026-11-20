@@ -242,7 +242,7 @@ def _years_text(years: list[int]) -> str:
 _CROSS_KIND = {"육합": ("six", "intact"), "충": ("clash", None), "형": ("punish", None), "해": ("harm", None), "파": ("break", None)}
 
 
-def _candidates(sig: dict, variant: str, a: str, b: str, shensha: list[dict], interactions: list[dict] | None = None) -> list[dict]:
+def _candidates(sig: dict, variant: str, a: str, b: str, shensha: list[dict], interactions: list[dict] | None = None, lover: bool = False) -> list[dict]:
     ex = 1 if variant == "work" else 0
     out: list[dict] = []
 
@@ -294,7 +294,7 @@ def _candidates(sig: dict, variant: str, a: str, b: str, shensha: list[dict], in
     if "원진살" in kinds and kinds["원진살"]["importance"] >= 2:
         _, first, close_extra, work_extra = _cc.SHENSHA["wonjin"]
         add(False, 3, first, work_extra if ex else close_extra)
-    if variant == "close" and "도화살" in kinds and kinds["도화살"]["importance"] >= 2:  # 동업 풀이에는 쓰지 않는다
+    if variant == "close" and not lover and "도화살" in kinds and kinds["도화살"]["importance"] >= 2:  # 동업 풀이에는 쓰지 않는다
         _, first, close_extra, work_extra = _cc.SHENSHA["dohwa"]
         add(True, 2, first, work_extra if ex else close_extra)
     return out
@@ -391,7 +391,7 @@ def build_compatibility_report(left: MyeongriCoreResult, right: MyeongriCoreResu
     sig = analyze_pair(left, right, _this_year(left))
     interactions = _cross_interactions(left, right)
     shensha = [i for i in interactions if i["kind"] in {"원진살", "도화살"}]
-    cands = _candidates(sig, variant, a, b, shensha, interactions)
+    cands = _candidates(sig, variant, a, b, shensha, interactions, lover=safe_relation == "연인 / 결혼")
     kinds_ss = {x["kind"]: x for x in shensha}
     good, hard = _pick(cands, True), _pick(cands, False)
     gods = sig["gods"]
