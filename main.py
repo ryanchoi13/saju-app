@@ -29,7 +29,8 @@ import account_withdrawal
 import report_access
 import account_security
 from style_context import build_style_contexts
-from fashion_v2.daily_colors import outfit_color, palette_color, todays_lucky_tones
+from fashion_v2.daily_colors import continuation_caption, outfit_color, palette_color, todays_lucky_tones
+from app.engine.services.element_balance import tongguan_day
 from fashion_v2.svg_recommendation import build_svg_catalog_contexts
 from fashion_v2.live_selector import (
     connect_selector,
@@ -431,18 +432,16 @@ def get_saju_pillars_and_analysis(name: str, gender: str, y: int, m: int, d: int
         datetime.timezone(datetime.timedelta(hours=9))
     )
     today_date = kst_now.date()
-    core = calculate_myeongri_core(
-        BirthInput(
-            name=name or "회원",
-            gender=gender,
-            birth_date=date(y, m, d),
-            calendar_type=backend_calendar_type,
-            is_leap_month=backend_is_leap,
-            birth_time=birth_clock,
-            time_unknown=birth_clock is None,
-        ),
-        target_date=today_date,
+    birth_input = BirthInput(
+        name=name or "회원",
+        gender=gender,
+        birth_date=date(y, m, d),
+        calendar_type=backend_calendar_type,
+        is_leap_month=backend_is_leap,
+        birth_time=birth_clock,
+        time_unknown=birth_clock is None,
     )
+    core = calculate_myeongri_core(birth_input, target_date=today_date)
 
     elements_weight = _element_composition_percent(core)
     singang_label = _STRENGTH_LABEL.get(
@@ -465,6 +464,13 @@ def get_saju_pillars_and_analysis(name: str, gender: str, y: int, m: int, d: int
     )
     # 오늘의 행운 색 두 개는 fashion_v2/daily_colors.todays_lucky_tones 한 곳에서만 정한다(2026-10-30).
     lucky = todays_lucky_tones(core, today_fortune, today_date.toordinal(), y * 372 + m * 31 + d)
+    # 어제 행운 색 오행(연결 문구용). 어제 일진·통관만 필요해서 하루치 운세 전체는 만들지 않는다.
+    yesterday = today_date - datetime.timedelta(days=1)
+    core_prev = calculate_myeongri_core(birth_input, target_date=yesterday)
+    prev_lucky = todays_lucky_tones(
+        core_prev, {"tongguan": tongguan_day(core_prev, core_prev.timing.daily["pillar"]["ganji"][1])},
+        yesterday.toordinal(), yesterday.year * 372 + yesterday.month * 31 + yesterday.day)
+    continuation = continuation_caption(prev_lucky, lucky, today_date.toordinal())
     fashion_element, today_element = lucky["fashion_element"], lucky["today_element"]
     fashion_color_basis = lucky["basis"]
 
@@ -578,14 +584,14 @@ def get_saju_pillars_and_analysis(name: str, gender: str, y: int, m: int, d: int
         result["daily_fortune"]["outfit"]["tongguan"] = tongguan
     # 2026-10-29 정오님: 코디 지식서가 갖춰질 때까지 화면에는 '오늘의 행운 색' 두 개만 보여 준다.
     result["daily_fortune"]["lucky_color_cards"] = _lucky_color_cards(
-        (tone_a, element_a), (tone_b, today_element), tongguan)
+        (tone_a, element_a), (tone_b, today_element), tongguan, continuation)
     return result
 
 
 _ELEMENT_LABEL = {"木": "목(木)", "火": "화(火)", "土": "토(土)", "金": "금(金)", "水": "수(水)"}
 
 
-def _lucky_color_cards(first, second, tongguan):
+def _lucky_color_cards(first, second, tongguan, continuation=""):
     """오늘의 행운 색 두 개. 같이 입으라는 조합이 아니라 각각 오늘의 기운을 채우는 색이다."""
     cards = []
     for tone, element in (first, second):
@@ -595,6 +601,8 @@ def _lucky_color_cards(first, second, tongguan):
     caption = ""
     if tongguan:
         caption = f"오늘은 부딪히는 두 기운이 있어요. {josa(cards[0]['name'], '이/가')} 둘 사이를 이어 줘요."
+    if continuation:   # 어제와 같은 칸의 오행이 같으면 추천 사유 맨 앞에 연결 문구
+        caption = f"{continuation} {caption}".strip()
     return dict(caption=caption, colors=cards)
 
 

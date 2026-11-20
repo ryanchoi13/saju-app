@@ -119,7 +119,7 @@ def test_real_fashion_pipeline_passes_common_state_color_to_palette():
                  state_version='test-state', scope='natal+luck_cycle+annual+monthly+daily')
     # 2026-10-30: 오늘의 두 색은 daily_colors.todays_lucky_tones 한 곳에서 정한다.
     with patch.object(fashion_colors,'build_fashion_color_basis',return_value=basis), \
-         patch.object(daily_colors,'element_tone_pair',wraps=daily_colors.element_tone_pair) as selector:
+         patch.object(daily_colors,'ganji_tone_pair',wraps=daily_colors.ganji_tone_pair) as selector:
         result = main.get_saju_pillars_and_analysis('검토', 'female', 1998,5,19,'solar',5)
     assert selector.call_args.args[0] == '水'
     got = result['daily_fortune']['fashion_color_basis']
