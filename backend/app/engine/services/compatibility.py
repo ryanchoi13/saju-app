@@ -212,10 +212,17 @@ def _favorable_overlap(core: MyeongriCoreResult, other: MyeongriCoreResult) -> s
 
 # ── 궁합 v2 (2026-11-20) ─────────────────────────────────────────────────────────────
 # 신호 계산은 compat_signals, 문구는 compat_copy. 위의 _cross_interactions 등은 '판단 근거' 상자에만 쓴다.
+import re
 from datetime import date as _date
 
 from app.engine.services import compat_copy as _cc
 from app.engine.services.compat_signals import GROUP, analyze_pair
+
+def _iyeyo(word: str) -> str:
+    """받침 있으면 이에요, 없으면 예요."""
+    last = word.rstrip()[-1]
+    return word + ("이에요" if (ord(last) - 0xAC00) % 28 else "예요")
+
 
 _EL_KO = {"木": "목(木)", "火": "화(火)", "土": "토(土)", "金": "금(金)", "水": "수(水)"}
 
@@ -260,7 +267,7 @@ def _candidates(sig: dict, variant: str, a: str, b: str, shensha: list[dict], in
         used.add(key)
         crossed += 1
         where = f"{a}님의 {_cc.ROLE[item['left']]}, {b}님의 {_cc.ROLE[item['right']]}가 만나는 곳에서는"
-        add(good, 1, f"{where} {first}", work_extra if ex else close_extra)
+        add(good, 1, f"{where} {re.sub(r'^두 사람[은이] ', '', first)}", work_extra if ex else close_extra)
     stem = _cc.STEM_CAND.get(sig["stem_rel"])
     if stem:
         add(stem[0], 3 if variant == "close" else 2, stem[1], stem[3] if ex else stem[2])
@@ -374,8 +381,8 @@ def build_compatibility_report(left: MyeongriCoreResult, right: MyeongriCoreResu
     see = [f"{a}님에게 {b}님은 {view[gods['l_sees_r']]}으로 느껴져요.",
            f"{b}님에게 {a}님은 {view[gods['r_sees_l']]}으로 느껴져요.",
            _cc.STEM_REL[sig["stem_rel"]],
-           f"{a}님이 {b}님에게 바라는 것은 {_cc.NEED[variant][gods['l_sees_r']]}이에요. "
-           f"{b}님이 {a}님에게 바라는 것은 {_cc.NEED[variant][gods['r_sees_l']]}이에요."]
+           f"{a}님이 {b}님에게 바라는 것은 {_iyeyo(_cc.NEED[variant][gods['l_sees_r']])}. "
+           f"{b}님이 {a}님에게 바라는 것은 {_iyeyo(_cc.NEED[variant][gods['r_sees_l']])}."]
     fr_friction, fr_repair = _cc.FR[variant][gods["l_sees_r"]]
     fmt = {"a": a, "b": b}
     me_a, me_b = sig["self"]["L"], sig["self"]["R"]
