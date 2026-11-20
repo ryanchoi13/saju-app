@@ -209,3 +209,6 @@ html[data-brand] #archiveModalBody .theme-reading[data-theme] > section[data-pay
 
 /* 칸 번호: Outfit. 숫자 높이를 제목 한글 높이(20px Pretendard 기준 약 17.8px)에 맞추고 가운데 정렬(1.5px 내림) */
 html[data-brand] #archiveModalBody .theme-reading[data-theme] > section > h2 .reading-section-number { font-family:'Dalha Num','Pretendard',sans-serif!important; font-size:24px!important; font-weight:700!important; line-height:1!important; letter-spacing:0!important; font-variant-numeric:tabular-nums lining-nums; display:inline-block; min-width:30px; transform:translateY(1.5px); }
+/* 11/20 올해·월별 운세 등 나머지 풀이도 같은 번호 모양으로: 회색 배지 없이 인주색 숫자만 (평생운세·테마운과 동일) */
+html[data-brand] #archiveModalBody .reading-section-heading { align-items:baseline; gap:10px; }
+html[data-brand] #archiveModalBody .reading-section-heading > .reading-section-number { background:none!important; padding:0!important; border-radius:0!important; margin:0!important; color:var(--c-point,#B5341F)!important; font-family:'Dalha Num','Pretendard',sans-serif!important; font-size:24px!important; font-weight:700!important; line-height:1!important; letter-spacing:0!important; font-variant-numeric:tabular-nums lining-nums; display:inline-block; min-width:30px; transform:translateY(1.5px); }
