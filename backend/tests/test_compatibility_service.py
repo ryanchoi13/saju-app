@@ -21,7 +21,7 @@ class CompatibilityReportTests(unittest.TestCase):
     def test_report_uses_both_calculated_charts(self):
         report = build_compatibility_report(self.left, self.right, "테스트A", "테스트B", "연인 / 결혼")
         text = report["title"] + report["content"]
-        for marker in ["정통 사주 궁합", "겉궁합 · 처음 만났을 때", "속궁합", "다툰 뒤 풀리는 법", "오래 함께할 때 · 앞으로 10년", "이 풀이의 근거", "출생 시간을 모르는"]:
+        for marker in ["정통 사주 궁합", "한눈에 보기", "겉궁합 · 처음 만났을 때", "속궁합", "다툰 뒤 풀리는 법", "오래 함께할 때 · 앞으로 10년", "이 풀이의 근거", "출생 시간을 모르는"]:
             self.assertIn(marker, text)
 
     def test_report_has_no_fixed_score_or_old_boilerplate(self):
@@ -69,6 +69,24 @@ class CompatibilityReportTests(unittest.TestCase):
         report = generate_detailed_report("gunghap", "기본", "테스트B", "연인 / 결혼", "테스트A", user=user, partner=partner)
         self.assertIn("테스트A님 & 테스트B님", report["title"])
         self.assertIn("오래 함께할 때 · 앞으로 10년", report["content"])
+
+
+class CompatibilityVerdictTests(unittest.TestCase):
+    def test_summary_has_score_tier_and_is_first(self):
+        import re
+        from app.engine.services import compat_copy as cc
+        def core(y, m, d, h, g):
+            return calculate_myeongri_core(
+                BirthInput(name="x", gender=g, birth_date=datetime.date(y, m, d), birth_time=datetime.time(h, 30)),
+                target_date=datetime.date(2026, 11, 20))
+        me, other = core(1978, 3, 13, 10, "male"), core(1984, 9, 2, 21, "female")
+        labels = {t[1] for t in cc.TIERS}
+        for relation in ["연인 / 결혼", "친구 / 지인", "동업 / 비즈니스"]:
+            html = build_compatibility_report(me, other, "가", "나", relation)["content"]
+            self.assertLess(html.index('data-compat-section="summary"'), html.index('data-compat-section="outer"'))
+            m = re.search(r'<strong>(\d+)점</strong> · ([^<]+)</p>', html)
+            self.assertTrue(m and 25 <= int(m.group(1)) <= 95 and m.group(2) in labels, relation)
+            self.assertIn("앞날을 정하는 숫자는 아니에요", html)
 
 
 class CompatibilityIntimacyTests(unittest.TestCase):
