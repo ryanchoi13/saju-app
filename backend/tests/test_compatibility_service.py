@@ -21,7 +21,7 @@ class CompatibilityReportTests(unittest.TestCase):
     def test_report_uses_both_calculated_charts(self):
         report = build_compatibility_report(self.left, self.right, "테스트A", "테스트B", "연인 / 결혼")
         text = report["title"] + report["content"]
-        for marker in ["정통 사주 궁합", "서로가 보는 서로", "각자 관계에서 보이는 모습", "다툰 뒤 풀리는 법", "앞으로 10년", "이 풀이의 근거", "출생 시간을 모르는"]:
+        for marker in ["정통 사주 궁합", "겉궁합 · 처음 만났을 때", "속궁합 · 가까워질수록 보이는 속마음", "다툰 뒤 풀리는 법", "오래 함께할 때 · 앞으로 10년", "이 풀이의 근거", "출생 시간을 모르는"]:
             self.assertIn(marker, text)
 
     def test_report_has_no_fixed_score_or_old_boilerplate(self):
@@ -68,7 +68,7 @@ class CompatibilityReportTests(unittest.TestCase):
         partner = {"name": "테스트B", "gender": "female", "birth_year": 1992, "birth_month": 6, "birth_day": 18, "calendar_type": "solar", "sijin_index": -1}
         report = generate_detailed_report("gunghap", "기본", "테스트B", "연인 / 결혼", "테스트A", user=user, partner=partner)
         self.assertIn("테스트A님 & 테스트B님", report["title"])
-        self.assertIn("앞으로 10년", report["content"])
+        self.assertIn("오래 함께할 때 · 앞으로 10년", report["content"])
 
 
 class CompatibilityV2Tests(unittest.TestCase):
@@ -130,7 +130,7 @@ class CompatibilityV2Tests(unittest.TestCase):
         self.assertTrue(unknown.uncertainty.time_unknown)
         content = build_compatibility_report(self.me, unknown, "가", "나", "연인 / 결혼")["content"]
         self.assertIn("출생 시간을 모르는 쪽", content)
-        self.assertIn("앞으로 10년", content)
+        self.assertIn("오래 함께할 때 · 앞으로 10년", content)
 
     def test_six_combination_state_distinguishes_clash_and_contest(self):
         from types import SimpleNamespace as P

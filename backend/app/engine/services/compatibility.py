@@ -246,8 +246,8 @@ def _candidates(sig: dict, variant: str, a: str, b: str, shensha: list[dict], in
     ex = 1 if variant == "work" else 0
     out: list[dict] = []
 
-    def add(good: bool, weight: int, first: str, extra: str):
-        out.append({"good": good, "weight": weight, "first": first, "extra": extra})
+    def add(good: bool, weight: int, first: str, extra: str, outer: bool = False):
+        out.append({"good": good, "weight": weight, "first": first, "extra": extra, "outer": outer})
 
     for slot, info in sig["branches"].items():
         kind, state = info["kind"], info["state"]
@@ -256,7 +256,7 @@ def _candidates(sig: dict, variant: str, a: str, b: str, shensha: list[dict], in
             continue
         good, first, close_extra, work_extra = entry
         weight = _cc.SLOT_WEIGHT[variant][slot] + (1 if state == "intact" else 0)
-        add(good, weight, f"{_cc.SLOT[variant][slot]} {first}", work_extra if ex else close_extra)
+        add(good, weight, f"{_cc.SLOT[variant][slot]} {first}", work_extra if ex else close_extra, outer=slot in {"year", "month"})
     used = {(i["kind"], i["state"] if i["kind"] == "six" else None) for i in sig["branches"].values() if i["kind"]}
     crossed = 0
     for item in sorted(interactions or [], key=lambda i: -i["importance"]):
@@ -301,7 +301,7 @@ def _candidates(sig: dict, variant: str, a: str, b: str, shensha: list[dict], in
 
 
 def _pick(cands: list[dict], good: bool, limit: int = 4) -> list[dict]:
-    pool = sorted((c for c in cands if c["good"] is good), key=lambda c: -c["weight"])
+    pool = sorted((c for c in cands if c["good"] is good and not c.get("outer")), key=lambda c: -c["weight"])
     seen, out = set(), []
     for c in pool:
         if c["first"] in seen:
@@ -311,9 +311,10 @@ def _pick(cands: list[dict], good: bool, limit: int = 4) -> list[dict]:
     return out[:limit]
 
 
-def _ranked(items: list[dict]) -> list[str]:
+def _ranked(items: list[dict], used: set | None = None) -> list[str]:
     """센 신호 둘은 두 문장(풀이 + 처방), 나머지는 한 문장. 같은 처방 문장은 한 번만. 신호가 없으면 아무것도 채우지 않는다."""
-    texts, used = [], set()
+    texts = []
+    used = set() if used is None else used
     for i, c in enumerate(items):
         extra = c["extra"] if i < 2 and c["extra"] not in used else ""
         used.add(c["extra"])
@@ -379,23 +380,26 @@ def build_compatibility_report(left: MyeongriCoreResult, right: MyeongriCoreResu
         return f'<section data-compat-section="{key}"><h2>{escape(title)}</h2>{paragraphs(values)}</section>'
 
     see = [f"{a}님에게 {b}님은 {view[gods['l_sees_r']]}으로 느껴져요.",
-           f"{b}님에게 {a}님은 {view[gods['r_sees_l']]}으로 느껴져요.",
-           _cc.STEM_REL[sig["stem_rel"]],
-           f"{a}님이 {b}님에게 바라는 것은 {_iyeyo(_cc.NEED[variant][gods['l_sees_r']])}. "
-           f"{b}님이 {a}님에게 바라는 것은 {_iyeyo(_cc.NEED[variant][gods['r_sees_l']])}."]
+           f"{b}님에게 {a}님은 {view[gods['r_sees_l']]}으로 느껴져요."]
+    outer = sorted((c for c in cands if c.get("outer")), key=lambda c: -c["weight"])[:2]
+    shared: set = set()
+    outer_text = _ranked(outer, shared) or ["띠와 월 자리에서는 눈에 띄게 맞물리거나 부딪히는 신호가 없어요. 겉으로 보이는 인상은 평범하게 편안한 사이예요."]
     fr_friction, fr_repair = _cc.FR[variant][gods["l_sees_r"]]
     fmt = {"a": a, "b": b}
     me_a, me_b = sig["self"]["L"], sig["self"]["R"]
     same_strength = me_a["strength"] == me_b["strength"]
-    selfs = [f"{a}님은 {_cc.EL_SELF[me_a['top']]} 사람이에요." + ("" if same_strength else " " + _cc.STRENGTH_SELF[variant][me_a["strength"]]),
+    inner = [f"{a}님은 {_cc.EL_SELF[me_a['top']]} 사람이에요." + ("" if same_strength else " " + _cc.STRENGTH_SELF[variant][me_a["strength"]]),
              f"{b}님은 {_cc.EL_SELF[me_b['top']]} 사람이에요. "
-             + (_cc.STRENGTH_BOTH[variant][me_b["strength"]] if same_strength else _cc.STRENGTH_SELF[variant][me_b["strength"]])]
-    body = sec("view", "서로가 보는 서로", see)
-    body += sec("self", "각자 관계에서 보이는 모습", selfs)
-    body += sec("good", "잘 맞는 점", _ranked(good) or ["두 원국을 맞대어 봐도 눈에 띄게 맞물리는 자리는 없어요. 닮은 점으로 가까워지기보다, 서로 다른 점을 알아 가며 가까워지는 사이예요."])
-    body += sec("hard", "부딪히기 쉬운 점", _ranked(hard) or ["두 원국을 맞대어 봐도 크게 부딪히는 신호는 보이지 않아요. 다만 생활 방식은 짐작하지 말고 직접 물어서 알아 가세요."])
+             + (_cc.STRENGTH_BOTH[variant][me_b["strength"]] if same_strength else _cc.STRENGTH_SELF[variant][me_b["strength"]]),
+             f"{a}님이 {b}님에게 바라는 것은 {_iyeyo(_cc.NEED[variant][gods['l_sees_r']])}. "
+             f"{b}님이 {a}님에게 바라는 것은 {_iyeyo(_cc.NEED[variant][gods['r_sees_l']])}."]
+    phase = "가까워진 뒤" if variant == "close" else "함께 일하면"
+    body = sec("outer", "겉궁합 · 처음 만났을 때", see + outer_text)
+    body += sec("inner", "속궁합 · 가까워질수록 보이는 속마음" if variant == "close" else "속궁합 · 같이 일해 볼수록 보이는 속모습", inner)
+    body += sec("good", f"{phase}, 잘 맞는 점", _ranked(good, shared) or ["두 원국을 맞대어 봐도 눈에 띄게 맞물리는 자리는 없어요. 닮은 점으로 가까워지기보다, 서로 다른 점을 알아 가며 가까워지는 사이예요."])
+    body += sec("hard", f"{phase}, 부딪히기 쉬운 점", _ranked(hard, shared) or ["두 원국을 맞대어 봐도 크게 부딪히는 신호는 보이지 않아요. 다만 생활 방식은 짐작하지 말고 직접 물어서 알아 가세요."])
     body += sec("repair", "다툰 뒤 풀리는 법", [fr_friction.format(**fmt), fr_repair.format(**fmt)])
-    body += sec("decade", "앞으로 10년, 두 사람의 흐름", _decade(sig, a, b))
+    body += sec("decade", "오래 함께할 때 · 앞으로 10년", _decade(sig, a, b))
     title, items = (_cc.CLOSING_FRIEND if safe_relation == "친구 / 지인" else _cc.CLOSING[variant])
     body += sec("closing", title, list(items))
     name_title = f"{escape(a)}님 & {escape(b)}님 정통 사주 궁합 감명서"
