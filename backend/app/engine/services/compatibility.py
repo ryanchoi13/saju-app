@@ -322,6 +322,27 @@ def _ranked(items: list[dict], used: set | None = None) -> list[str]:
     return texts
 
 
+def _intimacy(sig: dict, kinds: dict, a: str = "", b: str = "") -> list[str]:
+    """연인 풀이의 속궁합: 일지 관계 · 조후 · 도화 순으로 있는 신호만 쓰고 마지막에 확인 한 줄."""
+    day = sig["branches"].get("day") or {}
+    key = (day.get("kind"), day.get("state") if day.get("kind") == "six" else None)
+    lines = []
+    gods = sig["gods"]
+    for x, y, g in ((a, b, gods["l_sees_r"]), (b, a, gods["r_sees_l"])):
+        if g in _cc.INTIMACY_GOD:
+            lines.append(_cc.INTIMACY_GOD[g].format(x=x, y=y))
+    if key in _cc.INTIMACY_DAY:
+        lines.append(_cc.INTIMACY_DAY[key])
+    tl, tr = sig["climate"]["L"], sig["climate"]["R"]
+    ck = "opposite" if {tl, tr} == {"cold", "hot"} else tl if tl == tr and tl in {"hot", "cold"} else None
+    if ck:
+        lines.append(_cc.INTIMACY_CLIMATE[ck])
+    if "도화살" in kinds and kinds["도화살"]["importance"] >= 2:
+        lines.append(_cc.INTIMACY_DOHWA)
+    lines.append(_cc.INTIMACY_TIP)
+    return lines
+
+
 def _decade(sig: dict, a: str, b: str) -> list[str]:
     cl, cr = sig["cycles"]["L"], sig["cycles"]["R"]
     lines: list[str] = []
@@ -371,6 +392,7 @@ def build_compatibility_report(left: MyeongriCoreResult, right: MyeongriCoreResu
     interactions = _cross_interactions(left, right)
     shensha = [i for i in interactions if i["kind"] in {"원진살", "도화살"}]
     cands = _candidates(sig, variant, a, b, shensha, interactions)
+    kinds_ss = {x["kind"]: x for x in shensha}
     good, hard = _pick(cands, True), _pick(cands, False)
     gods = sig["gods"]
     view = _cc.VIEW[variant]
@@ -395,7 +417,11 @@ def build_compatibility_report(left: MyeongriCoreResult, right: MyeongriCoreResu
              f"{b}님이 {a}님에게 바라는 것은 {_iyeyo(_cc.NEED[variant][gods['r_sees_l']])}."]
     phase = "가까워진 뒤" if variant == "close" else "함께 일하면"
     body = sec("outer", "겉궁합 · 처음 만났을 때", see + outer_text)
-    body += sec("inner", "속궁합 · 가까워질수록 보이는 속마음" if variant == "close" else "속궁합 · 같이 일해 볼수록 보이는 속모습", inner)
+    if safe_relation == "연인 / 결혼":  # 끌림·스킨십 이야기는 연인 풀이에만 쓴다
+        body += sec("intimacy", "속궁합 · 끌림과 스킨십", _intimacy(sig, kinds_ss, a, b))
+        body += sec("inner", "가까워질수록 보이는 속마음", inner)
+    else:
+        body += sec("inner", "속궁합 · 가까워질수록 보이는 속마음" if variant == "close" else "속궁합 · 같이 일해 볼수록 보이는 속모습", inner)
     body += sec("good", f"{phase}, 잘 맞는 점", _ranked(good, shared) or ["두 원국을 맞대어 봐도 눈에 띄게 맞물리는 자리는 없어요. 닮은 점으로 가까워지기보다, 서로 다른 점을 알아 가며 가까워지는 사이예요."])
     body += sec("hard", f"{phase}, 부딪히기 쉬운 점", _ranked(hard, shared) or ["두 원국을 맞대어 봐도 크게 부딪히는 신호는 보이지 않아요. 다만 생활 방식은 짐작하지 말고 직접 물어서 알아 가세요."])
     body += sec("repair", "다툰 뒤 풀리는 법", [fr_friction.format(**fmt), fr_repair.format(**fmt)])
