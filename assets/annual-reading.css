@@ -94,7 +94,7 @@
 :is(#archiveModalBody,.period-reading) .annual-month > p.annual-month-todo { padding-top:14px; border-top:1px solid var(--ui-line,#DEDCD4); }
 :is(#archiveModalBody,.period-reading) .annual-month > p.annual-month-todo .annual-month-row > strong { color:#22406C!important; }
 /* 월 등급: 좋음 · 보통 · 주의 + 왜/처방 */
-:is(#archiveModalBody,.period-reading) .annual-month[data-grade="good"] { --grade:#4F6B4C; --grade-bg:#E9EEE5; }
+:is(#archiveModalBody,.period-reading) .annual-month[data-grade="good"] { --grade:#0B7A4B; --grade-bg:#E3F4EA; }
 :is(#archiveModalBody,.period-reading) .annual-month[data-grade="normal"] { --grade:#59636D; --grade-bg:#F0EFEA; }
 :is(#archiveModalBody,.period-reading) .annual-month[data-grade="caution"] { --grade:var(--c-point,#B5341F); --grade-bg:var(--c-point-tint,#F5E1DC); }
 /* 제목 줄: 왼쪽 '11월', 오른쪽 끝에 등급 칩 */
