@@ -14,7 +14,18 @@
   border-radius:2px;font-family:'Song Myung','Noto Serif KR',serif;font-size:20px;position:relative;
   transform:rotate(-7deg);animation:spStamp .34s cubic-bezier(.3,1.5,.5,1) 1.1s both}
 #dalhaSplash .sp-seal::after{content:"";position:absolute;inset:3px;border:1.5px solid rgba(253,252,249,.7);border-radius:1px}
+/* 별: 달 뒤쪽 가장자리에 작게 흩뿌리고 천천히 깜빡인다 */
+#dalhaSplash .sp-stars{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+#dalhaSplash .sp-star{position:absolute;border-radius:50%;background:#FDFCF9;opacity:0;
+  animation:spTwinkle var(--d,3.2s) ease-in-out var(--t,0s) infinite}
+#dalhaSplash .sp-star.plus::before,#dalhaSplash .sp-star.plus::after{content:"";position:absolute;left:50%;top:50%;background:#FDFCF9;border-radius:1px;transform:translate(-50%,-50%)}
+#dalhaSplash .sp-star.plus{background:none}
+#dalhaSplash .sp-star.plus::before{width:100%;height:1.5px}
+#dalhaSplash .sp-star.plus::after{width:1.5px;height:100%}
+#dalhaSplash .sp-moon,#dalhaSplash .sp-title,#dalhaSplash .sp-date,#dalhaSplash .sp-phrase,#dalhaSplash .sp-seal{position:relative;z-index:1}
+@keyframes spTwinkle{0%,100%{opacity:.12;transform:scale(.8)}50%{opacity:var(--o,.7);transform:scale(1.15)}}
 @keyframes spRise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 @keyframes spFade{from{opacity:0}to{opacity:1}}
 @keyframes spStamp{0%{opacity:0;transform:rotate(-7deg) scale(1.5)}100%{opacity:1;transform:rotate(-7deg) scale(1)}}
-@media (prefers-reduced-motion:reduce){#dalhaSplash,#dalhaSplash .sp-moon,#dalhaSplash .sp-phrase,#dalhaSplash .sp-seal{animation:none;transition:none}}
+@media (prefers-reduced-motion:reduce){#dalhaSplash,#dalhaSplash .sp-moon,#dalhaSplash .sp-phrase,#dalhaSplash .sp-seal{animation:none;transition:none}
+  #dalhaSplash .sp-star{animation:none;opacity:.45}}
