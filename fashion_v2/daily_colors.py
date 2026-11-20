@@ -16,7 +16,7 @@ ELEMENT_WEAR_TONES = {
     "水": ("navy", "black", "sky", "denim"),
     "木": ("olive", "sage", "forest", "teal"),
     "火": ("burgundy", "plum", "coral", "rust", "red", "lavender", "pink"),   # 이웃한 날끼리 톤이 겹치지 않게 섞은 순서
-    "土": ("beige", "camel", "brown", "butter", "mustard", "terracotta"),
+    "土": ("beige", "camel", "brown", "butter", "mustard", "terracotta", "khaki"),
 }
 
 # 통관 오행 → 메인 옷에 쓸 가라앉은 톤 (fashion_v2 팔레트 키)

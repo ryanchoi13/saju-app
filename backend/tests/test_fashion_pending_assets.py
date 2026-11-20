@@ -251,7 +251,7 @@ def test_every_ordered_palette_pair_including_equal_colours_resolves_to_the_revi
     from fashion_v2.live_match_check import match
 
     keys = tuple(PALETTE)
-    assert len(keys) == 31   # 2026-11-20: 테라코타·머스타드 추가
+    assert len(keys) == 32   # 2026-11-20: 테라코타·머스타드·카키 추가
     rows, expected = [], []
     for gender, age, candidate_id, drawing_id in (
         ("female", 15, "pending-female-winter-casual-fleece", "all-064"),
@@ -268,7 +268,7 @@ def test_every_ordered_palette_pair_including_equal_colours_resolves_to_the_revi
             rows.append(_matcher_row(look))
             expected.append(drawing_id)
             count += 1
-        assert count == 961   # 31 x 31
+        assert count == 1024   # 32 x 32
     assert match(rows) == expected
 
 
