@@ -51,6 +51,21 @@ def buy_report(user_id, key, cost, report):
         return state
 
 
+def delete_report(user_id, key, index, expected_title):
+    """보관함의 풀이 하나를 지운다(복채는 돌려주지 않는다).
+
+    화면이 본 목록과 서버 목록이 어긋나면(다른 기기에서 먼저 지웠거나 새로 샀을 때) 엉뚱한 풀이를 지우지 않도록
+    자리·종류·제목이 모두 맞을 때만 지운다.
+    """
+    with locked(user_id) as (_, _, state):
+        reports = state['reports']
+        if not 0 <= index < len(reports) or reports[index].get('report_key') != key \
+                or reports[index].get('report_title') != expected_title:
+            raise ValueError('report_changed')
+        del reports[index]
+        return state
+
+
 def refresh_owned_annual(user_id, expected, replacement):
     return refresh_owned_report(user_id, 'sinnian', expected, replacement)
 

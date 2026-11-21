@@ -563,7 +563,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
     <link id="dalhaBrandStyles" rel="stylesheet" href="/assets/brand-2026/brand.css?v=20261115-reader">
     <link rel="stylesheet" href="/assets/reading-polish.css?v=20261120-num1">
     <link rel="stylesheet" href="/assets/daily-card.css?v=20261115-title">
-    <link rel="stylesheet" href="/assets/brand-2026/refine.css?v=20261121-gh2">
+    <link rel="stylesheet" href="/assets/brand-2026/refine.css?v=20261121-gh4">
     <link href="https://fonts.googleapis.com/css2?family=Song+Myung&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/assets/brand-2026/ilryeok.css?v=20261108-p5">
     <link rel="stylesheet" href="/assets/brand-2026/splash.css?v=20261121-s5">
@@ -1487,7 +1487,6 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             <h3 id="themeIntroTitle" style="font-size: 18px; font-weight: 800; font-family: 'Noto Serif KR', serif; color: var(--c-ink,#1D2129);"></h3>
             <p id="themeIntroDesc" style="font-size: 13px; line-height: 1.75; color: #3C4651;"></p>
             <div id="themeIntroToc"></div>
-            <div id="themeIntroOwned" class="theme-intro-owned hidden"></div>
             <div style="display: flex; gap: 8px; justify-content: flex-end;">
                 <button type="button" class="dh-btn-quiet" onclick="closeThemeIntro()">닫기</button>
                 <button type="button" id="themeIntroGo" class="dh-btn-quiet theme-intro-go" onclick="confirmThemeIntro()">풀이 보기</button>
@@ -3775,47 +3774,110 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
 
         let themeIntroKey = null;
         function openThemeIntro(key) {
+            // 궁합은 상대마다 따로 보는 풀이라 작은 팝업이 아니라 전체 화면 페이지(목차 + 이전에 본 궁합)로 연다.
+            if (key === 'gunghap') { openGunghapPage(); return; }
             const section = document.getElementById(`concern-${key}`);
             if (!section) { selectConcern(key, true); return; }
             themeIntroKey = key;
-            renderThemeIntroOwned(key);
             document.getElementById('themeIntroTitle').textContent = section.querySelector('h3')?.textContent || '';
             document.getElementById('themeIntroDesc').textContent = section.querySelector('h3 + p')?.textContent || '';
             const toc = section.querySelector('.report-preview');
             document.getElementById('themeIntroToc').replaceChildren(...(toc ? [toc.cloneNode(true)] : []));
             document.querySelectorAll('[data-concern-choice]').forEach(el => el.setAttribute('aria-pressed', String(el.dataset.concernChoice === key)));
             // 이미 산 풀이: 팝업을 두 번 띄우지 않고, 풀이 팝업 하나 안에서 목차 → 풀이 보기로 이어 간다.
-            // 궁합은 상대마다 따로 보는 풀이라 '이미 산 풀이로 바로 가기'를 쓰지 않는다. 이전 궁합은 팝업 안 목록으로 보여 준다.
-            const ownedIndex = key === 'gunghap' ? -1 : latestOwnedReportIndex(key);
+            const ownedIndex = latestOwnedReportIndex(key);
             if (ownedIndex >= 0) { openOwnedThemeIntro(key, ownedIndex); return; }
             document.getElementById('themeIntroModal').classList.remove('hidden');
         }
-        // 팝업 아래쪽: 궁합 보기 버튼 글자 + 이전에 본 궁합 목록(최신순). 다른 테마는 목록 없이 '풀이 보기'.
-        function renderThemeIntroOwned(key) {
-            const box = document.getElementById('themeIntroOwned');
-            const go = document.getElementById('themeIntroGo');
-            document.getElementById('themeIntroModal').dataset.key = key;   // 궁합 팝업만 버튼 순서가 다르다(CSS)
-            box.replaceChildren();
-            go.textContent = key === 'gunghap' ? '궁합 보기' : '풀이 보기';
-            const rows = key === 'gunghap'
-                ? serverUnlockedReports.map((report, index) => ({report, index})).filter(x => x.report.report_key === 'gunghap').reverse()
-                : [];
-            box.classList.toggle('hidden', rows.length === 0);
-            if (!rows.length) return;
-            const label = document.createElement('span');
-            label.className = 'preview-label';
-            label.textContent = '이전에 본 궁합';
-            box.append(label);
-            rows.forEach(({report, index}) => {
-                const row = document.createElement('button');
-                row.type = 'button'; row.className = 'theme-intro-owned-row';
-                const title = document.createElement('strong'); title.textContent = report.report_title;
-                const meta = document.createElement('span');
-                meta.textContent = [report.reading_context?.relation, reportPurchaseLabel(report)].filter(Boolean).join(' · ');
-                row.append(title, meta);
-                row.onclick = () => { closeThemeIntro(); openReadingReport(index); };
-                box.append(row);
-            });
+        // 궁합: 다른 테마와 같은 전체 화면 페이지(왼쪽 위 뒤로 가기). 목차 → [궁합 보기] → 이전에 본 궁합(행마다 삭제).
+        function openGunghapPage() {
+            const modal = document.getElementById('archiveDetailModal');
+            if (!document.getElementById('concern-gunghap')) return;
+            if (modal.classList.contains('hidden')) {
+                readingReturnState = {scrollY:window.scrollY, focus:document.activeElement, overflow:document.body.style.overflow, url:location.href};
+                history.pushState({dalhaReader:true}, '', '#report');
+            }
+            readingReportIndex = -1;
+            modal.dataset.annualReader = 'false'; modal.dataset.annualPartitioned = 'false';
+            modal.dataset.themeIntro = 'true';   // 목차 화면에서는 PDF 저장·닫기 줄을 숨긴다
+            document.getElementById('archiveModalTitle').textContent = '궁합';
+            document.getElementById('readingReportMeta').textContent = '';
+            const contents = document.getElementById('readingReportContents');
+            contents.replaceChildren(); contents.classList.add('hidden');
+            renderGunghapPage();
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+            const body = document.getElementById('archiveModalBody');
+            body.scrollTop = 0;
+            (window.requestAnimationFrame || setTimeout)(() => { body.scrollTop = 0; });
+            document.getElementById('readingCloseButton').focus({preventScroll:true});
+        }
+        function renderGunghapPage() {
+            const section = document.getElementById('concern-gunghap');
+            const body = document.getElementById('archiveModalBody');
+            const page = document.createElement('section');
+            page.className = 'theme-intro-inline gunghap-page';
+            const heading = document.createElement('h3');
+            heading.textContent = section.querySelector('h3')?.textContent || '';
+            const desc = document.createElement('p');
+            desc.textContent = section.querySelector('h3 + p')?.textContent || '';
+            const toc = section.querySelector('.report-preview');
+            const go = document.createElement('button');
+            go.type = 'button'; go.className = 'reading-primary'; go.textContent = '궁합 보기';
+            go.onclick = () => openGunghapInputModal();   // 새로 볼 사람의 정보를 입력한다
+            page.append(heading, desc, ...(toc ? [toc.cloneNode(true)] : []), go);
+            const rows = serverUnlockedReports.map((report, index) => ({report, index}))
+                .filter(x => x.report.report_key === 'gunghap').reverse();
+            if (rows.length) {
+                const box = document.createElement('div');
+                box.className = 'gunghap-owned';
+                const label = document.createElement('span');
+                label.className = 'preview-label'; label.textContent = '이전에 본 궁합';
+                box.append(label);
+                rows.forEach(({report, index}) => {
+                    const row = document.createElement('div');
+                    row.className = 'gunghap-owned-row';
+                    const open = document.createElement('button');
+                    open.type = 'button'; open.className = 'gunghap-owned-open';
+                    const title = document.createElement('strong'); title.textContent = report.report_title;
+                    const meta = document.createElement('span');
+                    meta.textContent = [report.reading_context?.relation, reportPurchaseLabel(report)].filter(Boolean).join(' · ');
+                    open.append(title, meta);
+                    open.onclick = () => openReadingReport(index);
+                    const del = document.createElement('button');
+                    del.type = 'button'; del.className = 'gunghap-owned-del'; del.textContent = '삭제';
+                    del.setAttribute('aria-label', `${report.report_title} 삭제`);
+                    del.onclick = () => deleteGunghapReading(index);
+                    row.append(open, del); box.append(row);
+                });
+                page.append(box);
+            }
+            body.replaceChildren(page);
+        }
+        async function deleteGunghapReading(index) {
+            const report = serverUnlockedReports[index];
+            if (!report || report.report_key !== 'gunghap' || !currentUserId || reportRequestPending) return;
+            if (!window.confirm(`${report.report_title}\n\n삭제하면 되돌릴 수 없어요. 낸 복채는 돌려받지 못하고, 이 분과 다시 보려면 새로 결제해야 해요.\n\n삭제할까요?`)) return;
+            reportRequestPending = true;
+            try {
+                const res = await fetch('/api/reports/delete', {
+                    method: 'POST', headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({user_id: currentUserId, report_key: 'gunghap', index, expected_title: report.report_title})
+                });
+                const data = await res.json().catch(() => ({}));
+                if (!res.ok) { alert(data.detail || '삭제하지 못했어요. 잠시 후 다시 시도해 주세요.'); return; }
+                currentCoin = data.new_balance;
+                updateCoinDisplay();
+                serverUnlockedReports = data.unlocked_reports;
+                delete themePreviewCache.gunghap;
+                renderServerArchive();
+                restoreUnlockedUIFromReports();
+                renderGunghapPage();
+            } catch (error) {
+                alert('응답을 확인하지 못했어요. 새로고침 후 보관함을 먼저 확인해 주세요.');
+            } finally {
+                reportRequestPending = false;
+            }
         }
         function openOwnedThemeIntro(key, index) {
             openReadingReport(index);
@@ -3839,7 +3901,6 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             const key = themeIntroKey;
             closeThemeIntro();
             if (!key) return;
-            if (key === 'gunghap') { openGunghapInputModal(); return; }
             selectConcern(key, true);
             return showThemePreview(key, '기본');
         }
