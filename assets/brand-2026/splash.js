@@ -1,6 +1,7 @@
-/* 앱 시작 화면. 설치형 앱으로 켰을 때(또는 ?splash=1) 한 번만, 최소 1.6초 보여 준다.
+/* 앱 시작 화면. 설치형 앱으로 켰을 때(또는 ?splash=1) 한 번만, SHOW_MS(3초) 동안 보여 준다.
    (2026-11-18: 달 모양을 오늘의 달 위상에서 앱 아이콘 모양으로 통일) */
 (function () {
+  var SHOW_MS = 3000;   // 시작 화면 보이는 시간(ms). 여기 숫자만 바꾸면 된다. (2026-11-21: 1.6초 → 3초)
   var el = document.getElementById('dalhaSplash');
   if (!el) return;
   var forced = /[?&]splash=1\b/.test(location.search);
@@ -46,5 +47,5 @@
     setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, 400);
   }
   el.addEventListener('click', close);
-  setTimeout(close, 1600);
+  setTimeout(close, SHOW_MS);
 })();
