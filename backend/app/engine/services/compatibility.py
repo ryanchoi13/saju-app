@@ -327,8 +327,8 @@ def _ranked(items: list[dict], used: set | None = None) -> list[str]:
 
 
 def _intimacy(sig: dict, kinds: dict, a: str = "", b: str = "") -> list[str]:
-    """연인 풀이의 속궁합: 소개 → 일간 관계 → 각자의 애정 결 → 일지 관계 → 주도권 → 온도 → 도화 → 푸는 법 → 확인 한 줄. 있는 신호만 쓴다."""
-    lines = [_cc.INTIMACY_INTRO]
+    """연인 풀이의 속궁합: 일간 관계 → 각자의 결 → 분위기 → 일지 관계 → 채워 주는 기운 → 주도권 → 온도 → 도화. 있는 신호만, 모든 쌍에 같은 문장을 붙이지 않는다."""
+    lines = []
     stem = _cc.INTIMACY_STEM.get(sig.get("stem_rel"))
     if stem:
         lines.append(stem)
@@ -343,15 +343,14 @@ def _intimacy(sig: dict, kinds: dict, a: str = "", b: str = "") -> list[str]:
             lines.append(_cc.INTIMACY_MOOD[me["top"]].format(x=who))
     day = sig["branches"].get("day") or {}
     key = (day.get("kind"), day.get("state") if day.get("kind") == "six" else None)
-    if key in _cc.INTIMACY_DAY:
-        lines.append(_cc.INTIMACY_DAY[key])
+    lines.append(_cc.INTIMACY_DAY.get(key, _cc.INTIMACY_DAY_NONE))
     for who, other, els in ((a, b, sig["fills_l"]), (b, a, sig["fills_r"])):
-        if els:
-            lines.append(_cc.INTIMACY_FILL.format(x=who, y=other, el=_EL_KO[els[0]]))
+        if els and els[0] in _cc.INTIMACY_FILL:
+            lines.append(_cc.INTIMACY_FILL[els[0]].format(x=who, y=other, el=_EL_KO[els[0]]))
     sl, sr = sig["self"]["L"]["strength"], sig["self"]["R"]["strength"]
     if sl and sr:
         if sl == sr:
-            lines.append(_cc.INTIMACY_LEAD[(sl, sr)])
+            lines.append(_cc.INTIMACY_LEAD[(sl, sr)].format(a=a, b=b))
         else:
             strong, weak = (a, b) if sl == "strong" else (b, a)
             lines.append(_cc.INTIMACY_LEAD[("mixed", None)].format(s=strong, w=weak))
@@ -361,8 +360,6 @@ def _intimacy(sig: dict, kinds: dict, a: str = "", b: str = "") -> list[str]:
         lines.append(_cc.INTIMACY_CLIMATE[ck])
     if "도화살" in kinds and kinds["도화살"]["importance"] >= 2:
         lines.append(_cc.INTIMACY_DOHWA)
-    lines.append(_cc.INTIMACY_REPAIR)
-    lines.append(_cc.INTIMACY_TIP)
     return _drop_repeated_sentences(lines)
 
 
