@@ -563,7 +563,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
     <link id="dalhaBrandStyles" rel="stylesheet" href="/assets/brand-2026/brand.css?v=20261115-reader">
     <link rel="stylesheet" href="/assets/reading-polish.css?v=20261120-num1">
     <link rel="stylesheet" href="/assets/daily-card.css?v=20261115-title">
-    <link rel="stylesheet" href="/assets/brand-2026/refine.css?v=20261121-el1">
+    <link rel="stylesheet" href="/assets/brand-2026/refine.css?v=20261121-gh2">
     <link href="https://fonts.googleapis.com/css2?family=Song+Myung&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/assets/brand-2026/ilryeok.css?v=20261108-p5">
     <link rel="stylesheet" href="/assets/brand-2026/splash.css?v=20261121-s5">
@@ -1118,7 +1118,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                     <button data-concern-choice="wealth" aria-pressed="false" aria-controls="concern-wealth" onclick="openThemeIntro('wealth')"><i data-brand-icon="coins" class="concern-symbol" aria-hidden="true"></i><span class="concern-category">돈·생활</span><strong>돈을 모으고 쓰는 기준이 궁금해요</strong><span class="concern-open">풀이 살펴보기 <span aria-hidden="true">→</span></span></button>
                     <button data-concern-choice="study" aria-pressed="false" aria-controls="concern-study" onclick="openThemeIntro('study')"><i data-brand-icon="book" class="concern-symbol" aria-hidden="true"></i><span class="concern-category">학업·시험</span><strong>나에게 맞는 공부법을 찾고 싶어요</strong><span class="concern-open">풀이 살펴보기 <span aria-hidden="true">→</span></span></button>
                     <button data-concern-choice="health" aria-pressed="false" aria-controls="concern-health" onclick="openThemeIntro('health')"><i data-brand-icon="moon" class="concern-symbol" aria-hidden="true"></i><span class="concern-category">몸·건강</span><strong>타고난 체질과 조심할 때가 궁금해요</strong><span class="concern-open">풀이 살펴보기 <span aria-hidden="true">→</span></span></button>
-                    <button data-concern-choice="gunghap" aria-pressed="false" aria-controls="concern-gunghap" onclick="selectConcern('gunghap', true)"><i data-brand-icon="people" class="concern-symbol" aria-hidden="true"></i><span class="concern-category">궁합</span><strong>두 사람은 어떻게 잘 지낼 수 있을까요?</strong><span class="concern-open">풀이 살펴보기 <span aria-hidden="true">→</span></span></button>
+                    <button data-concern-choice="gunghap" aria-pressed="false" aria-controls="concern-gunghap" onclick="openThemeIntro('gunghap')"><i data-brand-icon="people" class="concern-symbol" aria-hidden="true"></i><span class="concern-category">궁합</span><strong>두 사람은 어떻게 잘 지낼 수 있을까요?</strong><span class="concern-open">풀이 살펴보기 <span aria-hidden="true">→</span></span></button>
                 </div>
                 <div class="reading-section-title concern-result-title hidden"><h3 id="concernSelectionTitle" tabindex="-1">관련 풀이 안내</h3></div>
                 <p id="concernSelectionHint" class="reading-caption">질문을 고르면 포함된 내용과 필요한 복채를 먼저 보여드려요.</p>
@@ -1160,8 +1160,9 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 </section>
                 <section id="concern-gunghap" class="card report-entry compatibility-card hidden" data-concern="gunghap" aria-labelledby="compatibilityTitle">
                     <span class="reading-eyebrow">궁합</span>
-                    <h3 id="compatibilityTitle" tabindex="-1">우리는 어디서 잘 맞고,<br>어떤 점이 다를까요?</h3>
+                    <h3 id="compatibilityTitle" tabindex="-1">우리는 어디서 잘 맞고, 어떤 점이 다를까요?</h3>
                     <p>연인, 동료, 친구 사이의 대화와 역할을 살펴봐요. 관계를 선택하고 두 사람의 사주를 함께 읽어보세요.</p>
+                    <div class="report-preview"><span class="preview-label">이런 이야기를 읽어요</span><ol class="theme-toc"><li><span class="toc-num">01</span><strong>겉궁합 · 처음 만났을 때</strong></li><li><span class="toc-num">02</span><strong>속궁합 · 가까워질수록 보이는 속마음</strong></li><li><span class="toc-num">03</span><strong>잘 맞는 점</strong></li><li><span class="toc-num">04</span><strong>부딪히기 쉬운 점</strong></li><li><span class="toc-num">05</span><strong>다툰 뒤 풀리는 법</strong></li><li><span class="toc-num">06</span><strong>오래 함께할 때 · 앞으로 10년</strong></li><li><span class="toc-num">07</span><strong>관계별 약속</strong></li></ol></div>
                     <div class="compatibility-topics"><span>끌림과 차이</span><span>대화와 갈등</span><span>함께하는 생활</span></div>
                     <div class="report-facts"><span>두 사람의 생년정보로 풀이</span><strong data-report-price="gunghap">250 복채</strong></div>
                     <div id="gunghapReportBox" class="hidden"></div>
@@ -1486,6 +1487,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             <h3 id="themeIntroTitle" style="font-size: 18px; font-weight: 800; font-family: 'Noto Serif KR', serif; color: var(--c-ink,#1D2129);"></h3>
             <p id="themeIntroDesc" style="font-size: 13px; line-height: 1.75; color: #3C4651;"></p>
             <div id="themeIntroToc"></div>
+            <div id="themeIntroOwned" class="theme-intro-owned hidden"></div>
             <div style="display: flex; gap: 8px; justify-content: flex-end;">
                 <button type="button" class="dh-btn-quiet" onclick="closeThemeIntro()">닫기</button>
                 <button type="button" id="themeIntroGo" class="dh-btn-quiet theme-intro-go" onclick="confirmThemeIntro()">풀이 보기</button>
@@ -3469,10 +3471,12 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
 
         async function handleUnlockReportOnServer(reportKey, cost, subOption = "기본", partnerName = "상대방", relation = "선택안함", partnerProfile = null) {
             if (!currentUserId) { alert("로그인이 필요합니다."); return; }
-            const ownedIndex = latestOwnedReportIndex(reportKey);
+            // 궁합은 상대마다 따로 산다: 이미 산 상대인지는 서버가 알아보고(결제 없이 그 풀이를 돌려줌), 복채 부족도 서버가 알려 준다.
+            const perPartner = reportKey === 'gunghap';
+            const ownedIndex = perPartner ? -1 : latestOwnedReportIndex(reportKey);
             if (ownedIndex >= 0) { openReadingReport(ownedIndex); return; }
             if (reportRequestPending) return;
-            if (currentCoin < cost) { openChargeStore(); return; }
+            if (!perPartner && currentCoin < cost) { openChargeStore(); return; }
 
             reportRequestPending = true;
             setReportRequestState(true);
@@ -3488,6 +3492,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             });
             const data = await res.json();
             if (!res.ok) {
+                if (perPartner && data.detail === 'Insufficient coins') { openChargeStore(); return; }
                 alert(data.detail || "리포트를 생성하지 못했습니다. 입력 정보를 확인해 주세요.");
                 return;
             }
@@ -3498,7 +3503,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             delete themePreviewCache[reportKey];
             renderServerArchive();
             restoreUnlockedUIFromReports();
-            openReadingReport(latestOwnedReportIndex(reportKey));
+            openReadingReport(Number.isInteger(data.focus_index) ? data.focus_index : latestOwnedReportIndex(reportKey));
             } catch (error) {
                 alert("응답을 확인하지 못했습니다. 새로고침 후 보관함을 먼저 확인해 주세요.");
             } finally {
@@ -3599,8 +3604,6 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
         }
 
         function openGunghapInputModal() {
-            const ownedIndex = latestOwnedReportIndex('gunghap');
-            if (ownedIndex >= 0) { openReadingReport(ownedIndex); return; }
             document.getElementById('gunghapSubmitButton').textContent = '250 복채로 두 사람의 인연 풀이 확인하기';
             const nameInput = document.getElementById('partnerNameInput');
             const relSelect = document.getElementById('partnerRelationSelect');
@@ -3775,15 +3778,44 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             const section = document.getElementById(`concern-${key}`);
             if (!section) { selectConcern(key, true); return; }
             themeIntroKey = key;
+            renderThemeIntroOwned(key);
             document.getElementById('themeIntroTitle').textContent = section.querySelector('h3')?.textContent || '';
             document.getElementById('themeIntroDesc').textContent = section.querySelector('h3 + p')?.textContent || '';
             const toc = section.querySelector('.report-preview');
             document.getElementById('themeIntroToc').replaceChildren(...(toc ? [toc.cloneNode(true)] : []));
             document.querySelectorAll('[data-concern-choice]').forEach(el => el.setAttribute('aria-pressed', String(el.dataset.concernChoice === key)));
             // 이미 산 풀이: 팝업을 두 번 띄우지 않고, 풀이 팝업 하나 안에서 목차 → 풀이 보기로 이어 간다.
-            const ownedIndex = latestOwnedReportIndex(key);
+            // 궁합은 상대마다 따로 보는 풀이라 '이미 산 풀이로 바로 가기'를 쓰지 않는다. 이전 궁합은 팝업 안 목록으로 보여 준다.
+            const ownedIndex = key === 'gunghap' ? -1 : latestOwnedReportIndex(key);
             if (ownedIndex >= 0) { openOwnedThemeIntro(key, ownedIndex); return; }
             document.getElementById('themeIntroModal').classList.remove('hidden');
+        }
+        // 팝업 아래쪽: 궁합 보기 버튼 글자 + 이전에 본 궁합 목록(최신순). 다른 테마는 목록 없이 '풀이 보기'.
+        function renderThemeIntroOwned(key) {
+            const box = document.getElementById('themeIntroOwned');
+            const go = document.getElementById('themeIntroGo');
+            document.getElementById('themeIntroModal').dataset.key = key;   // 궁합 팝업만 버튼 순서가 다르다(CSS)
+            box.replaceChildren();
+            go.textContent = key === 'gunghap' ? '궁합 보기' : '풀이 보기';
+            const rows = key === 'gunghap'
+                ? serverUnlockedReports.map((report, index) => ({report, index})).filter(x => x.report.report_key === 'gunghap').reverse()
+                : [];
+            box.classList.toggle('hidden', rows.length === 0);
+            if (!rows.length) return;
+            const label = document.createElement('span');
+            label.className = 'preview-label';
+            label.textContent = '이전에 본 궁합';
+            box.append(label);
+            rows.forEach(({report, index}) => {
+                const row = document.createElement('button');
+                row.type = 'button'; row.className = 'theme-intro-owned-row';
+                const title = document.createElement('strong'); title.textContent = report.report_title;
+                const meta = document.createElement('span');
+                meta.textContent = [report.reading_context?.relation, reportPurchaseLabel(report)].filter(Boolean).join(' · ');
+                row.append(title, meta);
+                row.onclick = () => { closeThemeIntro(); openReadingReport(index); };
+                box.append(row);
+            });
         }
         function openOwnedThemeIntro(key, index) {
             openReadingReport(index);
@@ -3807,6 +3839,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             const key = themeIntroKey;
             closeThemeIntro();
             if (!key) return;
+            if (key === 'gunghap') { openGunghapInputModal(); return; }
             selectConcern(key, true);
             return showThemePreview(key, '기본');
         }
@@ -3892,7 +3925,6 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             const configs = {
                 daewoon:['daewoonBox','btnDaewoon','daewoonTeaserBox'],
                 sinnian:['sinnianBox','btnSinnian','sinnianTeaserBox'],
-                gunghap:['gunghapReportBox','btnOpenGunghapModal',null],
                 ...Object.fromEntries(['wealth','love','business','health','study'].map(k => [k,[`themeReport_${k}`,`btnTheme_${k}`,null]]))
             };
             document.getElementById('annualMonthExplorer').classList.add('hidden');

@@ -40,7 +40,10 @@ def load(user_id, **seed):
 def buy_report(user_id, key, cost, report):
     with locked(user_id) as (_, _, state):
         # Repeated delivery/clicks must never spend twice or lose the first report.
-        if not any(r['report_key'] == key for r in state['reports']):
+        # 궁합만 상대마다 따로 산다(partner_key 가 같을 때만 같은 구매). 나머지는 종류당 하나.
+        partner_key = report.get('partner_key')
+        if not any(r['report_key'] == key and (partner_key is None or r.get('partner_key') == partner_key)
+                   for r in state['reports']):
             if state['balance'] < cost:
                 raise ValueError('insufficient_coins')
             state['balance'] -= cost

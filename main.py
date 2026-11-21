@@ -1,3 +1,5 @@
+import hashlib
+import json
 import os
 import sys
 import logging
@@ -266,6 +268,17 @@ def _partner_clock_fields(req) -> Dict[str, Any] | None:
     if req.partner_sijin_index is None or not -1 <= req.partner_sijin_index <= 11:
         return None
     return {"sijin_index": req.partner_sijin_index, "birth_hour": None, "birth_minute": None}
+
+
+def _partner_identity(req, partner_clock) -> str:
+    """궁합: 같은 상대·같은 관계인지 알아보는 지문. 생년월일 원본은 저장하지 않고 해시만 남긴다.
+
+    이름은 넣지 않는다(같은 사람을 이름만 바꿔 다시 사는 일을 막는다). 관계는 넣는다(연인/동업은 풀이가 다르다).
+    """
+    raw = json.dumps([req.partner_gender, req.partner_birth_year, req.partner_birth_month, req.partner_birth_day,
+                      req.partner_calendar_type, partner_clock.get("birth_hour"), partner_clock.get("birth_minute"),
+                      partner_clock.get("sijin_index"), req.relation], ensure_ascii=False)
+    return hashlib.sha256(raw.encode("utf-8")).hexdigest()[:24]
 
 
 def _birth_input_from_user(user: Dict[str, Any], name: str) -> BirthInput:
@@ -1166,10 +1179,9 @@ def unlock_report(req: UnlockReportRequest):
         raise HTTPException(status_code=422, detail='지원하지 않는 리포트입니다.')
     cost = prices[req.report_key]
     user = hydrate_account(req.user_id)
-    if any(r['report_key'] == req.report_key for r in reports_db[req.user_id]):
+    if req.report_key != "gunghap" and any(r['report_key'] == req.report_key for r in reports_db[req.user_id]):
         return {'status':'success', 'new_balance':user['coin'], 'unlocked_reports':client_reports(req.user_id)}
-    if user["coin"] < cost:
-        raise HTTPException(status_code=400, detail="Insufficient coins")
+    partner_key = None
     if req.report_key == "gunghap":
         required = (
             req.partner_name, req.partner_gender, req.partner_birth_year,
@@ -1188,7 +1200,15 @@ def unlock_report(req: UnlockReportRequest):
             date(req.partner_birth_year, req.partner_birth_month, req.partner_birth_day)
         except ValueError as exc:
             raise HTTPException(status_code=400, detail="상대방 생년월일이 올바르지 않습니다.") from exc
-    
+        # 궁합은 상대마다 따로 산다. 같은 상대·같은 관계를 다시 보내면 새로 결제하지 않고 그 풀이를 돌려준다.
+        partner_key = _partner_identity(req, partner_clock)
+        for r in reports_db[req.user_id]:
+            if r.get('report_key') == 'gunghap' and r.get('partner_key') == partner_key:
+                return {'status':'success', 'new_balance':user['coin'], 'unlocked_reports':client_reports(req.user_id),
+                        'focus_index':_gunghap_focus_index(req.user_id, partner_key)}
+    if user["coin"] < cost:
+        raise HTTPException(status_code=400, detail="Insufficient coins")
+
     rep_data = generate_detailed_report(
         req.report_key,
         req.sub_option,
@@ -1215,6 +1235,8 @@ def unlock_report(req: UnlockReportRequest):
     }
     new_report.update(narrative_version=rep_data.get('narrative_version'),
                       reading_context=dict(sub_option=req.sub_option, relation=req.relation))
+    if partner_key:
+        new_report['partner_key'] = partner_key
     if req.report_key == 'sinnian':
         new_report['report_year'] = rep_data.get('report_year')
 
@@ -1227,11 +1249,23 @@ def unlock_report(req: UnlockReportRequest):
     user['coin'] = assets['balance']
     reports_db[req.user_id] = assets['reports']
 
-    return {
+    result = {
         "status": "success",
         "new_balance": user["coin"],
         "unlocked_reports": client_reports(req.user_id)
     }
+    if partner_key:
+        result["focus_index"] = _gunghap_focus_index(req.user_id, partner_key)
+    return result
+
+
+def _gunghap_focus_index(user_id, partner_key):
+    """화면이 바로 열어 줄 궁합 풀이의 자리(보관함 배열 순서). 못 찾으면 None."""
+    for i in range(len(reports_db[user_id]) - 1, -1, -1):
+        r = reports_db[user_id][i]
+        if r.get('report_key') == 'gunghap' and r.get('partner_key') == partner_key:
+            return i
+    return None
 
 
 class PreviewReportRequest(BaseModel):
@@ -1368,7 +1402,7 @@ def bring_reports_up_to_date(user_id):
 
 def client_reports(user_id):
     """화면에 보내는 보관함. 이전 원문은 서버에만 둔다."""
-    return [{k: v for k, v in r.items() if k != 'previous_versions'} for r in bring_reports_up_to_date(user_id)]
+    return [{k: v for k, v in r.items() if k not in ('previous_versions', 'partner_key')} for r in bring_reports_up_to_date(user_id)]
 
 # Date-specific Korean daily zodiac/star guides.
 from zodiac_daily import build_daily_zodiac
