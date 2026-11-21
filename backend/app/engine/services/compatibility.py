@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 from html import escape
 from app.engine.services.reading_editorial import THEME_VERSION as VERSION, section, paragraphs
 from itertools import product
@@ -326,24 +327,55 @@ def _ranked(items: list[dict], used: set | None = None) -> list[str]:
 
 
 def _intimacy(sig: dict, kinds: dict, a: str = "", b: str = "") -> list[str]:
-    """연인 풀이의 속궁합: 일지 관계 · 조후 · 도화 순으로 있는 신호만 쓰고 마지막에 확인 한 줄."""
-    day = sig["branches"].get("day") or {}
-    key = (day.get("kind"), day.get("state") if day.get("kind") == "six" else None)
+    """연인 풀이의 속궁합: 일간 관계 → 각자의 결 → 분위기 → 일지 관계 → 채워 주는 기운 → 주도권 → 온도 → 도화. 있는 신호만, 모든 쌍에 같은 문장을 붙이지 않는다."""
     lines = []
+    stem = _cc.INTIMACY_STEM.get(sig.get("stem_rel"))
+    if stem:
+        lines.append(stem)
+    if sig.get("other_stem_six") and sig.get("stem_rel") != "six":
+        lines.append(_cc.INTIMACY_STEM_OTHER)
     gods = sig["gods"]
     for x, y, g in ((a, b, gods["l_sees_r"]), (b, a, gods["r_sees_l"])):
         if g in _cc.INTIMACY_GOD:
             lines.append(_cc.INTIMACY_GOD[g].format(x=x, y=y))
-    if key in _cc.INTIMACY_DAY:
-        lines.append(_cc.INTIMACY_DAY[key])
+    for who, me in ((a, sig["self"]["L"]), (b, sig["self"]["R"])):
+        if me["top"] in _cc.INTIMACY_MOOD:
+            lines.append(_cc.INTIMACY_MOOD[me["top"]].format(x=who))
+    day = sig["branches"].get("day") or {}
+    key = (day.get("kind"), day.get("state") if day.get("kind") == "six" else None)
+    lines.append(_cc.INTIMACY_DAY.get(key, _cc.INTIMACY_DAY_NONE))
+    for who, other, els in ((a, b, sig["fills_l"]), (b, a, sig["fills_r"])):
+        if els and els[0] in _cc.INTIMACY_FILL:
+            lines.append(_cc.INTIMACY_FILL[els[0]].format(x=who, y=other, el=_EL_KO[els[0]]))
+    sl, sr = sig["self"]["L"]["strength"], sig["self"]["R"]["strength"]
+    if sl and sr:
+        if sl == sr:
+            lines.append(_cc.INTIMACY_LEAD[(sl, sr)].format(a=a, b=b))
+        else:
+            strong, weak = (a, b) if sl == "strong" else (b, a)
+            lines.append(_cc.INTIMACY_LEAD[("mixed", None)].format(s=strong, w=weak))
     tl, tr = sig["climate"]["L"], sig["climate"]["R"]
     ck = "opposite" if {tl, tr} == {"cold", "hot"} else tl if tl == tr and tl in {"hot", "cold"} else None
     if ck:
         lines.append(_cc.INTIMACY_CLIMATE[ck])
     if "도화살" in kinds and kinds["도화살"]["importance"] >= 2:
         lines.append(_cc.INTIMACY_DOHWA)
-    lines.append(_cc.INTIMACY_TIP)
-    return lines
+    return _drop_repeated_sentences(lines)
+
+
+def _drop_repeated_sentences(lines: list[str]) -> list[str]:
+    """두 사람이 같은 유형이면 이름만 다른 문장이 겹치므로, 이미 나온 문장은 한 번만 쓴다."""
+    seen: set[str] = set()
+    out = []
+    for line in lines:
+        kept = []
+        for sentence in re.split(r"(?<=[.!?])\s+", line):
+            if sentence not in seen:
+                seen.add(sentence)
+                kept.append(sentence)
+        if kept:
+            out.append(" ".join(kept))
+    return out
 
 
 def _raw(cands: list[dict], extra_good: int = 0) -> int:
