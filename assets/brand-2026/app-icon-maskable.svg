@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- 홈 화면 아이콘용(manifest maskable): 바탕을 가장자리까지 채우고 달은 안전 영역(가운데 80%) 안에 둔다 -->
+  <defs>
+    <mask id="crescent"><rect width="512" height="512" fill="#000"/><circle cx="252" cy="258" r="168" fill="#fff"/><circle cx="342" cy="292" r="124" fill="#000"/></mask>
+  </defs>
+  <rect width="512" height="512" fill="#1D2129"/>
+  <rect width="512" height="512" fill="#F8F6F1" mask="url(#crescent)"/>
+  <circle cx="320" cy="322" r="42" fill="#E4B28F"/>
+</svg>
