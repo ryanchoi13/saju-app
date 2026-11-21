@@ -1,12 +1,10 @@
 /* 앱 시작 화면 (2026-11-16 정오님 확정: 먹빛 밤 + 오늘 날짜 + 도장 + 브랜드 한 줄)
    설치형 앱(standalone)으로 켰을 때만 보인다. 확인용: 주소 끝에 ?splash=1 */
-#dalhaSplash{position:fixed;inset:0;z-index:99999;display:none;flex-direction:column;align-items:center;justify-content:flex-start;
+#dalhaSplash{position:fixed;inset:0;z-index:99999;display:none;flex-direction:column;align-items:center;justify-content:center;
   background:#1D2129;color:#FDFCF9;transition:opacity .35s ease}
 #dalhaSplash.on{display:flex}
-/* 달을 화면 세로 한가운데에 둔다: OS가 먼저 띄우는 시작 화면(아이콘)의 달과 같은 자리·같은 크기라 끊김 없이 이어진다. 글자는 그 아래로 */
-#dalhaSplash::before{content:"";flex:0 0 50%}
 #dalhaSplash.out{opacity:0;pointer-events:none}
-#dalhaSplash .sp-moon{width:132px;height:132px;margin-top:-66px;overflow:visible}
+#dalhaSplash .sp-moon{width:132px;height:132px;overflow:visible;animation:spRise .9s cubic-bezier(.2,.8,.2,1) both}
 #dalhaSplash .sp-title{font-family:'Song Myung','Noto Serif KR',serif;font-weight:400;font-synthesis:none;
   font-size:56px;line-height:1;margin-top:40px;letter-spacing:.06em;padding-left:.06em}
 #dalhaSplash .sp-date{margin-top:18px;font-size:14px;color:rgba(253,252,249,.62)}
@@ -31,7 +29,3 @@
 @keyframes spStamp{0%{opacity:0;transform:rotate(-7deg) scale(1.5)}100%{opacity:1;transform:rotate(-7deg) scale(1)}}
 @media (prefers-reduced-motion:reduce){#dalhaSplash,#dalhaSplash .sp-moon,#dalhaSplash .sp-phrase,#dalhaSplash .sp-seal{animation:none;transition:none}
   #dalhaSplash .sp-star{animation:none;opacity:.45}}
-
-/* 키가 작은 폰: 가운데 달 아래 내용이 넘치지 않게 간격을 줄이고, 아주 작으면 도장을 뺀다 */
-@media (max-height:780px){#dalhaSplash .sp-title{margin-top:28px}#dalhaSplash .sp-phrase{margin-top:30px}#dalhaSplash .sp-seal{margin-top:24px}}
-@media (max-height:700px){#dalhaSplash .sp-seal{display:none}}
