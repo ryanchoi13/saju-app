@@ -1,11 +1,11 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
   <!-- 시작 화면용(manifest 'any'): OS가 아이콘을 화면 한가운데 크게 띄우므로, 달을 앱 안 시작 화면 달(132px)과 같은 크기로 줄여 가운데에 둔다.
-       바탕은 시작 화면 바탕(#1D2129)과 같은 색 → 사각형이 보이지 않는다. 달 중심 (250,260)을 캔버스 중심으로 옮기고 0.66배. -->
+       바탕은 시작 화면 바탕(#1D2129)과 같은 색 → 사각형이 보이지 않는다. 달 중심 (250,260)을 캔버스 중심으로 옮기고 0.60배. -->
   <defs>
     <mask id="crescent"><rect width="512" height="512" fill="#000"/><circle cx="252" cy="258" r="168" fill="#fff"/><circle cx="342" cy="292" r="124" fill="#000"/></mask>
   </defs>
   <rect width="512" height="512" fill="#1D2129"/>
-  <g transform="translate(256 256) scale(0.66) translate(-250 -260)">
+  <g transform="translate(256 256) scale(0.60) translate(-250 -260)">
     <rect width="512" height="512" fill="#F8F6F1" mask="url(#crescent)"/>
     <circle cx="320" cy="322" r="42" fill="#E4B28F"/>
   </g>
