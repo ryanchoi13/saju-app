@@ -1259,6 +1259,32 @@ def unlock_report(req: UnlockReportRequest):
     return result
 
 
+class DeleteReportRequest(BaseModel):
+    user_id: str = Field(min_length=1, max_length=100)
+    report_key: str = Field(min_length=1, max_length=40)
+    index: int = Field(ge=0, le=100000)
+    expected_title: str = Field(min_length=1, max_length=300)
+
+
+@app.post("/api/reports/delete")
+def delete_report(req: DeleteReportRequest):
+    """궁합 풀이만 지울 수 있다(상대마다 따로 사는 풀이). 나머지 풀이는 지우지 않는다."""
+    if req.user_id not in users_db:
+        raise HTTPException(status_code=404, detail="User not found")
+    if req.report_key != "gunghap":
+        raise HTTPException(status_code=422, detail="삭제할 수 없는 풀이입니다.")
+    hydrate_account(req.user_id)
+    try:
+        assets = wallet_store.delete_report(req.user_id, req.report_key, req.index, req.expected_title)
+    except ValueError as exc:
+        raise HTTPException(status_code=409, detail="이미 지워졌거나 목록이 바뀌었어요. 다시 열어 주세요.") from exc
+    except wallet_store.StorageUnavailable as exc:
+        raise HTTPException(status_code=503, detail="잠시 후 다시 시도해 주세요.") from exc
+    users_db[req.user_id]['coin'] = assets['balance']
+    reports_db[req.user_id] = assets['reports']
+    return {"status": "success", "new_balance": assets['balance'], "unlocked_reports": client_reports(req.user_id)}
+
+
 def _gunghap_focus_index(user_id, partner_key):
     """화면이 바로 열어 줄 궁합 풀이의 자리(보관함 배열 순서). 못 찾으면 None."""
     for i in range(len(reports_db[user_id]) - 1, -1, -1):

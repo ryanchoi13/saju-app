@@ -407,16 +407,18 @@ html[data-brand] body #themeIntroModal ol.theme-toc { list-style:none; margin:0;
 html[data-brand] body #themeIntroModal ol.theme-toc li { display:flex; gap:12px; align-items:baseline; padding:5px 0; }
 html[data-brand] body #themeIntroModal .toc-num { flex:0 0 20px; font-size:12px; color:var(--c-point); font-variant-numeric:tabular-nums; }
 html[data-brand] body #themeIntroModal ol.theme-toc li strong { font-size:14px; font-weight:500; line-height:1.5; color:var(--c-ink); }
-/* 궁합 팝업: 새로 보는 '궁합 보기'가 주인공(목차 바로 아래, 넓은 버튼) → 이전에 본 궁합 → 닫기 */
-html[data-brand] body #themeIntroModal[data-key="gunghap"] .theme-intro-modal > div:last-child { display:contents!important; }
-html[data-brand] body #themeIntroModal[data-key="gunghap"] .theme-intro-go { order:1; width:100%; min-height:48px; font-size:15px; font-weight:700; margin-top:4px; }
-html[data-brand] body #themeIntroModal[data-key="gunghap"] .theme-intro-owned { order:2; }
-html[data-brand] body #themeIntroModal[data-key="gunghap"] .theme-intro-modal > div:last-child > button:first-child { order:3; align-self:center; min-width:96px; }
-/* 궁합 팝업: 이전에 본 궁합 목록 */
-html[data-brand] body #themeIntroModal .theme-intro-owned { display:flex; flex-direction:column; gap:8px; padding-top:12px; border-top:1px dashed var(--c-perf,#D4D0C6); }
-html[data-brand] body #themeIntroModal .theme-intro-owned-row { display:flex; flex-direction:column; align-items:flex-start; gap:2px; width:100%; padding:10px 12px; text-align:left; background:var(--c-paper-shade,#F1EEE7); border:1px solid var(--c-line,#D9D5CB); border-radius:8px; font:inherit; color:var(--c-ink,#1D2129); cursor:pointer; }
-html[data-brand] body #themeIntroModal .theme-intro-owned-row strong { font-size:14px; font-weight:700; line-height:1.5; }
-html[data-brand] body #themeIntroModal .theme-intro-owned-row span { font-size:12px; color:var(--c-ink-60,#575B62); }
+/* 궁합 페이지(전체 화면): 목차 → 궁합 보기 → 이전에 본 궁합(행 오른쪽 삭제) */
+html[data-brand] body #archiveModalBody .gunghap-page > .reading-primary { width:100%; min-height:48px; margin-top:4px; }
+html[data-brand] body #archiveModalBody .gunghap-owned { display:flex; flex-direction:column; gap:8px; margin-top:8px; padding-top:14px; border-top:1px dashed var(--c-perf,#D4D0C6); }
+html[data-brand] body #archiveModalBody .gunghap-owned .preview-label { font-size:13px; font-weight:700; color:var(--c-ink-60,#575B62); }
+html[data-brand] body #archiveModalBody .gunghap-owned-row { display:flex; align-items:stretch; gap:8px; }
+html[data-brand] body #archiveModalBody .gunghap-owned-open { flex:1; min-width:0; display:flex; flex-direction:column; align-items:flex-start; gap:2px; padding:10px 12px; text-align:left; background:var(--c-paper-shade,#F1EEE7); border:1px solid var(--c-line,#D9D5CB); border-radius:8px; font:inherit; color:var(--c-ink,#1D2129); cursor:pointer; }
+html[data-brand] body #archiveModalBody .gunghap-owned-open strong { font-size:14px; font-weight:700; line-height:1.5; }
+html[data-brand] body #archiveModalBody .gunghap-owned-open span { font-size:12px; color:var(--c-ink-60,#575B62); }
+html[data-brand] body #archiveModalBody .gunghap-owned-del { flex:0 0 auto; display:flex; align-items:center; justify-content:center; min-width:56px; padding:0 12px; background:transparent; border:1px solid var(--c-line,#D9D5CB); border-radius:8px; font:inherit; font-size:13px; color:var(--c-ink-60,#575B62); cursor:pointer; }
+html[data-brand] body #archiveModalBody .gunghap-owned-del:hover,html[data-brand] body #archiveModalBody .gunghap-owned-del:focus-visible { border-color:var(--c-point,#B5341F); color:var(--c-point-deep,#8F2716); }
+/* 궁합 페이지 위에서 열리는 입력·충전·결제 창이 페이지 뒤로 가려지지 않게 */
+#gunghapModal,#chargeModal,#pgModal { z-index:2100; }
 html[data-brand] body #themeIntroModal .theme-intro-go { background:var(--c-ink); color:var(--c-paper); border-color:var(--c-ink); }
 
 /* 산 풀이의 목차 화면(풀이 팝업 안) */
