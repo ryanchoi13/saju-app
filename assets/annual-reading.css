@@ -22,9 +22,9 @@
 /* v3 월별 카드: 절기 기간 · 흐름 · 올해와 이어지는 점 · 이달의 초점 · 분야별 한 줄 · 할 일/피할 일 */
 :is(#archiveModalBody,.period-reading) .annual-month > .annual-month-period { font-weight:400; font-size:.875rem; color:var(--ui-muted,#425563); margin:-6px 0 14px; }
 :is(#archiveModalBody,.period-reading) .annual-month > p.annual-month-flow { font-weight:700; font-size:1rem!important; color:#22406C!important; }
-:is(#archiveModalBody,.period-reading) .annual-month > h5 { margin:18px 0 6px; font-size:.9rem!important; font-weight:800; color:var(--ui-accent,var(--c-ink,#1D2129)); }
+:is(#archiveModalBody,.period-reading) .annual-month > h5 { margin:18px 0 6px; font-size:1.125rem!important; line-height:1.6; font-weight:800; color:var(--ui-accent,var(--c-ink,#1D2129)); }
 :is(#archiveModalBody,.period-reading) .annual-month-lines { list-style:none; margin:0 0 1.15em; padding:0; }
-:is(#archiveModalBody,.period-reading) .annual-month-lines li { display:grid; grid-template-columns:4.4em minmax(0,1fr); margin:0 0 .5em; line-height:1.8; }
+:is(#archiveModalBody,.period-reading) .annual-month-lines li { font-size:1rem; display:grid; grid-template-columns:4.4em minmax(0,1fr); margin:0 0 .5em; line-height:1.8; }
 :is(#archiveModalBody,.period-reading) .annual-month-lines strong { color:var(--ui-accent,var(--c-ink,#1D2129)); }
 :is(#archiveModalBody,.period-reading) :is(.annual-reading,.annual-month) { min-width:0; overflow-wrap:anywhere; word-break:keep-all; }
 :is(#archiveModalBody,.period-reading) :is(.annual-reading,.annual-month) p { margin:0 0 1.15em; line-height:1.9!important; }
