@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from app.engine.services.theme_voice import with_hashtags
+
 from collections import Counter
 from html import escape
 
@@ -423,6 +425,7 @@ def build_lifetime_study_report(core: MyeongriCoreResult, user_name: str, *, is_
     content = (f'<div class="theme-reading" data-theme="study" data-narrative-version="{STUDY_NARRATIVE_VERSION}" '
                f'data-unlocked="{str(unlocked).lower()}">' + free + gated + evidence + _uncertainty(core)
                + f'<p class="reading-caption">{escape(sec.DISCLAIMER)}</p></div>')
+    content = with_hashtags(content, core)
     return {"analysis_basis": state_basis(query["applied_state"]), "title": f"{escape(name)}님 정통 명리 평생 학업·시험운",
             "content": content, "narrative_version": STUDY_NARRATIVE_VERSION, "is_unlocked": unlocked,
             "evidence_summary": evidence_summary}
