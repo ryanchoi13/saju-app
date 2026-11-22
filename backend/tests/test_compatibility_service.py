@@ -21,7 +21,7 @@ class CompatibilityReportTests(unittest.TestCase):
     def test_report_uses_both_calculated_charts(self):
         report = build_compatibility_report(self.left, self.right, "테스트A", "테스트B", "연인 / 결혼")
         text = report["title"] + report["content"]
-        for marker in ["정통 사주 궁합", "한눈에 보기", "겉궁합 · 처음 만났을 때", "속궁합", "다툰 뒤 풀리는 법", "오래 함께할 때 · 앞으로 10년", "이 풀이의 근거", "출생 시간을 모르는"]:
+        for marker in ["정통 사주 궁합", "한눈에 보기", "첫인상과 끌림", "밤의 온도와 스킨십 코드", "싸우고 난 뒤, 이렇게 풀려요", "앞으로 10년", "이 풀이의 근거", "출생 시간을 모르는"]:
             self.assertIn(marker, text)
 
     def test_report_has_no_fixed_score_or_old_boilerplate(self):
@@ -50,7 +50,7 @@ class CompatibilityReportTests(unittest.TestCase):
         items = _cross_interactions(left, right)
         self.assertTrue(any(item["kind"] == "원진살" and item["importance"] == 3 for item in items))
         report = build_compatibility_report(left, right, "테스트A", "테스트B", "연인 / 결혼")
-        self.assertIn("서운함을 말하지 않고 쌓아 두면", report["content"].split("<details")[0])
+        self.assertIn("작은 찜찜함을 조심해야 해요", report["content"].split("<details")[0])
 
     def test_day_branch_can_activate_cross_chart_peach_blossom(self):
         left = self.left.model_copy(deep=True)
@@ -68,7 +68,7 @@ class CompatibilityReportTests(unittest.TestCase):
         partner = {"name": "테스트B", "gender": "female", "birth_year": 1992, "birth_month": 6, "birth_day": 18, "calendar_type": "solar", "sijin_index": -1}
         report = generate_detailed_report("gunghap", "기본", "테스트B", "연인 / 결혼", "테스트A", user=user, partner=partner)
         self.assertIn("테스트A님 & 테스트B님", report["title"])
-        self.assertIn("오래 함께할 때 · 앞으로 10년", report["content"])
+        self.assertIn("앞으로 10년", report["content"])
 
 
 class CompatibilityVerdictTests(unittest.TestCase):
@@ -98,7 +98,7 @@ class CompatibilityIntimacyTests(unittest.TestCase):
         me, other = core(1978, 3, 13, 10, "male"), core(1984, 9, 2, 21, "female")
         lover = build_compatibility_report(me, other, "가", "나", "연인 / 결혼")["content"]
         self.assertIn('data-compat-section="intimacy"', lover)
-        self.assertIn("속궁합 · 끌림과 스킨십", lover)
+        self.assertIn("밤의 온도와 스킨십 코드", lover)
         for relation in ["친구 / 지인", "동업 / 비즈니스"]:
             self.assertNotIn("intimacy", build_compatibility_report(me, other, "가", "나", relation)["content"])
 
@@ -144,9 +144,9 @@ class CompatibilityV2Tests(unittest.TestCase):
         close = build_compatibility_report(self.me, other, "가", "나", "연인 / 결혼")["content"]
         work = build_compatibility_report(self.me, other, "가", "나", "동업 / 비즈니스")["content"]
         self.assertNotEqual(close, work)
-        self.assertIn("처음에 문서로 남길 약속", work)
-        self.assertNotIn("처음에 문서로 남길 약속", close)
-        self.assertIn("함께 정해 두면 편한 약속", close)
+        self.assertIn("손발이 척척 맞는 순간", work)
+        self.assertNotIn("손발이 척척 맞는 순간", close)
+        self.assertIn("우리가 찰떡같이 맞는 순간", close)
 
     def test_most_text_is_pair_specific(self):
         from collections import Counter
@@ -162,7 +162,7 @@ class CompatibilityV2Tests(unittest.TestCase):
         self.assertTrue(unknown.uncertainty.time_unknown)
         content = build_compatibility_report(self.me, unknown, "가", "나", "연인 / 결혼")["content"]
         self.assertIn("출생 시간을 모르는 쪽", content)
-        self.assertIn("오래 함께할 때 · 앞으로 10년", content)
+        self.assertIn("앞으로 10년", content)
 
     def test_six_combination_state_distinguishes_clash_and_contest(self):
         from types import SimpleNamespace as P
@@ -179,6 +179,71 @@ class CompatibilityV2Tests(unittest.TestCase):
         from app.engine.services import compat_copy as cc
         # 신호가 없을 때 쓰는 문장은 한 줄뿐이고, 풀이 칸을 채우는 공통 문단 은행은 없다.
         self.assertFalse(hasattr(cc, "PAIR_CHAPTERS"))
+
+
+class CompatibilityVoiceV2Tests(unittest.TestCase):
+    """2026-11-22 문장 규칙 v2: 쌍 그림·해시태그, 직역투 금지, 약한 신호 생략, 모두에게 같은 약속 목록 없음."""
+
+    @classmethod
+    def setUpClass(cls):
+        import random
+        random.seed(22)
+
+        def core(y, m, d, h, g):
+            return calculate_myeongri_core(
+                BirthInput(name="x", gender=g, birth_date=datetime.date(y, m, d), birth_time=datetime.time(h, 30)),
+                target_date=datetime.date(2026, 11, 22))
+        cls.core = staticmethod(core)
+        cls.pairs = [(core(random.randint(1965, 2005), random.randint(1, 12), random.randint(1, 28), random.randint(0, 23), "male"),
+                      core(random.randint(1965, 2005), random.randint(1, 12), random.randint(1, 28), random.randint(0, 23), "female"))
+                     for _ in range(30)]
+
+    def test_every_stem_pair_has_one_image(self):
+        from app.engine.services import compat_copy as cc
+        keys = {cc.STEMS[i] + cc.STEMS[j] for i in range(10) for j in range(i, 10)}
+        self.assertEqual(set(cc.PAIR), keys)
+        self.assertEqual(len({v[0] for v in cc.PAIR.values()}), 55)  # 해시태그가 겹치지 않는다
+        for key, (tag, image, plain) in cc.PAIR.items():
+            self.assertEqual("{q}" in image, key[0] != key[1], key)  # 같은 글자끼리는 두 분, 다르면 이름으로 나눈다
+
+    def test_body_has_no_literal_myeongri_phrasing(self):
+        import re
+        literal = re.compile("글자라|글자가|기운이|기운 사이|누르는 방향|원국|배우자 자리|일상의 리듬")
+        for i, (a, b) in enumerate(self.pairs):
+            relation = ["연인 / 결혼", "동업 / 비즈니스", "친구 / 지인"][i % 3]
+            body = build_compatibility_report(a, b, "가", "나", relation)["content"].split("<details")[0]
+            self.assertIsNone(literal.search(body), relation)
+            self.assertLessEqual(len(re.findall("기 쉬워요|기 쉽습니다", body)), 2)
+            self.assertNotIn("{", body)
+
+    def test_summary_shows_image_and_hashtags_after_the_score(self):
+        import re
+        a, b = self.core(1990, 5, 9, 10, "male"), self.core(1992, 5, 4, 10, "female")  # 甲 일간 × 庚 일간
+        html = build_compatibility_report(a, b, "민준", "서연", "연인 / 결혼")["content"]
+        self.assertLess(html.index("compat-verdict"), html.index("compat-image"))
+        self.assertIn("민준님은 큰 나무, 서연님은 그 나무에 닿는 도끼예요.", html)
+        tags = re.search(r'<p class="compat-tags">([^<]+)</p>', html).group(1).split()
+        self.assertEqual(tags[0], "#큰나무와도끼")
+        self.assertTrue(1 <= len(tags) <= 3 and all(t.startswith("#") for t in tags))
+        # 방향이 있는 신호는 이름으로 역할을 나눈다: 庚이 甲을 누르므로 정하는 쪽은 서연님.
+        self.assertIn("먼저 움직이는 쪽은 서연님이에요.", html)
+        self.assertIn("정하는 쪽은 서연님, 맞추는 쪽은 민준님이 돼요.", html)
+        # 이름을 바꿔 넣어도(왼쪽·오른쪽을 뒤집어도) 그림의 주인은 그대로다.
+        flipped = build_compatibility_report(b, a, "서연", "민준", "연인 / 결혼")["content"]
+        self.assertIn("민준님은 큰 나무, 서연님은 그 나무에 닿는 도끼예요.", flipped)
+        self.assertIn("먼저 움직이는 쪽은 서연님이에요.", flipped)
+
+    def test_question_title_only_when_the_body_can_answer(self):
+        a, same = self.core(1990, 5, 9, 10, "male"), self.core(1990, 5, 19, 10, "female")  # 둘 다 甲 일간
+        html = build_compatibility_report(a, same, "가", "나", "연인 / 결혼")["content"]
+        self.assertIn("첫인상과 끌림: 닮은 두 사람", html)
+        self.assertNotIn("누가 먼저 다가갈까", html)
+
+    def test_no_closing_list_shared_by_every_pair(self):
+        from app.engine.services import compat_copy as cc
+        self.assertFalse(hasattr(cc, "CLOSING"))
+        html = build_compatibility_report(*self.pairs[0], "가", "나", "연인 / 결혼")["content"]
+        self.assertNotIn('data-compat-section="closing"', html)
 
 
 if __name__ == "__main__":
