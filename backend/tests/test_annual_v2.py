@@ -340,10 +340,10 @@ class MonthGradeTests(TestCase):
     def test_reason_follows_the_grade_direction(self):
         items = [("day지 육합", 15), ("hour지 충", -8)]
         good = v2.month_grade("좋음", items)
-        self.assertIn("나 자신의 자리(일지)와 손잡는", good["reason"])
+        self.assertIn("나 자신의 자리(일지)에 힘을 보태는", good["reason"])
         caution = v2.month_grade("주의", items)
         self.assertIn("계획과 마무리의 자리(시지)", caution["reason"])
-        self.assertIn("(충)", caution["reason"])
+        self.assertIn("크게 흔들리는", caution["reason"])   # 11/23: '기운(충)' 같은 풀이말 대신 무슨 달인지를 말한다
         self.assertIn(caution["advice"], v2.ADVICE["caution"]["clash"])
         self.assertIn("함께", v2.month_grade("보통", items)["reason"])
 
@@ -368,7 +368,7 @@ class MonthGradeTests(TestCase):
         html = annual._render_month_card(11, r)
         self.assertIn("<h4>11월 · 주의</h4>", html)
         self.assertIn('data-grade="caution"', html)
-        self.assertIn("<strong>처방</strong>", html)
+        self.assertIn("<strong>이달은 이렇게</strong>", html)
 
 import unittest  # noqa: E402
 
@@ -412,3 +412,24 @@ class AnnualVoiceV2Tests(unittest.TestCase):
             self.assertEqual(area["paragraphs"]["lead"][start:start + 2], scene, area["area"])
             self.assertEqual((len(area["paragraphs"]["do"]), len(area["paragraphs"]["watch"])), (2, 2))
         self.assertEqual(annual_v2.validate_year(reading), [])
+
+    def test_overview_three_and_month_flow_are_rewritten_with_a_scene(self):
+        from app.engine.services import annual_v2, annual_voice
+        from app.engine.services.annual_copy import find_banned, split_sentences
+        self.assertEqual(set(annual_voice.OVERVIEW), set(annual_v2.GODS))
+        self.assertEqual(set(annual_voice.THREE), set(annual_v2.GODS))
+        self.assertEqual(set(annual_voice.MONTH_FLOW), set(annual_v2.GODS))
+        year = [s for g in annual_voice.OVERVIEW.values() for x in g for s in split_sentences(x)]
+        year += [s for g in annual_voice.THREE.values() for x in g for s in split_sentences(x)]
+        month = [s for g in annual_voice.MONTH_FLOW.values() for x in g for s in split_sentences(x)]
+        self.assertEqual(len(year + month), len(set(year + month)))
+        for s in year + month:
+            self.assertLessEqual(len(s), annual_v2.SENTENCE_MAX_LONG, s)
+            self.assertEqual(find_banned(s), [], s)
+            self.assertFalse(any(w in s for w in annual_v2.HEDGES + ("기 쉬",)), s)
+        # 조언("~세요")으로 끝나는 문장이 절반을 넘지 않는다
+        self.assertLess(sum(s.endswith("세요.") for s in year) / len(year), 0.3)
+        for flows in annual_voice.MONTH_FLOW.values():
+            for flow in flows:
+                self.assertEqual(len(split_sentences(flow)), 3, flow)
+

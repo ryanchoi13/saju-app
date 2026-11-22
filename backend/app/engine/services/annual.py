@@ -18,6 +18,7 @@ from app.engine.core.models import MyeongriCoreResult
 from app.engine.timing import calculate_timing
 from app.engine.calendar import to_solar
 from app.engine.semantic.overall import select_overall_domains, OVERALL_VERSION
+from app.engine.services import annual_voice
 from app.engine.services.annual_editorial import NARRATIVE_VERSION
 from app.engine.services.annual_copy import (
     CopyLedger, seed_from, flow_of,
@@ -244,8 +245,8 @@ def _render_month_card(month, reading):
     lines = "".join(f'<li><strong>{escape(l["label"])}</strong> {escape(l["text"])}</li>' for l in reading["lines"])
     period = f'<div class="annual-month-period">{escape(reading["period"])}</div>' if reading["period"] else ""
     g = reading.get("grade")
-    grade = (f'<p class="annual-month-grade" data-grade="{g["key"]}"><span class="annual-month-row"><strong>근거</strong><span>{escape(g["reason"])}</span></span>'
-             f'<span class="annual-month-row"><strong>처방</strong><span>{escape(g["advice"])}</span></span></p>') if g else ""
+    grade = (f'<p class="annual-month-grade" data-grade="{g["key"]}"><span class="annual-month-row"><strong>{annual_voice.MONTH_LABEL_REASON}</strong><span>{escape(g["reason"])}</span></span>'
+             f'<span class="annual-month-row"><strong>{annual_voice.MONTH_LABEL_ADVICE}</strong><span>{escape(g["advice"])}</span></span></p>') if g else ""
     link = (f'<h5>올해와 이어지는 점</h5><p>{escape(reading["link"])}</p>') if reading["link"] else ""
     return (
         f'<article data-report-month="{month}" data-flow="{reading["flow"]}" '

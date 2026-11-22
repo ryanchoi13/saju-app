@@ -21,7 +21,7 @@ from app.engine.services.annual_copy import (
 )
 
 V2_VERSION = "annual-v2"
-COPY_V2_VERSION = "dalha-annual-6"   # 11/15 분량 보강(총운·분야 두 단락·힘이 되는 사람·신살·개운법)
+COPY_V2_VERSION = "dalha-annual-7"   # 11/15 분량 보강(총운·분야 두 단락·힘이 되는 사람·신살·개운법)
 
 AREAS = (
     ("wealth", "재물"),
@@ -447,15 +447,18 @@ def compose_year(selection: dict) -> dict:
     ordered = center_keys + [k for k in AREA_KEYS if k not in center_keys]
     from app.engine.services import annual_depth
     more3 = annual_depth.THREE_MORE.get(god, annual_depth.THREE_MORE_GENERAL)
+    from app.engine.services import annual_voice
+    voice3 = annual_voice.THREE.get(god)
     return dict(
         version=COPY_V2_VERSION,
         god=god if god in GODS else None,
         title=bank["title"],
-        overview=list(bank["overview"]) + list(_overview_more(god)),
+        # 11/23: 총운·세 가지는 annual_voice 의 이어 쓴 문장을 먼저 쓴다(없는 십성만 옛 은행).
+        overview=list(annual_voice.OVERVIEW.get(god) or (list(bank["overview"]) + list(_overview_more(god)))),
         three=[
-            dict(key="best", label="가장 좋은 것", text=f'{bank["best"]} {more3[0]}'),
-            dict(key="caution", label="주의할 것", text=f'{bank["caution"]} {more3[1]}'),
-            dict(key="advice", label="한 가지 조언", text=f'{bank["advice"]} {more3[2]}'),
+            dict(key="best", label="가장 좋은 것", text=voice3[0] if voice3 else f'{bank["best"]} {more3[0]}'),
+            dict(key="caution", label="주의할 것", text=voice3[1] if voice3 else f'{bank["caution"]} {more3[1]}'),
+            dict(key="advice", label="한 가지 조언", text=voice3[2] if voice3 else f'{bank["advice"]} {more3[2]}'),
         ],
         centers=centers,
         areas=[block(k, k in center_keys) for k in ordered],
@@ -793,29 +796,30 @@ def _reason_kind(label: str) -> str:
 
 
 def _reason_text(label: str) -> str:
+    """그달 등급의 이유 한 문장. 11/23: '기운(합)·기울기' 같은 풀이말 대신 무슨 달인지를 그대로 말한다."""
     kind = _reason_kind(label)
     pos = POSITION_NAME.get(label.split("지")[0], "") if label[:1].isascii() else ""
     if kind == "join":
         if label == "일간 천간합":
-            return "나(일간)와 손잡는 기운(합)이 드는 달입니다."
+            return "나와 손발이 맞는 흐름이 들어오는 달입니다."
         if label in ("삼합", "방합"):
-            return "흩어진 기운이 한쪽으로 크게 모이는 달(삼합·방합)입니다."
-        return f"타고난 {pos}와 손잡는 기운(합)이 드는 달입니다."
+            return "흩어져 있던 힘이 한쪽으로 크게 모이는 달입니다."
+        return f"타고난 {pos}에 힘을 보태는 흐름이 드는 달입니다."
     return {
-        "clash": f"타고난 {pos}와 부딪히는 기운(충)이 드는 달입니다.",
-        "punish": f"타고난 {pos}와 마찰하는 기운(형)이 걸리는 달입니다.",
-        "harm": "타고난 사주와 작게 어긋나는 기운(해·파)이 걸리는 달입니다.",
-        "press": "나(일간)를 누르는 기운(극)이 드는 달입니다.",
-        "yong_good": "내 사주의 기울기를 바로잡아 주는 기운이 드는 달입니다.",
-        "yong_bad": "내 사주를 한쪽으로 더 기울게 하는 기운이 드는 달입니다.",
-        "fill": "타고난 사주에 모자란 오행을 채워주는 달입니다.",
-        "over": "타고난 사주에 이미 많은 오행이 더 쌓이는 달입니다.",
-        "stage_up": "기운이 차오르는 자리(12운성)에 드는 달입니다.",
-        "stage_down": "기운이 가라앉는 자리(12운성)에 드는 달입니다.",
-        "noble": "도움을 받는 자리(천을귀인)에 드는 달입니다.",
-        "literary": "배우고 쓰는 일에 힘이 붙는 자리(문창)에 드는 달입니다.",
-        "sharp": "기세가 날카로워지는 자리(양인·백호)에 드는 달입니다.",
-    }.get(kind, "타고난 사주와 크게 부딪히거나 맞물리는 기운이 없는 달입니다.")
+        "clash": f"타고난 {pos}가 크게 흔들리는 달입니다.",
+        "punish": f"타고난 {pos}에서 작은 마찰이 잦아지는 달입니다.",
+        "harm": "사소한 데서 조금씩 어긋나는 달입니다.",
+        "press": "나를 누르는 힘이 세지는 달입니다.",
+        "yong_good": "내게 모자랐던 쪽이 채워져 균형이 잡히는 달입니다.",
+        "yong_bad": "이미 치우친 쪽으로 더 쏠리는 달입니다.",
+        "fill": "타고난 사주에 모자란 것이 채워지는 달입니다.",
+        "over": "이미 넉넉한 것이 더 쌓여 넘치는 달입니다.",
+        "stage_up": "힘이 차오르는 달입니다.",
+        "stage_down": "힘이 가라앉아 쉬어 가야 하는 달입니다.",
+        "noble": "도와주는 사람이 나타나는 달입니다.",
+        "literary": "배우고 쓰는 일에 힘이 붙는 달입니다.",
+        "sharp": "기세가 날카로워지는 달입니다.",
+    }.get(kind, "크게 부딪히거나 맞물리는 일 없이 평소대로 흐르는 달입니다.")
 
 
 # 처방은 등급·이유별로 두세 개씩 두고 달에 따라 돌려 써서, 같은 이유가 여러 달에 나와도 글이 겹치지 않게 한다.
@@ -870,6 +874,11 @@ def month_grade(daily_grade: str | None, items: list[tuple[str, int]] | None, mo
                 basis=basis[0] if basis else None)
 
 
+def _voice_month_flow(god: str):
+    from app.engine.services import annual_voice
+    return annual_voice.MONTH_FLOW.get(god)
+
+
 def _take_if_free(ledger: CopyLedger, key: str, pool: list, offset: int):
     """풀이 남아 있으면 하나 고르고, 바닥났으면 None. (같은 문장을 다시 쓰지 않기 위해 빼는 쪽을 택한다)"""
     if not pool or not ledger.has_free(key, pool):
@@ -885,7 +894,7 @@ def compose_month(ledger: CopyLedger, month: int, *, month_god: str | None, year
     focus_area = focus_area if focus_area in FOCUS else "health"
     god = month_god if month_god in MONTH_FLOW else None
 
-    flow_text = ledger.take(f"m:flow:{god}", MONTH_FLOW[god] if god else GENERAL_FLOW, offset=month)[1]
+    flow_text = ledger.take(f"m:flow:{god}", (_voice_month_flow(god) or MONTH_FLOW[god]) if god else GENERAL_FLOW, offset=month)[1]
 
     link = None
     if god and year_god in FAMILY:
@@ -944,7 +953,8 @@ def validate_month(reading: dict) -> list[str]:
 # 검증 (테스트와 런타임 로그에서 함께 쓴다)
 # ---------------------------------------------------------------------------
 SENTENCE_MAX = 46
-SENTENCE_MAX_MONTH = 52
+SENTENCE_MAX_LONG = 72          # 11/23: 총운·세 가지는 짧은 문장과 이어진 문장을 섞는다(46자에 맞춰 토막 내지 않는다)
+SENTENCE_MAX_MONTH = 72         # 11/23: 월별 흐름도 장면 한 문장을 이어 쓴다(52 → 72)
 BASIS_SENTENCE_MAX = 64
 AREA_SENTENCE_MAX = 16          # 11/15 정오님 2.5~3배: 기본 4 + 이렇게 2 + 조심 2 + 근거·대운·초점 달
 AREA_SENTENCE_MAX_CENTRAL = 18  # 중심 분야는 흐름 1문장이 더 붙는다
@@ -975,7 +985,7 @@ def validate_year(reading: dict) -> list[str]:
     if not reading["areas"][0]["central"] and reading["centers"]:
         issues.append("중심 분야가 맨 위에 있지 않습니다")
     for s in sentences:
-        if len(s) > SENTENCE_MAX:
+        if len(s) > SENTENCE_MAX_LONG:
             issues.append(f"문장이 깁니다({len(s)}): {s}")
         if find_banned(s):
             issues.append(f"금기어 {find_banned(s)}: {s}")
