@@ -250,7 +250,7 @@ class BuilderStructureTests(TestCase):
 
     def test_sections_in_order(self):
         content = self.report["content"]
-        order = [content.index(t) for t in ("올해 총운", "올해의 세 가지", 'data-report-domain=', "12개월 흐름")]
+        order = [content.index(t) for t in ("올해 총운", "올해 꼭 기억할 세 가지", 'data-report-domain=', "12개월 흐름")]
         self.assertEqual(order, sorted(order))
         for area in v2.AREA_KEYS:
             self.assertEqual(content.count(f'data-report-domain="{area}"'), 1)
@@ -369,3 +369,46 @@ class MonthGradeTests(TestCase):
         self.assertIn("<h4>11월 · 주의</h4>", html)
         self.assertIn('data-grade="caution"', html)
         self.assertIn("<strong>처방</strong>", html)
+
+import unittest  # noqa: E402
+
+
+class AnnualVoiceV2Tests(unittest.TestCase):
+    """2026-11-22 문장 규칙 v2: 올해의 그림 한 줄, 해시태그 셋, 분야 칸은 장면으로 시작."""
+
+    def test_scene_and_image_banks_are_complete_and_within_the_year_rules(self):
+        from app.engine.services import annual_v2, annual_voice
+        from app.engine.services.annual_copy import find_banned
+        self.assertEqual(set(annual_voice.SCENE), set(annual_v2.GODS))
+        for god, areas in annual_voice.SCENE.items():
+            self.assertEqual(set(areas), set(annual_v2.AREA_KEYS), god)
+        self.assertEqual(len(annual_voice.YEAR_IMAGE), 10)
+        sentences = [s for g in annual_voice.SCENE.values() for pair in g.values() for s in pair]
+        sentences += [s for d in annual_voice.YEAR_IMAGE.values() for s in d.values()]
+        self.assertEqual(len(sentences), len(set(sentences)))
+        for s in sentences:
+            self.assertLessEqual(len(s), annual_v2.SENTENCE_MAX, s)
+            self.assertEqual(find_banned(s), [], s)
+            self.assertFalse(any(w in s for w in annual_v2.HEDGES + annual_v2.TIME_WORDS + ("기 쉬",)), s)
+
+    def test_year_tab_shows_image_tags_and_scene_first(self):
+        import datetime, re
+        from app.engine.core.models import BirthInput
+        from app.engine.orchestrator import calculate_myeongri_core
+        from app.engine.services import annual_v2, annual_voice, build_annual_overall_report
+        core = calculate_myeongri_core(
+            BirthInput(name="x", gender="male", birth_date=datetime.date(1988, 4, 12), birth_time=datetime.time(10, 30)),
+            target_date=datetime.date(2026, 11, 22))
+        report = build_annual_overall_report(core, "가", 2027)
+        reading, html = report["reading"], report["content"]
+        self.assertEqual(reading["image"], "촛불 곁에 불이 하나 더 켜지는 해입니다.")   # 丁 일간 × 2027 丁未(비견)
+        self.assertLess(html.index("annual-lead"), html.index("annual-image"))
+        tags = re.search(r'<p class="annual-tags">([^<]+)</p>', html).group(1).split()
+        self.assertEqual(len(tags), 3)
+        self.assertTrue(all(t.startswith("#") for t in tags))
+        for area in reading["areas"]:
+            scene = annual_voice.area_scene(reading["god"], area["area"])
+            start = 1 if area["central"] else 0
+            self.assertEqual(area["paragraphs"]["lead"][start:start + 2], scene, area["area"])
+            self.assertEqual((len(area["paragraphs"]["do"]), len(area["paragraphs"]["watch"])), (2, 2))
+        self.assertEqual(annual_v2.validate_year(reading), [])
