@@ -331,7 +331,8 @@ def _row_block(row, profile, seed, shift, heading, *, with_flip=True, style: int
     if used_scenes is not None and scene:
         used_scenes.add(scene)
     # 소제목이 이미 성향(결론)을 말하므로 본문은 장면으로 바로 들어간다. 장면이 없는 행만 성향 문장을 쓴다.
-    p1 = _p([scene or row["trait"]], allow_absolute=allow, where=f"row.{row['key']}")
+    p1 = _p([scene or row["trait"], copy.ROW_PRESSED.get(row["key"], "")], allow_absolute=allow,
+            droppable=(1,), where=f"row.{row['key']}")   # 평소의 모습 → 몰렸을 때의 모습(11/23)
     paras = [p1]
     if with_flip:
         flip = row["flip"] if row["flip"].startswith("다만") else "다만 " + row["flip"]

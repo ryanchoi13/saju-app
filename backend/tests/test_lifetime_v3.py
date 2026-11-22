@@ -146,6 +146,8 @@ class LifetimeVoiceV2Tests(unittest.TestCase):
     def test_every_dictionary_row_has_a_plain_title(self):
         from app.engine.services import now_me_copy as bank
         self.assertEqual(set(bank.ALL_ROWS), set(v3copy.ROW_HEAD))
+        self.assertEqual(set(bank.ALL_ROWS), set(v3copy.ROW_PRESSED))   # 11/23: 소단락마다 '몰렸을 때' 한 문장
+        self.assertEqual(len(set(v3copy.ROW_PRESSED.values())), len(v3copy.ROW_PRESSED))
 
     def test_body_keeps_structure_wording_out_and_never_repeats_a_sentence(self):
         random.seed(22)
