@@ -226,6 +226,7 @@ def _iyeyo(word: str) -> str:
 
 
 _EL_KO = {"木": "목(木)", "火": "화(火)", "土": "토(土)", "金": "금(金)", "水": "수(水)"}
+_EL_OBJ = {"木": "목(木)을", "火": "화(火)를", "土": "토(土)를", "金": "금(金)을", "水": "수(水)를"}
 
 
 def _this_year(core) -> int:
@@ -244,68 +245,93 @@ _CROSS_KIND = {"육합": ("six", "intact"), "충": ("clash", None), "형": ("pun
 
 
 _TAG = {"day": "가까운 자리", "month": "생활·일 자리", "year": "집안·배경 자리"}
+SHOW = 2    # 이 세기부터 본문에 쓴다(세기 1은 점수와 근거 상자에만)
+FULL = 3    # 이 세기부터 장면과 팁까지 쓴다(세기 2는 결론 한 줄)
+
+
+def _climate_kind(sig: dict) -> str | None:
+    tl, tr = sig["climate"]["L"], sig["climate"]["R"]
+    return "opposite" if {tl, tr} == {"cold", "hot"} else tl if tl == tr and tl in {"hot", "cold"} else None
+
+
+def _roles(sig: dict, a: str, b: str) -> dict:
+    """방향이 있는 신호에서 누가 어느 쪽인지. 방향이 없으면 그 열쇠를 넣지 않는다."""
+    gl, gr = GROUP.get(sig["gods"]["l_sees_r"]), GROUP.get(sig["gods"]["r_sees_l"])
+    out: dict = {}
+    if gl in _cc.MOVER_GROUPS:
+        out["mover"] = a
+    elif gr in _cc.MOVER_GROUPS:
+        out["mover"] = b
+    if sig["stem_rel"] == "control":
+        out["s"], out["w"] = (a, b) if gl == "wealth" else (b, a)
+    if sig["stem_rel"] == "generate":
+        out["g"], out["r"] = (a, b) if gl == "output" else (b, a)
+    if _climate_kind(sig) == "opposite":
+        out["c"], out["h"] = (a, b) if sig["climate"]["L"] == "cold" else (b, a)
+    return out
 
 
 def _candidates(sig: dict, variant: str, a: str, b: str, shensha: list[dict], interactions: list[dict] | None = None, lover: bool = False) -> list[dict]:
     ex = 1 if variant == "work" else 0
+    roles = _roles(sig, a, b)
     out: list[dict] = []
 
-    def add(good: bool, weight: int, first: str, extra: str, outer: bool = False, tag: str = ""):
-        out.append({"good": good, "weight": weight, "first": first, "extra": extra, "outer": outer, "tag": tag})
+    def add(good: bool, weight: int, hook: str, scene: str = "", tip: str = "", outer: bool = False, tag: str = "", hash_: str = ""):
+        out.append({"good": good, "weight": weight, "first": hook, "scene": scene, "extra": tip, "outer": outer, "tag": tag, "hash": hash_})
 
     for slot, info in sig["branches"].items():
         kind, state = info["kind"], info["state"]
         entry = _cc.KIND.get((kind, state) if kind == "six" else (kind, None))
         if not entry:
             continue
-        good, first, close_extra, work_extra = entry
+        good, hook, scene, close_tip, work_tip, hash_ = entry
         weight = _cc.SLOT_WEIGHT[variant][slot] + (1 if state == "intact" else 0)
-        add(good, weight, f"{_cc.SLOT[variant][slot]} {first}", work_extra if ex else close_extra, outer=slot in {"year", "month"}, tag=_TAG[slot])
+        add(good, weight, f"{_cc.SLOT[variant][slot]} {hook}", scene, work_tip if ex else close_tip, outer=slot in {"year", "month"}, tag=_TAG[slot], hash_=hash_)
     used = {(i["kind"], i["state"] if i["kind"] == "six" else None) for i in sig["branches"].values() if i["kind"]}
     crossed = 0
     for item in sorted(interactions or [], key=lambda i: -i["importance"]):
         key = _CROSS_KIND.get(item["kind"])
         if not key or item["left"] == item["right"] or item["importance"] < 2 or key in used or crossed >= 2:
             continue
-        good, first, close_extra, work_extra = _cc.KIND[key]
         used.add(key)
         crossed += 1
-        where = f"{a}님의 {_cc.ROLE[item['left']]}, {b}님의 {_cc.ROLE[item['right']]}가 만나는 곳에서는"
-        add(good, 1, f"{where} {re.sub(r'^두 사람[은이] ', '', first)}", work_extra if ex else close_extra, tag="엇갈려 만나는 자리")
-    stem = _cc.STEM_CAND.get(sig["stem_rel"])
-    if stem:
-        add(stem[0], 3 if variant == "close" else 2, stem[1], stem[3] if ex else stem[2], tag="서로를 보는 눈")
+        # 엇갈려 만나는 자리는 세기 1 — 점수에만 넣고 본문에는 쓰지 않는다(약한 신호는 생략).
+        add(_cc.KIND[key][0], 1, f"cross:{item['kind']}:{item['left']}:{item['right']}", tag="엇갈려 만나는 자리")
+    if sig["stem_rel"] == "six":
+        hook, scene, close_tip, work_tip, hash_ = _cc.STEM_SIX
+        add(True, 3 if variant == "close" else 2, hook, scene, work_tip if ex else close_tip, tag="서로를 보는 눈", hash_=hash_)
+    elif sig["stem_rel"] == "control" and "s" in roles:
+        hook, scene, tip, hash_ = (x.format(s=roles["s"], w=roles["w"]) for x in _cc.STEM_CONTROL[variant])
+        add(False, 3 if variant == "close" else 2, hook, scene, tip, tag="서로를 보는 눈", hash_=hash_)
     for who, other, els in ((a, b, sig["fills_l"]), (b, a, sig["fills_r"])):
         for el in els[:1]:
-            extra = (f"{who}님이 약한 부분은 {other}님에게 맡겨 보세요." if ex
-                     else f"{who}님이 지칠 때는 {other}님과 함께하는 시간을 일부러 늘려 보세요.")
-            add(True, 2, f"{other}님의 원국에는 {who}님에게 필요한 {_EL_KO[el]} 기운이 넉넉해서, 곁에 있으면 {who}님은 {_cc.EL_FILL[el]}.", extra, tag="서로 채워 주는 기운")
-    tl, tr = sig["climate"]["L"], sig["climate"]["R"]
-    kind = "opposite" if {tl, tr} == {"cold", "hot"} else tl if tl == tr and tl in {"hot", "cold"} else None
+            add(True, 2, _cc.FILL.format(x=who, y=other, el=_EL_OBJ[el], effect=_cc.EL_FILL[el]), tag="서로 채워 주는 기운", hash_=_cc.FILL_HASH)
+    kind = _climate_kind(sig)
     if kind:
-        good, first, close_extra, work_extra = _cc.CLIMATE[kind]
+        good, hook, close_scene, work_scene, close_tip, work_tip, hash_ = _cc.CLIMATE[kind]
+        fmt = {"c": roles.get("c", ""), "h": roles.get("h", "")}
         very = sig["climate"]["very"]["L"] or sig["climate"]["very"]["R"]
-        add(good, 3 + (1 if very else 0), first, work_extra if ex else close_extra, tag="두 사람의 온도")
+        add(good, 3 + (1 if very else 0), hook.format(**fmt), (work_scene if ex else close_scene).format(**fmt),
+            (work_tip if ex else close_tip).format(**fmt), tag="두 사람의 온도", hash_=hash_)
     for el in sig["heavy_both"][:1]:
         if (el, kind) in {("火", "hot"), ("水", "cold")}:
             continue  # 조후 문장과 같은 말이라 한 번만 쓴다
-        text, tip = _cc.EL_HEAVY[el]
-        add(False, 3, f"두 사람 모두 {_EL_KO[el]} 기운이 강해서 {text}.", tip, tag="함께 쏠린 기운")
+        hook, scene, tip, hash_ = _cc.EL_HEAVY[el]
+        add(False, 3, hook, scene, tip, tag="함께 쏠린 기운", hash_=hash_)
     for el in sig["lack_both"][:1]:
-        text, tip = _cc.EL_LACK[el]
-        add(False, 2, f"두 사람 모두 {_EL_KO[el]} 기운이 비어 있어 {text}.", tip, tag="함께 빈 기운")
+        hook, hash_ = _cc.EL_LACK[el]
+        add(False, 2, hook, tag="함께 빈 기운", hash_=hash_)
     kinds = {x["kind"]: x for x in sorted(shensha, key=lambda i: i["importance"])}  # 같은 종류는 가장 센 것이 남는다
     if "원진살" in kinds and kinds["원진살"]["importance"] >= 2:
-        _, first, close_extra, work_extra = _cc.SHENSHA["wonjin"]
-        add(False, 3, first, work_extra if ex else close_extra, tag="서로 거슬리는 기운")
+        _, hook, close_scene, work_scene, close_tip, work_tip, hash_ = _cc.SHENSHA["wonjin"]
+        add(False, 3, hook, work_scene if ex else close_scene, work_tip if ex else close_tip, tag="서로 거슬리는 기운", hash_=hash_)
     if variant == "close" and not lover and "도화살" in kinds and kinds["도화살"]["importance"] >= 2:  # 동업 풀이에는 쓰지 않는다
-        _, first, close_extra, work_extra = _cc.SHENSHA["dohwa"]
-        add(True, 2, first, work_extra if ex else close_extra, tag="서로 끌리는 매력")
+        add(True, 2, _cc.SHENSHA["dohwa"][1], tag="서로 끌리는 매력", hash_=_cc.SHENSHA["dohwa"][6])
     return out
 
 
 def _pick(cands: list[dict], good: bool, limit: int = 4) -> list[dict]:
-    pool = sorted((c for c in cands if c["good"] is good and not c.get("outer")), key=lambda c: -c["weight"])
+    pool = sorted((c for c in cands if c["good"] is good and not c.get("outer") and c["weight"] >= SHOW), key=lambda c: -c["weight"])
     seen, out = set(), []
     for c in pool:
         if c["first"] in seen:
@@ -316,13 +342,18 @@ def _pick(cands: list[dict], good: bool, limit: int = 4) -> list[dict]:
 
 
 def _ranked(items: list[dict], used: set | None = None) -> list[str]:
-    """센 신호 둘은 두 문장(풀이 + 처방), 나머지는 한 문장. 같은 처방 문장은 한 번만. 신호가 없으면 아무것도 채우지 않는다."""
+    """센 신호(세기 3↑)는 결론 + 장면 + 팁, 세기 2는 결론 한 줄, 세기 1은 쓰지 않는다. 같은 팁은 한 번만."""
     texts = []
     used = set() if used is None else used
-    for i, c in enumerate(items):
-        extra = c["extra"] if i < 2 and c["extra"] not in used else ""
+    for c in items:
+        if c["weight"] < SHOW:
+            continue
+        if c["weight"] < FULL:
+            texts.append(c["first"])
+            continue
+        tip = c["extra"] if c["extra"] and c["extra"] not in used else ""
         used.add(c["extra"])
-        texts.append(f"{c['first']} {extra}".strip())
+        texts.append(" ".join(x for x in (c["first"], c["scene"], tip) if x))
     return texts
 
 
@@ -330,15 +361,15 @@ def _intimacy(sig: dict, kinds: dict, a: str = "", b: str = "") -> list[str]:
     """연인 풀이의 속궁합 4문단: ① 한마디 결론 + 첫 끌림 ② 다가가는 방식 ③ 밤의 흐름과 푸는 법 ④ 속도·주도권·온도. 있는 신호만 쓴다."""
     day = sig["branches"].get("day") or {}
     key = (day.get("kind"), day.get("state") if day.get("kind") == "six" else None)
-    tl, tr = sig["climate"]["L"], sig["climate"]["R"]
-    ck = "opposite" if {tl, tr} == {"cold", "hot"} else tl if tl == tr and tl in {"hot", "cold"} else None
+    ck = _climate_kind(sig)
+    roles = _roles(sig, a, b)
     stem_rel = sig.get("stem_rel")
     kind = (_cc.INTIMACY_TYPE.get(key) or _cc.INTIMACY_TYPE_STEM.get(stem_rel)
             or _cc.INTIMACY_TYPE_CLIMATE.get(ck) or _cc.INTIMACY_TYPE_DEFAULT)
 
     first = [f"한마디로 두 분은 {kind}예요."]
     if _cc.INTIMACY_STEM.get(stem_rel):
-        first.append("바탕부터 보면 " + _cc.INTIMACY_STEM[stem_rel])
+        first.append(_cc.INTIMACY_STEM[stem_rel].format(**{k: roles.get(k, "") for k in ("s", "w", "g", "r")}))
     if sig.get("other_stem_six") and stem_rel != "six":
         first.append(_cc.INTIMACY_STEM_OTHER)
 
@@ -363,7 +394,7 @@ def _intimacy(sig: dict, kinds: dict, a: str = "", b: str = "") -> list[str]:
     third = [_cc.INTIMACY_DAY.get(key, _cc.INTIMACY_DAY_NONE)]
     for who, other, els in ((a, b, sig["fills_l"]), (b, a, sig["fills_r"])):
         if els and els[0] in _cc.INTIMACY_FILL:
-            line = _cc.INTIMACY_FILL[els[0]].format(x=who, y=other, el=_EL_KO[els[0]])
+            line = _cc.INTIMACY_FILL[els[0]].format(x=who, y=other)
             third.append(("반대로 " + line) if len(third) > 1 else line)
 
     fourth = []
@@ -375,7 +406,7 @@ def _intimacy(sig: dict, kinds: dict, a: str = "", b: str = "") -> list[str]:
             strong, weak = (a, b) if sl == "strong" else (b, a)
             fourth.append(_cc.INTIMACY_LEAD[("mixed", None)].format(s=strong, w=weak))
     if ck:
-        fourth.append(_cc.INTIMACY_CLIMATE[ck])
+        fourth.append(_cc.INTIMACY_CLIMATE[ck].format(c=roles.get("c", ""), h=roles.get("h", "")))
     if "도화살" in kinds and kinds["도화살"]["importance"] >= 2:
         fourth.append(_cc.INTIMACY_DOHWA)
 
@@ -416,7 +447,17 @@ def _tier(raw: int) -> tuple:
     return next(t for t in _cc.TIERS if raw >= t[0])
 
 
-def _summary(cands: list[dict], variant: str, extra_good: int) -> str:
+def _pair_image(left, right, a: str, b: str) -> tuple[str, str]:
+    """두 일간의 쌍 그림: (해시태그, 그림 한 문장 + 생활 말 한 문장)."""
+    ls, rs = left.natal_facts.day_master.stem, right.natal_facts.day_master.stem
+    first_is_left = _cc.STEMS.index(ls) <= _cc.STEMS.index(rs)
+    key = (ls + rs) if first_is_left else (rs + ls)
+    tag, image, plain = _cc.PAIR[key]
+    p, q = (a, b) if first_is_left else (b, a)
+    return tag, f"{image} {plain}".format(p=p, q=q)
+
+
+def _summary(cands: list[dict], variant: str, extra_good: int, pair: tuple[str, str]) -> str:
     raw = _raw(cands, extra_good)
     _, label, close_text, work_text = _tier(raw)
     uniq: dict[str, dict] = {}
@@ -424,43 +465,43 @@ def _summary(cands: list[dict], variant: str, extra_good: int) -> str:
         uniq.setdefault(c["first"], c)
     goods = [c for c in uniq.values() if c["good"]]
     hards = [c for c in uniq.values() if not c["good"]]
+    # 해시태그 셋: 쌍 그림 · 가장 센 맞는 신호 · 가장 센 부딪히는 신호(본문에 쓰는 신호에서만).
+    tags = [pair[0]]
+    top_good = next((c["hash"] for c in goods if c["weight"] >= SHOW and c["hash"]), _cc.SHENSHA["dohwa"][6] if extra_good else "")
+    top_hard = next((c["hash"] for c in hards if c["weight"] >= SHOW and c["hash"]), "")
+    tags += [t for t in (top_good, top_hard) if t]
     lines = [f'<p class="compat-verdict"><strong>{_score(raw)}점</strong> · {escape(label)}</p>',
+             f'<p class="compat-image">{escape(pair[1])}</p>',
+             f'<p class="compat-tags">{escape(" ".join("#" + t for t in tags))}</p>',
              f"<p>{escape(work_text if variant == 'work' else close_text)}</p>",
-             f"<p>맞는 신호 {len(goods) + (1 if extra_good else 0)}개 · 부딪히는 신호 {len(hards)}개</p>"]
-    if goods:
-        lines.append(f"<p>가장 잘 맞는 자리 · {escape(goods[0]['tag'])}</p>")
-    elif extra_good:
-        lines.append("<p>가장 잘 맞는 자리 · 서로 끌리는 매력</p>")
-    if hards:
-        lines.append(f"<p>가장 신경 쓸 자리 · {escape(hards[0]['tag'])}</p>")
-    lines.append(f'<p class="reading-caption">{escape(_cc.SCORE_NOTE)}</p>')
+             f"<p>맞는 신호 {len(goods) + (1 if extra_good else 0)}개 · 부딪히는 신호 {len(hards)}개</p>",
+             f'<p class="reading-caption">{escape(_cc.SCORE_NOTE)}</p>']
     return '<section data-compat-section="summary"><h2>한눈에 보기</h2>' + "".join(lines) + "</section>"
 
 
 def _decade(sig: dict, a: str, b: str) -> list[str]:
     cl, cr = sig["cycles"]["L"], sig["cycles"]["R"]
+    d = _cc.DECADE
     lines: list[str] = []
     if cl and cr:
-        lines.append(
-            f"지금 {a}님은 {cl['start_age']}~{cl['end_age']}세의 {_cc.CYCLE[cl['group']]} 10년을, "
-            f"{b}님은 {cr['start_age']}~{cr['end_age']}세의 {_cc.CYCLE[cr['group']]} 10년을 지나고 있어요.")
-        lines.append("두 사람의 10년이 같은 결이라 서로의 사정을 이해하기 쉬워요." if cl["group"] == cr["group"]
-                     else "10년의 결이 서로 달라서, 한 사람이 바쁠 때 다른 사람은 여유가 있을 수 있어요. 바쁜 쪽이 먼저 상황을 알려 주세요.")
+        lines.append(d["now"].format(a=a, b=b, la=cl["start_age"], lb=cl["end_age"], lc=_cc.CYCLE[cl["group"]],
+                                     ra=cr["start_age"], rb=cr["end_age"], rc=_cc.CYCLE[cr["group"]]))
+        lines.append(d["same"] if cl["group"] == cr["group"] else d["diff"])
     rows = sig["years"]
     both_good = [r["year"] for r in rows if r["L"] == "good" and r["R"] == "good"]
     both_hard = [r["year"] for r in rows if r["L"] == "hard" and r["R"] == "hard"]
     l_carry = [r["year"] for r in rows if r["L"] == "good" and r["R"] == "hard"]
     r_carry = [r["year"] for r in rows if r["R"] == "good" and r["L"] == "hard"]
     if both_good:
-        lines.append(f"{_years_text(both_good[:3])}은 두 사람 모두 기운을 받는 해예요. 함께 시작하고 싶은 일이 있다면 이때 맞춰 보세요.")
+        lines.append(d["both_good"].format(years=_years_text(both_good[:3])))
     if both_hard:
-        lines.append(f"{_years_text(both_hard[:3])}은 두 사람 모두 부담이 커지는 해예요. 큰 약속은 서두르지 말고 서로를 챙기는 데 쓰세요.")
+        lines.append(d["both_hard"].format(years=_years_text(both_hard[:3])))
     if l_carry:
-        lines.append(f"{_years_text(l_carry[:2])}은 {a}님은 힘을 받지만 {b}님은 부담이 있는 해예요. {a}님이 한 걸음 더 받쳐 주세요.")
+        lines.append(d["carry"].format(years=_years_text(l_carry[:2]), s=a, w=b))
     if r_carry:
-        lines.append(f"{_years_text(r_carry[:2])}은 {b}님은 힘을 받지만 {a}님은 부담이 있는 해예요. {b}님이 한 걸음 더 받쳐 주세요.")
+        lines.append(d["carry"].format(years=_years_text(r_carry[:2]), s=b, w=a))
     if not (both_good or both_hard or l_carry or r_carry):
-        lines.append("앞으로 10년 동안 두 사람이 눈에 띄게 겹치는 해는 없어요. 해마다 서로의 컨디션을 한 번씩 물어봐 주세요.")
+        lines.append(d["none"])
     return lines
 
 
@@ -478,14 +519,17 @@ def _evidence(sig: dict, interactions: list[dict], left, right, ln: str, rn: str
 
 
 def build_compatibility_report(left: MyeongriCoreResult, right: MyeongriCoreResult, left_name: str, right_name: str, relation: str) -> dict[str, str]:
-    """두 사람의 원국을 맞대어 읽는 궁합. 점수·단정 없이, 신호가 있는 만큼만 쓴다(compat_signals 참고)."""
+    """두 사람의 원국을 맞대어 읽는 궁합. 신호가 있는 만큼만 쓴다(compat_signals 참고). 문장 규칙은 compat_copy 머리말."""
     a, b = left_name or "회원", right_name or "상대방"
     safe_relation = relation if relation in _RELATION_GUIDE else "친구 / 지인"
     variant = _cc.VARIANT[safe_relation]
+    lover = safe_relation == "연인 / 결혼"
+    who = "lover" if lover else "work" if variant == "work" else "friend"
+    titles = _cc.TITLES[who]
     sig = analyze_pair(left, right, _this_year(left))
     interactions = _cross_interactions(left, right)
     shensha = [i for i in interactions if i["kind"] in {"원진살", "도화살"}]
-    cands = _candidates(sig, variant, a, b, shensha, interactions, lover=safe_relation == "연인 / 결혼")
+    cands = _candidates(sig, variant, a, b, shensha, interactions, lover=lover)
     kinds_ss = {x["kind"]: x for x in shensha}
     good, hard = _pick(cands, True), _pick(cands, False)
     gods = sig["gods"]
@@ -495,35 +539,47 @@ def build_compatibility_report(left: MyeongriCoreResult, right: MyeongriCoreResu
     def sec(key: str, title: str, values: list[str]) -> str:
         return f'<section data-compat-section="{key}"><h2>{escape(title)}</h2>{paragraphs(values)}</section>'
 
-    see = [f"{a}님에게 {b}님은 {view[gods['l_sees_r']]}으로 느껴져요.",
-           f"{b}님에게 {a}님은 {view[gods['r_sees_l']]}으로 느껴져요."]
-    outer = sorted((c for c in cands if c.get("outer")), key=lambda c: -c["weight"])[:2]
+    # 첫인상: 먼저 움직이는 쪽(방향이 있을 때만) → 그 사람의 눈에 비친 상대 → 반대쪽.
+    mover = _roles(sig, a, b).get("mover")
+    view_a = view[gods["l_sees_r"]].format(x=a, y=b)
+    view_b = (_cc.VIEW_SAME.format(x=a, y=b) if gods["r_sees_l"] == gods["l_sees_r"]
+              else view[gods["r_sees_l"]].format(x=b, y=a))
+    if mover:
+        first_view, second_view = (view_a, view_b) if mover == a else (view_b, view_a)
+        see = [f"{_cc.MOVER[who].format(m=mover)} {first_view}", second_view]
+    else:
+        see = [f"{_cc.MOVER_NONE[who]} {view_a}", view_b]
+    outer = sorted((c for c in cands if c.get("outer") and c["weight"] >= SHOW), key=lambda c: -c["weight"])[:2]
     shared: set = set()
-    outer_text = _ranked(outer, shared) or ["띠와 월 자리에서는 눈에 띄게 맞물리거나 부딪히는 신호가 없어요. 겉으로 보이는 인상은 평범하게 편안한 사이예요."]
+    outer_text = _ranked(outer, shared)
     fr_friction, fr_repair = _cc.FR[variant][gods["l_sees_r"]]
     fmt = {"a": a, "b": b}
     me_a, me_b = sig["self"]["L"], sig["self"]["R"]
     same_strength = me_a["strength"] == me_b["strength"]
-    inner = [f"{a}님은 {_cc.EL_SELF[me_a['top']]} 사람이에요." + ("" if same_strength else " " + _cc.STRENGTH_SELF[variant][me_a["strength"]]),
-             f"{b}님은 {_cc.EL_SELF[me_b['top']]} 사람이에요. "
-             + (_cc.STRENGTH_BOTH[variant][me_b["strength"]] if same_strength else _cc.STRENGTH_SELF[variant][me_b["strength"]]),
+    st = _cc.STRENGTH_SELF[variant]
+    if me_a["top"] == me_b["top"]:  # 같은 문장이 이름만 바뀌어 두 번 나오지 않게 한 번에 쓴다
+        inner = [_cc.EL_SELF_SAME.format(a=a, b=b, trait=_cc.EL_SELF[me_a["top"]]) + " "
+                 + (_cc.STRENGTH_BOTH[variant][me_b["strength"]] if same_strength
+                    else f"{a}님은 {st[me_a['strength']]} {b}님은 {st[me_b['strength']]}")]
+    else:
+        inner = [f"{a}님은 {_cc.EL_SELF[me_a['top']]} 사람이에요." + ("" if same_strength else " " + st[me_a["strength"]]),
+                 f"{b}님은 {_cc.EL_SELF[me_b['top']]} 사람이에요. "
+                 + (_cc.STRENGTH_BOTH[variant][me_b["strength"]] if same_strength else st[me_b["strength"]])]
+    inner += [
+             _cc.NEED_SAME.format(need=_iyeyo(_cc.NEED[variant][gods["l_sees_r"]])) if gods["l_sees_r"] == gods["r_sees_l"] else
              f"{a}님이 {b}님에게 바라는 것은 {_iyeyo(_cc.NEED[variant][gods['l_sees_r']])}. "
              f"{b}님이 {a}님에게 바라는 것은 {_iyeyo(_cc.NEED[variant][gods['r_sees_l']])}."]
-    phase = "가까워진 뒤" if variant == "close" else "함께 일하면"
-    dohwa_love = 2 if safe_relation == "연인 / 결혼" and "도화살" in kinds_ss and kinds_ss["도화살"]["importance"] >= 2 else 0
-    body = _summary(cands, variant, dohwa_love)
-    body += sec("outer", "겉궁합 · 처음 만났을 때", see + outer_text)
-    if safe_relation == "연인 / 결혼":  # 끌림·스킨십 이야기는 연인 풀이에만 쓴다
-        body += sec("intimacy", "속궁합 · 끌림과 스킨십", _intimacy(sig, kinds_ss, a, b))
-        body += sec("inner", "가까워질수록 보이는 속마음", inner)
-    else:
-        body += sec("inner", "속궁합 · 가까워질수록 보이는 속마음" if variant == "close" else "속궁합 · 같이 일해 볼수록 보이는 속모습", inner)
-    body += sec("good", f"{phase}, 잘 맞는 점", _ranked(good, shared) or ["두 원국을 맞대어 봐도 눈에 띄게 맞물리는 자리는 없어요. 닮은 점으로 가까워지기보다, 서로 다른 점을 알아 가며 가까워지는 사이예요."])
-    body += sec("hard", f"{phase}, 부딪히기 쉬운 점", _ranked(hard, shared) or ["두 원국을 맞대어 봐도 크게 부딪히는 신호는 보이지 않아요. 다만 생활 방식은 짐작하지 말고 직접 물어서 알아 가세요."])
-    body += sec("repair", "다툰 뒤 풀리는 법", [fr_friction.format(**fmt), fr_repair.format(**fmt)])
-    body += sec("decade", "오래 함께할 때 · 앞으로 10년", _decade(sig, a, b))
-    title, items = (_cc.CLOSING_FRIEND if safe_relation == "친구 / 지인" else _cc.CLOSING[variant])
-    body += sec("closing", title, list(items))
+    dohwa_love = 2 if lover and "도화살" in kinds_ss and kinds_ss["도화살"]["importance"] >= 2 else 0
+    body = _summary(cands, variant, dohwa_love, _pair_image(left, right, a, b))
+    body += sec("outer", titles["outer"][0 if mover else 1], see + outer_text)
+    if lover:  # 끌림·스킨십 이야기는 연인 풀이에만 쓴다
+        body += sec("intimacy", titles["intimacy"], _intimacy(sig, kinds_ss, a, b))
+    body += sec("inner", titles["inner"], inner)
+    body += sec("good", titles["good"], _ranked(good, shared) or [_cc.EMPTY["good"]])
+    body += sec("hard", titles["hard"], _ranked(hard, shared) or [_cc.EMPTY["hard"]])
+    body += sec("repair", titles["repair"], [fr_friction.format(**fmt), fr_repair.format(**fmt)])
+    carry = any({r["L"], r["R"]} == {"good", "hard"} for r in sig["years"])
+    body += sec("decade", titles["decade"][0 if carry else 1], _decade(sig, a, b))
     name_title = f"{escape(a)}님 & {escape(b)}님 정통 사주 궁합 감명서"
     uncertainty = (
         '<p class="reading-caption" data-compat-uncertainty="true">출생 시간을 모르는 쪽은 연·월·일 여섯 글자만으로 봤어요. '
