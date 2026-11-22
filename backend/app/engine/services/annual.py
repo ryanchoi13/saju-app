@@ -214,10 +214,16 @@ def _render_extras(reading):
 
 def _render_year(reading):
     parts = [
-        '<section class="annual-overview"><h3>올해 총운</h3>',
+        '<section class="annual-overview"><h3>올해 총운 · 나에게 어떤 해일까</h3>',
         f'<p class="annual-lead">{escape(reading["title"])}</p>',
+    ]
+    if reading.get("image"):      # 문장 규칙 v2(11/22): 일간 그림이 올해를 만나는 한 줄 + 해시태그 셋
+        parts.append(f'<p class="annual-image">{escape(reading["image"])}</p>')
+    if reading.get("tags"):
+        parts.append(f'<p class="annual-tags">{escape(" ".join(reading["tags"]))}</p>')
+    parts += [
         f'<p>{escape(" ".join(reading["overview"]))}</p></section>',
-        '<section class="annual-three"><h3>올해의 세 가지</h3>',
+        '<section class="annual-three"><h3>올해 꼭 기억할 세 가지</h3>',
     ]
     for item in reading["three"]:
         parts.append(f'<p data-annual-three="{item["key"]}"><strong>{escape(item["label"])}</strong><br>'
@@ -279,6 +285,13 @@ def build_annual_overall_report(core: MyeongriCoreResult, user_name: str, year: 
     selection = select_overall_domains(core, "annual", timing=timing)
     natal = select_overall_domains(core, "natal")
     reading = _annual_reading(selection, core, timing, year)
+    from app.engine.services import annual_voice
+    from app.engine.services.now_me_copy import DAY_MASTER_ROWS
+    day_pillar = (getattr(core.natal_facts, "pillars", None) or {}).get("day")
+    day_stem = getattr(day_pillar, "stem", None)
+    reading["image"] = annual_voice.year_image(day_stem, reading.get("god"))
+    center = next((a["label"] for a in reading["areas"] if a["central"]), None)
+    reading["tags"] = annual_voice.hashtags((DAY_MASTER_ROWS.get(day_stem) or {}).get("label"), reading.get("title"), center)
 
     # 같은 사람·같은 해에는 항상 같은 글, 다른 사람이면 다른 글이 되도록 시드를 고정한다.
     ledger = CopyLedger(seed_from(birth_date.isoformat(), year))

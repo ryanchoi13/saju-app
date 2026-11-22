@@ -21,7 +21,7 @@ from app.engine.services.annual_copy import (
 )
 
 V2_VERSION = "annual-v2"
-COPY_V2_VERSION = "dalha-annual-5"   # 11/15 분량 보강(총운·분야 두 단락·힘이 되는 사람·신살·개운법)
+COPY_V2_VERSION = "dalha-annual-6"   # 11/15 분량 보강(총운·분야 두 단락·힘이 되는 사람·신살·개운법)
 
 AREAS = (
     ("wealth", "재물"),
@@ -431,6 +431,13 @@ def compose_year(selection: dict) -> dict:
             if note:
                 lead += split_sentences(note)
         do, watch = annual_depth.area_more(god if god in GODS else None, area)
+        # 문장 규칙 v2(11/22): 분야 칸은 장면 두 문장으로 시작한다. 늘어난 만큼 조언 문장은 둘씩으로 줄인다.
+        from app.engine.services import annual_voice
+        scene = annual_voice.area_scene(god if god in GODS else None, area)
+        if scene:
+            head = lead[:1] if central else []          # 중심 분야는 '가장 크게 움직이는 분야' 문장 다음에 장면
+            lead = head + scene + lead[len(head):]
+            do, watch = do[:2], watch[:2]
         sentences = lead + do + watch
         return dict(area=area, label=AREA_LABEL[area], central=central,
                     mode=mode_of.get(area, "base"), sentences=sentences,
@@ -947,6 +954,8 @@ TIME_WORDS = ("지금", "이번 달", "이달", "오늘")
 
 def _year_sentences(reading: dict) -> list[str]:
     out = [reading["title"], *reading["overview"]]
+    if reading.get("image"):
+        out.append(reading["image"])
     for item in reading["three"]:
         out += split_sentences(item["text"])
     for area in reading["areas"]:
