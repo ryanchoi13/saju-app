@@ -16,6 +16,8 @@
 
 from __future__ import annotations
 
+from app.engine.services.theme_voice import with_hashtags
+
 from html import escape
 
 from app.engine.core.models import MyeongriCoreResult
@@ -52,9 +54,9 @@ _CLIMATE = {
     "very_hot_dry": "매우 덥고 건조한 환경",
 }
 _BOTTLENECK = {
-    "structural_damage": "생활의 기본 틀이 외부 변화와 충돌할 때 리듬이 흔들리기 쉬운 구조",
+    "structural_damage": "생활의 기본 틀이 외부 변화와 충돌할 때 리듬이 흔들리는 구조",
     "climate_extreme": "한난조습의 치우침을 먼저 완화해야 하는 구조",
-    "conflict": "여러 요구와 역할이 동시에 경쟁해 소모가 커지기 쉬운 구조",
+    "conflict": "여러 요구와 역할이 동시에 경쟁해 소모가 커지는 구조",
     "blocked_flow": "활동과 회복의 전환이 매끄럽지 않아 일정 조절이 필요한 구조",
     "bound_element": "한 역할이나 관계에 에너지가 오래 묶이지 않도록 점검할 구조",
     "unstable_root": "기초 체력·시간·도움 자원을 먼저 확보해야 하는 구조",
@@ -129,7 +131,7 @@ _SKELETON = (
 
 def _tier1_html(t1: dict) -> str:
     return (
-        '<section data-health-tier="1" data-paywall="free"><h2>에너지 흐름 읽기</h2>'
+        '<section data-health-tier="1" data-paywall="free"><h2>내 몸의 에너지는 어떻게 흐를까</h2>'
         f'<h3>{escape(t1["headline"])}</h3><p>{escape(t1["body"])}</p></section>')
 
 
@@ -139,7 +141,7 @@ def _tier2_html(boxes: list[dict]) -> str:
         f'<strong>{escape(b["title"])}</strong><p style="margin:4px 0 0;">{escape(b["text"])}</p></div>'
         for i, b in enumerate(boxes, start=1))
     return (
-        '<section data-health-tier="2" data-paywall="free"><h2>지칠 때 반복하기 쉬운 습관 2가지</h2>'
+        '<section data-health-tier="2" data-paywall="free"><h2>지칠 때 내가 되풀이하는 습관 2가지</h2>'
         f'<div style="display:grid;gap:8px;">{items}</div></section>')
 
 
@@ -426,6 +428,7 @@ def build_lifetime_health_report(
         + _tier1_html(t1) + _tier2_html(t2) + _boundary_html() + gated
         + evidence + _uncertainty(core)
         + f'<p class="reading-caption">{escape(copy.DISCLAIMER)}</p></div>')
+    content = with_hashtags(content, core)
     return {
         "analysis_basis": state_basis(query["applied_state"]),
         "title": f"{name}님 정통 명리 건강·웰빙 생활흐름",
