@@ -327,40 +327,59 @@ def _ranked(items: list[dict], used: set | None = None) -> list[str]:
 
 
 def _intimacy(sig: dict, kinds: dict, a: str = "", b: str = "") -> list[str]:
-    """연인 풀이의 속궁합: 일간 관계 → 각자의 결 → 분위기 → 일지 관계 → 채워 주는 기운 → 주도권 → 온도 → 도화. 있는 신호만, 모든 쌍에 같은 문장을 붙이지 않는다."""
-    lines = []
-    stem = _cc.INTIMACY_STEM.get(sig.get("stem_rel"))
-    if stem:
-        lines.append(stem)
-    if sig.get("other_stem_six") and sig.get("stem_rel") != "six":
-        lines.append(_cc.INTIMACY_STEM_OTHER)
-    gods = sig["gods"]
-    for x, y, g in ((a, b, gods["l_sees_r"]), (b, a, gods["r_sees_l"])):
-        if g in _cc.INTIMACY_GOD:
-            lines.append(_cc.INTIMACY_GOD[g].format(x=x, y=y))
-    for who, me in ((a, sig["self"]["L"]), (b, sig["self"]["R"])):
-        if me["top"] in _cc.INTIMACY_MOOD:
-            lines.append(_cc.INTIMACY_MOOD[me["top"]].format(x=who))
+    """연인 풀이의 속궁합 4문단: ① 한마디 결론 + 첫 끌림 ② 다가가는 방식 ③ 밤의 흐름과 푸는 법 ④ 속도·주도권·온도. 있는 신호만 쓴다."""
     day = sig["branches"].get("day") or {}
     key = (day.get("kind"), day.get("state") if day.get("kind") == "six" else None)
-    lines.append(_cc.INTIMACY_DAY.get(key, _cc.INTIMACY_DAY_NONE))
+    tl, tr = sig["climate"]["L"], sig["climate"]["R"]
+    ck = "opposite" if {tl, tr} == {"cold", "hot"} else tl if tl == tr and tl in {"hot", "cold"} else None
+    stem_rel = sig.get("stem_rel")
+    kind = (_cc.INTIMACY_TYPE.get(key) or _cc.INTIMACY_TYPE_STEM.get(stem_rel)
+            or _cc.INTIMACY_TYPE_CLIMATE.get(ck) or _cc.INTIMACY_TYPE_DEFAULT)
+
+    first = [f"한마디로 두 분은 {kind}예요."]
+    if _cc.INTIMACY_STEM.get(stem_rel):
+        first.append("바탕부터 보면 " + _cc.INTIMACY_STEM[stem_rel])
+    if sig.get("other_stem_six") and stem_rel != "six":
+        first.append(_cc.INTIMACY_STEM_OTHER)
+
+    gods = sig["gods"]
+    second = []
+    pairs = ((a, b, gods["l_sees_r"]), (b, a, gods["r_sees_l"]))
+    if pairs[0][2] in _cc.INTIMACY_GOD:
+        second.append(_cc.INTIMACY_GOD[pairs[0][2]].format(x=a, y=b))
+    if pairs[1][2] in _cc.INTIMACY_GOD:
+        if pairs[1][2] == pairs[0][2]:
+            second.append(_cc.INTIMACY_GOD_SAME.format(x=a, y=b))
+        else:
+            second.append(_cc.INTIMACY_GOD_SECOND + _cc.INTIMACY_GOD[pairs[1][2]].format(x=b, y=a))
+    ta, tb = sig["self"]["L"]["top"], sig["self"]["R"]["top"]
+    if ta in _cc.INTIMACY_MOOD_PHRASE and tb in _cc.INTIMACY_MOOD_PHRASE:
+        pa, pb = _cc.INTIMACY_MOOD_PHRASE[ta], _cc.INTIMACY_MOOD_PHRASE[tb]
+        if ta == tb:
+            second.append(_cc.INTIMACY_MOOD_SAME.format(a=pa))
+        else:
+            second.append(_cc.INTIMACY_MOOD_DIFF.format(x=a, y=b, a=pa, b=pb))
+
+    third = [_cc.INTIMACY_DAY.get(key, _cc.INTIMACY_DAY_NONE)]
     for who, other, els in ((a, b, sig["fills_l"]), (b, a, sig["fills_r"])):
         if els and els[0] in _cc.INTIMACY_FILL:
-            lines.append(_cc.INTIMACY_FILL[els[0]].format(x=who, y=other, el=_EL_KO[els[0]]))
+            line = _cc.INTIMACY_FILL[els[0]].format(x=who, y=other, el=_EL_KO[els[0]])
+            third.append(("반대로 " + line) if len(third) > 1 else line)
+
+    fourth = []
     sl, sr = sig["self"]["L"]["strength"], sig["self"]["R"]["strength"]
     if sl and sr:
         if sl == sr:
-            lines.append(_cc.INTIMACY_LEAD[(sl, sr)].format(a=a, b=b))
+            fourth.append(_cc.INTIMACY_LEAD[(sl, sr)].format(a=a, b=b))
         else:
             strong, weak = (a, b) if sl == "strong" else (b, a)
-            lines.append(_cc.INTIMACY_LEAD[("mixed", None)].format(s=strong, w=weak))
-    tl, tr = sig["climate"]["L"], sig["climate"]["R"]
-    ck = "opposite" if {tl, tr} == {"cold", "hot"} else tl if tl == tr and tl in {"hot", "cold"} else None
+            fourth.append(_cc.INTIMACY_LEAD[("mixed", None)].format(s=strong, w=weak))
     if ck:
-        lines.append(_cc.INTIMACY_CLIMATE[ck])
+        fourth.append(_cc.INTIMACY_CLIMATE[ck])
     if "도화살" in kinds and kinds["도화살"]["importance"] >= 2:
-        lines.append(_cc.INTIMACY_DOHWA)
-    return _drop_repeated_sentences(lines)
+        fourth.append(_cc.INTIMACY_DOHWA)
+
+    return _drop_repeated_sentences([" ".join(part) for part in (first, second, third, fourth) if part])
 
 
 def _drop_repeated_sentences(lines: list[str]) -> list[str]:
