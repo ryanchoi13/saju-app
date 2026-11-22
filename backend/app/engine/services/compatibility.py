@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 from html import escape
 from app.engine.services.reading_editorial import THEME_VERSION as VERSION, section, paragraphs
 from itertools import product
@@ -326,24 +327,74 @@ def _ranked(items: list[dict], used: set | None = None) -> list[str]:
 
 
 def _intimacy(sig: dict, kinds: dict, a: str = "", b: str = "") -> list[str]:
-    """연인 풀이의 속궁합: 일지 관계 · 조후 · 도화 순으로 있는 신호만 쓰고 마지막에 확인 한 줄."""
+    """연인 풀이의 속궁합 4문단: ① 한마디 결론 + 첫 끌림 ② 다가가는 방식 ③ 밤의 흐름과 푸는 법 ④ 속도·주도권·온도. 있는 신호만 쓴다."""
     day = sig["branches"].get("day") or {}
     key = (day.get("kind"), day.get("state") if day.get("kind") == "six" else None)
-    lines = []
-    gods = sig["gods"]
-    for x, y, g in ((a, b, gods["l_sees_r"]), (b, a, gods["r_sees_l"])):
-        if g in _cc.INTIMACY_GOD:
-            lines.append(_cc.INTIMACY_GOD[g].format(x=x, y=y))
-    if key in _cc.INTIMACY_DAY:
-        lines.append(_cc.INTIMACY_DAY[key])
     tl, tr = sig["climate"]["L"], sig["climate"]["R"]
     ck = "opposite" if {tl, tr} == {"cold", "hot"} else tl if tl == tr and tl in {"hot", "cold"} else None
+    stem_rel = sig.get("stem_rel")
+    kind = (_cc.INTIMACY_TYPE.get(key) or _cc.INTIMACY_TYPE_STEM.get(stem_rel)
+            or _cc.INTIMACY_TYPE_CLIMATE.get(ck) or _cc.INTIMACY_TYPE_DEFAULT)
+
+    first = [f"한마디로 두 분은 {kind}예요."]
+    if _cc.INTIMACY_STEM.get(stem_rel):
+        first.append("바탕부터 보면 " + _cc.INTIMACY_STEM[stem_rel])
+    if sig.get("other_stem_six") and stem_rel != "six":
+        first.append(_cc.INTIMACY_STEM_OTHER)
+
+    gods = sig["gods"]
+    second = []
+    pairs = ((a, b, gods["l_sees_r"]), (b, a, gods["r_sees_l"]))
+    if pairs[0][2] in _cc.INTIMACY_GOD:
+        second.append(_cc.INTIMACY_GOD[pairs[0][2]].format(x=a, y=b))
+    if pairs[1][2] in _cc.INTIMACY_GOD:
+        if pairs[1][2] == pairs[0][2]:
+            second.append(_cc.INTIMACY_GOD_SAME.format(x=a, y=b))
+        else:
+            second.append(_cc.INTIMACY_GOD_SECOND + _cc.INTIMACY_GOD[pairs[1][2]].format(x=b, y=a))
+    ta, tb = sig["self"]["L"]["top"], sig["self"]["R"]["top"]
+    if ta in _cc.INTIMACY_MOOD_PHRASE and tb in _cc.INTIMACY_MOOD_PHRASE:
+        pa, pb = _cc.INTIMACY_MOOD_PHRASE[ta], _cc.INTIMACY_MOOD_PHRASE[tb]
+        if ta == tb:
+            second.append(_cc.INTIMACY_MOOD_SAME.format(a=pa))
+        else:
+            second.append(_cc.INTIMACY_MOOD_DIFF.format(x=a, y=b, a=pa, b=pb))
+
+    third = [_cc.INTIMACY_DAY.get(key, _cc.INTIMACY_DAY_NONE)]
+    for who, other, els in ((a, b, sig["fills_l"]), (b, a, sig["fills_r"])):
+        if els and els[0] in _cc.INTIMACY_FILL:
+            line = _cc.INTIMACY_FILL[els[0]].format(x=who, y=other, el=_EL_KO[els[0]])
+            third.append(("반대로 " + line) if len(third) > 1 else line)
+
+    fourth = []
+    sl, sr = sig["self"]["L"]["strength"], sig["self"]["R"]["strength"]
+    if sl and sr:
+        if sl == sr:
+            fourth.append(_cc.INTIMACY_LEAD[(sl, sr)].format(a=a, b=b))
+        else:
+            strong, weak = (a, b) if sl == "strong" else (b, a)
+            fourth.append(_cc.INTIMACY_LEAD[("mixed", None)].format(s=strong, w=weak))
     if ck:
-        lines.append(_cc.INTIMACY_CLIMATE[ck])
+        fourth.append(_cc.INTIMACY_CLIMATE[ck])
     if "도화살" in kinds and kinds["도화살"]["importance"] >= 2:
-        lines.append(_cc.INTIMACY_DOHWA)
-    lines.append(_cc.INTIMACY_TIP)
-    return lines
+        fourth.append(_cc.INTIMACY_DOHWA)
+
+    return _drop_repeated_sentences([" ".join(part) for part in (first, second, third, fourth) if part])
+
+
+def _drop_repeated_sentences(lines: list[str]) -> list[str]:
+    """두 사람이 같은 유형이면 이름만 다른 문장이 겹치므로, 이미 나온 문장은 한 번만 쓴다."""
+    seen: set[str] = set()
+    out = []
+    for line in lines:
+        kept = []
+        for sentence in re.split(r"(?<=[.!?])\s+", line):
+            if sentence not in seen:
+                seen.add(sentence)
+                kept.append(sentence)
+        if kept:
+            out.append(" ".join(kept))
+    return out
 
 
 def _raw(cands: list[dict], extra_good: int = 0) -> int:
