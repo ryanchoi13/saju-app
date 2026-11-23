@@ -3,15 +3,20 @@
 2026-10-13 정오님: "와다에 너무 얽매이지 말자" → 두 목표 오행에서 대표 착장색을 하나씩 고른다.
 2026-10-28 정오님: 와다 배색 사전을 코드에서 완전히 뺀다. 색은 이 파일의 팔레트에서만 나온다.
 """
+import colorsys
+
 from fashion_v2.svg_recommendation import PALETTE
+
+STEMS = "甲乙丙丁戊己庚辛壬癸"
+BRANCHES = "子丑寅卯辰巳午未申酉戌亥"
 
 # 오행별 대표 착장색 (fashion_v2 팔레트 키). 튀는 색은 뒤 단계(연령·성별 규칙)가 소품·안 상의로 보낸다.
 ELEMENT_WEAR_TONES = {
-    "金": ("light_gray", "gray", "mid_gray", "ivory", "white"),
+    "金": ("light_gray", "gray", "mid_gray", "ivory", "white", "charcoal"),
     "水": ("navy", "black", "sky", "denim"),
     "木": ("olive", "sage", "forest", "teal"),
     "火": ("burgundy", "plum", "coral", "rust", "red", "lavender", "pink"),   # 이웃한 날끼리 톤이 겹치지 않게 섞은 순서
-    "土": ("beige", "camel", "brown", "butter"),
+    "土": ("beige", "camel", "brown", "butter", "mustard", "terracotta", "khaki"),
 }
 
 # 통관 오행 → 메인 옷에 쓸 가라앉은 톤 (fashion_v2 팔레트 키)
@@ -26,6 +31,53 @@ def element_tone_pair(first: str, second: str, day: int, salt: int):
     b = b_pool[(day * 3 + salt // 7) % len(b_pool)]
     if b == a:
         b = b_pool[(b_pool.index(b) + 1) % len(b_pool)]
+    return PALETTE[a], PALETTE[b]
+
+
+def _by_lightness(pool):
+    """팔레트 키를 밝은 쪽 → 어두운 쪽 순으로(HLS 명도, 같으면 이름순)."""
+    def light(key):
+        h = PALETTE[key]["hex"].lstrip("#")
+        r, g, b = (int(h[i:i + 2], 16) / 255 for i in (0, 2, 4))
+        return -colorsys.rgb_to_hls(r, g, b)[1], key
+    return sorted(pool, key=light)
+
+
+def ganji_index(ganji: str):
+    """60갑자 번호(甲子=0). 천간·지지 조합 값. 몰라서 못 구하면 None."""
+    if len(ganji) != 2 or ganji[0] not in STEMS or ganji[1] not in BRANCHES:
+        return None
+    s, b = STEMS.index(ganji[0]), BRANCHES.index(ganji[1])
+    return next((n for n in range(60) if n % 10 == s and n % 12 == b), None)
+
+
+def ganji_tone_pair(first: str, second: str, ganji: str):
+    """일진(천간·지지) 값으로 두 톤을 정한다. 날짜 번호 순환 대신.
+
+    60갑자는 하루마다 양·음이 번갈아 온다(甲子 양, 乙丑 음, ...). 이 성질을 이용한다.
+    - 1칸(A): 양의 날은 그 오행 톤 중 밝은 절반, 음의 날은 어두운 절반에서 고른다.
+    - 2칸(B): 항상 A의 반대쪽 절반에서 고른다.
+    그래서 어느 칸이든 이틀 연속 같은 오행이 나와도 밝은 톤 ↔ 어두운 톤이 교차한다.
+    절반 안에서는 지지 번호를 두 칸씩 밀며 돌려 같은 절반이 다시 올 때(이틀 뒤) 다른 톤이 된다.
+    """
+    n = ganji_index(ganji)
+    if n is None:
+        return None
+    a_sorted = _by_lightness(ELEMENT_WEAR_TONES.get(first) or ELEMENT_WEAR_TONES["金"])
+    b_sorted = _by_lightness(ELEMENT_WEAR_TONES.get(second) or ELEMENT_WEAR_TONES["水"])
+
+    def halves(pool):
+        k = (len(pool) + 1) // 2
+        return pool[:k], pool[k:] or pool[:k]
+
+    a_light, a_dark = halves(a_sorted)
+    b_light, b_dark = halves(b_sorted)
+    yang = n % 2 == 0
+    a_half, b_half = (a_light, b_dark) if yang else (a_dark, b_light)
+    a = a_half[(n % 12) // 2 % len(a_half)]
+    b = b_half[((n % 10) // 2 + 1) % len(b_half)]
+    if b == a:
+        b = b_half[(b_half.index(b) + 1) % len(b_half)]
     return PALETTE[a], PALETTE[b]
 
 
@@ -82,7 +134,8 @@ def todays_lucky_tones(core, today_fortune, day_ordinal: int, salt: int) -> dict
     if basis["source"] == "confirmed_natal_direction":
         # 코어가 용신 방향을 확정한 드문 경우는 예전(10/30) 그대로: 확정 오행 + 오늘 일간 오행
         today_element = core.timing.daily["pillar"]["stem_element"]
-        tone_a, tone_b = element_tone_pair(basis["primary_element"], today_element, day_ordinal, salt)
+        tone_a, tone_b = (ganji_tone_pair(basis["primary_element"], today_element, core.timing.daily["pillar"]["ganji"])
+                          or element_tone_pair(basis["primary_element"], today_element, day_ordinal, salt))
         element_a, tongguan = basis["primary_element"], today_fortune.get("tongguan")
         if tongguan:
             tone_a, element_a = tongguan_tone(tongguan["element"]), tongguan["element"]
@@ -120,7 +173,8 @@ def todays_lucky_tones(core, today_fortune, day_ordinal: int, salt: int) -> dict
             rest = [e for e in usable if e != first] or [e for e in ranking if e != first]
             second, second_rule = rest[0], "natal_rank"
 
-    tone_a, tone_b = element_tone_pair(first, second, day_ordinal, salt)
+    tone_a, tone_b = (ganji_tone_pair(first, second, core.timing.daily["pillar"]["ganji"])
+                      or element_tone_pair(first, second, day_ordinal, salt))
     element_a = first
     tongguan = today_fortune.get("tongguan")
     if tongguan and tiers.get(tongguan["element"]) == TIER_AVOID:
@@ -130,7 +184,8 @@ def todays_lucky_tones(core, today_fortune, day_ordinal: int, salt: int) -> dict
         tone_a, element_a = tongguan_tone(tg), tg
         if second == tg:
             second, second_rule = first, "tongguan_shift"
-            tone_b = element_tone_pair(first, first, day_ordinal, salt)[1]
+            tone_b = (ganji_tone_pair(first, first, core.timing.daily["pillar"]["ganji"])
+                      or element_tone_pair(first, first, day_ordinal, salt))[1]
         if tone_b["id"] == tone_a["id"]:
             pool = ELEMENT_WEAR_TONES.get(second) or ELEMENT_WEAR_TONES["水"]
             tone_b = PALETTE[pool[(pool.index(tone_b["id"]) + 1) % len(pool)]] if tone_b["id"] in pool else tone_b
@@ -139,3 +194,31 @@ def todays_lucky_tones(core, today_fortune, day_ordinal: int, salt: int) -> dict
     return dict(tone_a=tone_a, element_a=element_a, tone_b=tone_b, element_b=second,
                 fashion_element=element_a, today_element=second,
                 basis=basis, tongguan=tongguan)
+
+
+_EL_LABEL = {"木": "목(木)", "火": "화(火)", "土": "토(土)", "金": "금(金)", "水": "수(水)"}
+
+
+# 뜻은 같고 어조만 다른 연결 문구. 날짜 번호로 돌려서 이틀 연속 같은 문장이 나오지 않게 한다(2026-11-20).
+CONTINUATION_TEMPLATES = (
+    "어제에 이어 오늘도 {names}의 기운을 보충하는 날이에요.",
+    "어제처럼 오늘도 {names}의 기운이 필요한 날이에요.",
+    "{names}의 기운을 오늘도 한 번 더 채워 주세요.",
+    "어제 채운 {names}의 기운을 오늘도 이어 가요.",
+)
+
+
+def continuation_caption(prev: dict | None, today: dict, day_ordinal: int = 0) -> str:
+    """전날과 같은 칸(1칸끼리·2칸끼리)의 오행이 같으면 추천 사유 맨 앞에 붙일 연결 문구. 아니면 빈 문자열."""
+    if not prev:
+        return ""
+    same = []
+    for slot in ("element_a", "element_b"):
+        e = today.get(slot)
+        if e and e == prev.get(slot) and e not in same:
+            same.append(e)
+    if not same:
+        return ""
+    names = "·".join(_EL_LABEL.get(e, e) for e in same)
+    # n + n//4: 이틀 연속 같은 문장이 나오지 않으면서(차이가 1 또는 2) 4가지가 고르게 돌아간다. n % 4만 쓰면 쏠린다.
+    return CONTINUATION_TEMPLATES[(day_ordinal + day_ordinal // 4) % len(CONTINUATION_TEMPLATES)].format(names=names)

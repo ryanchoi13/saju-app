@@ -95,7 +95,7 @@
      ],
      [
       "black",
-      "beige"
+      "mustard"
      ],
      [
       "black",
@@ -115,11 +115,11 @@
      ],
      [
       "brown",
-      "burgundy"
+      "beige"
      ],
      [
       "brown",
-      "butter"
+      "burgundy"
      ],
      [
       "brown",
@@ -127,7 +127,7 @@
      ],
      [
       "brown",
-      "mid_gray"
+      "gray"
      ],
      [
       "brown",
@@ -159,7 +159,7 @@
      ],
      [
       "camel",
-      "beige"
+      "mustard"
      ],
      [
       "camel",
@@ -179,11 +179,11 @@
      ],
      [
       "coral",
-      "burgundy"
+      "beige"
      ],
      [
       "coral",
-      "butter"
+      "burgundy"
      ],
      [
       "coral",
@@ -191,7 +191,7 @@
      ],
      [
       "coral",
-      "mid_gray"
+      "gray"
      ],
      [
       "coral",
@@ -199,11 +199,11 @@
      ],
      [
       "forest",
-      "burgundy"
+      "beige"
      ],
      [
       "forest",
-      "butter"
+      "burgundy"
      ],
      [
       "forest",
@@ -211,7 +211,7 @@
      ],
      [
       "forest",
-      "mid_gray"
+      "gray"
      ],
      [
       "forest",
@@ -219,7 +219,7 @@
      ],
      [
       "gray",
-      "beige"
+      "mustard"
      ],
      [
       "gray",
@@ -259,11 +259,11 @@
      ],
      [
       "mid_gray",
-      "burgundy"
+      "beige"
      ],
      [
       "mid_gray",
-      "butter"
+      "burgundy"
      ],
      [
       "mid_gray",
@@ -271,7 +271,7 @@
      ],
      [
       "mid_gray",
-      "ivory"
+      "gray"
      ],
      [
       "mid_gray",
@@ -331,7 +331,7 @@
      ],
      [
       "plum",
-      "beige"
+      "mustard"
      ],
      [
       "plum",
@@ -351,7 +351,7 @@
      ],
      [
       "sage",
-      "beige"
+      "mustard"
      ],
      [
       "sage",
@@ -368,6 +368,10 @@
      [
       "sage",
       "white"
+     ],
+     [
+      "sky",
+      "beige"
      ],
      [
       "sky",
@@ -375,15 +379,11 @@
      ],
      [
       "sky",
-      "butter"
-     ],
-     [
-      "sky",
       "denim"
      ],
      [
       "sky",
-      "mid_gray"
+      "gray"
      ],
      [
       "sky",

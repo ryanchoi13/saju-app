@@ -129,6 +129,69 @@ class AccountSecurityTests(TestCase):
         restored=json.loads(subprocess.check_output([sys.executable,'-c',script],text=True))
         self.assertEqual(restored['balance'],550);self.assertEqual(len(restored['reports']),1)
 
+    def test_gunghap_is_bought_per_partner_and_never_charged_twice_for_the_same_one(self):
+        self.login();self.register()
+        def body(**kw):
+            b={'user_id':'user_qa-owner','report_key':'gunghap','cost':0,'partner_name':'가','relation':'연인',
+               'partner_gender':'female','partner_birth_year':1990,'partner_birth_month':5,'partner_birth_day':17,
+               'partner_calendar_type':'solar','partner_birth_hour':10,'partner_birth_minute':30}
+            b.update(kw);return b
+        post=lambda b:self.client.post('/api/reports/unlock',json=b)
+        r=post(body());self.assertEqual(r.status_code,200,r.text)
+        self.assertEqual((r.json()['new_balance'],len(r.json()['unlocked_reports']),r.json()['focus_index']),(750,1,0))
+        # 같은 상대·같은 관계(이름만 다름) → 결제 없이 그 풀이를 돌려준다.
+        r=post(body(partner_name='이름만 바꿈'))
+        self.assertEqual((r.json()['new_balance'],len(r.json()['unlocked_reports']),r.json()['focus_index']),(750,1,0))
+        # 다른 상대 → 새로 결제, 보관함에 하나 더.
+        r=post(body(partner_name='나',partner_birth_day=18))
+        self.assertEqual((r.json()['new_balance'],len(r.json()['unlocked_reports']),r.json()['focus_index']),(500,2,1))
+        # 같은 상대라도 관계가 다르면 다른 풀이.
+        r=post(body(relation='친구 / 지인'))
+        self.assertEqual((r.json()['new_balance'],len(r.json()['unlocked_reports']),r.json()['focus_index']),(250,3,2))
+        # 첫 상대를 다시 보내도 첫 풀이로 돌아가고, 잔액은 그대로.
+        r=post(body())
+        self.assertEqual((r.json()['new_balance'],len(r.json()['unlocked_reports']),r.json()['focus_index']),(250,3,0))
+        self.assertTrue(all('partner_key' not in x for x in r.json()['unlocked_reports']))
+        # 다른 풀이(daewoon 450)는 종류당 하나 규칙 그대로.
+        self.assertEqual(post({'user_id':'user_qa-owner','report_key':'daewoon','cost':0}).status_code,400)
+        # 복채가 모자라면 새 상대는 막힌다.
+        post(body(partner_name='또',partner_birth_year=1985))
+        r=post(body(partner_name='또또',partner_birth_year=1984))
+        self.assertEqual(r.status_code,400);self.assertEqual(r.json()['detail'],'Insufficient coins')
+        self.assertEqual(wallet_store.load('user_qa-owner')['balance'],0)
+
+    def test_gunghap_can_be_deleted_but_other_reports_and_wrong_targets_cannot(self):
+        self.login();self.register()
+        def body(**kw):
+            b={'user_id':'user_qa-owner','report_key':'gunghap','cost':0,'partner_name':'가','relation':'연인',
+               'partner_gender':'female','partner_birth_year':1990,'partner_birth_month':5,'partner_birth_day':17,
+               'partner_calendar_type':'solar','partner_birth_hour':10,'partner_birth_minute':30}
+            b.update(kw);return b
+        post=lambda path,b:self.client.post(path,json=b)
+        post('/api/reports/unlock',body());post('/api/reports/unlock',body(partner_name='나',partner_birth_day=18))
+        with patch.dict(os.environ, {'DALHA_TEST_USER_IDS':'user_qa-owner'}):   # 재물운은 아직 '곧 열려요'
+            post('/api/reports/unlock',{'user_id':'user_qa-owner','report_key':'wealth','cost':0})
+        reports=wallet_store.load('user_qa-owner')['reports']
+        self.assertEqual([r['report_key'] for r in reports],['gunghap','gunghap','wealth'])
+        title=reports[1]['report_title']
+        d=lambda **kw:post('/api/reports/delete',dict({'user_id':'user_qa-owner','report_key':'gunghap','index':1,'expected_title':title},**kw))
+        # 제목이 다르면(목록이 어긋남) 아무것도 지우지 않는다.
+        self.assertEqual(d(expected_title='다른 제목').status_code,409)
+        self.assertEqual(len(wallet_store.load('user_qa-owner')['reports']),3)
+        # 궁합이 아닌 풀이는 지울 수 없다.
+        self.assertEqual(d(report_key='wealth',index=2,expected_title=reports[2]['report_title']).status_code,422)
+        r=d();self.assertEqual(r.status_code,200,r.text)
+        self.assertEqual([x['report_key'] for x in r.json()['unlocked_reports']],['gunghap','wealth'])
+        # 복채는 돌려주지 않는다.
+        self.assertEqual(r.json()['new_balance'],wallet_store.load('user_qa-owner')['balance'])
+        # 같은 요청을 한 번 더 보내도(더블 클릭) 다른 풀이를 지우지 않는다.
+        self.assertEqual(d().status_code,409)
+        self.assertEqual(len(wallet_store.load('user_qa-owner')['reports']),2)
+        # 지운 상대는 다시 보면 새로 결제된다.
+        before=wallet_store.load('user_qa-owner')['balance']
+        r=post('/api/reports/unlock',body(partner_name='나',partner_birth_day=18))
+        self.assertEqual(r.json()['new_balance'],before-250)
+
     def test_unverified_charge_cannot_mint_coins(self):
         self.login()
         with patch.dict(os.environ, {'DALHA_TEST_USER_IDS':''}):
@@ -184,7 +247,8 @@ class AccountSecurityTests(TestCase):
             if sql.startswith('UPDATE account_assets') and params[0]==780:
                 raise RuntimeError('simulated write failure')
             return execute(conn,pg,sql,params)
-        with patch('wallet_store._execute',side_effect=fail_saved_report):
+        with patch('wallet_store._execute',side_effect=fail_saved_report), \
+                patch.dict(os.environ, {'DALHA_TEST_USER_IDS':'user_qa-owner'}):
             r=self.client.post('/api/reports/unlock',json={'user_id':'user_qa-owner','report_key':'wealth','cost':220})
         self.assertEqual(r.status_code,503)
         assets=wallet_store.load('user_qa-owner')

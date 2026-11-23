@@ -286,10 +286,9 @@ def _section(section_id: str, inner: str) -> str:
 
 
 def _line(section_id: str, text: str, link: str, evidence: str) -> str:
+    # 11/19 정오님: '궁합 보기·직업운 보기' 링크는 달지 않는다(link 인자는 호출부 호환용으로만 남김).
     return _section(section_id,
-                    f'<p class="now-me-line">{escape(text)} '
-                    f'<a class="now-me-link" href="{LINK_HREF[link]}" data-now-me-link="{link}">'
-                    f'{escape(copy.LINK_LABELS[link])}</a></p>'
+                    f'<p class="now-me-line">{escape(text)}</p>'
                     f'<small class="now-me-evidence">원국 · {escape(evidence)}</small>')
 
 

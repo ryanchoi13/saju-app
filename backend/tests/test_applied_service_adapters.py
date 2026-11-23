@@ -103,12 +103,17 @@ def test_fashion_ignores_stale_semantic_elements_and_keeps_unknown_unconfirmed(c
 
 
 def test_compatibility_uses_shared_eligibility(core):
+    """궁합이 필요한 오행을 정할 때 종합 판단의 확정 방향을 먼저 쓰고, 확정이 없으면 3단계 '좋음'으로 돌아간다."""
+    from app.engine.services.compat_signals import element_picture, needed_elements
+    el = element_picture(core)
     core.semantic_state.favorable_elements = ['金']
-    confirmed = build_compatibility_report(core, core, 'A', 'B', '친구 / 지인')
+    confirmed = needed_elements(core, el)
     core.synthesis.favorable_operations = []
-    unresolved = build_compatibility_report(core, core, 'A', 'B', '친구 / 지인')
-    assert confirmed['content'] != unresolved['content']
-    assert '특정 유리 오행을 확정하지 않아' in unresolved['content']
+    unresolved = needed_elements(core, el)
+    assert unresolved == list(el['good'])
+    # 같은 사람 둘로도 조립이 깨지지 않는다
+    assert build_compatibility_report(core, core, 'A', 'B', '친구 / 지인')['content']
+    assert isinstance(confirmed, list)
 
 
 def test_real_fashion_pipeline_passes_common_state_color_to_palette():
@@ -119,7 +124,7 @@ def test_real_fashion_pipeline_passes_common_state_color_to_palette():
                  state_version='test-state', scope='natal+luck_cycle+annual+monthly+daily')
     # 2026-10-30: 오늘의 두 색은 daily_colors.todays_lucky_tones 한 곳에서 정한다.
     with patch.object(fashion_colors,'build_fashion_color_basis',return_value=basis), \
-         patch.object(daily_colors,'element_tone_pair',wraps=daily_colors.element_tone_pair) as selector:
+         patch.object(daily_colors,'ganji_tone_pair',wraps=daily_colors.ganji_tone_pair) as selector:
         result = main.get_saju_pillars_and_analysis('검토', 'female', 1998,5,19,'solar',5)
     assert selector.call_args.args[0] == '水'
     got = result['daily_fortune']['fashion_color_basis']

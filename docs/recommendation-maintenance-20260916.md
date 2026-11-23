@@ -61,7 +61,7 @@
 python /path/to/benchmark_recommendation_maintenance.py /tmp/recommendation-result.json
 ```
 
-재현 스크립트: `scripts/benchmark_recommendation_maintenance.py`. 성능 수치는 환경에 따라 달라질 수 있다.
+재현 스크립트였던 `scripts/benchmark_recommendation_maintenance.py`는 옛 메뉴 탐색기(`ranked_menu.py`)용이라 2026-11-16에 함께 삭제했다(git 이력에서 확인). 성능 수치는 환경에 따라 달라질 수 있다.
 
 ## 후속 정리 순서
 

@@ -1,9 +1,6 @@
 /* 11/13 칸 번호 숫자 글꼴: Outfit Bold (SIL OFL 1.1, assets/fonts/OUTFIT-OFL.txt). 숫자만 쓰므로 라틴 부분만 직접 올림 */
 @font-face { font-family:'Dalha Num'; src:url('/assets/fonts/outfit-700-latin.woff2') format('woff2'); font-weight:700; font-style:normal; font-display:swap; unicode-range:U+0030-0039; }
 /* Readable hierarchy for both saved reports and newly generated readings. */
-#mealDailyCard #menuStatus { color:var(--c-ink,#1D2129)!important; font-size:15px!important; font-weight:700!important; background:transparent; border:0; padding:0; line-height:1.6; }
-@media(max-width:540px) { #mealDailyCard #menuStatus { font-size:13px!important; font-weight:600!important; } }
-@media(max-width:350px) { #mealDailyCard #menuStatus { font-size:12px!important; } }
 .meal-info-note p { margin:10px 0; line-height:1.8; }
 #mealDailyCard { scroll-margin-top:100px; }
 .lucky-item-art { width:55px; height:49px; display:block; margin:6px auto; }
@@ -25,7 +22,9 @@
 #unlockedArchiveList .archive-row { flex-wrap:nowrap; }
 #archiveModalBody .reading-plain-contents { padding:4px 0 18px; }
 #archiveModalBody .reading-plain-contents h3 { font-size:15px!important; font-weight:600; margin:0 0 10px; }
-#archiveModalBody .reading-plain-contents ol { margin:0; padding-left:24px; }
+#archiveModalBody .reading-plain-contents ol { margin:0; padding-left:0; list-style:none; }
+#archiveModalBody .reading-plain-contents li { display:flex; align-items:baseline; gap:12px; }
+#archiveModalBody .reading-plain-contents .toc-num { flex:0 0 24px; color:var(--c-point,#B5341F); font-family:'Dalha Num','Pretendard',sans-serif; font-weight:700; font-variant-numeric:tabular-nums lining-nums; }
 #archiveModalBody .reading-plain-contents li { font-size:14px!important; font-weight:400; line-height:1.8!important; margin:3px 0; }
 .archive-disclosure > summary { cursor:pointer; display:flex; justify-content:space-between; align-items:center; gap:10px; min-height:44px; }
 .archive-disclosure > summary::after { content:'펼치기 ＋'; font-size:12px; color:#59636D; white-space:nowrap; }
@@ -48,6 +47,8 @@ html[data-brand] .reading-view .card.reading-lead { background-image:url('/asset
 .now-me-label { display:block; margin-bottom:4px; color:var(--c-ink,#1D2129); font-weight:800; }
 .now-me-evidence { display:inline-block; font-size:12px; line-height:1.6; color:#59636D; background:#F3F0E8; border-radius:8px; padding:3px 9px; }
 .now-me-line { margin:0 0 8px!important; line-height:1.85; }
+/* 11/19 '궁합 보기·직업운 보기' 링크는 더 만들지 않는다. 이미 저장된 풀이에 남은 것은 숨긴다. */
+.now-me-link { display:none!important; }
 .now-me-link { margin-left:6px; color:var(--c-ink,#1D2129); font-weight:700; text-decoration:none; border-bottom:1px solid var(--c-point,#B5341F); white-space:nowrap; }
 .now-me-link:hover { border-bottom-color:var(--c-point,#B5341F); }
 .daewoon-free .now-me-section h3 { font-size:16px; font-weight:800; margin:18px 0 10px; color:var(--c-ink,#1D2129); }
@@ -77,6 +78,9 @@ html[data-brand] .reading-view .card.reading-lead { background-image:url('/asset
    큰 제목(번호 붙은 h3) 명조 22 > 소제목 h4 고딕 18 > 구간 h5 고딕 16 > 본문 16. */
 html[data-brand] #archiveModalBody .lifetime-v3 .reading-heading-copy { font-family:var(--brand-serif,'Noto Serif KR',serif)!important; font-size:22px!important; font-weight:600!important; line-height:1.5!important; }
 html[data-brand] #archiveModalBody .lifetime-v3 .reading-section-number { margin-top:3px; }
+/* 11/19 평생운세 칸 번호도 테마운 칸 번호와 같게: 회색 배지 없이 Outfit 24px 700 인주색 숫자만, 제목과 baseline 정렬 */
+html[data-brand] #archiveModalBody .lifetime-v3 .reading-section-heading { align-items:baseline!important; gap:10px!important; }
+html[data-brand] #archiveModalBody .lifetime-v3 .reading-section-number { background:none!important; padding:0!important; border-radius:0!important; margin:0!important; color:var(--c-point,#B5341F)!important; font-family:'Dalha Num','Pretendard',sans-serif!important; font-size:24px!important; font-weight:700!important; line-height:1!important; letter-spacing:0!important; font-variant-numeric:tabular-nums lining-nums; display:inline-block; min-width:30px; transform:translateY(1.5px); }
 html[data-brand] #archiveModalBody .lifetime-v3 h4 { font-family:'Pretendard',sans-serif!important; font-size:18px!important; font-weight:700!important; line-height:1.55!important; margin:28px 0 10px!important; }
 html[data-brand] #archiveModalBody .lifetime-v3 h5 { font-family:'Pretendard',sans-serif!important; font-size:16px!important; font-weight:700!important; line-height:1.55!important; }
 /* 테마 풀이 제목 위계 (11/04): 같은 브랜드 규칙이 접힌 근거의 h4(대운 구간·관계의 구조)와 번호 없는 h3를
@@ -205,3 +209,6 @@ html[data-brand] #archiveModalBody .theme-reading[data-theme] > section[data-pay
 
 /* 칸 번호: Outfit. 숫자 높이를 제목 한글 높이(20px Pretendard 기준 약 17.8px)에 맞추고 가운데 정렬(1.5px 내림) */
 html[data-brand] #archiveModalBody .theme-reading[data-theme] > section > h2 .reading-section-number { font-family:'Dalha Num','Pretendard',sans-serif!important; font-size:24px!important; font-weight:700!important; line-height:1!important; letter-spacing:0!important; font-variant-numeric:tabular-nums lining-nums; display:inline-block; min-width:30px; transform:translateY(1.5px); }
+/* 11/20 올해·월별 운세 등 나머지 풀이도 같은 번호 모양으로: 회색 배지 없이 인주색 숫자만 (평생운세·테마운과 동일) */
+html[data-brand] #archiveModalBody .reading-section-heading { align-items:baseline; gap:10px; }
+html[data-brand] #archiveModalBody .reading-section-heading > .reading-section-number { background:none!important; padding:0!important; border-radius:0!important; margin:0!important; color:var(--c-point,#B5341F)!important; font-family:'Dalha Num','Pretendard',sans-serif!important; font-size:24px!important; font-weight:700!important; line-height:1!important; letter-spacing:0!important; font-variant-numeric:tabular-nums lining-nums; display:inline-block; min-width:30px; transform:translateY(1.5px); }

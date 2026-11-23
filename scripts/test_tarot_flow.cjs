@@ -80,12 +80,18 @@ function fetcher(fn){w.fetch=async(url,options)=>{calls.push({url,...JSON.parse(
  const backs=[1,2,3].map(i=>w.getTarotCardBackSvg(i)).join('');
  const artDom=new JSDOM(backs);const ids=[...artDom.window.document.querySelectorAll('[id]')].map(el=>el.id);
  assert.equal(ids.length,new Set(ids).size);
- const types=['wood_growth','fire_vitality','earth_stability','metal_clarity','water_wisdom'];
- const talismans=types.map(t=>w.renderAuthenticCinnabarTalisman(t));assert.equal(new Set(talismans).size,5);
- assert.ok(talismans.every(svg=>!svg.includes('#FFE853')));
- run('currentTalisman={title:"결단정리부",power:"판단과 정리",desc:"차분한 마음",talisman_type:"metal_clarity"};');w.openTalismanModal();
+ // 오늘의 부적: 서버 spec 으로 그린다(분야·방향이 다르면 그림이 다르고, 같은 spec 이면 같은 그림, 글자·도장 없음).
+ run(fs.readFileSync('assets/talisman.js','utf8'));
+ const specs=[{domain:'money',dir:'good',element:'metal',layout:'dense',keys:['yu','bei','tian'],seed:1},{domain:'people',dir:'caution',element:'wood',layout:'dense',keys:['ren','kou','tian'],seed:2},{domain:'work',dir:'neutral',element:'water',layout:'simple',keys:['wave','ren','cross'],seed:3}];
+ const talismans=specs.map(sp=>{run('currentTalisman='+JSON.stringify({spec:sp})+';');return w.renderDailyTalisman(168);});
+ assert.equal(new Set(talismans).size,3);
+ assert.equal(talismans[0],(run('currentTalisman='+JSON.stringify({spec:specs[0]})+';'),w.renderDailyTalisman(168)));
+ assert.ok(talismans.every(svg=>!svg.includes('<text')&&!svg.includes('NaN')&&svg.includes('viewBox="0 0 200 334"')));
+ run('currentTalisman={spec:'+JSON.stringify({...specs[0],name:'곳간부',desc:'금전 흐름이 가벼운 날의 뜻을 담았어요.'})+'};');w.openTalismanModal();
+ assert.equal(doc.getElementById('talismanTitle').textContent,'곳간부');
+ assert.ok(doc.getElementById('talismanDesc').textContent.includes('금전'));
  assert.ok(doc.querySelector('#talismanRealBox #svgTalismanMain'));
  assert.ok(!doc.getElementById('talismanModal').textContent.includes('비급'));
- console.log('PASS free/paid direct draw, cancel, single flight, reread, server balance, retry ID, insufficient funds, automatic top-up return, account restore, cross-tab free conflict, coin icon order, card descriptions, five talismans, unique SVG IDs');
+ console.log('PASS free/paid direct draw, cancel, single flight, reread, server balance, retry ID, insufficient funds, automatic top-up return, account restore, cross-tab free conflict, coin icon order, card descriptions, spec-based talismans, unique SVG IDs');
  dom.window.close();
 })().catch(e=>{console.error(e);dom.window.close();process.exitCode=1;});

@@ -288,3 +288,18 @@ html[data-brand] #archiveModalBody .theme-reading .reading-phase { margin-top:14
 html[data-brand] #archiveModalBody .theme-reading .reading-phase summary { cursor:pointer; font-size:14px; padding:8px 0; }
 html[data-brand] #archiveModalBody .theme-reading .reading-cycle { padding:4px 0 16px; }
 html[data-brand] #themeSelectConfirm:disabled { opacity:.45; cursor:default; }
+
+/* 11/15: 풀이 읽기 화면은 점신처럼 화면 전체를 쓰고, 왼쪽 위 뒤로 가기 + 가운데 제목으로 간다.
+   (전에는 위아래에 어두운 틈이 남고 둥근 × 버튼이 달린 팝업이었다. 올해운세만 전체 화면이라 화면마다 달랐다.) */
+html[data-brand] #archiveDetailModal, #archiveDetailModal { padding:0!important; background:var(--ui-page,#F3F0E8); backdrop-filter:none; }
+html[data-brand] #archiveDetailModal > .modal-content, #archiveDetailModal > .modal-content {
+    height:100dvh!important; max-height:100dvh!important; max-width:640px!important;
+    border:0!important; border-radius:0!important; box-shadow:none!important;
+    padding:8px 20px max(12px,env(safe-area-inset-bottom))!important;
+}
+html[data-brand] #archiveDetailModal .reading-report-heading { grid-template-columns:44px minmax(0,1fr) 44px; gap:4px; border-bottom:0!important; padding-bottom:6px!important; margin:0!important; }
+html[data-brand] #archiveDetailModal #archiveModalTitle { text-align:center; font-size:17px!important; }
+html[data-brand] #archiveDetailModal #readingCloseButton, #archiveDetailModal #readingCloseButton {
+    width:44px; height:44px; min-width:44px; padding:0; border:0; border-radius:50%; background:transparent;
+    display:inline-flex; align-items:center; justify-content:center; color:var(--ui-ink,#1D2129);
+}

@@ -10,9 +10,9 @@
     <meta name="keywords" content="달하, 사주, 무료운세, 오늘의운세, 사주팔자, 무료사주, 신년운세, 궁합, 재물운, 연애운, 대운분석, 정통사주, 개운코디" />
     <link rel="canonical" href="https://dalha.kr/" />
 
-    <link rel="icon" type="image/svg+xml" href="/assets/brand-2026/app-icon.svg?v=20261031">
-    <link rel="icon" type="image/png" href="/assets/brand-2026/favicon.png?v=20261031">
-    <link rel="apple-touch-icon" href="/assets/brand-2026/apple-touch-icon.png?v=20261031">
+    <link rel="icon" type="image/svg+xml" href="/assets/brand-2026/app-icon.svg?v=20261120">
+    <link rel="icon" type="image/png" href="/assets/brand-2026/favicon.png?v=20261120">
+    <link rel="apple-touch-icon" href="/assets/brand-2026/apple-touch-icon.png?v=20261120">
     <link rel="manifest" href="/assets/brand-2026/site.webmanifest">
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://dalha.kr/" />
@@ -25,8 +25,9 @@
     <meta name="theme-color" content="#F8F6F1">
     <script src="/assets/design-init.js?v=20261001-4"></script>
     <script src="/assets/session-client.js?v=1"></script>
-    <link rel="stylesheet" href="/assets/annual-reading.css?v=20261108-p2">
-    <script src="/assets/annual-reader.js?v=20261108-p1" defer></script>
+    <script src="/assets/talisman.js?v=20261117-1"></script>
+    <link rel="stylesheet" href="/assets/annual-reading.css?v=20261121-h5">
+    <script src="/assets/annual-reader.js?v=20261117-flat4" defer></script>
     <script src="https://developers.kakao.com/sdk/js/kakao.min.js"></script>
     <script src="/assets/food-thumbnails-v1/catalog.js?v=3" defer></script>
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
@@ -48,6 +49,15 @@
         .card { background: #FFFFFF; border-radius: 20px; border: 1px solid #E2E8F0; padding: 18px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.03); position: relative; }
         .login-gate-card { background: radial-gradient(circle at center, #172746 0%, #0D1527 100%); border: 1.5px solid #E2C068; border-radius: 24px; padding: 32px 20px; text-align: center; color: white; display: flex; flex-direction: column; align-items: center; gap: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.4); margin-top: 10px; }
         .kakao-login-btn { width: 100%; background: #FEE500; color: #191919; border: none; font-size: 15px; font-weight: 800; padding: 15px; border-radius: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); transition: all 0.2s; }
+        /* 11/15: 정보 수정 화면의 뒤로 가기(처음 입력할 때는 숨김) */
+        .saju-edit-back { appearance:none; -webkit-appearance:none; display:flex; align-items:center; justify-content:center; width:44px; height:44px; margin:-8px 0 4px -10px; padding:0; border:0; border-radius:50%; background:transparent; color:var(--c-ink,#1D2129); cursor:pointer; }
+        .saju-edit-back.hidden { display:none; }
+        /* 11/15: 정보 수정은 오늘의 운세 창처럼 화면 가득, 위쪽에 ← 와 제목 */
+        #onboardingInputView.is-edit { position:fixed; inset:0; z-index:3200; margin:0; max-width:none; border:0; border-radius:0; box-shadow:none; overflow-y:auto; -webkit-overflow-scrolling:touch; background:#F8F6F1; padding:max(10px,env(safe-area-inset-top)) 20px 32px; }
+        #onboardingInputView.is-edit > * { max-width:600px; margin-left:auto; margin-right:auto; }
+        #onboardingInputView.is-edit .saju-first-only { display:none; }
+        #onboardingInputView.is-edit .saju-edit-back { position:absolute; left:6px; top:max(6px,env(safe-area-inset-top)); margin:0; z-index:1; }
+        #onboardingInputView.is-edit #sajuFormTitle { font-size:17px!important; margin:0 0 18px!important; min-height:44px; line-height:44px; }
         .gift-badge { background: #FEF3C7; color: #78350F; font-size: 12px; font-weight: 800; padding: 4px 12px; border-radius: 9999px; display: inline-block; }
 
         .user-profile-bar { background: #FFFFFF; border-radius: 16px; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; border: 1.5px solid #E2E8F0; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
@@ -65,20 +75,20 @@
 
         /* 명식표 천간/지지 본체: 리버스 진한 배경 + 흰 글씨 */
         .badge-elem-main { width: 44px; height: 44px; border-radius: 12px; display: inline-flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 900; color: #FFFFFF !important; box-shadow: 0 2px 4px rgba(0,0,0,0.12); }
-        .badge-main-wood { background: #4F6B4C; border: 1px solid #435C41; }
-        .badge-main-fire { background: #A9472F; border: 1px solid #923C28; }
-        .badge-main-earth { background: #93702F; border: 1px solid #7F6029; }
-        .badge-main-metal { background: #6B7178; border: 1px solid #5C6167; }
-        .badge-main-water { background: #2C4762; border: 1px solid #243B52; }
+        .badge-main-wood { background: #0B7A4B; border: 1px solid #096340; }
+        .badge-main-fire { background: #C42A1C; border: 1px solid #A82216; }
+        .badge-main-earth { background: #8A5A00; border: 1px solid #704800; }
+        .badge-main-metal { background: #4B5563; border: 1px solid #3C4450; }
+        .badge-main-water { background: #1F4FD8; border: 1px solid #1840B0; }
         .badge-main-none { background: #E4E1D9; color: #59636D !important; }
 
         /* 지장간: 연한 파스텔 배경 + 컬러 글씨 */
         .badge-jjg { width: 34px; height: 26px; border-radius: 6px; display: inline-flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; }
-        .elem-wood { background: #E8EDE3; color: #435C41; border: 1px solid #CCD6C5; }
-        .elem-fire { background: #F5E6DF; color: #923C28; border: 1px solid #E6C8BB; }
-        .elem-earth { background: #F3EBDB; color: #7F6029; border: 1px solid #E0D0AE; }
-        .elem-metal { background: #ECEDEE; color: #5C6167; border: 1px solid #D3D6D9; }
-        .elem-water { background: #E3E8EE; color: #243B52; border: 1px solid #C6D0DB; }
+        .elem-wood { background: #D9F2E3; color: #0B7A4B; border: 1px solid #B5E0C8; }
+        .elem-fire { background: #FFE0D9; color: #C42A1C; border: 1px solid #F5BFB3; }
+        .elem-earth { background: #FFEBB0; color: #8A5A00; border: 1px solid #EFD27A; }
+        .elem-metal { background: #E8ECF1; color: #4B5563; border: 1px solid #CBD2DB; }
+        .elem-water { background: #D7E5FF; color: #0F2C73; border: 1px solid #B2CBF5; }
         .elem-none { background: #F3F0E8; color: #8A8F94; border: 1px solid #DEDCD4; }
         
         .daily-banner { background: linear-gradient(135deg, #0D1527 0%, #17233D 100%); border: 1.5px solid #D4AF37; border-radius: 20px; padding: 20px 18px; color: white; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 10px 20px -3px rgba(13,21,39,0.25); margin-top: 4px; }
@@ -313,6 +323,13 @@
         .reading-view .reading-lead { background:var(--ui-surface); }
         .report-facts { color:var(--ui-muted); border-color:var(--ui-line); font-size:.875rem; gap:6px 18px; padding:14px 0; }
         .reading-caption, .reading-view .card > .reading-caption { color:var(--ui-muted); font-size:.875rem; line-height:1.85; }
+        .long-reading .compat-image { font-weight:600; }
+        .long-reading .compat-tags { color:var(--ui-muted); font-size:.9rem; word-break:keep-all; }
+        .lifetime-tags { color:var(--ui-muted); font-size:.9rem; word-break:keep-all; margin:4px 0 12px; }
+        .annual-image { font-weight:600; }
+        .annual-tags { color:var(--ui-muted); font-size:.9rem; word-break:keep-all; }
+        .theme-tags { color:var(--ui-muted); font-size:.9rem; word-break:keep-all; margin:0 0 12px; }
+        .reading-age-note { color:var(--ui-muted); font-size:.9rem; line-height:1.7; word-break:keep-all; margin:0 0 14px; }
         .reading-primary, .reading-view .report-entry > button { background:var(--ui-accent)!important; font-size:1rem!important; border-radius:14px!important; padding:16px 14px!important; min-height:52px; line-height:1.6; }
         .reading-section-title { margin:28px 2px 14px; flex-wrap:wrap; }
         .reading-section-title h3 { font-size:1.125rem; color:var(--ui-ink); }
@@ -541,25 +558,34 @@
 /* es-hangul 2.4.0 | MIT | Copyright (c) Viva Republica, Inc. | third_party/es-hangul-LICENSE */
 var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDescriptor;var N=Object.getOwnPropertyNames;var p=Object.prototype.hasOwnProperty;var S=(u,C)=>{for(var o in C)g(u,o,{get:C[o],enumerable:!0})},j=(u,C,o,n)=>{if(C&&typeof C=="object"||typeof C=="function")for(let t of N(C))!p.call(u,t)&&t!==o&&g(u,t,{get:()=>C[t],enumerable:!(n=d(C,t))||n.enumerable});return u};var O=u=>j(g({},"__esModule",{value:!0}),u);var R={};S(R,{josa:()=>D});var B=[..."\uAC01\uD7A3".normalize("NFD")].map(u=>u.charCodeAt(0)),c=44032,f=55203,i=28,E=21,_={"":"",\u3131:"\u3131",\u3132:"\u3132",\u3133:"\u3131\u3145",\u3134:"\u3134",\u3135:"\u3134\u3148",\u3136:"\u3134\u314E",\u3137:"\u3137",\u3138:"\u3138",\u3139:"\u3139",\u313A:"\u3139\u3131",\u313B:"\u3139\u3141",\u313C:"\u3139\u3142",\u313D:"\u3139\u3145",\u313E:"\u3139\u314C",\u313F:"\u3139\u314D",\u3140:"\u3139\u314E",\u3141:"\u3141",\u3142:"\u3142",\u3143:"\u3143",\u3144:"\u3142\u3145",\u3145:"\u3145",\u3146:"\u3146",\u3147:"\u3147",\u3148:"\u3148",\u3149:"\u3149",\u314A:"\u314A",\u314B:"\u314B",\u314C:"\u314C",\u314D:"\u314D",\u314E:"\u314E"},h={\u314F:"\u314F",\u3150:"\u3150",\u3151:"\u3151",\u3152:"\u3152",\u3153:"\u3153",\u3154:"\u3154",\u3155:"\u3155",\u3156:"\u3156",\u3157:"\u3157",\u3158:"\u3157\u314F",\u3159:"\u3157\u3150",\u315A:"\u3157\u3163",\u315B:"\u315B",\u315C:"\u315C",\u315D:"\u315C\u3153",\u315E:"\u315C\u3154",\u315F:"\u315C\u3163",\u3160:"\u3160",\u3161:"\u3161",\u3162:"\u3161\u3163",\u3163:"\u3163"},v=["\u3131","\u3132","\u3134","\u3137","\u3138","\u3139","\u3141","\u3142","\u3143","\u3145","\u3146","\u3147","\u3148","\u3149","\u314A","\u314B","\u314C","\u314D","\u314E"],m=Object.values(h),l=["","\u3131","\u3132","\u3133","\u3134","\u3135","\u3136","\u3137","\u3139","\u313A","\u313B","\u313C","\u313D","\u313E","\u313F","\u3140","\u3141","\u3142","\u3144","\u3145","\u3146","\u3147","\u3148","\u314A","\u314B","\u314C","\u314D","\u314E"].map(u=>_[u]),G=["","\uB9CC","\uC5B5","\uC870","\uACBD","\uD574","\uC790","\uC591","\uAD6C","\uAC04","\uC815","\uC7AC","\uADF9","\uD56D\uD558\uC0AC","\uC544\uC2B9\uAE30","\uB098\uC720\uD0C0","\uBD88\uAC00\uC0AC\uC758","\uBB34\uB7C9\uB300\uC218","\uAC81","\uC5C5"],P=G.length*4;var b={A:"\uC5D0\uC774",B:"\uBE44",C:"\uC528",D:"\uB514",E:"\uC774",F:"\uC5D0\uD504",G:"\uC9C0",H:"\uC5D0\uC774\uCE58",I:"\uC544\uC774",J:"\uC81C\uC774",K:"\uCF00\uC774",L:"\uC5D8",M:"\uC5E0",N:"\uC5D4",O:"\uC624",P:"\uD53C",Q:"\uD050",R:"\uC54C",S:"\uC5D0\uC2A4",T:"\uD2F0",U:"\uC720",V:"\uBE0C\uC774",W:"\uB354\uBE14\uC720",X:"\uC5D1\uC2A4",Y:"\uC640\uC774",Z:"\uC9C0"};function F(u){let C=u.charCodeAt(0);if(!(c<=C&&C<=f))return;let n=C-c,t=n%i,r=(n-t)/i%E,s=Math.floor((n-t)/i/E);return{choseong:v[s],jungseong:m[r],jongseong:l[t]}}function $(u,C){let o=u[u.length-1];if(o==null)return!1;let n=o.charCodeAt(0);if(n<c||n>f)return!1;let r=(n-c)%i,s=l[r].length;switch(C?.only){case"single":return s===1;case"double":return s===2;default:return r>0}}var e={START_CHOSEONG:B[0],START_JUNGSEONG:B[1],START_JONGSEONG:B[2],END_CHOSEONG:B[3],END_JUNGSEONG:B[4],END_JONGSEONG:B[5]};var x=new RegExp(`[^\\u${e.START_CHOSEONG.toString(16)}-\\u${e.END_CHOSEONG.toString(16)}\u3131-\u314E\\s]+`,"ug"),y=new RegExp(`[\\u${e.START_CHOSEONG.toString(16)}-\\u${e.END_CHOSEONG.toString(16)}]`,"g"),L=new RegExp(`[\\u${e.START_JUNGSEONG.toString(16)}-\\u${e.END_JUNGSEONG.toString(16)}\\u${e.START_JONGSEONG.toString(16)}-\\u${e.END_JONGSEONG.toString(16)}]+`,"ug");var U=new RegExp(`[^\\u${e.START_JUNGSEONG.toString(16)}-\\u${e.END_JUNGSEONG.toString(16)}\u314F-\u3163\\s]+`,"ug"),w=new RegExp(`[\\u${e.START_JUNGSEONG.toString(16)}-\\u${e.END_JUNGSEONG.toString(16)}]`,"g"),M=Object.keys(h);var k=new RegExp(`[^\\u${e.START_JONGSEONG.toString(16)}-\\u${e.END_JONGSEONG.toString(16)}\\s]+`,"ug"),W=new RegExp(`[\\u${e.START_JONGSEONG.toString(16)}-\\u${e.END_JONGSEONG.toString(16)}]`,"g"),V=l.slice(1).map(u=>Object.fromEntries(Object.entries(_).map(([C,o])=>[o,C]))[u]),T=["\uC73C\uB85C/\uB85C","\uC73C\uB85C\uC11C/\uB85C\uC11C","\uC73C\uB85C\uC368/\uB85C\uC368","\uC73C\uB85C\uBD80\uD130/\uB85C\uBD80\uD130"];function D(u,C){if(u.length===0)return u;if(/^[A-Z]+$/.test(u)){let o=u[u.length-1],n=b[o];return u+a(n,C)}return u+a(u,C)}D.pick=a;function a(u,C){var o;if(u.length===0)return C.split("/")[0];let n=$(u),t=n?0:1,r=n&&((o=F(u[u.length-1]))==null?void 0:o.jongseong)==="\u3139",s=n&&r&&T.includes(C);return(C==="\uC640/\uACFC"||s)&&(t=t===0?1:0),C.split("/")[t]}var J={\uBCA0\uAC2F\uC787:"\uBCA0\uAC20\uB2CF",\uAE7B\uC78E:"\uAE6C\uB2D9",\uB098\uBB47\uC78E:"\uB098\uBB38\uB2D9",\uB3C4\uB9AC\uAE7B\uC5F4:"\uB3C4\uB9AC\uAE6C\uB148",\uB4B7\uC737:"\uB4A8\uB27B"},H={\uC804\uC5ED:"\uC800\uB141"};var A=u=>C=>u[C],X=[A(J),A(H)];return O(R);})();
 </script>
-    <link rel="stylesheet" href="/assets/design-system.css?v=20261108-p1">
+    <link rel="stylesheet" href="/assets/design-system.css?v=20261121-el1">
     <link rel="stylesheet" href="/assets/tarot-v2.css?v=1">
     <link rel="stylesheet" href="/assets/reading-tabs-v2.css?v=20261108-p1">
-    <link rel="stylesheet" href="/assets/landing.css?v=1">
+    <link rel="stylesheet" href="/assets/landing.css?v=20261118-onepage">
     <script src="/assets/design-controls.js?v=20261001-4" defer></script>
     <script src="/assets/design-sample.js?v=20261029-1" defer></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;600;700&display=swap" rel="stylesheet">
-    <link id="dalhaBrandStyles" rel="stylesheet" href="/assets/brand-2026/brand.css?v=20261108-p1">
-    <link rel="stylesheet" href="/assets/reading-polish.css?v=20261113-study4">
-    <link rel="stylesheet" href="/assets/daily-card.css?v=20261113-s1">
-    <link rel="stylesheet" href="/assets/brand-2026/refine.css?v=20261115-toc4">
+    <link id="dalhaBrandStyles" rel="stylesheet" href="/assets/brand-2026/brand.css?v=20261115-reader">
+    <link rel="stylesheet" href="/assets/reading-polish.css?v=20261120-num1">
+    <link rel="stylesheet" href="/assets/daily-card.css?v=20261115-title">
+    <link rel="stylesheet" href="/assets/brand-2026/refine.css?v=20261121-gh4">
     <link href="https://fonts.googleapis.com/css2?family=Song+Myung&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/assets/brand-2026/ilryeok.css?v=20261108-p5">
+    <link rel="stylesheet" href="/assets/brand-2026/splash.css?v=20261121-s5">
     <script src="/assets/reading-polish.js?v=20261113-hier1" defer></script>
     <script src="/assets/brand-2026/brand-ui.js?v=20261108-p1" defer></script>
 </head>
 <body>
+    <div id="dalhaSplash" aria-hidden="true">
+        <svg class="sp-moon" viewBox="0 0 100 100"></svg>
+        <div class="sp-title">달하</div>
+        <div class="sp-date"></div>
+        <p class="sp-phrase">정읍사의 달빛처럼<br>당신의 앞날을 비춰요</p>
+        <div class="sp-seal">月</div>
+    </div>
+    <script src="/assets/brand-2026/splash.js?v=20261121-s4"></script>
 
     <div class="app-container">
 
@@ -583,59 +609,52 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             <!-- 로그인 게이트 -->
             <div id="view-login-gate" class="dalha-landing">
                 <section class="landing-hero" aria-labelledby="landing-title">
-                    <div class="landing-intro">
-                        <p class="landing-eyebrow">내 생활의 작은 지침서, 달하</p>
-                        <h1 id="landing-title">오늘의 생활부터<br>인생의 흐름까지,<br><em>나에게 가까운 운세.</em></h1>
-                        <p class="landing-description">오늘의 무료 운세와 옷차림·한 끼 추천부터,<br>나의 성향과 인생의 흐름, 마음에 걸리는 고민까지.<br class="landing-desktop-break"> 필요한 이야기를 달하에서 찾아보세요.</p>
-                        <div class="landing-actions">
-                            <button id="btnKakaoLogin" type="button" onclick="loginWithKakaoReal()" class="kakao-login-btn">
-                                <svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 3C6.5 3 2 6.6 2 11c0 2.8 1.9 5.3 4.8 6.7L6 21.5c-.1.3.2.6.5.4l4.4-2.9c.4 0 .7.1 1.1.1 5.5 0 10-3.6 10-8s-4.5-8-10-8z"/></svg>
-                                카카오로 나의 하루 시작하기
-                            </button>
-                            <a class="landing-text-link" href="#landing-preview">어떤 하루를 만나게 될까요? <span aria-hidden="true">↓</span></a>
+                    <p class="landing-eyebrow">나의 오늘 운세</p>
+                    <div class="landing-sheet-wrap">
+                        <div class="landing-sheet" role="img" aria-label="달하 서비스 소개 예시. 오늘의 행운 점수 92점, 서두르지 않아도 되는 날이에요. 오늘의 색은 올리브, 그레이, 아이보리. 추천 메뉴는 돌솥비빔밥, 설렁탕, 제육볶음, 아보카도 샐러드.">
+                            <div class="landing-sheet-in" aria-hidden="true">
+                                <span class="landing-hole" style="--l:15"></span><span class="landing-hole" style="--l:309"></span>
+                                <span class="landing-perf"></span>
+                                <span class="landing-moon"></span>
+                                <span class="landing-day" id="landingDay">18</span>
+                                <span class="landing-day-meta" id="landingDayMeta">11월 · 수요일</span>
+                                <span class="landing-example-label">소개용 예시</span>
+                                <div class="landing-stamp"><small>오늘의 행운</small><strong>92<em>점</em></strong></div>
+                                <h1 id="landing-title" class="landing-title">서두르지 않아도<br>되는 날이에요.</h1>
+                                                                <div class="landing-chip" style="--l:22;--t:238;--r:-8deg"><i style="background:#6B7A4B"></i><small>올리브</small></div>
+                                <div class="landing-chip" style="--l:80;--t:230;--r:3deg"><i style="background:#B8B4AA"></i><small>그레이</small></div>
+                                <div class="landing-chip" style="--l:138;--t:238;--r:10deg"><i style="background:#E8DFC9"></i><small>아이보리</small></div>
+                                <span class="landing-chip-note">오늘 더하면<br>좋은 색</span>
+                                <span class="landing-dish" style="--l:30.0;--t:341.0;--w:112.0;--h:101.9;--r:-4deg;--bw:822.56;--bx:-238.69;--by:-16.52"><i style="background-image:url(/assets/food-thumbnails-v1/food-01.webp)"></i></span><span class="landing-dish-name" style="--l:56.0;--t:454.0;--r:4deg">비빔밥</span>
+                            <span class="landing-dish" style="--l:188.0;--t:329.3;--w:108.0;--h:97.5;--r:5deg;--bw:786.73;--bx:-2.63;--by:-442.54"><i style="background-image:url(/assets/food-thumbnails-v1/food-02.webp)"></i></span><span class="landing-dish-name" style="--l:248.0;--t:438.0;--r:-5deg">설렁탕</span>
+                            <span class="landing-dish" style="--l:32.0;--t:465.0;--w:120.0;--h:94.0;--r:-6deg;--bw:896.00;--bx:-6.00;--by:-147.00"><i style="background-image:url(/assets/food-thumbnails-v1/food-03.webp)"></i></span><span class="landing-dish-name" style="--l:62.0;--t:564.0;--r:6deg">제육볶음</span>
+                            <span class="landing-dish" style="--l:186.0;--t:457.5;--w:112.0;--h:101.0;--r:4deg;--bw:822.56;--bx:-471.87;--by:-246.03"><i style="background-image:url(/assets/food-thumbnails-v1/food-05.webp)"></i></span><span class="landing-dish-name" style="--l:252.0;--t:562.0;--r:-4deg">샐러드</span>
+                                <span class="landing-spark" style="--l:150;--t:340;--d:0s">✦</span>
+                                <span class="landing-spark" style="--l:300;--t:440;--d:.9s">✦</span>
+                                <span class="landing-spark" style="--l:30;--t:456;--d:1.7s">✦</span>
+                            </div>
                         </div>
-                        <p class="landing-signup-note">처음 한 번, 이름과 생년월일 등 기본 정보를 입력해 주세요.<br>이미 가입했다면 같은 카카오 계정으로 이어서 이용할 수 있어요.</p>
                     </div>
-                    <div class="landing-scene" aria-label="달하 서비스 소개 예시">
-                        <div class="landing-orbit" aria-hidden="true"><span class="landing-moon"></span><span class="landing-star">✦</span></div>
-                        <div class="landing-day-card">
-                            <div class="landing-card-top"><span>DALHA · DAILY NOTE</span><span class="landing-example-label">소개용 예시</span></div>
-                            <p class="landing-card-caption">오늘, 나에게 건네는 한마디</p>
-                            <p class="landing-card-quote">조금 천천히,<br>나의 리듬을 찾아가는 날.</p>
-                            <div class="landing-card-rule"></div>
-                            <div class="landing-palette"><span>오늘의 색 힌트</span><div><i style="background:#E6DDCB"></i><i style="background:#6C8072"></i><i style="background:#283F4B"></i></div></div>
-                            <p class="landing-card-foot">운세의 한 줄이 일상의 작은 선택으로.</p>
-                        </div>
-                        <div class="landing-floating-note"><span aria-hidden="true">☾</span> 내 하루에 어울리는 작은 힌트</div>
+                    <div class="landing-actions">
+                        <p class="landing-gift"><span class="landing-gift-star" aria-hidden="true">✦</span><span>첫 가입 선물 <strong>복채 1,000</strong>을 드려요</span><span class="landing-gift-star" aria-hidden="true">✦</span></p>
+                        <button id="btnKakaoLogin" type="button" onclick="loginWithKakaoReal()" class="kakao-login-btn">
+                            <svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 3C6.5 3 2 6.6 2 11c0 2.8 1.9 5.3 4.8 6.7L6 21.5c-.1.3.2.6.5.4l4.4-2.9c.4 0 .7.1 1.1.1 5.5 0 10-3.6 10-8s-4.5-8-10-8z"/></svg>
+                            카카오로 시작하기
+                        </button>
                     </div>
                 </section>
-                <section id="landing-preview" class="landing-features" aria-labelledby="landing-features-title">
-                    <div class="landing-section-heading"><p class="landing-eyebrow">달하와 함께하는 하루</p><h2 id="landing-features-title">오늘, 뭐 입을까? 뭐 먹을까?<br>어떤 하루를 보낼까?</h2><p>막연한 운세를 넘어, 일상의 작은 선택까지.<br>오늘의 나에게 맞는 방향을 달하에서 찾아보세요.</p></div>
-                    <div class="landing-feature-grid">
-                        <article class="landing-feature">
-                            <div class="landing-feature-art landing-style-art" aria-hidden="true"><svg viewBox="0 0 220 150" fill="none"><path d="M77 27L95 19H125L143 27L175 59L151 80L140 66V131H80V66L69 80L45 59Z" fill="#E6DDCB" stroke="#A79F8D" stroke-width="1.5"/><path d="M95 19L110 38L125 19M110 38V131M80 66L77 27M140 66L143 27" stroke="#A79F8D" stroke-width="1.5"/><circle cx="115" cy="54" r="1.5" fill="#8C8779"/><circle cx="115" cy="75" r="1.5" fill="#8C8779"/><circle cx="115" cy="96" r="1.5" fill="#8C8779"/></svg><div class="landing-fabric-swatches"><i></i><i></i><i></i></div></div>
-                            <h3>오늘 나의 행운 색</h3><p>사주와 오늘의 기운으로 고른 두 가지 색.<br>옷이나 소품에 더해 보세요.</p>
-                        </article>
-                        <article class="landing-feature">
-                            <div class="landing-feature-art landing-food-art" aria-hidden="true"><div class="landing-plate"><span>아침</span><strong>점심</strong><span>저녁</span></div><span class="landing-food-note">오늘은 무엇을 먹을까?</span></div>
-                            <h3>오늘 나에게 맞는 식단</h3><p>오늘의 기운과 계절에 어울리는 메뉴를<br>아침·점심·저녁 두 가지씩 골라 드려요.</p>
-                        </article>
-                        <article class="landing-feature">
-                            <div class="landing-feature-art landing-fortune-art" aria-hidden="true"><span>오늘의 방향</span><strong>서두르기보다<br>하나씩, 차분하게.</strong><div class="landing-line"></div><small>나를 돌아보는 잠깐의 여유</small></div>
-                            <h3>오늘의 흐름을 읽어요</h3><p>사주를 바탕으로 오늘의 운세와<br>일상에서 참고할 조언을 확인해요.</p>
-                        </article>
-                    </div>
-                    <p class="landing-example-disclaimer">위 문구·색상·그림은 서비스 이해를 위한 예시이며, 실제 개인별 추천과 다릅니다.</p>
-                </section>
-                <section class="landing-start" aria-labelledby="landing-start-title"><h2 id="landing-start-title">정해진 운명보다,<br>내가 만들어갈 오늘.</h2><p>달하의 힌트를 참고해 나에게 맞는 선택을 해보세요.</p><a class="landing-start-link" href="#btnKakaoLogin">나의 하루 시작하기 <span aria-hidden="true">↗</span></a><p class="landing-first-time">카카오 로그인 → 기본 정보 입력 → 나의 달하</p></section>
                 <footer class="landing-footer"><span>달하 · DALHA</span><div class="landing-brand-story"><h2>당신의 일상을 비추는 달빛, 달하</h2><p>고대가요 「정읍사」에서 달을 부르는 말처럼,<br>달하는 삶의 갈림길에서 방향을 살피는 길잡이가 되고자 합니다.</p><p>생년월일과 태어난 시간을 바탕으로 사주를 구성하고,<br>음양오행과 전통 명리학의 해석 체계를 일상의 언어로 풀어냅니다.</p></div></footer>
+                <script>(function(){try{var f=function(o){return new Intl.DateTimeFormat('ko-KR',Object.assign({timeZone:'Asia/Seoul'},o)).format(new Date())};
+                    document.getElementById('landingDay').textContent=f({day:'numeric'}).replace(/\D/g,'');
+                    document.getElementById('landingDayMeta').textContent=f({month:'numeric'}).replace(/\D/g,'')+'월 · '+f({weekday:'long'});}catch(e){}})();</script>
             </div>
 
             <!-- 온보딩 명식 입력 폼 -->
             <div id="onboardingInputView" class="card hidden" style="text-align: center;">
-                <div class="gift-badge" style="margin-bottom: 12px;">🎁 카카오 연동 완료 (+1,000 복채 지급)</div>
-                <h2 style="font-size: 21px; font-weight: 800; margin-bottom: 2px; font-family: 'Noto Serif KR', serif;">사주 명식 입력</h2>
-                <p style="font-size: 13px; color: var(--c-ink-60,#575B62); margin-bottom: 16px;">처음 한 번만 정보를 입력해 주세요.<br>다음 로그인부터 저장된 정보로 이어서 이용할 수 있어요.</p>
+                <button type="button" id="sajuEditBack" class="saju-edit-back hidden" aria-label="뒤로 가기" onclick="closeSajuEditForm()"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+                <div class="gift-badge saju-first-only" style="margin-bottom: 12px;">🎁 카카오 연동 완료 (+1,000 복채 지급)</div>
+                <h2 id="sajuFormTitle" style="font-size: 21px; font-weight: 800; margin-bottom: 2px; font-family: 'Noto Serif KR', serif;">사주 명식 입력</h2>
+                <p class="saju-first-only" style="font-size: 13px; color: var(--c-ink-60,#575B62); margin-bottom: 16px;">처음 한 번만 정보를 입력해 주세요.<br>다음 로그인부터 저장된 정보로 이어서 이용할 수 있어요.</p>
                 <div id="kakaoProfileHelp" hidden style="margin-bottom:16px; text-align:left;">
                     <p id="kakaoProfileNotice" role="status" style="font-size:13px; color:var(--c-ink-60,#575B62); margin-bottom:8px;"></p>
                     <button id="btnKakaoProfile" type="button" class="kakao-login-btn hidden" onclick="requestKakaoProfileConsent()">카카오 정보 불러오기</button>
@@ -643,7 +662,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
 
                 <div class="form-group">
                     <label class="form-label">이름</label>
-                    <input type="text" id="inputName" class="form-input" placeholder="이름을 입력하세요" value="">
+                    <input type="text" id="inputName" class="form-input" placeholder="이름을 입력하세요" value="" maxlength="20">
                 </div>
                 
                 <div class="form-group">
@@ -678,7 +697,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                     </div>
                     <p id="birthTimeLegacyNote" class="reading-caption" hidden></p>
                 </div>
-                <button onclick="submitSajuRegistration()" class="btn-primary">정밀 감명서 발행하기</button>
+                <button id="btnSajuSubmit" onclick="submitSajuRegistration()" class="btn-primary">정밀 감명서 발행하기</button>
             </div>
 
             <!-- 탭 1: 오늘운세 -->
@@ -818,15 +837,8 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                             <div id="menuPhotoCards" class="menu-photos"></div>
                             <p id="menuRecommendationComment" class="menu-recommendation-comment" hidden></p>
                             <div id="menuExplorerControls" hidden>
-                                <div class="menu-mode-controls" role="group" aria-label="메뉴 종류">
-                                    <button id="menuMode-general" type="button" aria-pressed="true" onclick="DalhaMenu.changeMode('general')">일반식</button>
-                                    <button id="menuMode-diet" type="button" aria-pressed="false" onclick="DalhaMenu.changeMode('diet')">다이어트식</button>
-                                </div>
-                                <p id="menuStatus" class="menu-status" role="status"></p>
-                                <button id="menuNext" class="menu-next" type="button" onclick="DalhaMenu.next()">하루 세트 다시 추천</button>
                                 <details class="meal-info-note"><summary>식단 추천 이용 안내</summary><p><span id="mealGuideName">회원</span>님의 사주 원국과 오늘의 기운을 음양오행의 관점에서 참고해, 오늘의 한 끼에 어울리는 식단을 골라봤어요.</p><p>표시 열량은 음식 자료에 등록된 분량과 열량을 바탕으로 각 끼니를 합산한 추정치예요. 실제 섭취량과 조리법에 따라 달라질 수 있어요.</p><p>일상의 참고를 위한 정보이며, 건강·영양에 대한 전문적인 판단을 대신하지 않습니다.</p></details>
                             </div>
-                            <p id="menuError" class="menu-error" role="alert"></p>
                             <button id="menuPlanLike" type="button" onclick="togglePlanLike()" aria-label="오늘 식단 좋아요" aria-pressed="false" hidden style="border:0;background:transparent;color:var(--c-ink-60,#575B62);font-size:25px;cursor:pointer;padding:4px 10px;min-width:44px;min-height:44px;">♡</button>
                             <span id="menuLikeStatus" role="status" style="font-size:11px;color:var(--c-ink-60,#575B62);"></span>
                             <button id="menuModeToggle" hidden type="button" onclick="toggleMenuMode()" style="width: 100%; border: 1px solid #BBF7D0; background: #F0FDF4; color: #166534; border-radius: 8px; padding: 6px 8px; font-size: 11.5px; font-weight: 800; cursor: pointer;">다이어트 식단으로 보기</button>
@@ -864,8 +876,8 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                         </div>
                         <div class="drawer-body hidden" id="drawerBodyTalisman">
                             <div class="talisman-banner">
-                                <h3 id="talismanBannerHeader" class="dh-talisman-title">오늘의 오행 부적</h3>
-                                <div class="talisman-art"><div id="talismanBannerPreview" style="width: 84px; height: 144px; filter: drop-shadow(0 5px 7px rgba(67,50,30,0.14));"></div></div>
+                                <h3 id="talismanBannerHeader" class="dh-talisman-title">오늘의 부적</h3>
+                                <div class="talisman-art"><div id="talismanBannerPreview" style="width: 84px; height: 140px; filter: drop-shadow(0 5px 7px rgba(67,50,30,0.14));"></div></div>
                                 <p class="dh-talisman-note">하루의 시작에 마음을 가다듬고, 지키고 싶은 뜻을 새겨 보세요.</p>
                                 <button type="button" class="dh-btn" onclick="openTalismanModal()">부적 크게 보기</button>
                             </div>
@@ -979,7 +991,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 </header>
                 <div class="reading-profile">
                     <div><strong id="sajuOwnerName">내 정보</strong><p id="sajuOwnerMeta">입력한 생년정보를 확인해 주세요.</p></div>
-                    <button class="reading-text-button" onclick="reopenSajuEditForm()">정보 확인</button>
+                    <button class="reading-text-button reading-edit-btn" onclick="reopenSajuEditForm()">정보 수정</button>
                 </div>
                 <div class="reading-tabs" role="tablist" aria-label="나의 사주 살펴보기">
                     <button id="saju-tab-basic" role="tab" aria-selected="true" aria-controls="saju-basic" onclick="selectSajuSection('basic')">나의 사주</button>
@@ -993,10 +1005,10 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                         <p id="sajuSummaryText">타고난 성향과 현재 대운, 10년 단위 인생 흐름을 함께 읽어요. 올해·월별 운세는 별도 상품입니다.</p>
                     </section>
                     <details id="sajuEvidence" class="card reading-evidence" open>
-                        <summary>나의 여덟 글자와 오행 <span>접기·펼치기</span></summary>
+                        <summary>나의 원국(原局)과 오행 <span>접기·펼치기</span></summary>
 
                     <!-- 명식표 (2026-10-31 시안 511, 11-08 오행 색 칸): 연한 오행 칸 + 진한 한자 + 읽는 법. 일주는 남색 테두리 -->
-                    <div id="pillarChart" class="pc-grid" role="table" aria-label="사주 여덟 글자">
+                    <div id="pillarChart" class="pc-grid" role="table" aria-label="사주 원국">
                         <div class="pc-col pc-rowhead" aria-hidden="true"><span class="pc-label">&nbsp;</span><div class="pc-rh">천간</div><div class="pc-rh">지지</div><div class="pc-rh pc-rh-small">지장간</div></div>
                         <div class="pc-col">
                             <span class="pc-label">시</span>
@@ -1035,7 +1047,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                         </ul>
                         <p id="sajuStrengthLine" class="pc-strength" hidden></p>
                         <details class="pc-basis">
-                            <summary>풀이 근거</summary>
+                            <summary class="basis-sum">풀이 근거<i class="fold-caret" aria-hidden="true"></i></summary>
                             <p id="sajuStrengthBasis" class="pc-note"></p>
                             <p id="sajuElementsNote" class="pc-note">천간·지지의 표면 구성을 보여줍니다.</p>
                         </details>
@@ -1048,7 +1060,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                         <div class="report-facts"><span>성향 + 현재 대운 + 인생 흐름 · 한 번 구매</span><strong data-report-price="daewoon">450 복채</strong></div>
                         <div id="daewoonTeaserBox" class="report-preview">
                             <span class="preview-label">이런 이야기를 읽어요</span>
-                            <ol><li><strong>현재 대운</strong><span>일·돈·애정·관계·회복·배움의 6가지 이야기</span></li><li><strong>타고난 성향</strong><span>나의 강점과 반복되는 선택의 이유</span></li><li><strong>인생 흐름</strong><span>필요할 때 펼쳐보는 10년 단위 참고 풀이</span></li></ol>
+                            <ol class="theme-toc"><li><span class="toc-num">01</span><strong>나는 어떤 그림으로 태어났을까</strong></li><li><span class="toc-num">02</span><strong>나를 움직이는 진짜 성격</strong></li><li><span class="toc-num">03</span><strong>남들 눈에 먼저 보이는 나</strong></li><li><span class="toc-num">04</span><strong>돈·사랑·일·사람·쉼, 다섯 자리의 나</strong></li><li><span class="toc-num">05</span><strong>내 인생의 계절, 지나온 길과 지금</strong></li><li><span class="toc-num">06</span><strong>한마디</strong></li></ol>
                         </div>
                         <div id="daewoonBox" class="hidden"></div>
                         <button id="btnDaewoon" class="reading-primary" onclick="handleUnlockReportOnServer('daewoon', 450)">450 복채로 평생운세 읽기</button>
@@ -1085,13 +1097,11 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                     <div class="card reading-lead">
                         <span id="annualYearLabel" class="reading-eyebrow">올해·월별</span>
                         <h3>올해의 큰 그림,<br>한 달씩 나의 속도로</h3>
-                        <p>한 해의 중심 이야기를 먼저 읽고, 궁금한 달을 골라보세요. 일과 돈, 관계부터 생활 리듬까지 함께 짚어드려요.</p>
-                        <div class="report-facts"><span>올해 총운 + 6개 분야 + 12개월</span><strong data-report-price="sinnian">300 복채</strong></div>
+                        <div class="report-facts"><span>올해 총운 + 5개 분야 + 12개월</span><strong data-report-price="sinnian">300 복채</strong></div>
                         <div id="sinnianTeaserBox" class="report-preview">
                             <span class="preview-label">한 해를 이렇게 읽어요</span>
-                            <ol><li><strong>올해 총운</strong><span>한 해의 중심 흐름과 살펴볼 점</span></li><li><strong>분야별 이야기</strong><span>직업·재물·애정·관계·건강·학업</span></li><li><strong>12개월 풀이</strong><span>달마다 눈여겨볼 점과 생활 속 실천</span></li></ol>
+                            <ol><li><strong>올해 총운</strong><span>한 해의 중심 흐름과 살펴볼 점</span></li><li><strong>분야별 이야기</strong><span>재물·애정·일·건강·학업</span></li><li><strong>12개월 풀이</strong><span>달마다 눈여겨볼 점과 생활 속 실천</span></li></ol>
                         </div>
-                        <p id="annualScopeNote" class="reading-caption">월별 풀이는 각 달의 대표일(대체로 15일)을 기준으로 한 참고 풀이예요. 달 안의 매일이나 절기 전후 변화를 모두 다루지는 않아요.</p>
                         <div id="sinnianBox" class="hidden"></div>
                         <div id="annualMonthExplorer" class="hidden">
                             <div id="annualMonthChoices" class="period-choices" role="group" aria-label="월별 풀이 선택"></div>
@@ -1106,76 +1116,66 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             <div id="view-theme" class="tab-view hidden reading-view">
                 <header class="reading-heading">
                     <h2>테마운</h2>
-                    <p>어디서부터 풀어볼까요?<br>지금 내 마음과 가까운 질문을 골라보세요.</p>
+                    <p>어디서부터 풀어볼까요?</p>
                 </header>
-                <div class="reading-section-title concern-choice-title"><h3 id="concernChoiceTitle">지금 나의 고민은</h3><span>목차부터 살펴보세요</span></div>
+                <div class="reading-section-title concern-choice-title"><h3 id="concernChoiceTitle">궁금한 이야기를 골라보세요</h3></div>
                 <div class="concern-choices" role="group" aria-label="궁금한 주제 선택">
-                    <button data-concern-choice="business" aria-pressed="false" aria-controls="concern-business" onclick="selectConcern('business', true)"><i data-brand-icon="briefcase" class="concern-symbol" aria-hidden="true"></i><span class="concern-category">일·진로</span><strong>내 강점을 어떤 일에 써볼까요?</strong><span class="concern-open">풀이 살펴보기 <span aria-hidden="true">→</span></span></button>
-                    <button data-concern-choice="love" aria-pressed="false" aria-controls="concern-love" onclick="selectConcern('love', true)"><i data-brand-icon="heart" class="concern-symbol" aria-hidden="true"></i><span class="concern-category">애정·관계</span><strong>나는 어떤 사랑이 편할까요?</strong><span class="concern-open">풀이 살펴보기 <span aria-hidden="true">→</span></span></button>
-                    <button data-concern-choice="wealth" aria-pressed="false" aria-controls="concern-wealth" onclick="selectConcern('wealth', true)"><i data-brand-icon="coins" class="concern-symbol" aria-hidden="true"></i><span class="concern-category">돈·생활</span><strong>돈을 모으고 쓰는 기준이 궁금해요</strong><span class="concern-open">풀이 살펴보기 <span aria-hidden="true">→</span></span></button>
-                    <button data-concern-choice="study" aria-pressed="false" aria-controls="concern-study" onclick="selectConcern('study', true)"><i data-brand-icon="book" class="concern-symbol" aria-hidden="true"></i><span class="concern-category">학업·시험</span><strong>나에게 맞는 공부법을 찾고 싶어요</strong><span class="concern-open">풀이 살펴보기 <span aria-hidden="true">→</span></span></button>
-                    <button data-concern-choice="health" aria-pressed="false" aria-controls="concern-health" onclick="selectConcern('health', true)"><i data-brand-icon="moon" class="concern-symbol" aria-hidden="true"></i><span class="concern-category">몸·건강</span><strong>타고난 체질과 조심할 때가 궁금해요</strong><span class="concern-open">풀이 살펴보기 <span aria-hidden="true">→</span></span></button>
-                    <button data-concern-choice="gunghap" aria-pressed="false" aria-controls="concern-gunghap" onclick="selectConcern('gunghap', true)"><i data-brand-icon="people" class="concern-symbol" aria-hidden="true"></i><span class="concern-category">궁합</span><strong>두 사람은 어떻게 잘 지낼 수 있을까요?</strong><span class="concern-open">풀이 살펴보기 <span aria-hidden="true">→</span></span></button>
+                    <button data-concern-choice="business" aria-pressed="false" aria-controls="concern-business" onclick="openThemeIntro('business')"><i data-brand-icon="briefcase" class="concern-symbol" aria-hidden="true"></i><span class="concern-category">일·진로</span><strong>내 강점을 어떤 일에 써볼까요?</strong><span class="concern-open">풀이 살펴보기 <span aria-hidden="true">→</span></span></button>
+                    <button data-concern-choice="love" aria-pressed="false" aria-controls="concern-love" onclick="openThemeIntro('love')"><i data-brand-icon="heart" class="concern-symbol" aria-hidden="true"></i><span class="concern-category">애정·관계</span><strong>나는 어떤 사랑이 편할까요?</strong><span class="concern-open">풀이 살펴보기 <span aria-hidden="true">→</span></span></button>
+                    <button data-concern-choice="wealth" aria-pressed="false" aria-controls="concern-wealth" onclick="openThemeIntro('wealth')"><i data-brand-icon="coins" class="concern-symbol" aria-hidden="true"></i><span class="concern-category">돈·생활</span><strong>돈을 모으고 쓰는 기준이 궁금해요</strong><span class="concern-open">풀이 살펴보기 <span aria-hidden="true">→</span></span></button>
+                    <button data-concern-choice="study" aria-pressed="false" aria-controls="concern-study" onclick="openThemeIntro('study')"><i data-brand-icon="book" class="concern-symbol" aria-hidden="true"></i><span class="concern-category">학업·시험</span><strong>나에게 맞는 공부법을 찾고 싶어요</strong><span class="concern-open">풀이 살펴보기 <span aria-hidden="true">→</span></span></button>
+                    <button data-concern-choice="health" aria-pressed="false" aria-controls="concern-health" onclick="openThemeIntro('health')"><i data-brand-icon="moon" class="concern-symbol" aria-hidden="true"></i><span class="concern-category">몸·건강</span><strong>타고난 체질과 조심할 때가 궁금해요</strong><span class="concern-open">풀이 살펴보기 <span aria-hidden="true">→</span></span></button>
+                    <button data-concern-choice="gunghap" aria-pressed="false" aria-controls="concern-gunghap" onclick="openThemeIntro('gunghap')"><i data-brand-icon="people" class="concern-symbol" aria-hidden="true"></i><span class="concern-category">궁합</span><strong>두 사람은 어떻게 잘 지낼 수 있을까요?</strong><span class="concern-open">풀이 살펴보기 <span aria-hidden="true">→</span></span></button>
                 </div>
                 <div class="reading-section-title concern-result-title hidden"><h3 id="concernSelectionTitle" tabindex="-1">관련 풀이 안내</h3></div>
                 <p id="concernSelectionHint" class="reading-caption">질문을 고르면 포함된 내용과 필요한 복채를 먼저 보여드려요.</p>
                 <section id="concern-business" class="card report-entry hidden" data-concern="business" aria-labelledby="concern-heading-business">
                     <span class="reading-eyebrow">일·진로</span>
-                    <h3 id="concern-heading-business" tabindex="-1">직업·사업운</h3><p>일하는 기질과 맞는 일터, 돈을 버는 방식부터 이번 10년과 앞으로 12개월 일의 흐름까지 읽어요.</p>
-                    <div class="report-preview"><span class="preview-label">이런 이야기를 읽어요</span><ol class="theme-toc"><li><span class="toc-num">01</span><strong>일하는 기질</strong></li><li><span class="toc-num">02</span><strong>일할 때 빠지기 쉬운 함정 3가지</strong></li><li><span class="toc-num">03</span><strong>나에게 맞는 일터</strong></li><li><span class="toc-num">04</span><strong>잘 맞는 일의 종류</strong></li><li><span class="toc-num">05</span><strong>돈을 버는 방식</strong></li><li><span class="toc-num">06</span><strong>함께 일하는 사람</strong></li><li><span class="toc-num">07</span><strong>이번 10년의 일</strong></li><li><span class="toc-num">08</span><strong>앞으로 12개월 일의 흐름</strong></li><li><span class="toc-num">09</span><strong>자리가 움직이는 달</strong></li><li><span class="toc-num">10</span><strong>일을 지키는 실천</strong></li></ol></div>
-                    <div class="report-facts"><span>성향과 긴 흐름을 살펴봐요</span><strong data-report-price="business">앞부분 무료</strong></div>
+                    <h3 id="concern-heading-business" tabindex="-1">직업·사업운</h3><p>내가 일하는 방식과 맞는 일터, 돈을 버는 방식부터 이번 10년과 앞으로 12개월 일의 흐름까지 읽어요.</p>
+                    <div class="report-preview"><span class="preview-label">이런 이야기를 읽어요</span><ol class="theme-toc"><li><span class="toc-num">01</span><strong>나는 어떻게 일하는 사람일까</strong></li><li><span class="toc-num">02</span><strong>일할 때 내가 자꾸 빠지는 함정 3가지</strong></li><li><span class="toc-num">03</span><strong>나에게 맞는 일터</strong></li><li><span class="toc-num">04</span><strong>잘 맞는 일의 종류</strong></li><li><span class="toc-num">05</span><strong>돈을 버는 방식</strong></li><li><span class="toc-num">06</span><strong>함께 일하는 사람</strong></li><li><span class="toc-num">07</span><strong>이번 10년의 일</strong></li><li><span class="toc-num">08</span><strong>앞으로 12개월 일의 흐름</strong></li><li><span class="toc-num">09</span><strong>자리가 움직이는 달</strong></li><li><span class="toc-num">10</span><strong>일을 지키는 실천</strong></li></ol></div>
                     <div id="themeReport_business" class="hidden"></div>
                     <button id="btnTheme_business" class="reading-primary" onclick="openThemeSelectModal('business')">상황 고르고 먼저 읽어보기</button>
-                    <p class="reading-caption report-scope">특정 날짜의 이직·창업 여부를 정해주는 풀이는 아니에요.</p>
                 </section>
                 <section id="concern-love" class="card report-entry hidden" data-concern="love" aria-labelledby="concern-heading-love">
                     <span class="reading-eyebrow">애정·관계</span>
                     <h3 id="concern-heading-love" tabindex="-1">나의 애정운</h3><p>타고난 매력과 지나온 사랑, 되풀이되는 약점을 짚고 잘 맞는 사람과 인연이 드는 시기까지 읽어요.</p>
-                    <div class="report-preview"><span class="preview-label">이런 이야기를 읽어요</span><ol class="theme-toc"><li><span class="toc-num">01</span><strong>소통 기질 진단</strong></li><li><span class="toc-num">02</span><strong>관계에서 반복하기 쉬운 습관 3가지</strong></li><li><span class="toc-num">03</span><strong>타고난 매력</strong></li><li><span class="toc-num">04</span><strong>지나온 사랑</strong></li><li><span class="toc-num">05</span><strong>배우자 자리로 보는 사랑</strong></li><li><span class="toc-num">06</span><strong>사랑에서 되풀이되는 약점</strong></li><li><span class="toc-num">07</span><strong>나와 잘 맞는 사람, 부딪히기 쉬운 사람</strong></li><li><span class="toc-num">08</span><strong>다툰 뒤 마음이 풀리는 법</strong></li><li><span class="toc-num">09</span><strong>실패 없는 연애를 위한 개운법</strong></li><li><span class="toc-num">10</span><strong>지금의 사랑</strong></li><li><span class="toc-num">11</span><strong>동반자 시기</strong></li><li><span class="toc-num">12</span><strong>이번 10년의 사랑</strong></li><li><span class="toc-num">13</span><strong>앞으로 12개월 관계의 타이밍</strong></li><li><span class="toc-num">14</span><strong>함께 가면 좋은 곳</strong></li><li><span class="toc-num">15</span><strong>다정한 관계를 위한 실천</strong></li></ol></div>
-                    <div class="report-facts"><span>성향과 긴 흐름을 살펴봐요</span><strong data-report-price="love">앞부분 무료</strong></div>
+                    <div class="report-preview"><span class="preview-label">이런 이야기를 읽어요</span><ol class="theme-toc"><li><span class="toc-num">01</span><strong>나는 어떤 사랑을 하는 사람일까</strong></li><li><span class="toc-num">02</span><strong>관계에서 내가 되풀이하는 습관 3가지</strong></li><li><span class="toc-num">03</span><strong>타고난 매력</strong></li><li><span class="toc-num">04</span><strong>지나온 사랑</strong></li><li><span class="toc-num">05</span><strong>배우자 자리로 보는 사랑</strong></li><li><span class="toc-num">06</span><strong>사랑에서 되풀이되는 약점</strong></li><li><span class="toc-num">07</span><strong>나와 잘 맞는 사람, 자주 부딪히는 사람</strong></li><li><span class="toc-num">08</span><strong>다툰 뒤 마음이 풀리는 법</strong></li><li><span class="toc-num">09</span><strong>실패 없는 연애를 위한 개운법</strong></li><li><span class="toc-num">10</span><strong>지금의 사랑</strong></li><li><span class="toc-num">11</span><strong>동반자 시기</strong></li><li><span class="toc-num">12</span><strong>이번 10년의 사랑</strong></li><li><span class="toc-num">13</span><strong>앞으로 12개월 관계의 타이밍</strong></li><li><span class="toc-num">14</span><strong>함께 가면 좋은 곳</strong></li><li><span class="toc-num">15</span><strong>다정한 관계를 위한 실천</strong></li></ol></div>
                     <div id="themeReport_love" class="hidden"></div>
                     <button id="btnTheme_love" class="reading-primary" onclick="showThemePreview('love','기본')">먼저 읽어보기</button>
-                    <p class="reading-caption report-scope">나의 애정운은 한 사람을 풀이해요. 서로의 차이는 아래 두 사람 궁합에서 살펴보세요.</p>
                 </section>
                 <section id="concern-wealth" class="card report-entry hidden" data-concern="wealth" aria-labelledby="concern-heading-wealth">
                     <span class="reading-eyebrow">돈·생활</span>
                     <h3 id="concern-heading-wealth" tabindex="-1">평생 재물운</h3><p>타고난 돈 그릇과 돈이 새는 습관, 재물이 모이는 나이와 큰돈이 움직이는 해까지 읽어요.</p>
                     <div class="report-preview"><span class="preview-label">이런 이야기를 읽어요</span><ol class="theme-toc"><li><span class="toc-num">01</span><strong>타고난 돈 그릇</strong></li><li><span class="toc-num">02</span><strong>돈이 새는 습관 3가지</strong></li><li><span class="toc-num">03</span><strong>돈이 들어오는 길</strong></li><li><span class="toc-num">04</span><strong>나에게 맞는 재테크</strong></li><li><span class="toc-num">05</span><strong>돈과 사람</strong></li><li><span class="toc-num">06</span><strong>지나온 재물 흐름</strong></li><li><span class="toc-num">07</span><strong>재물이 모이는 나이</strong></li><li><span class="toc-num">08</span><strong>집·문서와 큰돈</strong></li><li><span class="toc-num">09</span><strong>앞으로 12개월 금전 흐름</strong></li><li><span class="toc-num">10</span><strong>재물 개운</strong></li><li><span class="toc-num">11</span><strong>재물을 지키는 실천</strong></li></ol></div>
-                    <div class="report-facts"><span>성향과 긴 흐름을 살펴봐요</span><strong data-report-price="wealth">앞부분 무료</strong></div>
                     <div id="themeReport_wealth" class="hidden"></div>
                     <button id="btnTheme_wealth" class="reading-primary" onclick="showThemePreview('wealth')">돈 그릇 먼저 읽어보기</button>
-                    <p class="reading-caption report-scope">투자 수익이나 금액을 예측하는 풀이가 아니에요.</p>
                 </section>
                 <section id="concern-study" class="card report-entry hidden" data-concern="study" aria-labelledby="concern-heading-study">
                     <span class="reading-eyebrow">학업·시험</span>
                     <h3 id="concern-heading-study" tabindex="-1">학업·시험운</h3><p>타고난 공부 머리와 학교 공부 궁합, 학문·기술·예체능 중 어울리는 길부터 시험·자격에 좋은 해까지 읽어요.</p>
                     <div class="report-preview"><span class="preview-label">이런 이야기를 읽어요</span><ol class="theme-toc"><li><span class="toc-num">01</span><strong>타고난 공부 머리</strong></li><li><span class="toc-num">02</span><strong>공부를 방해하는 습관 3가지</strong></li><li><span class="toc-num">03</span><strong>학교 공부와의 궁합</strong></li><li><span class="toc-num">04</span><strong>어울리는 진로 방향</strong></li><li><span class="toc-num">05</span><strong>나에게 맞는 공부법</strong></li><li><span class="toc-num">06</span><strong>잘 맞는 공부 분야</strong></li><li><span class="toc-num">07</span><strong>나의 시험운</strong></li><li><span class="toc-num">08</span><strong>공부가 잘 붙는 나이</strong></li><li><span class="toc-num">09</span><strong>시험·자격에 좋은 해</strong></li><li><span class="toc-num">10</span><strong>앞으로 12개월 학업 흐름</strong></li><li><span class="toc-num">11</span><strong>학업 개운</strong></li><li><span class="toc-num">12</span><strong>공부를 이어 가는 실천</strong></li></ol></div>
-                    <div class="report-facts"><span>성향과 긴 흐름을 살펴봐요</span><strong data-report-price="study">앞부분 무료</strong></div>
                     <div id="themeReport_study" class="hidden"></div>
                     <button id="btnTheme_study" class="reading-primary" onclick="showThemePreview('study')">공부 머리 먼저 읽어보기</button>
-                    <p class="reading-caption report-scope">합격 여부보다 준비하는 방식에 초점을 두어요.</p>
                 </section>
                 <section id="concern-health" class="card report-entry hidden" data-concern="health" aria-labelledby="concern-heading-health">
                     <span class="reading-eyebrow">몸·건강</span>
                     <h3 id="concern-heading-health" tabindex="-1">타고난 체질과 건강</h3><p>타고난 체질과 강한 곳·아껴 쓸 곳, 나에게 맞는 음식과 나이로 보는 조심할 시기까지 읽어요.</p>
-                    <div class="report-preview"><span class="preview-label">이런 이야기를 읽어요</span><ol class="theme-toc"><li><span class="toc-num">01</span><strong>에너지 흐름 읽기</strong></li><li><span class="toc-num">02</span><strong>지칠 때 반복하기 쉬운 습관 2가지</strong></li><li><span class="toc-num">03</span><strong>타고난 체질</strong></li><li><span class="toc-num">04</span><strong>강한 곳과 아껴 쓸 곳</strong></li><li><span class="toc-num">05</span><strong>나에게 맞는 음식</strong></li><li><span class="toc-num">06</span><strong>몸에 맞는 운동과 쉼</strong></li><li><span class="toc-num">07</span><strong>나이로 보는 조심할 시기</strong></li><li><span class="toc-num">08</span><strong>계절로 보는 컨디션</strong></li><li><span class="toc-num">09</span><strong>앞으로 12개월 컨디션</strong></li><li><span class="toc-num">10</span><strong>건강 개운법</strong></li><li><span class="toc-num">11</span><strong>생활 활력 3원칙</strong></li></ol></div>
-                    <div class="report-facts"><span>성향과 긴 흐름을 살펴봐요</span><strong data-report-price="health">앞부분 무료</strong></div>
+                    <div class="report-preview"><span class="preview-label">이런 이야기를 읽어요</span><ol class="theme-toc"><li><span class="toc-num">01</span><strong>내 몸의 에너지는 어떻게 흐를까</strong></li><li><span class="toc-num">02</span><strong>지칠 때 내가 되풀이하는 습관 2가지</strong></li><li><span class="toc-num">03</span><strong>타고난 체질</strong></li><li><span class="toc-num">04</span><strong>강한 곳과 아껴 쓸 곳</strong></li><li><span class="toc-num">05</span><strong>나에게 맞는 음식</strong></li><li><span class="toc-num">06</span><strong>몸에 맞는 운동과 쉼</strong></li><li><span class="toc-num">07</span><strong>나이로 보는 조심할 시기</strong></li><li><span class="toc-num">08</span><strong>계절로 보는 컨디션</strong></li><li><span class="toc-num">09</span><strong>앞으로 12개월 컨디션</strong></li><li><span class="toc-num">10</span><strong>건강 개운법</strong></li><li><span class="toc-num">11</span><strong>생활 활력 3원칙</strong></li></ol></div>
                     <div id="themeReport_health" class="hidden"></div>
                     <button id="btnTheme_health" class="reading-primary" onclick="showThemePreview('health')">체질 먼저 읽어보기</button>
                     <p class="reading-caption report-scope">질병을 진단하지 않아요. 몸의 불편함은 의료진과 확인해 주세요.</p>
                 </section>
                 <section id="concern-gunghap" class="card report-entry compatibility-card hidden" data-concern="gunghap" aria-labelledby="compatibilityTitle">
                     <span class="reading-eyebrow">궁합</span>
-                    <h3 id="compatibilityTitle" tabindex="-1">우리는 어디서 잘 맞고,<br>어떤 점이 다를까요?</h3>
+                    <h3 id="compatibilityTitle" tabindex="-1">우리는 어디서 잘 맞고, 어떤 점이 다를까요?</h3>
                     <p>연인, 동료, 친구 사이의 대화와 역할을 살펴봐요. 관계를 선택하고 두 사람의 사주를 함께 읽어보세요.</p>
+                    <div class="report-preview"><span class="preview-label">이런 이야기를 읽어요</span><ol class="theme-toc"><li><span class="toc-num">01</span><strong>첫인상과 끌림</strong></li><li><span class="toc-num">02</span><strong>가까워지면 보이는 진짜 모습</strong></li><li><span class="toc-num">03</span><strong>찰떡같이 맞는 순간</strong></li><li><span class="toc-num">04</span><strong>부딪히는 결정적 패턴</strong></li><li><span class="toc-num">05</span><strong>틀어진 뒤 풀리는 길</strong></li><li><span class="toc-num">06</span><strong>앞으로 10년</strong></li></ol></div>
                     <div class="compatibility-topics"><span>끌림과 차이</span><span>대화와 갈등</span><span>함께하는 생활</span></div>
-                    <div class="report-facts"><span>두 사람의 생년정보로 풀이</span><strong data-report-price="gunghap">350 복채</strong></div>
+                    <div class="report-facts"><span>두 사람의 생년정보로 풀이</span><strong data-report-price="gunghap">250 복채</strong></div>
                     <div id="gunghapReportBox" class="hidden"></div>
                     <button id="btnOpenGunghapModal" class="reading-primary" onclick="openGunghapInputModal()">상대방 정보 입력하기</button>
-                    <p id="gunghapPurchaseNote" class="reading-caption">정보를 입력한 다음 350 복채로 열람해요.</p>
+                    <p id="gunghapPurchaseNote" class="reading-caption">정보를 입력한 다음 250 복채로 열람해요.</p>
                 </section>
-                <button id="allConcernTopicsLink" class="reading-archive-link" onclick="selectConcern('all', true)">전체 주제의 목차 살펴보기 →</button>
-                <details class="reading-help"><summary>어떤 풀이부터 보면 좋을까요?</summary><p>하루의 운세와 옷차림·식단은 ‘오늘’에서, 성향과 긴 인생 흐름은 ‘나의 사주’에서 읽어요. 한 해와 이달이 궁금하면 ‘올해·월별’을, 한 가지 고민을 살펴보려면 주제별 풀이를 골라보세요.</p></details>
             </div>
 
             <!-- 탭 4: 마이페이지 -->
@@ -1189,24 +1189,32 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                     <button onclick="openChargeStore()" style="width: 100%; background: var(--c-ink,#1D2129); color: white; border: none; font-size: 15px; font-weight: 700; padding: 14px; border-radius: 16px; cursor: pointer;">복채 충전하기</button>
                 </div>
 
-                <div class="card" style="display: flex; justify-content: space-between; align-items: center; text-align: left;">
-                    <div><p style="font-size: 14px; font-weight: 800; color: var(--c-ink,#1D2129);">사주 정보 수정</p><p id="mypageProfileDesc" style="font-size: 12px; color: #59636D; margin-top: 2px;">-</p></div>
-                    <div style="display: flex; gap: 6px;">
-                        <button type="button" class="dh-btn-quiet" onclick="reopenSajuEditForm()">정보 수정</button>
-                        <button type="button" class="dh-btn-quiet" onclick="logoutKakaoUser()">로그아웃</button>
-                    </div>
-                </div>
+                <section class="my-box" aria-labelledby="myInfoHeading">
+                    <h3 id="myInfoHeading" class="my-box-title">내 정보</h3>
+                    <ul class="my-rows">
+                        <li><button type="button" class="my-row" onclick="reopenSajuEditForm()"><span class="my-row-main"><b>사주 정보 수정</b><small id="mypageProfileDesc">-</small></span><i class="my-chevron" aria-hidden="true"></i></button></li>
+                        <li><button type="button" id="reportArchiveToggle" class="my-row" onclick="openArchiveListModal()"><span class="my-row-main"><b>감명서 보관함</b></span><span id="archiveCountBadge" class="my-row-meta">0건</span><i class="my-chevron" aria-hidden="true"></i></button></li>
+                    </ul>
+                </section>
 
-                <details id="reportArchive" class="report-archive">
-                    <summary id="reportArchiveToggle"><span>감명서 보관함</span><span id="archiveCountBadge">0건</span></summary>
-                    <div id="unlockedArchiveList"></div>
-                </details>
+                <section class="my-box" aria-labelledby="myAccountHeading">
+                    <h3 id="myAccountHeading" class="my-box-title">계정</h3>
+                    <ul class="my-rows">
+                        <li><button type="button" class="my-row" onclick="logoutKakaoUser()"><span class="my-row-main"><b>로그아웃</b></span></button></li>
+                        <li><button type="button" class="my-row" onclick="openWithdrawDialog()"><span class="my-row-main"><b>회원 탈퇴</b></span></button></li>
+                    </ul>
+                </section>
+
+                <section class="my-box" aria-labelledby="myLegalHeading">
+                    <h3 id="myLegalHeading" class="my-box-title">약관 및 정책</h3>
+                    <ul class="my-rows">
+                        <li><button type="button" class="my-row" onclick="openLegalNotice('개인정보처리방침')"><span class="my-row-main"><b>개인정보처리방침</b></span><span class="my-row-meta">준비 중</span><i class="my-chevron" aria-hidden="true"></i></button></li>
+                        <li><button type="button" class="my-row" onclick="openLegalNotice('이용약관')"><span class="my-row-main"><b>이용약관</b></span><span class="my-row-meta">준비 중</span><i class="my-chevron" aria-hidden="true"></i></button></li>
+                    </ul>
+                </section>
             </div>
         </main>
 
-        <footer style="width: 100%; text-align: center; padding: 24px 12px; font-size: 11px; color: #59636D; line-height: 1.6; border-top: 1px solid rgba(0,0,0,0.06); margin-top: 30px;">
-            <p>달하(DALHA)는 고대가요 정읍사의 달빛처럼<br>인생의 갈림길에서 당신의 앞날을 비춰주는 정통 명리학 운명 나침반입니다.</p>
-        </footer>
 
         <nav id="bottomNavBar" class="hidden">
             <button onclick="switchTab('today')" id="tab-today" class="tab-btn active"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>오늘운세</span></button>
@@ -1329,7 +1337,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             </div>
             <div class="form-group" style="margin-top: 4px;">
                 <label class="form-label">상대방 이름</label>
-                <input type="text" id="partnerNameInput" class="form-input" placeholder="이름을 입력하세요" value="">
+                <input type="text" id="partnerNameInput" class="form-input" placeholder="이름을 입력하세요" value="" maxlength="20">
             </div>
             <div class="form-group">
                 <label class="form-label">상대방 성별</label>
@@ -1372,7 +1380,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 </select>
             </div>
             <button id="gunghapSubmitButton" onclick="confirmUnlockGunghapOnServer()" style="width: 100%; background: var(--c-ink,#1D2129); color: white; border: none; font-size: 14.5px; font-weight: 800; padding: 13px; border-radius: 12px; cursor: pointer;">
-                <span class="btn-coin-icon-white"></span> 350 복채로 두 사람의 인연 풀이 확인하기
+                <span class="btn-coin-icon-white"></span> 250 복채로 두 사람의 인연 풀이 확인하기
             </button>
         </div>
     </div>
@@ -1431,15 +1439,13 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
     <div id="talismanModal" class="modal-bg hidden">
         <div class="modal-content" style="max-width: 340px; padding: 18px; border-radius: 24px;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F3F0E8; padding-bottom: 8px;">
-                <h3 style="font-size: 14px; font-weight: 800; color: var(--c-ink,#1D2129); font-family: 'Noto Serif KR', serif;">오늘의 오행 부적</h3>
+                <h3 style="font-size: 14px; font-weight: 800; color: var(--c-ink,#1D2129); font-family: 'Noto Serif KR', serif;">오늘의 부적</h3>
                 <button onclick="closeTalismanModal()" style="background: none; border: none; font-size: 20px; color: #59636D; cursor: pointer;">&times;</button>
             </div>
             <div id="talismanRealBox" style="display: flex; justify-content: center; align-items: center; padding: 4px 0;"></div>
-            <div style="text-align: left; background: #F8F6F1; border: 1px solid #DEDCD4; border-radius: 12px; padding: 12px;">
-                <h4 id="talismanTitle" style="font-size: 13.5px; font-weight: 800; color: var(--c-ink,#1D2129);">결단정리부</h4>
-                <p id="talismanPower" style="font-size: 12px; font-weight: 700; color: var(--c-ink,#1D2129); margin: 2px 0;"></p>
-                <p id="talismanDesc" style="font-size: 11.5px; color: #59636D; line-height: 1.5;"></p>
-                <div style="border-top: 1px dashed #D4D0C6; margin-top: 6px; padding-top: 4px; font-size: 11px; color: var(--c-ink,#1D2129);">하루의 시작에 마음을 가다듬고, 지키고 싶은 뜻을 새겨 보세요.</div>
+            <div id="talismanMeaning" style="text-align: center; padding: 2px 6px 4px;">
+                <h4 id="talismanTitle" style="font-size: 15px; font-weight: 800; color: var(--c-ink,#1D2129); font-family: 'Noto Serif KR', serif;"></h4>
+                <p id="talismanDesc" style="font-size: 13px; color: #59636D; line-height: 1.6; margin-top: 4px; word-break: keep-all;"></p>
             </div>
             <div style="display: flex; gap: 8px;">
                 <button onclick="downloadTalismanImage()" style="flex: 1; background: var(--c-ink,#1D2129); color: white; border: none; font-size: 13.5px; font-weight: 800; padding: 12px; border-radius: 12px; cursor: pointer;">부적 이미지 저장</button>
@@ -1483,10 +1489,51 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
     </div>
 
     <!-- 보관함 다시보기 모달 -->
+    <div id="themeIntroModal" class="modal-bg hidden" role="dialog" aria-modal="true" aria-labelledby="themeIntroTitle" onclick="if(event.target===this)closeThemeIntro()">
+        <div class="modal-content theme-intro-modal" style="text-align: left; gap: 12px;">
+            <h3 id="themeIntroTitle" style="font-size: 18px; font-weight: 800; font-family: 'Noto Serif KR', serif; color: var(--c-ink,#1D2129);"></h3>
+            <p id="themeIntroDesc" style="font-size: 13px; line-height: 1.75; color: #3C4651;"></p>
+            <div id="themeIntroToc"></div>
+            <div style="display: flex; gap: 8px; justify-content: flex-end;">
+                <button type="button" class="dh-btn-quiet" onclick="closeThemeIntro()">닫기</button>
+                <button type="button" id="themeIntroGo" class="dh-btn-quiet theme-intro-go" onclick="confirmThemeIntro()">풀이 보기</button>
+            </div>
+        </div>
+    </div>
+    <div id="archiveListModal" class="modal-bg hidden" role="dialog" aria-modal="true" aria-labelledby="archiveListTitle" onclick="if(event.target===this)closeArchiveListModal()">
+        <div class="modal-content archive-list-modal" style="text-align: left; gap: 12px;">
+            <h3 id="archiveListTitle" style="font-size: 17px; font-weight: 800; font-family: 'Noto Serif KR', serif; color: var(--c-ink,#1D2129);">감명서 보관함</h3>
+            <div id="unlockedArchiveList"></div>
+            <div style="display: flex; justify-content: flex-end;"><button type="button" class="dh-btn-quiet" onclick="closeArchiveListModal()">닫기</button></div>
+        </div>
+    </div>
+    <div id="legalModal" class="modal-bg hidden" role="dialog" aria-modal="true" aria-labelledby="legalModalTitle" onclick="if(event.target===this)closeLegalNotice()">
+        <div class="modal-content" style="text-align: left; gap: 12px;">
+            <h3 id="legalModalTitle" style="font-size: 17px; font-weight: 800; font-family: 'Noto Serif KR', serif; color: var(--c-ink,#1D2129);"></h3>
+            <p style="font-size: 14px; line-height: 1.8; color: #3C4651;">아직 준비 중이에요. 내용이 정리되는 대로 이곳에 올릴게요.</p>
+            <div style="display: flex; justify-content: flex-end;"><button type="button" class="dh-btn-quiet" onclick="closeLegalNotice()">닫기</button></div>
+        </div>
+    </div>
+    <div id="withdrawModal" class="modal-bg hidden" role="dialog" aria-modal="true" aria-labelledby="withdrawTitle">
+        <div class="modal-content" style="text-align: left; gap: 12px;">
+            <h3 id="withdrawTitle" style="font-size: 17px; font-weight: 800; font-family: 'Noto Serif KR', serif; color: var(--c-ink,#1D2129);"></h3>
+            <div id="withdrawBody" style="font-size: 13px; line-height: 1.8; color: #3C4651;"></div>
+            <label id="withdrawAgreeRow" style="display: flex; gap: 8px; align-items: flex-start; font-size: 13px; line-height: 1.6; color: #3C4651;">
+                <input id="withdrawAgree" type="checkbox" onchange="syncWithdrawButton()" style="margin-top: 4px;">
+                <span>위 내용을 확인했어요.</span>
+            </label>
+            <p id="withdrawError" role="alert" class="hidden" style="font-size: 12px; color: #B3402E;"></p>
+            <div style="display: flex; gap: 8px; justify-content: flex-end;">
+                <button type="button" id="withdrawKeep" class="dh-btn-quiet" onclick="closeWithdrawDialog()">닫기</button>
+                <button type="button" id="withdrawConfirm" class="dh-btn-quiet" onclick="submitWithdrawDialog()"></button>
+            </div>
+        </div>
+    </div>
+
     <div id="archiveDetailModal" class="modal-bg hidden" role="dialog" aria-modal="true" aria-labelledby="archiveModalTitle">
         <div class="modal-content" style="max-width: 380px; max-height: 85vh; display: flex; flex-direction: column; text-align: left; padding: 20px; border-radius: 24px;">
             <div class="reading-report-heading" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F3F0E8; padding-bottom: 10px; margin-bottom: 12px;">
-                <button id="readingCloseButton" class="reading-text-button" aria-label="풀이 닫기" onclick="closeArchiveDetailModal()">×</button>
+                <button id="readingCloseButton" class="reading-text-button" aria-label="뒤로 가기" onclick="closeArchiveDetailModal()"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
                 <h3 id="archiveModalTitle" style="font-size: 14px; font-weight: 800; color: var(--c-ink,#1D2129); font-family: 'Noto Serif KR', serif;">운세 리포트</h3>
             </div>
             <p id="readingReportMeta" class="reading-caption" hidden></p>
@@ -1501,15 +1548,15 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
 
     <div id="dc3Backdrop" class="dc3-backdrop" onclick="closeDailySheet()"></div>
     <section id="dc3Sheet" class="dc3-sheet" role="dialog" aria-modal="true" aria-labelledby="dc3SheetGrade" tabindex="-1">
-        <div class="dc3-grab" aria-hidden="true"></div>
         <div class="dc3-sheet-head">
+            <button type="button" class="dc3-back" aria-label="뒤로 가기" onclick="closeDailySheet()"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
             <div class="dc3-sheet-head-main">
-                <div id="dc3SheetGrade" class="dc3-sheet-grade"></div>
-                <div id="dc3SheetSub" class="dc3-sheet-sub" hidden></div>
+                <div id="dc3SheetGrade" class="dc3-sheet-grade">오늘의 운세</div>
             </div>
             <svg class="dc3-sheet-moon dc3-sheet-moon-svg" viewBox="-50 -50 100 100" aria-hidden="true"><circle r="44" class="dc3-moon-dark"/><path id="resMoonLit2" class="dc3-moon-lit" d=""/></svg>
         </div>
         <div class="dc3-scroll">
+            <p id="dc3SheetSub" class="dc3-sheet-sub" hidden></p>
             <div class="dc3-block" id="dc3EvidenceBlock">
                 <p class="dc3-block-title">오늘은 이런 날</p>
                 <p id="dc3EvidenceFull" class="dc3-text"></p>
@@ -2199,6 +2246,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                                         switchTab('today');
                                         document.getElementById('bottomNavBar').classList.remove('hidden');
                                         restoreUnlockedUIFromReports();
+                                        offerWithdrawalCancel(sData);
                                     } else {
                                         acceptWardrobeResponse(sData);
                                         renderWardrobeUI();
@@ -2207,6 +2255,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
 
                                         document.getElementById('view-login-gate').classList.add('hidden');
                                         document.getElementById('onboardingInputView').classList.remove('hidden');
+                                        offerWithdrawalCancel(sData);
                                     }
                                 } catch(innerErr) {
                                     alert("로그인 처리 중 오류가 발생했습니다: " + innerErr.message);
@@ -2261,6 +2310,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                     }
                     document.getElementById('bottomNavBar').classList.remove('hidden');
                     restoreUnlockedUIFromReports();
+                    offerWithdrawalCancel(sData);
                 } else {
                     currentUserId = sData.user_id;
                     acceptTarotState(sData.tarot_state);
@@ -2307,6 +2357,84 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             }
         }
 
+        // ---- 회원 탈퇴: 신청 후 7일 동안은 다시 로그인해 취소할 수 있고, 이후 모두 삭제된다 ----
+        let withdrawMode = 'request';
+        function withdrawDateText(epochSeconds) {
+            return new Date(epochSeconds * 1000).toLocaleDateString('ko-KR', {month:'long', day:'numeric'});
+        }
+        function setWithdrawError(message) {
+            const box = document.getElementById('withdrawError');
+            box.textContent = message || '';
+            box.classList.toggle('hidden', !message);
+        }
+        function syncWithdrawButton() {
+            const confirm = document.getElementById('withdrawConfirm');
+            confirm.disabled = withdrawMode === 'request' && !document.getElementById('withdrawAgree').checked;
+        }
+        function showWithdrawDialog(mode, info) {
+            withdrawMode = mode;
+            setWithdrawError('');
+            const title = document.getElementById('withdrawTitle');
+            const body = document.getElementById('withdrawBody');
+            const agreeRow = document.getElementById('withdrawAgreeRow');
+            const confirm = document.getElementById('withdrawConfirm');
+            const keep = document.getElementById('withdrawKeep');
+            document.getElementById('withdrawAgree').checked = false;
+            if (mode === 'pending') {
+                title.textContent = '탈퇴를 신청한 계정이에요';
+                body.textContent = `${withdrawDateText(info.delete_at)}에 모든 정보가 삭제돼요. 지금 취소하면 계정과 복채, 감명서를 그대로 쓸 수 있어요.`;
+                agreeRow.classList.add('hidden');
+                confirm.textContent = '탈퇴 취소';
+                keep.textContent = '그대로 둘게요';
+            } else {
+                const reports = Array.isArray(serverUnlockedReports) ? serverUnlockedReports.length : 0;
+                title.textContent = '회원 탈퇴';
+                body.replaceChildren();
+                [
+                    `사라지는 것: 사주 정보, 남은 복채 ${currentCoin}, 구매한 감명서 ${reports}건, 보관함 기록`,
+                    '탈퇴를 신청하면 로그아웃되고, 7일 뒤에 삭제돼요. 삭제 후에는 되돌릴 수 없어요.',
+                    '7일 안에 다시 로그인해서 탈퇴를 취소할 수 있어요.',
+                    '남은 복채는 탈퇴하면 사라져요. 환불이 필요하면 탈퇴 전에 문의해 주세요.',
+                    '탈퇴 후 30일 안에 다시 가입하면 가입 선물 복채는 지급되지 않아요.'
+                ].forEach(text => { const line = document.createElement('p'); line.style.margin = '0 0 6px'; line.textContent = text; body.append(line); });
+                agreeRow.classList.remove('hidden');
+                confirm.textContent = '탈퇴 신청';
+                keep.textContent = '닫기';
+            }
+            syncWithdrawButton();
+            document.getElementById('withdrawModal').classList.remove('hidden');
+            keep.focus();
+        }
+        function openWithdrawDialog() { showWithdrawDialog('request'); }
+        function openArchiveListModal() { document.getElementById('archiveListModal').classList.remove('hidden'); }
+        function closeArchiveListModal() { document.getElementById('archiveListModal')?.classList.add('hidden'); }
+        function openLegalNotice(title) { document.getElementById('legalModalTitle').textContent = title; document.getElementById('legalModal').classList.remove('hidden'); }
+        function closeLegalNotice() { document.getElementById('legalModal').classList.add('hidden'); }
+        function closeWithdrawDialog() { document.getElementById('withdrawModal').classList.add('hidden'); }
+        async function submitWithdrawDialog() {
+            const confirm = document.getElementById('withdrawConfirm');
+            if (!currentUserId || confirm.disabled) return;
+            confirm.disabled = true; setWithdrawError('');
+            const cancelling = withdrawMode === 'pending';
+            try {
+                const response = await fetch(cancelling ? '/api/user/withdraw/cancel' : '/api/user/withdraw', {
+                    method: 'POST', headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({user_id: currentUserId, confirm: true})
+                });
+                if (!response.ok) throw new Error('withdraw failed');
+            } catch (_) {
+                setWithdrawError(cancelling ? '탈퇴 취소를 완료하지 못했어요. 잠시 후 다시 시도해 주세요.' : '탈퇴 신청을 완료하지 못했어요. 잠시 후 다시 시도해 주세요.');
+                confirm.disabled = false;
+                return;
+            }
+            if (cancelling) { closeWithdrawDialog(); return; }
+            localStorage.removeItem('dalha_kakao_id');
+            location.reload();
+        }
+        function offerWithdrawalCancel(payload) {
+            if (payload && payload.withdrawal_pending) showWithdrawDialog('pending', payload.withdrawal_pending);
+        }
+
         async function logoutKakaoUser() {
             try {
                 const result = await fetch('/api/auth/logout', {method:'POST'});
@@ -2315,7 +2443,6 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 alert('로그아웃을 완료하지 못했습니다. 연결을 확인하고 다시 시도해 주세요.');
                 return;
             }
-            window.DalhaMenu?.reset();
             localStorage.removeItem('dalha_kakao_id');
             location.reload();
         }
@@ -2370,34 +2497,10 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             </svg>`;
         }
 
-        function renderAuthenticCinnabarTalisman(type = 'metal_clarity', width = 168, height = 288, id = 'svgTalismanMain') {
-            const motifs = {
-                wood_growth: {glyph:'木',motto:'成長進展',path:'M42 103 Q70 99 100 102 M70 81 Q68 111 70 143 M68 102 Q58 120 38 133 M72 104 Q83 120 101 130'},
-                fire_vitality: {glyph:'火',motto:'明光活力',path:'M69 80 Q73 113 61 126 Q51 139 36 145 M70 108 Q81 132 104 142 M47 100 L52 115 M93 94 Q88 109 80 112'},
-                earth_stability: {glyph:'土',motto:'安定守護',path:'M45 104 Q70 100 97 104 M71 81 L69 140 M35 143 Q68 138 105 142'},
-                metal_clarity: {glyph:'金',motto:'決斷整理',path:'M70 80 Q60 97 36 110 M70 81 Q84 96 105 104 M49 108 L91 106 M42 120 L98 118 M70 105 L69 146 M47 127 L53 138 M92 125 L84 137 M34 148 Q70 143 105 147'},
-                water_wisdom: {glyph:'水',motto:'智慧流通',path:'M71 80 L70 146 Q67 153 58 147 M38 109 L57 106 Q55 126 35 138 M91 94 L78 114 Q88 132 107 139'},
-            };
-            const motif = motifs[type] || motifs.metal_clarity;
-            const fibers = Array.from({length:28},(_,i)=>{const x=12+(i*37)%116,y=14+(i*61)%211;return `<path d="M${x} ${y}l${3+i%5} ${i%2?'.6':'-.6'}"/>`;}).join('');
-            return `<svg id="${id}" width="${width}" height="${height}" viewBox="0 0 140 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${motif.motto} 오행 부적">
-                <defs><linearGradient id="${id}-paper" x2="1" y2="1"><stop stop-color="#F3E8CC"/><stop offset=".5" stop-color="#E9D9B4"/><stop offset="1" stop-color="#F0E3C5"/></linearGradient></defs>
-                <rect width="140" height="240" rx="1.5" fill="url(#${id}-paper)"/>
-                <g fill="none" stroke="#9D865C" stroke-width=".35" opacity=".24">${fibers}</g>
-                <rect class="talisman-frame" x="8" y="8" width="124" height="224" rx="1" fill="none" stroke="#9B7847" stroke-width=".65" opacity=".65"/>
-                <g fill="none" stroke="#893D2D" stroke-linecap="square" stroke-linejoin="miter">
-                    <path d="M47 32 Q64 25 93 29 M39 42 Q69 34 102 40 M69 22 L68 53 M49 50 L92 47" stroke-width="2.5"/>
-                    <path d="M49 62 Q72 57 93 61 L77 72 M61 62 L58 72" stroke-width="2"/>
-                    <path d="${motif.path}" stroke-width="4.1"/>
-                    <path d="M48 159 Q70 154 94 158 M56 167 L86 165 M70 156 L67 187 Q65 201 51 206" stroke-width="3"/>
-                    <path d="M45 185 Q55 186 64 178 M74 179 Q83 186 94 185" stroke-width="1.8"/>
-                </g>
-                <g transform="translate(101 194)" fill="none" stroke="#893D2D" stroke-width="1.1">
-                    <rect width="21" height="23"/><path d="M3 5h15M10.5 2v8M4 10h13M4 14h13v6H4Z"/>
-                </g>
-                <path d="M49 221h42" stroke="#AD9267" stroke-width=".5"/>
-                <text x="70" y="229" text-anchor="middle" fill="#8E7957" font-family="serif" font-size="4.6" letter-spacing="2.6">DALHA</text>
-            </svg>`;
+        // 오늘의 부적: 서버가 준 spec(분야·방향·신살·시드)로 화면에서 그린다. 글귀·도장은 두지 않는다.
+        function renderDailyTalisman(width = 168, id = 'svgTalismanMain') {
+            if (!window.DalhaTalisman) return '';
+            return window.DalhaTalisman.compose(currentTalisman && currentTalisman.spec, { width, id });
         }
 
         function renderBiorhythmWaveSvg(daysLived) {
@@ -2419,12 +2522,12 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             return `
                 <line x1="0" y1="${midY}" x2="${width}" y2="${midY}" stroke="#DEDCD4" stroke-width="1.2" />
                 <line x1="${width/2}" y1="5" x2="${width/2}" y2="${height-5}" stroke="#B9B6AC" stroke-width="1.5" stroke-dasharray="3 3" />
-                <path d="${getPath(23)}" fill="none" stroke="#A9472F" stroke-width="2.2" opacity="0.9" />
-                <path d="${getPath(28)}" fill="none" stroke="#4F6B4C" stroke-width="2.2" opacity="0.9" />
-                <path d="${getPath(33)}" fill="none" stroke="#2C4762" stroke-width="2.2" opacity="0.9" />
-                <circle cx="${width/2}" cy="${todayP.toFixed(1)}" r="4.5" fill="#A9472F" stroke="#FFFEFA" stroke-width="1.8" />
-                <circle cx="${width/2}" cy="${todayE.toFixed(1)}" r="4.5" fill="#4F6B4C" stroke="#FFFEFA" stroke-width="1.8" />
-                <circle cx="${width/2}" cy="${todayI.toFixed(1)}" r="4.5" fill="#2C4762" stroke="#FFFEFA" stroke-width="1.8" />
+                <path d="${getPath(23)}" fill="none" stroke="#C42A1C" stroke-width="2.2" opacity="0.9" />
+                <path d="${getPath(28)}" fill="none" stroke="#0B7A4B" stroke-width="2.2" opacity="0.9" />
+                <path d="${getPath(33)}" fill="none" stroke="#1F4FD8" stroke-width="2.2" opacity="0.9" />
+                <circle cx="${width/2}" cy="${todayP.toFixed(1)}" r="4.5" fill="#C42A1C" stroke="#FFFEFA" stroke-width="1.8" />
+                <circle cx="${width/2}" cy="${todayE.toFixed(1)}" r="4.5" fill="#0B7A4B" stroke="#FFFEFA" stroke-width="1.8" />
+                <circle cx="${width/2}" cy="${todayI.toFixed(1)}" r="4.5" fill="#1F4FD8" stroke="#FFFEFA" stroke-width="1.8" />
             `;
         }
 
@@ -2473,18 +2576,54 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             currentCoin = data.coin_balance;
             updateCoinDisplay();
             applySajuAnalysisToUI(data.saju_analysis);
+            // 사주가 바뀌면 예전 풀이는 '내 풀이'가 아니게 되고(새로 사야 함), 미리보기 캐시도 옛 사주 것이라 비운다.
+            if (Array.isArray(data.unlocked_reports)) {
+                serverUnlockedReports = data.unlocked_reports;
+                Object.keys(themePreviewCache).forEach(k => delete themePreviewCache[k]);
+                refreshReportEntrypoints();
+            }
 
             document.getElementById('onboardingInputView').classList.add('hidden');
+            document.getElementById('sajuEditBack').classList.add('hidden');
+            resetSajuFormMode();
+            if (sajuEditPushed) { sajuEditPushed = false; try { history.back(); } catch (e) {} }
             switchTab('today');
             document.getElementById('bottomNavBar').classList.remove('hidden');
         }
 
+        // 11/15: 정보 수정 화면은 뒤로 가기 화살표·폰 뒤로 가기로 열기 전 탭으로 돌아간다(처음 입력할 때는 뒤로 갈 곳이 없어 화살표를 숨긴다).
+        let sajuEditReturnTab = 'saju', sajuEditPushed = false;
+        function resetSajuFormMode() {
+            document.getElementById('onboardingInputView').classList.remove('is-edit');
+            document.getElementById('sajuFormTitle').textContent = '사주 명식 입력';
+            document.getElementById('btnSajuSubmit').textContent = '정밀 감명서 발행하기';
+        }
         function reopenSajuEditForm() {
+            sajuEditReturnTab = ['today', 'saju', 'theme', 'mypage'].find(t => !document.getElementById(`view-${t}`).classList.contains('hidden')) || 'saju';
             populateSajuForm(currentSajuProfile || getSavedUserSaju());
             document.getElementById('onboardingInputView').classList.remove('hidden');
+            document.getElementById('sajuEditBack').classList.remove('hidden');
+            document.getElementById('onboardingInputView').classList.add('is-edit');
+            document.getElementById('sajuFormTitle').textContent = '내 정보';
+            document.getElementById('btnSajuSubmit').textContent = '저장';
             ['today', 'saju', 'theme', 'mypage'].forEach(t => document.getElementById(`view-${t}`).classList.add('hidden'));
             document.getElementById('bottomNavBar').classList.add('hidden');
+            window.scrollTo(0, 0);
+            try { history.pushState({dalhaSajuEdit: true}, '', location.href); sajuEditPushed = true; } catch (e) { sajuEditPushed = false; }
         }
+        function closeSajuEditForm(fromPop) {
+            const form = document.getElementById('onboardingInputView');
+            if (form.classList.contains('hidden')) return;
+            form.classList.add('hidden');
+            document.getElementById('sajuEditBack').classList.add('hidden');
+            resetSajuFormMode();
+            if (sajuEditPushed && fromPop !== true) { sajuEditPushed = false; try { history.back(); } catch (e) {} }
+            else sajuEditPushed = false;
+            switchTab(sajuEditReturnTab);
+            document.getElementById('bottomNavBar').classList.remove('hidden');
+            window.scrollTo(0, 0);
+        }
+        window.addEventListener('popstate', () => { if (sajuEditPushed && !history.state?.dalhaSajuEdit) closeSajuEditForm(true); });
 
         // ---- v2 Tab 1: 서버 story 가 한 줄(제목)·총운·분야·마무리를 준다. 레거시 title/advice/time_flow 는 없을 때만 ----
         const DC3_STEM_LABEL = {day:'일', month:'월', year:'년', hour:'시'};
@@ -2613,10 +2752,10 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             domainEl.hidden = true;                     // 11/8 정오님: '일 좋음' 같은 분야 꼬리표는 홈·창 모두 쓰지 않는다(점수·등급과 겹치고 헷갈림)
             domainEl.textContent = domainLabel;
             domainEl.dataset.kind = note ? note.kind : '';
+            // 11/15 정오님: 창 제목은 '오늘의 운세'(홈 카드와 같은 이름), 등급·점수는 제목 아래 한 줄로.
             const sub = document.getElementById('dc3SheetSub');
-            sub.hidden = true;
-            sub.textContent = domainLabel;
-            document.getElementById('dc3SheetGrade').textContent = `${grade} · ${score}점`;
+            sub.hidden = false;
+            sub.textContent = `${grade} · ${score}점`;
             // 홈: 근거 대신 '오늘은 이렇게'(처방). 근거는 자세히 창에. 처방이 없는 옛 응답은 근거를 그대로 보인다
             const evidenceEl = document.getElementById('resGradeEvidence');
             const homeRx = fortune.rx_text || '';
@@ -2825,9 +2964,8 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             
             updateTodayWardrobeMatchPick();
 
-            document.getElementById('talismanBannerHeader').textContent = currentTalisman?.title || '오늘의 오행 부적';
             const talismanPreview = document.getElementById('talismanBannerPreview');
-            if (talismanPreview) talismanPreview.innerHTML = renderAuthenticCinnabarTalisman(currentTalisman?.talisman_type || "metal_clarity", 84, 144, "svgTalismanPreview");
+            if (talismanPreview) talismanPreview.innerHTML = renderDailyTalisman(84, "svgTalismanPreview");
         }
 
         const COLOR_HEX_MAP = {
@@ -3345,10 +3483,13 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
 
         async function handleUnlockReportOnServer(reportKey, cost, subOption = "기본", partnerName = "상대방", relation = "선택안함", partnerProfile = null) {
             if (!currentUserId) { alert("로그인이 필요합니다."); return; }
-            const ownedIndex = latestOwnedReportIndex(reportKey);
+            // 궁합은 상대마다 따로 산다: 이미 산 상대인지는 서버가 알아보고(결제 없이 그 풀이를 돌려줌), 복채 부족도 서버가 알려 준다.
+            const perPartner = reportKey === 'gunghap';
+            // 올해운세: 12월에 올해 것을 갖고 있어도 다음 해 것은 따로 산다.
+            const ownedIndex = perPartner ? -1 : reportKey === 'sinnian' ? ownedAnnualIndex('sale') : latestOwnedReportIndex(reportKey);
             if (ownedIndex >= 0) { openReadingReport(ownedIndex); return; }
             if (reportRequestPending) return;
-            if (currentCoin < cost) { openChargeStore(); return; }
+            if (!perPartner && currentCoin < cost) { openChargeStore(); return; }
 
             reportRequestPending = true;
             setReportRequestState(true);
@@ -3364,6 +3505,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             });
             const data = await res.json();
             if (!res.ok) {
+                if (perPartner && data.detail === 'Insufficient coins') { openChargeStore(); return; }
                 alert(data.detail || "리포트를 생성하지 못했습니다. 입력 정보를 확인해 주세요.");
                 return;
             }
@@ -3374,7 +3516,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             delete themePreviewCache[reportKey];
             renderServerArchive();
             restoreUnlockedUIFromReports();
-            openReadingReport(latestOwnedReportIndex(reportKey));
+            openReadingReport(Number.isInteger(data.focus_index) ? data.focus_index : latestOwnedReportIndex(reportKey));
             } catch (error) {
                 alert("응답을 확인하지 못했습니다. 새로고침 후 보관함을 먼저 확인해 주세요.");
             } finally {
@@ -3389,6 +3531,19 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
 
         // 구매한 풀이는 서버가 보관함을 보낼 때 최신 버전으로 바꿔 둔다(main.bring_reports_up_to_date).
         // 화면에는 '새로 받기' 버튼도, 이전 원문 선택도 두지 않는다.
+
+        // 구매일: 구매할 때 저장한 created_at. 'YYYY-MM-DD'로 돌려주고, 없는 옛 기록은 빈 문자열.
+        function reportPurchaseDay(report) {
+            const day = String(report?.created_at || '').slice(0, 10).replace(/\./g, '-');
+            return /^\d{4}-\d{2}-\d{2}$/.test(day) ? day : '';
+        }
+        // 상품 칸의 구매 표시: 'M월 D일 구매'. 날짜가 없는 옛 기록은 '구매함'.
+        function reportPurchaseLabel(report) {
+            const day = reportPurchaseDay(report);
+            if (!day) return '구매함';
+            const [, month, date] = day.split('-').map(Number);
+            return `${month}월 ${date}일 구매`;
+        }
 
         function renderServerArchive() {
             const container = document.getElementById('unlockedArchiveList');
@@ -3407,10 +3562,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
 
             // 화면 순서만 구매일 최신순으로 바꾼다. 배열 순서(=index)는 다른 곳에서 풀이를 여는 데 쓰므로 그대로 둔다.
             // 같은 날 산 것은 나중에 산 것(배열 뒤쪽)이 위로, 날짜 없는 옛 기록은 맨 아래로.
-            const purchaseDay = (report) => {
-                const day = String(report.created_at || '').slice(0, 10).replace(/\./g, '-');
-                return /^\d{4}-\d{2}-\d{2}$/.test(day) ? day : '';
-            };
+            const purchaseDay = reportPurchaseDay;
             serverUnlockedReports
                 .map((report, index) => ({ report, index, day: purchaseDay(report) }))
                 .sort((a, b) => (a.day === b.day ? b.index - a.index : a.day < b.day ? 1 : -1))
@@ -3418,8 +3570,8 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 const row = document.createElement('div'); row.className = 'archive-row';
                 const button = document.createElement('button');
                 button.type = 'button'; button.className = 'archive-reopen';
-                button.textContent = '다시보기';
-                button.setAttribute('aria-label', `${report.report_title} 다시보기`);
+                button.textContent = '풀이 보기';
+                button.setAttribute('aria-label', `${report.report_title} 풀이 보기`);
                 button.onclick = () => openServerArchiveDetail(index);
                 const copy = document.createElement('span'); copy.className = 'archive-entry-copy';
                 const title = document.createElement('span'); title.className = 'archive-title';
@@ -3429,6 +3581,11 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 if (boughtOn) {
                     const date = document.createElement('span'); date.className = 'archive-entry-date';
                     date.textContent = `구매일 : ${boughtOn}`; copy.append(date);
+                }
+                // 지금 내 정보와 다른 사주로 산 풀이는 누구 풀이인지 밝힌다.
+                if (report.for_current_saju === false && report.basis_label) {
+                    const whose = document.createElement('span'); whose.className = 'archive-entry-date';
+                    whose.textContent = `${report.basis_label} 기준`; copy.append(whose);
                 }
                 row.append(copy, button); container.append(row);
             });
@@ -3465,9 +3622,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
         }
 
         function openGunghapInputModal() {
-            const ownedIndex = latestOwnedReportIndex('gunghap');
-            if (ownedIndex >= 0) { openReadingReport(ownedIndex); return; }
-            document.getElementById('gunghapSubmitButton').textContent = '350 복채로 두 사람의 인연 풀이 확인하기';
+            document.getElementById('gunghapSubmitButton').textContent = '250 복채로 두 사람의 인연 풀이 확인하기';
             const nameInput = document.getElementById('partnerNameInput');
             const relSelect = document.getElementById('partnerRelationSelect');
 
@@ -3533,7 +3688,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 partner_birth_hour: partnerTime.hour,
                 partner_birth_minute: partnerTime.minute
             };
-            handleUnlockReportOnServer('gunghap', 350, "기본", pName, rel, partnerInput);
+            handleUnlockReportOnServer('gunghap', 250, "기본", pName, rel, partnerInput);
         }
 
         function openThemeSelectModal(key) {
@@ -3604,7 +3759,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
 
         function switchTab(tabId) {
             if (tabId === 'today') refreshDailyAnalysisIfNeeded();
-            if (tabId !== 'mypage') document.getElementById('reportArchive').open = false;
+            if (tabId !== 'mypage') closeArchiveListModal();
             ['today', 'saju', 'theme', 'mypage'].forEach(t => {
                 document.getElementById(`view-${t}`)?.classList.add('hidden');
                 document.getElementById(`tab-${t}`)?.classList.remove('active');
@@ -3636,16 +3791,148 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             });
         }
 
+        let themeIntroKey = null;
+        function openThemeIntro(key) {
+            // 궁합은 상대마다 따로 보는 풀이라 작은 팝업이 아니라 전체 화면 페이지(목차 + 이전에 본 궁합)로 연다.
+            if (key === 'gunghap') { openGunghapPage(); return; }
+            const section = document.getElementById(`concern-${key}`);
+            if (!section) { selectConcern(key, true); return; }
+            themeIntroKey = key;
+            document.getElementById('themeIntroTitle').textContent = section.querySelector('h3')?.textContent || '';
+            document.getElementById('themeIntroDesc').textContent = section.querySelector('h3 + p')?.textContent || '';
+            const toc = section.querySelector('.report-preview');
+            document.getElementById('themeIntroToc').replaceChildren(...(toc ? [toc.cloneNode(true)] : []));
+            document.querySelectorAll('[data-concern-choice]').forEach(el => el.setAttribute('aria-pressed', String(el.dataset.concernChoice === key)));
+            // 이미 산 풀이: 팝업을 두 번 띄우지 않고, 풀이 팝업 하나 안에서 목차 → 풀이 보기로 이어 간다.
+            const ownedIndex = latestOwnedReportIndex(key);
+            if (ownedIndex >= 0) { openOwnedThemeIntro(key, ownedIndex); return; }
+            document.getElementById('themeIntroModal').classList.remove('hidden');
+        }
+        // 궁합: 다른 테마와 같은 전체 화면 페이지(왼쪽 위 뒤로 가기). 목차 → [궁합 보기] → 이전에 본 궁합(행마다 삭제).
+        function openGunghapPage() {
+            const modal = document.getElementById('archiveDetailModal');
+            if (!document.getElementById('concern-gunghap')) return;
+            if (modal.classList.contains('hidden')) {
+                readingReturnState = {scrollY:window.scrollY, focus:document.activeElement, overflow:document.body.style.overflow, url:location.href};
+                history.pushState({dalhaReader:true}, '', '#report');
+            }
+            readingReportIndex = -1;
+            modal.dataset.annualReader = 'false'; modal.dataset.annualPartitioned = 'false';
+            modal.dataset.themeIntro = 'true';   // 목차 화면에서는 PDF 저장·닫기 줄을 숨긴다
+            document.getElementById('archiveModalTitle').textContent = '궁합';
+            { const meta = document.getElementById('readingReportMeta'); meta.textContent = ''; meta.hidden = true; }
+            const contents = document.getElementById('readingReportContents');
+            contents.replaceChildren(); contents.classList.add('hidden');
+            renderGunghapPage();
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+            const body = document.getElementById('archiveModalBody');
+            body.scrollTop = 0;
+            (window.requestAnimationFrame || setTimeout)(() => { body.scrollTop = 0; });
+            document.getElementById('readingCloseButton').focus({preventScroll:true});
+        }
+        function renderGunghapPage() {
+            const section = document.getElementById('concern-gunghap');
+            const body = document.getElementById('archiveModalBody');
+            const page = document.createElement('section');
+            page.className = 'theme-intro-inline gunghap-page';
+            const heading = document.createElement('h3');
+            heading.textContent = section.querySelector('h3')?.textContent || '';
+            const desc = document.createElement('p');
+            desc.textContent = section.querySelector('h3 + p')?.textContent || '';
+            const toc = section.querySelector('.report-preview');
+            const go = document.createElement('button');
+            go.type = 'button'; go.className = 'reading-primary'; go.textContent = '궁합 보기';
+            go.onclick = () => openGunghapInputModal();   // 새로 볼 사람의 정보를 입력한다
+            page.append(heading, desc, ...(toc ? [toc.cloneNode(true)] : []), go);
+            const rows = serverUnlockedReports.map((report, index) => ({report, index}))
+                .filter(x => x.report.report_key === 'gunghap').reverse();
+            if (rows.length) {
+                const box = document.createElement('div');
+                box.className = 'gunghap-owned';
+                const label = document.createElement('span');
+                label.className = 'preview-label'; label.textContent = '이전에 본 궁합';
+                box.append(label);
+                rows.forEach(({report, index}) => {
+                    const row = document.createElement('div');
+                    row.className = 'gunghap-owned-row';
+                    const open = document.createElement('button');
+                    open.type = 'button'; open.className = 'gunghap-owned-open';
+                    const title = document.createElement('strong'); title.textContent = report.report_title;
+                    const meta = document.createElement('span');
+                    meta.textContent = [report.reading_context?.relation, reportPurchaseLabel(report)].filter(Boolean).join(' · ');
+                    open.append(title, meta);
+                    open.onclick = () => openReadingReport(index);
+                    const del = document.createElement('button');
+                    del.type = 'button'; del.className = 'gunghap-owned-del'; del.textContent = '삭제';
+                    del.setAttribute('aria-label', `${report.report_title} 삭제`);
+                    del.onclick = () => deleteGunghapReading(index);
+                    row.append(open, del); box.append(row);
+                });
+                page.append(box);
+            }
+            body.replaceChildren(page);
+        }
+        async function deleteGunghapReading(index) {
+            const report = serverUnlockedReports[index];
+            if (!report || report.report_key !== 'gunghap' || !currentUserId || reportRequestPending) return;
+            if (!window.confirm(`${report.report_title}\n\n삭제하면 되돌릴 수 없어요. 낸 복채는 돌려받지 못하고, 이 분과 다시 보려면 새로 결제해야 해요.\n\n삭제할까요?`)) return;
+            reportRequestPending = true;
+            try {
+                const res = await fetch('/api/reports/delete', {
+                    method: 'POST', headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({user_id: currentUserId, report_key: 'gunghap', index, expected_title: report.report_title})
+                });
+                const data = await res.json().catch(() => ({}));
+                if (!res.ok) { alert(data.detail || '삭제하지 못했어요. 잠시 후 다시 시도해 주세요.'); return; }
+                currentCoin = data.new_balance;
+                updateCoinDisplay();
+                serverUnlockedReports = data.unlocked_reports;
+                delete themePreviewCache.gunghap;
+                renderServerArchive();
+                restoreUnlockedUIFromReports();
+                renderGunghapPage();
+            } catch (error) {
+                alert('응답을 확인하지 못했어요. 새로고침 후 보관함을 먼저 확인해 주세요.');
+            } finally {
+                reportRequestPending = false;
+            }
+        }
+        function openOwnedThemeIntro(key, index) {
+            openReadingReport(index);
+            const body = document.getElementById('archiveModalBody');
+            const intro = document.createElement('section');
+            intro.className = 'theme-intro-inline';
+            const heading = document.createElement('h3');
+            heading.textContent = document.getElementById('themeIntroTitle').textContent;
+            const desc = document.createElement('p');
+            desc.textContent = document.getElementById('themeIntroDesc').textContent;
+            const go = document.createElement('button');
+            go.type = 'button'; go.className = 'reading-primary'; go.textContent = '풀이 보기';
+            go.onclick = () => openReadingReport(index);   // 같은 팝업 안에서 본문으로 바꾼다
+            intro.append(heading, desc, ...document.getElementById('themeIntroToc').children, go);
+            body.replaceChildren(intro);
+            document.getElementById('archiveDetailModal').dataset.themeIntro = 'true';   // 목차 화면에서는 PDF 저장·닫기 줄을 숨긴다
+            body.scrollTop = 0;
+        }
+        function closeThemeIntro() { document.getElementById('themeIntroModal')?.classList.add('hidden'); }
+        function confirmThemeIntro() {
+            const key = themeIntroKey;
+            closeThemeIntro();
+            if (!key) return;
+            selectConcern(key, true);
+            return showThemePreview(key, '기본');
+        }
         function selectConcern(key, reveal = false) {
-            const labels = {wealth:'돈과 생활을 살펴보는 풀이', love:'나의 연애 패턴을 살펴보는 풀이', business:'일과 사업의 방향을 살펴보는 풀이', study:'공부 방식을 살펴보는 풀이', health:'체질과 건강을 살펴보는 풀이', gunghap:'두 사람의 관계를 살펴보는 풀이', all:'전체 주제별 풀이'};
+            const labels = {wealth:'돈과 생활을 살펴보는 풀이', love:'나의 연애 패턴을 살펴보는 풀이', business:'일과 사업의 방향을 살펴보는 풀이', study:'공부 방식을 살펴보는 풀이', health:'체질과 건강을 살펴보는 풀이', gunghap:'두 사람의 관계를 살펴보는 풀이'};
             if (!labels[key]) return;
-            document.querySelectorAll('[data-concern]').forEach(el => el.classList.toggle('hidden', key !== 'all' && el.dataset.concern !== key));
+            document.querySelectorAll('[data-concern]').forEach(el => el.classList.toggle('hidden', el.dataset.concern !== key));
             document.querySelectorAll('[data-concern-choice]').forEach(el => el.setAttribute('aria-pressed', String(el.dataset.concernChoice === key)));
             document.getElementById('concernSelectionTitle').textContent = labels[key];
             document.getElementById('concernSelectionHint').classList.add('hidden');
             document.querySelector('.concern-result-title').classList.remove('hidden');
             if (reveal) {
-                const heading = key === 'all' ? document.getElementById('concernSelectionTitle') : document.getElementById(key === 'gunghap' ? 'compatibilityTitle' : `concern-heading-${key}`);
+                const heading = document.getElementById(key === 'gunghap' ? 'compatibilityTitle' : `concern-heading-${key}`);
                 heading.focus({preventScroll:true});
                 heading.scrollIntoView({block:'start', behavior:'smooth'});
             }
@@ -3660,10 +3947,32 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
         }
 
         function latestOwnedReportIndex(key) {
+            // 11/23: 풀이는 산 사주에 묶인다. 내 정보를 다른 사주로 바꿨다면 예전 풀이는 '내 풀이'가 아니다(보관함에서만 열림).
+            // 올해운세는 해마다 따로 산다: 지금 파는 해의 것이 먼저, 없으면 12월에 아직 읽는 올해 것. 지난 해 것은 보관함에서만.
+            if (key === 'sinnian') {
+                const sale = ownedAnnualIndex('sale');
+                return sale >= 0 ? sale : ownedAnnualIndex('current');
+            }
             for (let i = serverUnlockedReports.length - 1; i >= 0; i--) {
-                if (serverUnlockedReports[i].report_key === key) return i;
+                const report = serverUnlockedReports[i];
+                if (report.report_key === key && report.for_current_saju !== false) return i;
             }
             return -1;
+        }
+
+        function ownedAnnualIndex(role) {
+            for (let i = serverUnlockedReports.length - 1; i >= 0; i--) {
+                const report = serverUnlockedReports[i];
+                if (report.report_key !== 'sinnian' || report.for_current_saju === false) continue;
+                if ((report.annual_role || 'sale') === role) return i;
+            }
+            return -1;
+        }
+
+        // 12월부터는 다음 해 풀이를 판다(서버 main._annual_sale_year 와 같은 규칙. 실제 결제는 서버가 정한다).
+        function annualSaleYear() {
+            const now = koreaYearMonth();
+            return now.month === 12 ? now.year + 1 : now.year;
         }
 
         function reportDocument(item) {
@@ -3718,13 +4027,13 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             const configs = {
                 daewoon:['daewoonBox','btnDaewoon','daewoonTeaserBox'],
                 sinnian:['sinnianBox','btnSinnian','sinnianTeaserBox'],
-                gunghap:['gunghapReportBox','btnOpenGunghapModal',null],
                 ...Object.fromEntries(['wealth','love','business','health','study'].map(k => [k,[`themeReport_${k}`,`btnTheme_${k}`,null]]))
             };
             document.getElementById('annualMonthExplorer').classList.add('hidden');
             document.getElementById('lifeCycleExplorer').classList.add('hidden');
             ['lifeCycleChoices','lifeCycleReading','annualMonthChoices','annualMonthReading'].forEach(id => document.getElementById(id).replaceChildren());
-            document.getElementById('annualYearLabel').textContent = `${koreaYearMonth().year}년 올해운세`;
+            const saleYear = annualSaleYear(), nextYearOnSale = saleYear !== koreaYearMonth().year;
+            document.getElementById('annualYearLabel').textContent = nextYearOnSale ? `${saleYear}년 운세` : `${saleYear}년 올해운세`;
             Object.entries(configs).forEach(([key, [slotId, buttonId, teaserId]]) => {
                 const index = latestOwnedReportIndex(key);
                 if (key === 'daewoon') {
@@ -3736,7 +4045,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 const price = document.querySelector(`[data-report-price="${key}"]`);
                 if (price) {
                     if (!price.dataset.price) price.dataset.price = price.textContent;
-                    price.textContent = index >= 0 ? '구매한 풀이' : price.dataset.price;
+                    price.textContent = index >= 0 ? reportPurchaseLabel(serverUnlockedReports[index]) : price.dataset.price;
                     price.classList.toggle('report-owned', index >= 0);
                 }
                 if (key === 'gunghap') document.getElementById('gunghapPurchaseNote').classList.toggle('hidden', index >= 0);
@@ -3745,25 +4054,32 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 slot.replaceChildren();
                 slot.classList.toggle('hidden', index < 0);
                 button.classList.toggle('hidden', index >= 0);
-                if (teaserId) document.getElementById(teaserId).classList.toggle('hidden', index >= 0);
+                if (key === 'sinnian') {
+                    // 12월: 올해 풀이를 읽는 사람에게도 다음 해 풀이 결제 버튼을 아래에 함께 보여 준다.
+                    const ownsSaleYear = ownedAnnualIndex('sale') >= 0;
+                    button.textContent = nextYearOnSale ? `300 ${COIN_UNIT}로 ${saleYear}년 운세 읽기` : `300 ${COIN_UNIT}로 올해운세 읽기`;
+                    button.classList.toggle('hidden', ownsSaleYear);
+                    button.classList.toggle('reading-primary', index < 0);
+                    button.classList.toggle('reading-secondary', index >= 0 && !ownsSaleYear);
+                }
+                if (teaserId) document.getElementById(teaserId).classList.toggle('hidden', key === 'daewoon' ? index < 0 : index >= 0);
                 if (index < 0) {
                     if (key === 'daewoon') renderDaewoonFree();
                     else if (themePreviewCache[key]) renderThemePreview(key);
                     return;
                 }
                 const item = serverUnlockedReports[index];
-                const note = document.createElement('p');
-                note.className = 'reading-caption';
-                note.textContent = `구매한 결과 · ${item.report_title}`;
+                // 11/15: '구매한 결과 · 제목' 안내는 지금 보는 칸과 같은 말이라 뺀다.
                 const open = document.createElement('button');
                 open.className = 'reading-primary';
-                open.textContent = key === 'sinnian' ? `${item.report_year || item.report_title?.match(/^(\d{4})/)?.[1] || ''}년 올해운세 확인하기`.replace(/^년 /, '') : '구매한 풀이 다시 읽기';
+                // 11/15: 산 풀이는 어느 칸이든 같은 '풀이 보기'. 구매 사실은 위 칸에 구매일로 작게 보인다.
+                open.textContent = '풀이 보기';
                 open.onclick = () => openReadingReport(index);
-                slot.append(note, open);
+                slot.append(open);
                 if (key === 'sinnian') {
                     const doc = reportDocument(item);
                     const year = item.report_year || doc.querySelector('[data-report-year]')?.dataset.reportYear || item.report_title?.match(/\b(\d{4})년?/)?.[1];
-                    document.getElementById('annualYearLabel').textContent = year ? `${year}년 올해운세` : '올해운세';
+                    document.getElementById('annualYearLabel').textContent = !year ? '올해운세' : Number(year) === koreaYearMonth().year ? `${year}년 올해운세` : `${year}년 운세`;
                     document.getElementById('annualMonthChoices').replaceChildren();
                     document.getElementById('annualMonthReading').replaceChildren();
                     if (doc.querySelector('.annual-reading [data-report-month]')) {
@@ -3847,7 +4163,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
         const COIN_UNIT = '복채';
         // 2026-10-15 공개 범위(프로젝트 문서 dalha-roadmap): 공개 때 결제 없음 → 이 풀이들은 '곧 열려요'.
         // 직업·애정·건강은 앞부분 무료 맛보기는 그대로 두고, 결제 버튼만 '곧 열려요'로 바꾼다. 이미 받은 풀이는 그대로 읽을 수 있다.
-        const DALHA_SOON_REPORTS = new Set(['business','love','health','wealth','study','gunghap']);
+        const DALHA_SOON_REPORTS = new Set(['business','love','health','wealth','study']);
         function applySoonEntrypoint(key) {
             if (!DALHA_SOON_REPORTS.has(key) || latestOwnedReportIndex(key) >= 0) return;
             const price = document.querySelector(`[data-report-price="${key}"]`);
@@ -3936,13 +4252,18 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             const item = owned;
             const modal = document.getElementById('archiveDetailModal');
             modal.dataset.annualReader = String(owned.report_key === 'sinnian');
+            delete modal.dataset.themeIntro;
             if (modal.classList.contains('hidden')) {
                 readingReturnState = {scrollY:window.scrollY, focus:document.activeElement, overflow:document.body.style.overflow, url:location.href};
                 history.pushState({dalhaReader:true}, '', '#report');
             }
             readingReportIndex = index;
-            document.getElementById('archiveModalTitle').textContent = item.report_title;
-            document.getElementById('readingReportMeta').textContent = '';
+            // 11/15: 화면 제목에서 '○○님 정통 명리' 머리말은 뺀다(예: '평생운세 · 성향과 흐름'). 저장된 원래 제목은 그대로 둔다.
+            const shortTitle = String(item.report_title || '').replace(/^\S+님\s*정통\s*명리\s*/, '').trim() || item.report_title;
+            document.getElementById('archiveModalTitle').textContent = shortTitle;
+            const whose = document.getElementById('readingReportMeta');
+            whose.textContent = (owned.for_current_saju === false && owned.basis_label) ? `${owned.basis_label} 기준 풀이` : '';
+            whose.hidden = !whose.textContent;
             const body = document.getElementById('archiveModalBody');
             body.innerHTML = item.report_content;
             if (owned.report_key === 'sinnian') {
@@ -3971,7 +4292,11 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                     const list = document.createElement('ol');
                     headings.forEach(heading => {
                         const entry = document.createElement('li');
-                        entry.textContent = heading.dataset.tocLabel.replace(/^\d+\s+/, '').replace(/^\d+[.)]\s*/, ''); list.append(entry); // <ol>이 번호를 붙이므로 제목 속 '1.'은 뺀다
+                        // 11/20: 본문 칸 번호(01·02…)와 같은 번호를 목차에도 쓴다. 제목 속 '1.'은 뺀다.
+                        const label = heading.dataset.tocLabel, match = label.match(/^(\d+)\s+(.*)$/);
+                        const num = document.createElement('span'); num.className = 'toc-num'; num.textContent = match ? match[1] : '';
+                        const text = document.createElement('span'); text.textContent = (match ? match[2] : label).replace(/^\d+[.)]\s*/, '');
+                        entry.append(num, text); list.append(entry);
                     });
                     toc.append(label, list); body.prepend(toc);
                 }
@@ -3981,7 +4306,10 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             contents.classList.toggle('hidden', !contents.childElementCount);
             modal.classList.remove('hidden');
             document.body.style.overflow = 'hidden';
-            document.getElementById('readingCloseButton').focus();
+            // 11/16: 창이 숨겨진 상태(display:none)에서는 scrollTop 초기화가 먹지 않아 풀이가 중간부터 열리는 경우가 있었다. 보이게 한 뒤 맨 위로 되돌린다.
+            body.scrollTop = 0;
+            (window.requestAnimationFrame || setTimeout)(() => { body.scrollTop = 0; });
+            document.getElementById('readingCloseButton').focus({preventScroll:true});
         }
 
         function dismissReadingReport() {
@@ -4374,10 +4702,11 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
         }
 
         function openTalismanModal() {
-            document.getElementById('talismanTitle').innerText = currentTalisman?.title || "결단정리부 (決斷整理)";
-            document.getElementById('talismanPower').innerText = currentTalisman?.power || "판단과 정리의 힘";
-            document.getElementById('talismanDesc').innerText = currentTalisman?.desc || "차분히 판단하고 필요한 것을 정리하는 마음을 담은 부적입니다.";
-            document.getElementById('talismanRealBox').innerHTML = renderAuthenticCinnabarTalisman(currentTalisman?.talisman_type || "metal_clarity", 168, 288);
+            document.getElementById('talismanRealBox').innerHTML = renderDailyTalisman(192, 'svgTalismanMain');
+            const tSpec = (currentTalisman && currentTalisman.spec) || {};
+            document.getElementById('talismanTitle').textContent = tSpec.name || '';
+            document.getElementById('talismanDesc').textContent = tSpec.desc || '';
+            document.getElementById('talismanMeaning').hidden = !tSpec.name;
             document.getElementById('talismanModal').classList.remove('hidden');
         }
 
@@ -4401,7 +4730,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
 
                 ctx.fillStyle = "#FAF9F6";
                 ctx.fillRect(0, 0, 420, 720);
-                ctx.drawImage(img, 21, 36, 378, 648);
+                ctx.drawImage(img, 30, 60, 360, 600);
 
                 const dlLink = document.createElement('a');
                 const downloadedAt = new Date(Date.now() + 9 * 60 * 60 * 1000).toISOString();

@@ -1,4 +1,4 @@
-// 2026-10-15 공개 범위(프로젝트 문서 dalha-roadmap): 결제 없이 공개 → 테마운 5개·궁합은 '곧 열려요',
+// 2026-10-15 공개 범위(프로젝트 문서 dalha-roadmap): 결제 없이 공개 → 테마운 5개는 '곧 열려요'(궁합은 11/20부터 복채 결제),
 // 직업·애정·건강의 앞부분 무료 맛보기는 유지, 타로·별자리·시간대 팁은 숨김. 실제 계정·네트워크 없이 확인한다.
 const {JSDOM, ResourceLoader, VirtualConsole} = require('jsdom');
 const fs = require('node:fs'), path = require('node:path'), assert = require('node:assert/strict');
@@ -36,18 +36,17 @@ class Resources extends ResourceLoader {
         assert.ok(!doc.querySelector('#drawerTalisman').hasAttribute('hidden'), 'talisman stays');
 
         w.eval('DALHA_SOON_REPORTS.forEach(applySoonEntrypoint)');
-        for (const key of ['gunghap']) {
-            const button = doc.getElementById(key === 'gunghap' ? 'btnOpenGunghapModal' : `btnTheme_${key}`);
-            assert.ok(button.classList.contains('soon-hidden'), `${key} purchase button hidden`);
-            assert.equal(doc.getElementById(`soon_${key}`).textContent, '곧 열려요');
-            assert.equal(doc.querySelector(`[data-report-price="${key}"]`).textContent, '곧 열려요');
-        }
+        // 11/20: 궁합은 복채 결제로 연다 — '곧 열려요' 표시가 없고 가격(250 복채)이 보인다.
+        assert.ok(!doc.getElementById('btnOpenGunghapModal').classList.contains('soon-hidden'), 'gunghap purchase button visible');
+        assert.equal(doc.getElementById('soon_gunghap'), null, 'gunghap has no soon badge');
+        assert.equal(doc.querySelector('[data-report-price="gunghap"]').textContent, '250 복채');
         for (const key of ['business', 'love', 'health', 'wealth', 'study']) {
             assert.ok(!doc.getElementById(`btnTheme_${key}`).classList.contains('soon-hidden'), `${key} free preview stays`);
-            assert.equal(doc.querySelector(`[data-report-price="${key}"]`).textContent, '앞부분 무료 · 전체는 곧 열려요');
+            // 11/15: 테마운 칸의 가격 안내 줄은 뺐다(열람 버튼·'전체 풀이는 곧 열려요'가 대신 알려 줌).
+            assert.equal(doc.querySelector(`[data-report-price="${key}"]`), null);
         }
         w.eval('DALHA_SOON_REPORTS.forEach(applySoonEntrypoint)');
-        assert.equal(doc.querySelectorAll('#soon_gunghap').length, 1, 'idempotent');
+        assert.equal(doc.querySelectorAll('#soon_gunghap').length, 0, 'idempotent');
 
         w.eval(`themePreviewCache.business = {content:'<p>앞부분</p><a data-paywall-cta href="#">결제</a>', price_coins:220}; renderThemePreview('business');`);
         const slot = doc.getElementById('themeReport_business');
@@ -55,6 +54,6 @@ class Resources extends ResourceLoader {
         assert.equal(slot.querySelector('[data-paywall-cta]'), null);
         assert.equal(slot.querySelector('.lock-soon').textContent, '전체 풀이는 곧 열려요');
         assert.match(slot.textContent, /앞부분/);
-        console.log('PASS: launch scope — theme 5 + gunghap soon, free previews kept, tarot/zodiac/time tips hidden');
+        console.log('PASS: launch scope — theme 5 soon, gunghap on sale, free previews kept, tarot/zodiac/time tips hidden');
     } finally { w.close(); }
 })().catch(e => { console.error(e); process.exit(1); });

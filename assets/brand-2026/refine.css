@@ -1,9 +1,9 @@
 /* 달하 화면 다듬기 (2026-10-30) — 맨 마지막에 읽히는 층.
    원칙: 남색 운세 카드(달)가 홈의 유일한 주인공. 나머지 칸은 같은 흰 카드 한 가지 모양으로 조용하게.
-   색은 brand.css 토큰만 쓴다. 오행 색은 아래 --el-* 한 벌(먹·흙 계열로 낮춘 색)만 쓴다. */
+   색은 brand.css 토큰만 쓴다. 오행 색은 아래 --el-* 한 벌(2026-11-21: 탁한 먹·흙 톤 → 또렷한 청·적·황·백·흑 계열)만 쓴다. */
 
 html[data-brand] {
-  --el-wood:#4F6B4C; --el-fire:#A9472F; --el-earth:#93702F; --el-metal:#6B7178; --el-water:#2C4762;
+  --el-wood:#0B7A4B; --el-fire:#C42A1C; --el-earth:#8A5A00; --el-metal:#4B5563; --el-water:#1F4FD8;
   --dh-gap:14px;
 }
 
@@ -286,11 +286,12 @@ html[data-brand] body #archiveModalBody .pc-grid .pc-unknown { font-size:14px!im
    글자/칸 대비는 다섯 색 모두 4.5:1 이상(목 5.4 · 화 5.0 · 토 4.8 · 금 5.3 · 수 13.1).
    --el-*(바이오리듬 등)는 그대로 두고 명식표 전용 토큰을 따로 둔다. */
 html[data-brand] {
-  --el-wood-ink:#2E6A44;  --el-wood-bg:#E2EFE4;  --el-wood-bar:#3F8A5A;
-  --el-fire-ink:#AE3823;  --el-fire-bg:#F9E1DA;  --el-fire-bar:#CC4E36;
-  --el-earth-ink:#82600E; --el-earth-bg:#F5E8C4; --el-earth-bar:#D3A12A;
-  --el-metal-ink:#5F6670; --el-metal-bg:#E9ECEF; --el-metal-bar:#A7AEB6;
-  --el-water-ink:#151D2E; --el-water-bg:#DAE4F1; --el-water-bar:#1F2B42;
+  /* 2026-11-21 또렷한 색으로 교체: 목=에메랄드 · 화=주홍 · 토=황금 · 금=은청회 · 수=코발트(글자는 깊은 남색). 글자/칸 대비 4.6 이상 */
+  --el-wood-ink:#0B7A4B;  --el-wood-bg:#D9F2E3;  --el-wood-bar:#17A35F;
+  --el-fire-ink:#C42A1C;  --el-fire-bg:#FFE0D9;  --el-fire-bar:#E8412E;
+  --el-earth-ink:#8A5A00; --el-earth-bg:#FFEBB0; --el-earth-bar:#F2B01E;
+  --el-metal-ink:#4B5563; --el-metal-bg:#E8ECF1; --el-metal-bar:#9CA6B5;
+  --el-water-ink:#0F2C73; --el-water-bg:#D7E5FF; --el-water-bar:#1F4FD8;
 }
 html[data-brand] body .pc-grid :is(.badge-main-wood,.elem-wood)   { --e-ink:var(--el-wood-ink);  --e-bg:var(--el-wood-bg); }
 html[data-brand] body .pc-grid :is(.badge-main-fire,.elem-fire)   { --e-ink:var(--el-fire-ink);  --e-bg:var(--el-fire-bg); }
@@ -351,3 +352,97 @@ html[data-brand] body .pc-track { display:block; height:10px; border-radius:5px;
 html[data-brand] body .pc-track > i { display:block; height:100%; width:0; border-radius:5px; transition:width .6s ease; }
 html[data-brand] body .pc-rows b, html[data-brand] body .pc-rows b[id] { text-align:right; font-size:14px; font-weight:650; color:var(--ui-ink)!important; font-variant-numeric:tabular-nums; }
 @media (prefers-reduced-motion: reduce) { html[data-brand] body .pc-track > i { transition:none; } }
+
+/* =====================================================================
+   11/16 슬라이드 코멘트 (정오님 pptx)
+   1) 머리 복채: 알약 속 알약 → 한 장의 표. 왼쪽 복채 숫자, 오른쪽 먹색 '충전' 칸이 붙어 있다
+   2) 나의 사주 '정보 수정': 글자만 → 테두리 있는 버튼
+   3) 펼침 표시: ▼(닫힘) ▲(열림)을 글자 옆에
+   ===================================================================== */
+:root[data-brand] body .coin-btn {
+  gap:0; padding:0; overflow:hidden; border:1px solid var(--c-ink); border-radius:6px; background:var(--c-paper); min-height:36px; color:var(--c-ink);
+}
+:root[data-brand] body .coin-btn > #headerCoinSvg { display:inline-flex; align-items:center; padding-left:9px; }
+:root[data-brand] body .coin-btn > #coinHeader { padding:0 10px 0 5px; font-size:14px; font-weight:700; font-variant-numeric:tabular-nums lining-nums; }
+:root[data-brand] body .coin-btn > .charge-tag {
+  align-self:stretch; display:inline-flex; align-items:center; margin:0; padding:0 11px; border-radius:0;
+  background:var(--c-ink); color:var(--c-paper); font-size:12px; font-weight:700; letter-spacing:0;
+}
+:root[data-brand] body .reading-profile .reading-edit-btn {
+  min-height:40px; padding:8px 14px; border:1px solid var(--c-ink); border-radius:8px; background:var(--c-paper); color:var(--c-ink); font-size:13px; font-weight:700;
+}
+:root[data-brand] body .reading-profile .reading-edit-btn:active { background:var(--c-paper-shade); }
+
+summary.basis-sum { list-style:none; }
+summary.basis-sum::-webkit-details-marker { display:none; }
+.fold-caret { display:inline-block; width:0; height:0; margin-left:7px; vertical-align:middle; border-left:4px solid transparent; border-right:4px solid transparent; border-top:6px solid currentColor; }   /* ▼ */
+details[open] > summary > .fold-caret { border-top:0; border-bottom:6px solid currentColor; }                                                                                          /* ▲ */
+
+/* 대운(10년) 풀이 칸: 굵은 먹 테두리 → 다른 칸과 같은 옅은 면 (슬라이드 3) */
+html[data-brand] body :is(#archiveModalBody,.period-reading) [data-current-cycle="true"] {
+  border:0!important; background:var(--c-paper-shade); border-radius:12px; padding:14px 16px;
+}
+
+/* ---- 마이페이지 (슬라이드 5): 흰 상자 + 제목 + 가는 줄로 나뉜 행 ---- */
+html[data-brand] body #view-mypage .my-box { background:var(--c-paper); border-radius:12px; padding:18px 20px 6px; margin-top:16px; text-align:left; }
+html[data-brand] body #view-mypage .my-box-title { margin:0; padding-bottom:12px; border-bottom:1px solid var(--c-line); font-family:var(--brand-serif); font-size:17px; font-weight:700; color:var(--c-ink); }
+html[data-brand] body #view-mypage .my-rows { list-style:none; margin:0; padding:0; }
+html[data-brand] body #view-mypage .my-rows > li + li { border-top:1px solid var(--c-line); }
+html[data-brand] body #view-mypage .my-row { display:flex; align-items:center; gap:10px; width:100%; min-height:56px; padding:12px 0; background:transparent; border:0; text-align:left; cursor:pointer; color:var(--c-ink); font:inherit; }
+html[data-brand] body #view-mypage .my-row-main { flex:1; min-width:0; display:flex; flex-direction:column; gap:3px; }
+html[data-brand] body #view-mypage .my-row-main b { font-size:15px; font-weight:600; }
+html[data-brand] body #view-mypage .my-row-main small { font-size:12.5px; color:var(--c-ink-60); line-height:1.5; overflow-wrap:anywhere; }
+html[data-brand] body #view-mypage .my-row-meta { font-size:12.5px; color:var(--c-ink-60); }
+html[data-brand] body #view-mypage .my-chevron { width:7px; height:7px; border-top:1.5px solid var(--c-ink-60); border-right:1.5px solid var(--c-ink-60); transform:rotate(45deg); flex-shrink:0; margin-right:3px; }
+html[data-brand] body #view-mypage .my-row:active { background:var(--c-paper-shade); }
+html[data-brand] body #view-mypage .my-row:focus-visible { outline:3px solid var(--c-point); outline-offset:2px; }
+html[data-brand] body #archiveListModal .archive-list-modal { max-height:80vh; overflow:auto; }
+
+/* ---- 테마운: 목차는 팝업(이런 이야기를 읽어요)에서 보여 주고, 아래 카드에서는 접어 둔다 ---- */
+html[data-brand] body #view-theme [data-concern] > .report-preview { display:none; }
+html[data-brand] body #themeIntroModal .theme-intro-modal { max-height:82vh; overflow:auto; }
+html[data-brand] body #themeIntroModal .report-preview { background:transparent; padding:0; border:0; margin:0; }
+html[data-brand] body #themeIntroModal .preview-label { display:block; margin:0 0 6px; font-size:13px; font-weight:700; color:var(--c-ink-60); }
+html[data-brand] body #themeIntroModal ol.theme-toc { list-style:none; margin:0; padding:0; }
+html[data-brand] body #themeIntroModal ol.theme-toc li { display:flex; gap:12px; align-items:baseline; padding:5px 0; }
+html[data-brand] body #themeIntroModal .toc-num { flex:0 0 20px; font-size:12px; color:var(--c-point); font-variant-numeric:tabular-nums; }
+html[data-brand] body #themeIntroModal ol.theme-toc li strong { font-size:14px; font-weight:500; line-height:1.5; color:var(--c-ink); }
+/* 궁합 페이지(전체 화면): 목차 → 궁합 보기 → 이전에 본 궁합(행 오른쪽 삭제) */
+html[data-brand] body #archiveModalBody .gunghap-page > .reading-primary { width:100%; min-height:48px; margin-top:4px; }
+html[data-brand] body #archiveModalBody .gunghap-owned { display:flex; flex-direction:column; gap:8px; margin-top:8px; padding-top:14px; border-top:1px dashed var(--c-perf,#D4D0C6); }
+html[data-brand] body #archiveModalBody .gunghap-owned .preview-label { font-size:13px; font-weight:700; color:var(--c-ink-60,#575B62); }
+html[data-brand] body #archiveModalBody .gunghap-owned-row { display:flex; align-items:stretch; gap:8px; }
+html[data-brand] body #archiveModalBody .gunghap-owned-open { flex:1; min-width:0; display:flex; flex-direction:column; align-items:flex-start; gap:2px; padding:10px 12px; text-align:left; background:var(--c-paper-shade,#F1EEE7); border:1px solid var(--c-line,#D9D5CB); border-radius:8px; font:inherit; color:var(--c-ink,#1D2129); cursor:pointer; }
+html[data-brand] body #archiveModalBody .gunghap-owned-open strong { font-size:14px; font-weight:700; line-height:1.5; }
+html[data-brand] body #archiveModalBody .gunghap-owned-open span { font-size:12px; color:var(--c-ink-60,#575B62); }
+html[data-brand] body #archiveModalBody .gunghap-owned-del { flex:0 0 auto; display:flex; align-items:center; justify-content:center; min-width:56px; padding:0 12px; background:transparent; border:1px solid var(--c-line,#D9D5CB); border-radius:8px; font:inherit; font-size:13px; color:var(--c-ink-60,#575B62); cursor:pointer; }
+html[data-brand] body #archiveModalBody .gunghap-owned-del:hover,html[data-brand] body #archiveModalBody .gunghap-owned-del:focus-visible { border-color:var(--c-point,#B5341F); color:var(--c-point-deep,#8F2716); }
+/* 궁합 페이지 위에서 열리는 입력·충전·결제 창이 페이지 뒤로 가려지지 않게 */
+#gunghapModal,#chargeModal,#pgModal { z-index:2100; }
+html[data-brand] body #themeIntroModal .theme-intro-go { background:var(--c-ink); color:var(--c-paper); border-color:var(--c-ink); }
+
+/* 산 풀이의 목차 화면(풀이 팝업 안) */
+html[data-brand] body #archiveModalBody .theme-intro-inline { display:flex; flex-direction:column; gap:14px; padding:8px 0 24px; }
+html[data-brand] body #archiveModalBody .theme-intro-inline h3 { margin:0; font-family:var(--brand-serif); font-size:22px; color:var(--c-ink); }
+html[data-brand] body #archiveModalBody .theme-intro-inline > p { margin:0; font-size:14px; line-height:1.75; color:var(--c-ink-60); }
+html[data-brand] body #archiveModalBody .theme-intro-inline .report-preview { display:block; background:transparent; border:0; padding:0; margin:0; }
+html[data-brand] body #archiveModalBody .theme-intro-inline ol.theme-toc { list-style:none; margin:0; padding:0; }
+html[data-brand] body #archiveModalBody .theme-intro-inline ol.theme-toc li { display:flex; gap:12px; align-items:baseline; padding:5px 0; }
+html[data-brand] body #archiveModalBody .theme-intro-inline .toc-num { flex:0 0 20px; font-size:12px; color:var(--c-point); }
+#archiveDetailModal[data-theme-intro="true"] .reading-modal-actions { display:none; }
+
+/* 풀이 팝업 안 접이식 칸(근거·참고): 둥근 상자 + 큰 여백이 섞여 깨져 보이던 것을 '윗줄 하나' 평면 칸으로 통일 */
+html[data-brand] body #archiveModalBody details,
+html[data-brand] body #archiveModalBody .theme-reading[data-theme] > details.reading-evidence {
+  border:0!important; border-top:1px solid var(--c-line)!important; border-radius:0!important; background:transparent!important;
+  padding:6px 0 10px!important; margin:0!important;
+}
+html[data-brand] body #archiveModalBody .theme-reading[data-theme] > details.reading-evidence { margin-top:28px!important; }
+html[data-brand] body #archiveModalBody details > summary {
+  display:flex; align-items:center; justify-content:space-between; gap:12px; min-height:44px; list-style:none; cursor:pointer;
+  font-size:15px; font-weight:700; color:var(--c-ink);
+}
+html[data-brand] body #archiveModalBody details > summary::-webkit-details-marker { display:none; }
+html[data-brand] body #archiveModalBody details > summary::after { content:''; flex-shrink:0; border-left:4px solid transparent; border-right:4px solid transparent; border-top:6px solid var(--c-ink-60); }   /* ▼ */
+html[data-brand] body #archiveModalBody details[open] > summary::after { border-top:0; border-bottom:6px solid var(--c-ink-60); }                                                                              /* ▲ */
+html[data-brand] body #archiveModalBody details[open] > summary { margin-bottom:6px; }

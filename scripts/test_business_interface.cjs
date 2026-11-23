@@ -89,9 +89,9 @@ const tick = () => new Promise(resolve => setTimeout(resolve,30));
         assert.ok(compatibility.classList.contains('hidden'));
         assert.equal(life.parentElement,basic);
         assert.equal(doc.querySelectorAll('#view-saju [onclick^=openConcern]').length,0);
-        const allTopics = doc.getElementById('allConcernTopicsLink');
         assert.ok(before(choiceTitle,choices) && before(choices,reportTitle));
-        assert.ok(before(reportTitle,compatibility) && before(compatibility,allTopics));
+        assert.ok(before(reportTitle,compatibility));
+        assert.equal(doc.getElementById('allConcernTopicsLink'),null);
         assert.equal(doc.querySelectorAll('[data-concern-choice]').length,6);
     });
     await test('concern routes use existing products and preserve situation forms', () => {
@@ -101,13 +101,14 @@ const tick = () => new Promise(resolve => setTimeout(resolve,30));
         assert.equal(doc.querySelectorAll('input[name="optM"]').length,4);
         assert.ok(doc.getElementById('modalOptionBox').textContent.includes('기혼'));
         w.closeThemeSelectModal();
-        w.selectConcern('all');
-        for (const key of ['wealth','love','business','health','study','gunghap']) assert.ok(visible(`concern-${key}`));
     });
     await test('question choices reveal a matching outline, preserve focus and never purchase', () => {
         let requests=0; w.fetch=async()=>{requests++;throw Error('unexpected purchase');};
         for (const key of ['business','love','wealth','study','health']) {
             doc.querySelector(`[data-concern-choice="${key}"]`).click();
+            assert.ok(!doc.getElementById('themeIntroModal').classList.contains('hidden'));
+            assert.equal(doc.querySelectorAll('#themeIntroToc li').length,doc.querySelectorAll(`#concern-${key} .report-preview li`).length);
+            w.alert=()=>{}; w.confirmThemeIntro();
             assert.ok(visible(`concern-${key}`));
             assert.equal(doc.querySelectorAll('[data-concern]:not(.hidden)').length,1);
             assert.equal(doc.activeElement.id,`concern-heading-${key}`);

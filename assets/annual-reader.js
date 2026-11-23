@@ -25,6 +25,28 @@ window.formatAnnualReading = function(body) {
         if (opening?.childNodes.length === 1 && opening.firstChild.nodeType === 3) {
             opening.firstChild.textContent = opening.textContent.replace(/^\d{1,2}월 [\s\S]*?님의 풀이입니다\.\s*/, '');
         }
+        // 이미 저장된 풀이(옛 마크업)도 새 월별 카드 모양으로 맞춘다: 총운이 근거·처방 앞, 근거·처방/할 일·피할 일은 라벨 칸+글 칸
+        const gradeBox = card.querySelector(':scope > p.annual-month-grade');
+        const flowLine = card.querySelector(':scope > p.annual-month-flow');
+        if (gradeBox && flowLine && (gradeBox.compareDocumentPosition(flowLine) & Node.DOCUMENT_POSITION_FOLLOWING)) {
+            card.insertBefore(flowLine, gradeBox);
+        }
+        card.querySelectorAll(':scope > p.annual-month-grade, :scope > p.annual-month-todo').forEach(box => {
+            if (box.querySelector('.annual-month-row')) return;
+            const rows = [];
+            box.childNodes.forEach(node => {
+                if (node.nodeName === 'STRONG') rows.push({ label: node.textContent, text: '' });
+                else if (node.nodeName !== 'BR' && rows.length) rows[rows.length - 1].text += node.textContent;
+            });
+            if (!rows.length) return;
+            box.replaceChildren(...rows.map(row => {
+                const line = document.createElement('span'); line.className = 'annual-month-row';
+                const label = document.createElement('strong'); label.textContent = row.label;
+                const text = document.createElement('span'); text.textContent = row.text.trim();
+                line.append(label, text);
+                return line;
+            }));
+        });
     });
     body.querySelectorAll('.annual-kind').forEach(el => el.remove());
     body.querySelectorAll('.annual-note').forEach(el => {
