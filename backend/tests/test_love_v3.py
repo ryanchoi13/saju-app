@@ -99,8 +99,9 @@ class LoveV3Tests(unittest.TestCase):
         for option in ("기본", "솔로", "기혼", None):
             with self.subTest(option=option):
                 original = dict(report_key="love", report_content="옛 풀이", narrative_version="love-4tier-v2",
-                                reading_context=dict(sub_option=option) if option else {})
-                rebuilt = main._rebuilt_report(user, original, LOVE_NARRATIVE_VERSION)
+                                reading_context=dict(sub_option=option) if option else {},
+                                basis=user)            # 11/23: 풀이는 산 사주(basis)로 다시 쓴다
+                rebuilt = main._rebuilt_report(original, LOVE_NARRATIVE_VERSION)
                 self.assertIsNotNone(rebuilt)
                 self.assertEqual(rebuilt["narrative_version"], LOVE_NARRATIVE_VERSION)
                 self.assertIn('data-love-tier="now"', rebuilt["report_content"])

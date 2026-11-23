@@ -40,14 +40,25 @@ def load(user_id, **seed):
 def buy_report(user_id, key, cost, report):
     with locked(user_id) as (_, _, state):
         # Repeated delivery/clicks must never spend twice or lose the first report.
-        # 궁합만 상대마다 따로 산다(partner_key 가 같을 때만 같은 구매). 나머지는 종류당 하나.
-        partner_key = report.get('partner_key')
+        # 궁합은 상대마다(partner_key), 나머지는 산 사주마다(saju_key) 종류당 하나.
+        partner_key, saju_key = report.get('partner_key'), report.get('saju_key')
         if not any(r['report_key'] == key and (partner_key is None or r.get('partner_key') == partner_key)
+                   and (saju_key is None or r.get('saju_key') == saju_key)
                    for r in state['reports']):
             if state['balance'] < cost:
                 raise ValueError('insufficient_coins')
             state['balance'] -= cost
             state['reports'].append(report)
+        return state
+
+
+def stamp_reports(user_id, stamps):
+    """옛 풀이에 '산 사주' 기록을 붙인다. 본문·버전·결제일·잔액은 건드리지 않는다."""
+    with locked(user_id) as (_, _, state):
+        for expected, fields in stamps:
+            report = next((r for r in state['reports'] if r == expected), None)
+            if report is not None and not report.get('saju_key'):
+                report.update(fields)
         return state
 
 
@@ -78,13 +89,18 @@ def refresh_owned_report(user_id, report_key, expected, replacement):
     """
     from copy import deepcopy
     with locked(user_id) as (_, _, state):
-        report = next((r for r in state['reports'] if r['report_key'] == report_key), None)
-        if report is None:
+        # 같은 종류를 사주마다 따로 가질 수 있으므로, 같은 사주(saju_key)의 풀이만 본다.
+        mine = [r for r in state['reports'] if r['report_key'] == report_key
+                and r.get('saju_key') == expected.get('saju_key')]
+        if not mine:
             raise ValueError('not_owned')
+        report = next((r for r in mine if r == expected), None)
+        if report is None:
+            if any(r.get('narrative_version') == replacement['narrative_version'] for r in mine):
+                return state
+            raise ValueError('report_changed')
         if report.get('narrative_version') == replacement['narrative_version']:
             return state
-        if report != expected:
-            raise ValueError('report_changed')
         history = report.setdefault('previous_versions', [])
         history.append(deepcopy({k:v for k,v in expected.items() if k != 'previous_versions'}))
         for field in ('report_title', 'report_content', 'narrative_version', 'report_year',

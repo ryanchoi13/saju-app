@@ -85,6 +85,15 @@ class AnnualReaderTests(TestCase):
         with self.assertRaises(ValueError): build_annual_overall_report(core, '검증', 2025)
 
 
+def without_saju(value):
+    """옛 풀이는 처음 열 때 '산 사주' 기록(saju_key·basis)이 붙는다(11/23). 그 기록만 빼고 비교한다."""
+    if isinstance(value, list):
+        return [without_saju(v) for v in value]
+    if isinstance(value, dict):
+        return {k: without_saju(v) for k, v in value.items() if k not in ('saju_key', 'basis')}
+    return value
+
+
 class AnnualRefreshTests(TestCase):
     def setUp(self):
         tmp = TemporaryDirectory(); self.addCleanup(tmp.cleanup)
@@ -130,7 +139,7 @@ class AnnualRefreshTests(TestCase):
         self.assertEqual(reports[1]['report_content'], '별도 풀이')
         state = wallet_store.load(self.owner)
         self.assertEqual(state['balance'], 480)                # 추가 차감 없음
-        self.assertEqual(state['reports'][0]['previous_versions'], [self.original])   # 서버에는 보관
+        self.assertEqual(without_saju(state['reports'][0]['previous_versions']), [self.original])   # 서버에는 보관
         with patch('main.generate_detailed_report', side_effect=AssertionError('must not regenerate')):
             self.assertEqual(self.session_reports(), reports)
 
@@ -138,13 +147,13 @@ class AnnualRefreshTests(TestCase):
         self.original.update(report_content='<p>연도 없음</p>', report_title='이전 풀이')
         self.seed()
         self.assertEqual(self.session_reports()[0]['report_content'], '<p>연도 없음</p>')
-        self.assertEqual(wallet_store.load(self.owner)['reports'][0], self.original)
+        self.assertEqual(without_saju(wallet_store.load(self.owner)['reports'][0]), self.original)
 
     def test_generation_failure_keeps_the_old_reading(self):
         self.seed(); before = wallet_store.load(self.owner)
         with patch('main.generate_detailed_report', side_effect=ValueError('bad profile')):
             self.assertEqual(self.session_reports()[0]['report_content'], self.original['report_content'])
-        self.assertEqual(wallet_store.load(self.owner), before)
+        self.assertEqual(without_saju(wallet_store.load(self.owner)), before)
 
     def test_storage_failure_keeps_the_old_reading_and_balance(self):
         self.seed(); before = wallet_store.load(self.owner)
@@ -155,7 +164,7 @@ class AnnualRefreshTests(TestCase):
             return execute(conn, pg, sql, params)
         with patch('wallet_store._execute', side_effect=fail):
             self.assertEqual(self.session_reports()[0]['report_content'], self.original['report_content'])
-        self.assertEqual(wallet_store.load(self.owner), before)
+        self.assertEqual(without_saju(wallet_store.load(self.owner)), before)
 
     def test_old_refresh_endpoints_are_gone(self):
         self.seed()
@@ -171,7 +180,7 @@ class AnnualRefreshTests(TestCase):
             list(pool.map(lambda _:wallet_store.refresh_owned_annual(self.owner,self.original,replacement),range(8)))
         state=wallet_store.load(self.owner)
         self.assertEqual(state['balance'],480)
-        self.assertEqual(state['reports'][0]['previous_versions'],[self.original])
+        self.assertEqual(without_saju(state['reports'][0]['previous_versions']),[self.original])
         with self.assertRaises(ValueError):
             wallet_store.refresh_owned_annual(self.owner,dict(self.original,report_content='stale'),
                 dict(replacement,narrative_version='future-version'))

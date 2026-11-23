@@ -281,6 +281,36 @@ def _partner_identity(req, partner_clock) -> str:
     return hashlib.sha256(raw.encode("utf-8")).hexdigest()[:24]
 
 
+# --- 산 풀이는 '산 사주'에 묶인다 (11/23 정오님 결정) ---------------------------
+# 한 번 사서 내 정보만 바꿔 가며 다른 사람 풀이를 보는 일을 막는다. 풀이를 살 때의 사주(basis)를 풀이에 함께
+# 저장하고, 지금 저장된 사주와 같을 때만 '내 풀이'로 본다. 태어난 시간만 달라도 다른 사주다(예외 없음).
+# 이름은 사주가 아니므로 지문에 넣지 않는다. basis·saju_key 는 서버에만 두고 화면에는 표시용 한 줄만 보낸다.
+SAJU_FIELDS = ('gender', 'birth_year', 'birth_month', 'birth_day',
+               'calendar_type', 'sijin_index', 'birth_hour', 'birth_minute')
+SAJU_BOUND_KEYS = ('sinnian', 'daewoon', 'wealth', 'business', 'love', 'health', 'study')
+
+
+def _saju_key(user: Dict[str, Any]) -> str:
+    raw = '|'.join(str(user.get(field)) for field in SAJU_FIELDS)
+    return hashlib.sha256(raw.encode('utf-8')).hexdigest()[:24]
+
+
+def _report_basis(user: Dict[str, Any]) -> Dict[str, Any]:
+    return dict({field: user.get(field) for field in SAJU_FIELDS}, name=user.get('name') or '회원')
+
+
+def _basis_label(basis: Dict[str, Any]) -> str:
+    calendar = {'lunar': ' (음력)', 'leap': ' (음력 윤달)'}.get(basis.get('calendar_type'), '')
+    return f"{basis.get('name')} · {basis.get('birth_year')}.{basis.get('birth_month')}.{basis.get('birth_day')}{calendar}"
+
+
+def _owned_for_current_saju(user_id, report_key, user):
+    """지금 저장된 사주로 산 report_key 풀이. 없으면 None."""
+    current = _saju_key(user)
+    return next((r for r in bring_reports_up_to_date(user_id)
+                 if r.get('report_key') == report_key and r.get('saju_key') == current), None)
+
+
 def _birth_input_from_user(user: Dict[str, Any], name: str) -> BirthInput:
     clock = _birth_clock(user.get("sijin_index", -1), user.get("birth_hour"), user.get("birth_minute"))
     calendar_type = "lunar" if user["calendar_type"] in {"lunar", "leap"} else "solar"
@@ -1090,6 +1120,8 @@ def register_saju(req: RegisterSajuRequest):
         "coin_balance": users_db[req.user_id]["coin"],
         "saju_analysis": _public_saju(saju_res),
         "profile": _public_profile(users_db[req.user_id]),
+        # 사주가 바뀌면 산 풀이의 '지금 사주 것인지' 표시가 달라진다(풀이 본문은 산 사주 그대로).
+        "unlocked_reports": client_reports(req.user_id),
     }
 
 def _wardrobe_response(user_id):
@@ -1179,8 +1211,12 @@ def unlock_report(req: UnlockReportRequest):
         raise HTTPException(status_code=422, detail='지원하지 않는 리포트입니다.')
     cost = prices[req.report_key]
     user = hydrate_account(req.user_id)
-    if req.report_key != "gunghap" and any(r['report_key'] == req.report_key for r in reports_db[req.user_id]):
-        return {'status':'success', 'new_balance':user['coin'], 'unlocked_reports':client_reports(req.user_id)}
+    if req.report_key != "gunghap":
+        if not user.get('profile_complete'):
+            raise HTTPException(status_code=422, detail='사주 정보를 먼저 확인해 주세요.')
+        # 같은 사주로 이미 샀으면 다시 결제하지 않는다. 내 정보를 다른 사주로 바꿨다면 새 구매다.
+        if _owned_for_current_saju(req.user_id, req.report_key, user):
+            return {'status':'success', 'new_balance':user['coin'], 'unlocked_reports':client_reports(req.user_id)}
     partner_key = None
     if req.report_key == "gunghap":
         required = (
@@ -1237,6 +1273,8 @@ def unlock_report(req: UnlockReportRequest):
                       reading_context=dict(sub_option=req.sub_option, relation=req.relation))
     if partner_key:
         new_report['partner_key'] = partner_key
+    else:
+        new_report.update(saju_key=_saju_key(user), basis=_report_basis(user))
     if req.report_key == 'sinnian':
         new_report['report_year'] = rep_data.get('report_year')
 
@@ -1321,9 +1359,9 @@ def preview_report(req: PreviewReportRequest):
         return dict(status='free', report_key=req.report_key, is_unlocked=False, price_coins=0,
                     title=generated['title'], content=generated['content'],
                     narrative_version=generated.get('narrative_version'))
-    if report_access.owns_report(reports_db.get(req.user_id), req.report_key):
-        stored = next(r for r in reports_db[req.user_id] if r['report_key'] == req.report_key)
-        return dict(status='owned', report_key=req.report_key, report=stored)
+    stored = _owned_for_current_saju(req.user_id, req.report_key, user) if user.get('profile_complete') else None
+    if stored:
+        return dict(status='owned', report_key=req.report_key, report=_client_report(stored, _saju_key(user)))
     if not user.get('profile_complete'):
         raise HTTPException(status_code=422, detail='사주 정보를 먼저 확인해 주세요.')
     generated = generate_detailed_report(req.report_key, req.sub_option or '기본', '', '',
@@ -1371,8 +1409,11 @@ def _owned_year(original):
     return year if year and 1900 <= year <= 9999 else None
 
 
-def _rebuilt_report(user, original, target_version):
-    """구매한 풀이를 지금 저장된 사주로 다시 쓴다. 다시 쓸 근거가 부족하면 None."""
+def _rebuilt_report(original, target_version):
+    """구매한 풀이를 '산 사주'(basis)로 다시 쓴다. 지금 프로필은 쓰지 않는다. 다시 쓸 근거가 부족하면 None."""
+    user = original.get('basis')
+    if not user:                    # 누구 사주로 산 것인지 모르면 다른 사람 풀이로 바꿔 버리지 않는다.
+        return None
     from app.engine.services.career_copy import STATUS_TRACK as CAREER_OPTIONS
     key = original['report_key']
     now = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=9))).isoformat()
@@ -1384,32 +1425,57 @@ def _rebuilt_report(user, original, target_version):
                                              user=user, report_year=year)
         return dict(report_title=generated['title'], report_content=generated['content'],
                     narrative_version=target_version, report_year=year,
-                    refreshed_at=now, profile_basis='current_saved_profile')
+                    refreshed_at=now, profile_basis='purchase_saju')
     context = original.get('reading_context') or {}
     option = context.get('sub_option', '기본')
     # 애정운은 11/06부터 연애 상태를 고르지 않으므로(love-v3) 저장된 상황 값과 관계없이 다시 쓴다.
-    allowed = CAREER_OPTIONS if key == 'business' else None
-    if allowed and option not in allowed:   # 사용자가 고른 상황을 짐작하지 않는다.
+    # 직업운: 지금 화면은 상황을 묻지 않고 '기본'으로 산다. 저장된 값이 '기본'이면 그대로 다시 쓰고,
+    # 상황 값이 아예 없거나 모르는 값이면 사용자가 고른 상황을 짐작하지 않는다.
+    if key == 'business' and not (option in CAREER_OPTIONS or context.get('sub_option') == '기본'):
         return None
     generated = generate_detailed_report(key, option, '', context.get('relation', ''), user.get('name', '회원'),
                                          user=user, is_unlocked=True)
     return dict(report_title=generated['title'], report_content=generated['content'],
                 narrative_version=generated.get('narrative_version', target_version),
-                profile_basis='current_saved_profile', reading_context=dict(context, sub_option=option),
+                profile_basis='purchase_saju', reading_context=dict(context, sub_option=option),
                 refreshed_at=now)
 
 
+def _bind_old_reports(user_id, user):
+    """이 규칙 전에 산 풀이(basis 없음)를 지금 저장된 사주에 한 번 묶는다.
+
+    그때는 프로필과 풀이가 늘 같은 사람이었다. 다만 제목의 이름이 지금 이름과 다르면(이미 프로필을 바꿔 둔 계정)
+    누구 사주인지 알 수 없으므로 묶지 않는다 — 그 풀이는 그대로 두고 다시 쓰지도 않는다.
+    """
+    import re
+    stamps = []
+    for report in reports_db.get(user_id, []):
+        if report.get('report_key') not in SAJU_BOUND_KEYS or report.get('saju_key'):
+            continue
+        named = re.search(r'(\S+?)님', report.get('report_title') or '')
+        if named and named.group(1) != (user.get('name') or ''):
+            continue
+        stamps.append((report, dict(saju_key=_saju_key(user), basis=_report_basis(user))))
+    if not stamps:
+        return
+    try:
+        reports_db[user_id] = wallet_store.stamp_reports(user_id, stamps)['reports']
+    except (ValueError, wallet_store.StorageUnavailable):
+        logger.warning('옛 풀이를 사주에 묶지 못함 user=%s', user_id)
+
+
 def bring_reports_up_to_date(user_id):
-    """보관함의 풀이 중 버전이 낡은 것을 최신으로 바꾼다. 실패한 것은 그대로 둔다."""
+    """보관함의 풀이 중 버전이 낡은 것을 '산 사주'의 최신 풀이로 바꾼다. 실패한 것은 그대로 둔다."""
     user = users_db.get(user_id) or hydrate_account(user_id)
     if not user.get('profile_complete'):
         return reports_db.get(user_id, [])
+    _bind_old_reports(user_id, user)
     for original in list(reports_db.get(user_id, [])):
         target = _report_target_version(original.get('report_key'))
         if target is None or original.get('narrative_version') == target:
             continue
         try:
-            replacement = _rebuilt_report(user, original, target)
+            replacement = _rebuilt_report(original, target)
         except Exception:
             logger.warning('구매한 풀이 자동 갱신 실패(생성) user=%s key=%s', user_id, original.get('report_key'),
                            exc_info=True)
@@ -1426,9 +1492,25 @@ def bring_reports_up_to_date(user_id):
     return reports_db.get(user_id, [])
 
 
+SERVER_ONLY_REPORT_FIELDS = ('previous_versions', 'partner_key', 'saju_key', 'basis')
+
+
+def _client_report(report, current_saju):
+    """화면용 풀이 한 건. 사주에 묶이는 풀이는 지금 사주의 것인지(for_current_saju)와 누구 풀이인지(basis_label)를 붙인다."""
+    shown = {k: v for k, v in report.items() if k not in SERVER_ONLY_REPORT_FIELDS}
+    bound = report.get('report_key') in SAJU_BOUND_KEYS
+    shown['for_current_saju'] = (not bound) or report.get('saju_key') == current_saju
+    if bound and report.get('basis'):
+        shown['basis_label'] = _basis_label(report['basis'])
+    return shown
+
+
 def client_reports(user_id):
-    """화면에 보내는 보관함. 이전 원문은 서버에만 둔다."""
-    return [{k: v for k, v in r.items() if k not in ('previous_versions', 'partner_key')} for r in bring_reports_up_to_date(user_id)]
+    """화면에 보내는 보관함. 이전 원문과 사주 원본은 서버에만 둔다."""
+    reports = bring_reports_up_to_date(user_id)
+    user = users_db.get(user_id) or {}
+    current = _saju_key(user) if user.get('profile_complete') else None
+    return [_client_report(r, current) for r in reports]
 
 # Date-specific Korean daily zodiac/star guides.
 from zodiac_daily import build_daily_zodiac

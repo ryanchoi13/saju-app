@@ -2575,6 +2575,12 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             currentCoin = data.coin_balance;
             updateCoinDisplay();
             applySajuAnalysisToUI(data.saju_analysis);
+            // 사주가 바뀌면 예전 풀이는 '내 풀이'가 아니게 되고(새로 사야 함), 미리보기 캐시도 옛 사주 것이라 비운다.
+            if (Array.isArray(data.unlocked_reports)) {
+                serverUnlockedReports = data.unlocked_reports;
+                Object.keys(themePreviewCache).forEach(k => delete themePreviewCache[k]);
+                refreshReportEntrypoints();
+            }
 
             document.getElementById('onboardingInputView').classList.add('hidden');
             document.getElementById('sajuEditBack').classList.add('hidden');
@@ -3574,6 +3580,11 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                     const date = document.createElement('span'); date.className = 'archive-entry-date';
                     date.textContent = `구매일 : ${boughtOn}`; copy.append(date);
                 }
+                // 지금 내 정보와 다른 사주로 산 풀이는 누구 풀이인지 밝힌다.
+                if (report.for_current_saju === false && report.basis_label) {
+                    const whose = document.createElement('span'); whose.className = 'archive-entry-date';
+                    whose.textContent = `${report.basis_label} 기준`; copy.append(whose);
+                }
                 row.append(copy, button); container.append(row);
             });
         }
@@ -3807,7 +3818,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             modal.dataset.annualReader = 'false'; modal.dataset.annualPartitioned = 'false';
             modal.dataset.themeIntro = 'true';   // 목차 화면에서는 PDF 저장·닫기 줄을 숨긴다
             document.getElementById('archiveModalTitle').textContent = '궁합';
-            document.getElementById('readingReportMeta').textContent = '';
+            { const meta = document.getElementById('readingReportMeta'); meta.textContent = ''; meta.hidden = true; }
             const contents = document.getElementById('readingReportContents');
             contents.replaceChildren(); contents.classList.add('hidden');
             renderGunghapPage();
@@ -3934,8 +3945,10 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
         }
 
         function latestOwnedReportIndex(key) {
+            // 11/23: 풀이는 산 사주에 묶인다. 내 정보를 다른 사주로 바꿨다면 예전 풀이는 '내 풀이'가 아니다(보관함에서만 열림).
             for (let i = serverUnlockedReports.length - 1; i >= 0; i--) {
-                if (serverUnlockedReports[i].report_key === key) return i;
+                const report = serverUnlockedReports[i];
+                if (report.report_key === key && report.for_current_saju !== false) return i;
             }
             return -1;
         }
@@ -4217,7 +4230,9 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             // 11/15: 화면 제목에서 '○○님 정통 명리' 머리말은 뺀다(예: '평생운세 · 성향과 흐름'). 저장된 원래 제목은 그대로 둔다.
             const shortTitle = String(item.report_title || '').replace(/^\S+님\s*정통\s*명리\s*/, '').trim() || item.report_title;
             document.getElementById('archiveModalTitle').textContent = shortTitle;
-            document.getElementById('readingReportMeta').textContent = '';
+            const whose = document.getElementById('readingReportMeta');
+            whose.textContent = (owned.for_current_saju === false && owned.basis_label) ? `${owned.basis_label} 기준 풀이` : '';
+            whose.hidden = !whose.textContent;
             const body = document.getElementById('archiveModalBody');
             body.innerHTML = item.report_content;
             if (owned.report_key === 'sinnian') {
