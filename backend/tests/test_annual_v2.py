@@ -203,6 +203,40 @@ class MonthTests(TestCase):
         for fam in v2.AREA_LINES.values():
             self.assertEqual(set(fam), set(v2.AREA_KEYS))
 
+    def test_graded_month_flow_follows_the_same_rules(self):
+        # 11/23: 등급(좋음·주의)에 맞춘 흐름 문단 — 십성 열 개 모두, 결론 → 장면 → 팁 세 문장.
+        from app.engine.services import annual_voice
+        pattern = re.compile(r"(생깁니다|일어납니다|찾아옵니다|사고가|사고를|질병|수술|반드시|기 쉽|기 쉬)")
+        for grade_key, bank in annual_voice.MONTH_FLOW_BY_GRADE.items():
+            self.assertEqual(set(bank), set(v2.MONTH_FLOW), grade_key)
+            for god, text in bank.items():
+                sentences = split_sentences(text)
+                self.assertEqual(len(sentences), 3, text)
+                self.assertTrue(sentences[0].endswith("달입니다."), text)
+                self.assertRegex(sentences[2], r"세요\.$", text)
+                self.assertIsNone(pattern.search(text), text)
+                self.assertEqual(find_banned(text), [], text)
+                for sentence in sentences:
+                    self.assertLessEqual(len(sentence), v2.SENTENCE_MAX_MONTH, sentence)
+                    self.assertFalse(any(h in sentence for h in v2.HEDGES), sentence)
+        every = [t for bank in annual_voice.MONTH_FLOW_BY_GRADE.values() for t in bank.values()]
+        every += [t for pool in annual_voice.MONTH_FLOW.values() for t in pool]
+        self.assertEqual(len(set(split_sentences(" ".join(every)))), len(split_sentences(" ".join(every))))
+
+    def test_month_flow_matches_the_grade_and_never_repeats(self):
+        from app.engine.services import annual_voice
+        ledger = CopyLedger(1)
+        month = lambda m, key: v2.compose_month(ledger, m, month_god="seven_killings", year_god="peer",
+                                                focus_area="work", grade=dict(key=key, label=v2.GRADE_LABEL[key],
+                                                reason="그달의 이유입니다.", advice="이렇게 하세요."))["flow_text"]
+        first, second = month(3, "caution"), month(9, "caution")
+        self.assertEqual(first, annual_voice.MONTH_FLOW_CAUTION["seven_killings"])
+        self.assertIn(second, annual_voice.MONTH_FLOW["seven_killings"])       # 같은 문단을 한 해에 두 번 쓰지 않는다
+        self.assertEqual(month(11, "good"), annual_voice.MONTH_FLOW_GOOD["seven_killings"])
+        normal = v2.compose_month(CopyLedger(1), 3, month_god="peer", year_god="peer", focus_area="work",
+                                  grade=dict(key="normal", label="보통", reason="이유입니다.", advice="하세요."))["flow_text"]
+        self.assertIn(normal, annual_voice.MONTH_FLOW["peer"])
+
     def test_month_text_is_attitude_not_event(self):
         pattern = re.compile(r"(생깁니다|일어납니다|찾아옵니다|사고가|사고를|질병|수술|반드시)")
         pools = [*v2.MONTH_FLOW.values(), v2.GENERAL_FLOW, *v2.FOCUS.values(), *v2.MODE_LINES.values(),

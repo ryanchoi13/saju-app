@@ -874,9 +874,13 @@ def month_grade(daily_grade: str | None, items: list[tuple[str, int]] | None, mo
                 basis=basis[0] if basis else None)
 
 
-def _voice_month_flow(god: str):
+def _take_month_flow(ledger: CopyLedger, god: str, grade_key: str | None, month: int) -> str:
+    """그달 흐름 문단. '좋음'·'주의' 달은 등급에 맞춘 문단을 먼저 쓰고(한 해에 한 번), 그 밖에는 십성 문단을 돌려 쓴다."""
     from app.engine.services import annual_voice
-    return annual_voice.MONTH_FLOW.get(god)
+    graded = annual_voice.MONTH_FLOW_BY_GRADE.get(grade_key, {}).get(god)
+    if graded and ledger.has_free(f"m:flow:{god}:{grade_key}", [graded]):
+        return ledger.take(f"m:flow:{god}:{grade_key}", [graded], offset=0)[1]
+    return ledger.take(f"m:flow:{god}", annual_voice.MONTH_FLOW.get(god) or MONTH_FLOW[god], offset=month)[1]
 
 
 def _take_if_free(ledger: CopyLedger, key: str, pool: list, offset: int):
@@ -894,7 +898,8 @@ def compose_month(ledger: CopyLedger, month: int, *, month_god: str | None, year
     focus_area = focus_area if focus_area in FOCUS else "health"
     god = month_god if month_god in MONTH_FLOW else None
 
-    flow_text = ledger.take(f"m:flow:{god}", (_voice_month_flow(god) or MONTH_FLOW[god]) if god else GENERAL_FLOW, offset=month)[1]
+    flow_text = (_take_month_flow(ledger, god, (grade or {}).get("key"), month) if god
+                 else ledger.take("m:flow:None", GENERAL_FLOW, offset=month)[1])
 
     link = None
     if god and year_god in FAMILY:
