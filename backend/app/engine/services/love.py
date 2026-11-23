@@ -559,7 +559,8 @@ def _compose_v4(core: MyeongriCoreResult, query: dict, name: str, group: str, se
                       f'{GAN_KO.get(pillar["stem"], "")}{ZHI_KO.get(pillar["branch"], "")}({pillar["ganji"]}) 대운')
         cycle_tier = sec.CYCLE_TIER[tiers[GAN_WUXING[pillar["stem"]]]]
         nxt = next((c for c in timing.get("cycles", []) if c.get("index") == current.get("index", -9) + 1), None)
-        if nxt and nxt.get("ten_god") in sec.NEXT_SHORT:
+        # 91세 이후에 시작하는 대운은 "다음 10년"으로 잇지 않는다(11/23 점검: 92세에게 "101세부터…").
+        if nxt and nxt.get("ten_god") in sec.NEXT_SHORT and nxt["start_age"] <= 90:
             gz = nxt["pillar"]["ganji"]
             cycle_next = sec.NEXT_LINE.format(age=nxt["start_age"], ganji=gz,
                                               ganji_ko=GAN_KO.get(gz[0], "") + ZHI_KO.get(gz[1], ""),

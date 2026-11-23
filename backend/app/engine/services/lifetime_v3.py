@@ -9,6 +9,7 @@
 
 from __future__ import annotations
 
+from contextvars import ContextVar
 import re
 from collections import Counter
 from datetime import date
@@ -41,11 +42,21 @@ SENTENCE_LIMIT = 80          # 앉아서 읽는 긴 글이라 두 절까지(10/2
 EVENT_BANNED = ("사고", "이혼", "파국")   # 지나온 길에서도 쓰지 않는 사건 말(헌장 10/23)
 
 
+# 문장 길이는 '우리가 쓴 글'의 길이를 재는 규칙이다. 이름이 길다고 풀이 전체가 옛 버전으로 떨어지면 안 되므로
+# (11/23 점검: 이름 10글자 이상에서 약 9%) 이름은 세 글자로 쳐서 잰다.
+_READER_NAME: ContextVar[str] = ContextVar("lifetime_v3_reader_name", default="")
+
+
+def _measured(sentence: str) -> int:
+    name = _READER_NAME.get()
+    return len(sentence.replace(name, "○○○")) if len(name) > 3 else len(sentence)
+
+
 def check_paragraph(text: str, allow_absolute: bool = False) -> list[str]:
     """now_me_copy.validate_paragraph 와 같은 규칙에서 문장 길이만 80자로 늘린 검사."""
     issues = [i for i in bank.validate_paragraph(text, allow_absolute=allow_absolute) if not i.startswith("문장이 깁니다")]
     for sentence in split_sentences(text):
-        if len(sentence) > SENTENCE_LIMIT:
+        if _measured(sentence) > SENTENCE_LIMIT:
             issues.append(f"문장이 깁니다({len(sentence)}): {sentence}")
     issues += [f"사건 말 '{w}'" for w in EVENT_BANNED if w in text]
     return issues
@@ -923,6 +934,7 @@ def build_lifetime_v3(core: MyeongriCoreResult, user_name: str, *, past, now, fu
     profile["strength"] = strength          # 칠살 대운 갈래 판단용(11/02)
     seed = seed_from(*profile["pillars"].values())
     name = user_name or "회원"
+    _READER_NAME.set(name)
     ordered = select_rows(profile)
     if not ordered:
         raise ValueError("lifetime_v3: 해당하는 사전 행이 없습니다")

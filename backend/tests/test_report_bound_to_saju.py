@@ -42,7 +42,8 @@ class ReportBoundToSajuTests(TestCase):
         self.addCleanup(self.tmp.cleanup)
         env = patch.dict(os.environ, {'DATABASE_URL': '', 'RENDER': '', 'RENDER_SERVICE_ID': '',
             'DALHA_WARDROBE_DB': self.tmp.name + '/profiles.sqlite',
-            'DALHA_MENU_DB': self.tmp.name + '/menus.sqlite'})
+            'DALHA_MENU_DB': self.tmp.name + '/menus.sqlite',
+            'DALHA_TEST_USER_IDS': USER})   # 직업운은 아직 '곧 열려요'라 테스트 계정으로 산다
         env.start(); self.addCleanup(env.stop)
         ready = patch.object(menu_store, '_READY', False); ready.start(); self.addCleanup(ready.stop)
         auth_kakao(KakaoAuthRequest(kakao_id="test-bound"))

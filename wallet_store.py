@@ -40,10 +40,11 @@ def load(user_id, **seed):
 def buy_report(user_id, key, cost, report):
     with locked(user_id) as (_, _, state):
         # Repeated delivery/clicks must never spend twice or lose the first report.
-        # 궁합은 상대마다(partner_key), 나머지는 산 사주마다(saju_key) 종류당 하나.
-        partner_key, saju_key = report.get('partner_key'), report.get('saju_key')
+        # 궁합은 상대마다(partner_key), 나머지는 산 사주마다(saju_key) 종류당 하나. 올해운세는 해마다(report_year) 따로.
+        partner_key, saju_key, year = report.get('partner_key'), report.get('saju_key'), report.get('report_year')
         if not any(r['report_key'] == key and (partner_key is None or r.get('partner_key') == partner_key)
                    and (saju_key is None or r.get('saju_key') == saju_key)
+                   and (year is None or r.get('report_year') in (None, year))
                    for r in state['reports']):
             if state['balance'] < cost:
                 raise ValueError('insufficient_coins')
@@ -91,7 +92,8 @@ def refresh_owned_report(user_id, report_key, expected, replacement):
     with locked(user_id) as (_, _, state):
         # 같은 종류를 사주마다 따로 가질 수 있으므로, 같은 사주(saju_key)의 풀이만 본다.
         mine = [r for r in state['reports'] if r['report_key'] == report_key
-                and r.get('saju_key') == expected.get('saju_key')]
+                and r.get('saju_key') == expected.get('saju_key')
+                and r.get('report_year') in (expected.get('report_year'), replacement.get('report_year'))]
         if not mine:
             raise ValueError('not_owned')
         report = next((r for r in mine if r == expected), None)
