@@ -52,3 +52,23 @@ class ThemeVoiceV2Tests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class CommonSentenceConditionTests(unittest.TestCase):
+    """2026-11-23: 너무 많은 사람에게 똑같이 나오던 문장의 조건을 좁혔다(바넘 효과 방지)."""
+
+    def test_career_strength_sentence_needs_a_decided_strength(self):
+        from app.engine.services import career_copy
+        self.assertFalse(career_copy.strength_decided(None))
+        self.assertTrue(career_copy.strength_decided("weak"))
+        undecided = career_copy.compose_tier1("output", "career", None)
+        decided = career_copy.compose_tier1("output", "career", "strong")
+        self.assertNotIn("기운이 고른 편이라", undecided["body"])
+        self.assertEqual(decided["sentence_count"], undecided["sentence_count"] + 1)
+
+    def test_intent_word_is_not_flagged_as_medical(self):
+        from app.engine.services.health_copy import find_medical
+        self.assertEqual(find_medical("원치 않는 부탁에는 짧고 분명하게 의사를 전하세요."), [])
+        self.assertEqual(find_medical("내 의사를 분명히 밝히세요."), [])
+        self.assertTrue(find_medical("의사를 찾아가세요."))
+        self.assertTrue(find_medical("의사에게 물어보세요."))

@@ -65,6 +65,17 @@ def strength_key(strength: str | None) -> str:
     return "balanced"
 
 
+_STRENGTH_DECIDED = {"weak", "extremely_weak", "strong", "extremely_strong", "balanced", "neutral", "moderate", "medium"}
+
+
+def strength_decided(strength: str | None) -> bool:
+    """강약이 실제로 판정됐는가. 판정이 보류된 사주(다수)에게 '기운이 고른 편'이라고 쓰지 않기 위한 문(11/23).
+
+    보류를 '고름'으로 읽으면 열에 여덟이 같은 문장을 받는다. 근거가 없으면 그 문장을 쓰지 않는다(헌장: 약하면 쓰지 않는다).
+    """
+    return strength in _STRENGTH_DECIDED
+
+
 # ---------------------------------------------------------------------------
 # 1단: 기질 진단. 문장 네 개를 이어 붙인다 (A 강점 · B 일하는 방식 · C 기운의 세기 · D 한 줄 마무리).
 #      어미는 ~니다 → ~요 → ~니다 → ~법이죠 로 번갈아 간다. 합계는 모든 조합에서 180~220자(실측 190~205).
@@ -302,7 +313,10 @@ def compose_tier1(group: str, track: str, strength: str | None) -> dict:
     g = group if group in TIER1 else "balanced"
     t = track if track in TRACKS else "career"
     block = TIER1[g]
-    sentences = [block["A"][t], block["B"][t], TIER1_STRENGTH[strength_key(strength)][t], block["D"]]
+    sentences = [block["A"][t], block["B"][t]]
+    if strength_decided(strength):          # 강약 판정이 보류면 강약 문장을 쓰지 않는다
+        sentences.append(TIER1_STRENGTH[strength_key(strength)][t])
+    sentences.append(block["D"])
     body = " ".join(sentences)
     return dict(headline=HEADLINES[g], body=body, char_count=len(body), sentence_count=len(sentences), group=g)
 

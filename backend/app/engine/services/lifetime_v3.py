@@ -407,6 +407,15 @@ def _place_key(profile) -> str:
     return "neutral"
 
 
+def _shensha_on_day(core, name: str) -> bool:
+    """그 신살이 일지(나와 가장 가까운 자리)에 놓였는가."""
+    for item in core.evidence:
+        if f"shensha:{name}" in item.supports:
+            if any(m.get("position") == "day" for m in item.source_values.get("natal_matches", [])):
+                return True
+    return False
+
+
 def _domains(core, profile, climate, number: int, name: str = "회원") -> tuple[str, dict]:
     g, els = profile["groups"], profile["elements"]
     chosen: dict[str, tuple[list[str], str, str]] = {}
@@ -464,10 +473,11 @@ def _domains(core, profile, climate, number: int, name: str = "회원") -> tuple
     else:
         k = "neutral"
     people = list(copy.PEOPLE[k])
-    if profile["flower_canopy"]:
+    canopy_on_day = _shensha_on_day(core, "flower_canopy")
+    if canopy_on_day:   # 11/23: 원국 어디든 화개가 있으면 쓰던 것을(150명 중 93명) 일지 화개로 좁힌다
         canopy = copy.PEOPLE_CANOPY if k == "rob_many" else copy.PEOPLE_CANOPY.replace("그러면서도 ", "한편 ")
         people.insert(min(2, len(people)), canopy)
-    chosen["people"] = (people, f"비겁 {g['비겁']['main']} · 인성 {g['인성']['main']}" + (" · 화개" if profile["flower_canopy"] else ""), k)
+    chosen["people"] = (people, f"비겁 {g['비겁']['main']} · 인성 {g['인성']['main']}" + (" · 일지 화개" if canopy_on_day else ""), k)
     # 몸과 쉼 — 의학 표현 없이 생활 리듬으로만
     if els["水"]["state"] == "none":
         k = "lack_water"
