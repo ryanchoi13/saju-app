@@ -89,7 +89,7 @@ class ReadingRefreshTests(TestCase):
         self.assertNotIn('previous_versions', report)
         state = wallet_store.load(self.owner)
         self.assertEqual(state['balance'], 780)
-        self.assertEqual(state['reports'][0]['previous_versions'], [self.original])
+        self.assertEqual(annual_tests.without_saju(state['reports'][0]['previous_versions']), [self.original])
         with patch('main.generate_detailed_report', side_effect=AssertionError('already updated')):
             self.assertEqual(self.session_reports()[0], report)
 
@@ -121,11 +121,12 @@ class ReadingRefreshTests(TestCase):
         self.seed_theme(); before=wallet_store.load(self.owner)
         with patch('main.generate_detailed_report',side_effect=ValueError('invalid')):
             self.session_reports()
-        self.assertEqual(wallet_store.load(self.owner),before)
+        self.assertEqual(annual_tests.without_saju(wallet_store.load(self.owner)),before)
+        stored=wallet_store.load(self.owner)['reports'][0]   # 처음 열 때 '산 사주' 기록이 붙은 상태
         replacement=dict(report_title='새 풀이',report_content='<p>새 원고</p>',narrative_version=THEME_VERSION)
         with ThreadPoolExecutor(max_workers=4) as pool:
             list(pool.map(lambda _:wallet_store.refresh_owned_report(
-                self.owner,'study',self.original,replacement),range(8)))
+                self.owner,'study',stored,replacement),range(8)))
         state=wallet_store.load(self.owner)
         self.assertEqual(state['balance'],780)
-        self.assertEqual(state['reports'][0]['previous_versions'],[self.original])
+        self.assertEqual(annual_tests.without_saju(state['reports'][0]['previous_versions']),[self.original])
