@@ -329,6 +329,7 @@
         .annual-image { font-weight:600; }
         .annual-tags { color:var(--ui-muted); font-size:.9rem; word-break:keep-all; }
         .theme-tags { color:var(--ui-muted); font-size:.9rem; word-break:keep-all; margin:0 0 12px; }
+        .reading-age-note { color:var(--ui-muted); font-size:.9rem; line-height:1.7; word-break:keep-all; margin:0 0 14px; }
         .reading-primary, .reading-view .report-entry > button { background:var(--ui-accent)!important; font-size:1rem!important; border-radius:14px!important; padding:16px 14px!important; min-height:52px; line-height:1.6; }
         .reading-section-title { margin:28px 2px 14px; flex-wrap:wrap; }
         .reading-section-title h3 { font-size:1.125rem; color:var(--ui-ink); }
@@ -661,7 +662,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
 
                 <div class="form-group">
                     <label class="form-label">이름</label>
-                    <input type="text" id="inputName" class="form-input" placeholder="이름을 입력하세요" value="">
+                    <input type="text" id="inputName" class="form-input" placeholder="이름을 입력하세요" value="" maxlength="20">
                 </div>
                 
                 <div class="form-group">
@@ -1130,7 +1131,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 <p id="concernSelectionHint" class="reading-caption">질문을 고르면 포함된 내용과 필요한 복채를 먼저 보여드려요.</p>
                 <section id="concern-business" class="card report-entry hidden" data-concern="business" aria-labelledby="concern-heading-business">
                     <span class="reading-eyebrow">일·진로</span>
-                    <h3 id="concern-heading-business" tabindex="-1">직업·사업운</h3><p>나는 어떻게 일하는 사람일까과 맞는 일터, 돈을 버는 방식부터 이번 10년과 앞으로 12개월 일의 흐름까지 읽어요.</p>
+                    <h3 id="concern-heading-business" tabindex="-1">직업·사업운</h3><p>내가 일하는 방식과 맞는 일터, 돈을 버는 방식부터 이번 10년과 앞으로 12개월 일의 흐름까지 읽어요.</p>
                     <div class="report-preview"><span class="preview-label">이런 이야기를 읽어요</span><ol class="theme-toc"><li><span class="toc-num">01</span><strong>나는 어떻게 일하는 사람일까</strong></li><li><span class="toc-num">02</span><strong>일할 때 내가 자꾸 빠지는 함정 3가지</strong></li><li><span class="toc-num">03</span><strong>나에게 맞는 일터</strong></li><li><span class="toc-num">04</span><strong>잘 맞는 일의 종류</strong></li><li><span class="toc-num">05</span><strong>돈을 버는 방식</strong></li><li><span class="toc-num">06</span><strong>함께 일하는 사람</strong></li><li><span class="toc-num">07</span><strong>이번 10년의 일</strong></li><li><span class="toc-num">08</span><strong>앞으로 12개월 일의 흐름</strong></li><li><span class="toc-num">09</span><strong>자리가 움직이는 달</strong></li><li><span class="toc-num">10</span><strong>일을 지키는 실천</strong></li></ol></div>
                     <div id="themeReport_business" class="hidden"></div>
                     <button id="btnTheme_business" class="reading-primary" onclick="openThemeSelectModal('business')">상황 고르고 먼저 읽어보기</button>
@@ -1336,7 +1337,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             </div>
             <div class="form-group" style="margin-top: 4px;">
                 <label class="form-label">상대방 이름</label>
-                <input type="text" id="partnerNameInput" class="form-input" placeholder="이름을 입력하세요" value="">
+                <input type="text" id="partnerNameInput" class="form-input" placeholder="이름을 입력하세요" value="" maxlength="20">
             </div>
             <div class="form-group">
                 <label class="form-label">상대방 성별</label>
@@ -3484,7 +3485,8 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             if (!currentUserId) { alert("로그인이 필요합니다."); return; }
             // 궁합은 상대마다 따로 산다: 이미 산 상대인지는 서버가 알아보고(결제 없이 그 풀이를 돌려줌), 복채 부족도 서버가 알려 준다.
             const perPartner = reportKey === 'gunghap';
-            const ownedIndex = perPartner ? -1 : latestOwnedReportIndex(reportKey);
+            // 올해운세: 12월에 올해 것을 갖고 있어도 다음 해 것은 따로 산다.
+            const ownedIndex = perPartner ? -1 : reportKey === 'sinnian' ? ownedAnnualIndex('sale') : latestOwnedReportIndex(reportKey);
             if (ownedIndex >= 0) { openReadingReport(ownedIndex); return; }
             if (reportRequestPending) return;
             if (!perPartner && currentCoin < cost) { openChargeStore(); return; }
@@ -3946,11 +3948,31 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
 
         function latestOwnedReportIndex(key) {
             // 11/23: 풀이는 산 사주에 묶인다. 내 정보를 다른 사주로 바꿨다면 예전 풀이는 '내 풀이'가 아니다(보관함에서만 열림).
+            // 올해운세는 해마다 따로 산다: 지금 파는 해의 것이 먼저, 없으면 12월에 아직 읽는 올해 것. 지난 해 것은 보관함에서만.
+            if (key === 'sinnian') {
+                const sale = ownedAnnualIndex('sale');
+                return sale >= 0 ? sale : ownedAnnualIndex('current');
+            }
             for (let i = serverUnlockedReports.length - 1; i >= 0; i--) {
                 const report = serverUnlockedReports[i];
                 if (report.report_key === key && report.for_current_saju !== false) return i;
             }
             return -1;
+        }
+
+        function ownedAnnualIndex(role) {
+            for (let i = serverUnlockedReports.length - 1; i >= 0; i--) {
+                const report = serverUnlockedReports[i];
+                if (report.report_key !== 'sinnian' || report.for_current_saju === false) continue;
+                if ((report.annual_role || 'sale') === role) return i;
+            }
+            return -1;
+        }
+
+        // 12월부터는 다음 해 풀이를 판다(서버 main._annual_sale_year 와 같은 규칙. 실제 결제는 서버가 정한다).
+        function annualSaleYear() {
+            const now = koreaYearMonth();
+            return now.month === 12 ? now.year + 1 : now.year;
         }
 
         function reportDocument(item) {
@@ -4010,7 +4032,8 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             document.getElementById('annualMonthExplorer').classList.add('hidden');
             document.getElementById('lifeCycleExplorer').classList.add('hidden');
             ['lifeCycleChoices','lifeCycleReading','annualMonthChoices','annualMonthReading'].forEach(id => document.getElementById(id).replaceChildren());
-            document.getElementById('annualYearLabel').textContent = `${koreaYearMonth().year}년 올해운세`;
+            const saleYear = annualSaleYear(), nextYearOnSale = saleYear !== koreaYearMonth().year;
+            document.getElementById('annualYearLabel').textContent = nextYearOnSale ? `${saleYear}년 운세` : `${saleYear}년 올해운세`;
             Object.entries(configs).forEach(([key, [slotId, buttonId, teaserId]]) => {
                 const index = latestOwnedReportIndex(key);
                 if (key === 'daewoon') {
@@ -4031,6 +4054,14 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 slot.replaceChildren();
                 slot.classList.toggle('hidden', index < 0);
                 button.classList.toggle('hidden', index >= 0);
+                if (key === 'sinnian') {
+                    // 12월: 올해 풀이를 읽는 사람에게도 다음 해 풀이 결제 버튼을 아래에 함께 보여 준다.
+                    const ownsSaleYear = ownedAnnualIndex('sale') >= 0;
+                    button.textContent = nextYearOnSale ? `300 ${COIN_UNIT}로 ${saleYear}년 운세 읽기` : `300 ${COIN_UNIT}로 올해운세 읽기`;
+                    button.classList.toggle('hidden', ownsSaleYear);
+                    button.classList.toggle('reading-primary', index < 0);
+                    button.classList.toggle('reading-secondary', index >= 0 && !ownsSaleYear);
+                }
                 if (teaserId) document.getElementById(teaserId).classList.toggle('hidden', key === 'daewoon' ? index < 0 : index >= 0);
                 if (index < 0) {
                     if (key === 'daewoon') renderDaewoonFree();
@@ -4048,7 +4079,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 if (key === 'sinnian') {
                     const doc = reportDocument(item);
                     const year = item.report_year || doc.querySelector('[data-report-year]')?.dataset.reportYear || item.report_title?.match(/\b(\d{4})년?/)?.[1];
-                    document.getElementById('annualYearLabel').textContent = year ? `${year}년 올해운세` : '올해운세';
+                    document.getElementById('annualYearLabel').textContent = !year ? '올해운세' : Number(year) === koreaYearMonth().year ? `${year}년 올해운세` : `${year}년 운세`;
                     document.getElementById('annualMonthChoices').replaceChildren();
                     document.getElementById('annualMonthReading').replaceChildren();
                     if (doc.querySelector('.annual-reading [data-report-month]')) {

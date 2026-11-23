@@ -169,7 +169,8 @@ class AccountSecurityTests(TestCase):
             b.update(kw);return b
         post=lambda path,b:self.client.post(path,json=b)
         post('/api/reports/unlock',body());post('/api/reports/unlock',body(partner_name='나',partner_birth_day=18))
-        post('/api/reports/unlock',{'user_id':'user_qa-owner','report_key':'wealth','cost':0})
+        with patch.dict(os.environ, {'DALHA_TEST_USER_IDS':'user_qa-owner'}):   # 재물운은 아직 '곧 열려요'
+            post('/api/reports/unlock',{'user_id':'user_qa-owner','report_key':'wealth','cost':0})
         reports=wallet_store.load('user_qa-owner')['reports']
         self.assertEqual([r['report_key'] for r in reports],['gunghap','gunghap','wealth'])
         title=reports[1]['report_title']
@@ -246,7 +247,8 @@ class AccountSecurityTests(TestCase):
             if sql.startswith('UPDATE account_assets') and params[0]==780:
                 raise RuntimeError('simulated write failure')
             return execute(conn,pg,sql,params)
-        with patch('wallet_store._execute',side_effect=fail_saved_report):
+        with patch('wallet_store._execute',side_effect=fail_saved_report), \
+                patch.dict(os.environ, {'DALHA_TEST_USER_IDS':'user_qa-owner'}):
             r=self.client.post('/api/reports/unlock',json={'user_id':'user_qa-owner','report_key':'wealth','cost':220})
         self.assertEqual(r.status_code,503)
         assets=wallet_store.load('user_qa-owner')
