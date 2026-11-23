@@ -60,8 +60,8 @@ const current={report_key:'sinnian',report_title:generated.title,report_content:
         const card=doc.querySelector('#annualMonthPanel [data-report-month]:not([hidden])') || doc.querySelector('#annualMonthPanel [data-report-month]');
         assert.ok(card, button.textContent);
         assert.match(card.textContent,/이달의 초점/);
-        assert.match(card.textContent,/근거/);
-        assert.match(card.textContent,/처방/);
+        assert.match(card.textContent,/이달의 기운/);
+        assert.match(card.textContent,/이달은 이렇게/);
     }
     const printed = new JSDOM('',{url:'https://dalha.test/'});
     let printCalls=0;
