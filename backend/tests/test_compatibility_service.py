@@ -239,6 +239,18 @@ class CompatibilityVoiceV2Tests(unittest.TestCase):
         self.assertIn("첫인상과 끌림: 닮은 두 사람", html)
         self.assertNotIn("누가 먼저 다가갈까", html)
 
+    def test_middle_strength_signals_get_a_scene_but_no_tip(self):
+        from app.engine.services import compat_copy as cc
+        from app.engine.services.compatibility import _ranked
+        strong = {"good": True, "weight": 3, "first": "결론.", "scene": "장면.", "extra": "팁.", "outer": False}
+        middle = dict(strong, weight=2, first="결론2.", scene="장면2.")
+        weak = dict(strong, weight=1, first="결론3.")
+        self.assertEqual(_ranked([strong, middle, weak]), ["결론. 장면. 팁.", "결론2. 장면2."])
+        for bank in (cc.FILL_SCENE, cc.EL_LACK_SCENE):
+            self.assertEqual(set(bank), set("木火土金水"))
+        for variant in ("close", "work"):
+            self.assertEqual(set(cc.FR_AFTER[variant]), set(cc.FR[variant]))
+
     def test_no_closing_list_shared_by_every_pair(self):
         from app.engine.services import compat_copy as cc
         self.assertFalse(hasattr(cc, "CLOSING"))

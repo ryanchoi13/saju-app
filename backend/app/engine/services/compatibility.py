@@ -246,7 +246,7 @@ _CROSS_KIND = {"육합": ("six", "intact"), "충": ("clash", None), "형": ("pun
 
 _TAG = {"day": "가까운 자리", "month": "생활·일 자리", "year": "집안·배경 자리"}
 SHOW = 2    # 이 세기부터 본문에 쓴다(세기 1은 점수와 근거 상자에만)
-FULL = 3    # 이 세기부터 장면과 팁까지 쓴다(세기 2는 결론 한 줄)
+FULL = 3    # 이 세기부터 팁까지 쓴다(세기 2는 결론 + 장면)
 
 
 def _climate_kind(sig: dict) -> str | None:
@@ -305,7 +305,8 @@ def _candidates(sig: dict, variant: str, a: str, b: str, shensha: list[dict], in
         add(False, 3 if variant == "close" else 2, hook, scene, tip, tag="서로를 보는 눈", hash_=hash_)
     for who, other, els in ((a, b, sig["fills_l"]), (b, a, sig["fills_r"])):
         for el in els[:1]:
-            add(True, 2, _cc.FILL.format(x=who, y=other, el=_EL_OBJ[el], effect=_cc.EL_FILL[el]), tag="서로 채워 주는 기운", hash_=_cc.FILL_HASH)
+            add(True, 2, _cc.FILL.format(x=who, y=other, el=_EL_OBJ[el], effect=_cc.EL_FILL[el]),
+                _cc.FILL_SCENE[el].format(x=who, y=other), tag="서로 채워 주는 기운", hash_=_cc.FILL_HASH)
     kind = _climate_kind(sig)
     if kind:
         good, hook, close_scene, work_scene, close_tip, work_tip, hash_ = _cc.CLIMATE[kind]
@@ -320,13 +321,13 @@ def _candidates(sig: dict, variant: str, a: str, b: str, shensha: list[dict], in
         add(False, 3, hook, scene, tip, tag="함께 쏠린 기운", hash_=hash_)
     for el in sig["lack_both"][:1]:
         hook, hash_ = _cc.EL_LACK[el]
-        add(False, 2, hook, tag="함께 빈 기운", hash_=hash_)
+        add(False, 2, hook, _cc.EL_LACK_SCENE[el], tag="함께 빈 기운", hash_=hash_)
     kinds = {x["kind"]: x for x in sorted(shensha, key=lambda i: i["importance"])}  # 같은 종류는 가장 센 것이 남는다
     if "원진살" in kinds and kinds["원진살"]["importance"] >= 2:
         _, hook, close_scene, work_scene, close_tip, work_tip, hash_ = _cc.SHENSHA["wonjin"]
         add(False, 3, hook, work_scene if ex else close_scene, work_tip if ex else close_tip, tag="서로 거슬리는 기운", hash_=hash_)
     if variant == "close" and not lover and "도화살" in kinds and kinds["도화살"]["importance"] >= 2:  # 동업 풀이에는 쓰지 않는다
-        add(True, 2, _cc.SHENSHA["dohwa"][1], tag="서로 끌리는 매력", hash_=_cc.SHENSHA["dohwa"][6])
+        add(True, 2, _cc.SHENSHA["dohwa"][1], _cc.DOHWA_SCENE, tag="서로 끌리는 매력", hash_=_cc.SHENSHA["dohwa"][6])
     return out
 
 
@@ -342,18 +343,20 @@ def _pick(cands: list[dict], good: bool, limit: int = 4) -> list[dict]:
 
 
 def _ranked(items: list[dict], used: set | None = None) -> list[str]:
-    """센 신호(세기 3↑)는 결론 + 장면 + 팁, 세기 2는 결론 한 줄, 세기 1은 쓰지 않는다. 같은 팁은 한 번만."""
+    """센 신호(세기 3↑)는 결론 + 장면 + 팁, 세기 2는 결론 + 장면, 세기 1은 쓰지 않는다. 같은 팁은 한 번만."""
     texts = []
     used = set() if used is None else used
     for c in items:
         if c["weight"] < SHOW:
             continue
-        if c["weight"] < FULL:
-            texts.append(c["first"])
+        scene = c["scene"] if c["scene"] and c["scene"] not in used else ""   # 같은 관계가 두 자리에 있어도 장면은 한 번만
+        used.add(c["scene"])
+        if c["weight"] < FULL:          # 세기 2: 결론 + 장면(팁은 붙이지 않는다). 11/23 분량 보강
+            texts.append(" ".join(x for x in (c["first"], scene) if x))
             continue
         tip = c["extra"] if c["extra"] and c["extra"] not in used else ""
         used.add(c["extra"])
-        texts.append(" ".join(x for x in (c["first"], c["scene"], tip) if x))
+        texts.append(" ".join(x for x in (c["first"], scene, tip) if x))
     return texts
 
 
@@ -577,7 +580,8 @@ def build_compatibility_report(left: MyeongriCoreResult, right: MyeongriCoreResu
     body += sec("inner", titles["inner"], inner)
     body += sec("good", titles["good"], _ranked(good, shared) or [_cc.EMPTY["good"]])
     body += sec("hard", titles["hard"], _ranked(hard, shared) or [_cc.EMPTY["hard"]])
-    body += sec("repair", titles["repair"], [fr_friction.format(**fmt), fr_repair.format(**fmt)])
+    body += sec("repair", titles["repair"], [fr_friction.format(**fmt), fr_repair.format(**fmt),
+                                             _cc.FR_AFTER[variant][gods["l_sees_r"]].format(**fmt)])
     carry = any({r["L"], r["R"]} == {"good", "hard"} for r in sig["years"])
     body += sec("decade", titles["decade"][0 if carry else 1], _decade(sig, a, b))
     name_title = f"{escape(a)}님 & {escape(b)}님 정통 사주 궁합 감명서"
