@@ -2575,6 +2575,12 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             currentCoin = data.coin_balance;
             updateCoinDisplay();
             applySajuAnalysisToUI(data.saju_analysis);
+            // 이름·생년월일을 바꾸면 산 풀이도 새 사주로 다시 쓰여 온다. 미리보기 캐시는 옛 사주 것이라 비운다.
+            if (Array.isArray(data.unlocked_reports)) {
+                serverUnlockedReports = data.unlocked_reports;
+                Object.keys(themePreviewCache).forEach(k => delete themePreviewCache[k]);
+                refreshReportEntrypoints();
+            }
 
             document.getElementById('onboardingInputView').classList.add('hidden');
             document.getElementById('sajuEditBack').classList.add('hidden');

@@ -281,6 +281,17 @@ def _partner_identity(req, partner_clock) -> str:
     return hashlib.sha256(raw.encode("utf-8")).hexdigest()[:24]
 
 
+PROFILE_KEY_FIELDS = ('name', 'gender', 'birth_year', 'birth_month', 'birth_day',
+                      'calendar_type', 'sijin_index', 'birth_hour', 'birth_minute')
+
+
+def _profile_key(user: Dict[str, Any]) -> str:
+    """풀이가 어느 사주(이름 포함)로 쓰였는지 가리는 지문. 화면에는 보내지 않는다."""
+    import hashlib
+    raw = '|'.join(str(user.get(field)) for field in PROFILE_KEY_FIELDS)
+    return hashlib.sha256(raw.encode('utf-8')).hexdigest()[:24]
+
+
 def _birth_input_from_user(user: Dict[str, Any], name: str) -> BirthInput:
     clock = _birth_clock(user.get("sijin_index", -1), user.get("birth_hour"), user.get("birth_minute"))
     calendar_type = "lunar" if user["calendar_type"] in {"lunar", "leap"} else "solar"
@@ -1090,6 +1101,8 @@ def register_saju(req: RegisterSajuRequest):
         "coin_balance": users_db[req.user_id]["coin"],
         "saju_analysis": _public_saju(saju_res),
         "profile": _public_profile(users_db[req.user_id]),
+        # 이름·생년월일이 바뀌면 산 풀이도 새 사주로 다시 쓴다(화면 보관함도 함께 바꾼다).
+        "unlocked_reports": client_reports(req.user_id),
     }
 
 def _wardrobe_response(user_id):
@@ -1237,6 +1250,8 @@ def unlock_report(req: UnlockReportRequest):
                       reading_context=dict(sub_option=req.sub_option, relation=req.relation))
     if partner_key:
         new_report['partner_key'] = partner_key
+    else:
+        new_report['profile_key'] = _profile_key(user)
     if req.report_key == 'sinnian':
         new_report['report_year'] = rep_data.get('report_year')
 
@@ -1322,6 +1337,7 @@ def preview_report(req: PreviewReportRequest):
                     title=generated['title'], content=generated['content'],
                     narrative_version=generated.get('narrative_version'))
     if report_access.owns_report(reports_db.get(req.user_id), req.report_key):
+        bring_reports_up_to_date(req.user_id)
         stored = next(r for r in reports_db[req.user_id] if r['report_key'] == req.report_key)
         return dict(status='owned', report_key=req.report_key, report=stored)
     if not user.get('profile_complete'):
@@ -1384,29 +1400,32 @@ def _rebuilt_report(user, original, target_version):
                                              user=user, report_year=year)
         return dict(report_title=generated['title'], report_content=generated['content'],
                     narrative_version=target_version, report_year=year,
-                    refreshed_at=now, profile_basis='current_saved_profile')
+                    refreshed_at=now, profile_basis='current_saved_profile', profile_key=_profile_key(user))
     context = original.get('reading_context') or {}
     option = context.get('sub_option', '기본')
     # 애정운은 11/06부터 연애 상태를 고르지 않으므로(love-v3) 저장된 상황 값과 관계없이 다시 쓴다.
-    allowed = CAREER_OPTIONS if key == 'business' else None
-    if allowed and option not in allowed:   # 사용자가 고른 상황을 짐작하지 않는다.
+    # 직업운: 지금 화면은 상황을 묻지 않고 '기본'으로 산다. 저장된 값이 '기본'이면 그대로 다시 쓰고,
+    # 상황 값이 아예 없거나 모르는 값이면 사용자가 고른 상황을 짐작하지 않는다.
+    if key == 'business' and not (option in CAREER_OPTIONS or context.get('sub_option') == '기본'):
         return None
     generated = generate_detailed_report(key, option, '', context.get('relation', ''), user.get('name', '회원'),
                                          user=user, is_unlocked=True)
     return dict(report_title=generated['title'], report_content=generated['content'],
                 narrative_version=generated.get('narrative_version', target_version),
                 profile_basis='current_saved_profile', reading_context=dict(context, sub_option=option),
-                refreshed_at=now)
+                refreshed_at=now, profile_key=_profile_key(user))
 
 
 def bring_reports_up_to_date(user_id):
-    """보관함의 풀이 중 버전이 낡은 것을 최신으로 바꾼다. 실패한 것은 그대로 둔다."""
+    """보관함의 풀이 중 버전이 낡았거나 다른 사주로 쓰인 것을 지금 사주의 최신 풀이로 바꾼다. 실패한 것은 그대로 둔다."""
     user = users_db.get(user_id) or hydrate_account(user_id)
     if not user.get('profile_complete'):
         return reports_db.get(user_id, [])
+    current_profile = _profile_key(user)
     for original in list(reports_db.get(user_id, [])):
         target = _report_target_version(original.get('report_key'))
-        if target is None or original.get('narrative_version') == target:
+        if target is None or (original.get('narrative_version') == target
+                              and original.get('profile_key') == current_profile):
             continue
         try:
             replacement = _rebuilt_report(user, original, target)
@@ -1428,7 +1447,7 @@ def bring_reports_up_to_date(user_id):
 
 def client_reports(user_id):
     """화면에 보내는 보관함. 이전 원문은 서버에만 둔다."""
-    return [{k: v for k, v in r.items() if k not in ('previous_versions', 'partner_key')} for r in bring_reports_up_to_date(user_id)]
+    return [{k: v for k, v in r.items() if k not in ('previous_versions', 'partner_key', 'profile_key')} for r in bring_reports_up_to_date(user_id)]
 
 # Date-specific Korean daily zodiac/star guides.
 from zodiac_daily import build_daily_zodiac

@@ -81,14 +81,15 @@ def refresh_owned_report(user_id, report_key, expected, replacement):
         report = next((r for r in state['reports'] if r['report_key'] == report_key), None)
         if report is None:
             raise ValueError('not_owned')
-        if report.get('narrative_version') == replacement['narrative_version']:
+        if report.get('narrative_version') == replacement['narrative_version'] \
+                and report.get('profile_key') == replacement.get('profile_key'):
             return state
         if report != expected:
             raise ValueError('report_changed')
         history = report.setdefault('previous_versions', [])
         history.append(deepcopy({k:v for k,v in expected.items() if k != 'previous_versions'}))
         for field in ('report_title', 'report_content', 'narrative_version', 'report_year',
-                      'refreshed_at', 'profile_basis', 'reading_context'):
+                      'refreshed_at', 'profile_basis', 'reading_context', 'profile_key'):
             if field in replacement:
                 report[field] = replacement[field]
         # Original purchase date, other reports, balance and receipts are intact.

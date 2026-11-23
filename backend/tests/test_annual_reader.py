@@ -110,7 +110,9 @@ class AnnualRefreshTests(TestCase):
         wallet_store.buy_report(self.owner,'sinnian',300,self.original)
         # 이미 최신 버전인 다른 풀이: 올해 운세를 고칠 때 함께 바뀌지 않아야 한다 (11/06 love-v3부터 상태 없는 애정운도 최신화 대상)
         from app.engine.services.love import LOVE_NARRATIVE_VERSION
-        wallet_store.buy_report(self.owner,'love',220,dict(report_key='love',report_content='별도 풀이',narrative_version=LOVE_NARRATIVE_VERSION))
+        # 지금 저장된 사주로 쓰인 풀이라는 지문도 함께 둔다(11/23: 지문이 다르거나 없으면 지금 사주로 다시 쓴다).
+        wallet_store.buy_report(self.owner,'love',220,dict(report_key='love',report_content='별도 풀이',narrative_version=LOVE_NARRATIVE_VERSION,
+            profile_key=main._profile_key(main.users_db[self.owner])))
 
     def session_reports(self):
         main.users_db.clear(); main.reports_db.clear()
