@@ -3876,7 +3876,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
         async function deleteGunghapReading(index) {
             const report = serverUnlockedReports[index];
             if (!report || report.report_key !== 'gunghap' || !currentUserId || reportRequestPending) return;
-            if (!window.confirm(`${report.report_title}\n\n삭제하면 되돌릴 수 없어요. 낸 복채는 돌려받지 못하고, 이 분과 다시 보려면 새로 결제해야 해요.\n\n삭제할까요?`)) return;
+            if (!window.confirm('삭제하시겠습니까?\n보관함에서도 삭제됩니다.')) return;
             reportRequestPending = true;
             try {
                 const res = await fetch('/api/reports/delete', {
