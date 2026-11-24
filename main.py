@@ -919,7 +919,7 @@ def _verified_kakao_request(req):
             raise ValueError('identity mismatch')
         account = data.get('kakao_account') or {}
     except Exception:
-        raise HTTPException(status_code=401, detail='카카오 정보를 확인하지 못했습니다. 다시 로그인해 주세요.') from None
+        raise HTTPException(status_code=401, detail='다시 로그인해 주세요.') from None
     def shared(key):
         return None if account.get(key+'_needs_agreement') else account.get(key)
     return req.model_copy(update=dict(name=shared('name'), gender=shared('gender'),
@@ -982,7 +982,7 @@ def _withdrawal_pending(user_id):
     try:
         return account_withdrawal.pending(user_id)
     except account_withdrawal.StorageUnavailable:
-        raise HTTPException(status_code=503, detail='회원 정보를 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.')
+        raise HTTPException(status_code=503, detail='회원 정보를 불러오지 못했어요. 다시 시도해 주세요.')
 
 
 @app.post("/api/auth/kakao")
@@ -993,7 +993,7 @@ def auth_kakao(req: KakaoAuthRequest, response: Response = None, request: Reques
     try:
         saved = account_store.load(user_id)
     except account_store.StorageUnavailable:
-        raise HTTPException(status_code=503, detail='저장된 회원 정보를 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.')
+        raise HTTPException(status_code=503, detail='회원 정보를 불러오지 못했어요. 다시 시도해 주세요.')
 
     if user_id not in users_db:
         users_db[user_id] = {
@@ -1024,7 +1024,7 @@ def auth_kakao(req: KakaoAuthRequest, response: Response = None, request: Reques
         try:
             account_store.save(user_id, _public_profile(user), confirmed=user['profile_complete'])
         except account_store.StorageUnavailable:
-            raise HTTPException(status_code=503, detail='회원 정보를 저장하지 못했습니다. 다시 시도해 주세요.')
+            raise HTTPException(status_code=503, detail='회원 정보를 저장하지 못했어요. 다시 시도해 주세요.')
     elif saved:
         user.update(saved['profile'], profile_complete=saved['confirmed'])
 
@@ -1044,7 +1044,7 @@ def auth_kakao(req: KakaoAuthRequest, response: Response = None, request: Reques
             response.set_cookie(session_store.COOKIE, token, max_age=session_store.TTL,
                                 httponly=True, secure=secure, samesite='lax', path='/')
     except account_store.StorageUnavailable:
-        raise HTTPException(status_code=503, detail='회원 정보를 저장하지 못했습니다. 다시 시도해 주세요.')
+        raise HTTPException(status_code=503, detail='회원 정보를 저장하지 못했어요. 다시 시도해 주세요.')
 
     has_profile = bool(user.get("profile_complete"))
     if has_profile:
@@ -1100,7 +1100,7 @@ def withdraw_account(req: WithdrawRequest, request: Request, response: Response)
     try:
         state = account_withdrawal.request(req.user_id)
     except account_withdrawal.StorageUnavailable:
-        raise HTTPException(status_code=503, detail='탈퇴 신청을 저장하지 못했습니다. 다시 시도해 주세요.')
+        raise HTTPException(status_code=503, detail='탈퇴 신청을 하지 못했어요. 다시 시도해 주세요.')
     session_store.revoke(request.cookies.get(session_store.COOKIE))
     response.delete_cookie(session_store.COOKIE, path='/')
     return {'status': 'success', **state}
@@ -1111,7 +1111,7 @@ def cancel_withdrawal(req: WithdrawRequest):
     try:
         cancelled = account_withdrawal.cancel(req.user_id)
     except account_withdrawal.StorageUnavailable:
-        raise HTTPException(status_code=503, detail='탈퇴 취소를 저장하지 못했습니다. 다시 시도해 주세요.')
+        raise HTTPException(status_code=503, detail='탈퇴를 취소하지 못했어요. 다시 시도해 주세요.')
     return {'status': 'success', 'cancelled': cancelled}
 
 
@@ -1152,7 +1152,7 @@ def register_saju(req: RegisterSajuRequest):
     try:
         account_store.save(req.user_id, req.model_dump(exclude={'user_id'}), confirmed=True)
     except account_store.StorageUnavailable:
-        raise HTTPException(status_code=503, detail='사주 정보를 저장하지 못했습니다. 다시 시도해 주세요.')
+        raise HTTPException(status_code=503, detail='사주 정보를 저장하지 못했어요. 다시 시도해 주세요.')
     if req.user_id not in users_db:
         users_db[req.user_id] = {"coin": 1000}
 
@@ -1235,9 +1235,9 @@ def _change_wardrobe(user_id, operation, item_id=None, item=None):
         items = wardrobe_store.mutate(user_id, operation, item_id, item)
         return {"status": "success", "wardrobe_items": items}
     except wardrobe_store.StorageUnavailable:
-        raise HTTPException(status_code=503, detail="옷장에 저장하지 못했습니다. 잠시 후 다시 시도해 주세요.")
+        raise HTTPException(status_code=503, detail="옷장에 저장하지 못했어요. 다시 시도해 주세요.")
     except KeyError:
-        raise HTTPException(status_code=404, detail="아이템을 찾지 못했습니다. 옷장을 다시 불러와 주세요.")
+        raise HTTPException(status_code=404, detail="아이템을 찾지 못했어요. 새로고침해 주세요.")
     except ValueError as exc:
         raise HTTPException(status_code=422, detail=str(exc))
 
@@ -1280,7 +1280,7 @@ def unlock_report(req: UnlockReportRequest):
     
     prices = report_access.REPORT_PRICES
     if req.report_key not in prices:
-        raise HTTPException(status_code=422, detail='지원하지 않는 리포트입니다.')
+        raise HTTPException(status_code=422, detail='볼 수 없는 풀이예요.')
     cost = prices[req.report_key]
     user = hydrate_account(req.user_id)
     if req.report_key != "gunghap":
@@ -1301,16 +1301,16 @@ def unlock_report(req: UnlockReportRequest):
         if not all(required):
             raise HTTPException(status_code=400, detail="상대방 사주 정보를 모두 입력해 주세요.")
         if req.partner_gender not in {"male", "female"}:
-            raise HTTPException(status_code=400, detail="상대방 성별 값이 올바르지 않습니다.")
+            raise HTTPException(status_code=400, detail="상대방 성별을 확인해 주세요.")
         if req.partner_calendar_type not in {"solar", "lunar", "leap"}:
-            raise HTTPException(status_code=400, detail="상대방 달력 구분이 올바르지 않습니다.")
+            raise HTTPException(status_code=400, detail="상대방 양력·음력을 확인해 주세요.")
         partner_clock = _partner_clock_fields(req)
         if partner_clock is None:
-            raise HTTPException(status_code=400, detail="상대방 출생시간 값이 올바르지 않습니다.")
+            raise HTTPException(status_code=400, detail="상대방이 태어난 시각을 확인해 주세요.")
         try:
             date(req.partner_birth_year, req.partner_birth_month, req.partner_birth_day)
         except ValueError as exc:
-            raise HTTPException(status_code=400, detail="상대방 생년월일이 올바르지 않습니다.") from exc
+            raise HTTPException(status_code=400, detail="상대방 생년월일을 확인해 주세요.") from exc
         # 궁합은 상대마다 따로 산다. 같은 상대·같은 관계를 다시 보내면 새로 결제하지 않고 그 풀이를 돌려준다.
         partner_key = _partner_identity(req, partner_clock)
         for r in reports_db[req.user_id]:
@@ -1359,7 +1359,7 @@ def unlock_report(req: UnlockReportRequest):
     except ValueError:
         raise HTTPException(status_code=400, detail='Insufficient coins')
     except wallet_store.StorageUnavailable:
-        raise HTTPException(status_code=503, detail='열람 정보를 저장하지 못했습니다. 다시 시도해 주세요.')
+        raise HTTPException(status_code=503, detail='풀이를 열지 못했어요. 다시 시도해 주세요.')
     user['coin'] = assets['balance']
     reports_db[req.user_id] = assets['reports']
 
@@ -1381,7 +1381,7 @@ def delete_report(req: DeleteReportRequest):
     if req.user_id not in users_db:
         raise HTTPException(status_code=404, detail="User not found")
     if req.report_key != "gunghap":
-        raise HTTPException(status_code=422, detail="삭제할 수 없는 풀이입니다.")
+        raise HTTPException(status_code=422, detail="삭제할 수 없는 풀이예요.")
     hydrate_account(req.user_id)
     try:
         assets = wallet_store.delete_report(req.user_id, req.report_key, req.index, req.expected_title)
@@ -1417,7 +1417,7 @@ def preview_report(req: PreviewReportRequest):
     요청 값으로는 바뀌지 않는다.
     """
     if req.report_key not in report_access.PREVIEW_REPORTS:
-        raise HTTPException(status_code=422, detail='미리보기를 지원하지 않는 리포트입니다.')
+        raise HTTPException(status_code=422, detail='미리보기가 없는 풀이예요.')
     if req.user_id not in users_db:
         raise HTTPException(status_code=404, detail="User not found")
     user = hydrate_account(req.user_id)
@@ -1620,7 +1620,7 @@ def draw_daily_tarot(req: TarotDrawRequest):
     except tarot_service.DrawError as exc:
         raise HTTPException(status_code=exc.status, detail=exc.detail)
     except wardrobe_store.StorageUnavailable:
-        raise HTTPException(status_code=503, detail={'code':'storage_unavailable','message':'카드를 저장하지 못했습니다. 같은 요청으로 다시 확인해 주세요.'})
+        raise HTTPException(status_code=503, detail={'code':'storage_unavailable','message':'카드를 저장하지 못했어요. 다시 시도해 주세요.'})
 
 
 @app.get('/api/daily-tarot/state')
@@ -1642,14 +1642,14 @@ def get_daily_tarot(slot: int, user_id: Optional[str] = None, is_paid: Optional[
 @app.post("/api/user/charge-coin")
 def charge_coin(req: ChargeCoinRequest):
     if not _is_tester(req.user_id):
-        raise HTTPException(status_code=403, detail='가상 충전은 등록된 테스트 계정에서만 가능합니다. 실제 결제는 진행되지 않습니다.')
+        raise HTTPException(status_code=403, detail='테스트 계정만 가상 충전할 수 있어요.')
     try:
         with wallet_store.locked(req.user_id) as (_, _, assets):
             if assets['balance'] + req.amount > 1000000:
                 raise ValueError('test_balance_limit')
             assets['balance'] += req.amount
     except ValueError:
-        raise HTTPException(status_code=400, detail='테스트 복채 보유 한도를 초과했습니다.')
+        raise HTTPException(status_code=400, detail='테스트 복채 한도를 넘었어요.')
     users_db[req.user_id]['coin'] = assets['balance']
     return {'status':'success', 'new_balance':assets['balance'], 'test_only':True}
 

@@ -2189,7 +2189,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             try {
                 if (!window.DALHA_DESIGN_SAMPLE) initKakaoSDK();
                 if (!window.Kakao) {
-                    alert("카카오 SDK 로딩 중입니다. 1~2초 후 다시 눌러주세요.");
+                    alert("잠시 후 다시 눌러 주세요.");
                     return;
                 }
                 if (!window.Kakao.isInitialized()) {
@@ -2220,7 +2220,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                                     });
 
                                     if (!sRes.ok) {
-                                        alert("서버 연결 실패 (" + sRes.status + "): 잠시 후 다시 시도해 주세요.");
+                                        console.error("login sync", sRes.status); alert("연결이 원활하지 않아요. 잠시 후 다시 시도해 주세요.");
                                         return;
                                     }
 
@@ -2258,20 +2258,20 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                                         offerWithdrawalCancel(sData);
                                     }
                                 } catch(innerErr) {
-                                    alert("로그인 처리 중 오류가 발생했습니다: " + innerErr.message);
+                                    console.error(innerErr); alert("로그인하지 못했어요. 다시 시도해 주세요.");
                                 }
                             },
                             fail: function(err) { 
-                                alert("카카오 프로필 정보를 가져오지 못했습니다: " + JSON.stringify(err)); 
+                                console.error(err); alert("로그인하지 못했어요. 다시 시도해 주세요."); 
                             }
                         });
                     },
                     fail: function(err) { 
-                        alert("카카오 로그인 창 오류: " + JSON.stringify(err)); 
+                        console.error(err); alert("로그인하지 못했어요. 다시 시도해 주세요."); 
                     }
                 });
             } catch(outerErr) { 
-                alert("로그인 실행 오류: " + outerErr.message); 
+                console.error(outerErr); alert("로그인하지 못했어요. 다시 시도해 주세요."); 
             }
         }
 
@@ -2440,7 +2440,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 const result = await fetch('/api/auth/logout', {method:'POST'});
                 if (!result.ok) throw Error('logout failed');
             } catch (_) {
-                alert('로그아웃을 완료하지 못했습니다. 연결을 확인하고 다시 시도해 주세요.');
+                alert('로그아웃하지 못했어요. 다시 시도해 주세요.');
                 return;
             }
             localStorage.removeItem('dalha_kakao_id');
@@ -2546,7 +2546,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 return;
             }
             if (!timeUnknown && (!Number.isInteger(birthHour) || !Number.isInteger(birthMinute))) {
-                alert("태어난 시와 분을 골라 주세요. 모르면 시에서 '모름'을 선택할 수 있습니다.");
+                alert("태어난 시각을 골라 주세요. 모르면 '모름'을 골라 주세요.");
                 return;
             }
             const sijin = -1;  // 정확한 시각을 보내면 서버가 시진 번호를 함께 계산해 저장한다
@@ -2567,7 +2567,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 })
             });
             if (!res.ok) {
-                alert("사주 정보 저장에 실패했습니다. 잠시 후 다시 시도해 주세요.");
+                alert("사주 정보를 저장하지 못했어요. 다시 시도해 주세요.");
                 return;
             }
             const data = await res.json();
@@ -3384,11 +3384,11 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
 
         function goToWizardStep(step) {
             if (step === 2 && !wizardCategory) {
-                alert("아이템 종류를 선택해 주세요.");
+                alert("아이템 종류를 골라 주세요.");
                 return;
             }
             if (step === 3 && wizardColors.length === 0) {
-                alert("색상을 1개 이상 선택해 주세요.");
+                alert("색상을 하나 이상 골라 주세요.");
                 return;
             }
 
@@ -3439,8 +3439,8 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
 
         let wardrobeSavePending = false;
         async function saveWardrobeItemToServer() {
-            if (!currentUserId) { alert("로그인이 필요합니다."); return; }
-            if (!wizardColors.length || !wizardMaterials.length) { alert("색상과 소재를 1개 이상 선택해 주세요."); return; }
+            if (!currentUserId) { alert("로그인해 주세요."); return; }
+            if (!wizardColors.length || !wizardMaterials.length) { alert("색상과 소재를 하나 이상 골라 주세요."); return; }
             if (wardrobeSavePending) return;
             wardrobeSavePending = true;
             const editing = editingWardrobeItemId;
@@ -3459,30 +3459,30 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 acceptWardrobeResponse(data);
                 closeWardrobeAddWizard();
                 renderWardrobeUI();
-                alert(editing ? "✨ 옷장 아이템이 수정되었습니다!" : "✨ 내 옷장에 새 아이템이 등록되었습니다!");
+                alert(editing ? "수정했어요." : "옷장에 추가했어요.");
             } catch (error) {
-                alert(error.message || '옷장에 저장하지 못했습니다. 다시 시도해 주세요.');
+                alert(error.message || '옷장에 저장하지 못했어요. 다시 시도해 주세요.');
             } finally { wardrobeSavePending = false; }
         }
 
         async function deleteWardrobeItem(itemId) {
             if (!currentUserId || wardrobeSavePending) return;
-            if (!confirm("이 아이템을 옷장에서 삭제하시겠습니까?")) return;
+            if (!confirm("옷장에서 삭제할까요?")) return;
             wardrobeSavePending = true;
             try {
                 const res = await fetch(`/api/wardrobe/delete/${itemId}?user_id=${encodeURIComponent(currentUserId)}`, {method:'DELETE'});
                 const data = await res.json();
                 if (!res.ok || !Array.isArray(data.wardrobe_items)) {
-                    throw Error(typeof data.detail === 'string' ? data.detail : '아이템을 삭제하지 못했습니다. 다시 시도해 주세요.');
+                    throw Error(typeof data.detail === 'string' ? data.detail : '삭제하지 못했어요. 다시 시도해 주세요.');
                 }
                 acceptWardrobeResponse(data);
                 renderWardrobeUI();
-            } catch (error) { alert(error.message || '아이템을 삭제하지 못했습니다. 다시 시도해 주세요.'); }
+            } catch (error) { alert(error.message || '삭제하지 못했어요. 다시 시도해 주세요.'); }
             finally { wardrobeSavePending = false; }
         }
 
         async function handleUnlockReportOnServer(reportKey, cost, subOption = "기본", partnerName = "상대방", relation = "선택안함", partnerProfile = null) {
-            if (!currentUserId) { alert("로그인이 필요합니다."); return; }
+            if (!currentUserId) { alert("로그인해 주세요."); return; }
             // 궁합은 상대마다 따로 산다: 이미 산 상대인지는 서버가 알아보고(결제 없이 그 풀이를 돌려줌), 복채 부족도 서버가 알려 준다.
             const perPartner = reportKey === 'gunghap';
             // 올해운세: 12월에 올해 것을 갖고 있어도 다음 해 것은 따로 산다.
@@ -3506,7 +3506,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             const data = await res.json();
             if (!res.ok) {
                 if (perPartner && data.detail === 'Insufficient coins') { openChargeStore(); return; }
-                alert(data.detail || "리포트를 생성하지 못했습니다. 입력 정보를 확인해 주세요.");
+                alert(data.detail || "풀이를 만들지 못했어요. 입력한 정보를 확인해 주세요.");
                 return;
             }
 
@@ -3518,7 +3518,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             restoreUnlockedUIFromReports();
             openReadingReport(Number.isInteger(data.focus_index) ? data.focus_index : latestOwnedReportIndex(reportKey));
             } catch (error) {
-                alert("응답을 확인하지 못했습니다. 새로고침 후 보관함을 먼저 확인해 주세요.");
+                alert("응답이 없어요. 새로고침한 뒤 보관함을 확인해 주세요.");
             } finally {
                 reportRequestPending = false;
                 setReportRequestState(false);
@@ -3616,7 +3616,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 if (returnToTarot && tarotPendingDraw) {
                     tarotMessage('충전이 완료됐습니다. 선택한 카드를 펼치고 있어요.');
                     await submitTarotDraw();
-                } else alert(`테스트용 가상 충전이 완료되었습니다. (+${amount.toLocaleString()} 복채)\n실제 결제는 발생하지 않습니다.`);
+                } else alert(`${amount.toLocaleString()} 복채를 테스트로 충전했어요.\n실제 결제는 없어요.`);
             } catch (error) { status.textContent = error.message || '충전 결과를 확인하지 못했습니다. 잔액을 확인한 뒤 다시 시도해 주세요.'; }
             finally { pgPaymentBusy = false; button.disabled = false; }
         }
@@ -3660,20 +3660,20 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 return;
             }
             if (!gender || !y || !m || !d) {
-                alert("상대방의 성별과 생년월일을 모두 선택해 주세요.");
+                alert("상대방 성별과 생년월일을 골라 주세요.");
                 return;
             }
             if (!partnerTime.complete) {
-                alert("상대방의 태어난 시와 분을 골라 주세요. 모르면 시에서 '모름'을 선택할 수 있습니다.");
+                alert("상대방이 태어난 시각을 골라 주세요. 모르면 '모름'을 골라 주세요.");
                 return;
             }
             if (!rel) {
-                alert("관계 유형을 선택해 주세요.");
+                alert("관계를 골라 주세요.");
                 return;
             }
             const checkDate = new Date(y, m - 1, d);
             if (checkDate.getFullYear() !== y || checkDate.getMonth() !== m - 1 || checkDate.getDate() !== d) {
-                alert("상대방의 생년월일을 정확히 선택해 주세요.");
+                alert("상대방 생년월일을 다시 확인해 주세요.");
                 return;
             }
 
@@ -3876,7 +3876,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
         async function deleteGunghapReading(index) {
             const report = serverUnlockedReports[index];
             if (!report || report.report_key !== 'gunghap' || !currentUserId || reportRequestPending) return;
-            if (!window.confirm('삭제하시겠습니까?\n보관함에서도 삭제됩니다.')) return;
+            if (!window.confirm('삭제할까요?\n보관함에서도 사라져요.')) return;
             reportRequestPending = true;
             try {
                 const res = await fetch('/api/reports/delete', {
@@ -3884,7 +3884,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                     body: JSON.stringify({user_id: currentUserId, report_key: 'gunghap', index, expected_title: report.report_title})
                 });
                 const data = await res.json().catch(() => ({}));
-                if (!res.ok) { alert(data.detail || '삭제하지 못했어요. 잠시 후 다시 시도해 주세요.'); return; }
+                if (!res.ok) { alert(data.detail || '삭제하지 못했어요. 다시 시도해 주세요.'); return; }
                 currentCoin = data.new_balance;
                 updateCoinDisplay();
                 serverUnlockedReports = data.unlocked_reports;
@@ -3893,7 +3893,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 restoreUnlockedUIFromReports();
                 renderGunghapPage();
             } catch (error) {
-                alert('응답을 확인하지 못했어요. 새로고침 후 보관함을 먼저 확인해 주세요.');
+                alert('응답이 없어요. 새로고침한 뒤 보관함을 확인해 주세요.');
             } finally {
                 reportRequestPending = false;
             }
@@ -4216,7 +4216,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             if (button) button.textContent = (key === 'health' || key === 'wealth' || key === 'study') ? '다시 불러오기' : '상황 다시 고르기';
         }
         async function showThemePreview(key, subOption = '기본') {
-            if (!currentUserId) { alert('로그인이 필요합니다.'); return; }
+            if (!currentUserId) { alert('로그인해 주세요.'); return; }
             const ownedIndex = latestOwnedReportIndex(key);
             if (ownedIndex >= 0) { openReadingReport(ownedIndex); return; }
             if (reportRequestPending) return;
@@ -4227,13 +4227,13 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                     body: JSON.stringify({user_id: currentUserId, report_key: key, sub_option: subOption})
                 });
                 const data = await res.json();
-                if (!res.ok) { alert(data.detail || '미리보기를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.'); return; }
+                if (!res.ok) { alert(data.detail || '미리보기를 불러오지 못했어요. 다시 시도해 주세요.'); return; }
                 if (data.status === 'owned') { refreshReportEntrypoints(); openReadingReport(latestOwnedReportIndex(key)); return; }
                 themePreviewCache[key] = {...data, subOption};
                 renderThemePreview(key);
                 document.getElementById(`themeReport_${key}`)?.scrollIntoView({block:'start', behavior:'smooth'});
             } catch (error) {
-                alert('응답을 확인하지 못했어요. 네트워크를 확인한 뒤 다시 시도해 주세요.');
+                alert('연결이 원활하지 않아요. 다시 시도해 주세요.');
             } finally {
                 reportRequestPending = false; setReportRequestState(false);
             }
@@ -4330,7 +4330,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             const item = serverUnlockedReports[readingReportIndex];
             if (!item) return;
             const printWindow = window.open('', '_blank');
-            if (!printWindow) { alert('인쇄를 위해 팝업을 허용해 주세요.'); return; }
+            if (!printWindow) { alert('팝업을 허용해야 인쇄할 수 있어요.'); return; }
             printWindow.document.write('<!doctype html><html lang="ko"><head><meta charset="UTF-8"><title>달하 운세</title></head><body></body></html>');
             const printStyle = printWindow.document.createElement('style');
             printStyle.textContent = window.ANNUAL_PRINT_STYLE || 'body{font-family:sans-serif;line-height:1.8}';
@@ -4458,12 +4458,12 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 
                 document.getElementById('zodiacModal').classList.remove('hidden');
             } catch(e) { 
-                if (requestId === zodiacRequestId) alert('운세를 불러오지 못했습니다. 잠시 후 다시 눌러 주세요.');
+                if (requestId === zodiacRequestId) alert('운세를 불러오지 못했어요. 다시 눌러 주세요.');
             }
         }
 
         function closeZodiacModal() { zodiacRequestId++; document.getElementById('zodiacModal').classList.add('hidden'); }
-        function shareZodiacFortune() { alert('📋 오늘의 운세 링크가 복사되었습니다!'); }
+        function shareZodiacFortune() { alert('링크를 복사했어요.'); }
 
         // 명식표 천간/지지 본체 리버스 배지
         // 명식표: 오행 색 칸 + 큰 한자 + 읽는 법(경 · 금). 서버는 한글 글자를 주므로 자리(천간/지지)로 한자를 찾는다.
@@ -4651,7 +4651,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             if (!tarotDrawnToday) return submitTarotDraw();
             tarotPendingDraw.isPaid = true;
             tarotPendingDraw.submitted = false;
-            if (!window.confirm('C 10을 사용해 한 번 더 보시겠어요?')) {
+            if (!window.confirm('C 10으로 한 번 더 볼까요?')) {
                 tarotPendingDraw = null; saveTarotSession(); renderTarotChoices();
                 tarotMessage('추가 카드 보기를 취소했습니다.'); return;
             }
