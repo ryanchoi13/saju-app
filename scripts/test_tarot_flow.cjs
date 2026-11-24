@@ -24,7 +24,7 @@ function fetcher(fn){w.fetch=async(url,options)=>{calls.push({url,...JSON.parse(
  assert.equal(run('currentCoin'),30);
  await w.handleTarotDraw(1);assert.equal(calls.length,1); // Rereading is free.
  confirmAnswers=[false];await w.handleTarotDraw(2);assert.equal(calls.length,1); // Cancel never spends.
- assert.match(confirmations.at(-1),/^C 10을 사용해/);
+ assert.match(confirmations.at(-1),/^C 10으로/);
  assert.equal(run('tarotPendingDraw'),null);
  fetcher(()=>response(20,10));confirmAnswers=[true];await w.handleTarotDraw(2);
  assert.equal(calls.length,2);assert.equal(run('currentCoin'),20);
