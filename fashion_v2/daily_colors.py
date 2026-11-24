@@ -51,7 +51,7 @@ def ganji_index(ganji: str):
     return next((n for n in range(60) if n % 10 == s and n % 12 == b), None)
 
 
-def ganji_tone_pair(first: str, second: str, ganji: str):
+def ganji_tone_pair(first: str, second: str, ganji: str, salt: int = 0):
     """일진(천간·지지) 값으로 두 톤을 정한다. 날짜 번호 순환 대신.
 
     60갑자는 하루마다 양·음이 번갈아 온다(甲子 양, 乙丑 음, ...). 이 성질을 이용한다.
@@ -59,6 +59,9 @@ def ganji_tone_pair(first: str, second: str, ganji: str):
     - 2칸(B): 항상 A의 반대쪽 절반에서 고른다.
     그래서 어느 칸이든 이틀 연속 같은 오행이 나와도 밝은 톤 ↔ 어두운 톤이 교차한다.
     절반 안에서는 지지 번호를 두 칸씩 밀며 돌려 같은 절반이 다시 올 때(이틀 뒤) 다른 톤이 된다.
+    salt(사람마다 다른 수, 생년월일에서)만큼 절반 안의 시작 칸을 밀어, 같은 날 같은 오행이어도
+    사람마다 톤이 갈린다(2026-11-24: salt 없이 같은 날 두 사람 두 색까지 같음 60% → 되돌림).
+    밝음·어두움 절반을 고르는 규칙은 그대로라 연속 날 명도 교차는 유지된다.
     """
     n = ganji_index(ganji)
     if n is None:
@@ -74,8 +77,8 @@ def ganji_tone_pair(first: str, second: str, ganji: str):
     b_light, b_dark = halves(b_sorted)
     yang = n % 2 == 0
     a_half, b_half = (a_light, b_dark) if yang else (a_dark, b_light)
-    a = a_half[(n % 12) // 2 % len(a_half)]
-    b = b_half[((n % 10) // 2 + 1) % len(b_half)]
+    a = a_half[((n % 12) // 2 + salt) % len(a_half)]
+    b = b_half[((n % 10) // 2 + 1 + salt // 7) % len(b_half)]
     if b == a:
         b = b_half[(b_half.index(b) + 1) % len(b_half)]
     return PALETTE[a], PALETTE[b]
@@ -134,7 +137,7 @@ def todays_lucky_tones(core, today_fortune, day_ordinal: int, salt: int) -> dict
     if basis["source"] == "confirmed_natal_direction":
         # 코어가 용신 방향을 확정한 드문 경우는 예전(10/30) 그대로: 확정 오행 + 오늘 일간 오행
         today_element = core.timing.daily["pillar"]["stem_element"]
-        tone_a, tone_b = (ganji_tone_pair(basis["primary_element"], today_element, core.timing.daily["pillar"]["ganji"])
+        tone_a, tone_b = (ganji_tone_pair(basis["primary_element"], today_element, core.timing.daily["pillar"]["ganji"], salt)
                           or element_tone_pair(basis["primary_element"], today_element, day_ordinal, salt))
         element_a, tongguan = basis["primary_element"], today_fortune.get("tongguan")
         if tongguan:
@@ -173,7 +176,7 @@ def todays_lucky_tones(core, today_fortune, day_ordinal: int, salt: int) -> dict
             rest = [e for e in usable if e != first] or [e for e in ranking if e != first]
             second, second_rule = rest[0], "natal_rank"
 
-    tone_a, tone_b = (ganji_tone_pair(first, second, core.timing.daily["pillar"]["ganji"])
+    tone_a, tone_b = (ganji_tone_pair(first, second, core.timing.daily["pillar"]["ganji"], salt)
                       or element_tone_pair(first, second, day_ordinal, salt))
     element_a = first
     tongguan = today_fortune.get("tongguan")
@@ -184,7 +187,7 @@ def todays_lucky_tones(core, today_fortune, day_ordinal: int, salt: int) -> dict
         tone_a, element_a = tongguan_tone(tg), tg
         if second == tg:
             second, second_rule = first, "tongguan_shift"
-            tone_b = (ganji_tone_pair(first, first, core.timing.daily["pillar"]["ganji"])
+            tone_b = (ganji_tone_pair(first, first, core.timing.daily["pillar"]["ganji"], salt)
                       or element_tone_pair(first, first, day_ordinal, salt))[1]
         if tone_b["id"] == tone_a["id"]:
             pool = ELEMENT_WEAR_TONES.get(second) or ELEMENT_WEAR_TONES["水"]
