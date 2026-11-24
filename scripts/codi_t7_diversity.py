@@ -27,8 +27,11 @@ START = dt.date(2026, 11, 25)
 DAYS = 30
 
 # ---- 색 분류 (공식집 2절) ----
-NEUTRAL = {"light_gray", "gray", "mid_gray", "ivory", "white", "charcoal", "black", "navy", "denim",
-           "beige", "camel", "brown", "khaki", "olive"}
+NEUTRAL = {"gray", "mid_gray", "charcoal", "black", "navy", "denim", "beige", "camel", "brown", "khaki", "olive"}
+# 밝은 무채(흰·아이보리·라이트 그레이)는 공식집 2절의 "가라앉은 색"이 아니다 → 아우터가 아니라 이너·상의·하의로
+LIGHT = {"white", "ivory", "light_gray"}
+# 이름에 색이 박힌 아이템은 행운 색을 받지 않는다(예: 블랙 데님, 갈색 부츠)
+COLOR_WORDS = ("블랙", "검정", "차콜", "갈색", "브라운", "흰", "회색", "네이비", "아이보리", "베이지", "인디고", "연청", "중청", "짙은 데님", "올리브", "갈회색", "파스텔", "밝은")
 SOFT = {"sky", "lavender", "pink", "butter", "sage"}
 DEEP = {"burgundy", "plum", "rust", "forest", "teal", "terracotta", "mustard"}
 VIVID = {"red", "coral"}
@@ -42,6 +45,8 @@ MALE_LOUD = {"coral", "red", "pink", "lavender", "butter"}
 def kind(c):
     if c in NEUTRAL:
         return "neutral"
+    if c in LIGHT:
+        return "light"
     if c in SOFT:
         return "soft"
     if c in DEEP:
@@ -106,30 +111,33 @@ CELLS = {
                                 "shoes": ["러닝화 + 보이는 양말"], "scarf": ["-"]}),
                    ("다운 + 비운동복 하의", 1, {"outer": ["짧은 경량 다운"], "bottom": ["데님", "플리츠 미니"],
                                             "shoes": ["러닝화 + 보이는 양말", "부츠"], "scarf": ["-"]}),
-                   ("이너·하의 같은 밝은 색", 1, {"outer": ["짧은 경량 다운"], "inner": ["밝은 이너"],
+                   ("이너·하의 같은 밝은 색", 1, {"outer": ["짧은 경량 다운"], "inner": ["이너"],
                                              "bottom": ["같은 색 트랙 팬츠"], "shoes": ["러닝화"], "scarf": ["-"]})],
         slots=dict(neutral=["outer", "bottom"], soft=["outer"], deep=["scarf", "shoes"], vivid=["scarf", "shoes"]),
         big=["outer", "bottom"]),
     "M40 미니멀": dict(
-        templates=[("기본", 2, {"outer": ["트러커", "블루종", "레더 재킷", "코트"], "inner": ["밝은 이너 목"],
+        templates=[("기본", 2, {"outer": ["트러커", "블루종", "레더 재킷", "코트"], "inner": ["이너(목에 보이게)"],
                                 "bottom": ["블랙·차콜 와이드", "연청 데님", "중청 데님"],
                                 "shoes": ["블랙 더비", "블랙 로퍼", "블랙 첼시"], "acc": ["머플러", "가방", "-"]}),
                    ("짙은 위 + 갈색 바지", 1, {"outer": ["블루종", "코트"], "top": ["니트"], "bottom": ["갈색 와이드"],
                                            "shoes": ["블랙 더비", "블랙 로퍼"], "acc": ["머플러", "-"]}),
-                   ("파스텔 니트 + 짙은 아래", 1, {"outer": ["코트"], "top": ["파스텔 니트"],
+                   ("밝은 니트 + 짙은 아래", 1, {"outer": ["코트"], "top": ["니트"],
                                               "bottom": ["블랙·차콜 와이드"], "shoes": ["블랙 더비"], "acc": ["-"]})],
         slots=dict(neutral=["outer", "top", "inner"], soft=["inner", "top", "acc"], deep=["top", "inner", "acc"], vivid=["inner", "top", "acc"]),
         big=["outer"]),
     "M40 댄디": dict(
         templates=[("기본", 2, {"outer": ["재킷", "블루종", "코트"], "top": ["티", "크루넥 니트", "모크넥 니트"],
-                                "bottom": ["블랙 와이드 슬랙스", "차콜 와이드 슬랙스"], "shoes": ["블랙 구두", "블랙 첼시"]}),
+                                "bottom": ["블랙 와이드 슬랙스", "차콜 와이드 슬랙스"], "shoes": ["블랙 구두", "블랙 첼시"],
+                                "muffler": ["머플러", "-"]}),
                    ("셋업", 1, {"setup": ["회색 셋업", "차콜 셋업", "갈회색 셋업"], "top": ["크루넥 니트", "티"],
-                               "shoes": ["블랙 구두"]}),
+                               "shoes": ["블랙 구두"], "muffler": ["머플러", "-"]}),
                    ("갈색 블루종", 1, {"outer": ["갈색 스웨이드 블루종", "갈색 가죽 블루종"], "top": ["니트"],
-                                     "bottom": ["블랙 와이드 슬랙스"], "shoes": ["블랙 구두", "블랙 첼시"]})],
-        slots=dict(neutral=["outer", "setup", "top"], soft=["top"], deep=["top"], vivid=["top"]), big=["outer", "setup"]),
+                                     "bottom": ["블랙 와이드 슬랙스"], "shoes": ["블랙 구두", "블랙 첼시"],
+                                     "muffler": ["머플러", "-"]})],
+        slots=dict(neutral=["outer", "setup", "top", "muffler"], soft=["top", "muffler"], deep=["top", "muffler"], vivid=["top", "muffler"]),
+        big=["outer", "setup"]),
     "M40 클래식": dict(
-        templates=[("기본", 1, {"outer": ["클래식 코트", "종아리 롱코트", "짧은 트래드 재킷"], "top": ["회색 니트", "네이비 니트"],
+        templates=[("기본", 1, {"outer": ["클래식 코트", "종아리 롱코트", "짧은 트래드 재킷"], "top": ["니트"],
                                 "neck": ["셔츠 칼라", "터틀넥"], "bottom": ["아이보리 와이드", "짙은 데님", "정장 바지"],
                                 "shoes": ["검정 가죽 구두"], "muffler": ["머플러", "-"]})],
         slots=dict(neutral=["outer", "bottom"], soft=["top", "muffler"], deep=["muffler", "top"],
@@ -143,7 +151,7 @@ CELLS = {
                    vivid=["inner", "bag", "hat"]), big=["outer", "bottom"]),
     "M40 아메카지": dict(
         templates=[("기본", 2, {"outer": ["밀리터리 재킷", "가죽 재킷", "워크 재킷", "데님 재킷"],
-                                "layer": ["셔츠", "후드"], "bottom": ["인디고 데님", "블랙 데님", "올리브 카고", "베이지 치노"],
+                                "layer": ["셔츠", "후드"], "bottom": ["인디고 데님", "블랙 데님", "올리브 카고", "베이지 치노", "치노"],
                                 "shoes": ["갈색 부츠", "갈색 더비"], "pattern": ["체크 셔츠", "페어아일 니트", "-"],
                                 "hat": ["비니", "볼캡", "-"]}),
                    ("짧은 다운", 1, {"outer": ["짧은 다운"], "bottom": ["와이드 데님", "와이드 카고"],
@@ -195,11 +203,15 @@ def place(cell, items, colors, male):
         dropped.append(strong[1])
         notes.append("강한 색 둘(계열 다름) → 둘째 뺌")
     # 색 있는 쪽이 먼저 자리를 고르고, 무채·가라앉은 색이 남은 바탕 자리를 맡는다(공식집 2절에 더함)
-    for c in sorted(colors, key=lambda c: kind(c) == "neutral"):
+    for c in sorted(colors, key=lambda c: kind(c) in ("neutral", "light")):
         if c in dropped:
             continue
-        for slot in cell["slots"][kind(c)]:
+        order = (cell["slots"]["soft"] + [x for x in cell["slots"]["neutral"] if x not in ("outer", "setup")]
+                 if kind(c) == "light" else cell["slots"][kind(c)])
+        for slot in order:
             if slot not in items or slot in used:
+                continue
+            if any(w in items[slot] for w in COLOR_WORDS):
                 continue
             if male and c in MALE_LOUD and slot in MALE_FORBIDDEN_SLOTS:
                 continue
