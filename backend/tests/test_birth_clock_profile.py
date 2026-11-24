@@ -52,7 +52,7 @@ class BirthClockProfileTests(TestCase):
         detail = result["saju_analysis"]["saju_data"]["pillars_detail"]
         self.assertEqual(detail["day"]["cg"] + detail["day"]["jj"], "신사")
         self.assertEqual(detail["hour"]["cg"] + detail["hour"]["jj"], "무자")
-        self.assertIn("23시 45분생", result["saju_analysis"]["birth_summary"])
+        self.assertIn("23시 45분(자시)생", result["saju_analysis"]["birth_summary"])
 
     def test_profile_keeps_clock_and_derived_sijin(self):
         result = self._register(birth_hour=23, birth_minute=45)
@@ -66,7 +66,7 @@ class BirthClockProfileTests(TestCase):
         result = auth_kakao(KakaoAuthRequest(kakao_id="test-clock"))
         self.assertEqual(result["status"], "existing_user")
         self.assertEqual((result["profile"]["birth_hour"], result["profile"]["birth_minute"]), (7, 5))
-        self.assertIn("7시 05분생", result["saju_analysis"]["birth_summary"])
+        self.assertIn("7시 05분(묘시)생", result["saju_analysis"]["birth_summary"])
 
     def test_unknown_time_still_works(self):
         result = self._register(sijin_index=-1)

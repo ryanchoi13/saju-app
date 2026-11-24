@@ -9,6 +9,7 @@
 
 from __future__ import annotations
 
+from contextvars import ContextVar
 import re
 from collections import Counter
 from datetime import date
@@ -41,11 +42,21 @@ SENTENCE_LIMIT = 80          # 앉아서 읽는 긴 글이라 두 절까지(10/2
 EVENT_BANNED = ("사고", "이혼", "파국")   # 지나온 길에서도 쓰지 않는 사건 말(헌장 10/23)
 
 
+# 문장 길이는 '우리가 쓴 글'의 길이를 재는 규칙이다. 이름이 길다고 풀이 전체가 옛 버전으로 떨어지면 안 되므로
+# (11/23 점검: 이름 10글자 이상에서 약 9%) 이름은 세 글자로 쳐서 잰다.
+_READER_NAME: ContextVar[str] = ContextVar("lifetime_v3_reader_name", default="")
+
+
+def _measured(sentence: str) -> int:
+    name = _READER_NAME.get()
+    return len(sentence.replace(name, "○○○")) if len(name) > 3 else len(sentence)
+
+
 def check_paragraph(text: str, allow_absolute: bool = False) -> list[str]:
     """now_me_copy.validate_paragraph 와 같은 규칙에서 문장 길이만 80자로 늘린 검사."""
     issues = [i for i in bank.validate_paragraph(text, allow_absolute=allow_absolute) if not i.startswith("문장이 깁니다")]
     for sentence in split_sentences(text):
-        if len(sentence) > SENTENCE_LIMIT:
+        if _measured(sentence) > SENTENCE_LIMIT:
             issues.append(f"문장이 깁니다({len(sentence)}): {sentence}")
     issues += [f"사건 말 '{w}'" for w in EVENT_BANNED if w in text]
     return issues
@@ -297,7 +308,6 @@ def _meaning(row, profile, style: int = 0) -> list[str]:
         else:
             lines = [f"{_jo(g['what'], '이/가')} 겉면에 보이지 않습니다.",
                      f"{_jo(g['plain'], '은/는')} 밖에서 채우는 편이에요."]
-    lines.append(_label_line(row["label"], style))
     return lines
 
 
@@ -319,15 +329,21 @@ def _why_row(row, profile) -> list[str]:
     return [first, "원국 · " + _evidence_text(row, profile)]
 
 
-def _row_block(row, profile, seed, shift, heading, *, with_flip=True, style: int = 0) -> str:
+def _row_block(row, profile, seed, shift, heading, *, with_flip=True, style: int = 0, used_scenes: set | None = None) -> str:
     allow = bool(row.get("allow_absolute"))
     meaning = _meaning(row, profile, style)
+    # 문장 규칙 v2(11/22): 결론(성향)이 먼저, 바로 장면. 명리 뜻풀이는 본문이 아니라 '풀이 근거'로 내린다.
     # 장면은 한 문장. 따로 고른 장면 두 개를 붙이면 서로 딴 얘기가 된다(10/30).
-    pool = copy.SCENE_FLOW.get(row.get("scene_key") or "")
-    scene = pool[(seed >> shift) % len(pool)] if pool else ""
-    base = len(meaning)
-    p1 = _p(meaning + [row["trait"], scene], allow_absolute=allow,
-            droppable=(base + 1,), where=f"row.{row['key']}")
+    pool = copy.SCENE_FLOW.get(row.get("scene_key") or "") or ()
+    # 같은 장면이 다른 소단락에 또 나오지 않게, 이미 쓴 장면은 건너뛴다.
+    start = (seed >> shift) % len(pool) if pool else 0
+    scene = next((pool[(start + k) % len(pool)] for k in range(len(pool))
+                  if used_scenes is None or pool[(start + k) % len(pool)] not in used_scenes), "")
+    if used_scenes is not None and scene:
+        used_scenes.add(scene)
+    # 소제목이 이미 성향(결론)을 말하므로 본문은 장면으로 바로 들어간다. 장면이 없는 행만 성향 문장을 쓴다.
+    p1 = _p([scene or row["trait"], copy.ROW_PRESSED.get(row["key"], "")], allow_absolute=allow,
+            droppable=(1,), where=f"row.{row['key']}")   # 평소의 모습 → 몰렸을 때의 모습(11/23)
     paras = [p1]
     if with_flip:
         flip = row["flip"] if row["flip"].startswith("다만") else "다만 " + row["flip"]
@@ -336,7 +352,7 @@ def _row_block(row, profile, seed, shift, heading, *, with_flip=True, style: int
                         allow_absolute=allow, droppable=(0,), where=f"flip.{row['key']}"))
     body = "".join(f"<p>{escape(t)}</p>" for t in paras)
     return (f'<article class="lifetime-sub" data-now-me-row="{escape(row["key"])}">'
-            f'<h4>{escape(heading)}</h4>{body}' + _why(*_why_row(row, profile)) + '</article>')
+            f'<h4>{escape(heading)}</h4>{body}' + _why(" ".join(meaning), *_why_row(row, profile)) + '</article>')
 
 
 def _no_today(tip: str) -> str:
@@ -390,6 +406,15 @@ def _place_key(profile) -> str:
     if officer["main"] == 0 and profile["hour_confidence"] == "high":
         return "autonomous"
     return "neutral"
+
+
+def _shensha_on_day(core, name: str) -> bool:
+    """그 신살이 일지(나와 가장 가까운 자리)에 놓였는가."""
+    for item in core.evidence:
+        if f"shensha:{name}" in item.supports:
+            if any(m.get("position") == "day" for m in item.source_values.get("natal_matches", [])):
+                return True
+    return False
 
 
 def _domains(core, profile, climate, number: int, name: str = "회원") -> tuple[str, dict]:
@@ -449,10 +474,11 @@ def _domains(core, profile, climate, number: int, name: str = "회원") -> tuple
     else:
         k = "neutral"
     people = list(copy.PEOPLE[k])
-    if profile["flower_canopy"]:
+    canopy_on_day = _shensha_on_day(core, "flower_canopy")
+    if canopy_on_day:   # 11/23: 원국 어디든 화개가 있으면 쓰던 것을(150명 중 93명) 일지 화개로 좁힌다
         canopy = copy.PEOPLE_CANOPY if k == "rob_many" else copy.PEOPLE_CANOPY.replace("그러면서도 ", "한편 ")
         people.insert(min(2, len(people)), canopy)
-    chosen["people"] = (people, f"비겁 {g['비겁']['main']} · 인성 {g['인성']['main']}" + (" · 화개" if profile["flower_canopy"] else ""), k)
+    chosen["people"] = (people, f"비겁 {g['비겁']['main']} · 인성 {g['인성']['main']}" + (" · 일지 화개" if canopy_on_day else ""), k)
     # 몸과 쉼 — 의학 표현 없이 생활 리듬으로만
     if els["水"]["state"] == "none":
         k = "lack_water"
@@ -473,13 +499,8 @@ def _domains(core, profile, climate, number: int, name: str = "회원") -> tuple
     for i, (key, title) in enumerate(copy.DOMAIN_TITLES, 1):
         lines, ev, _ = chosen[key]
         text = _p([line.format(name=name) for line in lines], where=f"domain.{key}")
-        link = ""
-        if key in ("love", "work"):
-            target = "gunghap" if key == "love" else "business"
-            link = (f' <a class="now-me-link" href="{LINK_HREF[target]}" data-now-me-link="{target}">'
-                    f'{escape(bank.LINK_LABELS[target])}</a>')
         parts.append(f'<article class="lifetime-sub" data-domain="{key}"><h4>{number}-{i}. {escape(title)}</h4>'
-                     f'<p>{escape(text)}{link}</p><small class="now-me-evidence">원국 · {escape(ev)}</small></article>')
+                     f'<p>{escape(text)}</p><small class="now-me-evidence">원국 · {escape(ev)}</small></article>')
     return "".join(parts), {k: v[2] for k, v in chosen.items()}
 
 
@@ -544,10 +565,11 @@ YEAR_PAIR = "{age1}세 무렵에는 {event1}, {age2}세 무렵에는 {event2}." 
 
 def _join_year_pair(out: list[str], pairs: list[tuple]) -> list[str]:
     """앞의 두 해를 한 문장으로 잇는다. 어미가 '습니다'가 아니거나 80자를 넘으면 그대로 둔다."""
-    if len(pairs) < 2 or not pairs[0][1].endswith("습니다"):
+    if len(pairs) < 2 or not pairs[0][1].endswith(("습니다", "을 겁니다")):
         return out
     (a1, e1), (a2, e2) = pairs[0], pairs[1]
-    joined = YEAR_PAIR.format(age1=a1, event1=e1[:-3] + "고", age2=a2, event2=e2)
+    linked = e1[:-3] + ("테고" if e1.endswith("을 겁니다") else "고")   # ~했을 겁니다 → ~했을 테고
+    joined = YEAR_PAIR.format(age1=a1, event1=linked, age2=a2, event2=e2)
     if len(joined) > SENTENCE_LIMIT:
         return out
     return [joined] + out[2:]
@@ -720,9 +742,24 @@ def _past_article(c, info, years, profile, seen: Counter, day_stem: str) -> tupl
     origin = pool[0] if seen[f"origin:{origin_key}"] == 1 else (pool[1] if seen[f"origin:{origin_key}"] == 2 else "")
     if info["kind"] == "fill" and after:
         origin = ""                                   # '처음 들어온' 말을 두 번 하지 않는다
+    if info["kind"] == "fill":                        # 같은 기운이 여러 구간에 이어 채워질 때 같은 문장을 되풀이하지 않는다
+        nth = seen[f"fill:{info['fills'][0]}"]
+        if nth >= 2:
+            after = None                              # '처음엔 서툴렀고'는 처음 채워진 구간에만
+        if nth >= 3:
+            first = ""                                # '이번에도 채워졌습니다'는 한 번만(근거 칸에 남는다)
+    if after:                                         # 같은 풀이 문장은 풀이 전체에서 한 번만
+        seen[f"after:{after}"] += 1
+        if seen[f"after:{after}"] > 1:
+            after = None
+    structure = ""
+    if info["kind"] not in ("fill", "clash"):         # 구조 말은 본문이 아니라 근거 칸으로(문장 규칙 v2, 11/22)
+        structure, first = first, ""
     body = _p([lead, first] + theme + [after or ""] + year_lines + [origin], where=f"past.{c['index']}")
     pillar = c["pillar"]
     why = [f"대운 {pillar['ganji']} — 천간 {pillar['stem']}({copy.GOD_KO.get(c.get('ten_god'), '')}) · 지지 {pillar['branch']}."]
+    if structure:
+        why.append(structure)
     rel_text = _relation_text(info)
     if rel_text:
         why.append(rel_text)
@@ -776,22 +813,30 @@ def _now_article(now, info, profile, missing, day_stem: str, seen=None) -> tuple
     said = {lead_meta.get("main"), lead_meta.get("concession")}
     kind = info["kind"]
     first_tpl = copy.KIND_NOW[kind]
+    structure = ""                                    # 구조 말은 근거 칸으로(문장 규칙 v2, 11/22). fill·clash 는 본문에 남긴다
+    repeated = False
     if kind == "fill":
         e = info["fills"][0]
         el = copy.ELEMENT[e]
-        lead = [copy.NOW_LEAD.format(lead=lead_body), first_tpl[0].format(name=el["name"], ja=_j(el["name"], "이/가"))]
-        if e in missing:
-            lead.append(first_tpl[1].format(power=el["power"], jw=_j(el["power"], "이/가")))
+        repeated = bool(seen is not None and seen[f"fill:{e}"])   # 지나온 구간에서 이미 채워졌던 기운
+        if repeated:
+            lead = [copy.NOW_LEAD.format(lead=lead_body), copy.KIND_NOW_FILL_AGAIN.format(name=el["name"])]
+        else:
+            lead = [copy.NOW_LEAD.format(lead=lead_body), first_tpl[0].format(name=el["name"], ja=_j(el["name"], "이/가"))]
+            if e in missing:
+                lead.append(first_tpl[1].format(power=el["power"], jw=_j(el["power"], "이/가")))
     elif kind in ("thick", "grow"):
         e = (info["thick"] or info["grow"])[0]
         el = copy.ELEMENT[e]
-        lead = [copy.NOW_LEAD.format(lead=lead_body), first_tpl[0].format(name=el["name"], ja=_j(el["name"], "이/가")), first_tpl[1]]
+        structure = first_tpl[0].format(name=el["name"], ja=_j(el["name"], "이/가"))
+        lead = [copy.NOW_LEAD.format(lead=lead_body), first_tpl[1]]
     elif kind == "clash":
         pos = "day" if "day" in info["clash_pos"] else "month"
         label_pos = copy.POSITION[pos]
         lead = [copy.NOW_LEAD.format(lead=lead_body), first_tpl[0].format(pos=label_pos, jp=_j(label_pos, "을/를")), first_tpl[1]]
     else:
-        lead = [copy.NOW_LEAD.format(lead=lead_body)] + list(first_tpl)
+        structure = first_tpl[0]
+        lead = [copy.NOW_LEAD.format(lead=lead_body)] + list(first_tpl[1:])
     # 보조 관계: 유형이 아닌 일지·월지 충, 일간 충을 한 문장 덧붙인다
     extra = []
     if kind != "clash":
@@ -813,13 +858,15 @@ def _now_article(now, info, profile, missing, day_stem: str, seen=None) -> tuple
     p1 = _p(lead + list(theme_now), where="now.1")
     means_key = f"clash:{'day' if 'day' in info['clash_pos'] else 'month'}" if kind == "clash" else kind
     means = copy.MEANS_NOW.get(means_key) if means_key not in said else None
-    if kind == "fill":
+    if kind == "fill" and repeated:
+        means = None                                  # '처음엔 낯설지만'은 처음 들어온 구간에만 맞는 말이다
+    elif kind == "fill" and means:                    # means 가 없을 때(첫 문장이 이미 말함) 조립이 깨지던 것을 막는다
         name = copy.ELEMENT[info["fills"][0]]["name"]
         means = f"{name}{_j(name, '은/는')} " + means
     p2 = _p(extra + ([means] if means else []) + [tip_now], where="now.2")
     pillar = now["pillar"]
     why = [f"대운 {pillar['ganji']} — 천간 {pillar['stem']} · 지지 {pillar['branch']}, {copy.GOD_KO.get(now.get('ten_god'), '')}.",
-           _relation_text(info)]
+           structure, _relation_text(info)]
     if sk:
         why.append("칠살 대운 · " + copy.SK_WHY[sk])
     ages = f'{now["start_age"]}~{now["end_age"]}세'
@@ -827,7 +874,7 @@ def _now_article(now, info, profile, missing, day_stem: str, seen=None) -> tuple
             f'data-report-cycle="{now["index"]}" data-cycle-ages="{ages}">'
             f'<h4>{escape(copy.NOW_HEADING.format(ages=ages, ganji=pillar["ganji"]))}</h4>'
             f'<p>{escape(p1)}</p><p>{escape(p2)}</p>' + _why(*why) + '</article>')
-    return html, kind
+    return html, ("fill_again" if repeated else kind)
 
 
 def _next_article(nxt, info_next, profile, day_stem, now_info=None) -> str:
@@ -845,9 +892,7 @@ def _next_article(nxt, info_next, profile, day_stem, now_info=None) -> str:
     return (f'<article class="lifetime-sub" data-lifetime-section="upcoming" data-locked="true" '
             f'data-report-cycle="{nxt["index"]}" data-cycle-ages="{nxt["start_age"]}~{nxt["end_age"]}세">'
             f'<h4>{escape(copy.NEXT_HEADING)}</h4>'
-            f'<p data-cycle-teaser="true">{escape(text)}</p>'
-            f'<p class="reading-caption">🔒 {escape(copy.NEXT_LOCK_NOTE)}</p>'
-            f'<a href="#paywall" data-paywall-cta="lifetime-cycles">대운 전체 풀이 열어보기</a></article>')
+            f'<p data-cycle-teaser="true">{escape(text)}</p></article>')  # 11/20: 잠금 안내·결제 링크 제거
 
 
 def _flow(core, profile, past, now, future, missing) -> tuple[str, str | None, dict]:
@@ -900,6 +945,7 @@ def build_lifetime_v3(core: MyeongriCoreResult, user_name: str, *, past, now, fu
     profile["strength"] = strength          # 칠살 대운 갈래 판단용(11/02)
     seed = seed_from(*profile["pillars"].values())
     name = user_name or "회원"
+    _READER_NAME.set(name)
     ordered = select_rows(profile)
     if not ordered:
         raise ValueError("lifetime_v3: 해당하는 사전 행이 없습니다")
@@ -924,29 +970,33 @@ def build_lifetime_v3(core: MyeongriCoreResult, user_name: str, *, past, now, fu
 
     numbering = iter(range(1, 10))
     day_row = bank.DAY_MASTER_ROWS[profile["day_master"]]
+    # 해시태그 셋: 일간 그림 + 가장 센 성격 둘(문장 규칙 v2, 11/22)
+    tags = [day_row["label"]] + [copy.ROW_HEAD[r["key"]] for r, _ in core_picks[:2]]
     head = (f'<section class="lifetime-v3-head" data-lifetime-section="head">'
             f'<p class="now-me-lead">{escape(name)}님은 <strong>{escape(day_row["label"])}</strong>입니다.</p>'
+            f'<p class="lifetime-tags">{escape(" ".join("#" + t.replace(" ", "") for t in tags))}</p>'
             + _chart_html(core, profile, hidden_counts) + '</section>')
 
     map_html, map_meta = _map(core, profile, hidden_counts, {r["key"] for r, _ in core_picks})
     html = head + _section("map", next(numbering), map_html)
 
+    used_scenes: set = set()
     sec = next(numbering)
     core_parts = [f"<p>{escape(copy.CORE_INTRO.format(name=name, n=copy.COUNT_KO.get(len(core_picks), len(core_picks))))}</p>"]
     for i, (row, mode) in enumerate(core_picks, 1):
         if mode == "main":
-            heading = f"{sec}-{i}. '{row['label']}'"
+            heading = f"{sec}-{i}. {copy.ROW_HEAD[row['key']]}"
         else:
-            heading = f"{sec}-{i}. '{mode.split(':', 1)[1]}'의 뒷면 — '{row['label']}'"
-        core_parts.append(_row_block(row, profile, seed, 3 + i * 2, heading, style=i - 1))
+            heading = f"{sec}-{i}. {copy.ROW_HEAD_FLIP.format(head=copy.ROW_HEAD[row['key']])}"
+        core_parts.append(_row_block(row, profile, seed, 3 + i * 2, heading, style=i - 1, used_scenes=used_scenes))
     html += _section("core", sec, "".join(core_parts))
 
     if first_seen:
         sec = next(numbering)
         parts = [f"<p>{escape(copy.FIRST_SEEN_INTRO)}</p>"]
         for i, row in enumerate(first_seen, 1):
-            parts.append(_row_block(row, profile, seed, 11 + i * 2, f"{sec}-{i}. '{row['label']}'",
-                                    style=len(core_picks) + i - 1))
+            parts.append(_row_block(row, profile, seed, 11 + i * 2, f"{sec}-{i}. {copy.ROW_HEAD[row['key']]}",
+                                    style=len(core_picks) + i - 1, used_scenes=used_scenes))
         html += _section("first-seen", sec, "".join(parts))
 
     sec = next(numbering)

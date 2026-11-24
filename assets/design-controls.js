@@ -25,7 +25,7 @@
         button.classList.add(secondary ? 'ui-action-secondary' : 'ui-action-primary');
       });
     });
-    document.getElementById('talismanTitle')?.parentElement.classList.add('ui-panel');
+    document.getElementById('talismanRealBox')?.classList.add('ui-panel');
     document.getElementById('pgItemName')?.parentElement.classList.add('ui-panel');
     const options = document.getElementById('modalOptionBox');
     const styleOptions = () => options.querySelectorAll('label').forEach(el => el.classList.add('ui-option'));

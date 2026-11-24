@@ -16,6 +16,8 @@
 
 from __future__ import annotations
 
+from app.engine.services.theme_voice import with_hashtags
+
 from collections import Counter
 from datetime import date
 from html import escape
@@ -29,6 +31,7 @@ from app.engine.services.annual_copy import seed_from, split_sentences
 from app.engine.services import love_copy as copy
 from app.engine.services import theme_timing
 from app.engine.services import love_sections as sec
+from app.engine.services.need_reason import need_reason
 from app.engine.services import love_depth as depth
 from app.engine.services.theme_core import CLASH, PEACH, SIX, hidden_tally, natal_counts, tally
 from app.engine.services import daily_score
@@ -214,7 +217,7 @@ def _p(text: str, attr: str = "") -> str:
 
 
 def _tier1_html(t1: dict, stem_text: str) -> str:
-    return _section("nature", "소통 기질 진단",
+    return _section("nature", "나는 어떤 사랑을 하는 사람일까",
                     f'<h3>{escape(t1["headline"])}</h3>{_p(t1["body"])}{_p(stem_text)}', "free", "1")
 
 
@@ -224,7 +227,7 @@ def _tier2_html(boxes: list[dict]) -> str:
         f'<strong>{escape(b["title"])}</strong><p style="margin:4px 0 0;">{escape(b["text"])}</p>'
         f'<p data-love-trap-fix="{i}" style="margin:4px 0 0;">{escape(b["fix"])}</p></div>'
         for i, b in enumerate(boxes, start=1))
-    return _section("traps", f"관계에서 반복하기 쉬운 습관 {len(boxes)}가지",
+    return _section("traps", f"관계에서 내가 되풀이하는 습관 {len(boxes)}가지",
                     f'<div style="display:grid;gap:8px;">{items}</div>', "free", "2")
 
 
@@ -556,7 +559,8 @@ def _compose_v4(core: MyeongriCoreResult, query: dict, name: str, group: str, se
                       f'{GAN_KO.get(pillar["stem"], "")}{ZHI_KO.get(pillar["branch"], "")}({pillar["ganji"]}) 대운')
         cycle_tier = sec.CYCLE_TIER[tiers[GAN_WUXING[pillar["stem"]]]]
         nxt = next((c for c in timing.get("cycles", []) if c.get("index") == current.get("index", -9) + 1), None)
-        if nxt and nxt.get("ten_god") in sec.NEXT_SHORT:
+        # 91세 이후에 시작하는 대운은 "다음 10년"으로 잇지 않는다(11/23 점검: 92세에게 "101세부터…").
+        if nxt and nxt.get("ten_god") in sec.NEXT_SHORT and nxt["start_age"] <= 90:
             gz = nxt["pillar"]["ganji"]
             cycle_next = sec.NEXT_LINE.format(age=nxt["start_age"], ganji=gz,
                                               ganji_ko=GAN_KO.get(gz[0], "") + ZHI_KO.get(gz[1], ""),
@@ -587,7 +591,7 @@ def _compose_v4(core: MyeongriCoreResult, query: dict, name: str, group: str, se
         group=group if group in sec.START else "balanced", charm=charm["text"], remedy=remedy, depth=depth,
         cycle=cycle, cycle_head=cycle_head, cycle_tier=cycle_tier, cycle_next=cycle_next,
         year=year_text, year_head=year_head, month_caption=sec.MONTH_CAPTION.format(y=start[0], m=start[1]),
-        months=rows, key_months=keys, place=sec.place_text(name, good), bullets=bullets,
+        months=rows, key_months=keys, place=sec.place_text(name, good, need_reason(core, good)), bullets=bullets,
         evidence=dict(good_elements=good, charm=charm["evidence"], remedy=remedy["evidence"], depth=depth["evidence"], cycle=current.get("pillar", {}).get("ganji"), cycle_god=god, year=year,
                       months=[dict(month=f'{r["y"]}-{r["m"]:02d}', ganji=r["ganji"], grade=r["grade"],
                                    reason=r["reason"]) for r in rows],
@@ -651,7 +655,7 @@ def build_lifetime_love_report(
         evidence_extra = f'<p>{escape(advice)}</p>' if advice else ""
         me, ne = match["evidence"], now["evidence"]
         basis = (f"잘 맞는 사람: 일지 {me['day_branch']}의 육합 {me['six_combination']} · "
-                 f"부딪히기 쉬운 사람: 일지 {me['day_branch']}의 충 {me['clash']} · "
+                 f"부딪히는 사람: 일지 {me['day_branch']}의 충 {me['clash']} · "
                  f"인연이 들어오는 길: 지금 대운 {ne['cycle'] or '-'}({ne['cycle_group'] or '-'}), "
                  f"앞으로 12개월의 세운 {ne['year']}({ne['year_group']}) · "
                  f"달별 등급: 각 달 15일 월주를 오늘의 운세 '사람' 분야 규칙표로 판정(성별 규칙 제외) · "
@@ -675,6 +679,7 @@ def build_lifetime_love_report(
         + evidence + _uncertainty(core) +
         '<p class="reading-caption">원국과 흐름을 바탕으로 한 해석이며 상대의 마음이나 관계의 결과를 단정하지 않습니다. '
         '중요한 결정은 현실의 상황과 서로의 대화도 함께 살펴 주세요.</p></div>')
+    content = with_hashtags(content, core)
     return {
         "analysis_basis": state_basis(query["applied_state"]),
         "title": f"{name}님 정통 명리 애정·관계운",

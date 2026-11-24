@@ -12,6 +12,8 @@
 
 from __future__ import annotations
 
+from app.engine.services.theme_voice import with_hashtags
+
 from collections import Counter
 from datetime import date
 from html import escape
@@ -25,6 +27,7 @@ from app.engine.services.annual_copy import sanitize_paragraph, seed_from
 from app.engine.services import career_copy as copy
 from app.engine.services import theme_timing
 from app.engine.services import career_sections as sec
+from app.engine.services.need_reason import need_reason
 from app.engine.services.theme_core import CLASH, YEOKMA, hidden_tally, tally
 from app.engine.services import daily_score
 from app.engine.services.daily_score import _god_group, calendar_ganji
@@ -118,7 +121,7 @@ def _p(text: str, attr: str = "") -> str:
 
 
 def _tier1_html(t1: dict, stem_text: str) -> str:
-    return _section("nature", "일하는 기질",
+    return _section("nature", "나는 어떻게 일하는 사람일까",
                     f'<h3>{escape(t1["headline"])}</h3>{_p(t1["body"])}{_p(stem_text)}', "free", 1)
 
 
@@ -128,7 +131,7 @@ def _tier2_html(boxes: list[dict]) -> str:
         f'<strong>{escape(b["title"])}</strong><p style="margin:4px 0 0;">{escape(b["text"])}</p>'
         f'<p data-career-trap-fix="{i}" style="margin:4px 0 0;">{escape(b["fix"])}</p></div>'
         for i, b in enumerate(boxes, start=1))
-    return _section("traps", f"일할 때 빠지기 쉬운 함정 {len(boxes)}가지",
+    return _section("traps", f"일할 때 내가 자꾸 빠지는 함정 {len(boxes)}가지",
                     f'<div style="display:grid;gap:8px;">{items}</div>', "free", 2)
 
 
@@ -159,7 +162,7 @@ def _pair(items: list[tuple[str, str, str]]) -> str:
 
 def _unlocked_html(d: dict) -> str:
     out = [
-        _section("workplace", "나에게 맞는 일터", _p(d["workplace"]) + _p(d["workplace_strength"])),
+        _section("workplace", "나에게 맞는 일터", _p(d["workplace"]) + (_p(d["workplace_strength"]) if d["workplace_strength"] else "")),
         _section("jobs", "잘 맞는 일의 종류", _p(d["job_kind"]) + _p(d["fields"])),
         _section("money", "돈을 버는 방식",
                  f'<h3>{escape(d["money_title"])}</h3>' + _p(d["money"]) + _p(d["money_tail"])),
@@ -304,7 +307,8 @@ def _compose_v3(core: MyeongriCoreResult, query: dict, name: str, group: str, tr
                       f'{GAN_KO.get(stem, "")}{ZHI_KO.get(current["pillar"]["branch"], "")}({current["pillar"]["ganji"]}) 대운')
         cycle_tier = sec.CYCLE_TIER[tiers[GAN_WUXING[stem]]]
         nxt = next((c for c in timing.get("cycles", []) if c.get("index") == current.get("index", -9) + 1), None)
-        if nxt and nxt.get("ten_god") in sec.NEXT_SHORT:
+        # 91세 이후에 시작하는 대운은 "다음 10년"으로 잇지 않는다(11/23 점검: 92세에게 "101세부터…").
+        if nxt and nxt.get("ten_god") in sec.NEXT_SHORT and nxt["start_age"] <= 90:
             cycle_next = sec.NEXT_LINE.format(age=nxt["start_age"], ganji=nxt["pillar"]["ganji"],
                                               ganji_ko=GAN_KO.get(nxt["pillar"]["ganji"][0], "") + ZHI_KO.get(nxt["pillar"]["ganji"][1], ""),
                                               short=sec.NEXT_SHORT[nxt["ten_god"]])
@@ -333,8 +337,8 @@ def _compose_v3(core: MyeongriCoreResult, query: dict, name: str, group: str, tr
     bullets.append(copy.STATUS_BULLET.get(status, copy.STATUS_BULLET[copy.DEFAULT_STATUS]))
 
     return dict(
-        workplace=sec.WORKPLACE[group][track], workplace_strength=sec.WORKPLACE_STRENGTH[copy.strength_key(strength)],
-        job_kind=sec.JOB_KIND[group], fields=sec.field_text(name, good),
+        workplace=sec.WORKPLACE[group][track], workplace_strength=(sec.WORKPLACE_STRENGTH[copy.strength_key(strength)] if copy.strength_decided(strength) else ""),
+        job_kind=sec.JOB_KIND[group], fields=sec.field_text(name, good, need_reason(core, good)),
         money_title=sec.MONEY_TITLE[money], money=sec.MONEY_TEXT[money], money_tail=sec.MONEY_TAIL[(money, track)],
         helper=sec.HELPER[helper], hard=sec.HARD[hard],
         cycle=cycle, cycle_head=cycle_head, cycle_tier=cycle_tier, cycle_next=cycle_next,
@@ -401,7 +405,7 @@ def build_lifetime_career_report(
         tiers_ko = " · ".join(f'{_ELEMENT_KO[e]} {_TIER_KO[t]}' for e, t in ev["tiers"].items())
         basis = (f'오행 3단계(행운 색과 같은 기준): {tiers_ko}. '
                  f'힘이 되는 사람 = 필요한 오행의 십성({_GROUP_KO[ev["helper"]]}), '
-                 f'부딪히기 쉬운 사람 = 피할 오행의 십성({_GROUP_KO[ev["hard"]]}). '
+                 f'부딪히는 사람 = 피할 오행의 십성({_GROUP_KO[ev["hard"]]}). '
                  f'달별 등급은 각 달 15일의 월주를 오늘의 운세 \'일\' 분야 규칙표로 판정. '
                  f'움직이는 달 = 연지·일지의 역마, 월지 충.')
         evidence_extra = (f'<p>{escape(advice)}</p>' if advice else "") + f'<p data-career-basis="v3">{escape(basis)}</p>'
@@ -421,6 +425,7 @@ def build_lifetime_career_report(
         + evidence + _uncertainty(core) +
         '<p class="reading-caption">원국과 흐름을 바탕으로 한 해석이며 결과를 보장하지 않습니다. '
         '중요한 결정은 현실의 조건과 전문가의 판단도 함께 확인해 주세요.</p></div>')
+    content = with_hashtags(content, core)
     return {
         "analysis_basis": state_basis(query["applied_state"]),
         "title": f"{name}님 정통 명리 직업·사업운",

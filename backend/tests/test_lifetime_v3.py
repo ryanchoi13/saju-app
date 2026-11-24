@@ -41,7 +41,7 @@ class LifetimeV3Tests(unittest.TestCase):
         top = [s for s in found if s in ORDER]
         self.assertEqual(top, ORDER)
         self.assertEqual(report["narrative_version"], "lifetime-v3.6")
-        for n, title in enumerate(["원국 지도", "타고난 결", "사람들이 먼저 보는 것", "분야별로 보면", "인생의 흐름", "한마디"], 1):
+        for n, title in enumerate(["나는 어떤 그림으로 태어났을까", "나를 움직이는 진짜 성격", "남들 눈에 먼저 보이는 나", "돈·사랑·일·사람·쉼, 다섯 자리의 나", "내 인생의 계절, 지나온 길과 지금", "한마디"], 1):
             self.assertIn(f"<h3>{n}. {title}</h3>", report["content"])
 
     def test_every_reading_block_has_a_folded_why(self):
@@ -120,6 +120,73 @@ class FlowTests(unittest.TestCase):
             text = _plain(result["html"])
             for word in ("사고", "이혼", "사망", "질병"):
                 self.assertNotIn(word, text)
+
+
+class LifetimeVoiceV2Tests(unittest.TestCase):
+    """2026-11-22 문장 규칙 v2: 그림은 일간 그림 하나, 결론(소제목) → 장면, 구조 말은 근거 칸, 같은 문장 반복 없음."""
+
+    @staticmethod
+    def _body(html):
+        html = re.sub(r'<div class="lifetime-why">.*?</div>', "", html, flags=re.S)
+        html = re.sub(r"<table.*?</table>", "", html, flags=re.S)
+        return re.sub(r"<[^>]+>", "\n", html)
+
+    def test_head_has_three_hashtags_and_row_titles_are_plain(self):
+        result, *_ = _v3(_core(date(1978, 3, 13), time(11, 0)))
+        html = result["html"]
+        tags = re.search(r'<p class="lifetime-tags">([^<]+)</p>', html).group(1).split()
+        self.assertEqual(len(tags), 3)
+        self.assertTrue(all(t.startswith("#") and " " not in t for t in tags))
+        heads = re.findall(r'data-now-me-row="([A-C]\d+)"><h4>([^<]+)</h4>', html)
+        self.assertTrue(heads)
+        for key, head in heads:
+            self.assertIn(v3copy.ROW_HEAD[key], head)
+            self.assertNotIn("&#x27;", head)   # 사전 라벨(다른 비유)을 소제목으로 쓰지 않는다
+
+    def test_every_dictionary_row_has_a_plain_title(self):
+        from app.engine.services import now_me_copy as bank
+        self.assertEqual(set(bank.ALL_ROWS), set(v3copy.ROW_HEAD))
+        self.assertEqual(set(bank.ALL_ROWS), set(v3copy.ROW_PRESSED))   # 11/23: 소단락마다 '몰렸을 때' 한 문장
+        self.assertEqual(len(set(v3copy.ROW_PRESSED.values())), len(v3copy.ROW_PRESSED))
+
+    def test_body_keeps_structure_wording_out_and_never_repeats_a_sentence(self):
+        random.seed(22)
+        literal = re.compile("들어온 기운이|빗댑니다|이름은 이 모습에서|글자\\(겁재\\)|수 있습니다|수 있어요")
+        for i in range(40):
+            core = _core(date(random.randint(1960, 2006), random.randint(1, 12), random.randint(1, 28)),
+                         None if i % 7 == 0 else time(random.randint(0, 23), 30), random.choice(["male", "female"]))
+            report = build_lifetime_overall_report(core, "가")
+            self.assertIn("lifetime-v3-head", report["content"], i)
+            body = self._body(report["content"].split("원국과 대운을 바탕으로 한 해석입니다")[0])
+            self.assertIsNone(literal.search(body), i)
+            sentences = [x.strip() for x in re.split(r"\n|(?<=[.!?])\s+", body) if len(x.strip()) > 14]
+            repeated = sorted({x for x in sentences if sentences.count(x) > 1})
+            self.assertEqual(repeated, [], i)
+
+    def test_charts_that_used_to_fall_back_to_v4_now_build(self):
+        # 채움 대운인데 첫 문장이 이미 같은 말을 한 경우 조립이 깨져 옛 v4로 떨어지던 원국 둘(11/22 발견).
+        for birth, clock, gender in ((date(1992, 10, 15), None, "female"), (date(1982, 6, 11), time(1, 30), "male")):
+            core = calculate_myeongri_core(
+                BirthInput(name="테스트", gender=gender, birth_date=birth, birth_time=clock, time_unknown=clock is None),
+                target_date=date(2026, 11, 22))
+            self.assertIn("lifetime-v3-head", build_lifetime_overall_report(core, "가")["content"])
+
+    def test_filled_element_is_not_called_first_when_earlier_cycles_already_filled_it(self):
+        random.seed(5)
+        checked = 0
+        for i in range(60):
+            core = _core(date(random.randint(1960, 2006), random.randint(1, 12), random.randint(1, 28)),
+                         time(random.randint(0, 23), 30), random.choice(["male", "female"]))
+            html = build_lifetime_overall_report(core, "가")["content"]
+            past = "".join(re.findall(r'data-cycle-state="past">.*?</article>', html, flags=re.S))
+            now = re.search(r'data-current-cycle="true".*?</article>', html, flags=re.S)
+            for name in ("목(木)", "화(火)", "토(土)", "금(金)", "수(水)"):
+                first = f"원국에 없던 {name} 기운이 처음으로 들어왔습니다."
+                if now and first in now.group(0):
+                    checked += 1
+                    self.assertNotIn(f"{name} 기운이 처음으로", past, i)
+                    self.assertNotIn(f"비어 있던 {name} 기운이 채워졌습니다", past, i)
+        self.assertGreater(checked, 0)
 
 
 if __name__ == "__main__":

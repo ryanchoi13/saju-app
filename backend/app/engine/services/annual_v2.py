@@ -21,7 +21,7 @@ from app.engine.services.annual_copy import (
 )
 
 V2_VERSION = "annual-v2"
-COPY_V2_VERSION = "dalha-annual-4"   # 11/8 근거 상자 + 분야 문장
+COPY_V2_VERSION = "dalha-annual-7"   # 11/15 분량 보강(총운·분야 두 단락·힘이 되는 사람·신살·개운법)
 
 AREAS = (
     ("wealth", "재물"),
@@ -77,35 +77,35 @@ YEAR_AREAS = {
     "rob_wealth": dict(
         wealth=("돈이 들어오는 만큼 나갈 일도 많은 해입니다. 나갈 돈을 따로 한 번 더 적어보세요.",
                 "남과 견주며 쓰는 돈이 가장 크게 샙니다. 빌려주는 돈은 돌려받지 못해도 괜찮은 만큼만 정하세요."),
-        love=("사람이 곁에 모이기 쉬운 해입니다. 연인이나 가족과 보내는 시간을 따로 떼어두세요.",
-              "모임이 늘면 가까운 사람이 서운해지기 쉽습니다. 약속을 잡기 전에 상대의 일정부터 물어보세요."),
+        love=("사람이 곁에 모이는 해입니다. 연인이나 가족과 보내는 시간을 따로 떼어두세요.",
+              "모임이 늘면 가까운 사람이 서운해집니다. 약속을 잡기 전에 상대의 일정부터 물어보세요."),
         work=("동료와 함께할 때 일이 앞으로 갑니다. 맡을 일은 시작 전에 나눠 정하세요.",
               "경쟁 상대를 의식해 계획을 흔들지 마세요. 내 일의 속도는 내가 정합니다."),
-        health=("모임이 늘면 잠과 식사가 밀리기 쉽습니다. 약속 사이에 쉬는 날을 넣으세요.",
-                "남의 일정에 맞추다 내 리듬이 깨지기 쉽습니다. 거절해도 되는 약속을 미리 골라두세요."),
+        health=("모임이 늘면 잠과 식사가 밀립니다. 약속 사이에 쉬는 날을 넣으세요.",
+                "남의 일정에 맞추다 내 리듬이 깨집니다. 거절해도 되는 약속을 미리 골라두세요."),
         study=("함께 배우면 속도가 붙습니다. 스터디나 모임을 활용하세요.",
                "다른 사람의 진도에 마음이 쏠리면 흔들립니다. 내 목표에 맞는 부분만 가져오세요."),
     ),
     "eating_god": dict(
         wealth=("재주와 손재간이 수입으로 이어지기 좋은 해입니다. 잘하는 것에 값을 매겨 보세요.",
-                "즐기는 일에 쓰는 돈이 늘기 쉽습니다. 취미와 외식에 쓸 금액의 상한을 정하세요."),
+                "즐기는 일에 쓰는 돈이 늘어납니다. 취미와 외식에 쓸 금액의 상한을 정하세요."),
         love=("다정한 표현이 잘 통하는 해입니다. 함께 먹고 즐기는 시간이 관계를 깊게 합니다.",
-              "편한 사이일수록 표현을 미루기 쉽습니다. 고맙다는 말을 그때그때 꺼내세요."),
+              "편한 사이일수록 표현을 미룹니다. 고맙다는 말을 그때그때 꺼내세요."),
         work=("꾸준히 해온 일이 결과로 보이기 좋은 해입니다. 결과물을 정리해 남에게 보여주세요.",
               "새 일을 벌이기 전에 끝낼 일부터 마무리하세요. 마무리가 쌓일수록 다음 길이 열립니다."),
         health=("먹고 자는 리듬이 건강의 중심입니다. 맛있는 한 끼와 충분한 잠을 챙기세요.",
-                "편한 만큼 활동이 줄기 쉽습니다. 가벼운 운동을 일정에 고정해 두세요."),
+                "편한 만큼 활동이 줄어듭니다. 가벼운 운동을 일정에 고정해 두세요."),
         study=("손으로 하며 익히는 공부가 잘 맞습니다. 이론보다 직접 만들어 보세요.",
                "배운 것을 작은 결과물로 남기세요. 만든 것이 쌓이면 실력이 눈에 보입니다."),
     ),
     "hurting_officer": dict(
         wealth=("재주가 돈이 되기 좋은 해입니다. 내가 만든 것에 값을 매겨 보세요.",
-                "기분에 따라 쓰는 돈이 늘기 쉽습니다. 돈과 관련한 약속은 말보다 기록으로 남기세요."),
+                "기분에 따라 쓰는 돈이 늘어납니다. 돈과 관련한 약속은 말보다 기록으로 남기세요."),
         love=("솔직한 말이 관계를 움직이는 해입니다. 솔직함에 온기를 얹어 전하세요.",
-              "가까운 사이일수록 표현이 거칠어지기 쉽습니다. 서운한 말을 한 만큼 고마움도 말하세요."),
+              "가까운 사이일수록 표현이 거칠어집니다. 서운한 말을 한 만큼 고마움도 말하세요."),
         work=("일에서 내 방식을 보여주기 좋은 해입니다. 규칙과 부딪히기 전에 대안부터 준비하세요.",
               "윗사람과 의견이 갈리면 감정보다 근거를 내미세요. 새로운 시도는 작게 시험하고 결과로 말하세요."),
-        health=("생각이 많아 잠이 얕아지기 쉽습니다. 잠들기 전 화면과 걱정을 내려놓으세요.",
+        health=("생각이 많아 잠이 얕아집니다. 잠들기 전 화면과 걱정을 내려놓으세요.",
                 "목소리를 많이 쓰는 해라 쉬는 시간이 필요합니다. 말하지 않는 시간을 하루에 한 번 두세요."),
         study=("토론하고 질문하며 배우는 방식이 맞습니다. 의문이 생기면 그냥 넘기지 마세요.",
                "배운 것을 내 말로 다시 설명해 보세요. 설명이 막히는 곳이 더 공부할 곳입니다."),
@@ -129,10 +129,10 @@ YEAR_AREAS = {
               "분위기에 맞춰 약속을 남발하지 마세요. 지키지 못할 말은 처음부터 하지 않는 편이 낫습니다."),
         work=("활동 범위가 넓어지는 해입니다. 제안이 오면 비용과 시간을 따져보고 고르세요.",
               "여러 일을 동시에 벌이면 마무리가 흐려집니다. 벌인 일은 하나씩 끝내고 다음으로 가세요."),
-        health=("움직임이 많아 피로가 쌓이기 쉽습니다. 이동 사이에 쉬는 시간을 꼭 넣으세요.",
-                "불규칙한 식사가 이어지기 쉽습니다. 바쁜 날일수록 한 끼는 제대로 챙기세요."),
+        health=("움직임이 많아 피로가 쌓입니다. 이동 사이에 쉬는 시간을 꼭 넣으세요.",
+                "불규칙한 식사가 이어집니다. 바쁜 날일수록 한 끼는 제대로 챙기세요."),
         study=("현장에서 배우는 공부가 잘 맞습니다. 사람을 만나고 직접 보며 익히세요.",
-               "배움이 여러 갈래로 흩어지기 쉽습니다. 올해 파고들 분야를 하나로 좁히세요."),
+               "배움이 여러 갈래로 흩어집니다. 올해 파고들 분야를 하나로 좁히세요."),
     ),
     "direct_officer": dict(
         wealth=("재물은 정해진 수입 안에서 계획대로 쓰는 쪽이 맞습니다. 고정 지출부터 점검하세요.",
@@ -141,17 +141,17 @@ YEAR_AREAS = {
               "반듯한 태도가 차갑게 보이기도 합니다. 가끔은 먼저 다정한 안부를 건네세요."),
         work=("직책과 역할이 정리되기 좋은 해입니다. 일의 범위와 기한을 분명히 해 두세요.",
               "인정받는 일이 늘수록 부탁도 늘어납니다. 새 일을 맡기 전에 기존 일의 순서를 정하세요."),
-        health=("책임감 때문에 쉬는 시간이 줄기 쉽습니다. 일과 휴식의 선을 정해 두세요.",
+        health=("책임감 때문에 쉬는 시간이 줄어듭니다. 일과 휴식의 선을 정해 두세요.",
                 "몸이 보내는 불편함을 바쁘다고 넘기지 마세요. 상태를 확인하는 날을 정해 두세요."),
         study=("체계적으로 쌓는 공부가 맞습니다. 기초부터 순서대로 가세요.",
                "공식 과정이나 자격증처럼 인정받는 길이 잘 맞습니다. 일정을 정해 꾸준히 이어가세요."),
     ),
     "seven_killings": dict(
-        wealth=("압박 속에 돈을 쓰는 결정이 늘기 쉽습니다. 큰 지출은 하루 미뤄 다시 보세요.",
+        wealth=("압박 속에 돈을 쓰는 결정이 늘어납니다. 큰 지출은 하루 미뤄 다시 보세요.",
                 "서두른 지출과 계약이 가장 후회가 큽니다. 조건은 숫자로 확인한 뒤에 서명하세요."),
-        love=("강한 인상으로 다가가기 쉬운 해입니다. 단호함에 한마디 부드러움을 더하세요.",
-              "지친 날의 예민함이 가까운 사람에게 향하기 쉽습니다. 힘든 이유를 먼저 말로 알려주세요."),
-        work=("일의 강도가 높아지기 쉽습니다. 맡을 일과 넘길 일을 먼저 나누세요.",
+        love=("강한 인상으로 다가가는 해입니다. 단호함에 한마디 부드러움을 더하세요.",
+              "지친 날의 예민함이 가까운 사람에게 향합니다. 힘든 이유를 먼저 말로 알려주세요."),
+        work=("일의 강도가 높아집니다. 맡을 일과 넘길 일을 먼저 나누세요.",
               "요구가 센 사람 앞에서 무조건 맞추지 마세요. 가능한 범위와 어려운 부분을 분명히 말하세요."),
         health=("과로를 가장 경계해야 하는 해입니다. 잠을 줄이는 선택은 가장 나중으로 미루세요.",
                 "긴장을 푸는 나만의 방법을 만드세요. 땀이 나는 운동이나 따뜻한 샤워가 도움이 됩니다."),
@@ -166,7 +166,7 @@ YEAR_AREAS = {
         work=("실무 지식을 쌓으면 일이 안정됩니다. 막히는 일은 아는 사람에게 도움을 청하세요.",
               "준비만 길어지지 않게 하세요. 배운 것을 일에 바로 적용해 보세요."),
         health=("회복에 힘을 쓰기 좋은 해입니다. 충분히 자고 따뜻한 음식으로 기본을 다지세요.",
-                "편안함에 익숙해져 움직임이 줄기 쉽습니다. 가볍게 걷는 시간을 생활에 넣으세요."),
+                "편안함에 익숙해져 움직임이 줄어듭니다. 가볍게 걷는 시간을 생활에 넣으세요."),
         study=("공부하기 좋은 해입니다. 읽고 정리한 것이 쌓일수록 힘이 됩니다.",
                "자료만 모으지 말고 한 권을 끝까지 보세요. 배운 내용을 다른 사람에게 설명해 보세요."),
     ),
@@ -176,11 +176,11 @@ YEAR_AREAS = {
         love=("소수와 깊이 통하는 해입니다. 마음 맞는 사람에게 시간을 쓰세요.",
               "혼자 결론 내리고 멀어지지 마세요. 오해는 물어보면 풀립니다."),
         work=("남다른 아이디어가 일에서 빛나기 좋은 해입니다. 검증된 방식과 섞어 쓰면 안정됩니다.",
-              "생각만 하다 멈추기 쉽습니다. 떠오른 방법은 작게 시험해 보세요."),
-        health=("생각이 많아 잠이 흐트러지기 쉽습니다. 자기 전에는 머리를 쉬게 하는 루틴을 두세요.",
+              "생각만 하다 멈춥니다. 떠오른 방법은 작게 시험해 보세요."),
+        health=("생각이 많아 잠이 흐트러집니다. 자기 전에는 머리를 쉬게 하는 루틴을 두세요.",
                 "불규칙한 생활이 이어지지 않게 하세요. 식사 시간만이라도 고정해 두세요."),
-        study=("특이한 분야에 끌리기 쉬운 해입니다. 깊이 파고드는 공부가 실력이 됩니다.",
-               "흥미가 식으면 중도에 놓기 쉽습니다. 목표를 작게 쪼개 끝까지 한 번은 가보세요."),
+        study=("특이한 분야에 끌리는 해입니다. 깊이 파고드는 공부가 실력이 됩니다.",
+               "흥미가 식으면 중도에 놓습니다. 목표를 작게 쪼개 끝까지 한 번은 가보세요."),
     ),
 }
 
@@ -209,7 +209,7 @@ GODS = {
             "역할과 비용을 먼저 정하고 시작하세요.",
         ],
         best="뜻이 맞는 사람과 힘을 합치기 좋습니다. 경쟁이 있는 자리에서 오히려 실력이 또렷해집니다.",
-        caution="남의 속도에 휩쓸려 무리하기 쉽습니다. 승부욕이 앞서면 필요 없는 지출도 따라옵니다.",
+        caution="남의 속도에 휩쓸려 무리합니다. 승부욕이 앞서면 필요 없는 지출도 따라옵니다.",
         advice="함께할 일은 시작 전에 역할과 비용을 적어두세요. 친할수록 분명하게 하는 쪽이 오래 갑니다.",
         areas=YEAR_AREAS["rob_wealth"],
     ),
@@ -223,7 +223,7 @@ GODS = {
             "시작한 일은 끝내는 날짜를 정해두세요.",
         ],
         best="하던 일을 완성해 내놓기 좋은 해입니다. 취미와 일상의 즐거움이 그대로 힘이 됩니다.",
-        caution="느긋함이 미루는 습관으로 바뀌기 쉽습니다. 먹고 쉬는 즐거움이 과해지면 몸이 무거워집니다.",
+        caution="느긋함이 미루는 습관으로 바뀝니다. 먹고 쉬는 즐거움이 과해지면 몸이 무거워집니다.",
         advice="결과물 하나를 끝까지 만드세요. 작아도 완성한 것이 한 해를 받쳐줍니다.",
         areas=YEAR_AREAS["eating_god"],
     ),
@@ -251,7 +251,7 @@ GODS = {
             "다만 작은 것에 매이면 큰 흐름을 놓칩니다.",
         ],
         best="생활의 기반을 정돈하기 좋은 해입니다. 세워둔 계획이 그대로 힘이 됩니다.",
-        caution="안정만 찾다 새로운 시도를 놓치기 쉽습니다. 사소한 계산에 매이면 마음이 좁아집니다.",
+        caution="안정만 찾다 새로운 시도를 놓칩니다. 사소한 계산에 매이면 마음이 좁아집니다.",
         advice="고정으로 나가는 비용을 전부 적어보세요. 줄일 것과 지킬 것이 나뉩니다.",
         areas=YEAR_AREAS["direct_wealth"],
     ),
@@ -259,13 +259,13 @@ GODS = {
         title="넓게 움직이며 기회를 고르는 해",
         overview=[
             "올해는 활동 범위가 넓어지는 해입니다.",
-            "사람과 제안, 낯선 장소와 접점이 늘기 쉽습니다.",
+            "사람과 제안, 낯선 장소와 접점이 늘어납니다.",
             "눈과 발이 바빠지는 만큼 얻는 정보도 많습니다.",
             "다만 모든 제안이 내 것은 아닙니다.",
             "고르는 눈이 올해의 실력입니다.",
         ],
         best="시야와 인맥을 넓히기 좋은 해입니다. 발로 뛴 만큼 정보와 감각이 쌓입니다.",
-        caution="벌이는 일이 늘어 마무리가 흩어지기 쉽습니다. 좋은 말만 믿고 큰 비용을 쓰지 마세요.",
+        caution="벌이는 일이 늘어 마무리가 흩어집니다. 좋은 말만 믿고 큰 비용을 쓰지 마세요.",
         advice="제안은 사흘 두고 답하세요. 비용과 시간을 숫자로 적은 뒤 정하세요.",
         areas=YEAR_AREAS["indirect_wealth"],
     ),
@@ -279,7 +279,7 @@ GODS = {
             "책임질 범위를 먼저 정하면 마음이 편해집니다.",
         ],
         best="믿음직한 사람으로 자리 잡기 좋은 해입니다. 역할이 분명할수록 힘이 실립니다.",
-        caution="남의 시선을 의식해 짐을 떠안기 쉽습니다. 완벽하려는 마음이 스스로를 조입니다.",
+        caution="남의 시선을 의식해 짐을 떠안습니다. 완벽하려는 마음이 스스로를 조입니다.",
         advice="부탁을 받으면 범위와 기한부터 확인하세요. 모호한 약속을 하지 않는 것도 책임입니다.",
         areas=YEAR_AREAS["direct_officer"],
     ),
@@ -287,13 +287,13 @@ GODS = {
         title="압박 속에서 중심을 세우는 해",
         overview=[
             "올해는 결단과 추진의 힘이 강한 해입니다.",
-            "요구가 늘고 속도가 빨라지기 쉽습니다.",
+            "요구가 늘고 속도가 빨라집니다.",
             "그럴수록 우선순위가 실력입니다.",
             "한꺼번에 막으려 하면 먼저 지칩니다.",
             "맡을 것과 미룰 것을 가려내세요.",
         ],
         best="돌파력이 필요한 일에서 존재감이 커집니다. 부담을 이겨내며 나의 한계선이 분명해집니다.",
-        caution="긴장이 길어지면 몸이 먼저 신호를 보냅니다. 급한 마음에 말이 거칠어지기 쉽습니다.",
+        caution="긴장이 길어지면 몸이 먼저 신호를 보냅니다. 급한 마음에 말이 거칠어집니다.",
         advice="한 번에 할 일은 세 가지만 고르세요. 쉬는 시간은 일정에 먼저 넣어두세요.",
         areas=YEAR_AREAS["seven_killings"],
     ),
@@ -302,12 +302,12 @@ GODS = {
         overview=[
             "올해는 배움과 보호의 기운이 곁에 머무는 해입니다.",
             "아는 것을 정리하고 채우기 좋습니다.",
-            "도움을 청하면 따뜻한 손길이 닿기 쉽습니다.",
+            "도움을 청하면 따뜻한 손길이 닿습니다.",
             "다만 준비만 길어지면 시작이 늦어집니다.",
             "배운 것은 작게라도 써보세요.",
         ],
         best="마음이 안정되고 배울 거리가 풍부해집니다. 믿을 만한 스승이나 선배의 말이 길이 됩니다.",
-        caution="준비가 길어져 시작이 늦어지기 쉽습니다. 도움에 기대다 결정을 미루지 마세요.",
+        caution="준비가 길어져 시작이 늦어집니다. 도움에 기대다 결정을 미루지 마세요.",
         advice="배운 것 하나는 곧바로 일상에 써보세요. 써본 것만 내 것이 됩니다.",
         areas=YEAR_AREAS["direct_resource"],
     ),
@@ -315,13 +315,13 @@ GODS = {
         title="남다른 관점으로 길을 찾는 해",
         overview=[
             "올해는 생각의 결이 독특해지는 해입니다.",
-            "익숙한 방식 밖에서 새로운 실마리를 얻기 쉽습니다.",
+            "익숙한 방식 밖에서 새로운 실마리를 얻습니다.",
             "직관과 호기심이 좋은 안내자가 됩니다.",
             "다만 생각만 깊어지면 행동이 멈춥니다.",
             "떠오른 아이디어는 작게 시험해 보세요.",
         ],
         best="남들이 지나친 것을 알아보는 눈이 생깁니다. 독특한 공부나 취향이 쓸모를 찾습니다.",
-        caution="혼자 생각에 오래 잠기기 쉽습니다. 근거 없는 확신이나 변덕에 휘둘리지 마세요.",
+        caution="혼자 생각에 오래 잠깁니다. 근거 없는 확신이나 변덕에 휘둘리지 마세요.",
         advice="떠오른 생각은 일단 적고 사흘 뒤 다시 보세요. 그래도 끌리는 것만 실행하세요.",
         areas=YEAR_AREAS["indirect_resource"],
     ),
@@ -406,6 +406,11 @@ def central_areas(selection: dict, god: str | None) -> list[dict]:
     return found
 
 
+def _overview_more(god):
+    from app.engine.services import annual_depth
+    return annual_depth.OVERVIEW_MORE.get(god, annual_depth.OVERVIEW_MORE_GENERAL)
+
+
 def compose_year(selection: dict) -> dict:
     """올해 총운 · 세 가지 · 분야 5칸. 같은 입력이면 항상 같은 결과."""
     god = selection.get("focal_god")
@@ -415,27 +420,45 @@ def compose_year(selection: dict) -> dict:
     mode_of = {c["area"]: c["mode"] for c in centers}
 
     def block(area: str, central: bool) -> dict:
+        # 11/15 정오님 '분야마다 두세 줄은 하다 마는 느낌': 모든 분야에 깊은 두 줄을 넣고,
+        # '이렇게 해 보세요'·'조심할 점' 두 단락을 더한다(annual_depth). 근거·초점 달은 annual.py 가 뒤에 붙인다.
+        from app.engine.services import annual_depth
         short, deep = bank["areas"][area]
-        sentences = split_sentences(short)
+        lead = split_sentences(short) + (split_sentences(deep) if deep else [])
         if central:
-            sentences += split_sentences(deep)
+            lead = [annual_depth.CENTRAL_LEAD[area]] + lead
             note = MODE_NOTE.get(area, {}).get(mode_of.get(area, "base"))
             if note:
-                sentences += split_sentences(note)
+                lead += split_sentences(note)
+        do, watch = annual_depth.area_more(god if god in GODS else None, area)
+        # 문장 규칙 v2(11/22): 분야 칸은 장면 두 문장으로 시작한다. 늘어난 만큼 조언 문장은 둘씩으로 줄인다.
+        from app.engine.services import annual_voice
+        scene = annual_voice.area_scene(god if god in GODS else None, area)
+        if scene:
+            head = lead[:1] if central else []          # 중심 분야는 '가장 크게 움직이는 분야' 문장 다음에 장면
+            lead = head + scene + lead[len(head):]
+            do, watch = do[:2], watch[:2]
+        sentences = lead + do + watch
         return dict(area=area, label=AREA_LABEL[area], central=central,
                     mode=mode_of.get(area, "base"), sentences=sentences,
+                    paragraphs=dict(lead=lead, do=do, watch=watch, basis=[]),
                     text=" ".join(sentences))
 
     ordered = center_keys + [k for k in AREA_KEYS if k not in center_keys]
+    from app.engine.services import annual_depth
+    more3 = annual_depth.THREE_MORE.get(god, annual_depth.THREE_MORE_GENERAL)
+    from app.engine.services import annual_voice
+    voice3 = annual_voice.THREE.get(god)
     return dict(
         version=COPY_V2_VERSION,
         god=god if god in GODS else None,
         title=bank["title"],
-        overview=list(bank["overview"]),
+        # 11/23: 총운·세 가지는 annual_voice 의 이어 쓴 문장을 먼저 쓴다(없는 십성만 옛 은행).
+        overview=list(annual_voice.OVERVIEW.get(god) or (list(bank["overview"]) + list(_overview_more(god)))),
         three=[
-            dict(key="best", label="가장 좋은 것", text=bank["best"]),
-            dict(key="caution", label="주의할 것", text=bank["caution"]),
-            dict(key="advice", label="한 가지 조언", text=bank["advice"]),
+            dict(key="best", label="가장 좋은 것", text=voice3[0] if voice3 else f'{bank["best"]} {more3[0]}'),
+            dict(key="caution", label="주의할 것", text=voice3[1] if voice3 else f'{bank["caution"]} {more3[1]}'),
+            dict(key="advice", label="한 가지 조언", text=voice3[2] if voice3 else f'{bank["advice"]} {more3[2]}'),
         ],
         centers=centers,
         areas=[block(k, k in center_keys) for k in ordered],
@@ -539,7 +562,7 @@ MONTH_FLOW = {
         "만들고 즐기는 일에 손이 가는 달입니다. 작은 결과물 하나를 끝내면 뿌듯함이 오래 갑니다. 먹고 쉬는 즐거움은 적당히 누리세요.",
     ],
     "hurting_officer": [
-        "하고 싶은 말이 많아지는 달입니다. 생각을 꺼내 보여주기 좋지만 말투가 날카로워지기 쉽습니다. 중요한 말은 한 번 정리해서 전하세요.",
+        "하고 싶은 말이 많아지는 달입니다. 생각을 꺼내 보여주기 좋지만 말투가 날카로워집니다. 중요한 말은 한 번 정리해서 전하세요.",
         "답답한 틀을 바꾸고 싶어지는 달입니다. 불만보다 대안을 먼저 준비하면 뜻이 잘 전해집니다. 감정이 앞선 날의 결정은 미루세요.",
     ],
     "direct_wealth": [
@@ -547,7 +570,7 @@ MONTH_FLOW = {
         "꾸준함이 보람으로 남는 달입니다. 정해둔 계획을 그대로 지키는 것이 가장 큰 힘입니다. 큰 변화보다 작은 반복에 마음을 두세요.",
     ],
     "indirect_wealth": [
-        "활동 범위가 넓어지는 달입니다. 제안과 만남이 늘기 쉽고, 돈이 들고 나는 일도 많아집니다. 반가운 일이 겹칠수록 고르는 눈이 필요합니다.",
+        "활동 범위가 넓어지는 달입니다. 제안과 만남이 늘고, 돈이 들고 나는 일도 많아집니다. 반가운 일이 겹칠수록 고르는 눈이 필요합니다.",
         "발이 바빠지고 정보가 많이 들어오는 달입니다. 기회처럼 보이는 것도 비용과 시간을 따져보고 고르세요. 벌인 일은 하나씩 마무리하세요.",
     ],
     "direct_officer": [
@@ -556,14 +579,14 @@ MONTH_FLOW = {
     ],
     "seven_killings": [
         "요구와 속도가 함께 올라가는 달입니다. 한꺼번에 막으려 하지 말고 순서를 정하세요. 긴장이 길어지면 쉬는 시간부터 챙기세요.",
-        "결단이 필요한 일이 몰리기 쉬운 달입니다. 급할수록 맡을 것과 미룰 것을 먼저 가르세요. 말이 거칠어지지 않게 한 박자 쉬어가세요.",
+        "결단이 필요한 일이 몰리는 달입니다. 급할수록 맡을 것과 미룰 것을 먼저 가르세요. 말이 거칠어지지 않게 한 박자 쉬어가세요.",
     ],
     "direct_resource": [
-        "배우고 채우기 좋은 달입니다. 도움을 청하면 따뜻한 손길이 닿기 쉽습니다. 준비만 길어지지 않게 배운 것을 바로 써보세요.",
+        "배우고 채우기 좋은 달입니다. 도움을 청하면 따뜻한 손길이 닿습니다. 준비만 길어지지 않게 배운 것을 바로 써보세요.",
         "마음이 차분히 가라앉는 달입니다. 읽고 정리하는 시간이 다음 걸음을 받쳐줍니다. 기대기만 하지 말고 결정은 직접 내리세요.",
     ],
     "indirect_resource": [
-        "생각이 깊어지고 감각이 예민해지는 달입니다. 남다른 아이디어가 떠오르기 쉽습니다. 떠오른 것은 적어 두고 작게 시험해 보세요.",
+        "생각이 깊어지고 감각이 예민해지는 달입니다. 남다른 아이디어가 떠오릅니다. 떠오른 것은 적어 두고 작게 시험해 보세요.",
         "혼자만의 시간이 필요해지는 달입니다. 익숙한 방식 밖에서 실마리를 얻기 좋습니다. 생각만 하다 멈추지 않게 작은 행동을 붙이세요.",
     ],
 }
@@ -773,29 +796,30 @@ def _reason_kind(label: str) -> str:
 
 
 def _reason_text(label: str) -> str:
+    """그달 등급의 이유 한 문장. 11/23: '기운(합)·기울기' 같은 풀이말 대신 무슨 달인지를 그대로 말한다."""
     kind = _reason_kind(label)
     pos = POSITION_NAME.get(label.split("지")[0], "") if label[:1].isascii() else ""
     if kind == "join":
         if label == "일간 천간합":
-            return "나(일간)와 손잡는 기운(합)이 드는 달입니다."
+            return "나와 손발이 맞는 흐름이 들어오는 달입니다."
         if label in ("삼합", "방합"):
-            return "흩어진 기운이 한쪽으로 크게 모이는 달(삼합·방합)입니다."
-        return f"타고난 {pos}와 손잡는 기운(합)이 드는 달입니다."
+            return "흩어져 있던 힘이 한쪽으로 크게 모이는 달입니다."
+        return f"타고난 {pos}에 힘을 보태는 흐름이 드는 달입니다."
     return {
-        "clash": f"타고난 {pos}와 부딪히는 기운(충)이 드는 달입니다.",
-        "punish": f"타고난 {pos}와 마찰하는 기운(형)이 걸리는 달입니다.",
-        "harm": "타고난 사주와 작게 어긋나는 기운(해·파)이 걸리는 달입니다.",
-        "press": "나(일간)를 누르는 기운(극)이 드는 달입니다.",
-        "yong_good": "내 사주의 기울기를 바로잡아 주는 기운이 드는 달입니다.",
-        "yong_bad": "내 사주를 한쪽으로 더 기울게 하는 기운이 드는 달입니다.",
-        "fill": "타고난 사주에 모자란 오행을 채워주는 달입니다.",
-        "over": "타고난 사주에 이미 많은 오행이 더 쌓이는 달입니다.",
-        "stage_up": "기운이 차오르는 자리(12운성)에 드는 달입니다.",
-        "stage_down": "기운이 가라앉는 자리(12운성)에 드는 달입니다.",
-        "noble": "도움을 받는 자리(천을귀인)에 드는 달입니다.",
-        "literary": "배우고 쓰는 일에 힘이 붙는 자리(문창)에 드는 달입니다.",
-        "sharp": "기세가 날카로워지는 자리(양인·백호)에 드는 달입니다.",
-    }.get(kind, "타고난 사주와 크게 부딪히거나 맞물리는 기운이 없는 달입니다.")
+        "clash": f"타고난 {pos}가 크게 흔들리는 달입니다.",
+        "punish": f"타고난 {pos}에서 작은 마찰이 잦아지는 달입니다.",
+        "harm": "사소한 데서 조금씩 어긋나는 달입니다.",
+        "press": "나를 누르는 힘이 세지는 달입니다.",
+        "yong_good": "내게 모자랐던 쪽이 채워져 균형이 잡히는 달입니다.",
+        "yong_bad": "이미 치우친 쪽으로 더 쏠리는 달입니다.",
+        "fill": "타고난 사주에 모자란 것이 채워지는 달입니다.",
+        "over": "이미 넉넉한 것이 더 쌓여 넘치는 달입니다.",
+        "stage_up": "힘이 차오르는 달입니다.",
+        "stage_down": "힘이 가라앉아 쉬어 가야 하는 달입니다.",
+        "noble": "도와주는 사람이 나타나는 달입니다.",
+        "literary": "배우고 쓰는 일에 힘이 붙는 달입니다.",
+        "sharp": "기세가 날카로워지는 달입니다.",
+    }.get(kind, "크게 부딪히거나 맞물리는 일 없이 평소대로 흐르는 달입니다.")
 
 
 # 처방은 등급·이유별로 두세 개씩 두고 달에 따라 돌려 써서, 같은 이유가 여러 달에 나와도 글이 겹치지 않게 한다.
@@ -850,6 +874,15 @@ def month_grade(daily_grade: str | None, items: list[tuple[str, int]] | None, mo
                 basis=basis[0] if basis else None)
 
 
+def _take_month_flow(ledger: CopyLedger, god: str, grade_key: str | None, month: int) -> str:
+    """그달 흐름 문단. '좋음'·'주의' 달은 등급에 맞춘 문단을 먼저 쓰고(한 해에 한 번), 그 밖에는 십성 문단을 돌려 쓴다."""
+    from app.engine.services import annual_voice
+    graded = annual_voice.MONTH_FLOW_BY_GRADE.get(grade_key, {}).get(god)
+    if graded and ledger.has_free(f"m:flow:{god}:{grade_key}", [graded]):
+        return ledger.take(f"m:flow:{god}:{grade_key}", [graded], offset=0)[1]
+    return ledger.take(f"m:flow:{god}", annual_voice.MONTH_FLOW.get(god) or MONTH_FLOW[god], offset=month)[1]
+
+
 def _take_if_free(ledger: CopyLedger, key: str, pool: list, offset: int):
     """풀이 남아 있으면 하나 고르고, 바닥났으면 None. (같은 문장을 다시 쓰지 않기 위해 빼는 쪽을 택한다)"""
     if not pool or not ledger.has_free(key, pool):
@@ -865,7 +898,8 @@ def compose_month(ledger: CopyLedger, month: int, *, month_god: str | None, year
     focus_area = focus_area if focus_area in FOCUS else "health"
     god = month_god if month_god in MONTH_FLOW else None
 
-    flow_text = ledger.take(f"m:flow:{god}", MONTH_FLOW[god] if god else GENERAL_FLOW, offset=month)[1]
+    flow_text = (_take_month_flow(ledger, god, (grade or {}).get("key"), month) if god
+                 else ledger.take("m:flow:None", GENERAL_FLOW, offset=month)[1])
 
     link = None
     if god and year_god in FAMILY:
@@ -924,34 +958,39 @@ def validate_month(reading: dict) -> list[str]:
 # 검증 (테스트와 런타임 로그에서 함께 쓴다)
 # ---------------------------------------------------------------------------
 SENTENCE_MAX = 46
-SENTENCE_MAX_MONTH = 52
+SENTENCE_MAX_LONG = 72          # 11/23: 총운·세 가지는 짧은 문장과 이어진 문장을 섞는다(46자에 맞춰 토막 내지 않는다)
+SENTENCE_MAX_MONTH = 72         # 11/23: 월별 흐름도 장면 한 문장을 이어 쓴다(52 → 72)
 BASIS_SENTENCE_MAX = 64
-AREA_SENTENCE_MAX = 5           # 11/8 정오님: 분야마다 3~5문장
-AREA_SENTENCE_MAX_CENTRAL = 7   # 중심 분야는 더 길게(기본 2 + 중심 2 + 흐름 1 + 원국 근거 + 대운·관계)
+AREA_SENTENCE_MAX = 16          # 11/15 정오님 2.5~3배: 기본 4 + 이렇게 2 + 조심 2 + 근거·대운·초점 달
+AREA_SENTENCE_MAX_CENTRAL = 18  # 중심 분야는 흐름 1문장이 더 붙는다
 HEDGES = ("좋겠습니다", "좋겠어요", "수 있어요", "수 있습니다", "듯합니다", "것 같")
 TIME_WORDS = ("지금", "이번 달", "이달", "오늘")
 
 
 def _year_sentences(reading: dict) -> list[str]:
     out = [reading["title"], *reading["overview"]]
+    if reading.get("image"):
+        out.append(reading["image"])
     for item in reading["three"]:
         out += split_sentences(item["text"])
     for area in reading["areas"]:
         out += area["sentences"]
+    for extra in reading.get("extras") or ():
+        out += extra["sentences"]
     return out
 
 
 def validate_year(reading: dict) -> list[str]:
     issues: list[str] = []
     sentences = _year_sentences(reading)
-    if not 4 <= len(reading["overview"]) <= 6:
+    if not 4 <= len(reading["overview"]) <= 11:
         issues.append(f"총운 문장 수 {len(reading['overview'])}")
     if len(reading["areas"]) != len(AREA_KEYS):
         issues.append("분야 칸 수가 다릅니다")
     if not reading["areas"][0]["central"] and reading["centers"]:
         issues.append("중심 분야가 맨 위에 있지 않습니다")
     for s in sentences:
-        if len(s) > SENTENCE_MAX:
+        if len(s) > SENTENCE_MAX_LONG:
             issues.append(f"문장이 깁니다({len(s)}): {s}")
         if find_banned(s):
             issues.append(f"금기어 {find_banned(s)}: {s}")

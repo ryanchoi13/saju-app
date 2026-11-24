@@ -14,7 +14,7 @@ from app.engine.services.simple_menu import daily_choices
 from app.engine.services.daily_menu import BREAKFAST_BAPSANG, BREAKFAST_SIMPLE, MENU_POOL, NOT_A_MEAL, _SIMILAR, recommend_daily_menus
 from app.engine.services.menu_categories import menu_category
 from app.engine.services.daily_guidance import build_daily_guidance
-from app.engine.services import daily_copy, daily_menu_copy, daily_sections, daily_rx, daily_score, daily_shinsal, daily_story, lucky_items
+from app.engine.services import daily_copy, daily_menu_copy, daily_sections, daily_rx, daily_score, daily_shinsal, daily_story, daily_talisman, lucky_items
 from app.engine.services.annual_copy import seed_from
 from app.engine.services.daily_scenarios import select_daily_scenario
 from app.engine.services.daily_topics import select_daily_topics
@@ -588,6 +588,10 @@ def build_daily_fortune(
                 f"타고난 균형과 오늘의 기운을 함께 본 {element['ko']} 기운을 상징적으로 담은 일일 부적입니다."
             ),
             "talisman_type": talisman_type,
+            # 11/17 부적 v2: 화면은 이 명세만으로 그림을 그린다(제목·힘·설명은 더는 보이지 않는다)
+            "spec": daily_talisman.for_day(
+                core, grade=grade, domain_note=domain_note, luck_element=luck_element,
+                account_key=account_key or core.input.birth_date.isoformat(), d=target_date),
         },
         "supporting_shensha": [_SHENSHA_KO[name][0] for name in shensha],
         "evidence_summary": {

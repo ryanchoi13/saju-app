@@ -112,8 +112,7 @@ class RenderTests(unittest.TestCase):
         for sid in ("core", "people", "place"):
             self.assertIn(f'data-now-me-section="{sid}"', html)
         self.assertGreaterEqual(html.count("now-me-evidence"), 4)
-        self.assertIn('data-now-me-link="gunghap"', html)
-        self.assertIn('data-now-me-link="business"', html)
+        self.assertNotIn('data-now-me-link', html)      # 11/19 '궁합 보기·직업운 보기' 링크 없앰
         self.assertNotIn("data-paywall-cta", html)      # 화면이 '준비 중' 문구로 바꿔 버리는 속성
         plain = _plain(html)
         for word in copy.BANNED_PERSONALITY:

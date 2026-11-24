@@ -1,4 +1,4 @@
-# docs/ 안내 (2026-10-15)
+# docs/ 안내 (2026-11-16 정리)
 
 **결정·기준의 정본은 claude.ai 프로젝트 "달하(dalha.kr) 고도화"의 문서다** (00-dalha-charter, dalha-roadmap, part-engine·part-content·part-codi·part-food·part-brand). 이 폴더는 그때그때의 기술 기록이다. 아래 '기록'·'레거시' 문서는 지금 동작과 다를 수 있으니, 코드를 바꿀 근거로 쓰기 전에 프로젝트 문서와 코드를 확인한다.
 
@@ -15,6 +15,7 @@
 | fashion-reference-sources.md | 코디 — 참고 출처 |
 | daily-menu-research.md | 음식 — 추천 근거와 경계 |
 | lightweight-food-images.md | 음식 — 사진 |
+| fashion-selector-rollout.md | 코디 — 자동 추천 롤아웃 설정(`DALHA_FASHION_SELECTOR_ROLLOUT`, 기본 off) |
 
 ## 기록 (그 시점의 작업 기록, 지금과 다를 수 있음)
 business-interface-v1, complete-look-and-biorhythm, daily-polish-and-storage, design-comparison, fashion-post-launch, fashion-svg-review-revision-2, fashion-v2-stage1~3, fashion-v2-weather-stage1~2, fashion-watch-study, fortune-quality-20261004, operations-status-2026-09-22, practical-daily-recommendations, readable-light-ui, reading-discovery-2026-10, recommendation-maintenance-20260916, session-wallet-release, shoes-and-accessory-matching, tarot-talisman-polish, typography-josa-style
@@ -22,6 +23,6 @@ business-interface-v1, complete-look-and-biorhythm, daily-polish-and-storage, de
 ## 레거시 (화면에서 쓰지 않는 기능)
 | 문서 | 이유 |
 |---|---|
-| diet-menu-expansion.md | 다이어트 모드는 10/14에 없앰 |
-| ranked-menu-explorer.md | 옛 메뉴 탐색기(/api/menu/explore) — 화면에서 안 씀 |
-| fashion-v2-rolling-review.md | 보드 일정(fashion-board-schedule) — 워크플로 꺼 둠 |
+| diet-menu-expansion.md | 다이어트 모드는 10/14에 화면에서 없앰. 다만 식단 목록 코드(`diet_catalog_revision.py`)는 아직 남아 있어 문서도 둠 |
+
+11/16 정리로 삭제한 문서: ranked-menu-explorer.md(옛 메뉴 탐색기 — 코드와 함께 삭제), fashion-v2-rolling-review.md(보드 일정 워크플로가 없어짐). 필요하면 git 이력에서 본다.

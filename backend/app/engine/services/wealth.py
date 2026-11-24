@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from app.engine.services.theme_voice import with_hashtags
+
 from collections import Counter
 from html import escape
 
@@ -47,9 +49,9 @@ def _natal_style(counts: Counter) -> tuple[str, str]:
     indirect = counts["indirect_wealth"]
     output = counts["eating_god"] + counts["hurting_officer"]
     if direct > indirect:
-        style = "정재 쪽이 더 드러나므로 계획·예산·반복 가능한 수입 구조를 관리하는 방식이 기본축이 되기 쉽습니다."
+        style = "정재 쪽이 더 드러나므로 계획·예산·반복 가능한 수입 구조를 관리하는 방식이 기본축이 됩니다."
     elif indirect > direct:
-        style = "편재 쪽이 더 드러나므로 사람·거래·시장 변화에서 기회를 찾는 방식이 기본축이 되기 쉽습니다."
+        style = "편재 쪽이 더 드러나므로 사람·거래·시장 변화에서 기회를 찾는 방식이 기본축이 됩니다."
     elif direct or indirect:
         style = "정재와 편재가 함께 보여 안정적인 관리와 새로운 기회 탐색을 병행하는 구조입니다."
     else:
@@ -484,6 +486,7 @@ def build_lifetime_wealth_report(core: MyeongriCoreResult, user_name: str, *, is
     content = (f'<div class="theme-reading" data-theme="wealth" data-narrative-version="{WEALTH_NARRATIVE_VERSION}" '
                f'data-unlocked="{str(unlocked).lower()}">' + free + gated + evidence + _uncertainty(core)
                + f'<p class="reading-caption">{escape(sec.DISCLAIMER)}</p></div>')
+    content = with_hashtags(content, core)
     return {"analysis_basis": state_basis(query["applied_state"]), "title": f"{escape(name)}님 정통 명리 평생 재물운",
             "content": content, "narrative_version": WEALTH_NARRATIVE_VERSION, "is_unlocked": unlocked,
             "evidence_summary": evidence_summary}

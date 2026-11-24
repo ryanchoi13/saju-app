@@ -22,14 +22,14 @@ const dom = new JSDOM(`<input id="inputName" value="테스트">
   <select id="birthDaySelect"><option value="15" selected>15</option></select>
   <select id="birthHourSelect"></select><select id="birthMinuteSelect"></select>
   <p id="birthTimeLegacyNote" hidden></p>
-  <div id="onboardingInputView"></div><div id="bottomNavBar"></div>`, { runScripts: 'outside-only' });
+  <div id="onboardingInputView"></div><button id="sajuEditBack"></button><h2 id="sajuFormTitle"></h2><button id="btnSajuSubmit"></button><div id="bottomNavBar"></div>`, { runScripts: 'outside-only' });
 const w = dom.window;
 const sent = [], alerts = [];
 Object.assign(w, {
   selectedGender: 'male', selectedCalendarType: 'solar', currentUserId: 'user_1', currentCoin: 0,
   alert: msg => alerts.push(msg),
   fetch: async (_url, opts) => { sent.push(JSON.parse(opts.body)); return { ok: true, json: async () => ({ coin_balance: 1, profile: null }) }; },
-  saveUserSajuToLocal() {}, updateCoinDisplay() {}, applySajuAnalysisToUI() {}, switchTab() {},
+  saveUserSajuToLocal() {}, updateCoinDisplay() {}, applySajuAnalysisToUI() {}, switchTab() {}, sajuEditPushed: false,
 });
 w.eval(helpers.replace('const SIJIN_NAMES', 'var SIJIN_NAMES') + submit);
 w.initBirthTimeDropdowns();
@@ -44,7 +44,7 @@ assert.equal($('birthMinuteSelect').options.length, 61);
 (async () => {
   // 시·분을 고르지 않으면 막음
   await w.submitSajuRegistration();
-  assert.equal(sent.length, 0); assert.match(alerts.at(-1), /시와 분/);
+  assert.equal(sent.length, 0); assert.match(alerts.at(-1), /태어난 시각/);
 
   // 시만 고르고 분을 안 고르면 막음
   $('birthHourSelect').value = '23'; $('birthHourSelect').onchange();
@@ -101,7 +101,7 @@ assert.equal($('birthMinuteSelect').options.length, 61);
   // 시만 고르고 분 없음 → 막음
   p$('partnerBirthHourSelect').value = '23'; p$('partnerBirthHourSelect').onchange();
   pw.confirmUnlockGunghapOnServer();
-  assert.equal(unlocks.length, 0); assert.match(palerts.at(-1), /상대방의 태어난 시와 분/);
+  assert.equal(unlocks.length, 0); assert.match(palerts.at(-1), /상대방이 태어난 시각/);
   // 23시 45분 → 전송
   p$('partnerBirthMinuteSelect').value = '45';
   pw.confirmUnlockGunghapOnServer();
