@@ -88,8 +88,11 @@
 }
 /* 월 근거·처방, 할 일·피할 일: 상자 없이 본문 줄에 맞춘다. '분야별 한 줄'과 같은 라벨 칸(4.4em)·글 칸, 라벨은 굵게 */
 :is(#archiveModalBody,.period-reading) .annual-month > p:is(.annual-month-grade,.annual-month-todo) { background:none; border-radius:0; padding:0; margin:0 0 1.15em; font-size:1rem!important; font-weight:400!important; line-height:1.8!important; color:var(--ui-ink,var(--c-ink,#1D2129)); }
-:is(#archiveModalBody,.period-reading) .annual-month-row { display:grid; grid-template-columns:4.4em minmax(0,1fr); margin:0 0 .5em; }
-:is(#archiveModalBody,.period-reading) .annual-month-row > strong { white-space:nowrap; font-weight:800; color:var(--ui-accent,var(--c-ink,#1D2129)); }
+:is(#archiveModalBody,.period-reading) .annual-month-row { display:block; margin:0 0 .7em; }
+:is(#archiveModalBody,.period-reading) .annual-month-row:last-child { margin-bottom:0; }
+/* 11/24 라벨이 길어 글과 겹침 → 라벨을 한 줄로 두고 글은 다음 줄 맨 앞부터 */
+:is(#archiveModalBody,.period-reading) .annual-month-row > strong { display:block; margin:0 0 .15em; font-weight:800; color:var(--ui-accent,var(--c-ink,#1D2129)); }
+:is(#archiveModalBody,.period-reading) .annual-month-row > span { display:block; }
 :is(#archiveModalBody,.period-reading) .annual-month > p.annual-month-grade { padding-bottom:14px; border-bottom:1px solid var(--ui-line,#DEDCD4); }
 :is(#archiveModalBody,.period-reading) .annual-month > p.annual-month-todo { padding-top:14px; border-top:1px solid var(--ui-line,#DEDCD4); }
 :is(#archiveModalBody,.period-reading) .annual-month > p.annual-month-todo .annual-month-row > strong { color:#22406C!important; }
