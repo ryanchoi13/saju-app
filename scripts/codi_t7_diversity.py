@@ -1,6 +1,6 @@
 """코디 시험 T7 — 다양성 재기 (2026-11-24).
 
-공식집 v1(docs/codi-knowledge/cases/formula-book.md)의 한국 FW-겨울 12칸만으로
+공식집(docs/codi-knowledge/cases/formula-book.md, 지금 v1.2)의 한국 FW-겨울 12칸만으로
 착장을 30번(30일) 만들고, 몇 가지가 나오는지·같은 것이 얼마나 반복되는지·
 표준에서 벗어나는 날이 있는지 센다.
 
@@ -63,7 +63,7 @@ CELLS = {
         templates=[("기본", 2, {"outer": ["오버 울 코트", "무스탕", "부클 코트"], "top": ["니트"],
                                 "inner": ["흰 티 목", "셔츠 칼라"], "bottom": ["긴 스커트", "와이드 바지"],
                                 "shoes": ["낮은 앵클부츠", "로퍼"], "bag": ["가방"]})],
-        slots=dict(neutral=["outer", "bottom", "top"], soft=["inner", "top"], deep=["bag", "shoes"],
+        slots=dict(neutral=["outer", "bottom", "top"], soft=["inner", "top"], deep=["top", "inner", "bag"],
                    vivid=["inner", "bag"]), big=["outer", "bottom"]),
     "F20 캐주얼": dict(
         templates=[("기본", 2, {"outer": ["짧은 패딩", "짧은 재킷", "(아우터 없이) 오버 스웨트"],
@@ -72,7 +72,7 @@ CELLS = {
                    ("짧은 하의 + 타이츠", 1, {"outer": ["짧은 패딩", "짧은 재킷"], "top": ["니트", "스웨트"],
                                           "bottom": ["미니 스커트", "쇼츠"], "legs": ["회색 타이츠", "검정 타이츠"],
                                           "shoes": ["롱부츠"], "bag": ["가방"]})],
-        slots=dict(neutral=["outer", "bottom"], soft=["hat", "inner", "top"], deep=["bag", "top"],
+        slots=dict(neutral=["outer", "bottom"], soft=["hat", "inner", "top"], deep=["top", "bag"],
                    vivid=["bag", "hat", "inner"]), big=["outer", "bottom"]),
     "F20 페미닌": dict(
         templates=[("기본", 2, {"outer": ["코트", "짧은 재킷"], "top": ["니트", "카디건"],
@@ -82,7 +82,7 @@ CELLS = {
                    ("짧은 하의 + 다리 한 겹", 1, {"outer": ["코트", "짧은 재킷"], "top": ["니트", "카디건"],
                                               "bottom": ["미니 스커트", "짧은 원피스"], "legs": ["타이츠", "니삭스"],
                                               "shoes": ["롱부츠"], "bag": ["가방"]})],
-        slots=dict(neutral=["outer", "bottom"], soft=["top", "bottom", "neck"], deep=["bag", "neck"],
+        slots=dict(neutral=["outer", "bottom"], soft=["top", "bottom", "neck"], deep=["neck", "bag"],
                    vivid=["neck", "top"]), big=["outer", "bottom"]),
     "F20 스트릿": dict(
         templates=[("기본", 2, {"outer": ["짧은 패딩", "플리스", "카디건", "(아우터 없이) 오버 스웨트"],
@@ -104,7 +104,7 @@ CELLS = {
                    ("롱코트", 1, {"outer": ["종아리 롱코트"], "top": ["니트"], "neck": ["흰·회색 터틀넥"],
                                  "bottom": ["블랙 미디 스커트", "발목 바지"], "shoes": ["낮은 구두", "앵클부츠"],
                                  "bag": ["블랙 가죽 가방", "브라운 가죽 가방"]})],
-        slots=dict(neutral=["outer", "top"], soft=["neck", "top"], deep=["bag", "shoes"], vivid=["neck"]),
+        slots=dict(neutral=["outer", "top"], soft=["neck", "top"], deep=["top", "bag"], vivid=["neck"]),
         big=["outer"]),
     "F20 애슬레저": dict(
         templates=[("기본", 2, {"outer": ["짧은 경량 다운"], "bottom": ["레깅스", "트랙 팬츠", "스웨트 팬츠"],
@@ -147,8 +147,8 @@ CELLS = {
                                 "bottom": ["데님", "치노", "코듀로이", "부츠컷 데님"],
                                 "shoes": ["검정 가죽", "갈색 부츠", "블랙 단색 운동화"], "hat": ["볼캡", "비니", "-"],
                                 "bag": ["가방", "-"]})],
-        slots=dict(neutral=["outer", "bottom", "shoes"], soft=["hat", "inner"], deep=["bag", "inner"],
-                   vivid=["inner", "bag", "hat"]), big=["outer", "bottom"]),
+        slots=dict(neutral=["outer", "bottom", "shoes"], soft=["hat", "inner"], deep=["inner"],
+                   vivid=["inner", "hat"]), big=["outer", "bottom"]),
     "M40 아메카지": dict(
         templates=[("기본", 2, {"outer": ["밀리터리 재킷", "가죽 재킷", "워크 재킷", "데님 재킷"],
                                 "layer": ["셔츠", "후드"], "bottom": ["인디고 데님", "블랙 데님", "올리브 카고", "베이지 치노", "치노"],
@@ -202,12 +202,19 @@ def place(cell, items, colors, male):
     if len(strong) == 2 and FAMILY.get(strong[0]) != FAMILY.get(strong[1]):
         dropped.append(strong[1])
         notes.append("강한 색 둘(계열 다름) → 둘째 뺌")
+    # v1.2: 색 있는 행운 색은 하루 한 자리가 기본 — 둘째 색 있는 색은 작은 자리에만
+    small = {"hat", "muffler", "scarf", "acc", "neck", "legs"} | (set() if male else {"bag"})
+    chromatic_seen = 0
     # 색 있는 쪽이 먼저 자리를 고르고, 무채·가라앉은 색이 남은 바탕 자리를 맡는다(공식집 2절에 더함)
     for c in sorted(colors, key=lambda c: kind(c) in ("neutral", "light")):
         if c in dropped:
             continue
         order = (cell["slots"]["soft"] + [x for x in cell["slots"]["neutral"] if x not in ("outer", "setup")]
                  if kind(c) == "light" else cell["slots"][kind(c)])
+        if kind(c) not in ("neutral", "light"):
+            chromatic_seen += 1
+            if chromatic_seen == 2:
+                order = [x for x in order if x in small]
         for slot in order:
             if slot not in items or slot in used:
                 continue
