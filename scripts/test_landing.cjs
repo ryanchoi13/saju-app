@@ -48,7 +48,7 @@ class Resources extends ResourceLoader {
         assert.match(gate.querySelector('.landing-footer').textContent, /정읍사/);
         assert.match(gate.querySelector('.landing-footer').textContent, /음양오행과 전통 명리학/);
         assert.ok(!gate.querySelector('.landing-footer').textContent.includes('전문적인 판단'));
-        assert.match(doc.querySelector('#menuExplorerControls details').textContent, /건강·영양에 대한 전문적인 판단을 대신하지 않습니다/);
+        assert.match(doc.querySelector('#menuExplorerControls details').textContent, /건강·영양 판단은 전문가와 상의해 주세요/);
         assert.ok(gate.textContent.includes('소개용 예시'));
         assert.ok(!gate.textContent.includes('3초'));
         for (const link of gate.querySelectorAll('a[href^="#"]')) {

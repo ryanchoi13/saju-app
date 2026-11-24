@@ -44,7 +44,7 @@ assert.equal($('birthMinuteSelect').options.length, 61);
 (async () => {
   // 시·분을 고르지 않으면 막음
   await w.submitSajuRegistration();
-  assert.equal(sent.length, 0); assert.match(alerts.at(-1), /시와 분/);
+  assert.equal(sent.length, 0); assert.match(alerts.at(-1), /태어난 시각/);
 
   // 시만 고르고 분을 안 고르면 막음
   $('birthHourSelect').value = '23'; $('birthHourSelect').onchange();
@@ -101,7 +101,7 @@ assert.equal($('birthMinuteSelect').options.length, 61);
   // 시만 고르고 분 없음 → 막음
   p$('partnerBirthHourSelect').value = '23'; p$('partnerBirthHourSelect').onchange();
   pw.confirmUnlockGunghapOnServer();
-  assert.equal(unlocks.length, 0); assert.match(palerts.at(-1), /상대방의 태어난 시와 분/);
+  assert.equal(unlocks.length, 0); assert.match(palerts.at(-1), /상대방이 태어난 시각/);
   // 23시 45분 → 전송
   p$('partnerBirthMinuteSelect').value = '45';
   pw.confirmUnlockGunghapOnServer();
