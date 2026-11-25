@@ -50,10 +50,12 @@ class Resources extends ResourceLoader {
 
         w.eval(`themePreviewCache.business = {content:'<p>앞부분</p><a data-paywall-cta href="#">결제</a>', price_coins:220}; renderThemePreview('business');`);
         const slot = doc.getElementById('themeReport_business');
-        assert.equal(slot.querySelector('.theme-unlock-cta'), null, 'no payment button');
+        // 11/25: '곧 열려요'를 없앴다 — 테마운 미리보기 아래에 복채 결제 버튼이 나온다.
+        assert.match(slot.querySelector('.theme-unlock-cta').textContent, /220 복채/);
         assert.equal(slot.querySelector('[data-paywall-cta]'), null);
-        assert.equal(slot.querySelector('.lock-soon').textContent, '전체 풀이는 곧 열려요');
+        assert.equal(slot.querySelector('.lock-soon'), null, 'no coming-soon badge');
+        assert.equal(doc.querySelectorAll('[id^="soon_"]').length, 0, 'no soon badges anywhere');
         assert.match(slot.textContent, /앞부분/);
-        console.log('PASS: launch scope — theme 5 soon, gunghap on sale, free previews kept, tarot/zodiac/time tips hidden');
+        console.log('PASS: launch scope — themes on sale, gunghap on sale, free previews kept, tarot/zodiac/time tips hidden');
     } finally { w.close(); }
 })().catch(e => { console.error(e); process.exit(1); });
