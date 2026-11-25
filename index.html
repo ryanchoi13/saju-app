@@ -4222,7 +4222,8 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
         const COIN_UNIT = '복채';
         // 2026-10-15 공개 범위(프로젝트 문서 dalha-roadmap): 공개 때 결제 없음 → 이 풀이들은 '곧 열려요'.
         // 직업·애정·건강은 앞부분 무료 맛보기는 그대로 두고, 결제 버튼만 '곧 열려요'로 바꾼다. 이미 받은 풀이는 그대로 읽을 수 있다.
-        const DALHA_SOON_REPORTS = new Set(['business','venture','love','health','wealth','study']);
+        // 11/25 정오님: 테마운을 다 만들어서 '곧 열려요'는 없앴다 — 모든 테마운을 복채로 바로 연다(목록은 비워 둔다).
+        const DALHA_SOON_REPORTS = new Set([]);
         function applySoonEntrypoint(key) {
             if (!DALHA_SOON_REPORTS.has(key) || latestOwnedReportIndex(key) >= 0) return;
             const price = document.querySelector(`[data-report-price="${key}"]`);

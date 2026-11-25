@@ -139,30 +139,25 @@ class AnnualEditionTests(AccountCase):
 
 
 class SoonReportsTests(AccountCase):
-    """'곧 열려요' 풀이는 화면뿐 아니라 서버 결제 창구에서도 막는다."""
+    """11/25부터 '곧 열려요' 없이 모든 풀이를 판다. 화면과 서버 목록은 늘 같아야 한다."""
 
     def buy(self, key, cost):
         return main.unlock_report(UnlockReportRequest(user_id=USER, report_key=key, cost=cost))
 
-    def test_soon_readings_cannot_be_bought_by_calling_the_server(self):
-        self.save(); before = users_db[USER]['coin']
-        for key in ('business', 'love', 'health', 'wealth', 'study'):
-            with self.subTest(key=key), self.assertRaises(HTTPException) as caught:
-                self.buy(key, 220)
-            self.assertEqual(caught.exception.status_code, 403)
-        self.assertEqual(users_db[USER]['coin'], before)
-        self.assertEqual(main.client_reports(USER), [])
+    def test_all_theme_readings_sell_now(self):
+        # 11/25: '곧 열려요'를 없앴다 — 테마운 6개 모두 복채로 바로 산다(테스트 계정이 아니어도).
+        import report_access
+        for key in ('business', 'venture', 'love', 'health', 'wealth', 'study'):
+            self.assertTrue(report_access.on_sale(key), key)
+        self.save()
+        for key in ('venture', 'love', 'study'):
+            self.buy(key, 220)
+        self.assertEqual({r['report_key'] for r in main.client_reports(USER)}, {'venture', 'love', 'study'})
 
     def test_open_readings_still_sell(self):
         self.save()
         self.buy('daewoon', 450); self.buy('sinnian', 300)
         self.assertEqual({r['report_key'] for r in main.client_reports(USER)}, {'daewoon', 'sinnian'})
-
-    def test_registered_test_account_can_buy_soon_readings(self):
-        self.save()
-        with patch.dict(os.environ, {'DALHA_TEST_USER_IDS': USER}):
-            self.buy('business', 220)
-        self.assertEqual([r['report_key'] for r in main.client_reports(USER)], ['business'])
 
     def test_server_and_screen_share_the_same_soon_list(self):
         import report_access

@@ -35,7 +35,9 @@ def builder_kwargs(report_key: str, unlocked) -> dict:
 
 # 공개 범위(10/15 결정): 이 풀이들은 아직 팔지 않는다 — 화면은 '곧 열려요'로 보여 준다(index.html DALHA_SOON_REPORTS 와 같은 목록).
 # 화면만 막으면 결제 창구에 직접 요청해 살 수 있으므로 서버에서도 막는다(11/23 점검). 등록된 테스트 계정은 살 수 있다.
-SOON_REPORTS = frozenset({'business', 'venture', 'love', 'health', 'wealth', 'study'})
+# 11/25 정오님: 테마운을 다 만들었으니 '곧 열려요'는 없었던 일로 — 모든 풀이를 복채로 바로 산다.
+# 다시 막을 풀이가 생기면 여기와 index.html DALHA_SOON_REPORTS 에 같이 넣는다.
+SOON_REPORTS = frozenset()
 
 
 def on_sale(report_key, is_tester=False):
