@@ -49,6 +49,12 @@ RULE_TEXT = {
 }
 
 
+def today_of(core: MyeongriCoreResult) -> date:
+    """풀이를 보는 날(엔진에 넘긴 target_date). 없으면 오늘."""
+    raw = (core.timing.daily or {}).get("date") if core.timing else None
+    return date.fromisoformat(raw) if raw else date.today()
+
+
 def _cycles(core: MyeongriCoreResult) -> list[dict]:
     lc = core.timing.model_dump(mode="json").get("luck_cycle") or {}
     return lc.get("cycles") or []

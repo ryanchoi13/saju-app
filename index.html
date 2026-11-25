@@ -1121,6 +1121,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 <div class="reading-section-title concern-choice-title"><h3 id="concernChoiceTitle">궁금한 이야기를 골라보세요</h3></div>
                 <div class="concern-choices" role="group" aria-label="궁금한 주제 선택">
                     <button data-concern-choice="business" aria-pressed="false" aria-controls="concern-business" onclick="openThemeIntro('business')"><i data-brand-icon="briefcase" class="concern-symbol" aria-hidden="true"></i><span class="concern-category">일·진로</span><strong>내 강점을 어떤 일에 써볼까요?</strong><span class="concern-open">풀이 살펴보기 <span aria-hidden="true">→</span></span></button>
+                    <button data-concern-choice="venture" aria-pressed="false" aria-controls="concern-venture" onclick="openThemeIntro('venture')"><i data-brand-icon="store" class="concern-symbol" aria-hidden="true"></i><span class="concern-category">사업</span><strong>어떤 사업이 나와 맞을까요?</strong><span class="concern-open">풀이 살펴보기 <span aria-hidden="true">→</span></span></button>
                     <button data-concern-choice="love" aria-pressed="false" aria-controls="concern-love" onclick="openThemeIntro('love')"><i data-brand-icon="heart" class="concern-symbol" aria-hidden="true"></i><span class="concern-category">애정·관계</span><strong>나는 어떤 사랑이 편할까요?</strong><span class="concern-open">풀이 살펴보기 <span aria-hidden="true">→</span></span></button>
                     <button data-concern-choice="wealth" aria-pressed="false" aria-controls="concern-wealth" onclick="openThemeIntro('wealth')"><i data-brand-icon="coins" class="concern-symbol" aria-hidden="true"></i><span class="concern-category">돈·생활</span><strong>돈을 모으고 쓰는 기준이 궁금해요</strong><span class="concern-open">풀이 살펴보기 <span aria-hidden="true">→</span></span></button>
                     <button data-concern-choice="study" aria-pressed="false" aria-controls="concern-study" onclick="openThemeIntro('study')"><i data-brand-icon="book" class="concern-symbol" aria-hidden="true"></i><span class="concern-category">학업·시험</span><strong>나에게 맞는 공부법을 찾고 싶어요</strong><span class="concern-open">풀이 살펴보기 <span aria-hidden="true">→</span></span></button>
@@ -1135,6 +1136,13 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                     <div class="report-preview"><span class="preview-label">이런 이야기를 읽어요</span><ol class="theme-toc"><li><span class="toc-num">01</span><strong>나는 어떻게 일하는 사람일까</strong></li><li><span class="toc-num">02</span><strong>일할 때 내가 자꾸 빠지는 함정 3가지</strong></li><li><span class="toc-num">03</span><strong>나에게 맞는 일터</strong></li><li><span class="toc-num">04</span><strong>잘 맞는 일의 종류</strong></li><li><span class="toc-num">05</span><strong>돈을 버는 방식</strong></li><li><span class="toc-num">06</span><strong>함께 일하는 사람</strong></li><li><span class="toc-num">07</span><strong>이번 10년의 일</strong></li><li><span class="toc-num">08</span><strong>앞으로 12개월 일의 흐름</strong></li><li><span class="toc-num">09</span><strong>자리가 움직이는 달</strong></li><li><span class="toc-num">10</span><strong>일을 지키는 실천</strong></li></ol></div>
                     <div id="themeReport_business" class="hidden"></div>
                     <button id="btnTheme_business" class="reading-primary" onclick="openThemeSelectModal('business')">상황 고르고 먼저 읽어보기</button>
+                </section>
+                <section id="concern-venture" class="card report-entry hidden" data-concern="venture" aria-labelledby="concern-heading-venture">
+                    <span class="reading-eyebrow">사업</span>
+                    <h3 id="concern-heading-venture" tabindex="-1">사업운</h3><p>나에게 맞는 사업의 성격과 업종, 동업과 돈을 거는 규모부터 앞으로 5년 사업 흐름과 문 열기 좋은 날까지 읽어요.</p>
+                    <div class="report-preview"><span class="preview-label">이런 이야기를 읽어요</span><ol class="theme-toc"><li><span class="toc-num">01</span><strong>나는 어떤 사업가일까</strong></li><li><span class="toc-num">02</span><strong>사업에서 빠지기 쉬운 함정 3가지</strong></li><li><span class="toc-num">03</span><strong>나에게 맞는 사업의 성격</strong></li><li><span class="toc-num">04</span><strong>업종별로 보면</strong></li><li><span class="toc-num">05</span><strong>동업과 함께할 사람</strong></li><li><span class="toc-num">06</span><strong>돈을 거는 규모</strong></li><li><span class="toc-num">07</span><strong>이번 10년의 사업</strong></li><li><span class="toc-num">08</span><strong>앞으로 5년 사업 흐름</strong></li><li><span class="toc-num">09</span><strong>문 열기 좋은 달과 날</strong></li><li><span class="toc-num">10</span><strong>사업을 지키는 실천</strong></li></ol></div>
+                    <div id="themeReport_venture" class="hidden"></div>
+                    <button id="btnTheme_venture" class="reading-primary" onclick="showThemePreview('venture')">사업 기질 먼저 읽어보기</button>
                 </section>
                 <section id="concern-love" class="card report-entry hidden" data-concern="love" aria-labelledby="concern-heading-love">
                     <span class="reading-eyebrow">애정·관계</span>
@@ -3924,7 +3932,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             return showThemePreview(key, '기본');
         }
         function selectConcern(key, reveal = false) {
-            const labels = {wealth:'돈과 생활을 살펴보는 풀이', love:'나의 연애 패턴을 살펴보는 풀이', business:'일과 사업의 방향을 살펴보는 풀이', study:'공부 방식을 살펴보는 풀이', health:'체질과 건강을 살펴보는 풀이', gunghap:'두 사람의 관계를 살펴보는 풀이'};
+            const labels = {wealth:'돈과 생활을 살펴보는 풀이', love:'나의 연애 패턴을 살펴보는 풀이', business:'일과 사업의 방향을 살펴보는 풀이', venture:'맞는 사업과 시기를 살펴보는 풀이', study:'공부 방식을 살펴보는 풀이', health:'체질과 건강을 살펴보는 풀이', gunghap:'두 사람의 관계를 살펴보는 풀이'};
             if (!labels[key]) return;
             document.querySelectorAll('[data-concern]').forEach(el => el.classList.toggle('hidden', el.dataset.concern !== key));
             document.querySelectorAll('[data-concern-choice]').forEach(el => el.setAttribute('aria-pressed', String(el.dataset.concernChoice === key)));
@@ -4027,7 +4035,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             const configs = {
                 daewoon:['daewoonBox','btnDaewoon','daewoonTeaserBox'],
                 sinnian:['sinnianBox','btnSinnian','sinnianTeaserBox'],
-                ...Object.fromEntries(['wealth','love','business','health','study'].map(k => [k,[`themeReport_${k}`,`btnTheme_${k}`,null]]))
+                ...Object.fromEntries(['wealth','love','business','venture','health','study'].map(k => [k,[`themeReport_${k}`,`btnTheme_${k}`,null]]))
             };
             document.getElementById('annualMonthExplorer').classList.add('hidden');
             document.getElementById('lifeCycleExplorer').classList.add('hidden');
@@ -4163,11 +4171,11 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
         const COIN_UNIT = '복채';
         // 2026-10-15 공개 범위(프로젝트 문서 dalha-roadmap): 공개 때 결제 없음 → 이 풀이들은 '곧 열려요'.
         // 직업·애정·건강은 앞부분 무료 맛보기는 그대로 두고, 결제 버튼만 '곧 열려요'로 바꾼다. 이미 받은 풀이는 그대로 읽을 수 있다.
-        const DALHA_SOON_REPORTS = new Set(['business','love','health','wealth','study']);
+        const DALHA_SOON_REPORTS = new Set(['business','venture','love','health','wealth','study']);
         function applySoonEntrypoint(key) {
             if (!DALHA_SOON_REPORTS.has(key) || latestOwnedReportIndex(key) >= 0) return;
             const price = document.querySelector(`[data-report-price="${key}"]`);
-            const hasPreview = ['business','love','health','wealth','study'].includes(key);
+            const hasPreview = ['business','venture','love','health','wealth','study'].includes(key);
             if (price) price.textContent = hasPreview ? '앞부분 무료 · 전체는 곧 열려요' : '곧 열려요';
             if (hasPreview) return;
             const button = document.getElementById(key === 'gunghap' ? 'btnOpenGunghapModal' : `btnTheme_${key}`);
@@ -4213,7 +4221,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             const price = document.querySelector(`[data-report-price="${key}"]`);
             if (price) price.textContent = DALHA_SOON_REPORTS.has(key) ? '앞부분 무료 · 전체는 곧 열려요' : `${state.price_coins} ${COIN_UNIT}`;
             const button = document.getElementById(`btnTheme_${key}`);
-            if (button) button.textContent = (key === 'health' || key === 'wealth' || key === 'study') ? '다시 불러오기' : '상황 다시 고르기';
+            if (button) button.textContent = (key === 'health' || key === 'wealth' || key === 'study' || key === 'venture') ? '다시 불러오기' : '상황 다시 고르기';
         }
         async function showThemePreview(key, subOption = '기본') {
             if (!currentUserId) { alert('로그인해 주세요.'); return; }

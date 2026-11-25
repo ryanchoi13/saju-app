@@ -290,7 +290,7 @@ def _partner_identity(req, partner_clock) -> str:
 # 이름은 사주가 아니므로 지문에 넣지 않는다. basis·saju_key 는 서버에만 두고 화면에는 표시용 한 줄만 보낸다.
 SAJU_FIELDS = ('gender', 'birth_year', 'birth_month', 'birth_day',
                'calendar_type', 'sijin_index', 'birth_hour', 'birth_minute')
-SAJU_BOUND_KEYS = ('sinnian', 'daewoon', 'wealth', 'business', 'love', 'health', 'study')
+SAJU_BOUND_KEYS = ('sinnian', 'daewoon', 'wealth', 'business', 'venture', 'love', 'health', 'study')
 
 
 def _saju_key(user: Dict[str, Any]) -> str:
@@ -716,7 +716,7 @@ def _outfit_tracks_from_look(fashion_v2: Dict[str, Any], fallback: Dict[str, Any
 # --- Detailed Report Generator Engine ---
 # 나이에 맞지 않는 풀이(11/23 점검: 7살에게 '배우자 자리'·'월급', 갓난아기에게 '재테크').
 # 풀이 은행을 나이별로 다시 쓰는 대신, 어린 나이라는 점과 읽는 법을 맨 위 한 줄로 먼저 알린다.
-AGE_NOTE_KEYS = ('daewoon', 'sinnian', 'business', 'love', 'wealth')
+AGE_NOTE_KEYS = ('daewoon', 'sinnian', 'business', 'venture', 'love', 'wealth')
 AGE_NOTE_CHILD = "{name}님은 아직 어린 나이예요. 일·돈·사랑 이야기는 어른이 되어 펼쳐질 모습으로, 지금은 타고난 기질을 먼저 봐 주세요."
 AGE_NOTE_TEEN = "{name}님은 아직 자라는 나이예요. 일·돈·사랑 이야기는 어른이 되어 만날 모습으로 읽어 주세요."
 
@@ -855,6 +855,15 @@ def _build_detailed_report(
             target_date=kst_today,
         )
         return build_lifetime_study_report(core, user_name, **tier)
+    elif report_key == "venture":
+        if not user:
+            raise ValueError("사업운 생성에 사용자 사주 정보가 필요합니다.")
+        from app.engine.services.venture import build_venture_report
+        core = calculate_myeongri_core(
+            _birth_input_from_user(user, user_name),
+            target_date=_kst_today(),
+        )
+        return build_venture_report(core, user_name, **tier)
     raise ValueError(f"지원하지 않는 리포트입니다: {report_key}")
 
 # --- API Endpoints ---
@@ -1449,7 +1458,7 @@ def preview_report(req: PreviewReportRequest):
 # 바꿀 수 없는 경우(궁합처럼 상대 정보가 없음, 상황 선택값이 없음, 연도를 모름, 생성·저장 실패)는
 # 기존 풀이를 그대로 두고 다음에 다시 시도한다. 결제일·잔액·다른 풀이는 건드리지 않는다.
 logger = logging.getLogger('dalha.reports')
-AUTO_UPDATE_KEYS = ('sinnian', 'daewoon', 'wealth', 'business', 'love', 'health', 'study')
+AUTO_UPDATE_KEYS = ('sinnian', 'daewoon', 'wealth', 'business', 'venture', 'love', 'health', 'study')
 
 
 def _report_target_version(report_key):
@@ -1459,6 +1468,7 @@ def _report_target_version(report_key):
     from app.engine.services.health import HEALTH_NARRATIVE_VERSION
     from app.engine.services.wealth import WEALTH_NARRATIVE_VERSION
     from app.engine.services.study import STUDY_NARRATIVE_VERSION
+    from app.engine.services.venture import VENTURE_NARRATIVE_VERSION
     from app.engine.services.lifetime import LIFETIME_NARRATIVE_VERSION
     if report_key not in AUTO_UPDATE_KEYS:
         return None
@@ -1466,6 +1476,7 @@ def _report_target_version(report_key):
         'sinnian': ANNUAL_NARRATIVE_VERSION, 'daewoon': LIFETIME_NARRATIVE_VERSION,
         'business': CAREER_NARRATIVE_VERSION, 'love': LOVE_NARRATIVE_VERSION,
         'health': HEALTH_NARRATIVE_VERSION, 'wealth': WEALTH_NARRATIVE_VERSION, 'study': STUDY_NARRATIVE_VERSION,
+        'venture': VENTURE_NARRATIVE_VERSION,
     }.get(report_key, THEME_VERSION)
 
 

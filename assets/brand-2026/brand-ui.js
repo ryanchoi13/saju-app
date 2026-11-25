@@ -12,6 +12,7 @@
     hanger:'<path d="M9 6a3 3 0 1 1 4 2.8V11l9 6v2H2v-2l10-6"/>',
     palette:'<circle cx="7" cy="7" r="3"/><circle cx="17" cy="7" r="3"/><circle cx="7" cy="17" r="3"/><circle cx="17" cy="17" r="3"/>',
     briefcase:'<rect x="2" y="7" width="20" height="14" rx="2"/><path d="M8 7V3h8v4M2 12c6 4 14 4 20 0M10 13v3h4v-3"/>',
+    store:'<path d="M3 9 4.5 4h15L21 9M3 9v11h18V9M3 9h18M3 9c0 2 4 2 4.5 0 .5 2 4.5 2 4.5 0 0 2 4 2 4.5 0 .5 2 4.5 2 4.5 0M9 20v-6h6v6"/>',
     coins:'<ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v6c0 4 16 4 16 0V5M4 11v6c0 4 16 4 16 0v-6"/>',
     cards:'<rect x="7" y="2" width="13" height="19" rx="2"/><path d="m7 6-4 1 1 16 9-1M13.5 7l2 4-2 4-2-4Z"/>',
     orbit:'<circle cx="12" cy="12" r="4"/><ellipse cx="12" cy="12" rx="11" ry="6" transform="rotate(-40 12 12)"/><path d="M12 2v1M12 21v1"/>'

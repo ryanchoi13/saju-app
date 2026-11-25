@@ -13,12 +13,13 @@ from pathlib import Path
 
 from app.engine.core.models import BirthInput
 from app.engine.orchestrator import calculate_myeongri_core
-from app.engine.services import career_sections, health_sections, love_sections, study_sections, wealth_sections
+from app.engine.services import career_sections, health_sections, love_sections, study_sections, venture_sections, wealth_sections
 from app.engine.services.career import build_lifetime_career_report
 from app.engine.services.health import build_lifetime_health_report
 from app.engine.services.love import build_lifetime_love_report
 from app.engine.services.study import build_lifetime_study_report
 from app.engine.services.wealth import build_lifetime_wealth_report
+from app.engine.services.venture import build_venture_report
 
 INDEX = Path(__file__).resolve().parents[2] / "index.html"
 THEMES = {
@@ -27,6 +28,7 @@ THEMES = {
     "wealth": (build_lifetime_wealth_report, wealth_sections),
     "study": (build_lifetime_study_report, study_sections),
     "health": (build_lifetime_health_report, health_sections),
+    "venture": (build_venture_report, venture_sections),
 }
 PEOPLE = [
     ("male", datetime.date(1978, 3, 13), datetime.time(10, 30)),

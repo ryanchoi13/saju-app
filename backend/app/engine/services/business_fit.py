@@ -58,9 +58,9 @@ CATALOG = {
     "consulting": dict(name="상담·컨설팅", natures=("resource",), element="土"),
     "care_service": dict(name="돌봄·요양 서비스", natures=("resource", "officer"), element="土"),
     "senior_goods": dict(name="시니어 용품 유통", natures=("wealth",), element="水"),
-    "real_estate": dict(name="부동산·임대", natures=("wealth",), element="土"),
-    "finance": dict(name="금융·투자", natures=("wealth", "officer"), element="金"),
-    "manufacturing": dict(name="제조·정밀 기술", natures=("peer", "officer"), element="金"),
+    "real_estate": dict(name="부동산·임대", natures=("wealth",), element="土", capital="high"),
+    "finance": dict(name="금융·투자", natures=("wealth", "officer"), element="金", capital="high"),
+    "manufacturing": dict(name="제조·정밀 기술", natures=("peer", "officer"), element="金", capital="high"),
     "freelance_pro": dict(name="1인 전문직·프리랜서", natures=("peer", "output"), element=None),
 }
 
@@ -109,7 +109,7 @@ def nature_fit(core: MyeongriCoreResult, nature: str, year: int | None = None, *
     natal = sum(tally(core, gods).values())
     hidden = sum(hidden_tally(core, gods).values())
     strength = _strength(core)
-    cyc = bt.cycle_for_year(core, year or date.today().year) if with_cycle else None
+    cyc = bt.cycle_for_year(core, year or bt.today_of(core).year) if with_cycle else None
     cyc_group = _TEN_GOD_GROUP.get((cyc or {}).get("ten_god"))
 
     rules = []
@@ -192,7 +192,9 @@ def _option_rules(core: MyeongriCoreResult, opt: dict, year: int) -> tuple[list[
             rules.append("partner_risk")
         elif strength == "weak":
             rules.append("partner_help")
-    capital = opt.get("capital", "mid")
+    # 큰돈이 묶이는 업종(부동산·금융·제조)은 사용자가 더 작게 적어도 카탈로그의 규모를 쓴다
+    _size = {"low": 0, "mid": 1, "high": 2}
+    capital = max(opt.get("capital", "mid"), CATALOG.get(opt.get("category", ""), {}).get("capital", "low"), key=_size.get)
     cyc = bt.cycle_for_year(core, year)
     cyc_group = _TEN_GOD_GROUP.get((cyc or {}).get("ten_god"))
     if capital == "high":
@@ -211,7 +213,7 @@ def compare_options(core: MyeongriCoreResult, options: list[dict], start_year: i
     options: [{name, category(CATALOG 키) 또는 natures+element, partnership: bool, capital: low|mid|high}]
     돌려주는 것: 선택지별 등급·맞는 점·걸리는 점·문 열기 좋은 해, 5년 흐름, 공통 안내.
     """
-    year = start_year or date.today().year
+    year = start_year or bt.today_of(core).year
     flow = bt.five_year_flow(core, year)
     lead = copy.lead_group(tally(core), hidden_tally(core))
     rows = []
