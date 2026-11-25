@@ -59,6 +59,17 @@ class VentureTests(unittest.TestCase):
         # 문자열 'true' 같은 값으로는 열리지 않는다
         self.assertFalse(build_venture_report(self.core, "t", is_unlocked="true")["is_unlocked"])
 
+    def test_locked_traps_show_one_and_fade_second(self):
+        c = self.free["content"]
+        traps = [sec.TRAPS[k] for k in self.free["evidence_summary"]["traps"]]
+        self.assertIn('data-venture-trap="1"', c)
+        self.assertIn(html.escape(traps[0][2]), c)          # 1번은 처방까지
+        self.assertIn("data-paywall-fade", c)
+        self.assertIn(html.escape(traps[1][0]), c)          # 2번은 제목·설명만 흐리게
+        self.assertNotIn(html.escape(traps[1][2]), c)
+        self.assertNotIn('data-venture-trap="3"', c)
+        self.assertNotIn(html.escape(traps[2][1]), c)        # 3번은 싣지 않는다
+
     def test_repeatable(self):
         self.assertEqual(self.paid["content"], build_venture_report(self.core, "최정오", is_unlocked=True)["content"])
 

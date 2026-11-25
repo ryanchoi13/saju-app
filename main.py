@@ -1448,6 +1448,7 @@ def preview_report(req: PreviewReportRequest):
                                          user.get('name', '회원'), user=user, is_unlocked=False)
     return dict(status='preview', report_key=req.report_key, is_unlocked=False,
                 price_coins=report_access.REPORT_PRICES[req.report_key],
+                on_sale=report_access.on_sale(req.report_key, _is_tester(req.user_id)),
                 title=generated['title'], content=generated['content'],
                 narrative_version=generated.get('narrative_version'))
 

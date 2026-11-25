@@ -71,7 +71,8 @@ class ThemeTocMatchTests(unittest.TestCase):
             locked = [(f"{i:02d}", t) for i, (_, t) in enumerate(sec.LOCKED_SECTIONS, len(free) + 1)]
             self.assertEqual(toc[len(free):], locked, key)
             shown = re.findall(r'<span class="locked-num">(\d+)</span> (.*?)</li>', html)
-            self.assertEqual(shown, locked, key)
+            # 11/25 사업운: 미리보기는 흐림 처리 + 복채 버튼으로 끝나고, 잠긴 칸 목록은 들어오기 전 목차 화면에만 둔다.
+            self.assertEqual(shown, [] if key == "venture" else locked, key)
 
 
 if __name__ == "__main__":
