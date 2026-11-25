@@ -36,7 +36,7 @@ from app.engine.services.element_balance import composition, element_tiers, nata
 from app.engine.constants import GAN_KO, GAN_WUXING, ZHI_KO
 from app.engine.facts.ten_gods import get_ten_god
 
-CAREER_NARRATIVE_VERSION = "career-v3"  # 11/13: 칸 10개 · 분량 3배 · 12달 등급
+CAREER_NARRATIVE_VERSION = "career-v3.1"  # 11/25: 일의 성격 단락 · 제목 직업운. 11/13: 칸 10개 · 분량 3배 · 12달 등급
 
 _TEN_GOD = {
     "peer": "비견", "rob_wealth": "겁재", "eating_god": "식신",
@@ -429,7 +429,7 @@ def build_lifetime_career_report(
     content = with_hashtags(content, core)
     return {
         "analysis_basis": state_basis(query["applied_state"]),
-        "title": f"{name}님 정통 명리 직업·사업운",
+        "title": f"{name}님 정통 명리 직업운",
         "content": content,
         "narrative_version": CAREER_NARRATIVE_VERSION,
         "copy_version": copy.COPY_VERSION,

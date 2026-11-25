@@ -20,7 +20,7 @@ class LifetimeCareerReportTests(unittest.TestCase):
 
     def test_business_report_uses_natal_and_all_cycles(self):
         report = build_lifetime_career_report(self.core, "최정오", "사업가")
-        self.assertIn("평생 직업·사업운", report["title"])
+        self.assertIn("직업운", report["title"])
         for marker in [
             "평생 일의 구조 · 사업가", "이어갈 고객과 운영의 기준",
             "현재 직업·사업 흐름", "48~57세", "庚申",
@@ -54,7 +54,7 @@ class LifetimeCareerReportTests(unittest.TestCase):
         report = generate_detailed_report(
             "business", "사업가", "상대방", "선택안함", "최정오", user=user
         )
-        self.assertIn("정통 명리 평생 직업·사업운", report["title"])
+        self.assertIn("정통 명리 직업운", report["title"])
         self.assertIn("이어갈 고객과 운영의 기준", report["content"])
 
 

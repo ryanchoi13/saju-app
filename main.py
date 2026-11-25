@@ -813,7 +813,7 @@ def _build_detailed_report(
         return build_lifetime_wealth_report(core, user_name, **tier)
     elif report_key == "business":
         if not user:
-            raise ValueError("평생 직업·사업운 생성에 사용자 사주 정보가 필요합니다.")
+            raise ValueError("평생 직업운 생성에 사용자 사주 정보가 필요합니다.")
         kst_today = datetime.datetime.now(
             datetime.timezone(datetime.timedelta(hours=9))
         ).date()
