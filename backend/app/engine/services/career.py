@@ -26,6 +26,7 @@ from app.engine.services.applied_guidance import direction_advice, state_basis
 from app.engine.services.annual_copy import sanitize_paragraph, seed_from
 from app.engine.services import career_copy as copy
 from app.engine.services import theme_timing
+from app.engine.services import business_fit
 from app.engine.services import career_sections as sec
 from app.engine.services.need_reason import need_reason
 from app.engine.services.theme_core import CLASH, YEOKMA, hidden_tally, tally
@@ -35,7 +36,7 @@ from app.engine.services.element_balance import composition, element_tiers, nata
 from app.engine.constants import GAN_KO, GAN_WUXING, ZHI_KO
 from app.engine.facts.ten_gods import get_ten_god
 
-CAREER_NARRATIVE_VERSION = "career-v3"  # 11/13: 칸 10개 · 분량 3배 · 12달 등급
+CAREER_NARRATIVE_VERSION = "career-v3.1"  # 11/25: 일의 성격 단락 · 제목 직업운. 11/13: 칸 10개 · 분량 3배 · 12달 등급
 
 _TEN_GOD = {
     "peer": "비견", "rob_wealth": "겁재", "eating_god": "식신",
@@ -163,7 +164,7 @@ def _pair(items: list[tuple[str, str, str]]) -> str:
 def _unlocked_html(d: dict) -> str:
     out = [
         _section("workplace", "나에게 맞는 일터", _p(d["workplace"]) + (_p(d["workplace_strength"]) if d["workplace_strength"] else "")),
-        _section("jobs", "잘 맞는 일의 종류", _p(d["job_kind"]) + _p(d["fields"])),
+        _section("jobs", "잘 맞는 일의 종류", _p(d["job_kind"]) + (_p(d["nature"]) if d.get("nature") else "") + _p(d["fields"])),
         _section("money", "돈을 버는 방식",
                  f'<h3>{escape(d["money_title"])}</h3>' + _p(d["money"]) + _p(d["money_tail"])),
         _section("people", "함께 일하는 사람",
@@ -338,7 +339,7 @@ def _compose_v3(core: MyeongriCoreResult, query: dict, name: str, group: str, tr
 
     return dict(
         workplace=sec.WORKPLACE[group][track], workplace_strength=(sec.WORKPLACE_STRENGTH[copy.strength_key(strength)] if copy.strength_decided(strength) else ""),
-        job_kind=sec.JOB_KIND[group], fields=sec.field_text(name, good, need_reason(core, good)),
+        job_kind=sec.JOB_KIND[group], nature=business_fit.nature_text(core, group, start[0]), fields=sec.field_text(name, good, need_reason(core, good)),
         money_title=sec.MONEY_TITLE[money], money=sec.MONEY_TEXT[money], money_tail=sec.MONEY_TAIL[(money, track)],
         helper=sec.HELPER[helper], hard=sec.HARD[hard],
         cycle=cycle, cycle_head=cycle_head, cycle_tier=cycle_tier, cycle_next=cycle_next,
@@ -428,7 +429,7 @@ def build_lifetime_career_report(
     content = with_hashtags(content, core)
     return {
         "analysis_basis": state_basis(query["applied_state"]),
-        "title": f"{name}님 정통 명리 직업·사업운",
+        "title": f"{name}님 정통 명리 직업운",
         "content": content,
         "narrative_version": CAREER_NARRATIVE_VERSION,
         "copy_version": copy.COPY_VERSION,
