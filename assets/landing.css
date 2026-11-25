@@ -47,12 +47,12 @@ body:has(#view-login-gate:not(.hidden)) { background:var(--c-desk,#E9E6DE); }
 
 /* ---- 시작 영역 */
 .landing-actions { max-width:420px; margin:26px auto 0; }
-.landing-gift { position:relative; display:flex; align-items:center; justify-content:center; gap:10px; margin:0 0 14px; padding:12px 18px; background:var(--c-point,#B5341F); color:var(--c-paper,#FDFCF9); border-radius:2px; font-size:14px; font-weight:600; letter-spacing:-.01em; transform:rotate(-1deg); }
-.landing-gift::before,.landing-gift::after { content:''; position:absolute; top:50%; width:14px; height:14px; margin-top:-7px; border-radius:50%; background:var(--c-desk,#E9E6DE); }
-.landing-gift::before { left:-7px; } .landing-gift::after { right:-7px; }
-.landing-gift strong { font-size:19px; font-weight:800; letter-spacing:-.02em; }
-.landing-gift-star { font-size:15px; animation:landing-twinkle 1.8s ease-in-out infinite; }
-.landing-gift-star:last-child { animation-delay:.9s; }
+.landing-gift { position:relative; display:flex; align-items:center; justify-content:center; gap:8px; margin:0 0 14px; padding:9px 16px; background:var(--c-paper,#FDFCF9); color:var(--c-ink-60,#575B62); border:1px dashed var(--c-line,#D9D5CB); border-radius:2px; font-size:13px; font-weight:500; letter-spacing:-.01em; transform:rotate(-.6deg); }
+.landing-gift::before,.landing-gift::after { content:''; position:absolute; top:50%; width:12px; height:12px; margin-top:-6px; border-radius:50%; background:var(--c-desk,#E9E6DE); }
+.landing-gift::before { left:-6px; } .landing-gift::after { right:-6px; }
+.landing-gift strong { font-size:14px; font-weight:700; letter-spacing:-.01em; color:var(--c-point,#B5341F); }
+.landing-gift-star { font-size:11px; color:var(--c-point,#B5341F); opacity:.6; animation:landing-twinkle 2.8s ease-in-out infinite; }
+.landing-gift-star:last-child { animation-delay:1.4s; }
 .landing-actions .kakao-login-btn { min-height:54px; border-radius:10px; box-shadow:none; font-weight:700; font-size:16px; }
 .landing-actions .kakao-login-btn:hover { background:#F4DC00; }
 @keyframes landing-twinkle { 0%,100% { opacity:.25; transform:scale(.7) rotate(0); } 50% { opacity:1; transform:scale(1.15) rotate(20deg); } }
