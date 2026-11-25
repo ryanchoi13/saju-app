@@ -81,9 +81,16 @@ def slot_of(seg, column):
 
 def parse_file(path):
     m = re.match(r"(kr|us|eu|jp)-(f20|m40)-([a-z-]+)-(fw|ss)\.md", path.name)
-    if not m:
-        return []
-    country, group, style, season = m.groups()
+    if m:
+        country, group, style, season = m.groups()
+    else:
+        # 2차 조사 파일(r2-<번호>-<이름>.md)은 첫 줄 <!-- stats: <나라> <집단> <시즌> --> 으로 읽는다(2026-11-25).
+        m2 = re.match(r"r2-(\d+)-[a-z0-9-]+\.md", path.name)
+        meta = re.search(r"<!--\s*stats:\s*(kr|us|eu|jp)\s+(f20|m40)\s+(fw|ss)\s*-->", path.read_text(encoding="utf-8")) if m2 else None
+        if not meta:
+            return []
+        country, group, season = meta.groups()
+        style = "r2-" + m2.group(1)
     rows, header, kind = [], None, None
     for line in path.read_text(encoding="utf-8").splitlines():
         if not line.startswith("|"):
@@ -190,6 +197,16 @@ def main():
                 out["situations"][f"{group}-{tag}"] = s
                 top = ", ".join(f"{k} {v}" for k, v in list(s["slots"].items())[:4])
                 print(f"- {group} {tag}: {s['n']}착장 · 색 있음 {pct(s['with_color'], s['n'])} · {top}")
+    # 상황별(실착, 상황 칸이 있는 것 — 2차 조사부터)
+    print("\n## 한국 실착 상황별(2차 조사 파일 r2-*만 — 1차 카드의 상황 칸은 섞지 않음)")
+    for group in ("f20", "m40"):
+        for tag in ("출근", "주말", "데이트", "나들이"):
+            sel = [r for r in rows if r["country"] == "kr" and r["group"] == group and r["kind"] == "실착" and r["style"].startswith("r2-") and tag in r["situation"]]
+            s = summarize(sel, f"{group}-{tag}-실착")
+            if s:
+                out["situations"][f"{group}-{tag}-실착"] = s
+                top = ", ".join(f"{k} {v}" for k, v in list(s["slots"].items())[:4])
+                print(f"- {group} {tag} 실착: {s['n']}착장 · 색 있음 {pct(s['with_color'], s['n'])} · {top} · 신발 {s['shoe']}")
     Path("/tmp/codi_point_stats.json").write_text(json.dumps(out, ensure_ascii=False, indent=1))
 
 
