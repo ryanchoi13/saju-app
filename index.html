@@ -534,6 +534,8 @@
         .theme-preview { margin-top:14px; display:flex; flex-direction:column; gap:12px; }
         .theme-preview .theme-unlock-cta { width:100%; }
         .theme-preview-note { font-size:.8125rem; color:var(--ui-muted); margin:0; }
+        .theme-fade-gate { display:flex; flex-direction:column; align-items:stretch; gap:8px; margin:4px 0 20px; text-align:center; }
+        .theme-fade-gate .lock-soon { display:block; text-align:center; }
         .daewoon-free .lifetime-nature { margin-top:12px; }
         .drawer-card[hidden], .journal-times[hidden], .soon-hidden { display:none!important; }
         .lock-soon { display:inline-block; margin-top:10px; padding:6px 12px; border-radius:9px; background:var(--ui-tint); color:var(--ui-muted); }
@@ -4268,21 +4270,31 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             const wrap = document.createElement('div');
             wrap.className = 'theme-preview';
             wrap.append(tpl.content);
-            const soon = DALHA_SOON_REPORTS.has(key);
+            // 공개 전 풀이라도 서버가 살 수 있다고 하면(테스트 계정) 결제 버튼을 보인다.
+            const soon = DALHA_SOON_REPORTS.has(key) && state.on_sale !== true;
+            const fade = wrap.querySelector('[data-paywall-fade]');
             const cta = document.createElement(soon ? 'span' : 'button');
             if (soon) {
                 cta.className = 'lock-soon';
-                cta.textContent = '전체 풀이는 곧 열려요';
+                cta.textContent = fade ? `${state.price_coins} ${COIN_UNIT} · 전체 풀이는 곧 열려요` : '전체 풀이는 곧 열려요';
             } else {
                 cta.type = 'button';
                 cta.className = 'reading-primary theme-unlock-cta';
-                cta.textContent = `🔒 ${state.price_coins} ${COIN_UNIT}으로 열람하기`;
+                cta.textContent = fade ? `${state.price_coins} ${COIN_UNIT}으로 전체 보기` : `🔒 ${state.price_coins} ${COIN_UNIT}으로 열람하기`;
                 cta.onclick = () => handleUnlockReportOnServer(key, state.price_coins, state.subOption || '기본');
             }
             const note = document.createElement('p');
             note.className = 'theme-preview-note';
             note.textContent = soon ? '앞부분은 지금 무료로 읽을 수 있어요.' : '결제하면 잠긴 부분이 바로 열려요. 다시 읽을 때는 추가 결제가 없어요.';
-            wrap.append(cta, note);
+            if (fade) {
+                // 11/25 정오님(사업운): 흐려지는 글 바로 아래에 복채·보기 버튼을 둔다.
+                const gate = document.createElement('div');
+                gate.className = 'theme-fade-gate';
+                gate.append(cta, note);
+                (fade.closest('section') || fade).after(gate);
+            } else {
+                wrap.append(cta, note);
+            }
             return wrap;
         }
         async function showThemePreview(key, subOption = '기본') {

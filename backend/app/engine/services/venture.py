@@ -25,9 +25,6 @@ from app.engine.services.theme_voice import with_hashtags
 VENTURE_NARRATIVE_VERSION = "venture-v1"
 
 _BOX = "border:1px solid #E2E8F0;border-radius:12px;padding:12px 14px;background:#FFFFFF;"
-_SKELETON = ('<div aria-hidden="true" style="margin-top:10px;display:grid;gap:6px;">'
-             + "".join(f'<div style="height:10px;width:{w}%;background:#E2E8F0;border-radius:6px;"></div>' for w in (92, 78, 85))
-             + "</div>")
 _PEERS = {"peer": "peers"}
 _TEN_GOD_GROUP = {
     "eating_god": "output", "hurting_officer": "output", "direct_wealth": "wealth", "indirect_wealth": "wealth",
@@ -214,28 +211,39 @@ def build_venture_report(core: MyeongriCoreResult, user_name: str, *, is_unlocke
     a = _analyse(core)
     head, body = sec.NATURE[a["lead"]]
     nature_html = f"<h3>{escape(head)}</h3>" + _p(body.format(name=name)) + _p(sec.STRENGTH.get(a["strength"], ""))
-    traps_html = '<div style="display:grid;gap:8px;">' + "".join(
-        f'<div data-venture-trap="{i}" style="{_BOX}"><strong>{escape(t)}</strong>'
-        f'<p style="margin:4px 0 0;">{escape(x)}</p><p style="margin:4px 0 0;">{escape(f)}</p></div>'
-        for i, (t, x, f) in enumerate((sec.TRAPS[k] for k in a["traps"]), 1)) + "</div>"
+    traps = [sec.TRAPS[k] for k in a["traps"]]
+
+    def _trap_box(i: int, t: str, x: str, f: str | None) -> str:
+        fix = f'<p style="margin:4px 0 0;">{escape(f)}</p>' if f else ""
+        return (f'<div data-venture-trap="{i}" style="{_BOX}"><strong>{escape(t)}</strong>'
+                f'<p style="margin:4px 0 0;">{escape(x)}</p>{fix}</div>')
+
+    if unlocked:
+        traps_html = '<div style="display:grid;gap:8px;">' + "".join(
+            _trap_box(i, t, x, f) for i, (t, x, f) in enumerate(traps, 1)) + "</div>"
+    else:
+        # 11/25 정오님: 잠금 상태에서는 함정 1번은 다 보여 주고, 2번은 앞부분만 흐려지게 보여 준 뒤 그 아래에 복채·보기 버튼.
+        # 2번의 처방과 3번은 싣지 않는다(결제 뒤에만 나온다).
+        shown = [_trap_box(1, *traps[0])] if traps else []
+        if len(traps) > 1:
+            t, x, _ = traps[1]
+            shown.append('<div data-paywall-fade aria-hidden="true" style="max-height:104px;overflow:hidden;pointer-events:none;'
+                         'user-select:none;-webkit-mask-image:linear-gradient(to bottom,#000 15%,transparent 95%);'
+                         'mask-image:linear-gradient(to bottom,#000 15%,transparent 95%);">'
+                         + _trap_box(2, t, x, None) + "</div>")
+        traps_html = '<div style="display:grid;gap:8px;">' + "".join(shown) + "</div>"
     free = (_sec("nature", sec.TITLES["nature"], nature_html, "free")
-            + _sec("traps", sec.TITLES["traps"], traps_html, "free")
-            + '<hr data-paywall-boundary="venture" style="border:0;border-top:1px dashed #94A3B8;margin:18px 0;">')
+            + _sec("traps", sec.TITLES["traps"], traps_html, "free"))
+    if unlocked:
+        free += '<hr data-paywall-boundary="venture" style="border:0;border-top:1px dashed #94A3B8;margin:18px 0;">'
     evidence_summary = dict(natal=dict(lead_group=a["lead"], strength=a["strength"], peers=a["peers"],
                                        ten_gods=a["counts"]), traps=a["traps"])
     if unlocked:
         gated, ev = _paid(core, name, a)
         evidence_summary["v1"] = ev
     else:
-        titles = "".join(f'<li data-venture-locked="{k}"><span class="locked-num">{i:02d}</span> {escape(t)}</li>'
-                         for i, (k, t) in enumerate(sec.LOCKED_SECTIONS, 3))
-        gated = ('<section data-venture-tier="3" data-paywall="locked" data-locked="true" '
-                 'style="border:1px dashed #94A3B8;border-radius:12px;background:#F8FAFC;padding:14px;margin-bottom:8px;">'
-                 '<div style="font-size:12px;color:#64748B;font-weight:800;">🔒 잠긴 풀이</div>'
-                 '<h2 style="margin:4px 0 0;">이어지는 풀이</h2>'
-                 f'<p data-venture-teaser="3" style="margin:6px 0 0;">{escape(sec.LOCKED_TEASER)}</p>'
-                 f'<ul data-locked-toc style="list-style:none;padding-left:0;margin:6px 0 0;">{titles}</ul>{_SKELETON}</section>'
-                 '<a href="#paywall-theme-venture" data-paywall-cta="theme-venture" style="display:inline-block;margin-top:6px;'
+        # 잠긴 칸 목록은 들어오기 전 목차 화면에 이미 있다. 여기서는 결제 자리 표시만 둔다(화면은 서버 가격으로 버튼을 그린다).
+        gated = ('<a href="#paywall-theme-venture" data-paywall-cta="theme-venture" style="display:inline-block;margin-top:6px;'
                  'padding:10px 16px;border-radius:10px;background:#1D2129;color:#fff;font-weight:700;text-decoration:none;">'
                  f'{escape(sec.CTA)}</a>')
     c = a["counts"]
