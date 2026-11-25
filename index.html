@@ -1576,6 +1576,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             </div>
             <div class="dc3-block" id="dc3StoryBlock">
                 <p id="resOverallLabel" class="dc3-block-title" hidden>총운</p>
+                <p id="dc3StoryLead" class="dc3-text" style="margin-bottom:10px" hidden></p>
                 <p id="resAdvice" class="dc3-text"></p>
             </div>
             <div class="dc3-block" id="dc3SecBlock" hidden>
@@ -2735,7 +2736,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             if (!card || !badge) return;
             const grade = fortune?.grade;
             const score = fortune?.score;
-            const rest = ['resGradeDomain', 'resGradeEvidence', 'resGradeDomainText', 'resGradeRx', 'dc3SheetSub'];
+            const rest = ['resGradeDomain', 'resGradeEvidence', 'resGradeDomainText', 'resGradeRx', 'dc3SheetSub', 'dc3StoryLead'];
             if (!grade) {                               // 등급이 없는 옛 응답: 점수 배지만, 창 열기 없음
                 badge.textContent = fortune?.mode_badge || (score ? `운세 ${score}점` : '');
                 badge.dataset.grade = '보통';
@@ -2771,6 +2772,13 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             evidenceEl.hidden = !evidenceEl.textContent;
             document.getElementById('resGradeRxHomeLabel').hidden = !homeRx;
             if (homeRx) document.getElementById('resGradeRxHomeLabel').textContent = fortune.rx_label || '오늘은 이렇게';
+            // 11/25 정오님: 홈 카드에서 읽은 두 줄이 '자세히 보기' 창 첫머리에도 그대로 나와야 이어진다(제목 바로 아래).
+            {
+                const lead = document.getElementById('dc3StoryLead');
+                const leadText = (fortune.story && fortune.story.body_rest) ? evidenceEl.textContent : '';
+                lead.textContent = leadText;
+                lead.hidden = !leadText;
+            }
             document.getElementById('dc3EvidenceFull').textContent = fortune.evidence_text || '';
             // 11/9 정오님: 하루 줄기가 하나가 되면서 '오늘은 이런 날'은 총운과 같은 말을 되풀이했다. 창에서는 총운 하나로 말한다
             document.getElementById('dc3EvidenceBlock').hidden = !!(fortune.story && fortune.story.body_rest);
@@ -3814,7 +3822,47 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             // 이미 산 풀이: 팝업을 두 번 띄우지 않고, 풀이 팝업 하나 안에서 목차 → 풀이 보기로 이어 간다.
             const ownedIndex = latestOwnedReportIndex(key);
             if (ownedIndex >= 0) { openOwnedThemeIntro(key, ownedIndex); return; }
-            document.getElementById('themeIntroModal').classList.remove('hidden');
+            // 11/25 정오님: 아직 안 산 테마(사업운 등)도 작은 팝업 대신 산 풀이와 같은 전체 화면(왼쪽 위 뒤로 가기)으로 연다.
+            openThemePage(key);
+        }
+        function openThemePage(key) {
+            const section = document.getElementById(`concern-${key}`);
+            const modal = document.getElementById('archiveDetailModal');
+            if (!section || !modal) return;
+            if (modal.classList.contains('hidden')) {
+                readingReturnState = {scrollY:window.scrollY, focus:document.activeElement, overflow:document.body.style.overflow, url:location.href};
+                history.pushState({dalhaReader:true}, '', '#report');
+            }
+            readingReportIndex = -1;
+            modal.dataset.annualReader = 'false'; modal.dataset.annualPartitioned = 'false';
+            modal.dataset.themeIntro = 'true';   // 목차·미리보기 화면에서는 PDF 저장·닫기 줄을 숨긴다
+            modal.dataset.themePage = key;
+            document.getElementById('archiveModalTitle').textContent = section.querySelector('h3')?.textContent || '';
+            { const meta = document.getElementById('readingReportMeta'); meta.textContent = ''; meta.hidden = true; }
+            const contents = document.getElementById('readingReportContents');
+            contents.replaceChildren(); contents.classList.add('hidden');
+            const intro = document.createElement('section');
+            intro.className = 'theme-intro-inline';
+            const heading = document.createElement('h3');
+            heading.textContent = section.querySelector('h3')?.textContent || '';
+            const desc = document.createElement('p');
+            desc.textContent = section.querySelector('h3 + p')?.textContent || '';
+            const toc = section.querySelector('.report-preview');
+            const go = document.createElement('button');
+            go.type = 'button'; go.className = 'reading-primary'; go.textContent = '풀이 보기';
+            go.onclick = () => { selectConcern(key); showThemePreview(key, '기본'); };
+            intro.append(heading, desc, ...(toc ? [toc.cloneNode(true)] : []), go);
+            const body = document.getElementById('archiveModalBody');
+            body.replaceChildren(intro);
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+            body.scrollTop = 0;
+            (window.requestAnimationFrame || setTimeout)(() => { body.scrollTop = 0; });
+            document.getElementById('readingCloseButton').focus({preventScroll:true});
+        }
+        function themePageOpenFor(key) {
+            const modal = document.getElementById('archiveDetailModal');
+            return !!(modal && !modal.classList.contains('hidden') && modal.dataset.themePage === key && readingReportIndex < 0);
         }
         // 궁합: 다른 테마와 같은 전체 화면 페이지(왼쪽 위 뒤로 가기). 목차 → [궁합 보기] → 이전에 본 궁합(행마다 삭제).
         function openGunghapPage() {
@@ -3827,6 +3875,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             readingReportIndex = -1;
             modal.dataset.annualReader = 'false'; modal.dataset.annualPartitioned = 'false';
             modal.dataset.themeIntro = 'true';   // 목차 화면에서는 PDF 저장·닫기 줄을 숨긴다
+            delete modal.dataset.themePage;
             document.getElementById('archiveModalTitle').textContent = '궁합';
             { const meta = document.getElementById('readingReportMeta'); meta.textContent = ''; meta.hidden = true; }
             const contents = document.getElementById('readingReportContents');
@@ -4194,6 +4243,24 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             const state = themePreviewCache[key];
             const slot = document.getElementById(`themeReport_${key}`);
             if (!state || !slot) return;
+            slot.replaceChildren(buildThemePreview(key));
+            slot.classList.remove('hidden');
+            // 11/25: 전체 화면 테마 페이지가 열려 있으면 미리보기도 그 안에서 보여 준다(작은 카드로 내려가지 않게).
+            if (themePageOpenFor(key)) {
+                const body = document.getElementById('archiveModalBody');
+                const page = buildThemePreview(key);
+                page.classList.add('theme-preview-page');
+                body.replaceChildren(page);
+                window.polishReading?.(body);
+                body.scrollTop = 0;
+            }
+            const price = document.querySelector(`[data-report-price="${key}"]`);
+            if (price) price.textContent = DALHA_SOON_REPORTS.has(key) ? '앞부분 무료 · 전체는 곧 열려요' : `${state.price_coins} ${COIN_UNIT}`;
+            const button = document.getElementById(`btnTheme_${key}`);
+            if (button) button.textContent = (key === 'health' || key === 'wealth' || key === 'study' || key === 'venture') ? '다시 불러오기' : '상황 다시 고르기';
+        }
+        function buildThemePreview(key) {
+            const state = themePreviewCache[key];
             const tpl = document.createElement('template');
             tpl.innerHTML = state.content || '';
             // 서버 HTML 안의 결제 링크는 쓰지 않는다. 가격·결제 버튼은 아래에서 서버가 준 price_coins 로 그린다.
@@ -4216,12 +4283,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             note.className = 'theme-preview-note';
             note.textContent = soon ? '앞부분은 지금 무료로 읽을 수 있어요.' : '결제하면 잠긴 부분이 바로 열려요. 다시 읽을 때는 추가 결제가 없어요.';
             wrap.append(cta, note);
-            slot.replaceChildren(wrap);
-            slot.classList.remove('hidden');
-            const price = document.querySelector(`[data-report-price="${key}"]`);
-            if (price) price.textContent = DALHA_SOON_REPORTS.has(key) ? '앞부분 무료 · 전체는 곧 열려요' : `${state.price_coins} ${COIN_UNIT}`;
-            const button = document.getElementById(`btnTheme_${key}`);
-            if (button) button.textContent = (key === 'health' || key === 'wealth' || key === 'study' || key === 'venture') ? '다시 불러오기' : '상황 다시 고르기';
+            return wrap;
         }
         async function showThemePreview(key, subOption = '기본') {
             if (!currentUserId) { alert('로그인해 주세요.'); return; }
@@ -4239,7 +4301,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
                 if (data.status === 'owned') { refreshReportEntrypoints(); openReadingReport(latestOwnedReportIndex(key)); return; }
                 themePreviewCache[key] = {...data, subOption};
                 renderThemePreview(key);
-                document.getElementById(`themeReport_${key}`)?.scrollIntoView({block:'start', behavior:'smooth'});
+                if (!themePageOpenFor(key)) document.getElementById(`themeReport_${key}`)?.scrollIntoView({block:'start', behavior:'smooth'});
             } catch (error) {
                 alert('연결이 원활하지 않아요. 다시 시도해 주세요.');
             } finally {
@@ -4261,6 +4323,7 @@ var DalhaHangul=(()=>{var g=Object.defineProperty;var d=Object.getOwnPropertyDes
             const modal = document.getElementById('archiveDetailModal');
             modal.dataset.annualReader = String(owned.report_key === 'sinnian');
             delete modal.dataset.themeIntro;
+            delete modal.dataset.themePage;
             if (modal.classList.contains('hidden')) {
                 readingReturnState = {scrollY:window.scrollY, focus:document.activeElement, overflow:document.body.style.overflow, url:location.href};
                 history.pushState({dalhaReader:true}, '', '#report');
