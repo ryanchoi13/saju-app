@@ -36,20 +36,21 @@ const hidden=id=>$(id).classList.contains('hidden');
         w.closeLegalNotice(); assert.ok(hidden('legalModal'));
     }
 
-    // 테마운: 고르면 '이런 이야기를 읽어요' 팝업 → 풀이 보기로 본문 쪽으로
+    // 테마운(안 산 풀이): 11/25 작은 팝업 대신 전체 화면(왼쪽 위 뒤로 가기)에서 '이런 이야기를 읽어요' → 풀이 보기로 미리보기
     let previewed=[]; w.fetch=async(url,opts)=>{previewed.push(JSON.parse(opts.body).report_key);throw Error('stop');};
     vm.runInContext('currentUserId="u1"',ctx);
     assert.match(doc.querySelector('[data-concern-choice="wealth"]').getAttribute('onclick'),/openThemeIntro\('wealth'\)/);
     w.openThemeIntro('wealth');
-    assert.ok(!hidden('themeIntroModal'));
-    assert.match($('themeIntroModal').textContent,/이런 이야기를 읽어요/);
-    assert.ok(doc.querySelectorAll('#themeIntroToc li').length>=5);
-    assert.equal($('themeIntroTitle').textContent,'평생 재물운');
-    assert.ok(doc.querySelector('#concern-wealth').classList.contains('hidden'));
-    await w.confirmThemeIntro();
     assert.ok(hidden('themeIntroModal'));
+    assert.ok(!hidden('archiveDetailModal'));
+    assert.equal($('archiveModalTitle').textContent,'평생 재물운');
+    assert.match($('archiveModalBody').textContent,/이런 이야기를 읽어요/);
+    assert.ok(doc.querySelectorAll('#archiveModalBody .theme-intro-inline li').length>=5);
+    assert.equal($('archiveDetailModal').dataset.themeIntro,'true');
+    await $('archiveModalBody').querySelector('button.reading-primary').onclick();
     assert.ok(!doc.querySelector('#concern-wealth').classList.contains('hidden'));
     assert.ok(previewed.includes('wealth'));
+    w.dismissReadingReport();
 
     // 이미 산 풀이: 팝업은 하나(풀이 팝업). 목차 → 풀이 보기가 같은 팝업 안에서 이어진다.
     vm.runInContext('serverUnlockedReports=[{report_key:"wealth",report_title:"재물운",report_content:"<h3>본문 시작</h3>"}]',ctx);
