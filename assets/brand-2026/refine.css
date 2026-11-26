@@ -446,3 +446,18 @@ html[data-brand] body #archiveModalBody details > summary::-webkit-details-marke
 html[data-brand] body #archiveModalBody details > summary::after { content:''; flex-shrink:0; border-left:4px solid transparent; border-right:4px solid transparent; border-top:6px solid var(--c-ink-60); }   /* ▼ */
 html[data-brand] body #archiveModalBody details[open] > summary::after { border-top:0; border-bottom:6px solid var(--c-ink-60); }                                                                              /* ▲ */
 html[data-brand] body #archiveModalBody details[open] > summary { margin-bottom:6px; }
+
+/* ---- 11/26 목차 한 벌 정리 (정오님: 전부 굵고 줄 간격이 넓다) ----
+   테마운·궁합 소개 화면, 테마운 팝업, 평생운세 '목차', 풀이 안 잠긴 칸 목록이 모두 같은 모양을 쓴다.
+   제목 15px 보통 굵기(500) · 한 줄 약 38px · 번호 인주색 12px.
+   번호 색은 '#archiveModalBody span' 먹색 규칙(design-system)에 지지 않도록 id 수준 + !important. */
+html[data-brand] body :is(#archiveModalBody,#themeIntroModal,#view-theme,.reading-view) ol.theme-toc { gap:0!important; list-style:none!important; margin:0!important; padding:0!important; }
+html[data-brand] body :is(#archiveModalBody,#themeIntroModal,#view-theme,.reading-view) :is(ol.theme-toc,.reading-plain-contents ol,[data-locked-toc]) > li {
+  display:flex!important; align-items:baseline; gap:12px; padding:8px 0!important; margin:0!important; border:0!important;
+  font-size:15px!important; font-weight:500!important; line-height:1.5!important; color:var(--c-ink,#1D2129)!important; }
+html[data-brand] body :is(#archiveModalBody,#themeIntroModal,#view-theme,.reading-view) ol.theme-toc > li strong,
+html[data-brand] body :is(#archiveModalBody,#themeIntroModal,#view-theme,.reading-view) .reading-plain-contents li > span:not(.toc-num) {
+  display:block; font-size:15px!important; font-weight:500!important; line-height:1.5!important; color:var(--c-ink,#1D2129)!important; }
+html[data-brand] body :is(#archiveModalBody,#themeIntroModal,#view-theme,.reading-view) :is(.toc-num,[data-locked-toc] span.locked-num) {
+  flex:0 0 20px; min-width:20px; font-family:'Pretendard',sans-serif!important; font-size:12px!important; font-weight:500!important; line-height:1.5!important;
+  color:var(--c-point,#B5341F)!important; opacity:1!important; letter-spacing:0!important; font-variant-numeric:tabular-nums lining-nums; }
