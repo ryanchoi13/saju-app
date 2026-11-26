@@ -68,7 +68,8 @@ def slot_of(seg, column):
         return None
     if any(k in seg for k in LEGS):
         return "다리"
-    if any(k in seg for k in SCARF):
+    # '숄더백'·'오프숄더'의 '숄'을 머플러(숄)로 세지 않는다(2026-11-26 고침).
+    if any(k in seg.replace("숄더", "") for k in SCARF):
         return "머플러·스카프"
     if any(k in seg for k in HAT):
         return "모자"
